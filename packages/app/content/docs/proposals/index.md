@@ -14,13 +14,11 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [esbabbler roadmap](/docs/esbabbler/roadmap)
 - [platform roadmap](/docs/platform/roadmap)
 - [sheet editor roadmap](/docs/sheet-editor/roadmap)
-- [clicker roadmap](/docs/clicker/roadmap)
-- [dungeons roadmap](/docs/dungeons/roadmap)
 - [achievements roadmap](/docs/achievements/roadmap)
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)
 
-vue-phaserjs is mature with no roadmap and no open proposals.
+vue-phaserjs, clicker, and dungeons are mature with no roadmap and no open proposals.
 
 Repo-wide refactor plans have no area roadmap and live here directly:
 

@@ -9,4 +9,4 @@ Battle conditions (poison, sleep, burn) and an elemental type chart multiplying 
 
 **Why deferred:** Both mechanics only create decisions when monsters have distinct kits and stats; with today's roster they'd be invisible complexity. The `Status` model (hp/exp) and the battle state machine would both grow meaningfully — worth doing once, after the foundations.
 
-**Revisit when:** the roster is differentiated enough that matchups can matter — [attack power and defense](/docs/dungeons/battle) has shipped, so [monster roster expansion](/docs/proposals/dungeons/monster-roster-expansion) is the remaining gate.
+**Revisit when:** the roster grows beyond five species — [attack power and defense](/docs/dungeons/battle) and the [roster's stat/kit differentiation](/docs/dungeons/monsters-and-items) have both shipped, so new species art is the remaining gate for a type chart to have enough matchups to matter.

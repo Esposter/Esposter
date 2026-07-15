@@ -4,8 +4,8 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { EncounterObjectProperty } from "#shared/generated/tiled/propertyTypes/class/EncounterObjectProperty";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
-import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { getEncounterArea } from "@/services/dungeons/area/getEncounterArea";
+import { createEncounteredMonster } from "@/services/dungeons/monster/createEncounteredMonster";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/scene/world/constants";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useDungeonsStore } from "@/store/dungeons";
@@ -40,7 +40,7 @@ export const useRandomEncounter = (scene: SceneWithPlugins) => {
   const areaTiledObjectProperty = getTiledObjectProperty<Area>(properties, EncounterObjectProperty.area);
   const encounterArea = getEncounterArea(areaTiledObjectProperty.value);
   const randomEncounterableMonster = getWeightedRandomValue(encounterArea.encounterableMonsters);
-  const randomMonster = new Monster(randomEncounterableMonster.key);
+  const randomMonster = createEncounteredMonster(randomEncounterableMonster.key, randomEncounterableMonster.level);
   const enemyStore = useEnemyStore();
   const { activeMonster } = storeToRefs(enemyStore);
   stepsSinceLastEncounter.value = 0;

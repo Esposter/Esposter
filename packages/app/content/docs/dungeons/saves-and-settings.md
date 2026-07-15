@@ -15,7 +15,7 @@ A `Save` is the full run state: `player` (position, direction, party monsters, i
 
 **Settings** — the Settings scene edits `dungeons.settings`, shared across runs: text speed (Slow/Mid/Fast, driving dialog animation delay), battle style, animations on/off, sound on/off + volume percentage, and theme mode (recoloring the UI glass panels via `ThemeModeColorsMap`). Settings persist in the same blob write.
 
-**Achievements** — two, both save-count-based on the `dungeons.saveDungeons` trigger path (DungeonCrawler: 1, DungeonMaster: 50). Since saving is manual, these do reflect play, unlike the clicker's autosave-driven counts.
+**Achievements** — seven, all on the `dungeons.saveDungeons` trigger path. Two count saves (DungeonCrawler: 1, DungeonMaster: 50); five are play milestones whose `condition` reads the saved run when the player checkpoints ([unlock pipeline](/docs/achievements/unlock-pipeline)): MonsterCatcher (party size ≥ 2 — the starter is one, so two means a capture), MonsterTrainer / MonsterElite (any monster at level 10 / 25), MonsterCollector (every species present in the party), and DungeonHomeowner (every chest discovered so far opened, across all maps' `WorldData`). Since saving is manual, all of these reflect play, unlike the clicker's autosave-driven counts.
 
 ## Procedures
 
