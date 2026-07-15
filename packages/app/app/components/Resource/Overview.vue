@@ -3,14 +3,16 @@ import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 
 interface ResourceOverviewProps {
+  isLoading?: boolean;
   publication?: ResourcePublication;
   resource: Resource;
 }
 
-const { publication, resource } = defineProps<ResourceOverviewProps>();
+const { isLoading, publication, resource } = defineProps<ResourceOverviewProps>();
 const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
 const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, resource.id) : undefined));
 const copyPublicLink = async () => {
@@ -25,7 +27,8 @@ const copyPublicLink = async () => {
 <template>
   <div p-6 flex flex-col gap-4>
     <span text-h6>Essentials</span>
-    <v-card>
+    <StyledSkeleton v-if="isLoading" type="article" />
+    <v-card v-else>
       <v-card-text>
         <div gap-x-6 gap-y-2 grid items-center :style="{ gridTemplateColumns: 'auto 1fr' }">
           <span op-medium-emphasis>Type</span>
@@ -34,7 +37,7 @@ const copyPublicLink = async () => {
             {{ ResourceDefinitionMap[resource.type].title }}
           </div>
           <span op-medium-emphasis>Created</span>
-          <span>{{ dayjs(resource.createdAt).format("ddd, MMM D, YYYY h:mm A") }}</span>
+          <span>{{ dayjs(resource.createdAt).format(RESOURCE_DATE_FORMAT) }}</span>
           <span op-medium-emphasis>Updated</span>
           <span>{{ dayjs(resource.updatedAt).fromNow() }}</span>
           <template v-if="isPublishable">
@@ -50,7 +53,7 @@ const copyPublicLink = async () => {
           <template v-if="publicUrl">
             <span op-medium-emphasis>Public link</span>
             <div flex flex-wrap gap-2 items-center>
-              <a text-info :href="publicUrl" target="_blank" rel="noopener">{{ publicUrl }}</a>
+              <NuxtLink :to="publicUrl" external text-info target="_blank">{{ publicUrl }}</NuxtLink>
               <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
             </div>
           </template>

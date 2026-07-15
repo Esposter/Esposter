@@ -1,7 +1,7 @@
 import type { BladeDefinition } from "@/models/resource/BladeDefinition";
 
-import ResourceFileData from "@/components/Resource/File/Data.vue";
-import ResourceFileSettings from "@/components/Resource/File/Settings.vue";
+import ResourceSheetData from "@/components/Resource/Sheet/Data.vue";
+import ResourceSheetSettings from "@/components/Resource/Sheet/Settings.vue";
 import ResourceSurveyResponses from "@/components/Resource/Survey/Responses.vue";
 import ResourceTodoListCalendar from "@/components/Resource/TodoList/Calendar.vue";
 import ResourceTodoListItems from "@/components/Resource/TodoList/Items.vue";
@@ -10,11 +10,11 @@ import { ResourceType } from "@esposter/db-schema";
 export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]> = {
   [ResourceType.Dashboard]: [],
   [ResourceType.Email]: [],
-  [ResourceType.File]: [
-    { component: ResourceFileData, icon: "mdi-table", slug: "data", title: "Data" },
-    { component: ResourceFileSettings, icon: "mdi-cog", slug: "settings", title: "Settings" },
-  ],
   [ResourceType.Flowchart]: [],
+  [ResourceType.Sheet]: [
+    { component: ResourceSheetData, icon: "mdi-table", slug: "data", title: "Data" },
+    { component: ResourceSheetSettings, icon: "mdi-cog", slug: "settings", title: "Settings" },
+  ],
   [ResourceType.Survey]: [
     { component: ResourceSurveyResponses, icon: "mdi-poll", slug: "responses", title: "Responses" },
   ],

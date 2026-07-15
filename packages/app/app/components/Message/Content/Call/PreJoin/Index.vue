@@ -28,7 +28,7 @@ const { height: mediaControlsHeight } = useElementSize(mediaControls);
 <template>
   <div p-6 bg-background flex flex-col gap-4 size-full overflow-y-auto lg:flex-row>
     <div flex flex-1 flex-col gap-y-4 min-h-0 min-w-0>
-      <MessageContentCallPreJoinCameraPreview flex-1 min-h-0 :is-camera-enabled :stream="cameraStream" />
+      <MessageContentCallPreJoinCameraPreview flex-1 :is-camera-enabled :stream="cameraStream" />
       <MessageContentCallPreJoinMediaControls
         ref="mediaControls"
         :is-camera-enabled

@@ -3,7 +3,7 @@ import type { ResourceDefinition } from "#shared/models/resource/ResourceDefinit
 import { dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
 import { emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { flowchartEditorSchema } from "#shared/models/flowchartEditor/data/FlowchartEditor";
-import { fileResourceSchema } from "#shared/models/resource/file/FileResource";
+import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import { todoListResourceSchema } from "#shared/models/resource/todoList/TodoListResource";
 import { webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -22,17 +22,17 @@ export const ResourceDefinitionMap = {
     icon: "mdi-email-edit",
     title: ResourceType.Email,
   },
-  [ResourceType.File]: {
-    capabilities: { datasetProvider: true, portable: true },
-    contentSchema: fileResourceSchema,
-    icon: "mdi-file-table",
-    title: ResourceType.File,
-  },
   [ResourceType.Flowchart]: {
     capabilities: {},
     contentSchema: flowchartEditorSchema,
     icon: "mdi-sitemap",
     title: ResourceType.Flowchart,
+  },
+  [ResourceType.Sheet]: {
+    capabilities: { datasetProvider: true, portable: true },
+    contentSchema: sheetResourceSchema,
+    icon: "mdi-table",
+    title: ResourceType.Sheet,
   },
   [ResourceType.Survey]: {
     capabilities: { datasetProvider: true, publishable: true },

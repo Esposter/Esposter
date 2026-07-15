@@ -6,9 +6,9 @@ import { LikeAchievementDefinitionMap } from "#shared/services/achievement/defin
 import { MessageAchievementDefinitionMap } from "#shared/services/achievement/definitions/MessageAchievementDefinitionMap";
 import { PostAchievementDefinitionMap } from "#shared/services/achievement/definitions/PostAchievementDefinitionMap";
 import { RoomAchievementDefinitionMap } from "#shared/services/achievement/definitions/RoomAchievementDefinitionMap";
+import { SheetAchievementDefinitionMap } from "#shared/services/achievement/definitions/SheetAchievementDefinitionMap";
 import { SpecialAchievementDefinitionMap } from "#shared/services/achievement/definitions/SpecialAchievementDefinitionMap";
 import { SurveyAchievementDefinitionMap } from "#shared/services/achievement/definitions/SurveyAchievementDefinitionMap";
-import { TableAchievementDefinitionMap } from "#shared/services/achievement/definitions/TableAchievementDefinitionMap";
 import { WebpageAchievementDefinitionMap } from "#shared/services/achievement/definitions/WebpageAchievementDefinitionMap";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
@@ -21,9 +21,9 @@ export const AchievementDefinitionMap = {
   ...MessageAchievementDefinitionMap,
   ...PostAchievementDefinitionMap,
   ...RoomAchievementDefinitionMap,
+  ...SheetAchievementDefinitionMap,
   ...SpecialAchievementDefinitionMap,
   ...SurveyAchievementDefinitionMap,
-  ...TableAchievementDefinitionMap,
   ...WebpageAchievementDefinitionMap,
 } as const;
 

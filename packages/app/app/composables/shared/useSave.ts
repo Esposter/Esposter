@@ -4,8 +4,7 @@ import type { z } from "zod";
 
 import { authClient } from "@/services/auth/authClient";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
-import { useAlertStore } from "@/store/alert";
-import { getResultAsync, ItemMetadataPropertyNames } from "@esposter/shared";
+import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 interface UseSaveAuthOptions<TDef extends TRPCResolverDef> {
   save: Resolver<TDef>;
@@ -33,7 +32,7 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
   { auth, toSave, unauth }: UseSaveOptions<TState, T, TDef>,
 ) => {
   const session = authClient.useSession();
-  const alertStore = useAlertStore();
+  const executeSaveMutation = useMutation();
   const saveToLocalStorage = useSaveToLocalStorage();
   // T defaults to TState when toSave is omitted, which TypeScript cannot follow — the single `as never` is the centralized cost
   const getSaveValue = (): T => (toSave ? toSave(state.value) : (state.value as never));
@@ -47,13 +46,11 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
     saveItemMetadata(value);
     let isSuccessful = false;
     if (session.value.data && auth)
-      isSuccessful = await getResultAsync(() => auth.save(value)).match(
-        () => true,
-        (error) => {
-          alertStore.createAlert(error.message, "error");
-          return false;
+      await executeSaveMutation(() => auth.save(value), {
+        onSuccess: () => {
+          isSuccessful = true;
         },
-      );
+      });
     else if (unauth) isSuccessful = saveToLocalStorage(unauth.key, unauth.schema, value);
 
     if (isSuccessful) lastSavedJson = valueJson;

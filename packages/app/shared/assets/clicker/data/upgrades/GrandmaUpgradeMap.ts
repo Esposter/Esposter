@@ -226,6 +226,4 @@ export const GrandmaUpgradeMap = {
   },
 } as const satisfies Record<GrandmaUpgradeId, Except<Upgrade<GrandmaUpgradeId>, "id">>;
 
-export const GrandmaUpgrades: ReadonlySet<(typeof GrandmaUpgradeMap)[keyof typeof GrandmaUpgradeMap]> = new Set(
-  Object.values(GrandmaUpgradeMap),
-);
+export const GrandmaUpgrades = Object.values(GrandmaUpgradeMap);

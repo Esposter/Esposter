@@ -1,4 +1,4 @@
-import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
+import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { z } from "zod";
 
 export type DatasetColumnType = Exclude<ColumnType, ColumnType.Computed>;

@@ -18,7 +18,7 @@ const onClick = () => {
 
 <template>
   <li>
-    <a
+    <NuxtInvisibleLink
       class="text-[0.9375rem]"
       py-1.5
       no-underline
@@ -27,12 +27,12 @@ const onClick = () => {
       duration="[--transition-duration]"
       :class="isActive ? 'text-primary font-medium' : 'text-inherit op-medium-emphasis hover:op-high-emphasis'"
       :data-slide-indicator-key="link.id"
-      :href="`#${link.id}`"
+      :to="{ hash: `#${link.id}` }"
       :style="{ paddingLeft: `${0.75 + depth * 0.75}rem` }"
       @click.prevent="onClick()"
     >
       {{ link.text }}
-    </a>
+    </NuxtInvisibleLink>
     <ul v-if="link.children" m-0 p-0 list-none>
       <DocsTableOfContentsItem
         v-for="child of link.children"

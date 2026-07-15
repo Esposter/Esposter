@@ -3,8 +3,8 @@ import { z } from "zod";
 export enum ResourceType {
   Dashboard = "Dashboard",
   Email = "Email",
-  File = "File",
   Flowchart = "Flowchart",
+  Sheet = "Sheet",
   Survey = "Survey",
   TodoList = "TodoList",
   Webpage = "Webpage",

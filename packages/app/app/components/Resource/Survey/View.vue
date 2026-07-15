@@ -17,26 +17,45 @@ const { $trpc } = useNuxtApp();
 
 let surveyResponse: null | SurveyResponseEntity = null;
 
+const executeMutation = useMutation();
+// Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess
 const saveSurveyResponse = async (survey: Model) => {
   const responseModel = survey.data;
   responseModel.pageNo = survey.currentPageNo;
-  if (!surveyResponse) {
+  const currentSurveyResponse = surveyResponse;
+  if (!currentSurveyResponse) {
     const newSurveyResponseId = crypto.randomUUID();
-    surveyResponse = await $trpc.survey.createSurveyResponse.mutate({
-      model: responseModel,
-      partitionKey: id,
-      rowKey: newSurveyResponseId,
-    });
-    localStorage.setItem(LocalStorageKey.SurveyResponseId(id), surveyResponse.rowKey);
+    await executeMutation(
+      () =>
+        $trpc.survey.createSurveyResponse.mutate({
+          model: responseModel,
+          partitionKey: id,
+          rowKey: newSurveyResponseId,
+        }),
+      {
+        onSuccess: (newSurveyResponse) => {
+          surveyResponse = newSurveyResponse;
+          localStorage.setItem(LocalStorageKey.SurveyResponseId(id), newSurveyResponse.rowKey);
+        },
+      },
+    );
     return;
   }
 
-  surveyResponse = await $trpc.survey.updateSurveyResponse.mutate({
-    model: responseModel,
-    modelVersion: surveyResponse.modelVersion,
-    partitionKey: surveyResponse.partitionKey,
-    rowKey: surveyResponse.rowKey,
-  });
+  await executeMutation(
+    () =>
+      $trpc.survey.updateSurveyResponse.mutate({
+        model: responseModel,
+        modelVersion: currentSurveyResponse.modelVersion,
+        partitionKey: currentSurveyResponse.partitionKey,
+        rowKey: currentSurveyResponse.rowKey,
+      }),
+    {
+      onSuccess: (updatedSurveyResponse) => {
+        surveyResponse = updatedSurveyResponse;
+      },
+    },
+  );
 };
 
 const { content, name } = await getResultAsync(() => $trpc.survey.readPublishedResourceContent.query(id)).match(

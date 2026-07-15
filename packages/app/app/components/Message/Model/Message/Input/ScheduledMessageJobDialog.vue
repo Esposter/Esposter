@@ -3,7 +3,6 @@ import { dayjs } from "#shared/services/dayjs";
 import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "@/store/message/room";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
-import { withFinalizerAsync } from "@esposter/shared";
 import { marked } from "marked";
 
 const rules = useVRules();
@@ -23,6 +22,26 @@ const setDefaultScheduledAt = () => {
   scheduledAt.value = dayjs().add(1, "minute").toDate();
   minScheduledAt.value = new Date(scheduledAt.value);
 };
+const executeMutation = useMutation();
+// Server-scheduled job — non-optimistic
+const scheduleJob = async (onComplete: () => void) => {
+  const roomId = currentRoomId.value;
+  if (roomId)
+    await executeMutation(() =>
+      isReminder.value
+        ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+            roomId,
+            runAt: scheduledAt.value,
+            text: text.value,
+          })
+        : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+            message: marked.parse(text.value, { async: false }),
+            roomId,
+            runAt: scheduledAt.value,
+          }),
+    );
+  onComplete();
+};
 
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) setDefaultScheduledAt();
@@ -35,44 +54,18 @@ watch(isOpen, (newIsOpen) => {
     :card-props="{ title }"
     :confirm-button-props="{ text: confirmText, prependIcon: isReminder ? 'mdi-bell-plus' : 'mdi-send-clock' }"
     :confirm-button-attrs="{ disabled: !scheduledAt }"
-    @submit="
-      async (_event, onComplete) => {
-        await withFinalizerAsync(async () => {
-          const roomId = currentRoomId;
-          if (!roomId) return;
-
-          if (isReminder)
-            await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
-              roomId,
-              runAt: scheduledAt,
-              text,
-            });
-          else
-            await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-              message: marked.parse(text, { async: false }),
-              roomId,
-              runAt: scheduledAt,
-            });
-        }, onComplete);
-      }
-    "
+    @submit="(_event, onComplete) => scheduleJob(onComplete)"
   >
-    <v-container>
-      <v-row>
-        <v-col cols="12">
-          <StyledDatePicker
-            v-model="scheduledAt"
-            :date-picker-props="{
-              minDate: minScheduledAt,
-              placeholder: 'Run at',
-              sixWeeks: 'append',
-            }"
-          />
-        </v-col>
-        <v-col cols="12">
-          <v-textarea v-model="text" :label="textLabel" :rules="[rules.required()]" auto-grow />
-        </v-col>
-      </v-row>
-    </v-container>
+    <div flex flex-col gap-4>
+      <StyledDatePicker
+        v-model="scheduledAt"
+        :date-picker-props="{
+          minDate: minScheduledAt,
+          placeholder: 'Run at',
+          sixWeeks: 'append',
+        }"
+      />
+      <v-textarea v-model="text" :label="textLabel" :rules="[rules.required()]" auto-grow />
+    </div>
   </StyledFormDialog>
 </template>

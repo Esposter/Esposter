@@ -5,8 +5,6 @@ describe("buildingMap", () => {
   test("sorted by price", () => {
     expect.hasAssertions();
 
-    const buildings = [...Buildings];
-
-    expect(buildings).toStrictEqual(buildings.toSorted((a, b) => a.basePrice - b.basePrice));
+    expect(Buildings).toStrictEqual(Buildings.toSorted((a, b) => a.basePrice - b.basePrice));
   });
 });

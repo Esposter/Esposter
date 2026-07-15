@@ -4,20 +4,49 @@
 // Is enough below ~6 pages), and roadmap/deferred/rejected always trail in an automatic Planning group.
 export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
   architecture: {
-    "Core standards": ["platform", "resources", "datasets", "publishing", "serialization", "singleton-dialogs"],
+    "Core standards": [
+      "platform",
+      "resources",
+      "datasets",
+      "publishing",
+      "serialization",
+      "singleton-dialogs",
+      "navigation",
+    ],
     Backend: ["auth", "azure-services", "file-uploads"],
     Development: ["environment", "monorepo-tooling", "server-testing"],
   },
   esbabbler: {
-    Messaging: ["messaging", "message-list-rendering", "slash-commands", "scheduled-messages", "drafts-and-sent"],
-    "Members & profiles": ["friends-and-dms", "profiles-and-presence", "nicknames", "invites", "settings"],
+    Messaging: [
+      "messaging",
+      "message-list-rendering",
+      "room-ui",
+      "slash-commands",
+      "scheduled-messages",
+      "drafts-and-sent",
+    ],
+    "Members & profiles": [
+      "friends-and-dms",
+      "profiles-and-presence",
+      "nicknames",
+      "invites",
+      "settings",
+      "room-settings",
+    ],
     Moderation: ["moderation", "rbac"],
     Calls: ["voice-video", "calls"],
     Infrastructure: ["push-notifications", "offline-cache"],
   },
   platform: {
-    "Explorer & shell": ["resource-explorer", "shell-cohesion", "resource-consolidation"],
-    Resources: ["file-resource", "survey-resource"],
+    "Explorer & shell": [
+      "resource-explorer",
+      "list-filters-and-views",
+      "resource-page-parity",
+      "notifications",
+      "shell-cohesion",
+      "resource-consolidation",
+    ],
+    Resources: ["sheet-resource", "survey-resource"],
     Editors: ["dashboard-data-binding", "email-personalization"],
   },
   virrun: {

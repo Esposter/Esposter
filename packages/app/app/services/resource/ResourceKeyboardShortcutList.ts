@@ -10,7 +10,10 @@ export const ResourceKeyboardShortcutList = [
   },
   {
     category: "Navigation",
-    items: [{ description: "Go to All resources", keys: ["G", "A"] }],
+    items: [
+      { description: "Go to All resources", keys: ["G", "A"] },
+      { description: "Open notifications", keys: ["G", "N"] },
+    ],
   },
   {
     category: "General",

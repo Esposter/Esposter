@@ -15,9 +15,11 @@ A Discord-style fullscreen settings dialog for **message/communication** prefere
 | Global route `/user/settings` | Account · Profile                        | `users` (`UserIntroductionCard` + `UserProfileCard` + SAS avatar upload)         |
 | Theme                         | top-right toggle, not a panel            | cookie (`THEME_COOKIE_NAME`) — hard SSR constraint (flash-free first paint)      |
 
-The dialog is opened by the gear in `Message/LeftSideBar/StatusBar.vue` and mirrors the room-settings pattern (`SettingsType` enum → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
+The dialog is opened by the gear in `Message/LeftSideBar/StatusBar.vue` and mirrors the [room settings](/docs/esbabbler/room-settings) pattern (`SettingsType` enum → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
 
-Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings mutation is **optimistic** (apply to the store immediately, mutate in the background, roll back + alert on failure — `useOptimisticMutation`); and the sidebar section rail is `StyledSlideIndicator` stretched across **all** visible sections, pinned to the target while a click-scroll runs.
+Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings mutation is **optimistic** (apply to the store immediately, mutate in the background, roll back + surface the error on failure — [`useMutation`](/docs/architecture/client-data)); and the sidebar section rail is `StyledSlideIndicator` stretched across **all** visible sections, pinned to the target while a click-scroll runs.
+
+They also share the responsive shell: the sidebar drawer (`MessageModelSettingsLeftSideBar`) is `permanent` only on desktop and becomes a `temporary` overlay on `smAndDown`, opened by a `mdi-menu` hamburger the content header renders on mobile and closed on selection. The user dialog holds that open flag as `isDrawerOpen` on its dialog store; the room dialog threads it through its `Dialog`. See [room settings](/docs/esbabbler/room-settings) for the diagram.
 
 **Sync by default, per-device by exception**: preferences live in the DB and sync across devices; only hardware device IDs (mic/speaker/camera — a device chosen on one machine must not apply on another) and UI collapsibles stay `localStorage`.
 
@@ -60,18 +62,18 @@ The dialog uses a Discord-style two-level nav: a `v-list-group` per `UserSetting
 
 ## Key files
 
-| File                                                                         | Role                                           |
-| :--------------------------------------------------------------------------- | :--------------------------------------------- |
-| `packages/db-schema/src/schema/userSettingsInMessage.ts`                     | table + enums + range constants                |
-| `packages/app/server/trpc/routers/user.ts`                                   | `readUserSettings` + `updateUserSettings`      |
-| `packages/app/app/models/message/user/UserSettingsType.ts`                   | panel enum (values double as titles)           |
-| `packages/app/app/services/message/user/settings/`                           | list-item / content / section maps             |
-| `packages/app/app/store/message/user/settings/index.ts`                      | DB-backed store (optimistic + revert)          |
-| `packages/app/app/store/message/user/settings/voice.ts`                      | device-local store (`localStorage` device IDs) |
-| `packages/app/app/store/message/user/settings/dialog.ts`                     | dialog UI store (visibility, scrollspy state)  |
-| `packages/app/app/components/Message/Model/User/Settings/`                   | dialog + wrappers + `Type/*` panels            |
-| `packages/app/app/composables/message/user/settings/useSettingsScrollSpy.ts` | topmost-visible-section scrollspy              |
-| `packages/app/app/pages/user/settings.vue`                                   | global account/profile surface                 |
+| File                                                                         | Role                                                                 |
+| :--------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/userSettingsInMessage.ts`                     | table + enums + range constants                                      |
+| `packages/app/server/trpc/routers/user.ts`                                   | `readUserSettings` + `updateUserSettings`                            |
+| `packages/app/app/models/message/user/UserSettingsType.ts`                   | panel enum (values double as titles)                                 |
+| `packages/app/app/services/message/user/settings/`                           | list-item / content / section maps                                   |
+| `packages/app/app/store/message/user/settings/index.ts`                      | DB-backed store (optimistic + revert)                                |
+| `packages/app/app/store/message/user/settings/voice.ts`                      | device-local store (`localStorage` device IDs)                       |
+| `packages/app/app/store/message/user/settings/dialog.ts`                     | dialog UI store (visibility, mobile `isDrawerOpen`, scrollspy state) |
+| `packages/app/app/components/Message/Model/User/Settings/`                   | dialog + wrappers + `Type/*` panels                                  |
+| `packages/app/app/composables/message/user/settings/useSettingsScrollSpy.ts` | topmost-visible-section scrollspy                                    |
+| `packages/app/app/pages/user/settings.vue`                                   | global account/profile surface                                       |
 
 ## Notes
 

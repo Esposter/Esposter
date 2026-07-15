@@ -44,7 +44,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <v-toolbar pl-4 flex-none :title="`Configuration - ${itemType}`">
+  <v-toolbar flex-none :title="`Configuration - ${itemType}`">
     <v-spacer />
     <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value="editedItem" />
     <slot name="prepend-actions" />

@@ -22,6 +22,8 @@ Find a rule's owner here before adding it. If nothing fits, that may signal a mi
 - `typescript` — TypeScript language rules and type patterns.
 - `vue` / `vue-component-patterns` / `vue-composable-patterns` — Vue SFC semantics, component architecture, composable patterns respectively.
 - `styling` / `unocss` — attributify styling usage vs. UnoCSS config.
+- `coderabbit` — CodeRabbit review config: PR file budget, `.coderabbit.yaml` exclusions, exclude/re-enable commit pair.
+- `score` — the `SCORE.md` repository audit: re-scoring process, README badge sync, `compatibilityDate` bump.
 - Domain skills (`drizzle`, `trpc`, `zod`, `pinia`, `error-handling`, `testing`, `azure-table`, `esbabbler`, `tiptap`, `vuetify`, …) own their domain's rules only.
 
 Keep this map current whenever a skill is split, merged, or created.

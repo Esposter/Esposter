@@ -27,12 +27,14 @@ describe(getServiceSearchItems, () => {
 
   test("matches the type title case-insensitively", () => {
     expect.hasAssertions();
-    expect(getServiceSearchItems("SURVEY")).toStrictEqual([surveyItem]);
+    expect(getServiceSearchItems(ResourceDefinitionMap[ResourceType.Survey].title.toUpperCase())).toStrictEqual([
+      surveyItem,
+    ]);
   });
 
   test("matches the type description", () => {
     expect.hasAssertions();
-    expect(getServiceSearchItems("collect responses")).toStrictEqual([surveyItem]);
+    expect(getServiceSearchItems(ResourceTypeDescriptionMap[ResourceType.Survey])).toStrictEqual([surveyItem]);
   });
 
   test("returns no items when nothing matches", () => {

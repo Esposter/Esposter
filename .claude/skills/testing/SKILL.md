@@ -71,6 +71,7 @@ Never repeat the same literal value or object across tests. If 2+ tests (or rows
 - **Date format tests** — `for...of` inside a single test using `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never `test.each`.
 - **Interpolated descriptions** — `` `${AdminActionType.BanUser}: owner bans member — ban inserted` ``. Never write enum values as string literals in titles; always template literals with the enum reference. Plain English for non-enum cases ("integer", "decimal", "epoch date").
 - **Idempotency** — always `"[functionName] is idempotent"` when repeating an operation yields the same result. Never `"deduplicates ..."`, `"does not create duplicate"`, or `"skips duplicate"`.
+- **Router CRUD descriptions** — happy paths use the bare operation verb: `"creates"`, `"updates"`, `"deletes"` (one per operation, all field assertions combined). Error paths follow `"fails <operation> with <condition>"`: `"fails update with wrong user"`, `"fails delete with non-existent id"`, `"fails create with existing like"`. Never a scratch/repro label (`"creates twice"`, `"REPRO ..."`) — name the condition being rejected, not the mechanics of triggering it.
 
 ## Array / Type Utilities
 

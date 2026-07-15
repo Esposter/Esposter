@@ -4,4 +4,4 @@ export enum PostSortType {
   Top = "Top",
 }
 
-export const PostSortTypes = new Set(Object.values(PostSortType));
+export const PostSortTypes = Object.values(PostSortType);

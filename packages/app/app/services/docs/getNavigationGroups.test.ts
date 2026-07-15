@@ -1,6 +1,8 @@
 import type { ContentNavigationItem } from "@nuxt/content";
 
+import { DocsNavigationSlug } from "@/models/docs/DocsNavigationSlug";
 import { getNavigationGroups } from "@/services/docs/getNavigationGroups";
+import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const createItem = (path: string): ContentNavigationItem => ({
@@ -12,38 +14,48 @@ describe(getNavigationGroups, () => {
   test("unmapped section keeps feature pages ungrouped and trails planning pages", () => {
     expect.hasAssertions();
 
-    const groups = getNavigationGroups("/docs/posts", [
-      createItem("/docs/posts/likes"),
-      createItem("/docs/posts/roadmap"),
-      createItem("/docs/posts/deferred"),
-      createItem("/docs/posts/rejected"),
+    const sectionPath = `${RoutePath.Docs}/a`;
+    const groups = getNavigationGroups(sectionPath, [
+      createItem(`${sectionPath}/b`),
+      createItem(`${sectionPath}/${DocsNavigationSlug.Roadmap}`),
+      createItem(`${sectionPath}/${DocsNavigationSlug.Deferred}`),
+      createItem(`${sectionPath}/${DocsNavigationSlug.Rejected}`),
     ]);
 
     expect(groups.map(({ items, title }) => ({ paths: items.map(({ path }) => path), title }))).toStrictEqual([
-      { paths: ["/docs/posts/likes"], title: undefined },
-      { paths: ["/docs/posts/roadmap", "/docs/posts/deferred", "/docs/posts/rejected"], title: "Planning" },
+      { paths: [`${sectionPath}/b`], title: undefined },
+      {
+        paths: [
+          `${sectionPath}/${DocsNavigationSlug.Roadmap}`,
+          `${sectionPath}/${DocsNavigationSlug.Deferred}`,
+          `${sectionPath}/${DocsNavigationSlug.Rejected}`,
+        ],
+        title: "Planning",
+      },
     ]);
   });
 
   test("mapped section orders groups by declaration order with unmapped pages leading", () => {
     expect.hasAssertions();
 
-    const groups = getNavigationGroups("/docs/virrun", [
-      createItem("/docs/virrun/cache"),
-      createItem("/docs/virrun/architecture"),
-      createItem("/docs/virrun/new-unmapped-page"),
+    // "virrun" and its "architecture"/"cache" slugs are real DocsSectionGroupsMap keys the code owns
+    const sectionPath = `${RoutePath.Docs}/virrun`;
+    const groups = getNavigationGroups(sectionPath, [
+      createItem(`${sectionPath}/cache`),
+      createItem(`${sectionPath}/architecture`),
+      createItem(`${sectionPath}/a`),
     ]);
 
     expect(groups.map(({ items, title }) => ({ paths: items.map(({ path }) => path), title }))).toStrictEqual([
-      { paths: ["/docs/virrun/new-unmapped-page"], title: undefined },
-      { paths: ["/docs/virrun/architecture"], title: "Core" },
-      { paths: ["/docs/virrun/cache"], title: "Performance" },
+      { paths: [`${sectionPath}/a`], title: undefined },
+      { paths: [`${sectionPath}/architecture`], title: "Core" },
+      { paths: [`${sectionPath}/cache`], title: "Performance" },
     ]);
   });
 
   test("returns no groups for no items", () => {
     expect.hasAssertions();
 
-    expect(getNavigationGroups("/docs/virrun", [])).toStrictEqual([]);
+    expect(getNavigationGroups(`${RoutePath.Docs}/a`, [])).toStrictEqual([]);
   });
 });

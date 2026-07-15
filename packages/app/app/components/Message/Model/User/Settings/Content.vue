@@ -9,7 +9,8 @@ interface UserSettingsContentProps {
 
 const { settingsType } = defineProps<UserSettingsContentProps>();
 const userSettingsDialogStore = useUserSettingsDialogStore();
-const { isVisible } = storeToRefs(userSettingsDialogStore);
+const { isDrawerOpen, isVisible } = storeToRefs(userSettingsDialogStore);
+const { smAndDown } = useVDisplay();
 const component = computed(() => UserSettingsContentMap[settingsType]);
 useSettingsScrollSpy();
 </script>
@@ -18,7 +19,10 @@ useSettingsScrollSpy();
   <MessageModelSettingsContent>
     <template #header>
       <v-sheet tag="header" px-4 py-4 flex items-center justify-between>
-        <div font-bold text-headline-medium>{{ settingsType }}</div>
+        <div flex gap-2 items-center>
+          <StyledTooltipIconButton v-if="smAndDown" icon="mdi-menu" text="Show menu" @click="isDrawerOpen = true" />
+          <div font-bold text-headline-medium>{{ settingsType }}</div>
+        </div>
         <v-tooltip text="Close">
           <template #activator="{ props: tooltipProps }">
             <v-btn :="tooltipProps" icon="mdi-close" variant="text" @click="isVisible = false" />

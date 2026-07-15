@@ -10,7 +10,6 @@ export const useDirectMessageSubscribables = () => {
   const { storeDeleteDirectMessage, storeUpdateDirectMessage } = directMessageStore;
   const { directMessageParticipantsMap, directMessages } = storeToRefs(directMessageStore);
   const session = authClient.useSession();
-  const router = useRouter();
 
   useOnlineSubscribable(
     () => getIdsKey(directMessages.value),
@@ -37,13 +36,12 @@ export const useDirectMessageSubscribables = () => {
           onData: getSynchronizedFunction(async (userId) => {
             if (userId === session.value.data?.user.id) {
               storeDeleteDirectMessage({ id: roomId });
-              await router.push({
-                path:
-                  directMessages.value.length > 0
-                    ? RoutePath.Messages(takeOne(directMessages.value).id)
-                    : RoutePath.MessagesIndex,
-                replace: true,
-              });
+              await navigateTo(
+                directMessages.value.length > 0
+                  ? RoutePath.Messages(takeOne(directMessages.value).id)
+                  : RoutePath.MessagesIndex,
+                { replace: true },
+              );
               return;
             }
             const participants = directMessageParticipantsMap.value.get(roomId) ?? [];

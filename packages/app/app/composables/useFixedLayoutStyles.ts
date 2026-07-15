@@ -5,15 +5,19 @@ import { useLayoutStore } from "@/store/layout";
 
 const APP_BAR_CSS_VALUE = "var(--app-bar-height)";
 
-export const useFixedLayoutStyles = (bottomOffset: Ref<number | string>) => {
+export const useFixedLayoutStyles = (
+  bottomOffset: Ref<number | string>,
+  leftWidth: MaybeRefOrGetter<number> = LEFT_DRAWER_WIDTH,
+  rightWidth: MaybeRefOrGetter<number> = RIGHT_DRAWER_WIDTH,
+) => {
   const layoutStore = useLayoutStore();
   const { isDesktop, isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
-  const leftOffset = computed(() => (isLeftDrawerOpen.value ? 0 : -LEFT_DRAWER_WIDTH));
-  const rightOffset = computed(() => (isRightDrawerOpen.value ? 0 : -RIGHT_DRAWER_WIDTH));
+  const leftOffset = computed(() => (isLeftDrawerOpen.value ? 0 : -toValue(leftWidth)));
+  const rightOffset = computed(() => (isRightDrawerOpen.value ? 0 : -toValue(rightWidth)));
   // We only need to offset the middle if we are on desktop
   // As the drawers are floating on non-desktop screens
-  const middleLeftOffset = computed(() => (isDesktop.value && isLeftDrawerOpen.value ? LEFT_DRAWER_WIDTH : 0));
-  const middleRightOffset = computed(() => (isDesktop.value && isRightDrawerOpen.value ? RIGHT_DRAWER_WIDTH : 0));
+  const middleLeftOffset = computed(() => (isDesktop.value && isLeftDrawerOpen.value ? toValue(leftWidth) : 0));
+  const middleRightOffset = computed(() => (isDesktop.value && isRightDrawerOpen.value ? toValue(rightWidth) : 0));
   return {
     bottom: computed<CSSProperties>(() => ({
       bottom: "0px",
@@ -24,7 +28,7 @@ export const useFixedLayoutStyles = (bottomOffset: Ref<number | string>) => {
       height: `calc(100% - ${APP_BAR_CSS_VALUE})`,
       left: `${leftOffset.value}px`,
       top: APP_BAR_CSS_VALUE,
-      width: `${LEFT_DRAWER_WIDTH}px`,
+      width: `${toValue(leftWidth)}px`,
     })),
     middle: computed<CSSProperties>(() => ({
       "--v-layout-bottom": `${bottomOffset.value}px`,
@@ -36,7 +40,7 @@ export const useFixedLayoutStyles = (bottomOffset: Ref<number | string>) => {
       height: `calc(100% - ${APP_BAR_CSS_VALUE})`,
       right: `${rightOffset.value}px`,
       top: APP_BAR_CSS_VALUE,
-      width: `${RIGHT_DRAWER_WIDTH}px`,
+      width: `${toValue(rightWidth)}px`,
     })),
   };
 };

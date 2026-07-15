@@ -1,6 +1,6 @@
 ---
 name: vue-component-patterns
-description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, and same-level abstraction. Apply when designing or refactoring Vue components.
+description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, same-level abstraction, present-tense emit names, inline template event handlers, and useCloned local copies over ref + watch. Apply when designing or refactoring Vue components.
 ---
 
 # Vue Component Patterns (Esposter)
@@ -12,6 +12,7 @@ Cross-product chrome is a small set of shared components in `components/Styled/`
 - `StyledPageHeader` — the canonical editor/page header (breadcrumb row + `actions` slot + `controls` slot). Every editor header mounts document picker / selects / search through it; controls never go inside `v-toolbar-title`.
 - `StyledEmptyState` — icon + title + description + action slot for empty lists/states.
 - `StyledSkeleton` — bordered `v-skeleton-loader` for per-region loading.
+- `StyledSearchDialog` — the canonical Ctrl+K search palette (dialog + solo autofocus search field + `hotkey` prop registered via `useVHotkey`, `activator` slot, results in the default slot). Every dialog-style search UI mounts through it — never re-roll a `v-dialog` + `v-text-field` + hotkey listener (`onKeyStroke`/`useEventListener`) per feature. See `docs/architecture/search.md`.
 - `AppBreadcrumbs` — route→product trail (matched against `ProductListLinkItems`), rendered by `StyledPageHeader`.
 
 When a new product/editor is added, give it a `StyledPageHeader`, a launcher entry in `ProductListLinkItems`, and — if it is document-backed — a row in the `/documents` hub maps (`DocumentTypeRoutePathMap` / `DocumentTypeIconMap`). Document the result in the shell-cohesion spec.
@@ -81,6 +82,23 @@ const nickname = ref(userToRoom.nickname);
 
 **When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data, where the store can be empty at component creation time.
 
+## Local Copies of Reactive Sources — `useCloned`, Never `ref` + `watch`
+
+A local editable copy of a reactive source (edit drafts, buffered inputs, slider values) is always VueUse `useCloned` — never a hand-rolled `ref(source.value)` plus a `watch` syncing source → copy:
+
+```ts
+// ❌ const searchInput = ref(searchQuery.value);
+//    watch(searchQuery, (newSearchQuery) => { searchInput.value = newSearchQuery; });
+// ✅
+const { cloned: searchInput } = useCloned(searchQuery);
+const { cloned: editedName } = useCloned(() => name); // getter form for props/store fields
+```
+
+- Destructure `sync` when a Reset button must re-copy on demand (`Resource/Sheet/Row/EditDialog.vue`)
+- The write-back direction (copy → source) is a genuine side effect — a single `watch` (often on a `refDebounced` of the copy) or an explicit save action is fine there
+
+More generally, before writing any `watch`, express it as a `computed`, a template `v-if`, or a purpose-built VueUse composable first. Reserve `watch` for side effects that can't be reactive values: emits, navigation, DOM calls (`focus`/`scrollIntoView`/measure), fetch-on-change, library bridges (Phaser/tiptap/LiveKit), and state resets/clamps triggered by another value changing.
+
 ## Generic SFC Components
 
 When a component's model value (or other prop) type depends on an enum/discriminant key, make the component generic:
@@ -145,7 +163,36 @@ A **derived/computed** value still fits the literal type as long as it can only 
 
 **Exception — genuinely two-way boolean.** Use the full `boolean` type only when the prop carries a real, changeable boolean: a `v-model` / `defineModel<boolean>()`, or a ref/computed whose value legitimately flips **both** ways at the call site. A flag that only ever toggles away from its default is not this case — keep it a literal.
 
-## Component Co-location (Folder = Auto-import Prefix)
+## Emits — Present-Tense Event Names
+
+Emit names are **present-tense verbs**: `delete`, `update`, `create`, `save`, `submit` — never past tense (`deleted`, `updated`, `copied`). The event names the action the parent should handle, not a completed fact; past-tense names also drift from Vue/DOM convention (`click`, `submit`, `change`).
+
+```ts
+// ❌ const emit = defineEmits<{ deleted: []; updated: [] }>();
+// ✅
+const emit = defineEmits<{ delete: []; update: [] }>();
+```
+
+For state-sync emits, use the `update:x` form where `x` is the state name (`"update:copied": [boolean]`) — the verb stays present tense; the state name may be any shape.
+
+## Event Handlers — Inline in the Template Binding
+
+Inline handler logic directly in the `@event` binding instead of declaring a one-use `onSubmit`/`deleteResource` function in script — the binding reuses the emitter's parameter inference (`onComplete`, `_event`, slot props) that a script-level function would have to re-type.
+
+```vue
+<!-- ❌ @submit="onSubmit" with const onSubmit = async () => {...} in script -->
+<!-- ✅ -->
+<StyledFormDialog
+  @submit="
+    async (_event, onComplete) => {
+      await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids: [resource.id] }));
+      onComplete();
+    }
+  "
+/>
+```
+
+Extract to script only when the template genuinely can't express it: globals unreachable from templates (`window`), logic reused across multiple bindings, or literals a template attribute can't carry (a string containing double quotes → hoist just that string to a `computed`).
 
 **Group components with the same prefix into a folder** — Nuxt auto-imports with the folder path as prefix, so co-located components share it without repeating it in filenames.
 
@@ -368,13 +415,43 @@ const controlItems = computed<ControlItem[]>(() => [
 
 **When NOT to extract:** Items rendering fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.
 
+## One Affordance Per Action — No Duplicate Behaviour
+
+**Every action gets exactly one visible way to trigger it.** Two controls that do the identical thing are not "convenience" — they make the user stop and ask whether the two differ, and they double the surface that has to stay in sync.
+
+The resource list had three routes to the same destination per row: the row's `@click:row`, a `text-info` `NuxtLink` on the name, and an `Open` icon button in the actions column (plus an `Open` item in the right-click menu). All four navigated to `RoutePath.Resource(item.id)`. Now the row click is the only one, and the name renders as plain text.
+
+When you find duplicates, keep the affordance with the **largest hit target and the least chrome**, and delete the rest:
+
+```vue
+<!-- WRONG — the name link and the Open button both repeat the row click -->
+<template #[`item.name`]="{ item }">
+  <NuxtLink text-info :to="RoutePath.Resource(item.id)" @click.stop>{{ item.name }}</NuxtLink>
+</template>
+<template #[`item.actions`]="{ item }">
+  <StyledTooltipIconButton icon="mdi-open-in-new" text="Open" :button-props="{ to: RoutePath.Resource(item.id) }" />
+</template>
+
+<!-- CORRECT — row click navigates; the name is plain text (drop the slot entirely), actions hold only what the row click can't do -->
+<template #[`item.actions`]="{ item }">
+  <StyledOverflowMenu :items="getActionItems(item)" @click.stop />
+</template>
+```
+
+Corollaries:
+
+- **Don't style non-links like links.** `text-info` + underline is a promise of a distinct navigation target. If the row already navigates, the name is plain text — styling it as a link implies it goes somewhere else.
+- **A different trigger for the same command is not a duplicate.** A right-click context menu and a row `⋮` menu are two triggers for one list of commands — that is fine, and they must be driven by **one** shared `Item[]` (see [Permission-Filtered Action Items](#permission-filtered-action-items-composable--v-for)). What is banned is a second _visible_ control for a command that already has one.
+- **A genuinely different behaviour is not a duplicate.** `Open in new tab` survives next to row-click because it does something row-click cannot.
+- If a slot exists only to re-render the default value (`{{ item.name }}`), delete the slot and let the default rendering do it.
+
 ## Singleton Dialogs — Store-Driven Target, Never Per-Item
 
 **Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded `v-dialog`/menu creates N full component trees that all mount, hydrate, and re-render together — the root cause of a seconds-long INP on the messages page. The full rationale and canonical wiring live in `packages/app/content/docs/architecture/singleton-dialogs.md`; keep that page updated when this pattern evolves.
 
 The pattern (three parts):
 
-1. **Target ref in a per-service dialog store** — dialog UI state never lives in a business-logic store. Each service gets its own dialog store next to its business store (`store/message/dialog.ts` → `useMessageDialogStore`, `store/post/dialog.ts`, `store/resource/file/rowDialog.ts`, …) holding only targets like `deletingId` / `editingColumnName`. Targets are strings defaulting to `""` — never `undefined` (empty-string default rule).
+1. **Target ref in a per-service dialog store** — dialog UI state never lives in a business-logic store. Each service gets its own dialog store next to its business store (`store/message/dialog.ts` → `useMessageDialogStore`, `store/post/dialog.ts`, `store/resource/sheet/rowDialog.ts`, …) holding only targets like `deletingId` / `editingColumnName`. Targets are strings defaulting to `""` — never `undefined` (empty-string default rule).
 2. **Action buttons write the target** — the per-item button is a dumb `StyledTooltipIconButton` with `@click.stop="deletingId = item.id"`. No activator slots, no emit plumbing up the tree.
 3. **One dialog instance mounted at list level** — a `ConfirmDeleteDialog.vue`/`EditDialog.vue` singleton mounted once (in the list/table/page component). It resolves the full item from the business store by target, guards with `v-if="item"`, and derives its model via `useSingletonDialog`:
 
@@ -388,11 +465,11 @@ const isOpen = useSingletonDialog(deletingId); // get: Boolean(target); set fals
 <StyledDeleteFormDialog v-if="item" v-model="isOpen" :card-props="{ title, text }" @delete="..." />
 ```
 
-- When the dialog needs per-open local state (a `structuredClone` edit draft), mount it `v-if`-guarded **with a `:key`** at the list level so it re-creates per target: `<ResourceFileRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" />`.
+- When the dialog needs per-open local state (a `structuredClone` edit draft), mount it `v-if`-guarded **with a `:key`** at the list level so it re-creates per target: `<ResourceSheetRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" />`.
 - Hover toolbars / options menus in list items follow the same idea with `v-if` (mount on hover), not `v-show` — see `Message/Model/Message/List/Item.vue`.
 - Single-instance dialogs (one create button per toolbar, one settings dialog per page) may keep the button+dialog combined component — the rule targets per-item multiplication.
 
-Canonical examples: `Message/Model/Message/ConfirmDeleteDialog.vue`, `Resource/File/Column/{ActionSlot,Table,EditDialog,ConfirmDeleteDialog}.vue`, `Message/Model/Room/Settings/Dialog.vue`.
+Canonical examples: `Message/Model/Message/ConfirmDeleteDialog.vue`, `Resource/Sheet/Column/{ActionSlot,Table,EditDialog,ConfirmDeleteDialog}.vue`, `Message/Model/Room/Settings/Dialog.vue`.
 
 ## Page Decomposition — Pages are Layout + Composition
 

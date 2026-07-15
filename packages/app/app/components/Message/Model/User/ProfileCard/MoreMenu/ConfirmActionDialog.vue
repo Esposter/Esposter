@@ -17,12 +17,13 @@ const executeAdminAction = useExecuteAdminAction();
 
 <template>
   <StyledDeleteFormDialog
-    :card-props="{ text, title }"
+    :card-props="{ title }"
     :confirm-button-props="{ text: AdminActionTitleMap[type] }"
     @delete="(onComplete) => executeAdminAction((roomId) => ({ roomId, targetUserId: user.id, type }), onComplete)"
   >
     <template #activator="{ updateIsOpen }">
       <v-list-item :="AdminActionListItemPropsMap[type]" @click.stop="updateIsOpen(true)" />
     </template>
+    {{ text }}
   </StyledDeleteFormDialog>
 </template>

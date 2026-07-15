@@ -7,7 +7,7 @@ import {
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
 } from "@/services/exec/wsl/constants";
 import { createSourceMirrorArchive } from "@/services/exec/wsl/createSourceMirrorArchive";
-import { mkdirSync, readdirSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
+import { lstatSync, mkdirSync, readdirSync, readlinkSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
@@ -73,22 +73,34 @@ describe(createSourceMirrorArchive, () => {
     ]);
   });
 
-  test.runIf(isSymlinkSupported)("dereferences a symlink so its member extracts as the target's content", () => {
-    expect.hasAssertions();
+  test.runIf(isSymlinkSupported)(
+    "preserves a symlink member so it extracts as a link, not the target's content",
+    () => {
+      expect.hasAssertions();
 
-    const linkFilename = "link";
-    writeFileSync(join(cwd, TEST_FILENAME), TEST_FILENAME);
-    symlinkSync(TEST_FILENAME, join(cwd, linkFilename));
+      // The real regression: a package `eslint.config.js` links to a sibling dir whose file resolves its own imports
+      // From that dir. Dereferencing (`tar -h`) copied the target's content into the link's location, so its relative
+      // Resolution broke; preserving the link lets Node walk its realpath and resolve from the target's real directory.
+      const siblingDirectoryName = "sibling";
+      const linkTarget = `${siblingDirectoryName}/target`;
+      const linkFilename = "link";
+      mkdirSync(join(cwd, siblingDirectoryName));
+      writeFileSync(join(cwd, linkTarget), TEST_FILENAME);
+      symlinkSync(linkTarget, join(cwd, linkFilename));
 
-    const { archiveFilename } = createSourceMirrorArchive(cwd, entryUnc, [linkFilename], TAG);
+      const { archiveFilename } = createSourceMirrorArchive(cwd, entryUnc, [linkFilename], TAG);
 
-    // Extracting the member on the archiving host proves drvfs parity: content, not a preserved symlink whose target
-    // Would be unresolvable after the Linux-side extract.
-    const extractDirectory = create();
-    execFileHidden("tar", ["-xf", join(entryUnc, archiveFilename), "-C", extractDirectory]);
+      const extractDirectory = create();
+      execFileHidden("tar", ["-xf", join(entryUnc, archiveFilename), "-C", extractDirectory]);
 
-    expect(readFileSync(join(extractDirectory, linkFilename), "utf8")).toBe(TEST_FILENAME);
-  });
+      const extractedLinkPath = join(extractDirectory, linkFilename);
+
+      expect(lstatSync(extractedLinkPath).isSymbolicLink()).toBe(true);
+      // Windows `symlinkSync` normalizes the target separator to `\`; the intent is that the link (not the target's
+      // Content) round-trips, so compare separator-agnostically — the real mirror's git symlinks are already posix.
+      expect(readlinkSync(extractedLinkPath).replaceAll("\\", "/")).toBe(linkTarget);
+    },
+  );
 
   test("throws when tar fails for anything but an unreadable file and leaves the copy list staged for the reaper", () => {
     expect.hasAssertions();

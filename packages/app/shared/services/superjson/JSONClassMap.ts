@@ -11,12 +11,12 @@ import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/M
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
-import { BooleanColumn } from "#shared/models/resource/file/column/BooleanColumn";
-import { ComputedColumn } from "#shared/models/resource/file/column/ComputedColumn";
-import { DateColumn } from "#shared/models/resource/file/column/DateColumn";
-import { NumberColumn } from "#shared/models/resource/file/column/NumberColumn";
-import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
-import { Row } from "#shared/models/resource/file/datasource/Row";
+import { BooleanColumn } from "#shared/models/resource/sheet/column/BooleanColumn";
+import { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
+import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
+import { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
+import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
+import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { StandardMessageEntity, SurveyResponseEntity, WebhookMessageEntity } from "@esposter/db-schema";

@@ -1,39 +1,39 @@
 import type { PortableResourceType } from "#shared/models/resource/PortableResourceType";
 import type { PortableFormat } from "@/models/resource/PortableFormat";
 
-import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
+import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
-import { createDefaultFileSettings } from "@/services/resource/file/createDefaultFileSettings";
-import { DataSourceConfigurationMap } from "@/services/resource/file/dataSource/DataSourceConfigurationMap";
+import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
+import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
-import { useFileStore } from "@/store/resource/file";
+import { useSheetStore } from "@/store/resource/sheet";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
-// Self-contained per-format import/export for File, backed by the same client-side parse the Data blade uses
-const createFilePortableFormat = (type: DataSourceType): PortableFormat => ({
+// Self-contained per-format import/export for Sheet, backed by the same client-side parse the Data blade uses
+const createSheetPortableFormat = (type: DataSourceType): PortableFormat => ({
   export: async () => {
-    const fileStore = useFileStore();
-    const { loadContent } = fileStore;
+    const sheetStore = useSheetStore();
+    const { loadContent } = sheetStore;
     // The command bar is reachable from any blade, so the content may not be loaded yet
     await loadContent();
     const configuration = DataSourceConfigurationMap[type];
-    const settings = fileStore.settings.type === type ? fileStore.settings : createDefaultFileSettings(type);
+    const settings = sheetStore.settings.type === type ? sheetStore.settings : createDefaultSheetSettings(type);
     const exportFile = useExportFile();
     await exportFile(
-      (mimeType) => configuration.serialize(fileStore.dataSource, settings, mimeType),
-      fileStore.resource?.name ?? "export",
+      (mimeType) => configuration.serialize(sheetStore.dataSource, settings, mimeType),
+      sheetStore.resource?.name ?? "export",
       configuration.mimeType,
       configuration.accept,
     );
   },
   import: async () => {
-    const fileStore = useFileStore();
-    const { loadContent } = fileStore;
+    const sheetStore = useSheetStore();
+    const { loadContent } = sheetStore;
     await loadContent();
     const configuration = DataSourceConfigurationMap[type];
-    const settings = fileStore.settings.type === type ? fileStore.settings : createDefaultFileSettings(type);
+    const settings = sheetStore.settings.type === type ? sheetStore.settings : createDefaultSheetSettings(type);
     const importFile = useImportFile();
     const setDataSource = useSetDataSource();
     await importFile(configuration.mimeType, configuration.accept, async (file) => {
@@ -76,9 +76,9 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
       label: "Personalized HTML",
     },
   ],
-  [ResourceType.File]: [
-    createFilePortableFormat(DataSourceType.Csv),
-    createFilePortableFormat(DataSourceType.Json),
-    createFilePortableFormat(DataSourceType.Xlsx),
+  [ResourceType.Sheet]: [
+    createSheetPortableFormat(DataSourceType.Csv),
+    createSheetPortableFormat(DataSourceType.Json),
+    createSheetPortableFormat(DataSourceType.Xlsx),
   ],
 };

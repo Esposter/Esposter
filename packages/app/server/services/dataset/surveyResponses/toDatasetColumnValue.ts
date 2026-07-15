@@ -1,4 +1,4 @@
-import type { ColumnValue } from "#shared/models/resource/file/column/ColumnValue";
+import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
 export const toDatasetColumnValue = (value: unknown): ColumnValue => {
   if (value === null || value === undefined) return null;

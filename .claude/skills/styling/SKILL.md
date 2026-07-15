@@ -12,8 +12,36 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index unless the layout needs them. Don't add z-index defensively; rely on DOM order and positioning first.
 - Prefer theme primitives over bespoke styling: `StyledCard` / `v-sheet` for card/panel/surface backgrounds; theme colours (`bg-background`, `b-border`, `text-primary`, `text-error`) and semantic opacity utilities before custom colours. For surface colour use `v-sheet`, not `bg-surface` on a `<div>` (see Full-Page Surface Layout).
 - Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. If a semantic colour is genuinely needed, prefer Vuetify theme colours or the Material palette with lighten/darken variants (`text-green-darken-2`, `bg-yellow-lighten-5`, `text-red`) over raw values.
-- Avoid custom `min-width`/`max-width`/fixed width/height when flex, grid, wrapping, or intrinsic sizing solves it. Reach for `flex-1`, `min-w-0`, `shrink-0`, responsive direction (`flex-col lg:flex-row`), breakpoint grids (`grid-cols-1 md:grid-cols-2`) first.
+- Never hardcode a fixed dimension to lay out a **region** (sidebar/panel/column split) — see [Layout Dimensions](#layout-dimensions).
 - Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds). First check whether the component hierarchy or flex/grid structure is wrong.
+
+## Layout Dimensions
+
+A hardcoded rem dimension on a **layout region** is banned — it doesn't adapt to the container or viewport (`w-56` sidebar, `h-96` panel). Distinguish two cases:
+
+- **Layout region** (sidebar, content pane, column split, page section) → size it responsively, never with a magic rem. Use the Vuetify grid for column layouts (`v-row` / `v-col` with responsive `cols`/`sm`/`md`/`lg` — it is flexbox underneath, so it also drives shells with independent scroll), or UnoCSS `flex-1` + `min-w-0` + responsive direction (`flex-col lg:flex-row`) / breakpoint grids (`grid-cols-1 md:grid-cols-2`). To fill the parent use `h-full` / `size-full` (portable) — not a fixed height.
+- **Intrinsic element** (icon, avatar, dot, divider, slider track, meter, media aspect box, dropdown/menu `min-w-*` and readable-content `max-w-*` constraints) → a fixed size IS correct. Prefer the `size` attribute (or `width`/`height` props) over `w-<n>` / `h-<n>` where the component supports it.
+
+```html
+<!-- WRONG — magic rem drives the layout -->
+<div flex shrink-0 flex-col w-56>…sidebar…</div>
+<!-- CORRECT — responsive grid column (flex underneath → scroll still works) -->
+<v-row no-gutters>
+  <v-col cols="4" md="3" lg="2" pe-6>…sidebar…</v-col>
+  <v-col>…content…</v-col>
+</v-row>
+```
+
+### Vuetify inputs grow to fill a flex column
+
+A Vuetify input's root (`.v-input`) is `flex: 1 1 auto`. Drop it straight into a `flex flex-col` container and it **stretches to the full column height** (a giant text field). Attributify `flex-none` on the component is unreliable — it ties on specificity with Vuetify's base rule and can lose the cascade. Wrap the input in a plain `<div>` instead (default `flex-grow: 0`), so the div is the flex item and the field keeps its natural height:
+
+```html
+<!-- CORRECT — wrapper is the flex item; field is its natural height -->
+<div>
+  <v-text-field density="compact" hide-details placeholder="Create role..." />
+</div>
+```
 
 ## Full-Page Surface Layout
 

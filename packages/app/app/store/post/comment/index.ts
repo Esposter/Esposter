@@ -3,6 +3,7 @@ import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInp
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
 import type { PostWithRelations } from "@esposter/db-schema";
 
+import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
@@ -24,23 +25,50 @@ export const useCommentStore = defineStore("post/comment", () => {
     ...restOperationData
   } = createOperationData(items, ["id"], DerivedDatabaseEntityType.Comment);
 
+  const executeCreateCommentMutation = useMutation();
+  const executeUpdateCommentMutation = useMutation();
+  const executeDeleteCommentMutation = useMutation();
+  // Server-generated comment — non-optimistic, applied in onSuccess
   const createComment = async (input: CreateCommentInput) => {
     if (!currentPost.value || EMPTY_TEXT_REGEX.test(input.description)) return;
 
-    const newComment = await $trpc.post.createComment.mutate(input);
-    storeCreateComment(newComment);
-    currentPost.value.noComments += 1;
+    await executeCreateCommentMutation(() => $trpc.post.createComment.mutate(input), {
+      onSuccess: (newComment) => {
+        if (!currentPost.value) return;
+        storeCreateComment(newComment);
+        currentPost.value.noComments += 1;
+      },
+    });
   };
   const updateComment = async (input: UpdateCommentInput) => {
-    const updatedComment = await $trpc.post.updateComment.mutate(input);
-    storeUpdateComment(updatedComment);
+    const snapshot = items.value.map((comment) => ({ ...comment }));
+    await executeUpdateCommentMutation(() => $trpc.post.updateComment.mutate(input), {
+      applyOptimistic: () => {
+        storeUpdateComment(input);
+        return () => {
+          items.value = snapshot;
+        };
+      },
+      onSuccess: (updatedComment) => {
+        storeUpdateComment(updatedComment);
+      },
+    });
   };
   const deleteComment = async (input: DeleteCommentInput) => {
     if (!currentPost.value) return;
 
-    const { id } = await $trpc.post.deleteComment.mutate(input);
-    storeDeleteComment({ id });
-    currentPost.value.noComments -= 1;
+    const snapshot = [...items.value];
+    await executeDeleteCommentMutation(() => $trpc.post.deleteComment.mutate(input), {
+      applyOptimistic: () => {
+        if (!currentPost.value) return () => undefined;
+        storeDeleteComment({ id: input });
+        currentPost.value.noComments -= 1;
+        return () => {
+          items.value = snapshot;
+          if (currentPost.value) currentPost.value.noComments += 1;
+        };
+      },
+    });
   };
 
   return {

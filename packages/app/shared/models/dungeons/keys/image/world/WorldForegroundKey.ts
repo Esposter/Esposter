@@ -7,7 +7,7 @@ type WorldForegroundKeyMap = {
 };
 
 export const WorldForegroundKey = Object.fromEntries(
-  Array.from(TilemapKeys, (k) => {
+  TilemapKeys.map((k) => {
     const key: WorldForegroundKey = `World${k}Foreground`;
     return [key, key];
   }),

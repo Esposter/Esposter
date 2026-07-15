@@ -43,7 +43,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
 Singleton-dialog targets (`deletingId`, `editingColumnName`, `settingsRoomId`, …) never live in a business-logic store — each service gets a dedicated dialog store next to its business store, following the existing `dialog.ts` / `*Dialog.ts` naming:
 
 - `store/message/dialog.ts` → `useMessageDialogStore`; `store/post/dialog.ts` → `usePostDialogStore` (folder exists → `<folder>/dialog.ts`)
-- `store/message/roomCategoryDialog.ts` → `useRoomCategoryDialogStore`; `store/resource/file/rowDialog.ts` → `useRowDialogStore` (no feature folder → `<feature>Dialog.ts` beside the business store file)
+- `store/message/roomCategoryDialog.ts` → `useRoomCategoryDialogStore`; `store/resource/sheet/rowDialog.ts` → `useRowDialogStore` (no feature folder → `<feature>Dialog.ts` beside the business store file)
 
 Targets are strings defaulting to `""` (never `undefined`), and components derive `v-model` from them via `useSingletonDialog`. Full pattern: the Singleton Dialogs section in the `vue-component-patterns` skill and `packages/app/content/docs/architecture/singleton-dialogs.md`.
 

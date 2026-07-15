@@ -23,6 +23,22 @@ const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
 const viewableFileIndex = computed(() => viewableFiles.value.findIndex(({ id }) => id === file.id));
 const isActive = ref(false);
+const executeMutation = useMutation();
+const deleteFile = async () => {
+  const previousFiles = message.files;
+  await executeMutation(
+    () => $trpc.message.deleteFile.mutate({ id: file.id, partitionKey: message.partitionKey, rowKey: message.rowKey }),
+    {
+      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success.
+      applyOptimistic: () => {
+        message.files = message.files.filter(({ id }) => id !== file.id);
+        return () => {
+          message.files = previousFiles;
+        };
+      },
+    },
+  );
+};
 </script>
 
 <template>
@@ -60,9 +76,7 @@ const isActive = ref(false);
           :is-hovering
           :hover-props
           :url
-          @delete="
-            $trpc.message.deleteFile.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey, id: file.id })
-          "
+          @delete="deleteFile"
         />
       </v-hover>
     </div>

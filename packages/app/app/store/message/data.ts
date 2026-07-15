@@ -5,6 +5,8 @@ import type { MessageEvents } from "#shared/models/message/events/MessageEvents"
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
+import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
+import { useMutation } from "@/composables/shared/useMutation";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -19,6 +21,7 @@ import { Operation } from "@esposter/shared";
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
+  const executeMutation = useMutation();
   const roomStore = useRoomStore();
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
@@ -42,7 +45,18 @@ export const useDataStore = defineStore("message/data", () => {
     return true;
   };
   const updateMessage = async (input: UpdateMessageInput) => {
-    await $trpc.message.updateMessage.mutate(input);
+    const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
+    const previousMessage = message?.message;
+    await executeMutation(() => $trpc.message.updateMessage.mutate(input), {
+      // Apply only the raw reactive field change — the subscription echo re-runs MessageHookMap on success,
+      // So calling storeUpdateMessage here would double-fire the update hooks.
+      applyOptimistic: () => {
+        baseStoreUpdateMessage(input);
+        return () => {
+          if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
+        };
+      },
+    });
   };
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));

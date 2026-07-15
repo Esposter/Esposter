@@ -10,6 +10,7 @@ const { smAndDown } = useVDisplay();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
+const { storeUpdateRoom } = roomStore;
 const { currentRoom, isCreator } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
@@ -18,6 +19,25 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 const roomName = useRoomName(() => currentRoom.value?.id ?? "");
 const placeholder = useRoomPlaceholder(currentRoom);
 const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");
+const executeMutation = useMutation();
+const updateRoom = async (name: string) => {
+  if (!currentRoom.value) return;
+  const { id, image: oldImage, name: oldName } = currentRoom.value;
+  const image = editedImage.value;
+  const isNameChanged = name !== oldName;
+  await executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
+    applyOptimistic: () => {
+      storeUpdateRoom({ id, image, name });
+      return () => {
+        storeUpdateRoom({ id, image: oldImage, name: oldName });
+      };
+    },
+    onSuccess: async (updatedRoom) => {
+      if (isNameChanged)
+        await createMessage({ message: updatedRoom.name, roomId: updatedRoom.id, type: MessageType.EditRoom });
+    },
+  });
+};
 </script>
 
 <template>
@@ -37,15 +57,7 @@ const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");
       :schema="selectRoomInMessageSchema.shape.name"
       :placeholder
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
-      @submit="
-        async (name) => {
-          if (!currentRoom) return;
-          const isNameChanged = name !== currentRoom.name;
-          const updatedRoom = await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name, image: editedImage });
-          if (isNameChanged)
-            await createMessage({ roomId: updatedRoom.id, type: MessageType.EditRoom, message: updatedRoom.name });
-        }
-      "
+      @submit="updateRoom"
     >
       <template #prepend-content>
         <MessageContentHeaderEditRoomImageField v-model="editedImage" :name="roomName" :room-id="currentRoom.id" />

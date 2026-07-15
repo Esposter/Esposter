@@ -5,7 +5,7 @@ description: Dashboard visuals bound to datasets — reference + query per visua
 
 # Dashboard Data Binding
 
-A dashboard visual can bind to a `DatasetReference` (survey responses, a File resource) instead of only embedding static chart data — the marquee cross-product integration, applying the [datasets standard](/docs/architecture/datasets) to the dashboard product. A bound visual resolves its chart data from `dataset.readDataset` at render time; static visuals work unchanged — binding is additive.
+A dashboard visual can bind to a `DatasetReference` (survey responses, a Sheet resource) instead of only embedding static chart data — the marquee cross-product integration, applying the [datasets standard](/docs/architecture/datasets) to the dashboard product. A bound visual resolves its chart data from `dataset.readDataset` at render time; static visuals work unchanged — binding is additive.
 
 ## How it works
 
@@ -13,7 +13,7 @@ A dashboard visual can bind to a `DatasetReference` (survey responses, a File re
 flowchart LR
   ED["Dashboard Editor blade<br/>Bind-to-data form"] -->|"pick provider → resource →<br/>x column + series rows"| VIS["Visual.dataset<br/>{ reference, query }"]
   VIS -->|render / per-visual refresh| READ["dataset.readDataset"]
-  READ --> PROV["DatasetProviderMap<br/>File · SurveyResponses"]
+  READ --> PROV["DatasetProviderMap<br/>Sheet · SurveyResponses"]
   PROV -->|rows| AGG["client aggregation<br/>count/sum/avg/min/max per series"]
   AGG --> CHART["chart data"]
   PUB["publishResource"] -->|bakes resolved data| SNAP["published snapshot<br/>(no live reads on /view)"]

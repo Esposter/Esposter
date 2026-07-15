@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Esposter TypeScript conventions — banned patterns (any, Omit, !, forEach, parameter properties), error handling with InvalidOperationError, control flow guard clauses, and enum ref defaults. Apply when writing any TypeScript in this project.
+description: Esposter TypeScript conventions — banned patterns (any, Omit, !, forEach, parameter properties), error handling with InvalidOperationError, control flow guard clauses, enum ref defaults, no unused/speculative exports, and Object.values arrays over enum Sets. Apply when writing any TypeScript in this project.
 ---
 
 # TypeScript Conventions
@@ -21,6 +21,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
   - `arr.toSpliced(...)` not manual splice+spread — `splice()` **BANNED** for producing new arrays (still allowed for in-place mutation of store/reactive arrays)
   - `arr.with(index, value)` not `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
 - **`new Set` only for dedup** — use `.some()` for unique arrays. `Set` only when (a) deduplication is the goal, or (b) collection large enough that O(n) `.some()` hurts perf.
+- **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
 - Named imports from libraries, but only when not auto-imported by Nuxt/modules (`ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; all VueUse composables are auto-imported — never import manually).
 - **Use the `node:` protocol for Node.js built-ins** — `import { readFileSync } from "node:fs"`, never bare `"fs"`/`"path"`/`"crypto"`. Enforced by `unicorn/prefer-node-protocol`.
 - **Never import ambient globals** — `process`, `console`, `Buffer`, `URL`, `fetch`, etc. are already global; use them directly, never `import process from "node:process"`. Only import the built-ins that aren't ambient (`node:fs`, `node:path`, `node:crypto`, …).
@@ -105,9 +106,22 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 - **`try`/`catch` is BANNED** for fallible work — use neverthrow `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup, never `try`/`finally`); never `.catch()` chains. Full patterns, utilities, consumption rules, and Azure Functions logging/retry live in the **error-handling** skill.
 - **`.then()` exception**: acceptable only for a **promise queue** (serialising sequential async ops in a sync context, e.g. `chain = chain.then(async () => {...})`) — can't be expressed with `await` in a sync watcher/callback. All other `.then()`/`.catch()` must be converted.
-- Fire-and-forget: extract to a named `async` function and call without `await`.
 - **Never `await import(...)`** for code-splitting — always static top-level `import`. Components are already chunk-split per component by the build, so a nested dynamic import only hides the dependency and (in dev) defers Vite discovery until first use, which can trigger a mid-session re-optimization that leaves chunks referencing stale dep hashes. Only touch `optimizeDeps` when the dependency's own docs instruct it. Sole exception: a library-mandated lazy-loader contract (e.g. CodeMirror `LanguageDescription.of({ load })`).
-- **Never `void asyncFn()`** — when passing an async function to a sync callback slot (`onScopeDispose`, event listeners, Phaser callbacks), wrap with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction`. This satisfies `no-misused-promises` without suppressing the rule.
+
+### The `void` operator is BANNED
+
+`no-void` is an **error** (enabled in `.oxlintrc.json`, so it covers `.ts` **and** `.vue`). The only `void` in the codebase is the one inside `getSynchronizedFunction`; there is never a second one. `void` is not a fix — it silences `no-floating-promises` while throwing away the promise, so rejections become unhandled and the caller can't await completion.
+
+When you reach for `void asyncFn()`, work down this list and stop at the first that applies:
+
+1. **Can the enclosing function be `async`?** Then make it `async` and `await`. This is the answer for nearly every case — including **Vue template/emit handlers** (`@click`, `@confirm`, `@delete`) and any callback typed `Promisable<void>` (e.g. `Item.onClick`). Vue does not care that a handler returns a promise, so `onClick: async () => { await executeMutation(...) }` is correct and needs no wrapper.
+2. **Do you own the callback's type?** Then widen it to `Promisable<void>` (from `type-fest`) and `await` it at the call site — see the next bullet. Never force callers to `void` their async work.
+3. **Third-party sync slot you genuinely cannot change** (`onScopeDispose`, `addEventListener`, Phaser callbacks) — wrap with `getSynchronizedFunction(asyncFn)` from `#shared/util/function/getSynchronizedFunction` (explicit import; not auto-imported). This is the _only_ sanctioned fire-and-forget.
+
+Do not reach for step 3 before ruling out 1 and 2 — `getSynchronizedFunction` drops the promise just like `void` does, so it's a last resort, not a synonym for "make the lint error go away".
+
+- **Callback types you own should accept `Promisable<void>` and be awaited** — when defining a callback slot in your own option/hook interface (e.g. `useMutation`'s `onSuccess`/`applyOptimistic`), type it `(...) => Promisable<void>` (`Promisable` from `type-fest`) and `await` it at the call site, so callers can pass `async` handlers that run to completion.
+- **Fire-and-forget in a sync body**: if the enclosing function can't be `async` and there's no callback slot to widen, restructure so the sync teardown stays sync and the promise is awaited last (see `useMicrophoneLevel`'s `stop`) — don't `void` it.
 
 ## Error Handling
 
@@ -206,16 +220,21 @@ export const stringTransformationTypeSchema = z.enum(
 
 ## Enum Values Array
 
-- **Export a pluralized `Set` from the enum file only when `Object.values` is actually used** — `export const EnumNames = new Set(Object.values(EnumName))` at the bottom (after the Zod schema). Don't add pre-emptively if never iterated/checked. Use it at every call site.
+- **Export a pluralized values collection from the enum file only when it's actually used** — at the bottom (after the Zod schema). Never pre-emptively: an export with zero call sites is dead code.
+- **Plain `Object.values` array by default, `new Set` only when Set functionality is genuinely used** — enum values are unique by construction, so a Set adds nothing for iteration and forces `[...EnumNames]` spreads at every array call site (`v-for`, `.map`, `.filter`, `.join` all want arrays). Reach for a Set only when call sites actually use `.has()`/`.difference()` or the source can contain duplicates (e.g. `ContentTypes` dedupes mime-type values):
 
   ```ts
-  export const BooleanFormats = new Set(Object.values(BooleanFormat));
-  BooleanFormats.has(format); // O(1)
-  for (const f of BooleanFormats) { ... } // Set is iterable
-  Array.from(BooleanFormats, fn); // map over a Set
+  // Default — plain array; iterate, map, filter, join directly with no spreads
+  export const PostSortTypes = Object.values(PostSortType);
+
+  // Set — earned by real membership checks at the call sites
+  export const NumberFormats: ReadonlySet<NumberFormat> = new Set(Object.values(NumberFormat));
+  NumberFormats.has(format); // O(1)
   ```
 
-- **Never write `Object.values(SomeEnum)` inline** — use the exported `Set`.
+  In published packages (`db-schema` etc., isolatedDeclarations) annotate the array explicitly: `export const MessageTypes: readonly MessageType[] = Object.values(MessageType);`. In the app, let it infer.
+
+- **Never write `Object.values(SomeEnum)` inline** — use the exported array.
 
 ## Iterating Non-Array Iterables (Set, Map, etc.)
 

@@ -15,7 +15,7 @@ definePageMeta({
 const route = useRoute();
 // Id is stable for this page instance (keyed by id), so a plain cast is safe; only blade changes without a remount
 const id = route.params.id as string;
-const { load, publication, publish, remove, rename, resource, unpublish } = useResource(id);
+const { duplicate, isLoading, load, publication, publish, remove, rename, resource, unpublish } = useResource(id);
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
 const activeBlade = computed(() => (route.params.blade as string) || ResourceBladeType.Overview);
@@ -41,7 +41,18 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
           <AppBreadcrumbs :crumbs="[{ title: 'All', to: RoutePath.ResourcesAll }]" :title="resource.name" />
         </template>
       </StyledPageHeader>
-      <ResourceExplorer :active-blade :publication :publish :remove :rename :resource :unpublish />
+      <ResourceExplorer
+        :active-blade
+        :duplicate
+        :is-loading
+        :publication
+        :publish
+        :refresh="load"
+        :remove
+        :rename
+        :resource
+        :unpublish
+      />
     </div>
   </NuxtLayout>
 </template>

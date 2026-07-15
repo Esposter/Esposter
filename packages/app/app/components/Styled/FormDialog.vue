@@ -18,7 +18,7 @@ defineSlots<{
 }>();
 const modelValue = defineModel<boolean>({ default: false });
 const { cardProps, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledFormDialogProps>();
-const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
+const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: (isSuccessful?: boolean) => void] }>();
 const editForm = ref<InstanceType<typeof VForm>>();
 const isEditFormValid = ref(true);
 const isSubmitting = ref(false);
@@ -26,8 +26,9 @@ const formId = useId();
 const submit = (event: SubmitEventPromise) => {
   if (isSubmitting.value) return;
   isSubmitting.value = true;
-  emit("submit", event, () => {
-    modelValue.value = false;
+  // A failed submit keeps the dialog open so the user can retry without losing their draft
+  emit("submit", event, (isSuccessful = true) => {
+    if (isSuccessful) modelValue.value = false;
     isSubmitting.value = false;
   });
 };

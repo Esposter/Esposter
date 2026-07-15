@@ -2,13 +2,18 @@ import type { Item } from "@/models/shared/Item";
 
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { useCallStore } from "@/store/message/room/call";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useRoleStore } from "@/store/message/room/role";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
+  const executeLowerHandMutation = useMutation();
+  const executeAdminActionMutation = useMutation();
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+  const participantStore = useParticipantStore();
+  const { setHandRaised } = participantStore;
   const roleStore = useRoleStore();
   const { getMyPermissions } = roleStore;
   const myPermissions = computed(() => (callRoomId.value ? getMyPermissions(callRoomId.value) : undefined));
@@ -35,11 +40,25 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-hand-back-right-off",
         onClick: async () => {
-          await $trpc.callSession.setHandRaised.mutate({
-            callSessionId,
-            isHandRaised: false,
-            participantId,
-          });
+          await executeLowerHandMutation(
+            () =>
+              $trpc.callSession.setHandRaised.mutate({
+                callSessionId,
+                isHandRaised: false,
+                participantId,
+              }),
+            {
+              applyOptimistic: () => {
+                const oldIsHandRaised =
+                  participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantId)?.isHandRaised ??
+                  false;
+                setHandRaised(callSessionId, participantId, false);
+                return () => {
+                  setHandRaised(callSessionId, participantId, oldIsHandRaised);
+                };
+              },
+            },
+          );
         },
         title: "Lower Hand",
       });
@@ -47,11 +66,13 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-microphone-off",
         onClick: async () => {
-          await $trpc.message.moderation.executeAdminAction.mutate({
-            roomId,
-            targetUserId: userId,
-            type: AdminActionType.ForceMute,
-          });
+          await executeAdminActionMutation(() =>
+            $trpc.message.moderation.executeAdminAction.mutate({
+              roomId,
+              targetUserId: userId,
+              type: AdminActionType.ForceMute,
+            }),
+          );
         },
         title: "Force Mute",
       });
@@ -59,11 +80,13 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-microphone",
         onClick: async () => {
-          await $trpc.message.moderation.executeAdminAction.mutate({
-            roomId,
-            targetUserId: userId,
-            type: AdminActionType.ForceUnmute,
-          });
+          await executeAdminActionMutation(() =>
+            $trpc.message.moderation.executeAdminAction.mutate({
+              roomId,
+              targetUserId: userId,
+              type: AdminActionType.ForceUnmute,
+            }),
+          );
         },
         title: "Force Unmute",
       });
@@ -71,11 +94,13 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-account-remove",
         onClick: async () => {
-          await $trpc.message.moderation.executeAdminAction.mutate({
-            roomId,
-            targetUserId: userId,
-            type: AdminActionType.KickFromCall,
-          });
+          await executeAdminActionMutation(() =>
+            $trpc.message.moderation.executeAdminAction.mutate({
+              roomId,
+              targetUserId: userId,
+              type: AdminActionType.KickFromCall,
+            }),
+          );
         },
         title: "Kick from Call",
       });

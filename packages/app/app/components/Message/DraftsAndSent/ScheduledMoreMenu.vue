@@ -26,10 +26,7 @@ const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
         @click="cancelScheduledMessageJobToDraft(scheduledMessageJob)"
       />
       <StyledDeleteFormDialog
-        :card-props="{
-          title: 'Delete message',
-          text: 'Are you sure you want to delete this scheduled message?',
-        }"
+        :card-props="{ title: 'Delete message' }"
         @delete="
           (onComplete) => withFinalizerAsync(() => cancelScheduledMessageJob(scheduledMessageJob.id), onComplete)
         "
@@ -37,6 +34,7 @@ const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
         <template #activator="{ updateIsOpen }">
           <v-list-item title="Delete message" text-error @click.stop="updateIsOpen(true)" />
         </template>
+        Are you sure you want to delete this scheduled message?
       </StyledDeleteFormDialog>
     </v-list>
   </StyledTooltipMenuIconButton>

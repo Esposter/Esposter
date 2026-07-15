@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export enum DatasetProviderType {
-  File = "File",
+  Sheet = "Sheet",
   SurveyResponses = "SurveyResponses",
 }
 
