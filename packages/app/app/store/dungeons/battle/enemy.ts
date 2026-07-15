@@ -1,4 +1,3 @@
-// oxlint-disable @typescript-eslint/no-unnecessary-type-arguments
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { Position } from "grid-engine";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";

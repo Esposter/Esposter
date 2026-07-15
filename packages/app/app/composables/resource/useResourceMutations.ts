@@ -1,9 +1,7 @@
-/* oxlint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import type { ResourceMutations } from "@/models/resource/ResourceMutations";
 
 import { ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
 // Mutations live on each type's createResourceProcedures router, so the dispatch is an explicit per-type map
 export const useResourceMutations = () => {
   const { $trpc } = useNuxtApp();

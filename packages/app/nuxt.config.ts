@@ -1,5 +1,5 @@
 // @TODO: This should not be required once nuxt fixes its types
-// oxlint-disable-next-line @typescript-eslint/ban-ts-comment
+// oxlint-disable-next-line typescript/ban-ts-comment
 // @ts-nocheck
 import { app } from "./configuration/app";
 import { build } from "./configuration/build";

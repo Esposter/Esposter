@@ -1,4 +1,3 @@
-/* oxlint-disable no-new-func */
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { ColumnFormVjsfContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormVjsfContext";
 import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
