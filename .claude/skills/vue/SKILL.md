@@ -70,7 +70,6 @@ Ceremony, in every form — not only callbacks passed as arguments:
   });
   ```
 
-- **Template handlers** — inline directly (`@submit="async (_, onComplete) => { ... }"`) so Vue infers event arg types.
 - **Trivially-typed lambdas** — never extract one whose arg types are already inferable.
 
 Legitimate reasons to keep a name:
