@@ -2,6 +2,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
+import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "@/services/resource/constants";
 import { useSheetStore } from "@/store/resource/sheet";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { takeOne } from "@esposter/shared";
@@ -27,7 +28,7 @@ const previewHeaders = computed(
       value: (row: Row) => takeOne(row.data, column.name),
     })) ?? [],
 );
-const previewRows = computed(() => previewDataSource.value?.rows.slice(0, 5) ?? []);
+const previewRows = computed(() => previewDataSource.value?.rows.slice(0, SHEET_IMPORT_PREVIEW_ROW_COUNT) ?? []);
 </script>
 
 <template>

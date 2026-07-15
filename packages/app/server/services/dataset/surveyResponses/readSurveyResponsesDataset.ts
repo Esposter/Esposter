@@ -7,7 +7,7 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { getSurveyModelDatasetColumns } from "@@/server/services/dataset/surveyResponses/getSurveyModelDatasetColumns";
 import { toDatasetColumnValue } from "@@/server/services/dataset/surveyResponses/toDatasetColumnValue";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { getTopNEntities, serializeClauses } from "@esposter/db";
+import { countEntities, getTopNEntities, serializeClauses } from "@esposter/db";
 import {
   AZURE_MAX_PAGE_SIZE,
   AzureTable,
@@ -35,11 +35,18 @@ export const readSurveyResponsesDataset: DatasetProvider = async (ctx, reference
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: reference.id },
   ];
   const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+  const filter = serializeClauses(clauses);
   const surveyResponses = await getTopNEntities(surveyResponseClient, AZURE_MAX_PAGE_SIZE, SurveyResponseEntity, {
-    filter: serializeClauses(clauses),
+    filter,
   });
   const rows = surveyResponses.map(({ model }) =>
     Object.fromEntries(columns.map(({ name }) => [name, toDatasetColumnValue(model[name])])),
   );
-  return { columns, rows };
+  // Counting is a full partition scan, so a read that fit under the cap answers for itself and only a
+  // Read that filled it pays for the count — the one case where the caller needs to know what it is missing
+  const totalRows =
+    surveyResponses.length < AZURE_MAX_PAGE_SIZE
+      ? surveyResponses.length
+      : await countEntities(surveyResponseClient, { filter });
+  return { columns, rows, totalRows };
 };

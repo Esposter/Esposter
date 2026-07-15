@@ -2,11 +2,12 @@ import type { PortableResourceType } from "#shared/models/resource/PortableResou
 import type { PortableFormat } from "@/models/resource/PortableFormat";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
+import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
+import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { useSheetStore } from "@/store/resource/sheet";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -52,10 +53,10 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const { createAlert } = useAlertStore();
         // The live editor + bound dataset live on the email store (set by the blade); the export needs both
         const { datasetReference, editor, resource } = storeToRefs(useEmailEditorStore());
-        const editorValue = editor.value;
-        const resourceValue = resource.value;
+        const { pendingDataset } = storeToRefs(useEmailExportDialogStore());
+        const exportPersonalizedHtml = useExportPersonalizedHtml();
         const referenceValue = datasetReference.value;
-        if (!editorValue || !resourceValue || !referenceValue) {
+        if (!editor.value || !resource.value || !referenceValue) {
           createAlert("Bind a dataset before exporting personalized HTML", "warning");
           return;
         }
@@ -67,8 +68,10 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
             return;
           }
 
-          const count = exportPersonalizedHtml(editorValue, resourceValue, dataset.rows);
-          createAlert(`Exported ${count} personalized emails`, "success");
+          // Silently mailing a truncated audience is the one failure the sender can never take back,
+          // So a capped read hands the decision to the Editor blade's confirm instead of exporting
+          if (getDatasetTruncation(dataset)) pendingDataset.value = dataset;
+          else exportPersonalizedHtml(dataset.rows);
         }).match(noop, (error) => {
           createAlert(error.message, "error");
         });

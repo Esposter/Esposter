@@ -1,0 +1,40 @@
+---
+title: Share to Esbabbler
+description: A Share command on published resources that posts the public link into an esbabbler room you pick.
+---
+
+# Share to Esbabbler
+
+A **Share** command on published resources: pick one of your rooms, add an optional note, and the public `/view/[type]/[id]` link lands there as a message. It is the first real bridge between the platform and [esbabbler](/docs/esbabbler), and it is deliberately the smallest one that works — client-side only, reusing the existing message-create path, with no new procedures and no schema.
+
+Before it, sharing meant copying the link off the Overview blade and pasting it into a room by hand. That still works; this just does it in place.
+
+## How it works
+
+```mermaid
+flowchart LR
+  CMD["Share command<br/>(command bar, published only)"] --> DLG["ShareDialog"]
+  DLG -->|room.readRooms| ROOMS["your rooms → v-select"]
+  DLG --> MSG["getShareMessage<br/>note + newline + public URL"]
+  MSG -->|"message.createMessage<br/>{ roomId, message }"| ROOM[("room message")]
+  ROOM --> OK["notification: Shared to {room}<br/>+ Open room action"]
+```
+
+- **The command appears for `PublishableResourceType` only while published.** An unpublished resource has no public URL, so there is nothing to share until it has one — the command is absent, not disabled. It sits beside the publish toggle in the command bar and collapses into the `…` overflow on narrow viewports with everything else.
+- **The dialog reads your rooms once per open** (it mounts only while open) into a `v-select`, with an optional note field. No rooms is an empty state pointing at esbabbler, not a disabled button with no explanation.
+- **The message is plain text** — `getShareMessage` puts the note on its own line above the URL, or sends the bare link if there is no note. It goes through the standard `message.createMessage` mutation, so RBAC, rate limits, profanity filtering, and the whole message pipeline apply unchanged. The link preview the pipeline already builds from the view page's OG meta tags is what unfurls it, so a share needs no message type of its own; rich embeds stay [deferred](/docs/platform/deferred/esbabbler-link-unfurl).
+- **Success lands in the [notifications](/docs/platform/notifications) store** with an **Open room** action.
+
+## Key files
+
+| File                                            | Role                                        |
+| ----------------------------------------------- | ------------------------------------------- |
+| `app/components/Resource/ShareDialog.vue`       | room picker, note, send, empty state        |
+| `app/components/Resource/BladeActions.vue`      | the Share command (publishable + published) |
+| `app/components/Resource/BladeOverflowMenu.vue` | the same command, collapsed                 |
+| `app/services/resource/getShareMessage.ts`      | note + link composition                     |
+
+## Notes
+
+- **Deliberately one direction** (platform → room). Surfacing "shared with me" inside the explorer is a different feature needing read-model thought, and is not in this cut.
+- The message is the caller's own message in their own room — no special message type, no service-to-service write, no elevated permission. Deleting the resource later leaves a dead link, exactly like any pasted URL.

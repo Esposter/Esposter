@@ -23,7 +23,7 @@ flowchart LR
 
 - **Detail dialog** — a per-row action opening the response as a question → answer list (the dataset row rendered vertically, singleton dialog per the dialog conventions). Answers already arrive flattened through the dataset; no new read path.
 - **Delete** — `deleteSurveyResponse({ id, rowKey })` — the survey id is the partition key, derived server-side, never accepted from the caller — owner-gated via `getOwnerProcedure(ResourceType.Survey, …)`, deleting the Azure Table entity. Destructive confirm follows [resource page parity](/docs/platform/resource-page-parity) guard patterns.
-- **Count** — `countSurveyResponses(id)`, owner-gated, surfaced on the Survey Overview summary slot ("N responses" linking to the Responses blade). Azure Table has no cheap server-side count, so this counts keys-only pages up to `AZURE_MAX_PAGE_SIZE + 1` and returns the count plus an `isCapped` flag — the extra key is what distinguishes exactly-cap from beyond-cap, and only `isCapped` renders `1000+` — consistent with the dataset row cap ([warning proposal](/docs/proposals/platform/dataset-row-cap-warning)).
+- **Count** — `countSurveyResponses(id)`, owner-gated, surfaced on the Survey Overview summary slot ("N responses" linking to the Responses blade). Azure Table has no cheap server-side count, so this counts keys-only pages up to `AZURE_MAX_PAGE_SIZE + 1` and returns the count plus an `isCapped` flag — the extra key is what distinguishes exactly-cap from beyond-cap, and only `isCapped` renders `1000+` — consistent with the dataset row cap ([warning](/docs/platform/dataset-row-cap-warning)).
 
 ## Procedures
 

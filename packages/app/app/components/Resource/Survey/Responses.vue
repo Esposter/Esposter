@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 
 const route = useRoute();
 const { dataset, error, isLoading } = useDataset(() => ({
@@ -7,12 +8,17 @@ const { dataset, error, isLoading } = useDataset(() => ({
   type: DatasetProviderType.SurveyResponses,
 }));
 const headers = computed(() => dataset.value?.columns.map(({ name }) => ({ key: name, title: name })) ?? []);
+const truncation = computed(() => (dataset.value ? getDatasetTruncation(dataset.value) : undefined));
 </script>
 
 <template>
   <StyledSkeleton v-if="isLoading" />
-  <div v-else p-4>
+  <div v-else flex flex-col gap-4 p-4>
     <v-alert v-if="error" type="error" :text="error" />
-    <v-data-table v-else :headers :items="dataset?.rows ?? []" />
+    <template v-else>
+      <!-- Responses are the one dataset the owner reads as a record of truth, so a silent cut is never acceptable -->
+      <DatasetTruncationAlert v-if="truncation" :truncation />
+      <v-data-table :headers :items="dataset?.rows ?? []" />
+    </template>
   </div>
 </template>

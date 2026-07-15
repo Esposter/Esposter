@@ -149,6 +149,55 @@ describe("resource", () => {
     expect(count).toBe(1);
   });
 
+  test("counts resources grouped by type", async () => {
+    expect.hasAssertions();
+
+    await dashboardCaller.createResource({ name });
+    await sheetCaller.createResource({ name });
+    await sheetCaller.createResource({ name });
+
+    const countsByType = await caller.countsByType();
+
+    // Ordered by count desc, so the busiest type leads the summary cards
+    expect(countsByType).toStrictEqual([
+      { count: 2, type: ResourceType.Sheet },
+      { count: 1, type: ResourceType.Dashboard },
+    ]);
+  });
+
+  test("omits types with no resources from the grouped count", async () => {
+    expect.hasAssertions();
+
+    await dashboardCaller.createResource({ name });
+
+    const countsByType = await caller.countsByType();
+
+    expect(countsByType).toStrictEqual([{ count: 1, type: ResourceType.Dashboard }]);
+  });
+
+  test("counts grouped by type filtered by search query", async () => {
+    expect.hasAssertions();
+
+    await dashboardCaller.createResource({ name: "quarterly report" });
+    await sheetCaller.createResource({ name: "grocery list" });
+
+    const countsByType = await caller.countsByType({ searchQuery: "report" });
+
+    expect(countsByType).toStrictEqual([{ count: 1, type: ResourceType.Dashboard }]);
+  });
+
+  test("counts grouped by type only for the caller's own resources", async () => {
+    expect.hasAssertions();
+
+    await mockSessionOnce(mockContext.db);
+    await dashboardCaller.createResource({ name });
+    await sheetCaller.createResource({ name });
+
+    const countsByType = await caller.countsByType();
+
+    expect(countsByType).toStrictEqual([{ count: 1, type: ResourceType.Sheet }]);
+  });
+
   test("filters resources by published status", async () => {
     expect.hasAssertions();
 

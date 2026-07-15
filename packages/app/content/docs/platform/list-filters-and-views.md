@@ -26,7 +26,7 @@ Azure "All resources" parity for `/resources/all`: a filter-pill row, checkbox m
 - **Column chooser** ("Manage view"): checkbox `v-menu` over `ResourceHeaders`, hidden set persisted to `LocalStorageKey.ResourceListHiddenColumns`; the name column can never be hidden.
 - **Group by type**: toolbar toggle mapping to the data table's `group-by`, section headers = type icon + title + count.
 - **Footer parity**: "Showing x–y of N records" + page-size select (`items-per-page-options`).
-- **Summary view** (per-type count cards) is still a [proposal](/docs/proposals/platform/summary-view).
+- **Summary view**: a toolbar toggle swapping the table for per-type count cards over the same filters — see [summary view](/docs/platform/summary-view).
 
 ## Rows
 

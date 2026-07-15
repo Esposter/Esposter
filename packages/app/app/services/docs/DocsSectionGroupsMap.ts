@@ -46,14 +46,16 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     "Explorer & shell": [
       "resource-explorer",
       "list-filters-and-views",
+      "summary-view",
       "resource-page-parity",
+      "share-to-esbabbler",
       "notifications",
       "global-search",
       "shell-cohesion",
       "resource-consolidation",
     ],
-    Resources: ["sheet-resource", "survey-resource"],
-    Editors: ["dashboard-data-binding", "email-personalization"],
+    Resources: ["sheet-resource", "create-from-file", "survey-resource"],
+    Editors: ["dashboard-data-binding", "email-personalization", "dataset-row-cap-warning"],
   },
   virrun: {
     Core: ["architecture", "orchestrator-api", "execution-backends", "configuration"],
