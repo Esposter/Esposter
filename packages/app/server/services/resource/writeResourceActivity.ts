@@ -1,4 +1,5 @@
 import type { WriteResourceActivityInput } from "@@/server/models/resource/WriteResourceActivityInput";
+import type { Clause, ResourceActivityEntity as AResourceActivityEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
@@ -9,9 +10,10 @@ import {
   CompositeKeyPropertyNames,
   getReverseTickedTimestamp,
   ResourceActivityEntity,
+  ResourceActivityEntityPropertyNames,
   ResourceActivityType,
 } from "@esposter/db-schema";
-import { getResultAsync, noop, takeOne } from "@esposter/shared";
+import { getResultAsync, ItemMetadataPropertyNames, noop } from "@esposter/shared";
 
 // Emitted after the primary write, best-effort: the resource is already saved, so a failed
 // Activity write logs and never fails the user's mutation.
@@ -19,19 +21,26 @@ export const writeResourceActivity = ({ resourceId, ...rest }: WriteResourceActi
   getResultAsync(async () => {
     const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
     if (rest.activityType === ResourceActivityType.ContentSaved) {
-      // Newest-first rowKey means the head of the partition is the last thing that happened
-      const entries = await getTopNEntities(resourceActivityClient, 1, ResourceActivityEntity, {
+      // Coalesce on existence rather than on the partition head: "this user already has a
+      // ContentSaved inside the window" is the flood the window exists to stop, and asking the
+      // Question this way makes the answer independent of the order entities come back in.
+      const recentEntries = await getTopNEntities(resourceActivityClient, 1, ResourceActivityEntity, {
         filter: serializeClauses([
           { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: resourceId },
-        ]),
+          {
+            key: ResourceActivityEntityPropertyNames.activityType,
+            operator: BinaryOperator.eq,
+            value: ResourceActivityType.ContentSaved,
+          },
+          { key: ResourceActivityEntityPropertyNames.userId, operator: BinaryOperator.eq, value: rest.userId },
+          {
+            key: ItemMetadataPropertyNames.createdAt,
+            operator: BinaryOperator.gt,
+            value: new Date(Date.now() - CONTENT_SAVED_COALESCE_WINDOW_MS),
+          },
+        ] as Clause<AResourceActivityEntity>[]),
       });
-      const latestEntry = entries.length > 0 ? takeOne(entries) : undefined;
-      if (
-        latestEntry?.activityType === ResourceActivityType.ContentSaved &&
-        latestEntry.userId === rest.userId &&
-        Date.now() - new Date(latestEntry.createdAt).getTime() < CONTENT_SAVED_COALESCE_WINDOW_MS
-      )
-        return;
+      if (recentEntries.length > 0) return;
     }
 
     await createEntity(
