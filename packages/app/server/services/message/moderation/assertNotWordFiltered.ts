@@ -8,7 +8,9 @@ export const assertNotWordFiltered = async (
   getCanManageMessages: () => Promise<boolean>,
 ): Promise<void> => {
   if (!filter?.words.length) return;
-  if (await getCanManageMessages()) return;
-  else if (filter.words.some((word) => messageText.toLowerCase().includes(word.toLowerCase())))
-    throw new TRPCError({ code: "FORBIDDEN", message: "Message contains blocked content." });
+
+  const normalizedMessageText = messageText.toLowerCase();
+  if (!filter.words.some((word) => normalizedMessageText.includes(word.toLowerCase()))) return;
+  else if (await getCanManageMessages()) return;
+  else throw new TRPCError({ code: "FORBIDDEN", message: "Message contains blocked content." });
 };

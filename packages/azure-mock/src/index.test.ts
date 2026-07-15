@@ -8,7 +8,7 @@ const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
 describe("azure-mock", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 39.30 KB (40244 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 39.31 KB (40252 bytes)"`);
   });
 
   test("types size", () => {
