@@ -43,9 +43,14 @@ Never leave a framework value composable (e.g. `useVDisplay`, `useRoute`) strand
 
 ## Inline Functions & Handlers
 
-**A function referenced exactly once does not exist. Inline it.** This is not a style preference — a name used once buys nothing and costs a jump, and every one of them is a refactor someone pays for later. The test is a count, not a judgement: `grep` the identifier, and if it appears in its declaration and **one** other place, it must be inlined. Two or more references, or a reference that genuinely needs the same function _identity_ in two places, is what earns a name.
+**A single-use function that only defers a block must be inlined.** A single reference is the _trigger_ for the question, not the answer to it. Ask what the name buys:
 
-This applies to **every** single-use function, not only to callbacks passed as arguments:
+- **Ceremony → inline.** The name describes _when_ it runs (`onMount`, `init`, `load`, `setup`, `handleX`) and the body is simply the block its one caller would have contained. The name adds a jump and buys nothing, and inlining makes the file strictly smaller.
+- **Abstraction → keep.** The name describes _what it computes_ (`getColumnType`, `isStyleNode`, `checkIsInteractableDirection`) and compresses a non-obvious computation — a switch, a predicate, a parse — so its call site reads as one idea. Inlining a 14-line switch into a loop body is bigger, more nested, and deletes the only word explaining what it means. Single use is not a reason to destroy it.
+
+The discriminator: **does the name state its trigger or its result?** A trigger-named function is the caller wearing a disguise. A result-named function is a concept. Never inline a function whose call site would then need a comment to explain what the block does — that comment is the name you just removed.
+
+Ceremony, in every form — not only callbacks passed as arguments:
 
 - **Passed to a hook / registration** — `useEventListener("keydown", (event) => { ... })`, never a separate `onKeydown` used once. Arg types infer from the event name, so no annotation is needed.
 - **Called inside a hook** — a named `onMount`/`init`/`load` that only `onMounted` invokes is the same violation wearing a different hat. Inline the body into `onMounted`. Wrapping it (`getResultAsync(onMount)`) does **not** make it a second reference:
@@ -68,13 +73,14 @@ This applies to **every** single-use function, not only to callbacks passed as a
 - **Template handlers** — inline directly (`@submit="async (_, onComplete) => { ... }"`) so Vue infers event arg types.
 - **Trivially-typed lambdas** — never extract one whose arg types are already inferable.
 
-Legitimate reasons to keep the name — all of them mean 2+ references:
+Legitimate reasons to keep a name:
 
+- It names a **result**, not a trigger (see above) — single use is fine.
 - The same **reference** is needed twice (`addEventListener` + `removeEventListener`).
+- It is the component's **public API** via `defineExpose({ onKeyDown })` — the expose _is_ the second reference.
 - A mutation must re-run a setup read: `refreshResponses` awaited at setup **and** bound to `@delete`.
-- The body is genuinely shared by two call sites.
 
-Before extracting a function, ask what the second caller is. If you can't name one, there isn't one.
+**Template handlers are a judgement call, not a rule.** A single-use `@click="copyPublicLink"` whose body is several statements stays named — hoisting a multi-statement async body into an attribute is worse than the jump it saves. Inline into the template only when the body is a short expression or the arg types need Vue's inference (`@submit="async (_, onComplete) => { ... }"`).
 
 - **Prefer `useEventListener` over manual `addEventListener`/`removeEventListener`** — it auto-removes on unmount, so it replaces an `onMounted` (add) + `onUnmounted` (remove) pair and lets the handler be inlined. Omit the target for `window` events (`useEventListener("resize", ...)`) — the omitted-target form is SSR-safe (don't reference `window` at setup top-level). Fall back to manual `onMounted`/`onUnmounted` only when the target isn't reachable SSR-safely as a getter and the listener is genuinely tied to mount.
 - **`@click` shorthand**: a single async call uses `@click="myAsyncFn(args)"` directly — no `async () => { await ... }` wrapper.
