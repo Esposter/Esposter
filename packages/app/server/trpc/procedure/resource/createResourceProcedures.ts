@@ -240,12 +240,12 @@ export const createResourceProcedures = <TType extends ResourceType>(
         if (!transformPublicReadContent) return { content, name: resource.name };
         return { content: await transformPublicReadContent(ctx, resource, content), name: resource.name };
       }),
-    readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id").query<number>(({ ctx }) =>
-      readResourceViewCount(ctx.resource.id),
-    ),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
       ResourcePublication | undefined
     >(({ ctx }) => ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })),
+    readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id").query<number>(({ ctx }) =>
+      readResourceViewCount(ctx.resource.id),
+    ),
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
       const { id } = ctx.resource;
       await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));

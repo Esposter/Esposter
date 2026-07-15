@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { MAX_CLOSED_MESSAGE_LENGTH } from "#shared/services/resource/survey/constants";
 import { SurveyResponseModeItemCategoryDefinitions } from "@/services/resource/survey/SurveyResponseModeItemCategoryDefinitions";
 import { useSurveyStore } from "@/store/survey";
-import { MAX_CLOSED_MESSAGE_LENGTH } from "#shared/services/resource/survey/constants";
 import { SurveyResponseMode } from "@esposter/db-schema";
 
 const surveyStore = useSurveyStore();
@@ -52,7 +52,7 @@ const save = async () => {
         @update:model-value="save"
       />
       <!-- Modes are collection-time postures, not privacy promises about the answers themselves -->
-      <span op-medium-emphasis text-caption>
+      <span text-caption op-medium-emphasis>
         {{
           cloned.responseMode === SurveyResponseMode.Identified
             ? "Only participants holding a link from a program can answer, and you can see who said what."

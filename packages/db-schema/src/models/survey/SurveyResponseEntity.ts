@@ -6,10 +6,10 @@ import { selectResourceSchema } from "@/schema/resources";
 import { z } from "zod";
 
 export class SurveyResponseEntity extends AzureEntity {
-  // Opaque program-issued participant token, "" in Anonymous mode — resolvable only owner-side
-  participantToken = "";
   model: Record<string, unknown> = {};
   modelVersion = 0;
+  // Opaque program-issued participant token, "" in Anonymous mode — resolvable only owner-side
+  participantToken = "";
 
   constructor(init?: Partial<SurveyResponseEntity> & ToData<CompositeKeyEntity>) {
     super();
@@ -24,7 +24,7 @@ export const surveyResponseEntitySchema = z.object({
       rowKey: z.uuid(),
     }),
   ).shape,
-  participantToken: z.union([z.literal(""), z.uuid()]).default(""),
   model: z.record(z.string().min(1), z.unknown()),
   modelVersion: z.int().nonnegative(),
+  participantToken: z.union([z.literal(""), z.uuid()]).default(""),
 }) satisfies z.ZodType<ToData<SurveyResponseEntity>>;

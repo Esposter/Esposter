@@ -2,13 +2,13 @@ import type { ProgramParticipant } from "#shared/models/resource/program/Program
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Clause, Resource } from "@esposter/db-schema";
 
-import { RestError } from "@azure/data-tables";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
 import { danglingProgramBindingError } from "@@/server/services/program/danglingProgramBindingError";
 import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { RestError } from "@azure/data-tables";
 import { createEntity, getEntity, getTopNEntities, serializeClauses } from "@esposter/db";
 import {
   AZURE_MAX_PAGE_SIZE,

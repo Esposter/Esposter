@@ -125,6 +125,7 @@ describe("program", () => {
     const participants = await caller.generateProgramParticipants({ id: program.id });
 
     expect(participants.map(({ keyValue }) => keyValue)).toStrictEqual([" ", "a"]);
+
     // Tokens are UUIDs, never derived from the key — a derivable token could be minted by anyone
     for (const { keyValue, token } of participants) {
       expect(token).not.toBe(keyValue);
@@ -285,8 +286,8 @@ describe("program", () => {
     assert.exists(respondedParticipant);
     assert.exists(unrespondedParticipant);
     await surveyCaller.createSurveyResponse({
-      participantToken: respondedParticipant.token,
       model: { satisfaction: 0 },
+      participantToken: respondedParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -317,8 +318,8 @@ describe("program", () => {
     await caller.generateProgramParticipants({ id: program.id });
     // A response carrying no token carries nobody, so it is simply not a participant row
     await surveyCaller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });

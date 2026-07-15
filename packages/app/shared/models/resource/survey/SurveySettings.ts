@@ -2,7 +2,7 @@ import type { SurveyResponseMode } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import { MAX_CLOSED_MESSAGE_LENGTH } from "#shared/services/resource/survey/constants";
-import { surveyResponseModeSchema, SurveyResponseMode as SurveyResponseModeEnum } from "@esposter/db-schema";
+import { SurveyResponseMode as SurveyResponseModeEnum, surveyResponseModeSchema } from "@esposter/db-schema";
 import { normalizeString } from "@esposter/shared";
 import { z } from "zod";
 

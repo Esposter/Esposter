@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Resource } from "@esposter/db-schema";

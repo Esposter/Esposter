@@ -68,16 +68,16 @@ const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
 });
 
 const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
-  participantToken: true,
   model: true,
+  participantToken: true,
   partitionKey: true,
   rowKey: true,
 });
 
 const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
-  participantToken: true,
   model: true,
   modelVersion: true,
+  participantToken: true,
   partitionKey: true,
   rowKey: true,
 });
@@ -109,6 +109,14 @@ export const surveyRouter = router({
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
+  deleteFile: getOwnerProcedure(ResourceType.Survey, deleteFileInputSchema, "surveyId").mutation(
+    async ({ input: { blobPath, surveyId } }) => {
+      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+      const blobName = `${surveyId}/${blobPath}`;
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      await blockBlobClient.deleteIfExists();
+    },
+  ),
   deleteSurveyResponse: getOwnerProcedure(ResourceType.Survey, deleteSurveyResponseInputSchema, "id").mutation(
     async ({ ctx, input: { rowKey } }) => {
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
@@ -119,14 +127,6 @@ export const surveyRouter = router({
         JSON.stringify({ partitionKey: ctx.resource.id, rowKey }),
       );
       await deleteEntity(surveyResponseClient, ctx.resource.id, rowKey);
-    },
-  ),
-  deleteFile: getOwnerProcedure(ResourceType.Survey, deleteFileInputSchema, "surveyId").mutation(
-    async ({ input: { blobPath, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      const blobName = `${surveyId}/${blobPath}`;
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      await blockBlobClient.deleteIfExists();
     },
   ),
   generateDownloadFileSasUrls: getOwnerProcedure(
@@ -145,13 +145,6 @@ export const surveyRouter = router({
     const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
     return generateUploadFileSasEntities(containerClient, files, getFilesDirectoryName(surveyId));
   }),
-  // The dataset contract carries no keys, so the blade reads rows keyed through its own procedure —
-  // A blade-local read concern, not a Dataset shape change
-  readSurveyResponseRecords: getOwnerProcedure(
-    ResourceType.Survey,
-    countSurveyResponsesInputSchema,
-    "id",
-  ).query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
     .query<null | SurveyResponseEntity>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
@@ -166,6 +159,13 @@ export const surveyRouter = router({
       if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken) return null;
       return surveyResponse;
     }),
+  // The dataset contract carries no keys, so the blade reads rows keyed through its own procedure —
+  // A blade-local read concern, not a Dataset shape change
+  readSurveyResponseRecords: getOwnerProcedure(
+    ResourceType.Survey,
+    countSurveyResponsesInputSchema,
+    "id",
+  ).query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
   updateSurveyResponse: standardRateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {

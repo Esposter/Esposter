@@ -320,7 +320,7 @@ describe("createResourceProcedures", () => {
 
     // Telemetry must never break serving the page
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
-    expect(await caller.readResourceViewCount({ id: newResource.id })).toBe(0);
+    await expect(caller.readResourceViewCount({ id: newResource.id })).resolves.toBe(0);
   });
 
   test("deletes view counts with the resource", async () => {

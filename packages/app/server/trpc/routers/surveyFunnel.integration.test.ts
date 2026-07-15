@@ -8,8 +8,8 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { closedSurveyErrorReason, invalidParticipantTokenErrorReason } from "@@/server/services/survey/constants";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
@@ -94,7 +94,7 @@ describe("survey funnel — café feedback drive", () => {
 
     expect(participants).toHaveLength(customers.length);
     // Re-running the drive after adding customers must never rotate a token already sent out
-    expect(await programCaller.generateProgramParticipants({ id: program.id })).toStrictEqual(participants);
+    await expect(programCaller.generateProgramParticipants({ id: program.id })).resolves.toStrictEqual(participants);
 
     const [firstParticipant, secondParticipant, silentParticipant] = participants;
     assert.exists(firstParticipant);
@@ -103,22 +103,22 @@ describe("survey funnel — café feedback drive", () => {
 
     // 5. The respondents — one answers, one token is reused for a resume, one forgery is rejected
     const firstResponse = await surveyCaller.createSurveyResponse({
-      participantToken: firstParticipant.token,
       model: { [satisfaction]: 0 },
+      participantToken: firstParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
     const secondResponse = await surveyCaller.createSurveyResponse({
-      participantToken: secondParticipant.token,
       model: { [satisfaction]: 1 },
+      participantToken: secondParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
 
     await expect(
       surveyCaller.createSurveyResponse({
-        participantToken: crypto.randomUUID(),
         model: { [satisfaction]: 1 },
+        participantToken: crypto.randomUUID(),
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
       }),
@@ -137,7 +137,10 @@ describe("survey funnel — café feedback drive", () => {
       { isResponded: true, keyValue: secondParticipant.keyValue },
       { isResponded: false, keyValue: silentParticipant.keyValue },
     ]);
-    expect(await surveyCaller.countSurveyResponses({ id: survey.id })).toStrictEqual({ count: 2, isCapped: false });
+    await expect(surveyCaller.countSurveyResponses({ id: survey.id })).resolves.toStrictEqual({
+      count: 2,
+      isCapped: false,
+    });
 
     // The owner removes one response as a test submission, then closes the survey
     await surveyCaller.deleteSurveyResponse({ id: survey.id, rowKey: secondResponse.rowKey });
@@ -157,9 +160,9 @@ describe("survey funnel — café feedback drive", () => {
     // Closing takes effect without re-publishing, so the participant URL stays alive and says so
     await expect(
       surveyCaller.updateSurveyResponse({
-        participantToken: firstParticipant.token,
         model: { [satisfaction]: 1 },
         modelVersion: firstResponse.modelVersion,
+        participantToken: firstParticipant.token,
         partitionKey: survey.id,
         rowKey: firstResponse.rowKey,
       }),
@@ -211,10 +214,11 @@ describe("survey funnel — café feedback drive", () => {
       { name: "responded", type: ColumnType.Boolean },
     ]);
     expect(snapshot?.rows.map(({ responded }) => responded)).toStrictEqual([true, false, false]);
+
     for (const customer of customers) expect(JSON.stringify(publishedDashboard)).not.toContain(customer);
 
     // Views count the public reads: the survey's one published read plus the dashboard's
-    expect(await dashboardCaller.readResourceViewCount({ id: dashboard.id })).toBe(1);
-    expect(await surveyCaller.readResourceViewCount({ id: survey.id })).toBe(1);
+    await expect(dashboardCaller.readResourceViewCount({ id: dashboard.id })).resolves.toBe(1);
+    await expect(surveyCaller.readResourceViewCount({ id: survey.id })).resolves.toBe(1);
   });
 });
