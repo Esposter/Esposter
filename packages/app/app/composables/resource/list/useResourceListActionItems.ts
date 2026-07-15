@@ -6,7 +6,7 @@ import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 
 // The row ⋮ menu and the right-click menu are the same commands behind two triggers, so the items have one definition.
 // Plain "Open" is deliberately absent — clicking the row already does that, and a second visible affordance for it
-// only makes the user wonder whether the two differ.
+// Only makes the user wonder whether the two differ.
 export const useResourceListActionItems = () => {
   const listDialogStore = useListDialogStore();
   const { deletingId, renamingId } = storeToRefs(listDialogStore);

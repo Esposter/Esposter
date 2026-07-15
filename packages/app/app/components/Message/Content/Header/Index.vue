@@ -10,6 +10,7 @@ const { smAndDown } = useVDisplay();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
+const { storeUpdateRoom } = roomStore;
 const { currentRoom, isCreator } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
@@ -21,16 +22,21 @@ const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");
 const executeMutation = useMutation();
 const updateRoom = async (name: string) => {
   if (!currentRoom.value) return;
-  const isNameChanged = name !== currentRoom.value.name;
-  await executeMutation(
-    () => $trpc.room.updateRoom.mutate({ id: currentRoom.value?.id ?? "", image: editedImage.value, name }),
-    {
-      onSuccess: async (updatedRoom) => {
-        if (isNameChanged)
-          await createMessage({ message: updatedRoom.name, roomId: updatedRoom.id, type: MessageType.EditRoom });
-      },
+  const { id, image: oldImage, name: oldName } = currentRoom.value;
+  const image = editedImage.value;
+  const isNameChanged = name !== oldName;
+  await executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
+    applyOptimistic: () => {
+      storeUpdateRoom({ id, image, name });
+      return () => {
+        storeUpdateRoom({ id, image: oldImage, name: oldName });
+      };
     },
-  );
+    onSuccess: async (updatedRoom) => {
+      if (isNameChanged)
+        await createMessage({ message: updatedRoom.name, roomId: updatedRoom.id, type: MessageType.EditRoom });
+    },
+  });
 };
 </script>
 

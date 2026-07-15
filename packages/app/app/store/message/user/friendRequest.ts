@@ -22,15 +22,12 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const sentFriendRequests = computed(() =>
     friendRequests.value.filter((friendRequest) => friendRequest.senderId === userId.value),
   );
-  const { createFriendRequest: baseStoreCreateFriendRequest } = createOperationData(
+  // createFriendRequest already dedups by id, so a repeated echo delivery is idempotent without a manual guard
+  const { createFriendRequest: storeCreateFriendRequest } = createOperationData(
     friendRequests,
     ["id"],
     DatabaseEntityType.FriendRequest,
   );
-
-  const storeCreateFriendRequest = (friendRequest: FriendRequestWithRelations) => {
-    if (!friendRequests.value.some(({ id }) => id === friendRequest.id)) baseStoreCreateFriendRequest(friendRequest);
-  };
 
   const storeAcceptFriendRequest = (friendUser: User) => {
     friendRequests.value = friendRequests.value.filter(
@@ -57,9 +54,13 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     );
   };
 
+  // Non-optimistic: the row carries the sender/receiver user graph the client can't faithfully fabricate, and a
+  // Temp-id placeholder would race the echo's server-id row into a transient duplicate.
   const sendFriendRequest = async (receiverId: string) => {
-    // Server-generated request row — non-optimistic, applied in onSuccess (subscription echo is idempotent)
     await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
+      // The onSendFriendRequest echo covers the caller for a newly created request, but the already-exists
+      // Conflict path returns the existing row WITHOUT emitting — so this write is the only one on that path.
+      // It is idempotent: storeCreateFriendRequest dedups by id.
       onSuccess: (friendRequest) => {
         storeCreateFriendRequest(friendRequest);
       },

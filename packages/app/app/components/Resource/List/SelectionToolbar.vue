@@ -2,7 +2,6 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { useNotificationStore } from "@/store/notification";
 import { takeOne } from "@esposter/shared";
 
 interface ResourceListSelectionToolbarProps {
@@ -10,11 +9,7 @@ interface ResourceListSelectionToolbarProps {
 }
 
 const { selectedResources } = defineProps<ResourceListSelectionToolbarProps>();
-const emit = defineEmits<{ clear: []; delete: [] }>();
-const { $trpc } = useNuxtApp();
-const executeMutation = useMutation();
-const notificationStore = useNotificationStore();
-const { createNotification } = notificationStore;
+const emit = defineEmits<{ clear: []; delete: [resources: Resource[]] }>();
 const { exportResourcesCsv } = useExportResourcesCsv();
 const selectedLabel = computed(() => `${selectedResources.length} ${pluralize("resource", selectedResources.length)}`);
 // One selection guards on the name, matching the row and blade delete dialogs;
@@ -31,25 +26,9 @@ const confirmName = computed(() =>
       :card-props="{ title: `Delete ${selectedLabel}` }"
       :confirm-name
       @delete="
-        async (onComplete) => {
-          let isSuccessful = false;
-          await executeMutation(
-            () => $trpc.resource.deleteResources.mutate({ ids: selectedResources.map(({ id }) => id) }),
-            {
-              onError: (error) => {
-                createNotification({ severity: 'error', title: error.message });
-              },
-              onSuccess: (deletedResources) => {
-                createNotification({
-                  severity: 'success',
-                  title: `Deleted ${deletedResources.length} ${pluralize('resource', deletedResources.length)}`,
-                });
-                emit('delete');
-                isSuccessful = true;
-              },
-            },
-          );
-          onComplete(isSuccessful);
+        (onComplete) => {
+          onComplete();
+          emit('delete', selectedResources);
         }
       "
     >

@@ -39,6 +39,21 @@ readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => ctx.db.query.fri
 - **If also needed by a Pinia store (frontend), put it in `shared/services/<feature>/`** — importable on both server and client without duplication.
 - **If also needed by `packages/azure-functions`, put it in `packages/db`** — Postgres/Drizzle functions called from both the Nuxt app server and Azure Functions belong in `packages/db/src/services/` with `PostgresJsDatabase<typeof relations>` as the `db` parameter. Export from `packages/db/src/index.ts`; the app re-exports via a thin `export { fn } from "@esposter/db"` wrapper. Examples: RBAC helpers (`getPermissions`, `hasPermission`), message moderation checks, push subscription queries. Error-throwing wrappers (`assertCanCreateMessage` etc.) stay in their own packages because they throw package-specific types (`TRPCError` in the app, `InvalidOperationError` in azure-functions); only the underlying DB query helpers move to `packages/db`.
 
+## Client-Side Data Access — `useQuery` / `useMutation`
+
+Every **user-facing** client read/write goes through one of two primitives in `composables/shared/` (full reference: `content/docs/architecture/client-data.md`):
+
+- **`useMutation()`** — writes. Returns an executor `executeMutation(mutate, { applyOptimistic, onSuccess, onError })`: optimistic apply + rollback, staleness guarding, and an error alert. Declare **one named instance per logical action** (`executeCreateRoleMutation`, `executeDeleteRoleMutation`) — never share a counter across independent actions.
+  - **Optimistic by default** — every write applies `applyOptimistic` unless it matches a documented exception (server-generated value _is_ the result e.g. `createInvite`/`createWebhook`/`joinRoom`; optimistic-concurrency version tokens e.g. `saveResourceContent`; server-authoritative moderation `executeAdminAction`; the `createLike` PK hazard). A server-generated **id alone is not an exception** — a flat list-create the client can faithfully build AND that is visible when it fires (`createRoomCategory`) inserts a temp placeholder + reconciles in `onSuccess`, like `createMessage`. Both tests must pass: relational/server-computed rows (`createPost`, `createRole`) would flash wrong data, and off-screen creates (`scheduleMessage`, `createSearchHistory` — its list sits in a closed menu) update nothing the user sees. Those stay `onSuccess`-only. Full list in `client-data.md` → "Optimistic by default".
+- **`useQuery(query, { onSuccess })`** — one-shot **ancillary component** reads. Non-blocking background fetch → `{ data, refresh }`, error alert. Not for page-level loaders that must gate render / 404.
+
+These are **not** universal, and the raw call sites are deliberate exceptions, not omissions:
+
+- **Queries** — most reads are raw by design: cursor-pagination `useRead*` + store `readItems`/`readMoreItems` (dominant list pattern, see the vue-composable-patterns skill), `useAutoSearch`/`useCursorSearcher` search, `useReadData`, and page-level gating loaders (top-level `await` → `throw createError` / navigate). `useQuery` is the minority case.
+- **Mutations** — raw only for: fire-and-forget bookkeeping (mark-read, push-subscription registration), needs-return-value composed flows (SAS uploads), the bespoke message-send path, and the call-session lifecycle family (knock/join/leave — need return values + LiveKit teardown, `console.error`+rethrow).
+
+Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it matches a documented exception in `client-data.md`; otherwise use the primitive.
+
 ## Client-Side Calling Conventions
 
 - **Never call `.query({})` / `.mutate({})` with a bare empty object** — procedures whose inputs are all-optional chain `.prefault({})` on the input schema (see Pagination Params Schemas), which makes the input itself optional. Call with no argument: `$trpc.survey.readSurveys.query()`. Same for test callers: `caller.readDocuments()`.

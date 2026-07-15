@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
 
+import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
+import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
+import { useDataStore } from "@/store/message/data";
+
 interface ContainerProps {
   linkPreviewResponse: LinkPreviewResponse;
   partitionKey: MessageEntity["partitionKey"];
@@ -9,11 +13,23 @@ interface ContainerProps {
 
 const { linkPreviewResponse, partitionKey, rowKey } = defineProps<ContainerProps>();
 const { $trpc } = useNuxtApp();
+const dataStore = useDataStore();
+const { items } = storeToRefs(dataStore);
 const isActive = ref(false);
 const executeMutation = useMutation();
-// Embed removal applies via the subscription echo — non-optimistic
 const deleteLinkPreviewResponse = async (onComplete: () => void) => {
-  await executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }));
+  const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }));
+  const previousLinkPreviewResponse = message?.linkPreviewResponse;
+  await executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }), {
+    // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success.
+    applyOptimistic: () => {
+      if (message) message.linkPreviewResponse = null;
+      return () => {
+        if (message && previousLinkPreviewResponse !== undefined)
+          message.linkPreviewResponse = previousLinkPreviewResponse;
+      };
+    },
+  });
   onComplete();
 };
 </script>

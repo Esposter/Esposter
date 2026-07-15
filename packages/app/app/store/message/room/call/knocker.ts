@@ -1,7 +1,7 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
 
-import { getResultAsync } from "@esposter/shared";
+import { useMutation } from "@/composables/shared/useMutation";
 
 export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { $trpc } = useNuxtApp();
@@ -12,10 +12,19 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   });
   const knockers = ref<CallParticipant[]>([]);
 
+  const executeKnockCallMutation = useMutation();
+  const executeAdmitKnockerMutation = useMutation();
+  const executeDismissKnockerMutation = useMutation();
   const knockCall = async (callId: string) => {
-    await getResultAsync(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId })).match(() => {
-      knockingCallSessionId.value = callId;
-    }, console.error);
+    const previousKnockingCallSessionId = knockingCallSessionId.value;
+    await executeKnockCallMutation(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId }), {
+      applyOptimistic: () => {
+        knockingCallSessionId.value = callId;
+        return () => {
+          knockingCallSessionId.value = previousKnockingCallSessionId;
+        };
+      },
+    });
   };
   const cancelKnock = () => {
     knockingCallSessionId.value = "";
@@ -28,19 +37,31 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
     knockers.value = knockers.value.filter((knocker) => knocker.id !== knockerId);
   };
   const admitKnocker = async (callSessionId: string, sessionId: string) => {
-    await getResultAsync(() => $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, sessionId })).match(
-      () => {
-        deleteKnocker(sessionId);
+    const previousKnockers = knockers.value;
+    await executeAdmitKnockerMutation(
+      () => $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, sessionId }),
+      {
+        applyOptimistic: () => {
+          deleteKnocker(sessionId);
+          return () => {
+            knockers.value = previousKnockers;
+          };
+        },
       },
-      console.error,
     );
   };
   const dismissKnocker = async (callSessionId: string, sessionId: string) => {
-    await getResultAsync(() => $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, sessionId })).match(
-      () => {
-        deleteKnocker(sessionId);
+    const previousKnockers = knockers.value;
+    await executeDismissKnockerMutation(
+      () => $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, sessionId }),
+      {
+        applyOptimistic: () => {
+          deleteKnocker(sessionId);
+          return () => {
+            knockers.value = previousKnockers;
+          };
+        },
       },
-      console.error,
     );
   };
   const resetKnockerState = () => {

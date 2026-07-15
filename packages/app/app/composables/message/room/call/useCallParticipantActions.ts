@@ -2,6 +2,7 @@ import type { Item } from "@/models/shared/Item";
 
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { useCallStore } from "@/store/message/room/call";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useRoleStore } from "@/store/message/room/role";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
@@ -11,6 +12,8 @@ export const useCallParticipantActions = () => {
   const executeAdminActionMutation = useMutation();
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
+  const participantStore = useParticipantStore();
+  const { setHandRaised } = participantStore;
   const roleStore = useRoleStore();
   const { getMyPermissions } = roleStore;
   const myPermissions = computed(() => (callRoomId.value ? getMyPermissions(callRoomId.value) : undefined));
@@ -37,12 +40,24 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-hand-back-right-off",
         onClick: async () => {
-          await executeLowerHandMutation(() =>
-            $trpc.callSession.setHandRaised.mutate({
-              callSessionId,
-              isHandRaised: false,
-              participantId,
-            }),
+          await executeLowerHandMutation(
+            () =>
+              $trpc.callSession.setHandRaised.mutate({
+                callSessionId,
+                isHandRaised: false,
+                participantId,
+              }),
+            {
+              applyOptimistic: () => {
+                const oldIsHandRaised =
+                  participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantId)?.isHandRaised ??
+                  false;
+                setHandRaised(callSessionId, participantId, false);
+                return () => {
+                  setHandRaised(callSessionId, participantId, oldIsHandRaised);
+                };
+              },
+            },
           );
         },
         title: "Lower Hand",
