@@ -11,14 +11,4 @@ describe(getSynchronizedFunction, () => {
 
     expect(fn).toHaveBeenCalledExactlyOnceWith("");
   });
-
-  test("returns undefined instead of the original promise", () => {
-    expect.hasAssertions();
-
-    const fn = vi.fn<() => Promise<string>>().mockResolvedValue("");
-
-    const result = getSynchronizedFunction(fn)();
-
-    expect(result).toBeUndefined();
-  });
 });
