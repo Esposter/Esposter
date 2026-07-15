@@ -72,9 +72,9 @@ onMounted(() => {
       ref="input"
       v-model="modelValue"
       color-inherit
+      pr-2
       outline-none
       b-none
-      pr-2
       bg-transparent
       field-sizing-content
       text-body-medium
