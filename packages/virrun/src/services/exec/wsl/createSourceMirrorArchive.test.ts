@@ -118,12 +118,13 @@ describe(createSourceMirrorArchive, () => {
     expect(readdirSync(entryUnc)).toStrictEqual([archiveFilename]);
   });
 
-  test("throws when tar fails for anything but a per-entry skip and leaves the copy list staged for the reaper", () => {
+  test("throws when tar fails for anything but a per-entry skip and still consumes the copy list", () => {
     expect.hasAssertions();
 
     // An unusable `-C` root is a whole-spawn failure (`Cannot chdir`), not a report tar archived past — the archive
     // Holds nothing trustworthy, so the plan must abort loudly instead of pruning the entire manifest.
     expect(() => createSourceMirrorArchive(join(cwd, "missing"), entryUnc, [TEST_FILENAME], TAG)).toThrow(Error);
-    expect(readdirSync(entryUnc)).toContain(`${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${TAG}`);
+    // Aborting is no reason to strand the list: tar is done with it either way, so it never reaches the reaper.
+    expect(readdirSync(entryUnc)).not.toContain(`${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${TAG}`);
   });
 });

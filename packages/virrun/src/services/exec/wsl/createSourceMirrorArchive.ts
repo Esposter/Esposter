@@ -26,8 +26,9 @@ import { join } from "node:path";
 // Tests exercise the real spawn on any platform. (The win32 bsdtar writer stamps a benign pax LIBARCHIVE.symlinktype
 // Header on each symlink member; the WSL GNU-tar extract quiets its "unknown keyword" warning — createWslSourceMirrorSync.)
 //
-// The copy list is consumed and unlinked here, staged under the pid-tag convention so a plan that dies mid-way leaves
-// Only reapable corpses (reapStaleSourceMirrorTemps). A failure tar recovered from per-entry — a Windows-locked file,
+// The copy list is consumed and unlinked here whatever tar's verdict, staged under the pid-tag convention so a plan
+// That dies mid-way leaves only reapable corpses (reapStaleSourceMirrorTemps). A failure tar recovered from
+// Per-entry — a Windows-locked file,
 // Or one that vanished between the manifest walk and this spawn — leaves an archive complete but for those entries, so
 // The listed paths its members lack come back as unarchivedPaths for the planner to prune, instead of a single skipped
 // File hard-failing every run. Attribution reads the archive, never the stderr, because bsdtar names no path at all on
@@ -45,11 +46,15 @@ export const createSourceMirrorArchive = (
   const copyListFilename = `${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${tag}`;
   const copyListUnc = join(entryUnc, copyListFilename);
   writeFileSync(copyListUnc, joinNullDelimited(copyPaths));
-  const unarchivedPaths = getResult(() =>
+  const archiveResult = getResult(() =>
     execFileHidden("tar", ["-c", "--no-recursion", "--null", "-f", archiveUnc, "-C", cwd, "-T", copyListUnc], {
       timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS,
     }),
-  ).match(
+  );
+  // The list is tar's input and nothing else's, so it is spent the moment tar returns either way — unlinking
+  // Before the verdict is read keeps the aborting path from leaving the reaper a corpse it never needed
+  unlinkSync(copyListUnc);
+  const unarchivedPaths = archiveResult.match(
     (): string[] => [],
     (error) => {
       const stderr =
@@ -64,6 +69,5 @@ export const createSourceMirrorArchive = (
       return copyPaths.filter((path) => !members.has(path));
     },
   );
-  unlinkSync(copyListUnc);
   return { archiveFilename, unarchivedPaths };
 };
