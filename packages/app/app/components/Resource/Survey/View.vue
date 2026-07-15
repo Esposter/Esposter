@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { SurveyResponseEntity } from "@esposter/db-schema";
 
+import { DEFAULT_CLOSED_MESSAGE } from "#shared/services/resource/survey/constants";
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { THEME_KEY } from "@/services/survey/constants";
-import { getResultAsync } from "@esposter/shared";
+import { SurveyResponseMode } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
 
@@ -14,6 +16,9 @@ interface ResourceSurveyViewProps {
 
 const { id } = defineProps<ResourceSurveyViewProps>();
 const { $trpc } = useNuxtApp();
+const route = useRoute();
+// Read once on load and threaded through every write — the URL carries an opaque token or nothing
+const participantToken = Array.isArray(route.query.t) ? (route.query.t[0] ?? "") : (route.query.t ?? "");
 
 let surveyResponse: null | SurveyResponseEntity = null;
 
@@ -28,6 +33,7 @@ const saveSurveyResponse = async (survey: Model) => {
     await executeMutation(
       () =>
         $trpc.survey.createSurveyResponse.mutate({
+          participantToken,
           model: responseModel,
           partitionKey: id,
           rowKey: newSurveyResponseId,
@@ -35,7 +41,7 @@ const saveSurveyResponse = async (survey: Model) => {
       {
         onSuccess: (newSurveyResponse) => {
           surveyResponse = newSurveyResponse;
-          localStorage.setItem(LocalStorageKey.SurveyResponseId(id), newSurveyResponse.rowKey);
+          localStorage.setItem(LocalStorageKey.SurveyResponseId(id, participantToken), newSurveyResponse.rowKey);
         },
       },
     );
@@ -45,6 +51,7 @@ const saveSurveyResponse = async (survey: Model) => {
   await executeMutation(
     () =>
       $trpc.survey.updateSurveyResponse.mutate({
+        participantToken,
         model: responseModel,
         modelVersion: currentSurveyResponse.modelVersion,
         partitionKey: currentSurveyResponse.partitionKey,
@@ -64,6 +71,10 @@ const { content, name } = await getResultAsync(() => $trpc.survey.readPublishedR
     throw createError({ statusCode: 404, statusMessage: "Survey not found" });
   },
 );
+// Settings arrive live on the public read, so closing or gating takes effect without a re-publish and
+// The URL stays alive — unlike unpublish, which 404s every participant link already sent
+const { closedMessage, isAcceptingResponses, responseMode } = content.settings;
+const isParticipantTokenRequired = responseMode === SurveyResponseMode.Identified && !participantToken;
 const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
 const model = new Model(surveyModel);
 if (theme) model.applyTheme(theme);
@@ -75,7 +86,7 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
   await getResultAsync(() => saveSurveyResponse(survey)).match(
     () => {
       // The resume id must not outlive the submission — a shared device could otherwise reopen the answers
-      localStorage.removeItem(LocalStorageKey.SurveyResponseId(id));
+      localStorage.removeItem(LocalStorageKey.SurveyResponseId(id, participantToken));
       showSaveSuccess();
     },
     (error) => showSaveError(error.message),
@@ -84,25 +95,43 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
 useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 
 const isLoading = ref(true);
-// Respondent progress is tracked per browser, so an interrupted survey resumes where it left off
-const onMount = async () => {
-  const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id));
-  if (!surveyResponseId) return;
-
-  surveyResponse = await $trpc.survey.readSurveyResponse.query({ partitionKey: id, rowKey: surveyResponseId });
-  if (!surveyResponse) return;
-
-  model.data = surveyResponse.model;
-  if (!surveyResponse.model.pageNo) return;
-  model.currentPageNo = surveyResponse.model.pageNo as number;
-};
 
 onMounted(async () => {
-  await onMount();
+  // Respondent progress is tracked per browser, so an interrupted survey resumes where it left off.
+  // A failed resume falls back to a blank survey rather than stranding the respondent on the skeleton
+  if (isAcceptingResponses && !isParticipantTokenRequired)
+    await getResultAsync(async () => {
+      const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id, participantToken));
+      if (!surveyResponseId) return;
+
+      surveyResponse = await $trpc.survey.readSurveyResponse.query({
+        participantToken,
+        partitionKey: id,
+        rowKey: surveyResponseId,
+      });
+      if (!surveyResponse) return;
+
+      model.data = surveyResponse.model;
+      if (!surveyResponse.model.pageNo) return;
+
+      model.currentPageNo = surveyResponse.model.pageNo as number;
+    }).match(noop, console.error);
   isLoading.value = false;
 });
 </script>
 
 <template>
-  <SurveyComponent v-if="!isLoading" :model />
+  <StyledEmptyState
+    v-if="!isAcceptingResponses"
+    icon="mdi-lock-outline"
+    :title="name"
+    :description="closedMessage || DEFAULT_CLOSED_MESSAGE"
+  />
+  <StyledEmptyState
+    v-else-if="isParticipantTokenRequired"
+    icon="mdi-email-lock-outline"
+    :title="name"
+    description="This survey is open to invited participants only. Please use the personal link you were sent."
+  />
+  <SurveyComponent v-else-if="!isLoading" :model />
 </template>

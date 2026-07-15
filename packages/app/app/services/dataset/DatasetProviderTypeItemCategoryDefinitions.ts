@@ -5,6 +5,7 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 const DatasetProviderTypeItemCategoryDefinitionMap = {
+  [DatasetProviderType.ProgramStatus]: { title: "Program status" },
   [DatasetProviderType.Sheet]: { title: "File" },
   [DatasetProviderType.SurveyResponses]: { title: "Survey responses" },
 } as const satisfies Record<DatasetProviderType, Except<SelectItemCategoryDefinition<DatasetProviderType>, "value">>;

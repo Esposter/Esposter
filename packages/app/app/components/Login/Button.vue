@@ -26,7 +26,6 @@ const isLoading = ref(false);
     :style
     shadow="[0_2px_4px_0_rgba(0,0,0,0.25)]"
     hover:shadow="[0_2px_10px_2px_rgba(0,0,0,0.35)]"
-    mb-3
     pl-2
     rd
     flex

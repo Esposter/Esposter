@@ -25,7 +25,7 @@ flowchart LR
 ```
 
 - The email variant renders MJML button markup; the webpage variant renders plain HTML button markup — the shared core produces the survey list + URLs, thin per-editor wrappers own the markup (shared-core-and-thin-wrappers, not a copy).
-- No per-recipient identity on webpages (there is no audience row behind an anonymous page visitor), so the webpage block is always the plain published URL — a webpage-distributed survey is the Anonymous [response mode](/docs/proposals/platform/survey-response-modes); invite tokens belong to [programs](/docs/proposals/platform/program-resource).
+- No per-participant identity on webpages (there is no audience row behind an anonymous page visitor), so the webpage block is always the plain published URL — a webpage-distributed survey is the Anonymous [response mode](/docs/platform/survey-response-modes); participant tokens belong to [programs](/docs/platform/program-resource).
 
 ## Key files
 
@@ -38,4 +38,4 @@ flowchart LR
 ## Notes
 
 - Embedding the survey _inline_ (iframe of the respondent page) is deliberately out: iframes inside GrapesJS canvases and published pages bring sizing/sandboxing complexity for marginal gain over a button — the respondent page is already mobile-friendly. Revisit only on real demand.
-- Blocks list **published, Anonymous-mode** surveys only. Published is the same rule as email — a draft survey has no public URL to link. Anonymous-mode is webpage-specific: an Invited survey linked from a public page would gate every visitor behind an invite-required screen, which reads as a broken link, so those surveys are excluded from the webpage block list rather than offered and then rejected at the door. Email keeps listing both modes — it is the surface that _can_ carry a token.
+- Blocks list **published, Anonymous-mode** surveys only. Published is the same rule as email — a draft survey has no public URL to link. Anonymous-mode is webpage-specific: an Identified survey linked from a public page would gate every visitor behind a token-required screen, which reads as a broken link, so those surveys are excluded from the webpage block list rather than offered and then rejected at the door. Email keeps listing both modes — it is the surface that _can_ carry a token.

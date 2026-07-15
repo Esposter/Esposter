@@ -7,7 +7,7 @@ const { userSettings } = storeToRefs(userSettingsStore);
 </script>
 
 <template>
-  <template v-if="userSettings">
+  <div v-if="userSettings" flex flex-col gap-y-8>
     <MessageModelUserSettingsSection :title="VoiceSettingsSection.Devices">
       <MessageModelUserSettingsTypeVoiceDevices :user-settings />
     </MessageModelUserSettingsSection>
@@ -23,5 +23,5 @@ const { userSettings } = storeToRefs(userSettingsStore);
     <MessageModelUserSettingsSection :title="VoiceSettingsSection.JoinSettings">
       <MessageModelUserSettingsTypeVoiceJoinSwitches :user-settings />
     </MessageModelUserSettingsSection>
-  </template>
+  </div>
 </template>

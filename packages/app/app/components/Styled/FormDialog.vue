@@ -53,7 +53,7 @@ defineExpose({ editForm, isEditFormValid });
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <v-form :id="formId" ref="editForm" v-model="isEditFormValid" @submit.prevent="submit">
+    <v-form :id="formId" ref="editForm" v-model="isEditFormValid" flex flex-col gap-y-4 @submit.prevent="submit">
       <slot />
     </v-form>
     <template #prepend-actions>

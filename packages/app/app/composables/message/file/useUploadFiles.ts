@@ -1,4 +1,3 @@
-// oxlint-disable @typescript-eslint/no-unnecessary-type-arguments
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";

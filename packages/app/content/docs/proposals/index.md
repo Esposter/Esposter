@@ -24,3 +24,5 @@ Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [Null removal](/docs/proposals/refactors/null-removal) — eliminate `null` in favour of `undefined`, ESLint-enforced.
 - [Comment cleanup](/docs/proposals/refactors/comment-cleanup) — sweep ledger for keeping comments tight repo-wide.
+- [File upload consolidation](/docs/proposals/refactors/file-upload-consolidation) — one SAS round-trip and one file validator instead of four and three.
+- [Mock table ordering fidelity](/docs/proposals/refactors/mock-table-ordering-fidelity) — `MockTableClient` returns insertion order where Azure returns `partitionKey` + `rowKey` order.

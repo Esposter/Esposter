@@ -1,21 +1,8 @@
 import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
-import type { Clause } from "@esposter/db-schema";
 
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getSurveyModelDatasetColumns } from "@@/server/services/dataset/surveyResponses/getSurveyModelDatasetColumns";
-import { toDatasetColumnValue } from "@@/server/services/dataset/surveyResponses/toDatasetColumnValue";
-import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { countEntities, getTopNEntities, serializeClauses } from "@esposter/db";
-import {
-  AZURE_MAX_PAGE_SIZE,
-  AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  ResourceType,
-  SurveyResponseEntity,
-} from "@esposter/db-schema";
+import { readSurveyResponseDatasetSource } from "@@/server/services/dataset/surveyResponses/readSurveyResponseDatasetSource";
+import { toSurveyResponseDatasetRow } from "@@/server/services/dataset/surveyResponses/toSurveyResponseDatasetRow";
+import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 
 export const readSurveyResponsesDataset: DatasetProvider = async (ctx, reference) => {
@@ -28,25 +15,8 @@ export const readSurveyResponsesDataset: DatasetProvider = async (ctx, reference
   });
   if (!resource) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-  // The blob is written on first save, so a freshly created survey serves an empty dataset
-  const content = await readResourceContent(ResourceDefinitionMap[ResourceType.Survey].contentSchema, resource.id);
-  const columns = getSurveyModelDatasetColumns(parseSurveyModel(content?.model ?? ""));
-  const clauses: Clause<SurveyResponseEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: reference.id },
-  ];
-  const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-  const filter = serializeClauses(clauses);
-  const surveyResponses = await getTopNEntities(surveyResponseClient, AZURE_MAX_PAGE_SIZE, SurveyResponseEntity, {
-    filter,
-  });
-  const rows = surveyResponses.map(({ model }) =>
-    Object.fromEntries(columns.map(({ name }) => [name, toDatasetColumnValue(model[name])])),
-  );
-  // Counting is a full partition scan, so a read that fit under the cap answers for itself and only a
-  // Read that filled it pays for the count — the one case where the caller needs to know what it is missing
-  const totalRows =
-    surveyResponses.length < AZURE_MAX_PAGE_SIZE
-      ? surveyResponses.length
-      : await countEntities(surveyResponseClient, { filter });
-  return { columns, rows, totalRows };
+  const { columns, surveyResponses, totalRows } = await readSurveyResponseDatasetSource(resource.id);
+  // The dataset contract carries no keys — row identity is the Responses blade's concern, and a
+  // Dataset flows into publishable dashboards
+  return { columns, rows: surveyResponses.map(({ model }) => toSurveyResponseDatasetRow(columns, model)), totalRows };
 };

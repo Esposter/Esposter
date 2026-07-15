@@ -54,7 +54,13 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "shell-cohesion",
       "resource-consolidation",
     ],
-    Resources: ["sheet-resource", "create-from-file", "survey-resource"],
+    Resources: ["sheet-resource", "create-from-file", "survey-resource", "program-resource"],
+    "Survey funnel": [
+      "survey-response-controls",
+      "survey-response-modes",
+      "survey-response-management",
+      "published-view-analytics",
+    ],
     Editors: ["dashboard-data-binding", "email-personalization", "dataset-row-cap-warning"],
   },
   virrun: {

@@ -7,7 +7,7 @@ import { Operation, takeOne, uncapitalize } from "@esposter/shared";
 
 export const createOperationData = <
   TItem extends object,
-  // oxlint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
   TIdKeys extends EntityIdKeys<TItem>,
   TEntityTypeKey extends EntityTypeKey,
 >(

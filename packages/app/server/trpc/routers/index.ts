@@ -14,6 +14,7 @@ import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { postRouter } from "@@/server/trpc/routers/post";
+import { programRouter } from "@@/server/trpc/routers/program";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { roleRouter } from "@@/server/trpc/routers/role";
@@ -43,6 +44,7 @@ const trpcRouterWithoutAchievements = router({
   like: likeRouter,
   message: messageRouter,
   post: postRouter,
+  program: programRouter,
   pushSubscription: pushSubscriptionRouter,
   resource: resourceRouter,
   role: roleRouter,

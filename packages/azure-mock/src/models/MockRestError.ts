@@ -1,11 +1,10 @@
-// A mock error class that mimics the structure of Azure's RestError
-// This allows you to test error handling more realistically.
-export class MockRestError extends Error {
-  statusCode: number;
+import { RestError } from "@azure/core-rest-pipeline";
 
+// Extends the real error class rather than mimicking its shape, so an `instanceof RestError` branch in the
+// Code under test takes the same path it takes against the live service
+export class MockRestError extends RestError {
   constructor(message: string, statusCode: number) {
-    super(message);
+    super(message, { statusCode });
     this.name = "MockRestError";
-    this.statusCode = statusCode;
   }
 }
