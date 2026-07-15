@@ -51,12 +51,10 @@ const scheduleMessage = async (onComplete: () => void) => {
     :confirm-button-attrs="{ disabled: !scheduledAt }"
     @submit="(_event, onComplete) => scheduleMessage(onComplete)"
   >
-    <div flex flex-col gap-4>
-      <StyledDatePicker
-        v-model="scheduledAt"
-        :date-picker-props="{ minDate: minScheduledAt, placeholder: 'Run at', sixWeeks: 'append' }"
-      />
-      <v-textarea :model-value="target ? getTextFromHtml(target.content) : ''" label="Message" readonly />
-    </div>
+    <StyledDatePicker
+      v-model="scheduledAt"
+      :date-picker-props="{ minDate: minScheduledAt, placeholder: 'Run at', sixWeeks: 'append' }"
+    />
+    <v-textarea :model-value="target ? getTextFromHtml(target.content) : ''" label="Message" readonly />
   </StyledFormDialog>
 </template>
