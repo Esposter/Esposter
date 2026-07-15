@@ -10,6 +10,10 @@ export const readSurveyResponseRecords = async (surveyId: Resource["id"]): Promi
   const { columns, surveyResponses } = await readSurveyResponseDatasetSource(surveyId);
   return {
     columns,
-    rows: surveyResponses.map(({ model, rowKey }) => ({ ...toSurveyResponseDatasetRow(columns, model), rowKey })),
+    // The row is built fresh per response and shared with nobody, so the key is assigned onto it rather
+    // Than spread into a second copy
+    rows: surveyResponses.map(({ model, rowKey }) =>
+      Object.assign(toSurveyResponseDatasetRow(columns, model), { rowKey }),
+    ),
   };
 };
