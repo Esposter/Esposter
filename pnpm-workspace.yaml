@@ -59,7 +59,7 @@ catalog:
   "@nuxt/test-utils": ^4.0.3
   "@nuxtjs/seo": ^5.3.2
   "@panzoom/panzoom": ^4.6.2
-  "@pinia/nuxt": ^1.0.0
+  "@pinia/nuxt": ^0.11.3
   "@platformatic/vfs": ^0.4.0
   "@pulumi/azure-native": ^3.20.0
   "@pulumi/github": ^6.14.0
@@ -193,7 +193,7 @@ catalog:
   pdfjs-dist: ^6.1.200
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
-  pinia: ^4.0.1
+  pinia: ^3.0.4
   postgres: ^3.4.9
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.2.0
@@ -262,8 +262,5 @@ overrides:
   pdfjs-dist: ^6.1.200
   vite: ^8.1.4
   vue-router: ^5.1.0
-
-patchedDependencies:
-  pinia@4.0.1: patches/pinia@4.0.1.patch
 
 shellEmulator: true
