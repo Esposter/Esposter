@@ -150,6 +150,37 @@ describe("program", () => {
     expect(reissuedInvites).toStrictEqual(invites);
   });
 
+  test("generateProgramInvites issues one token per recipient across concurrent runs", async () => {
+    expect.hasAssertions();
+
+    const survey = await setupInvitedSurvey();
+    const program = await createBoundProgram({
+      keyValues,
+      name,
+      programCaller: caller,
+      sheetCaller,
+      surveyId: survey.id,
+    });
+    // Neither run sees the other's rows, so both try to issue every token — the storage key is what makes
+    // One of them lose, and the loser adopts the winner's token instead of minting a rival
+    const [invites, concurrentInvites] = await Promise.all([
+      caller.generateProgramInvites({ id: program.id }),
+      caller.generateProgramInvites({ id: program.id }),
+    ]);
+
+    expect(concurrentInvites).toStrictEqual(invites);
+
+    const clauses: Clause<ProgramInviteEntity>[] = [
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: program.id },
+    ];
+    const programInviteClient = await useTableClient(AzureTable.ProgramInvites);
+    const storedInvites = await getTopNEntities(programInviteClient, AZURE_MAX_PAGE_SIZE, ProgramInviteEntity, {
+      filter: serializeClauses(clauses),
+    });
+
+    expect(storedInvites).toHaveLength(invites.length);
+  });
+
   test("generates only the missing tokens for a grown audience", async () => {
     expect.hasAssertions();
 

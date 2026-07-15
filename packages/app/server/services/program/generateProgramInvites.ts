@@ -2,12 +2,14 @@ import type { ProgramInvite } from "#shared/models/resource/program/ProgramInvit
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Clause, Resource } from "@esposter/db-schema";
 
+import { RestError } from "@azure/data-tables";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
 import { danglingProgramBindingError } from "@@/server/services/program/danglingProgramBindingError";
+import { getProgramInviteId } from "@@/server/services/program/getProgramInviteId";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { createEntity, getTopNEntities, serializeClauses } from "@esposter/db";
+import { createEntity, getEntity, getTopNEntities, serializeClauses } from "@esposter/db";
 import {
   AZURE_MAX_PAGE_SIZE,
   AzureTable,
@@ -19,7 +21,8 @@ import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 // Idempotent by the audience key value: re-running after the audience grows issues only the missing
-// Tokens and never rotates an existing one, because a rotated token would dead-link an already-sent invite
+// Tokens and never rotates an existing one, because a rotated token would dead-link an already-sent invite.
+// The guarantee is the storage key, not this read-then-write — see ProgramInviteEntity
 export const generateProgramInvites = async (
   ctx: AuthedContext,
   programId: Resource["id"],
@@ -45,24 +48,42 @@ export const generateProgramInvites = async (
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: programId },
   ];
   const programInviteClient = await useTableClient(AzureTable.ProgramInvites);
+  // The capped page is a warm cache, never the source of truth — an invite past the cap is simply one this
+  // Read did not see, and the insert below still refuses to issue it a second token
   const existingInvites = await getTopNEntities(programInviteClient, AZURE_MAX_PAGE_SIZE, ProgramInviteEntity, {
     filter: serializeClauses(clauses),
   });
   const invitesByKeyValue = new Map<string, ProgramInvite>(
-    existingInvites.map(({ keyValue, rowKey }) => [keyValue, { keyValue, token: rowKey }]),
+    existingInvites.map(({ keyValue, token }) => [keyValue, { keyValue, token }]),
   );
   // One token per distinct key value — the same recipient twice in the audience is one invite
   for (const row of rows) {
     const keyValue = row[content.keyColumn];
     if (typeof keyValue !== "string" || !keyValue || invitesByKeyValue.has(keyValue)) continue;
 
-    // A UUID, never derived from the key — a derivable token would let anyone mint one from an email address
+    const rowKey = getProgramInviteId(keyValue);
     const token = crypto.randomUUID();
-    await createEntity(
-      programInviteClient,
-      new ProgramInviteEntity({ keyValue, partitionKey: programId, publicId: crypto.randomUUID(), rowKey: token }),
+    const isCreated = await getResultAsync(() =>
+      createEntity(
+        programInviteClient,
+        new ProgramInviteEntity({ keyValue, partitionKey: programId, publicId: crypto.randomUUID(), rowKey, token }),
+      ),
+    ).match(
+      () => true,
+      (error) => {
+        if (error instanceof RestError && error.statusCode === 409) return false;
+        throw error;
+      },
     );
-    invitesByKeyValue.set(keyValue, { keyValue, token });
+    if (isCreated) {
+      invitesByKeyValue.set(keyValue, { keyValue, token });
+      continue;
+    }
+
+    // Someone else got there first, so their token is the one that may already be sitting in an inbox —
+    // This run adopts it and drops the token it just minted, which was never stored and never sent
+    const existingInvite = await getEntity(programInviteClient, ProgramInviteEntity, programId, rowKey);
+    if (existingInvite) invitesByKeyValue.set(keyValue, { keyValue, token: existingInvite.token });
   }
   return [...invitesByKeyValue.values()];
 };
