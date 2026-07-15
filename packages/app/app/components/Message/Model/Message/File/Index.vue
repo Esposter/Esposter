@@ -2,6 +2,7 @@
 import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 
 import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
+import { useDataStore } from "@/store/message/data";
 import { useDownloadFileStore } from "@/store/message/file";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { takeOne } from "@esposter/shared";
@@ -15,30 +16,14 @@ interface FileProps {
 }
 
 const { columnLayout, file, index, isPreview, message } = defineProps<FileProps>();
-const { $trpc } = useNuxtApp();
 const isCreator = await useIsCreator(() => message);
+const { deleteFile } = useDataStore();
 const downloadFileStore = useDownloadFileStore();
 const { viewFiles } = downloadFileStore;
 const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
 const viewableFileIndex = computed(() => viewableFiles.value.findIndex(({ id }) => id === file.id));
 const isActive = ref(false);
-const executeMutation = useMutation();
-const deleteFile = async () => {
-  const previousFiles = message.files;
-  await executeMutation(
-    () => $trpc.message.deleteFile.mutate({ id: file.id, partitionKey: message.partitionKey, rowKey: message.rowKey }),
-    {
-      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success.
-      applyOptimistic: () => {
-        message.files = message.files.filter(({ id }) => id !== file.id);
-        return () => {
-          message.files = previousFiles;
-        };
-      },
-    },
-  );
-};
 </script>
 
 <template>
@@ -76,7 +61,7 @@ const deleteFile = async () => {
           :is-hovering
           :hover-props
           :url
-          @delete="deleteFile"
+          @delete="deleteFile({ id: file.id, partitionKey: message.partitionKey, rowKey: message.rowKey })"
         />
       </v-hover>
     </div>

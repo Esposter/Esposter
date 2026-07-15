@@ -5,7 +5,7 @@ describe("getSynchronizedFunction type", () => {
   test("returns void instead of the original promise", () => {
     expect.hasAssertions();
 
-    expectTypeOf(getSynchronizedFunction<[string]>).returns.returns.toEqualTypeOf<void>();
+    expectTypeOf(getSynchronizedFunction<[string]>).returns.returns.toBeVoid();
   });
 
   test("forwards the original parameters", () => {

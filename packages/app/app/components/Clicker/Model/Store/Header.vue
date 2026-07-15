@@ -9,7 +9,7 @@ const { buyQuantity } = storeToRefs(buildingStore);
 <template>
   <div>
     <div font-bold flex justify-center text-headline-large>Store</div>
-    <div flex justify-center pt-2>
+    <div pt-2 flex justify-center>
       <v-btn-toggle v-model="buyQuantity" density="compact" mandatory>
         <v-btn v-for="quantity of BUY_QUANTITIES" :key="quantity" :value="quantity" :text="`×${quantity}`" />
       </v-btn-toggle>
