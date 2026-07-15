@@ -6,10 +6,7 @@ import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames } from "
 
 // Azure Table has no "delete where partitionKey eq" — a partition is cleared by enumerating its keys.
 // The scan is capped like every other read, so clearing a partition costs one page, not an unbounded walk
-export const deleteTablePartition = async <TAzureTable extends AzureTable>(
-  tableName: TAzureTable,
-  partitionKey: string,
-): Promise<void> => {
+export const deleteTablePartition = async (tableName: AzureTable, partitionKey: string): Promise<void> => {
   const tableClient = await useTableClient(tableName);
   const filter = serializeClauses([
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },

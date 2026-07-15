@@ -24,9 +24,8 @@ export const incrementResourceViewCount = async (resourceId: Resource["id"]): Pr
         return;
       }
 
-      const isUpdated = await getResultAsync(() =>
-        updateEntity(resourceViewClient, { ...resourceView, count: resourceView.count + 1 }, "Merge"),
-      ).match(
+      resourceView.count++;
+      const isUpdated = await getResultAsync(() => updateEntity(resourceViewClient, resourceView, "Merge")).match(
         () => true,
         // A concurrent increment already bumped the row, so re-read and try again
         () => false,

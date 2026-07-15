@@ -17,7 +17,9 @@ const { dataset, error, isLoading, refresh } = useDataset(() => ({
 const rowKeys = ref<string[]>([]);
 const headers = computed(() => dataset.value?.columns.map(({ name }) => ({ key: name, title: name })) ?? []);
 const items = computed(
-  () => dataset.value?.rows.map((row, index) => ({ ...row, rowKey: rowKeys.value[index] ?? "" })) ?? [],
+  () =>
+    // oxlint-disable-next-line oxc/no-map-spread -- a copy is required, the dataset rows are the source of truth and must not gain a key column
+    dataset.value?.rows.map((row, index) => ({ ...row, rowKey: rowKeys.value[index] ?? "" })) ?? [],
 );
 const readRowKeys = async () => {
   if (!id.value) return;

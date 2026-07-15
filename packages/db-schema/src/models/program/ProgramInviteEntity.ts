@@ -5,7 +5,7 @@ import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/Azure
 import { selectResourceSchema } from "@/schema/resources";
 import { z } from "zod";
 
-// partitionKey = program id, rowKey = the opaque invite token
+// PartitionKey = program id, rowKey = the opaque invite token
 export class ProgramInviteEntity extends AzureEntity {
   // The audience key column's value for this recipient — never leaves the server or the owner client
   keyValue = "";

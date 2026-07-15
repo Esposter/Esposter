@@ -314,7 +314,7 @@ describe("createResourceProcedures", () => {
     await caller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
     await caller.publishResource({ id: newResource.id });
     // The table client is constructed per call, so the failure is injected on the prototype
-    vi.spyOn(MockTableClient.prototype, "upsertEntity").mockRejectedValue(new Error(""));
+    vi.spyOn(MockTableClient.prototype, "upsertEntity").mockRejectedValue(new Error("Table write failed"));
     vi.spyOn(console, "error").mockImplementation(noop);
     const { content } = await caller.readPublishedResourceContent(newResource.id);
 
