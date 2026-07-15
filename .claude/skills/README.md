@@ -62,6 +62,8 @@ The `vue` / `vue-component-patterns` / `vue-composable-patterns` boundary is **s
 - `coderabbit` — review config: PR file budget, `.coderabbit.yaml` exclusions, exclude/re-enable commit pair.
 - `oxlint` — lint rule exceptions and disable directives.
 - `package-scripts` — which `pnpm` script to run, and from where.
+- `context-efficiency` — how the main session spends its own context/turns: delegating wide reads, batching verification, polling vs sleeping, baselining before chasing an error.
+- `run-app` — launching the dev server and driving the app in a real browser to verify UI: session seeding, Chrome/CDP, the dev-build and async-render traps.
 - `build` — rolldown configs and external lists.
 - `bench` — colocated `*.bench.ts` and the benchmark reporter.
 - `dependency-updates` — the catalog, pinning, node bumps.
