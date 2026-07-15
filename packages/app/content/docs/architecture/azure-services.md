@@ -20,7 +20,7 @@ Which Azure services are used, what each one owns, and which package accesses it
 | **Azure Web PubSub**    | Webhook message delivery and cross-process fan-out (separate from tRPC subscriptions)                      | `server/composables/azure/webPubSub/useWebPubSubServiceClient.ts`                                                |
 | **LiveKit**             | Audio/video SFU — signaling, media tracks, participant lifecycle                                           | `server/api/webhooks/livekit.post.ts` (webhook); `livekit-server-sdk` server-side; `livekit-client` browser-side |
 
-EventGrid vs Service Bus: EventGrid is fire-and-forget **now** (push a notification the moment a message lands); Service Bus is fire **later** (a scheduled message job must run at its `runAt`). Both terminate in Azure Functions handlers — see [/docs/architecture/index](/docs/architecture) for the area docs that use them.
+EventGrid vs Service Bus: EventGrid is fire-and-forget **now** (push a notification the moment a message lands); Service Bus is fire **later** (a scheduled message job must run at its `runAt`). Both terminate in Azure Functions handlers.
 
 ## Blob Storage containers
 

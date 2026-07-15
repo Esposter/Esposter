@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — describe with function refs, canonical test values, targeted takeOne usage for unsafe index access patterns, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), the Windows UnoCSS test-skip rule, and type-level test conventions for .test-d.ts files. Apply when writing .test.ts or .test-d.ts files.
+description: Esposter Vitest testing conventions — describe with function refs, canonical test values, takeOne for unsafe index access, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), mock cleanup by creation style, toThrowErrorMatchingInlineSnapshot as the only error assertion, when a test needs @vitest-environment nuxt, bundle-size snapshot tests, and type-level conventions for .test-d.ts files. Apply when writing .test.ts or .test-d.ts files.
 ---
 
 # Testing Conventions (Vitest)
@@ -24,7 +24,7 @@ description: Esposter Vitest testing conventions — describe with function refs
   - When the promise resolves to a **real value**, `await` into a `const` and assert on it: `const count = await caller.count(); expect(count).toBe(x);`. `.rejects.` stays the only accepted async **error** assertion (see **Error Assertions**).
 - **`toStrictEqual` always** — never `toEqual`/`toMatchObject`. Assert exact counts: no `.toBeGreaterThan(0)` on collections.
 - **`.toBe` for deterministic values** — when the full expected value is knowable (URL, ID, enum string), always `.toBe(fullValue)`, never `.toContain`/`.toMatch`. Inline the expected value in the `expect` call — never an intermediate `const expected*`.
-- **Never fragment-match a full deterministic output** — a `.toContain`/`.toMatch`/`.not.toContain` against a value that is fully determined by the inputs (a generated shell script/argv, a formatted CLI report, rendered markdown/HTML, a transform's output) asserts one slice and silently ignores the rest. Assert the **whole** output instead: `.toBe(fullValue)` when it inlines cleanly, else `toMatchInlineSnapshot()` (leave empty, fill with `pnpm test -u`) for bulky/multiline values. A full snapshot also **subsumes** paired negative assertions — a `.not.toContain("<th>")` is proven by the snapshot showing no `<th>`, so drop it. Keep `.toContain` **only** for genuine membership on non-deterministic content: an array/list membership (`args.toContain("--flag")`, `list.toContain(obj)`) or a string carrying a runtime value (a UUID, an absolute temp path). If the whole output embeds a machine-specific path/UUID, it isn't snapshot-safe — keep fragment-matching or assert behavior portably.
+- **Never fragment-match a full deterministic output** — a `.toContain`/`.toMatch` against a value fully determined by the inputs asserts one slice and ignores the rest. Assert the whole output: `.toBe(fullValue)`, else `toMatchInlineSnapshot()` (leave empty, fill with `pnpm test -u`) for bulky/multiline values. A full snapshot **subsumes** paired negative assertions — drop the `.not.toContain(...)`. Keep `.toContain` only for genuine membership on non-deterministic content (array membership, a string carrying a runtime UUID/temp path). If the whole output embeds a machine-specific path/UUID it isn't snapshot-safe — fragment-match or assert behavior portably.
 - **Strip ANSI before snapshotting CLI output** — `isColorEnabled()` reads the ambient terminal/env (TTY, `FORCE_COLOR`, `NO_COLOR`), which differs between an interactive shell, `-u`, and CI, so a raw snapshot of colorized output is non-deterministic and flip-flops between color-coded and plain. Wrap the value in `stripAnsi(...)` (`@/services/cli/color/stripAnsi.test` in virrun) so the snapshot checks message content alone; coloring is verified separately in `colorize`/`isColorEnabled` tests. Narrow a `string | undefined` with `assert.exists(value)` before `stripAnsi(value)`.
 - **Minimize per-test setup** — shared mutable state as `let` inside `describe`, init in `beforeEach`. Mount helpers take no arguments when state is pre-initialized.
 - **Reuse utilities** — check for an existing `<helper>.test.ts` (or `<helper>.bench.ts`) beside the code under test before writing a new one. See "Test Utility Files" below.
@@ -43,13 +43,13 @@ Never repeat the same literal value or object across tests. If 2+ tests (or rows
 - **Scope correctly** — values built from `beforeAll`/`beforeEach` state stay as `let`. Runtime-independent values (UUIDs, literals, static objects) go at `describe` scope as `const`. Never regenerate a UUID per test unless each test needs a unique one.
 - **No single-use extraction** — only extract when used 2+ times. A value used once stays inline.
 - **Never re-declare a source constant/marker in a test — import it** — a test must not hardcode a literal that production code also owns: a sentinel/marker (`__VIRRUN_LOGIN_PATH_BEGIN__`), a process/cmdline marker (`VIRRUN_WSL_PROCESS_MARKER`), a temp-file prefix, a cache filename, an env-var key, etc. Import the exported constant from the source so the two can never silently drift (a copy stays green while asserting the wrong thing after the source changes). If the constant is currently module-private in the source, **export it** — promote it to the nearest `constants.ts` (matching where its siblings live, e.g. `services/exec/wsl/constants.ts`) and import it in both the source and the test. When a function takes the marker as a **parameter**, still pass the real shared constant (as `buildWslReapCommand(VIRRUN_WSL_PROCESS_MARKER)` does) rather than inventing a bespoke `"...-test-marker"` string — that keeps sibling tests consistent and the snapshot faithful to production. A genuinely test-only transform value with no production counterpart (e.g. a mock's `TEST_WSL_PREFIX`) is fine as a `*.test` constant.
-- **Canonical file & directory names (CRITICAL)** — a test file or directory name carries **no meaning**; a distinct one is pure noise and a decision nobody should have to make. There is exactly **one** canonical file name `TEST_FILENAME = "a"` and **one** canonical directory `TEST_DIR = "/a"` (both in the nearest `constants.test.ts`). Use them for **every** test path. **Never invent a custom name** — no `"marker"`, `"fork-only.txt"`, `"helper.cjs"`, `"main.cjs"`, `"index.js"`, `"dist"`, `"nested"`, `"packages"/"app"`, `"escape.txt"`, etc. This is a hard rule; diverse names are a recurring mistake.
+- **Canonical file & directory names (filesystem tests)** — a test file or directory name carries **no meaning**; a distinct one is pure noise and a decision nobody should have to make. Where a package tests real filesystem paths, it declares one canonical file name and one canonical directory in the nearest `constants.test.ts` and uses them for **every** test path — today that's `packages/virrun` (`TEST_FILENAME = "a"`, `TEST_DIR = "/a"`, in `src/services/exec/util/constants.test.ts`). **Never invent a custom name** alongside them (`"marker"`, `"helper.cjs"`, `"dist"`, `"nested"`…); diverse names are a recurring mistake. A package with no filesystem tests needs no such constants — don't introduce them speculatively.
   - **Extension only when the code under test depends on it** (module resolution, parser/format tests) — then `` `${TEST_FILENAME}.cjs` ``. Otherwise the bare `TEST_FILENAME`.
   - **A path that must be absent** (missing-file / non-existent tests) — build it from `TEST_DIR` (the canonical non-existent dir), e.g. ``join(TEST_DIR, `${TEST_FILENAME}.cjs`)``. Never a custom `"missing.cjs"`.
   - **File content** follows the string-value convention (`""` base, `" "` for a differing value) — never a custom word like `"x"` or `"scratch"`.
   - **When two distinct paths genuinely must coexist** (e.g. a module and the dependency it requires): reuse `TEST_FILENAME` distinguished by nesting (`` `${TEST_FILENAME}/${TEST_FILENAME}.cjs` `` required by `` `${TEST_FILENAME}.cjs` ``) — never a second semantic name. Note a **bare** file `a` and a directory `a` collide, so a flat file plus a nested dir of the same bare name cannot coexist: give the flat file an extension, or test a single nested path. Prefer splitting into separate focused tests over needing two coexisting names.
   - **Real artifacts are not fixtures** — an actual on-disk name the production code owns (`pnpm-lock.yaml`, `.gitignore`, the built `dist/index.js`, the real monorepo `packages/` dir) stays its real name (use the existing constant where one exists); only invented _test_ names get canonicalised.
-  - **Temp-dir prefixes / repo paths** consolidate into `constants.test.ts` the same way (e.g. `TEST_TEMP_DIR_PREFIX = "a-"`). Reuse across all tests; never hardcode raw path strings or diverse custom prefixes.
+  - **Temp-dir prefixes and other repeated path fragments** consolidate into `constants.test.ts` the same way. Reuse across all tests; never hardcode raw path strings or diverse custom prefixes.
 
 ## Canonical Test Values
 
@@ -247,57 +247,33 @@ afterEach(() => vi.unstubAllGlobals());
 
 Default environment is `node` — do **not** add `// @vitest-environment node`.
 
-- **tRPC router tests** (`server/trpc/routers/**/*.test.ts`) — add `// @vitest-environment nuxt` as the first line.
-- **Nuxt-dependent non-router tests** — add `// @vitest-environment nuxt` when Nuxt runtime APIs are required (e.g. `app/store/message/emoji.test.ts`).
+- **tRPC router tests need NO directive.** `createCallerFactory` is pure `@trpc/server`, and the Nuxt-dependent server composables the middleware reaches (e.g. `useIsProduction` → `useRuntimeConfig`) are mocked in `shared/test/setup.ts`. Node env is correct and much faster — don't add the directive by reflex.
+- **Add `// @vitest-environment nuxt` only when the Nuxt runtime is genuinely required** — a test using `mountSuspended`/`renderSuspended`, or importing a store/composable that calls `useNuxtApp()`/`useRouter()` at setup time. A handful of router tests carry it because they pull in such a store transitively; that's the exception, not the rule for routers.
 - **All other tests** — no directive needed.
 
 **DOM comes from the nuxt environment, not setup.ts.** The nuxt environment builds its own happy-dom `window`/`document` (and `mountSuspended` attaches to its own `#test-wrapper`), so there is **no** manual happy-dom registration — node-env tests run without a DOM. If a test touches the DOM (or imports something that does at module load), declare `// @vitest-environment nuxt`; do not reach for `window` in a node-env test. `fake-indexeddb/auto` stays a global setup file: it only assigns the IDB\* global constructors the `idb` library needs, is cheap in node, and the cache composables (`useCursorPaginationCache`/`useOffsetPaginationCache`) pull IndexedDB in transitively across many nuxt-env tests, so scoping it isn't worth the surface area.
 
 ## Bundle Size Snapshot Tests
 
-Every library package (`packages/*` except `app`) has `src/index.test.ts` with two snapshots — bundle size (`index.js`) and types size (`index.d.ts`):
+Every library package (`packages/*` except `app`) has `src/index.test.ts` asserting two `getFileSize` snapshots — bundle size (`dist/index.js`) and types size (`dist/index.d.ts`), with `getFileSize` imported from `@esposter/configuration`. **Copy the file from any sibling package** rather than writing it from scratch.
+
+- **Workflow**: create with **empty** snapshots (`toMatchInlineSnapshot()`), then `pnpm build` (the test reads compiled `dist/`) + `pnpm test --run -u` to fill them in. Re-run `-u` after any later build change.
+- **New library package**: add a `test` script (`"test": "vitest"`) and `vitest` + `@types/node` devDeps. Never add `@vitest/coverage-v8` per-package — coverage runs only from the repo root, so the provider lives in the root `package.json` alone.
+- **Default to the simple unguarded form.** Only split per-platform once you've **confirmed** the byte count differs across OSes (a large bundle where CRLF vs LF shifts the count) or CI fails on the other OS — never speculatively. Fill your own OS via `-u`; leave the other's snapshot empty for that OS's CI to populate.
+- `app` is the exception — its root suite is a `describe.todo` with `/* eslint-disable vitest/require-top-level-describe */` so CI doesn't require `packages/app/.output`.
+
+**Platform-specific tests generally** — gate with two `test.skipIf`/`describe.skipIf(process.platform …)` tests, one per platform, each with its own snapshot; never an in-test `if` branch. Only the matching OS's test runs, so neither asserts conditionally and no `vitest/no-conditional-expect` disable is needed. `process.platform` reads directly — no `isWindows` const.
 
 ```ts
-import { getFileSize } from "@esposter/configuration";
-import { resolve } from "node:path";
-import { describe, expect, test } from "vitest";
-
-const distFile = resolve(import.meta.dirname, "../dist/index.js");
-const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
-
-describe("@esposter/my-package", () => {
-  test("bundle size", () => {
-    expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.06 KB (12345 bytes)"`);
-  });
-
-  test("types size", () => {
-    expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 1.45 KB (1484 bytes)"`);
-  });
-});
+test.skipIf(process.platform !== "win32")("bundle size (Windows)", () => { ... });
+test.skipIf(process.platform === "win32")("bundle size (POSIX)", () => { ... });
 ```
-
-- Import `getFileSize` from `@esposter/configuration` (the `configuration` package itself imports it locally from `./getFileSize`).
-- **Default to the simple unguarded form above.** Only split per-platform when you have **confirmed** the byte count actually differs across OSes (e.g. a large bundle where CRLF vs LF shifts the count, as `packages/azure-functions/src/index.test.ts` does) or its CI fails on the other OS — don't split speculatively. When you do split, write **two `test.skipIf` tests** — one per platform — each with its own snapshot, rather than one test with an `if (isWindows)` branch inside:
-
-  ```ts
-  test.skipIf(process.platform !== "win32")("bundle size (Windows)", () => { ... });
-  test.skipIf(process.platform === "win32")("bundle size (POSIX)", () => { ... });
-  ```
-
-  Only the matching OS's test runs; the other is skipped, so neither asserts conditionally — **no `/* eslint-disable vitest/no-conditional-expect, vitest/no-conditional-in-test */` is needed** (the disable was only required by the old in-test `if` form; prefer `skipIf` and drop it). Fill the OS you're on via `-u`; leave the other's snapshot empty (`toMatchInlineSnapshot()`) for that OS's CI to auto-populate. This is the general convention for any platform-specific test, not just bundle size: gate with `test.skipIf`/`describe.skipIf(process.platform …)` rather than an in-test conditional — `process.platform` reads directly, so a separate `isWindows` const is unnecessary.
-
-- Run `pnpm build` in the package first (the test reads compiled `dist/index.js` + `dist/index.d.ts`).
-- Auto-fill workflow: create the test with **empty** snapshots (`toMatchInlineSnapshot()`), then `pnpm build` + `pnpm test --run -u` to let Vitest write the sizes in.
-- `pnpm test --run -u` also updates the snapshots after any later build change.
-- `app` is different — its root bundle-size suite is a `describe.todo` with `/* eslint-disable vitest/require-top-level-describe */` so CI doesn't require `packages/app/.output`.
-- To add to a new library package: add a `test` script (`"test": "vitest"`), add `vitest` + `@types/node` to `devDependencies`, create `src/index.test.ts`. Do **not** add `@vitest/coverage-v8` per-package — coverage runs only from the repo root (`pnpm coverage` → `vitest run --coverage` across all projects), so the provider lives in the root `package.json` alone.
 
 ## Running Tests
 
 - **Tests run on Windows.** The old Vitest crash (`TypeError: The argument 'filename' must be a file URL object...`) came from `@unocss/nuxt` loading during Nuxt config resolution; `configuration/modules.ts` now uses a minimal allowlist of modules under `process.env.VITEST` (no UnoCSS/PWA/security/SEO), so the full suite runs cross-platform. If a new test needs an excluded module, add it to the Vitest branch in `modules.ts`.
 - **Always use `run_in_background: true`** for `pnpm lint`, `pnpm typecheck`, and test commands.
+- **Run the full suite, not just your new file.** A green targeted run hides regressions the full parallel run catches — above all **collateral damage from shared global state**. A sweep/mutation that is safe on an isolated, serial resource (a per-key cache dir) is catastrophic on a shared, concurrent one (the global `os.tmpdir()`, a shared registry): it deletes or corrupts a live sibling test's state. Treat any "another test's temp vanished" failure as your own regression, never flakiness.
 
 ## Testing Composables with Lifecycle Hooks
 
@@ -316,6 +292,7 @@ describe(useMyComposable, () => {
 
 ## What to Test
 
+- **Audit for transitive-only coverage** — after writing the suite, ask honestly whether any branch is covered _only_ through a caller. Cover every branch of the contract including the guard clauses (the "skips non-directories" case, the no-op-when-absent case). Test a shared primitive **directly**; let its wrappers test only their unique value-add, so no branch is duplicated across primitive and wrapper.
 - **Test composables, not underlying service functions** — composable tests cover the full call chain. Only test a service directly when it has no composable wrapper.
 - **Don't repeat generic middleware tests** — shared middleware (auth, membership, permissions) is tested once; skip redundant UNAUTHORIZED/NotFound tests per procedure.
 - **Shared procedure/subscription builders: thorough once, wiring smoke per consumer** — when endpoints are config-only instantiations of a shared builder (e.g. `getRoomEventSubscription`), the builder's full behavior matrix lives in the builder's own co-located test through ONE representative endpoint; each consuming router keeps a single happy-path wiring test. Same principle as the twin-test-files rule, applied to routers.

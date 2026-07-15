@@ -37,7 +37,7 @@ Paths relative to `packages/virrun/src/`.
 
 | File                                                         | Role                                                                                          |
 | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| `models/exec/DifferentialCase.ts`                            | one corpus entry — `command` + `name` + optional per-case normalization rules                 |
+| `models/exec/differential/DifferentialCase.ts`               | one corpus entry — `command` + `name` + optional per-case normalization rules                 |
 | `models/exec/differential/NormalizationRule.ts`              | a single explicit `{ pattern, placeholder }` substitution                                     |
 | `services/exec/differential/normalizeExecResult.ts`          | applies a case's rules to stdout/stderr (exit code untouched)                                 |
 | `services/exec/differential/differentialCorpus.test.ts`      | `NODE_DIFFERENTIAL_CORPUS` (every backend) + `SHELL_DIFFERENTIAL_CORPUS` (real-exec backends) |

@@ -13,7 +13,7 @@ Sub-pages: [call view UI](/docs/esbabbler/calls/call-view) · [screenshare](/doc
 
 A call is anchored to a `callSessionsInMessage` row, not a route:
 
-- `id: text` PK — a **12-char alphanumeric token** (`createToken`, crypto-secure); the id _is_ the shareable link token.
+- `id: text` PK — a **12-char alphanumeric token** (`createId(CALL_ID_LENGTH)`, crypto-secure); the id _is_ the shareable link token.
 - `roomId` — set for room calls (unique FK → rooms, cascade); null-scoped standalone calls persist ownership on `userId` (creator).
 - The session row is the persistent 1:1 anchor per room and survives restarts; participants do not (in-memory `callSessionParticipantMap`).
 
@@ -37,7 +37,7 @@ Leave happens only on: explicit **Leave Call**, moderation (`KickFromCall`/`Kick
 ```mermaid
 sequenceDiagram
     participant A as Client (joining)
-    participant T as tRPC roomCall router
+    participant T as tRPC callSession router
     participant LK as LiveKit SFU
     participant B as Other clients
 
@@ -58,20 +58,22 @@ Every `/calls/[id]` visitor sees prejoin (verify mic/camera) first. The creator 
 
 ## Procedures
 
-All in `server/trpc/routers/room/call.ts`, registered as `roomCall`:
+All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the waiting-room procedures live in `server/trpc/routers/call/knocker.ts` and merge in under a `knocker` key:
 
-| Procedure                                                                                                                  | Auth             | Purpose                                                                              |
-| -------------------------------------------------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------ |
-| `createCall`                                                                                                               | authed           | create a standalone roomless session (`/calls`)                                      |
-| `readCallSessionId({ roomId })`                                                                                            | member           | room observer entry; returns `""` if none (never null)                               |
-| `readCallSession({ id })`                                                                                                  | authed           | standalone validation for `/calls/[id]`                                              |
-| `joinCallByRoomId({ roomId })`                                                                                             | member           | create/reuse room session; returns LiveKit connection data                           |
-| `joinCall({ id })`                                                                                                         | authed           | standalone join — creator or admitted knocker only                                   |
-| `leaveCall({ callSessionId })`                                                                                             | authed           | remove from participant map; last leaver posts the `MessageType.Call` system message |
-| `readCallParticipants({ callSessionId })`                                                                                  | authed           | initial list for observers                                                           |
-| `setMute` / `setCamera`                                                                                                    | authed           | sync state to the server map; broadcast                                              |
-| `knockCall` / `admitKnocker` / `dismissKnocker`                                                                            | authed / creator | standalone waiting room                                                              |
-| `onJoinCall` / `onLeaveCall` / `onSetMute` / `onVideoChanged` / `onKnockCall` / `onKnockerAdmitted` / `onKnockerDismissed` | authed           | subscriptions keyed by `callSessionId`                                               |
+| Procedure                                                                             | Auth               | Purpose                                                                              |
+| ------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------ |
+| `createCall`                                                                          | authed             | create a standalone roomless session (`/calls`)                                      |
+| `readCallSessionId({ roomId })`                                                       | member             | room observer entry; returns `""` if none (never null)                               |
+| `readCallSession({ id })`                                                             | authed             | standalone validation for `/calls/[id]`                                              |
+| `joinCallByRoomId({ roomId })`                                                        | member             | create/reuse room session; returns LiveKit connection data                           |
+| `joinCall({ id })`                                                                    | authed             | standalone join — creator or admitted knocker only                                   |
+| `leaveCall({ callSessionId })`                                                        | authed             | remove from participant map; last leaver posts the `MessageType.Call` system message |
+| `readCallParticipantMap({ callSessionId })`                                           | authed             | initial participant map for observers                                                |
+| `setMute` / `setCamera`                                                               | authed             | sync state to the server map; broadcast                                              |
+| `setHandRaised`                                                                       | authed / moderator | raise own hand; lowering another's needs `MuteMembers` on the call's room            |
+| `knocker.knockCall` / `knocker.admitKnocker` / `knocker.dismissKnocker`               | authed / creator   | standalone waiting room                                                              |
+| `onJoinCall` / `onLeaveCall` / `onSetMute` / `onVideoChanged` / `onHandRaisedChanged` | authed             | subscriptions keyed by `callSessionId`                                               |
+| `knocker.onKnockCall` / `knocker.onKnockerAdmitted` / `knocker.onKnockerDismissed`    | authed             | waiting-room subscriptions keyed by `callSessionId`                                  |
 
 Tokens grant `canPublishSources: [Microphone, Camera, ScreenShare, ScreenShareAudio]` with `room: callSessionId` and `metadata: { userId }`.
 
@@ -94,7 +96,8 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 | File                                                     | Role                                                     |
 | :------------------------------------------------------- | :------------------------------------------------------- |
 | `packages/db-schema/src/schema/callSessionsInMessage.ts` | session anchor table                                     |
-| `packages/app/server/trpc/routers/room/call.ts`          | all procedures                                           |
+| `packages/app/server/trpc/routers/call/index.ts`         | all call procedures (registered as `callSession`)        |
+| `packages/app/server/trpc/routers/call/knocker.ts`       | waiting-room procedures (merged under `knocker`)         |
 | `packages/app/server/services/message/call/`             | participant/knocker/admitted maps + CRUD                 |
 | `packages/app/server/api/webhooks/livekit.post.ts`       | webhook backup for join/leave                            |
 | `packages/app/app/store/message/room/call/`              | root + participant + media + knocker stores              |
@@ -105,5 +108,5 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 
 - v1 was mesh WebRTC (≤ 8 users, audio only, N² upload); LiveKit replaced it because video/screenshare make mesh bandwidth unsustainable and LiveKit removes all signaling procedures (`sendSignal`/`onSendSignal` deleted).
 - Hosting: LiveKit Cloud free tier (5,000 participant-minutes/month) now; self-hosted LiveKit on Azure Container Apps (~$5–15/month, scales to zero) when usage exceeds ~10,000 participant-minutes/month.
-- Empty-string sentinel: `readCallSessionId` and `readInviteToken` return `""`, never `null`.
+- Empty-string sentinel: `readCallSessionId` returns `""` when the room has no session, never `null`.
 - Virtual backgrounds: starter image presets via `@livekit/track-processors`; selecting a preset turns the camera on, and camera-off resets the processor.

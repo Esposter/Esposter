@@ -25,12 +25,12 @@ All member name display goes through `getDisplayName(user, roomId)` from `useUse
 
 ### Where nickname is applied
 
-| Location                          | How                                                                                                       |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Mention labels in message body    | `useMessageWithMentions(message, roomId)` — pass `() => message.partitionKey` as second arg               |
-| Member list sidebar               | `MemberListItem` via `displayName = computed(() => getDisplayName(member, room.id))`                      |
-| Role permission panel member list | `MemberPanelListItem` with `member` prop — `displayName = computed(() => getDisplayName(member, roomId))` |
-| Push notification title           | `message/index.ts` router queries `usersToRoomsInMessage.nickname` before publishing the EventGrid event  |
+| Location                       | How                                                                                                       |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| Mention labels in message body | `useMessageWithMentions(message, roomId)` — pass `() => message.partitionKey` as second arg               |
+| Member list sidebar            | `Message/Model/Member/ListItem.vue` — `displayName = computed(() => getDisplayName(member, room.id))`     |
+| Room settings member list      | `Message/Model/Room/Settings/Type/Member/ListItem.vue` — `computed(() => getDisplayName(member, roomId))` |
+| Push notification title        | `message/index.ts` router queries `usersToRoomsInMessage.nickname` before publishing the EventGrid event  |
 
 ### `||` not `??` for nickname fallback
 
@@ -119,16 +119,14 @@ Both settings dialogs share one structure and three conventions — apply them t
 
 ## Scheduled Message Jobs Architecture
 
-Scheduled messages and reminders use a two-step pattern: Postgres row + Azure Storage Queue.
+Scheduled messages and reminders use a two-step pattern: Postgres row + Azure **Service Bus** (not Storage Queue).
 
 **Flow**:
 
-1. tRPC mutation inserts a row into `scheduledMessageJobsInMessage`.
-2. Same mutation enqueues to `AzureQueue.ScheduledMessageJobs` with `visibilityTimeout = Math.min(Math.max(0, Math.ceil((runAt - now) / 1000)), 604800)`.
-3. Azure Functions queue-trigger (`ProcessScheduledMessageJob`) reads the row, re-checks permissions/room state, executes, marks `completedAt`.
+1. tRPC mutation (`server/trpc/routers/message/scheduledMessageJob.ts`) inserts a row into `scheduledMessageJobsInMessage`.
+2. Same mutation calls `enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt)` — a thin wrapper (`@esposter/db`) over `serviceBusSender.scheduleMessages(body, runAt)`. Pass `runAt` as a `Date` directly: **no clamping, no delay maths** — Service Bus takes an absolute enqueue time and delivers past-dated messages immediately.
+3. Azure Functions Service Bus queue-trigger (`ProcessScheduledMessageJob`) reads the row, re-checks `cancelledAt`/`completedAt` for idempotency, executes, marks `completedAt`. If `job.runAt` is still in the future it re-enqueues itself instead of executing.
 
-**Key constraint**: Azure Storage Queue max visibility timeout is 604800 seconds (7 days). Jobs with `runAt > 7 days` become visible early, so `ProcessScheduledMessageJob` re-checks `job.runAt` — if still in the future it re-enqueues itself with the remaining delay (`enqueueScheduledMessageJob`) instead of executing. It always verifies `cancelledAt`/`completedAt` for idempotency. No timer scan needed.
+**No timer function** — a separate polling timer is unnecessary; Service Bus scheduled delivery handles the delay.
 
-**No timer function** — a separate `EnqueueScheduledMessageJobs` polling timer is unnecessary complexity; the queue's native visibility timeout handles delay. The timer approach was removed in favour of direct enqueueing.
-
-**Azure composable** — use `useQueueClient(AzureQueue.ScheduledMessageJobs)` (from `@@/server/composables/azure/queue/useQueueClient`) in server routes and tRPC routers. `packages/azure-functions` uses its own `getQueueClient(azureQueue)` wrapper over `@esposter/db`'s `getQueueClient(connectionString, azureQueue)`.
+**Azure composable** — `useServiceBusSender(AzureQueue.ScheduledMessageJobs)` (`@@/server/composables/azure/serviceBus/useServiceBusSender`) in server routes and tRPC routers. `packages/azure-functions` uses its own `getServiceBusSender(azureQueue)` wrapper over `@esposter/db`'s `getServiceBusSender(connectionString, azureQueue)`.

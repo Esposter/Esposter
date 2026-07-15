@@ -41,7 +41,7 @@ The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus
 | `app/components/Resource/Survey/Editor.vue`    | inline SurveyJS creator Editor blade            |
 | `app/components/Resource/Survey/Responses.vue` | Responses blade (dataset table)                 |
 | `app/components/Resource/Survey/View.vue`      | public respondent renderer (`ViewComponentMap`) |
-| `app/composables/resource/useSurveyCreator.ts` | creator setup + autosave wiring                 |
+| `app/composables/survey/useSurveyCreator.ts`   | creator setup + autosave wiring                 |
 | `server/trpc/routers/survey.ts`                | resource factory + response/file procedures     |
 
 ## Notes

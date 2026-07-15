@@ -35,7 +35,7 @@ The achievement router is merged separately from the main root router to break a
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `packages/app`, except those starting with `packages/`, which are relative to the repo root.
 
 | File                                                       | Role                               |
 | ---------------------------------------------------------- | ---------------------------------- |

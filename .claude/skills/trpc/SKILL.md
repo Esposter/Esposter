@@ -41,18 +41,9 @@ readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => ctx.db.query.fri
 
 ## Client-Side Data Access — `useQuery` / `useMutation`
 
-Every **user-facing** client read/write goes through one of two primitives in `composables/shared/` (full reference: `content/docs/architecture/client-data.md`):
+Every **user-facing** client read/write goes through `useQuery` / `useMutation` (`composables/shared/`). Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it matches a documented exception — the raw call sites are deliberate, not omissions.
 
-- **`useMutation()`** — writes. Returns an executor `executeMutation(mutate, { applyOptimistic, onSuccess, onError })`: optimistic apply + rollback, staleness guarding, and an error alert. Declare **one named instance per logical action** (`executeCreateRoleMutation`, `executeDeleteRoleMutation`) — never share a counter across independent actions.
-  - **Optimistic by default** — every write applies `applyOptimistic` unless it matches a documented exception (server-generated value _is_ the result e.g. `createInvite`/`createWebhook`/`joinRoom`; optimistic-concurrency version tokens e.g. `saveResourceContent`; server-authoritative moderation `executeAdminAction`; the `createLike` PK hazard). A server-generated **id alone is not an exception** — a flat list-create the client can faithfully build AND that is visible when it fires (`createRoomCategory`) inserts a temp placeholder + reconciles in `onSuccess`, like `createMessage`. Both tests must pass: relational/server-computed rows (`createPost`, `createRole`) would flash wrong data, and off-screen creates (`scheduleMessage`, `createSearchHistory` — its list sits in a closed menu) update nothing the user sees. Those stay `onSuccess`-only. Full list in `client-data.md` → "Optimistic by default".
-- **`useQuery(query, { onSuccess })`** — one-shot **ancillary component** reads. Non-blocking background fetch → `{ data, refresh }`, error alert. Not for page-level loaders that must gate render / 404.
-
-These are **not** universal, and the raw call sites are deliberate exceptions, not omissions:
-
-- **Queries** — most reads are raw by design: cursor-pagination `useRead*` + store `readItems`/`readMoreItems` (dominant list pattern, see the vue-composable-patterns skill), `useAutoSearch`/`useCursorSearcher` search, `useReadData`, and page-level gating loaders (top-level `await` → `throw createError` / navigate). `useQuery` is the minority case.
-- **Mutations** — raw only for: fire-and-forget bookkeeping (mark-read, push-subscription registration), needs-return-value composed flows (SAS uploads), the bespoke message-send path, and the call-session lifecycle family (knock/join/leave — need return values + LiveKit teardown, `console.error`+rethrow).
-
-Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it matches a documented exception in `client-data.md`; otherwise use the primitive.
+Canonical reference (primitive semantics, "Optimistic by default", and the full exception list): `content/docs/architecture/client-data.md`.
 
 ## Client-Side Calling Conventions
 
@@ -70,17 +61,18 @@ Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it ma
 
 Routers nested by domain. Root merger: `server/trpc/routers/index.ts`.
 
-| Client path                  | Router file                     |
-| ---------------------------- | ------------------------------- |
-| `trpc.callSession.*`         | `routers/call/index.ts`         |
-| `trpc.callSession.knocker.*` | `routers/call/knocker.ts`       |
-| `trpc.message.*`             | `routers/message/index.ts`      |
-| `trpc.message.emoji.*`       | `routers/message/emoji.ts`      |
-| `trpc.message.moderation.*`  | `routers/message/moderation.ts` |
-| `trpc.room.*`                | `routers/room/index.ts`         |
-| `trpc.room.category.*`       | `routers/room/category.ts`      |
-| `trpc.room.directMessage.*`  | `routers/room/directMessage.ts` |
-| `trpc.room.filter.*`         | `routers/room/filter.ts`        |
+| Client path                          | Router file                              |
+| ------------------------------------ | ---------------------------------------- |
+| `trpc.callSession.*`                 | `routers/call/index.ts`                  |
+| `trpc.callSession.knocker.*`         | `routers/call/knocker.ts`                |
+| `trpc.message.*`                     | `routers/message/index.ts`               |
+| `trpc.message.emoji.*`               | `routers/message/emoji.ts`               |
+| `trpc.message.moderation.*`          | `routers/message/moderation.ts`          |
+| `trpc.message.scheduledMessageJob.*` | `routers/message/scheduledMessageJob.ts` |
+| `trpc.room.*`                        | `routers/room/index.ts`                  |
+| `trpc.room.category.*`               | `routers/room/category.ts`               |
+| `trpc.room.directMessage.*`          | `routers/room/directMessage.ts`          |
+| `trpc.room.filter.*`                 | `routers/room/filter.ts`                 |
 
 Exception: `achievement` merged separately to avoid circular dep with the router that fires achievement events.
 
@@ -114,8 +106,10 @@ router({ callSession: callRouter, ... }) // knocker already nested inside callRo
 Three builders in `server/trpc/procedure/room/`:
 
 - `getMemberProcedure(schema, roomIdKey)` — verifies caller is a room member; standard message/room operations.
-- `getPermissionsProcedure(permission, schema, roomIdKey)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin.
-- `getOwnerProcedure` — verifies caller owns the room; destructive room operations.
+- `getPermissionsProcedure(permission, schema, roomIdKey, rateLimiterType?)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin.
+- `getOwnerProcedure(schema, roomIdKey, rateLimiterType?)` — verifies caller owns the room; destructive room operations.
+
+`rateLimiterType` defaults to `RateLimiterType.Standard`; pass another only to opt into a different limiter.
 
 ## Room-Scoped Subscriptions — `getRoomEventSubscription`
 
@@ -291,15 +285,4 @@ In tests, `Promise.all([iterator.next(), mutation()])` exposes this: the mutatio
   let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
   ```
 
-- **Name callers with domain prefix when multiple exist** — `roomCaller`, `directMessageCaller`, `knockerCaller`; never generic `caller`.
-- **Always create test resources via `caller.method()`** — never insert rows directly into the DB. Direct insertion bypasses application logic (auth, business rules, cascades), making the tested flow differ from the real one. If a resource belongs to another router, create a second caller via `createCallerFactory(otherRouter)`.
-- **Use `assert(value)` to narrow before accessing** — never `!`. After `const [row] = await ...returning()`, call `assert(row)`.
-- **Never use bare `.rejects.toThrow()`** — it passes for any error. Always assert the specific error:
-  - `.rejects.toThrowErrorMatchingInlineSnapshot(...)` for the full message. Use a template literal when it contains runtime values (UUIDs, entity names); reconstruct computed IDs (e.g. a friendship ID from sorted UUIDs) before the `expect`:
-    ```ts
-    await expect(caller.create(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Foo, input.id).message}]`,
-    );
-    ```
-  - `.rejects.toBeInstanceOf(ErrorClass)` when only the error type matters.
-  - TRPCError snapshot format is `[TRPCError: <message>]` — the prefix comes from TRPCError's `toString()`.
+- **Caller naming, creating resources via callers not `db.insert`, and error assertions** — see the `testing` skill. Note for tRPC specifically: `toThrowErrorMatchingInlineSnapshot` is the only accepted error assertion (`toBeInstanceOf` is banned), and the TRPCError snapshot format is `[TRPCError: <message>]` — the prefix comes from TRPCError's `toString()`.

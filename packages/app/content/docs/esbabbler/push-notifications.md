@@ -59,8 +59,8 @@ The notification title uses the sender's per-room nickname when set (see [/docs/
 
 ## Key files
 
-| File                                                                        | Role                           |
-| :-------------------------------------------------------------------------- | :----------------------------- |
-| `packages/db/src/services/message/getPushSubscriptionsForMessage.ts`        | recipient filtering            |
-| `packages/azure-functions/src/functions/processPushNotification.ts`         | delivery handler               |
-| `packages/azure-functions/src/services/message/sendReminderNotification.ts` | reminder variant (direct push) |
+| File                                                                 | Role                           |
+| :------------------------------------------------------------------- | :----------------------------- |
+| `packages/db/src/services/message/getPushSubscriptionsForMessage.ts` | recipient filtering            |
+| `packages/azure-functions/src/functions/processPushNotification.ts`  | delivery handler               |
+| `packages/azure-functions/src/services/sendReminderNotification.ts`  | reminder variant (direct push) |

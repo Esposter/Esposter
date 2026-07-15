@@ -11,11 +11,15 @@ Three suggestion extensions exist in the message input: emoji, mention, and slas
 
 ### Files per suggestion feature
 
-| Concern              | Location                                                            |
-| -------------------- | ------------------------------------------------------------------- |
-| Extension composable | `app/composables/message/editor/use{Feature}Extension.ts`           |
-| Suggestion config    | `app/services/message/{feature}/{Feature}Suggestion.ts`             |
-| List component       | `app/components/Message/Model/Message/Suggestion/{Feature}List.vue` |
+Paths differ per feature — there is no single `{feature}` folder convention:
+
+| Feature       | Extension composable                                               | Suggestion config                                              |
+| ------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
+| Emoji         | `app/composables/message/editor/useEmojiExtension.ts`              | `app/services/message/emoji/EmojiSuggestion.ts`                |
+| Mention       | `app/composables/message/mentions/useMentionExtension.ts`          | `app/services/message/MentionSuggestion.ts` (no subfolder)     |
+| Slash command | `app/composables/message/slashCommand/useSlashCommandExtension.ts` | `app/services/message/slashCommands/SlashCommandSuggestion.ts` |
+
+List components are uniform: `app/components/Message/Model/Message/Suggestion/{Feature}List.vue`.
 
 ### Unique PluginKey — required for every suggestion
 
@@ -51,7 +55,7 @@ export const useEmojiExtension = () => EmojiExtension.configure({ suggestion: Em
 
 ### Never inline extensions in components
 
-`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable in `app/composables/message/editor/`, never in a `.vue` `<script setup>`. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
+`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable under `app/composables/message/` (see the table above for the per-feature folder), never in a `.vue` `<script setup>`. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
 
 Exception: an extension wiring only a couple of local component callbacks (e.g. `Editor.vue`'s Enter/Esc) may stay inline.
 

@@ -68,4 +68,4 @@ Paths relative to `packages/app`.
 ## Notes
 
 - Time away from the page is compensated by [offline progress](/docs/clicker/offline-progress): the load path awards capped production for the gap since the save was last stamped.
-- Late-game blob size shrank by an order of magnitude with normalization (19 full upgrade objects → 19 short ids).
+- Late-game blob size shrank by an order of magnitude with normalization (28 full upgrade objects → 28 short ids).

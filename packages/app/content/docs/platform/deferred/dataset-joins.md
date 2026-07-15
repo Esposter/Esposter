@@ -13,7 +13,7 @@ It is a query language's first feature wearing a trench coat — key selection, 
 
 ## Revisit when
 
-A second concrete join pair appears that no purpose-built provider reasonably covers — then prefer the File lookup-column shape (client-side, rides the existing computed-column machinery) over a server-side join engine.
+A second concrete join pair appears that no purpose-built provider reasonably covers — then prefer the Sheet lookup-column shape (client-side, rides the existing computed-column machinery) over a server-side join engine.
 
 ## Cheaper interim
 

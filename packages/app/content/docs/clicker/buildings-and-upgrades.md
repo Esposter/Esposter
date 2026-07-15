@@ -24,7 +24,7 @@ Numbers render through `formatNumberLong` (`thousand`, `million`, … built by p
 Content lives in `shared/assets/clicker/data/` as constant maps, typed by `satisfies` at compile time and covered by co-located tests for the ordering the type system can't express:
 
 - `BuildingMap` — `Building` per `BuildingId`: `basePrice`, `baseValue`, flavor text (with [compiled variables](/docs/clicker/clicker-types)).
-- `<Building>UpgradeMap` — one map per building, merged into `UpgradeMap` via `mergeObjectsStrict` (which fails the build on id collisions). An `Upgrade` has `price`, `effects: Effect[]`, `unlockConditions`, description + flavor text. Only Cursor and Grandma have upgrade lines today (including Cursor's cross-building "Thousand fingers" tier); giving the other 17 buildings one is [deferred on icon art](/docs/clicker/deferred/all-building-upgrades).
+- `<Building>UpgradeMap` — one map per building, merged into `UpgradeMap` via `mergeObjectsStrict` (which fails the build on id collisions). An `Upgrade` has `price`, `effects: Effect[]`, `unlockConditions`, description + flavor text. Only Cursor and Grandma have upgrade lines today (including Cursor's cross-building "Thousand Fingers" tier); giving the other 17 buildings one is [deferred on icon art](/docs/clicker/deferred/all-building-upgrades).
 
 ## Procedures
 
@@ -37,18 +37,18 @@ Content lives in `shared/assets/clicker/data/` as constant maps, typed by `satis
 
 Paths relative to `packages/app`.
 
-| File                                                 | Role                                                                 |
-| ---------------------------------------------------- | -------------------------------------------------------------------- |
-| `shared/assets/clicker/data/BuildingMap.ts`          | building definitions                                                 |
-| `shared/assets/clicker/data/upgrades/UpgradeMap.ts`  | merged upgrade definitions                                           |
-| `app/services/clicker/building/getBuildingPrice.ts`  | the exponential price curve                                          |
-| `app/store/clicker/building.ts`                      | prices, per-building power, stats, buying                            |
-| `app/store/clicker/upgrade.ts`                       | unlock evaluation, buying                                            |
-| `app/components/Clicker/Model/Store/List.vue`        | store panel; fetches + initializes both maps                         |
-| `app/components/Clicker/Model/Store/Header.vue`      | ×1/×10/×100 buy-quantity toggle                                      |
-| `app/components/Clicker/Model/Building/ListItem.vue` | building row with stats + Buy                                        |
-| `app/components/Clicker/Model/Upgrade/ListItem.vue`  | upgrade row with Buy                                                 |
-| `app/services/clicker/format.ts`                     | long/short number notation (`formatNumberShort` is currently unused) |
+| File                                                 | Role                                           |
+| ---------------------------------------------------- | ---------------------------------------------- |
+| `shared/assets/clicker/data/BuildingMap.ts`          | building definitions                           |
+| `shared/assets/clicker/data/upgrades/UpgradeMap.ts`  | merged upgrade definitions                     |
+| `app/services/clicker/building/getBuildingPrice.ts`  | the exponential price curve                    |
+| `app/store/clicker/building.ts`                      | prices, per-building power, stats, buying      |
+| `app/store/clicker/upgrade.ts`                       | unlock evaluation, buying                      |
+| `app/components/Clicker/Model/Store/List.vue`        | store panel; fetches + initializes both maps   |
+| `app/components/Clicker/Model/Store/Header.vue`      | ×1/×10/×100 buy-quantity toggle                |
+| `app/components/Clicker/Model/Building/ListItem.vue` | building row with stats + Buy                  |
+| `app/components/Clicker/Model/Upgrade/ListItem.vue`  | upgrade row with Buy                           |
+| `app/services/clicker/format.ts`                     | long-word number notation (`formatNumberLong`) |
 
 ## Notes
 

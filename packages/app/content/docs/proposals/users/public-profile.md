@@ -32,5 +32,5 @@ Paths relative to `packages/app`.
 
 ## Notes
 
-- Respect [feed block filtering](/docs/proposals/posts/feed-block-filtering) once it lands — a blocked author's profile stays reachable by direct navigation (same permalink semantics), but their posts stay hidden from feeds.
+- Respect [feed block filtering](/docs/posts/feed-block-filtering), which is already in place — a blocked author's profile stays reachable by direct navigation (same permalink semantics), but their posts stay hidden from feeds.
 - Comments are intentionally excluded from the profile's post list (`parentId IS NULL`) — a stream of context-free comments reads as noise; revisit with a tab if asked for.

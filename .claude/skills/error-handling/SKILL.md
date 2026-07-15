@@ -11,6 +11,8 @@ description: Esposter Error Handling Conventions — neverthrow getResult/getRes
 
 Never write `try` anywhere (no `try`/`catch`, no `try`/`finally`) in any code — components, composables, stores, server routes, tRPC routers. Use `getResult`/`getResultAsync` + chain methods; for cleanup use `withFinalizer`/`withFinalizerAsync`.
 
+Only exception: published package README examples aimed at external consumers may use plain `try`/`finally` — a doc example shouldn't force consumers to install `@esposter/shared`.
+
 ## Core Utility
 
 ```typescript
@@ -23,7 +25,7 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 ```
 
 - Always use `getResult(() => expr)` / `getResultAsync(() => asyncExpr)`. Never call `fromThrowable` or `ResultAsync.fromPromise` directly.
-- Never leave a `Result`/`ResultAsync` unhandled — finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
+- Never leave a `Result`/`ResultAsync` unhandled — enforced by `neverthrow/must-use-result` (eslint, error). Finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
 - `.isOk()` / `.isErr()` are BANNED — branch with `.match(...)` instead so both branches are handled in one place. To rethrow/cleanup on failure, `throw` inside the err handler (works in sync and async handlers alike); to fall back, `.unwrapOr(fallback)`.
 - Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`.
 - Never `void` a ResultAsync — always `await` (ResultAsync never rejects, so awaiting is safe).
@@ -212,4 +214,8 @@ await withFinalizerAsync(
 );
 ```
 
-For simple loading flags around a `ResultAsync`, set the flag after `await` (ResultAsync resolves to a `Result` instead of rejecting). `useInFlight()` handles loading state automatically — prefer it over manual `isLoading` flags.
+For simple loading flags around a `ResultAsync`, set the flag after `await` (ResultAsync resolves to a `Result` instead of rejecting).
+
+## Client Reads/Writes — Don't Hand-Roll the Chain
+
+Most user-facing client reads/writes already have the `getResultAsync` + error-alert chain built in: `useQuery` / `useMutation` (`app/composables/shared/`). Reach for those before writing your own chain around a `$trpc` call — canonical reference and the documented raw-call exceptions: `content/docs/architecture/client-data.md`.

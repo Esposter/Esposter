@@ -1,10 +1,16 @@
 import { Buildings } from "#shared/assets/clicker/data/BuildingMap";
+import { CursorUpgrades } from "#shared/assets/clicker/data/upgrades/CursorUpgradeMap";
+import { GrandmaUpgrades } from "#shared/assets/clicker/data/upgrades/GrandmaUpgradeMap";
 import { describe, expect, test } from "vitest";
 
-describe("buildingMap", () => {
-  test("sorted by price", () => {
+describe("clicker data", () => {
+  test.each([
+    ["buildingMap", Buildings.map(({ basePrice }) => basePrice)],
+    ["cursorUpgradeMap", CursorUpgrades.map(({ price }) => price)],
+    ["grandmaUpgradeMap", GrandmaUpgrades.map(({ price }) => price)],
+  ])("%s is sorted by price", (_name, prices) => {
     expect.hasAssertions();
 
-    expect(Buildings).toStrictEqual(Buildings.toSorted((a, b) => a.basePrice - b.basePrice));
+    expect(prices).toStrictEqual(prices.toSorted((a, b) => a - b));
   });
 });

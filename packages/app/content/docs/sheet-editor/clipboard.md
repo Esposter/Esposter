@@ -60,17 +60,16 @@ The anchor is preserved across Shift+click and Shift+Arrow; dragging re-anchors 
 
 All paths relative to `packages/app/app`.
 
-| File                                                                 | Role                                                         |
-| -------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `models/resource/sheet/CellRange.ts`                                 | `CellRange` interface                                        |
-| `models/resource/sheet/commands/PasteMode.ts`                        | `PasteMode` enum (`Overwrite` / `ShiftDown`)                 |
-| `models/resource/sheet/commands/PasteRangeCommand.ts`                | Overwrite paste + undo snapshot                              |
-| `services/resource/sheet/commands/parseClipboardValuesByPosition.ts` | TSV → `string[][]` (no header row)                           |
-| `services/resource/sheet/commands/copyToClipboard.ts`                | TSV + HTML `ClipboardItem` write with `writeText` fallback   |
-| `composables/resource/sheet/useCopyRangeToClipboard.ts`              | Slices the selected range and writes it to the clipboard     |
-| `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `PasteRangeCommand` or `CreateRowsCommand` |
-| `components/Resource/Sheet/Row/Table.vue`                            | Keyboard handlers; maps `shiftKey` → `PasteMode`             |
-| `store/resource/sheet/cell.ts`                                       | Anchor/focus selection state, keyboard navigation            |
+| File                                                                 | Role                                                                                                                                               |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `models/resource/sheet/commands/PasteMode.ts`                        | `PasteMode` enum (`Overwrite` / `ShiftDown`)                                                                                                       |
+| `models/resource/sheet/commands/PasteRangeCommand.ts`                | Overwrite paste + undo snapshot                                                                                                                    |
+| `services/resource/sheet/commands/parseClipboardValuesByPosition.ts` | TSV → `string[][]` (no header row)                                                                                                                 |
+| `services/resource/sheet/commands/copyToClipboard.ts`                | TSV + HTML `ClipboardItem` write with `writeText` fallback                                                                                         |
+| `composables/resource/sheet/useCopyRangeToClipboard.ts`              | Slices the selected range and writes it to the clipboard                                                                                           |
+| `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `PasteRangeCommand` or `CreateRowsCommand`                                                                                       |
+| `components/Resource/Sheet/Row/Table.vue`                            | Keyboard handlers; maps `shiftKey` → `PasteMode`                                                                                                   |
+| `store/resource/sheet/cell.ts`                                       | Anchor/focus selection state, keyboard navigation, and the `selectedCellRange` computed (normalized `rowStart`/`rowEnd`/`columnStart`/`columnEnd`) |
 
 ## Notes
 

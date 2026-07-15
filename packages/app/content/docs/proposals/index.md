@@ -18,7 +18,7 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)
 
-vue-phaserjs, clicker, and dungeons are mature with no roadmap and no open proposals.
+vue-phaserjs, clicker, dungeons, anime, and fluid-simulator are mature with no roadmap and no open proposals.
 
 Repo-wide refactor plans have no area roadmap and live here directly:
 

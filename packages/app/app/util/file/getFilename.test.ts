@@ -11,6 +11,6 @@ describe(getFilename, () => {
   test("filename", () => {
     expect.hasAssertions();
 
-    expect(getFilename("/")).toBe("");
+    expect(getFilename("a/b.txt")).toBe("b.txt");
   });
 });

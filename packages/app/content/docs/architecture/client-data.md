@@ -64,6 +64,24 @@ await executeMutation(mutate, {
 
 Both `applyOptimistic` and `onSuccess` are staleness-guarded so a superseded call leaves the newer state intact. The error alert always fires with the real `Error.message`.
 
+```mermaid
+flowchart TD
+  Action[User action] --> Apply[applyOptimistic]
+  Apply -->|writes change now| Store[(Store)]
+  Apply -->|returns rollback closure| Mutate[tRPC mutate]
+  Mutate -->|resolves| Stale{Superseded by a newer call?}
+  Mutate -->|rejects| StaleError{Superseded by a newer call?}
+  Stale -->|no| Success[onSuccess — server-authoritative result]
+  Stale -->|yes| Drop[Discard result — newer state wins]
+  Success --> Store
+  StaleError -->|no| Rollback[Run rollback closure]
+  StaleError -->|yes| Drop
+  Rollback --> Store
+  Rollback --> Alert[createAlert with the real Error.message]
+  Mutate -.->|server broadcast| Echo[Subscription echo]
+  Echo -->|idempotently re-applies same value| Store
+```
+
 Call `useMutation()` once per logical action — each instance owns its own staleness counter, so two independent actions must **never** share one. A shared instance lets a newer unrelated call supersede an older action's `onSuccess`/rollback (fire `deleteRole` while `createRole` is in flight and the created role never lands in the store). In a store with several mutations, declare one named instance per action (`executeCreateRoleMutation`, `executeDeleteRoleMutation`, …); a single flow that branches into two tRPC calls (create-or-update save) correctly shares one instance, because its successive calls do supersede each other.
 
 **Placeholder creates instantiate their executor _inside_ the action, one per call** (`createRoomCategory`). Each call owns a distinct placeholder object, so successive creates are independent — they must never supersede each other. With a shared store-level instance, a second create marks the first stale and skips its `onSuccess`, stranding a temp-id placeholder for a row that exists server-side under a different id (a later rename/delete then 404s). Superseding is only correct when the later call targets the _same_ state as the earlier one.

@@ -13,10 +13,10 @@ Everything runs on the existing server-test stack ([server testing](/docs/archit
 
 One concrete real-world case anchors everything — **a café owner running a customer feedback drive**:
 
-1. Imports `customers.csv` into a **File** (name + email columns).
+1. Imports `customers.csv` into a **Sheet** (name + email columns).
 2. Authors a feedback **Survey**, sets it **Invited** mode, publishes it.
 3. Authors an invite **Email** bound to the customers dataset with a survey invite block.
-4. Creates a **Program** binding audience (customers File, key column `email`) + email + survey, generates invites, exports tokened HTML (delivery is manual for now).
+4. Creates a **Program** binding audience (customers Sheet, key column `email`) + email + survey, generates invites, exports tokened HTML (delivery is manual for now).
 5. Customers open `/view/survey/{id}?t={token}` and respond; one token is reused, one is forged, one customer never responds.
 6. The owner checks the **Status** — 2 of 3 responded — deletes a test response, then **closes** the survey.
 7. A **Dashboard** visual binds the `ProgramStatus` dataset (response rate), and the owner publishes the dashboard; view analytics count the public reads.

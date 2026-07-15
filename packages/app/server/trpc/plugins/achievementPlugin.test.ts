@@ -33,7 +33,7 @@ describe("achievementPlugin", () => {
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
     // The plugin reaches the database only through insert upserts, and the mutation itself saves to blob storage
     vi.spyOn(mockContext.db, "insert").mockImplementation(() => {
-      throw new Error("");
+      throw new Error("Database insert failed");
     });
     const clickerSave = new ClickerSave();
     await caller.clicker.saveClicker(clickerSave);

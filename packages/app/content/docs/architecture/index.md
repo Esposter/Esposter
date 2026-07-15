@@ -24,4 +24,5 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Server testing](/docs/architecture/server-testing)                                       | tRPC router test wiring — in-memory DB, mocked Azure services, controlled auth session   |
 | [Destructive confirmation](/docs/architecture/destructive-confirmation)                   | One shared delete dialog — StyledDeleteFormDialog + opt-in type-the-name guard           |
 | [Singleton dialogs](/docs/architecture/singleton-dialogs)                                 | Store-driven singleton dialogs — one mounted dialog per feature, never one per list item |
+| [Navigation](/docs/architecture/navigation)                                               | NuxtLink/navigateTo for every link — never a raw anchor — and instant docs routing       |
 | [Search](/docs/architecture/search)                                                       | One search stack — StyledSearchDialog palettes + useAutoSearch/useCursorSearcher         |

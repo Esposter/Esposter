@@ -50,7 +50,7 @@ The CLI is built on citty, so every command has `--help`. The bare `virrun -- <c
 
 ## Dogfooding (this repo)
 
-Esposter is the first consumer — dogfooding _is_ the test corpus, not a separate effort. The committed root `virrun.config.ts` branches win32 → `os`, else `native` ([configuration](/docs/virrun/configuration)). Read-only verification scripts (`eslint .`, `oxfmt --check`, `tsgo`, `vitest run`) carry the prefix — on win32 they get caching + isolation and never need the network. Mutating siblings (`oxfmt`, `eslint --fix`) and watch-mode `vitest` don't carry it, and network commands (`outdated:dependencies`) run native: the sandbox can't cache them and would only add the prepare-rebuild + mirror tax. `pnpm install` is never on the ladder — the os install feeds the fork snapshot, not host disk ([materialize node_modules](/docs/virrun/rejected/materialize-node-modules)).
+Esposter is the first consumer — dogfooding _is_ the test corpus, not a separate effort. The committed root `virrun.config.ts` branches win32 → `os`, else `native` ([configuration](/docs/virrun/configuration)). Read-only verification scripts (`eslint .`, `oxfmt --check`, `tsgo`, `vitest run`) carry the prefix — on win32 they get caching + isolation and never need the network. The mutating dev-loop siblings (`format` → `oxfmt`, `lint:fix` → `oxlint --fix`/`eslint --fix`) carry it too, wrapping each underlying step so their edits flow back to the host ([write-back](/docs/virrun/write-back)). Watch-mode `watch:packages` and network commands (`outdated:dependencies`) run native: the sandbox can't cache them and would only add the prepare-rebuild + mirror tax. `pnpm install` is never on the ladder — the os install feeds the fork snapshot, not host disk ([materialize node_modules](/docs/virrun/rejected/materialize-node-modules)).
 
 ## Key files
 
@@ -61,7 +61,7 @@ Paths relative to `packages/virrun/src/`.
 | `services/cli/` (citty commands)                       | `run`/`exec`/`warm`/`init`/`cache`/`doctor` subcommands |
 | `services/cli/doctor/probeOsBackendChecks.ts`          | the per-prerequisite doctor probes                      |
 | `services/configuration/resolveVirrunConfiguration.ts` | config discovery + loading (unconfig)                   |
-| `services/util/isVirrunEnabled.ts`                     | reads the injected `VIRRUN=true` signal                 |
+| `services/configuration/isVirrunEnabled.ts`            | reads the injected `VIRRUN=true` signal                 |
 
 ## Notes
 

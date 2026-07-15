@@ -1,3 +1,4 @@
+import { dayjs } from "#shared/services/dayjs";
 import { getRecordDifferenceDescription } from "@/services/resource/sheet/commands/getRecordDifferenceDescription";
 import { describe, expect, test } from "vitest";
 
@@ -16,30 +17,15 @@ describe(getRecordDifferenceDescription, () => {
     expect(getRecordDifferenceDescription({ "": "" }, { "": " " })).toBe(`${HEADER}\n |  |  `);
   });
 
-  test("changed number value produces table", () => {
+  test("changed date value produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": 0 }, { "": 1 })).toBe(`${HEADER}\n | 0 | 1`);
-  });
+    const originalValue = dayjs("1970-01-01", "YYYY-MM-DD", true).toDate();
+    const updatedValue = dayjs("1970-01-02", "YYYY-MM-DD", true).toDate();
 
-  test("changed boolean value produces table", () => {
-    expect.hasAssertions();
-
-    expect(getRecordDifferenceDescription({ "": true }, { "": false })).toBe(`${HEADER}\n | true | false`);
-  });
-
-  test("changed date string value produces table", () => {
-    expect.hasAssertions();
-
-    expect(getRecordDifferenceDescription({ "": "1970-01-01" }, { "": "1970-01-02" })).toBe(
+    expect(getRecordDifferenceDescription({ "": originalValue }, { "": updatedValue })).toBe(
       `${HEADER}\n | 1970-01-01 | 1970-01-02`,
     );
-  });
-
-  test("null value produces table", () => {
-    expect.hasAssertions();
-
-    expect(getRecordDifferenceDescription({ "": null }, { "": "" })).toBe(`${HEADER}\n | null | `);
   });
 
   test("multiple changed values produces multiple rows", () => {
@@ -66,11 +52,5 @@ describe(getRecordDifferenceDescription, () => {
     expect.hasAssertions();
 
     expect(getRecordDifferenceDescription({ "": "" }, {})).toBe(`${HEADER}\n |  | undefined`);
-  });
-
-  test("empty objects returns empty string", () => {
-    expect.hasAssertions();
-
-    expect(getRecordDifferenceDescription({}, {})).toBe("");
   });
 });

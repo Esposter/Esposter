@@ -5,7 +5,7 @@ description: A rich-text document resource type on the existing Tiptap dependenc
 
 # Note Resource
 
-The suite has a spreadsheet (File), a form (Survey), a site builder (Webpage), a BI canvas (Dashboard), a diagram (Flowchart), and an email — but no plain **document**. A Note resource type fills the most common everyday artifact: meeting notes, a spec, a README-style page — authored in Tiptap (already a dependency, powering the messaging editor), shareable via the standard publish flow.
+The suite has a spreadsheet (Sheet), a form (Survey), a site builder (Webpage), a BI canvas (Dashboard), a diagram (Flowchart), and an email — but no plain **document**. A Note resource type fills the most common everyday artifact: meeting notes, a spec, a README-style page — authored in Tiptap (already a dependency, powering the messaging editor), shareable via the standard publish flow.
 
 ## Scope
 

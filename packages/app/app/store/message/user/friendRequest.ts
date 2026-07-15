@@ -22,7 +22,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const sentFriendRequests = computed(() =>
     friendRequests.value.filter((friendRequest) => friendRequest.senderId === userId.value),
   );
-  // createFriendRequest already dedups by id, so a repeated echo delivery is idempotent without a manual guard
+  // CreateFriendRequest already dedups by id, so a repeated echo delivery is idempotent without a manual guard
   const { createFriendRequest: storeCreateFriendRequest } = createOperationData(
     friendRequests,
     ["id"],

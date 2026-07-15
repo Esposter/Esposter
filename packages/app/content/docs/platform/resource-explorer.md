@@ -45,7 +45,7 @@ flowchart LR
 
   subgraph bladepage [Resource page]
     MENU["Blade nav"] --> OV["Overview<br/>Essentials + command bar:<br/>rename · delete · publish* · import/export*"]
-    MENU --> TB["Type blades<br/>File: Data · Settings<br/>Survey: Editor · Responses<br/>TodoList: Items · Calendar<br/>others: Editor (inline)"]
+    MENU --> TB["Type blades<br/>Sheet: Data · Settings<br/>Survey: Editor · Responses<br/>TodoList: Items · Calendar<br/>others: Editor (inline)"]
   end
 
   RES --> bladepage
@@ -80,7 +80,7 @@ Azure-portal-faithful **two flex boxes** on one surface (deliberately simple —
 │ « Resources   │ 📄 Q3 Report | Overview   [Rename][Delete] [✕] │  ← blade box header (type + name)
 │ ───────────── ├───────────────┬──────────────────────────────┤
 │ 📄 Q3 Report  │ ▸ Overview     │  Essentials                  │
-│ 📊 Sales      │   Data         │   Type     File              │
+│ 📊 Sales      │   Data         │   Type     Sheet             │
 │ 🌐 Landing…   │   Settings     │   Created  … ago  Updated 2h │
 └───────────────┴───────────────┴──────────────────────────────┘
    list box (collapsible)         blade box (flex-1, owns the divider)
@@ -106,11 +106,11 @@ flowchart LR
 
 ### Blades
 
-The blade nav's built-in slugs come from the `ResourceBladeTypes` set (enum order **Overview** first, then **Editor** — `sort-enums` disabled so the enum stays the single ordered source of truth), followed by the type's own blades from `ResourceBladeDefinitionMap`. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `BladeOutlet` renders it under `<ClientOnly><Suspense>` (VueFlow/GrapesJS can't SSR, and GrapesJS uses async setup). Blade-only types (File, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
+The blade nav's built-in slugs come from the `ResourceBladeTypes` set (enum order **Overview** first, then **Editor** — `sort-enums` disabled so the enum stays the single ordered source of truth), followed by the type's own blades from `ResourceBladeDefinitionMap`. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `BladeOutlet` renders it under `<ClientOnly><Suspense>` (VueFlow/GrapesJS can't SSR, and GrapesJS uses async setup). Blade-only types (Sheet, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
 
 | Type      | Blades after Overview                                        |
 | --------- | ------------------------------------------------------------ |
-| File      | Data (grid editor), Settings (parse configuration form)      |
+| Sheet     | Data (grid editor), Settings (parse configuration form)      |
 | Survey    | Editor (SurveyJS creator, inline), Responses (dataset table) |
 | TodoList  | Items (todo table), Calendar (FullCalendar over this list)   |
 | Dashboard | Editor (canvas incl. bind-to-data, inline)                   |
@@ -143,7 +143,7 @@ stateDiagram-v2
 
 **Update = one write path.** Settings and Data are separate blades but one content blob with one `contentVersion` — never two write paths for one artifact. Optimistic concurrency: a stale `contentVersion` rejects the save.
 
-**Linking to other resources** is the dataset capability ([/docs/architecture/datasets](/docs/architecture/datasets)), not a resource-to-resource foreign key: a consumer holds a `DatasetReference` (`{ type, id }`) and either copies (File import — one-time row copy) or references (Dashboard visual / Email merge fields — re-resolved on load via `dataset.readDataset`).
+**Linking to other resources** is the dataset capability ([/docs/architecture/datasets](/docs/architecture/datasets)), not a resource-to-resource foreign key: a consumer holds a `DatasetReference` (`{ type, id }`) and either copies (Sheet import — one-time row copy) or references (Dashboard visual / Email merge fields — re-resolved on load via `dataset.readDataset`).
 
 **Delete.** `deleteResource` removes the row, the `resource_publications` row (if any), and the whole `{id}/` blob directory — identical for every type. Because links are bare `DatasetReference` ids (not FKs), deleting a source leaves consumers' stored references dangling; the consumer re-resolves on load and fails/returns empty rather than cascading. Published snapshots are unaffected (they baked data in at publish time). Surfacing a "source no longer available" state is deferred ([dangling dataset references](/docs/platform/deferred/dangling-dataset-references)).
 

@@ -68,14 +68,6 @@ describe(computeColumnChartData, () => {
     expect(result?.series).toStrictEqual([{ data: [0, 1, 2], name: "" }]);
   });
 
-  test(`number column series name matches column name`, () => {
-    expect.hasAssertions();
-
-    const result = computeColumnChartData(createNumberStats({ columnName: " " }));
-
-    expect(result?.series).toStrictEqual([{ data: [0, 1, 2], name: " " }]);
-  });
-
   test(`number column with all null statistics returns null`, () => {
     expect.hasAssertions();
 

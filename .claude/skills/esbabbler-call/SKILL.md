@@ -1,6 +1,6 @@
 ---
 name: esbabbler-call
-description: Esposter messaging calls (esbabbler) implementation — call session architecture, standalone vs room calls, token generation, call lifecycle/leave boundaries, client call stores, participant Map design, RoomPermission bits, AdminActionType, and the knock/admit lobby. Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages).
+description: Esposter messaging calls (esbabbler) implementation — call session architecture, standalone vs room calls, random id generation, call lifecycle/leave boundaries, client call stores, participant Map design, RoomPermission bits, AdminActionType, and the knock/admit lobby. Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages).
 ---
 
 # Esbabbler Calls — Implementation
@@ -16,15 +16,15 @@ Calls build on `callSessionsInMessage` (Postgres) + ephemeral in-memory maps. Th
 | `callAdmittedParticipantMap` (in-memory) | `Map<callSessionId, Set<sessionId>>`. One-time standalone waiting-room admissions. Consumed by `joinCall({ id })`.                                                                                                       |
 | `callStartTimeMap` (in-memory)           | `Map<callSessionId, Date>`. Tracks call start for duration calculation.                                                                                                                                                  |
 
-## Token vs code terminology
+## Random id terminology
 
-All short random codes are **tokens**:
+Short random codes are always the row's `id` — never a separate `token`/`code` column:
 
-- `invitesInMessage.token` (length 8) — invite link token
-- `callSessionsInMessage.id` (length 12) — the `id` IS the shareable call/meeting link token (no separate `token` field)
-- `createToken(length)` from `#shared/util/math/random/createToken` — the single generator (uses `crypto.getRandomValues`)
+- `invitesInMessage.id` (`INVITE_ID_LENGTH` = 8) — the invite link code
+- `callSessionsInMessage.id` (`CALL_ID_LENGTH` = 12) — the shareable call/meeting link
+- `createId(length)` from `#shared/util/math/random/createId` — the single generator (uses `crypto.getRandomValues`)
 
-Never use `code`, `createCode`, or `CODE_LENGTH` — old names, deleted.
+Never use `token`, `code`, `createToken`, `createCode`, or `*_TOKEN_LENGTH` — old names, deleted.
 
 ## Standalone vs room calls
 
@@ -45,7 +45,7 @@ Never use `code`, `createCode`, or `CODE_LENGTH` — old names, deleted.
 1. **Room entry**: `readCallSessionId({ roomId })` → reads `callSessionsInMessage`, returns `id` (`""` if none). Called by `useCallSubscribables` on viewed-room change; subscriptions skipped when `""`.
 2. **Join via room**: `joinCallByRoomId({ roomId })` → membership required → creates session row if none (3-retry upsert inline) → returns `{ callSessionId, participants, livekitUrl, livekitToken }`.
 3. **Join via id**: `joinCall({ id })` → auth only → finds **standalone** session by id → allows creator or admitted session → same join flow.
-4. **Subscriptions** (`onJoinCall`, `onLeaveCall`, `onSetMute`, `onVideoChanged`) take `callSessionId` (not `roomId`); auth only — caller must have obtained the `callSessionId` through an authenticated call.
+4. **Subscriptions** (`onHandRaisedChanged`, `onJoinCall`, `onLeaveCall`, `onSetMute`, `onVideoChanged`) take `callSessionId` (not `roomId`); auth only — caller must have obtained the `callSessionId` through an authenticated call.
 5. **Leave**: `leaveCall({ callSessionId })`. Throws `NOT_FOUND` if caller not a participant. On last participant leaving: writes call duration as `MessageType.Call` system message to the room.
 
 ## Call leave boundaries
@@ -97,7 +97,7 @@ const childMap = computed(() => parentMap.value.get(parentId.value) ?? new Map<s
 v-for="entity of childMap.values()"
 ```
 
-`useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
+`useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isPoppedOut`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `participantVolumePercentageMap`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
 
 `useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`, `setActiveDevice`. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers call `room.switchActiveDevice` to restart the live track. The store keeps no `selectedAudioInputDeviceId`-style refs. See `packages/app/content/docs/esbabbler/voice-video.md` (Device selection).
 
@@ -171,4 +171,4 @@ Scope: standalone calls only. Room calls stay gated by room membership/RBAC.
 - `admitKnocker` / `dismissKnocker` — called by any participant; `admitKnocker` adds a one-time session admission in `callAdmittedParticipantMap`, then emits `onKnockerAdmitted` to the knocker.
 - `/calls/[id]` states: `idle` (pre-join) → `knocking` (waiting overlay) → `joined` (full CallView).
 - Creator (`callSessionsInMessage.userId`) skips straight to `joined`; everyone else must be admitted.
-- `JoinNotice.vue` shows "Let In" / "Dismiss" per knocker.
+- `Message/Content/Call/JoinNotice/Index.vue` shows "Let In" / "Dismiss" per knocker.

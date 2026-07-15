@@ -31,7 +31,7 @@ Reddit-style voting: each user holds at most one like per post with `value ∈ {
 
 ## Key files
 
-Paths relative to `packages/app`.
+Paths relative to `packages/app`, except those starting with `packages/`, which are relative to the repo root.
 
 | File                                                       | Role                                 |
 | ---------------------------------------------------------- | ------------------------------------ |

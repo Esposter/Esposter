@@ -26,7 +26,7 @@ The fixture boots one game per suite (`beforeAll`) and destroys it in `afterAll`
 
 - **Lifecycle hooks** — each of `onInit`, `onPreload`, `onCreate`, `onUpdate`, `onNextTick`, `onShutdown` fires at the right phase and the right number of times; handlers registered for one scene do not fire when another scene advances.
 - **`useInitializeGameObject`** — object creation, initial SetterMap application, reactive setter updates, parent container insertion, destroy-on-unmount, and the `immediate` flag (creator runs before `onCreate`, used for mid-game spawns).
-- **Components** — `Scene` (event order `@init` → `@preload` → `@create`, external `@shutdown`), `Sprite`, `Container` (slot child gets a `parentContainer`), `Text` (merges `useTextStore` default style), `Tilemap` (key change destroys and recreates), `PathFollower`, `Arc`.
+- **Components** — `Scene` (event order `@init` → `@preload` → `@create`, external `@shutdown`), `Container` (slot child gets a `parentContainer`), `Text` (merges `useTextStore` default style), `Tilemap` (key change destroys and recreates). `Sprite` has no suite of its own — it is the vehicle the `Container` and `useInitializeGameObject` tests mount, so it is covered indirectly.
 - **Store integration** — `useCameraStore` fades gate `useInputStore.isInputActive`; `usePhaserStore` scene switching and parallel scene launch/removal — all against the real headless scene.
 - **Utilities** — `pushGameObject` depth-sorted insertion.
 

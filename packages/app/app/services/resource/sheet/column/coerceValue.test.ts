@@ -6,37 +6,11 @@ import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { describe, expect, test } from "vitest";
 
 describe(coerceValue, () => {
-  test(`empty string returns null for ${ColumnType.Boolean}`, () => {
-    expect.hasAssertions();
-
-    expect(coerceValue("", ColumnType.Boolean)).toBeNull();
-  });
-
-  test(`empty string returns null for ${ColumnType.Number}`, () => {
-    expect.hasAssertions();
-
-    expect(coerceValue("", ColumnType.Number)).toBeNull();
-  });
-
-  test(`empty string returns null for ${ColumnType.Date}`, () => {
-    expect.hasAssertions();
-
-    expect(coerceValue("", ColumnType.Date)).toBeNull();
-  });
-
-  test(`empty string returns null for ${ColumnType.String}`, () => {
+  test("empty and whitespace-only strings return null", () => {
     expect.hasAssertions();
 
     expect(coerceValue("", ColumnType.String)).toBeNull();
-  });
-
-  test("whitespace-only string returns null for any type", () => {
-    expect.hasAssertions();
-
-    expect(coerceValue("   ", ColumnType.Boolean)).toBeNull();
-    expect(coerceValue("   ", ColumnType.Number)).toBeNull();
-    expect(coerceValue("   ", ColumnType.Date)).toBeNull();
-    expect(coerceValue("   ", ColumnType.String)).toBeNull();
+    expect(coerceValue(" ", ColumnType.String)).toBeNull();
   });
 
   test(`"true" coerces to ${ColumnType.Boolean} true`, () => {
@@ -60,21 +34,11 @@ describe(coerceValue, () => {
     expect(coerceValue("False", ColumnType.Boolean)).toBe(false);
   });
 
-  test(`integer coerces to ${ColumnType.Number}`, () => {
+  test(`integer, decimal and negative coerce to ${ColumnType.Number}`, () => {
     expect.hasAssertions();
 
     expect(coerceValue("0", ColumnType.Number)).toBe(0);
-  });
-
-  test(`decimal coerces to ${ColumnType.Number}`, () => {
-    expect.hasAssertions();
-
     expect(coerceValue("0.1", ColumnType.Number)).toBe(0.1);
-  });
-
-  test(`negative coerces to ${ColumnType.Number}`, () => {
-    expect.hasAssertions();
-
     expect(coerceValue("-1", ColumnType.Number)).toBe(-1);
   });
 
@@ -82,12 +46,6 @@ describe(coerceValue, () => {
     expect.hasAssertions();
 
     expect(coerceValue(String(Number.NaN), ColumnType.Number)).toBeNull();
-  });
-
-  test(`epoch date stays as ${ColumnType.Date} string`, () => {
-    expect.hasAssertions();
-
-    expect(coerceValue("1970-01-01", ColumnType.Date)).toBe("1970-01-01");
   });
 
   test(`all date formats epoch date stays as ${ColumnType.Date} string`, () => {

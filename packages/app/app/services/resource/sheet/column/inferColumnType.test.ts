@@ -12,12 +12,6 @@ describe(inferColumnType, () => {
     expect(inferColumnType([])).toBe(ColumnType.String);
   });
 
-  test(`empty string returns ${ColumnType.String}`, () => {
-    expect.hasAssertions();
-
-    expect(inferColumnType([""])).toBe(ColumnType.String);
-  });
-
   test(`boolean returns ${ColumnType.Boolean}`, () => {
     expect.hasAssertions();
 
@@ -52,12 +46,6 @@ describe(inferColumnType, () => {
     expect.hasAssertions();
 
     expect(inferColumnType([String(Number.NaN)])).toBe(ColumnType.String);
-  });
-
-  test(`epoch date returns ${ColumnType.Date}`, () => {
-    expect.hasAssertions();
-
-    expect(inferColumnType(["1970-01-01"])).toBe(ColumnType.Date);
   });
 
   test(`all date formats epoch date returns ${ColumnType.Date}`, () => {

@@ -41,7 +41,7 @@ Two internal maps, both keyed `roomId → inner map`, deliberately split for pri
 
 ## Procedures
 
-The old `readUsersToRooms` returned all members' full rows, leaking private fields (notificationType, lastMessageAt, isHidden) to every room member. It is replaced by two focused procedures:
+Two focused procedures keep each member's private fields (notificationType, lastMessageAt, isHidden) to themselves:
 
 | Procedure            | Input                   | Returns                          | Who                |
 | :------------------- | :---------------------- | :------------------------------- | :----------------- |
@@ -56,11 +56,11 @@ Room settings → **My Profile** tab (visible to all members, no permission requ
 
 ## Key files
 
-| File                                                                    | Role                                   |
-| :---------------------------------------------------------------------- | :------------------------------------- |
-| `packages/app/app/store/message/room/userToRoom.ts`                     | `useUserToRoomStore`, `getDisplayName` |
-| `packages/app/app/composables/message/useMessageWithMentions.ts`        | mention label resolution               |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/Profile/` | My Profile tab + nickname field        |
+| File                                                                      | Role                                   |
+| :------------------------------------------------------------------------ | :------------------------------------- |
+| `packages/app/app/store/message/room/userToRoom.ts`                       | `useUserToRoomStore`, `getDisplayName` |
+| `packages/app/app/composables/message/mentions/useMessageWithMentions.ts` | mention label resolution               |
+| `packages/app/app/components/Message/Model/Room/Settings/Type/Profile/`   | My Profile tab + nickname field        |
 
 ## Notes
 

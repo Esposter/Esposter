@@ -12,56 +12,44 @@ describe(formatValue, () => {
     expect(formatValue(null, DateFormat["YYYY-MM-DD"])).toBe("");
   });
 
-  describe(BooleanFormat.TrueFalse, () => {
-    test("formats boolean as true/false", () => {
-      expect.hasAssertions();
-      expect(formatValue(true, BooleanFormat.TrueFalse)).toBe("true");
-      expect(formatValue(false, BooleanFormat.TrueFalse)).toBe("false");
-    });
+  test(`formats boolean as ${BooleanFormat.TrueFalse}`, () => {
+    expect.hasAssertions();
+    expect(formatValue(true, BooleanFormat.TrueFalse)).toBe("true");
+    expect(formatValue(false, BooleanFormat.TrueFalse)).toBe("false");
   });
 
-  describe(BooleanFormat.YesNo, () => {
-    test("formats boolean as Yes/No", () => {
-      expect.hasAssertions();
-      expect(formatValue(true, BooleanFormat.YesNo)).toBe("Yes");
-      expect(formatValue(false, BooleanFormat.YesNo)).toBe("No");
-    });
+  test(`formats boolean as ${BooleanFormat.YesNo}`, () => {
+    expect.hasAssertions();
+    expect(formatValue(true, BooleanFormat.YesNo)).toBe("Yes");
+    expect(formatValue(false, BooleanFormat.YesNo)).toBe("No");
   });
 
-  describe(BooleanFormat.OneZero, () => {
-    test("formats boolean as 1/0", () => {
-      expect.hasAssertions();
-      expect(formatValue(true, BooleanFormat.OneZero)).toBe("1");
-      expect(formatValue(false, BooleanFormat.OneZero)).toBe("0");
-    });
+  test(`formats boolean as ${BooleanFormat.OneZero}`, () => {
+    expect.hasAssertions();
+    expect(formatValue(true, BooleanFormat.OneZero)).toBe("1");
+    expect(formatValue(false, BooleanFormat.OneZero)).toBe("0");
   });
 
-  describe(NumberFormat.Plain, () => {
-    test("formats number as plain string", () => {
-      expect.hasAssertions();
-      expect(formatValue(0, NumberFormat.Plain)).toBe("0");
-      expect(formatValue(0.1, NumberFormat.Plain)).toBe("0.1");
-      expect(formatValue(-1, NumberFormat.Plain)).toBe("-1");
-    });
+  test(`formats number as ${NumberFormat.Plain}`, () => {
+    expect.hasAssertions();
+    expect(formatValue(0, NumberFormat.Plain)).toBe("0");
+    expect(formatValue(0.1, NumberFormat.Plain)).toBe("0.1");
+    expect(formatValue(-1, NumberFormat.Plain)).toBe("-1");
   });
 
-  describe(NumberFormat.Scientific, () => {
-    test("formats number in scientific notation", () => {
-      expect.hasAssertions();
-      expect(formatValue(0, NumberFormat.Scientific)).toBe("0e+0");
-    });
+  test(`formats number as ${NumberFormat.Scientific}`, () => {
+    expect.hasAssertions();
+    expect(formatValue(0, NumberFormat.Scientific)).toBe("0e+0");
   });
 
-  describe(DateFormat["YYYY-MM-DD"], () => {
-    test("formats date string using dayjs", () => {
-      expect.hasAssertions();
-      expect(formatValue("1970-01-01", DateFormat["YYYY-MM-DD"])).toBe("1970-01-01");
-    });
+  test(`formats date string as ${DateFormat["YYYY-MM-DD"]}`, () => {
+    expect.hasAssertions();
+    expect(formatValue("1970-01-01", DateFormat["YYYY-MM-DD"])).toBe("1970-01-01");
+  });
 
-    test("returns raw string for invalid date string", () => {
-      expect.hasAssertions();
-      expect(formatValue("not-a-date", DateFormat["YYYY-MM-DD"])).toBe("not-a-date");
-    });
+  test("returns raw string for invalid date string", () => {
+    expect.hasAssertions();
+    expect(formatValue("not-a-date", DateFormat["YYYY-MM-DD"])).toBe("not-a-date");
   });
 
   test("returns empty string for non-boolean value with boolean format", () => {
