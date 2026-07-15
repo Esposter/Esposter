@@ -239,7 +239,9 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       </template>
       <template #[`item.actions`]="{ item }">
         <!-- stop keeps the row's navigateTo from firing when the menu is opened -->
-        <StyledOverflowMenu :items="getActionItems(item)" @click.stop />
+        <div @click.stop>
+          <StyledOverflowMenu :items="getActionItems(item)" />
+        </div>
       </template>
       <template #group-header="{ columns, isGroupOpen, item, toggleGroup }">
         <tr>
