@@ -49,5 +49,5 @@ flowchart LR
 
 ## Notes
 
-- Deliberately not persisted (no table, no localStorage) — the value is immediate feedback + a session trail; durable history is the activity log's job ([activity log](/docs/proposals/platform/activity-log)).
+- Deliberately not persisted (no table, no localStorage) — the value is immediate feedback + a session trail; durable history is the activity log's job ([activity log](/docs/platform/activity-log)).
 - The store no-ops on the server (`getIsServer`) so SSR renders never enqueue toasts.
