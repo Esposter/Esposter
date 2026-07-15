@@ -1,12 +1,12 @@
 ---
 name: styling
-description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, layout dimensions (no magic rem on regions; Vuetify grid, flex-1), full-page surface layout (v-sheet over bg-surface) and borders drawn exactly once, slash/fraction utilities, theme colours and text-info links, arbitrary values and CSS variables, abbreviated utilities (op-, b-, rd-), gap directionality, rem over px, and style-block rules. Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
+description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, layout dimensions (no magic rem on regions; Vuetify grid, flex-1), full-page surface layout (v-sheet over bg-surface) and borders drawn exactly once, slash/fraction utilities, theme colours and text-info links, arbitrary values and CSS variables, abbreviated utilities (op-, b-, rd-), gap directionality, the parent owning spacing (gap/padding over child margins), rem over px, and style-block rules. Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
 ---
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
 
 - Prop-based styling for ALL static styles: `<div text-red p-4>`.
-- **UnoCSS attributes go first** — before Vue/component props: `<StyledAvatar mr-3 :image="image" :name="name" />`.
+- **UnoCSS attributes go first** — before Vue/component props: `<StyledAvatar flex-none :image="image" :name="name" />`.
 - `flex` not `d-flex`.
 - `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
 - Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index unless the layout needs them. Don't add z-index defensively; rely on DOM order and positioning first.
