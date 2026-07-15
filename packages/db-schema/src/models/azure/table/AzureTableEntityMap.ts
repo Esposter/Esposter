@@ -4,6 +4,7 @@ import type { MessageMetadataEntity } from "@/models/message/metadata/MessageMet
 import type { MessageMetadataType } from "@/models/message/metadata/MessageMetadataType";
 import type { ModerationLogEntity } from "@/models/message/ModerationLogEntity";
 import type { WebhookMessageEntity } from "@/models/message/WebhookMessageEntity";
+import type { ResourceActivityEntity } from "@/models/resource/ResourceActivityEntity";
 import type { SurveyResponseEntity } from "@/models/survey/SurveyResponseEntity";
 import type { TableEntity } from "@azure/data-tables";
 
@@ -12,5 +13,6 @@ export interface AzureTableEntityMap {
   [AzureTable.MessagesAscending]: TableEntity;
   [AzureTable.MessagesMetadata]: MessageMetadataEntity<MessageMetadataType>;
   [AzureTable.ModerationLog]: ModerationLogEntity;
+  [AzureTable.ResourceActivity]: ResourceActivityEntity;
   [AzureTable.SurveyResponses]: SurveyResponseEntity;
 }
