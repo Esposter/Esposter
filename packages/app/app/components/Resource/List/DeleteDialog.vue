@@ -28,6 +28,6 @@ const isOpen = useSingletonDialog(deletingId);
       }
     "
   >
-    Delete "{{ resource.name }}"? This cannot be undone.
+    Deleting this resource cannot be undone.
   </StyledDeleteFormDialog>
 </template>

@@ -1,4 +1,4 @@
-/* oxlint-disable no-inferrable-types */
+/* oxlint-disable typescript/no-inferrable-types */
 import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { describe } from "vitest";
 // A pid far above any real one, so the OS reports no such process (ESRCH) — the shared "this owner is dead" sentinel

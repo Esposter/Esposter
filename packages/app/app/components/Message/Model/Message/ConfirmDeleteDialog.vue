@@ -36,11 +36,9 @@ const deleteMessage = async (onComplete: () => void) => {
     :card-props="{ title: 'Delete Message' }"
     @delete="deleteMessage"
   >
-    <div flex flex-col gap-4>
-      Are you sure you want to delete this message?
-      <div py-2 b-1 b-text rd-lg b-solid shadow-md>
-        <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
-      </div>
-    </div>
+    Are you sure you want to delete this message?
+    <StyledPreviewCard>
+      <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
+    </StyledPreviewCard>
   </StyledDeleteFormDialog>
 </template>

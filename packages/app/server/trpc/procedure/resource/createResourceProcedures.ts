@@ -9,11 +9,15 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
+import { deleteTablePartition } from "@@/server/services/azure/table/deleteTablePartition";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
+import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
+import { ResourceOwnedTablesMap } from "@@/server/services/resource/ResourceOwnedTablesMap";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
@@ -22,6 +26,7 @@ import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardR
 import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
+  AzureTable,
   DatabaseEntityType,
   resourcePublications,
   resources,
@@ -51,7 +56,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const { contentSchema } = ResourceDefinitionMap[type];
   // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { transformPublishedContent, transformReadContent } = (args[0] ??
+  const { transformPublicReadContent, transformPublishedContent, transformReadContent } = (args[0] ??
     {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
@@ -96,6 +101,13 @@ export const createResourceProcedures = <TType extends ResourceType>(
         );
         const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
         await deleteDirectory(containerClient, id, true);
+        // View history is the resource's own telemetry, so it dies with the resource — as does every
+        // Table partition the type owns under this id (a program's participants, and so on)
+        await Promise.all(
+          [AzureTable.ResourceViews, ...ResourceOwnedTablesMap[type]].map((tableName) =>
+            deleteTablePartition(tableName, id),
+          ),
+        );
         return deletedResource;
       },
     ),
@@ -222,11 +234,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const content = contentSchema.parse(
           jsonDateParse(await streamToText(readableStreamBody)),
         ) as ResourceContent<TType>;
-        return { content, name: resource.name };
+        // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
+        // The increment swallows its own failures — telemetry must never break serving the page
+        await incrementResourceViewCount(input);
+        if (!transformPublicReadContent) return { content, name: resource.name };
+        return { content: await transformPublicReadContent(ctx, resource, content), name: resource.name };
       }),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
       ResourcePublication | undefined
     >(({ ctx }) => ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })),
+    readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id").query<number>(({ ctx }) =>
+      readResourceViewCount(ctx.resource.id),
+    ),
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
       const { id } = ctx.resource;
       await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));

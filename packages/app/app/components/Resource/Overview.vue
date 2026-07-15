@@ -13,8 +13,22 @@ interface ResourceOverviewProps {
 }
 
 const { isLoading, publication, resource } = defineProps<ResourceOverviewProps>();
+// Essentials takes extra rows from the type (the grid owns the two columns, so a slot renders
+// A label/value pair); summary takes whole cards below the card
+defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
+const getResourceMutations = useResourceMutations();
 const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
 const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, resource.id) : undefined));
+// Best-effort telemetry, so a failed count leaves the row out rather than erroring the whole blade
+// The page is keyed by resource id, so this instance only ever describes one resource — the count is
+// Read once on mount rather than watching an id that cannot change underneath it
+const viewCount = ref<number>();
+onMounted(async () => {
+  const { readResourceViewCount } = getResourceMutations(resource.type);
+  if (!readResourceViewCount) return;
+
+  viewCount.value = await getResultAsync(() => readResourceViewCount({ id: resource.id })).unwrapOr(undefined);
+});
 const copyPublicLink = async () => {
   if (!publicUrl.value) return;
   await getResultAsync(() => window.navigator.clipboard.writeText(`${window.location.origin}${publicUrl.value}`)).match(
@@ -50,6 +64,13 @@ const copyPublicLink = async () => {
               <v-chip v-else size="small">Draft</v-chip>
             </div>
           </template>
+          <template v-if="publication && viewCount !== undefined">
+            <span op-medium-emphasis>Views</span>
+            <div flex gap-2 items-center>
+              <v-icon size="small" icon="mdi-eye-outline" />
+              <span>{{ viewCount }}</span>
+            </div>
+          </template>
           <template v-if="publicUrl">
             <span op-medium-emphasis>Public link</span>
             <div flex flex-wrap gap-2 items-center>
@@ -57,6 +78,7 @@ const copyPublicLink = async () => {
               <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
             </div>
           </template>
+          <slot name="essentials" />
         </div>
       </v-card-text>
     </v-card>

@@ -35,14 +35,18 @@ watch(modelValue, (newModelValue) => {
       <slot name="activator" :="activatorProps" />
     </template>
     <slot />
-    <v-text-field
-      v-if="confirmName"
-      v-model="confirmNameValue"
-      :label="`Type '${confirmName}' to confirm`"
-      autofocus
-      density="compact"
-      hide-details
-      mt-6
-    />
+    <template v-if="confirmName">
+      <div flex gap-x-2 items-center>
+        <v-code flex-1 truncate>{{ confirmName }}</v-code>
+        <StyledClipboardIconButton :source="confirmName" />
+      </div>
+      <v-text-field
+        v-model="confirmNameValue"
+        :label="`Type '${confirmName}' to confirm`"
+        autofocus
+        density="compact"
+        hide-details
+      />
+    </template>
   </StyledFormDialog>
 </template>

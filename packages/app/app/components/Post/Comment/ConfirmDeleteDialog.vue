@@ -25,11 +25,9 @@ const isOpen = useSingletonDialog(deletingId);
       }
     "
   >
-    <div flex flex-col gap-4>
-      Are you sure you want to delete this comment?
-      <div py-2 b-1 b-text rd-lg b-solid shadow-md>
-        <PostCommentPreview :comment />
-      </div>
-    </div>
+    Are you sure you want to delete this comment?
+    <StyledPreviewCard>
+      <PostCommentPreview :comment />
+    </StyledPreviewCard>
   </StyledDeleteFormDialog>
 </template>

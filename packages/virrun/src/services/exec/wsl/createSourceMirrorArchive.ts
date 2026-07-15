@@ -6,8 +6,9 @@ import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
 } from "@/services/exec/wsl/constants";
+import { getIsTolerableArchiveFailure } from "@/services/exec/wsl/getIsTolerableArchiveFailure";
 import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
-import { parseUnreadableArchivePaths } from "@/services/exec/wsl/parseUnreadableArchivePaths";
+import { readSourceMirrorArchiveMembers } from "@/services/exec/wsl/readSourceMirrorArchiveMembers";
 import { getResult } from "@esposter/shared";
 import { unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -25,10 +26,15 @@ import { join } from "node:path";
 // Tests exercise the real spawn on any platform. (The win32 bsdtar writer stamps a benign pax LIBARCHIVE.symlinktype
 // Header on each symlink member; the WSL GNU-tar extract quiets its "unknown keyword" warning — createWslSourceMirrorSync.)
 //
-// The copy list is consumed and unlinked here, staged under the pid-tag convention so a plan that dies mid-way leaves
-// Only reapable corpses (reapStaleSourceMirrorTemps). A failure whose stderr is entirely "couldn't open" reports
-// (Windows-locked files — tar keeps archiving the rest) returns those paths as unreadablePaths for the planner to
-// Prune, instead of one locked file hard-failing every run; any other failure throws and aborts the plan.
+// The copy list is consumed and unlinked here whatever tar's verdict, staged under the pid-tag convention so a plan
+// That dies mid-way leaves only reapable corpses (reapStaleSourceMirrorTemps). A failure tar recovered from
+// Per-entry — a Windows-locked file,
+// Or one that vanished between the manifest walk and this spawn — leaves an archive complete but for those entries, so
+// The listed paths its members lack come back as unarchivedPaths for the planner to prune, instead of a single skipped
+// File hard-failing every run. Attribution reads the archive, never the stderr, because bsdtar names no path at all on
+// A vanished entry (`tar: : Couldn't visit directory`) — the archive is the one record of what was actually captured,
+// And it answers both skip kinds with the same question. Any other failure (getIsTolerableArchiveFailure), or an
+// Archive that won't even list, throws and aborts the plan.
 export const createSourceMirrorArchive = (
   cwd: string,
   entryUnc: string,
@@ -36,25 +42,32 @@ export const createSourceMirrorArchive = (
   tag: string,
 ): SourceMirrorArchive => {
   const archiveFilename = `${VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX}${tag}`;
+  const archiveUnc = join(entryUnc, archiveFilename);
   const copyListFilename = `${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${tag}`;
   const copyListUnc = join(entryUnc, copyListFilename);
   writeFileSync(copyListUnc, joinNullDelimited(copyPaths));
-  const unreadablePaths = getResult(() =>
-    execFileHidden(
-      "tar",
-      ["-c", "--no-recursion", "--null", "-f", join(entryUnc, archiveFilename), "-C", cwd, "-T", copyListUnc],
-      { timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS },
-    ),
-  ).match(
+  const archiveResult = getResult(() =>
+    execFileHidden("tar", ["-c", "--no-recursion", "--null", "-f", archiveUnc, "-C", cwd, "-T", copyListUnc], {
+      timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS,
+    }),
+  );
+  // The list is tar's input and nothing else's, so it is spent the moment tar returns either way — unlinking
+  // Before the verdict is read keeps the aborting path from leaving the reaper a corpse it never needed
+  unlinkSync(copyListUnc);
+  const unarchivedPaths = archiveResult.match(
     (): string[] => [],
     (error) => {
       const stderr =
         error instanceof Error && "stderr" in error && typeof error.stderr === "string" ? error.stderr : "";
-      const paths = parseUnreadableArchivePaths(stderr);
-      if (paths === undefined) throw error;
-      return paths;
+      if (!getIsTolerableArchiveFailure(stderr)) throw error;
+      const members = getResult(() => readSourceMirrorArchiveMembers(archiveUnc)).match(
+        (value) => new Set(value),
+        () => {
+          throw error;
+        },
+      );
+      return copyPaths.filter((path) => !members.has(path));
     },
   );
-  unlinkSync(copyListUnc);
-  return { archiveFilename, unreadablePaths };
+  return { archiveFilename, unarchivedPaths };
 };

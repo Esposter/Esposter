@@ -30,12 +30,15 @@ useSettingsScrollSpy();
         </v-tooltip>
       </v-sheet>
     </template>
-    <!-- Timeout 0 shows the skeleton on every tab switch instead of keeping the stale panel -->
-    <Suspense v-if="component" :timeout="0">
-      <component :is="component" />
-      <template #fallback>
-        <MessageModelSettingsSkeleton />
-      </template>
-    </Suspense>
+    <!-- pb-8 gives the scroll area its bottom breathing room, which the panels used to each carry as a mb-8 -->
+    <div pb-8>
+      <!-- Timeout 0 shows the skeleton on every tab switch instead of keeping the stale panel -->
+      <Suspense v-if="component" :timeout="0">
+        <component :is="component" />
+        <template #fallback>
+          <MessageModelSettingsSkeleton />
+        </template>
+      </Suspense>
+    </div>
   </MessageModelSettingsContent>
 </template>

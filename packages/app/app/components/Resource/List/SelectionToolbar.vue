@@ -37,7 +37,7 @@ const confirmName = computed(() =>
           Delete ({{ selectedResources.length }})
         </v-btn>
       </template>
-      Delete {{ selectedLabel }}? This cannot be undone.
+      Deleting {{ selectedLabel }} cannot be undone.
       <v-list density="compact">
         <v-list-item v-for="{ id, name } of selectedResources" :key="id" :title="name" />
       </v-list>

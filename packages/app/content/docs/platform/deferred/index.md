@@ -16,7 +16,7 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Cross-resource activity feed](/docs/platform/deferred/cross-resource-activity-feed) — needs a second user-keyed table for a feed of your own actions
 - [Dangling dataset references](/docs/platform/deferred/dangling-dataset-references) — delete-time consumer rewrites need real machinery; re-resolve fails soft today
 - [Dashboard kiosk mode](/docs/platform/deferred/dashboard-kiosk-mode) — auto-refresh of baked snapshots refreshes nothing; needs live reads first
-- [Dataset joins](/docs/platform/deferred/dataset-joins) — a query language's first feature; design only after tracked invites create real demand
+- [Dataset joins](/docs/platform/deferred/dataset-joins) — a query language's first feature; design only after tracked participants create real demand
 - [Dataset row-cap pagination](/docs/platform/deferred/dataset-row-cap-pagination) — no consumer has hit the 1000-row cap
 - [Draft version history](/docs/platform/deferred/draft-version-history) — session undo + publish snapshots cover recovery today
 - [Resource collaboration](/docs/platform/deferred/document-collaboration) — ACLs + concurrent editing are each their own project; publishing covers read-sharing

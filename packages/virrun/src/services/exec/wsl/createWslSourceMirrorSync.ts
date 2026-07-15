@@ -42,8 +42,9 @@ import { join } from "node:path";
 //   Ext4 `tar -x` into `tree/` — no source file ever crosses v9fs individually. `chmod -R 777` after the extract
 //   Restores the drvfs-parity modes the old rsync propagated (bsdtar records NTFS entries mode-less as 644/755, which
 //   Would strip the exec bits repo scripts rely on inside the sandbox). Symlinks ship preserved (their relative
-//   Targets are mirrored too, so they resolve at extract) and a Windows-locked file is skipped and pruned from the
-//   Published manifest rather than fatal (createSourceMirrorArchive).
+//   Targets are mirrored too, so they resolve at extract) and a path the archive couldn't capture — Windows-locked, or
+//   Vanished since the walk — is skipped and pruned from the published manifest rather than fatal
+//   (createSourceMirrorArchive).
 // - No readable manifest (first run, corrupt file, `cache clean`) or a missing tree materializes from scratch: the
 //   Archive carries the whole manifest file set and the script clears `tree/` before extracting, which also
 //   Self-heals any mirror-vs-manifest drift; the fresh manifest is published either way. The old whole-tree
@@ -84,12 +85,13 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     const consumedPaths: string[] = [];
     let archivePath = "";
     if (copyPaths.length > 0) {
-      const { archiveFilename, unreadablePaths } = createSourceMirrorArchive(cwd, entryUnc, copyPaths, tag);
+      const { archiveFilename, unarchivedPaths } = createSourceMirrorArchive(cwd, entryUnc, copyPaths, tag);
       archivePath = `${entryPath}/${archiveFilename}`;
       consumedPaths.push(archivePath);
-      // A Windows-locked copy path is missing from the archive, so it must not be published as held: pruning keeps
-      // The manifest honest and later runs retry it until readable, instead of one locked file hard-failing the run.
-      for (const unreadablePath of unreadablePaths) delete manifest[unreadablePath];
+      // A copy path the archive lacks must not be published as held: pruning keeps the manifest honest and later runs
+      // Retry it (a locked file until readable; a vanished one is simply gone from the next walk), instead of one
+      // Skipped file hard-failing the run.
+      for (const unarchivedPath of unarchivedPaths) delete manifest[unarchivedPath];
     }
     writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(manifest));
     // The origin marker is staged host-side like the manifest and published via `mv` (atomic same-fs rename), so a

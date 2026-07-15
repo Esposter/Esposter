@@ -15,14 +15,16 @@ const { cloned: pushToTalkReleaseDelayMs } = useCloned(() => userSettings.pushTo
 </script>
 
 <template>
-  <div mb-1 mt-4 text-body-medium>Push to Talk Release Delay</div>
-  <div mb-2 text-body-small>{{ pushToTalkReleaseDelayMs }}ms</div>
-  <v-slider
-    v-model="pushToTalkReleaseDelayMs"
-    :max="MAX_PUSH_TO_TALK_RELEASE_DELAY_MS"
-    :min="MIN_PUSH_TO_TALK_RELEASE_DELAY_MS"
-    :step="10"
-    hide-details
-    @end="updateUserSettings({ pushToTalkReleaseDelayMs: $event })"
-  />
+  <div flex flex-col gap-y-1>
+    <div text-body-medium>Push to Talk Release Delay</div>
+    <div text-body-small>{{ pushToTalkReleaseDelayMs }}ms</div>
+    <v-slider
+      v-model="pushToTalkReleaseDelayMs"
+      :max="MAX_PUSH_TO_TALK_RELEASE_DELAY_MS"
+      :min="MIN_PUSH_TO_TALK_RELEASE_DELAY_MS"
+      :step="10"
+      hide-details
+      @end="updateUserSettings({ pushToTalkReleaseDelayMs: $event })"
+    />
+  </div>
 </template>

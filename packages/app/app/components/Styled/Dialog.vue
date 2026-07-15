@@ -39,7 +39,11 @@ const isFullScreen = ref(false);
       <template v-if="$slots.default">
         <v-divider />
         <v-card-text flex-1 overflow-y-auto>
-          <slot />
+          <!-- The shell owns body rhythm, so consumers pass bare children. The wrapper stays auto-height:
+            v-card-text is flex-1, so making it the flex container would stretch v-input children to fill it. -->
+          <div flex flex-col gap-y-4>
+            <slot />
+          </div>
         </v-card-text>
       </template>
       <v-divider />

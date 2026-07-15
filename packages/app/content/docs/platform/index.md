@@ -1,11 +1,11 @@
 ---
 title: Platform
-description: The Azure-portal-like Resource Explorer over sheets, surveys, todo lists, dashboards, emails, webpages, and flowcharts.
+description: The Azure-portal-like Resource Explorer over sheets, surveys, programs, todo lists, dashboards, emails, webpages, and flowcharts.
 ---
 
 # Platform
 
-The platform area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one Azure-portal-like Resource Explorer at `/resources`. A sheet, a survey, a todo list, a dashboard, an email, a webpage, and a flowchart are all the same thing to the platform — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
+The platform area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one Azure-portal-like Resource Explorer at `/resources`. A sheet, a survey, a program, a todo list, a dashboard, an email, a webpage, and a flowchart are all the same thing to the platform — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
 
 The standards the platform applies live in architecture: the layer model ([/docs/architecture/platform](/docs/architecture/platform)), the resource model ([/docs/architecture/resources](/docs/architecture/resources)), datasets ([/docs/architecture/datasets](/docs/architecture/datasets)), and publishing ([/docs/architecture/publishing](/docs/architecture/publishing)). The pages in this area describe the product surface built on them.
 
@@ -14,8 +14,8 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - **Resource** — one Postgres identity row + one content blob in Azure Blob + one `ResourceDefinitionMap` entry. Single-owner, auth-gated, one `contentVersion` write path.
 - **Capability** — a cross-cutting mechanism a type opts into: **Publishable** (versioned snapshot + public `/view/[type]/[id]`), **DatasetProvider** (serves columns + rows through `dataset.readDataset`), **Portable** (import/export formats).
 - **Explorer** — the Azure-portal-shaped shell: Home landing, `/resources/all` list, marketplace-style create flow, and a resource page composing blades. See [resource explorer](/docs/platform/resource-explorer).
-- **Blade** — one panel of a resource page, addressed by route segment (`/resources/[id]/[[blade]]`). Every resource has a built-in Overview; types add their own (Sheet: Data + Settings, Survey: Responses, TodoList: Items + Calendar) and editor-backed types render their editor inline in the Editor blade.
-- **Dataset** — the read contract that lets one resource consume another's data: a Dashboard visual binds to a `DatasetReference` ([dashboard data binding](/docs/platform/dashboard-data-binding)), an Email binds one for merge fields ([email personalization](/docs/platform/email-personalization)).
+- **Blade** — one panel of a resource page, addressed by route segment (`/resources/[id]/[[blade]]`). Every resource has a built-in Overview; types add their own (Sheet: Data + Settings, Survey: Responses, Program: Setup + Status, TodoList: Items + Calendar) and editor-backed types render their editor inline in the Editor blade.
+- **Dataset** — the read contract that lets one resource consume another's data: a Dashboard visual binds to a `DatasetReference` ([dashboard data binding](/docs/platform/dashboard-data-binding)), an Email binds one for merge fields ([email personalization](/docs/platform/email-personalization)), and a Program both binds one as its audience and serves one as its funnel status ([program resource](/docs/platform/program-resource)).
 
 ## Feature pages
 
@@ -27,6 +27,11 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
+- [Program resource](/docs/platform/program-resource) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
+- [Survey response controls](/docs/platform/survey-response-controls) — the accepting-responses toggle and the closed state that keeps participant links alive
+- [Survey response modes](/docs/platform/survey-response-modes) — Anonymous or Identified identity, enforced at the write boundary
+- [Survey response management](/docs/platform/survey-response-management) — response detail, owner delete, response count on Overview
+- [Published view analytics](/docs/platform/published-view-analytics) — best-effort view counts on public reads for every publishable type
 - [Dashboard data binding](/docs/platform/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Email personalization](/docs/platform/email-personalization) — merge fields, survey invite blocks, personalized HTML export
 - [Resource Explorer consolidation](/docs/platform/resource-consolidation) — the shipped six-phase program record
@@ -47,3 +52,4 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - Resource page command-bar parity — labeled commands with `…` overflow, Refresh, `duplicateResource`, type-the-name/`delete {n}` destructive guards
 - Notifications bell — session-scoped notification store, app-bar bell + single snackbar queue, `G N` chord, stale-`contentVersion` save-conflict surface
 - File resource renamed to **Sheet** — pg enum value, `sheet` router, models/components/store, and the docs area (`sheet-editor`, `sheet-resource`); no backwards compat
+- **End-to-end survey funnel** — the send → view → respond → analyze loop closed: survey `settings` (accepting-responses toggle + Anonymous/Identified response mode) enforced at one server write boundary, the **Program** resource issuing opaque participant tokens and serving the identity-free `ProgramStatus` dataset, owner-side response detail/delete/count, and best-effort view counts on every publishable type's public read. One new Postgres enum value and two new Azure Tables; no new services. The café-scenario chain is covered end to end by `surveyFunnel.integration.test.ts`.
