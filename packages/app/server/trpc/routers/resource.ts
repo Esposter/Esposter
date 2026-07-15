@@ -58,6 +58,9 @@ const resourceFilterInputSchema = z.object({
   ids: createUniqueArraySchema(selectResourceSchema.shape.id).max(MAX_READ_LIMIT).optional(),
   isPublished: z.boolean().optional(),
   searchQuery: z.string().optional(),
+  // The Tag pill's value is optional, and containment cannot express "has this tag, any value" —
+  // That is key-existence, so the two filters are separate inputs rather than one nullable record
+  tagName: z.string().optional(),
   tags: resourceTagsSchema.optional(),
   types: z.array(resourceTypeSchema).optional(),
   updatedAfter: z.date().optional(),
@@ -90,7 +93,7 @@ const createSearchSimilarity = (searchQuery: string) => sql`similarity(${resourc
 const createResourcesWhere = (
   db: Context["db"],
   userId: string,
-  { ids, isPublished, searchQuery, tags, types, updatedAfter, updatedBefore }: ResourceFilterInput,
+  { ids, isPublished, searchQuery, tagName, tags, types, updatedAfter, updatedBefore }: ResourceFilterInput,
   isDeletedOnly = false,
 ) => {
   // A publication row exists iff the resource is currently published
@@ -111,6 +114,8 @@ const createResourcesWhere = (
       : undefined,
     ids ? inArray(resources.id, ids) : undefined,
     tags && Object.keys(tags).length > 0 ? sql`${resources.tags} @> ${JSON.stringify(tags)}::jsonb` : undefined,
+    // Both operators are backed by the resources_tags_index GIN index
+    tagName ? sql`jsonb_exists(${resources.tags}, ${tagName})` : undefined,
     types && types.length > 0 ? inArray(resources.type, types) : undefined,
     isPublished === undefined ? undefined : isPublished ? exists(publicationExists) : notExists(publicationExists),
     updatedAfter ? gte(resources.updatedAt, updatedAfter) : undefined,

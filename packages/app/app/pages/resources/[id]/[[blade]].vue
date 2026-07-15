@@ -2,6 +2,7 @@
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { isValidResourceBlade } from "@/services/resource/isValidResourceBlade";
 import { validate } from "@/services/router/validate";
+import { useFavoriteStore } from "@/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 
 // Key by id only so switching blades reuses this page (the left resource list stays mounted instead of refetching);
@@ -15,12 +16,16 @@ definePageMeta({
 const route = useRoute();
 // Id is stable for this page instance (keyed by id), so a plain cast is safe; only blade changes without a remount
 const id = route.params.id as string;
-const { duplicate, isLoading, load, publication, publish, remove, rename, resource, unpublish } = useResource(id);
+const { duplicate, isLoading, load, publication, publish, remove, rename, resource, unpublish, updateTags } =
+  useResource(id);
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
 const activeBlade = computed(() => (route.params.blade as string) || ResourceBladeType.Overview);
-// Opening a resource feeds the global search dropdown's "Recently viewed" group
+// Opening a resource feeds Home's Recent tab and the search dropdown's "Recently viewed" group
 useRecordResourceView(resource);
+const favoriteStore = useFavoriteStore();
+// The toolbar's star needs to know whether this resource is already starred
+onMounted(() => favoriteStore.readFavorites());
 
 // Blade switches reuse this page instance, so the guard watches instead of running once in setup
 watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
@@ -52,6 +57,7 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
         :rename
         :resource
         :unpublish
+        :update-tags
       />
     </div>
   </NuxtLayout>

@@ -7,6 +7,8 @@ import { getResourceUpdatedRange } from "@/services/resource/list/getResourceUpd
 interface ResourceFilterValues {
   searchQuery: string;
   status: "" | ResourceStatusFilter;
+  tagName: string;
+  tagValue: string;
   types: ResourceType[];
   updatedAfter?: Date;
   updatedBefore?: Date;
@@ -16,6 +18,8 @@ interface ResourceFilterValues {
 export const getResourceFilterInput = ({
   searchQuery,
   status,
+  tagName,
+  tagValue,
   types,
   updatedAfter,
   updatedBefore,
@@ -24,5 +28,7 @@ export const getResourceFilterInput = ({
   ...(searchQuery ? { searchQuery } : {}),
   ...(types.length > 0 ? { types } : {}),
   ...(status ? { isPublished: status === ResourceStatusFilter.Published } : {}),
+  // A value pins the tag to it (containment); without one the filter is just "has this tag"
+  ...(tagName ? (tagValue ? { tags: { [tagName]: tagValue } } : { tagName }) : {}),
   ...getResourceUpdatedRange(updatedFilter, updatedAfter, updatedBefore),
 });

@@ -42,16 +42,21 @@ export const useResourceListFilters = () => {
       sortByQuery.value = serializedSortBy === defaultSerializedSortBy ? "" : serializedSortBy;
     },
   });
+  // Name and value are separate params so a name-only tag filter stays deep-linkable
+  const tagName = useRouteQuery("tagName", "", { transform: String });
+  const tagValue = useRouteQuery("tagValue", "", { transform: String });
   const updatedFilter = ref<"" | ResourceUpdatedFilter>("");
   const updatedAfter = ref<Date>();
   const updatedBefore = ref<Date>();
   const hasActiveFilters = computed(() =>
-    Boolean(searchQuery.value || types.value.length > 0 || status.value || updatedFilter.value),
+    Boolean(searchQuery.value || types.value.length > 0 || status.value || updatedFilter.value || tagName.value),
   );
   const clearFilters = () => {
     searchQuery.value = "";
     types.value = [];
     status.value = "";
+    tagName.value = "";
+    tagValue.value = "";
     updatedFilter.value = "";
     updatedAfter.value = undefined;
     updatedBefore.value = undefined;
@@ -63,6 +68,8 @@ export const useResourceListFilters = () => {
     searchQuery,
     sortBy,
     status,
+    tagName,
+    tagValue,
     types,
     updatedAfter,
     updatedBefore,

@@ -34,6 +34,13 @@ const items = computed(() => {
       title: ResourceBladeTitleMap[ResourceBladeType.Editor],
       to: `${RoutePath.Resource(resource.id)}/${ResourceBladeType.Editor}`,
     });
+  // Activity is built-in for every type, and sits above the type's own blades like the portal's
+  results.push({
+    blade: ResourceBladeType.Activity,
+    icon: "mdi-history",
+    title: ResourceBladeTitleMap[ResourceBladeType.Activity],
+    to: `${RoutePath.Resource(resource.id)}/${ResourceBladeType.Activity}`,
+  });
   for (const { icon, slug, title } of ResourceBladeDefinitionMap[resource.type])
     results.push({ blade: slug, icon, title, to: `${RoutePath.Resource(resource.id)}/${slug}` });
   return results;

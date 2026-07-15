@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
+import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -10,9 +10,12 @@ interface ResourceOverviewProps {
   isLoading?: boolean;
   publication?: ResourcePublication;
   resource: Resource;
+  updateTags?: (tags: ResourceTags) => Promise<void>;
 }
 
-const { isLoading, publication, resource } = defineProps<ResourceOverviewProps>();
+const { isLoading, publication, resource, updateTags } = defineProps<ResourceOverviewProps>();
+const isTagsEditorOpen = ref(false);
+const tagRows = computed(() => Object.entries(resource.tags));
 const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
 const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, resource.id) : undefined));
 const copyPublicLink = async () => {
@@ -57,9 +60,25 @@ const copyPublicLink = async () => {
               <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
             </div>
           </template>
+          <template v-if="updateTags">
+            <span op-medium-emphasis>Tags</span>
+            <div flex flex-wrap gap-2 items-center>
+              <v-chip v-for="[tagName, tagValue] of tagRows" :key="tagName" size="small">
+                {{ tagValue ? `${tagName}: ${tagValue}` : tagName }}
+              </v-chip>
+              <span v-if="tagRows.length === 0" op-medium-emphasis>None</span>
+              <v-btn size="small" variant="text" @click="isTagsEditorOpen = true">Edit</v-btn>
+            </div>
+          </template>
         </div>
       </v-card-text>
     </v-card>
     <slot name="summary" />
+    <ResourceTagsEditorDialog
+      v-if="updateTags && isTagsEditorOpen"
+      v-model="isTagsEditorOpen"
+      :tags="resource.tags"
+      :update-tags="updateTags"
+    />
   </div>
 </template>

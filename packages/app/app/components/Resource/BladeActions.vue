@@ -54,6 +54,8 @@ const isDeleteOpen = ref(false);
     @delete="isDeleteOpen = true"
     @rename="isRenameOpen = true"
   />
+  <!-- One click, one icon: the star stays out of the overflow menu like the close ✕ -->
+  <ResourceFavoriteToggle :resource />
   <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
   <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename :resource />
   <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove :resource />

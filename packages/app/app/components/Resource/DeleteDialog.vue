@@ -25,6 +25,6 @@ const { remove, resource } = defineProps<ResourceDeleteDialogProps>();
       }
     "
   >
-    Deleting this resource cannot be undone.
+    Deleting this resource moves it to the Recycle bin for 30 days.
   </StyledDeleteFormDialog>
 </template>
