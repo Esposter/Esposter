@@ -14,6 +14,7 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
@@ -23,6 +24,7 @@ import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
+  ResourceActivityType,
   resourcePublications,
   resources,
   selectResourceSchema,
@@ -35,8 +37,11 @@ import { z } from "zod";
 const readResourcesInputSchema = createOffsetPaginationParamsSchema(selectResourceSchema.keyof()).prefault({});
 
 const createResourceInputSchema = selectResourceSchema.pick({ name: true });
-
-const updateResourceInputSchema = selectResourceSchema.pick({ id: true, name: true });
+// Tags replace the whole record rather than merging, which is Azure's own tag update semantics
+const updateResourceInputSchema = z.object({
+  ...selectResourceSchema.pick({ id: true, name: true }).shape,
+  ...selectResourceSchema.pick({ tags: true }).partial().shape,
+});
 
 const resourceIdInputSchema = selectResourceSchema.pick({ id: true });
 
@@ -73,8 +78,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const baseProcedures = {
     createResource: standardAuthedProcedure
       .input(createResourceInputSchema)
-      .mutation<Resource>(async ({ ctx, input }) =>
-        requireMutation(
+      .mutation<Resource>(async ({ ctx, input }) => {
+        const newResource = requireMutation(
           (
             await ctx.db
               .insert(resources)
@@ -84,18 +89,26 @@ export const createResourceProcedures = <TType extends ResourceType>(
           Operation.Create,
           DatabaseEntityType.Resource,
           ctx.getSessionPayload.user.id,
-        ),
-      ),
+        );
+        await writeResourceActivity({
+          activityType: ResourceActivityType.Created,
+          resourceId: newResource.id,
+          userId: ctx.getSessionPayload.user.id,
+        });
+        return newResource;
+      }),
+    // Soft: the row, its content blob and its {id}/ directory all survive the Recycle bin window,
+    // Which is exactly what makes restore possible. Purge is what actually destroys them.
     deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
       async ({ ctx, input: { id } }) => {
         const deletedResource = requireMutation(
-          (await ctx.db.delete(resources).where(eq(resources.id, id)).returning())[0],
+          (await ctx.db.update(resources).set({ deletedAt: new Date() }).where(eq(resources.id, id)).returning())[0],
           Operation.Delete,
           DatabaseEntityType.Resource,
           id,
         );
-        const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-        await deleteDirectory(containerClient, id, true);
+        // A deleted resource must not stay publicly served, so restore deliberately returns a Draft
+        await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
         return deletedResource;
       },
     ),
@@ -113,6 +126,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
           orderBy: (resources, { desc }) =>
             sortBy.length > 0 ? parseSortByToSql(resources, sortBy) : desc(resources.updatedAt),
           where: {
+            // Soft-deleted resources belong to the Recycle bin, never to a type's own listing
+            deletedAt: {
+              isNull: true,
+            },
             type: {
               eq: type,
             },
@@ -126,10 +143,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return getOffsetPaginationData(resultResources, limit);
       }),
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
-      ({ ctx, input: { content, contentVersion, id } }) =>
+      async ({ ctx, input: { content, contentVersion, id } }) => {
         // Bump the version and write the blob in one transaction so a failed upload rolls the version back,
         // Keeping Postgres and blob storage consistent instead of stranding the resource at a version with stale content
-        ctx.db.transaction(async (tx) => {
+        const updatedResource = await ctx.db.transaction(async (tx) => {
           // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
           const updatedResource = (
             await tx
@@ -142,16 +159,35 @@ export const createResourceProcedures = <TType extends ResourceType>(
 
           await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(content));
           return updatedResource;
-        }),
+        });
+        await writeResourceActivity({
+          activityType: ResourceActivityType.ContentSaved,
+          resourceId: id,
+          userId: ctx.getSessionPayload.user.id,
+        });
+        return updatedResource;
+      },
     ),
     updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { id, ...rest } }) =>
-        requireMutation(
+      async ({ ctx, input: { id, ...rest } }) => {
+        const oldName = ctx.resource.name;
+        const updatedResource = requireMutation(
           (await ctx.db.update(resources).set(rest).where(eq(resources.id, id)).returning())[0],
           Operation.Update,
           DatabaseEntityType.Resource,
           id,
-        ),
+        );
+        // A tags-only edit is not a rename, so it leaves no Renamed entry
+        if (updatedResource.name !== oldName)
+          await writeResourceActivity({
+            activityType: ResourceActivityType.Renamed,
+            newName: updatedResource.name,
+            oldName,
+            resourceId: id,
+            userId: ctx.getSessionPayload.user.id,
+          });
+        return updatedResource;
+      },
     ),
   };
   const publishProcedures = {
@@ -172,10 +208,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
           : content;
         // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
         // The publication row can never point at a publishVersion whose blob was never written.
-        return ctx.db.transaction(async (tx) => {
+        const publication = await ctx.db.transaction(async (tx) => {
           // The version bump is done in SQL so concurrent publishes each claim a distinct publish blob;
           // The publication row exists only while the resource is published (the Publishable capability's state)
-          const publication = requireMutation(
+          const newPublication = requireMutation(
             (
               await tx
                 .insert(resourcePublications)
@@ -192,11 +228,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
           );
           await useUpload(
             AzureContainer.ResourceAssets,
-            getPublishedContentBlobName(id, publication.publishVersion),
+            getPublishedContentBlobName(id, newPublication.publishVersion),
             JSON.stringify(publishedContent),
           );
-          return publication;
+          return newPublication;
         });
+        await writeResourceActivity({
+          activityType: ResourceActivityType.Published,
+          publishVersion: publication.publishVersion,
+          resourceId: id,
+          userId: ctx.getSessionPayload.user.id,
+        });
+        return publication;
       },
     ),
     readPublishedResourceContent: standardRateLimitedProcedure
@@ -233,6 +276,11 @@ export const createResourceProcedures = <TType extends ResourceType>(
 
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
       await deleteDirectory(containerClient, `${id}/published`, true);
+      await writeResourceActivity({
+        activityType: ResourceActivityType.Unpublished,
+        resourceId: id,
+        userId: ctx.getSessionPayload.user.id,
+      });
       return ctx.resource;
     }),
   };
