@@ -95,26 +95,27 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
 useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 
 const isLoading = ref(true);
-// Respondent progress is tracked per browser, so an interrupted survey resumes where it left off
-const onMount = async () => {
-  const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id, inviteToken));
-  if (!surveyResponseId) return;
-
-  surveyResponse = await $trpc.survey.readSurveyResponse.query({
-    inviteToken,
-    partitionKey: id,
-    rowKey: surveyResponseId,
-  });
-  if (!surveyResponse) return;
-
-  model.data = surveyResponse.model;
-  if (!surveyResponse.model.pageNo) return;
-  model.currentPageNo = surveyResponse.model.pageNo as number;
-};
 
 onMounted(async () => {
+  // Respondent progress is tracked per browser, so an interrupted survey resumes where it left off.
   // A failed resume falls back to a blank survey rather than stranding the respondent on the skeleton
-  if (isAcceptingResponses && !isInviteRequired) await getResultAsync(onMount).match(noop, console.error);
+  if (isAcceptingResponses && !isInviteRequired)
+    await getResultAsync(async () => {
+      const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id, inviteToken));
+      if (!surveyResponseId) return;
+
+      surveyResponse = await $trpc.survey.readSurveyResponse.query({
+        inviteToken,
+        partitionKey: id,
+        rowKey: surveyResponseId,
+      });
+      if (!surveyResponse) return;
+
+      model.data = surveyResponse.model;
+      if (!surveyResponse.model.pageNo) return;
+
+      model.currentPageNo = surveyResponse.model.pageNo as number;
+    }).match(noop, console.error);
   isLoading.value = false;
 });
 </script>

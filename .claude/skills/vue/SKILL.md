@@ -43,9 +43,39 @@ Never leave a framework value composable (e.g. `useVDisplay`, `useRoute`) strand
 
 ## Inline Functions & Handlers
 
-- Inline arrow functions where argument types are inferable — don't extract single-use, trivially-typed lambdas.
-- Inline Vue event handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`) so Vue infers event arg types. Extract to a named function only if the same logic is reused in multiple places. Single-use handlers must always be inlined.
-- **Single-use callbacks passed to `useEventListener`/`watch`/lifecycle hooks must be inlined too** — never define a `const onFoo = ...` that is referenced in exactly one registration. Inline the arrow: `useEventListener("keydown", (event) => { ... })`, not a separate `onKeydown` used once. The callback's arg types are inferred from the event name, so no annotation is needed. Keep a named function only when the **same reference** is needed in 2+ places (e.g. passed to both `addEventListener` and `removeEventListener`).
+**A function referenced exactly once does not exist. Inline it.** This is not a style preference — a name used once buys nothing and costs a jump, and every one of them is a refactor someone pays for later. The test is a count, not a judgement: `grep` the identifier, and if it appears in its declaration and **one** other place, it must be inlined. Two or more references, or a reference that genuinely needs the same function _identity_ in two places, is what earns a name.
+
+This applies to **every** single-use function, not only to callbacks passed as arguments:
+
+- **Passed to a hook / registration** — `useEventListener("keydown", (event) => { ... })`, never a separate `onKeydown` used once. Arg types infer from the event name, so no annotation is needed.
+- **Called inside a hook** — a named `onMount`/`init`/`load` that only `onMounted` invokes is the same violation wearing a different hat. Inline the body into `onMounted`. Wrapping it (`getResultAsync(onMount)`) does **not** make it a second reference:
+
+  ```ts
+  // WRONG — onMount is referenced once
+  const onMount = async () => { ... };
+  onMounted(async () => {
+    await getResultAsync(onMount).match(noop, console.error);
+    isLoading.value = false;
+  });
+
+  // CORRECT — the body lives where it runs
+  onMounted(async () => {
+    await getResultAsync(async () => { ... }).match(noop, console.error);
+    isLoading.value = false;
+  });
+  ```
+
+- **Template handlers** — inline directly (`@submit="async (_, onComplete) => { ... }"`) so Vue infers event arg types.
+- **Trivially-typed lambdas** — never extract one whose arg types are already inferable.
+
+Legitimate reasons to keep the name — all of them mean 2+ references:
+
+- The same **reference** is needed twice (`addEventListener` + `removeEventListener`).
+- A mutation must re-run a setup read: `refreshResponses` awaited at setup **and** bound to `@delete`.
+- The body is genuinely shared by two call sites.
+
+Before extracting a function, ask what the second caller is. If you can't name one, there isn't one.
+
 - **Prefer `useEventListener` over manual `addEventListener`/`removeEventListener`** — it auto-removes on unmount, so it replaces an `onMounted` (add) + `onUnmounted` (remove) pair and lets the handler be inlined. Omit the target for `window` events (`useEventListener("resize", ...)`) — the omitted-target form is SSR-safe (don't reference `window` at setup top-level). Fall back to manual `onMounted`/`onUnmounted` only when the target isn't reachable SSR-safely as a getter and the listener is genuinely tied to mount.
 - **`@click` shorthand**: a single async call uses `@click="myAsyncFn(args)"` directly — no `async () => { await ... }` wrapper.
 - **IME composition guard** — on `@keydown.enter` for text inputs, guard inline so confirming a CJK candidate doesn't commit: `@keydown.enter.stop="!$event.isComposing && commitEdit()"`.

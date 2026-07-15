@@ -24,17 +24,15 @@ const responseLabel = computed(() => {
   return `${count}${isCapped ? "+" : ""} ${noun}`;
 });
 
-const readResponseCount = async () => {
-  responseCount.value = await getResultAsync(() =>
-    $trpc.survey.countSurveyResponses.query({ id: resource.id }),
-  ).unwrapOr(undefined);
-};
-
 // The page is keyed by resource id, so this instance only ever describes one survey — both reads run
 // Once, in parallel. The Collection card edits the same content blob the editor writes, so it needs
 // The loaded settings
 onMounted(async () => {
-  await Promise.all([loadContent(), readResponseCount()]);
+  const [, newResponseCount] = await Promise.all([
+    loadContent(),
+    getResultAsync(() => $trpc.survey.countSurveyResponses.query({ id: resource.id })).unwrapOr(undefined),
+  ]);
+  responseCount.value = newResponseCount;
 });
 </script>
 
