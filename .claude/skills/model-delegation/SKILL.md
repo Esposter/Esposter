@@ -31,6 +31,22 @@ The agent starts with zero conversation context. The prompt must carry:
 - The main session may only edit files the agent will not stage — agree the file boundary in the prompt (e.g. agent excludes `proposals/platform/blueprint-*`), and queue everything else until its commit lands.
 - Never spawn a duplicate agent for the same task; wait for the completion notification, then verify its commit yourself (git log, spot-check the grep audits) before building on it.
 
+## Running several agents at once
+
+One agent per PR, each in its own git worktree (`isolation: "worktree"` on the Agent tool), is the way to open a batch of PRs in parallel. The shared-working-tree boundary rule above only holds for a single agent; two agents in one tree trample each other. Isolation is what makes concurrency safe, so it is not optional for a batch.
+
+Fan-out is earned by the prompt and paid for by the budget. The historical failure mode was agents burning their budget re-reading context and never producing work — that happens when the prompt is a topic instead of a spec. Two conditions gate a parallel batch, and both must hold: every prompt is a self-contained spec-execution task per the section above, and there are excess tokens to burn. Under a tight budget, or for exploratory, ideation, or docs-authoring work, stay sequential in the main session where judgment compounds.
+
+Plan the batch around what the agents touch:
+
+- Give each agent its own branch cut from `develop` and a stated merge order; a PR that depends on another's output is a stacked branch, not a parallel one — fold it into its parent's PR instead.
+- Overlap must be additive only (separate rows on a shared component, separate procedures in a shared router). Shared schema sections or a shared write path mean one PR, not two agents.
+- Each agent commits, pushes, and opens its own PR from its worktree. Verify each landed commit yourself before the next PR merges on top.
+
+## Cleaning up worktrees
+
+Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. Never sweep a long-lived branch you did not create.
+
 ## Design for agents
 
 Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. The [Blueprint proposal](../../../packages/app/content/docs/proposals/platform/blueprint-resource.md) is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.

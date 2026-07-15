@@ -88,6 +88,8 @@ git status --porcelain -uall | wc -l                                  # plus any
 
 Run both and sum before starting a sweep. When the budget is reached, stop and hand back for a PR.
 
+The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~100 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
+
 ## When to Exclude
 
 Chunk at the budget where you can. A mechanical rename can't be chunked — it's one atomic commit — so exclude the files within it that carry no reviewable content.
