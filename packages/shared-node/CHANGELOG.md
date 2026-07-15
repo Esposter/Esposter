@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
+
+### Bug Fixes
+
+* enums and arrays ([faa3f2f](https://github.com/Esposter/Esposter/commit/faa3f2fc2d8e7453fead1ba02cb9b0f294b1b70f))
+* indicator ([713f7fc](https://github.com/Esposter/Esposter/commit/713f7fc14e2e159707e08ae0427511bd216260e1))
+* snapshot ([7f06a8d](https://github.com/Esposter/Esposter/commit/7f06a8dc107f8ce8feb5746c51cd7dc964cc6bb6))
+* snapshots ([9764b23](https://github.com/Esposter/Esposter/commit/9764b23ba8be5cb84229baf997f54ce00c9cef98))
+* tighten zod schemas ([2676108](https://github.com/Esposter/Esposter/commit/2676108ab50ca99ccb56d4e1db00ac749fc084f3))
+* wip ([cf2c92b](https://github.com/Esposter/Esposter/commit/cf2c92b108efb84bad50e151bb749b9cf3257bf8))
+
 ## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
 
 ### Bug Fixes

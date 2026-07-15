@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
+
+### Bug Fixes
+
+* builds ([257b3e5](https://github.com/Esposter/Esposter/commit/257b3e505310d4dffb1676db75d8b0b8c7ff9bb3))
+* code review comments ([90e6319](https://github.com/Esposter/Esposter/commit/90e6319e7f4b6e8f69ce9905705a676ede10bf3a))
+* lint ([efca886](https://github.com/Esposter/Esposter/commit/efca886f54859c3284ef8f563f4b34c790177a18))
+* lint ([a4c7288](https://github.com/Esposter/Esposter/commit/a4c7288c8ed94b34053c7284e40245dffa661de6))
+* lint ([b048d55](https://github.com/Esposter/Esposter/commit/b048d55cf7f936c8012587c874607b16caa7f9da))
+* lint + md files ([86b882a](https://github.com/Esposter/Esposter/commit/86b882a7f0f6bcce9b8fcc3a84c4e32c7db8f213))
+* navigation ([75ffabc](https://github.com/Esposter/Esposter/commit/75ffabc0edcdcbca403c4bafe4fb3d1b5a0f7bca))
+* optimize templates ([f712e55](https://github.com/Esposter/Esposter/commit/f712e558a4ed10823b5700e5e8dc28caaa97e923))
+* scripts etc ([e84fe22](https://github.com/Esposter/Esposter/commit/e84fe2275dbb553c45ab5f16dfc438e4940a4dc9))
+* use global imports ([598c717](https://github.com/Esposter/Esposter/commit/598c7173d577028471c090e7b1b1fce63a67d35e))
+
 ## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
 
 ### Bug Fixes
