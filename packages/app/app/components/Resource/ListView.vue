@@ -118,9 +118,14 @@ const deleteResources = async (resources: Resource[]) => {
   // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory)
   await executeDeleteResourcesMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
     applyOptimistic: () => {
-      items.value = items.value.filter(({ id }) => !ids.includes(id));
+      const optimisticItems = items.value.filter(({ id }) => !ids.includes(id));
+      items.value = optimisticItems;
       count.value -= resources.length;
       return () => {
+        // A refresh, page turn or filter change mid-flight replaces `items` wholesale, so anything but our own
+        // Optimistic array means the snapshot is stale and restoring it would undo the newer read
+        if (items.value !== optimisticItems) return;
+
         items.value = snapshot;
         count.value = snapshotCount;
       };

@@ -31,7 +31,10 @@ describe("achievementPlugin", () => {
     expect.hasAssertions();
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
-    vi.spyOn(mockContext.db.query.achievements, "findFirst").mockRejectedValue(new Error(""));
+    // The plugin reaches the database only through insert upserts, and the mutation itself saves to blob storage
+    vi.spyOn(mockContext.db, "insert").mockImplementation(() => {
+      throw new Error("");
+    });
     const clickerSave = new ClickerSave();
     await caller.clicker.saveClicker(clickerSave);
     const readClicker = await caller.clicker.readClicker();
@@ -58,5 +61,21 @@ describe("achievementPlugin", () => {
 
     expect(clickerNovice.amount).toBe(1);
     expect(clickerNovice.unlockedAt).toBeInstanceOf(Date);
+  });
+
+  test("counts every increment when mutations run concurrently", async () => {
+    expect.hasAssertions();
+
+    await Promise.all([caller.clicker.saveClicker(new ClickerSave()), caller.clicker.saveClicker(new ClickerSave())]);
+    const userAchievements = await caller.achievement.readUserAchievements();
+    // Novice unlocks on the first save, so a still-locked achievement is what proves neither increment was lost
+    const clickerSaver = userAchievements.find(
+      ({ achievement }) => achievement.name === ClickerAchievementName.ClickerSaver,
+    );
+
+    assert(clickerSaver);
+
+    expect(clickerSaver.amount).toBe(2);
+    expect(clickerSaver.unlockedAt).toBeNull();
   });
 });
