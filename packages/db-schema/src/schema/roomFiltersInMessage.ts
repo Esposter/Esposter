@@ -25,3 +25,5 @@ export const roomFiltersInMessage = pgTable(
     schema: messageSchema,
   },
 );
+
+export type RoomFilterInMessage = typeof roomFiltersInMessage.$inferSelect;

@@ -25,6 +25,7 @@ import {
   roomsInMessage,
   SearchIndex,
   StandardMessageEntity,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import {
   InvalidOperationError,
@@ -36,6 +37,7 @@ import {
   takeOne,
 } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase, MockSearchDatabase, MockTableDatabase } from "azure-mock";
+import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const getMessage = (userId: string) =>
@@ -813,7 +815,100 @@ describe("message", () => {
     });
   });
 
+  describe("createMessage read-only guard", () => {
+    test("message from a member of a read-only room throws FORBIDDEN", async () => {
+      expect.hasAssertions();
+
+      const newRoom = await roomCaller.createRoom({ name });
+      await roomCaller.updateRoom({ id: newRoom.id, isReadOnly: true });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+      const { user } = await mockSessionOnce(mockContext.db);
+      await roomCaller.joinRoom(invite.id);
+      const message = getMessage(user.id);
+      await mockSessionOnce(mockContext.db, user);
+
+      await expect(
+        messageCaller.createMessage({ message, roomId: newRoom.id }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
+    });
+
+    test("message from someone who can manage messages succeeds in a read-only room", async () => {
+      expect.hasAssertions();
+
+      // Read-only silences the room, not its moderators — the owner always may
+      const newRoom = await roomCaller.createRoom({ name });
+      await roomCaller.updateRoom({ id: newRoom.id, isReadOnly: true });
+      const userId = getMockSession().user.id;
+
+      const createdMessage = await messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id });
+
+      expect(createdMessage).toBeDefined();
+    });
+  });
+
+  describe("createMessage timeout guard", () => {
+    // The clock is pinned so "timed out until 1ms from now" is still true by the time the message lands
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(0);
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    test("message from a timed out member throws FORBIDDEN", async () => {
+      expect.hasAssertions();
+
+      const newRoom = await roomCaller.createRoom({ name });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+      const { user } = await mockSessionOnce(mockContext.db);
+      await roomCaller.joinRoom(invite.id);
+      await mockContext.db
+        .update(usersToRoomsInMessage)
+        .set({ timeoutUntil: new Date(Date.now() + 1) })
+        .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, user.id)));
+      const message = getMessage(user.id);
+      await mockSessionOnce(mockContext.db, user);
+
+      await expect(
+        messageCaller.createMessage({ message, roomId: newRoom.id }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
+    });
+
+    test("a timed out owner is still timed out", async () => {
+      expect.hasAssertions();
+
+      // A timeout outranks every permission, so it is the one rule managing messages cannot talk its way past
+      const newRoom = await roomCaller.createRoom({ name });
+      const userId = getMockSession().user.id;
+      await mockContext.db
+        .update(usersToRoomsInMessage)
+        .set({ timeoutUntil: new Date(Date.now() + 1) })
+        .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, userId)));
+
+      await expect(
+        messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
+    });
+  });
+
   describe("createMessage word filter guard", () => {
+    test("message with a blocked word from someone who can manage messages succeeds", async () => {
+      expect.hasAssertions();
+
+      // The filter is a moderation tool, so it never fires on the moderator wielding it
+      const newRoom = await roomCaller.createRoom({ name });
+      await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: ["spam"] });
+
+      const createdMessage = await messageCaller.createMessage({
+        message: `<p>this is spam</p>`,
+        roomId: newRoom.id,
+      });
+
+      expect(createdMessage).toBeDefined();
+    });
+
     test("message with blocked word throws FORBIDDEN", async () => {
       expect.hasAssertions();
 

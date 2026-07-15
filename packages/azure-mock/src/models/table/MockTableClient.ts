@@ -157,11 +157,13 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
       .match(noop, (error) => {
         throw error;
       });
+    // A transaction the service accepted reports 202 with no sub-response body, so an entity lookup finds
+    // Nothing to return — the shape is the real one, not a cast past it
     return Promise.resolve({
-      getResponseForEntity: noop,
+      getResponseForEntity: () => undefined,
       status: 202,
       subResponses: [],
-    } as unknown as TableTransactionResponse);
+    });
   }
 
   updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {

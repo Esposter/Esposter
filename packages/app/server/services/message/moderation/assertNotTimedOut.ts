@@ -1,11 +1,7 @@
-import type { Context } from "@@/server/trpc/context";
+import type { UserToRoomInMessage } from "@esposter/db-schema";
 
 import { TRPCError } from "@trpc/server";
-
-export const assertNotTimedOut = async (db: Context["db"], userId: string, roomId: string) => {
-  const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
-    columns: { timeoutUntil: true },
-    where: { roomId: { eq: roomId }, userId: { eq: userId } },
-  });
-  if (userToRoom?.timeoutUntil && userToRoom.timeoutUntil > new Date()) throw new TRPCError({ code: "FORBIDDEN" });
+// A timeout outranks every permission — a moderator who times themselves out stays timed out
+export const assertNotTimedOut = (member: Pick<UserToRoomInMessage, "timeoutUntil"> | undefined): void => {
+  if (member?.timeoutUntil && member.timeoutUntil > new Date()) throw new TRPCError({ code: "FORBIDDEN" });
 };
