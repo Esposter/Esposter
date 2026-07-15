@@ -7,6 +7,7 @@ import {
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
 } from "@/services/exec/wsl/constants";
 import { createSourceMirrorArchive } from "@/services/exec/wsl/createSourceMirrorArchive";
+import { readSourceMirrorArchiveMembers } from "@/services/exec/wsl/readSourceMirrorArchiveMembers";
 import { lstatSync, mkdirSync, readdirSync, readlinkSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -17,14 +18,8 @@ describe(createSourceMirrorArchive, () => {
   const TAG = `${process.pid}.0`;
   let cwd = "";
   let entryUnc = "";
-  // Archive members as stored (posix relative paths); a directory member's trailing slash is normalized away so
-  // Expectations read like the copyPaths that produced them.
-  // Split on \r?\n — Windows bsdtar terminates member lines with \r\n.
   const listMembers = (archiveFilename: string): string[] =>
-    execFileHidden("tar", ["-tf", join(entryUnc, archiveFilename)])
-      .split(/\r?\n/u)
-      .filter(Boolean)
-      .map((member) => (member.endsWith("/") ? member.slice(0, -1) : member));
+    readSourceMirrorArchiveMembers(join(entryUnc, archiveFilename));
 
   beforeEach(() => {
     cwd = create();
@@ -44,7 +39,7 @@ describe(createSourceMirrorArchive, () => {
     writeFileSync(join(cwd, listedChildPath), TEST_FILENAME);
     writeFileSync(join(cwd, skippedChildPath), TEST_FILENAME);
 
-    const { archiveFilename, unreadablePaths } = createSourceMirrorArchive(
+    const { archiveFilename, unarchivedPaths } = createSourceMirrorArchive(
       cwd,
       entryUnc,
       [TEST_FILENAME, directoryName, listedChildPath],
@@ -52,7 +47,7 @@ describe(createSourceMirrorArchive, () => {
     );
 
     expect(archiveFilename).toBe(`${VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX}${TAG}`);
-    expect(unreadablePaths).toStrictEqual([]);
+    expect(unarchivedPaths).toStrictEqual([]);
     // A listed directory contributes its entry alone — its children are mirrored only when listed themselves, exactly
     // Matching the manifest's per-entry bookkeeping.
     expect(listMembers(archiveFilename).toSorted()).toStrictEqual(
@@ -102,11 +97,33 @@ describe(createSourceMirrorArchive, () => {
     },
   );
 
-  test("throws when tar fails for anything but an unreadable file and leaves the copy list staged for the reaper", () => {
+  test("reports a listed path that vanished before the spawn and keeps the rest of the archive", () => {
     expect.hasAssertions();
 
-    // A vanished path is not a tolerated "couldn't open" report — the plan must abort loudly.
-    expect(() => createSourceMirrorArchive(cwd, entryUnc, [TEST_FILENAME], TAG)).toThrow(Error);
+    // The manifest walk and this spawn cannot be atomic, so a build output or editor temp listed a moment ago may be
+    // Gone by now. Tar skips it, archives everything else, and exits non-zero — the plan must survive that, and bsdtar
+    // Names no path on this report (`tar: : Couldn't visit directory`), so only the archive's members can attribute it.
+    const vanishedFilename = "vanished";
+    writeFileSync(join(cwd, TEST_FILENAME), TEST_FILENAME);
+
+    const { archiveFilename, unarchivedPaths } = createSourceMirrorArchive(
+      cwd,
+      entryUnc,
+      [TEST_FILENAME, vanishedFilename],
+      TAG,
+    );
+
+    expect(unarchivedPaths).toStrictEqual([vanishedFilename]);
+    expect(listMembers(archiveFilename)).toStrictEqual([TEST_FILENAME]);
+    expect(readdirSync(entryUnc)).toStrictEqual([archiveFilename]);
+  });
+
+  test("throws when tar fails for anything but a per-entry skip and leaves the copy list staged for the reaper", () => {
+    expect.hasAssertions();
+
+    // An unusable `-C` root is a whole-spawn failure (`Cannot chdir`), not a report tar archived past — the archive
+    // Holds nothing trustworthy, so the plan must abort loudly instead of pruning the entire manifest.
+    expect(() => createSourceMirrorArchive(join(cwd, "missing"), entryUnc, [TEST_FILENAME], TAG)).toThrow(Error);
     expect(readdirSync(entryUnc)).toContain(`${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${TAG}`);
   });
 });

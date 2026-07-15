@@ -7,17 +7,6 @@ description: Open platform work — the prioritized index over the proposal spec
 
 Azure-portal parity program for the Resource Explorer: the [consolidation](/docs/platform/resource-consolidation) shipped — this backlog closes the UX gap between our explorer and the real portal. Items link their full specs under [proposals](/docs/proposals) — directly or via their section heading; the specs are the plan, this page is only the priority order. Check [deferred](/docs/platform/deferred) + [rejected](/docs/platform/rejected) before adding items. New Azure services are the only real cost anywhere below; everything else is frontend + procedures + at most a Postgres migration (never run `db:gen`/`db:up` automatically — generate on request, user applies).
 
-## Next — end-to-end survey funnel (invite → respond → analyze)
-
-The audience → email invite → survey → responses → dashboard loop works today but leaks in the middle: responses can't be joined back to invites, a survey can't close without 404ing its links, junk responses can't be removed, and the view step is invisible. These close it (response modes + program ship together; the rest are independent):
-
-- [ ] Survey response modes ([spec](/docs/proposals/platform/survey-response-modes)): explicit Anonymous | Invited mode in survey settings, opaque `inviteToken` on responses, per-mode server validation — the extensible identity foundation
-- [ ] Program resource ([spec](/docs/proposals/platform/program-resource)): the distribution orchestrator — binds audience + email + survey, issues opaque invite tokens, Status blade + `ProgramStatus` dataset provider for funnel dashboards
-- [ ] Survey response controls ([spec](/docs/proposals/platform/survey-response-controls)): Accepting-responses toggle enforced server-side, closed state on the respondent page instead of unpublish-404
-- [ ] Survey response management ([spec](/docs/proposals/platform/survey-response-management)): per-response detail dialog, owner delete, response count on Overview
-- [ ] Published view analytics ([spec](/docs/proposals/platform/published-view-analytics)): best-effort view counter (Azure Table) on public reads, Views row on Overview — views vs responses is the completion rate
-- [ ] Funnel integration tests ([spec](/docs/proposals/platform/funnel-integration-tests)): the TDD contract — per-proposal acceptance checklists land red→green with each item above; the café-scenario integration spec closes the section
-
 ## Later — editors and capability parity
 
 - [ ] Note resource ([spec](/docs/proposals/platform/note-resource)): rich-text document type on the existing Tiptap dependency — and a live test of the one-ResourceType extensibility claim
@@ -30,6 +19,10 @@ The audience → email invite → survey → responses → dashboard loop works 
 - [ ] Recycle bin ([spec](/docs/proposals/platform/recycle-bin)): `deletedAt` soft delete, restore/purge, timer auto-purge
 - [ ] `pg_trgm` relevance ([spec](/docs/proposals/platform/global-search-relevance)): extension + GIN index migration, `similarity()` ranking for typo tolerance (Azure AI Search stays [deferred](/docs/platform/deferred/azure-ai-search))
 - [ ] Summary view toggle on `/all`: per-type count cards over a grouped `count` procedure ([spec](/docs/proposals/platform/summary-view))
+
+## Later — known defects
+
+- [ ] Resource content date revival ([spec](/docs/proposals/platform/resource-content-date-revival)): `readResourceContent` revives ISO datetime strings into `Date`s that `columnValueSchema` then rejects — a Sheet cell holding an ISO datetime fails to read today; reproduce before fixing
 
 ## Later — larger or multi-area
 

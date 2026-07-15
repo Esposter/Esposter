@@ -1,4 +1,4 @@
-/* oxlint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* oxlint-disable typescript/no-unnecessary-type-assertion */
 // @TODO: remove when we switch to vue-tsgo — slight difference between ts6 and tsgo (ts7) behaviour
 import type { PropertyCondition } from "#shared/models/achievement/type/PropertyCondition";
 

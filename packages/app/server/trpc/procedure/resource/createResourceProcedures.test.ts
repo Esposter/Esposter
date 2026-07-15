@@ -1,19 +1,38 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Clause } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
-import { getBlobName } from "@esposter/db";
-import { AzureContainer, DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { getBlobName, getTopNEntities, serializeClauses } from "@esposter/db";
+import {
+  AZURE_MAX_PAGE_SIZE,
+  AzureContainer,
+  AzureTable,
+  BinaryOperator,
+  CompositeKeyPropertyNames,
+  DatabaseEntityType,
+  resources,
+  ResourceType,
+  ResourceViewEntity,
+} from "@esposter/db-schema";
+import { InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
+import { MockContainerDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+
+// The view-count assertions read the counter table directly, so the mock must be registered in this
+// Module graph — createMockContext's registration does not reach a direct import
+vi.mock(
+  import("@@/server/composables/azure/table/useTableClient"),
+  () => import("@@/server/composables/azure/table/useTableClient.test"),
+);
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
 // Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
@@ -35,8 +54,10 @@ describe("createResourceProcedures", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
+    MockTableDatabase.clear();
     // Cascade removes any resource_publications rows too
     await mockContext.db.delete(resources);
+    vi.restoreAllMocks();
   });
 
   test("creates resource", async () => {
@@ -246,7 +267,7 @@ describe("createResourceProcedures", () => {
     expect.hasAssertions();
 
     // A non-publishable type (Table) has no publish endpoints at all — capability gating, not just a guard.
-    // The caller proxy is permissive at runtime, so absence is asserted on the router's procedure record.
+    // The dashboardCaller proxy is permissive at runtime, so absence is asserted on the router's procedure record.
     const publishableProcedures = Object.keys(dashboardRouter._def.procedures);
     const nonPublishableProcedures = Object.keys(sheetRouter._def.procedures);
 
@@ -255,6 +276,78 @@ describe("createResourceProcedures", () => {
     expect(nonPublishableProcedures).not.toContain("unpublishResource");
     expect(nonPublishableProcedures).not.toContain("readResourcePublication");
     expect(nonPublishableProcedures).not.toContain("readPublishedResourceContent");
+    // View counting rides the publishable capability, so it is gated by the same seam
+    expect(publishableProcedures).toContain("readResourceViewCount");
+    expect(nonPublishableProcedures).not.toContain("readResourceViewCount");
+  });
+
+  test("counts each public read", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    const initialViewCount = await dashboardCaller.readResourceViewCount({ id: newResource.id });
+
+    expect(initialViewCount).toBe(0);
+
+    await dashboardCaller.readPublishedResourceContent(newResource.id);
+    await dashboardCaller.readPublishedResourceContent(newResource.id);
+    const viewCount = await dashboardCaller.readResourceViewCount({ id: newResource.id });
+
+    // One person refreshing counts twice — these are views, never visitors
+    expect(viewCount).toBe(2);
+  });
+
+  test("counts no views for unpublished resources", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+
+    await expect(
+      dashboardCaller.readPublishedResourceContent(newResource.id),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+
+    const viewCount = await dashboardCaller.readResourceViewCount({ id: newResource.id });
+
+    expect(viewCount).toBe(0);
+  });
+
+  test("serves the public read when the view counter fails", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const dashboard = new Dashboard();
+    await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    // The table client is constructed per call, so the failure is injected on the prototype
+    vi.spyOn(MockTableClient.prototype, "upsertEntity").mockRejectedValue(new Error("Table write failed"));
+    vi.spyOn(console, "error").mockImplementation(noop);
+    const { content } = await dashboardCaller.readPublishedResourceContent(newResource.id);
+
+    // Telemetry must never break serving the page
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
+    await expect(dashboardCaller.readResourceViewCount({ id: newResource.id })).resolves.toBe(0);
+  });
+
+  test("deletes view counts with the resource", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    await dashboardCaller.readPublishedResourceContent(newResource.id);
+    await dashboardCaller.deleteResource({ id: newResource.id });
+    // The resource row is gone, so the cleared partition can only be observed against the table
+    const clauses: Clause<ResourceViewEntity>[] = [
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: newResource.id },
+    ];
+    const resourceViewClient = await useTableClient(AzureTable.ResourceViews);
+    const resourceViews = await getTopNEntities(resourceViewClient, AZURE_MAX_PAGE_SIZE, ResourceViewEntity, {
+      filter: serializeClauses(clauses),
+    });
+
+    expect(resourceViews).toStrictEqual([]);
   });
 
   test("generates upload file sas entities", async () => {

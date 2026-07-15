@@ -15,4 +15,12 @@ describe(deserializeValue, () => {
     expect(deserializeValue("0")).toBe(0);
     expect(deserializeValue(String(Number.NaN))).toBe(Number.NaN);
   });
+
+  test("round-trips a value carrying the literal delimiter", () => {
+    expect.hasAssertions();
+
+    const value = "o'brien' or 1 eq 1";
+
+    expect(deserializeValue(escapeValue(value))).toBe(value);
+  });
 });

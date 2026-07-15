@@ -25,8 +25,8 @@ const emit = defineEmits<{ close: [] }>();
       }
     "
   >
-    <div flex items-center>
-      <v-icon mr-3 :icon="userAchievement.achievement.icon" size="large" />
+    <div flex gap-x-3 items-center>
+      <v-icon :icon="userAchievement.achievement.icon" size="large" />
       <div>
         <div font-bold text-title-large>Achievement Unlocked!</div>
         <div text-body-large>{{ prettify(userAchievement.achievement.name) }}</div>

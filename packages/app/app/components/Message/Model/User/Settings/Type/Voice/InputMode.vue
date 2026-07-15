@@ -16,24 +16,26 @@ const voiceInputModes = Object.values(VoiceInputMode);
 </script>
 
 <template>
-  <v-radio-group
-    :model-value="userSettings.voiceInputMode"
-    hide-details
-    @update:model-value="updateUserSettings({ voiceInputMode: $event as VoiceInputMode })"
-  >
-    <v-radio
-      v-for="voiceInputMode of voiceInputModes"
-      :key="voiceInputMode"
-      :label="VoiceInputModeLabelMap[voiceInputMode]"
-      :value="voiceInputMode"
-    />
-  </v-radio-group>
-  <template v-if="userSettings.voiceInputMode === VoiceInputMode.PushToTalk">
-    <MessageModelUserSettingsTypeVoicePushToTalkKeybindButton :keybind="userSettings.pushToTalkKeybind" />
-    <div mt-2 op-medium-emphasis text-body-small>
-      Activates your mic only while you hold the keybind. Push to Talk only works while an app window (main or pop-out)
-      has focus.
-    </div>
-    <MessageModelUserSettingsTypeVoicePushToTalkReleaseDelaySlider :user-settings />
-  </template>
+  <div flex flex-col gap-y-2>
+    <v-radio-group
+      :model-value="userSettings.voiceInputMode"
+      hide-details
+      @update:model-value="updateUserSettings({ voiceInputMode: $event as VoiceInputMode })"
+    >
+      <v-radio
+        v-for="voiceInputMode of voiceInputModes"
+        :key="voiceInputMode"
+        :label="VoiceInputModeLabelMap[voiceInputMode]"
+        :value="voiceInputMode"
+      />
+    </v-radio-group>
+    <template v-if="userSettings.voiceInputMode === VoiceInputMode.PushToTalk">
+      <MessageModelUserSettingsTypeVoicePushToTalkKeybindButton :keybind="userSettings.pushToTalkKeybind" />
+      <div op-medium-emphasis text-body-small>
+        Activates your mic only while you hold the keybind. Push to Talk only works while an app window (main or
+        pop-out) has focus.
+      </div>
+      <MessageModelUserSettingsTypeVoicePushToTalkReleaseDelaySlider :user-settings />
+    </template>
+  </div>
 </template>

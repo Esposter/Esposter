@@ -1,4 +1,3 @@
-/* oxlint-disable no-inferrable-types */
 export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
 // Sibling of snapshots/: source-keyed prepare layers holding a framework's generated artifacts (e.g. Nuxt's .nuxt),
 // Keyed by lockfile + source-tree hash + the resolved prepare step, so a source change invalidates exactly this

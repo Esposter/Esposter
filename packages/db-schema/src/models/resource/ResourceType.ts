@@ -4,6 +4,7 @@ export enum ResourceType {
   Dashboard = "Dashboard",
   Email = "Email",
   Flowchart = "Flowchart",
+  Program = "Program",
   Sheet = "Sheet",
   Survey = "Survey",
   TodoList = "TodoList",

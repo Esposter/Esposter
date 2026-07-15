@@ -7,8 +7,7 @@ const { unblockUser } = blockStore;
 </script>
 
 <template>
-  <div v-if="blockedUsers.length > 0">
-    <div mb-3 text-title-large>Blocked — {{ blockedUsers.length }}</div>
+  <MessageFriendsSection v-if="blockedUsers.length > 0" :title="`Blocked — ${blockedUsers.length}`">
     <v-list rd>
       <MessageFriendsUserListItem v-for="{ id, name, image } of blockedUsers" :key="id" :image :name>
         <template #append>
@@ -16,5 +15,5 @@ const { unblockUser } = blockStore;
         </template>
       </MessageFriendsUserListItem>
     </v-list>
-  </div>
+  </MessageFriendsSection>
 </template>

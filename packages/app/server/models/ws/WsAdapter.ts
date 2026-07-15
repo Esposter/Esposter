@@ -23,4 +23,9 @@ export class WsAdapter extends EventEmitter {
   send(data: string) {
     this.#peer.send(data);
   }
+
+  terminate() {
+    this.readyState = this.CLOSING;
+    this.#peer.terminate();
+  }
 }

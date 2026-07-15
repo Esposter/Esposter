@@ -39,7 +39,8 @@ const displayName = computed(() => name || placeholder);
   <StyledFormDialog
     v-model="modelValue"
     :card-props
-    :confirm-button-props="{ text: 'Save', disabled: schema.safeParse(editedName).data === name && !isDirty }"
+    :confirm-button-attrs="{ disabled: schema.safeParse(editedName).data === name && !isDirty }"
+    :confirm-button-props="{ text: 'Save' }"
     @submit="
       (_event, onComplete) => {
         emit('submit', editedName);
@@ -73,16 +74,14 @@ const displayName = computed(() => name || placeholder);
         </template>
       </v-tooltip>
     </template>
-    <div flex flex-col gap-4>
-      <slot name="prepend-content" />
-      <v-text-field
-        v-model="editedName"
-        autofocus
-        density="compact"
-        :placeholder
-        :rules="[rules.maxLength(maxLength), rules.isNotProfanity()]"
-      />
-    </div>
+    <slot name="prepend-content" />
+    <v-text-field
+      v-model="editedName"
+      autofocus
+      density="compact"
+      :placeholder
+      :rules="[rules.maxLength(maxLength), rules.isNotProfanity()]"
+    />
   </StyledFormDialog>
 </template>
 

@@ -1,4 +1,3 @@
-/* oxlint-disable @typescript-eslint/no-unnecessary-type-arguments */
 import type {
   AnyPgColumnBuilder,
   PgBuildColumns,

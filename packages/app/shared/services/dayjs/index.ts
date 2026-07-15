@@ -6,6 +6,7 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore.js";
 import isToday from "dayjs/plugin/isToday.js";
 import isYesterday from "dayjs/plugin/isYesterday.js";
 import relativeTime from "dayjs/plugin/relativeTime.js";
+import utc from "dayjs/plugin/utc.js";
 
 baseDayjs.extend(advancedFormat);
 baseDayjs.extend(customParseFormat);
@@ -14,5 +15,6 @@ baseDayjs.extend(isSameOrBefore);
 baseDayjs.extend(isToday);
 baseDayjs.extend(isYesterday);
 baseDayjs.extend(relativeTime);
+baseDayjs.extend(utc);
 
 export const dayjs = baseDayjs;

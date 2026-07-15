@@ -1,4 +1,3 @@
-/* oxlint-disable no-inferrable-types */
 // Host-global task-cache layout, under getGlobalCacheDirectory()/tasks/<key>/ (specs/config-and-cache.md). A cache
 // Entry records one exit-0 persist run so an identical later run (same command + lockfile + source tree) skips the
 // Sandbox entirely and replays the recorded result — the dev-loop "skip unchanged builds" lever (roadmap.md).

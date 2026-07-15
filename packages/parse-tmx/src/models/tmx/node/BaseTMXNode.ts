@@ -1,5 +1,5 @@
 import type { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
-// oxlint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export class BaseTMXNode<T> {
   // Indexable signature, since TypeScript private properties block proper #name access.
   [key: string]: unknown;

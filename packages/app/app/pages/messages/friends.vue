@@ -11,8 +11,8 @@ await readFriends();
       <MessageLeftSideBar />
     </template>
     <v-sheet flex flex-col h-full overflow-y-auto>
-      <v-container>
-        <div font-bold mb-6 text-headline-small>Friends</div>
+      <v-container flex flex-col gap-y-8>
+        <div font-bold text-headline-small>Friends</div>
         <MessageFriendsSearch />
         <MessageFriendsRequestList />
         <MessageFriendsList />

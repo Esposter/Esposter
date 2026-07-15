@@ -3,6 +3,7 @@ import type { ResourceDefinition } from "#shared/models/resource/ResourceDefinit
 import { dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
 import { emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { flowchartEditorSchema } from "#shared/models/flowchartEditor/data/FlowchartEditor";
+import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import { todoListResourceSchema } from "#shared/models/resource/todoList/TodoListResource";
@@ -27,6 +28,12 @@ export const ResourceDefinitionMap = {
     contentSchema: flowchartEditorSchema,
     icon: "mdi-sitemap",
     title: ResourceType.Flowchart,
+  },
+  [ResourceType.Program]: {
+    capabilities: { datasetProvider: true },
+    contentSchema: programResourceSchema,
+    icon: "mdi-bullhorn",
+    title: ResourceType.Program,
   },
   [ResourceType.Sheet]: {
     capabilities: { datasetProvider: true, portable: true },
