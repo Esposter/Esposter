@@ -45,4 +45,21 @@ describe("flowchart", () => {
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(flowchartEditor)));
   });
+
+  test("serves the published snapshot to the public view", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const flowchartEditor = new FlowchartEditor();
+    await caller.saveResourceContent({
+      content: flowchartEditor,
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
+
+    expect(publishedContent.name).toBe(name);
+    expect(publishedContent.content).toStrictEqual(jsonDateParse(JSON.stringify(flowchartEditor)));
+  });
 });

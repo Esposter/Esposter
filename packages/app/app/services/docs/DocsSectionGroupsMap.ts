@@ -52,8 +52,14 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "shell-cohesion",
       "resource-consolidation",
     ],
-    Resources: ["sheet-resource", "survey-resource"],
-    Editors: ["dashboard-data-binding", "email-personalization"],
+    Resources: ["sheet-resource", "survey-resource", "resource-file-assets"],
+    Editors: [
+      "dashboard-data-binding",
+      "email-personalization",
+      "email-web-view",
+      "flowchart-publish",
+      "webpage-survey-invite-blocks",
+    ],
   },
   virrun: {
     Core: ["architecture", "orchestrator-api", "execution-backends", "configuration"],

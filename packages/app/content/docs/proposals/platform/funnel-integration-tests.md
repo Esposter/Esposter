@@ -74,7 +74,7 @@ Each list is the TDD checklist an implementation session turns into `it` blocks 
 - an increment failure (mock the table write to throw) never fails the public read
 - unpublished/nonexistent resources 404 without counting; `deleteResource` clears the partition
 
-### Publish parity ([email](/docs/proposals/platform/email-web-view), [flowchart](/docs/proposals/platform/flowchart-publish), [note](/docs/proposals/platform/note-resource)) — per-type router tests
+### Publish parity ([email](/docs/platform/email-web-view), [flowchart](/docs/platform/flowchart-publish), [note](/docs/proposals/platform/note-resource)) — per-type router tests
 
 - publish → public read round-trips the snapshot; unpublish 404s; edits after publish stay invisible until re-publish (the factory already proves this per type — new types just instantiate the same cases)
 

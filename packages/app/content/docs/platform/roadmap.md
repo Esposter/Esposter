@@ -16,14 +16,10 @@ The audience → email invite → survey → responses → dashboard loop works 
 - [ ] Survey response controls ([spec](/docs/proposals/platform/survey-response-controls)): Accepting-responses toggle enforced server-side, closed state on the respondent page instead of unpublish-404
 - [ ] Survey response management ([spec](/docs/proposals/platform/survey-response-management)): per-response detail dialog, owner delete, response count on Overview
 - [ ] Published view analytics ([spec](/docs/proposals/platform/published-view-analytics)): best-effort view counter (Azure Table) on public reads, Views row on Overview — views vs responses is the completion rate
-- [ ] Webpage survey invite blocks ([spec](/docs/proposals/platform/webpage-survey-invite-blocks)): the email editor's invite blocks in the webpage editor via a shared block builder
 - [ ] Funnel integration tests ([spec](/docs/proposals/platform/funnel-integration-tests)): the TDD contract — per-proposal acceptance checklists land red→green with each item above; the café-scenario integration spec closes the section
 
 ## Later — editors and capability parity
 
-- [ ] Resource file assets ([spec](/docs/proposals/platform/resource-file-assets)): promote Survey's `{id}/files` SAS machinery to a FileAssets capability + GrapesJS Asset Manager wiring — hosted images for Email/Webpage instead of base64, prerequisite for email sending
-- [ ] Email web view ([spec](/docs/proposals/platform/email-web-view)): Email opts into Publishable — save-time HTML capture, `/view/email/[id]` "view in browser" page (best after file assets)
-- [ ] Flowchart publish ([spec](/docs/proposals/platform/flowchart-publish)): Flowchart opts into Publishable — read-only VueFlow view, the simplest capability adoption
 - [ ] Note resource ([spec](/docs/proposals/platform/note-resource)): rich-text document type on the existing Tiptap dependency — and a live test of the one-ResourceType extensibility claim
 
 ## Later — storage-backed (one Postgres migration or Azure table each, independently shippable)

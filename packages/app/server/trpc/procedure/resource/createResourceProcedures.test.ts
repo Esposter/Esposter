@@ -8,7 +8,9 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
-import { DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
+import { webpageRouter } from "@@/server/trpc/routers/webpage";
+import { getBlobName } from "@esposter/db";
+import { AzureContainer, DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -17,13 +19,18 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 // Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
 describe("createResourceProcedures", () => {
   let mockContext: Context;
-  let caller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
+  let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
+  // Dashboard is the publishable representative; Webpage is the FileAssets one
+  let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
   const updatedName = "updatedName";
+  const filename = "filename";
+  const mimetype = "mimetype";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    caller = createCallerFactory(dashboardRouter)(mockContext);
+    dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
+    webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -35,7 +42,7 @@ describe("createResourceProcedures", () => {
   test("creates resource", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await dashboardCaller.createResource({ name });
 
     expect(newResource.name).toBe(name);
     expect(newResource.type).toBe(ResourceType.Dashboard);
@@ -45,18 +52,18 @@ describe("createResourceProcedures", () => {
   test("reads resources with publication state", async () => {
     expect.hasAssertions();
 
-    const readResources = await caller.readResources();
+    const readResources = await dashboardCaller.readResources();
 
     expect(readResources.items).toStrictEqual([]);
 
-    const newResource = await caller.createResource({ name });
-    const newReadResources = await caller.readResources();
+    const newResource = await dashboardCaller.createResource({ name });
+    const newReadResources = await dashboardCaller.readResources();
 
     expect(newReadResources.items).toStrictEqual([{ ...newResource, publication: null }]);
 
-    await caller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
-    await caller.publishResource({ id: newResource.id });
-    const publishedReadResources = await caller.readResources();
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    const publishedReadResources = await dashboardCaller.readResources();
 
     expect(publishedReadResources.items[0]?.publication?.publishVersion).toBe(1);
   });
@@ -64,8 +71,8 @@ describe("createResourceProcedures", () => {
   test("updates resource", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    const updatedResource = await caller.updateResource({ id: newResource.id, name: updatedName });
+    const newResource = await dashboardCaller.createResource({ name });
+    const updatedResource = await dashboardCaller.updateResource({ id: newResource.id, name: updatedName });
 
     expect(updatedResource.name).toBe(updatedName);
   });
@@ -73,23 +80,23 @@ describe("createResourceProcedures", () => {
   test("fails update with wrong user", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await dashboardCaller.createResource({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      caller.updateResource({ id: newResource.id, name: updatedName }),
+      dashboardCaller.updateResource({ id: newResource.id, name: updatedName }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("deletes resource", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    const deletedResource = await caller.deleteResource({ id: newResource.id });
+    const newResource = await dashboardCaller.createResource({ name });
+    const deletedResource = await dashboardCaller.deleteResource({ id: newResource.id });
 
     expect(deletedResource.id).toBe(newResource.id);
 
-    const readResources = await caller.readResources();
+    const readResources = await dashboardCaller.readResources();
 
     expect(readResources.items).toStrictEqual([]);
   });
@@ -97,8 +104,8 @@ describe("createResourceProcedures", () => {
   test("reads undefined content for new resource", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    const content = await caller.readResourceContent({ id: newResource.id });
+    const newResource = await dashboardCaller.createResource({ name });
+    const content = await dashboardCaller.readResourceContent({ id: newResource.id });
 
     expect(content).toBeUndefined();
   });
@@ -106,9 +113,9 @@ describe("createResourceProcedures", () => {
   test("saves and reads content", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard({ visuals: [new Visual()] });
-    const updatedResource = await caller.saveResourceContent({
+    const updatedResource = await dashboardCaller.saveResourceContent({
       content: dashboard,
       contentVersion: newResource.contentVersion,
       id: newResource.id,
@@ -116,7 +123,7 @@ describe("createResourceProcedures", () => {
 
     expect(updatedResource.contentVersion).toBe(1);
 
-    const content = await caller.readResourceContent({ id: newResource.id });
+    const content = await dashboardCaller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
   });
@@ -124,12 +131,12 @@ describe("createResourceProcedures", () => {
   test("fails save content with old content version", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard();
-    await caller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
+    await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
 
     await expect(
-      caller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
+      dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${
         new InvalidOperationError(
@@ -144,25 +151,25 @@ describe("createResourceProcedures", () => {
   test("fails save content with wrong user", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await dashboardCaller.createResource({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      caller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id }),
+      dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("publishes and reads published content", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard({ visuals: [new Visual()] });
-    await caller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
-    const publication = await caller.publishResource({ id: newResource.id });
+    await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
+    const publication = await dashboardCaller.publishResource({ id: newResource.id });
 
     expect(publication.publishVersion).toBe(1);
 
-    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
+    const publishedContent = await dashboardCaller.readPublishedResourceContent(newResource.id);
 
     expect(publishedContent.name).toBe(name);
     expect(publishedContent.content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
@@ -171,10 +178,10 @@ describe("createResourceProcedures", () => {
   test("bumps publish version on republish", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    await caller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
-    await caller.publishResource({ id: newResource.id });
-    const republication = await caller.publishResource({ id: newResource.id });
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    const republication = await dashboardCaller.publishResource({ id: newResource.id });
 
     expect(republication.publishVersion).toBe(2);
   });
@@ -182,23 +189,23 @@ describe("createResourceProcedures", () => {
   test("reads publication state", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    const publication = await caller.readResourcePublication({ id: newResource.id });
+    const newResource = await dashboardCaller.createResource({ name });
+    const publication = await dashboardCaller.readResourcePublication({ id: newResource.id });
 
     expect(publication).toBeUndefined();
 
-    await caller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
-    await caller.publishResource({ id: newResource.id });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
 
-    expect((await caller.readResourcePublication({ id: newResource.id }))?.publishVersion).toBe(1);
+    expect((await dashboardCaller.readResourcePublication({ id: newResource.id }))?.publishVersion).toBe(1);
   });
 
   test("fails publish without content", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await dashboardCaller.createResource({ name });
 
-    await expect(caller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(dashboardCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${
         new InvalidOperationError(
           Operation.Update,
@@ -212,27 +219,27 @@ describe("createResourceProcedures", () => {
   test("unpublishes resource", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    await caller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
-    await caller.publishResource({ id: newResource.id });
-    await caller.unpublishResource({ id: newResource.id });
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    await dashboardCaller.unpublishResource({ id: newResource.id });
 
-    const publication = await caller.readResourcePublication({ id: newResource.id });
+    const publication = await dashboardCaller.readResourcePublication({ id: newResource.id });
 
     expect(publication).toBeUndefined();
-    await expect(caller.readPublishedResourceContent(newResource.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: NOT_FOUND]`,
-    );
+    await expect(
+      dashboardCaller.readPublishedResourceContent(newResource.id),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
   test("fails read published content for unpublished resource", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await dashboardCaller.createResource({ name });
 
-    await expect(caller.readPublishedResourceContent(newResource.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: NOT_FOUND]`,
-    );
+    await expect(
+      dashboardCaller.readPublishedResourceContent(newResource.id),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
   test("omits publish procedures for non-publishable types", () => {
@@ -248,5 +255,76 @@ describe("createResourceProcedures", () => {
     expect(nonPublishableProcedures).not.toContain("unpublishResource");
     expect(nonPublishableProcedures).not.toContain("readResourcePublication");
     expect(nonPublishableProcedures).not.toContain("readPublishedResourceContent");
+  });
+
+  test("generates upload file sas entities", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    const sasEntities = await webpageCaller.generateUploadFileSasEntities({
+      files: [{ filename, mimetype }],
+      id: newResource.id,
+    });
+
+    expect(sasEntities).toHaveLength(1);
+  });
+
+  test("generates download file sas urls", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    const sasUrls = await webpageCaller.generateDownloadFileSasUrls({
+      files: [{ filename, id: crypto.randomUUID(), mimetype }],
+      id: newResource.id,
+    });
+
+    expect(sasUrls).toHaveLength(1);
+  });
+
+  test("fails generate upload file sas entities with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      webpageCaller.generateUploadFileSasEntities({ files: [{ filename, mimetype }], id: newResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("deletes file", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    const blobPath = `files/${getBlobName(crypto.randomUUID(), filename)}`;
+    const blobName = `${newResource.id}/${blobPath}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+
+    await webpageCaller.deleteFile({ blobPath, id: newResource.id });
+
+    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).toBe(false);
+  });
+
+  test("deleteFile is idempotent", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    const blobPath = `files/${getBlobName(crypto.randomUUID(), filename)}`;
+
+    await webpageCaller.deleteFile({ blobPath, id: newResource.id });
+
+    await expect(webpageCaller.deleteFile({ blobPath, id: newResource.id })).resolves.toBeUndefined();
+  });
+
+  test("omits file asset procedures for types without the capability", () => {
+    expect.hasAssertions();
+
+    const fileAssetsProcedures = Object.keys(webpageRouter._def.procedures);
+    const nonFileAssetsProcedures = Object.keys(dashboardRouter._def.procedures);
+
+    expect(fileAssetsProcedures).toContain("generateUploadFileSasEntities");
+    expect(nonFileAssetsProcedures).not.toContain("generateUploadFileSasEntities");
+    expect(nonFileAssetsProcedures).not.toContain("generateDownloadFileSasUrls");
+    expect(nonFileAssetsProcedures).not.toContain("deleteFile");
   });
 });

@@ -16,6 +16,7 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 
 ## Capabilities
 
+- **FileAssets** — asset uploads under `{id}/files/…` through the shared capability procedures ([resource file assets](/docs/platform/resource-file-assets)).
 - **Publishable** — publish goes through the generic `publishResource` plus the two factory hooks: `transformPublishedContent` clones referenced asset blobs into `{id}/published/{publishVersion}/` and rewrites URLs; `transformReadContent` refreshes SAS asset URLs on owner read. Publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys.
 - **DatasetProvider** — `readSurveyResponsesDataset` serves responses through `dataset.readDataset`, auth keyed to resource ownership.
 
@@ -23,10 +24,9 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 
 The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus the type-specific procedures that are deliberately **not** capabilities (single consumer — see the admission rule in [/docs/architecture/resources](/docs/architecture/resources)):
 
-| Procedure                                                                      | Auth                 | Purpose                            |
-| ------------------------------------------------------------------------------ | -------------------- | ---------------------------------- |
-| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`         | public, rate-limited | respondent answers → Azure Table   |
-| `generateUploadFileSasEntities` / `generateDownloadFileSasUrls` / `deleteFile` | owner                | asset uploads under `{id}/files/…` |
+| Procedure                                                              | Auth                 | Purpose                          |
+| ---------------------------------------------------------------------- | -------------------- | -------------------------------- |
+| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse` | public, rate-limited | respondent answers → Azure Table |
 
 ## Blades / routes
 
@@ -42,7 +42,7 @@ The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus
 | `app/components/Resource/Survey/Responses.vue` | Responses blade (dataset table)                 |
 | `app/components/Resource/Survey/View.vue`      | public respondent renderer (`ViewComponentMap`) |
 | `app/composables/survey/useSurveyCreator.ts`   | creator setup + autosave wiring                 |
-| `server/trpc/routers/survey.ts`                | resource factory + response/file procedures     |
+| `server/trpc/routers/survey.ts`                | resource factory + response procedures          |
 
 ## Notes
 

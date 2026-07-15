@@ -29,6 +29,10 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
 - [Dashboard data binding](/docs/platform/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Email personalization](/docs/platform/email-personalization) — merge fields, survey invite blocks, personalized HTML export
+- [Email web view](/docs/platform/email-web-view) — Email is Publishable: save-time HTML capture, `/view/email/[id]` browser copy
+- [Flowchart publish](/docs/platform/flowchart-publish) — Flowchart is Publishable: read-only VueFlow render at `/view/flowchart/[id]`
+- [Resource file assets](/docs/platform/resource-file-assets) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
+- [Webpage survey invite blocks](/docs/platform/webpage-survey-invite-blocks) — published surveys as drag-in invite buttons in both GrapesJS editors
 - [Resource Explorer consolidation](/docs/platform/resource-consolidation) — the shipped six-phase program record
 
 Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/platform/deferred) (with revisit triggers) and [rejected](/docs/platform/rejected).
@@ -47,3 +51,6 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - Resource page command-bar parity — labeled commands with `…` overflow, Refresh, `duplicateResource`, type-the-name/`delete {n}` destructive guards
 - Notifications bell — session-scoped notification store, app-bar bell + single snackbar queue, `G N` chord, stale-`contentVersion` save-conflict surface
 - File resource renamed to **Sheet** — pg enum value, `sheet` router, models/components/store, and the docs area (`sheet-editor`, `sheet-resource`); no backwards compat
+- FileAssets capability — Survey's `{id}/files` SAS machinery promoted onto the resource factory, adopted by Email and Webpage through a GrapesJS Asset Manager adapter (hosted images instead of base64)
+- Publish parity for the remaining visual types — Email (`/view/email/[id]` browser copy via save-time MJML capture) and Flowchart (read-only VueFlow render) both opted into Publishable; Sheet and TodoList stay non-publishable by design
+- Survey invite blocks in the webpage editor — the email block builder moved to a shared core with per-editor markup wrappers

@@ -9,7 +9,7 @@ A **Brand kit** resource holding an organization's visual identity — palette, 
 
 ## Why deferred
 
-There is no shared theming pipeline to plug into: GrapesJS styling is per-canvas CSS, the SurveyJS theme lives inside the survey model, and neither has a variable-injection seam today. Building the kit first means building a cross-editor theming abstraction for a need no user has expressed — and a single-consumer mechanism fails the capability admission rule in spirit. Logo hosting alone is covered by [resource file assets](/docs/proposals/platform/resource-file-assets).
+There is no shared theming pipeline to plug into: GrapesJS styling is per-canvas CSS, the SurveyJS theme lives inside the survey model, and neither has a variable-injection seam today. Building the kit first means building a cross-editor theming abstraction for a need no user has expressed — and a single-consumer mechanism fails the capability admission rule in spirit. Logo hosting alone is covered by [resource file assets](/docs/platform/resource-file-assets).
 
 ## Revisit when
 

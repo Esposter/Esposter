@@ -18,6 +18,7 @@ describe("email", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["email"]>;
   const name = "name";
+  const html = "html";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -36,9 +37,11 @@ describe("email", () => {
 
     expect(newResource.type).toBe(ResourceType.Email);
 
-    // The dataset binding is part of the round-trip so the schema provably preserves it
+    // The dataset binding and the save-time compiled html are part of the round-trip
+    // So the schema provably preserves them
     const emailEditor = new EmailEditor({
       datasetReference: { id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses },
+      html,
     });
     await caller.saveResourceContent({
       content: emailEditor,
@@ -48,5 +51,21 @@ describe("email", () => {
     const content = await caller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(emailEditor)));
+  });
+
+  test("serves the compiled html to the published web view", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new EmailEditor({ html }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
+
+    expect(publishedContent.name).toBe(name);
+    expect(publishedContent.content.html).toBe(html);
   });
 });
