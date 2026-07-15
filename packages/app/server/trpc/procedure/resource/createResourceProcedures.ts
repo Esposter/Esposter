@@ -13,7 +13,9 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
+import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -23,6 +25,7 @@ import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardR
 import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
+  AzureTable,
   DatabaseEntityType,
   ResourceActivityType,
   resourcePublications,
@@ -56,7 +59,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const { contentSchema } = ResourceDefinitionMap[type];
   // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { transformPublishedContent, transformReadContent } = (args[0] ??
+  const { transformPublicReadContent, transformPublishedContent, transformReadContent } = (args[0] ??
     {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
@@ -107,7 +110,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
           DatabaseEntityType.Resource,
           id,
         );
-        // A deleted resource must not stay publicly served, so restore deliberately returns a Draft
+        // A deleted resource must not stay publicly served, so restore deliberately returns a Draft.
+        // The blobs and the type's table partitions survive until purge — destroying them here would
+        // Make restore hand back an empty resource
         await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
         return deletedResource;
       },
@@ -265,11 +270,18 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const content = contentSchema.parse(
           jsonDateParse(await streamToText(readableStreamBody)),
         ) as ResourceContent<TType>;
-        return { content, name: resource.name };
+        // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
+        // The increment swallows its own failures — telemetry must never break serving the page
+        await incrementResourceViewCount(input);
+        if (!transformPublicReadContent) return { content, name: resource.name };
+        return { content: await transformPublicReadContent(ctx, resource, content), name: resource.name };
       }),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
       ResourcePublication | undefined
     >(({ ctx }) => ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })),
+    readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id").query<number>(({ ctx }) =>
+      readResourceViewCount(ctx.resource.id),
+    ),
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
       const { id } = ctx.resource;
       await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));

@@ -6,7 +6,8 @@ export const deserializeValue = (string: string): SerializableValue => {
   else if (string === String(null)) return null;
   else if (Number.isFinite(Number(string))) return Number(string);
   else if (string === String(Number.NaN)) return Number.NaN;
-  else if (string.startsWith("'") && string.endsWith("'")) return string.slice(1, -1);
+  // The inverse of escapeValue: strip the delimiters, then undouble the quotes it doubled
+  else if (string.startsWith("'") && string.endsWith("'")) return string.slice(1, -1).replaceAll("''", "'");
   else {
     const date = new Date(string);
     if (Number.isNaN(date)) return string;

@@ -16,7 +16,7 @@ export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
     if (!firstHeading) return;
     // Headings set scroll-margin-top to clear the sticky app bar + category tabs, so reuse it as the
     // Effective top of the viewport instead of duplicating the offset here
-    // oxlint-disable-next-line prefer-number-coercion -- computed styles are px-suffixed ("112px"), Number() would be NaN
+    // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("112px"), Number() would be NaN
     const viewportTop = Number.parseFloat(window.getComputedStyle(firstHeading.element).scrollMarginTop) || 0;
     const tops = headings.map(({ element }) => element.getBoundingClientRect().top);
     const newVisibleIds = headings

@@ -5,7 +5,7 @@ import { getContainerClient } from "@/services/getContainerClient";
 import { getTableClient } from "@/services/getTableClient";
 import { logAndRethrow } from "@/services/logAndRethrow";
 import { purgeResource, RECYCLE_BIN_RETENTION_MS } from "@esposter/db";
-import { AzureContainer, AzureFunction, AzureTable, resources } from "@esposter/db-schema";
+import { AzureContainer, AzureFunction, AzureTable, ResourceOwnedTablesMap, resources } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, isNotNull, lt } from "drizzle-orm";
 
@@ -23,15 +23,19 @@ export const purgeDeletedResourcesHandler: TimerHandler = (_timer, context) =>
 
     context.log(`${AzureFunction.PurgeDeletedResources} purging`, { count: expiredResources.length });
     const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
-    const resourceActivityClient = await getTableClient(AzureTable.ResourceActivity);
     // Per-resource so one poisoned resource cannot block the rest of the sweep; its row survives,
     // So the next tick retries it. Failures are logged, never rethrown — a rethrow would strand
     // The resources this pass already purged behind a retry of the whole batch.
-    for (const { id } of expiredResources)
-      await getResultAsync(() => purgeResource(db, containerClient, resourceActivityClient, id)).match(
-        noop,
-        (error) => {
-          context.error(`${AzureFunction.PurgeDeletedResources} failed to purge resource ${id}: `, error);
-        },
-      );
+    for (const { id, type } of expiredResources)
+      await getResultAsync(async () => {
+        // The type decides which partitions this resource owns, so the client list is per-resource
+        const tableClients = await Promise.all(
+          [AzureTable.ResourceActivity, AzureTable.ResourceViews, ...ResourceOwnedTablesMap[type]].map((tableName) =>
+            getTableClient(tableName),
+          ),
+        );
+        await purgeResource(db, containerClient, tableClients, id);
+      }).match(noop, (error) => {
+        context.error(`${AzureFunction.PurgeDeletedResources} failed to purge resource ${id}: `, error);
+      });
   }).match(noop, logAndRethrow(context, AzureFunction.PurgeDeletedResources));

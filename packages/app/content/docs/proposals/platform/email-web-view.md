@@ -41,5 +41,5 @@ flowchart LR
 ## Notes
 
 - Hosted images inside the published copy need publish-time asset cloning — that arrives with [resource file assets](/docs/proposals/platform/resource-file-assets); until then published emails render external-URL images only, same as export does.
-- A personalized web version per recipient (resolving merge fields server-side per invite token) is deliberately out — it would make the public view do per-request dataset reads, which publishing exists to avoid. The published copy is one static artifact.
+- A personalized web version per recipient (resolving merge fields server-side per participant token) is deliberately out — it would make the public view do per-request dataset reads, which publishing exists to avoid. The published copy is one static artifact.
 - Cost check: no new services, no schema migration — capability flag + one component + a save-path addition.

@@ -1,4 +1,4 @@
-/* oxlint-disable no-inferrable-types */
+/* oxlint-disable typescript/no-inferrable-types */
 import { dayjs } from "@/services/dayjs";
 
 export const GITIGNORE_FILENAME = ".gitignore";

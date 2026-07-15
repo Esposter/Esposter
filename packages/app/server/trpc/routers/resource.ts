@@ -32,6 +32,7 @@ import {
   resourceActivityEntitySchema,
   ResourceActivityEntity,
   ResourceActivityType,
+  ResourceOwnedTablesMap,
   resourceFavorites,
   resourcePublications,
   resources,
@@ -211,8 +212,14 @@ export const resourceRouter = router({
   purgeResource: getOwnerProcedure(undefined, readResourceInputSchema, "id", true).mutation<Resource>(
     async ({ ctx, input: { id } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
-      await purgeResource(ctx.db, containerClient, resourceActivityClient, id);
+      // Every partition keyed by this resource id: its activity trail, its view counters, and whatever
+      // Its type owns — purge is the only place they are destroyed, since delete is soft
+      const tableClients = await Promise.all(
+        [AzureTable.ResourceActivity, AzureTable.ResourceViews, ...ResourceOwnedTablesMap[ctx.resource.type]].map(
+          (tableName) => useTableClient(tableName),
+        ),
+      );
+      await purgeResource(ctx.db, containerClient, tableClients, id);
       return ctx.resource;
     },
   ),
