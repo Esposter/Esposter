@@ -8,6 +8,9 @@ import { TRPCError } from "@trpc/server";
 export const danglingProgramBindingError = (): TRPCError =>
   new TRPCError({
     code: "BAD_REQUEST",
-    message: new InvalidOperationError(Operation.Create, AzureEntityType.ProgramInvite, danglingProgramBindingReason)
-      .message,
+    message: new InvalidOperationError(
+      Operation.Create,
+      AzureEntityType.ProgramParticipant,
+      danglingProgramBindingReason,
+    ).message,
   });

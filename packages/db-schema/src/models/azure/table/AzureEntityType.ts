@@ -1,6 +1,6 @@
 export enum AzureEntityType {
   File = "File",
   Message = "Message",
-  ProgramInvite = "ProgramInvite",
+  ProgramParticipant = "ProgramParticipant",
   SurveyResponse = "SurveyResponse",
 }

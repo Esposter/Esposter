@@ -4,7 +4,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import { closedSurveyErrorReason, invalidInviteTokenErrorReason } from "@@/server/services/survey/constants";
+import { closedSurveyErrorReason, invalidParticipantTokenErrorReason } from "@@/server/services/survey/constants";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { createBoundProgram } from "@@/server/trpc/routers/createBoundProgram.test";
@@ -27,25 +27,25 @@ describe("survey", () => {
   const model = "model";
   const updatedModel = "updatedModel";
   const settings = surveySettingsSchema.parse({});
-  const invitedSettings = { ...settings, responseMode: SurveyResponseMode.Invited };
+  const identifiedSettings = { ...settings, responseMode: SurveyResponseMode.Identified };
   const closedMessage = "closedMessage";
   const closedSettings = { ...settings, closedMessage, isAcceptingResponses: false };
   const keyValue = "keyValue";
-  const invalidInviteTokenErrorMessage = new InvalidOperationError(
+  const invalidParticipantTokenErrorMessage = new InvalidOperationError(
     Operation.Create,
     AzureEntityType.SurveyResponse,
-    invalidInviteTokenErrorReason,
+    invalidParticipantTokenErrorReason,
   ).message;
   const closedSurveyErrorMessage = new InvalidOperationError(
     Operation.Create,
     AzureEntityType.SurveyResponse,
     closedSurveyErrorReason,
   ).message;
-  // An Invited survey plus a program bound to it, returning the survey and its one valid token
-  const setupInvitedSurvey = async () => {
+  // An Identified survey plus a program bound to it, returning the survey and its one valid token
+  const setupIdentifiedSurvey = async () => {
     const survey = await caller.createResource({ name });
     await caller.saveResourceContent({
-      content: { model, settings: invitedSettings } satisfies SurveyResource,
+      content: { model, settings: identifiedSettings } satisfies SurveyResource,
       contentVersion: survey.contentVersion,
       id: survey.id,
     });
@@ -56,9 +56,9 @@ describe("survey", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const [invite] = await programCaller.generateProgramInvites({ id: program.id });
-    assert.exists(invite);
-    return { survey, token: invite.token };
+    const [participant] = await programCaller.generateProgramParticipants({ id: program.id });
+    assert.exists(participant);
+    return { survey, token: participant.token };
   };
 
   beforeAll(async () => {
@@ -126,7 +126,7 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 1 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
@@ -156,13 +156,13 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
     const updatedSurveyResponse = await caller.updateSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 1 },
       modelVersion: newSurveyResponse.modelVersion,
       partitionKey: newSurveyResponse.partitionKey,
@@ -178,7 +178,7 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
@@ -186,7 +186,7 @@ describe("survey", () => {
 
     await expect(
       caller.updateSurveyResponse({
-        inviteToken: "",
+        participantToken: "",
         model: newSurveyResponse.model,
         modelVersion: newSurveyResponse.modelVersion,
         partitionKey: newSurveyResponse.partitionKey,
@@ -202,13 +202,13 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
     await caller.updateSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 1 },
       modelVersion: newSurveyResponse.modelVersion,
       partitionKey: newSurveyResponse.partitionKey,
@@ -217,7 +217,7 @@ describe("survey", () => {
 
     await expect(
       caller.updateSurveyResponse({
-        inviteToken: "",
+        participantToken: "",
         model: { satisfaction: 2 },
         modelVersion: newSurveyResponse.modelVersion,
         partitionKey: newSurveyResponse.partitionKey,
@@ -238,105 +238,105 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    // A stale invite link into an anonymous survey still works, it just carries nothing
+    // A stale participant link into an anonymous survey still works, it just carries nothing
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: crypto.randomUUID(),
+      participantToken: crypto.randomUUID(),
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
 
-    expect(newSurveyResponse.inviteToken).toBe("");
+    expect(newSurveyResponse.participantToken).toBe("");
   });
 
-  test(`${SurveyResponseMode.Invited}: accepts a valid token and stores it`, async () => {
+  test(`${SurveyResponseMode.Identified}: accepts a valid token and stores it`, async () => {
     expect.hasAssertions();
 
-    const { survey, token } = await setupInvitedSurvey();
+    const { survey, token } = await setupIdentifiedSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: token,
+      participantToken: token,
       model: { satisfaction: 0 },
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
 
-    expect(newSurveyResponse.inviteToken).toBe(token);
+    expect(newSurveyResponse.participantToken).toBe(token);
   });
 
-  test(`fails create with missing token in ${SurveyResponseMode.Invited} mode`, async () => {
+  test(`fails create with missing token in ${SurveyResponseMode.Identified} mode`, async () => {
     expect.hasAssertions();
 
-    const { survey } = await setupInvitedSurvey();
+    const { survey } = await setupIdentifiedSurvey();
 
     await expect(
       caller.createSurveyResponse({
-        inviteToken: "",
+        participantToken: "",
         model: { satisfaction: 0 },
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidInviteTokenErrorMessage}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
   });
 
-  test(`fails create with forged token in ${SurveyResponseMode.Invited} mode`, async () => {
+  test(`fails create with forged token in ${SurveyResponseMode.Identified} mode`, async () => {
     expect.hasAssertions();
 
-    const { survey } = await setupInvitedSurvey();
+    const { survey } = await setupIdentifiedSurvey();
 
     await expect(
       caller.createSurveyResponse({
-        inviteToken: crypto.randomUUID(),
+        participantToken: crypto.randomUUID(),
         model: { satisfaction: 0 },
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidInviteTokenErrorMessage}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
   });
 
-  test(`fails create with another survey's token in ${SurveyResponseMode.Invited} mode`, async () => {
+  test(`fails create with another survey's token in ${SurveyResponseMode.Identified} mode`, async () => {
     expect.hasAssertions();
 
-    const { survey } = await setupInvitedSurvey();
+    const { survey } = await setupIdentifiedSurvey();
     // A token issued by a program bound to a different survey is as good as a forgery
-    const { token: otherToken } = await setupInvitedSurvey();
+    const { token: otherToken } = await setupIdentifiedSurvey();
 
     await expect(
       caller.createSurveyResponse({
-        inviteToken: otherToken,
+        participantToken: otherToken,
         model: { satisfaction: 0 },
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidInviteTokenErrorMessage}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
   });
 
-  test(`${SurveyResponseMode.Invited}: resumes with the same token`, async () => {
+  test(`${SurveyResponseMode.Identified}: resumes with the same token`, async () => {
     expect.hasAssertions();
 
-    const { survey, token } = await setupInvitedSurvey();
+    const { survey, token } = await setupIdentifiedSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: token,
+      participantToken: token,
       model: { satisfaction: 0 },
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
     const updatedSurveyResponse = await caller.updateSurveyResponse({
-      inviteToken: token,
+      participantToken: token,
       model: { satisfaction: 1 },
       modelVersion: newSurveyResponse.modelVersion,
       partitionKey: survey.id,
       rowKey: newSurveyResponse.rowKey,
     });
 
-    expect(updatedSurveyResponse.inviteToken).toBe(token);
+    expect(updatedSurveyResponse.participantToken).toBe(token);
   });
 
-  test(`fails update with swapped token in ${SurveyResponseMode.Invited} mode`, async () => {
+  test(`fails update with swapped token in ${SurveyResponseMode.Identified} mode`, async () => {
     expect.hasAssertions();
 
     const survey = await caller.createResource({ name });
     await caller.saveResourceContent({
-      content: { model, settings: invitedSettings } satisfies SurveyResource,
+      content: { model, settings: identifiedSettings } satisfies SurveyResource,
       contentVersion: survey.contentVersion,
       id: survey.id,
     });
@@ -348,12 +348,12 @@ describe("survey", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const invites = await programCaller.generateProgramInvites({ id: program.id });
-    const [firstInvite, secondInvite] = invites;
-    assert.exists(firstInvite);
-    assert.exists(secondInvite);
+    const participants = await programCaller.generateProgramParticipants({ id: program.id });
+    const [firstParticipant, secondParticipant] = participants;
+    assert.exists(firstParticipant);
+    assert.exists(secondParticipant);
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: firstInvite.token,
+      participantToken: firstParticipant.token,
       model: { satisfaction: 0 },
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -361,21 +361,21 @@ describe("survey", () => {
 
     await expect(
       caller.updateSurveyResponse({
-        inviteToken: secondInvite.token,
+        participantToken: secondParticipant.token,
         model: { satisfaction: 1 },
         modelVersion: newSurveyResponse.modelVersion,
         partitionKey: survey.id,
         rowKey: newSurveyResponse.rowKey,
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidInviteTokenErrorMessage}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
   });
 
-  test(`switching ${SurveyResponseMode.Invited} to ${SurveyResponseMode.Anonymous} applies on the next write`, async () => {
+  test(`switching ${SurveyResponseMode.Identified} to ${SurveyResponseMode.Anonymous} applies on the next write`, async () => {
     expect.hasAssertions();
 
-    const { survey, token } = await setupInvitedSurvey();
+    const { survey, token } = await setupIdentifiedSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: token,
+      participantToken: token,
       model: { satisfaction: 0 },
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -387,7 +387,7 @@ describe("survey", () => {
       id: survey.id,
     });
     const anonymousSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 1 },
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -397,9 +397,9 @@ describe("survey", () => {
       rowKey: newSurveyResponse.rowKey,
     });
 
-    expect(anonymousSurveyResponse.inviteToken).toBe("");
+    expect(anonymousSurveyResponse.participantToken).toBe("");
     // The mode governs the write boundary from now on; it never mutates responses already stored
-    expect(existingSurveyResponse?.inviteToken).toBe(token);
+    expect(existingSurveyResponse?.participantToken).toBe(token);
   });
 
   test("fails create with closed survey", async () => {
@@ -414,7 +414,7 @@ describe("survey", () => {
 
     await expect(
       caller.createSurveyResponse({
-        inviteToken: "",
+        participantToken: "",
         model: { satisfaction: 0 },
         partitionKey: newResource.id,
         rowKey: crypto.randomUUID(),
@@ -427,7 +427,7 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
@@ -441,7 +441,7 @@ describe("survey", () => {
 
     await expect(
       caller.updateSurveyResponse({
-        inviteToken: "",
+        participantToken: "",
         model: { satisfaction: 1 },
         modelVersion: newSurveyResponse.modelVersion,
         partitionKey: newResource.id,
@@ -488,7 +488,7 @@ describe("survey", () => {
       id: newResource.id,
     });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
@@ -502,13 +502,13 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
     await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 1 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
@@ -527,7 +527,7 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
@@ -546,7 +546,7 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
@@ -564,7 +564,7 @@ describe("survey", () => {
     const newResource = await caller.createResource({ name });
     const otherResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
@@ -587,7 +587,7 @@ describe("survey", () => {
     expect(emptyCount).toStrictEqual({ count: 0, isCapped: false });
 
     await caller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),

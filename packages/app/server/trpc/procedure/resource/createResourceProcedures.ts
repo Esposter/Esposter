@@ -102,7 +102,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
         await deleteDirectory(containerClient, id, true);
         // View history is the resource's own telemetry, so it dies with the resource — as does every
-        // Table partition the type owns under this id (a program's invites, and so on)
+        // Table partition the type owns under this id (a program's participants, and so on)
         await Promise.all(
           [AzureTable.ResourceViews, ...ResourceOwnedTablesMap[type]].map((tableName) =>
             deleteTablePartition(tableName, id),

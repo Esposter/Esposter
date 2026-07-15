@@ -7,7 +7,7 @@ import { normalizeString } from "@esposter/shared";
 import { z } from "zod";
 
 // Live collection settings — deliberately in the working content blob, never the publish snapshot,
-// So closing or switching mode takes effect without re-publishing every already-sent invite link
+// So closing or switching mode takes effect without re-publishing every already-sent participant link
 export class SurveySettings {
   closedMessage = "";
   isAcceptingResponses = true;

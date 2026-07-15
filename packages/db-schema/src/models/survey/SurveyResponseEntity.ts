@@ -6,8 +6,8 @@ import { selectResourceSchema } from "@/schema/resources";
 import { z } from "zod";
 
 export class SurveyResponseEntity extends AzureEntity {
-  // Opaque program-issued invite token, "" in Anonymous mode — resolvable only owner-side
-  inviteToken = "";
+  // Opaque program-issued participant token, "" in Anonymous mode — resolvable only owner-side
+  participantToken = "";
   model: Record<string, unknown> = {};
   modelVersion = 0;
 
@@ -24,7 +24,7 @@ export const surveyResponseEntitySchema = z.object({
       rowKey: z.uuid(),
     }),
   ).shape,
-  inviteToken: z.union([z.literal(""), z.uuid()]).default(""),
+  participantToken: z.union([z.literal(""), z.uuid()]).default(""),
   model: z.record(z.string().min(1), z.unknown()),
   modelVersion: z.int().nonnegative(),
 }) satisfies z.ZodType<ToData<SurveyResponseEntity>>;

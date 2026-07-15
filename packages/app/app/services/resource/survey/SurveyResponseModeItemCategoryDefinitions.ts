@@ -6,7 +6,7 @@ import { SurveyResponseMode } from "@esposter/db-schema";
 
 const SurveyResponseModeItemCategoryDefinitionMap = {
   [SurveyResponseMode.Anonymous]: { title: SurveyResponseMode.Anonymous },
-  [SurveyResponseMode.Invited]: { title: SurveyResponseMode.Invited },
+  [SurveyResponseMode.Identified]: { title: SurveyResponseMode.Identified },
 } as const satisfies Record<SurveyResponseMode, Except<SelectItemCategoryDefinition<SurveyResponseMode>, "value">>;
 
 export const SurveyResponseModeItemCategoryDefinitions: SelectItemCategoryDefinition<SurveyResponseMode>[] =

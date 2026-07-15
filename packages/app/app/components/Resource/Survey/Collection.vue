@@ -54,8 +54,8 @@ const save = async () => {
       <!-- Modes are collection-time postures, not privacy promises about the answers themselves -->
       <span op-medium-emphasis text-caption>
         {{
-          cloned.responseMode === SurveyResponseMode.Invited
-            ? "Only recipients holding a program invite link can answer, and you can see who said what."
+          cloned.responseMode === SurveyResponseMode.Identified
+            ? "Only participants holding a link from a program can answer, and you can see who said what."
             : "Anyone with the link can answer and you structurally cannot tell who said what."
         }}
       </span>

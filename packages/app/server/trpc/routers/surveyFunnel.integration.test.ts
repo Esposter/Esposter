@@ -10,7 +10,7 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { closedSurveyErrorReason, invalidInviteTokenErrorReason } from "@@/server/services/survey/constants";
+import { closedSurveyErrorReason, invalidParticipantTokenErrorReason } from "@@/server/services/survey/constants";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "@@/server/trpc/routers/createAudienceSheet.test";
@@ -40,7 +40,7 @@ describe("survey funnel — café feedback drive", () => {
   const satisfaction = "satisfaction";
   const model = JSON.stringify({ pages: [{ elements: [{ name: satisfaction, type: "rating" }], name: "page1" }] });
   // Three customers is the smallest audience exhibiting responded / not-responded / rejected.
-  // Address-shaped so the "never leaks the recipient list" assertions have a needle worth searching for
+  // Address-shaped so the "never leaks the participant list" assertions have a needle worth searching for
   const customers = ["a@a", "b@b", "c@c"];
 
   beforeAll(async () => {
@@ -65,17 +65,20 @@ describe("survey funnel — café feedback drive", () => {
     // 1. The audience — a Sheet of customers, keyed by email
     const sheet = await createAudienceSheet(sheetCaller, "customers", customers);
 
-    // 2. The survey — Invited mode, published
+    // 2. The survey — Identified mode, published
     const survey = await surveyCaller.createResource({ name: "feedback" });
     await surveyCaller.saveResourceContent({
-      content: { model, settings: { ...settings, responseMode: SurveyResponseMode.Invited } } satisfies SurveyResource,
+      content: {
+        model,
+        settings: { ...settings, responseMode: SurveyResponseMode.Identified },
+      } satisfies SurveyResource,
       contentVersion: survey.contentVersion,
       id: survey.id,
     });
     await surveyCaller.publishResource({ id: survey.id });
 
     // 3 + 4. The email and the program binding audience + email + survey
-    const email = await emailCaller.createResource({ name: "invite" });
+    const email = await emailCaller.createResource({ name: "participant" });
     const program = await programCaller.createResource({ name: "feedback drive" });
     await programCaller.saveResourceContent({
       content: {
@@ -87,26 +90,26 @@ describe("survey funnel — café feedback drive", () => {
       contentVersion: program.contentVersion,
       id: program.id,
     });
-    const invites = await programCaller.generateProgramInvites({ id: program.id });
+    const participants = await programCaller.generateProgramParticipants({ id: program.id });
 
-    expect(invites).toHaveLength(customers.length);
+    expect(participants).toHaveLength(customers.length);
     // Re-running the drive after adding customers must never rotate a token already sent out
-    expect(await programCaller.generateProgramInvites({ id: program.id })).toStrictEqual(invites);
+    expect(await programCaller.generateProgramParticipants({ id: program.id })).toStrictEqual(participants);
 
-    const [firstInvite, secondInvite, silentInvite] = invites;
-    assert.exists(firstInvite);
-    assert.exists(secondInvite);
-    assert.exists(silentInvite);
+    const [firstParticipant, secondParticipant, silentParticipant] = participants;
+    assert.exists(firstParticipant);
+    assert.exists(secondParticipant);
+    assert.exists(silentParticipant);
 
     // 5. The respondents — one answers, one token is reused for a resume, one forgery is rejected
     const firstResponse = await surveyCaller.createSurveyResponse({
-      inviteToken: firstInvite.token,
+      participantToken: firstParticipant.token,
       model: { [satisfaction]: 0 },
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
     const secondResponse = await surveyCaller.createSurveyResponse({
-      inviteToken: secondInvite.token,
+      participantToken: secondParticipant.token,
       model: { [satisfaction]: 1 },
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -114,25 +117,25 @@ describe("survey funnel — café feedback drive", () => {
 
     await expect(
       surveyCaller.createSurveyResponse({
-        inviteToken: crypto.randomUUID(),
+        participantToken: crypto.randomUUID(),
         model: { [satisfaction]: 1 },
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${
-        new InvalidOperationError(Operation.Create, AzureEntityType.SurveyResponse, invalidInviteTokenErrorReason)
+        new InvalidOperationError(Operation.Create, AzureEntityType.SurveyResponse, invalidParticipantTokenErrorReason)
           .message
       }]`,
     );
 
-    // 6. The status — 2 of 3 responded, and the third customer shows as invited-not-responded
+    // 6. The status — 2 of 3 responded, and the third customer shows as added-not-responded
     const statusRows = await programCaller.readProgramStatus({ id: program.id });
 
     expect(statusRows.map(({ isResponded, keyValue }) => ({ isResponded, keyValue }))).toStrictEqual([
-      { isResponded: true, keyValue: firstInvite.keyValue },
-      { isResponded: true, keyValue: secondInvite.keyValue },
-      { isResponded: false, keyValue: silentInvite.keyValue },
+      { isResponded: true, keyValue: firstParticipant.keyValue },
+      { isResponded: true, keyValue: secondParticipant.keyValue },
+      { isResponded: false, keyValue: silentParticipant.keyValue },
     ]);
     expect(await surveyCaller.countSurveyResponses({ id: survey.id })).toStrictEqual({ count: 2, isCapped: false });
 
@@ -145,16 +148,16 @@ describe("survey funnel — café feedback drive", () => {
     await surveyCaller.saveResourceContent({
       content: {
         model,
-        settings: { ...settings, isAcceptingResponses: false, responseMode: SurveyResponseMode.Invited },
+        settings: { ...settings, isAcceptingResponses: false, responseMode: SurveyResponseMode.Identified },
       } satisfies SurveyResource,
       contentVersion: survey.contentVersion + 1,
       id: survey.id,
     });
 
-    // Closing takes effect without re-publishing, so the invite URL stays alive and says so
+    // Closing takes effect without re-publishing, so the participant URL stays alive and says so
     await expect(
       surveyCaller.updateSurveyResponse({
-        inviteToken: firstInvite.token,
+        participantToken: firstParticipant.token,
         model: { [satisfaction]: 1 },
         modelVersion: firstResponse.modelVersion,
         partitionKey: survey.id,
@@ -200,11 +203,11 @@ describe("survey funnel — café feedback drive", () => {
     const publishedDashboard = await dashboardCaller.readPublishedResourceContent(dashboard.id);
     const snapshot = publishedDashboard.content.visuals[0]?.dataset?.snapshot;
 
-    // The published funnel chart is baked from the recipient-free dataset — publishing it cannot
-    // Leak who was invited
+    // The published funnel chart is baked from the identity-free dataset — publishing it cannot
+    // Leak who was added
     expect(snapshot?.columns).toStrictEqual([
-      { name: "recipient", type: ColumnType.String },
-      { name: "invitedAt", type: ColumnType.Date },
+      { name: "participant", type: ColumnType.String },
+      { name: "addedAt", type: ColumnType.Date },
       { name: "responded", type: ColumnType.Boolean },
     ]);
     expect(snapshot?.rows.map(({ responded }) => responded)).toStrictEqual([true, false, false]);

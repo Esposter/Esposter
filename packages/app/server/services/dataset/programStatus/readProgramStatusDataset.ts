@@ -6,8 +6,8 @@ import { readProgramStatusRows } from "@@/server/services/program/readProgramSta
 import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 // A dataset flows into dashboards and a dashboard is publishable, so its snapshot is a public read.
-// The recipient column is therefore the invite's non-secret publicId — never keyValue, which is the
-// Recipient list, and never the token, which is the bearer credential survey writes accept.
+// The participant column is therefore their non-secret publicId — never keyValue, which is the
+// Participant list, and never the token, which is the bearer credential survey writes accept.
 // Response-rate charting needs counts and dates, not identities
 export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) => {
   const resource = await ctx.db.query.resources.findFirst({
@@ -22,15 +22,15 @@ export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) 
   const statusRows = await readProgramStatusRows(resource.id);
   return {
     columns: [
-      { name: "recipient", type: ColumnType.String },
-      { name: "invitedAt", type: ColumnType.Date },
+      { name: "participant", type: ColumnType.String },
+      { name: "addedAt", type: ColumnType.Date },
       { name: "responded", type: ColumnType.Boolean },
     ],
     // Charting a funnel needs the day, not the minute — and a date-only string is what survives the
     // Published-snapshot round trip (see getUtcDateString)
-    rows: statusRows.map(({ invitedAt, isResponded, publicId }) => ({
-      invitedAt: getUtcDateString(invitedAt),
-      recipient: publicId,
+    rows: statusRows.map(({ addedAt, isResponded, publicId }) => ({
+      addedAt: getUtcDateString(addedAt),
+      participant: publicId,
       responded: isResponded,
     })),
   };

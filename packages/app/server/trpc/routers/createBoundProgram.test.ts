@@ -16,7 +16,7 @@ interface CreateBoundProgramOptions {
   surveyId: Resource["id"];
 }
 
-// A program bound to an audience sheet and a survey — the minimum setup for issuing invite tokens
+// A program bound to an audience sheet and a survey — the minimum setup for issuing participant tokens
 export const createBoundProgram = async ({
   keyValues,
   name,

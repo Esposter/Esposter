@@ -27,9 +27,9 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
-- [Program resource](/docs/platform/program-resource) — the distribution orchestrator: audience + email + survey bindings, opaque invite tokens, funnel status
-- [Survey response controls](/docs/platform/survey-response-controls) — the accepting-responses toggle and the closed state that keeps invite links alive
-- [Survey response modes](/docs/platform/survey-response-modes) — Anonymous or Invited identity, enforced at the write boundary
+- [Program resource](/docs/platform/program-resource) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
+- [Survey response controls](/docs/platform/survey-response-controls) — the accepting-responses toggle and the closed state that keeps participant links alive
+- [Survey response modes](/docs/platform/survey-response-modes) — Anonymous or Identified identity, enforced at the write boundary
 - [Survey response management](/docs/platform/survey-response-management) — response detail, owner delete, response count on Overview
 - [Published view analytics](/docs/platform/published-view-analytics) — best-effort view counts on public reads for every publishable type
 - [Dashboard data binding](/docs/platform/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
@@ -52,4 +52,4 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - Resource page command-bar parity — labeled commands with `…` overflow, Refresh, `duplicateResource`, type-the-name/`delete {n}` destructive guards
 - Notifications bell — session-scoped notification store, app-bar bell + single snackbar queue, `G N` chord, stale-`contentVersion` save-conflict surface
 - File resource renamed to **Sheet** — pg enum value, `sheet` router, models/components/store, and the docs area (`sheet-editor`, `sheet-resource`); no backwards compat
-- **End-to-end survey funnel** — the invite → view → respond → analyze loop closed: survey `settings` (accepting-responses toggle + Anonymous/Invited response mode) enforced at one server write boundary, the **Program** resource issuing opaque invite tokens and serving the recipient-free `ProgramStatus` dataset, owner-side response detail/delete/count, and best-effort view counts on every publishable type's public read. One new Postgres enum value and two new Azure Tables; no new services. The café-scenario chain is covered end to end by `surveyFunnel.integration.test.ts`.
+- **End-to-end survey funnel** — the send → view → respond → analyze loop closed: survey `settings` (accepting-responses toggle + Anonymous/Identified response mode) enforced at one server write boundary, the **Program** resource issuing opaque participant tokens and serving the identity-free `ProgramStatus` dataset, owner-side response detail/delete/count, and best-effort view counts on every publishable type's public read. One new Postgres enum value and two new Azure Tables; no new services. The café-scenario chain is covered end to end by `surveyFunnel.integration.test.ts`.

@@ -11,29 +11,29 @@ import {
   AzureTable,
   BinaryOperator,
   CompositeKeyPropertyNames,
-  ProgramInviteEntity,
+  ProgramParticipantEntity,
 } from "@esposter/db-schema";
 
-// The canonical invites × responses join, purpose-built rather than routed through a generic join engine.
-// A response with no matching invite (an anonymous-era row) is simply not an invite, so it never appears here
+// The canonical participants × responses join, purpose-built rather than routed through a generic join engine.
+// A response with no matching participant (an anonymous-era row) carries nobody, so it never appears here
 export const readProgramStatusRows = async (programId: Resource["id"]): Promise<ProgramStatusRow[]> => {
-  const inviteClauses: Clause<ProgramInviteEntity>[] = [
+  const participantClauses: Clause<ProgramParticipantEntity>[] = [
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: programId },
   ];
-  const programInviteClient = await useTableClient(AzureTable.ProgramInvites);
-  const invites = await getTopNEntities(programInviteClient, AZURE_MAX_PAGE_SIZE, ProgramInviteEntity, {
-    filter: serializeClauses(inviteClauses),
+  const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
+  const participants = await getTopNEntities(programParticipantClient, AZURE_MAX_PAGE_SIZE, ProgramParticipantEntity, {
+    filter: serializeClauses(participantClauses),
   });
-  // A deleted or unbound survey leaves the invites readable with nothing responded — the same
+  // A deleted or unbound survey leaves the participants readable with nothing responded — the same
   // Fail-soft posture as every dangling reference
   const content = await readResourceContent(programResourceSchema, programId);
   const respondedTokens = new Set<string>();
   if (content?.surveyId) {
     const surveyResponses = await readSurveyResponseEntities(content.surveyId);
-    for (const { inviteToken } of surveyResponses) if (inviteToken) respondedTokens.add(inviteToken);
+    for (const { participantToken } of surveyResponses) if (participantToken) respondedTokens.add(participantToken);
   }
-  return invites.map(({ createdAt, keyValue, publicId, token }) => ({
-    invitedAt: createdAt,
+  return participants.map(({ createdAt, keyValue, publicId, token }) => ({
+    addedAt: createdAt,
     isResponded: respondedTokens.has(token),
     keyValue,
     publicId,

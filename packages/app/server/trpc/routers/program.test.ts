@@ -24,7 +24,7 @@ import {
   AzureTable,
   BinaryOperator,
   CompositeKeyPropertyNames,
-  ProgramInviteEntity,
+  ProgramParticipantEntity,
   resources,
   ResourceType,
   SurveyResponseMode,
@@ -34,7 +34,7 @@ import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
-// This suite reads the invite table directly to prove the delete cleanup, so it needs the mock
+// This suite reads the participant table directly to prove the delete cleanup, so it needs the mock
 // Registered in its own module graph — createMockContext's registration does not reach a direct import
 vi.mock(
   import("@@/server/composables/azure/table/useTableClient"),
@@ -42,7 +42,7 @@ vi.mock(
 );
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
-// Here only the router wiring plus the program-specific invite issuance and status join.
+// Here only the router wiring plus the program-specific participant issuance and status join.
 describe("program", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["program"]>;
@@ -52,19 +52,19 @@ describe("program", () => {
   const name = "name";
   const model = "model";
   const settings = surveySettingsSchema.parse({});
-  const invitedSettings = { ...settings, responseMode: SurveyResponseMode.Invited };
-  // Three recipients is the smallest set exhibiting responded / not-responded / duplicate-key
+  const identifiedSettings = { ...settings, responseMode: SurveyResponseMode.Identified };
+  // Three participants is the smallest set exhibiting responded / not-responded / duplicate-key
   const keyValues = ["", " ", "a"];
   const keyValue = "keyValue";
   const danglingProgramBindingErrorMessage = new InvalidOperationError(
     Operation.Create,
-    AzureEntityType.ProgramInvite,
+    AzureEntityType.ProgramParticipant,
     danglingProgramBindingReason,
   ).message;
-  const setupInvitedSurvey = async () => {
+  const setupIdentifiedSurvey = async () => {
     const survey = await surveyCaller.createResource({ name });
     await surveyCaller.saveResourceContent({
-      content: { model, settings: invitedSettings } satisfies SurveyResource,
+      content: { model, settings: identifiedSettings } satisfies SurveyResource,
       contentVersion: survey.contentVersion,
       id: survey.id,
     });
@@ -113,8 +113,8 @@ describe("program", () => {
   test("generates one token per distinct audience key value", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
-    // The empty key value is skipped and the duplicate collapses — one token per distinct recipient
+    const survey = await setupIdentifiedSurvey();
+    // The empty key value is skipped and the duplicate collapses — one token per distinct participant
     const program = await createBoundProgram({
       keyValues: [...keyValues, "a"],
       name,
@@ -122,20 +122,20 @@ describe("program", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const invites = await caller.generateProgramInvites({ id: program.id });
+    const participants = await caller.generateProgramParticipants({ id: program.id });
 
-    expect(invites.map(({ keyValue }) => keyValue)).toStrictEqual([" ", "a"]);
+    expect(participants.map(({ keyValue }) => keyValue)).toStrictEqual([" ", "a"]);
     // Tokens are UUIDs, never derived from the key — a derivable token could be minted by anyone
-    for (const { keyValue, token } of invites) {
+    for (const { keyValue, token } of participants) {
       expect(token).not.toBe(keyValue);
       expect(z.uuid().safeParse(token).success).toBe(true);
     }
   });
 
-  test("generateProgramInvites is idempotent", async () => {
+  test("generateProgramParticipants is idempotent", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues,
       name,
@@ -143,17 +143,17 @@ describe("program", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const invites = await caller.generateProgramInvites({ id: program.id });
-    const reissuedInvites = await caller.generateProgramInvites({ id: program.id });
+    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const reissuedParticipants = await caller.generateProgramParticipants({ id: program.id });
 
-    // Re-running never rotates a token — a rotated token would dead-link an already-sent invite
-    expect(reissuedInvites).toStrictEqual(invites);
+    // Re-running never rotates a token — a rotated token would dead-link a link already sent out
+    expect(reissuedParticipants).toStrictEqual(participants);
   });
 
-  test("generateProgramInvites issues one token per recipient across concurrent runs", async () => {
+  test("generateProgramParticipants issues one token per participant across concurrent runs", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues,
       name,
@@ -163,28 +163,33 @@ describe("program", () => {
     });
     // Neither run sees the other's rows, so both try to issue every token — the storage key is what makes
     // One of them lose, and the loser adopts the winner's token instead of minting a rival
-    const [invites, concurrentInvites] = await Promise.all([
-      caller.generateProgramInvites({ id: program.id }),
-      caller.generateProgramInvites({ id: program.id }),
+    const [participants, concurrentParticipants] = await Promise.all([
+      caller.generateProgramParticipants({ id: program.id }),
+      caller.generateProgramParticipants({ id: program.id }),
     ]);
 
-    expect(concurrentInvites).toStrictEqual(invites);
+    expect(concurrentParticipants).toStrictEqual(participants);
 
-    const clauses: Clause<ProgramInviteEntity>[] = [
+    const clauses: Clause<ProgramParticipantEntity>[] = [
       { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: program.id },
     ];
-    const programInviteClient = await useTableClient(AzureTable.ProgramInvites);
-    const storedInvites = await getTopNEntities(programInviteClient, AZURE_MAX_PAGE_SIZE, ProgramInviteEntity, {
-      filter: serializeClauses(clauses),
-    });
+    const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
+    const storedParticipants = await getTopNEntities(
+      programParticipantClient,
+      AZURE_MAX_PAGE_SIZE,
+      ProgramParticipantEntity,
+      {
+        filter: serializeClauses(clauses),
+      },
+    );
 
-    expect(storedInvites).toHaveLength(invites.length);
+    expect(storedParticipants).toHaveLength(participants.length);
   });
 
   test("generates only the missing tokens for a grown audience", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues: [" "],
       name,
@@ -192,7 +197,7 @@ describe("program", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const invites = await caller.generateProgramInvites({ id: program.id });
+    const participants = await caller.generateProgramParticipants({ id: program.id });
     const content = await caller.readResourceContent({ id: program.id });
     assert.exists(content?.audience);
     const grownSheet = await createAudienceSheet(sheetCaller, name, [" ", "a"]);
@@ -201,16 +206,16 @@ describe("program", () => {
       contentVersion: program.contentVersion + 1,
       id: program.id,
     });
-    const grownInvites = await caller.generateProgramInvites({ id: program.id });
+    const grownParticipants = await caller.generateProgramParticipants({ id: program.id });
 
-    expect(grownInvites).toHaveLength(2);
-    expect(grownInvites[0]).toStrictEqual(invites[0]);
+    expect(grownParticipants).toHaveLength(2);
+    expect(grownParticipants[0]).toStrictEqual(participants[0]);
   });
 
   test("fails generate with dangling audience binding", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues,
       name,
@@ -223,7 +228,7 @@ describe("program", () => {
     await sheetCaller.deleteResource({ id: content.audience.id });
 
     // The provider's UNAUTHORIZED never throws through — it surfaces as the program's own binding error
-    await expect(caller.generateProgramInvites({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(caller.generateProgramParticipants({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${danglingProgramBindingErrorMessage}]`,
     );
   });
@@ -231,7 +236,7 @@ describe("program", () => {
   test("fails generate with wrong user", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues,
       name,
@@ -241,7 +246,7 @@ describe("program", () => {
     });
     await mockSessionOnce(mockContext.db);
 
-    await expect(caller.generateProgramInvites({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(caller.generateProgramParticipants({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });
@@ -249,7 +254,7 @@ describe("program", () => {
   test("fails read status with wrong user", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues,
       name,
@@ -264,10 +269,10 @@ describe("program", () => {
     );
   });
 
-  test("reads status joining invites against responses", async () => {
+  test("reads status joining participants against responses", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues,
       name,
@@ -275,12 +280,12 @@ describe("program", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const invites = await caller.generateProgramInvites({ id: program.id });
-    const [respondedInvite, invitedOnlyInvite] = invites;
-    assert.exists(respondedInvite);
-    assert.exists(invitedOnlyInvite);
+    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const [respondedParticipant, unrespondedParticipant] = participants;
+    assert.exists(respondedParticipant);
+    assert.exists(unrespondedParticipant);
     await surveyCaller.createSurveyResponse({
-      inviteToken: respondedInvite.token,
+      participantToken: respondedParticipant.token,
       model: { satisfaction: 0 },
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -288,8 +293,8 @@ describe("program", () => {
     const statusRows = await caller.readProgramStatus({ id: program.id });
 
     expect(statusRows.map(({ isResponded, keyValue }) => ({ isResponded, keyValue }))).toStrictEqual([
-      { isResponded: true, keyValue: respondedInvite.keyValue },
-      { isResponded: false, keyValue: invitedOnlyInvite.keyValue },
+      { isResponded: true, keyValue: respondedParticipant.keyValue },
+      { isResponded: false, keyValue: unrespondedParticipant.keyValue },
     ]);
   });
 
@@ -309,10 +314,10 @@ describe("program", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    await caller.generateProgramInvites({ id: program.id });
-    // A response carrying no token was never invited, so it is simply not an invite row
+    await caller.generateProgramParticipants({ id: program.id });
+    // A response carrying no token carries nobody, so it is simply not a participant row
     await surveyCaller.createSurveyResponse({
-      inviteToken: "",
+      participantToken: "",
       model: { satisfaction: 0 },
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -325,7 +330,7 @@ describe("program", () => {
   test("reads status with a deleted survey binding", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues: [" "],
       name,
@@ -333,19 +338,19 @@ describe("program", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    await caller.generateProgramInvites({ id: program.id });
+    await caller.generateProgramParticipants({ id: program.id });
     await surveyCaller.deleteResource({ id: survey.id });
     const statusRows = await caller.readProgramStatus({ id: program.id });
 
-    // Invites persist and stay readable with responses gone — the fail-soft posture for dangling links
+    // Participants persist and stay readable with responses gone — the fail-soft posture for dangling links
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
   });
 
-  test("serves the status dataset without the audience key value or the invite token", async () => {
+  test("serves the status dataset without the audience key value or the participant token", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
-    // A distinctive key value so the "never leaks the recipient list" assertion has a real needle
+    const survey = await setupIdentifiedSurvey();
+    // A distinctive key value so the "never leaks the participant list" assertion has a real needle
     const program = await createBoundProgram({
       keyValues: [keyValue],
       name,
@@ -353,24 +358,24 @@ describe("program", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const invites = await caller.generateProgramInvites({ id: program.id });
-    const invite = invites[0];
-    assert.exists(invite);
+    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const participant = participants[0];
+    assert.exists(participant);
     const dataset = await datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus });
 
-    expect(dataset.columns.map(({ name }) => name)).toStrictEqual(["recipient", "invitedAt", "responded"]);
+    expect(dataset.columns.map(({ name }) => name)).toStrictEqual(["participant", "addedAt", "responded"]);
     expect(dataset.rows.map(({ responded }) => responded)).toStrictEqual([false]);
-    // A dashboard bound to this dataset is publishable, so neither the recipient list nor the token
+    // A dashboard bound to this dataset is publishable, so neither the participant list nor the token
     // May enter it — the token is the credential survey writes accept, so publishing it would let any
-    // Viewer respond as the invitee
-    expect(JSON.stringify(dataset)).not.toContain(invite.keyValue);
-    expect(JSON.stringify(dataset)).not.toContain(invite.token);
+    // Viewer respond as that participant
+    expect(JSON.stringify(dataset)).not.toContain(participant.keyValue);
+    expect(JSON.stringify(dataset)).not.toContain(participant.token);
   });
 
   test("fails read status dataset with wrong user", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues: [" "],
       name,
@@ -385,10 +390,10 @@ describe("program", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("deletes program invites with the program", async () => {
+  test("deletes program participants with the program", async () => {
     expect.hasAssertions();
 
-    const survey = await setupInvitedSurvey();
+    const survey = await setupIdentifiedSurvey();
     const program = await createBoundProgram({
       keyValues: [" "],
       name,
@@ -396,17 +401,22 @@ describe("program", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    await caller.generateProgramInvites({ id: program.id });
+    await caller.generateProgramParticipants({ id: program.id });
     await caller.deleteResource({ id: program.id });
     // The program row is gone, so the partition can only be observed against the table itself
-    const programInviteClient = await useTableClient(AzureTable.ProgramInvites);
-    const clauses: Clause<ProgramInviteEntity>[] = [
+    const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
+    const clauses: Clause<ProgramParticipantEntity>[] = [
       { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: program.id },
     ];
-    const remainingInvites = await getTopNEntities(programInviteClient, AZURE_MAX_PAGE_SIZE, ProgramInviteEntity, {
-      filter: serializeClauses(clauses),
-    });
+    const remainingParticipants = await getTopNEntities(
+      programParticipantClient,
+      AZURE_MAX_PAGE_SIZE,
+      ProgramParticipantEntity,
+      {
+        filter: serializeClauses(clauses),
+      },
+    );
 
-    expect(remainingInvites).toStrictEqual([]);
+    expect(remainingParticipants).toStrictEqual([]);
   });
 });

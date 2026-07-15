@@ -5,7 +5,7 @@ import type { FileSasEntity } from "@esposter/db-schema";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
-import { invalidInviteTokenError } from "@@/server/services/survey/invalidInviteTokenError";
+import { invalidParticipantTokenError } from "@@/server/services/survey/invalidParticipantTokenError";
 import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
 import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurveyResponseRead";
 import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
@@ -62,20 +62,20 @@ const deleteFileInputSchema = z.object({
 });
 
 const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
-  inviteToken: true,
+  participantToken: true,
   partitionKey: true,
   rowKey: true,
 });
 
 const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
-  inviteToken: true,
+  participantToken: true,
   model: true,
   partitionKey: true,
   rowKey: true,
 });
 
 const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
-  inviteToken: true,
+  participantToken: true,
   model: true,
   modelVersion: true,
   partitionKey: true,
@@ -103,9 +103,9 @@ export const surveyRouter = router({
   createSurveyResponse: standardRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
-      const inviteToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.inviteToken);
+      const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-      const newSurveyResponse = new SurveyResponseEntity({ ...input, inviteToken });
+      const newSurveyResponse = new SurveyResponseEntity({ ...input, participantToken });
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
@@ -154,22 +154,22 @@ export const surveyRouter = router({
   ).query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
-    .query<null | SurveyResponseEntity>(async ({ ctx, input: { inviteToken, partitionKey, rowKey } }) => {
-      const resolvedInviteToken = await resolveSurveyResponseRead(ctx.db, partitionKey, inviteToken);
+    .query<null | SurveyResponseEntity>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
+      const resolvedParticipantToken = await resolveSurveyResponseRead(ctx.db, partitionKey, participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const surveyResponse = await getEntity(surveyResponseClient, SurveyResponseEntity, partitionKey, rowKey);
       if (!surveyResponse) return null;
-      // A resume must present the identity the response was started with, so another recipient's row is
-      // Indistinguishable from one that does not exist. Only Invited mode resolves a token to compare —
+      // A resume must present the identity the response was started with, so another participant's row is
+      // Indistinguishable from one that does not exist. Only Identified mode resolves a token to compare —
       // Anonymous carries no identity to contradict, so a survey switched to it still resumes its
-      // Invited-era responses, exactly as the write boundary treats them
-      if (resolvedInviteToken && resolvedInviteToken !== surveyResponse.inviteToken) return null;
+      // Identified-era responses, exactly as the write boundary treats them
+      if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken) return null;
       return surveyResponse;
     }),
   updateSurveyResponse: standardRateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
-      const inviteToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.inviteToken);
+      const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const surveyResponse = await requireEntity(
         getEntity(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
@@ -177,8 +177,9 @@ export const surveyRouter = router({
         JSON.stringify({ partitionKey: input.partitionKey, rowKey: input.rowKey }),
       );
       // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
-      // Only Invited mode resolves a token to compare — Anonymous carries no identity to contradict
-      if (inviteToken && inviteToken !== surveyResponse.inviteToken) throw invalidInviteTokenError();
+      // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
+      if (participantToken && participantToken !== surveyResponse.participantToken)
+        throw invalidParticipantTokenError();
       // Response models are plain records, so duplicates are detected structurally rather than by reference
       if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model))
         throw new TRPCError({
@@ -199,7 +200,7 @@ export const surveyRouter = router({
         });
 
       // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write
-      const updatedSurveyResponse = { ...input, inviteToken };
+      const updatedSurveyResponse = { ...input, participantToken };
       await updateEntity(surveyResponseClient, updatedSurveyResponse);
       return Object.assign(surveyResponse, updatedSurveyResponse);
     }),

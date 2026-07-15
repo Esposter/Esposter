@@ -18,7 +18,7 @@ const { id } = defineProps<ResourceSurveyViewProps>();
 const { $trpc } = useNuxtApp();
 const route = useRoute();
 // Read once on load and threaded through every write — the URL carries an opaque token or nothing
-const inviteToken = Array.isArray(route.query.t) ? (route.query.t[0] ?? "") : (route.query.t ?? "");
+const participantToken = Array.isArray(route.query.t) ? (route.query.t[0] ?? "") : (route.query.t ?? "");
 
 let surveyResponse: null | SurveyResponseEntity = null;
 
@@ -33,7 +33,7 @@ const saveSurveyResponse = async (survey: Model) => {
     await executeMutation(
       () =>
         $trpc.survey.createSurveyResponse.mutate({
-          inviteToken,
+          participantToken,
           model: responseModel,
           partitionKey: id,
           rowKey: newSurveyResponseId,
@@ -41,7 +41,7 @@ const saveSurveyResponse = async (survey: Model) => {
       {
         onSuccess: (newSurveyResponse) => {
           surveyResponse = newSurveyResponse;
-          localStorage.setItem(LocalStorageKey.SurveyResponseId(id, inviteToken), newSurveyResponse.rowKey);
+          localStorage.setItem(LocalStorageKey.SurveyResponseId(id, participantToken), newSurveyResponse.rowKey);
         },
       },
     );
@@ -51,7 +51,7 @@ const saveSurveyResponse = async (survey: Model) => {
   await executeMutation(
     () =>
       $trpc.survey.updateSurveyResponse.mutate({
-        inviteToken,
+        participantToken,
         model: responseModel,
         modelVersion: currentSurveyResponse.modelVersion,
         partitionKey: currentSurveyResponse.partitionKey,
@@ -72,9 +72,9 @@ const { content, name } = await getResultAsync(() => $trpc.survey.readPublishedR
   },
 );
 // Settings arrive live on the public read, so closing or gating takes effect without a re-publish and
-// The URL stays alive — unlike unpublish, which 404s every invite already sent
+// The URL stays alive — unlike unpublish, which 404s every participant link already sent
 const { closedMessage, isAcceptingResponses, responseMode } = content.settings;
-const isInviteRequired = responseMode === SurveyResponseMode.Invited && !inviteToken;
+const isParticipantTokenRequired = responseMode === SurveyResponseMode.Identified && !participantToken;
 const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
 const model = new Model(surveyModel);
 if (theme) model.applyTheme(theme);
@@ -86,7 +86,7 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
   await getResultAsync(() => saveSurveyResponse(survey)).match(
     () => {
       // The resume id must not outlive the submission — a shared device could otherwise reopen the answers
-      localStorage.removeItem(LocalStorageKey.SurveyResponseId(id, inviteToken));
+      localStorage.removeItem(LocalStorageKey.SurveyResponseId(id, participantToken));
       showSaveSuccess();
     },
     (error) => showSaveError(error.message),
@@ -99,13 +99,13 @@ const isLoading = ref(true);
 onMounted(async () => {
   // Respondent progress is tracked per browser, so an interrupted survey resumes where it left off.
   // A failed resume falls back to a blank survey rather than stranding the respondent on the skeleton
-  if (isAcceptingResponses && !isInviteRequired)
+  if (isAcceptingResponses && !isParticipantTokenRequired)
     await getResultAsync(async () => {
-      const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id, inviteToken));
+      const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id, participantToken));
       if (!surveyResponseId) return;
 
       surveyResponse = await $trpc.survey.readSurveyResponse.query({
-        inviteToken,
+        participantToken,
         partitionKey: id,
         rowKey: surveyResponseId,
       });
@@ -128,10 +128,10 @@ onMounted(async () => {
     :description="closedMessage || DEFAULT_CLOSED_MESSAGE"
   />
   <StyledEmptyState
-    v-else-if="isInviteRequired"
+    v-else-if="isParticipantTokenRequired"
     icon="mdi-email-lock-outline"
     :title="name"
-    description="This survey is open to invited recipients only. Please use the link from your invite."
+    description="This survey is open to invited participants only. Please use the personal link you were sent."
   />
   <SurveyComponent v-else-if="!isLoading" :model />
 </template>

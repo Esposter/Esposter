@@ -13,8 +13,8 @@ import { TRPCError } from "@trpc/server";
 export const resolveSurveyResponseWrite = async (
   db: Context["db"],
   surveyId: Resource["id"],
-  inviteToken: SurveyResponseEntity["inviteToken"],
-): Promise<SurveyResponseEntity["inviteToken"]> => {
+  participantToken: SurveyResponseEntity["participantToken"],
+): Promise<SurveyResponseEntity["participantToken"]> => {
   const { isAcceptingResponses, responseMode } = await readSurveySettings(surveyId);
   if (!isAcceptingResponses)
     throw new TRPCError({
@@ -22,5 +22,5 @@ export const resolveSurveyResponseWrite = async (
       message: new InvalidOperationError(Operation.Create, AzureEntityType.SurveyResponse, closedSurveyErrorReason)
         .message,
     });
-  return SurveyResponseModeValidatorMap[responseMode](db, surveyId, inviteToken);
+  return SurveyResponseModeValidatorMap[responseMode](db, surveyId, participantToken);
 };

@@ -19,8 +19,8 @@ const statusRows = ref<ProgramStatusRow[]>([]);
 const isLoading = ref(true);
 const respondedCount = computed(() => statusRows.value.filter(({ isResponded }) => isResponded).length);
 const headers = [
-  { key: "keyValue", title: "Recipient" },
-  { key: "invitedAt", title: "Invited" },
+  { key: "keyValue", title: "Participant" },
+  { key: "addedAt", title: "Added" },
   { key: "isResponded", title: "Responded" },
 ];
 const readStatus = async () => {
@@ -33,13 +33,13 @@ const readStatus = async () => {
     },
   );
 };
-const generateInvites = async () => {
-  await executeGenerateMutation(() => $trpc.program.generateProgramInvites.mutate({ id: id.value }), {
+const generateParticipants = async () => {
+  await executeGenerateMutation(() => $trpc.program.generateProgramParticipants.mutate({ id: id.value }), {
     onError: (error) => {
       createNotification({ severity: "error", title: error.message });
     },
-    onSuccess: async (invites) => {
-      createNotification({ severity: "success", title: `${invites.length} invites ready` });
+    onSuccess: async (participants) => {
+      createNotification({ severity: "success", title: `${participants.length} participants ready` });
       await readStatus();
     },
   });
@@ -59,21 +59,21 @@ onMounted(async () => {
       <span text-h6>Status</span>
       <v-spacer />
       <span op-medium-emphasis>{{ respondedCount }} of {{ statusRows.length }} responded</span>
-      <StyledButton :button-props="{ prependIcon: 'mdi-ticket-confirmation' }" @click="generateInvites">
-        Generate invites
+      <StyledButton :button-props="{ prependIcon: 'mdi-ticket-confirmation' }" @click="generateParticipants">
+        Generate participants
       </StyledButton>
     </div>
     <StyledEmptyState
       v-if="statusRows.length === 0"
       icon="mdi-ticket-outline"
-      title="No invites yet"
-      description="Bind an audience on the Setup blade, then generate invites."
+      title="No participants yet"
+      description="Bind an audience on the Setup blade, then generate participants."
     />
     <v-data-table v-else :headers :items="statusRows">
-      <template #[`item.invitedAt`]="{ item }">{{ dayjs(item.invitedAt).format(RESOURCE_DATE_FORMAT) }}</template>
+      <template #[`item.addedAt`]="{ item }">{{ dayjs(item.addedAt).format(RESOURCE_DATE_FORMAT) }}</template>
       <template #[`item.isResponded`]="{ item }">
         <v-chip v-if="item.isResponded" color="success" size="small">Responded</v-chip>
-        <v-chip v-else size="small">Invited</v-chip>
+        <v-chip v-else size="small">Awaiting</v-chip>
       </template>
     </v-data-table>
   </div>
