@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
+
+### Bug Fixes
+
+* cleanup configs and CI ([4e1b370](https://github.com/Esposter/Esposter/commit/4e1b370bb32f13483d8aeb63d2f307a2a06e9f10))
+* code review comments ([a54c05f](https://github.com/Esposter/Esposter/commit/a54c05fa837998275ca4c7d7236efbbb4bd26819))
+* docs + skills ([fd274a1](https://github.com/Esposter/Esposter/commit/fd274a1db9f48dc3816a4ab00abe718f377605df))
+* harden virrun orphan sweep against killing live runs ([535e076](https://github.com/Esposter/Esposter/commit/535e076ba7c5a5d6b1f37161c1cdb28a5bfb8fd7))
+* indicator ([713f7fc](https://github.com/Esposter/Esposter/commit/713f7fc14e2e159707e08ae0427511bd216260e1))
+* lint ([b048d55](https://github.com/Esposter/Esposter/commit/b048d55cf7f936c8012587c874607b16caa7f9da))
+* lint and update deps ([4a7e50b](https://github.com/Esposter/Esposter/commit/4a7e50b2969f545175866d7079d5f1347f281947))
+* rsync => tar for best performance ([32e82ac](https://github.com/Esposter/Esposter/commit/32e82ac83ce01fe99423bc57de8fbfa30d950827))
+* snapshots ([9764b23](https://github.com/Esposter/Esposter/commit/9764b23ba8be5cb84229baf997f54ce00c9cef98))
+* symlinks for tar + lint ([247d74b](https://github.com/Esposter/Esposter/commit/247d74b53693f4a697832f67ceefaa81fbf15f59))
+* tighten zod schemas ([2676108](https://github.com/Esposter/Esposter/commit/2676108ab50ca99ccb56d4e1db00ac749fc084f3))
+* update virrun bundle size snapshots ([75c4b3e](https://github.com/Esposter/Esposter/commit/75c4b3e919cc2ae14d212ac2e7f1a1cb0bbb5ef0))
+* use global crypto.randomUUID in remaining packages ([0c0a671](https://github.com/Esposter/Esposter/commit/0c0a671afa7908bd28785247b5ddc2171d46498b))
+* virrun to use tar ([83d8b87](https://github.com/Esposter/Esposter/commit/83d8b8716ec092a1227d148ab19569bc2b274af2))
+* wip ([7166dbf](https://github.com/Esposter/Esposter/commit/7166dbfe79082fff53ac921bb75602aa90afeeee))
+
 ## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
 
 ### Bug Fixes

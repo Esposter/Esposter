@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
+
+### Bug Fixes
+
+* add db migrations ([fabe3e0](https://github.com/Esposter/Esposter/commit/fabe3e077cf7c464e278f1870600d6f16b9b8f15))
+* docs + skills ([fd274a1](https://github.com/Esposter/Esposter/commit/fd274a1db9f48dc3816a4ab00abe718f377605df))
+* lint ([b048d55](https://github.com/Esposter/Esposter/commit/b048d55cf7f936c8012587c874607b16caa7f9da))
+* lint and tests ([643227b](https://github.com/Esposter/Esposter/commit/643227be2953addc4e7eb0ffbd9db79075273596))
+* post-merge integration for esbabbler, platform, and posts branches ([a14af16](https://github.com/Esposter/Esposter/commit/a14af16951d55266948f62c378c7490a6854f166))
+* prerender build and migrate script ([4e5f563](https://github.com/Esposter/Esposter/commit/4e5f563ec01bf277c3635594f03f1425a23442b9))
+* scripts etc ([e84fe22](https://github.com/Esposter/Esposter/commit/e84fe2275dbb553c45ab5f16dfc438e4940a4dc9))
+* snapshot ([1a341c4](https://github.com/Esposter/Esposter/commit/1a341c4e45b737c6550a6c2d1239a6682f0fd0f0))
+* snapshot and script ([b2df969](https://github.com/Esposter/Esposter/commit/b2df9695cd825d4a774386621345f5ef4a79d0cb))
+* snapshots ([3891df7](https://github.com/Esposter/Esposter/commit/3891df78866019f8f7453875bd8ba733f6277094))
+* snapshots ([9764b23](https://github.com/Esposter/Esposter/commit/9764b23ba8be5cb84229baf997f54ce00c9cef98))
+* snapshots ([4929c5e](https://github.com/Esposter/Esposter/commit/4929c5ec8bb318e2bc18cfb5b19125858f2f8e9b))
+* test bundle size and refactor ([ecd748e](https://github.com/Esposter/Esposter/commit/ecd748e2e964936c9afb3061ae5d57f9bd05547f))
+* tests and md ([40c2560](https://github.com/Esposter/Esposter/commit/40c2560782503822ebc6b1d4c0867b40f7c2156c))
+* types and partial lint ([b672a10](https://github.com/Esposter/Esposter/commit/b672a10ba489be55b40c1ef11b6aaef4c7e8f233))
+* update back the vue-tsc ([eb26324](https://github.com/Esposter/Esposter/commit/eb26324e7910fe40fb49ec3a3bd05f22eccfa255))
+* use global crypto.randomUUID in remaining packages ([0c0a671](https://github.com/Esposter/Esposter/commit/0c0a671afa7908bd28785247b5ddc2171d46498b))
+* wip ([cf2c92b](https://github.com/Esposter/Esposter/commit/cf2c92b108efb84bad50e151bb749b9cf3257bf8))
+
+### Features
+
+* esbabbler mention badges + push-to-talk keybind with release delay ([3cc0602](https://github.com/Esposter/Esposter/commit/3cc060227b201fcac212b11be6d401312a9b5f74))
+* migrate to service bus ([60572d9](https://github.com/Esposter/Esposter/commit/60572d945321e2953abd3bb43f61553c7221f43d))
+
 ## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
 
 ### Bug Fixes

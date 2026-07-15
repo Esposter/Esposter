@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
+
+### Bug Fixes
+
+* add db migrations ([fabe3e0](https://github.com/Esposter/Esposter/commit/fabe3e077cf7c464e278f1870600d6f16b9b8f15))
+* bugs and add roadmap ([cd3e0ab](https://github.com/Esposter/Esposter/commit/cd3e0abd051c0d17d7d7bc0b9a7a0d9b9d602f51))
+* code review comments ([e5d9658](https://github.com/Esposter/Esposter/commit/e5d9658aa458b8f3304bca7ed95a9adbbebae6d8))
+* code review comments ([75256b1](https://github.com/Esposter/Esposter/commit/75256b195dc52f474467abd9748c03c9ae809e2c))
+* db schema ([831c8c1](https://github.com/Esposter/Esposter/commit/831c8c10aeda8a97a6f2b590a523f9edec2515c5))
+* docs + skills ([fd274a1](https://github.com/Esposter/Esposter/commit/fd274a1db9f48dc3816a4ab00abe718f377605df))
+* enums and arrays ([faa3f2f](https://github.com/Esposter/Esposter/commit/faa3f2fc2d8e7453fead1ba02cb9b0f294b1b70f))
+* indicator ([713f7fc](https://github.com/Esposter/Esposter/commit/713f7fc14e2e159707e08ae0427511bd216260e1))
+* lint ([0585f65](https://github.com/Esposter/Esposter/commit/0585f65205d8fc91fb2b3573678faca86194d0f6))
+* lint + sanitize html ([cebc09e](https://github.com/Esposter/Esposter/commit/cebc09e9f1cae9eee5da927ea5b1b49a58455dcb))
+* lint and tests ([643227b](https://github.com/Esposter/Esposter/commit/643227be2953addc4e7eb0ffbd9db79075273596))
+* mount + refactor webpage ([7aa30f9](https://github.com/Esposter/Esposter/commit/7aa30f92bbb4073bffbdfeec1f15e507e3985902))
+* prerender build and migrate script ([4e5f563](https://github.com/Esposter/Esposter/commit/4e5f563ec01bf277c3635594f03f1425a23442b9))
+* refactor ([47e6295](https://github.com/Esposter/Esposter/commit/47e629569ca054d66507d2a9b85e6d45114671a7))
+* scripts etc ([e84fe22](https://github.com/Esposter/Esposter/commit/e84fe2275dbb553c45ab5f16dfc438e4940a4dc9))
+* snapshot ([1a341c4](https://github.com/Esposter/Esposter/commit/1a341c4e45b737c6550a6c2d1239a6682f0fd0f0))
+* snapshot and script ([b2df969](https://github.com/Esposter/Esposter/commit/b2df9695cd825d4a774386621345f5ef4a79d0cb))
+* snapshots ([3891df7](https://github.com/Esposter/Esposter/commit/3891df78866019f8f7453875bd8ba733f6277094))
+* snapshots ([9764b23](https://github.com/Esposter/Esposter/commit/9764b23ba8be5cb84229baf997f54ce00c9cef98))
+* snapshots ([4929c5e](https://github.com/Esposter/Esposter/commit/4929c5ec8bb318e2bc18cfb5b19125858f2f8e9b))
+* test ([085cbe5](https://github.com/Esposter/Esposter/commit/085cbe505d50161fc757657c0032df47143a23c4))
+* test bundle size and refactor ([ecd748e](https://github.com/Esposter/Esposter/commit/ecd748e2e964936c9afb3061ae5d57f9bd05547f))
+* tests and md ([40c2560](https://github.com/Esposter/Esposter/commit/40c2560782503822ebc6b1d4c0867b40f7c2156c))
+* types and partial lint ([b672a10](https://github.com/Esposter/Esposter/commit/b672a10ba489be55b40c1ef11b6aaef4c7e8f233))
+* use global crypto.randomUUID in remaining packages ([0c0a671](https://github.com/Esposter/Esposter/commit/0c0a671afa7908bd28785247b5ddc2171d46498b))
+* wip ([cf2c92b](https://github.com/Esposter/Esposter/commit/cf2c92b108efb84bad50e151bb749b9cf3257bf8))
+
+### Features
+
+* Add document hub ([515126c](https://github.com/Esposter/Esposter/commit/515126ca01ede96a5b1a63131d1db76fc3f55d15))
+* finish phase 5 ([9ab17cb](https://github.com/Esposter/Esposter/commit/9ab17cbb1e3e9e7fd248c27725a227c6a57995dc))
+
 ## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
 
 ### Bug Fixes
