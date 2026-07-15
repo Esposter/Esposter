@@ -28,9 +28,9 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
 </script>
 
 <template>
-  <div mb-8>
-    <div mb-3 text-title-large>Add Friend</div>
-    <div flex gap-2>
+  <MessageFriendsSection title="Add Friend">
+    <!-- Plain wrapper: a bare v-input in a flex column stretches to the full column height -->
+    <div>
       <v-text-field
         v-model="searchQuery"
         placeholder="Search by name"
@@ -39,10 +39,10 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
         @click:clear="searchQuery = ''"
       />
     </div>
-    <v-list v-if="searchResults.length > 0" mt-2 rd>
+    <v-list v-if="searchResults.length > 0" rd>
       <MessageFriendsUserListItem v-for="{ id, name, image } of searchResults" :key="id" :image :name>
         <template #append>
-          <div flex gap-2>
+          <div flex gap-x-2>
             <v-btn
               v-if="!isFriend(id) && !hasSentRequest(id)"
               text="Send Request"
@@ -64,6 +64,6 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
         </template>
       </MessageFriendsUserListItem>
     </v-list>
-    <v-progress-linear v-if="isPending" indeterminate mt-2 />
-  </div>
+    <v-progress-linear v-if="isPending" indeterminate />
+  </MessageFriendsSection>
 </template>
