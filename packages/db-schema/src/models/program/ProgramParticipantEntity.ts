@@ -5,28 +5,29 @@ import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/Azure
 import { selectResourceSchema } from "@/schema/resources";
 import { z } from "zod";
 
-// PartitionKey = program id, rowKey = the key value's hash — the recipient's identity, so storage itself
-// Rejects a second invite for a recipient who already has one. A random rowKey would make every racing
-// Generate a distinct row, and nothing below the storage layer can enforce uniqueness after the fact
-export class ProgramInviteEntity extends AzureEntity {
-  // The audience key column's value for this recipient — never leaves the server or the owner client
+// One row per person in a program's audience: PartitionKey = program id, rowKey = the key value's hash.
+// The key is the participant's identity, so storage itself rejects a second row for someone who already
+// Has one. A random rowKey would make every racing generate a distinct row, and nothing below the storage
+// Layer can enforce uniqueness after the fact
+export class ProgramParticipantEntity extends AzureEntity {
+  // The audience key column's value for this participant — never leaves the server or the owner client
   keyValue = "";
-  // A non-secret stand-in for the recipient, safe to publish. The token is the bearer credential
+  // A non-secret stand-in for the participant, safe to publish. The token is the bearer credential
   // Survey writes accept, so it can never be the identity a publishable dataset carries — a published
-  // Funnel chart would otherwise hand every viewer the ability to respond as any invitee
+  // Funnel chart would otherwise hand every viewer the ability to respond as anyone
   publicId = "";
   // A UUID, never derived from the key value — a derivable token would let anyone mint one from an email
   // Address. That unguessability is why it cannot double as the rowKey: a key the caller cannot predict
   // Is a key storage cannot deduplicate on
   token = "";
 
-  constructor(init?: Partial<ProgramInviteEntity> & ToData<CompositeKeyEntity>) {
+  constructor(init?: Partial<ProgramParticipantEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
   }
 }
 
-export const programInviteEntitySchema = z.object({
+export const programParticipantEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
       partitionKey: selectResourceSchema.shape.id,
@@ -36,4 +37,4 @@ export const programInviteEntitySchema = z.object({
   keyValue: z.string().min(1),
   publicId: z.uuid(),
   token: z.uuid(),
-}) satisfies z.ZodType<ToData<ProgramInviteEntity>>;
+}) satisfies z.ZodType<ToData<ProgramParticipantEntity>>;
