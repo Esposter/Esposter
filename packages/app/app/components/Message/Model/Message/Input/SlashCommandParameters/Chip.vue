@@ -44,8 +44,6 @@ onMounted(() => {
   <div
     :class="isError ? ['b-error'] : ['b-border', 'focus-within:b-info']"
     b="[0.09375rem]"
-    px-2
-    py-1
     rd
     b-solid
     bg-border
@@ -54,11 +52,11 @@ onMounted(() => {
     items-center
     overflow-hidden
   >
+    <!-- The label segment bleeds to the chip edge, so each segment owns its padding rather than
+      the root padding it and the label clawing it back with a negative margin -->
     <span
       :class="isError ? 'text-error' : ''"
       font-bold
-      my--1
-      ml--2
       py-1
       pl-2
       pr-1
@@ -76,6 +74,7 @@ onMounted(() => {
       color-inherit
       outline-none
       b-none
+      pr-2
       bg-transparent
       field-sizing-content
       text-body-medium
