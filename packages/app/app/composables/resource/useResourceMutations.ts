@@ -15,6 +15,7 @@ export const useResourceMutations = () => {
           publishResource: (input) => $trpc.dashboard.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.dashboard.readResourceContent.query(input),
           readResourcePublication: (input) => $trpc.dashboard.readResourcePublication.query(input),
+          readResourceViewCount: (input) => $trpc.dashboard.readResourceViewCount.query(input),
           // Content is untyped at this cross-type dispatch; the calling store owns the concrete schema
           saveResourceContent: (input) => $trpc.dashboard.saveResourceContent.mutate(input as never),
           unpublishResource: (input) => $trpc.dashboard.unpublishResource.mutate(input),
@@ -34,6 +35,13 @@ export const useResourceMutations = () => {
           saveResourceContent: (input) => $trpc.flowchart.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.flowchart.updateResource.mutate(input),
         };
+      case ResourceType.Program:
+        return {
+          deleteResource: (input) => $trpc.program.deleteResource.mutate(input),
+          readResourceContent: (input) => $trpc.program.readResourceContent.query(input),
+          saveResourceContent: (input) => $trpc.program.saveResourceContent.mutate(input as never),
+          updateResource: (input) => $trpc.program.updateResource.mutate(input),
+        };
       case ResourceType.Sheet:
         return {
           deleteResource: (input) => $trpc.sheet.deleteResource.mutate(input),
@@ -47,6 +55,7 @@ export const useResourceMutations = () => {
           publishResource: (input) => $trpc.survey.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.survey.readResourceContent.query(input),
           readResourcePublication: (input) => $trpc.survey.readResourcePublication.query(input),
+          readResourceViewCount: (input) => $trpc.survey.readResourceViewCount.query(input),
           saveResourceContent: (input) => $trpc.survey.saveResourceContent.mutate(input as never),
           unpublishResource: (input) => $trpc.survey.unpublishResource.mutate(input),
           updateResource: (input) => $trpc.survey.updateResource.mutate(input),
@@ -64,6 +73,7 @@ export const useResourceMutations = () => {
           publishResource: (input) => $trpc.webpage.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.webpage.readResourceContent.query(input),
           readResourcePublication: (input) => $trpc.webpage.readResourcePublication.query(input),
+          readResourceViewCount: (input) => $trpc.webpage.readResourceViewCount.query(input),
           saveResourceContent: (input) => $trpc.webpage.saveResourceContent.mutate(input as never),
           unpublishResource: (input) => $trpc.webpage.unpublishResource.mutate(input),
           updateResource: (input) => $trpc.webpage.updateResource.mutate(input),

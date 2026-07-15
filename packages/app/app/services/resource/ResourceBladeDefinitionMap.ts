@@ -1,5 +1,7 @@
 import type { BladeDefinition } from "@/models/resource/BladeDefinition";
 
+import ResourceProgramSetup from "@/components/Resource/Program/Setup.vue";
+import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
 import ResourceSheetData from "@/components/Resource/Sheet/Data.vue";
 import ResourceSheetSettings from "@/components/Resource/Sheet/Settings.vue";
 import ResourceSurveyResponses from "@/components/Resource/Survey/Responses.vue";
@@ -11,6 +13,11 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
   [ResourceType.Dashboard]: [],
   [ResourceType.Email]: [],
   [ResourceType.Flowchart]: [],
+  // A program has no canvas, so it declares no Editor — Setup and Status are the whole surface
+  [ResourceType.Program]: [
+    { component: ResourceProgramSetup, icon: "mdi-cog", slug: "setup", title: "Setup" },
+    { component: ResourceProgramStatus, icon: "mdi-chart-timeline-variant", slug: "status", title: "Status" },
+  ],
   [ResourceType.Sheet]: [
     { component: ResourceSheetData, icon: "mdi-table", slug: "data", title: "Data" },
     { component: ResourceSheetSettings, icon: "mdi-cog", slug: "settings", title: "Settings" },
