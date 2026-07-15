@@ -5,5 +5,8 @@ export enum AzureTable {
   MessagesAscending = "MessagesAscending",
   MessagesMetadata = "MessagesMetadata",
   ModerationLog = "ModerationLog",
+  ProgramInvites = "ProgramInvites",
+  // Best-effort public view counters, bucketed per resource per UTC day
+  ResourceViews = "ResourceViews",
   SurveyResponses = "SurveyResponses",
 }

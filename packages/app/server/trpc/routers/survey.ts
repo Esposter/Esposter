@@ -1,7 +1,13 @@
+import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
 import type { FileSasEntity } from "@esposter/db-schema";
 
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
+import { invalidInviteTokenError } from "@@/server/services/survey/invalidInviteTokenError";
+import { readSurveyResponseEntities } from "@@/server/services/survey/readSurveyResponseEntities";
+import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
+import { transformPublicReadSurvey } from "@@/server/services/survey/transformPublicReadSurvey";
 import { transformPublishedSurvey } from "@@/server/services/survey/transformPublishedSurvey";
 import { transformReadSurvey } from "@@/server/services/survey/transformReadSurvey";
 import { router } from "@@/server/trpc";
@@ -11,6 +17,7 @@ import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerPro
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import {
   createEntity,
+  deleteEntity,
   generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
   getEntity,
@@ -55,31 +62,59 @@ const deleteFileInputSchema = z.object({
 const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({ partitionKey: true, rowKey: true });
 
 const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
+  inviteToken: true,
   model: true,
   partitionKey: true,
   rowKey: true,
 });
 
 const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
+  inviteToken: true,
   model: true,
   modelVersion: true,
   partitionKey: true,
   rowKey: true,
 });
 
+const deleteSurveyResponseInputSchema = surveyResponseEntitySchema.pick({ rowKey: true }).extend({
+  // The partition key is the survey id, derived from this owner-checked id — never accepted from the caller
+  id: selectResourceSchema.shape.id,
+});
+
+const countSurveyResponsesInputSchema = selectResourceSchema.pick({ id: true });
+
 export const surveyRouter = router({
   ...createResourceProcedures(ResourceType.Survey, {
+    transformPublicReadContent: transformPublicReadSurvey,
     transformPublishedContent: transformPublishedSurvey,
     transformReadContent: transformReadSurvey,
   }),
+  countSurveyResponses: getOwnerProcedure(
+    ResourceType.Survey,
+    countSurveyResponsesInputSchema,
+    "id",
+  ).query<CountSurveyResponsesOutput>(({ ctx }) => countSurveyResponses(ctx.resource.id)),
   createSurveyResponse: standardRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
-    .mutation<SurveyResponseEntity>(async ({ input }) => {
+    .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
+      const inviteToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.inviteToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-      const newSurveyResponse = new SurveyResponseEntity(input);
+      const newSurveyResponse = new SurveyResponseEntity({ ...input, inviteToken });
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
+  deleteSurveyResponse: getOwnerProcedure(ResourceType.Survey, deleteSurveyResponseInputSchema, "id").mutation(
+    async ({ ctx, input: { rowKey } }) => {
+      const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+      // Existence is proven before deleting so a second delete of the same key errors rather than silently passing
+      await requireEntity(
+        getEntity(surveyResponseClient, SurveyResponseEntity, ctx.resource.id, rowKey),
+        AzureEntityType.SurveyResponse,
+        JSON.stringify({ partitionKey: ctx.resource.id, rowKey }),
+      );
+      await deleteEntity(surveyResponseClient, ctx.resource.id, rowKey);
+    },
+  ),
   deleteFile: getOwnerProcedure(ResourceType.Survey, deleteFileInputSchema, "surveyId").mutation(
     async ({ input: { blobPath, surveyId } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
@@ -104,6 +139,11 @@ export const surveyRouter = router({
     const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
     return generateUploadFileSasEntities(containerClient, files, getFilesDirectoryName(surveyId));
   }),
+  // The dataset contract carries no keys, so the blade reads them alongside its rows through the same
+  // Capped read the provider uses — a blade-local read concern, not a Dataset shape change
+  readSurveyResponseRowKeys: getOwnerProcedure(ResourceType.Survey, countSurveyResponsesInputSchema, "id").query<
+    string[]
+  >(async ({ ctx }) => (await readSurveyResponseEntities(ctx.resource.id)).map(({ rowKey }) => rowKey)),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
     .query<null | SurveyResponseEntity>(async ({ input: { partitionKey, rowKey } }) => {
@@ -113,13 +153,17 @@ export const surveyRouter = router({
     }),
   updateSurveyResponse: standardRateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
-    .mutation<SurveyResponseEntity>(async ({ input }) => {
+    .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
+      const inviteToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.inviteToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const surveyResponse = await requireEntity(
         getEntity(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
         AzureEntityType.SurveyResponse,
         JSON.stringify({ partitionKey: input.partitionKey, rowKey: input.rowKey }),
       );
+      // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
+      // Only Invited mode resolves a token to compare — Anonymous carries no identity to contradict
+      if (inviteToken && inviteToken !== surveyResponse.inviteToken) throw invalidInviteTokenError();
       // Response models are plain records, so duplicates are detected structurally rather than by reference
       if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model))
         throw new TRPCError({
@@ -139,7 +183,9 @@ export const surveyRouter = router({
           ).message,
         });
 
-      await updateEntity(surveyResponseClient, input);
-      return Object.assign(surveyResponse, input);
+      // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write
+      const updatedSurveyResponse = { ...input, inviteToken };
+      await updateEntity(surveyResponseClient, updatedSurveyResponse);
+      return Object.assign(surveyResponse, updatedSurveyResponse);
     }),
 });

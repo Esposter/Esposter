@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { SurveyResponseEntity } from "@esposter/db-schema";
 
+import { DEFAULT_CLOSED_MESSAGE } from "#shared/services/resource/survey/constants";
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { THEME_KEY } from "@/services/survey/constants";
+import { SurveyResponseMode } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
@@ -14,6 +16,9 @@ interface ResourceSurveyViewProps {
 
 const { id } = defineProps<ResourceSurveyViewProps>();
 const { $trpc } = useNuxtApp();
+const route = useRoute();
+// Read once on load and threaded through every write — the URL carries an opaque token or nothing
+const inviteToken = Array.isArray(route.query.t) ? (route.query.t[0] ?? "") : (route.query.t ?? "");
 
 let surveyResponse: null | SurveyResponseEntity = null;
 
@@ -28,6 +33,7 @@ const saveSurveyResponse = async (survey: Model) => {
     await executeMutation(
       () =>
         $trpc.survey.createSurveyResponse.mutate({
+          inviteToken,
           model: responseModel,
           partitionKey: id,
           rowKey: newSurveyResponseId,
@@ -45,6 +51,7 @@ const saveSurveyResponse = async (survey: Model) => {
   await executeMutation(
     () =>
       $trpc.survey.updateSurveyResponse.mutate({
+        inviteToken,
         model: responseModel,
         modelVersion: currentSurveyResponse.modelVersion,
         partitionKey: currentSurveyResponse.partitionKey,
@@ -64,6 +71,10 @@ const { content, name } = await getResultAsync(() => $trpc.survey.readPublishedR
     throw createError({ statusCode: 404, statusMessage: "Survey not found" });
   },
 );
+// Settings arrive live on the public read, so closing or gating takes effect without a re-publish and
+// The URL stays alive — unlike unpublish, which 404s every invite already sent
+const { closedMessage, isAcceptingResponses, responseMode } = content.settings;
+const isInviteRequired = responseMode === SurveyResponseMode.Invited && !inviteToken;
 const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
 const model = new Model(surveyModel);
 if (theme) model.applyTheme(theme);
@@ -98,11 +109,23 @@ const onMount = async () => {
 };
 
 onMounted(async () => {
-  await onMount();
+  if (isAcceptingResponses && !isInviteRequired) await onMount();
   isLoading.value = false;
 });
 </script>
 
 <template>
-  <SurveyComponent v-if="!isLoading" :model />
+  <StyledEmptyState
+    v-if="!isAcceptingResponses"
+    icon="mdi-lock-outline"
+    :title="name"
+    :description="closedMessage || DEFAULT_CLOSED_MESSAGE"
+  />
+  <StyledEmptyState
+    v-else-if="isInviteRequired"
+    icon="mdi-email-lock-outline"
+    :title="name"
+    description="This survey is open to invited recipients only. Please use the link from your invite."
+  />
+  <SurveyComponent v-else-if="!isLoading" :model />
 </template>

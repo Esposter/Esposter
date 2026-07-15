@@ -9,7 +9,7 @@ A generic join operation over the dataset contract: resolve two `DatasetReferenc
 
 ## Why deferred
 
-It is a query language's first feature wearing a trench coat — key selection, join type, collision naming, and row-cap interaction all need real design. The one demonstrated join (survey responses × audience) is served purpose-built by the [Program](/docs/proposals/platform/program-resource) `ProgramStatus` dataset provider, which joins invites to responses server-side and exposes the result through the front door. A _generic_ join has no remaining consumer.
+It is a query language's first feature wearing a trench coat — key selection, join type, collision naming, and row-cap interaction all need real design. The one demonstrated join (survey responses × audience) is served purpose-built by the [Program](/docs/platform/program-resource) `ProgramStatus` dataset provider, which joins invites to responses server-side and exposes the result through the front door. A _generic_ join has no remaining consumer.
 
 ## Revisit when
 
