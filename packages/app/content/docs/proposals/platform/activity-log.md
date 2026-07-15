@@ -55,11 +55,11 @@ sequenceDiagram
 
 ## Key files
 
-| File                                                | Role                                        |
-| --------------------------------------------------- | ------------------------------------------- |
-| `packages/db-schema/src/models/azure/AzureTable.ts` | `ResourceActivity` table key                |
-| `server/services/resource/writeResourceActivity.ts` | best-effort emit helper used by the factory |
-| `app/components/Resource/ActivityLog.vue`           | blade timeline                              |
+| File                                                      | Role                                        |
+| --------------------------------------------------------- | ------------------------------------------- |
+| `packages/db-schema/src/models/azure/table/AzureTable.ts` | `ResourceActivity` table key                |
+| `server/services/resource/writeResourceActivity.ts`       | best-effort emit helper used by the factory |
+| `app/components/Resource/ActivityLog.vue`                 | blade timeline                              |
 
 ## Notes
 

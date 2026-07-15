@@ -39,6 +39,12 @@ readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => ctx.db.query.fri
 - **If also needed by a Pinia store (frontend), put it in `shared/services/<feature>/`** — importable on both server and client without duplication.
 - **If also needed by `packages/azure-functions`, put it in `packages/db`** — Postgres/Drizzle functions called from both the Nuxt app server and Azure Functions belong in `packages/db/src/services/` with `PostgresJsDatabase<typeof relations>` as the `db` parameter. Export from `packages/db/src/index.ts`; the app re-exports via a thin `export { fn } from "@esposter/db"` wrapper. Examples: RBAC helpers (`getPermissions`, `hasPermission`), message moderation checks, push subscription queries. Error-throwing wrappers (`assertCanCreateMessage` etc.) stay in their own packages because they throw package-specific types (`TRPCError` in the app, `InvalidOperationError` in azure-functions); only the underlying DB query helpers move to `packages/db`.
 
+## Client-Side Data Access — `useQuery` / `useMutation`
+
+Every **user-facing** client read/write goes through `useQuery` / `useMutation` (`composables/shared/`). Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it matches a documented exception — the raw call sites are deliberate, not omissions.
+
+Canonical reference (primitive semantics, "Optimistic by default", and the full exception list): `content/docs/architecture/client-data.md`.
+
 ## Client-Side Calling Conventions
 
 - **Never call `.query({})` / `.mutate({})` with a bare empty object** — procedures whose inputs are all-optional chain `.prefault({})` on the input schema (see Pagination Params Schemas), which makes the input itself optional. Call with no argument: `$trpc.survey.readSurveys.query()`. Same for test callers: `caller.readDocuments()`.
@@ -55,17 +61,18 @@ readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => ctx.db.query.fri
 
 Routers nested by domain. Root merger: `server/trpc/routers/index.ts`.
 
-| Client path                  | Router file                     |
-| ---------------------------- | ------------------------------- |
-| `trpc.callSession.*`         | `routers/call/index.ts`         |
-| `trpc.callSession.knocker.*` | `routers/call/knocker.ts`       |
-| `trpc.message.*`             | `routers/message/index.ts`      |
-| `trpc.message.emoji.*`       | `routers/message/emoji.ts`      |
-| `trpc.message.moderation.*`  | `routers/message/moderation.ts` |
-| `trpc.room.*`                | `routers/room/index.ts`         |
-| `trpc.room.category.*`       | `routers/room/category.ts`      |
-| `trpc.room.directMessage.*`  | `routers/room/directMessage.ts` |
-| `trpc.room.filter.*`         | `routers/room/filter.ts`        |
+| Client path                          | Router file                              |
+| ------------------------------------ | ---------------------------------------- |
+| `trpc.callSession.*`                 | `routers/call/index.ts`                  |
+| `trpc.callSession.knocker.*`         | `routers/call/knocker.ts`                |
+| `trpc.message.*`                     | `routers/message/index.ts`               |
+| `trpc.message.emoji.*`               | `routers/message/emoji.ts`               |
+| `trpc.message.moderation.*`          | `routers/message/moderation.ts`          |
+| `trpc.message.scheduledMessageJob.*` | `routers/message/scheduledMessageJob.ts` |
+| `trpc.room.*`                        | `routers/room/index.ts`                  |
+| `trpc.room.category.*`               | `routers/room/category.ts`               |
+| `trpc.room.directMessage.*`          | `routers/room/directMessage.ts`          |
+| `trpc.room.filter.*`                 | `routers/room/filter.ts`                 |
 
 Exception: `achievement` merged separately to avoid circular dep with the router that fires achievement events.
 
@@ -99,8 +106,10 @@ router({ callSession: callRouter, ... }) // knocker already nested inside callRo
 Three builders in `server/trpc/procedure/room/`:
 
 - `getMemberProcedure(schema, roomIdKey)` — verifies caller is a room member; standard message/room operations.
-- `getPermissionsProcedure(permission, schema, roomIdKey)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin.
-- `getOwnerProcedure` — verifies caller owns the room; destructive room operations.
+- `getPermissionsProcedure(permission, schema, roomIdKey, rateLimiterType?)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin.
+- `getOwnerProcedure(schema, roomIdKey, rateLimiterType?)` — verifies caller owns the room; destructive room operations.
+
+`rateLimiterType` defaults to `RateLimiterType.Standard`; pass another only to opt into a different limiter.
 
 ## Room-Scoped Subscriptions — `getRoomEventSubscription`
 
@@ -276,15 +285,4 @@ In tests, `Promise.all([iterator.next(), mutation()])` exposes this: the mutatio
   let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
   ```
 
-- **Name callers with domain prefix when multiple exist** — `roomCaller`, `directMessageCaller`, `knockerCaller`; never generic `caller`.
-- **Always create test resources via `caller.method()`** — never insert rows directly into the DB. Direct insertion bypasses application logic (auth, business rules, cascades), making the tested flow differ from the real one. If a resource belongs to another router, create a second caller via `createCallerFactory(otherRouter)`.
-- **Use `assert(value)` to narrow before accessing** — never `!`. After `const [row] = await ...returning()`, call `assert(row)`.
-- **Never use bare `.rejects.toThrow()`** — it passes for any error. Always assert the specific error:
-  - `.rejects.toThrowErrorMatchingInlineSnapshot(...)` for the full message. Use a template literal when it contains runtime values (UUIDs, entity names); reconstruct computed IDs (e.g. a friendship ID from sorted UUIDs) before the `expect`:
-    ```ts
-    await expect(caller.create(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Foo, input.id).message}]`,
-    );
-    ```
-  - `.rejects.toBeInstanceOf(ErrorClass)` when only the error type matters.
-  - TRPCError snapshot format is `[TRPCError: <message>]` — the prefix comes from TRPCError's `toString()`.
+- **Caller naming, creating resources via callers not `db.insert`, and error assertions** — see the `testing` skill. Note for tRPC specifically: `toThrowErrorMatchingInlineSnapshot` is the only accepted error assertion (`toBeInstanceOf` is banned), and the TRPCError snapshot format is `[TRPCError: <message>]` — the prefix comes from TRPCError's `toString()`.

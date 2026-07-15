@@ -1,9 +1,9 @@
 ---
-title: File Resource
+title: Sheet Resource
 description: CSV/JSON/XLSX files as resources — identity, parse settings, and grid data split into their proper homes with Data and Settings blades.
 ---
 
-# File Resource
+# Sheet Resource
 
 Each imported file (CSV/JSON/XLSX) is its own resource. The old table editor fused three concerns on one entity (`ADataSourceItem`: identity, parse settings, and the data itself, all inside one multi-item `TableEditorConfiguration` blob); the Sheet resource keeps them separate:
 
@@ -28,7 +28,7 @@ A Sheet resource always has a `data` section (empty `DataSource` on create) — 
 ## Capabilities
 
 - **DatasetProvider** — `readSheetDataset` reads `content.data` via `dataSourceToDataset`. A `DatasetReference` is just the resource id — a resource _is_ the item, so there is no sub-item selector.
-- **Portable** — `PortableFormatMap[File]` carries the three formats (accept/mimeType/serialize/deserialize per `DataSourceType`); both Import and Export commands appear in the command bar. Import is a client-side parse (no upload) with a 5-row preview.
+- **Portable** — `PortableFormatMap[ResourceType.Sheet]` carries the three formats (accept/mimeType/serialize/deserialize per `DataSourceType`); both Import and Export commands appear in the command bar. Import is a client-side parse (no upload) with a 5-row preview.
 
 ## Blades
 

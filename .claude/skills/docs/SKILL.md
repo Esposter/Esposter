@@ -1,11 +1,11 @@
 ---
 name: docs
-description: Esposter documentation conventions for packages/app/content/docs (the in-app /docs section rendered by @nuxt/content). Apply when creating, updating, or referencing any documentation page, proposal, decision, or roadmap.
+description: Esposter documentation conventions for packages/app/content/docs (the in-app /docs section rendered by @nuxt/content) — the Mermaid diagram mandate parse-validated by content/docs.test.ts (a syntax error fails pnpm test; no semicolons in labels), location-carries-status (area vs proposals vs deferred/rejected), plain .md with GFM only, the two-field frontmatter, feature-page template, registering pages in index.md and DocsSectionGroupsMap.ts, repo-wide standards belong in architecture/, and one-area-at-a-time working. Apply when creating, updating, or referencing any documentation page, proposal, roadmap, or deferred/rejected idea.
 ---
 
 # Docs — Esposter Conventions
 
-All documentation lives in `packages/app/content/docs/` and is rendered in the app at `/docs` by @nuxt/content. There is no separate `features/` or `architecture/` tree — the docs section is the single source of truth, kept updated as code changes.
+All documentation lives in `packages/app/content/docs/` and is rendered in the app at `/docs` by @nuxt/content. That tree is the single source of truth, kept updated as code changes — never start a parallel docs tree elsewhere in the repo. (Within it, `architecture/` is a real and mandated folder; see the layout below.)
 
 ## The one status rule
 
@@ -18,7 +18,7 @@ All documentation lives in `packages/app/content/docs/` and is rendered in the a
 
 ## Single responsibility — one file per feature/idea
 
-Doc files are like Vue SFCs: **one feature, proposal, or decision per file — never merge them.** Do not consolidate multiple specs into one page or multiple decisions into one file; modularity beats file count. A page may have sub-pages (nested folder with `index.md`) when a feature has cohesive sub-features (e.g. `sheet-editor/computed-columns/aggregation.md`). Never delete or merge a doc file "to tidy up" — split when a page grows two responsibilities, and only remove a file when the idea itself is superseded (record that in a decision page).
+Doc files are like Vue SFCs: **one feature, proposal, or decision per file — never merge them.** Do not consolidate multiple specs into one page or multiple decisions into one file; modularity beats file count. A page may have sub-pages (nested folder with `index.md`) when a feature has cohesive sub-features (`<area>/<feature>/<sub-feature>.md`) — but only once the sub-features genuinely exist; a feature starts as one flat `<feature>.md`. Never delete or merge a doc file "to tidy up" — split when a page grows two responsibilities, and only remove a file when the idea itself is superseded (record that in a decision page).
 
 ## Directory layout
 
@@ -28,7 +28,8 @@ packages/app/content/docs/
   architecture/
     index.md                  ← index of cross-cutting topics
     <topic>.md                ← as-built system explanation shared by multiple areas
-  <area>/                     ← esbabbler · platform · sheet-editor · virrun · vue-phaserjs · infra
+  <area>/                     ← achievements · anime · clicker · dungeons · esbabbler · fluid-simulator
+                              ·  infra · platform · posts · sheet-editor · users · virrun · vue-phaserjs
     index.md                  ← what the area is, key concepts, terse chronological shipped log
     <feature>.md              ← one page per implemented feature (or <feature>/ folder with index.md + sub-feature pages)
     deferred/
@@ -39,12 +40,15 @@ packages/app/content/docs/
       <idea>.md               ← one won't-do idea per page
     roadmap.md                ← open work only (omit for mature areas with none)
   proposals/
-    <area>/<name>.md          ← unimplemented design spec
+    <area>/<name>.md          ← unimplemented design spec, one folder per area
+    refactors/<name>.md       ← cross-area one-time sweeps (not an area — no index/roadmap/deferred)
 ```
 
 Area folders and file names: kebab-case (they become URL slugs). One topic per file; no version grab-bags.
 
 **Sidebar grouping**: sections with many flat feature pages get logical subheader groups in the in-app left sidebar via `packages/app/app/services/docs/DocsSectionGroupsMap.ts` (section slug → group title → page slugs; declaration order is display order). When adding a feature page to a mapped section (architecture, esbabbler, platform, virrun), add its slug to the right group — unmapped slugs render ungrouped at the top. `roadmap`/`deferred`/`rejected` group automatically under a trailing "Planning" subheader; sections with few pages need no map entry (alphabetical is enough).
+
+**Mechanical follow-through.** After a rename, grep the whole docs tree for the old term. After adding a page, register it in **both** the area `index.md` table and `DocsSectionGroupsMap.ts`.
 
 **File format is always `.md`, never `.mdx`.** MDX is the React ecosystem's format; @nuxt/content parses MDC syntax (`::component` blocks, `{.class}` props) inside plain `.md`, and `.md` stays readable on GitHub/editors/grep. Decided 2026-07-11 — don't revisit.
 
@@ -118,7 +122,7 @@ Check both folders before adding a roadmap item or proposal — never re-argue a
 
 ## Roadmap pages
 
-Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`). When an item ships: add one terse line to the area `index.md` shipped log, write/refresh the feature page unless it was a one-time change with no standing behaviour to document (see the Lifecycle table), delete the roadmap item.
+Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`).
 
 ## Lifecycle
 
@@ -131,9 +135,18 @@ Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped b
 | Won't do                  | `<area>/rejected/<idea>.md`  | One page with rationale                                                                  |
 | Deferred                  | `<area>/deferred/<idea>.md`  | One page with rationale + revisit trigger                                                |
 
-## Sequential per-area work — never parallelize
+**Docs move with the code that changes them** — update the owning page in the same change that ships the behaviour, and cover the full lifecycle it describes (creation _and_ cleanup/teardown), not just the happy path.
 
-**Never fan out to parallel subagents for docs/feature work.** Parallel agents each re-read the same context cold and exhaust the token budget on reading before doing any real work. All work happens in the main session, **one product area at a time, to completion, before touching the next area**.
+## One area at a time
+
+The repo-wide default is to parallelize independent work (see `~/.claude/rules/agents.md`). **Docs ideation and triage are the narrow exception**, for two concrete reasons — not as a blanket ban on subagents:
+
+- **Triage needs one head.** Deciding implement/deferred/rejected across an area requires holding every idea in view at once and checking each against `deferred/`+`rejected/`. Split across agents, they duplicate ideas, re-argue decided ones, and produce inconsistent buckets.
+- **Conflicting writes.** Agents working one area touch the same `index.md`, `roadmap.md`, and `DocsSectionGroupsMap.ts`, so they clobber each other's edits.
+
+So: ideation, triage, and the per-area pass run in the main session, **one product area at a time, to completion**. Depth over breadth — that focus is the point.
+
+Genuinely independent docs work **may** fan out: read-only research/verification (grepping code to confirm what a page claims), and edits to disjoint areas that share no index file. Give each agent the area to finish, never a slice of one.
 
 Modularize by area, and take each area through its **full lifecycle in one sequential pass**:
 

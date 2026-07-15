@@ -41,13 +41,13 @@ flowchart LR
 
 Drizzle table `resources` (`packages/db-schema/src/schema/resources.ts`) — pure identity + content lifecycle:
 
-| Column           | Type                   | Notes                                                        |
-| ---------------- | ---------------------- | ------------------------------------------------------------ |
-| `id`             | uuid PK                | becomes the blob path prefix                                 |
-| `type`           | `ResourceType` pg enum | Dashboard, Email, File, Flowchart, Survey, TodoList, Webpage |
-| `name`           | text + length check    | `createNameSchema` pattern                                   |
-| `userId`         | FK → users, cascade    | owner; resources are single-owner                            |
-| `contentVersion` | integer                | optimistic concurrency on content saves                      |
+| Column           | Type                   | Notes                                                         |
+| ---------------- | ---------------------- | ------------------------------------------------------------- |
+| `id`             | uuid PK                | becomes the blob path prefix                                  |
+| `type`           | `ResourceType` pg enum | Dashboard, Email, Flowchart, Sheet, Survey, TodoList, Webpage |
+| `name`           | text + length check    | `createNameSchema` pattern                                    |
+| `userId`         | FK → users, cascade    | owner; resources are single-owner                             |
+| `contentVersion` | integer                | optimistic concurrency on content saves                       |
 
 Publish state is **normalized into its own table**, `resource_publications` — a row exists iff the resource is currently published. Publishing is a capability, not a base attribute, so publish columns do not belong on every resource row:
 
@@ -73,11 +73,11 @@ Each type owns one content schema (Zod, interface-first, one export per file) in
 
 A capability is a cross-cutting mechanism a resource type opts into via its definition. **Admission rule: a capability exists only when ≥2 resource types need the same mechanism, or when the type system must guarantee its absence** (a TodoList must not have publish endpoints). Anything used by exactly one type is type-specific code — promoting a single-consumer mechanism is over-engineering.
 
-| Capability          | Contract                                                                                                                                               | Adopters                                                               |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [/docs/architecture/publishing](/docs/architecture/publishing) | Dashboard, Survey, Webpage                                             |
-| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [/docs/architecture/datasets](/docs/architecture/datasets)                           | File, Survey (responses)                                               |
-| **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands                                                   | File (csv/json/xlsx, both ways), Email (personalized html export only) |
+| Capability          | Contract                                                                                                                                               | Adopters                                                                |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [/docs/architecture/publishing](/docs/architecture/publishing) | Dashboard, Survey, Webpage                                              |
+| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [/docs/architecture/datasets](/docs/architecture/datasets)                           | Sheet, Survey (responses)                                               |
+| **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands                                                   | Sheet (csv/json/xlsx, both ways), Email (personalized html export only) |
 
 Explicitly **not** capabilities: collecting public responses (Survey-only — stays survey-specific code) and dataset _consumption_ (just calling `dataset.readDataset` from a component; no per-type wiring to declare).
 
@@ -145,7 +145,7 @@ One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/
 
 `saveResourceContent` bumps `contentVersion` and writes the blob in one transaction — the version check is part of the `UPDATE`'s `WHERE`, so concurrent saves cannot both pass and silently lose a write, and a failed blob upload rolls the version back.
 
-Two optional hooks, both proven by Survey: `transformPublishedContent(ctx, resource, content)` (rewrite content at publish time with owner authority — Dashboard bakes dataset snapshots, Survey clones asset blobs into the publish directory) and `transformReadContent(ctx, resource, content)` (rewrite on owner read — Survey refreshes SAS asset URLs).
+The factory also accepts two optional content-transform hooks, `transformPublishedContent` and `transformReadContent` — see [/docs/architecture/publishing](/docs/architecture/publishing).
 
 Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`.
 
@@ -153,11 +153,11 @@ Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey)` in `serve
 
 Router-per-type plus one thin cross-type router:
 
-| Router                                                           | Contents                                                                                                                                                                             |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `resource`                                                       | `readResource` (single row by id, cross-type), `readResources` (explorer list, all types), `count` (filtered total, shares its filter schema with the list so they stay in lockstep) |
-| `file`, `todoList`, `dashboard`, `email`, `webpage`, `flowchart` | `createResourceProcedures(type, …)`                                                                                                                                                  |
-| `survey`                                                         | factory + type-specific procedures (responses, SAS file uploads)                                                                                                                     |
+| Router                                                            | Contents                                                                                                                                                                             |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `resource`                                                        | `readResource` (single row by id, cross-type), `readResources` (explorer list, all types), `count` (filtered total, shares its filter schema with the list so they stay in lockstep) |
+| `sheet`, `todoList`, `dashboard`, `email`, `webpage`, `flowchart` | `createResourceProcedures(type, …)`                                                                                                                                                  |
+| `survey`                                                          | factory + type-specific procedures (responses, SAS file uploads)                                                                                                                     |
 
 Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key off the literal tRPC path (`"flowchart.saveResourceContent"`), and type-specific procedures need a home.
 

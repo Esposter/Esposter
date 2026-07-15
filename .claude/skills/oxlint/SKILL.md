@@ -89,7 +89,7 @@ expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIR, PLAN)
 
 When the captured arg is a known shared reference, assert it directly (`expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop)`); when only its type is knowable, use `toBeTypeOf` (`expect(checkIsStale).toBeTypeOf("function")`). `takeOne` and `noop` come from `@esposter/shared`.
 
-## `prefer-named-capture-group` (ESLint)
+## `prefer-named-capture-group` (oxlint)
 
 Every capturing group `(...)` must be named `(?<name>...)`:
 

@@ -5,7 +5,7 @@ import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Inert store options (no fs writes) and the shared wsl mocks so getWslSourceMirrorPath resolves a canonical mirror
-// Path from TEST_REPO_ROOT_WIN — the same transform createWslSourceMirrorSync.test / getWslSourceMirrorPath.test use.
+// Path from TEST_REPO_ROOT_WIN — the same transform createWslSourceMirrorSync.test / sourceMirrorPaths.test use.
 const loginPath = "/usr/local/bin:/usr/bin";
 
 vi.mock(import("@/services/exec/store/createSharedPackageStoreOptions"), () => ({

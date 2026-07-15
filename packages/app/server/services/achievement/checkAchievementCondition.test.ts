@@ -11,31 +11,16 @@ import { describe, expect, test } from "vitest";
 describe(checkAchievementCondition, () => {
   const message = "message";
   const data = { message };
+  const baseCondition = { path: "message.length", type: AchievementConditionType.Property } as const;
 
   test(`${AchievementConditionType.Property} ${BinaryOperator.eq}`, () => {
     expect.hasAssertions();
 
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.eq,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.eq, value: message.length }, data),
     ).toBe(true);
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.eq,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length + 1,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 }, data),
     ).toBe(false);
   });
 
@@ -43,26 +28,10 @@ describe(checkAchievementCondition, () => {
     expect.hasAssertions();
 
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.gt,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length - 1,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.gt, value: message.length - 1 }, data),
     ).toBe(true);
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.gt,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.gt, value: message.length }, data),
     ).toBe(false);
   });
 
@@ -70,26 +39,10 @@ describe(checkAchievementCondition, () => {
     expect.hasAssertions();
 
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.ge,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.ge, value: message.length }, data),
     ).toBe(true);
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.ge,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length + 1,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.ge, value: message.length + 1 }, data),
     ).toBe(false);
   });
 
@@ -97,26 +50,10 @@ describe(checkAchievementCondition, () => {
     expect.hasAssertions();
 
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.lt,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length + 1,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.lt, value: message.length + 1 }, data),
     ).toBe(true);
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.lt,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.lt, value: message.length }, data),
     ).toBe(false);
   });
 
@@ -124,26 +61,10 @@ describe(checkAchievementCondition, () => {
     expect.hasAssertions();
 
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.le,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.le, value: message.length }, data),
     ).toBe(true);
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.le,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length - 1,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.le, value: message.length - 1 }, data),
     ).toBe(false);
   });
 
@@ -151,26 +72,10 @@ describe(checkAchievementCondition, () => {
     expect.hasAssertions();
 
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.ne,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length + 1,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.ne, value: message.length + 1 }, data),
     ).toBe(true);
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.ne,
-          path: "message.length",
-          type: AchievementConditionType.Property,
-          value: message.length,
-        },
-        data,
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.ne, value: message.length }, data),
     ).toBe(false);
   });
 
@@ -179,23 +84,13 @@ describe(checkAchievementCondition, () => {
 
     expect(
       checkAchievementCondition(
-        {
-          operator: AchievementOperator.Contains,
-          path: "message",
-          type: AchievementConditionType.Property,
-          value: message,
-        },
+        { ...baseCondition, operator: AchievementOperator.Contains, path: "message", value: message },
         data,
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        {
-          operator: AchievementOperator.Contains,
-          path: "message",
-          type: AchievementConditionType.Property,
-          value: "0",
-        },
+        { ...baseCondition, operator: AchievementOperator.Contains, path: "message", value: "0" },
         data,
       ),
     ).toBe(false);
@@ -206,23 +101,13 @@ describe(checkAchievementCondition, () => {
 
     expect(
       checkAchievementCondition(
-        {
-          operator: AchievementOperator.Matches,
-          path: "message",
-          type: AchievementConditionType.Property,
-          value: /^[a-z]+$/u,
-        },
+        { ...baseCondition, operator: AchievementOperator.Matches, path: "message", value: /^[a-z]+$/u },
         data,
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        {
-          operator: AchievementOperator.Matches,
-          path: "message",
-          type: AchievementConditionType.Property,
-          value: /^[0-9]+$/u,
-        },
+        { ...baseCondition, operator: AchievementOperator.Matches, path: "message", value: /^[0-9]+$/u },
         data,
       ),
     ).toBe(false);
@@ -233,23 +118,13 @@ describe(checkAchievementCondition, () => {
 
     expect(
       checkAchievementCondition(
-        {
-          operator: AchievementOperator.IsPalindrome,
-          path: "message",
-          type: AchievementConditionType.Property,
-          value: true,
-        },
+        { ...baseCondition, operator: AchievementOperator.IsPalindrome, path: "message", value: true },
         { message: "" },
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        {
-          operator: AchievementOperator.IsPalindrome,
-          path: "message",
-          type: AchievementConditionType.Property,
-          value: true,
-        },
+        { ...baseCondition, operator: AchievementOperator.IsPalindrome, path: "message", value: true },
         data,
       ),
     ).toBe(false);
@@ -261,10 +136,10 @@ describe(checkAchievementCondition, () => {
     expect(
       checkAchievementCondition(
         {
+          ...baseCondition,
           operation: (value) => value === message,
           operator: AchievementOperator.Operation,
           path: "message",
-          type: AchievementConditionType.Property,
         } as PropertyCondition<"message.createMessage">,
         data,
       ),
@@ -272,10 +147,10 @@ describe(checkAchievementCondition, () => {
     expect(
       checkAchievementCondition(
         {
+          ...baseCondition,
           operation: (value) => value !== message,
           operator: AchievementOperator.Operation,
           path: "message",
-          type: AchievementConditionType.Property,
         } as PropertyCondition<"message.createMessage">,
         data,
       ),
@@ -286,15 +161,7 @@ describe(checkAchievementCondition, () => {
     expect.hasAssertions();
 
     expect(
-      checkAchievementCondition(
-        {
-          operator: BinaryOperator.eq,
-          path: "message",
-          type: AchievementConditionType.Property,
-          value: message,
-        },
-        {},
-      ),
+      checkAchievementCondition({ ...baseCondition, operator: BinaryOperator.eq, path: "message", value: message }, {}),
     ).toBe(false);
   });
 
@@ -305,18 +172,8 @@ describe(checkAchievementCondition, () => {
       checkAchievementCondition(
         {
           conditions: [
-            {
-              operator: BinaryOperator.eq,
-              path: "message",
-              type: AchievementConditionType.Property,
-              value: message,
-            },
-            {
-              operator: BinaryOperator.eq,
-              path: "message.length",
-              type: AchievementConditionType.Property,
-              value: message.length,
-            },
+            { ...baseCondition, operator: BinaryOperator.eq, path: "message", value: message },
+            { ...baseCondition, operator: BinaryOperator.eq, value: message.length },
           ],
           type: AchievementConditionType.And,
         },
@@ -327,18 +184,8 @@ describe(checkAchievementCondition, () => {
       checkAchievementCondition(
         {
           conditions: [
-            {
-              operator: BinaryOperator.eq,
-              path: "message",
-              type: AchievementConditionType.Property,
-              value: message,
-            },
-            {
-              operator: BinaryOperator.eq,
-              path: "message.length",
-              type: AchievementConditionType.Property,
-              value: message.length + 1,
-            },
+            { ...baseCondition, operator: BinaryOperator.eq, path: "message", value: message },
+            { ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 },
           ],
           type: AchievementConditionType.And,
         },
@@ -354,18 +201,8 @@ describe(checkAchievementCondition, () => {
       checkAchievementCondition(
         {
           conditions: [
-            {
-              operator: BinaryOperator.eq,
-              path: "message.length",
-              type: AchievementConditionType.Property,
-              value: message.length,
-            },
-            {
-              operator: BinaryOperator.eq,
-              path: "message.length",
-              type: AchievementConditionType.Property,
-              value: message.length + 1,
-            },
+            { ...baseCondition, operator: BinaryOperator.eq, value: message.length },
+            { ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 },
           ],
           type: AchievementConditionType.Or,
         },
@@ -376,18 +213,8 @@ describe(checkAchievementCondition, () => {
       checkAchievementCondition(
         {
           conditions: [
-            {
-              operator: BinaryOperator.eq,
-              path: "message.length",
-              type: AchievementConditionType.Property,
-              value: message.length + 1,
-            },
-            {
-              operator: BinaryOperator.eq,
-              path: "message.length",
-              type: AchievementConditionType.Property,
-              value: message.length + 1,
-            },
+            { ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 },
+            { ...baseCondition, operator: BinaryOperator.eq, value: message.length + 1 },
           ],
           type: AchievementConditionType.Or,
         },

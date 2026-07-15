@@ -5,7 +5,7 @@ description: Deferred — a maintained reference index answering "what consumes 
 
 # Resource references
 
-A reference index over cross-resource links: which dashboards bind this File, which emails merge from this survey's responses, which resources this one consumes — surfaced as a "Referenced by / References" panel on the Overview blade. Today every link is a bare `DatasetReference` (or survey id) buried inside consumers' content blobs, so answering "is anything using this?" means scanning every blob.
+A reference index over cross-resource links: which dashboards bind this Sheet, which emails merge from this survey's responses, which resources this one consumes — surfaced as a "Referenced by / References" panel on the Overview blade. Today every link is a bare `DatasetReference` (or survey id) buried inside consumers' content blobs, so answering "is anything using this?" means scanning every blob.
 
 ## Why deferred
 

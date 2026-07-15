@@ -40,7 +40,8 @@ Message attachments land in `AzureContainer.MessageAssets`; survey asset files i
 
 ```ts
 // shared/services/app/constants.ts
-export const MEGABYTE = 2 ** 20;
+export const KIBIBYTE = 2 ** 10;
+export const MEGABYTE = KIBIBYTE ** 2;
 export const MAX_REQUEST_SIZE = 2 * MEGABYTE; // tRPC body limit (JSON payloads)
 export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE; // SAS max blob size (file uploads)
 ```

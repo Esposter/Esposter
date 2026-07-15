@@ -9,6 +9,7 @@ import { useMessageDialogStore } from "@/store/message/dialog";
 import { useForwardStore } from "@/store/message/input/forward";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
 import { exhaustiveGuard, normalizeString, RoutePath } from "@esposter/shared";
@@ -29,6 +30,8 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
+  const userToRoomStore = useUserToRoomStore();
+  const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
   const threadStore = useThreadStore();
   const { openThread } = threadStore;
   const runtimeConfig = useRuntimeConfig();
@@ -108,12 +111,17 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const markUnreadFromHereItem: Item = {
     icon: "mdi-email-mark-as-unread",
     onClick: async () => {
-      await executeMarkUnreadMutation(() =>
-        $trpc.userToRoom.updateUserToRoom.mutate({
-          lastMessageAt: dayjs(message.createdAt).subtract(1, "millisecond").toDate(),
-          roomId: message.partitionKey,
-        }),
-      );
+      const lastMessageAt = dayjs(message.createdAt).subtract(1, "millisecond").toDate();
+      const roomId = message.partitionKey;
+      const previousUserToRoom = getMyUserToRoom(roomId);
+      await executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastMessageAt, roomId }), {
+        applyOptimistic: () => {
+          if (previousUserToRoom) setMyUserToRoom(roomId, { ...previousUserToRoom, lastMessageAt });
+          return () => {
+            if (previousUserToRoom) setMyUserToRoom(roomId, previousUserToRoom);
+          };
+        },
+      });
     },
     title: "Mark Unread From Here",
   };

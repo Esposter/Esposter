@@ -4,13 +4,14 @@ import type { UpdateRoomCategoryInput } from "#shared/models/db/roomCategory/Upd
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
 import { useMutation } from "@/composables/shared/useMutation";
+import { authClient } from "@/services/auth/authClient";
 import { getCategoryPositionUpdates } from "@/services/message/roomCategory/getCategoryPositionUpdates";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
+  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeCreateRoomCategoryMutation = useMutation();
   const executeDeleteRoomCategoryMutation = useMutation();
   const executeUpdateRoomCategoryMutation = useMutation();
   const executeReorderRoomCategoriesMutation = useMutation();
@@ -21,11 +22,35 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     updateRoomCategory: storeUpdateRoomCategory,
   } = createOperationData(categories, ["id"], DatabaseEntityType.RoomCategory);
 
-  // Server-generated category — non-optimistic, applied in onSuccess
+  // The server only adds userId and takes the position/timestamp column defaults, so the client can build the
+  // Row faithfully — insert a temp-id placeholder now and reconcile the server row onto it in onSuccess.
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
+    if (!session.value.data) return;
+
+    // Own executor per call — each create owns a distinct placeholder, so concurrent creates must never
+    // Supersede each other's reconcile (a skipped onSuccess would strand a temp id that isn't the server's)
+    const executeCreateRoomCategoryMutation = useMutation();
+    // Reactive so the onSuccess Object.assign onto this same object triggers the list re-render
+    const newCategory = reactive<RoomCategoryInMessage>({
+      createdAt: new Date(),
+      deletedAt: null,
+      id: crypto.randomUUID(),
+      name: input.name,
+      position: 0,
+      updatedAt: new Date(),
+      userId: session.value.data.user.id,
+    });
     await executeCreateRoomCategoryMutation(() => $trpc.room.category.createRoomCategory.mutate(input), {
-      onSuccess: (newCategory) => {
+      applyOptimistic: () => {
         storeCreateRoomCategory(newCategory);
+        return () => {
+          storeDeleteRoomCategory({ id: newCategory.id });
+        };
+      },
+      // Reconcile onto the placeholder itself so it keeps its list position instead of being
+      // Removed and re-appended under the server id
+      onSuccess: (createdCategory) => {
+        Object.assign(newCategory, createdCategory);
       },
     });
   };

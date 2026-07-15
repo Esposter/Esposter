@@ -7,13 +7,9 @@ description: Esposter git workflow conventions — commit message format, safety
 
 ## Commit Message Format
 
-```text
-<type>: <description>
+Conventional-commits format and the type list are in `~/.claude/rules/git-workflow.md`.
 
-<optional body>
-```
-
-Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`
+**Commit attribution is enabled.** `~/.claude/settings.json` sets no `includeCoAuthoredBy` key, so it defaults on — recent commits carry the `Co-Authored-By` trailer. Expect it; don't strip it. (The global rules file claims attribution is disabled — it is not.)
 
 ## Multi-line Commit Messages — Tool-Specific Syntax
 

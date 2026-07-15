@@ -17,4 +17,4 @@ A user-facing need for external data materializes.
 
 ## Cheaper interim
 
-Download external data and import it as CSV/JSON/XLSX through the Sheet resource's existing import, then serve it as a File dataset.
+Download external data and import it as CSV/JSON/XLSX through the Sheet resource's existing import, then serve it as a Sheet dataset.

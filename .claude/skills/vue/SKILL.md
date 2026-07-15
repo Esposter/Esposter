@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Esposter Vue 3 SFC conventions — macro ordering, template patterns, watch aliases, props naming, refs/computed, and conditional logic. Apply when writing .vue files.
+description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template patterns and attribute ordering, inline handlers, v-model vs split bindings (never normalizeString in Vue), refs/computed/template refs, the watch decision tree and watch aliases, auth session call forms, browser globals, SSR guards via getIsServer, and upsert form mode. Apply when writing or reviewing .vue files.
 ---
 
 # Vue Conventions
@@ -115,23 +115,8 @@ The only acceptable client-side validation is Vuetify form field rules (inline e
 - **Dotted slot names need dynamic binding** — Vue rejects dots in static slot names; Vuetify item slots use brackets: `#[`item.drag`]`, `#[`item.actions`]`. Only dot-free names are static (`#top`, `#activator`).
 - **Always use `:` shorthand** — `:disabled="..."` not `v-bind:disabled`. Object spread: `:="object"` not `v-bind="object"`.
 - **Never use `.value` in templates** — Vue auto-unwraps refs. `ref.value` in a template reads `.value` on the unwrapped object (usually `undefined`). Write `fn(ref)`. `.value` is only for `<script setup>` outside template expressions.
-- **No allocating expressions in render positions** — a template expression that runs on every render (a `:prop` bind, `v-for` source, or `{{ }}` interpolation) must not build a new object/array. This most often means **`Object.*` calls** (`Object.entries`/`keys`/`values`/`fromEntries`/`assign`) — enforced by `vue/no-restricted-syntax`. A fresh reference each render breaks prop reference-equality (e.g. VueFlow's `:node-types`) and forces needless re-renders/recomputes. Hoist to a **script-setup `const`** when the source is static (an imported map/enum), or a **`computed`** when it derives from reactive state:
-
-  ```vue
-  <!-- WRONG — new array every render -->
-  <v-item v-for="[key, permission] of Object.entries(RoomPermission)" :key />
-  ```
-
-  ```ts
-  // RIGHT — hoisted once (RoomPermission is a static import)
-  const roomPermissions = Object.entries(RoomPermission);
-  ```
-
-  ```vue
-  <v-item v-for="[key, permission] of roomPermissions" :key />
-  ```
-
-  Event handlers (`@click`, `@submit`, …) are exempt — they run per-event, not per-render — so an inline `Object.assign(model, await mutate())` in a handler is fine (and reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice; don't "fix" it).
+- **No allocating expressions in render positions** — `Object.*` calls in a `:prop` bind, `v-for` source, or `{{ }}` allocate a fresh reference every render. Enforced by `vue/no-restricted-syntax` (`packages/configuration/eslint/overrides/vueRules.js`); its message states the fix (hoist to a script-setup `const` for static sources, a `computed` for reactive ones) and exempts event handlers.
+- Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
 
 ## Optional Refs — Omit the Initial Value
 
@@ -318,18 +303,6 @@ watch(throttledSearchQuery, async (newQuery) => {
 });
 ```
 
-### Summary
-
-| Scenario                                       | Pattern                                                   |
-| ---------------------------------------------- | --------------------------------------------------------- |
-| Read-only derivation                           | `computed`                                                |
-| Form init from prop/store (no external change) | `ref(source.value)` directly — never `watchImmediate`     |
-| Editable copy that resyncs from source         | `useCloned(() => source)` — never `ref` + `watch` mirror  |
-| Form reset on dialog/menu open                 | `watch(dialog, (isOpen) => { if (!isOpen) return; ... })` |
-| Two-way store binding                          | Writable `computed` (get/set)                             |
-| External imperative API                        | `watch`                                                   |
-| Async side effect                              | `watch`                                                   |
-
 ## Watch Aliases & `watchEffect`
 
 - Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `watchImmediate(source, cb)` over `{ immediate: true }`. When both needed: `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate).
@@ -346,7 +319,7 @@ watch(throttledSearchQuery, async (newQuery) => {
 ## Vue Hooks
 
 - Place `watch`, `onMounted`, `onUnmounted`, and other lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments, with a blank line before them.
-- **Prefer no hook at all.** Before adding a `watch`/`watchEffect`, exhaust the Watch Decision Tree above — derive with `computed`, initialize a `ref` from a prop/store value directly, or push the data down as a prop and let the child own it. Reach for a watcher only when bridging an imperative API or running an async side effect. A `watchEffect` that merely copies a store value into a local `ref` is almost always replaceable by the wrapper + pure-child pattern (see the `vue-component-patterns` skill): guard the source with `v-if` in the parent, pass it as a required prop, and init the child's `ref` from that prop.
+- **Prefer no hook at all** — exhaust the Watch Decision Tree above first. A `watchEffect` that merely copies a store value into a local `ref` is almost always replaceable by the wrapper + pure-child pattern (see the `vue-component-patterns` skill): guard the source with `v-if` in the parent, pass it as a required prop, and init the child's `ref` from that prop.
 - **Blank line between each consecutive hook/watcher** — every `watch`/`watchEffect`/`onMounted`/`onUnmounted` block is an independent registration, so put a blank line between adjacent ones. This overrides the `formatting` skill's "no blank line before a block that immediately follows another block".
 - **Order by lifecycle phase**: `watch`/`watchEffect` first, then `onMounted`, then `onUnmounted` (setup-time reactive registrations precede mount-time, which precede teardown). Within the same phase keep source order.
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly (avoids scope/binding issues and argument forwarding): `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
@@ -379,12 +352,7 @@ useScript<typeof Desmos>(API_URL, {
 
 ## Routing
 
-- **Links use `:to` / `NuxtLink`, never a raw `<a>`** — internal `<NuxtLink :to>` (or Vuetify `:to`), external `<NuxtLink :to external target>`, in-page `<NuxtInvisibleLink :to="{ hash }">`. A raw `<a>` is banned by lint. Full standard: [navigation](/docs/architecture/navigation) + the `vuetify` skill's Navigation section.
-- **`navigateTo(target, options)` for imperative navigation** — post-mutation redirects, form submits, route guards. Never `useRouter().push`/`replace` to navigate (query-string-only `router.replace({ query })` is not navigation and is fine).
-- **`useRouter()` for reactive route reads** — reading route data inside a `computed`/`watch` (e.g. `router.currentRoute.value.params.id`).
-- **`useRoute()` for plain reads** — reading params/query outside a reactive context (regular function or async handler).
-
-> This inverts the usual Vue Router split deliberately: `useRoute()` returns a stale, non-reactive snapshot when called outside a component setup (composables, stores, middleware, async handlers), whereas `useRouter().currentRoute` stays reactive everywhere. Standardizing on `useRouter()` for reactive reads avoids that footgun since route reads often live in composables.
+See the **routing** skill — links/`:to`, `navigateTo`, reactive route reads, route validation, page keys, and route-synced tabs.
 
 ## After Finishing Code Changes
 

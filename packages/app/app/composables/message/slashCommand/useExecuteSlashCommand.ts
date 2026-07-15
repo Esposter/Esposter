@@ -16,7 +16,8 @@ export const useExecuteSlashCommand = () => {
   const { $trpc } = useNuxtApp();
   const executeMutation = useMutation();
   const roomStore = useRoomStore();
-  const { currentRoomId } = storeToRefs(roomStore);
+  const { storeUpdateRoom } = roomStore;
+  const { currentRoom, currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { storeSendMessage } = dataStore;
   const pollDialogStore = usePollDialogStore();
@@ -67,7 +68,16 @@ export const useExecuteSlashCommand = () => {
         createMessageInput = { message: `(╯°□°）╯︵ ┻━┻`, roomId, type: MessageType.Message };
         break;
       case SlashCommandType.Topic: {
-        await executeMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic: command.parameterValues.text }));
+        const { text } = command.parameterValues;
+        const oldTopic = currentRoom.value?.topic;
+        await executeMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic: text }), {
+          applyOptimistic: () => {
+            storeUpdateRoom({ id: roomId, topic: text });
+            return () => {
+              storeUpdateRoom({ id: roomId, topic: oldTopic });
+            };
+          },
+        });
         break;
       }
       case SlashCommandType.Unflip:

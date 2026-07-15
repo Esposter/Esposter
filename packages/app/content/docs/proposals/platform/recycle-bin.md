@@ -9,7 +9,7 @@ Soft delete with restore: deleting a resource marks it `deletedAt` instead of de
 
 ## Scope
 
-**Today**: Delete destroys the row and blob immediately — for a platform where a File or Survey can hold hours of work behind a single Delete button, an undo window has clear value even with the type-the-name guard. **This proposal adds** soft delete as one column: every read path already funnels through `createResourcesWhere`, so exclusion is one predicate.
+**Today**: Delete destroys the row and blob immediately — for a platform where a Sheet or Survey can hold hours of work behind a single Delete button, an undo window has clear value even with the type-the-name guard. **This proposal adds** soft delete as one column: every read path already funnels through `createResourcesWhere`, so exclusion is one predicate.
 
 ## Data model
 

@@ -7,7 +7,7 @@ description: The standard for serving tabular data — contract, DatasetProvider
 
 The standard for serving tabular data across products. Whenever one product needs to read another product's data (survey responses in a dashboard, file rows in an import), it goes through this contract — never through product-specific reads.
 
-Serving is the **DatasetProvider capability** ([/docs/architecture/resources](/docs/architecture/resources)): a resource type opts in via `ResourceDefinitionMap`, and the derived `DatasetProviderResourceType` union keys the provider map so a declared-but-unregistered provider is a compile error. _Consuming_ is not a capability — it is just calling `dataset.readDataset` from a component (dashboard binding form, email merge fields).
+Serving is the **DatasetProvider capability** ([/docs/architecture/resources](/docs/architecture/resources)): a resource type opts in via `ResourceDefinitionMap`, and `DatasetProviderType` keys the provider map so a declared-but-unregistered provider is a compile error. _Consuming_ is not a capability — it is just calling `dataset.readDataset` from a component (dashboard binding form, email merge fields).
 
 ## Contract
 
@@ -50,7 +50,7 @@ Public viewers never call this: published resources bake resolved datasets in at
 flowchart LR
   DASH["Dashboard binding form"] -->|DatasetReference| RD["dataset.readDataset"]
   EMAIL["Email merge fields"] -->|DatasetReference| RD
-  IMPORT["File import (one-time row copy)"] -->|DatasetReference| RD
+  IMPORT["Sheet import (one-time row copy)"] -->|DatasetReference| RD
   RD --> MAP["DatasetProviderMap[type]"]
   MAP --> SR["readSurveyResponsesDataset"] --> AT[("SurveyResponseEntity<br/>Azure Table")]
   MAP --> FR["readSheetDataset"] --> BLOB[("Sheet content blob")]

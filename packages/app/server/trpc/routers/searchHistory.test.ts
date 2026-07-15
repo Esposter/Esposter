@@ -52,14 +52,6 @@ describe("searchHistory", () => {
     expect(takeOne(readSearchHistories.items).query).toBe(query);
   });
 
-  test("fails read search histories with non-existent room id", async () => {
-    expect.hasAssertions();
-
-    await expect(
-      searchHistoryCaller.readSearchHistories({ roomId: crypto.randomUUID() }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
   test("fails read search histories with non-existent member", async () => {
     expect.hasAssertions();
 

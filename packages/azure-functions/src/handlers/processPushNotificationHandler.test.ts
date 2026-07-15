@@ -33,7 +33,7 @@ describe(processPushNotificationHandler, () => {
   const context = new InvocationContext();
   const name = "name";
   const userId = crypto.randomUUID();
-  const baseMessage = { message: "<p>a</p>", partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() };
+  const message = { message: "<p>a</p>", partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID(), userId };
   const notificationOptions = { icon: "", title: "" };
 
   beforeAll(async () => {
@@ -49,19 +49,7 @@ describe(processPushNotificationHandler, () => {
     expect.hasAssertions();
 
     const result = await processPushNotificationHandler(
-      createEvent({ message: { ...baseMessage, userId }, notificationOptions } satisfies PushNotificationEventGridData),
-      context,
-    );
-
-    expect(result).toBeUndefined();
-  });
-
-  test("completes without error when message has no userId (webhook message)", async () => {
-    expect.hasAssertions();
-
-    // Webhook messages have no direct user author, so userId is absent from the payload
-    const result = await processPushNotificationHandler(
-      createEvent({ message: baseMessage, notificationOptions } satisfies PushNotificationEventGridData),
+      createEvent({ message, notificationOptions } satisfies PushNotificationEventGridData),
       context,
     );
 

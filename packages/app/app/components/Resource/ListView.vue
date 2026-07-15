@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
+import type { Item } from "@/models/shared/Item";
 import type { Resource, ResourceType } from "@esposter/db-schema";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { pluralize } from "#shared/util/text/pluralize";
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { useNotificationStore } from "@/store/notification";
 import { useListDialogStore } from "@/store/resource/listDialog";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 
 interface ResourceListViewProps {
   // When set, a close ✕ routes here (the base list closes back a layer); omitted when it sits behind a blade
@@ -19,6 +22,13 @@ interface ResourceListViewProps {
 }
 
 const { closeTo, isSearchable = true } = defineProps<ResourceListViewProps>();
+const { $trpc } = useNuxtApp();
+// When narrow, the toolbar commands collapse into the … overflow menu — the close ✕ never collapses
+const { smAndDown } = useVDisplay();
+const { getActionItems } = useResourceListActionItems();
+const notificationStore = useNotificationStore();
+const { createNotification } = notificationStore;
+const executeDeleteResourcesMutation = useMutation();
 const listDialogStore = useListDialogStore();
 const { deletingId, renamingId } = storeToRefs(listDialogStore);
 // The workbench filter state mirrors to query params (deep links from global search included);
@@ -79,6 +89,55 @@ const showingText = computed(() => {
   const end = Math.min(page.value * itemsPerPage.value, count.value);
   return `Showing ${start}–${end} of ${count.value} records`;
 });
+const toolbarItems = computed<Item[]>(() => [
+  {
+    active: isGroupedByType.value,
+    icon: "mdi-format-list-group",
+    onClick: () => {
+      isGroupedByType.value = !isGroupedByType.value;
+    },
+    title: "Group by type",
+  },
+  {
+    icon: "mdi-file-export-outline",
+    onClick: () => exportAllResourcesCsv(createResourcesPageReader()),
+    title: "Export CSV",
+  },
+  { icon: "mdi-refresh", onClick: () => refresh(), title: "Refresh" },
+]);
+// Owned here because the row leaves `items` optimistically, which unmounts the v-if-gated delete dialog mid-flight
+const deleteResources = async (resources: Resource[]) => {
+  const snapshot = [...items.value];
+  const snapshotCount = count.value;
+  const ids = resources.map(({ id }) => id);
+  // Read up front — the optimistic removal drops the rows before the notification fires
+  const deletedNotificationTitle =
+    resources.length === 1
+      ? `Deleted "${takeOne(resources).name}"`
+      : `Deleted ${resources.length} ${pluralize("resource", resources.length)}`;
+  // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory)
+  await executeDeleteResourcesMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
+    applyOptimistic: () => {
+      const optimisticItems = items.value.filter(({ id }) => !ids.includes(id));
+      items.value = optimisticItems;
+      count.value -= resources.length;
+      return () => {
+        // A refresh, page turn or filter change mid-flight replaces `items` wholesale, so anything but our own
+        // Optimistic array means the snapshot is stale and restoring it would undo the newer read
+        if (items.value !== optimisticItems) return;
+
+        items.value = snapshot;
+        count.value = snapshotCount;
+      };
+    },
+    onError: (error) => {
+      createNotification({ severity: "error", title: error.message });
+    },
+    onSuccess: () => {
+      createNotification({ severity: "success", title: deletedNotificationTitle });
+    },
+  });
+};
 const getResourceIcon = (type: ResourceType) => ResourceDefinitionMap[type].icon;
 const getResourceTitle = (type: ResourceType) => ResourceDefinitionMap[type].title;
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigateTo(RoutePath.Resource(item.id));
@@ -115,18 +174,15 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         />
         <v-spacer />
         <StyledTooltipIconButton
-          icon="mdi-format-list-group"
-          text="Group by type"
-          :button-props="{ active: isGroupedByType }"
-          @click="isGroupedByType = !isGroupedByType"
+          v-for="{ active, icon, onClick, title } of smAndDown ? [] : toolbarItems"
+          :key="title"
+          :icon
+          :text="title"
+          :button-props="{ active }"
+          @click="onClick"
         />
         <ResourceListColumnChooserMenu v-model="hiddenColumnKeys" />
-        <StyledTooltipIconButton
-          icon="mdi-file-export-outline"
-          text="Export CSV"
-          @click="exportAllResourcesCsv(createResourcesPageReader())"
-        />
-        <StyledTooltipIconButton icon="mdi-refresh" text="Refresh" @click="refresh()" />
+        <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
         <StyledTooltipIconButton v-if="closeTo" icon="mdi-close" text="Close" :button-props="{ to: closeTo }" />
       </v-toolbar>
       <ResourceListSelectionToolbar
@@ -134,9 +190,9 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         :selected-resources
         @clear="clearSelection()"
         @delete="
-          async () => {
+          (resources) => {
             clearSelection();
-            await refresh();
+            deleteResources(resources);
           }
         "
       />
@@ -186,18 +242,11 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
           {{ getResourceTitle(item.type) }}
         </div>
       </template>
-      <template #[`item.name`]="{ item }">
-        <!-- A real link so middle-click/ctrl-click work; stop keeps the row's navigateTo from double-firing -->
-        <NuxtLink text-info :to="RoutePath.Resource(item.id)" @click.stop>{{ item.name }}</NuxtLink>
-      </template>
       <template #[`item.actions`]="{ item }">
-        <!-- stop keeps the row's navigateTo from double-firing on top of the button's own `to` -->
-        <StyledTooltipIconButton
-          icon="mdi-open-in-new"
-          text="Open"
-          :button-props="{ to: RoutePath.Resource(item.id) }"
-          @click.stop
-        />
+        <!-- stop keeps the row's navigateTo from firing when the menu is opened -->
+        <div @click.stop>
+          <StyledOverflowMenu :items="getActionItems(item)" />
+        </div>
       </template>
       <template #group-header="{ columns, isGroupOpen, item, toggleGroup }">
         <tr>
@@ -259,7 +308,11 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         :resource="renamingResource"
         @update="refresh()"
       />
-      <ResourceListDeleteDialog v-if="deletingResource" :resource="deletingResource" @delete="refresh()" />
+      <ResourceListDeleteDialog
+        v-if="deletingResource"
+        :resource="deletingResource"
+        @delete="deleteResources($event)"
+      />
     </template>
   </div>
 </template>

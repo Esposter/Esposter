@@ -1,46 +1,34 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { useNotificationStore } from "@/store/notification";
+import { pluralize } from "#shared/util/text/pluralize";
+import { takeOne } from "@esposter/shared";
 
 interface ResourceListSelectionToolbarProps {
   selectedResources: Resource[];
 }
 
 const { selectedResources } = defineProps<ResourceListSelectionToolbarProps>();
-const emit = defineEmits<{ clear: []; delete: [] }>();
-const { $trpc } = useNuxtApp();
-const executeMutation = useMutation();
-const notificationStore = useNotificationStore();
-const { createNotification } = notificationStore;
+const emit = defineEmits<{ clear: []; delete: [resources: Resource[]] }>();
 const { exportResourcesCsv } = useExportResourcesCsv();
-// The bulk guard is the selection count, mirroring the single-delete type-the-name guard
-const confirmName = computed(() => `delete ${selectedResources.length}`);
+const selectedLabel = computed(() => `${selectedResources.length} ${pluralize("resource", selectedResources.length)}`);
+// One selection guards on the name, matching the row and blade delete dialogs;
+// Past one no single name identifies the set, so the guard falls back to the count phrase
+const confirmName = computed(() =>
+  selectedResources.length === 1 ? takeOne(selectedResources).name : `Delete ${selectedLabel.value}`,
+);
 </script>
 
 <template>
   <div px-4 py-2 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
     <span op-medium-emphasis>{{ selectedResources.length }} selected</span>
     <StyledDeleteFormDialog
-      :card-props="{ title: 'Delete resources' }"
+      :card-props="{ title: `Delete ${selectedLabel}` }"
       :confirm-name
       @delete="
-        async (onComplete) => {
-          let isSuccessful = false;
-          await executeMutation(
-            () => $trpc.resource.deleteResources.mutate({ ids: selectedResources.map(({ id }) => id) }),
-            {
-              onError: (error) => {
-                createNotification({ severity: 'error', title: error.message });
-              },
-              onSuccess: (deletedResources) => {
-                createNotification({ severity: 'success', title: `Deleted ${deletedResources.length} resources` });
-                emit('delete');
-                isSuccessful = true;
-              },
-            },
-          );
-          onComplete(isSuccessful);
+        (onComplete) => {
+          onComplete();
+          emit('delete', selectedResources);
         }
       "
     >
@@ -49,7 +37,7 @@ const confirmName = computed(() => `delete ${selectedResources.length}`);
           Delete ({{ selectedResources.length }})
         </v-btn>
       </template>
-      Delete {{ selectedResources.length }} resources? This cannot be undone.
+      Delete {{ selectedLabel }}? This cannot be undone.
       <v-list density="compact">
         <v-list-item v-for="{ id, name } of selectedResources" :key="id" :title="name" />
       </v-list>

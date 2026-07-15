@@ -74,3 +74,7 @@ There is **no** shared "speaking indicator analyser" to reuse — in-call active
 ## Not yet built
 
 - **Speaker Volume >100% boost** — needs Room `webAudioMix`; element volume caps at 100% today.
+
+## Unverified
+
+The live audio path (mic gain, voice-activity/push-to-talk gating, noise-suppression modes) has only ever been exercised single-party — one browser, no remote peer. Nothing above is proven against a real two-party call, so treat the applied-behaviour column as intent rather than observed fact until someone runs one.

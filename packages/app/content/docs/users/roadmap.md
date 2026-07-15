@@ -5,7 +5,7 @@ description: Open work for the users area — prioritized checkboxes linking the
 
 # Roadmap
 
-Open work only. Decided ideas live in [rejected](/docs/users/rejected) — check it before adding an item.
+Open work only. Decided ideas live in [deferred](/docs/users/deferred) and [rejected](/docs/users/rejected) — check both before adding an item.
 
 ## Next
 

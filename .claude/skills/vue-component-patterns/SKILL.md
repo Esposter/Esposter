@@ -1,13 +1,13 @@
 ---
 name: vue-component-patterns
-description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, same-level abstraction, present-tense emit names, inline template event handlers, and useCloned local copies over ref + watch. Apply when designing or refactoring Vue components.
+description: Esposter Vue 3 component architecture — the shared Styled/App shell primitives, same level of abstraction, the wrapper + pure-child pattern for async data, generic SFCs, per-variant type correctness, is-prefixed boolean props typed as the non-default literal, present-tense emit names, component folder naming and Nuxt auto-import name collapse, defineSlots and conditional slot forwarding, slot extraction, array + v-for over hardcoded list items, shared list-item shells with action slots, permission-filtered action items, one affordance per action, singleton dialogs over per-item dialogs, page decomposition, and maximal component granularity. Apply when designing, decomposing, naming, or refactoring Vue components.
 ---
 
 # Vue Component Patterns (Esposter)
 
 ## Shared Shell / Design-System Primitives
 
-Cross-product chrome is a small set of shared components in `components/Styled/` (design-system) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare `v-toolbar` per editor.** Their design and rationale live in `packages/app/content/docs/platform/shell-cohesion.md`; keep that spec live in the same change when you add or alter a shell primitive (see the `feature-workflow` Document phase).
+Cross-product chrome is a small set of shared components in `components/Styled/` (design-system) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare `v-toolbar` per editor.** Their design and rationale live in `packages/app/content/docs/platform/shell-cohesion.md`; keep that spec live in the same change when you add or alter a shell primitive.
 
 - `StyledPageHeader` — the canonical editor/page header (breadcrumb row + `actions` slot + `controls` slot). Every editor header mounts document picker / selects / search through it; controls never go inside `v-toolbar-title`.
 - `StyledEmptyState` — icon + title + description + action slot for empty lists/states.
@@ -15,7 +15,7 @@ Cross-product chrome is a small set of shared components in `components/Styled/`
 - `StyledSearchDialog` — the canonical Ctrl+K search palette (dialog + solo autofocus search field + `hotkey` prop registered via `useVHotkey`, `activator` slot, results in the default slot). Every dialog-style search UI mounts through it — never re-roll a `v-dialog` + `v-text-field` + hotkey listener (`onKeyStroke`/`useEventListener`) per feature. See `docs/architecture/search.md`.
 - `AppBreadcrumbs` — route→product trail (matched against `ProductListLinkItems`), rendered by `StyledPageHeader`.
 
-When a new product/editor is added, give it a `StyledPageHeader`, a launcher entry in `ProductListLinkItems`, and — if it is document-backed — a row in the `/documents` hub maps (`DocumentTypeRoutePathMap` / `DocumentTypeIconMap`). Document the result in the shell-cohesion spec.
+When a new product/editor is added, give it a `StyledPageHeader`, a launcher entry in `ProductListLinkItems`, and — if it is resource-backed — an entry in `ResourceDefinitionMap` (`shared/services/resource/`), the single map carrying each resource type's `icon`, `title`, and route for the `/resources` hub. Document the result in the shell-cohesion spec.
 
 ## Same Level of Abstraction
 
@@ -24,31 +24,43 @@ Every statement in `<script setup>` must operate at the same conceptual level. M
 **Rule:** If one line calls a composable encapsulating a concept, all other lines should be at that same call-site level — not implementing sub-steps inline.
 
 ```vue
-<!-- WRONG: selectedRoleId/selectedRole management is a lower-level concern mixed in -->
+<!-- WRONG: selection management is a lower-level concern mixed into orchestration -->
 <script setup lang="ts">
-const roles = computed(() => getRoles(roomId));
-const selectedRoleId = ref(roles.value[0]?.id ?? null);
-const selectedRole = computed(() => roles.value.find(({ id }) => id === selectedRoleId.value) ?? null);
-watch(roles, (newRoles) => {
-  if (selectedRoleId.value !== null && !newRoles.some(({ id }) => id === selectedRoleId.value))
-    selectedRoleId.value = newRoles[0]?.id ?? null;
+const foos = computed(() => getFoos(parentId));
+const selectedFooId = ref("");
+const selectedFoo = computed(() => foos.value.find(({ id }) => id === selectedFooId.value));
+watch(foos, (newFoos) => {
+  if (selectedFooId.value && !newFoos.some(({ id }) => id === selectedFooId.value))
+    selectedFooId.value = newFoos[0]?.id ?? "";
 });
 </script>
 
-<!-- CORRECT: all lines at the same orchestration level -->
+<!-- CORRECT: all lines at the same orchestration level — the store owns the selection -->
 <script setup lang="ts">
-const roles = computed(() => getRoles(roomId));
-const { selectedRole, selectedRoleId } = useSelectedRole(roles);
+const fooStore = useFooStore();
+const { foos, selectedFoo, selectedFooId } = storeToRefs(fooStore);
 </script>
 ```
 
 **Signals abstraction levels are mixed:**
 
-- A composable call sits next to a manual `ref` + `computed` + `watch` block implementing the same concept
-- A `v-if="x !== null"` guard exists only so the template body can skip null checks (extract to a child component receiving a non-null prop instead)
+- A store or composable call sits next to a manual `ref` + `computed` + `watch` block implementing the same concept
+- A `v-if="x"` guard exists only so the template body can skip absence checks (extract to a child component receiving a required prop instead)
 - Inline `watch` callbacks contain multi-step logic that belongs in a composable
 
-**Fix:** extract the lower-level block into a composable (`use*`) or child component, then call it at the same level as everything else.
+**Fix:** move the lower-level block to its owner — a store (selection state, shared reactive data — see the `pinia` skill) or a `use*` composable — then call it at the same level as everything else.
+
+### Selection state: read the store, don't thread props
+
+Once the selection lives in the store, children read it directly. This drops both the prop chain and the emit chain — a list item binds `:active="foo.id === selectedFooId"` from `storeToRefs` and calls `selectFoo()` itself, instead of the parent passing `:selected-foo-id` down and handling `@select` back up.
+
+When a child has **local mutable state initialized from a prop**, don't watch the prop to reset it — use `:key` so the child remounts and re-initializes from the fresh prop:
+
+```vue
+<!-- ❌ watch(() => foo.fields, (newFields) => { fields.value = newFields; }) in FooEditor -->
+<!-- ✅ :key remounts FooEditor on selection change -->
+<FooEditor v-if="selectedFoo" :key="selectedFoo.id" :foo="selectedFoo" />
+```
 
 ## Async Data: Wrapper + Pure Child Pattern
 
@@ -82,22 +94,9 @@ const nickname = ref(userToRoom.nickname);
 
 **When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data, where the store can be empty at component creation time.
 
-## Local Copies of Reactive Sources — `useCloned`, Never `ref` + `watch`
+## Local Copies of Reactive Sources
 
-A local editable copy of a reactive source (edit drafts, buffered inputs, slider values) is always VueUse `useCloned` — never a hand-rolled `ref(source.value)` plus a `watch` syncing source → copy:
-
-```ts
-// ❌ const searchInput = ref(searchQuery.value);
-//    watch(searchQuery, (newSearchQuery) => { searchInput.value = newSearchQuery; });
-// ✅
-const { cloned: searchInput } = useCloned(searchQuery);
-const { cloned: editedName } = useCloned(() => name); // getter form for props/store fields
-```
-
-- Destructure `sync` when a Reset button must re-copy on demand (`Resource/Sheet/Row/EditDialog.vue`)
-- The write-back direction (copy → source) is a genuine side effect — a single `watch` (often on a `refDebounced` of the copy) or an explicit save action is fine there
-
-More generally, before writing any `watch`, express it as a `computed`, a template `v-if`, or a purpose-built VueUse composable first. Reserve `watch` for side effects that can't be reactive values: emits, navigation, DOM calls (`focus`/`scrollIntoView`/measure), fetch-on-change, library bridges (Phaser/tiptap/LiveKit), and state resets/clamps triggered by another value changing.
+A local editable copy of a reactive source is always VueUse `useCloned`, never `ref` + `watch` — see the `vue` skill's Watch Decision Tree, which owns the rule and the `sync`/`clone` options.
 
 ## Generic SFC Components
 
@@ -175,24 +174,7 @@ const emit = defineEmits<{ delete: []; update: [] }>();
 
 For state-sync emits, use the `update:x` form where `x` is the state name (`"update:copied": [boolean]`) — the verb stays present tense; the state name may be any shape.
 
-## Event Handlers — Inline in the Template Binding
-
-Inline handler logic directly in the `@event` binding instead of declaring a one-use `onSubmit`/`deleteResource` function in script — the binding reuses the emitter's parameter inference (`onComplete`, `_event`, slot props) that a script-level function would have to re-type.
-
-```vue
-<!-- ❌ @submit="onSubmit" with const onSubmit = async () => {...} in script -->
-<!-- ✅ -->
-<StyledFormDialog
-  @submit="
-    async (_event, onComplete) => {
-      await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids: [resource.id] }));
-      onComplete();
-    }
-  "
-/>
-```
-
-Extract to script only when the template genuinely can't express it: globals unreachable from templates (`window`), logic reused across multiple bindings, or literals a template attribute can't carry (a string containing double quotes → hoist just that string to a `computed`).
+## Component Folder Naming
 
 **Group components with the same prefix into a folder** — Nuxt auto-imports with the folder path as prefix, so co-located components share it without repeating it in filenames.
 
@@ -209,11 +191,11 @@ Extract to script only when the template genuinely can't express it: globals unr
 
 **When the shared word is intentional** (the folder name legitimately ends with the word the file starts with), Nuxt still collapses it — so reference the **collapsed** name in the template, never the naive un-collapsed concatenation:
 
-- `Feature/ListSent/SentList.vue` → tag is `<FeatureListSentList />`, **not** `<FeatureListSentSentList />`. The duplicated form resolves to no component and renders **empty with no error**, so it fails silently.
-- `Feature/ListSent/SentListItem.vue` → tag is `<FeatureListSentListItem />`.
-- This collapse affects **only the template tag**. A props interface is a plain TS type and does not collapse, so `FeatureListSentSentListItemProps` remains valid (if redundant) — don't "fix" it to match the tag.
+- `Message/DraftsAndSent/SentList.vue` → tag is `<MessageDraftsAndSentList />`, **not** `<MessageDraftsAndSentSentList />`. The duplicated form resolves to no component and renders **empty with no error**, so it fails silently.
+- `Message/DraftsAndSent/SentListItem.vue` → tag is `<MessageDraftsAndSentListItem />`.
+- This collapse affects **only the template tag**. A props interface is a plain TS type and does not collapse, so `MessageDraftsAndSentSentListItemProps` remains valid (if redundant) — don't "fix" it to match the tag.
 
-When renaming a folder, the collapse is preserved if the new folder ends with the same word as the old one (e.g. `DraftsSent/` → `DraftsAndSent/` both end in `Sent`), so collapsed usages stay correct under a mechanical token rename. Verify with `typecheck`, which flags an unknown collapsed tag.
+Verify with `typecheck`, which flags an unknown collapsed tag.
 
 ## File Length
 
@@ -262,7 +244,7 @@ The extracted component:
 
 <!-- After: extracted to FooterSlot.vue, used in Table.vue -->
 <template #tfoot>
-  <TableEditorFileRowFooterSlot :data-source="dataSource" />
+  <ResourceSheetRowFooterSlot :data-source="dataSource" />
 </template>
 ```
 
@@ -272,39 +254,29 @@ This keeps the parent lean and makes each slot independently readable and testab
 
 **Never hardcode repeated `<v-list-item>` (or any list item) elements** when they share the same structure — extract to an array and render with `v-for`.
 
-The array lives in `services/` (co-located with the component's feature folder), not inline. **Constant arrays use PascalCase names.**
-
-```text
-services/permission/PermissionItems.ts   ← array defined here
-components/Permission/List.vue           ← imports and v-for renders
-```
+The array lives in `services/<domain>/` (co-located with the component's feature folder), not inline. **Constant arrays use PascalCase names.** Real examples: `services/message/room/call/CallFeatures.ts`, `services/resource/list/ResourceTypeListItems.ts`.
 
 ```ts
-// services/permission/PermissionItems.ts
-export const PermissionItems = [
+// services/foo/FooItems.ts — array defined here, imported by components/Foo/List.vue
+export const FooItems = [
   { value: "read", title: "Read", prependIcon: "mdi-eye" },
   { value: "write", title: "Write", prependIcon: "mdi-pencil" },
-  { value: "admin", title: "Admin", prependIcon: "mdi-shield" },
 ] as const;
 ```
 
 ```vue
 <!-- CORRECT: import array from services/, v-for in template -->
 <script setup lang="ts">
-import { PermissionItems } from "@/services/permission/PermissionItems";
+import { FooItems } from "@/services/foo/FooItems";
 </script>
 <template>
   <v-list>
-    <v-list-item
-      v-for="{ value, title, prependIcon } of PermissionItems"
-      :key="value"
-      :value="value"
-      :title="title"
-      :prepend-icon="prependIcon"
-    />
+    <v-list-item v-for="{ value, title, prependIcon } of FooItems" :key="value" :value :title :prepend-icon />
   </v-list>
 </template>
 ```
+
+When the items **are** an enum with no extra per-item data, iterate the enum directly instead of mirroring it into an array — but hoist the `Object.entries` call to a script-setup `const` (see the `vue` skill's render-position rule).
 
 **When to apply:**
 
@@ -333,7 +305,7 @@ Trigger: the same `v-list-item` + prepend block copy-pasted across 2+ lists (fri
 
 ### Shell attrs passthrough
 
-When the shell's consumers need different root interactions (one passes `@click`, another `tabindex`), do NOT add props for them — declare `defineOptions({ inheritAttrs: false })` and spread onto the actual interactive element: `<v-list-item :="{ ...props, ...$attrs }">` (here `props` comes from a wrapping `v-hover` slot). Render optional chrome only when the consumer supplies it: `v-if="$slots.default"` around the hover/focus action toolbar. Use VueUse `useFocusWithin(useTemplateRef(...))` for focus-visibility instead of hand-rolled focusin/focusout handlers (a `@ts-expect-error TS2590` may be needed on Vuetify component refs). Examples: `Message/DraftsAndSent/BaseListItem.vue` (Draft/Scheduled/Sent), `TableEditor/File/SelectionToolbar.vue` (Row/Column TopSlots), `Message/RightSideBar/Search/Filter/PickerList.vue` (User/Room pickers — a skeleton slot referenced twice: pending state and waypoint loader).
+When the shell's consumers need different root interactions (one passes `@click`, another `tabindex`), do NOT add props for them — declare `defineOptions({ inheritAttrs: false })` and spread onto the actual interactive element: `<v-list-item :="{ ...props, ...$attrs }">` (here `props` comes from a wrapping `v-hover` slot). Render optional chrome only when the consumer supplies it: `v-if="$slots.default"` around the hover/focus action toolbar. Use VueUse `useFocusWithin(useTemplateRef(...))` for focus-visibility instead of hand-rolled focusin/focusout handlers (a `@ts-expect-error TS2590` may be needed on Vuetify component refs). Examples: `Message/DraftsAndSent/BaseListItem.vue` (Draft/Scheduled/Sent), `Resource/Sheet/SelectionToolbar.vue` (Row/Column TopSlots), `Message/RightSideBar/Search/Filter/PickerList.vue` (User/Room pickers — a skeleton slot referenced twice: pending state and waypoint loader).
 
 ## Permission-Filtered Action Items: Composable + v-for
 
@@ -415,6 +387,36 @@ const controlItems = computed<ControlItem[]>(() => [
 
 **When NOT to extract:** Items rendering fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.
 
+## One Affordance Per Action — No Duplicate Behaviour
+
+**Every action gets exactly one visible way to trigger it.** Two controls that do the identical thing are not "convenience" — they make the user stop and ask whether the two differ, and they double the surface that has to stay in sync.
+
+The resource list had three routes to the same destination per row: the row's `@click:row`, a `text-info` `NuxtLink` on the name, and an `Open` icon button in the actions column (plus an `Open` item in the right-click menu). All four navigated to `RoutePath.Resource(item.id)`. Now the row click is the only one, and the name renders as plain text.
+
+When you find duplicates, keep the affordance with the **largest hit target and the least chrome**, and delete the rest:
+
+```vue
+<!-- WRONG — the name link and the Open button both repeat the row click -->
+<template #[`item.name`]="{ item }">
+  <NuxtLink text-info :to="RoutePath.Resource(item.id)" @click.stop>{{ item.name }}</NuxtLink>
+</template>
+<template #[`item.actions`]="{ item }">
+  <StyledTooltipIconButton icon="mdi-open-in-new" text="Open" :button-props="{ to: RoutePath.Resource(item.id) }" />
+</template>
+
+<!-- CORRECT — row click navigates; the name is plain text (drop the slot entirely), actions hold only what the row click can't do -->
+<template #[`item.actions`]="{ item }">
+  <StyledOverflowMenu :items="getActionItems(item)" @click.stop />
+</template>
+```
+
+Corollaries:
+
+- **Don't style non-links like links.** `text-info` + underline is a promise of a distinct navigation target. If the row already navigates, the name is plain text — styling it as a link implies it goes somewhere else.
+- **A different trigger for the same command is not a duplicate.** A right-click context menu and a row `⋮` menu are two triggers for one list of commands — that is fine, and they must be driven by **one** shared `Item[]` (see [Permission-Filtered Action Items](#permission-filtered-action-items-composable--v-for)). What is banned is a second _visible_ control for a command that already has one.
+- **A genuinely different behaviour is not a duplicate.** `Open in new tab` survives next to row-click because it does something row-click cannot.
+- If a slot exists only to re-render the default value (`{{ item.name }}`), delete the slot and let the default rendering do it.
+
 ## Singleton Dialogs — Store-Driven Target, Never Per-Item
 
 **Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded `v-dialog`/menu creates N full component trees that all mount, hydrate, and re-render together — the root cause of a seconds-long INP on the messages page. The full rationale and canonical wiring live in `packages/app/content/docs/architecture/singleton-dialogs.md`; keep that page updated when this pattern evolves.
@@ -432,7 +434,10 @@ const isOpen = useSingletonDialog(deletingId); // get: Boolean(target); set fals
 
 ```vue
 <!-- singleton dialog: resolve item from store, v-if guard, v-model via useSingletonDialog -->
-<StyledDeleteFormDialog v-if="item" v-model="isOpen" :card-props="{ title, text }" @delete="..." />
+<!-- cardProps carries the header (title/subtitle/prependIcon) only — the message goes in the default slot -->
+<StyledDeleteFormDialog v-if="item" v-model="isOpen" :card-props="{ title: 'Delete Foo' }" @delete="...">
+  Are you sure you want to delete <b>{{ item.name }}</b>?
+</StyledDeleteFormDialog>
 ```
 
 - When the dialog needs per-open local state (a `structuredClone` edit draft), mount it `v-if`-guarded **with a `:key`** at the list level so it re-creates per target: `<ResourceSheetRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" />`.
@@ -479,75 +484,31 @@ Default to the **smallest coherent unit**. Each component should be stupid simpl
 
 ### Extract every action control into its own component
 
-An action button is **not** a leaf — it owns logic. Extract each `v-btn` (with its `v-tooltip`, its click handler, and the store access / multi-step logic it needs) into its own component. The handler and store wiring live in that button component, never in the parent list item or page.
+An action button is **not** a leaf — it owns logic. Extract each `v-btn` (with its `v-tooltip`, its click handler, and the store access it needs) into its own component, so the list item / page keeps no action logic:
 
 ```vue
-<!-- WRONG: list item owns multiple actions + 4 inline tooltip+btn blocks -->
+<!-- ❌ list item owning 4 inline tooltip+btn blocks and their handlers -->
+<!-- ✅ list item is pure layout; each button owns its action end to end -->
 <v-list-item>
   ...
-  <v-tooltip text="Primary action"><template #activator="{ props }">
-    <v-btn :="props" icon="mdi-send-outline" @click.stop="primaryAction" />
-  </template></v-tooltip>
-  <!-- repeated for secondary, tertiary, delete... -->
-</v-list-item>
-
-<!-- CORRECT: list item is pure layout; each button is its own component owning its action -->
-<v-list-item>
-  ...
-  <FeatureEntityDeleteButton :entity-item />
-  <FeatureEntityEditButton :entity-item />
-  <FeatureEntityScheduleButton :entity-item />
-  <FeatureEntityPrimaryButton :entity-item />
+  <FooDeleteButton :foo />
+  <FooEditButton :foo />
+  <FooSendButton :foo />
 </v-list-item>
 ```
 
-The button component holds its own store wiring; the single-use handler stays **inline in the template** (the inline-handler rule in the `vue` skill — single-use handlers must be inlined for event-arg inference). Do NOT extract the handler to a named script function:
+The button component holds its own store wiring, and its single-use handler stays **inline in the template** (the `vue` skill's inline-handler rule) — don't extract it to a named script function.
 
-```vue
-<!-- EntityPrimaryButton.vue — owns the action end to end -->
-<script setup lang="ts">
-const { entityItem } = defineProps<FeatureEntityPrimaryButtonProps>();
-const featureStore = useFeatureStore();
-const { performPrimaryAction } = featureStore;
-const relatedStore = useRelatedStore();
-const { cleanupAfterAction } = relatedStore;
-</script>
-<template>
-  <v-tooltip text="Primary action">
-    <template #activator="{ props }">
-      <v-btn
-        :="props"
-        icon="mdi-send-outline"
-        @click.stop="
-          async () => {
-            await performPrimaryAction({
-              entityId: entityItem.id,
-              roomId: entityItem.room.id,
-            });
-            cleanupAfterAction(entityItem.room.id);
-          }
-        "
-      />
-    </template>
-  </v-tooltip>
-</template>
-```
-
-Extract to a `use*` composable only when the **same multi-step logic is reused by 2+ buttons** (e.g. `useCancelScheduledJob` = tRPC mutate + store removal, shared by the primary button, edit button, and more-menu). A composable is reuse, not single-use extraction — it does not violate the inline-handler rule.
-
-- **List items / rows reduce to pure layout** — avatar, title, subtitle, time, and a row of extracted button/menu components. No action logic in the item.
-- **A button with a keyboard shortcut is its own component** owning both the `v-btn` and the `onKeyStroke` handler (e.g. `UndoButton.vue`, `RedoButton.vue`) — never wire the shortcut in the parent.
-- **A `v-menu` and its menu items is one component** (e.g. `EntityMoreMenu.vue`) — the menu plus its list items are one coherent unit.
-- **Shared multi-step action logic used by 2+ button components** goes into a `use*` composable (single-function composables return the function directly), never duplicated.
+- **List items / rows reduce to pure layout** — avatar, title, subtitle, time, and a row of extracted button/menu components.
+- **A button with a keyboard shortcut is its own component** owning both the `v-btn` and the `onKeyStroke` handler (e.g. `UndoButton.vue`) — never wire the shortcut in the parent.
+- **A `v-menu` and its items is one component** — the menu plus its list items are one coherent unit.
+- **Multi-step logic reused by 2+ buttons** goes into a `use*` composable (e.g. `useCancelScheduledMessageJob`, shared by the send/edit buttons and the more-menu). A composable is reuse, not single-use extraction — it doesn't violate the inline-handler rule. Single-function composables return the function directly.
 
 ### Allowed grouping (do NOT split these)
 
-Keep together only when items are genuinely the same logic / coherent:
+Keep together only when items are genuinely the same logic: buttons/items rendered via `v-for` over a config array (PascalCase, in `services/<domain>/`), or a coherent group driven by one config (a `v-tabs` from a `tabs` array, an icon-button toolbar from a `computed` array).
 
-- Multiple buttons or items following the **same logic**, rendered via `v-for` over a config / constant list (PascalCase array in `services/<domain>/`).
-- A coherent group driven by the same data / config (a single `v-tabs` built from a `tabs` array, an icon-button toolbar from a `computed` array).
-
-**`v-for` does not exempt the item body.** Iterating is shared structure; per-item _logic_ is not. If each iterated item carries its own handler, store wiring, or multi-step logic, the item body becomes **its own component** rendered inside the `v-for` (`<FeatureRowItem v-for="item of items" :key="item.id" :item />`) — the parent's loop stays pure layout. Only inline the item body when it is a plain prop spread over a config array with no own logic (the icon-button-toolbar / `v-tabs` cases above).
+**`v-for` does not exempt the item body.** Iterating is shared structure; per-item _logic_ is not. If each iterated item carries its own handler, store wiring, or multi-step logic, the item body becomes **its own component** rendered inside the `v-for` — the parent's loop stays pure layout. Only inline the item body when it is a plain prop spread with no own logic.
 
 ### Do NOT over-extract
 

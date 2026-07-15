@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — v-btn tooltips, typed SelectItemCategoryDefinition for selects/lists/menus, enum-value-as-display-title pattern, dialog form validity, StyledAvatar for user avatars, and keyboard shortcut components. Apply when writing Vuetify components or dialogs.
+description: Esposter Vuetify 4 conventions — StyledButton for primary actions, :to navigation, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, v-btn tooltips, mergeProps for nested activators, typed SelectItemCategoryDefinition for selects/lists/menus (clearable banned), enum-value-as-display-title, dialog form validity (StyledFormDialog vs StyledEditFormDialog), StyledList, useVRules form validation, StyledAvatar, CSS custom properties over SASS variables, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
 ---
 
 # Vuetify Conventions
@@ -18,9 +18,9 @@ Use `StyledButton` for every confirm / complete / primary call-to-action button 
 
 Vuetify components with router integration (`v-btn`, `v-card`, `v-list-item`, `v-breadcrumbs` items) take a `:to` prop that renders a real `<a>` / `RouterLink` with keyboard focus, `aria-current`, and middleware handling for free. **Use `:to` for any navigation to a static route.** For wrapper components pass it through their props object — `StyledButton` / `StyledTooltipIconButton` → `:button-props="{ to: RoutePath.X }"`.
 
-Reserve `navigateTo(...)` inside a handler for **dynamic-only** targets where there is no element to hang `:to` on: search submit (`@keyup.enter`), a redirect after a create/delete mutation resolves, or a `v-data-table` `@click:row`. Never use `useRouter().push`/`replace` for navigation — `navigateTo` is the imperative form (query-only `router.replace({ query })` is not navigation and is fine).
+Reserve `navigateTo(...)` inside a handler for **dynamic-only** targets where there is no element to hang `:to` on: search submit (`@keyup.enter`), a redirect after a create/delete mutation resolves, or a `v-data-table` `@click:row`.
 
-**A raw `<a>` is banned** (`vue/no-restricted-html-elements`). When no Vuetify `:to` component fits, use `<NuxtLink :to>` for internal routes, `<NuxtLink :to external target="_blank">` for external URLs, and `<NuxtInvisibleLink :to="{ hash }">` (a `NuxtLink` clone that strips default link styling) for in-page anchors. A link-styled control with no destination is a `<span text-info underline cursor-pointer>`, not an anchor. Full standard: [navigation](/docs/architecture/navigation) — mirror it in the `vue` skill.
+When no Vuetify `:to` component fits, fall back to `NuxtLink`/`NuxtInvisibleLink` — see the **routing** skill, which owns link choice, the raw-`<a>` ban, and imperative navigation.
 
 ## Auto-Imported Composables — `v` Prefix
 
@@ -129,11 +129,32 @@ When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use 
 - **`clearable` is BANNED on selects** — clearing emits `null`, which violates the no-null convention and fails non-nullable API inputs. Model "no selection / all" as an explicit first item carrying the empty sentinel (`{ title: "All members", value: "" }`, `{ title: "No limit", value: 0 }`) so the ref stays a plain inferred `ref("")`/`ref(0)` and the sentinel propagates end-to-end (see the typescript skill's sentinel section).
 
 - Name the items constant to reflect what the value represents — e.g. `columnIds` for `SelectItemCategoryDefinition<string>[]` where each value is a column ID.
-- **Prefer enum values as display titles** — when the enum string value IS the label, use `Object.values(EnumType).map((v) => ({ title: v, value: v }))` (`ColumnTypeItemCategoryDefinitions` pattern). When display must differ from the enum value (rare), use `const Map = { ... } as const satisfies Record<Enum, Except<SelectItemCategoryDefinition<Enum>, "value">>` + `parseDictionaryToArray` (`CsvDelimiterItemCategoryDefinitions` pattern). Update enum string values to match the label when reasonable, to keep key and value the same string.
+- **Prefer enum values as display titles** — set `title` to the enum member itself (`title: SomeEnum.Foo`) so key and value stay the same string. Update enum string values to match the intended label when reasonable, rather than inventing a separate title.
+
+  Pick the construction by what each item carries:
+
+  | Shape                                     | Construction                                                                      | Canonical example                             |
+  | ----------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------- |
+  | Enum value as title + extra fields (icon) | `as const satisfies Record<Enum, …>` map + `parseDictionaryToArray(Map, "value")` | `DataSourceTypeItemCategoryDefinitions`       |
+  | Custom titles / an empty-sentinel item    | plain `SelectItemCategoryDefinition<T>[]` array literal                           | `BooleanFilterValueItemCategoryDefinitions`   |
+  | Enum value needing display formatting     | `Object.values(Enum).map(...)` through `prettify()`                               | `StringTransformationItemCategoryDefinitions` |
 
 ## Dialog Form Validity
 
-Name the form validity ref `isEditFormValid`; bind via `v-model` on `<v-form>`, init `ref(true)` (optimistic). Disable Save & Close via `:confirm-button-attrs="{ disabled: !isEditFormValid }"`. Never use try/catch in submit handlers — prevent invalid submission through validation rules so state stays consistent. Use `StyledEditFormDialogErrorIcon` with `:edit-form :is-edit-form-valid` (plus optional `:schema :edited-value` for Zod validation). `editForm` is a required prop typed `InstanceType<typeof VForm> | undefined` (always passed; `| undefined` reflects the ref being uninitialized before mount). `isEditFormValid` is field-level only (from `<v-form v-model>`); schema errors are computed internally inside `StyledEditFormDialogErrorIcon`.
+Two different components — don't wire them the same way.
+
+**`StyledFormDialog`** owns its own `isEditFormValid` and `isSubmitting` and merges them into the confirm button internally (`disabled: Boolean(confirmButtonAttrs.disabled) || !isEditFormValid || isSubmitting`), along with `type="submit"`, `form`, and `loading`. So consumers **never** pass `!isEditFormValid` — `confirmButtonAttrs` carries only the consumer's **own** extra condition, if any:
+
+```vue
+<!-- only the consumer's own condition; form validity + submitting are already handled -->
+<StyledFormDialog :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }" />
+```
+
+**`StyledEditFormDialog`** (the Save & Close family) has **no** `confirmButtonAttrs` at all — it takes `editedItem`, `schema`, `isDirty`, `isEditFormValid`, `isSavable`, `name`, `originalItem?`, and owns its save button (`EditFormDialog/SaveButton.vue`).
+
+Name a form validity ref `isEditFormValid`, bind via `v-model` on `<v-form>`, init `ref(true)` (optimistic). Prevent invalid submission through validation rules so state stays consistent, rather than catching in the submit handler (error handling — see the `error-handling` skill).
+
+Use `StyledEditFormDialogErrorIcon` with `:edit-form :is-edit-form-valid` (plus optional `:schema :edited-value` for Zod validation). `editForm` is a required prop typed `InstanceType<typeof VForm> | undefined` (always passed; `| undefined` reflects the ref being uninitialized before mount). `isEditFormValid` is field-level only (from `<v-form v-model>`); schema errors are computed internally inside `StyledEditFormDialogErrorIcon`.
 
 ## Inline Form Error Display (non-dialog)
 
@@ -192,7 +213,7 @@ declare module "vuetify/labs/rules" {
 }
 ```
 
-- Rules that depend on reactive component state (e.g. uniqueness against a live list) stay component composables instead — see vue-composable-patterns "Extract Duplicate Validation Rules".
+- Rules depending on reactive component state (e.g. uniqueness against a live list) are **not** global aliases — they belong in a composable, or an Ajv keyword when the form is Vjsf. See the `vue-composable-patterns` skill's "Validation Rules — Pick the Right Layer".
 - The `required` HTML attribute is not a Vuetify prop — use `:rules="[rules.required()]"`.
 
 ## HTML Footprint
@@ -203,7 +224,7 @@ declare module "vuetify/labs/rules" {
 ## User Avatars
 
 - **Always use `<StyledAvatar>`** — never inline `v-avatar` + `v-img` + fallback `<span>`. It handles image/fallback internally (shows `v-img` when `image` is set, falls back to `StyledDefaultAvatar`).
-- Props: `image?: User["image"]`, `name: User["name"]`, `avatarProps?: VAvatar["$props"]`.
+- Props: `image?: User["image"]`, `name: User["name"]`, `avatarProps?: VAvatar["$props"]`, `avatarAttrs?: VAvatar["$attrs"]` — the two are combined with `mergeProps(avatarAttrs, avatarProps)` onto whichever root renders, so pass activator/tooltip slot props through `avatarAttrs` (see Nested Activators above).
 
 ```vue
 <StyledAvatar mr-3 :image="user.image" :name="user.name" :avatar-props="{ size: '2.25rem' }" />

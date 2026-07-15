@@ -14,7 +14,7 @@ An `Effect` has a `value`, `targets` (which building ids or `Target.Mouse` it ap
 - `Additive` — adds `value` to the power.
 - `Multiplicative` — multiplies the power by `value`.
 - `BuildingAdditive` — adds `value` per owned unit of the configured target buildings (e.g. "cursors gain +0.1 for each grandma").
-- `BuildingAdditiveNor` — adds `value` per owned unit of every building **except** the configured targets (the "Thousand fingers"-style effects).
+- `BuildingAdditiveNor` — adds `value` per owned unit of every building **except** the configured targets (the "Thousand Fingers"-style effects).
 
 `applyEffects` applies the four types in the fixed `EffectTypes` order via `EffectOperatorMap` (a constant map from effect type to its pure applier), so additive effects always land before multiplicative ones.
 

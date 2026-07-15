@@ -62,7 +62,7 @@ flowchart TD
 3. Awaits `client.waitReady` — `new PGlite()` returns before init finishes, so without this the first query pays the boot cost and can blow past the per-test timeout.
 4. Returns the drizzle-orm `db` instance cast to `PostgresJsDatabase<typeof relations>`.
 
-**Why a snapshot instead of running migrations at runtime?** Loading a pre-migrated data directory skips PGlite's `initdb` boot + migration generation, cutting ~2.3 s per call down to ~0.9 s. Regenerate it with `pnpm snapshot:gen` (in `packages/db-mock`) whenever the schema changes. `createMockDb.test.ts` fails if the committed snapshot drifts from the live schema (it diffs the snapshot against a freshly `generateMigration`-built DB). The hookTimeout in `vitest.config.ts` stays at 60 s to absorb PGlite boot under parallel test load.
+**Why a snapshot instead of running migrations at runtime?** Loading a pre-migrated data directory skips PGlite's `initdb` boot + migration generation, roughly halving boot per call. Regenerate it with `pnpm snapshot:gen` (in `packages/db-mock`) whenever the schema changes. `createMockDb.test.ts` fails if the committed snapshot drifts from the live schema (it diffs the snapshot against a freshly `generateMigration`-built DB). The hookTimeout in `vitest.config.ts` stays at five minutes to absorb PGlite boot under parallel test load.
 
 **Why PGlite instead of a real PostgreSQL?** No external process, no port, no cleanup — each test suite gets an isolated in-memory database that vanishes when the worker exits.
 
@@ -72,17 +72,24 @@ flowchart TD
 
 `packages/azure-mock` ships mock implementations:
 
-| Mock class                     | Replaces                                  | In-memory store                        |
-| ------------------------------ | ----------------------------------------- | -------------------------------------- |
-| `MockTableClient`              | `CustomTableClient` (Azure Table Storage) | `MockTableDatabase` (static `Map`)     |
-| `MockContainerClient`          | `BlockBlobClient` (Azure Blob Storage)    | `MockContainerDatabase` (static `Map`) |
-| `MockEventGridPublisherClient` | `EventGridPublisherClient`                | none (fire-and-forget no-op)           |
+| Mock class                     | Replaces                                  | In-memory store                         |
+| ------------------------------ | ----------------------------------------- | --------------------------------------- |
+| `MockTableClient`              | `CustomTableClient` (Azure Table Storage) | `MockTableDatabase` (static `Map`)      |
+| `MockContainerClient`          | `ContainerClient` (Azure Blob Storage)    | `MockContainerDatabase` (static `Map`)  |
+| `MockBlobClient`               | `BlobClient` (single blob)                | `MockContainerDatabase`                 |
+| `MockBlobBatchClient`          | `BlobBatchClient` (batch blob deletes)    | `MockContainerDatabase`                 |
+| `MockEventGridPublisherClient` | `EventGridPublisherClient`                | `MockEventGridDatabase` (static `Map`)  |
+| `MockServiceBusSender`         | `ServiceBusSender`                        | `MockServiceBusDatabase` (static `Map`) |
+| `MockSearchClient`             | `SearchClient` (Azure AI Search)          | `MockSearchDatabase` (static `Map`)     |
+| `MockQueueClient`              | `QueueClient` (Azure Queue Storage)       | `MockQueueDatabase` (static `Map`)      |
+| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`                  | none (`sendToAll` no-op)                |
 
-The static maps persist across calls within a test run. Clear them in `afterEach`:
+The static maps persist across calls within a test run. Clear whichever ones your suite writes to in `afterEach` — `MockEventGridPublisherClient.send` accumulates events, so a suite that fires events must clear `MockEventGridDatabase` or it leaks into the next test:
 
 ```ts
 afterEach(() => {
   MockContainerDatabase.clear();
+  MockEventGridDatabase.clear();
   MockTableDatabase.clear();
 });
 ```

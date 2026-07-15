@@ -7,10 +7,17 @@ export const useCancelScheduledMessageJob = () => {
   const executeMutation = useMutation();
   const scheduledMessageJobStore = useScheduledMessageJobStore();
   const { removeScheduledMessageJob } = scheduledMessageJobStore;
+  const { count, items } = storeToRefs(scheduledMessageJobStore);
   return async (id: ScheduledMessageJobInMessage["id"]) => {
     await executeMutation(() => $trpc.message.scheduledMessageJob.cancelScheduledJob.mutate({ id }), {
-      onSuccess: () => {
+      applyOptimistic: () => {
+        const itemsSnapshot = items.value;
+        const countSnapshot = count.value;
         removeScheduledMessageJob(id);
+        return () => {
+          items.value = itemsSnapshot;
+          count.value = countSnapshot;
+        };
       },
     });
   };

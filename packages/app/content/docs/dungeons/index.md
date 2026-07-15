@@ -23,7 +23,7 @@ Dungeons is Esposter's monster-catching RPG at `/dungeons`: walk a tile-based wo
 - [Monsters and items](/docs/dungeons/monsters-and-items) — content data, party management, inventory.
 - [Saves and settings](/docs/dungeons/saves-and-settings) — persistence, the settings scene, achievements.
 
-Open work: [roadmap](/docs/dungeons/roadmap). Decided ideas: [deferred](/docs/dungeons/deferred), [rejected](/docs/dungeons/rejected).
+No open work. Decided ideas: [deferred](/docs/dungeons/deferred), [rejected](/docs/dungeons/rejected).
 
 ## Shipped log
 
@@ -31,3 +31,5 @@ Chronological, one line per feature.
 
 - **Single save** — collapsed the unused multi-save array into one `save` field.
 - **Attack power and defense** — per-attack `power`, per-species `defense`, and a saturating damage formula, so move choice and bulk both matter.
+- **Monster roster expansion** — differentiated stat archetypes, 2–3 move kits per species, and level-scaled weighted encounters.
+- **Milestone achievements** — captures, levels, collection, and chests evaluated from the save payload on each manual save.

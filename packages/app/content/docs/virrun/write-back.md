@@ -71,7 +71,7 @@ Paths relative to `packages/virrun/src/`.
 
 | File                                                    | Role                                                                                                                |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `models/exec/OverlayEntryKind.ts`                       | enum `Regular`/`Whiteout`/`OpaqueDir` — the classification result                                                   |
+| `models/exec/snapshot/OverlayEntryKind.ts`              | enum `Regular`/`Whiteout`/`OpaqueDir` — the classification result                                                   |
 | `services/exec/snapshot/parseOverlayEntryKind.ts`       | pure: classify an upper entry from a parsed manifest entry + opaque flag                                            |
 | `services/exec/snapshot/buildFlushPlan.ts`              | pure: turn an upper walk into an ordered `FlushOp[]`, skipping snapshot-lower paths                                 |
 | `services/exec/snapshot/runOverlayScript.ts`            | run the probe/apply python3 seam (direct on Linux; via `wsl.exe` on win32)                                          |

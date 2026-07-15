@@ -13,4 +13,4 @@ Datasets serve visualization, import, and export; no consumer has hit the cap, a
 
 ## Revisit when
 
-A real consumer (dashboard binding, File import, email personalized export) hits the cap on real data.
+A real consumer (dashboard binding, Sheet import, email personalized export) hits the cap on real data.

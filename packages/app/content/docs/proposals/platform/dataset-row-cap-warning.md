@@ -13,12 +13,12 @@ When `dataset.readDataset` hits the `AZURE_MAX_PAGE_SIZE` (1000) row cap — use
 
 ## How it works
 
-- `Dataset` gains `totalRows?: number` — set by a provider when it knows the uncapped count (SurveyResponses: the partition query count; File: `content.data.rows.length`). `rows.length < totalRows` ⇒ truncated.
+- `Dataset` gains `totalRows?: number` — set by a provider when it knows the uncapped count (SurveyResponses: the partition query count; Sheet: `content.data.rows.length`). `rows.length < totalRows` ⇒ truncated.
 - Consumers surface it:
   - **Dashboard visual**: a footnote on the bound visual — "Showing 1000 of {M} rows" (warning icon, tooltip explains the cap).
   - **Survey Responses blade**: a banner above the table.
   - **Email personalized export**: a confirm dialog before export — "{M − N} rows will not get an email" — so partial sends are a decision, not an accident.
-  - **File import** (dataset copy path): the 5-row preview notes the capped total.
+  - **Sheet import** (dataset copy path): the 5-row preview notes the capped total.
 
 ## Key files
 

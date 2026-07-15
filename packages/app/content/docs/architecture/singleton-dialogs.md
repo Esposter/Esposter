@@ -48,7 +48,7 @@ A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singlet
 | `app/store/message/room/dialog.ts`                                                   | Room dialog state (`settingsRoomId`, `isEditRoomDialogOpen`)                         |
 | `app/store/message/roomCategoryDialog.ts`, `app/store/message/room/webhookDialog.ts` | Category / webhook delete targets                                                    |
 | `app/store/post/dialog.ts`, `app/store/post/comment/dialog.ts`                       | Post / comment delete targets                                                        |
-| `app/store/resource/sheet/columnDialog.ts`, `app/store/resource/sheet/rowDialog.ts`  | File table editor chart/edit/delete targets                                          |
+| `app/store/resource/sheet/columnDialog.ts`, `app/store/resource/sheet/rowDialog.ts`  | Sheet table editor chart/edit/delete targets                                         |
 | `app/components/Message/Model/Message/ConfirmDeleteDialog.vue`                       | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)              |
 | `app/components/Resource/Sheet/Row/EditDialog.vue`                                   | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)          |
 | `app/components/Message/Model/Room/Settings/Dialog.vue`                              | Fullscreen settings dialog driven by `settingsRoomId`                                |

@@ -30,7 +30,7 @@ flowchart LR
 **Ranking** — the hot score is computed at write time, never re-read:
 
 ```text
-sign(likes) × log10(max(|likes|, 1)) + (createdAtMs − 1.5e12) / 45e6
+sign(likes) × log10(max(|likes|, 1)) + max(0, createdAtMs − 1.5e12) / 45e6
 ```
 
 The log term means early likes matter most; the time term gives newer posts a constant head start (each ~12.5 hours of age is worth one order of magnitude of likes). Because age is baked in as an absolute offset, scores never need recomputation — newer posts simply start higher. Every like create/update/delete and comment create recomputes the score in the same transaction that updates the counters.

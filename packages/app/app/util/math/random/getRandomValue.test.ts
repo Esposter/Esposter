@@ -16,12 +16,4 @@ describe(getRandomValue, () => {
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getRandomValue.name, "cannot pick random value from empty values").message}]`,
     );
   });
-
-  test("fails for empty array", () => {
-    expect.hasAssertions();
-
-    expect(() => getRandomValue([])).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getRandomValue.name, "cannot pick random value from empty values").message}]`,
-    );
-  });
 });

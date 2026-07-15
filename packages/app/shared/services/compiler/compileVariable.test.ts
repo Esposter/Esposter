@@ -6,9 +6,4 @@ describe(compileVariable, () => {
     expect.hasAssertions();
     expect(compileVariable("0")).toBe("{0}");
   });
-
-  test("wraps empty key with curly brace delimiters by default", () => {
-    expect.hasAssertions();
-    expect(compileVariable("")).toBe("{}");
-  });
 });

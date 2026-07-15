@@ -1,10 +1,12 @@
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
+import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
+import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { useMutation } from "@/composables/shared/useMutation";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
@@ -43,9 +45,34 @@ export const useDataStore = defineStore("message/data", () => {
     delete newMessage.isLoading;
     return true;
   };
-  // The edited message applies via the subscription echo — non-optimistic
   const updateMessage = async (input: UpdateMessageInput) => {
-    await executeMutation(() => $trpc.message.updateMessage.mutate(input));
+    const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
+    const previousMessage = message?.message;
+    await executeMutation(() => $trpc.message.updateMessage.mutate(input), {
+      // Apply only the raw reactive field change — the subscription echo re-runs MessageHookMap on success,
+      // So calling storeUpdateMessage here would double-fire the update hooks.
+      applyOptimistic: () => {
+        baseStoreUpdateMessage(input);
+        return () => {
+          if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
+        };
+      },
+    });
+  };
+  const deleteFile = async ({ id, ...compositeKey }: DeleteFileInput) => {
+    const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, compositeKey));
+    if (!message) return;
+
+    const previousFiles = message.files;
+    await executeMutation(() => $trpc.message.deleteFile.mutate({ id, ...compositeKey }), {
+      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success.
+      applyOptimistic: () => {
+        baseStoreUpdateMessage({ ...compositeKey, files: previousFiles.filter((file) => file.id !== id) });
+        return () => {
+          baseStoreUpdateMessage({ ...compositeKey, files: previousFiles });
+        };
+      },
+    });
   };
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));
@@ -89,6 +116,7 @@ export const useDataStore = defineStore("message/data", () => {
   // The $trpc mutations, tracked by their related subscriptions.
   return {
     createMessage,
+    deleteFile,
     files,
     hasMoreNewer,
     items,

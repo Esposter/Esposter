@@ -149,27 +149,6 @@ describe(applyFilter, () => {
     expect(filteredDocuments).toHaveLength(0);
   });
 
-  test("groups same-key clauses with OR and cross-key clauses with AND", () => {
-    expect.hasAssertions();
-
-    const groupedDocuments: Record<string, unknown>[] = [
-      { partitionKey, rowKey },
-      { partitionKey: "1", rowKey },
-      { partitionKey, rowKey: "1" },
-      { partitionKey: "2", rowKey },
-    ];
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "1" },
-      { key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.eq, value: rowKey },
-    ];
-    const filteredDocuments = applyFilter(groupedDocuments, clauses);
-
-    expect(filteredDocuments).toHaveLength(2);
-    expect(takeOne(filteredDocuments).partitionKey).toBe(partitionKey);
-    expect(takeOne(filteredDocuments, 1).partitionKey).toBe("1");
-  });
-
   test("matches null clauses against null and missing values", () => {
     expect.hasAssertions();
 

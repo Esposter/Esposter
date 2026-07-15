@@ -1,6 +1,6 @@
 ---
 name: pinia
-description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), and CRUD patterns (findIndex guard, Object.assign update, filter delete). Apply when using or writing Pinia stores.
+description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), per-service dialog stores, never redirecting store functions through wrappers, selection state in the store, useDataMap vs a plain Map, cursor pagination helpers, tRPC mutation placement via useMutation with optimistic rollback, createOperationData CRUD verbs and store* subscription handlers, CRUD/parameter naming, full tRPC input objects, minimal-input actions, reusing existing store maps, reactive Map mutations, markRaw for class instances, and session auth in stores. Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store.
 ---
 
 # Pinia Store Conventions
@@ -35,7 +35,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
   storeCreateFriend(user);
 
   // refs/computeds via dot-access (never storeToRefs inside a store)
-  const roomParticipants = computed(() => roomParticipantsMap.value.get(roomStore.currentRoomId));
+  const directMessageParticipants = computed(() => directMessageParticipantsMap.value.get(roomStore.currentRoomId));
   ```
 
 ## Dialog UI State Lives in Per-Service Dialog Stores
@@ -79,75 +79,31 @@ const { setActiveDevice } = liveKitStore;
 
 Same principle as [tRPC Mutation Placement](#trpc-mutation-placement) — don't add an indirection that carries no logic.
 
-## Store as Single Source of Truth — Eliminate Watches and Prop Threading
+## Selection State Belongs in the Store
 
-Reactive state shared across a component tree belongs in the store, not local refs. Local refs + watches to sync state signal the data should live in the store.
-
-### Selection State
-
-When a component tree has a "selected item" concept (e.g. `selectedRoleId`), put it in the store:
+When a component tree has a "selected item" concept, the selected **id** is store state — not a local ref threaded down as a prop. Store mutations then update the selection directly, so no component emits or watches are needed:
 
 ```typescript
-// store/message/room/role.ts
-// Track the selection by id with "" as the "nothing selected" sentinel (never string | null) — a stale id is
-// harmless, and the computed resolves the object, returning undefined (not null) when absent.
-const selectedRoleId = ref("");
-const selectedRole = computed(() => {
-  if (selectedRoleId.value === "") return undefined;
-  for (const roles of rolesMap.value.values()) {
-    const role = roles.find(({ id }) => id === selectedRoleId.value);
-    if (role) return role;
-  }
-  return undefined;
-});
-const selectRole = (id: string) => {
-  selectedRoleId.value = id;
+const { data: selectedFooId, setData: setSelectedFooId } = useDataMap(() => parentStore.currentId, "");
+const selectedFoo = computed(() => foos.value.find(({ id }) => id === selectedFooId.value));
+const selectFoo = (id: string) => {
+  selectedFooId.value = id;
 };
 
-// Store mutations update selection directly — no emits needed
-const readRoles = async (input: ReadRolesInput) => {
-  const result = await $trpc.role.readRoles.query(input);
-  rolesMap.value.set(input.roomId, result);
-  selectedRoleId.value = result[0]?.id ?? ""; // init selection
-};
-const createRole = async (input: CreateRoleInput) => {
-  const newRole = await $trpc.role.createRole.mutate(input);
-  rolesMap.value.set(input.roomId, [newRole, ...getRoles(input.roomId)]);
-  selectedRoleId.value = newRole.id; // auto-select created item
-  return newRole;
+// mutations own the selection — read initializes it, create auto-selects
+const createFoo = async (input: CreateFooInput) => {
+  await executeCreateFooMutation(() => $trpc.foo.createFoo.mutate(input), {
+    onSuccess: (newFoo) => {
+      setFoos(input.parentId, [newFoo, ...getFoos(input.parentId)]);
+      setSelectedFooId(input.parentId, newFoo.id);
+    },
+  });
 };
 ```
 
-Children read `selectedRoleId`/`selectedRole` from the store directly — no prop threading, no `defineModel` + `watchImmediate`. Deletion reflects automatically (computed returns `undefined` when the role is gone). No component-level watches to reset on selection change.
+`""` is the "nothing selected" sentinel and the computed resolves to `undefined` when absent — a stale id is harmless. The sentinel rule (and the `useDataMap(..., "")` form) is owned by the `typescript` skill; `| null` is not an option.
 
-### Eliminating Watches with `:key`
-
-When a child has **local mutable state initialized from a prop** (e.g. `permissions = ref(role.permissions)`), don't watch the prop to reset it — use `:key`:
-
-```vue
-<!-- WRONG: watch in RoleEditor syncing permissions when role prop changes -->
-watch(() => role.permissions, (newPermissions) => { permissions.value = newPermissions; });
-
-<!-- CORRECT: :key remounts RoleEditor on selection change (guarded — selectedRole is nullable) -->
-<RoleEditor v-if="selectedRole" :key="selectedRole.id" :role="selectedRole" :room-id />
-```
-
-The remounted component always initializes from the fresh prop.
-
-### Eliminating Prop Threading
-
-When children need store state, have them read the store directly — don't thread props to pass store data down:
-
-```vue
-<!-- WRONG: Index threads selectedRoleId → RoleList → RoleListItem as isActive prop -->
-<RoleList :roles :selected-role-id @select="selectRole($event)" />
-
-<!-- CORRECT: RoleListItem reads selectedRoleId from store directly -->
-const roleStore = useRoleStore(); const { selectedRoleId } = storeToRefs(roleStore); // template: :active="role.id ===
-selectedRoleId"
-```
-
-This also drops the emit chain — `RoleListItem` calls `selectRole()` directly instead of emitting up.
+The component-side consequences — reading the selection straight from the store instead of prop threading, and `:key` instead of a reset watch — are in the `vue-component-patterns` skill.
 
 ## useDataMap
 
@@ -165,9 +121,11 @@ const { data: notificationType, setDataMap } = useDataMap(
   NotificationType.DirectMessage,
 );
 
-// Manual Map — any key can be accessed (roles loaded per room on demand)
-const rolesMap = ref(new Map<string, RoomRole[]>());
-const getRoles = (roomId: string) => rolesMap.value.get(roomId) ?? [];
+// Manual Map — an entity cache keyed by arbitrary id, with no "current" concept
+const userMap = ref(new Map<string, User>());
+const storeUser = (user: User) => {
+  userMap.value.set(user.id, user);
+};
 ```
 
 **Generic usage** — pass the explicit type generic when the default alone can't infer the full type (unions, empty `{}`/`[]`). Primitives with unambiguous defaults (`""`, `0`, `true`) don't need one. Never use an as-cast instead of the generic.
@@ -195,13 +153,20 @@ Three helpers — pick by type and keying needs:
 `createOperationData` supports any entity type — `EntityIdKeys<T>` resolves to `["id"]` (SQL entities extending `AItemEntity`), `["partitionKey","rowKey"]` (Azure entities), or `(keyof T & string)[]` as a fallback. `Ban` uses `(roomId, userId)` composite PK — always pass both keys exactly matching the DB primary key:
 
 ```typescript
-// useBanStore — cursor pagination + createOperationData for typed delete
-const { hasMore, items, readItems, readMoreItems } = useCursorPaginationOperationData(cursorPaginationData);
+// cursor pagination + createOperationData for a typed, composite-key delete
+const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<BanInMessageWithRelations>();
 const { deleteBan: storeDeleteBan } = createOperationData(items, ["roomId", "userId"], DatabaseEntityType.Ban);
 
-const deleteBan = async (input: UnbanUserInput) => {
-  await $trpc.moderation.unbanUser.mutate(input);
-  storeDeleteBan({ roomId: input.roomId, userId: input.userId });
+const deleteBan = async (input: DeleteBanInput) => {
+  const snapshot = [...items.value];
+  await executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
+    applyOptimistic: () => {
+      storeDeleteBan(input);
+      return () => {
+        items.value = snapshot;
+      };
+    },
+  });
 };
 ```
 
@@ -218,16 +183,30 @@ Add a store action only when it adds meaningful client logic:
 - Shared state updates not covered by subscriptions
 - Coordination of multiple stores, requests, or validation steps
 
+A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`) — declare `const executeMutation = useMutation()` at the store root and never hand-roll the alert/rollback wiring. It handles error surfacing (`createAlert` unless you pass `onError`) and discards stale responses, so only the latest call wins.
+
+- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. Snapshot the previous value outside the callback and restore it in the returned closure.
+- **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id) — apply those after the response instead of optimistically.
+
 ```typescript
 // subscription owns the state change — call the mutation directly at the user action
 $trpc.friend.deleteFriend.mutate(friendId);
 
-// store action justified — adds local state logic after the mutation
-const unban = async (userId: string) => {
-  await $trpc.moderation.unbanUser.mutate({ roomId, userId });
-  items.value = items.value.filter((ban) => ban.userId !== userId);
+// store action justified — optimistic local state with automatic rollback
+const deleteBan = async (input: DeleteBanInput) => {
+  const snapshot = [...items.value];
+  await executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
+    applyOptimistic: () => {
+      storeDeleteBan(input);
+      return () => {
+        items.value = snapshot;
+      };
+    },
+  });
 };
 ```
+
+Give each mutation in a store its own `useMutation()` instance (`executeCreateFooMutation`, `executeUpdateFooMutation`) so one action's staleness tracking can't cancel another's. Full rationale: `packages/app/content/docs/architecture/client-data.md`.
 
 ## createOperationData Usage
 
@@ -307,16 +286,14 @@ const blockUser = async (userId: FriendUserIdInput) => {
 
 ## Reuse Existing Store Maps — Never Build Local Maps in Actions
 
-When a store action receives entities already cached in another store's map (e.g. `memberMap` in `useMemberStore`), write them into that map directly. Do **not** build a transient local `Map` just to look up values within the same action, and do **not** create a second parallel map ref holding the same data.
+When a store action receives entities already cached by another store, write them through that store's own setter. Do **not** build a transient local `Map` just to look up values within the same action, and do **not** create a second parallel map ref holding the same data.
+
+`useUserStore` owns the canonical `userMap`; stores holding user-bearing lists feed it rather than duplicating it — `useMemberStore` destructures `storeUser`/`storeUsers` at its root and writes members through them, then looks users up at display time.
 
 ```typescript
-// write directly into the existing memberMap; look up at display time
-const memberStore = useMemberStore(); // declared at store root
-const storeMessages = (messages: MessageEntity[], users: User[]) => {
-  for (const user of users) memberStore.memberMap.set(user.id, user);
-  for (const message of messages) messageMap.value.set(message.rowKey, message);
-};
-// In displayItems computed, look up creators from memberStore.memberMap directly
+// declared at store root; feed the owning store instead of mirroring its data
+const userStore = useUserStore();
+const { storeUsers } = userStore;
 ```
 
 This keeps a single source of truth for user data.
@@ -337,7 +314,7 @@ Pinia `ref`/`reactive` state is **deep** — pushing a class instance into a rea
 Wrap class instances in `markRaw` at the single point they enter reactive state. The container stays reactive (its `length`/identity still drives computeds); only the instance opts out of proxying — correct since command/controller instances hold no reactive state of their own.
 
 ```typescript
-// store/tableEditor/fileHistory — commands use # private fields, so never let them be proxied
+// store/resource/sheet/history — commands use # private fields, so never let them be proxied
 const history = ref<ADataSourceCommand[]>([]); // array stays reactive (length drives isUndoable)
 const push = (command: ADataSourceCommand) => {
   history.value.push(markRaw(command)); // markRaw so undo()/execute() can read this.#index etc.

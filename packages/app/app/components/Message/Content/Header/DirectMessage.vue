@@ -9,11 +9,21 @@ const participants = computed(() =>
   currentDirectMessage.value ? (directMessageParticipantsMap.value.get(currentDirectMessage.value.id) ?? []) : [],
 );
 const executeMutation = useMutation();
-// Participant removal applies via the subscription echo — non-optimistic
 const deleteDirectMessageParticipant = async (userId: string) => {
   const roomId = currentDirectMessage.value?.id;
-  if (roomId)
-    await executeMutation(() => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }));
+  if (!roomId) return;
+  const previousParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
+  await executeMutation(() => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }), {
+    applyOptimistic: () => {
+      directMessageParticipantsMap.value.set(
+        roomId,
+        previousParticipants.filter(({ id }) => id !== userId),
+      );
+      return () => {
+        directMessageParticipantsMap.value.set(roomId, previousParticipants);
+      };
+    },
+  });
 };
 </script>
 

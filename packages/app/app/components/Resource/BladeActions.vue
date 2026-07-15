@@ -18,17 +18,20 @@ interface ResourceBladeActionsProps {
 
 const { duplicate, isLoading, publication, publish, refresh, remove, rename, resource, unpublish } =
   defineProps<ResourceBladeActionsProps>();
-// When narrow, trailing commands collapse into the … overflow menu — the close ✕ never collapses
+// When narrow, every command collapses into the … overflow menu — the close ✕ never collapses
 const { smAndDown } = useVDisplay();
 const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
 const isPortable = computed(() => "portable" in ResourceDefinitionMap[resource.type].capabilities);
+// The dialogs mount only while open so their fields start from the current resource every time
+const isRenameOpen = ref(false);
+const isDeleteOpen = ref(false);
 </script>
 
 <template>
-  <v-btn prepend-icon="mdi-refresh" variant="text" :loading="isLoading" @click="refresh()">Refresh</v-btn>
-  <ResourceRenameDialogButton :rename :resource />
-  <ResourceDeleteDialogButton :remove :resource />
   <template v-if="!smAndDown">
+    <v-btn prepend-icon="mdi-refresh" variant="text" :loading="isLoading" @click="refresh()">Refresh</v-btn>
+    <v-btn prepend-icon="mdi-pencil" variant="text" @click="isRenameOpen = true">Rename</v-btn>
+    <v-btn color="error" prepend-icon="mdi-delete" variant="text" @click="isDeleteOpen = true">Delete</v-btn>
     <v-divider vertical mx-1 />
     <v-btn prepend-icon="mdi-content-copy" variant="text" @click="duplicate()">Duplicate</v-btn>
     <template v-if="isPublishable">
@@ -40,6 +43,18 @@ const isPortable = computed(() => "portable" in ResourceDefinitionMap[resource.t
       <ResourcePortableActions :resource />
     </template>
   </template>
-  <ResourceBladeOverflowMenu v-else :duplicate :publication :publish :resource :unpublish />
+  <ResourceBladeOverflowMenu
+    v-else
+    :duplicate
+    :publication
+    :publish
+    :refresh
+    :resource
+    :unpublish
+    @delete="isDeleteOpen = true"
+    @rename="isRenameOpen = true"
+  />
   <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
+  <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename :resource />
+  <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove :resource />
 </template>

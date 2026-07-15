@@ -1,6 +1,7 @@
 import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
+import { deleteFileInputSchema } from "#shared/models/db/message/DeleteFileInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { readMySentMessagesInputSchema } from "#shared/models/db/message/ReadMySentMessagesInput";
 import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput";
@@ -112,11 +113,6 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
     .min(1)
     .max(MAX_READ_LIMIT),
   ...roomIdSchema.shape,
-});
-
-const deleteFileInputSchema = z.object({
-  ...standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
-  id: fileEntitySchema.shape.id,
 });
 
 const deleteLinkPreviewResponseInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });

@@ -82,6 +82,12 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     const current = resource.value;
     if (!current) return;
     await executeRenameMutation(() => getResourceMutations(current.type).updateResource({ id: current.id, name }), {
+      applyOptimistic: () => {
+        resource.value = { ...current, name };
+        return () => {
+          resource.value = current;
+        };
+      },
       onError: createErrorNotification,
       onSuccess: (newResource) => {
         resource.value = newResource;
@@ -146,10 +152,16 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     if (!current) return;
     const { unpublishResource } = getResourceMutations(current.type);
     if (!unpublishResource) return;
+    const currentPublication = publication.value;
     await executeUnpublishMutation(() => unpublishResource({ id: current.id }), {
+      applyOptimistic: () => {
+        publication.value = undefined;
+        return () => {
+          publication.value = currentPublication;
+        };
+      },
       onError: createErrorNotification,
       onSuccess: () => {
-        publication.value = undefined;
         createNotification({ severity: "success", title: `Unpublished "${current.name}"` });
       },
     });

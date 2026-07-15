@@ -1,21 +1,27 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — retrieving review feedback across all three endpoints (nitpicks live in the review body, not inline comments; the bot login is coderabbitai[bot]), replying to findings, checking review state before pushing (never push into a running review), .coderabbit.yaml lives on main and is read from the PR base branch, per-file path_filters for mechanical renames, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — retrieving review feedback across all three endpoints (nitpicks live in the review body, not inline comments; the bot login is coderabbitai[bot]), replying to findings, checking review state before pushing (never push into a running review), .coderabbit.yaml is read from the PR base branch (normally develop), per-file path_filters for mechanical renames, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
 ---
 
 # CodeRabbit Conventions
 
-## Config Lives on `main`
+## Config Is Read From the PR Base Branch
 
-`.coderabbit.yaml` sits at the repo root. CodeRabbit reads it from the **base branch** of a PR, not the head branch. PRs target `develop`, and `develop` merges to `main` — so an exclusion only takes effect once it is on the branch the PR is based against.
+`.coderabbit.yaml` sits at the repo root. CodeRabbit reads it from the **base branch** of a PR, not the head branch. **PRs target `develop`, so `develop` is the branch that matters** — an exclusion only takes effect once it is on the branch the PR is based against.
 
-Commit exclusions **directly to `main`** as a standalone commit, separate from the work they cover. An exclusion committed on the feature branch does nothing.
+Commit exclusions **directly to the base branch (`develop`)** as a standalone commit, separate from the work they cover. An exclusion committed on the feature branch does nothing.
+
+The two branches diverge and that is expected: `develop` carries the live temporary exclusion block, `main` carries only the permanent entries (it picks up the block on release merges and loses it when the block is removed). Always check the branch you are actually on:
+
+```bash
+git show develop:.coderabbit.yaml | head -20   # the config CodeRabbit actually applies to PRs
+```
 
 ## Why Per-File, Not Globs
 
 CodeRabbit's `path_filters` are static globs with no notion of "this file was only renamed". A glob like `!packages/app/app/services/resource/sheet/**` excludes that tree for **every future PR**, permanently blinding review of real changes until someone remembers to revert it.
 
-List every excluded file explicitly instead. It is verbose, and that verbosity is the point — a 70-line block is obviously temporary and obviously scoped, where a 3-line glob quietly rots.
+List every excluded file explicitly instead. It is verbose, and that verbosity is the point — a several-hundred-line block (the live File → Sheet block is ~732 entries) is obviously temporary and obviously scoped, where a 3-line glob quietly rots.
 
 Keep permanent structural entries (`!pnpm-lock.yaml`, generated migrations) at the top of `path_filters`, above any temporary block.
 
@@ -86,15 +92,22 @@ Run both and sum before starting a sweep. When the budget is reached, stop and h
 
 Chunk at the budget where you can. A mechanical rename can't be chunked — it's one atomic commit — so exclude the files within it that carry no reviewable content.
 
-Only exclude **pure renames**: 100% similarity, zero content change. A file that was renamed _and_ edited still needs review.
+Exclude only files with **no reviewable content change**. Two kinds qualify:
+
+- **Pure renames** — 100% similarity, zero content change (`R100`).
+- **Rename-token-only edits** — the file's only diff is the mechanical substitution itself (e.g. every `File` identifier → `Sheet`). The live block covers both, and its header comment says so.
+
+A file that was renamed _and_ carries a real logic change still needs review. When in doubt, leave it in.
 
 ## Generating the List
 
-`R100` is git's marker for a rename with no content change:
+`R100` is git's marker for a rename with no content change — it gets you the pure-rename subset for free:
 
 ```bash
 git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 "\""}' | sort
 ```
+
+Rename-token-only edits are not `R100` (they have a content diff), so they can't be auto-detected — review those diffs and add them by hand.
 
 Verify the count matches what you expect before committing, and validate the result parses:
 
@@ -119,9 +132,10 @@ Exclusions are always temporary. Every exclusion commit names its own revert so 
 ```text
 chore: exclude File -> Sheet rename files from CodeRabbit review
 
-The File -> Sheet resource rename touches 426 files, of which 70 are pure
-renames with no content change. Exclude those so the review stays under
-the free-tier file limit and focuses on the files that actually changed.
+The File -> Sheet resource rename touches 800+ files, of which 732 are pure
+renames or rename-token-only edits with no reviewable content change. Exclude
+those so the review stays under the free-tier file limit and focuses on the
+files that actually changed.
 
 Revert with "chore: re-enable CodeRabbit review for File -> Sheet rename
 files" once the rename PR merges.
@@ -146,9 +160,9 @@ Mark the temporary block in the yaml with a comment naming its scope, so "remove
 
 When the user says "remove the exclusions" or "re-enable review":
 
-1. `git switch main && git pull --ff-only origin main`
+1. `git switch develop && git pull --ff-only origin develop` — **the base branch, not `main`.** Removing the block from `main` is a no-op: the live exclusions are on `develop`, which is what PRs are reviewed against.
 2. Delete the commented temporary block from `.coderabbit.yaml`, leaving the permanent entries
 3. Commit as `chore: re-enable CodeRabbit review for <scope>`, taking `<scope>` from the block's comment
-4. Push to `main`
+4. Push to `develop`
 
-If more than one temporary block exists, ask which scope to remove rather than clearing all of them.
+Verify the block is actually gone from the branch that matters (`git show develop:.coderabbit.yaml | grep -c '"!'` should drop to the permanent-entry count). If more than one temporary block exists, ask which scope to remove rather than clearing all of them.

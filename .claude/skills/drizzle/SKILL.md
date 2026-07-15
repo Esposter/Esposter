@@ -1,26 +1,27 @@
 ---
 name: drizzle
-description: Esposter Drizzle ORM conventions — column naming (camelCase matching property), pgTable wrapper for metadata, schema placement, select patterns, relational vs SQL-style API preference, and v2 relation definitions (defineRelationsPart, optional:false, naming). Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers.
+description: Esposter Drizzle ORM conventions — bare column builders (camelCase applied by the pgTable wrapper), pgTable wrapper for metadata, schema placement, select patterns, relational vs SQL-style API preference, and v2 relation definitions (defineRelationsPart, optional:false, naming). Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers.
 ---
 
 # Drizzle ORM Conventions
 
 ## Column Names
 
-Column name string must exactly match the TypeScript property key (camelCase). Never snake_case.
+**Never pass a name string to a column builder** — call it bare. Casing is handled centrally: the `pgTable` wrapper builds through drizzle's `camelCase` helper (`packages/db-schema/src/pgTable.ts`), and `messageSchema` is `camelCase.schema("message")`, so the DB column name is the camelCase property key automatically.
 
 ```typescript
-receiverId: text("receiverId").notNull(), // not "receiver_id"
-isHidden: boolean("isHidden").notNull().default(false),
+receiverId: text().notNull(), // not text("receiverId"), never "receiver_id"
+isHidden: boolean().notNull().default(false),
 ```
 
 ## Table Definition
 
 - Use `pgTable` wrapper from `@/pgTable` (not raw `drizzle-orm/pg-core`) for all tables, including join tables. Pass composite PKs via `extraConfig`.
-- Pass `schema: messageSchema` for all message-feature tables to group them under the `message` Postgres schema.
+- Table name strings stay snake_case plural (`"room_categories"`, `"push_subscriptions"`) — only columns are camelCase.
+- Pass `schema: messageSchema` for message-feature tables to group them under the `message` Postgres schema. Tables shared beyond the messaging feature (`friends`, `users`, `posts`, `blocks`) take no `schema` and land in the default schema.
 
 ```typescript
-export const friends = pgTable("friends", { id: text("id").primaryKey(), ... }, { schema: messageSchema });
+export const roomsInMessage = pgTable("rooms", { id: uuid().primaryKey().defaultRandom(), ... }, { schema: messageSchema });
 ```
 
 ## Registering Exports in the `schema` Object
@@ -46,7 +47,7 @@ A common trap: adding a second enum alongside an existing one and registering on
   - Complex `OR` join conditions spanning multiple FK columns.
   - Aggregations: `db.select({ count: count() }).from(...)`.
   - `onConflictDoNothing` / `onConflictDoUpdate` (upserts).
-- **Never use number literals for `limit:`** — use `MAX_READ_LIMIT` (1000) or `DEFAULT_READ_LIMIT` (15) from `#shared/services/pagination/constants`.
+- **Never use number literals for `limit:`** — use `MAX_READ_LIMIT` (1000) from `@esposter/shared` or `DEFAULT_READ_LIMIT` (15) from `#shared/services/pagination/constants`.
 - `.map()` to unwrap `with:` results is intentional — Drizzle always nests them.
 
 ## Relations (v2 API)
@@ -137,12 +138,12 @@ orderBy: (table, { asc }) => [asc(table.position)]
 Due to [drizzle-team/drizzle-orm#695](https://github.com/drizzle-team/drizzle-orm/issues/695), eager-loaded relation shapes must be a constant object exported from the relation file. Define `XxxWithRelations` types inline right after the constant. Consumers import both from `@esposter/db-schema`:
 
 ```ts
-// usersToRoomsRelation.ts
-export const UserToRoomRelations = { room: true, user: true } as const;
-export type UserToRoomWithRelations = UserToRoom & { room: Room; user: User };
+// usersToRoomsInMessageRelation.ts
+export const UserToRoomInMessageRelations = { roomInMessage: true, user: true } as const;
+export type UserToRoomInMessageWithRelations = UserToRoomInMessage & { roomInMessage: RoomInMessage; user: User };
 
 // In the router
-const result = await ctx.db.query.usersToRooms.findFirst({ where: { ... }, with: UserToRoomRelations });
+const result = await ctx.db.query.usersToRoomsInMessage.findFirst({ where: { ... }, with: UserToRoomInMessageRelations });
 ```
 
 ### `createSelectSchema`
@@ -178,16 +179,16 @@ await tx
 
 ## Constraint & Index Naming
 
-Always explicit, descriptive names — never bare column names like `"name"` or `"position"`. Use underscores between components but preserve the column's camelCase.
+Always explicit, descriptive names — never bare column names like `"name"` or `"position"`. Underscores between components; the `{table}` component is the snake_case table name, but the `{column}` components keep their camelCase.
 
-| Type              | Pattern                         | Example                                        |
-| ----------------- | ------------------------------- | ---------------------------------------------- |
-| Length check      | `{table}_{column}_length_check` | `"users_name_length_check"`                    |
-| Other check       | `{table}_{column}_check`        | `"room_categories_position_check"`             |
-| Semantic check    | descriptive phrase              | `"no_self_block"`, `"rooms_name_check"`        |
-| Unique constraint | `{table}_{col1}_{col2}_unique`  | `"push_subscriptions_endpoint_user_id_unique"` |
-| Index             | `{table}_{col}_index`           | `"blocks_blockedId_index"`                     |
-| Composite index   | `{table}_{col1}_{col2}_index`   | `"room_roles_room_id_position_index"`          |
+| Type              | Pattern                         | Example                                       |
+| ----------------- | ------------------------------- | --------------------------------------------- |
+| Length check      | `{table}_{column}_length_check` | `"users_name_length_check"`                   |
+| Other check       | `{table}_{column}_check`        | `"room_categories_position_check"`            |
+| Semantic check    | descriptive phrase              | `"no_self_block"`, `"rooms_name_check"`       |
+| Unique constraint | `{table}_{col1}_{col2}_unique`  | `"push_subscriptions_endpoint_userId_unique"` |
+| Index             | `{table}_{col}_index`           | `"blocks_blockedId_index"`                    |
+| Composite index   | `{table}_{col1}_{col2}_index`   | `"room_roles_roomId_position_index"`          |
 
 ## CHECK Constraints with `sql` Template Literals
 
@@ -211,23 +212,9 @@ Always explicit, descriptive names — never bare column names like `"name"` or 
 
 All mutations calling `.returning()` must:
 
-1. **Destructure the first element**: `const [result] = await db.insert(...).returning()`
-2. **Guard for undefined and throw** — never return a fallback like `?? []` or `?? null`:
-   ```ts
-   const [updatedFilter] = await ctx.db
-     .insert(roomFiltersInMessage)
-     .values({ roomId, words })
-     .onConflictDoUpdate({ set: { words }, target: roomFiltersInMessage.roomId })
-     .returning();
-   if (!updatedFilter)
-     throw new TRPCError({
-       code: "BAD_REQUEST",
-       message: new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomFilter, roomId).message,
-     });
-   return updatedFilter;
-   ```
-3. **Return the full entity** — never a subset of fields (e.g. `.words`). Let callers destructure what they need.
-4. **Add `DatabaseEntityType` if missing** — add to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then run `pnpm build` in `packages/db-schema/` to rebuild dist.
+1. **Wrap the first element in `requireMutation`** — never hand-roll the undefined guard, never fall back to `?? []` / `?? null`. See the error-handling skill (tRPC Backend Guards).
+2. **Return the full entity** — never a subset of fields (e.g. `.words`). Let callers destructure what they need.
+3. **Add `DatabaseEntityType` if missing** — add to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then run `pnpm build` in `packages/db-schema/` to rebuild dist.
 
 ## Migrations
 
@@ -270,12 +257,13 @@ Do not coerce `undefined` to `null` with `?? null` unless null has distinct doma
 - **UUID PK for entities referenced by other tables** — `id: uuid("id").primaryKey().defaultRandom()`.
 - **Text PK for natural-key tables** — computed text PK when uniquely identified by a domain-derived string.
 - **Composite PK for pure join tables** — `primaryKey({ columns: [col1, col2] })` when no surrogate is needed.
-- **Token-as-PK** — when a generated random token already uniquely identifies the row (invite tokens, call session tokens), use it as `id: text().primaryKey()` directly. Do NOT add a separate `uuid` surrogate alongside a `token` column. The field is always named `id` (never `token`) for shape consistency.
+- **Random-id PK** — when a generated random code already uniquely identifies the row (invites, call sessions), use it as `id: text().primaryKey()` directly. Do NOT add a separate `uuid` surrogate alongside a `token`/`code` column. The field is always named `id` for shape consistency, with a colocated `{ENTITY}_ID_LENGTH` constant + length CHECK.
 
   ```typescript
-  // token IS the id — no separate uuid surrogate + token column
+  // the random id IS the PK — no separate uuid surrogate
+  export const CALL_ID_LENGTH = 12;
   export const callSessionsInMessage = pgTable("call_sessions", {
-    id: text().primaryKey(), // the token, generated by createToken(CALL_TOKEN_LENGTH)
+    id: text().primaryKey(), // generated by createId(CALL_ID_LENGTH) from #shared/util/math/random/createId
     roomId: uuid().unique().references(() => roomsInMessage.id, { onDelete: "cascade" }),
   }, ...);
   ```

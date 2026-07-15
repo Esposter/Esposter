@@ -1,21 +1,28 @@
 // @vitest-environment nuxt
+import type { AppNotification } from "@/models/notification/AppNotification";
+import type { ComputedRef, Ref } from "vue";
+
 import { useNotificationStore } from "@/store/notification";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useNotificationStore, () => {
   const title = "title";
+  let notificationStore: ReturnType<typeof useNotificationStore>;
+  let notifications: Ref<AppNotification[]>;
+  let snackbarNotification: ComputedRef<AppNotification | undefined>;
+  let unreadCount: ComputedRef<number>;
 
   beforeEach(() => {
     setActivePinia(createPinia());
+    notificationStore = useNotificationStore();
+    ({ notifications, snackbarNotification, unreadCount } = storeToRefs(notificationStore));
   });
 
   test("creates notifications newest first with a queued snackbar", () => {
     expect.hasAssertions();
 
-    const notificationStore = useNotificationStore();
     const { createNotification } = notificationStore;
-    const { notifications, snackbarNotification, unreadCount } = storeToRefs(notificationStore);
     createNotification({ severity: "success", title });
     createNotification({ severity: "error", title: " " });
 
@@ -28,9 +35,7 @@ describe(useNotificationStore, () => {
   test("deletes a notification and its queued snackbar", () => {
     expect.hasAssertions();
 
-    const notificationStore = useNotificationStore();
     const { createNotification, deleteNotification } = notificationStore;
-    const { notifications, snackbarNotification } = storeToRefs(notificationStore);
     createNotification({ severity: "info", title });
     const notification = notifications.value.find(({ title: notificationTitle }) => notificationTitle === title);
     assert.exists(notification);
@@ -43,9 +48,7 @@ describe(useNotificationStore, () => {
   test("dismisses a snackbar without deleting the notification", () => {
     expect.hasAssertions();
 
-    const notificationStore = useNotificationStore();
     const { createNotification, deleteSnackbar } = notificationStore;
-    const { notifications, snackbarNotification } = storeToRefs(notificationStore);
     createNotification({ severity: "warning", title });
     const notification = notifications.value.find(({ title: notificationTitle }) => notificationTitle === title);
     assert.exists(notification);
@@ -58,9 +61,7 @@ describe(useNotificationStore, () => {
   test("deletes all notifications", () => {
     expect.hasAssertions();
 
-    const notificationStore = useNotificationStore();
     const { createNotification, deleteNotifications } = notificationStore;
-    const { notifications, snackbarNotification, unreadCount } = storeToRefs(notificationStore);
     createNotification({ severity: "success", title });
     createNotification({ severity: "error", title });
     deleteNotifications();
@@ -73,9 +74,7 @@ describe(useNotificationStore, () => {
   test("marks all notifications as read", () => {
     expect.hasAssertions();
 
-    const notificationStore = useNotificationStore();
     const { createNotification, markAllAsRead } = notificationStore;
-    const { notifications, unreadCount } = storeToRefs(notificationStore);
     createNotification({ severity: "success", title });
     createNotification({ severity: "info", title });
     markAllAsRead();

@@ -1,6 +1,6 @@
 ---
 name: vue-composable-patterns
-description: Esposter-specific Vue 3 composable and form patterns — MaybeRefOrGetter, SSR safety, online/offline, type-driven state reset, resource management, cursor pagination (store + useRead* composable + StyledWaypoint), and server search-as-you-type (useAutoSearch/useCursorSearcher). Apply when writing composables, form dialogs, paginated lists, search inputs, or browser-aware reactive code.
+description: Esposter Vue 3 composable and form patterns — cursor pagination (store + useRead* composable + StyledWaypoint), server search-as-you-type (useAutoSearch/useCursorSearcher, hand-rolling banned), MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting mutation blocks with builder args, permission-gated settings tabs, schema-controlling selectors in the prepend-form slot, type-driven state reset via create maps, toRawDeep, resource cleanup, useOnline, SSR-safe watches, dirty-check saves with useSave, dialog data loading, capturing the instance before await, use*Subscribables, and the offline IndexedDB pagination cache. Apply when writing or reviewing a composable, form dialog, paginated list, search input, offline cache, or browser-aware reactive code.
 ---
 
 # Vue Composable & Form Patterns
@@ -69,9 +69,9 @@ await readFoos();
 
 Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. Never use a manual "Load more" `v-btn` with `isLoadingMore` state — that belongs to `StyledWaypoint`.
 
-- `:is-active="hasMore"` — hides and deactivates when no more pages
+- `:is-active="hasMore"` — `v-show`n and deactivated when there are no more pages
 - `@change="readMoreXxx"` — handler must accept `(onComplete: () => void)` and call `onComplete()` when done (via the `onComplete` arg to `readMoreItems`)
-- Default slot: shown while loading (skeleton items); omit to use the built-in `v-progress-circular`
+- **Default slot replaces the built-in loader entirely.** The fallback is a `v-progress-circular` rendered only while loading; supplying slot content overrides it and the slot gets **no `isLoading` prop**, so passed skeletons render whenever `isActive` — not just during a fetch. Omit the slot unless you want that always-visible placeholder.
 
 ```vue
 <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
@@ -81,7 +81,7 @@ Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" butto
 
 ```typescript
 const readMoreBans = (onComplete: () => void) =>
-  readMoreItems((cursor) => $trpc.moderation.readBans.query({ cursor, limit: LIMIT, roomId }), onComplete);
+  readMoreItems((cursor) => $trpc.message.moderation.readBans.query({ cursor, limit: LIMIT, roomId }), onComplete);
 ```
 
 ## Server Search-as-You-Type — `useAutoSearch` / `useCursorSearcher` (hand-rolling BANNED)
@@ -90,7 +90,7 @@ Hand-rolling search-as-you-type around a `$trpc` search query is **banned** — 
 
 Pick the layer by result shape:
 
-- **Cursor-paginated results** → `useCursorSearcher(query, true)` — wraps `useAutoSearch` + `useCursorPaginationData`; the query callback receives `(searchQuery, cursor, opts)` and must forward `opts` (carries the abort signal) to the tRPC call. Pass the third `isIncludeEmptySearchQuery: true` argument when an empty query should list everything (e.g. room pickers).
+- **Cursor-paginated results** → `useCursorSearcher(query, isAutoSearch?, isIncludeEmptySearchQuery?)` — wraps `useAutoSearch` + `useCursorPaginationData`; the query callback receives `(searchQuery, cursor, opts)` and must forward `opts` (carries the abort signal) to the tRPC call. Both flags are literal `true`-only (never `false`): the 2nd opts into auto-search, and the 3rd makes an empty query list everything (e.g. room pickers) — it only has an effect alongside the 2nd. Returns `{ hasMore, items, readItemsSearched, readMoreItemsSearched, searchQuery }`.
 - **Plain array results** → `useAutoSearch(searchQuery, { reset, search })` directly; `search` receives the sanitized query and the `AbortSignal` to forward as `{ signal }`.
 - **Ctrl+K palette UI** → wrap in `StyledSearchDialog` (see the vue-component-patterns skill).
 
@@ -133,44 +133,41 @@ Use `MaybeRefOrGetter<T>` when the composable **internally reacts** to the value
 Use a plain **function argument** on the returned function when the value is just a **pass-through** evaluated at call time (no internal reactive dependency).
 
 ```typescript
-// CORRECT: MaybeRefOrGetter — composable computes based on the value
-export const useColumnNameRule = (columns: MaybeRefOrGetter<DataSource["columns"]>, currentName?: string) =>
+// CORRECT: MaybeRefOrGetter — composable reacts to the value internally
+export const useFooValidation = (foos: MaybeRefOrGetter<Foo[]>, currentName?: string) =>
   computed(() => {
-    const columnsValue = toValue(columns); // reactive, re-evaluates on change
-    return (value: string): string | true => {
-      if (value !== currentName && columnsValue.some(({ name }) => name === value)) return "Column already exists";
-      return true;
-    };
+    const foosValue = toValue(foos); // reactive, re-evaluates on change
+    return (value: string) => value === currentName || !foosValue.some(({ name }) => name === value);
   });
 
 // CORRECT: plain argument — value passed through at call time
-export const useCopyToClipboard = () => {
+export const useCopyRangeToClipboard = () => {
   return async (rowIds?: string[]) => {
-    await copyToClipboard(dataSource, item, rowIds);
+    await copyToClipboard(dataSource, { rowIds });
   };
 };
 ```
 
-Callers pass a getter to stay reactive to prop changes (`currentName` covers "allow own name" for edit vs create):
-
-```typescript
-const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name); // edit
-const uniqueNameRule = useColumnNameRule(() => dataSource.columns); // create
-```
+Callers pass a getter to stay reactive to prop changes; an optional `currentName` covers "allow own name" for edit vs create.
 
 **Rules:**
 
 - Don't annotate composable return types — let TypeScript infer. Only annotate if inference fails or a contract must be enforced.
-- Vue auto-unwraps computed refs in templates, so `:rules="[uniqueNameRule]"` passes the function value correctly.
+- Vue auto-unwraps computed refs in templates, so `:rules="[someRule]"` passes the function value correctly.
 
-## Extract Duplicate Validation Rules
+## Validation Rules — Pick the Right Layer
 
-When the same validation rule appears in 2+ components **and depends on reactive component state** (e.g. uniqueness against a live list), extract to a shared composable immediately — don't copy-paste. (Stateless or simply parameterized rules belong in `app/rules.config.ts` as global `useVRules()` aliases instead — see the vuetify skill.) The optional `currentName` parameter handles edit vs create:
+Three layers; pick by what the rule depends on.
 
-```typescript
-// single shared composable — never duplicate the inline rule across dialog buttons
-const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name); // edit
-```
+- **Stateless / simply parameterized** → a global alias in `app/rules.config.ts`, used via `useVRules()` (see the `vuetify` skill).
+- **Depends on reactive component state, plain Vuetify form** → a shared composable taking `MaybeRefOrGetter` (above). Extract on the 2nd copy — never duplicate an inline rule across dialogs.
+- **Depends on reactive state, but the form is a Vjsf schema** → a custom **Ajv keyword**, not a composable. A rule can't live in the schema as a closure, so the schema _declares_ the keyword and the component _injects_ the validate function at runtime:
+
+  1. Declare the keyword (`services/ajv/keywords/`) — `{ keyword, schemaType, type } as const satisfies KeywordDefinition`, no `validate`.
+  2. Tag the field in the Zod schema via `.meta({ [fooKeywordDefinition.keyword]: true })`, and declare the key on `GlobalMeta` in `shared/types/zod.d.ts`.
+  3. In the form-options composable, spread the definition and add the reactive `validate` into `ajvOptions.keywords`; the component passes the result as `:options` to `<Vjsf>`.
+
+  Reference wiring: `uniqueColumnNameKeywordDefinition` + `useColumnFormOptions` + `useUniqueColumnNameKeywordDefinitionValidation`.
 
 ## Extract Duplicate Mutation Blocks — Builder Arg for Discriminated-Union Inputs
 
@@ -220,70 +217,59 @@ const visibleSettings = computed(() =>
 
 ## Schema-Controlling Selectors in `#prepend-form`
 
-When a dialog has a selector (column type, chart type) that controls **which Vjsf schema** renders, put it in the `#prepend-form` slot — not the default slot alongside schema content. Matches `Dashboard/Visual/Preview/EditFormDialog.vue`. `TableEditorFileEditDialogButton` exposes `#prepend-form`, rendered inside `v-form` before the default slot.
+When a dialog has a selector (column type, chart type) that controls **which Vjsf schema** renders, put it in the `#prepend-form` slot — not the default slot alongside schema content. `StyledEditFormDialog` exposes `#prepend-form`, rendered above the `v-form`, so the selector isn't part of the form it reshapes. Canonical: `Dashboard/Visual/Preview/EditFormDialog.vue`.
 
 ```vue
 <!-- WRONG: type selector mixed into default slot with Vjsf -->
-<TableEditorFileEditDialogButton ...>
-  <v-select v-model="columnType" label="Type" ... />
-  <Vjsf v-model="editedColumn" :schema="jsonSchema" />
-</TableEditorFileEditDialogButton>
+<StyledEditFormDialog ...>
+  <v-select v-model="fooType" label="Type" ... />
+  <Vjsf v-model="editedFoo" :schema="jsonSchema" />
+</StyledEditFormDialog>
 
 <!-- RIGHT: type selector in #prepend-form -->
-<TableEditorFileEditDialogButton ...>
+<StyledEditFormDialog ...>
   <template #prepend-form>
-    <v-select v-model="columnType" label="Type" ... />
+    <v-select v-model="fooType" label="Type" ... />
   </template>
-  <v-text-field v-model="editedColumn.name" label="Column" ... />
-  <Vjsf v-model="editedColumn" :schema="jsonSchema" />
-</TableEditorFileEditDialogButton>
+  <Vjsf v-model="editedFoo" :schema="jsonSchema" />
+</StyledEditFormDialog>
 ```
 
 ## Type-Driven State Reset: Watch + Create Map
 
 When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, use `watch` with a **create map** abstracting per-type construction.
 
-**Step 1 — define a create map in services:**
+**Step 1 — define a create map in services**, keyed by the discriminant, each entry a `create` taking a `Partial` of the target minus its discriminant. The `as const satisfies` mapped type ties each key to its own constructor, so `Map[type].create(...)` returns the right subtype:
 
 ```ts
-// ColumnTypeCreateMap.ts
-export const ColumnTypeCreateMap = {
-  [ColumnType.Boolean]: { create: (name = "") => new Column<ColumnType.Boolean>({ name, type: ColumnType.Boolean }) },
-  [ColumnType.Date]: { create: (name = "") => new DateColumn({ name }) },
-  [ColumnType.Number]: { create: (name = "") => new Column<ColumnType.Number>({ name, type: ColumnType.Number }) },
-  [ColumnType.String]: { create: (name = "") => new Column({ name }) },
-} as const satisfies Record<
-  Exclude<ColumnType, ColumnType.Computed>,
-  { create: (name?: string) => DataSource["columns"][number] }
->;
+// FooTypeCreateMap.ts
+export const FooTypeCreateMap = {
+  [FooType.Bar]: { create: (init?: Partial<Except<BarFoo, "type">>) => new BarFoo({ ...init }) },
+  [FooType.Baz]: { create: (init?: Partial<Except<BazFoo, "type">>) => new BazFoo({ ...init }) },
+} as const satisfies {
+  [K in FooType]: { create: (init?: Partial<Except<Extract<Foo, { type: K }>, "type">>) => Foo };
+};
 ```
 
 **Step 2 — use watch + map in the component:**
 
 ```ts
-const columnType = ref<Exclude<ColumnType, ColumnType.Computed>>(ColumnType.String);
-const editedColumn = ref(ColumnTypeCreateMap[ColumnType.String].create());
-const resetForm = () => {
-  editedColumn.value = ColumnTypeCreateMap[columnType.value].create();
-};
+const fooType = ref(FooType.Bar);
+const editedFoo = ref(FooTypeCreateMap[FooType.Bar].create());
 
-watch(columnType, (newType) => {
-  const name = editedColumn.value.name; // preserve name; object shorthand needs `name` not `currentName`
-  editedColumn.value = ColumnTypeCreateMap[newType].create(name);
+watch(fooType, (newType) => {
+  const { name } = editedFoo.value; // preserve fields that survive the type switch
+  editedFoo.value = FooTypeCreateMap[newType].create({ name });
 });
 ```
 
-For **external sync** (a parent can reset the model), add a second watch on the model's discriminant field to keep the local ref in sync:
+For **external sync** (a parent can reset the model), add a second watch on the model's discriminant field to keep the local type ref in sync:
 
 ```ts
-const transformationType = ref(editedColumn.value.transformation.type);
-watch(transformationType, (newType) => {
-  editedColumn.value.transformation = ColumnTransformationTypeCreateMap[newType].create();
-});
 watch(
-  () => editedColumn.value.transformation.type,
+  () => editedFoo.value.type,
   (newType) => {
-    transformationType.value = newType;
+    fooType.value = newType;
   },
 );
 ```
@@ -309,56 +295,9 @@ const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSourc
 
 Always use `toRawDeep` from `@esposter/shared` instead of Vue's `toRaw` — `toRaw` only unwraps one level; `toRawDeep` recursively unwraps all nested reactive proxies. Critical when passing reactive data to APIs requiring plain objects (IndexedDB `store.put()`, `structuredClone`, postMessage).
 
-## Route-Synced Tabs
+## Routing
 
-Sync `v-tabs` state to the URL instead of a plain `ref`, so the active tab survives a refresh and is linkable. Use `useEnumRouteQuery` (`app/composables/shared/route/useEnumRouteQuery.ts`, auto-imported) with the shared `TAB_QUERY_PARAMETER_KEY` key and the enum's value `Set`. It validates against the enum, falling back to the default when the param is missing **or** invalid — raw `@vueuse/router` `useRouteQuery` only falls back when the param is absent, so a hand-edited `?tab=garbage` would otherwise leave no tab active. It also infers the enum type from its arguments, so no generic argument is needed.
-
-```typescript
-import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
-import { DraftsAndSentTab, DraftsAndSentTabs } from "@/models/message/draftsAndSent/DraftsAndSentTab";
-
-// syncs to ?tab=Drafts and survives refresh — not a plain ref(DraftsAndSentTab.Drafts)
-const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsAndSentTabs, DraftsAndSentTab.Drafts);
-```
-
-Each enum exposes a value `Set` alongside it (`DraftsAndSentTabs`, `PermissionsTabs`, `AchievementStatuses`). Put `useEnumRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep it in the parent and pass it down as `v-model`.
-
-## Route-Param Validation + Page Key (avoid remount refetch)
-
-For pages with **optional/nested route segments** that share one page component (e.g. `[id]/[[blade]].vue`), each segment change is a different path, so by default the page **remounts** on every in-page navigation — re-running top-level `await` loaders and remounting the whole subtree (a shared sidebar/list refetches on every click).
-
-Fix with two paired changes:
-
-1. **Key the page by the stable segment only** via `definePageMeta({ key })`, so sibling-segment navigations reuse the page instead of remounting it.
-2. **Validate params at the route boundary, not in setup** — `definePageMeta({ validate })` runs on every navigation (including in-page segment changes), so a bad param 404s _before_ setup. Reuse `@/services/router/validate` (uuid v4 for `id`) or a domain `schema.shape.id.safeParseAsync`, and check enum segments against the enum's `Set`. This replaces any in-setup `watchEffect(showError)`.
-
-```ts
-// pages/resources/[id]/[[blade]].vue
-import { validate } from "@/services/router/validate";
-
-definePageMeta({
-  key: (route) => `resource-${Array.isArray(route.params.id) ? route.params.id[0] : route.params.id}`,
-  middleware: "auth",
-  validate: (route) => {
-    if (!validate(route)) return false; // shared uuid-v4 check for id
-    const { blade } = route.params;
-    return !blade || (typeof blade === "string" && ResourceBladeTypes.has(blade as ResourceBladeType));
-  },
-});
-const route = useRoute();
-// Keyed/stable segment → plain const cast (page remounts on id change; validate guarantees it is a string)
-const id = route.params.id as string;
-const { load, resource } = useResource(id);
-await load();
-// Only the CHANGING segment needs a computed — it updates without a remount once the page is reused
-const activeBlade = computed(() => (route.params.blade as ResourceBladeType) || ResourceBladeType.Overview);
-```
-
-**Rules:**
-
-- `<v-list-item :to>` / `<NuxtLink to>` are already SPA navigations — switching them to `navigateTo` does **not** fix a remount refetch. The remount comes from the per-segment page key, so fix it at the page level.
-- The **keyed/stable** segment is a plain `const route.params.x as string` (safe because `validate` gated it and the page remounts when it changes). Only the **changing** segment needs a `computed` — a captured `const` for it goes stale after reuse.
-- `takeOne` (`@esposter/shared`) is the `noUncheckedIndexedAccess` workaround for **array / first-element** access — not for `string | string[]` route params, which `validate` + a cast already handle.
+Route reads, route-synced tabs (`useEnumRouteQuery`), and `definePageMeta` `validate`/`key` for optional segments live in the **routing** skill.
 
 ## Resource Management
 
@@ -509,40 +448,39 @@ Rules:
 
 ## Offline IndexedDB Cache via Pagination Cache Composables
 
-Offline cache should mirror Pinia state. Prefer thin feature-level `use*Cache` composables that delegate to `useCursorPaginationCache` or `useOffsetPaginationCache`. Do **not** add new `readItems` cache options or push IndexedDB behavior deeper into pagination helpers. (`ReadItemsCacheOptions` has been removed; `readItems`/`readMoreItems` are plain pagination helpers that know nothing about IndexedDB or cache configuration.)
+Offline cache mirrors Pinia state, and it is **entirely self-contained**: `usePaginationCache` owns both directions via two watchers — items change → write IndexedDB; partition key changes **while offline** → read IndexedDB and hydrate the store. Nothing else touches the cache.
 
-**Generic base functions** (`app/services/cache/indexedDb/`):
+Consequences that keep this boundary intact:
 
-- `readIndexedDb(configuration, partitionKey)` — reads all items for a partition key
-- `writeIndexedDb(configuration, items, partitionKey)` — replaces all items for a partition key (respects `configuration.limit`)
-- `resetIndexedDb()` — clears the singleton (used in tests)
+- **`readItems`/`readMoreItems` know nothing about IndexedDB** — they are plain pagination helpers. Never add cache options to them or push cache behaviour deeper into pagination.
+- **Read composables know nothing about the cache either** — there is no read-side cache composable to call. Never call `useOnline`, `readIndexedDb`, or `writeIndexedDb` from a feature read composable; hydration is already automatic.
+- `readIndexedDb` / `writeIndexedDb` (`app/services/cache/indexedDb/`) are called **only** from `usePaginationCache`.
 
-**Configuration objects** (one per file, `as const satisfies IndexedDbStoreConfiguration`):
+**Generic cache composables** (`app/composables/cache/indexedDb/`) — both take one options object and return `{ flush }`:
 
-- `MessageIndexedDbStoreConfiguration` — `CompositeAzureKeyPath`, `limit: 50`
-- `MemberIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
-- `RoomIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
+- `usePaginationCache` — the base; takes `initializeItems`
+- `useCursorPaginationCache` / `useOffsetPaginationCache` — wrap it, taking `initializeCursorPaginationData` / the offset equivalent instead
 
-**Generic cache composables** (`app/composables/cache/indexedDb/`):
+**Feature cache composable pattern** — a thin wrapper reading store refs and returning the generic composable:
 
-- `useCursorPaginationCache` — watches cursor store items, writes IndexedDB, hydrates offline partition changes
-- `useReadCursorPaginationCache` — wraps first-page cursor reads: online query, offline IndexedDB read
-- `useOffsetPaginationCache` / `useReadOffsetPaginationCache` — offset equivalents
+```ts
+export const useFooCache = () => {
+  const fooStore = useFooStore();
+  const { foos } = storeToRefs(fooStore);
+  const { initializeCursorPaginationData } = fooStore;
+  return useCursorPaginationCache({
+    configuration: FooIndexedDbStoreConfiguration,
+    initializeCursorPaginationData,
+    items: foos,
+    partitionKey: () => session.value.data?.user.id ?? "",
+  });
+};
+```
 
-**Feature cache composable pattern:**
-
-- read store refs with `storeToRefs`
-- return `useCursorPaginationCache(...)` or `useOffsetPaginationCache(...)`, passing `configuration`, `items`, `partitionKey`, and the store initializer
-- use `getWriteItems` for feature-specific filtering (e.g. loading messages)
-- use `onHydrate` for companion state updates (e.g. member counts, user maps)
-- return the generic `flush()` from cache composables that tests need to await
-
-**Read composable pattern:**
-
-- create a read helper with `useReadCursorPaginationCache(configuration)` or `useReadOffsetPaginationCache(configuration)`
-- call it inside the `readItems` query callback
-- put online-only metadata reads inside the online query passed to the cache helper
-- do not call `useOnline`, `readIndexedDb`, or `writeIndexedDb` directly from feature read composables
+- `configuration` — one per file, `as const satisfies IndexedDbStoreConfiguration` (a key path, plus an optional `limit`)
+- `getWriteItems` — feature-specific filtering before persisting
+- `onHydrate` — companion state updates after an offline hydrate (member counts, user maps)
+- `flush()` — returned so tests can await the pending write
 
 `useMessageCache`, `useMemberCache`, `useRoomCache` are the reference shapes. Architecture doc: `packages/app/content/docs/esbabbler/offline-cache.md`.
 
@@ -552,15 +490,17 @@ When a component needs ancillary data (permissions, metadata) alongside a primar
 
 ```typescript
 // bundle ancillary reads in the owning read composable (useReadRooms.ts) — not a separate component onMounted fetch
+const readMyUsersToRooms = useReadMyUsersToRooms();
 const readMyPermissions = useReadMyPermissions();
+const readRoles = useReadRoles();
 const readRooms = () =>
-  readItems(
-    () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
-    ({ items }) => {
-      const roomIds = items.map(({ id }) => id);
-      return Promise.all([readUsersToRooms(roomIds), readMyPermissions(roomIds)]);
-    },
-  );
+  readItems(async () => {
+    const data = await $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {});
+    const roomIds = data.items.map(({ id }) => id);
+    if (roomIds.length > 0)
+      await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
+    return data;
+  });
 ```
 
-Follow the `useReadUsersToRooms` pattern for batch ancillary reads — a composable accepting an array of IDs and calling the store method for each in `Promise.all`.
+Follow the `useReadMyUsersToRooms` pattern for batch ancillary reads — a composable taking an **array** of ids, early-returning when it is empty, and issuing one batched query rather than N per-id calls.

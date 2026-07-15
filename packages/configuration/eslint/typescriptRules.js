@@ -22,7 +22,6 @@ export default Object.assign(
     delete rules["@typescript-eslint/restrict-plus-operands"];
     delete rules["@typescript-eslint/restrict-template-expressions"];
     // Computationally expensive
-    delete rules["@typescript-eslint/no-confusing-void-expression"];
     delete rules["@typescript-eslint/no-deprecated"];
     delete rules["@typescript-eslint/unified-signatures"];
     return rules;

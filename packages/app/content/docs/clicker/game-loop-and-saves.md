@@ -44,7 +44,7 @@ flowchart TD
 | `clicker.readClicker` | user | —                   | read the user's save blob      |
 | `clicker.saveClicker` | user | `clickerSaveSchema` | overwrite the user's save blob |
 
-`saveClicker` is also the trigger path for all five clicker achievements (save-count thresholds 1/5/10/100/1000).
+`saveClicker` is also the trigger path for all ten clicker achievements: five save-count thresholds (1/5/10/100/1000) and five milestones whose `condition` reads the save payload ([unlock pipeline](/docs/achievements/unlock-pipeline)) — ClickerMillionaire / ClickerBillionaire / ClickerTrillionaire (`noPoints` at 1e6/1e9/1e12), ClickerArchitect (every building owned), and ClickerCompletionist (every upgrade bought). The 60-second autosave cadence works for the milestones: progress is evaluated at least once a minute while playing, and unlocks are idempotent.
 
 ## Key files
 
@@ -67,5 +67,5 @@ Paths relative to `packages/app`.
 
 ## Notes
 
-- There is no offline progress: production only happens while the page is open (the worker timers keep it alive across tab switches, not across sessions).
-- Late-game blob size shrank by an order of magnitude with normalization (19 full upgrade objects → 19 short ids).
+- Time away from the page is compensated by [offline progress](/docs/clicker/offline-progress): the load path awards capped production for the gap since the save was last stamped.
+- Late-game blob size shrank by an order of magnitude with normalization (28 full upgrade objects → 28 short ids).

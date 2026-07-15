@@ -5,7 +5,7 @@ description: Open infrastructure work — every item links its proposal.
 
 # Roadmap
 
-All items are deferred-with-trigger; there is no active wave. Rationale lives in [/docs/infra/optimization-review](/docs/infra/optimization-review) and `packages/infra/docs/`.
+Open work, each item linking its proposal — nothing is in progress right now. Ideas parked behind a revisit trigger live in [deferred](/docs/infra/deferred) instead. Rationale lives in [Cost & Security Posture](/docs/infra/optimization-review) and `packages/infra/docs/`.
 
 ## Next
 

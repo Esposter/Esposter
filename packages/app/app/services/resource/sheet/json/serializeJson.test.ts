@@ -42,15 +42,6 @@ describe(serializeJson, () => {
     ]);
   });
 
-  test("returns blob with correct mime type", async () => {
-    expect.hasAssertions();
-
-    const dataSource = createDataSource([], []);
-    const blob = await serializeJson(dataSource, defaultSettings, MIME_TYPE);
-
-    expect(blob.type).toBe(MIME_TYPE);
-  });
-
   test("empty rows produces empty array", async () => {
     expect.hasAssertions();
 

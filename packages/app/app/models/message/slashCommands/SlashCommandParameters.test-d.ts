@@ -16,45 +16,9 @@ describe("slashCommandParameters type", () => {
     expectTypeOf<SlashCommandParameters<SlashCommandType.Me>>().toEqualTypeOf<{ message: string }>();
   });
 
-  test(SlashCommandType.Poll, () => {
-    expect.hasAssertions();
-
-    expectTypeOf<SlashCommandParameters<SlashCommandType.Poll>>().toEqualTypeOf<{}>();
-  });
-
-  test(SlashCommandType.Remind, () => {
-    expect.hasAssertions();
-
-    expectTypeOf<SlashCommandParameters<SlashCommandType.Remind>>().toEqualTypeOf<{}>();
-  });
-
-  test(SlashCommandType.Roll, () => {
-    expect.hasAssertions();
-
-    expectTypeOf<SlashCommandParameters<SlashCommandType.Roll>>().toEqualTypeOf<{}>();
-  });
-
-  test(SlashCommandType.Schedule, () => {
-    expect.hasAssertions();
-
-    expectTypeOf<SlashCommandParameters<SlashCommandType.Schedule>>().toEqualTypeOf<{}>();
-  });
-
   test(SlashCommandType.Shrug, () => {
     expect.hasAssertions();
 
     expectTypeOf<SlashCommandParameters<SlashCommandType.Shrug>>().toEqualTypeOf<{ text?: string }>();
-  });
-
-  test(SlashCommandType.TableFlip, () => {
-    expect.hasAssertions();
-
-    expectTypeOf<SlashCommandParameters<SlashCommandType.TableFlip>>().toEqualTypeOf<{}>();
-  });
-
-  test(SlashCommandType.Unflip, () => {
-    expect.hasAssertions();
-
-    expectTypeOf<SlashCommandParameters<SlashCommandType.Unflip>>().toEqualTypeOf<{}>();
   });
 });

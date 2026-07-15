@@ -49,4 +49,4 @@ What each provider namespace under `src/azure/resources/` holds:
 ## Notes
 
 - App-plane settings are not fully represented: Function App runtime settings and App Insights connection settings remain external to the imported `WebApp` declarations (open roadmap item — see /docs/infra/roadmap).
-- The import-era artifacts (`packages/infra/data/` CSV inventory and the import manifest generator) were migration scaffolding; the declared end state is their removal once no longer needed as import evidence.
+- The import-era scaffolding (the `packages/infra/data/` CSV asset inventory and the `buildAzureImportManifest` generator) has been deleted now that the import is done — `packages/infra/data/` holds only the `messages-index` search index definition.

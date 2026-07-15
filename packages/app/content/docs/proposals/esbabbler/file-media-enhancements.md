@@ -23,12 +23,12 @@ No new procedures for thumbnails (the existing SAS batch covers the extra blob).
 
 ## Key files
 
-| File                                                                      | Change                             |
-| :------------------------------------------------------------------------ | :--------------------------------- |
-| `packages/app/app/services/azure/container/uploadBlocks.ts` (caller side) | thumbnail generation before upload |
-| `packages/db-schema/src/schema/roomsInMessage.ts`                         | limit columns (+ migration)        |
-| `packages/app/server/services/message/generateUploadFileSasEntities.ts`   | enforce limits                     |
-| `packages/app/server/services/message/searchMessages.ts`                  | `hasFiles` filter                  |
+| File                                                                        | Change                             |
+| :-------------------------------------------------------------------------- | :--------------------------------- |
+| `packages/app/app/services/azure/container/uploadBlocks.ts` (caller side)   | thumbnail generation before upload |
+| `packages/db-schema/src/schema/roomsInMessage.ts`                           | limit columns (+ migration)        |
+| `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts` | enforce limits                     |
+| `packages/app/server/services/message/searchMessages.ts`                    | `hasFiles` filter                  |
 
 ## Notes
 

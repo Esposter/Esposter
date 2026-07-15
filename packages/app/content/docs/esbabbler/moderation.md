@@ -67,7 +67,7 @@ The moderation log is an append-only Azure Table (`AzureTable.ModerationLog`): `
 | `packages/db-schema/src/models/message/AdminActionType.ts`                    | action type enum                |
 | `packages/app/server/trpc/routers/message/moderation.ts`                      | moderation router               |
 | `packages/app/server/services/message/moderation/AdminActionPermissionMap.ts` | action → required permission    |
-| `packages/app/app/shared/models/db/moderation/ExecuteAdminActionInput.ts`     | discriminated union input       |
+| `packages/app/shared/models/db/moderation/ExecuteAdminActionInput.ts`         | discriminated union input       |
 | `packages/app/app/composables/message/moderation/useAdminActionMap.ts`        | client-side per-action handlers |
 | `packages/app/server/services/message/moderation/assertNotWordFiltered.ts`    | word filter enforcement         |
 | `packages/app/server/trpc/routers/room/filter.ts`                             | word filter CRUD                |

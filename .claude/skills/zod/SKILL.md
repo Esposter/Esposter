@@ -1,6 +1,6 @@
 ---
 name: zod
-description: Esposter Zod schema conventions — z namespace imports, no optional+default combos, generic schemas with create* functions, vjsf form schemas, and satisfies with ToData for class types. Apply when writing Zod schemas.
+description: Esposter Zod schema conventions — z namespace imports and the export-type z.infer form, string normalization via transform+pipe (and the nested-pipe JSON-schema trap), createUniqueArraySchema for arrays, validating external/boundary payloads (incl. isolatedDeclarations annotations), Zod 4 shorthand APIs, persisted-data latest-shape-only, tightest-possible constraints, generic create*Schema factories, and the vjsf form-schema rules (layout meta, ajv keywords, discriminated-union forms). Apply when writing Zod schemas.
 ---
 
 # Zod Conventions
@@ -114,8 +114,10 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`. Never named impo
 
 ## Inferring Types from a Schema
 
-- **`type X = z.infer<typeof xSchema>`, never `interface X extends z.infer<typeof xSchema> {}`.** The empty-extends-interface form is pure indirection — it only exists to rename the inferred type and reads as if it adds members when it adds none. Use a plain `type` alias.
-- **Declare the `type` directly beneath its schema and reference it by name** — the alias lives next to the `const xSchema = z.object({...})` it derives from (the standard schema-then-type pairing), and use sites refer to `X`. Don't inline `z.infer<typeof xSchema>` at the use site — the named type beside the schema documents the relationship and keeps call signatures readable.
+Interface-first (`satisfies z.ZodType<T>`) is the default — see `~/.claude/rules/zod.md`. `z.infer` is for schemas with no hand-written interface (tRPC input schemas: `CreateTypingInput`, `ReadMessagesInput`), not for models.
+
+- **When you do need infer, always `export type X = z.infer<typeof xSchema>`** — never `interface X extends z.infer<typeof xSchema> {}`. The extends form trips oxlint `import/namespace` (`"infer" not found in imported namespace`), because the `z` namespace can't be resolved in `extends` position.
+- **Declare the `type` directly beneath its schema and reference it by name** — the alias lives next to the `const xSchema = z.object({...})` it derives from, and use sites refer to `X`. Don't inline `z.infer<typeof xSchema>` at the use site.
 
 ## Zod 4 Shorthand APIs
 
@@ -182,39 +184,49 @@ Rules:
 - **`z.enum` with native enums (Zod 4)** — use `z.enum(MyEnum)` directly for TS string enums; `z.nativeEnum` is Zod 3 only.
 - **Schema must match its type exactly** — if a field is `ColumnFormat`, use `columnFormatSchema`, never inline `z.union([booleanFormatSchema, ...])`. Every named type has exactly one named schema; never reconstruct a union inline.
 - **`.default()`** — never combine `.optional().default(value)` (`.default()` already handles `undefined`). Only use `.default()` in schemas whose TS type is a **class with actual property defaults** (e.g. `class Foo { bar = [] }`). Never add `.default()` to a schema that `satisfies z.ZodType<Interface>` — interfaces have no defaults, so schema and type would misalign. Initialise empties explicitly at the call site (`new MyClass()` or `{ steps: [] }`).
-- **Generic schemas** — when an abstract class has a generic type param (e.g. `ADataSourceItem<TType, TConfig>`), its schema must be generic too: export a `create*Schema` function taking typed zod schemas as params. Never hardcode type-specific values in a base schema. Use `T` for one param, descriptive `T*` (`TType`, `TConfiguration`) for multiple:
+- **Generic schemas** — when an abstract class/interface has a generic type param (e.g. `AColumn<TColumnType>`), its schema must be generic too: export a `create*Schema` function taking typed zod schemas as params. Never hardcode type-specific values in a base schema. Use `T` for one param, descriptive `T*` (`TType`, `TConfiguration`) for multiple. Canonical: `createAColumnSchema` / `createAColumnFormSchema` (`shared/models/resource/sheet/column/`), `createCursorPaginationParamsSchema`, `createSortItemSchema`.
 
   ```typescript
-  // generic function, concrete schemas passed by callers (never hardcode type-specific values in a base schema)
-  export const createDataSourceItemSchema = <
-    TType extends z.ZodType<keyof DataSourceConfigurationTypeMap>,
-    TConfiguration extends z.ZodType<object>,
-  >(
-    typeSchema: TType,
-    configurationSchema: TConfiguration,
-  ) => z.object({ ...aTableEditorItemEntitySchema.shape, configuration: configurationSchema, type: typeSchema });
-  // Caller:
-  export const csvDataSourceItemSchema = createDataSourceItemSchema(
-    z.literal(DataSourceType.Csv),
-    csvDataSourceConfigurationSchema,
-  ) satisfies z.ZodType<ToData<CsvDataSourceItem>>;
+  // AColumnForm.ts — generic factory; concrete literal passed by callers
+  export const createAColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) => {
+    const aColumnSchema = createAColumnSchema(typeSchema);
+    return z.object({
+      description: aColumnSchema.shape.description,
+      name: aColumnSchema.shape.name.meta({ title: "Column", [uniqueColumnNameKeywordDefinition.keyword]: true }),
+      sourceName: aColumnSchema.shape.sourceName.meta({ title: "Source Column" }),
+      type: typeSchema,
+    });
+  };
+
+  // DateColumnForm.ts — caller spreads the factory's .shape (never .extend()), adds its own fields, satisfies its interface
+  export const dateColumnFormSchema = z
+    .object({
+      ...createAColumnFormSchema(z.literal(ColumnType.Date).readonly()).shape,
+      format: dateColumnSchema.shape.format,
+    })
+    .meta({ title: ColumnType.Date }) satisfies z.ZodType<DateColumnForm>;
   ```
 
-  For the union used by parent models, create a separate `*ItemSchema.ts` using `z.discriminatedUnion`. Adding a new type = add its schema to the union array:
+  The union lives in the file named after the union type (`ColumnForm.ts`), declared **before** the schema, with `satisfies` — see `~/.claude/rules/zod.md`. Adding a new type = add its schema to the union array.
 
   ```typescript
-  export const dataSourceItemSchema = z.discriminatedUnion("type", [csvDataSourceItemSchema]);
+  export type ColumnForm =
+    BooleanColumnForm | ComputedColumnForm | DateColumnForm | NumberColumnForm | StringColumnForm;
+
+  export const columnFormSchema = z.discriminatedUnion("type", [
+    booleanColumnFormSchema,
+    computedColumnFormSchema,
+    dateColumnFormSchema,
+    numberColumnFormSchema,
+    stringColumnFormSchema,
+  ]) satisfies z.ZodType<ColumnForm>;
   ```
 
-- **vjsf form schemas** — never pass a full entity schema containing `z.date()` fields to `zodToJsonSchema()` — vjsf throws. Create a separate `*FormSchema` co-located in the same file via `.pick().extend()` to add `.meta()` titles, picking only user-editable fields (no `id`/`createdAt`/`updatedAt`).
+- **vjsf form schemas** — never pass a full entity schema containing `z.date()` fields to `zodToJsonSchema()` — vjsf throws. Model a separate `*Form` interface + `*FormSchema` (one per file, e.g. `DateColumnForm.ts`) covering only user-editable fields (no `id`/`createdAt`/`updatedAt`), built by spreading the base factory's `.shape` and re-`.meta()`-ing fields for titles. Pull individual field validators off the entity schema's `.shape` (`dateColumnSchema.shape.format`) rather than redeclaring them.
+- **Opt-in shared field schemas for union members** — when _some_ (not all) members of a discriminated union share a field, give it its own interface + `create*Schema` factory file that members opt into by spreading its `.shape` (`createSourceColumnIdSchema`); never force the field onto every member via the base schema. Members that don't need it use `z.object({...})` directly. Naming (`SourceColumnId`, not `WithSourceColumnId`) is the naming skill's rule.
 - **`ColumnTransformationType` enum values** — short descriptive names matching the domain (`Aggregation`, `ConvertTo`, `DatePart`, `Math`, `RegexMatch`, `String`), distinct from interface names (`AggregationTransformation` → `ColumnTransformationType.Aggregation`).
 - **`.meta({ title })` values** — use enum values directly, not string literals; `zodToJsonSchema` runs `toTitleCase(prettify(...))` automatically, so `ColumnTransformationType.ConvertTo` renders as `"Convert To"`. Always prefer `meta({ title: ColumnTransformationType.X })`.
-- **`.meta({ applicableColumnTypes })`** — when a transformation applies only to certain source column types, declare `applicableColumnTypes: ColumnType[]`. Typed via `GlobalMeta extends Partial<WithApplicableColumnTypes>` in `shared/types/zod.d.ts`; the UI filters source column dropdowns by it. No `applicableColumnTypes` = accepts any source column type.
-
-  ```typescript
-  .meta({ applicableColumnTypes: [ColumnType.Date], title: ColumnTransformationType.DatePart })
-  ```
-
+- **`GlobalMeta` carries only `layout` + ajv keywords** (`shared/types/zod.d.ts`: `interface GlobalMeta extends AjvKeywords { layout?: Partial<PartialCompObject> }`). There is no `applicableColumnTypes` meta key — column-type filtering is done by passing a pre-filtered vjsf context key into `createSourceColumnIdSchema` (below). `ApplicableColumnTypes` is a non-schema concept used only by `ColumnStatisticsDefinition`.
 - **Vjsf discriminated union variant titles** — every variant in a Vjsf-rendered `z.discriminatedUnion` needs `.meta({ title })` on the variant object (not just fields), else Vjsf shows "Option 1", etc. Prefer setting it on the schema at definition time:
 
   ```typescript
@@ -226,7 +238,7 @@ Rules:
   - `z.literal(ColumnType.Computed)` (no `.readonly()`) — **BROKEN auto-detection**: can't pre-select the variant when editing. Never omit `.readonly()`.
   - `z.enum([...])` (no `.readonly()`) — renders a select; uses the first enum value as default on switch. ✓
   - `z.enum([...]).readonly()` — **BROKEN**: `readOnly: true` but no `const`, so Vjsf can't determine the value on switch; the old value persists. **Never use `.readonly()` on an enum discriminant.**
-- **Vjsf `getItems` filtering by column type** — to show only certain column types, pass the pre-filtered context key into the `createSourceColumnIdSchema(getItems)` factory (default `context.columnItems`). The factory bakes `getItems` into `layout`, so transformations just spread its `.shape`. Pass the per-type pre-filtered lists in `options.context` from the Vue component (`columnItems`, `dateColumnItems`, `numberColumnItems`, `stringColumnItems`, each `dataSource.columns.filter(...).map(({ id, name }) => ({ title: name, value: id }))`):
+- **Vjsf `getItems` filtering by column type** — to show only certain column types, pass the pre-filtered context key into the `createSourceColumnIdSchema(getItems)` factory (default `context.columnItems`). The factory bakes `getItems` into `layout`, so transformations just spread its `.shape`. The per-type lists are built once by the `useColumnFormOptions` composable, not inline in each component — `ColumnFormVjsfContext` has one field per column type (`booleanColumnItems`, `columnItems`, `computedColumnItems`, `dateColumnItems`, `numberColumnItems`, `stringColumnItems`), each `dataSource.columns.filter(...).map(({ id, name }) => ({ title: name, value: id }))`:
 
   ```typescript
   export const datePartTransformationSchema = z
@@ -240,60 +252,64 @@ Rules:
 
   `getItems` is a JS expression string, so spread works for multiple types: `"[...context.dateColumnItems, ...context.numberColumnItems]"`.
 
-- **vjsf `.meta()` layout properties** — put `comp`, `getProps`, `getItems` under the `layout` key of the field's `.meta()` in the schema, not injected dynamically via `schema.extend()` in a composable. `GlobalMeta` (`shared/types/zod.d.ts`) types `layout?: Partial<PartialCompObject>` — its values are vjsf JS expression strings evaluated at runtime against the vjsf `context` (passed via `:options`):
+- **vjsf `.meta()` layout properties** — put `comp`, `getItems`, `getProps` under the `layout` key of the field's `.meta()` in the schema, never injected dynamically from a composable. `GlobalMeta` (`shared/types/zod.d.ts`) types `layout?: Partial<PartialCompObject>` — its values are vjsf JS expression strings evaluated at runtime against the vjsf `context` (passed via `:options`):
 
   ```typescript
-  name: z.string().meta({
-    layout: { getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Already exists'] }` },
-    title: "Name",
-  }),
+  description: z.string().meta({ layout: { comp: "textarea" } }),
   sourceColumnId: z.string().meta({ layout: { comp: "select", getItems: "context.columnItems" }, title: "Source Column" }),
   ```
 
-- **`zodToJsonSchema` in components** — expose two computeds: `schema` (Zod, for validation) and `jsonSchema` (for vjsf), deriving `jsonSchema` from `schema.value`. Never create a precomputed JSON schema map file; the `*TypeFormSchemaMap` is the source of truth.
+  **Cross-field validation is an ajv keyword, not a `getProps` rules expression** — a check needing values outside the field (e.g. name uniqueness against sibling columns) is declared as a `.meta()` ajv keyword flag and implemented as an ajv `validate` fn passed through `options.ajvOptions.keywords`, so the rule stays typed and testable:
 
   ```typescript
-  // schema.value reused for jsonSchema — no intermediate JSON schema map file
-  const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
-  const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+  name: aColumnSchema.shape.name.meta({ title: "Column", [uniqueColumnNameKeywordDefinition.keyword]: true }),
   ```
 
-- **Vjsf options typing** — type the `options` computed as `VjsfOptions<ContextType>` (`VjsfOptions` from `app/models/vjsf/VjsfOptions.ts`); the context interface lives in `app/models/<feature>/ContextInterface.ts` (one per file, reusable across create/edit dialogs for the same form):
+- **Pass the discriminated union straight to vjsf** — because every variant's discriminant is `z.literal(...).readonly()` (a single `const`), Vjsf auto-detects the active `oneOf` variant when pre-populating and renders its own variant selector. So there is no per-type `columnType` ref, no type-selector reset handler, and no precomputed JSON schema map file. `jsonSchema` is a plain `const` (the union schema never changes), not a computed:
 
   ```typescript
-  import type { ColumnFormVjsfContext } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
-  import type { VjsfOptions } from "@/models/vjsf/VjsfOptions";
-  const options = computed<VjsfOptions<ColumnFormVjsfContext>>(() => ({ context: { columnNames: ..., currentName: ... } }));
+  // Resource/Sheet/Column/EditDialog.vue
+  const jsonSchema = zodToJsonSchema(columnFormSchema);
+  // <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
   ```
 
-- **Vjsf discriminated union — auto-detection limitation**: Vjsf only auto-detects the matching `oneOf` variant when the discriminant has a single `const` (`z.literal(...).readonly()`). `z.enum([...])` / `z.union([z.literal(...), ...])` don't produce a single `const` — Vjsf shows a blank variant selector. **Don't use a discriminated union schema for forms where the variant must pre-select from existing data.** Instead use a `*TypeFormSchemaMap` (`Record<EnumType, z.ZodType>`) and select per entry at the call site. Edit dialog inits `const columnType = ref(column.type)`; create dialog inits `ref(ColumnType.String)`. Both: `const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]); const jsonSchema = computed(() => zodToJsonSchema(schema.value))`. The type selector resets the form on change — edit dialog inline (`@update:model-value="editedColumn = structuredClone(ColumnTypeCreateMap[$event].create())"`; `structuredClone` required because Vjsf needs plain objects), create dialog `@update:model-value="resetForm()"`.
+- **`*TypeFormSchemaMap` is for narrowing a value to one variant's fields, not for choosing the form schema.** It lives in the union's own file (`ColumnForm.ts`, alongside `columnFormSchema`), maps each enum key to **its own** variant schema, and is consumed by `extractSchemaFields(ColumnTypeFormSchemaMap[column.type], column)` to compare edited-vs-original for dirty state:
 
   ```typescript
-  // shared/models/.../ColumnTypeFormSchemaMap.ts
+  // shared/models/resource/sheet/column/ColumnForm.ts — one schema per key; columnFormSchema is the union above it
   export const ColumnTypeFormSchemaMap = {
-    [ColumnType.Boolean]: columnFormSchema,
+    [ColumnType.Boolean]: booleanColumnFormSchema,
     [ColumnType.Computed]: computedColumnFormSchema,
     [ColumnType.Date]: dateColumnFormSchema,
-    [ColumnType.Number]: columnFormSchema,
-    [ColumnType.String]: columnFormSchema,
-  };
+    [ColumnType.Number]: numberColumnFormSchema,
+    [ColumnType.String]: stringColumnFormSchema,
+  } as const satisfies Record<ColumnType, z.ZodType<ColumnForm>>;
   ```
 
-  Selector items live in `*ItemCategoryDefinitions.ts`, mapping display names to canonical enum values (`SelectItemCategoryDefinition<ColumnType>[]`, e.g. `{ title: "Standard", value: ColumnType.String }`). Factory defaults come from `*TypeCreateMap`, which accepts `Except<Partial<SpecificType>, "type">` and pins `type`:
+- **Vjsf options typing** — type the `options` computed as `VjsfOptions<ContextType>` (`VjsfOptions` from `app/models/vjsf/VjsfOptions.ts`); the context interface lives in `app/models/<feature>/<Name>VjsfContext.ts` (one per file), and the computed that builds it is a composable shared by the create and edit dialogs (`useColumnFormOptions(() => dataSource, () => column.name)`). Alongside `context`, `ajvOptions.keywords` wires custom ajv keywords (e.g. the unique-column-name check):
+
+  ```typescript
+  export interface ColumnFormVjsfContext {
+    booleanColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
+    columnItems: SelectItemCategoryDefinition<Column["id"]>[];
+    // …one per ColumnType
+  }
+  export const ColumnFormVjsfContextPropertyNames =
+    getPropertyNames<Pick<VjsfOptions<ColumnFormVjsfContext>, "context">>();
+  ```
+
+  Factory defaults come from `*TypeCreateMap` (`app/services/.../ColumnTypeCreateMap.ts`), keyed by enum, each `create` accepting `Partial<Except<SpecificType, "type">>`, closed with a mapped `as const satisfies` so each entry keeps its specific subtype:
 
   ```typescript
   export const ColumnTypeCreateMap = {
-    [ColumnType.String]: {
-      create: (init?: Except<Partial<Column<ColumnType.String>>, "type">) =>
-        new Column({ ...init, type: ColumnType.String }),
-    },
-    [ColumnType.Date]: { create: (init?: Except<Partial<DateColumn>, "type">) => new DateColumn({ ...init }) },
+    [ColumnType.Date]: { create: (init?: Partial<Except<DateColumn, "type">>) => new DateColumn({ ...init }) },
     // ...
-  } as const satisfies Record<
-    ColumnType,
-    { create: (init?: Except<Partial<Column>, "type">) => DataSource["columns"][number] }
-  >;
+  } as const satisfies {
+    [K in ColumnType]: { create: (init?: Partial<Except<Extract<Column, { type: K }>, "type">>) => Column };
+  };
   ```
+
+  Dialogs `structuredClone` the created instance — vjsf rejects class instances, and fast-deep-equal compares constructors.
 
 - **Snapshot tests for vjsf schemas** — for schemas passed to `zodToJsonSchema()` and rendered by Vjsf, add a `toMatchInlineSnapshot()` test co-located next to the schema file (same folder/base name). Fill via `pnpm vitest run --update`:
 

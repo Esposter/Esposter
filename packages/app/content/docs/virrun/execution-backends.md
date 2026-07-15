@@ -70,7 +70,7 @@ Paths relative to `packages/virrun/src/`.
 | `models/vfs/FsProvider.ts`                     | internal FS interface the runtime codes against                              |
 | `services/vfs/createPlatformaticFsProvider.ts` | adapter over `@platformatic/vfs`; the lone import = the `node:vfs` swap shim |
 | `services/exec/os/createOsBackend.ts`          | chooses Linux bwrap or Windows/WSL bwrap                                     |
-| `services/exec/createLinuxOsBackend.ts`        | spawns commands inside the Linux bwrap RAM overlay                           |
+| `services/exec/bwrap/createLinuxOsBackend.ts`  | spawns commands inside the Linux bwrap RAM overlay                           |
 | `services/exec/wsl/createWslOsBackend.ts`      | spawns Linux bwrap through `wsl.exe` on Windows                              |
 | `services/exec/bwrap/buildBwrapArgs.ts`        | pure builder for the bwrap overlay argv                                      |
 | `services/exec/os/isOsBackendSupported.ts`     | Linux/WSL + bubblewrap availability check                                    |
