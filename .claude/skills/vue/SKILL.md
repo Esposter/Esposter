@@ -70,16 +70,37 @@ Ceremony, in every form — not only callbacks passed as arguments:
   });
   ```
 
+- **Template handlers** — a handler bound to exactly one element is ceremony, whatever its length. Inline it into the binding (`@submit="async (_, onComplete) => { ... }"`), which also lets Vue infer the event arg types. Multi-statement and `async` bodies are fine inline; the handler's trigger is the element it sits on, so that is where it belongs:
+
+  ```vue
+  <!-- WRONG — copyPublicLink is bound once -->
+  <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
+
+  <!-- CORRECT -->
+  <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="async () => { ... }" />
+  ```
+
+  The one exception is **scope**: a template expression can only reach bindings `<script setup>` exposes to it. Top-level `const`s and imports are exposed, so `getResultAsync`/`noop`/a store method all inline fine. Things the template cannot name — `window` and other browser globals, a local `let`, a type annotation the body needs — force the handler to stay in script:
+
+  ```ts
+  // Stays named: the template cannot reference window
+  const copyPublicLink = async () => {
+    if (!publicUrl.value) return;
+    await getResultAsync(() =>
+      window.navigator.clipboard.writeText(`${window.location.origin}${publicUrl.value}`),
+    ).match(noop, noop);
+  };
+  ```
+
 - **Trivially-typed lambdas** — never extract one whose arg types are already inferable.
 
 Legitimate reasons to keep a name:
 
 - It names a **result**, not a trigger (see above) — single use is fine.
-- The same **reference** is needed twice (`addEventListener` + `removeEventListener`).
+- The handler references something the **template has no scope for** (`window.…`, a type annotation) — see above.
+- The same **reference** is needed twice (`addEventListener` + `removeEventListener`), or one handler is bound to two elements.
 - It is the component's **public API** via `defineExpose({ onKeyDown })` — the expose _is_ the second reference.
 - A mutation must re-run a setup read: `refreshResponses` awaited at setup **and** bound to `@delete`.
-
-**Template handlers are a judgement call, not a rule.** A single-use `@click="copyPublicLink"` whose body is several statements stays named — hoisting a multi-statement async body into an attribute is worse than the jump it saves. Inline into the template only when the body is a short expression or the arg types need Vue's inference (`@submit="async (_, onComplete) => { ... }"`).
 
 - **Prefer `useEventListener` over manual `addEventListener`/`removeEventListener`** — it auto-removes on unmount, so it replaces an `onMounted` (add) + `onUnmounted` (remove) pair and lets the handler be inlined. Omit the target for `window` events (`useEventListener("resize", ...)`) — the omitted-target form is SSR-safe (don't reference `window` at setup top-level). Fall back to manual `onMounted`/`onUnmounted` only when the target isn't reachable SSR-safely as a getter and the listener is genuinely tied to mount.
 - **`@click` shorthand**: a single async call uses `@click="myAsyncFn(args)"` directly — no `async () => { await ... }` wrapper.
