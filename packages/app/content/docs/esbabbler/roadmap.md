@@ -18,4 +18,3 @@ Prioritized top-down. Every item links a full proposal; the specs are the plan, 
 
 - [ ] [Store subscription audit](/docs/proposals/esbabbler/store-subscription-audit) — one owner per state transition + idempotence tests
 - [ ] [Search index tooling](/docs/proposals/esbabbler/search-index-tooling) — index schema docs + status/rebuild scripts
-- [ ] Voice & Video two-party verification — the live-call audio path (mic gain, gating, noise modes) still needs real two-party call verification ([/docs/esbabbler/voice-video](/docs/esbabbler/voice-video))

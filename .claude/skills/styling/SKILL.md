@@ -275,7 +275,7 @@ Always use UnoCSS abbreviated shorthand forms — they are first-class utilities
 ```vue
 <div
   :class="isError ? ['b-error'] : ['b-border', 'focus-within:b-info']"
-  b="[1.5px]"
+  b="[0.09375rem]"
   px-2
   py-1
   rd

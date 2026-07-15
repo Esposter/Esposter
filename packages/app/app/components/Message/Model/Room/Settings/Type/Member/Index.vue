@@ -13,9 +13,7 @@ const roleStore = useRoleStore();
 const { selectedMemberId } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
-const selectedMember = computed(() =>
-  selectedMemberId.value ? (members.value.find(({ id }) => id === selectedMemberId.value) ?? null) : null,
-);
+const selectedMember = computed(() => members.value.find(({ id }) => id === selectedMemberId.value));
 </script>
 
 <template>

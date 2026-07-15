@@ -1,6 +1,6 @@
 ---
 name: claude-permissions
-description: Esposter Claude Code permission-rule conventions for the allow-only .claude/settings.local.json — Bash/PowerShell wildcard semantics (only the trailing space-* form works; :* and no-space * do NOT match here, so colon sub-scripts need their own explicit rule), mirroring rules across both shells, and sorting. Generic harness semantics live in the update-config skill. Apply when editing settings.local.json or debugging why a command still prompts.
+description: Esposter Claude Code permission-rule conventions for the allow-only .claude/settings.local.json — the shipped file is the standard (every rule is the trailing space-star form, colon sub-scripts get their own rule), mirroring rules across Bash and PowerShell, and sorting. Generic harness semantics live in the update-config skill. Apply when editing settings.local.json or debugging why a command still prompts.
 ---
 
 # Claude Code Permission Rules (`.claude/settings.local.json`)
@@ -11,15 +11,9 @@ The repo's `settings.local.json` is **allow-only**: it has no `deny` or `ask` li
 
 ## The one non-obvious rule: use `command *`, and give colon sub-scripts their own rule
 
-**Only the trailing `space + *` form works in this harness.** `:*` and the no-space `*` form do **not** match — verified empirically (`pnpm format*` and `pnpm format:*` both kept prompting; `pnpm format *` is what finally allowed it).
+**The shipped `settings.local.json` is the standard — copy its shape.** Every rule in it is the trailing `space + *` form (`Bash(pnpm lint *)`, `Bash(az resource show *)`), and that file is known to work. Match it rather than reaching for `:*` or a no-space `*`; those forms are not used anywhere in this repo and are not known to work here.
 
-| Pattern             | Matches                        | Does NOT match                 |
-| ------------------- | ------------------------------ | ------------------------------ |
-| `Bash(pnpm lint *)` | `pnpm lint`, `pnpm lint --fix` | `pnpm lint:fix`, `pnpm linter` |
-| `Bash(pnpm lint:*)` | — (never matches)              | everything                     |
-| `Bash(pnpm lint*)`  | — (never matches)              | everything                     |
-
-The consequence: `pnpm lint *` does not cover `pnpm lint:fix` — the `:` breaks the word boundary, so each colon sub-script you actually invoke needs its own rule (`pnpm lint:fix *`, `pnpm outdated:dependencies *`). This is also the first thing to check when a command still prompts.
+`pnpm lint *` covers `pnpm lint` and `pnpm lint --fix`, but **not** `pnpm lint:fix` — hence the file's separate `pnpm lint:fix *`, `pnpm lint:fix:packages *`, and `pnpm outdated:dependencies *` entries. Each colon sub-script you actually invoke needs its own rule. That is the first thing to check when a command still prompts.
 
 ## Project conventions for `settings.local.json`
 

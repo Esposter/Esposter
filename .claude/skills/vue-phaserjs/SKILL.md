@@ -57,7 +57,7 @@ Multi-line setters already use braces naturally — no change needed.
 
 This package itself has zero `markRaw` usages — the rule bites in the consuming app (`packages/app/app/`: `store/`, `components/Dungeons/`, `composables/dungeons/`). Look there for real examples.
 
-Pinia devtools traverse store state via Vue's `traverse`. Phaser 3.85+ `Frame.get glTexture()` returns `null` before WebGL upload — crash in dev when traversed. `markRaw(obj)` sets `__v_skip = true` to skip traversal.
+Pinia devtools traverse store state via Vue's `traverse`. `TextureSource.glTexture` starts `null` and is only assigned on WebGL upload, and `Frame#glTexture` is a getter proxying straight to it — so traversing a Phaser object before its texture uploads reads `null` and crashes in dev. `markRaw(obj)` sets `__v_skip = true` to skip traversal.
 
 ```ts
 sprite.value = markRaw(newSprite); // traverse-safe
