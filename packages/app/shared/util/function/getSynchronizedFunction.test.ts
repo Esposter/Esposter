@@ -17,6 +17,8 @@ describe(getSynchronizedFunction, () => {
 
     const fn = vi.fn<() => Promise<string>>().mockResolvedValue("");
 
-    expect(getSynchronizedFunction(fn)()).toBeUndefined();
+    const result = getSynchronizedFunction(fn)();
+
+    expect(result).toBeUndefined();
   });
 });
