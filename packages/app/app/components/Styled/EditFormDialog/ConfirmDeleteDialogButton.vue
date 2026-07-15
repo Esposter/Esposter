@@ -21,8 +21,8 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton icon="mdi-delete" text="Delete" @click="updateIsOpen(true)" />
     </template>
-    <div pb-2 flex flex-wrap gap-1 items-center>
-      <v-code>{{ name }}</v-code>
+    <div flex gap-2 items-center pb-4>
+      <v-code flex-1>{{ name }}</v-code>
       <StyledClipboardIconButton :source="name" />
     </div>
     To confirm the delete action please enter the name of the
