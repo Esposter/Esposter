@@ -50,7 +50,7 @@ Public viewers never call this: published resources bake resolved datasets in at
 flowchart LR
   DASH["Dashboard binding form"] -->|DatasetReference| RD["dataset.readDataset"]
   EMAIL["Email merge fields"] -->|DatasetReference| RD
-  IMPORT["File import (one-time row copy)"] -->|DatasetReference| RD
+  IMPORT["Sheet import (one-time row copy)"] -->|DatasetReference| RD
   RD --> MAP["DatasetProviderMap[type]"]
   MAP --> SR["readSurveyResponsesDataset"] --> AT[("SurveyResponseEntity<br/>Azure Table")]
   MAP --> FR["readSheetDataset"] --> BLOB[("Sheet content blob")]

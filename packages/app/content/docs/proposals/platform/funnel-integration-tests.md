@@ -31,7 +31,7 @@ flowchart LR
 
 ## Test home
 
-Per-proposal cases live in the routers' existing co-located test files (`server/trpc/routers/survey.test.ts`, new `program.test.ts`, `dataset.test.ts`). The cross-router scenario spec is a new category — it exercises seven routers in one flow (`file`, `survey`, `email`, `program`, `dashboard`, `dataset`, `resource`) — and lives at `server/trpc/routers/surveyFunnel.integration.test.ts`, node environment, same `createMockContext` lifecycle, with one caller per router bound to the same context. Integration specs use scenario-named `describe` strings (there is no single function to reference — a deliberate, documented deviation from the function-ref describe convention).
+Per-proposal cases live in the routers' existing co-located test files (`server/trpc/routers/survey.test.ts`, new `program.test.ts`, `dataset.test.ts`). The cross-router scenario spec is a new category — it exercises seven routers in one flow (`sheet`, `survey`, `email`, `program`, `dashboard`, `dataset`, `resource`) — and lives at `server/trpc/routers/surveyFunnel.integration.test.ts`, node environment, same `createMockContext` lifecycle, with one caller per router bound to the same context. Integration specs use scenario-named `describe` strings (there is no single function to reference — a deliberate, documented deviation from the function-ref describe convention).
 
 ## Acceptance cases per proposal
 

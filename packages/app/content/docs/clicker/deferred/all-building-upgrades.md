@@ -22,4 +22,4 @@ The 85 upgrade icons exist. The content maps are mechanical to rewrite once they
 ## Notes
 
 - `ClickerCompletionist` ("buy every upgrade") reads `Object.keys(UpgradeMap)` dynamically, so it needs no change when the lines land — it simply gets harder.
-- The effect engine's `BuildingAdditive`/`BuildingAdditiveNor` types already support cross-building synergy upgrades (Cursor's "Thousand fingers" line demonstrates it), so those can follow the same way.
+- The effect engine's `BuildingAdditive`/`BuildingAdditiveNor` types already support cross-building synergy upgrades (Cursor's "Thousand Fingers" line demonstrates it), so those can follow the same way.
