@@ -20,12 +20,12 @@ describe(getTopRole, () => {
     const role = createRoomRole({ position: 0 });
 
     expect(getTopRole([everyoneRole, role])).toStrictEqual(role);
-    expect(getTopRole([everyoneRole])).toBeNull();
+    expect(getTopRole([everyoneRole])).toBeUndefined();
   });
 
-  test("returns null for no roles", () => {
+  test("returns undefined for no roles", () => {
     expect.hasAssertions();
 
-    expect(getTopRole([])).toBeNull();
+    expect(getTopRole([])).toBeUndefined();
   });
 });

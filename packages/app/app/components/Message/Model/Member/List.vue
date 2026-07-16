@@ -27,8 +27,9 @@ const memberGroups = computed(() => {
     </template>
     <template v-else-if="currentRoom">
       <template v-for="{ members: groupMembers, role } of memberGroups" :key="role?.id ?? ''">
+        <!-- Counts are only trustworthy once every page is loaded — a partial count reads as the room total -->
         <v-list-subheader font-bold uppercase text-body-small>
-          {{ role?.name ?? "Members" }} — {{ groupMembers.length }}
+          {{ role?.name ?? "Members" }}{{ hasMore ? "" : ` — ${groupMembers.length}` }}
         </v-list-subheader>
         <MessageModelMemberListItem v-for="member of groupMembers" :key="member.id" :member :room="currentRoom" />
       </template>

@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
-import { ROOM_CATEGORY_DRAG_HANDLE_CLASS, ROOM_CATEGORY_GHOST_CLASS } from "@/services/message/roomCategory/constants";
+import {
+  ROOM_CATEGORY_DRAG_HANDLE_CLASS,
+  ROOM_CATEGORY_TOUCH_DRAG_DELAY_MS,
+} from "@/services/message/roomCategory/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
-const isCollapsed = useLocalStorage("message-sidebar-rooms-collapsed", false);
+const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarRoomsCollapsed, false);
 const { readRoomCategories } = useReadRoomCategories();
 const roomCategoryStore = useRoomCategoryStore();
 const { categories } = storeToRefs(roomCategoryStore);
@@ -66,7 +70,9 @@ const moveCategory = async (category: RoomCategoryInMessage, direction: -1 | 1) 
     />
     <MessageModelRoomCategoryRoomGroup :rooms="uncategorizedRooms" />
     <VueDraggable
-      :ghost-class="ROOM_CATEGORY_GHOST_CLASS"
+      :delay="ROOM_CATEGORY_TOUCH_DRAG_DELAY_MS"
+      delay-on-touch-only
+      ghost-class="room-category-ghost"
       :handle="`.${ROOM_CATEGORY_DRAG_HANDLE_CLASS}`"
       :model-value="sortedCategories"
       @update:model-value="reorderRoomCategories"

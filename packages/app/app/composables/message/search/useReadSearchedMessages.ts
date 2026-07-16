@@ -4,7 +4,7 @@ import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
+import { useMessageLayoutStore } from "@/store/message/ui/layout";
 import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 

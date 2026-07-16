@@ -2,6 +2,7 @@
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { ROOM_CATEGORY_DRAG_HANDLE_CLASS } from "@/services/message/roomCategory/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 
 interface RoomCategoryRoomGroupProps {
   category?: RoomCategoryInMessage;
@@ -10,7 +11,7 @@ interface RoomCategoryRoomGroupProps {
 
 const { category, rooms } = defineProps<RoomCategoryRoomGroupProps>();
 const emit = defineEmits<{ move: [direction: -1 | 1] }>();
-const isCollapsed = useLocalStorage(`message-category-${category?.id ?? "uncategorized"}-collapsed`, false);
+const isCollapsed = useLocalStorage(LocalStorageKey.MessageCategoryCollapsed(category?.id ?? "uncategorized"), false);
 </script>
 
 <template>

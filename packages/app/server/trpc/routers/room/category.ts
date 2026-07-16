@@ -9,17 +9,26 @@ import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { Operation, takeOne } from "@esposter/shared";
+import { eq, max } from "drizzle-orm";
 
 export const categoryRouter = router({
   createRoomCategory: standardAuthedProcedure
     .input(createRoomCategoryInputSchema)
     .mutation<RoomCategoryInMessage>(async ({ ctx, input }) => {
+      // Append below the user's existing drag-assigned order — the column default 0 would tie with
+      // Whatever category the user dragged to the top and jump the new category above it
+      const { maxPosition } = takeOne(
+        await ctx.db
+          .select({ maxPosition: max(roomCategoriesInMessage.position) })
+          .from(roomCategoriesInMessage)
+          .where(eq(roomCategoriesInMessage.userId, ctx.getSessionPayload.user.id)),
+      );
       const createdRoomCategory = requireMutation(
         (
           await ctx.db
             .insert(roomCategoriesInMessage)
-            .values({ ...input, userId: ctx.getSessionPayload.user.id })
+            .values({ ...input, position: (maxPosition ?? -1) + 1, userId: ctx.getSessionPayload.user.id })
             .returning()
         )[0],
         Operation.Create,

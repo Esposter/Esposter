@@ -4,8 +4,6 @@ import type { Resource } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useDownload } from "@@/server/composables/azure/container/useDownload";
-import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -15,7 +13,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { RestError } from "@azure/storage-blob";
-import { deleteDirectory } from "@esposter/db";
+import { copyBlob, deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -25,15 +23,7 @@ import {
   resourceTypeSchema,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import {
-  createUniqueArraySchema,
-  getResultAsync,
-  MAX_READ_LIMIT,
-  noop,
-  Operation,
-  streamToText,
-  takeOne,
-} from "@esposter/shared";
+import { createUniqueArraySchema, getResultAsync, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { and, count, desc, eq, exists, gte, ilike, inArray, lte, notExists } from "drizzle-orm";
 import { z } from "zod";
 
@@ -122,18 +112,6 @@ export const resourceRouter = router({
     }),
   duplicateResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
     const { name, type, userId } = ctx.resource;
-    // A copy starts as Draft, so only the draft content blob is copied — never the publication.
-    // The blob is written on first save, so a missing blob just means there is no content to copy yet.
-    // Read before inserting so a failed download never strands a half-created copy.
-    const content = await getResultAsync(() =>
-      useDownload(AzureContainer.ResourceAssets, getContentBlobName(ctx.resource.id)),
-    ).match(
-      ({ readableStreamBody }) => (readableStreamBody ? streamToText(readableStreamBody) : undefined),
-      (error) => {
-        if (error instanceof RestError && error.statusCode === 404) return undefined;
-        throw error;
-      },
-    );
     const newResource = requireMutation(
       (
         await ctx.db
@@ -149,14 +127,22 @@ export const resourceRouter = router({
       DatabaseEntityType.Resource,
       ctx.resource.id,
     );
-    if (content !== undefined)
-      await getResultAsync(() =>
-        useUpload(AzureContainer.ResourceAssets, getContentBlobName(newResource.id), content),
-      ).match(noop, async (error) => {
-        // Never leave a content-less orphan copy behind when the blob write fails
-        await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
-        throw error;
-      });
+    // A copy starts as Draft, so only the draft content blob is copied — never the publication.
+    // Copying server-side within the same container avoids round-tripping the content through this process.
+    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    await getResultAsync(() =>
+      copyBlob(
+        containerClient,
+        `${containerClient.url}/${getContentBlobName(ctx.resource.id)}`,
+        getContentBlobName(newResource.id),
+      ),
+    ).match(noop, async (error) => {
+      // The blob is written on first save, so a missing source just means there is no content to copy yet
+      if (error instanceof RestError && error.statusCode === 404) return;
+      // Never leave a content-less orphan copy behind when the blob copy fails
+      await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
+      throw error;
+    });
     return newResource;
   }),
   readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query(({ ctx }) => ctx.resource),

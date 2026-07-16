@@ -14,6 +14,8 @@ const startWidth = ref(0);
 const clampWidth = (value: number) => Math.min(Math.max(value, min), max);
 const onPointerDown = (event: PointerEvent) => {
   if (!(event.currentTarget instanceof HTMLElement)) return;
+  // Mouse drags otherwise also start a native text selection sweeping across the sidebar content
+  event.preventDefault();
   event.currentTarget.setPointerCapture(event.pointerId);
   isDragging.value = true;
   startX.value = event.clientX;

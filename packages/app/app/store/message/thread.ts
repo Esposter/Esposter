@@ -2,7 +2,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
+import { useMessageLayoutStore } from "@/store/message/ui/layout";
 
 export const useThreadStore = defineStore("message/thread", () => {
   const { $trpc } = useNuxtApp();
