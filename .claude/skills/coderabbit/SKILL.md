@@ -9,6 +9,8 @@ description: Esposter CodeRabbit review conventions — retrieving review feedba
 
 `.coderabbit.yaml` sits at the repo root. CodeRabbit reads it from the **base branch** of a PR, not the head branch. **PRs target `develop`, so `develop` is the branch that matters** — an exclusion only takes effect once it is on the branch the PR is based against.
 
+CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**: develop-base PRs are skipped with "Auto reviews are disabled on base/target branches other than the default branch" unless `reviews.auto_review.base_branches` lists `develop` (regex list, additive to the default branch). Until that setting lands, trigger a review on a develop-base PR manually by commenting `@coderabbitai review` on it.
+
 Commit exclusions **directly to the base branch (`develop`)** as a standalone commit, separate from the work they cover. An exclusion committed on the feature branch does nothing.
 
 The two branches diverge and that is expected: `develop` carries the live temporary exclusion block, `main` carries only the permanent entries (it picks up the block on release merges and loses it when the block is removed). Always check the branch you are actually on:
@@ -79,7 +81,7 @@ Verify before accepting. CodeRabbit reasons from names and prior "learnings" and
 
 ## PR File Budget
 
-CodeRabbit's free tier has a hard cap of ~150 files per PR. Keep every chunk of work to **~100 changed files measured from the branch point** — work is committed and pushed continuously, so dirty-file counts see nothing:
+CodeRabbit caps this repo at **50 files per review** — the Open Source tier's file limit is popularity-scaled and a low-star repo sits at the floor, so don't expect it to lift. If the limit needs re-checking, the bot's skip comment on an over-budget PR states the current number. Keep every chunk of work to **~40 changed files measured from the branch point** — work is committed and pushed continuously, so dirty-file counts see nothing:
 
 ```bash
 git diff --name-only "$(git merge-base <base-branch> HEAD)" | wc -l   # committed changes since branching (base is what this branch was cut from, e.g. develop)
@@ -88,7 +90,7 @@ git status --porcelain -uall | wc -l                                  # plus any
 
 Run both and sum before starting a sweep. When the budget is reached, stop and hand back for a PR.
 
-The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~100 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
+The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~40 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
 
 ## When to Exclude
 
