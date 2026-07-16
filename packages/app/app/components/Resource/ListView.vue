@@ -81,7 +81,13 @@ const {
   error: typeCountsError,
   isLoading: isLoadingTypeCounts,
   refresh: refreshTypeCounts,
-} = useReadResourceTypeCounts({ searchQuery: search, status, updatedAfter, updatedBefore, updatedFilter });
+} = useReadResourceTypeCounts(() => ({
+  searchQuery: search.value,
+  status: status.value,
+  updatedAfter: updatedAfter.value,
+  updatedBefore: updatedBefore.value,
+  updatedFilter: updatedFilter.value,
+}));
 // The cards are only mounted in summary mode, so the read follows the mode rather than every filter change
 watch([isSummaryView, filterKey], async ([newIsSummaryView]) => {
   if (newIsSummaryView) await refreshTypeCounts();

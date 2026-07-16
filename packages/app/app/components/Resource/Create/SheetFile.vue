@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 
 import { DataSourceTypes } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "@/services/resource/constants";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { getDataSourceTypeByFileName } from "@/services/resource/sheet/dataSource/getDataSourceTypeByFileName";
@@ -16,25 +14,17 @@ const sheetResource = defineModel<SheetResource>();
 const error = defineModel<string>("error", { default: "" });
 // The filename is the best name the user never has to type, so the form takes it as its own
 const emit = defineEmits<{ parse: [name: string] }>();
-const accept = DataSourceTypes.map((type) => DataSourceConfigurationMap[type].accept).join(",");
+const accepts = DataSourceTypes.map((type) => DataSourceConfigurationMap[type].accept);
+const accept = accepts.join(",");
 const dropZone = useTemplateRef("dropZone");
 const file = ref<File>();
 const isParsing = ref(false);
-const previewHeaders = computed(
-  () =>
-    sheetResource.value?.data.columns.map(({ name }) => ({
-      key: name,
-      title: name,
-      value: (row: Row) => takeOne(row.data, name),
-    })) ?? [],
-);
-const previewRows = computed(() => sheetResource.value?.data.rows.slice(0, SHEET_IMPORT_PREVIEW_ROW_COUNT) ?? []);
 const parseFile = async (newFile: File) => {
   file.value = newFile;
   sheetResource.value = undefined;
   const type = getDataSourceTypeByFileName(newFile.name);
   if (!type) {
-    error.value = `${newFile.name} is not a ${accept} file`;
+    error.value = `${newFile.name} is not a ${accepts.join(" or ")} file`;
     return;
   }
 
@@ -89,11 +79,6 @@ const onUpdateFile = async (newFile?: File | File[]) => {
       prepend-inner-icon="mdi-paperclip"
       @update:model-value="onUpdateFile"
     />
-    <template v-if="sheetResource">
-      <span text-caption op-medium-emphasis>
-        Preview — first {{ previewRows.length }} of {{ sheetResource.data.rows.length }} rows
-      </span>
-      <v-data-table density="compact" hide-default-footer :headers="previewHeaders" :items="previewRows" />
-    </template>
+    <ResourceSheetPreviewTable v-if="sheetResource" :data-source="sheetResource.data" />
   </div>
 </template>

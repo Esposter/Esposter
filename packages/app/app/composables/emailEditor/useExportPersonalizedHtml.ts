@@ -1,6 +1,7 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
 import { pluralize } from "#shared/util/text/pluralize";
+import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
 import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -16,7 +17,7 @@ export const useExportPersonalizedHtml = () => {
     const editorValue = editor.value;
     const resourceValue = resource.value;
     if (!editorValue || !resourceValue) {
-      createAlert("Open the email editor before exporting personalized HTML", "warning");
+      createAlert(OPEN_EMAIL_EDITOR_MESSAGE, "warning");
       return;
     }
 

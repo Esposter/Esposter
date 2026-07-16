@@ -3,6 +3,7 @@ import type { PortableFormat } from "@/models/resource/PortableFormat";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
+import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { useAlertStore } from "@/store/alert";
@@ -57,7 +58,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const exportPersonalizedHtml = useExportPersonalizedHtml();
         const referenceValue = datasetReference.value;
         if (!editor.value || !resource.value) {
-          createAlert("Open the email editor before exporting personalized HTML", "warning");
+          createAlert(OPEN_EMAIL_EDITOR_MESSAGE, "warning");
           return;
         }
         if (!referenceValue) {

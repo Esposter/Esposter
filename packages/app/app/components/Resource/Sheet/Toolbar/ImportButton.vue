@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "@/services/resource/constants";
 import { useSheetStore } from "@/store/resource/sheet";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
-import { takeOne } from "@esposter/shared";
 
 const sheetStore = useSheetStore();
 const { settings } = storeToRefs(sheetStore);
@@ -20,15 +17,6 @@ const isPreviewOpen = computed({
     if (!newIsPreviewOpen) previewDataSource.value = null;
   },
 });
-const previewHeaders = computed(
-  () =>
-    previewDataSource.value?.columns.map((column) => ({
-      key: column.name,
-      title: column.name,
-      value: (row: Row) => takeOne(row.data, column.name),
-    })) ?? [],
-);
-const previewRows = computed(() => previewDataSource.value?.rows.slice(0, SHEET_IMPORT_PREVIEW_ROW_COUNT) ?? []);
 </script>
 
 <template>
@@ -54,6 +42,6 @@ const previewRows = computed(() => previewDataSource.value?.rows.slice(0, SHEET_
       }
     "
   >
-    <v-data-table density="compact" hide-default-footer :headers="previewHeaders" :items="previewRows" />
+    <ResourceSheetPreviewTable v-if="previewDataSource" :data-source="previewDataSource" />
   </StyledDialog>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DATASET_ROW_CAP_DESCRIPTION } from "#shared/services/dataset/constants";
+import { formatTruncationCount } from "#shared/services/dataset/formatTruncationCount";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { pluralize } from "#shared/util/text/pluralize";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
@@ -33,10 +34,11 @@ const isOpen = computed({
   >
     <div flex flex-col gap-2>
       <span>
-        This email is bound to {{ truncation.totalRows }} {{ pluralize("row", truncation.totalRows) }} but only
-        {{ truncation.shownRows }} loaded, so
+        This email is bound to {{ formatTruncationCount(truncation.totalRows, truncation.isCountCapped) }}
+        {{ pluralize("row", truncation.totalRows) }} but only {{ truncation.shownRows }} loaded, so
         <strong>
-          {{ truncation.hiddenRows }} {{ pluralize("row", truncation.hiddenRows) }} will not get an email
+          {{ formatTruncationCount(truncation.hiddenRows, truncation.isCountCapped) }}
+          {{ pluralize("row", truncation.hiddenRows) }} will not get an email
         </strong>
         .
       </span>

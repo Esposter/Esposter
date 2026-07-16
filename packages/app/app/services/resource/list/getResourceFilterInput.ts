@@ -1,17 +1,8 @@
-import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
-import type { ResourceType } from "@esposter/db-schema";
+import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
 
 import { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
 import { getResourceUpdatedRange } from "@/services/resource/list/getResourceUpdatedRange";
 
-interface ResourceFilterValues {
-  searchQuery: string;
-  status: "" | ResourceStatusFilter;
-  types: ResourceType[];
-  updatedAfter?: Date;
-  updatedBefore?: Date;
-  updatedFilter: "" | ResourceUpdatedFilter;
-}
 // Maps the client filter refs' sentinel values onto the procedure's optional filter input
 export const getResourceFilterInput = ({
   searchQuery,
