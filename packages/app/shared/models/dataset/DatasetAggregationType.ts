@@ -9,3 +9,5 @@ export enum DatasetAggregationType {
 }
 
 export const datasetAggregationTypeSchema = z.enum(DatasetAggregationType) satisfies z.ZodType<DatasetAggregationType>;
+
+export const DatasetAggregationTypes = Object.values(DatasetAggregationType);

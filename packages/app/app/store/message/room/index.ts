@@ -58,6 +58,7 @@ export const useRoomStore = defineStore("message/room", () => {
   const deleteRoom = async (input: DeleteRoomInput) => {
     const executeDeleteRoomMutation = useMutation();
     const snapshot = [...items.value];
+    let isSuccessful = false;
     await executeDeleteRoomMutation(() => $trpc.room.deleteRoom.mutate(input), {
       applyOptimistic: () => {
         baseStoreDeleteRoom({ id: input });
@@ -66,6 +67,7 @@ export const useRoomStore = defineStore("message/room", () => {
         };
       },
       onSuccess: async () => {
+        isSuccessful = true;
         if (currentRoomId.value !== input) return;
         await navigateTo(
           rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
@@ -75,6 +77,7 @@ export const useRoomStore = defineStore("message/room", () => {
         );
       },
     });
+    return isSuccessful;
   };
   const joinRoom = async (input: JoinRoomInput) => {
     await executeJoinRoomMutation(() => $trpc.room.joinRoom.mutate(input), {
@@ -86,6 +89,7 @@ export const useRoomStore = defineStore("message/room", () => {
   };
   const leaveRoom = async (input: LeaveRoomInput) => {
     const snapshot = [...items.value];
+    let isSuccessful = false;
     await executeLeaveRoomMutation(() => $trpc.room.leaveRoom.mutate(input), {
       applyOptimistic: () => {
         baseStoreDeleteRoom({ id: input });
@@ -94,6 +98,7 @@ export const useRoomStore = defineStore("message/room", () => {
         };
       },
       onSuccess: async () => {
+        isSuccessful = true;
         if (currentRoomId.value !== input) return;
         await navigateTo(
           rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
@@ -103,6 +108,7 @@ export const useRoomStore = defineStore("message/room", () => {
         );
       },
     });
+    return isSuccessful;
   };
   MessageHookMap[Operation.Create].push(({ message, partitionKey, type }) => {
     if (type !== MessageType.EditRoom) return;

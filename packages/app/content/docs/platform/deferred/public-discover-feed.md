@@ -13,7 +13,7 @@ Publishing currently means "reachable by URL", not "listed" — flipping that is
 
 ## Revisit when
 
-Published links are actually being shared ([share to esbabbler](/docs/proposals/platform/share-to-esbabbler) shipping is the measurable start) and there is enough public content that discovery beats direct links. Listing must be opt-in per publication from day one.
+Published links are actually being shared ([share to esbabbler](/docs/platform/share-to-esbabbler) is the measurable start) and there is enough public content that discovery beats direct links. Listing must be opt-in per publication from day one.
 
 ## Cheaper interim
 

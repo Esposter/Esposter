@@ -12,7 +12,11 @@ export const getResourceUpdatedRange = (
     case "":
       return {};
     case ResourceUpdatedFilter.Custom:
-      return { ...(updatedAfter ? { updatedAfter } : {}), ...(updatedBefore ? { updatedBefore } : {}) };
+      return {
+        ...(updatedAfter ? { updatedAfter } : {}),
+        // Extend to end-of-day so the selected "To" date is inclusive against the server's lte filter
+        ...(updatedBefore ? { updatedBefore: dayjs(updatedBefore).endOf("day").toDate() } : {}),
+      };
     case ResourceUpdatedFilter.Last7Days:
       return { updatedAfter: dayjs().subtract(7, "days").toDate() };
     case ResourceUpdatedFilter.Last24Hours:

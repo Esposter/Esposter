@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { hasCapability } from "#shared/services/resource/hasCapability";
 import { RoutePath } from "@esposter/shared";
 
 interface ResourceBladeActionsProps {
@@ -20,11 +20,12 @@ const { duplicate, isLoading, publication, publish, refresh, remove, rename, res
   defineProps<ResourceBladeActionsProps>();
 // When narrow, every command collapses into the … overflow menu — the close ✕ never collapses
 const { smAndDown } = useVDisplay();
-const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
-const isPortable = computed(() => "portable" in ResourceDefinitionMap[resource.type].capabilities);
+const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
+const isPortable = computed(() => hasCapability(resource.type, "portable"));
 // The dialogs mount only while open so their fields start from the current resource every time
 const isRenameOpen = ref(false);
 const isDeleteOpen = ref(false);
+const isShareOpen = ref(false);
 </script>
 
 <template>
@@ -37,6 +38,10 @@ const isDeleteOpen = ref(false);
     <template v-if="isPublishable">
       <v-divider vertical mx-1 />
       <ResourcePublishToggle :publication :publish :unpublish />
+      <!-- An unpublished resource has no public URL, so there is nothing to share until it has one -->
+      <v-btn v-if="publication" prepend-icon="mdi-share-variant" variant="text" @click="isShareOpen = true">
+        Share
+      </v-btn>
     </template>
     <template v-if="isPortable">
       <v-divider vertical mx-1 />
@@ -53,8 +58,10 @@ const isDeleteOpen = ref(false);
     :unpublish
     @delete="isDeleteOpen = true"
     @rename="isRenameOpen = true"
+    @share="isShareOpen = true"
   />
   <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
   <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename :resource />
   <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove :resource />
+  <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />
 </template>

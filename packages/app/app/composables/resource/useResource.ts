@@ -1,8 +1,10 @@
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { getSequentialFunction } from "#shared/util/function/getSequentialFunction";
+import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useNotificationStore } from "@/store/notification";
-import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 // Blade-scoped state for one resource (metadata + content + publication)
 export const useResource = (id: MaybeRefOrGetter<string>) => {
@@ -14,10 +16,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   const executePublishMutation = useMutation();
   const executeUnpublishMutation = useMutation();
   const notificationStore = useNotificationStore();
-  const { createNotification } = notificationStore;
-  const createErrorNotification = (error: Error) => {
-    createNotification({ severity: "error", title: error.message });
-  };
+  const { createErrorNotification, createNotification } = notificationStore;
   const getResourceMutations = useResourceMutations();
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
@@ -42,8 +41,9 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     if (!current) return Promise.resolve(undefined);
     return getResourceMutations(current.type).readResourceContent({ id: current.id });
   };
-  // Optimistic concurrency: writes the returned row back so the next save carries the bumped contentVersion
-  const save = async (content: unknown) => {
+  // Serialized so each save picks up the contentVersion the previous one wrote back.
+  // The server's optimistic-concurrency rejection then only fires for genuine cross-session edits, not our own overlapping saves.
+  const save = getSequentialFunction(async (content: unknown) => {
     const current = resource.value;
     if (!current) return false;
     let isSuccessful = false;
@@ -77,7 +77,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
       },
     );
     return isSuccessful;
-  };
+  });
   const rename = async (name: string) => {
     const current = resource.value;
     if (!current) return;
@@ -133,12 +133,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
         publication.value = newPublication;
         createNotification({
           action: {
-            handler: () =>
-              getResultAsync(() =>
-                window.navigator.clipboard.writeText(
-                  `${window.location.origin}${RoutePath.View(current.type, current.id)}`,
-                ),
-              ).match(noop, noop),
+            handler: () => copyLinkToClipboard(RoutePath.View(current.type, current.id)),
             title: "Copy public link",
           },
           severity: "success",

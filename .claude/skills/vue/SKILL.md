@@ -173,6 +173,7 @@ The only acceptable client-side validation is Vuetify form field rules (inline e
 - **Never use `.value` in templates** — Vue auto-unwraps refs. `ref.value` in a template reads `.value` on the unwrapped object (usually `undefined`). Write `fn(ref)`. `.value` is only for `<script setup>` outside template expressions.
 - **No allocating expressions in render positions** — `Object.*` calls in a `:prop` bind, `v-for` source, or `{{ }}` allocate a fresh reference every render. Enforced by `vue/no-restricted-syntax` (`packages/configuration/eslint/overrides/vueRules.js`); its message states the fix (hoist to a script-setup `const` for static sources, a `computed` for reactive ones) and exempts event handlers.
 - Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
+- **`import type` names ARE visible in template casts** — a type-only imported name works in a template `as` cast (`$event as NoiseSuppressionMode`); never widen it to a value import for the cast's sake. Only a template _value_ usage — enum member access (`FooType.Bar`), a `v-for` source, a call — needs the value import. When vue-tsc reports TS2551 `Property 'X' does not exist on type '{ …ctx… }'` on a template identifier, the culprit is a value usage of a type-only import somewhere in the template, not the cast — find it before changing import forms.
 
 ## Optional Refs — Omit the Initial Value
 

@@ -2,7 +2,6 @@ import type { AppNotification } from "@/models/notification/AppNotification";
 import type { Except } from "type-fest";
 
 import { getIsServer } from "@esposter/shared";
-
 // Session-scoped by design — never persisted; durable history is the activity log's job
 export const useNotificationStore = defineStore("notification", () => {
   const notifications = ref<AppNotification[]>([]);
@@ -23,6 +22,10 @@ export const useNotificationStore = defineStore("notification", () => {
     notifications.value = [notification, ...notifications.value];
     snackbarIds.value = [...snackbarIds.value, notification.id];
   };
+  // The one shape every mutation error surfaces as, so call sites don't restate it
+  const createErrorNotification = (error: Error) => {
+    createNotification({ severity: "error", title: error.message });
+  };
   const deleteSnackbar = (id: string) => {
     snackbarIds.value = snackbarIds.value.filter((snackbarId) => snackbarId !== id);
   };
@@ -40,6 +43,7 @@ export const useNotificationStore = defineStore("notification", () => {
     );
   };
   return {
+    createErrorNotification,
     createNotification,
     deleteNotification,
     deleteNotifications,

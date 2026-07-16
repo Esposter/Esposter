@@ -6,3 +6,5 @@ export enum VoiceSettingsSection {
   InputMode = "Input Mode",
   JoinSettings = "Join Settings",
 }
+
+export const VoiceSettingsSections = Object.values(VoiceSettingsSection);

@@ -102,7 +102,15 @@ onMounted(async () => {
       @close="resetItem()"
       @delete="
         async (onComplete) => {
-          await withFinalizerAsync(() => saveItem(true), onComplete);
+          let isSuccessful = false;
+          await withFinalizerAsync(
+            async () => {
+              isSuccessful = await saveItem(true);
+            },
+            () => {
+              onComplete(isSuccessful);
+            },
+          );
         }
       "
       @save="saveItem()"

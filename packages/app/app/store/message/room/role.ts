@@ -132,6 +132,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const deleteRole = async (input: DeleteRoleInput) => {
     const previousRoles = getRoles(input.roomId);
+    let isSuccessful = false;
     await executeDeleteRoleMutation(() => $trpc.role.deleteRole.mutate(input), {
       applyOptimistic: () => {
         setRoles(
@@ -142,7 +143,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
           setRoles(input.roomId, previousRoles);
         };
       },
+      onSuccess: () => {
+        isSuccessful = true;
+      },
     });
+    return isSuccessful;
   };
   const assignRole = async (input: AssignRoleInput) => {
     const existingMemberRoles = getMemberRoles(input.roomId, input.userId);

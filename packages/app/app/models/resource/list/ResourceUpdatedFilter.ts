@@ -6,3 +6,5 @@ export enum ResourceUpdatedFilter {
   Last30Days = "Last 30 days",
   Custom = "Custom",
 }
+
+export const ResourceUpdatedFilters: ReadonlySet<ResourceUpdatedFilter> = new Set(Object.values(ResourceUpdatedFilter));

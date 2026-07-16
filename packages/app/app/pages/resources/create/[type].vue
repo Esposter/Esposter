@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
+
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { isCreatableResourceType } from "@/services/resource/CreatableResourceTypes";
 import { resourceNameRules } from "@/services/resource/resourceNameRules";
-import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
+import { useNotificationStore } from "@/store/notification";
+import { RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
@@ -12,11 +15,51 @@ const typeParam = (Array.isArray(route.params.type) ? route.params.type[0] : rou
 if (!isCreatableResourceType(typeParam)) throw createError({ statusCode: 404, statusMessage: "Unknown resource type" });
 
 const type = typeParam;
+const { $trpc } = useNuxtApp();
 const createResource = useCreateResource();
 const executeMutation = useMutation();
+const executeSaveMutation = useMutation();
+const { createErrorNotification } = useNotificationStore();
 const name = ref("");
 const isValid = ref(false);
 const isSubmitting = ref(false);
+// Only Sheet has a file to start from today; every other type creates name-only
+const sheetResource = ref<SheetResource>();
+const fileError = ref("");
+// The create call writes no blob, so the parsed rows land through the same first save the Data blade would do.
+// A failed save still leaves a valid empty sheet, so the user keeps the resource and is told what is missing
+const submit = async () => {
+  isSubmitting.value = true;
+  await executeMutation(() => createResource(type, name.value), {
+    onError: createErrorNotification,
+    onSuccess: async (resource) => {
+      const sheetResourceValue = sheetResource.value;
+      if (!sheetResourceValue) {
+        await navigateTo(RoutePath.Resource(resource.id));
+        return;
+      }
+
+      let isSaved = false;
+      await executeSaveMutation(
+        () =>
+          $trpc.sheet.saveResourceContent.mutate({
+            content: sheetResourceValue,
+            contentVersion: resource.contentVersion,
+            id: resource.id,
+          }),
+        {
+          onError: createErrorNotification,
+          onSuccess: () => {
+            isSaved = true;
+          },
+        },
+      );
+      // They came to see their rows, so a successful import lands on the Data blade rather than Overview
+      await navigateTo(isSaved ? `${RoutePath.Resource(resource.id)}/data` : RoutePath.Resource(resource.id));
+    },
+  });
+  isSubmitting.value = false;
+};
 </script>
 
 <template>
@@ -34,14 +77,8 @@ const isSubmitting = ref(false);
                 v-model="isValid"
                 @submit.prevent="
                   async () => {
-                    if (!isValid) return;
-                    isSubmitting = true;
-                    await executeMutation(() => createResource(type, name), {
-                      onSuccess: async (resource) => {
-                        await navigateTo(RoutePath.Resource(resource.id));
-                      },
-                    });
-                    isSubmitting = false;
+                    if (!isValid || fileError) return;
+                    await submit();
                   }
                 "
               >
@@ -52,9 +89,18 @@ const isSubmitting = ref(false);
                   label="Name"
                   :rules="resourceNameRules"
                 />
+                <ResourceCreateSheetFile
+                  v-if="type === ResourceType.Sheet"
+                  v-model="sheetResource"
+                  v-model:error="fileError"
+                  @parse="name ||= $event"
+                />
                 <div mt-4 flex gap-2 justify-end>
                   <v-btn variant="text" :to="RoutePath.ResourcesCreate">Cancel</v-btn>
-                  <StyledButton type="submit" :button-props="{ disabled: !isValid, loading: isSubmitting }">
+                  <StyledButton
+                    type="submit"
+                    :button-props="{ disabled: !isValid || Boolean(fileError), loading: isSubmitting }"
+                  >
                     Create
                   </StyledButton>
                 </div>

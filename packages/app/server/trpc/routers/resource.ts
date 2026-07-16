@@ -1,3 +1,4 @@
+import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
@@ -18,6 +19,7 @@ import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
+  RESOURCE_NAME_MAX_LENGTH,
   resourcePublications,
   resources,
   resourceTypeSchema,
@@ -55,6 +57,8 @@ const readResourcesInputSchema = z.object({
 const deleteResourcesInputSchema = z.object({
   ids: createUniqueArraySchema(selectResourceSchema.shape.id).min(1).max(MAX_READ_LIMIT),
 });
+// Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
+const duplicateNameSuffix = " (copy)";
 // Shared filter so count and readResources stay in lockstep as filters evolve
 const createResourcesWhere = (
   db: Context["db"],
@@ -86,6 +90,19 @@ export const resourceRouter = router({
           .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
       ).count,
   ),
+  // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
+  // The affordance for setting it. Behind the same createResourcesWhere, so the cards can never disagree
+  // With the list they navigate into
+  countsByType: standardAuthedProcedure
+    .input(resourceFilterInputSchema.omit({ types: true }).prefault({}))
+    .query<ResourceTypeCount[]>(({ ctx, input }) =>
+      ctx.db
+        .select({ count: count(), type: resources.type })
+        .from(resources)
+        .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input))
+        .groupBy(resources.type)
+        .orderBy(desc(count())),
+    ),
   deleteResources: standardAuthedProcedure
     .input(deleteResourcesInputSchema)
     .mutation<Resource[]>(async ({ ctx, input: { ids } }) => {
@@ -121,7 +138,11 @@ export const resourceRouter = router({
       (
         await ctx.db
           .insert(resources)
-          .values({ name: `${name} (copy)`, type, userId })
+          .values({
+            name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - duplicateNameSuffix.length)}${duplicateNameSuffix}`,
+            type,
+            userId,
+          })
           .returning()
       )[0],
       Operation.Create,

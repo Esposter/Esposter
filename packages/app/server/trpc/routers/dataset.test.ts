@@ -79,6 +79,7 @@ describe("dataset", () => {
       { name: "comments", type: ColumnType.String },
     ]);
     expect(dataset.rows).toStrictEqual([{ comments: "great", satisfaction: 5, wouldRecommend: true }]);
+    expect(dataset.totalRows).toBe(1);
   });
 
   test("reads survey responses dataset within the azure page size limit", async () => {
@@ -94,6 +95,8 @@ describe("dataset", () => {
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
+    // The capped read reports the uncapped total so consumers can say what they are not showing
+    expect(dataset.totalRows).toBe(AZURE_MAX_PAGE_SIZE + 1);
   });
 
   test("reads survey responses dataset with no responses", async () => {
@@ -103,6 +106,7 @@ describe("dataset", () => {
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.rows).toStrictEqual([]);
+    expect(dataset.totalRows).toBe(0);
   });
 
   test("fills missing answers with null", async () => {
@@ -170,6 +174,7 @@ describe("dataset", () => {
 
     expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
     expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
+    expect(dataset.totalRows).toBe(1);
   });
 
   test("reads file dataset within the azure page size limit", async () => {
@@ -189,6 +194,8 @@ describe("dataset", () => {
     const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet });
 
     expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
+    // The whole blob is parsed either way, so the uncapped total is always known here
+    expect(dataset.totalRows).toBe(AZURE_MAX_PAGE_SIZE + 1);
   });
 
   test("fails read file dataset without content", async () => {

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
-import type { RoomInMessage } from "@esposter/db-schema";
+import type { AdminActionType, RoomInMessage } from "@esposter/db-schema";
 
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
 import { useModerationLogStore } from "@/store/message/moderation/log";
 import { useMemberStore } from "@/store/message/user/member";
 import { formatDuration } from "@/util/text/formatDuration";
-import { AdminActionType } from "@esposter/db-schema";
+import { AdminActionTypes } from "@esposter/db-schema";
 
 interface AuditLogProps {
   room: RoomInMessage;
@@ -36,7 +36,7 @@ const memberItems = computed<SelectItemCategoryDefinition<string>[]>(() => [
 ]);
 const adminActionTypeItems = [
   { title: "All actions", value: "" },
-  ...Object.values(AdminActionType).map((adminActionType) => ({
+  ...AdminActionTypes.map((adminActionType) => ({
     props: { prependIcon: AdminActionIconMap[adminActionType] },
     title: adminActionType,
     value: adminActionType,

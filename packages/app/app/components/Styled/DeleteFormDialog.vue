@@ -36,10 +36,10 @@ watch(modelValue, (newModelValue) => {
     </template>
     <slot />
     <template v-if="confirmName">
-      <div flex gap-x-2 items-center>
-        <v-code flex-1 truncate>{{ confirmName }}</v-code>
+      <v-code flex gap-x-2 items-center>
+        <span flex-1 truncate>{{ confirmName }}</span>
         <StyledClipboardIconButton :source="confirmName" />
-      </div>
+      </v-code>
       <v-text-field
         v-model="confirmNameValue"
         :label="`Type '${confirmName}' to confirm`"

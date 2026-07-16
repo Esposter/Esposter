@@ -33,7 +33,7 @@ describe(getResourceUpdatedRange, () => {
     });
   });
 
-  test("passes through only the provided custom bounds", () => {
+  test("passes through the custom From date and extends the To date to end-of-day", () => {
     expect.hasAssertions();
 
     const updatedAfter = new Date("1970-01-01");
@@ -43,7 +43,7 @@ describe(getResourceUpdatedRange, () => {
     expect(getResourceUpdatedRange(ResourceUpdatedFilter.Custom, updatedAfter)).toStrictEqual({ updatedAfter });
     expect(getResourceUpdatedRange(ResourceUpdatedFilter.Custom, updatedAfter, updatedBefore)).toStrictEqual({
       updatedAfter,
-      updatedBefore,
+      updatedBefore: dayjs(updatedBefore).endOf("day").toDate(),
     });
   });
 });

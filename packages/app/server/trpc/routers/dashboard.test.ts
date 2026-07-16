@@ -81,6 +81,7 @@ describe("dashboard", () => {
     expect(publishedContent.content.visuals[0]?.dataset?.snapshot).toStrictEqual({
       columns: [{ name: "satisfaction", type: ColumnType.Number }],
       rows: [{ satisfaction: 5 }],
+      totalRows: 1,
     });
   });
 });

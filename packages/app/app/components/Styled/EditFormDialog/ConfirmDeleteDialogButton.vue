@@ -7,7 +7,7 @@ interface ConfirmDeleteDialogButtonProps<T> {
 }
 
 const { name, originalItem } = defineProps<ConfirmDeleteDialogButtonProps<T>>();
-const emit = defineEmits<{ delete: [onComplete: () => void] }>();
+const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
 </script>
 
 <template>
@@ -21,7 +21,9 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton icon="mdi-delete" text="Delete" @click="updateIsOpen(true)" />
     </template>
-    To confirm the delete action please enter the name of the
-    <span font-bold>{{ originalItem.type }}</span> exactly as it occurs.
+    <div>
+      To confirm the delete action please enter the name of the
+      <span font-bold>{{ originalItem.type }}</span> exactly as it occurs.
+    </div>
   </StyledDeleteFormDialog>
 </template>

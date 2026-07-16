@@ -18,7 +18,7 @@ useResizeObserver(container, (entries) => {
   height.value = entry.target.clientHeight;
 });
 
-const { error, isLoading, refresh, visualPropsData } = useVisualPropsData(() => visual);
+const { error, isLoading, refresh, truncation, visualPropsData } = useVisualPropsData(() => visual);
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
 const options = useApexOptions(
   () => visual.chart,
@@ -37,6 +37,8 @@ const options = useApexOptions(
     <div ref="container" h-full relative>
       <v-alert v-if="error" type="error" text="Failed to load data" />
       <VueApexCharts v-else :="data" :options />
+      <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
+      <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
       <!-- A snapshotted binding renders baked data, so there is nothing to refresh -->
       <StyledTooltipIconButton
         v-if="visual.dataset && !visual.dataset.snapshot"

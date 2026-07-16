@@ -13,3 +13,5 @@ export enum AdminActionType {
 }
 
 export const adminActionTypeSchema = z.enum(AdminActionType) satisfies z.ZodType<AdminActionType>;
+
+export const AdminActionTypes: readonly AdminActionType[] = Object.values(AdminActionType);

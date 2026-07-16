@@ -15,8 +15,8 @@ export const readSurveyResponsesDataset: DatasetProvider = async (ctx, reference
   });
   if (!resource) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-  const { columns, surveyResponses } = await readSurveyResponseDatasetSource(resource.id);
+  const { columns, surveyResponses, totalRows } = await readSurveyResponseDatasetSource(resource.id);
   // The dataset contract carries no keys — row identity is the Responses blade's concern, and a
   // Dataset flows into publishable dashboards
-  return { columns, rows: surveyResponses.map(({ model }) => toSurveyResponseDatasetRow(columns, model)) };
+  return { columns, rows: surveyResponses.map(({ model }) => toSurveyResponseDatasetRow(columns, model)), totalRows };
 };

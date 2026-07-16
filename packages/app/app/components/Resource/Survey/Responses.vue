@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 
+import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
 import { getResultAsync } from "@esposter/shared";
 
@@ -27,14 +28,17 @@ const refreshResponses = async () => {
 };
 const headers = computed(() => records.value?.columns.map(({ name }) => ({ key: name, title: name })) ?? []);
 const items = computed(() => records.value?.rows ?? []);
+const truncation = computed(() => (records.value ? getDatasetTruncation(records.value) : undefined));
 
 await refreshResponses();
 </script>
 
 <template>
-  <div p-4>
+  <div p-4 flex flex-col gap-4>
     <v-alert v-if="error" type="error" :text="error" />
     <template v-else>
+      <!-- Responses are the one dataset the owner reads as a record of truth, so a silent cut is never acceptable -->
+      <DatasetTruncationAlert v-if="truncation" :truncation />
       <v-data-table :headers="[...headers, { key: 'actions', sortable: false, title: '' }]" :items>
         <template #[`item.actions`]="{ item }">
           <div flex gap-1 justify-end>

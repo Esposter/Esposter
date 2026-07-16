@@ -1,7 +1,7 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { MonsterKeys } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { DungeonsAchievementName } from "@esposter/db-schema";
 
@@ -58,8 +58,7 @@ export const DungeonsAchievementDefinitionMap = {
     amount: 1,
     category: AchievementCategory.Dungeons,
     condition: {
-      operation: (value) =>
-        Object.values(MonsterKey).every((monsterKey) => value.some(({ key }) => key === monsterKey)),
+      operation: (value) => MonsterKeys.every((monsterKey) => value.some(({ key }) => key === monsterKey)),
       operator: AchievementOperator.Operation,
       path: "save.player.monsters",
       type: AchievementConditionType.Property,

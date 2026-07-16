@@ -5,3 +5,5 @@ export enum SettingsCategory {
   Moderation = "Moderation",
   UserManagement = "User Management",
 }
+
+export const SettingsCategories = Object.values(SettingsCategory);
