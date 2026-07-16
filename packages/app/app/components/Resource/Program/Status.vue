@@ -12,7 +12,7 @@ const { $trpc } = useNuxtApp();
 const programStore = useProgramStore();
 const { loadContent } = programStore;
 const notificationStore = useNotificationStore();
-const { createNotification } = notificationStore;
+const { createErrorNotification, createNotification } = notificationStore;
 const executeGenerateMutation = useMutation();
 const id = computed(() => (Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? "")));
 const statusRows = ref<ProgramStatusRow[]>([]);
@@ -24,20 +24,13 @@ const headers = [
   { key: "isResponded", title: "Responded" },
 ];
 const readStatus = async () => {
-  await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match(
-    (newStatusRows) => {
-      statusRows.value = newStatusRows;
-    },
-    (error) => {
-      createNotification({ severity: "error", title: error.message });
-    },
-  );
+  await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match((newStatusRows) => {
+    statusRows.value = newStatusRows;
+  }, createErrorNotification);
 };
 const generateParticipants = async () => {
   await executeGenerateMutation(() => $trpc.program.generateProgramParticipants.mutate({ id: id.value }), {
-    onError: (error) => {
-      createNotification({ severity: "error", title: error.message });
-    },
+    onError: createErrorNotification,
     onSuccess: async (participants) => {
       createNotification({ severity: "success", title: `${participants.length} participants ready` });
       await readStatus();

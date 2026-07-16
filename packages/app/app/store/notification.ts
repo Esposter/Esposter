@@ -22,6 +22,10 @@ export const useNotificationStore = defineStore("notification", () => {
     notifications.value = [notification, ...notifications.value];
     snackbarIds.value = [...snackbarIds.value, notification.id];
   };
+  // The one shape every mutation error surfaces as, so call sites don't restate it
+  const createErrorNotification = (error: Error) => {
+    createNotification({ severity: "error", title: error.message });
+  };
   const deleteSnackbar = (id: string) => {
     snackbarIds.value = snackbarIds.value.filter((snackbarId) => snackbarId !== id);
   };
@@ -39,6 +43,7 @@ export const useNotificationStore = defineStore("notification", () => {
     );
   };
   return {
+    createErrorNotification,
     createNotification,
     deleteNotification,
     deleteNotifications,

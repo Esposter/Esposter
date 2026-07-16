@@ -27,7 +27,7 @@ const { $trpc } = useNuxtApp();
 const { smAndDown } = useVDisplay();
 const { getActionItems } = useResourceListActionItems();
 const notificationStore = useNotificationStore();
-const { createNotification } = notificationStore;
+const { createErrorNotification, createNotification } = notificationStore;
 const executeDeleteResourcesMutation = useMutation();
 const listDialogStore = useListDialogStore();
 const { deletingId, renamingId } = storeToRefs(listDialogStore);
@@ -101,12 +101,6 @@ const isContextMenuOpen = useSingletonDialog(contextMenuId);
 const contextMenuResource = computed(() => items.value.find(({ id }) => id === contextMenuId.value));
 const renamingResource = computed(() => items.value.find(({ id }) => id === renamingId.value));
 const deletingResource = computed(() => items.value.find(({ id }) => id === deletingId.value));
-const showingText = computed(() => {
-  if (count.value === 0) return "";
-  const start = (page.value - 1) * itemsPerPage.value + 1;
-  const end = Math.min(page.value * itemsPerPage.value, count.value);
-  return `Showing ${start}–${end} of ${count.value} records`;
-});
 const toolbarItems = computed<Item[]>(() => [
   {
     active: isSummaryView.value,
@@ -162,9 +156,7 @@ const deleteResources = async (resources: Resource[]) => {
           count.value = snapshotCount;
         };
       },
-      onError: (error) => {
-        createNotification({ severity: "error", title: error.message });
-      },
+      onError: createErrorNotification,
       onSuccess: () => {
         createNotification({ severity: "success", title: deletedNotificationTitle });
       },
@@ -339,9 +331,6 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
           title="No resources yet"
           description="Create a resource and it will show up here."
         />
-      </template>
-      <template #[`footer.prepend`]>
-        <span v-if="showingText" mr-auto op-medium-emphasis>{{ showingText }}</span>
       </template>
     </StyledDataTableServer>
     <template v-if="isSearchable">

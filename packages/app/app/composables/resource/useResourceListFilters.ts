@@ -3,13 +3,17 @@ import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatus
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import type { Resource, ResourceType } from "@esposter/db-schema";
 
-import { resourceStatusFilterSchema } from "@/models/resource/list/ResourceStatusFilter";
+import { dayjs } from "#shared/services/dayjs";
+import { ResourceStatusFilters } from "@/models/resource/list/ResourceStatusFilter";
+import { ResourceUpdatedFilters } from "@/models/resource/list/ResourceUpdatedFilter";
 import { DEFAULT_RESOURCE_SORT_BY } from "@/services/resource/constants";
 import { deserializeResourceSortBy } from "@/services/resource/list/deserializeResourceSortBy";
 import { serializeResourceSortBy } from "@/services/resource/list/serializeResourceSortBy";
 import { resourceTypeSchema } from "@esposter/db-schema";
 
 const defaultSerializedSortBy = serializeResourceSortBy([...DEFAULT_RESOURCE_SORT_BY]);
+// Dates can't round-trip through a query param directly, so the custom bounds serialize day-granular
+const updatedBoundDateFormat = "YYYY-MM-DD";
 // The /all workbench filter state, mirrored to query params so the list is deep-linkable,
 // Refresh-safe, and back-button-safe. useRouteQuery drops a param again when set back to its default.
 export const useResourceListFilters = () => {
@@ -21,12 +25,7 @@ export const useResourceListFilters = () => {
         return parsedType.success ? [parsedType.data] : [];
       }),
   });
-  const status = useRouteQuery<null | string | string[], "" | ResourceStatusFilter>("status", "", {
-    transform: (value) => {
-      const parsedStatus = resourceStatusFilterSchema.safeParse(value);
-      return parsedStatus.success ? parsedStatus.data : "";
-    },
-  });
+  const status = useEnumRouteQuery<"" | ResourceStatusFilter>("status", ResourceStatusFilters, "");
   const page = useRouteQuery<null | number | string | string[], number>("page", 1, {
     transform: (value) => {
       const parsedPage = Number(value);
@@ -42,9 +41,22 @@ export const useResourceListFilters = () => {
       sortByQuery.value = serializedSortBy === defaultSerializedSortBy ? "" : serializedSortBy;
     },
   });
-  const updatedFilter = ref<"" | ResourceUpdatedFilter>("");
-  const updatedAfter = ref<Date>();
-  const updatedBefore = ref<Date>();
+  const updatedFilter = useEnumRouteQuery<"" | ResourceUpdatedFilter>("updated", ResourceUpdatedFilters, "");
+  const createUpdatedBound = (key: string) => {
+    const boundQuery = useRouteQuery(key, "", { transform: String });
+    return computed<Date | undefined>({
+      get: () => {
+        if (!boundQuery.value) return undefined;
+        const parsedBound = dayjs(boundQuery.value, updatedBoundDateFormat);
+        return parsedBound.isValid() ? parsedBound.toDate() : undefined;
+      },
+      set: (value) => {
+        boundQuery.value = value ? dayjs(value).format(updatedBoundDateFormat) : "";
+      },
+    });
+  };
+  const updatedAfter = createUpdatedBound("updatedAfter");
+  const updatedBefore = createUpdatedBound("updatedBefore");
   const hasActiveFilters = computed(() =>
     Boolean(searchQuery.value || types.value.length > 0 || status.value || updatedFilter.value),
   );

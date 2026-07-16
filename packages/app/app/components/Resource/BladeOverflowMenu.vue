@@ -2,7 +2,7 @@
 import type { Item } from "@/models/shared/Item";
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { hasCapability } from "#shared/services/resource/hasCapability";
 
 interface ResourceBladeOverflowMenuProps {
   duplicate: () => Promise<void>;
@@ -16,7 +16,7 @@ interface ResourceBladeOverflowMenuProps {
 const { duplicate, publication, publish, refresh, resource, unpublish } = defineProps<ResourceBladeOverflowMenuProps>();
 // The dialogs live in the toolbar so they outlive this menu closing
 const emit = defineEmits<{ delete: []; rename: []; share: [] }>();
-const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
+const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
 const overflowItems = computed<Item[]>(() => [
   { icon: "mdi-refresh", onClick: () => refresh(), title: "Refresh" },

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { hasCapability } from "#shared/services/resource/hasCapability";
 import { RoutePath } from "@esposter/shared";
 
 interface ResourceBladeActionsProps {
@@ -20,8 +20,8 @@ const { duplicate, isLoading, publication, publish, refresh, remove, rename, res
   defineProps<ResourceBladeActionsProps>();
 // When narrow, every command collapses into the … overflow menu — the close ✕ never collapses
 const { smAndDown } = useVDisplay();
-const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
-const isPortable = computed(() => "portable" in ResourceDefinitionMap[resource.type].capabilities);
+const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
+const isPortable = computed(() => hasCapability(resource.type, "portable"));
 // The dialogs mount only while open so their fields start from the current resource every time
 const isRenameOpen = ref(false);
 const isDeleteOpen = ref(false);

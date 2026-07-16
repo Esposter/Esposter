@@ -15,7 +15,7 @@ const isOpen = defineModel<boolean>({ default: false });
 const { resource } = defineProps<ResourceShareDialogProps>();
 const { $trpc } = useNuxtApp();
 const notificationStore = useNotificationStore();
-const { createNotification } = notificationStore;
+const { createErrorNotification, createNotification } = notificationStore;
 const executeMutation = useMutation();
 const roomItems = ref<SelectItemCategoryDefinition<string>[]>([]);
 const isLoadingRooms = ref(true);
@@ -29,9 +29,7 @@ onMounted(async () => {
   await getResultAsync(async () => {
     const { items } = await $trpc.room.readRooms.query({ limit: MAX_READ_LIMIT });
     roomItems.value = items.map(({ id, name }) => ({ title: name, value: id }));
-  }).match(noop, (error) => {
-    createNotification({ severity: "error", title: error.message });
-  });
+  }).match(noop, createErrorNotification);
   isLoadingRooms.value = false;
 });
 const share = async () => {
@@ -42,9 +40,7 @@ const share = async () => {
   await executeMutation(
     () => $trpc.message.createMessage.mutate({ message: shareMessage.value, roomId: roomId.value }),
     {
-      onError: (error) => {
-        createNotification({ severity: "error", title: error.message });
-      },
+      onError: createErrorNotification,
       onSuccess: () => {
         createNotification({
           action: { title: "Open room", to: RoutePath.Messages(room.value) },

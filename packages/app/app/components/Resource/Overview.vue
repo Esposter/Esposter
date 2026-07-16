@@ -2,9 +2,11 @@
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
+import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
-import { getResultAsync, noop, RoutePath } from "@esposter/shared";
+import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
+import { getResultAsync, RoutePath } from "@esposter/shared";
 
 interface ResourceOverviewProps {
   isLoading?: boolean;
@@ -17,7 +19,7 @@ const { isLoading, publication, resource } = defineProps<ResourceOverviewProps>(
 // A label/value pair); summary takes whole cards below the card
 defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
 const getResourceMutations = useResourceMutations();
-const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
+const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
 const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, resource.id) : undefined));
 // Best-effort telemetry, so a failed count leaves the row out rather than erroring the whole blade
 // The page is keyed by resource id, so this instance only ever describes one resource — the count is
@@ -31,10 +33,7 @@ onMounted(async () => {
 });
 const copyPublicLink = async () => {
   if (!publicUrl.value) return;
-  await getResultAsync(() => window.navigator.clipboard.writeText(`${window.location.origin}${publicUrl.value}`)).match(
-    noop,
-    noop,
-  );
+  await copyLinkToClipboard(publicUrl.value);
 };
 </script>
 

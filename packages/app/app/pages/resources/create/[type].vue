@@ -4,6 +4,7 @@ import type { SheetResource } from "#shared/models/resource/sheet/SheetResource"
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { isCreatableResourceType } from "@/services/resource/CreatableResourceTypes";
 import { resourceNameRules } from "@/services/resource/resourceNameRules";
+import { useNotificationStore } from "@/store/notification";
 import { RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
@@ -18,6 +19,7 @@ const { $trpc } = useNuxtApp();
 const createResource = useCreateResource();
 const executeMutation = useMutation();
 const executeSaveMutation = useMutation();
+const { createErrorNotification } = useNotificationStore();
 const name = ref("");
 const isValid = ref(false);
 const isSubmitting = ref(false);
@@ -29,6 +31,7 @@ const fileError = ref("");
 const submit = async () => {
   isSubmitting.value = true;
   await executeMutation(() => createResource(type, name.value), {
+    onError: createErrorNotification,
     onSuccess: async (resource) => {
       const sheetResourceValue = sheetResource.value;
       if (!sheetResourceValue) {
@@ -45,6 +48,7 @@ const submit = async () => {
             id: resource.id,
           }),
         {
+          onError: createErrorNotification,
           onSuccess: () => {
             isSaved = true;
           },

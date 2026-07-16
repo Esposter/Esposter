@@ -10,7 +10,7 @@ const CSV_ACCEPT = ".csv";
 
 export const useExportResourcesCsv = () => {
   const notificationStore = useNotificationStore();
-  const { createNotification } = notificationStore;
+  const { createErrorNotification, createNotification } = notificationStore;
   const exportFile = useExportFile();
   const exportResourcesCsv = async (resourceItems: Resource[]) => {
     const isExported = await exportFile(
@@ -49,9 +49,7 @@ export const useExportResourcesCsv = () => {
           severity: "warning",
           title: `Export truncated to the first ${MAX_CSV_EXPORT_ROWS} resources`,
         });
-    }).match(noop, (error) => {
-      createNotification({ severity: "error", title: error.message });
-    });
+    }).match(noop, createErrorNotification);
   };
   return { exportAllResourcesCsv, exportResourcesCsv };
 };
