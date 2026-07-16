@@ -11,12 +11,13 @@ The fix is metadata, not pagination. A [`Dataset`](/docs/architecture/datasets) 
 
 ## How it works
 
-`Dataset` gains one optional field, `totalRows`. `getDatasetTruncation` is the single check every consumer shares: given `rows.length < totalRows`, it returns what was shown, what is hidden, and the total — otherwise nothing. A provider that cannot cheaply count omits `totalRows`, and its consumers simply never warn.
+`Dataset` gains one optional field, `totalRows`. `getDatasetTruncation` is the single check every consumer shares: given `rows.length < totalRows`, it returns what was shown, what is hidden, the total, and whether that total is itself a floor — otherwise nothing. A provider that cannot cheaply count omits `totalRows`, and its consumers simply never warn.
 
 ```mermaid
 flowchart TD
   SHEET["readSheetDataset<br/>totalRows = data.rows.length"] --> DS[("Dataset<br/>columns · rows · totalRows?")]
-  SURVEY["readSurveyResponsesDataset<br/>totalRows = countEntities when capped"] --> DS
+  SURVEY["readSurveyResponsesDataset<br/>totalRows = bounded countEntities when capped"] --> DS
+  PROGRAM["readProgramStatusDataset<br/>totalRows = bounded countEntities when capped"] --> DS
   DS --> CHECK["getDatasetTruncation<br/>rows.length < totalRows?"]
   CHECK -->|"no"| SILENT["render as complete"]
   CHECK -->|"yes"| FOOT["Dashboard visual — TruncationFootnote"]
@@ -28,7 +29,7 @@ flowchart TD
 ### The providers
 
 - **Sheet** parses the whole content blob before slicing to the cap, so `totalRows` costs nothing — it is already holding every row.
-- **SurveyResponses** cannot count for free: Azure Table Storage has no count API, so a total means walking every matching row. It therefore **only pays when it has to**. A read that came back under the cap answers for itself (`totalRows = rows.length`), and only a read that filled the cap runs `countEntities` — a keys-only page walk, the smallest payload a full partition scan can have. The common survey costs one request, exactly as before; the 5000-response survey pays a scan for the one number its owner needs.
+- **SurveyResponses** and **ProgramStatus** cannot count for free: Azure Table Storage has no count API, so a total means walking every matching row. They therefore **only pay when they have to, and never more than a bounded walk**. A read that came back under the cap answers for itself (`totalRows = rows.length`); only a read that filled the cap runs `countEntities` — a keys-only page walk, bounded at `DATASET_MAX_COUNTED_ROWS` so a huge partition cannot stall the read just to render a banner number. A count that hit the bound is a floor: `getDatasetTruncation` marks it `isCountCapped`, and every surface renders it as "M+" via `formatTruncationCount` rather than as an exact total.
 
 ### The consumers
 
@@ -46,6 +47,7 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 | `shared/models/dataset/Dataset.ts`                                      | the `totalRows` field                                   |
 | `shared/services/dataset/getDatasetTruncation.ts`                       | the one truncation check every consumer shares          |
 | `shared/services/dataset/getDatasetTruncationText.ts`                   | the one "Showing N of M rows" phrasing                  |
+| `shared/services/dataset/formatTruncationCount.ts`                      | renders a bound-hitting count as "M+"                   |
 | `app/components/Dataset/TruncationAlert.vue`                            | banner form (Survey Responses)                          |
 | `app/components/Dataset/TruncationFootnote.vue`                         | footnote form (Dashboard visual)                        |
 | `app/components/Resource/Email/ExportTruncationDialog.vue`              | the pre-export confirm                                  |
@@ -57,4 +59,4 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 
 - Deliberately metadata-only. The fix for _actually needing_ more rows is [pagination](/docs/platform/deferred/dataset-row-cap-pagination), and this warning is what gives that page a consumer: once users see "of M" and complain, it has earned its build.
 - One phrasing service backs every surface, so a chart footnote and a table banner can never quote different numbers for the same read.
-- `countEntities` is never free and never on the happy path — the guard that only calls it on a filled page is load-bearing, not an optimization.
+- `countEntities` is never free and never on the happy path — the guard that only calls it on a filled page is load-bearing, not an optimization. Its `maxCount` bound is load-bearing too: without it, every open of a huge partition's blade pays a full key-walk to render one number.

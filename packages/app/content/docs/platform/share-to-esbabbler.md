@@ -22,7 +22,8 @@ flowchart LR
 
 - **The command appears for `PublishableResourceType` only while published.** An unpublished resource has no public URL, so there is nothing to share until it has one — the command is absent, not disabled. It sits beside the publish toggle in the command bar and collapses into the `…` overflow on narrow viewports with everything else.
 - **The dialog reads your rooms once per open** (it mounts only while open) into a `v-select`, with an optional note field. No rooms is an empty state pointing at esbabbler, not a disabled button with no explanation.
-- **The message is plain text** — `getShareMessage` puts the note on its own line above the URL, or sends the bare link if there is no note. It goes through the standard `message.createMessage` mutation, so RBAC, rate limits, profanity filtering, and the whole message pipeline apply unchanged. The link preview the pipeline already builds from the view page's OG meta tags is what unfurls it, so a share needs no message type of its own; rich embeds stay [deferred](/docs/platform/deferred/esbabbler-link-unfurl).
+- **The message is sanitized HTML with an explicit anchor** — message bodies render through `v-html` and nothing in the pipeline autolinks bare text, so `getShareMessage` builds the link itself (`<a href … target="_blank">`) and wraps the escaped note above it, newlines as line breaks. It goes through the standard `message.createMessage` mutation, so RBAC, rate limits, profanity filtering, and the whole message pipeline apply unchanged; rich embeds/unfurls stay [deferred](/docs/platform/deferred/esbabbler-link-unfurl).
+- **The dialog validates what it sends** — the length rule checks the composed message (note + markup + link) against the message cap, not just the raw note, so a note that fits the counter can never produce a message the server rejects.
 - **Success lands in the [notifications](/docs/platform/notifications) store** with an **Open room** action.
 
 ## Key files

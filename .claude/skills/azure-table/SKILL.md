@@ -1,6 +1,6 @@
 ---
 name: azure-table
-description: Esposter Azure Table Storage patterns — key constants, partition/row key design, reverse-ticked timestamps, and batch write/pagination. Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code.
+description: Esposter Azure Table Storage patterns — key constants, partition/row key design, reverse-ticked timestamps, batch write/pagination, and bounded counting after capped reads. Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code.
 ---
 
 # Azure Table Storage Patterns
@@ -107,6 +107,13 @@ const filter = serializeClauses([
   getTableNullClause(ItemMetadataPropertyNames.deletedAt),
 ] as Clause<StandardMessageEntity>[]);
 ```
+
+## Counting — Only After a Capped Read, and Bounded
+
+Azure Table has no count API — `countEntities` (from `@esposter/db`) walks every matching page with a keys-only projection. Two rules keep the walk cheap and honest:
+
+- **Only count when a capped read filled.** A read under its cap answers for itself (`rows.length < cap ? rows.length : await countFooEntities(...)`); only a full page has something to be missing.
+- **Bound the walk when the count feeds a display.** Pass `countEntities`'s `maxCount` argument (callers name their bound, e.g. `DATASET_MAX_COUNTED_ROWS`). A count that hit the bound is a floor, not a total — every surface must render it as one ("N+", via the shared truncation formatter), never as an exact number.
 
 ## Entity Class Constructors
 

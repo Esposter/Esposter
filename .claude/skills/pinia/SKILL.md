@@ -1,6 +1,6 @@
 ---
 name: pinia
-description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), per-service dialog stores, never redirecting store functions through wrappers, selection state in the store, useDataMap vs a plain Map, cursor pagination helpers, tRPC mutation placement via useMutation with optimistic rollback, createOperationData CRUD verbs and store* subscription handlers, CRUD/parameter naming, full tRPC input objects, minimal-input actions, reusing existing store maps, reactive Map mutations, markRaw for class instances, and session auth in stores. Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store.
+description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), per-service dialog stores, blade-scoped store state torn down on unmount, never redirecting store functions through wrappers, selection state in the store, useDataMap vs a plain Map, cursor pagination helpers, tRPC mutation placement via useMutation with optimistic rollback, createOperationData CRUD verbs and store* subscription handlers, CRUD/parameter naming, full tRPC input objects, minimal-input actions, reusing existing store maps, reactive Map mutations, markRaw for class instances, and session auth in stores. Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store.
 ---
 
 # Pinia Store Conventions
@@ -46,6 +46,12 @@ Singleton-dialog targets (`deletingId`, `editingColumnName`, `settingsRoomId`, �
 - `store/message/roomCategoryDialog.ts` → `useRoomCategoryDialogStore`; `store/resource/sheet/rowDialog.ts` → `useRowDialogStore` (no feature folder → `<feature>Dialog.ts` beside the business store file)
 
 Targets are strings defaulting to `""` (never `undefined`), and components derive `v-model` from them via `useSingletonDialog`. Full pattern: the Singleton Dialogs section in the `vue-component-patterns` skill and `packages/app/content/docs/architecture/singleton-dialogs.md`.
+
+## Blade-Scoped Store State — the Owning Component Tears It Down
+
+Some store refs are populated _by a component_ so code outside its subtree can reach them — a live third-party editor instance bridged for a command bar, a staged payload for a confirm dialog the component renders. The store is app-lifetime; that state is not. The component that populates such a ref MUST clear it in `onUnmounted` (back to `undefined`/`""`), or the value outlives its blade and leaks across targets: a "current" editor that no longer exists silently satisfying guards, a staged dialog re-opening over a different resource with the previous resource's data.
+
+Symmetry rule: whatever a component bridges onto a store in setup/`watchImmediate`, its `onUnmounted` un-bridges.
 
 ## Never Redirect Store Functions — Use Them Directly
 

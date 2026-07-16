@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, one owner per topic, don't restate what an enforcer already checks, generic placeholders over identifiers from one change, and declaration layout. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, or when deciding which skill a new rule belongs in.
+description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, generic placeholders over identifiers from one change, magnitudes over incident numbers, and declaration layout. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
 ---
 
 # Skill Authoring
@@ -24,6 +24,13 @@ A rule lives in exactly **one** skill. Other skills reference it with a one-line
 - A skill that finds itself explaining another skill's topic to set up its own point should link and move on.
 - **A pointer earns its place only when it saves real duplication.** Don't redirect to a section the reader reaches by reading on, and don't replace a self-sufficient one-liner with a "see X" link.
 - If a rule fits **no** skill, that's a missing skill — create one rather than overloading an unrelated one. Check `.claude/skills/README.md` first.
+
+## Capture session learnings here, not in private memory
+
+When a session discovers or corrects a convention — a shared primitive that must be reused instead of hand-rolled, a lifecycle rule behind a bug class, a claim in an existing skill that turned out to be stale — it lands in the owning skill **in the same session**, not in an assistant's private memory or the conversation. Skills are the compounding layer: they are what every future session, model, and background agent loads; a lesson recorded anywhere else dies with the session that learned it.
+
+- Adding a section is also a frontmatter edit — the `description` must gain the new topic or selection never surfaces it.
+- **A skill claim contradicted by evidence gets verified empirically and fixed, never obeyed.** Run the enforcer, reproduce the behavior, then correct the line — a stale rule that keeps being followed compounds exactly like a good one.
 
 ## Don't restate what an enforcer already checks
 

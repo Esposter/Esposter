@@ -1,6 +1,6 @@
 ---
 name: vue-composable-patterns
-description: Esposter Vue 3 composable and form patterns — cursor pagination (store + useRead* composable + StyledWaypoint), server search-as-you-type (useAutoSearch/useCursorSearcher, hand-rolling banned), MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting mutation blocks with builder args, permission-gated settings tabs, schema-controlling selectors in the prepend-form slot, type-driven state reset via create maps, toRawDeep, resource cleanup, useOnline, SSR-safe watches, dirty-check saves with useSave, dialog data loading, capturing the instance before await, use*Subscribables, and the offline IndexedDB pagination cache. Apply when writing or reviewing a composable, form dialog, paginated list, search input, offline cache, or browser-aware reactive code.
+description: Esposter Vue 3 composable and form patterns — cursor pagination (store + useRead* composable + StyledWaypoint), server search-as-you-type (useAutoSearch/useCursorSearcher, hand-rolling banned), MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting mutation blocks with builder args, permission-gated settings tabs, schema-controlling selectors in the prepend-form slot, type-driven state reset via create maps, toRawDeep, resource cleanup, useOnline, SSR-safe watches, dirty-check saves with useSave, async sequencing primitives (getConcurrentFunction/getSynchronizedFunction/useQuery — hand-rolling stale guards banned), dialog data loading, capturing the instance before await, use*Subscribables, and the offline IndexedDB pagination cache. Apply when writing or reviewing a composable, form dialog, paginated list, search input, offline cache, or browser-aware reactive code.
 ---
 
 # Vue Composable & Form Patterns
@@ -154,6 +154,7 @@ Callers pass a getter to stay reactive to prop changes; an optional `currentName
 
 - Don't annotate composable return types — let TypeScript infer. Only annotate if inference fails or a contract must be enforced.
 - Vue auto-unwraps computed refs in templates, so `:rules="[someRule]"` passes the function value correctly.
+- A composable whose only reads happen inside an explicitly-invoked action (`refresh`, `save`) takes a plain getter or plain args — never refs it doesn't watch. Unwatched ref parameters advertise reactivity that doesn't exist, and the caller ends up re-adding its own watch anyway.
 
 ## Validation Rules — Pick the Right Layer
 
@@ -372,6 +373,15 @@ Rules:
 - Skipping returns `true` — "already persisted" is success, not failure.
 - The snapshot updates only after a **successful** save so failures retry on the next trigger.
 - Snapshots are JSON strings (`Serializable.toJSON` handles reactive proxies/class instances) with `updatedAt` excluded — `saveItemMetadata` bumps it as part of saving, so it must not participate in the dirty check.
+
+## Async Sequencing — Shared Primitives (hand-rolling BANNED)
+
+`#shared/util/function/` and `composables/shared/` own the async plumbing — grep them before writing any stale-guard, latest-wins, or fire-from-sync logic:
+
+- **`getConcurrentFunction(fn)`** — latest-wins guard: wraps `fn(checkIsStale, ...args)` and bumps an internal call id per invocation. Any composable exposing a `refresh`/read that can re-fire while in flight wraps it in this, so a slower earlier response can never overwrite a newer one. Never hand-roll the call-id bookkeeping.
+- **`getSynchronizedFunction(fn)`** — fire an async fn from a sync context (e.g. kick off a fetch during setup without a Suspense boundary).
+- **`useQuery(query, { onSuccess })`** — `getConcurrentFunction` + `shallowRef` data + auto-fetch on setup + error alert. Reach for it before writing a bespoke read composable; write a custom one only when the state shape genuinely differs (manual-trigger read exposing `isLoading`/`error` refs), and build its refresh on `getConcurrentFunction` even then.
+- **`useMutation`** — the one sanctioned inline call-id copy: its per-call generic result type cannot thread through `getConcurrentFunction`'s creation-time signature. Don't cite it as precedent for new copies. Usage conventions live in the `pinia` skill.
 
 ## Dialog Data Loading
 
