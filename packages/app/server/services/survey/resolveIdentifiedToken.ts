@@ -28,15 +28,17 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
   const programs = await db.query.resources.findMany({
     where: { type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
   });
+  // Every candidate's binding is read at once: this runs on every submission to an identified survey, and
+  // The owner's programs are independent of each other, so N sequential blob reads would be N latencies
+  // Charged to the respondent for no ordering the answer depends on
+  const contents = await Promise.all(programs.map(({ id }) => readResourceContent(programResourceSchema, id)));
+  const boundPrograms = programs.filter((_program, index) => contents[index]?.surveyId === surveyId);
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
-  for (const program of programs) {
-    const content = await readResourceContent(programResourceSchema, program.id);
-    if (content?.surveyId !== surveyId) continue;
-
+  for (const boundProgram of boundPrograms) {
     // The token is a column rather than the key, so this is a single-partition scan for one row —
     // The recipient's identity owns the key, and only one of the two can
     const clauses: Clause<ProgramParticipantEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: program.id },
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: boundProgram.id },
       { key: "token", operator: BinaryOperator.eq, value: participantToken },
     ];
     const [participant] = await getTopNEntities(programParticipantClient, 1, ProgramParticipantEntity, {

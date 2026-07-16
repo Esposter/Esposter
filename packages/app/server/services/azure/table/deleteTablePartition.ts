@@ -2,7 +2,12 @@ import type { AzureTable } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { serializeClauses } from "@esposter/db";
-import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
+import {
+  AZURE_MAX_BATCH_SIZE,
+  AZURE_MAX_PAGE_SIZE,
+  BinaryOperator,
+  CompositeKeyPropertyNames,
+} from "@esposter/db-schema";
 
 // Azure Table has no "delete where partitionKey eq" — a partition is cleared by enumerating its keys.
 // The scan is capped like every other read, so clearing a partition costs one page, not an unbounded walk
@@ -19,6 +24,11 @@ export const deleteTablePartition = async (tableName: AzureTable, partitionKey: 
     for (const { rowKey } of page) rowKeys.push(rowKey);
     break;
   }
-  // A delete needs no entity serialization, so the raw client method is the whole operation
-  await Promise.all(rowKeys.map((rowKey) => tableClient.deleteEntity(partitionKey, rowKey)));
+  // Every row here is by definition the one partition this clears, so the deletes ride a transaction per
+  // Batch rather than a request each — the capped page turns into ten calls instead of a thousand, on a
+  // Mutation the owner is waiting on. A delete needs no entity serialization: the composite key is the action
+  for (let i = 0; i < rowKeys.length; i += AZURE_MAX_BATCH_SIZE)
+    await tableClient.submitTransaction(
+      rowKeys.slice(i, i + AZURE_MAX_BATCH_SIZE).map((rowKey) => ["delete", { partitionKey, rowKey }]),
+    );
 };

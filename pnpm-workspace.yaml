@@ -61,20 +61,20 @@ catalog:
   "@panzoom/panzoom": ^4.6.2
   "@pinia/nuxt": ^0.11.3
   "@platformatic/vfs": ^0.4.0
-  "@pulumi/azure-native": ^3.20.0
+  "@pulumi/azure-native": ^3.21.0
   "@pulumi/github": ^6.14.0
-  "@pulumi/pulumi": ^3.252.0
+  "@pulumi/pulumi": ^3.253.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^2.2.0
-  "@tiptap/core": ^3.27.4
-  "@tiptap/extension-code-block-lowlight": ^3.27.4
-  "@tiptap/extension-file-handler": ^3.27.4
-  "@tiptap/extension-mention": ^3.27.4
-  "@tiptap/extensions": ^3.27.4
-  "@tiptap/pm": ^3.27.4
-  "@tiptap/starter-kit": ^3.27.4
-  "@tiptap/suggestion": ^3.27.4
-  "@tiptap/vue-3": ^3.27.4
+  "@tiptap/core": ^3.28.0
+  "@tiptap/extension-code-block-lowlight": ^3.28.0
+  "@tiptap/extension-file-handler": ^3.28.0
+  "@tiptap/extension-mention": ^3.28.0
+  "@tiptap/extensions": ^3.28.0
+  "@tiptap/pm": ^3.28.0
+  "@tiptap/starter-kit": ^3.28.0
+  "@tiptap/suggestion": ^3.28.0
+  "@tiptap/vue-3": ^3.28.0
   "@tresjs/cientos": ^5.8.1
   "@tresjs/core": ^5.8.3
   "@tresjs/nuxt": ^5.6.3
@@ -198,7 +198,7 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.2.0
   read-excel-file: ^9.3.1
-  rolldown: ^1.1.5
+  rolldown: ^1.2.0
   rolldown-plugin-dts: ^0.27.9
   rxjs: ^7.8.2
   sanitize-html: ^2.17.6
@@ -233,7 +233,7 @@ catalog:
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.5
-  vue-router: ^5.1.0
+  vue-router: ^5.2.0
   vue-tsc: ^3.3.7
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.1.5
@@ -261,6 +261,6 @@ overrides:
   h3: ^1.15.11
   pdfjs-dist: ^6.1.200
   vite: ^8.1.4
-  vue-router: ^5.1.0
+  vue-router: ^5.2.0
 
 shellEmulator: true

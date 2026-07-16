@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Resource } from "@esposter/db-schema";

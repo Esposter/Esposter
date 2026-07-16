@@ -126,8 +126,8 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 1 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -156,15 +156,15 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
     const updatedSurveyResponse = await caller.updateSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 1 },
       modelVersion: newSurveyResponse.modelVersion,
+      participantToken: "",
       partitionKey: newSurveyResponse.partitionKey,
       rowKey: newSurveyResponse.rowKey,
     });
@@ -178,17 +178,17 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
 
     await expect(
       caller.updateSurveyResponse({
-        participantToken: "",
         model: newSurveyResponse.model,
         modelVersion: newSurveyResponse.modelVersion,
+        participantToken: "",
         partitionKey: newSurveyResponse.partitionKey,
         rowKey: newSurveyResponse.rowKey,
       }),
@@ -202,24 +202,24 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
     await caller.updateSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 1 },
       modelVersion: newSurveyResponse.modelVersion,
+      participantToken: "",
       partitionKey: newSurveyResponse.partitionKey,
       rowKey: newSurveyResponse.rowKey,
     });
 
     await expect(
       caller.updateSurveyResponse({
-        participantToken: "",
         model: { satisfaction: 2 },
         modelVersion: newSurveyResponse.modelVersion,
+        participantToken: "",
         partitionKey: newSurveyResponse.partitionKey,
         rowKey: newSurveyResponse.rowKey,
       }),
@@ -240,8 +240,8 @@ describe("survey", () => {
     const newResource = await caller.createResource({ name });
     // A stale participant link into an anonymous survey still works, it just carries nothing
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: crypto.randomUUID(),
       model: { satisfaction: 0 },
+      participantToken: crypto.randomUUID(),
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -254,8 +254,8 @@ describe("survey", () => {
 
     const { survey, token } = await setupIdentifiedSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: token,
       model: { satisfaction: 0 },
+      participantToken: token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -270,8 +270,8 @@ describe("survey", () => {
 
     await expect(
       caller.createSurveyResponse({
-        participantToken: "",
         model: { satisfaction: 0 },
+        participantToken: "",
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
       }),
@@ -285,8 +285,8 @@ describe("survey", () => {
 
     await expect(
       caller.createSurveyResponse({
-        participantToken: crypto.randomUUID(),
         model: { satisfaction: 0 },
+        participantToken: crypto.randomUUID(),
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
       }),
@@ -302,8 +302,8 @@ describe("survey", () => {
 
     await expect(
       caller.createSurveyResponse({
-        participantToken: otherToken,
         model: { satisfaction: 0 },
+        participantToken: otherToken,
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
       }),
@@ -315,15 +315,15 @@ describe("survey", () => {
 
     const { survey, token } = await setupIdentifiedSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: token,
       model: { satisfaction: 0 },
+      participantToken: token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
     const updatedSurveyResponse = await caller.updateSurveyResponse({
-      participantToken: token,
       model: { satisfaction: 1 },
       modelVersion: newSurveyResponse.modelVersion,
+      participantToken: token,
       partitionKey: survey.id,
       rowKey: newSurveyResponse.rowKey,
     });
@@ -353,17 +353,17 @@ describe("survey", () => {
     assert.exists(firstParticipant);
     assert.exists(secondParticipant);
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: firstParticipant.token,
       model: { satisfaction: 0 },
+      participantToken: firstParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
 
     await expect(
       caller.updateSurveyResponse({
-        participantToken: secondParticipant.token,
         model: { satisfaction: 1 },
         modelVersion: newSurveyResponse.modelVersion,
+        participantToken: secondParticipant.token,
         partitionKey: survey.id,
         rowKey: newSurveyResponse.rowKey,
       }),
@@ -375,8 +375,8 @@ describe("survey", () => {
 
     const { survey, token } = await setupIdentifiedSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: token,
       model: { satisfaction: 0 },
+      participantToken: token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -387,8 +387,8 @@ describe("survey", () => {
       id: survey.id,
     });
     const anonymousSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 1 },
+      participantToken: "",
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -414,8 +414,8 @@ describe("survey", () => {
 
     await expect(
       caller.createSurveyResponse({
-        participantToken: "",
         model: { satisfaction: 0 },
+        participantToken: "",
         partitionKey: newResource.id,
         rowKey: crypto.randomUUID(),
       }),
@@ -427,8 +427,8 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -441,9 +441,9 @@ describe("survey", () => {
 
     await expect(
       caller.updateSurveyResponse({
-        participantToken: "",
         model: { satisfaction: 1 },
         modelVersion: newSurveyResponse.modelVersion,
+        participantToken: "",
         partitionKey: newResource.id,
         rowKey: newSurveyResponse.rowKey,
       }),
@@ -488,8 +488,8 @@ describe("survey", () => {
       id: newResource.id,
     });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -502,14 +502,14 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
     await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 1 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -517,9 +517,9 @@ describe("survey", () => {
     const responseCount = await caller.countSurveyResponses({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
-    expect(
-      await caller.readSurveyResponse({ partitionKey: newResource.id, rowKey: newSurveyResponse.rowKey }),
-    ).toBeNull();
+    await expect(
+      caller.readSurveyResponse({ partitionKey: newResource.id, rowKey: newSurveyResponse.rowKey }),
+    ).resolves.toBeNull();
   });
 
   test("fails delete survey response with non-existent row key", async () => {
@@ -527,8 +527,8 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -546,8 +546,8 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -564,8 +564,8 @@ describe("survey", () => {
     const newResource = await caller.createResource({ name });
     const otherResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -587,8 +587,8 @@ describe("survey", () => {
     expect(emptyCount).toStrictEqual({ count: 0, isCapped: false });
 
     await caller.createSurveyResponse({
-      participantToken: "",
       model: { satisfaction: 0 },
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });

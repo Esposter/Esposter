@@ -33,8 +33,8 @@ const saveSurveyResponse = async (survey: Model) => {
     await executeMutation(
       () =>
         $trpc.survey.createSurveyResponse.mutate({
-          participantToken,
           model: responseModel,
+          participantToken,
           partitionKey: id,
           rowKey: newSurveyResponseId,
         }),
@@ -51,9 +51,9 @@ const saveSurveyResponse = async (survey: Model) => {
   await executeMutation(
     () =>
       $trpc.survey.updateSurveyResponse.mutate({
-        participantToken,
         model: responseModel,
         modelVersion: currentSurveyResponse.modelVersion,
+        participantToken,
         partitionKey: currentSurveyResponse.partitionKey,
         rowKey: currentSurveyResponse.rowKey,
       }),

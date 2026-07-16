@@ -313,14 +313,17 @@ describe("createResourceProcedures", () => {
     const dashboard = new Dashboard();
     await caller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
     await caller.publishResource({ id: newResource.id });
-    // The table client is constructed per call, so the failure is injected on the prototype
-    vi.spyOn(MockTableClient.prototype, "upsertEntity").mockRejectedValue(new Error("Table write failed"));
+    // The table client is constructed per call, so the failure is injected on the prototype.
+    // The counter inserts the day's first view and merges every one after it — never upserts, because
+    // Two concurrent first views would both merge count: 1 and drop an increment
+    vi.spyOn(MockTableClient.prototype, "createEntity").mockRejectedValue(new Error("Table write failed"));
+    vi.spyOn(MockTableClient.prototype, "updateEntity").mockRejectedValue(new Error("Table write failed"));
     vi.spyOn(console, "error").mockImplementation(noop);
     const { content } = await caller.readPublishedResourceContent(newResource.id);
 
     // Telemetry must never break serving the page
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
-    expect(await caller.readResourceViewCount({ id: newResource.id })).toBe(0);
+    await expect(caller.readResourceViewCount({ id: newResource.id })).resolves.toBe(0);
   });
 
   test("deletes view counts with the resource", async () => {

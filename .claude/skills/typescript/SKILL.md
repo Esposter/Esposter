@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Esposter TypeScript conventions — banned patterns (Omit over Except, forEach, parameter properties, the void operator), declare over ! on class fields, arrow functions and overloads, neverthrow promise style, InvalidOperationError, guard clauses, exhaustive switch guards, enum naming/refs/values arrays, discriminant-keyed maps for polymorphic dispatch, and the string "" sentinel with the null-vs-undefined rules. Apply when writing any TypeScript in this project.
+description: Esposter TypeScript conventions — banned patterns (Omit over Except, forEach, parameter properties, the void operator), as unknown as treated like any (model the type instead; the rare mock and library-seam exceptions), declare over ! on class fields, arrow functions and overloads, neverthrow promise style, InvalidOperationError, guard clauses, exhaustive switch guards, enum naming/refs/values arrays, discriminant-keyed maps for polymorphic dispatch, and the string "" sentinel with the null-vs-undefined rules. Apply when writing any TypeScript in this project.
 ---
 
 # TypeScript Conventions
@@ -28,6 +28,31 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - **No `current*` caching of `.value`** just to use it once. If narrowing is needed after a guard, assign a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source is already non-reactive (e.g. a `readonly` prop field).
 - **Cloning** — `structuredClone(obj)` for deep clones; `Object.assign(structuredClone(obj), { ...updates })` to clone+override. Never `{ ...spread }` to clone a class instance (loses prototype). **Exception**: `structuredClone(new ClassName(...))` when a plain object is explicitly required (e.g. Vjsf rejects class instances) — add a comment explaining why.
 - **Boolean casting** — never `!!`; always `Boolean(value)`.
+
+## Type Assertions — `as unknown as` Is `any` With Extra Steps
+
+`as unknown as T` launders a value past every check the compiler would have run, which is the same hole `no-explicit-any` exists to close — it just isn't lint-enforceable, so hold the line in review. Treat every one as needing a **stated reason the type cannot be modelled**; the default answer is that it was simply never modelled:
+
+| Instead of asserting                            | Model it                                                                                                       |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| External/boundary data into a type              | Parse it with Zod — the `zod` skill owns this, and it is the one case where the cast is a **bug**              |
+| A generic seam (a client, a db, a search index) | Pass the type parameter (`Library<TDocument>`), or return the driver-agnostic supertype both sides satisfy     |
+| A prototype you are extending                   | `Object.assign(Proto, { method() {} })` — a runtime lookup needs no static claim, so nothing has to be lied to |
+| An untyped third-party package                  | An ambient `declare module "pkg"` — one `.d.ts` beats a suppression per import site                            |
+| Two shapes that "are really the same"           | One discriminated union, or a `satisfies`-checked adapter at the seam                                          |
+
+What survives is **seams the type system genuinely cannot express**. Most live in a mock or a `.test.ts`:
+
+- **A fake standing in for an SDK type with private or branded members** — an Azure SDK response carries `_response`/private brands a mock cannot structurally satisfy. This is the whole job of `azure-mock`/`db-mock`, and the `testing` skill sanctions it.
+- **A `vi.mock` factory replacing an overloaded function** — `vi.fn<typeof overloadedFn>()` cannot reproduce an overload set, hence `mockFn as unknown as typeof overloadedFn`.
+- **The mixin limitation** — a class expression extending a generic `TBase` cannot be inferred back to its mapped return type.
+
+A few are unavoidable in production source, and both known kinds share a tell — **TS refuses the single `as T` for want of overlap**, which is the compiler confirming there is nothing to narrow rather than you overruling it:
+
+- **A library result type that cannot express what it carries** — e.g. a search hit that declares none of the fields the index was told to store. There is no index signature to annotate against and no overlap to cast through.
+- **A transform whose key mapping is runtime-only** — `Object.fromEntries` over renamed keys types as a bare `Record`, which overlaps no class. Restate the shape only where something else already pins it (the source's own document type).
+
+Prefer a single `as T` whenever TS accepts it, and comment **what the compiler cannot see** — never "this is safe". Adding one to production source earns the same scrutiny as reaching for `any`: if the shape is worth asserting, it is worth declaring.
 
 ## Class Fields — `declare` over `!`
 

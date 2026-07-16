@@ -37,16 +37,16 @@ Adoption is only zero-risk if a sandbox path that cannot run becomes native: an 
 
 The CLI is built on citty, so every command has `--help`. The bare `virrun -- <cmd>` prefix is shorthand for `virrun run`.
 
-| Command                      | What it does                                                                                                                                                                                 |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `virrun -- <cmd>`            | Default passthrough — forks a warm snapshot on the `os` backend (write-back on), else execs natively. Alias of `virrun run`.                                                                 |
-| `virrun run -- <cmd>`        | Explicit form of the default; `--ephemeral` keeps the vanishing fork, `--no-cache` skips the task cache.                                                                                     |
-| `virrun exec -- <cmd>`       | Forced plain exec — runs the command directly, skipping any warm-cache fork (the cold sibling of `run`).                                                                                     |
-| `virrun warm`                | Provisions the `os` backend's warm cache (dependency snapshot + prepare layer) for the current lockfile ahead of time.                                                                       |
-| `virrun doctor`              | Probes each `os`-backend prerequisite (bubblewrap ≥ 0.10.0, WSL Linux node, python3, rsync, the real overlay-mount verdict) and prints an aligned per-check report; exits non-zero on a gap. |
-| `virrun init [--backend]`    | Writes the JSON config variant selecting the backend (`--force` to overwrite); hand-write `virrun.config.ts` for platform branching.                                                         |
-| `virrun cache ls`            | Lists the repo-local dependency store and host-global warm snapshots / prepare layers / task cache.                                                                                          |
-| `virrun cache clean [--all]` | Removes the repo-local `.virrun` cache; `--all` also clears the host-global snapshots, prepare layers, task cache, and win32 source mirrors.                                                 |
+| Command                      | What it does                                                                                                                                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `virrun -- <cmd>`            | Default passthrough — forks a warm snapshot on the `os` backend (write-back on), else execs natively. Alias of `virrun run`.                                                                    |
+| `virrun run -- <cmd>`        | Explicit form of the default; `--ephemeral` keeps the vanishing fork, `--no-cache` skips the task cache.                                                                                        |
+| `virrun exec -- <cmd>`       | Forced plain exec — runs the command directly, skipping any warm-cache fork (the cold sibling of `run`).                                                                                        |
+| `virrun warm`                | Provisions the `os` backend's warm cache (dependency snapshot + prepare layer) for the current lockfile ahead of time.                                                                          |
+| `virrun doctor`              | Probes each `os`-backend prerequisite (bubblewrap ≥ 0.10.0, WSL Linux node, python3, host tar, the real overlay-mount verdict) and prints an aligned per-check report; exits non-zero on a gap. |
+| `virrun init [--backend]`    | Writes the JSON config variant selecting the backend (`--force` to overwrite); hand-write `virrun.config.ts` for platform branching.                                                            |
+| `virrun cache ls`            | Lists the repo-local dependency store and host-global warm snapshots / prepare layers / task cache.                                                                                             |
+| `virrun cache clean [--all]` | Removes the repo-local `.virrun` cache; `--all` also clears the host-global snapshots, prepare layers, task cache, and win32 source mirrors.                                                    |
 
 ## Dogfooding (this repo)
 

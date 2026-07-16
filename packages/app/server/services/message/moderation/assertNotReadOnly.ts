@@ -1,15 +1,11 @@
-import type { Context } from "@@/server/trpc/context";
+import type { RoomInMessage } from "@esposter/db-schema";
 
-import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
-import { RoomPermission } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 
-export const assertNotReadOnly = async (db: Context["db"], userId: string, roomId: string) => {
-  const room = await db.query.roomsInMessage.findFirst({
-    columns: { isReadOnly: true },
-    where: { id: { eq: roomId } },
-  });
+export const assertNotReadOnly = async (
+  room: Pick<RoomInMessage, "isReadOnly"> | undefined,
+  getCanManageMessages: () => Promise<boolean>,
+): Promise<void> => {
   if (!room?.isReadOnly) return;
-  const isPermitted = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
-  if (!isPermitted) throw new TRPCError({ code: "FORBIDDEN" });
+  if (!(await getCanManageMessages())) throw new TRPCError({ code: "FORBIDDEN" });
 };
