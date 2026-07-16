@@ -5,7 +5,7 @@ import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdat
 import type { Except } from "type-fest";
 
 import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 // The summary cards read every filter except `types` — the cards are what sets it, so grouping by a type
 // The user already narrowed to would only ever render the one card they are standing on
 export const useReadResourceTypeCounts = ({
@@ -19,7 +19,9 @@ export const useReadResourceTypeCounts = ({
   const counts = ref<ResourceTypeCount[]>([]);
   const isLoading = ref(false);
   const error = ref("");
+  let callId = 0;
   const refresh = async () => {
+    const id = ++callId;
     // Shared with the list so a card's count is the number the list shows once the card sets its type
     const filterInput = getResourceFilterInput({
       searchQuery: searchQuery.value,
@@ -31,12 +33,15 @@ export const useReadResourceTypeCounts = ({
     });
     isLoading.value = true;
     error.value = "";
-    await getResultAsync(async () => {
-      counts.value = await $trpc.resource.countsByType.query(filterInput);
-    }).match(noop, (readError) => {
-      error.value = readError.message;
-    });
-    isLoading.value = false;
+    await getResultAsync(() => $trpc.resource.countsByType.query(filterInput)).match(
+      (newCounts) => {
+        if (id === callId) counts.value = newCounts;
+      },
+      (readError) => {
+        if (id === callId) error.value = readError.message;
+      },
+    );
+    if (id === callId) isLoading.value = false;
   };
   return { counts, error, isLoading, refresh };
 };

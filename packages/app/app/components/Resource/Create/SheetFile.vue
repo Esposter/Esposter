@@ -59,10 +59,16 @@ const { isOverDropZone } = useDropZone(dropZone, {
     if (files && files.length > 0) await parseFile(takeOne(files));
   },
 });
-// The picker hands back a lone file or a list depending on `multiple`, and the template has no File global
-const onUpdateFile = async (newFile: File | File[]) => {
-  const newFiles = Array.isArray(newFile) ? newFile : [newFile];
+// The picker hands back a lone file or a list depending on `multiple`, and clearing it hands back nothing,
+// Which resets the staged sheet along with the selection
+const onUpdateFile = async (newFile?: File | File[]) => {
+  const newFiles = Array.isArray(newFile) ? newFile : newFile ? [newFile] : [];
   if (newFiles.length > 0) await parseFile(takeOne(newFiles));
+  else {
+    file.value = undefined;
+    sheetResource.value = undefined;
+    error.value = "";
+  }
 };
 </script>
 

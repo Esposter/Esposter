@@ -2,8 +2,9 @@ import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getUtcDateString } from "#shared/services/dayjs/getUtcDateString";
+import { countProgramParticipantEntities } from "@@/server/services/program/countProgramParticipantEntities";
 import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
-import { ResourceType } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE, ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 // A dataset flows into dashboards and a dashboard is publishable, so its snapshot is a public read.
 // The participant column is therefore their non-secret publicId — never keyValue, which is the
@@ -20,6 +21,9 @@ export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) 
   if (!resource) throw new TRPCError({ code: "UNAUTHORIZED" });
 
   const statusRows = await readProgramStatusRows(resource.id);
+  // A read that fit under the cap answers for itself; only a read that filled it pays for the count
+  const totalRows =
+    statusRows.length < AZURE_MAX_PAGE_SIZE ? statusRows.length : await countProgramParticipantEntities(resource.id);
   return {
     columns: [
       { name: "participant", type: ColumnType.String },
@@ -33,5 +37,6 @@ export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) 
       participant: publicId,
       responded: isResponded,
     })),
+    totalRows,
   };
 };

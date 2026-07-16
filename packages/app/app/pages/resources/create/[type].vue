@@ -89,7 +89,7 @@ const submit = async () => {
                   v-if="type === ResourceType.Sheet"
                   v-model="sheetResource"
                   v-model:error="fileError"
-                  @parse="name = $event"
+                  @parse="name ||= $event"
                 />
                 <div mt-4 flex gap-2 justify-end>
                   <v-btn variant="text" :to="RoutePath.ResourcesCreate">Cancel</v-btn>

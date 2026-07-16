@@ -241,6 +241,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       @select="
         (type) => {
           types = [type];
+          page = 1;
           isSummaryView = false;
         }
       "

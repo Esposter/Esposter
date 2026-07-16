@@ -56,7 +56,11 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const { pendingDataset } = storeToRefs(useEmailExportDialogStore());
         const exportPersonalizedHtml = useExportPersonalizedHtml();
         const referenceValue = datasetReference.value;
-        if (!editor.value || !resource.value || !referenceValue) {
+        if (!editor.value || !resource.value) {
+          createAlert("Open the email editor before exporting personalized HTML", "warning");
+          return;
+        }
+        if (!referenceValue) {
           createAlert("Bind a dataset before exporting personalized HTML", "warning");
           return;
         }

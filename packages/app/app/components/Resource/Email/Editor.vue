@@ -8,6 +8,7 @@ import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { setBlocks } from "@/services/grapesjs/setBlocks";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
+import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { escapeHtml } from "@/util/text/escapeHtml";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop, RoutePath } from "@esposter/shared";
@@ -26,6 +27,12 @@ const { editor } = await useGrapesJsEditor(
 // Bridge the live editor onto the store so the command-bar Export can reach it
 watchImmediate(editor, (newEditor) => {
   storeEditor.value = newEditor;
+});
+const { pendingDataset } = storeToRefs(useEmailExportDialogStore());
+// The stores outlive the blade, so anything the blade staged or bridged is torn down with it
+onUnmounted(() => {
+  pendingDataset.value = undefined;
+  storeEditor.value = undefined;
 });
 
 const { dataset } = useDataset(() => datasetReference.value);

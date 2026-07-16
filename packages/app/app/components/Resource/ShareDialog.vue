@@ -17,11 +17,12 @@ const { $trpc } = useNuxtApp();
 const notificationStore = useNotificationStore();
 const { createNotification } = notificationStore;
 const executeMutation = useMutation();
-const rules = useVRules();
 const roomItems = ref<SelectItemCategoryDefinition<string>[]>([]);
 const isLoadingRooms = ref(true);
 const roomId = ref("");
 const note = ref("");
+const shareUrl = computed(() => `${window.location.origin}${RoutePath.View(resource.type, resource.id)}`);
+const shareMessage = computed(() => getShareMessage(note.value, shareUrl.value));
 const title = computed(() => `Share "${resource.name}"`);
 // The caller mounts this only while open, so the rooms are read once per open rather than watched
 onMounted(async () => {
@@ -37,21 +38,23 @@ const share = async () => {
   const room = roomItems.value.find(({ value }) => value === roomId.value);
   if (!room) return;
 
-  const message = getShareMessage(note.value, `${window.location.origin}${RoutePath.View(resource.type, resource.id)}`);
   // The caller's own message in their own room — RBAC, rate limits and the message pipeline apply unchanged
-  await executeMutation(() => $trpc.message.createMessage.mutate({ message, roomId: roomId.value }), {
-    onError: (error) => {
-      createNotification({ severity: "error", title: error.message });
+  await executeMutation(
+    () => $trpc.message.createMessage.mutate({ message: shareMessage.value, roomId: roomId.value }),
+    {
+      onError: (error) => {
+        createNotification({ severity: "error", title: error.message });
+      },
+      onSuccess: () => {
+        createNotification({
+          action: { title: "Open room", to: RoutePath.Messages(room.value) },
+          severity: "success",
+          title: `Shared to ${room.title}`,
+        });
+        isOpen.value = false;
+      },
     },
-    onSuccess: () => {
-      createNotification({
-        action: { title: "Open room", to: RoutePath.Messages(room.value) },
-        severity: "success",
-        title: `Shared to ${room.title}`,
-      });
-      isOpen.value = false;
-    },
-  });
+  );
 };
 </script>
 
@@ -85,7 +88,11 @@ const share = async () => {
         :counter="MESSAGE_MAX_LENGTH"
         label="Message (optional)"
         rows="3"
-        :rules="[rules.maxLength(MESSAGE_MAX_LENGTH)]"
+        :rules="[
+          () =>
+            shareMessage.length <= MESSAGE_MAX_LENGTH ||
+            'The note and link together exceed the message limit, so the note needs to be shorter',
+        ]"
       />
       <span text-caption op-medium-emphasis>The public link is posted as your own message in the room.</span>
     </div>
