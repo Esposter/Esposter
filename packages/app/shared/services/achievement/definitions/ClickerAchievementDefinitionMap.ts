@@ -2,7 +2,7 @@ import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
-import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
+import { BuildingIds } from "#shared/models/clicker/data/building/BuildingId";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { BinaryOperator, ClickerAchievementName } from "@esposter/db-schema";
 
@@ -19,7 +19,7 @@ export const ClickerAchievementDefinitionMap = {
     amount: 1,
     category: AchievementCategory.Clicker,
     condition: {
-      operation: (value) => Object.values(BuildingId).every((buildingId) => value.some(({ id }) => id === buildingId)),
+      operation: (value) => BuildingIds.every((buildingId) => value.some(({ id }) => id === buildingId)),
       operator: AchievementOperator.Operation,
       path: "boughtBuildings",
       type: AchievementConditionType.Property,

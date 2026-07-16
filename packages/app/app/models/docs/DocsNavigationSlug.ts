@@ -9,3 +9,5 @@ export enum DocsNavigationSlug {
   Rejected = "rejected",
   Proposals = "proposals",
 }
+
+export const DocsNavigationSlugs = Object.values(DocsNavigationSlug);

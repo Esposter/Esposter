@@ -3,7 +3,7 @@ import type { Promisable } from "type-fest";
 import { dayjs } from "#shared/services/dayjs";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
-import { AdminActionType } from "@esposter/db-schema";
+import { AdminActionType, AdminActionTypes } from "@esposter/db-schema";
 
 type Action = (roomId: string, durationMs?: number) => Promisable<void>;
 
@@ -39,7 +39,7 @@ export const useAdminActionMap = () => {
     },
   };
   return Object.fromEntries(
-    Object.values(AdminActionType).map((adminActionType) => [
+    AdminActionTypes.map((adminActionType) => [
       adminActionType,
       async (roomId: string, durationMs?: number) => {
         await Promise.all(AdminActionHookMap[adminActionType].map((fn) => Promise.resolve(fn(roomId))));

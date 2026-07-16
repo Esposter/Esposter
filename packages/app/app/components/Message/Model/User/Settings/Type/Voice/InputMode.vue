@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UserSettingsInMessage } from "@esposter/db-schema";
+import type { UserSettingsInMessage, VoiceInputMode } from "@esposter/db-schema";
 
 import { VoiceInputModeLabelMap } from "@/services/message/user/settings/VoiceInputModeLabelMap";
 import { useUserSettingsStore } from "@/store/message/user/settings";
-import { VoiceInputMode } from "@esposter/db-schema";
+import { VoiceInputModes } from "@esposter/db-schema";
 
 interface InputModeProps {
   userSettings: UserSettingsInMessage;
@@ -12,7 +12,6 @@ interface InputModeProps {
 const { userSettings } = defineProps<InputModeProps>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
-const voiceInputModes = Object.values(VoiceInputMode);
 </script>
 
 <template>
@@ -23,7 +22,7 @@ const voiceInputModes = Object.values(VoiceInputMode);
       @update:model-value="updateUserSettings({ voiceInputMode: $event as VoiceInputMode })"
     >
       <v-radio
-        v-for="voiceInputMode of voiceInputModes"
+        v-for="voiceInputMode of VoiceInputModes"
         :key="voiceInputMode"
         :label="VoiceInputModeLabelMap[voiceInputMode]"
         :value="voiceInputMode"

@@ -10,3 +10,5 @@ export const InviteExpireAfterMinutesMap = {
   "1 day": dayjs.duration(1, "day").asMinutes(),
   "7 days": dayjs.duration(7, "days").asMinutes(),
 } as const satisfies Record<string, number>;
+
+export const InviteExpireAfterMinutes = Object.values(InviteExpireAfterMinutesMap);

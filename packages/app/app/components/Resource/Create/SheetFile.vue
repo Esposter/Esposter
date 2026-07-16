@@ -2,7 +2,7 @@
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
+import { DataSourceTypes } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "@/services/resource/constants";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
@@ -16,7 +16,6 @@ const sheetResource = defineModel<SheetResource>();
 const error = defineModel<string>("error", { default: "" });
 // The filename is the best name the user never has to type, so the form takes it as its own
 const emit = defineEmits<{ parse: [name: string] }>();
-const DataSourceTypes: readonly DataSourceType[] = Object.values(DataSourceType);
 const accept = DataSourceTypes.map((type) => DataSourceConfigurationMap[type].accept).join(",");
 const dropZone = useTemplateRef("dropZone");
 const file = ref<File>();

@@ -6,7 +6,7 @@ import type { Except } from "type-fest";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import SlashCommandList from "@/components/Message/Model/Message/Suggestion/SlashCommandList.vue";
 import { getRender } from "@/services/message/getRender";
-import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
+import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { normalizeString } from "@esposter/shared";
@@ -32,7 +32,7 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
   }),
   items: ({ query }) => {
     const lowerQuery = query.toLowerCase();
-    return Object.values(SlashCommandDefinitionMap).filter(
+    return SlashCommandDefinitions.filter(
       ({ description, title }) =>
         title.toLowerCase().includes(lowerQuery) || description.toLowerCase().includes(lowerQuery),
     );

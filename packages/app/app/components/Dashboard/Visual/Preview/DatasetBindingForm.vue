@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualDatasetBinding";
 
-import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
+import { DatasetAggregationType, DatasetAggregationTypes } from "#shared/models/dataset/DatasetAggregationType";
 import { authClient } from "@/services/auth/authClient";
 import { useAlertStore } from "@/store/alert";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -13,7 +13,6 @@ const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { dataset } = useDataset(() => modelValue.value?.reference);
 const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name) ?? []);
-const datasetAggregationTypes = Object.values(DatasetAggregationType);
 </script>
 
 <template>
@@ -50,7 +49,7 @@ const datasetAggregationTypes = Object.values(DatasetAggregationType);
       <v-select v-model="modelValue.query.xColumn" :items="columnNames" label="X Column" />
       <div v-for="(series, index) of modelValue.query.series" :key="index" flex gap-2 items-center>
         <v-select v-model="series.column" :items="columnNames" label="Series Column" />
-        <v-select v-model="series.aggregation" :items="datasetAggregationTypes" label="Aggregation" />
+        <v-select v-model="series.aggregation" :items="DatasetAggregationTypes" label="Aggregation" />
         <StyledTooltipIconButton
           :button-props="{ disabled: modelValue.query.series.length === 1 }"
           icon="mdi-delete"

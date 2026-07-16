@@ -15,6 +15,8 @@ const voiceInputModeSchema = z.enum(VoiceInputMode) satisfies z.ZodType<VoiceInp
 
 export const voiceInputModeEnum = pgEnum("voice_input_mode", VoiceInputMode);
 
+export const VoiceInputModes: readonly VoiceInputMode[] = Object.values(VoiceInputMode);
+
 export enum NoiseSuppressionMode {
   Custom = "Custom",
   Studio = "Studio",

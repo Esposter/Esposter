@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from "@nuxt/content";
 
-import { DocsCategory } from "@/models/docs/DocsCategory";
+import { DocsCategories } from "@/models/docs/DocsCategory";
 import { getSectionCategory } from "@/services/docs/getSectionCategory";
 import { getSectionIcon } from "@/services/docs/getSectionIcon";
 
@@ -11,12 +11,10 @@ interface NavigationOverviewProps {
 
 const { sections } = defineProps<NavigationOverviewProps>();
 const categories = computed(() =>
-  Object.values(DocsCategory)
-    .map((category) => ({
-      category,
-      categorySections: sections.filter(({ path }) => getSectionCategory(path) === category),
-    }))
-    .filter(({ categorySections }) => categorySections.length > 0),
+  DocsCategories.map((category) => ({
+    category,
+    categorySections: sections.filter(({ path }) => getSectionCategory(path) === category),
+  })).filter(({ categorySections }) => categorySections.length > 0),
 );
 </script>
 

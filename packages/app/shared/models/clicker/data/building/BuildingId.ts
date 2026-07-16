@@ -23,3 +23,5 @@ export enum BuildingId {
 }
 
 export const buildingIdSchema = z.enum(BuildingId) satisfies z.ZodType<BuildingId>;
+
+export const BuildingIds = Object.values(BuildingId);

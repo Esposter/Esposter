@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { DocsCategory } from "@/models/docs/DocsCategory";
 import type { ContentNavigationItem } from "@nuxt/content";
 
-import { DocsCategory } from "@/models/docs/DocsCategory";
+import { DocsCategories } from "@/models/docs/DocsCategory";
 import { DocsCategoryIconMap } from "@/services/docs/DocsCategoryIconMap";
 import { getSectionCategory } from "@/services/docs/getSectionCategory";
 import { RoutePath } from "@esposter/shared";
@@ -14,12 +15,10 @@ interface CategoryTabsProps {
 const { activeCategory, sections } = defineProps<CategoryTabsProps>();
 // Each tab lands on its category's first section
 const categories = computed(() =>
-  Object.values(DocsCategory)
-    .map((category) => ({
-      category,
-      firstSection: sections.find(({ path }) => getSectionCategory(path) === category),
-    }))
-    .filter(({ firstSection }) => firstSection !== undefined),
+  DocsCategories.map((category) => ({
+    category,
+    firstSection: sections.find(({ path }) => getSectionCategory(path) === category),
+  })).filter(({ firstSection }) => firstSection !== undefined),
 );
 </script>
 

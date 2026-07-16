@@ -7,3 +7,5 @@ export enum DocsCategory {
   Packages = "Packages",
   Proposals = "Proposals",
 }
+
+export const DocsCategories = Object.values(DocsCategory);

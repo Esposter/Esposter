@@ -9,3 +9,5 @@ export enum MonsterKey {
 }
 
 export const monsterKeySchema = z.enum(MonsterKey) satisfies z.ZodType<MonsterKey>;
+
+export const MonsterKeys = Object.values(MonsterKey);

@@ -3,7 +3,7 @@ import type { SettingsContentMap } from "@/services/message/settings/SettingsCon
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
-import { SettingsCategory } from "@/models/message/room/SettingsCategory";
+import { SettingsCategories, SettingsCategory } from "@/models/message/room/SettingsCategory";
 import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategoryMap";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
@@ -37,7 +37,7 @@ const visibleCategories = computed(() =>
 );
 // Discord heads the first category with the server name itself
 const getCategoryTitle = (category: SettingsCategory) => (category === SettingsCategory.General ? room.name : category);
-const openedCategories = ref<SettingsCategory[]>(Object.values(SettingsCategory));
+const openedCategories = ref([...SettingsCategories]);
 const onClick = (settingsType: SettingsType) => {
   if (settingsType === SettingsType.Delete) emit("open:delete");
   else modelValue.value = settingsType;

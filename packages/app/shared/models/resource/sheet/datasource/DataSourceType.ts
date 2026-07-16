@@ -9,3 +9,5 @@ export enum DataSourceType {
 }
 
 export const dataSourceTypeSchema = z.enum(DataSourceType) satisfies z.ZodType<DataSourceType>;
+
+export const DataSourceTypes = Object.values(DataSourceType);

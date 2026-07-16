@@ -1,12 +1,10 @@
 import type { ContentNavigationItem } from "@nuxt/content";
 
-import { DocsNavigationSlug } from "@/models/docs/DocsNavigationSlug";
+import { DocsNavigationSlugs } from "@/models/docs/DocsNavigationSlug";
 import { DEFAULT_DOCS_NAVIGATION_WEIGHT } from "@/services/docs/constants";
 
-const docsNavigationSlugs: string[] = Object.values(DocsNavigationSlug);
-
 const getWeight = ({ path }: ContentNavigationItem) => {
-  const index = docsNavigationSlugs.indexOf(path.split("/").at(-1) ?? "");
+  const index = DocsNavigationSlugs.findIndex((slug) => slug === path.split("/").at(-1));
   return index === -1 ? DEFAULT_DOCS_NAVIGATION_WEIGHT : index;
 };
 
