@@ -76,6 +76,8 @@ watch([editor, publishedSurveys], ([newEditor, newPublishedSurveys]) => {
       <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
     </v-toolbar>
     <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 overflow-hidden />
+    <!-- The export command needs this blade's live editor anyway, so its confirm lives here too -->
+    <ResourceEmailExportTruncationDialog />
   </div>
 </template>
 

@@ -74,6 +74,18 @@ const filterKey = computed(() =>
 );
 const itemsPerPage = ref(RESOURCE_LIST_ITEMS_PER_PAGE);
 const isGroupedByType = ref(false);
+// Summary is a lens on the same filtered query rather than a route, so it stays local to the workbench
+const isSummaryView = ref(false);
+const {
+  counts: typeCounts,
+  error: typeCountsError,
+  isLoading: isLoadingTypeCounts,
+  refresh: refreshTypeCounts,
+} = useReadResourceTypeCounts({ searchQuery: search, status, updatedAfter, updatedBefore, updatedFilter });
+// The cards are only mounted in summary mode, so the read follows the mode rather than every filter change
+watch([isSummaryView, filterKey], async ([newIsSummaryView]) => {
+  if (newIsSummaryView) await refreshTypeCounts();
+});
 const hiddenColumnKeys = useLocalStorage<string[]>(LocalStorageKey.ResourceListHiddenColumns, []);
 const visibleHeaders = computed(() => ResourceHeaders.filter(({ key }) => !hiddenColumnKeys.value.includes(key)));
 const { clearSelection, selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
@@ -91,6 +103,14 @@ const showingText = computed(() => {
 });
 const toolbarItems = computed<Item[]>(() => [
   {
+    active: isSummaryView.value,
+    icon: "mdi-view-grid-outline",
+    onClick: () => {
+      isSummaryView.value = !isSummaryView.value;
+    },
+    title: "Summary view",
+  },
+  {
     active: isGroupedByType.value,
     icon: "mdi-format-list-group",
     onClick: () => {
@@ -103,7 +123,7 @@ const toolbarItems = computed<Item[]>(() => [
     onClick: () => exportAllResourcesCsv(createResourcesPageReader()),
     title: "Export CSV",
   },
-  { icon: "mdi-refresh", onClick: () => refresh(), title: "Refresh" },
+  { icon: "mdi-refresh", onClick: () => (isSummaryView.value ? refreshTypeCounts() : refresh()), title: "Refresh" },
 ]);
 // Owned here because the row leaves `items` optimistically, which unmounts the v-if-gated delete dialog mid-flight
 const deleteResources = async (resources: Resource[]) => {
@@ -212,7 +232,21 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         </template>
       </v-alert>
     </template>
+    <ResourceListSummaryCards
+      v-if="isSummaryView"
+      :counts="typeCounts"
+      :error="typeCountsError"
+      :is-loading="isLoadingTypeCounts"
+      @retry="refreshTypeCounts()"
+      @select="
+        (type) => {
+          types = [type];
+          isSummaryView = false;
+        }
+      "
+    />
     <StyledDataTableServer
+      v-else
       flex
       flex-1
       flex-col

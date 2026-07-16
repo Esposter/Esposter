@@ -21,11 +21,14 @@ The standards the platform applies live in architecture: the layer model ([/docs
 
 - [Resource explorer](/docs/platform/resource-explorer) — the shell: Home, list, create flow, resource page, blades, command bar
 - [List filters & views](/docs/platform/list-filters-and-views) — the `/all` workbench: filter pills, URL-synced state, bulk operations, column chooser, grouping, CSV export
+- [Summary view](/docs/platform/summary-view) — the `/all` List/Summary toggle: per-type count cards over a grouped count procedure
 - [Resource page parity](/docs/platform/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, type-the-name delete guard, save-conflict surface
+- [Share to esbabbler](/docs/platform/share-to-esbabbler) — Share command posting a published resource's public link into a room you pick
 - [Notifications bell](/docs/platform/notifications) — session-scoped operation-outcome toasts + app-bar bell panel
 - [Global search](/docs/platform/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, prefix-match ranking
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
+- [Create from file](/docs/platform/create-from-file) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
 - [Program resource](/docs/platform/program-resource) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
 - [Survey response controls](/docs/platform/survey-response-controls) — the accepting-responses toggle and the closed state that keeps participant links alive
@@ -34,6 +37,7 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Published view analytics](/docs/platform/published-view-analytics) — best-effort view counts on public reads for every publishable type
 - [Dashboard data binding](/docs/platform/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Email personalization](/docs/platform/email-personalization) — merge fields, survey invite blocks, personalized HTML export
+- [Dataset row-cap warning](/docs/platform/dataset-row-cap-warning) — "showing N of M" wherever a dataset read hits the 1000-row cap
 - [Resource Explorer consolidation](/docs/platform/resource-consolidation) — the shipped six-phase program record
 
 Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/platform/deferred) (with revisit triggers) and [rejected](/docs/platform/rejected).
@@ -53,3 +57,4 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - Notifications bell — session-scoped notification store, app-bar bell + single snackbar queue, `G N` chord, stale-`contentVersion` save-conflict surface
 - File resource renamed to **Sheet** — pg enum value, `sheet` router, models/components/store, and the docs area (`sheet-editor`, `sheet-resource`); no backwards compat
 - **End-to-end survey funnel** — the send → view → respond → analyze loop closed: survey `settings` (accepting-responses toggle + Anonymous/Identified response mode) enforced at one server write boundary, the **Program** resource issuing opaque participant tokens and serving the identity-free `ProgramStatus` dataset, owner-side response detail/delete/count, and best-effort view counts on every publishable type's public read. One new Postgres enum value and two new Azure Tables; no new services. The café-scenario chain is covered end to end by `surveyFunnel.integration.test.ts`.
+- Explorer parity smalls — `/all` Summary lens over a grouped `countsByType`, the dataset row cap surfaced as "showing N of M" in every consumer (`Dataset.totalRows` + `countEntities`), Sheet create-from-file landing in a ready Data blade, and a Share command posting a published link into an esbabbler room

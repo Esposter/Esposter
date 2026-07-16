@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import type { DatasetTruncation } from "#shared/models/dataset/DatasetTruncation";
 import type { Resource } from "@esposter/db-schema";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
+import { getDatasetTruncationText } from "#shared/services/dataset/getDatasetTruncationText";
 import { authClient } from "@/services/auth/authClient";
 import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
 import { useAlertStore } from "@/store/alert";
@@ -15,6 +18,8 @@ const setDataSource = useSetDataSource();
 const dialog = ref(false);
 const surveys = ref<Resource[]>([]);
 const selectedSurveyId = ref<string>();
+const getImportTruncationMessage = (truncation: DatasetTruncation) =>
+  `${getDatasetTruncationText(truncation)} — the remaining ${truncation.hiddenRows} were not imported`;
 
 watch(dialog, async (newDialog) => {
   if (!newDialog) return;
@@ -43,6 +48,9 @@ watch(dialog, async (newDialog) => {
                   type: DatasetProviderType.SurveyResponses,
                 });
                 await setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
+                // The sheet now looks like the whole survey, so a capped copy has to say so on the way in
+                const truncation = getDatasetTruncation(dataset);
+                if (truncation) createAlert(getImportTruncationMessage(truncation), 'warning');
               }).match(noop, (error) => createAlert(error.message, 'error')),
             () => onComplete(),
           )

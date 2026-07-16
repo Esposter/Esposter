@@ -6,4 +6,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 export interface SurveyResponseRecords {
   columns: DatasetColumn[];
   rows: (Record<string, ColumnValue> & { rowKey: string })[];
+  // The uncapped count, shaped like Dataset's so the blade shares the one truncation check. Responses are
+  // The owner's record of truth, so a capped read has to say what it left behind rather than quietly end
+  totalRows: number;
 }

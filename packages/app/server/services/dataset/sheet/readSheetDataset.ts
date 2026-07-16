@@ -28,6 +28,10 @@ export const readSheetDataset: DatasetProvider = async (ctx, reference) => {
   if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
 
   const { data } = sheetResourceSchema.parse(jsonDateParse(await streamToText(readableStreamBody)));
-  // Capped like readSurveyResponsesDataset so file-backed datasets cannot return unbounded payloads
-  return dataSourceToDataset({ ...data, rows: data.rows.slice(0, AZURE_MAX_PAGE_SIZE) });
+  // Capped like readSurveyResponsesDataset so file-backed datasets cannot return unbounded payloads.
+  // The whole blob is already in hand, so the uncapped total costs nothing to report
+  return {
+    ...dataSourceToDataset({ ...data, rows: data.rows.slice(0, AZURE_MAX_PAGE_SIZE) }),
+    totalRows: data.rows.length,
+  };
 };

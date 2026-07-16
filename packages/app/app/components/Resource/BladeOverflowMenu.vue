@@ -15,7 +15,7 @@ interface ResourceBladeOverflowMenuProps {
 
 const { duplicate, publication, publish, refresh, resource, unpublish } = defineProps<ResourceBladeOverflowMenuProps>();
 // The dialogs live in the toolbar so they outlive this menu closing
-const emit = defineEmits<{ delete: []; rename: [] }>();
+const emit = defineEmits<{ delete: []; rename: []; share: [] }>();
 const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
 const overflowItems = computed<Item[]>(() => [
@@ -29,6 +29,10 @@ const overflowItems = computed<Item[]>(() => [
           ? { icon: "mdi-cloud-off-outline", onClick: () => unpublish(), title: "Unpublish" }
           : { icon: "mdi-cloud-upload", onClick: () => publish(), title: "Publish" },
       ]
+    : []),
+  // An unpublished resource has no public URL, so there is nothing to share until it has one
+  ...(isPublishable.value && publication
+    ? [{ icon: "mdi-share-variant", onClick: () => emit("share"), title: "Share" }]
     : []),
   ...importFormats.value.map(({ import: importFormat, label }) => ({
     icon: "mdi-import",
