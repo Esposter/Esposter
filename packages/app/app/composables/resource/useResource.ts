@@ -41,8 +41,8 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     if (!current) return Promise.resolve(undefined);
     return getResourceMutations(current.type).readResourceContent({ id: current.id });
   };
-  // Serialized so each save picks up the contentVersion the previous one wrote back — the server's
-  // optimistic-concurrency rejection then only fires for genuine cross-session edits, not our own overlapping saves.
+  // Serialized so each save picks up the contentVersion the previous one wrote back.
+  // The server's optimistic-concurrency rejection then only fires for genuine cross-session edits, not our own overlapping saves.
   const save = getSequentialFunction(async (content: unknown) => {
     const current = resource.value;
     if (!current) return false;

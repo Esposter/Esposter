@@ -22,6 +22,7 @@ export const useGrapesJsEditor = async (storage: UseGrapesJsEditorStorage, confi
     const newEditor = grapesJS.init({
       ...configuration,
       container: `#${GRAPES_JS_EDITOR_CONTAINER_ID}`,
+      // oxlint-disable-next-line typescript/no-deprecated -- fromElement still functional in GrapesJS; removing it would change initial-load behavior
       fromElement: true,
       height: "100%",
       storageManager: {

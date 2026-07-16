@@ -5,7 +5,6 @@ import type { Except } from "type-fest";
 import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
 import { getResultAsync } from "@esposter/shared";
-
 // The summary cards read every filter except `types` — the cards are what sets it, so grouping by a type
 // The user already narrowed to would only ever render the one card they are standing on
 export const useReadResourceTypeCounts = (getFilters: () => Except<ResourceFilterValues, "types">) => {
