@@ -5,7 +5,7 @@ import { DEFAULT_DOCS_NAVIGATION_WEIGHT } from "@/services/docs/constants";
 
 const getWeight = ({ path }: ContentNavigationItem) => {
   const slug = path.split("/").at(-1) ?? "";
-  const index = DocsNavigationSlugs.findIndex((navigationSlug) => navigationSlug === slug);
+  const index = DocsNavigationSlugs.indexOf(slug);
   return index === -1 ? DEFAULT_DOCS_NAVIGATION_WEIGHT : index;
 };
 
