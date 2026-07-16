@@ -12,7 +12,7 @@ import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constant
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useNotificationStore } from "@/store/notification";
 import { useListDialogStore } from "@/store/resource/listDialog";
-import { RoutePath, takeOne } from "@esposter/shared";
+import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 
 interface ResourceListViewProps {
   // When set, a close ✕ routes here (the base list closes back a layer); omitted when it sits behind a blade
@@ -141,28 +141,35 @@ const deleteResources = async (resources: Resource[]) => {
     resources.length === 1
       ? `Deleted "${takeOne(resources).name}"`
       : `Deleted ${resources.length} ${pluralize("resource", resources.length)}`;
-  // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory)
-  await executeDeleteResourcesMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
-    applyOptimistic: () => {
-      const optimisticItems = items.value.filter(({ id }) => !ids.includes(id));
-      items.value = optimisticItems;
-      count.value -= resources.length;
-      return () => {
-        // A refresh, page turn or filter change mid-flight replaces `items` wholesale, so anything but our own
-        // Optimistic array means the snapshot is stale and restoring it would undo the newer read
-        if (items.value !== optimisticItems) return;
+  // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory).
+  // Selection accumulates across pages, so the ids are chunked to the server's per-call cap and sent in order
+  await executeDeleteResourcesMutation(
+    async () => {
+      for (let offset = 0; offset < ids.length; offset += MAX_READ_LIMIT)
+        await $trpc.resource.deleteResources.mutate({ ids: ids.slice(offset, offset + MAX_READ_LIMIT) });
+    },
+    {
+      applyOptimistic: () => {
+        const optimisticItems = items.value.filter(({ id }) => !ids.includes(id));
+        items.value = optimisticItems;
+        count.value -= resources.length;
+        return () => {
+          // A refresh, page turn or filter change mid-flight replaces `items` wholesale, so anything but our own
+          // Optimistic array means the snapshot is stale and restoring it would undo the newer read
+          if (items.value !== optimisticItems) return;
 
-        items.value = snapshot;
-        count.value = snapshotCount;
-      };
+          items.value = snapshot;
+          count.value = snapshotCount;
+        };
+      },
+      onError: (error) => {
+        createNotification({ severity: "error", title: error.message });
+      },
+      onSuccess: () => {
+        createNotification({ severity: "success", title: deletedNotificationTitle });
+      },
     },
-    onError: (error) => {
-      createNotification({ severity: "error", title: error.message });
-    },
-    onSuccess: () => {
-      createNotification({ severity: "success", title: deletedNotificationTitle });
-    },
-  });
+  );
 };
 const getResourceIcon = (type: ResourceType) => ResourceDefinitionMap[type].icon;
 const getResourceTitle = (type: ResourceType) => ResourceDefinitionMap[type].title;
@@ -232,12 +239,13 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         :has-active-filters
         @clear="clearFilters()"
       />
-      <v-alert v-if="error && items.length > 0" density="compact" type="error" :text="error" :rounded="0">
-        <template #append>
-          <v-btn size="small" variant="text" @click="refresh()">Retry</v-btn>
-        </template>
-      </v-alert>
     </template>
+    <!-- Rendered in both modes: the blade list paginates too, so a failed read must surface a retry there as well -->
+    <v-alert v-if="error && items.length > 0" density="compact" type="error" :text="error" :rounded="0">
+      <template #append>
+        <v-btn size="small" variant="text" @click="refresh()">Retry</v-btn>
+      </template>
+    </v-alert>
     <ResourceListSummaryCards
       v-if="isSummaryView"
       :counts="typeCounts"

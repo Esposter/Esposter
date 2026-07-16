@@ -36,7 +36,7 @@ const itemType = computed(() => prettify(editedItem.type));
 const errorIcon = useTemplateRef("errorIcon");
 const isValid = computed(() => errorIcon.value?.isValid ?? true);
 const emit = defineEmits<{
-  delete: [onComplete: () => void];
+  delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
   "update:edit-form-dialog": [value: false];
   "update:fullscreen-dialog": [value: boolean];

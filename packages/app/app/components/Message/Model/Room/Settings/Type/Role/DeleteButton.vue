@@ -17,7 +17,19 @@ const { deleteRole } = roleStore;
 <template>
   <StyledDeleteFormDialog
     :card-props="{ title: 'Delete Role' }"
-    @delete="async (onComplete) => await withFinalizerAsync(() => deleteRole({ roomId, id: roleId }), onComplete)"
+    @delete="
+      async (onComplete) => {
+        let isSuccessful = false;
+        await withFinalizerAsync(
+          async () => {
+            isSuccessful = await deleteRole({ roomId, id: roleId });
+          },
+          () => {
+            onComplete(isSuccessful);
+          },
+        );
+      }
+    "
   >
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton

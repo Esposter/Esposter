@@ -4,6 +4,7 @@ import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatus
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import type { Resource, ResourceType } from "@esposter/db-schema";
 
+import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -31,7 +32,9 @@ export const useReadResources = ({
       updatedBefore: updatedBefore.value,
       updatedFilter: updatedFilter.value,
     });
-  const readResources = async (options: ReadResourcesOptions) => {
+  // Debounced search, filter pills, Refresh and Retry can all fire overlapping reads, so a stale response
+  // Must neither overwrite fresher data nor flip loading state early
+  const readResources = getConcurrentFunction(async (checkIsStale, options: ReadResourcesOptions) => {
     lastOptions = options;
     const { itemsPerPage, page, sortBy } = options;
     const filterInput = getFilterInput();
@@ -47,13 +50,14 @@ export const useReadResources = ({
           ...filterInput,
         }),
       ]);
+      if (checkIsStale()) return;
       count.value = newCount;
       items.value = newItems;
     }).match(noop, (readError) => {
-      error.value = readError.message;
+      if (!checkIsStale()) error.value = readError.message;
     });
-    isLoading.value = false;
-  };
+    if (!checkIsStale()) isLoading.value = false;
+  });
   // Snapshots the filter + sort at call time so a chunked consumer (CSV export) pages one consistent query
   // Even if the filters change mid-export
   const createResourcesPageReader = () => {

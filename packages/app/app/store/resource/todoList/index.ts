@@ -29,19 +29,21 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     computed(() => items.value),
     ["id"],
   );
-  // One write path: item edits mutate the content blob, then persist it wholesale (revert on failure)
+  // One write path: item edits mutate the content blob, then persist it wholesale (revert on failure).
+  // The dialog closes only on success so a failed save/delete keeps the user's draft open for retry.
   const saveItem = async (isDeleteAction?: true) => {
-    if (!editedItem.value) return;
+    if (!editedItem.value) return false;
 
     const snapshot = structuredClone(toRawDeep(todoList.value));
 
     if (isDeleteAction) deleteItem({ id: editedItem.value.id });
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
-    editFormDialog.value = false;
 
     const isSuccessful = await saveTodoList();
-    if (!isSuccessful) todoList.value = snapshot;
+    if (isSuccessful) editFormDialog.value = false;
+    else todoList.value = snapshot;
+    return isSuccessful;
   };
   return {
     editedIndex,

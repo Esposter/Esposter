@@ -19,6 +19,7 @@ import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
+  RESOURCE_NAME_MAX_LENGTH,
   resourcePublications,
   resources,
   resourceTypeSchema,
@@ -56,6 +57,8 @@ const readResourcesInputSchema = z.object({
 const deleteResourcesInputSchema = z.object({
   ids: createUniqueArraySchema(selectResourceSchema.shape.id).min(1).max(MAX_READ_LIMIT),
 });
+// Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
+const duplicateNameSuffix = " (copy)";
 // Shared filter so count and readResources stay in lockstep as filters evolve
 const createResourcesWhere = (
   db: Context["db"],
@@ -135,7 +138,11 @@ export const resourceRouter = router({
       (
         await ctx.db
           .insert(resources)
-          .values({ name: `${name} (copy)`, type, userId })
+          .values({
+            name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - duplicateNameSuffix.length)}${duplicateNameSuffix}`,
+            type,
+            userId,
+          })
           .returning()
       )[0],
       Operation.Create,

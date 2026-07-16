@@ -7,7 +7,7 @@ interface ConfirmDeleteDialogButtonProps<T> {
 }
 
 const { name, originalItem } = defineProps<ConfirmDeleteDialogButtonProps<T>>();
-const emit = defineEmits<{ delete: [onComplete: () => void] }>();
+const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
 </script>
 
 <template>

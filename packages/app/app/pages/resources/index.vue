@@ -7,12 +7,14 @@ import { RoutePath } from "@esposter/shared";
 definePageMeta({ middleware: "auth" });
 useResourceKeyboardShortcuts();
 
-const { isLoading, items: recentResources, readResources } = useReadResources();
+const { error, isLoading, items: recentResources, readResources } = useReadResources();
 // Fetched after mount (not awaited in setup) so the recents card shows its skeleton instead of blocking navigation
 const hasLoaded = ref(false);
+const readRecentResources = () =>
+  readResources({ itemsPerPage: RECENT_RESOURCES_LIMIT, page: 1, sortBy: [...DEFAULT_RESOURCE_SORT_BY] });
 
 onMounted(async () => {
-  await readResources({ itemsPerPage: RECENT_RESOURCES_LIMIT, page: 1, sortBy: [...DEFAULT_RESOURCE_SORT_BY] });
+  await readRecentResources();
   hasLoaded.value = true;
 });
 </script>
@@ -51,6 +53,11 @@ onMounted(async () => {
                 </div>
               </v-card-item>
               <StyledSkeleton v-if="isLoading || !hasLoaded" type="list-item-two-line@5" />
+              <v-alert v-else-if="error" ma-4 density="compact" type="error" :text="error">
+                <template #append>
+                  <v-btn size="small" variant="text" @click="readRecentResources()">Retry</v-btn>
+                </template>
+              </v-alert>
               <StyledEmptyState
                 v-else-if="recentResources.length === 0"
                 description="Create a resource and it will show up here."

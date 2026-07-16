@@ -3,6 +3,7 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { useDashboardStore } from "@/store/dashboard";
+import { toRawDeep } from "@esposter/shared";
 
 export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
@@ -16,6 +17,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   });
   const {
     createVisual: storeCreateVisual,
+    deleteVisual: storeDeleteVisual,
     updateVisual,
     ...restOperationData
   } = createOperationData(visuals, ["id"], "Visual");
@@ -40,8 +42,17 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     await saveDashboard();
     editFormDialog.value = false;
   };
+  // One write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual
+  const deleteVisual = async (ids: { id: Visual["id"] }) => {
+    const snapshot = structuredClone(toRawDeep(visuals.value));
+    storeDeleteVisual(ids);
+    const isSuccessful = await saveDashboard();
+    if (!isSuccessful) visuals.value = snapshot;
+    return isSuccessful;
+  };
   return {
     createVisual,
+    deleteVisual,
     updateVisual,
     visuals,
     visualType,

@@ -18,7 +18,19 @@ const { deleteVisual } = visualStore;
 <template>
   <StyledDeleteFormDialog
     :card-props="{ title: `Delete ${prettify(type)} Visual` }"
-    @delete="async (onComplete) => await withFinalizerAsync(() => deleteVisual({ id }), onComplete)"
+    @delete="
+      async (onComplete) => {
+        let isSuccessful = false;
+        await withFinalizerAsync(
+          async () => {
+            isSuccessful = await deleteVisual({ id });
+          },
+          () => {
+            onComplete(isSuccessful);
+          },
+        );
+      }
+    "
   >
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton

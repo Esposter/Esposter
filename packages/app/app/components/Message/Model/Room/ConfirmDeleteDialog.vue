@@ -32,7 +32,15 @@ const roomName = computed(() => rooms.value.find(({ id }) => id === roomId)?.nam
     :confirm-name="isCreator ? roomName : undefined"
     @delete="
       async (onComplete) => {
-        await withFinalizerAsync(() => (isCreator ? deleteRoom(roomId) : leaveRoom(roomId)), onComplete);
+        let isSuccessful = false;
+        await withFinalizerAsync(
+          async () => {
+            isSuccessful = isCreator ? await deleteRoom(roomId) : await leaveRoom(roomId);
+          },
+          () => {
+            onComplete(isSuccessful);
+          },
+        );
       }
     "
   >
