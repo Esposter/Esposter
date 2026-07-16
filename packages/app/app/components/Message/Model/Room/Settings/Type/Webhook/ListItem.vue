@@ -33,7 +33,7 @@ const source = computed(() => `${runtimeConfig.public.baseUrl}/api/webhooks/${we
     <template #append>
       <StyledClipboardIconButton :source text="Copy Webhook URL" />
       <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" :room-id />
-      <MessageModelRoomSettingsTypeWebhookDeleteDialogButton :room-id :webhook />
+      <MessageModelRoomSettingsTypeWebhookDeleteButton :id="webhook.id" />
       <v-spacer />
       <MessageModelRoomSettingsTypeWebhookActiveSwitch :room-id :webhook />
     </template>

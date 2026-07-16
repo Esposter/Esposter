@@ -21,7 +21,8 @@ import { MOCK_TABLE_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { exhaustiveGuard, getOrCreate, getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
+import { exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
@@ -46,10 +47,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   }
 
   createEntity<T extends object>(entity: TableEntity<T>): Promise<CreateTableEntityResponse> {
-    const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
-    if (this.table.has(key)) throw new MockRestError("The specified entity already exists.", 409);
-
-    this.table.set(key, entity);
+    this.#applyCreate(entity);
     return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
   }
 
@@ -58,9 +56,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   }
 
   deleteEntity(partitionKey: string, rowKey: string): Promise<TableDeleteEntityHeaders> {
-    const key = this.#getCompositeKey(partitionKey, rowKey);
-    if (!this.table.has(key)) throw new MockRestError("The specified resource does not exist.", 404);
-    this.table.delete(key);
+    this.#applyDelete(partitionKey, rowKey);
     // The real response contains headers, an empty object is a sufficient mock.
     return Promise.resolve({});
   }
@@ -96,6 +92,9 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
           if (maxPageSize !== undefined && maxPageSize <= 0)
             throw new RangeError("maxPageSize must be greater than 0.");
+          // Azure Table Storage rejects a page size above its hard limit with InvalidInput (400)
+          else if (maxPageSize !== undefined && maxPageSize > AZURE_MAX_PAGE_SIZE)
+            throw new MockRestError("One of the request inputs is not valid.", 400);
 
           const allEntitiesWithMetadata = entities.map((e) => withMetadata(e));
           if (allEntitiesWithMetadata.length === 0) return;
@@ -120,7 +119,11 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     throw new Error("Method not implemented.");
   }
 
-  async submitTransaction(actions: Parameters<TableClient["submitTransaction"]>[0]): Promise<TableTransactionResponse> {
+  // The service applies a transaction atomically, so the actions land through the synchronous appliers rather
+  // Than the promise-returning methods: awaiting between two actions would let a concurrent caller interleave
+  // Its own writes, and the rollback below would then restore a snapshot predating them — silently dropping
+  // Writes the service would have kept. Nothing may observe a half-applied batch, including a losing one.
+  submitTransaction(actions: Parameters<TableClient["submitTransaction"]>[0]): Promise<TableTransactionResponse> {
     let partitionKey: string | undefined;
     for (const [, entity] of actions)
       if (partitionKey === undefined) partitionKey = entity.partitionKey;
@@ -128,20 +131,20 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
         throw new MockRestError("All transaction actions must target the same partitionKey.", 400);
 
     const snapshot = new Map(this.table);
-    await getResultAsync(async () => {
+    getResult(() => {
       for (const [type, entity, updateMode] of actions)
         switch (type) {
           case "create":
-            await this.createEntity(entity);
+            this.#applyCreate(entity);
             break;
           case "delete":
-            await this.deleteEntity(entity.partitionKey, entity.rowKey);
+            this.#applyDelete(entity.partitionKey, entity.rowKey);
             break;
           case "update":
-            await this.updateEntity(entity, updateMode);
+            this.#applyUpdate(entity, updateMode);
             break;
           case "upsert":
-            await this.upsertEntity(entity, updateMode);
+            this.#applyUpsert(entity, updateMode);
             break;
           default:
             exhaustiveGuard(type);
@@ -154,34 +157,52 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
       .match(noop, (error) => {
         throw error;
       });
-    return {
-      getResponseForEntity: noop,
+    // A transaction the service accepted reports 202 with no sub-response body, so an entity lookup finds
+    // Nothing to return — the shape is the real one, not a cast past it
+    return Promise.resolve({
+      getResponseForEntity: () => undefined,
       status: 202,
       subResponses: [],
-    } as unknown as TableTransactionResponse;
+    });
   }
 
   updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
-    const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
-    const existingEntity = this.table.get(key);
-    if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
-    else if (mode === "Merge") return this.#mergeEntity(key, existingEntity, entity);
-    // "Replace"
-    else {
-      this.table.set(key, entity);
-      return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
-    }
+    this.#applyUpdate(entity, mode);
+    return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
   }
 
   upsertEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
+    this.#applyUpsert(entity, mode);
+    return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
+  }
+
+  #applyCreate<T extends object>(entity: TableEntity<T>): void {
+    const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
+    if (this.table.has(key)) throw new MockRestError("The specified entity already exists.", 409);
+    this.table.set(key, entity);
+  }
+
+  #applyDelete(partitionKey: string, rowKey: string): void {
+    const key = this.#getCompositeKey(partitionKey, rowKey);
+    if (!this.table.has(key)) throw new MockRestError("The specified resource does not exist.", 404);
+    this.table.delete(key);
+  }
+
+  #applyUpdate<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): void {
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     const existingEntity = this.table.get(key);
-    if (existingEntity && mode === "Merge") return this.#mergeEntity(key, existingEntity, entity);
+    if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
+    else if (mode === "Merge") this.table.set(key, { ...existingEntity, ...entity });
+    // "Replace"
+    else this.table.set(key, entity);
+  }
+
+  #applyUpsert<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): void {
+    const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
+    const existingEntity = this.table.get(key);
+    if (existingEntity && mode === "Merge") this.table.set(key, { ...existingEntity, ...entity });
     // "Replace" or entity doesn't exist (which is an insert)
-    else {
-      this.table.set(key, entity);
-      return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
-    }
+    else this.table.set(key, entity);
   }
 
   #getCompositeKey(partitionKey: string, rowKey: string): string {
@@ -190,15 +211,6 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
 
   #getEtag(): string {
     return `W/"datetime'${new Date().toISOString()}'"`;
-  }
-
-  #mergeEntity<T extends object>(
-    key: string,
-    entity: TableEntity<T>,
-    entityToMerge: TableEntity<T>,
-  ): Promise<TableMergeEntityHeaders> {
-    this.table.set(key, { ...entity, ...entityToMerge });
-    return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
   }
 
   #withMetadata<T extends object>(entity: T): T & { etag: string } {

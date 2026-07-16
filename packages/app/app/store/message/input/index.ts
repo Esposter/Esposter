@@ -3,10 +3,10 @@ import type { Editor } from "@tiptap/core";
 
 import { dayjs } from "#shared/services/dayjs";
 import { validateFile } from "@/services/file/validateFile";
-import { DRAFT_KEY_PREFIX } from "@/services/message/draft/constants";
 import { getDraft } from "@/services/message/draft/getDraft";
 import { removeDraft } from "@/services/message/draft/removeDraft";
 import { setDraft } from "@/services/message/draft/setDraft";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
@@ -19,14 +19,15 @@ export const useInputStore = defineStore("message/input", () => {
   const initializeDrafts = (): Map<string, Draft> => {
     if (getIsServer()) return new Map();
     const drafts = new Map<string, Draft>();
+    const draftKeyPrefix = LocalStorageKey.Draft("");
     const draftKeys: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key?.startsWith(DRAFT_KEY_PREFIX)) draftKeys.push(key);
+      if (key?.startsWith(draftKeyPrefix)) draftKeys.push(key);
     }
 
     for (const key of draftKeys) {
-      const roomId = key.slice(DRAFT_KEY_PREFIX.length);
+      const roomId = key.slice(draftKeyPrefix.length);
       const draft = getDraft(roomId);
       if (!draft || EMPTY_TEXT_REGEX.test(draft.content)) continue;
       const sanitizedDraft = setDraft(roomId, draft.content);

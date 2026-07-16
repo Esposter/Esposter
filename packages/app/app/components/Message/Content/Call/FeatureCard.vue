@@ -7,9 +7,9 @@ const { description, icon, title } = defineProps<CallFeatureCardProps>();
 </script>
 
 <template>
-  <div p-4 rd-2 bg-surface flex flex-col gap-y-2>
+  <v-sheet p-4 rd-2 flex flex-col gap-y-2>
     <v-icon color="primary" :icon size="large" />
     <span font-medium text-body-medium>{{ title }}</span>
     <span text-hint>{{ description }}</span>
-  </div>
+  </v-sheet>
 </template>

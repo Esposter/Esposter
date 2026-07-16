@@ -1,8 +1,3 @@
-import type { InviteInMessage } from "@/schema/invitesInMessage";
-import type { RoomInMessage } from "@/schema/roomsInMessage";
-import type { User } from "@/schema/users";
-import type { UserToRoomInMessage } from "@/schema/usersToRoomsInMessage";
-
 import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -29,7 +24,3 @@ export const InviteInMessageRelations = {
   },
   user: true,
 } as const;
-export type InviteInMessageWithRelations = InviteInMessage & {
-  roomInMessage: RoomInMessage & { usersToRoomsInMessage: UserToRoomInMessage[] };
-  user: User;
-};

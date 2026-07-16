@@ -9,6 +9,6 @@ export const WebpageAchievementDefinitionMap = {
     description: "Save a webpage",
     icon: "mdi-web",
     points: 20,
-    triggerPath: "webpageEditor.saveWebpageEditor" as const,
+    triggerPath: "webpage.saveResourceContent" as const,
   }),
 };

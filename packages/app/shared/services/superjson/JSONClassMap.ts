@@ -2,6 +2,7 @@ import type { Serializable } from "@esposter/shared";
 import type { Class } from "type-fest";
 
 import { Clicker } from "#shared/models/clicker/data/Clicker";
+import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 import { BasicChartConfiguration } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { Chart } from "#shared/models/dashboard/data/chart/Chart";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
@@ -10,18 +11,13 @@ import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/M
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
-import { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
-import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
-import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
-import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
-import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
-import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
-import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
-import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
-import { Row } from "#shared/models/tableEditor/file/datasource/Row";
-import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
-import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
-import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import { BooleanColumn } from "#shared/models/resource/sheet/column/BooleanColumn";
+import { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
+import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
+import { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
+import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
+import { Row } from "#shared/models/resource/sheet/datasource/Row";
+import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { StandardMessageEntity, SurveyResponseEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
@@ -30,8 +26,8 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   BooleanColumn,
   Chart,
   Clicker,
+  ClickerSave,
   ComputedColumn,
-  CsvDataSourceItem,
   Dashboard,
   DateColumn,
   Dungeons,
@@ -43,12 +39,8 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   StandardMessageEntity,
   StringColumn,
   SurveyResponseEntity,
-  TableEditor,
-  TableEditorConfiguration,
   TodoListItem,
   Visual,
-  VuetifyComponentItem,
   WebhookMessageEntity,
   WebpageEditor,
-  XlsxDataSourceItem,
 };

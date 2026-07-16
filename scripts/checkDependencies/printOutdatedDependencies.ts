@@ -7,6 +7,7 @@ import { printTable } from "@/checkDependencies/printTable";
 export const printOutdatedDependencies = (outdatedDependencies: OutdatedDependency[], color: ColorPalette): void => {
   if (outdatedDependencies.length === 0) return;
 
+  console.log(color.cyan("Outdated dependencies"));
   printTable(
     ["Package", "Current", "Latest", "Dependents"],
     outdatedDependencies.map(({ current, dependencyType, dependents, latest, pkg }) => {

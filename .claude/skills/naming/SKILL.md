@@ -13,6 +13,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - `show*` is **banned** — rename to `is*Visible`: `showSettings` → `isSettingsVisible`, `showDialog` → `isDialogVisible`. Exception: 3rd-party API properties that can't be renamed
 - `isDirty` for tracking unsaved state — never `isChanged`
 - `initial*` for the last-saved snapshot used in dirty comparisons: `initialWords`, `initialName`
+- Boolean-valued `LocalStorageKey` registry entries follow the same `is*` rule (`IsResourceListCollapsed`) — see the file-organization skill "localStorage Keys"
 
 ## Functions
 
@@ -26,11 +27,12 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 ## Variables
 
 - **No abbreviations** — `directMessageRoom` not `dmRoom`, `existingDirectMessage` not `existing`. Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`
-  - Applies to exported names too — spell the full English word: `statistics` not `stat`/`stats` (e.g. `ColumnStatistics`, `useColumnStatistics`), `summation` not `sum` as a statistics identifier (`FooterStatisticsType.Summation`). Does NOT apply to math accumulator locals (`acc`, `s`) or the display title `"Sum"`. Prefer `FooterStatisticsType` over `FooterStatType`.
+  - Applies to exported names too — spell the full English word: `statistics` not `stat`/`stats` (`ColumnStatistics`, `ColumnStatisticsDefinitionMap`, `useColumnStatistics`, never `ColumnStatDefinitions`/`defineColumnStat`), `summation` not `sum` as a statistics identifier (the `ColumnStatisticsKey` is `summation`). Does NOT apply to math accumulator locals (`acc`, `s`) or the display title `"Sum"`.
 - **Name variables after their full domain type, dropping only the schema `InMessage` suffix** — a value typed as `PushSubscription` (table `pushSubscriptionsInMessage`) is `const pushSubscription`, never `const subscription` nor `const pushSubscriptionInMessage`. Omit only the `InMessage`/`inMessage` namespacing suffix.
 - **No `current*` prefix** for reactive refs/computeds — they are always the current value. Exception: global store identifiers distinguishing the active item from a collection: `currentRoomId`
 - `userId` for the session user's ID — never `me`, `myId`, `self`
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`
+- `edited{PropName}` for a **local editable copy** of a prop/store field (form drafts, buffered inputs) — the value a `v-text-field`/`v-model` binds to before save: `editedName` (copy of `resource.name`), `editedRow`, `editedImage`. Never `{prop}Value` (`renameValue` ✗) nor a bare restatement of the field. Holds whether the copy is a plain `ref(source)` or a `useCloned(() => source)` — the prefix marks it as the draft, not the source of truth
 - **Unused params keep the `_` prefix _and_ a readable name** — `_event`, `_index`, never bare `_`. The prefix satisfies lint; the name documents the slot. Applies to inlined handlers too: `@submit="async (_event, onComplete) => {...}"`
 - `display*` for presentation-layer computed that sorts/filters raw store data: `displayFriends`. Never `sorted*` or `filtered*`
 
@@ -53,12 +55,12 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - **No `With` prefix on mixin interfaces** — name after the capability: `SourceColumnId`, not `WithSourceColumnId`. Schema factories follow: `createSourceColumnIdSchema` not `createWithSourceColumnIdSchema`
 - **`A` prefix for abstract classes only** — never on interfaces. `AColumn` (abstract class) ✓, `SlashCommand` (interface) ✓, `ASlashCommand` ✗
 - **Interface fields use full type name** — `aggregationType: AggregationTransformationType` not `transform`, `mode`, or `type`. Never abbreviate enum field names
-- **Constant arrays/maps use PascalCase** — `export const PermissionItems = [...]`, `export const FrierenExpressions: Expression[] = [...]`. File names match: `PermissionItems.ts`
+- **Constant arrays/maps use PascalCase, and the file name matches the export** — `ProductListLinkItems.ts` → `export const ProductListLinkItems = [...]`; likewise `SoundMap.ts`, `EffectOperatorMap.ts`, `ColumnStatisticsDefinitionMap.ts`. (The `app/services/anime/*Expressions.ts` files are camelCase-named legacy outliers — don't copy them.)
 - **UI section enums: one per group, values double as title + id** — when a panel has scrollable subsections (or any list whose labels also serve as stable ids/anchors), model each group as its own enum whose values are the human title (e.g. `VoiceSettingsSection { InputMode = "Input Mode", ... }`). The value is reused as the display title and the DOM/scroll id, so don't derive a separate slug. One enum per subsection group, never a shared catch-all.
 
 ## Regex Constants
 
-- Named regex constants use `_REGEX` suffix — `EMPTY_TEXT_REGEX`, `DURATION_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix.
+- Named regex constants use `_REGEX` suffix — `EMPTY_TEXT_REGEX`, `INVITE_ID_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix.
 
 ## Framework-Specific Naming
 

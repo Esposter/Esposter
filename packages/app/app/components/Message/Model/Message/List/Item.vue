@@ -3,10 +3,11 @@ import type { Creator } from "@/models/message/Creator";
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
+import { MessageDisplayMode } from "@/models/message/MessageDisplayMode";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
-import { useForwardStore } from "@/store/message/input/forward";
-import { useReplyStore } from "@/store/message/input/reply";
+import { useMessageDialogStore } from "@/store/message/dialog";
+import { useAppearanceStore } from "@/store/message/ui/appearance";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { MessageType } from "@esposter/db-schema";
 
@@ -26,104 +27,80 @@ const isSameBatch = computed(
       message.userId === nextMessage.userId) &&
     dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
+const appearanceStore = useAppearanceStore();
+const { messageDisplayMode } = storeToRefs(appearanceStore);
+// Compact mode halves the batch gap and per-message padding so more messages fit on screen
+const isCompact = computed(() => messageDisplayMode.value === MessageDisplayMode.Compact);
 const messageStore = useMessageStore();
 const { editingRowKey, optionsMenu } = storeToRefs(messageStore);
-const replyStore = useReplyStore();
-const { rowKey: replyRowKey } = storeToRefs(replyStore);
+const messageDialogStore = useMessageDialogStore();
+const { deletingRowKey } = storeToRefs(messageDialogStore);
 const scrollStore = useScrollStore();
 const { activeRowKey } = storeToRefs(scrollStore);
-const forwardStore = useForwardStore();
-const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
 const isUpdateMode = computed({
   get: () => editingRowKey.value === message.rowKey,
   set: (value) => {
     editingRowKey.value = value ? message.rowKey : undefined;
   },
 });
-const isMessageActive = ref(false);
-const isOptionsActive = ref(false);
+const isHovered = ref(false);
 const isOptionsMenuOpen = ref(false);
 const isContextMenuTarget = computed(() => optionsMenu.value?.rowKey === message.rowKey);
-const isDisabled = computed(() => optionsMenu.value && optionsMenu.value.rowKey !== message.rowKey);
+const isDisabled = computed(() => Boolean(optionsMenu.value) && !isContextMenuTarget.value);
+const isDeleting = computed(() => deletingRowKey.value === message.rowKey);
 const isActive = computed(
   () =>
     !isDisabled.value &&
-    (isMessageActive.value ||
-      isOptionsActive.value ||
-      isOptionsMenuOpen.value ||
-      isContextMenuTarget.value ||
-      isUpdateMode.value),
+    (isHovered.value || isOptionsMenuOpen.value || isContextMenuTarget.value || isUpdateMode.value),
 );
-const isActiveAndNotUpdateMode = computed(() => isActive.value && !isUpdateMode.value);
-const selectEmoji = await useSelectEmoji(message);
+// Mounting on demand keeps the heavy options menu tree to a single instance across the whole list
+const isOptionsMenuVisible = computed(
+  () => !message.isLoading && isActive.value && !isUpdateMode.value && !isDeleting.value,
+);
 </script>
 
 <template>
-  <MessageModelMessageConfirmDeleteDialog :message>
-    <template #activator="{ isOpen, updateIsOpen }">
-      <component
-        :is="MessageComponentMap[message.type]"
-        :id="message.rowKey"
-        :mt="isSameBatch ? undefined : 4"
-        py-1
-        min-h-auto
-        :op-loading="message.isLoading ? '' : undefined"
-        :active="(isActive || activeRowKey === message.rowKey) && !isOpen"
-        :creator
-        :is-same-batch
+  <!-- display: contents keeps both children as direct flex items of the column-reversed list
+    while hover tracking spans the message and its overlapping options menu as one region -->
+  <div contents @mouseenter="isHovered = true" @mouseleave="isHovered = false">
+    <component
+      :is="MessageComponentMap[message.type]"
+      :id="message.rowKey"
+      :mt="isSameBatch ? undefined : isCompact ? 2 : 4"
+      :py="isCompact ? 0.5 : 1"
+      min-h-auto
+      :op-loading="message.isLoading ? '' : undefined"
+      :active="(isActive || activeRowKey === message.rowKey) && !isDeleting"
+      :creator
+      :is-same-batch
+      :message
+      @contextmenu.prevent="
+        (event: MouseEvent) => {
+          optionsMenu = {
+            rowKey: message.rowKey,
+            target: [event.clientX, event.clientY],
+          };
+        }
+      "
+    >
+      <MessageModelMessageEditor
+        v-if="isUpdateMode"
         :message
-        @mouseenter="isMessageActive = true"
-        @mouseleave="isMessageActive = false"
-        @contextmenu.prevent="
-          (event: MouseEvent) => {
-            optionsMenu = {
-              rowKey: message.rowKey,
-              target: [event.clientX, event.clientY],
-            };
-          }
-        "
-      >
-        <MessageModelMessageEditor
-          v-if="isUpdateMode"
-          :message
-          @update:update-mode="isUpdateMode = $event"
-          @update:delete-mode="updateIsOpen"
-        />
-      </component>
-      <div v-if="!message.isLoading" v-show="isActiveAndNotUpdateMode && !isOpen" relative z-1>
-        <div
-          right-4
-          absolute
-          :top="isSameBatch ? -9 : -2"
-          @mouseenter="isOptionsActive = true"
-          @mouseleave="isOptionsActive = false"
-        >
-          <v-hover #default="{ isHovering, props: hoverProps }">
-            <MessageModelMessageConfirmPinDialog :message>
-              <template #activator="{ updateIsOpen: updatePinDialogIsOpen }">
-                <MessageModelMessageOptionsMenu
-                  :message
-                  :is-hovering
-                  :hover-props
-                  @update:delete-mode="updateIsOpen"
-                  @update:forward="forwardRowKey = $event"
-                  @update:menu="isOptionsMenuOpen = $event"
-                  @update:pin="updatePinDialogIsOpen"
-                  @update:reply="replyRowKey = $event"
-                  @update:select-emoji="selectEmoji"
-                  @update:update-mode="isUpdateMode = $event"
-                />
-              </template>
-              <template #messagePreview>
-                <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
-              </template>
-            </MessageModelMessageConfirmPinDialog>
-          </v-hover>
-        </div>
+        @update:update-mode="isUpdateMode = $event"
+        @update:delete-mode="deletingRowKey = message.rowKey"
+      />
+    </component>
+    <div v-if="isOptionsMenuVisible" relative z-1>
+      <div right-4 absolute :top="isSameBatch ? -9 : -2">
+        <v-hover #default="{ isHovering, props: hoverProps }">
+          <MessageModelMessageOptionsMenu
+            :message
+            :is-hovering
+            :hover-props
+            @update:menu="isOptionsMenuOpen = $event"
+          />
+        </v-hover>
       </div>
-    </template>
-    <template #messagePreview>
-      <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
-    </template>
-  </MessageModelMessageConfirmDeleteDialog>
+    </div>
+  </div>
 </template>

@@ -36,16 +36,20 @@ const loginButtonsProps = ref<LoginButtonProps[]>([
   <NuxtLayout>
     <v-container flex h-full items-center justify-center>
       <StyledCard :card-props="{ width: '100%', maxWidth: '30rem' }">
-        <v-container>
-          <div mb-1 text-center text-headline-small>Sign in to</div>
-          <div mb-2 flex items-center justify-center>
+        <v-container flex flex-col gap-y-2>
+          <div text-center text-headline-small>Sign in to</div>
+          <div flex gap-x-2 items-center justify-center>
             <AppLogo />
-            <span pl-2 text-title-large>{{ SITE_NAME }}</span>
+            <span text-title-large>{{ SITE_NAME }}</span>
           </div>
-          <div mb-2 text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
-          <template v-for="loginButtonProps of loginButtonsProps" :key="loginButtonProps.provider">
-            <LoginButton :="loginButtonProps" />
-          </template>
+          <div text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
+          <div flex flex-col gap-y-3>
+            <LoginButton
+              v-for="loginButtonProps of loginButtonsProps"
+              :key="loginButtonProps.provider"
+              :="loginButtonProps"
+            />
+          </div>
         </v-container>
       </StyledCard>
     </v-container>

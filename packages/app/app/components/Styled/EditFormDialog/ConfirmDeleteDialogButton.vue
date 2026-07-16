@@ -7,48 +7,23 @@ interface ConfirmDeleteDialogButtonProps<T> {
 }
 
 const { name, originalItem } = defineProps<ConfirmDeleteDialogButtonProps<T>>();
-const emit = defineEmits<{ delete: [onComplete: () => void] }>();
-const dialog = ref(false);
-const nameTyped = ref("");
-const isDeletable = computed(() => nameTyped.value === name);
+const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
 </script>
 
 <template>
   <!-- We don't need to show the delete button if user is creating a new item -->
-  <v-dialog v-if="originalItem" v-model="dialog">
-    <template #activator>
-      <StyledTooltipIconButton icon="mdi-delete" text="Delete" @click="dialog = true" />
+  <StyledDeleteFormDialog
+    v-if="originalItem"
+    :card-props="{ title: `Confirm Deletion of ${originalItem.type}` }"
+    :confirm-name="name"
+    @delete="emit('delete', $event)"
+  >
+    <template #activator="{ updateIsOpen }">
+      <StyledTooltipIconButton icon="mdi-delete" text="Delete" @click="updateIsOpen(true)" />
     </template>
-    <StyledCard>
-      <v-card-title flex flex-wrap whitespace-normal items-center>
-        Confirm Deletion of {{ originalItem.type }}:
-        <v-code mx-2>{{ name }}</v-code>
-        <StyledClipboardIconButton :source="name" />
-      </v-card-title>
-      <v-card-text>
-        <div pb-4>
-          To confirm the delete action please enter the name of the
-          <span font-bold>{{ originalItem.type }}</span> exactly as it occurs.
-        </div>
-        <v-text-field v-model="nameTyped" />
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text="Cancel" variant="outlined" @click="dialog = false" />
-        <v-btn
-          color="error"
-          text="Delete"
-          variant="outlined"
-          :disabled="!isDeletable"
-          @click="
-            () => {
-              emit('delete', () => {
-                nameTyped = '';
-              });
-            }
-          "
-        />
-      </v-card-actions>
-    </StyledCard>
-  </v-dialog>
+    <div>
+      To confirm the delete action please enter the name of the
+      <span font-bold>{{ originalItem.type }}</span> exactly as it occurs.
+    </div>
+  </StyledDeleteFormDialog>
 </template>

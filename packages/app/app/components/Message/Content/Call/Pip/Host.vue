@@ -11,6 +11,8 @@ const { isPoppedOut } = storeToRefs(mediaStore);
 const callRoute = computed(() =>
   callRoomId.value ? RoutePath.Messages(callRoomId.value) : RoutePath.Calls(activeCallSessionId.value),
 );
+// Key events don't cross documents — the PiP window needs its own push-to-talk listeners
+usePushToTalk(isInCall, pipWindow);
 
 watch(isPoppedOut, async (newIsPoppedOut) => {
   if (!newIsPoppedOut) {

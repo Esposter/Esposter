@@ -33,8 +33,9 @@ describe(loadFilesSource, () => {
 
     const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}`;
     const { cwd, dispose } = await loadFilesSource({ files: { [nestedPath]: " " }, type: SourceType.Files });
+    const content = await readFile(join(cwd, nestedPath), "utf8");
 
-    await expect(readFile(join(cwd, nestedPath), "utf8")).resolves.toBe(" ");
+    expect(content).toBe(" ");
 
     await dispose();
   });

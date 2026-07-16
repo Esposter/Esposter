@@ -1,4 +1,4 @@
-/* oxlint-disable no-inferrable-types */
+/* oxlint-disable typescript/no-inferrable-types */
 import { dayjs } from "@/services/dayjs";
 
 export const GITIGNORE_FILENAME = ".gitignore";
@@ -67,11 +67,23 @@ export const CI_ENV_VALUE = "true";
 // Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
 // The probe fail (degrade to unsupported) instead of blocking the whole CLI.
 export const PROBE_TIMEOUT_MS: number = dayjs.duration(10, "seconds").asMilliseconds();
-// Upper bound the folded sync script enforces Linux-side — `flock -w` on the mirror lock plus `timeout` on rsync
-// (createWslSourceMirrorSync). Generous — the first cold materialize reads the whole source lower across v9fs
-// (15-64x slower) — but bounded so a stalled ext4 volume or hung lock aborts the run instead of hanging the CLI
-// Forever. Seconds, not ms: the consumers are Linux shell utilities, not execFileSync.
+// Minimum age (`ps -o etimes`) before the startup orphan sweep may judge a marker-matched process. Every transient
+// Misread window lasts milliseconds — a fork that hasn't exec'd yet (its cmdline still carries the parent's marker),
+// A spawning run whose Relay parent isn't established, a finishing run whose Relay died first — while a true corpse
+// Sits orphaned until the next virrun startup, so a short floor removes the races without delaying real reaps.
+// Seconds, not ms: the consumer is a Linux shell `[ -ge ]` against etimes.
+export const ORPHAN_REAP_MINIMUM_AGE_SECONDS: number = dayjs.duration(10, "seconds").asSeconds();
+// Upper bound the folded sync script enforces Linux-side — `flock -w` on the mirror lock plus `timeout` on the
+// Archive extract (createWslSourceMirrorSync). A pure hang guard: the extract unpacks one staged archive already
+// Sitting on ext4, seconds of local work even for a full materialize, so the bound only exists so a stalled ext4
+// Volume or hung lock aborts the run instead of hanging the CLI forever. Seconds, not ms: the consumers are Linux
+// Shell utilities, not execFileSync.
 export const SOURCE_MIRROR_TIMEOUT_SECONDS: number = dayjs.duration(5, "minutes").asSeconds();
+// Upper bound for the host-side `tar` staging the sync's archive (createSourceMirrorArchive): a native NTFS read of
+// The copied paths plus one sequential 9p write into the mirror entry. Generous — a full materialize archives the
+// Whole mirrored set — but bounded so a wedged 9p bridge fails the plan instead of hanging it. This is the
+// ExecFileSync side of the split, so ms; SOURCE_MIRROR_TIMEOUT_SECONDS bounds the Linux side.
+export const SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS: number = dayjs.duration(5, "minutes").asMilliseconds();
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
 // The host cache dir acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus).

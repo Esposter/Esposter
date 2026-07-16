@@ -10,8 +10,21 @@ import { withFinalizerAsync } from "@esposter/shared";
 
 const modelValue = defineModel<UserSettingsType>({ required: true });
 const userSettingsDialogStore = useUserSettingsDialogStore();
-const { activeSectionId, isScrollingToSection } = storeToRefs(userSettingsDialogStore);
+const { activeSectionId, isDrawerOpen, isScrollingToSection, visibleSectionIds } = storeToRefs(userSettingsDialogStore);
+const onSelectType = (settingsType: UserSettingsType) => {
+  modelValue.value = settingsType;
+  // Close the mobile drawer after a selection (no-op on desktop where the drawer is permanent)
+  isDrawerOpen.value = false;
+};
 const goTo = useVGoTo();
+const userSettingsListItems = Object.entries(UserSettingsListItemMap);
+// Highlight every visible section (docs table-of-contents behaviour) — the slide indicator stretches
+// Across them. While a sidebar click scrolls programmatically, pin the highlight to the target.
+const activeSectionIds = computed<string[]>(() => {
+  if (isScrollingToSection.value) return [activeSectionId.value];
+  const sections = UserSettingsSectionMap[modelValue.value].filter((section) => visibleSectionIds.value.has(section));
+  return sections.length > 0 ? sections : [activeSectionId.value];
+});
 const scrollToSection = async (section: SettingsSection) => {
   activeSectionId.value = section;
   const element = document.getElementById(section);
@@ -23,22 +36,20 @@ const scrollToSection = async (section: SettingsSection) => {
       isScrollingToSection.value = false;
     },
   );
+  // Close the mobile drawer once the section is in view (no-op on desktop where the drawer is permanent)
+  isDrawerOpen.value = false;
 };
 </script>
 
 <template>
-  <MessageModelSettingsLeftSideBar>
+  <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
     <v-list :opened="[modelValue]">
-      <v-list-group
-        v-for="[settingsType, { icon }] of Object.entries(UserSettingsListItemMap)"
-        :key="settingsType"
-        :value="settingsType"
-      >
+      <v-list-group v-for="[settingsType, { icon }] of userSettingsListItems" :key="settingsType" :value="settingsType">
         <template #activator="{ props }">
           <v-list-item
             :="props"
             :active="settingsType === modelValue"
-            @click="modelValue = settingsType as UserSettingsType"
+            @click="onSelectType(settingsType as UserSettingsType)"
           >
             <template #prepend>
               <v-icon :icon />
@@ -46,16 +57,16 @@ const scrollToSection = async (section: SettingsSection) => {
             <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
           </v-list-item>
         </template>
-        <StyledSlideIndicator v-if="settingsType === modelValue" :active-key="activeSectionId" />
+        <StyledSlideIndicator v-if="settingsType === modelValue" :active-keys="activeSectionIds" />
         <v-list-item
           v-for="section of UserSettingsSectionMap[settingsType as UserSettingsType]"
           :key="section"
-          :active="activeSectionId === section"
+          :active="activeSectionIds.includes(section)"
           :data-slide-indicator-key="section"
           density="compact"
           @click="scrollToSection(section)"
         >
-          <v-list-item-title :class="activeSectionId === section ? 'font-bold' : 'op-60'">{{
+          <v-list-item-title :class="activeSectionIds.includes(section) ? 'font-bold' : 'op-60'">{{
             section
           }}</v-list-item-title>
         </v-list-item>

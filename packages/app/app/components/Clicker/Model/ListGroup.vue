@@ -4,6 +4,7 @@ interface ClickerModelListGroupProps {
   title: string;
 }
 
+defineSlots<{ default: () => VNode }>();
 const { icon, title } = defineProps<ClickerModelListGroupProps>();
 </script>
 

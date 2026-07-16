@@ -8,6 +8,7 @@ interface StyledTooltipIconButtonProps {
   tooltipProps?: VTooltip["$props"];
 }
 
+defineSlots<{ default?: () => VNode }>();
 const { buttonProps, icon, text, tooltipProps } = defineProps<StyledTooltipIconButtonProps>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
 </script>
@@ -17,6 +18,10 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>();
     <template #activator="{ props }">
       <v-btn :icon :="{ ...props, ...buttonProps }" @click="emit('click', $event)" />
     </template>
-    <slot />
+    <!-- The explicit #default is required: v-slot + v-if compiles to conditional slot registration,
+      while a bare template v-if always registers the slot, suppressing VTooltip's text prop -->
+    <template v-if="$slots.default" #default>
+      <slot />
+    </template>
   </v-tooltip>
 </template>

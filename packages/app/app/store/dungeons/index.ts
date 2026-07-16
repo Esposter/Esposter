@@ -4,7 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { Dungeons, dungeonsSchema } from "#shared/models/dungeons/data/Dungeons";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { dayjs } from "#shared/services/dayjs";
-import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 
@@ -16,15 +16,14 @@ export const useDungeonsStore = defineStore("dungeons", () => {
   const { fadeOut } = cameraStore;
 
   const dungeons = ref(new Dungeons());
-  const saveDungeons = useSave(dungeons, {
+  const { save: saveDungeons, setState: setDungeons } = useSave(dungeons, {
     auth: { save: $trpc.dungeons.saveDungeons.mutate },
-    unauth: { key: DUNGEONS_LOCAL_STORAGE_KEY, schema: dungeonsSchema },
+    unauth: { key: LocalStorageKey.DungeonsStore, schema: dungeonsSchema },
   });
 
   const save = ref(new Save());
-  const saveIndex = ref(0);
   const saveData = async () => {
-    dungeons.value.saves[saveIndex.value] = save.value;
+    dungeons.value.save = save.value;
     await saveDungeons();
   };
 
@@ -35,5 +34,5 @@ export const useDungeonsStore = defineStore("dungeons", () => {
     });
   };
 
-  return { dungeons, fadeSwitchToScene, save, saveData, saveDungeons };
+  return { dungeons, fadeSwitchToScene, save, saveData, saveDungeons, setDungeons };
 });

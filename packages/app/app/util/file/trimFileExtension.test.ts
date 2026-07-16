@@ -11,6 +11,6 @@ describe(trimFileExtension, () => {
   test("file extension", () => {
     expect.hasAssertions();
 
-    expect(trimFileExtension(". ")).toBe("");
+    expect(trimFileExtension("a.txt")).toBe("a");
   });
 });

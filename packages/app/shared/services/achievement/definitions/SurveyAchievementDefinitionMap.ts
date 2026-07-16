@@ -17,7 +17,7 @@ export const SurveyAchievementDefinitionMap = {
     description: "Update a survey model",
     icon: "mdi-form-select",
     points: 15,
-    triggerPath: "survey.updateSurveyModel" as const,
+    triggerPath: "survey.saveResourceContent" as const,
   }),
   [SurveyAchievementName.Publisher]: defineAchievementDefinition({
     amount: 1,
@@ -25,7 +25,7 @@ export const SurveyAchievementDefinitionMap = {
     description: "Publish a survey",
     icon: "mdi-publish",
     points: 25,
-    triggerPath: "survey.publishSurvey" as const,
+    triggerPath: "survey.publishResource" as const,
   }),
   [SurveyAchievementName.Respondent]: defineAchievementDefinition({
     amount: 1,
@@ -49,7 +49,7 @@ export const SurveyAchievementDefinitionMap = {
     description: "Delete a survey",
     icon: "mdi-delete-sweep",
     points: 5,
-    triggerPath: "survey.deleteSurvey" as const,
+    triggerPath: "survey.deleteResource" as const,
   }),
   [SurveyAchievementName.SurveyEditor]: defineAchievementDefinition({
     amount: 1,
@@ -57,7 +57,7 @@ export const SurveyAchievementDefinitionMap = {
     description: "Edit a survey",
     icon: "mdi-file-document-edit",
     points: 5,
-    triggerPath: "survey.updateSurvey" as const,
+    triggerPath: "survey.updateResource" as const,
   }),
   [SurveyAchievementName.SurveyGuru]: defineAchievementDefinition({
     amount: 50,
@@ -65,7 +65,7 @@ export const SurveyAchievementDefinitionMap = {
     description: "Publish 50 surveys",
     icon: "mdi-trophy-variant",
     points: 200,
-    triggerPath: "survey.publishSurvey" as const,
+    triggerPath: "survey.publishResource" as const,
   }),
   [SurveyAchievementName.Surveyor]: defineAchievementDefinition({
     amount: 1,
@@ -73,7 +73,7 @@ export const SurveyAchievementDefinitionMap = {
     description: "Create a survey",
     icon: "mdi-poll",
     points: 15,
-    triggerPath: "survey.createSurvey" as const,
+    triggerPath: "survey.createResource" as const,
   }),
   [SurveyAchievementName.SurveySays]: defineAchievementDefinition({
     amount: 10,
@@ -81,6 +81,6 @@ export const SurveyAchievementDefinitionMap = {
     description: "Create 10 surveys",
     icon: "mdi-clipboard-list",
     points: 50,
-    triggerPath: "survey.createSurvey" as const,
+    triggerPath: "survey.createResource" as const,
   }),
 };

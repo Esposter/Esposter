@@ -6,6 +6,7 @@ interface MessageDraftsAndSentBaseListItemProps {
 }
 
 defineOptions({ inheritAttrs: false });
+defineSlots<{ default?: () => VNode; prepend?: () => VNode }>();
 const { displayTime, subtitle, title } = defineProps<MessageDraftsAndSentBaseListItemProps>();
 const listItem = useTemplateRef("listItem");
 // @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.
@@ -25,7 +26,7 @@ const { focused: isFocusWithin } = useFocusWithin(listItem);
       <template #append>
         <div flex gap-x-3 items-center>
           <span text-hint>{{ displayTime }}</span>
-          <div
+          <v-sheet
             v-if="$slots.default"
             v-show="isHovering || isFocusWithin"
             p-1
@@ -33,12 +34,11 @@ const { focused: isFocusWithin } = useFocusWithin(listItem);
             b-border
             rd-lg
             b-solid
-            bg-surface
             flex
             items-center
           >
             <slot />
-          </div>
+          </v-sheet>
         </div>
       </template>
     </v-list-item>

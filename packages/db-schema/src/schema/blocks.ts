@@ -2,7 +2,6 @@ import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, index, primaryKey, text } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-orm/zod";
 
 export const blocks = pgTable(
   "blocks",
@@ -24,5 +23,3 @@ export const blocks = pgTable(
 );
 
 export type Block = typeof blocks.$inferSelect;
-
-export const selectBlockSchema = createSelectSchema(blocks);

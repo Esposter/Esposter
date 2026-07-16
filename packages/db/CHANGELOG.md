@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
+
+### Bug Fixes
+
+* builds ([257b3e5](https://github.com/Esposter/Esposter/commit/257b3e505310d4dffb1676db75d8b0b8c7ff9bb3))
+* enums and arrays ([faa3f2f](https://github.com/Esposter/Esposter/commit/faa3f2fc2d8e7453fead1ba02cb9b0f294b1b70f))
+* post-merge integration for esbabbler, platform, and posts branches ([a14af16](https://github.com/Esposter/Esposter/commit/a14af16951d55266948f62c378c7490a6854f166))
+* snapshot and script ([b2df969](https://github.com/Esposter/Esposter/commit/b2df9695cd825d4a774386621345f5ef4a79d0cb))
+* snapshots ([9764b23](https://github.com/Esposter/Esposter/commit/9764b23ba8be5cb84229baf997f54ce00c9cef98))
+* wip ([cf2c92b](https://github.com/Esposter/Esposter/commit/cf2c92b108efb84bad50e151bb749b9cf3257bf8))
+
+### Features
+
+* esbabbler mention badges + push-to-talk keybind with release delay ([3cc0602](https://github.com/Esposter/Esposter/commit/3cc060227b201fcac212b11be6d401312a9b5f74))
+* migrate to service bus ([60572d9](https://github.com/Esposter/Esposter/commit/60572d945321e2953abd3bb43f61553c7221f43d))
+
 ## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
 
 ### Bug Fixes

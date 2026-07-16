@@ -4,6 +4,7 @@ import type { VNodeChild } from "vue";
 import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
+import { getTopRole } from "@/services/message/member/getTopRole";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { mergeProps } from "vue";
@@ -27,6 +28,8 @@ const displayName = computed(() => getDisplayName(member, room.id));
 const roleStore = useRoleStore();
 const { getMemberRoles } = roleStore;
 const memberRoles = computed(() => getMemberRoles(room.id, member.id).toSorted((a, b) => b.position - a.position));
+// Discord tints the display name with the member's top role color
+const topRoleColor = computed(() => getTopRole(memberRoles.value)?.color || undefined);
 const isMenuOpen = ref(false);
 </script>
 
@@ -44,7 +47,7 @@ const isMenuOpen = ref(false);
             <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="displayName" />
           </template>
           <v-list-item-title pr-6>
-            <div flex gap-x-1 items-center>
+            <div flex gap-x-1 items-center :style="{ color: topRoleColor }">
               {{ displayName }}
               <v-tooltip v-if="isCreator" text="Room Owner">
                 <template #activator="{ props }">

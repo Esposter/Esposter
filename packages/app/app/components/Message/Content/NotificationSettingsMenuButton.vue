@@ -8,8 +8,28 @@ const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
+const { setMyUserToRoom } = userToRoomStore;
 const { myUserToRoomMap } = storeToRefs(userToRoomStore);
 const notificationType = computed(() => myUserToRoomMap.value?.notificationType ?? NotificationType.DirectMessage);
+const notificationTypeLabels = Object.entries(NotificationTypeLabelMap);
+const executeMutation = useMutation();
+const updateNotificationType = async (newNotificationType: NotificationType) => {
+  const roomId = currentRoomId.value;
+  const userToRoom = myUserToRoomMap.value;
+  if (!roomId || !userToRoom) return;
+  await executeMutation(
+    () => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }),
+    {
+      applyOptimistic: () => {
+        const oldNotificationType = userToRoom.notificationType;
+        setMyUserToRoom(roomId, { ...userToRoom, notificationType: newNotificationType });
+        return () => {
+          setMyUserToRoom(roomId, { ...userToRoom, notificationType: oldNotificationType });
+        };
+      },
+    },
+  );
+};
 </script>
 
 <template>
@@ -24,15 +44,9 @@ const notificationType = computed(() => myUserToRoomMap.value?.notificationType 
       <v-radio-group
         :model-value="notificationType"
         hide-details
-        @update:model-value="
-          currentRoomId &&
-          $trpc.userToRoom.updateUserToRoom.mutate({
-            notificationType: $event as NotificationType,
-            roomId: currentRoomId,
-          })
-        "
+        @update:model-value="updateNotificationType($event as NotificationType)"
       >
-        <v-radio v-for="[value, label] of Object.entries(NotificationTypeLabelMap)" :key="value" :value :label>
+        <v-radio v-for="[value, label] of notificationTypeLabels" :key="value" :value :label>
           <template #label="{ props: labelProps }">
             <v-label :="labelProps" text-label-large :text="label" />
           </template>

@@ -12,15 +12,12 @@ import { userIdSchema } from "@/models/shared/UserId";
 import { selectRoomInMessageSchema } from "@/schema/roomsInMessage";
 import { selectUserSchema } from "@/schema/users";
 import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
-import { createUniqueArraySchema, sanitizeMessageHtml } from "@esposter/shared";
+import { createUniqueArraySchema, sanitizeTextHtml } from "@esposter/shared";
 import { z } from "zod";
 
 export const MENTION_MAX_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 10000;
-export const sanitizedMessageSchema = z
-  .string()
-  .transform(sanitizeMessageHtml)
-  .pipe(z.string().max(MESSAGE_MAX_LENGTH));
+export const sanitizedMessageSchema = z.string().transform(sanitizeTextHtml).pipe(z.string().max(MESSAGE_MAX_LENGTH));
 
 export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   extends AzureEntity

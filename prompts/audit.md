@@ -21,7 +21,7 @@ Read these files fully:
 
 - CSP: flag `unsafe-eval`, `unsafe-inline`, overly broad origins; suggest nonce/hash alternatives
 - Headers: verify `X-Content-Type-Options`, `X-Frame-Options`, `HSTS`, `Referrer-Policy` are set
-- `v-html`: flag any instance where content comes from user input without prior sanitization — note: message HTML is sanitized in `useDataStore.createMessage` / `updateMessage` via `sanitizeMessageHtml`, so `useMessageWithMentions` output is safe
+- `v-html`: flag any instance where content comes from user input without prior sanitization — note: rich-text HTML is sanitized at the Zod boundary via `.transform(sanitizeTextHtml)` in base db-schema schemas, so `useMessageWithMentions` output is safe
 - Auth: check tRPC procedures and server routes for missing auth guards
 - Secrets: flag any env vars read client-side or logged
 - Rate limiting: verify all mutation endpoints (tRPC + HTTP) are covered

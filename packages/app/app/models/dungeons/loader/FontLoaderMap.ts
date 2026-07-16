@@ -8,6 +8,4 @@ export const FontLoaderMap: Record<FontKey, (scene: SceneWithPlugins) => Loader.
   [FontKey.KenneyFutureNarrow]: (scene) => scene.load.font(FontKey.KenneyFutureNarrow, KenneyFutureNarrow),
 };
 
-export const FontLoaders: ReadonlySet<(scene: SceneWithPlugins) => Loader.LoaderPlugin> = new Set(
-  Object.values(FontLoaderMap),
-);
+export const FontLoaders = Object.values(FontLoaderMap);

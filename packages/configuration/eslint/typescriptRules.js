@@ -22,7 +22,6 @@ export default Object.assign(
     delete rules["@typescript-eslint/restrict-plus-operands"];
     delete rules["@typescript-eslint/restrict-template-expressions"];
     // Computationally expensive
-    delete rules["@typescript-eslint/no-confusing-void-expression"];
     delete rules["@typescript-eslint/no-deprecated"];
     delete rules["@typescript-eslint/unified-signatures"];
     return rules;
@@ -34,7 +33,19 @@ export default Object.assign(
   }),
   {
     "@typescript-eslint/consistent-type-exports": "error",
-    // Ban the TypeScript `private` keyword — use ECMAScript `#` private members instead (`protected` is still allowed; no `#` equivalent for subclass access).
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [
+          {
+            importNames: ["randomUUID"],
+            message: "Use the global `crypto.randomUUID()` instead of importing `randomUUID` from `node:crypto`.",
+            name: "node:crypto",
+          },
+        ],
+      },
+    ],
+    // `protected` is still allowed — no `#` equivalent exists for subclass access.
     "no-restricted-syntax": [
       "error",
       {
@@ -43,11 +54,17 @@ export default Object.assign(
           ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
       },
       {
-        // `expect.any` is a loose matcher that also trips a vitest/valid-expect false positive; capture the real value
-        // From the mock call (via takeOne) and assert it exactly, or assert its type with toBeTypeOf.
+        // `expect.any` also trips a vitest/valid-expect false positive.
         message:
           "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
         selector: "MemberExpression[object.name='expect'][property.name='any']",
+      },
+      {
+        // `router.replace({ query })` is a query-string update, not navigation, so only `push` is banned.
+        message:
+          "Use `navigateTo(target, { replace: true })` instead of `router.push` for navigation. (`router.replace({ query })` for query-only updates is fine.)",
+        selector:
+          "CallExpression[callee.property.name='push']:matches([callee.object.name=/^\\$?router$/], [callee.object.callee.name='useRouter'], [callee.object.property.name='$router'])",
       },
     ],
     // Computationally expensive

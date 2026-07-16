@@ -6,6 +6,8 @@ describe(streamToText, () => {
   test("empty string", async () => {
     expect.hasAssertions();
 
-    await expect(streamToText(Readable.from(""))).resolves.toBe("");
+    const text = await streamToText(Readable.from(""));
+
+    expect(text).toBe("");
   });
 });

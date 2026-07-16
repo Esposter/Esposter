@@ -6,6 +6,7 @@ import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/Update
 import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
+import { useMutation } from "@/composables/shared/useMutation";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
 import { MessageMetadataType } from "@esposter/db-schema";
@@ -14,23 +15,48 @@ import { takeOne } from "@esposter/shared";
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
+  const executeCreateEmojiMutation = useMutation();
+  const executeUpdateEmojiMutation = useMutation();
+  const executeDeleteEmojiMutation = useMutation();
   const { getEmojis, setEmojis } = useMessageMetadataMap(MessageMetadataType.Emoji);
-  // Optimistically update UI
   const createEmoji = async (input: CreateEmojiInput) => {
     if (!session.value.data) return;
     const newEmoji = reactive(createMessageEmojiMetadataEntity({ ...input, userIds: [session.value.data.user.id] }));
-    storeCreateEmoji(newEmoji);
-    Object.assign(newEmoji, await $trpc.message.emoji.createEmoji.mutate(input));
+    await executeCreateEmojiMutation(() => $trpc.message.emoji.createEmoji.mutate(input), {
+      applyOptimistic: () => {
+        storeCreateEmoji(newEmoji);
+        return () => {
+          storeDeleteEmoji(newEmoji);
+        };
+      },
+      onSuccess: (result) => {
+        Object.assign(newEmoji, result);
+      },
+    });
   };
   const updateEmoji = async (input: Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput) => {
     if (!session.value.data) return;
     const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, session.value.data.user.id) };
-    storeUpdateEmoji(updatedInput);
-    await $trpc.message.emoji.updateEmoji.mutate(updatedInput);
+    await executeUpdateEmojiMutation(() => $trpc.message.emoji.updateEmoji.mutate(updatedInput), {
+      applyOptimistic: () => {
+        storeUpdateEmoji(updatedInput);
+        return () => {
+          storeUpdateEmoji(input);
+        };
+      },
+    });
   };
   const deleteEmoji = async (input: DeleteEmojiInput) => {
-    storeDeleteEmoji(input);
-    await $trpc.message.emoji.deleteEmoji.mutate(input);
+    const emojis = getEmojis(input.messageRowKey);
+    const deletedEmoji = emojis.find((emoji) => getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji));
+    await executeDeleteEmojiMutation(() => $trpc.message.emoji.deleteEmoji.mutate(input), {
+      applyOptimistic: () => {
+        storeDeleteEmoji(input);
+        return () => {
+          if (deletedEmoji) storeCreateEmoji(deletedEmoji);
+        };
+      },
+    });
   };
 
   const storeCreateEmoji = (newEmoji: MessageEmojiMetadataEntity) => {

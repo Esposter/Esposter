@@ -2,15 +2,15 @@ import type { BenchmarkTaskNode } from "@/models/BenchmarkTaskNode";
 
 import { buildBenchmarkFileReport } from "@/services/buildBenchmarkFileReport";
 import { formatBenchmarkMarkdown } from "@/services/formatBenchmarkMarkdown";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { writeFile } from "node:fs/promises";
 
 const TS_EXTENSION_REGEX = /\.ts$/u;
 
-const writeFileOrThrow = async (path: string, contents: string): Promise<void> => {
-  const result = await getResultAsync(() => writeFile(path, contents));
-  if (result.isErr()) throw new InvalidOperationError(Operation.Create, path, result.error.message);
-};
+const writeFileOrThrow = (path: string, contents: string): Promise<void> =>
+  getResultAsync(() => writeFile(path, contents)).match(noop, (error) => {
+    throw new InvalidOperationError(Operation.Create, path, error.message);
+  });
 // Writes a bench file's results as two artifacts colocated beside the source (Foo.bench.ts →
 // Foo.bench.json + Foo.bench.md), so each bench is scoped to its file the way its test is, rather than one
 // Merged report per package. No-op for a bench file Vitest ran that declared no benchmarks (e.g. a shared

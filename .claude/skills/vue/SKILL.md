@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Esposter Vue 3 SFC conventions — macro ordering, template patterns, watch aliases, props naming, refs/computed, and conditional logic. Apply when writing .vue files.
+description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template patterns and attribute ordering, inline handlers, v-model vs split bindings (never normalizeString in Vue), refs/computed/template refs, the watch decision tree and watch aliases, auth session call forms, browser globals, SSR guards via getIsServer, and upsert form mode. Apply when writing or reviewing .vue files.
 ---
 
 # Vue Conventions
@@ -43,9 +43,65 @@ Never leave a framework value composable (e.g. `useVDisplay`, `useRoute`) strand
 
 ## Inline Functions & Handlers
 
-- Inline arrow functions where argument types are inferable — don't extract single-use, trivially-typed lambdas.
-- Inline Vue event handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`) so Vue infers event arg types. Extract to a named function only if the same logic is reused in multiple places. Single-use handlers must always be inlined.
-- **Single-use callbacks passed to `useEventListener`/`watch`/lifecycle hooks must be inlined too** — never define a `const onFoo = ...` that is referenced in exactly one registration. Inline the arrow: `useEventListener("keydown", (event) => { ... })`, not a separate `onKeydown` used once. The callback's arg types are inferred from the event name, so no annotation is needed. Keep a named function only when the **same reference** is needed in 2+ places (e.g. passed to both `addEventListener` and `removeEventListener`).
+**A single-use function that only defers a block must be inlined.** A single reference is the _trigger_ for the question, not the answer to it. Ask what the name buys:
+
+- **Ceremony → inline.** The name describes _when_ it runs (`onMount`, `init`, `load`, `setup`, `handleX`) and the body is simply the block its one caller would have contained. The name adds a jump and buys nothing, and inlining makes the file strictly smaller.
+- **Abstraction → keep.** The name describes _what it computes_ (`getColumnType`, `isStyleNode`, `checkIsInteractableDirection`) and compresses a non-obvious computation — a switch, a predicate, a parse — so its call site reads as one idea. Inlining a 14-line switch into a loop body is bigger, more nested, and deletes the only word explaining what it means. Single use is not a reason to destroy it.
+
+The discriminator: **does the name state its trigger or its result?** A trigger-named function is the caller wearing a disguise. A result-named function is a concept. Never inline a function whose call site would then need a comment to explain what the block does — that comment is the name you just removed.
+
+Ceremony, in every form — not only callbacks passed as arguments:
+
+- **Passed to a hook / registration** — `useEventListener("keydown", (event) => { ... })`, never a separate `onKeydown` used once. Arg types infer from the event name, so no annotation is needed.
+- **Called inside a hook** — a named `onMount`/`init`/`load` that only `onMounted` invokes is the same violation wearing a different hat. Inline the body into `onMounted`. Wrapping it (`getResultAsync(onMount)`) does **not** make it a second reference:
+
+  ```ts
+  // WRONG — onMount is referenced once
+  const onMount = async () => { ... };
+  onMounted(async () => {
+    await getResultAsync(onMount).match(noop, console.error);
+    isLoading.value = false;
+  });
+
+  // CORRECT — the body lives where it runs
+  onMounted(async () => {
+    await getResultAsync(async () => { ... }).match(noop, console.error);
+    isLoading.value = false;
+  });
+  ```
+
+- **Template handlers** — a handler bound to exactly one element is ceremony, whatever its length. Inline it into the binding (`@submit="async (_, onComplete) => { ... }"`), which also lets Vue infer the event arg types. Multi-statement and `async` bodies are fine inline; the handler's trigger is the element it sits on, so that is where it belongs:
+
+  ```vue
+  <!-- WRONG — copyPublicLink is bound once -->
+  <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
+
+  <!-- CORRECT -->
+  <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="async () => { ... }" />
+  ```
+
+  The one exception is **scope**: a template expression can only reach bindings `<script setup>` exposes to it. Top-level `const`s and imports are exposed, so `getResultAsync`/`noop`/a store method all inline fine. Things the template cannot name — `window` and other browser globals, a local `let`, a type annotation the body needs — force the handler to stay in script:
+
+  ```ts
+  // Stays named: the template cannot reference window
+  const copyPublicLink = async () => {
+    if (!publicUrl.value) return;
+    await getResultAsync(() =>
+      window.navigator.clipboard.writeText(`${window.location.origin}${publicUrl.value}`),
+    ).match(noop, noop);
+  };
+  ```
+
+- **Trivially-typed lambdas** — never extract one whose arg types are already inferable.
+
+Legitimate reasons to keep a name:
+
+- It names a **result**, not a trigger (see above) — single use is fine.
+- The handler references something the **template has no scope for** (`window.…`, a type annotation) — see above.
+- The same **reference** is needed twice (`addEventListener` + `removeEventListener`), or one handler is bound to two elements.
+- It is the component's **public API** via `defineExpose({ onKeyDown })` — the expose _is_ the second reference.
+- A mutation must re-run a setup read: `refreshResponses` awaited at setup **and** bound to `@delete`.
+
 - **Prefer `useEventListener` over manual `addEventListener`/`removeEventListener`** — it auto-removes on unmount, so it replaces an `onMounted` (add) + `onUnmounted` (remove) pair and lets the handler be inlined. Omit the target for `window` events (`useEventListener("resize", ...)`) — the omitted-target form is SSR-safe (don't reference `window` at setup top-level). Fall back to manual `onMounted`/`onUnmounted` only when the target isn't reachable SSR-safely as a getter and the listener is genuinely tied to mount.
 - **`@click` shorthand**: a single async call uses `@click="myAsyncFn(args)"` directly — no `async () => { await ... }` wrapper.
 - **IME composition guard** — on `@keydown.enter` for text inputs, guard inline so confirming a CJK candidate doesn't commit: `@keydown.enter.stop="!$event.isComposing && commitEdit()"`.
@@ -115,6 +171,9 @@ The only acceptable client-side validation is Vuetify form field rules (inline e
 - **Dotted slot names need dynamic binding** — Vue rejects dots in static slot names; Vuetify item slots use brackets: `#[`item.drag`]`, `#[`item.actions`]`. Only dot-free names are static (`#top`, `#activator`).
 - **Always use `:` shorthand** — `:disabled="..."` not `v-bind:disabled`. Object spread: `:="object"` not `v-bind="object"`.
 - **Never use `.value` in templates** — Vue auto-unwraps refs. `ref.value` in a template reads `.value` on the unwrapped object (usually `undefined`). Write `fn(ref)`. `.value` is only for `<script setup>` outside template expressions.
+- **No allocating expressions in render positions** — `Object.*` calls in a `:prop` bind, `v-for` source, or `{{ }}` allocate a fresh reference every render. Enforced by `vue/no-restricted-syntax` (`packages/configuration/eslint/overrides/vueRules.js`); its message states the fix (hoist to a script-setup `const` for static sources, a `computed` for reactive ones) and exempts event handlers.
+- Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
+- **`import type` names ARE visible in template casts** — a type-only imported name works in a template `as` cast (`$event as NoiseSuppressionMode`); never widen it to a value import for the cast's sake. Only a template _value_ usage — enum member access (`FooType.Bar`), a `v-for` source, a call — needs the value import. When vue-tsc reports TS2551 `Property 'X' does not exist on type '{ …ctx… }'` on a template identifier, the culprit is a value usage of a type-only import somewhere in the template, not the cast — find it before changing import forms.
 
 ## Optional Refs — Omit the Initial Value
 
@@ -280,7 +339,35 @@ const selectedStatus = ref(status.value);
 
 If the user opens → changes → closes without saving → reopens, they see their unsaved selection — usually acceptable (it indicates intent). Watch-to-reset forces a reset on every open, which can feel punishing.
 
-### 4. Bridging to external imperative APIs → `watch` is correct
+### 4. Async read of a source the instance can't outlive → `onMounted`, not `watch`
+
+Before watching an id to re-read on change, ask: **can it actually change under this instance?** When the router or the parent already keys the component by that id, a change unmounts and remounts it — the watch's re-run branch is dead code, and any staleness guard defends a transition that cannot happen.
+
+Resource pages are keyed by id (`definePageMeta({ key: (route) => \`resource-${route.params.id}\` })`), and `BladeOutlet` keys each blade by `\`${resource.id}-${activeBlade}\``inside`<Suspense>`. So inside a page, an Overview, or a blade, the resource id is **fixed for the instance's lifetime**:
+
+```typescript
+// The page is keyed by resource id, so this instance only ever describes one resource — read once
+const viewCount = ref<number>();
+onMounted(async () => {
+  viewCount.value = await getResultAsync(() => readResourceViewCount({ id: resource.id })).unwrapOr(undefined);
+});
+
+// Not: watchImmediate(() => resource.id, ...) — the id cannot change, so the watch is a once-only hook
+// Wearing a reactive costume, and it invites stale-response guards for a race that cannot occur
+```
+
+A blade sits inside `<Suspense>`, so it can go further and `await` the read at setup — the `<Suspense>` fallback renders the skeleton, replacing a local `isLoading` ref:
+
+```typescript
+const id = route.params.id as string; // keyed by id upstream, so a plain cast is safe
+await refreshResponses(); // Suspense shows StyledSkeleton until this resolves
+```
+
+Keep the read in a named function when a mutation must re-run it (a delete dialog's `@delete`), and call that same function at setup.
+
+**A watch is only right here when the source genuinely varies under a live instance** — a reactive reference bound to a form control, e.g. `useDataset(() => modelValue.value?.reference)` in a picker. Then the concurrency guard earns its place, because two reads really can overlap.
+
+### 5. Bridging to external imperative APIs → `watch` is correct
 
 Vue reactivity can't reach Phaser, Three.js, Tiptap, Desmos, or DOM-imperative APIs:
 
@@ -290,9 +377,9 @@ watch(isDark, (newIsDark) => {
 });
 ```
 
-### 5. Async side effects triggered by reactive state → `watch` is correct
+### 6. Async side effects triggered by reactive state → `watch` is correct
 
-Auto-save, API calls on throttled search, typing indicators:
+Auto-save, API calls on throttled search, typing indicators — the source genuinely changes under a live instance (see case 4 before reaching for this):
 
 ```typescript
 watch(throttledSearchQuery, async (newQuery) => {
@@ -300,18 +387,6 @@ watch(throttledSearchQuery, async (newQuery) => {
   initializePaginationData(results);
 });
 ```
-
-### Summary
-
-| Scenario                                       | Pattern                                                   |
-| ---------------------------------------------- | --------------------------------------------------------- |
-| Read-only derivation                           | `computed`                                                |
-| Form init from prop/store (no external change) | `ref(source.value)` directly — never `watchImmediate`     |
-| Editable copy that resyncs from source         | `useCloned(() => source)` — never `ref` + `watch` mirror  |
-| Form reset on dialog/menu open                 | `watch(dialog, (isOpen) => { if (!isOpen) return; ... })` |
-| Two-way store binding                          | Writable `computed` (get/set)                             |
-| External imperative API                        | `watch`                                                   |
-| Async side effect                              | `watch`                                                   |
 
 ## Watch Aliases & `watchEffect`
 
@@ -329,7 +404,7 @@ watch(throttledSearchQuery, async (newQuery) => {
 ## Vue Hooks
 
 - Place `watch`, `onMounted`, `onUnmounted`, and other lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments, with a blank line before them.
-- **Prefer no hook at all.** Before adding a `watch`/`watchEffect`, exhaust the Watch Decision Tree above — derive with `computed`, initialize a `ref` from a prop/store value directly, or push the data down as a prop and let the child own it. Reach for a watcher only when bridging an imperative API or running an async side effect. A `watchEffect` that merely copies a store value into a local `ref` is almost always replaceable by the wrapper + pure-child pattern (see the `vue-component-patterns` skill): guard the source with `v-if` in the parent, pass it as a required prop, and init the child's `ref` from that prop.
+- **Prefer no hook at all** — exhaust the Watch Decision Tree above first. A `watchEffect` that merely copies a store value into a local `ref` is almost always replaceable by the wrapper + pure-child pattern (see the `vue-component-patterns` skill): guard the source with `v-if` in the parent, pass it as a required prop, and init the child's `ref` from that prop.
 - **Blank line between each consecutive hook/watcher** — every `watch`/`watchEffect`/`onMounted`/`onUnmounted` block is an independent registration, so put a blank line between adjacent ones. This overrides the `formatting` skill's "no blank line before a block that immediately follows another block".
 - **Order by lifecycle phase**: `watch`/`watchEffect` first, then `onMounted`, then `onUnmounted` (setup-time reactive registrations precede mount-time, which precede teardown). Within the same phase keep source order.
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly (avoids scope/binding issues and argument forwarding): `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
@@ -362,10 +437,7 @@ useScript<typeof Desmos>(API_URL, {
 
 ## Routing
 
-- **`useRouter()` for reactive contexts** — reading route data inside a `computed`/`watch` (e.g. `router.currentRoute.value.params.id`) or calling navigation methods (`router.push`, `router.replace`).
-- **`useRoute()` for plain reads** — reading params/query outside a reactive context (regular function or async handler).
-
-> This inverts the usual Vue Router split deliberately: `useRoute()` returns a stale, non-reactive snapshot when called outside a component setup (composables, stores, middleware, async handlers), whereas `useRouter().currentRoute` stays reactive everywhere. Standardizing on `useRouter()` for reactive reads avoids that footgun since route reads often live in composables.
+See the **routing** skill — links/`:to`, `navigateTo`, reactive route reads, route validation, page keys, and route-synced tabs.
 
 ## After Finishing Code Changes
 

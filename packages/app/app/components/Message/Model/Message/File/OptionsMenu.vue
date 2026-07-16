@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
+import { downloadUrl } from "@/services/app/downloadUrl";
+
 interface FileOptionsMenuProps {
   filename: string;
   hoverProps?: Record<string, unknown>;
@@ -14,10 +16,7 @@ const menuItems = computed<Item[]>(() => [
   {
     icon: "mdi-download",
     onClick: () => {
-      const anchor = window.document.createElement("a");
-      anchor.href = url;
-      anchor.download = filename;
-      anchor.click();
+      downloadUrl(url, filename);
     },
     title: "Download",
   },

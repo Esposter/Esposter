@@ -1,30 +1,34 @@
 <script setup lang="ts">
-import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-
 import { usePostStore } from "@/store/post";
+import { useCommentStore } from "@/store/post/comment";
+import { usePostDialogStore } from "@/store/post/dialog";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
-interface PostConfirmDeleteDialogProps {
-  postId: string;
-}
-
-defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps) => VNode;
-  postPreview: () => VNode;
-}>();
-const { postId } = defineProps<PostConfirmDeleteDialogProps>();
 const postStore = usePostStore();
+const { items } = storeToRefs(postStore);
 const { deletePost } = postStore;
+const commentStore = useCommentStore();
+const { currentPost } = storeToRefs(commentStore);
+const postDialogStore = usePostDialogStore();
+const { deletingId } = storeToRefs(postDialogStore);
+// The comments page renders the current post outside the post list, so fall back to it
+const post = computed(
+  () =>
+    items.value.find(({ id }) => id === deletingId.value) ??
+    (currentPost.value?.id === deletingId.value ? currentPost.value : undefined),
+);
+const isOpen = useSingletonDialog(deletingId);
 </script>
 
 <template>
   <StyledDeleteFormDialog
-    :card-props="{
-      title: 'Delete Post',
-      text: 'Are you sure you want to delete this post?',
-    }"
+    v-if="post"
+    v-model="isOpen"
+    :card-props="{ title: 'Delete Post' }"
     @delete="
       async (onComplete) => {
+        if (!post) return;
+        const postId = post.id;
         await withFinalizerAsync(async () => {
           await deletePost(postId);
           await navigateTo(RoutePath.Index);
@@ -32,11 +36,9 @@ const { deletePost } = postStore;
       }
     "
   >
-    <template #activator="activatorProps">
-      <slot name="activator" :="activatorProps" />
-    </template>
-    <div mx-4 py-2 b-1 b-text rd-lg b-solid shadow-md>
-      <slot name="postPreview" />
-    </div>
+    Are you sure you want to delete this post?
+    <StyledPreviewCard>
+      <PostPreview :post />
+    </StyledPreviewCard>
   </StyledDeleteFormDialog>
 </template>

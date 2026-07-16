@@ -1,2 +1,0 @@
-export const TABLE_EDITOR_ITEMS_MAX_LENGTH = 1000;
-export const ITEM_NAME_MAX_LENGTH = 1000;

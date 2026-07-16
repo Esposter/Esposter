@@ -34,7 +34,7 @@ export const useReadMessages = () => {
 
     await Promise.all([
       readMembersByIds([...new Set(standardMessages.map(({ userId }) => userId))]),
-      readAppUsers(webhookMessages.map(({ appUser }) => appUser.id)),
+      readAppUsers([...new Set(webhookMessages.map(({ appUser }) => appUser.id))]),
       readReplies([
         ...new Set(standardMessages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined)),
       ]),

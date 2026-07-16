@@ -19,7 +19,9 @@ describe(loadSource, () => {
 
     const { cwd, dispose } = await loadSource({ files: { [TEST_FILENAME]: " " }, type: SourceType.Files });
 
-    await expect(readFile(join(cwd, TEST_FILENAME), "utf8")).resolves.toBe(" ");
+    const content = await readFile(join(cwd, TEST_FILENAME), "utf8");
+
+    expect(content).toBe(" ");
 
     await dispose();
   });

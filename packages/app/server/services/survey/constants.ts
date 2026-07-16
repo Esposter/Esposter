@@ -1,5 +1,3 @@
-import { DatabaseEntityType } from "@esposter/db-schema";
-import { uncapitalize } from "@esposter/shared";
+export const closedSurveyErrorReason = "survey is not accepting responses";
 
-export const SURVEY_MODEL_FILENAME = `${uncapitalize(DatabaseEntityType.Survey)}.json`;
-export const PUBLISH_DIRECTORY_PATH = "publish";
+export const invalidParticipantTokenErrorReason = "participant token is not valid for this survey";

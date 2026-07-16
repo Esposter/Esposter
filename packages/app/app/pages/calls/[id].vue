@@ -6,7 +6,6 @@ import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-defineRouteRules({ ssr: false });
 definePageMeta({
   middleware: "auth",
   validate: async (route) => {

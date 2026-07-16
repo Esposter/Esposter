@@ -19,5 +19,6 @@ const { items } = storeToRefs(webhookStore);
     <template v-else>
       <MessageModelRoomSettingsTypeWebhookListItem v-for="webhook of items" :key="webhook.id" :room-id :webhook />
     </template>
+    <MessageModelRoomSettingsTypeWebhookConfirmDeleteDialog :room-id />
   </v-list>
 </template>

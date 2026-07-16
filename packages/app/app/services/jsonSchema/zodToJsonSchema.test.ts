@@ -1,6 +1,5 @@
-/* oxlint-disable no-new-func */
-import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { ColumnFormVjsfContextPropertyNames } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
+import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
+import { ColumnFormVjsfContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormVjsfContext";
 import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";

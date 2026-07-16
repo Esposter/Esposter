@@ -76,9 +76,9 @@ describe("call", () => {
 
     const room = await roomCaller.createRoom({ name });
     const callSessionId = await createCallSessionId(mockContext.db, room.id, getMockSession().user.id);
-    const inviteCode = await roomCaller.createInvite({ roomId: room.id });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: room.id });
     const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(inviteCode);
+    await roomCaller.joinRoom(invite.id);
     await mockSessionOnce(mockContext.db, user);
 
     await expect(callCaller.readCallParticipantMap({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(

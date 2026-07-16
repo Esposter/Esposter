@@ -4,6 +4,9 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { User } from "better-auth";
 
+import { dayjs } from "#shared/services/dayjs";
+import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
+import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { createId } from "#shared/util/math/random/createId";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
@@ -17,9 +20,6 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MOCK_BLOB_BASE_URL, MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const expectedUsersToRoomsInsertError = (roomId: string, userId: string) =>
-  `Failed query: insert into "message"."usersToRooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "lastMessageAt", "nickname", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "lastMessageAt", "nickname", "notificationType", "roomId", "timeoutUntil", "userId"\nparams: 1970-01-01T00:00:00.000Z,${roomId},${userId}`;
-
 describe("room", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -28,6 +28,7 @@ describe("room", () => {
   const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
+  const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -304,15 +305,15 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
-    const readInvite = await roomCaller.readInvite(newInviteCode);
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const readInvite = await roomCaller.readInvite(newInvite.id);
     const userId = getMockSession().user.id;
 
     assert(readInvite);
 
     expect(readInvite.userId).toBe(userId);
     expect(readInvite.roomId).toBe(newRoom.id);
-    expect(readInvite.id).toBe(newInviteCode);
+    expect(readInvite.id).toBe(newInvite.id);
     expect(readInvite.isMember).toBe(true);
   });
 
@@ -324,44 +325,132 @@ describe("room", () => {
     expect(readInvite).toBeNull();
   });
 
-  test("reads invite id", async () => {
+  test("reads my invite", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInviteId = await roomCaller.createInvite({ roomId: newRoom.id });
-    const readInviteId = await roomCaller.readInviteId({ roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
-    expect(readInviteId).toBe(newInviteId);
+    expect(myInvite).toStrictEqual(newInvite);
   });
 
-  test("read invite id with no id to be empty", async () => {
+  test("reads my invite with no invite to be null", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const readInviteId = await roomCaller.readInviteId({ roomId: newRoom.id });
+    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
-    expect(readInviteId).toBe("");
+    expect(myInvite).toBeNull();
   });
 
-  test("creates invite to be cached", async () => {
+  test("reads my expired invite to be null", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
-    const cachedInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    await roomCaller.createInvite({
+      expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
+      maxUses: 0,
+      roomId: newRoom.id,
+    });
+    vi.setSystemTime(dayjs.duration(31, "minutes").asMilliseconds());
+    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
-    expect(cachedInviteCode).toBe(newInviteCode);
+    expect(myInvite).toBeNull();
+  });
+
+  test("creating again replaces the previous invite", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const firstInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const secondInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
+
+    expect(secondInvite.id).not.toBe(firstInvite.id);
+    expect(myInvite).toStrictEqual(secondInvite);
+  });
+
+  test("creates invite with expiry and max uses", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({
+      expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
+      maxUses,
+      roomId: newRoom.id,
+    });
+
+    expect(newInvite.expiresAt).toStrictEqual(dayjs(0).add(30, "minutes").toDate());
+    expect(newInvite.maxUses).toBe(maxUses);
+    expect(newInvite.uses).toBe(0);
   });
 
   test("joins", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
-    const joinedRoom = await roomCaller.joinRoom(newInviteCode);
+    const joinedRoom = await roomCaller.joinRoom(newInvite.id);
 
     expect(joinedRoom).toStrictEqual(newRoom);
+  });
+
+  test("joining consumes a use", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses,
+      roomId: newRoom.id,
+    });
+    await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    // MaxUses is 1, so the invite is now exhausted — read the row directly instead of readMyInvite
+    const invite = await mockContext.db.query.invitesInMessage.findFirst({ where: { id: { eq: newInvite.id } } });
+
+    expect(invite?.uses).toBe(1);
+  });
+
+  test("joining an exhausted invite fails like an unknown token", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses,
+      roomId: newRoom.id,
+    });
+    await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    await mockSessionOnce(mockContext.db);
+
+    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
+    );
+  });
+
+  test("joining an expired invite fails like an unknown token", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({
+      expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
+      maxUses: 0,
+      roomId: newRoom.id,
+    });
+    vi.setSystemTime(dayjs.duration(31, "minutes").asMilliseconds());
+    await mockSessionOnce(mockContext.db);
+
+    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
+    );
+
+    const readInvite = await roomCaller.readInvite(newInvite.id);
+
+    expect(readInvite).toBeNull();
   });
 
   test("fails create invite with direct message room", async () => {
@@ -373,7 +462,9 @@ describe("room", () => {
     await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
-    await expect(roomCaller.createInvite({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: directMessage.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
     );
   });
@@ -387,7 +478,7 @@ describe("room", () => {
     await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
-    await expect(roomCaller.readInviteId({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(roomCaller.readMyInvite({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
     );
   });
@@ -456,11 +547,15 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses: 0,
+      roomId: newRoom.id,
+    });
     const userId = getMockSession().user.id;
 
-    await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${expectedUsersToRoomsInsertError(newRoom.id, userId)}]`,
+    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Failed query: insert into "message"."usersToRooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "lastMessageAt", "mentionCount", "nickname", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, default, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "lastMessageAt", "mentionCount", "nickname", "notificationType", "roomId", "timeoutUntil", "userId"\nparams: 1970-01-01T00:00:00.000Z,${newRoom.id},${userId}]`,
     );
   });
 
@@ -468,12 +563,16 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses: 0,
+      roomId: newRoom.id,
+    });
     const onJoinRoom = await roomCaller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
     const data = await getFirstEmit(
       () => onJoinRoom,
-      () => roomCaller.joinRoom(newInviteCode),
+      () => roomCaller.joinRoom(newInvite.id),
     );
 
     expect(data).toStrictEqual(session.user);
@@ -483,9 +582,13 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses: 0,
+      roomId: newRoom.id,
+    });
     const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInviteCode);
+    await roomCaller.joinRoom(newInvite.id);
     vi.advanceTimersByTime(1);
     await mockSessionOnce(mockContext.db, user);
     const roomId = await roomCaller.leaveRoom(newRoom.id);
@@ -508,9 +611,13 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses: 0,
+      roomId: newRoom.id,
+    });
     const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInviteCode);
+    await roomCaller.joinRoom(newInvite.id);
     vi.advanceTimersByTime(1);
     const onLeaveRoom = await roomCaller.onLeaveRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db, user);
@@ -567,12 +674,12 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const invite = await roomCaller.createInvite({ roomId: newRoom.id });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(invite);
+    await roomCaller.joinRoom(invite.id);
     vi.advanceTimersByTime(1);
 
-    await expect(roomCaller.deleteMember({ roomId: newRoom.id, userId: user.id })).resolves.toBeUndefined();
+    await roomCaller.deleteMember({ roomId: newRoom.id, userId: user.id });
 
     const members = await roomCaller.readMembers({ roomId: newRoom.id });
 

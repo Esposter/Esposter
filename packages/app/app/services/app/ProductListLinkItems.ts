@@ -1,7 +1,7 @@
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
-import { RoutePath, SURVEY_DISPLAY_NAME } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 export const ProductListLinkItems = [
   {
@@ -15,43 +15,24 @@ export const ProductListLinkItems = [
     title: "Calls",
   },
   {
-    href: RoutePath.TableEditor,
-    icon: "mdi-table-edit",
-    title: "Table Editor",
+    href: RoutePath.Resources,
+    icon: "mdi-earth",
+    title: "Resource Explorer",
   },
   {
-    href: RoutePath.EmailEditor,
-    icon: "mdi-email-edit",
-    title: "Email Editor",
-  },
-  {
-    href: RoutePath.WebpageEditor,
-    icon: "mdi-language-html5",
-    title: "Webpage Editor",
-  },
-  {
-    href: RoutePath.FlowchartEditor,
-    icon: "mdi-sitemap",
-    title: "Flowchart Editor",
-  },
-  {
-    href: RoutePath.DashboardEditor,
-    icon: "mdi-view-dashboard-edit",
-    title: "Dashboard Editor",
-  },
-  {
-    href: RoutePath[SURVEY_DISPLAY_NAME],
-    icon: "mdi-text-box-edit",
-    title: SURVEY_DISPLAY_NAME,
-  },
-  {
-    href: RoutePath.Clicker,
-    icon: "mdi-cursor-pointer",
-    title: "Clicker",
-  },
-  {
-    href: RoutePath.Dungeons,
-    icon: "custom:dungeon-gate",
-    title: "Dungeons",
+    children: [
+      {
+        href: RoutePath.Clicker,
+        icon: "mdi-cursor-pointer",
+        title: "Clicker",
+      },
+      {
+        href: RoutePath.Dungeons,
+        icon: "custom:dungeon-gate",
+        title: "Dungeons",
+      },
+    ],
+    icon: "mdi-gamepad-variant",
+    title: "Games",
   },
 ] as const satisfies ListLinkItem[];

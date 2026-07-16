@@ -2,6 +2,7 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { authClient } from "@/services/auth/authClient";
+import { useCallStore } from "@/store/message/room/call";
 
 interface MessageContentCallParticipantBarAvatarProps {
   isHandRaised: boolean;
@@ -11,9 +12,13 @@ interface MessageContentCallParticipantBarAvatarProps {
 
 const { isHandRaised, isSpeaking, participant } = defineProps<MessageContentCallParticipantBarAvatarProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const { getActions, isForceMuteable, isKickableFromCall } = useCallParticipantActions();
+const callStore = useCallStore();
+const { isInCall } = storeToRefs(callStore);
+const { isForceMuteable, isKickableFromCall } = useCallParticipantActions();
 const isActionable = computed(
-  () => participant.userId !== session.value?.user.id && (isForceMuteable.value || isKickableFromCall.value),
+  () =>
+    participant.userId !== session.value?.user.id &&
+    (isInCall.value || isForceMuteable.value || isKickableFromCall.value),
 );
 const avatarProps = computed(() => ({
   avatarProps: { size: "1.75rem" },
@@ -24,25 +29,11 @@ const avatarProps = computed(() => ({
 
 <template>
   <div relative>
-    <v-menu v-if="isActionable">
+    <MessageContentCallParticipantActionMenu v-if="isActionable" :is-hand-raised :participant>
       <template #activator="{ props: menuProps }">
         <StyledAvatar cursor-pointer :="{ ...avatarProps, ...menuProps }" />
       </template>
-      <v-list density="compact">
-        <v-list-item
-          v-for="{ icon, title, onClick } of getActions(
-            participant.id,
-            participant.userId,
-            participant.isMuted,
-            isHandRaised,
-          )"
-          :key="title"
-          :prepend-icon="icon"
-          :title
-          @click="onClick?.($event)"
-        />
-      </v-list>
-    </v-menu>
+    </MessageContentCallParticipantActionMenu>
     <StyledAvatar v-else :="avatarProps" />
     <div
       v-if="isHandRaised"

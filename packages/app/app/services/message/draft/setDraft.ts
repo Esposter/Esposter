@@ -1,10 +1,10 @@
 import type { Draft } from "@/models/message/Draft";
 
-import { DRAFT_KEY_PREFIX } from "@/services/message/draft/constants";
-import { sanitizeMessageHtml } from "@esposter/shared";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { sanitizeTextHtml } from "@esposter/shared";
 
 export const setDraft = (roomId: string, content: string): Draft => {
-  const draft: Draft = { content: sanitizeMessageHtml(content), updatedAt: new Date() };
-  localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId}`, JSON.stringify(draft));
+  const draft: Draft = { content: sanitizeTextHtml(content), updatedAt: new Date() };
+  localStorage.setItem(LocalStorageKey.Draft(roomId), JSON.stringify(draft));
   return draft;
 };

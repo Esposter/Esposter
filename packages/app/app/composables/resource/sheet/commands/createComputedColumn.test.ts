@@ -1,0 +1,18 @@
+import type { ColumnTransformation } from "#shared/models/resource/sheet/column/transformation/ColumnTransformation";
+
+import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
+import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
+import { describe } from "vitest";
+
+export const createComputedColumn = (
+  name: string,
+  sourceColumnId: string,
+  transformation: ColumnTransformation = {
+    sourceColumnId,
+    targetType: ColumnType.String,
+    type: ColumnTransformationType.ConvertTo,
+  },
+): ComputedColumn => new ComputedColumn({ name, size: 0, sourceName: name, transformation });
+
+describe.todo("createComputedColumn");

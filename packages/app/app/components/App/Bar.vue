@@ -16,7 +16,7 @@ import { RoutePath, SITE_NAME } from "@esposter/shared";
       <div flex gap-x-2>
         <AppMenuButton />
         <AppToggleThemeButton />
-        <AppGithubButton />
+        <AppNotificationBell />
         <AppMoreDropdownButton />
       </div>
     </template>

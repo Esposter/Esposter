@@ -30,16 +30,20 @@ const items = computed<ListLinkItem[]>(() => {
       title: "About",
     },
     {
-      external: true,
       href: RoutePath.Docs,
       icon: "mdi-book-open-page-variant",
       title: "Documentation",
-      trailingSlash: "append",
     },
     {
       href: RoutePath.PrivacyPolicy,
       icon: "mdi-lock",
       title: "Privacy Policy",
+    },
+    {
+      external: true,
+      href: RoutePath.Github,
+      icon: "mdi-github",
+      title: "Github",
     },
   ];
   return session.value

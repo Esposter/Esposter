@@ -4,8 +4,11 @@ import { getResult } from "@esposter/shared";
 // Undefined to let the caller raise a sandbox error instead of inventing a result.
 export const parseBwrapExitCode = (status: string): number | undefined => {
   for (const line of status.split("\n")) {
-    const result = getResult(() => JSON.parse(line) as { "exit-code"?: number });
-    if (result.isOk() && typeof result.value["exit-code"] === "number") return result.value["exit-code"];
+    const exitCode = getResult(() => JSON.parse(line) as { "exit-code"?: number }).match(
+      (value) => value["exit-code"],
+      () => undefined,
+    );
+    if (typeof exitCode === "number") return exitCode;
   }
   return undefined;
 };

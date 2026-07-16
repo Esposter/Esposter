@@ -3,7 +3,8 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { VoiceInputModeLabelMap } from "@/services/message/user/settings/VoiceInputModeLabelMap";
 import { useUserSettingsStore } from "@/store/message/user/settings";
-import { VoiceInputMode } from "@esposter/db-schema";
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { VoiceInputMode, VoiceInputModes } from "@esposter/db-schema";
 
 interface InputModeProps {
   userSettings: UserSettingsInMessage;
@@ -12,24 +13,29 @@ interface InputModeProps {
 const { userSettings } = defineProps<InputModeProps>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
-const voiceInputModes = Object.values(VoiceInputMode);
 </script>
 
 <template>
-  <v-radio-group
-    :model-value="userSettings.voiceInputMode"
-    hide-details
-    @update:model-value="updateUserSettings({ voiceInputMode: $event as VoiceInputMode })"
-  >
-    <v-radio
-      v-for="voiceInputMode of voiceInputModes"
-      :key="voiceInputMode"
-      :label="VoiceInputModeLabelMap[voiceInputMode]"
-      :value="voiceInputMode"
-    />
-  </v-radio-group>
-  <MessageModelUserSettingsTypeVoicePushToTalkKeybindButton
-    v-if="userSettings.voiceInputMode === VoiceInputMode.PushToTalk"
-    :keybind="userSettings.pushToTalkKeybind"
-  />
+  <div flex flex-col gap-y-2>
+    <v-radio-group
+      :model-value="userSettings.voiceInputMode"
+      hide-details
+      @update:model-value="updateUserSettings({ voiceInputMode: $event as VoiceInputMode })"
+    >
+      <v-radio
+        v-for="voiceInputMode of VoiceInputModes"
+        :key="voiceInputMode"
+        :label="VoiceInputModeLabelMap[voiceInputMode]"
+        :value="voiceInputMode"
+      />
+    </v-radio-group>
+    <template v-if="userSettings.voiceInputMode === VoiceInputMode.PushToTalk">
+      <MessageModelUserSettingsTypeVoicePushToTalkKeybindButton :keybind="userSettings.pushToTalkKeybind" />
+      <div op-medium-emphasis text-body-small>
+        Activates your mic only while you hold the keybind. Push to Talk only works while an app window (main or
+        pop-out) has focus.
+      </div>
+      <MessageModelUserSettingsTypeVoicePushToTalkReleaseDelaySlider :user-settings />
+    </template>
+  </div>
 </template>

@@ -2,12 +2,14 @@ import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
-import { selectSurveySchema } from "@/schema/surveys";
+import { selectResourceSchema } from "@/schema/resources";
 import { z } from "zod";
 
 export class SurveyResponseEntity extends AzureEntity {
   model: Record<string, unknown> = {};
   modelVersion = 0;
+  // Opaque program-issued participant token, "" in Anonymous mode — resolvable only owner-side
+  participantToken = "";
 
   constructor(init?: Partial<SurveyResponseEntity> & ToData<CompositeKeyEntity>) {
     super();
@@ -18,10 +20,11 @@ export class SurveyResponseEntity extends AzureEntity {
 export const surveyResponseEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      partitionKey: selectSurveySchema.shape.id,
+      partitionKey: selectResourceSchema.shape.id,
       rowKey: z.uuid(),
     }),
   ).shape,
   model: z.record(z.string().min(1), z.unknown()),
   modelVersion: z.int().nonnegative(),
+  participantToken: z.union([z.literal(""), z.uuid()]).default(""),
 }) satisfies z.ZodType<ToData<SurveyResponseEntity>>;

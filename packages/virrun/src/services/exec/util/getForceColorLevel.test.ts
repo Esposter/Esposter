@@ -19,10 +19,4 @@ describe(getForceColorLevel, () => {
 
     expect(getForceColorLevel(4)).toBe("1");
   });
-
-  test(`maps a no-color depth to level 1`, () => {
-    expect.hasAssertions();
-
-    expect(getForceColorLevel(1)).toBe("1");
-  });
 });

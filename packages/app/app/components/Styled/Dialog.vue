@@ -30,11 +30,23 @@ const isFullScreen = ref(false);
     <template #activator>
       <slot name="activator" :is-open="modelValue" :update-is-open="(value) => (modelValue = value)" />
     </template>
+    <!-- Single shell for every dialog: header (title/subtitle/prependIcon via cardProps) → divider →
+      padded, scrollable body slot → divider → actions. Consumers pass bare body content; the shell owns the layout. -->
     <StyledCard :card-props>
       <template #append>
         <StyledToggleFullScreenDialogButton :is-full-screen-dialog="isFullScreen" @click="isFullScreen = $event" />
       </template>
-      <slot />
+      <template v-if="$slots.default">
+        <v-divider />
+        <v-card-text flex-1 overflow-y-auto>
+          <!-- The shell owns body rhythm, so consumers pass bare children. The wrapper stays auto-height:
+            v-card-text is flex-1, so making it the flex container would stretch v-input children to fill it. -->
+          <div flex flex-col gap-y-4>
+            <slot />
+          </div>
+        </v-card-text>
+      </template>
+      <v-divider />
       <v-card-actions>
         <slot name="prepend-actions" />
         <v-spacer />

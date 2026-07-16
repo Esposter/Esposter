@@ -48,10 +48,10 @@
     "dev:docker": "docker compose -f docker-compose.dev.yaml up",
     "format": "virrun -- oxfmt",
     "format:check": "virrun -- oxfmt --check",
-    "lint": "virrun -- oxlint && virrun -- eslint . && virrun -- pnpm -r --parallel --aggregate-output run lint",
-    "lint:fix": "virrun -- oxlint --fix && virrun -- eslint --fix . && virrun -- pnpm -r --parallel --aggregate-output run lint:fix",
-    "lint:fix:packages": "virrun -- oxlint --fix --ignore-pattern \"packages/app/**\" packages && virrun -- pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint:fix",
-    "lint:packages": "virrun -- oxlint --ignore-pattern \"packages/app/**\" packages && virrun -- pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint",
+    "lint": "virrun -- oxlint --format=default --disable-nested-config && virrun -- eslint . && virrun -- pnpm -r --parallel --aggregate-output run lint",
+    "lint:fix": "virrun -- oxlint --format=default --fix --disable-nested-config && virrun -- eslint --fix . && virrun -- pnpm -r --parallel --aggregate-output run lint:fix",
+    "lint:fix:packages": "virrun -- oxlint --format=default --fix --disable-nested-config --ignore-pattern \"packages/app/**\" packages && virrun -- pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint:fix",
+    "lint:packages": "virrun -- oxlint --format=default --disable-nested-config --ignore-pattern \"packages/app/**\" packages && virrun -- pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint",
     "outdated:dependencies": "tsx scripts/checkDependencies/index.ts",
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
@@ -88,7 +88,7 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": "^26.4.0"
+    "node": "^26.5.0"
   },
   "packageManager": "pnpm@11.6.0+sha512.9a36518224080c6fe5165afdcfe79bfa118c29be703f3f462b1e32efe1e98e47e8750b148e08286250aad4113cc7993ca413c4e2cd447752708c2ee5751bc95f",
   "crossOS": {

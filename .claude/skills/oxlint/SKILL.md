@@ -21,6 +21,25 @@ pnpm lint:fix:packages
 pnpm lint       # whole-repo check, no fix
 ```
 
+## Which directive to use
+
+Pick the directive by **which linter reports the rule**, and spell the rule the way that linter names it:
+
+- **Oxlint rule** → `oxlint-disable`, using oxlint's plugin prefix: `typescript/`, `unicorn/`, `import/`, `oxc/`, `vue/`. Never `@typescript-eslint/` — oxlint accepts it as an alias, so it silently works and drifts. Core rules take no prefix (`no-void`, `prefer-spread`). `no-inferrable-types` and `require-await` exist under both a core and a `typescript/` name — prefix them.
+- **ESLint-only rule** → `eslint-disable`, using the plugin's real name (`perfectionist/sort-objects`, `vitest/require-top-level-describe`, `@typescript-eslint/no-misused-spread`). Rules oxlint owns are switched off in ESLint by `eslint-plugin-oxlint`, so an `eslint-disable` for one is dead weight.
+
+Oxlint honours **both** prefixes; ESLint honours only its own. A rule needing both (e.g. `no-control-regex`) needs one directive each — see `stripAnsi.test.ts`.
+
+To find stale directives, let each linter judge its own — never read one's verdict on the other's:
+
+```bash
+# oxlint: only "Unused oxlint-disable" lines are real. It flags every
+# eslint-disable for a plugin it lacks (perfectionist/vitest) as unused — false.
+pnpm dlx oxlint --disable-nested-config --report-unused-disable-directives
+# eslint: reports unused directives even for rules it has turned off
+eslint . --report-unused-disable-directives
+```
+
 ## `typescript/method-signature-style` (oxlint)
 
 Interface method signatures must be property signatures:
@@ -89,7 +108,7 @@ expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIR, PLAN)
 
 When the captured arg is a known shared reference, assert it directly (`expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop)`); when only its type is knowable, use `toBeTypeOf` (`expect(checkIsStale).toBeTypeOf("function")`). `takeOne` and `noop` come from `@esposter/shared`.
 
-## `prefer-named-capture-group` (ESLint)
+## `prefer-named-capture-group` (oxlint)
 
 Every capturing group `(...)` must be named `(?<name>...)`:
 

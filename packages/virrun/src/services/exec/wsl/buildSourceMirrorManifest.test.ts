@@ -1,25 +1,14 @@
 import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { NODE_MODULES_DIRECTORY, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { isSymlinkSupported } from "@/services/exec/test/isSymlinkSupported.test";
+import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { buildSourceMirrorManifest } from "@/services/exec/wsl/buildSourceMirrorManifest";
-import { getResult } from "@esposter/shared";
-import { lstatSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { lstatSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 const NESTED_DIRECTORY_NAME = "b";
-// Windows only allows symlink creation with Developer Mode or elevation; probe once and skip the symlink case where
-// The OS refuses, exactly as the walk itself degrades (an uncreatable symlink can't exist in a working tree there).
-const isSymlinkSupported = getResult(() => {
-  const directory = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
-  symlinkSync(TEST_FILENAME, join(directory, NESTED_DIRECTORY_NAME));
-  rmSync(directory, { force: true, recursive: true });
-}).match(
-  () => true,
-  () => false,
-);
 
 describe(buildSourceMirrorManifest, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
@@ -76,19 +65,32 @@ describe(buildSourceMirrorManifest, () => {
     expect(Object.keys(manifest).toSorted()).toStrictEqual([TEST_FILENAME, NESTED_DIRECTORY_NAME]);
   });
 
-  test.runIf(isSymlinkSupported)("records a symlink by its target, not its content", () => {
+  test.runIf(isSymlinkSupported)("records a symlink by its target path and the link's own stat", () => {
     expect.hasAssertions();
 
     writeFileSync(join(cwd, TEST_FILENAME), TEST_FILENAME);
     symlinkSync(TEST_FILENAME, join(cwd, NESTED_DIRECTORY_NAME));
+    // The archive preserves symlinks, so the change signal is the link's own lstat (not the target's) plus its target.
+    const { mtimeMs, size } = lstatSync(join(cwd, NESTED_DIRECTORY_NAME));
 
     const manifest = buildSourceMirrorManifest(cwd, []);
 
     expect(manifest[NESTED_DIRECTORY_NAME]).toStrictEqual({
-      mtimeMs: 0,
-      size: 0,
+      mtimeMs,
+      size,
       target: TEST_FILENAME,
       type: SourceMirrorEntryType.Symlink,
+    });
+  });
+
+  test.runIf(isSymlinkSupported)("records a broken symlink so it mirrors as-is rather than dropping out", () => {
+    expect.hasAssertions();
+
+    symlinkSync(TEST_FILENAME, join(cwd, NESTED_DIRECTORY_NAME));
+    const { mtimeMs, size } = lstatSync(join(cwd, NESTED_DIRECTORY_NAME));
+
+    expect(buildSourceMirrorManifest(cwd, [])).toStrictEqual({
+      [NESTED_DIRECTORY_NAME]: { mtimeMs, size, target: TEST_FILENAME, type: SourceMirrorEntryType.Symlink },
     });
   });
 });

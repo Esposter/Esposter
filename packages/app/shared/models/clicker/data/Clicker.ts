@@ -1,15 +1,10 @@
 import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
-import type { ItemEntityType, ToData } from "@esposter/shared";
+import type { ItemEntityType } from "@esposter/shared";
 
-import { buildingWithStatsSchema } from "#shared/models/clicker/data/building/BuildingWithStats";
-import { ClickerType, clickerTypeSchema } from "#shared/models/clicker/data/ClickerType";
-import { createUpgradeSchema } from "#shared/models/clicker/data/upgrade/Upgrade";
-import { upgradeIdSchema } from "#shared/models/clicker/data/upgrade/UpgradeId";
-import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
-import { createItemEntityTypeSchema, createUniqueArraySchema } from "@esposter/shared";
-import { z } from "zod";
-
+import { ClickerType } from "#shared/models/clicker/data/ClickerType";
+import { AItemEntity } from "#shared/models/entity/AItemEntity";
+// The in-memory game state with fully resolved definitions — the persisted shape is `ClickerSave`
 export class Clicker extends AItemEntity implements ItemEntityType<ClickerType> {
   boughtBuildings: BuildingWithStats[] = [];
   boughtUpgrades: Upgrade[] = [];
@@ -21,12 +16,3 @@ export class Clicker extends AItemEntity implements ItemEntityType<ClickerType> 
     Object.assign(this, init);
   }
 }
-
-export const clickerSchema = z.object({
-  ...aItemEntitySchema.shape,
-  ...createItemEntityTypeSchema(clickerTypeSchema).shape,
-  boughtBuildings: createUniqueArraySchema(buildingWithStatsSchema, "id"),
-  boughtUpgrades: createUniqueArraySchema(createUpgradeSchema(upgradeIdSchema), "id"),
-  id: z.uuid(),
-  noPoints: z.number(),
-}) satisfies z.ZodType<ToData<Clicker>>;

@@ -193,7 +193,7 @@ export class Parser {
     } else if (this.#options.explicitArray) defineProperty(object, key, [newValue]);
     else defineProperty(object, key, newValue);
   }
-  // oxlint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
   #parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {
     const string = stripBOM(convertableToString.toString());
     this.#saxParser.onend = () => {

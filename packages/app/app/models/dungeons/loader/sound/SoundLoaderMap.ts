@@ -4,6 +4,4 @@ import { mergeObjectsStrict } from "@esposter/shared";
 
 export const SoundLoaderMap = mergeObjectsStrict(BackgroundMusicLoaderMap, SoundEffectLoaderMap);
 
-export const SoundLoaders: ReadonlySet<(typeof SoundLoaderMap)[keyof typeof SoundLoaderMap]> = new Set(
-  Object.values(SoundLoaderMap),
-);
+export const SoundLoaders = Object.values(SoundLoaderMap);

@@ -1,15 +1,15 @@
 # Infrastructure Overview
 
-Pulumi currently has 92 tracked source files under `src/azure/resources/`. Both development and production resources are declared in one unified stack.
+Pulumi currently has 98 tracked source files under `src/azure/resources/`. Both development and production resources are declared in one unified stack.
 
-`pulumi stack` reports 94 total resources: 92 source-file resources plus two Pulumi meta-resources that require no TypeScript declarations — `pulumi:pulumi:Stack` (the stack record itself) and `pulumi:providers:azure-native` (the provider instance). Both are auto-managed by Pulumi.
+`pulumi stack` reports 100 total resources: 98 source-file resources plus two Pulumi meta-resources that require no TypeScript declarations — `pulumi:pulumi:Stack` (the stack record itself) and `pulumi:providers:azure-native` (the provider instance). Both are auto-managed by Pulumi.
 
 ## Summary By Environment
 
 | Environment           | Scope                                               | Resource Count |
 | --------------------- | --------------------------------------------------- | -------------: |
-| Development           | `dev-*` Azure resources and their role assignments  |             45 |
-| Production            | `prod-*` Azure resources and their role assignments |             45 |
+| Development           | `dev-*` Azure resources and their role assignments  |             48 |
+| Production            | `prod-*` Azure resources and their role assignments |             48 |
 | Shared / Subscription | owner, policy                                       |              2 |
 
 ## Summary By Asset Type
@@ -31,6 +31,8 @@ Pulumi currently has 92 tracked source files under `src/azure/resources/`. Both 
 | Policy assignment              |     1 |
 | Resource group                 |     2 |
 | Role assignment                |    25 |
+| Service Bus namespace          |     2 |
+| Service Bus queue              |     2 |
 | Smart Detector Alert Rule      |    12 |
 | Storage account                |     2 |
 | Storage blob service           |     2 |
@@ -56,6 +58,8 @@ Resource files are grouped by Azure ARM provider namespace and resource type:
 | `Microsoft.OperationsManagement/solutions`             | `src/azure/resources/Microsoft.OperationsManagement/solutions/`             |
 | `Microsoft.Resources/resourceGroups`                   | `src/azure/resources/Microsoft.Resources/resourceGroups/`                   |
 | `Microsoft.Search/searchServices`                      | `src/azure/resources/Microsoft.Search/searchServices/`                      |
+| `Microsoft.ServiceBus/namespaces`                      | `src/azure/resources/Microsoft.ServiceBus/namespaces/`                      |
+| `Microsoft.ServiceBus/namespaces/queues`               | `src/azure/resources/Microsoft.ServiceBus/namespaces/queues/`               |
 | `Microsoft.SignalRService/webPubSub`                   | `src/azure/resources/Microsoft.SignalRService/webPubSub/`                   |
 | `Microsoft.Storage/storageAccounts`                    | `src/azure/resources/Microsoft.Storage/storageAccounts/`                    |
 | `Microsoft.Storage/storageAccounts/blobServices`       | `src/azure/resources/Microsoft.Storage/storageAccounts/blobServices/`       |

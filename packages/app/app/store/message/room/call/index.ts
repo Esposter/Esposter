@@ -1,5 +1,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
+import { useMutation } from "@/composables/shared/useMutation";
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
@@ -16,6 +17,7 @@ import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
+  const executeMutation = useMutation();
   const roomStore = useRoomStore();
   const session = authClient.useSession();
   const knockerStore = useKnockerStore();
@@ -49,6 +51,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   );
   const selfParticipant = computed(() => (sessionId.value ? callParticipantMap.value.get(sessionId.value) : undefined));
   const isInCall = computed(() => Boolean(selfParticipant.value));
+  // Hosted here (not a component) so hold-to-talk survives navigation, like the call itself
+  usePushToTalk(isInCall);
   const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
   const setHandRaisedEnabled = async (newIsHandRaised: boolean, targetSessionId?: string) => {
@@ -57,20 +61,25 @@ export const useCallStore = defineStore("message/room/call", () => {
     const participantSessionId = targetSessionId ?? sessionIdValue;
     if (!callSessionId || !sessionIdValue || !participantSessionId) return;
 
-    const oldIsHandRaised =
-      participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantSessionId)?.isHandRaised ?? false;
-    setHandRaised(callSessionId, participantSessionId, newIsHandRaised);
-
-    await getResultAsync(() =>
-      $trpc.callSession.setHandRaised.mutate({
-        callSessionId,
-        isHandRaised: newIsHandRaised,
-        participantId: participantSessionId,
-      }),
-    ).match(noop, (error) => {
-      setHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
-      throw error;
-    });
+    await executeMutation(
+      () =>
+        $trpc.callSession.setHandRaised.mutate({
+          callSessionId,
+          isHandRaised: newIsHandRaised,
+          participantId: participantSessionId,
+        }),
+      {
+        applyOptimistic: () => {
+          const oldIsHandRaised =
+            participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantSessionId)?.isHandRaised ??
+            false;
+          setHandRaised(callSessionId, participantSessionId, newIsHandRaised);
+          return () => {
+            setHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
+          };
+        },
+      },
+    );
   };
   const setCameraEnabled = async (newIsCameraEnabled: boolean) => {
     const callSessionId = activeCallSessionId.value;
@@ -248,11 +257,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       await setMuteEnabled(newIsMuted);
     }).match(noop, console.error);
   };
-  const toggleHandRaised = async () => {
-    await getResultAsync(async () => {
-      await setHandRaisedEnabled(!isHandRaised.value);
-    }).match(noop, console.error);
-  };
+  const toggleHandRaised = () => setHandRaisedEnabled(!isHandRaised.value);
   const toggleScreenShare = async () => {
     const newIsScreenSharing = !mediaStore.isScreenSharing;
     await getResultAsync(async () => {

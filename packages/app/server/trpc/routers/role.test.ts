@@ -137,9 +137,9 @@ describe("role", () => {
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
 
-    await expect(roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id })).resolves.toStrictEqual(
-      role,
-    );
+    const assignedRole = await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
+
+    expect(assignedRole).toStrictEqual(role);
   });
 
   test("cannot assign @everyone role explicitly", async () => {

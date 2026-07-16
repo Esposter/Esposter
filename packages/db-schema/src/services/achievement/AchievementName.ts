@@ -11,7 +11,6 @@ import { SurveyAchievementName } from "@/services/achievement/SurveyAchievementN
 import { TableAchievementName } from "@/services/achievement/TableAchievementName";
 import { WebpageAchievementName } from "@/services/achievement/WebpageAchievementName";
 import { mergeObjectsStrict } from "@esposter/shared";
-import { z } from "zod";
 
 export const AchievementName = mergeObjectsStrict(
   ClickerAchievementName,
@@ -40,7 +39,5 @@ export type AchievementName =
   | SurveyAchievementName
   | TableAchievementName
   | WebpageAchievementName;
-
-export const achievementNameSchema = z.enum(AchievementName) satisfies z.ZodType<AchievementName>;
 
 export const AchievementNames: ReadonlySet<AchievementName> = new Set(Object.values(AchievementName));

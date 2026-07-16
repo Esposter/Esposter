@@ -35,7 +35,7 @@ export default defineConfig({
 });
 ```
 
-See [config & cache](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/config-and-cache.md).
+See [configuration](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/configuration.md) and [cache](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/cache.md).
 
 On an `os`-backend run the CLI prints a one-time provisioning line on stderr so a multi-minute first install is explained, not a silent stall:
 

@@ -12,7 +12,7 @@ Esbabbler is a Discord clone. When a behaviour, structure, naming, information a
 - **Match:** feature behaviour, settings layout/categories, naming (Discord's term wins — e.g. "Roles", "Voice & Video"), defaults (e.g. push-to-talk off), scope (user vs server/room setting), keybinds, and copy.
 - **Diverge only on:** visual styling (Vuetify-defined — not ours to match pixel-for-pixel) and the explicit infra/storage constraints already recorded (Postgres + Azure Table split, no expensive infrastructure).
 - **When Discord's behaviour is unknown or ambiguous:** record it as an open question in the spec/roadmap — do not silently invent. A guess that diverges from Discord is a defect, not a design choice.
-- A feature Discord has but we deliberately dropped lives in `features/esbabbler/out-of-scope/` or `deferred/` with rationale — grep there before re-proposing.
+- A feature Discord has but we deliberately dropped lives in `packages/app/content/docs/esbabbler/rejected/` or `deferred/` with rationale — grep there before re-proposing.
 
 ## Display Name Resolution
 
@@ -25,12 +25,12 @@ All member name display goes through `getDisplayName(user, roomId)` from `useUse
 
 ### Where nickname is applied
 
-| Location                          | How                                                                                                       |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Mention labels in message body    | `useMessageWithMentions(message, roomId)` — pass `() => message.partitionKey` as second arg               |
-| Member list sidebar               | `MemberListItem` via `displayName = computed(() => getDisplayName(member, room.id))`                      |
-| Role permission panel member list | `MemberPanelListItem` with `member` prop — `displayName = computed(() => getDisplayName(member, roomId))` |
-| Push notification title           | `message/index.ts` router queries `usersToRoomsInMessage.nickname` before publishing the EventGrid event  |
+| Location                       | How                                                                                                       |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| Mention labels in message body | `useMessageWithMentions(message, roomId)` — pass `() => message.partitionKey` as second arg               |
+| Member list sidebar            | `Message/Model/Member/ListItem.vue` — `displayName = computed(() => getDisplayName(member, room.id))`     |
+| Room settings member list      | `Message/Model/Room/Settings/Type/Member/ListItem.vue` — `computed(() => getDisplayName(member, roomId))` |
+| Push notification title        | `message/index.ts` router queries `usersToRoomsInMessage.nickname` before publishing the EventGrid event  |
 
 ### `||` not `??` for nickname fallback
 
@@ -109,18 +109,24 @@ useOnlineSubscribable(
 - **`getOnlineSubscribableContext()`** (in `useOnlineSubscribable.ts`) captures `getCurrentInstance()`/`getCurrentScope()` for async subscribable composables — call it into a `const` BEFORE any `await` (context is lost after suspension); never inline the two calls.
 - **`requirePartitionKey(value, name)`** (`app/services/message/requirePartitionKey.ts`) is the guard for room-scoped reads needing a non-empty current room id (or user id): `const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);` — never hand-write the `InvalidOperationError` throw.
 
+## Settings Surfaces (Room + User Settings Dialogs)
+
+Both settings dialogs share one structure and three conventions — apply them to every new settings tab or field:
+
+- **Panels are lazy + skeletoned.** Each tab is a `defineAsyncComponent` in `SettingsContentMap` (room) / `UserSettingsContentMap` (user); the shared `Content.vue` wraps `<component :is>` in `<Suspense :timeout="0">` with `<MessageModelSettingsSkeleton />` as fallback. New tabs get the skeleton for free — never add per-panel spinners; if a panel needs data, top-level `await` it and let Suspense show the skeleton.
+- **Every settings mutation is optimistic.** Never make a control wait on the server round-trip. Use `useMutation()` (`app/composables/shared/useMutation.ts`, standard: [/docs/architecture/client-mutations](/docs/architecture/client-mutations)): `applyOptimistic` mutates the store immediately and returns the rollback closure; the mutation runs in the background; failure rolls back + surfaces the error. Subscriptions stay the confirming source of truth. It bundles staleness guarding, so a slow earlier call never clobbers a newer one.
+- **Sidebar section highlight uses `StyledSlideIndicator` with ALL visible keys.** Items carry `data-slide-indicator-key`; pass every visible section id (docs table-of-contents behaviour — the rail stretches across them), pinning to the clicked target while the programmatic scroll runs (`isScrollingToSection`). Never hand-roll a sliding/active rail.
+
 ## Scheduled Message Jobs Architecture
 
-Scheduled messages and reminders use a two-step pattern: Postgres row + Azure Storage Queue.
+Scheduled messages and reminders use a two-step pattern: Postgres row + Azure **Service Bus** (not Storage Queue).
 
 **Flow**:
 
-1. tRPC mutation inserts a row into `scheduledMessageJobsInMessage`.
-2. Same mutation enqueues to `AzureQueue.ScheduledMessageJobs` with `visibilityTimeout = Math.min(Math.max(0, Math.ceil((runAt - now) / 1000)), 604800)`.
-3. Azure Functions queue-trigger (`ProcessScheduledMessageJob`) reads the row, re-checks permissions/room state, executes, marks `completedAt`.
+1. tRPC mutation (`server/trpc/routers/message/scheduledMessageJob.ts`) inserts a row into `scheduledMessageJobsInMessage`.
+2. Same mutation calls `enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt)` — a thin wrapper (`@esposter/db`) over `serviceBusSender.scheduleMessages(body, runAt)`. Pass `runAt` as a `Date` directly: **no clamping, no delay maths** — Service Bus takes an absolute enqueue time and delivers past-dated messages immediately.
+3. Azure Functions Service Bus queue-trigger (`ProcessScheduledMessageJob`) reads the row, re-checks `cancelledAt`/`completedAt` for idempotency, executes, marks `completedAt`. If `job.runAt` is still in the future it re-enqueues itself instead of executing.
 
-**Key constraint**: Azure Storage Queue max visibility timeout is 604800 seconds (7 days). Jobs with `runAt > 7 days` become visible early, so `ProcessScheduledMessageJob` re-checks `job.runAt` — if still in the future it re-enqueues itself with the remaining delay (`enqueueScheduledMessageJob`) instead of executing. It always verifies `cancelledAt`/`completedAt` for idempotency. No timer scan needed.
+**No timer function** — a separate polling timer is unnecessary; Service Bus scheduled delivery handles the delay.
 
-**No timer function** — a separate `EnqueueScheduledMessageJobs` polling timer is unnecessary complexity; the queue's native visibility timeout handles delay. The timer approach was removed in favour of direct enqueueing.
-
-**Azure composable** — use `useQueueClient(AzureQueue.ScheduledMessageJobs)` (from `@@/server/composables/azure/queue/useQueueClient`) in server routes and tRPC routers. `packages/azure-functions` uses its own `getQueueClient(azureQueue)` wrapper over `@esposter/db`'s `getQueueClient(connectionString, azureQueue)`.
+**Azure composable** — `useServiceBusSender(AzureQueue.ScheduledMessageJobs)` (`@@/server/composables/azure/serviceBus/useServiceBusSender`) in server routes and tRPC routers. `packages/azure-functions` uses its own `getServiceBusSender(azureQueue)` wrapper over `@esposter/db`'s `getServiceBusSender(connectionString, azureQueue)`.

@@ -8,6 +8,23 @@ const directMessageName = useDirectMessageName(currentDirectMessage);
 const participants = computed(() =>
   currentDirectMessage.value ? (directMessageParticipantsMap.value.get(currentDirectMessage.value.id) ?? []) : [],
 );
+const executeMutation = useMutation();
+const deleteDirectMessageParticipant = async (userId: string) => {
+  const roomId = currentDirectMessage.value?.id;
+  if (!roomId) return;
+  const previousParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
+  await executeMutation(() => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }), {
+    applyOptimistic: () => {
+      directMessageParticipantsMap.value.set(
+        roomId,
+        previousParticipants.filter(({ id }) => id !== userId),
+      );
+      return () => {
+        directMessageParticipantsMap.value.set(roomId, previousParticipants);
+      };
+    },
+  });
+};
 </script>
 
 <template>
@@ -23,12 +40,7 @@ const participants = computed(() =>
           density="compact"
           size="small"
           closable
-          @click:close="
-            $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({
-              roomId: currentDirectMessage.id,
-              userId: id,
-            })
-          "
+          @click:close="deleteDirectMessageParticipant(id)"
         >
           <StyledAvatar mr-1 :image :name :avatar-props="{ size: '1rem' }" />
           {{ name }}

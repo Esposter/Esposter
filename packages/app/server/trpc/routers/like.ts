@@ -16,7 +16,7 @@ import { and, eq } from "drizzle-orm";
 export const likeRouter = router({
   createLike: standardAuthedProcedure.input(createLikeInputSchema).mutation<Like>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
-      const post = await requireEntity(
+      const [post, existingLike] = await Promise.all([
         tx.query.posts.findFirst({
           columns: {
             createdAt: true,
@@ -29,9 +29,30 @@ export const likeRouter = router({
             },
           },
         }),
-        DatabaseEntityType.Post,
-        input.postId,
-      );
+        tx.query.likes.findFirst({
+          where: {
+            postId: {
+              eq: input.postId,
+            },
+            userId: {
+              eq: ctx.getSessionPayload.user.id,
+            },
+          },
+        }),
+      ]);
+      if (!post)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Post, input.postId).message,
+        });
+      // A like already exists for this (user, post) — the client desynced (double-click / stale feed);
+      // Fail cleanly instead of surfacing the raw likes_pkey duplicate-key error as a 500
+      else if (existingLike)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Like, JSON.stringify(input)).message,
+        });
+
       const newLike = requireMutation(
         (
           await tx

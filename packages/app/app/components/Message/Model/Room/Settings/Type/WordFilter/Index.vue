@@ -11,14 +11,36 @@ interface WordFilterProps {
 const { room } = defineProps<WordFilterProps>();
 const rules = useVRules();
 const { $trpc } = useNuxtApp();
-const initialWords = ref<string[]>(await $trpc.room.filter.readRoomFilter.query({ roomId: room.id }));
-const words = ref([...initialWords.value]);
+const initialWords = ref<string[]>([]);
+const words = ref<string[]>([]);
+useQuery(() => $trpc.room.filter.readRoomFilter.query({ roomId: room.id }), {
+  onSuccess: (result) => {
+    initialWords.value = result;
+    words.value = [...result];
+  },
+});
 const newWord = ref("");
 const isDirty = computed(() => !deepEqual(words.value, initialWords.value));
 const isAtMaxWords = computed(() => words.value.length >= FILTER_WORDS_MAX_LENGTH);
 const createWord = () => {
   words.value = [...words.value, newWord.value];
   newWord.value = "";
+};
+const executeMutation = useMutation();
+const saveWords = async () => {
+  const previousInitialWords = initialWords.value;
+  await executeMutation(() => $trpc.room.filter.upsertRoomFilter.mutate({ roomId: room.id, words: words.value }), {
+    applyOptimistic: () => {
+      initialWords.value = [...words.value];
+      return () => {
+        initialWords.value = previousInitialWords;
+      };
+    },
+    onSuccess: (result) => {
+      initialWords.value = result.words;
+      words.value = [...result.words];
+    },
+  });
 };
 </script>
 
@@ -64,12 +86,7 @@ const createWord = () => {
           <span text-hint> Messages containing these words will be blocked. Comparisons are case-insensitive. </span>
           <StyledButton
             :button-props="{ disabled: !isDirty, text: 'Save Changes', variant: 'tonal' }"
-            @click="
-              async () => {
-                words = initialWords = (await $trpc.room.filter.upsertRoomFilter.mutate({ roomId: room.id, words }))
-                  .words;
-              }
-            "
+            @click="saveWords"
           />
         </div>
       </v-col>

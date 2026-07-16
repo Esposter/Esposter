@@ -6,7 +6,7 @@ import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configura
 
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
 import { forVuetify } from "./configuration/breakpoints";
-import { EN_US_SEGMENTER } from "./shared/services/constants";
+import { EN_US_SEGMENTER } from "./shared/services/intl/constants";
 
 const BaseColorsCommon = {
   border: "#ccc",
@@ -103,7 +103,9 @@ const defaults: DefaultsOptions = {
   VToolbar: { color: "surface" },
   VToolbarTitle: {
     style: {
+      // Neutralise Vuetify's default title margin so the padding below is the single source of horizontal spacing
       marginInlineStart: 0,
+      paddingLeft: "1rem",
     },
   },
   VTooltip: { location: "top" },

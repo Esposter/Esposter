@@ -5,6 +5,7 @@ import type { UpdateWebhookInput } from "#shared/models/db/webhook/UpdateWebhook
 import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
+import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
@@ -22,21 +23,50 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const readWebhooks = async (roomId: RoomInMessage["id"]) => {
     items.value = await $trpc.webhook.readWebhooks.query({ roomId });
   };
+  const executeCreateWebhookMutation = useMutation();
+  const executeUpdateWebhookMutation = useMutation();
+  const executeRotateTokenMutation = useMutation();
+  const executeDeleteWebhookMutation = useMutation();
+  // Server-generated webhook (id, token) — non-optimistic, applied in onSuccess
   const createWebhook = async (roomId: RoomInMessage["id"], input: Except<CreateWebhookInput, "roomId">) => {
-    const newWebhook = await $trpc.webhook.createWebhook.mutate({ ...input, roomId });
-    storeCreateWebhook(newWebhook, true);
+    await executeCreateWebhookMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {
+      onSuccess: (newWebhook) => {
+        storeCreateWebhook(newWebhook, true);
+      },
+    });
   };
   const updateWebhook = async (roomId: RoomInMessage["id"], input: Except<UpdateWebhookInput, "roomId">) => {
-    const updatedWebhook = await $trpc.webhook.updateWebhook.mutate({ ...input, roomId });
-    storeUpdateWebhook(updatedWebhook);
+    const snapshot = items.value.map((webhook) => ({ ...webhook }));
+    await executeUpdateWebhookMutation(() => $trpc.webhook.updateWebhook.mutate({ ...input, roomId }), {
+      applyOptimistic: () => {
+        storeUpdateWebhook({ ...input, roomId });
+        return () => {
+          items.value = snapshot;
+        };
+      },
+      onSuccess: (updatedWebhook) => {
+        storeUpdateWebhook(updatedWebhook);
+      },
+    });
   };
+  // Server-generated token — non-optimistic, applied in onSuccess
   const rotateToken = async (roomId: RoomInMessage["id"], input: Except<RotateTokenInput, "roomId">) => {
-    const updatedWebhook = await $trpc.webhook.rotateToken.mutate({ ...input, roomId });
-    storeUpdateWebhook(updatedWebhook);
+    await executeRotateTokenMutation(() => $trpc.webhook.rotateToken.mutate({ ...input, roomId }), {
+      onSuccess: (updatedWebhook) => {
+        storeUpdateWebhook(updatedWebhook);
+      },
+    });
   };
   const deleteWebhook = async (roomId: RoomInMessage["id"], input: Except<DeleteWebhookInput, "roomId">) => {
-    const { id } = await $trpc.webhook.deleteWebhook.mutate({ ...input, roomId });
-    storeDeleteWebhook({ id });
+    const snapshot = [...items.value];
+    await executeDeleteWebhookMutation(() => $trpc.webhook.deleteWebhook.mutate({ ...input, roomId }), {
+      applyOptimistic: () => {
+        storeDeleteWebhook({ id: input.id });
+        return () => {
+          items.value = snapshot;
+        };
+      },
+    });
   };
   return {
     createWebhook,

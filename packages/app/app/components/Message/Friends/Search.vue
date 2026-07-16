@@ -2,62 +2,53 @@
 import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);
 const { blockUser } = blockStore;
 const friendRequestStore = useFriendRequestStore();
+const { sendFriendRequest } = friendRequestStore;
 const { sentFriendRequests } = storeToRefs(friendRequestStore);
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const searchQuery = ref("");
 const searchResults = ref<Awaited<ReturnType<typeof $trpc.friend.searchUsers.query>>>([]);
-const isSearching = ref(false);
+const { isPending } = useAutoSearch(searchQuery, {
+  reset: () => {
+    searchResults.value = [];
+  },
+  search: async (sanitizedSearchQuery, signal) => {
+    searchResults.value = await $trpc.friend.searchUsers.query(sanitizedSearchQuery, { signal });
+  },
+});
 const isFriend = (userId: string) => friends.value.some(({ id }) => id === userId);
 const hasSentRequest = (userId: string) => sentFriendRequests.value.some(({ receiverId }) => receiverId === userId);
 const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id === userId);
-const onSearch = async () => {
-  if (!searchQuery.value) {
-    searchResults.value = [];
-    return;
-  }
-  isSearching.value = true;
-  await withFinalizerAsync(
-    async () => {
-      searchResults.value = await $trpc.friend.searchUsers.query(searchQuery.value);
-    },
-    () => {
-      isSearching.value = false;
-    },
-  );
-};
 </script>
 
 <template>
-  <div mb-8>
-    <div mb-3 text-title-large>Add Friend</div>
-    <div flex gap-2>
+  <MessageFriendsSection title="Add Friend">
+    <!-- Plain wrapper: a bare v-input in a flex column stretches to the full column height -->
+    <div>
       <v-text-field
         v-model="searchQuery"
         placeholder="Search by name"
         hide-details
         clearable
-        @input="onSearch"
-        @click:clear="searchResults = []"
+        @click:clear="searchQuery = ''"
       />
     </div>
-    <v-list v-if="searchResults.length > 0" mt-2 rd>
+    <v-list v-if="searchResults.length > 0" rd>
       <MessageFriendsUserListItem v-for="{ id, name, image } of searchResults" :key="id" :image :name>
         <template #append>
-          <div flex gap-2>
+          <div flex gap-x-2>
             <v-btn
               v-if="!isFriend(id) && !hasSentRequest(id)"
               text="Send Request"
               variant="tonal"
               size="small"
-              @click="$trpc.friendRequest.sendFriendRequest.mutate(id)"
+              @click="sendFriendRequest(id)"
             />
             <v-chip v-else-if="hasSentRequest(id)" text="Request Sent" size="small" />
             <v-chip v-else text="Friends" size="small" color="success" />
@@ -73,6 +64,6 @@ const onSearch = async () => {
         </template>
       </MessageFriendsUserListItem>
     </v-list>
-    <v-progress-linear v-if="isSearching" indeterminate mt-2 />
-  </div>
+    <v-progress-linear v-if="isPending" indeterminate />
+  </MessageFriendsSection>
 </template>

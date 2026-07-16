@@ -1,4 +1,4 @@
-import { EN_US_COMPARATOR } from "@/services/shared/constants";
+import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { createEnumPropertyString } from "@@/scripts/util/createEnumPropertyString";
 
 export const createEnumString = (name: string, properties: string[]) =>

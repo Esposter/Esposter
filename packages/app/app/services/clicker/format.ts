@@ -28,13 +28,6 @@ const suffixesLong = [
 for (const suffixLong of suffixesLong)
   for (const prefixLong of prefixesLong) formatLong.push(` ${prefixLong}${suffixLong}`);
 
-const formatShort = ["k", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No"];
-const prefixesShort = ["", "Un", "Do", "Tr", "Qa", "Qi", "Sx", "Sp", "Oc", "No"];
-const suffixesShort = ["Dc", "V", "T", "Qa", "Qi", "Sx", "Sp", "O", "N"];
-
-for (const suffixShort of suffixesShort)
-  for (const prefixShort of prefixesShort) formatShort.push(` ${prefixShort}${suffixShort}`);
-
 const formatEveryThirdPower = (notations: string[]) => (number: number, fractionDigits?: number) => {
   if (!isFinite(number)) return "Infinity";
 
@@ -56,4 +49,3 @@ const formatEveryThirdPower = (notations: string[]) => (number: number, fraction
 };
 
 export const formatNumberLong = formatEveryThirdPower(formatLong);
-export const formatNumberShort = formatEveryThirdPower(formatShort);

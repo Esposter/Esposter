@@ -3,8 +3,8 @@ import { ProcessProperties } from "@/services/process";
 import { app } from "@azure/functions";
 import { AzureFunction, AzureQueue } from "@esposter/db-schema";
 
-app.storageQueue(AzureFunction.ProcessScheduledMessageJob, {
-  connection: ProcessProperties.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
+app.serviceBusQueue(AzureFunction.ProcessScheduledMessageJob, {
+  connection: ProcessProperties.AZURE_SERVICE_BUS_CONNECTION_STRING,
   handler: processScheduledMessageJobHandler,
   queueName: AzureQueue.ScheduledMessageJobs,
 });

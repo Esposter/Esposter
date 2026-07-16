@@ -1,11 +1,15 @@
 import type { ToData } from "@esposter/shared";
-import type { z } from "zod";
 
 import { AGrapesJsEditor, grapesJsEditorSchema } from "#shared/models/grapesjs/AGrapesJsEditor";
 import { GRAPESJS_BASE_URL, PLACEHOLD_BASE_URL } from "#shared/services/grapesjs/constants";
 import { css, html } from "@esposter/shared";
+import { z } from "zod";
 
 export class WebpageEditor extends AGrapesJsEditor {
+  // Standalone render captured at save time so the public view page can serve
+  // The published webpage without loading GrapesJS
+  css?: string;
+  html?: string;
   pages: unknown[] = [
     {
       component: html`
@@ -733,4 +737,7 @@ export class WebpageEditor extends AGrapesJsEditor {
   }
 }
 
-export const webpageEditorSchema = grapesJsEditorSchema satisfies z.ZodType<ToData<WebpageEditor>>;
+export const webpageEditorSchema = grapesJsEditorSchema.extend({
+  css: z.string().optional(),
+  html: z.string().optional(),
+}) satisfies z.ZodType<ToData<WebpageEditor>>;

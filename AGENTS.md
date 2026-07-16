@@ -6,7 +6,7 @@ This file is the canonical guidance for AI coding agents working in this reposit
 
 **Project**: Esposter
 **Description**: A comprehensive social platform monorepo ("A nice and casual place for posting random things").
-**Architecture**: Monorepo using pnpm workspaces. See `architecture/monorepo-tooling.md` for workspace orchestration, publishing, installs, and CI runner policy.
+**Architecture**: Monorepo using pnpm workspaces. See `packages/app/content/docs/architecture/monorepo-tooling.md` for workspace orchestration, publishing, installs, and CI runner policy.
 **Language**: TypeScript (Strict Mode)
 **Runtime**: Node.js (see `engines.node` in `package.json`)
 **Package Manager**: pnpm (see `packageManager` in `package.json`)
@@ -61,13 +61,15 @@ pnpm coverage         # run from repo root — vitest --coverage across all work
 
 Vitest runs on Windows. The former `spawn EPERM` / UnoCSS config-load crash was fixed by giving `packages/app/configuration/modules.ts` a minimal Nuxt module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO). If a new test needs an excluded module, add it to the Vitest branch there.
 
-DB migrations (run from `packages/db-schema/`):
+DB migrations (run from `packages/db-schema/`). All wrap `drizzle-kit` via `db:run`:
 
 ```bash
-pnpm db:gen           # generate migration from schema changes
-pnpm db:up            # apply pending migrations
+pnpm db:gen           # drizzle-kit generate — writes a migration folder to packages/app/server/db/migrations/
+pnpm db:up            # drizzle-kit up — upgrades snapshot metadata to a newer drizzle-kit format. NOT an apply command.
 pnpm db:studio        # Drizzle Studio UI
 ```
+
+Nothing here applies migrations. They are applied **automatically at app startup** by the Nitro plugin `packages/app/server/plugins/migrate.ts`, which calls drizzle-orm's `migrate(db, { migrationsFolder: "server/db/migrations" })`.
 
 Barrel files (run in the package where you added/removed exports):
 
@@ -83,7 +85,7 @@ pnpm update:node      # bump engines.node + @types/node, install/switch via fnm,
 pnpm depcruise:graph  # generate dependency-graph.svg from package entrypoints
 ```
 
-Use plain `pnpm i` for dependency installs. See `architecture/monorepo-tooling.md` for install safety rules. `pnpm update:node [version]` bumps the node version everywhere in one call (see the `dependency-updates` skill).
+Use plain `pnpm i` for dependency installs. See `packages/app/content/docs/architecture/monorepo-tooling.md` for install safety rules. `pnpm update:node [version]` bumps the node version everywhere in one call (see the `dependency-updates` skill).
 
 `pnpm depcruise:graph` pipes dependency-cruiser DOT output directly into `graphviz-cli` to produce `dependency-graph.svg`. Avoid committing intermediate DOT/Mermaid files unless explicitly needed for debugging.
 
@@ -101,15 +103,21 @@ When adding a new feature, use Postgres for anything relational/queryable and Az
 ### Schema → Migration Workflow
 
 1. Edit schema file in `packages/db-schema/src/schema/` (use `pgTable` wrapper, not raw drizzle `pgTable`)
-2. Run `pnpm db:gen` from `packages/db-schema/` to generate the migration SQL
-3. Run `pnpm db:up` to apply it
-4. If adding new exported types/functions, run `pnpm export:gen` in `packages/db-schema/`
+2. Add the migration under `packages/app/server/db/migrations/<timestamp>_<name>/` — a `migration.sql` plus a `snapshot.json`
+3. If adding new exported types/functions, run `pnpm export:gen` in `packages/db-schema/`
+4. Migrations apply on next app startup (see the migrate plugin above) — there is no apply script to run
+
+**Agents: hand-craft the migration; do not run `db:gen`.** `db:gen` needs a live `DATABASE_URL` and generates a random codename folder. Clone the newest migration's `snapshot.json`, give it a fresh uuid `id` and set `prevIds` to `[<the cloned snapshot's id>]`, then write `migration.sql` by hand. Statements are separated by `--> statement-breakpoint`. Name the folder descriptively (`20260714000000_file_to_sheet_rename`, `20260530041000_fix_likes_created_at_default`) rather than in drizzle's codename style.
+
+Hand-writing is also the only correct option where drizzle-kit's diff is wrong — e.g. a rename: `ALTER TYPE "public"."resource_type" RENAME VALUE 'File' TO 'Sheet';` preserves data, whereas a generated diff would drop and recreate. Report to the user that a migration is pending; it applies when they next start the app.
 
 ### tRPC Router Organization
 
 Root merger: `packages/app/server/trpc/routers/index.ts`
 
-All feature routers are flat-merged at the root (`message`, `room`, `moderation`, `call`, `directMessage`, etc. — all top-level keys, even logically nested ones). The only exception is `achievement`, which is merged separately to avoid a circular dependency with the router that fires achievement events.
+Most feature routers are registered as top-level keys (`message`, `room`, `role`, `resource`, `callSession`, etc.). Logically nested routers are nested for real, not flattened — e.g. `moderationRouter` is merged into `messageRouter` and reached as `message.moderation` (`$trpc.message.moderation.deleteBan`), alongside `message.emoji` and `message.scheduledMessageJob`. Check the parent router before assuming a key is top-level.
+
+`achievement` is the one merge-time exception: it's merged onto `trpcRouterWithoutAchievements` via `mergeRouters` to avoid a circular dependency with the routers that fire achievement events.
 
 To add a new router:
 
@@ -130,11 +138,12 @@ Three RBAC-aware procedure builders in `server/trpc/procedure/room/`:
 
 ### RBAC System
 
-Permissions stored as a bigint bitfield on `roomRoles` (Postgres). Key service functions in `server/services/room/rbac/`:
+Permissions stored as a bigint bitfield on `roomRoles` (Postgres). Key service functions:
 
-- `hasPermission(db, userId, roomId, permission)` — single permission check; room owners and Administrators bypass all checks
-- `isManageable(actorTopPosition, targetTopPosition)` — hierarchy check; prevents lower-role members from acting on higher-role members
-- `getTopRolePosition(db, userId, roomId)` — returns the actor's highest role position
+- `hasPermission(db, userId, roomId, permission)` — single permission check; room owners and Administrators bypass all checks. Lives in `@esposter/db` (`packages/db/src/services/room/rbac/`); `server/services/room/rbac/hasPermission.ts` is a re-export. Same for `getPermissions`.
+- `checkIsManageable(actorTopPosition, targetPosition, isRoomOwner)` — hierarchy check; prevents lower-role members from acting on higher-role members. Room owners always pass. Lives in `packages/app/shared/services/room/rbac/checkIsManageable.ts` (shared — used by both `server/trpc/routers/` and the client `role` store).
+- `getTopRolePosition(db, userId, roomId)` — the actor's highest role position, `-1` if none. Overloaded: pass a `roomId[]` to get a `Map<string, number>` instead. In `server/services/room/rbac/`.
+- `getActorContext(db, actorUserId, roomId)` — bundles `{ actorTopPosition, isOwner }`, the usual input to `checkIsManageable`. In `server/services/room/rbac/`.
 
 `RoomPermission` enum and `roomRoles` schema live in `packages/db-schema`.
 
@@ -171,4 +180,4 @@ To add a new slash command:
 
 ### Azure Functions
 
-Triggered by EventGrid events, not called directly from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid`; Azure Functions consume them for async work (push notifications, friend request notifications, webhook delivery). No HTTP triggers are exposed to clients.
+Background handlers triggered by EventGrid events or Service Bus queues, not called directly from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid` for fire-and-forget async work (push notifications, friend request notifications, webhook delivery) and enqueues Service Bus messages for delayed/scheduled work (scheduled message jobs, which need `scheduleMessages` delivery at a future `runAt`). No HTTP triggers are exposed to clients.

@@ -36,7 +36,7 @@ const itemType = computed(() => prettify(editedItem.type));
 const errorIcon = useTemplateRef("errorIcon");
 const isValid = computed(() => errorIcon.value?.isValid ?? true);
 const emit = defineEmits<{
-  delete: [onComplete: () => void];
+  delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
   "update:edit-form-dialog": [value: false];
   "update:fullscreen-dialog": [value: boolean];
@@ -44,7 +44,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <v-toolbar pl-4 flex-none :title="`Configuration - ${itemType}`">
+  <v-toolbar flex-none :title="`Configuration - ${itemType}`">
     <v-spacer />
     <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value="editedItem" />
     <slot name="prepend-actions" />

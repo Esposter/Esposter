@@ -24,8 +24,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section :id="title" ref="section" mb-8>
-    <div font-bold mb-4 text-title-medium>{{ title }}</div>
+  <section :id="title" ref="section" flex flex-col gap-y-4>
+    <div font-bold text-title-medium>{{ title }}</div>
     <slot />
   </section>
 </template>

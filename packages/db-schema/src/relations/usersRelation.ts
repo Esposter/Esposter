@@ -73,10 +73,6 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id,
       to: r.sessions.userId,
     }),
-    surveys: r.many.surveys({
-      from: r.users.id,
-      to: r.surveys.userId,
-    }),
     userAchievements: r.many.userAchievements({
       from: r.users.id,
       to: r.userAchievements.userId,

@@ -83,12 +83,14 @@ const probePython3 = (): DiagnosticCheck => {
       }
     : { fix: "", label, note: output, status: DiagnosticStatus.Ok, type };
 };
-// Off win32 the source already lives on the host FS, so no mirror and no rsync — the check is N/A. On win32 the source
-// Is synced onto the ext4 mirror (createWslSourceMirrorSync) with rsync inside WSL, so a missing rsync aborts every
-// Os run that has a delta to apply.
-const probeRsync = (): DiagnosticCheck => {
-  const label = "WSL rsync (source mirror)";
-  const type = DiagnosticCheckType.Rsync;
+// Off win32 the source already lives on the host FS, so no mirror and no archive — the check is N/A. On win32 the
+// Source is synced onto the ext4 mirror through a tar archive staged by the HOST tar (createSourceMirrorArchive) —
+// Probed directly on Windows, never through resolveHostCommand, because that is where it runs — so a missing tar.exe
+// Aborts every os run that has a delta to apply. The extract side inside WSL needs no probe: GNU tar is an essential
+// Package in every distro, unlike the rsync this replaced.
+const probeTar = (): DiagnosticCheck => {
+  const label = "host tar (source mirror)";
+  const type = DiagnosticCheckType.Tar;
   if (process.platform !== "win32")
     return {
       fix: "",
@@ -97,10 +99,12 @@ const probeRsync = (): DiagnosticCheck => {
       status: DiagnosticStatus.NotApplicable,
       type,
     };
-  const output = readProbeOutput("rsync", ["--version"]);
+  const output = getResult(() => execFileHidden("tar", ["--version"], { timeout: PROBE_TIMEOUT_MS }))
+    .map((stdout) => stdout.trim())
+    .unwrapOr(null);
   return output === null
     ? {
-        fix: "install rsync inside your default WSL2 distro (e.g. `sudo apt install -y rsync`)",
+        fix: "install Windows tar (bsdtar ships with Windows 10 1803+ at System32\\tar.exe; check PATH)",
         label,
         note: "not found — the repo source can't be mirrored onto ext4, so os runs abort",
         status: DiagnosticStatus.Missing,
@@ -129,6 +133,6 @@ export const probeOsBackendChecks = (): DiagnosticCheck[] => [
   probeBubblewrap(),
   probeWslNode(),
   probePython3(),
-  probeRsync(),
+  probeTar(),
   probeSandbox(),
 ];

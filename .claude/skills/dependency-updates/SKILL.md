@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, pinned packages (h3), and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3), and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -32,14 +32,17 @@ It deliberately does **not** refresh the lockfile (per step 3 above). After it f
 
 When `@electric-sql/pglite` changes between minor versions, regenerate the db-mock data directory snapshot from `packages/db-mock/` with `pnpm snapshot:gen`, then verify the db-mock tests. The committed `packages/db-mock/src/snapshot.tar.gz` is tied to PGlite's dump format and may need refreshing even without schema changes.
 
-## Pinned packages (do not update)
+## Exact-pinned packages (no caret)
 
-- **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
-- **`@vue/language-core`, `vue-tsc`** — pinned to `3.3.5` (no caret); 3.3.6+ broken. Keep majors matched.
+- **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (`1.0.0-rc.2`, no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
+
+## Version-capped packages (keep the caret, cap the range)
+
+- **`h3`** — has `^` (both catalog and `overrides:`). Skip major/RC bumps; only update minor/patch within the current major.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 
-Temporary overrides that force a transitive dep to a safe version. Remove when the upstream package catches up. Each override comment must be prefixed with `# @TODO:` so they're easy to search for and clean up later.
+Temporary overrides that force a transitive dep to a safe version (currently `crossws`, `h3`, `pdfjs-dist`, `vite`, `vue-router`). Remove when the upstream package catches up — none currently carry a comment explaining why, so check git blame before removing one.
 
 ## Tracked issues (update normally, but watch these)
 
@@ -55,4 +58,6 @@ Evidence: `db-schema`/`db`/`db-mock` declare `drizzle-orm` as a peer only (no de
 
 ## Caret rules
 
-Every catalog entry must have `^` except pinned packages listed above. If an entry is missing `^` with no entry in the pinned list above, add it when updating.
+Every catalog entry has `^` except the exact-pinned packages listed above (currently only `drizzle-kit` and `drizzle-orm`). Note `h3` **has** a caret — it is capped by policy, not by a missing `^`.
+
+Before adding a `^` to a caret-less entry, check it against the exact-pinned list; if it's there, leave it alone. If it isn't, the missing caret is likely an oversight — add it.

@@ -5,7 +5,7 @@ import type { SlashCommandType } from "@/models/message/slashCommands/SlashComma
 
 import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
 import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
-import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
+import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
@@ -47,7 +47,7 @@ const deleteParameter = (index: number) => {
   focus(index - 1);
 };
 const commandNavigateNext = async () => {
-  const newSlashCommand = Object.values(SlashCommandDefinitionMap).find(
+  const newSlashCommand = SlashCommandDefinitions.find(
     ({ type }) => type.toLowerCase() === commandTitle.value.toLowerCase(),
   );
   if (newSlashCommand && newSlashCommand.type !== pendingSlashCommand.value?.type) await selectCommand(newSlashCommand);

@@ -18,7 +18,7 @@ defineSlots<{
 }>();
 const modelValue = defineModel<boolean>({ default: false });
 const { cardProps, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledFormDialogProps>();
-const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
+const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: (isSuccessful?: boolean) => void] }>();
 const editForm = ref<InstanceType<typeof VForm>>();
 const isEditFormValid = ref(true);
 const isSubmitting = ref(false);
@@ -26,8 +26,9 @@ const formId = useId();
 const submit = (event: SubmitEventPromise) => {
   if (isSubmitting.value) return;
   isSubmitting.value = true;
-  emit("submit", event, () => {
-    modelValue.value = false;
+  // A failed submit keeps the dialog open so the user can retry without losing their draft
+  emit("submit", event, (isSuccessful = true) => {
+    if (isSuccessful) modelValue.value = false;
     isSubmitting.value = false;
   });
 };
@@ -52,7 +53,7 @@ defineExpose({ editForm, isEditFormValid });
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <v-form :id="formId" ref="editForm" v-model="isEditFormValid" @submit.prevent="submit">
+    <v-form :id="formId" ref="editForm" v-model="isEditFormValid" flex flex-col gap-y-4 @submit.prevent="submit">
       <slot />
     </v-form>
     <template #prepend-actions>

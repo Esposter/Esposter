@@ -1,30 +1,25 @@
-import type { FileSasEntity, Survey } from "@esposter/db-schema";
+import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
+import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
+import type { FileSasEntity } from "@esposter/db-schema";
 
-import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyInput";
-import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
-import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
-import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
-import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { useUpdateBlobUrls } from "@@/server/composables/survey/useUpdateBlobUrls";
-import { ownedBy } from "@@/server/services/db/ownedBy";
-import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
-import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
-import { SURVEY_MODEL_FILENAME } from "@@/server/services/survey/constants";
-import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
-import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
+import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
+import { invalidParticipantTokenError } from "@@/server/services/survey/invalidParticipantTokenError";
+import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
+import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurveyResponseRead";
+import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
+import { transformPublicReadSurvey } from "@@/server/services/survey/transformPublicReadSurvey";
+import { transformPublishedSurvey } from "@@/server/services/survey/transformPublishedSurvey";
+import { transformReadSurvey } from "@@/server/services/survey/transformReadSurvey";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
+import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
 import {
-  cloneBlobUrls,
   createEntity,
-  deleteDirectory,
+  deleteEntity,
   generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
   getEntity,
@@ -34,49 +29,47 @@ import {
   AzureContainer,
   AzureEntityType,
   AzureTable,
-  DatabaseEntityType,
   fileEntitySchema,
-  selectSurveySchema,
+  ResourceType,
+  selectResourceSchema,
   SurveyResponseEntity,
   surveyResponseEntitySchema,
-  surveys,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, InvalidOperationError, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
+import { createUniqueArraySchema, InvalidOperationError, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { count, eq } from "drizzle-orm";
 import { z } from "zod";
 
-const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
-
-const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).prefault({});
-
-const readSurveyModelInputSchema = selectSurveySchema.shape.id;
+// Type-owned binary assets (survey uploads) live under the standard {id}/files/… convention
+const getFilesDirectoryName = (surveyId: string) => `${surveyId}/files`;
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true }), "filename")
     .min(1)
     .max(MAX_READ_LIMIT),
-  surveyId: selectSurveySchema.shape.id,
+  surveyId: selectResourceSchema.shape.id,
 });
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
   files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true, mimetype: true }), "id")
     .min(1)
     .max(MAX_READ_LIMIT),
-  surveyId: selectSurveySchema.shape.id,
+  surveyId: selectResourceSchema.shape.id,
 });
 
 const deleteFileInputSchema = z.object({
   blobPath: z.string().min(1).max(MAX_READ_LIMIT),
-  surveyId: selectSurveySchema.shape.id,
+  surveyId: selectResourceSchema.shape.id,
 });
 
-const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
-
-const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({ partitionKey: true, rowKey: true });
+const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
+  participantToken: true,
+  partitionKey: true,
+  rowKey: true,
+});
 
 const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   model: true,
+  participantToken: true,
   partitionKey: true,
   rowKey: true,
 });
@@ -84,204 +77,111 @@ const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
 const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   model: true,
   modelVersion: true,
+  participantToken: true,
   partitionKey: true,
   rowKey: true,
 });
 
-export const surveyRouter = router({
-  count: standardAuthedProcedure.query(
-    async ({ ctx }) =>
-      takeOne(
-        await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.getSessionPayload.user.id)),
-      ).count,
-  ),
-  createSurvey: standardAuthedProcedure.input(createSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
-    const newSurvey = requireMutation(
-      (
-        await ctx.db
-          .insert(surveys)
-          .values({ ...input, userId: ctx.getSessionPayload.user.id })
-          .returning()
-      )[0],
-      Operation.Create,
-      DatabaseEntityType.Survey,
-      ctx.getSessionPayload.user.id,
-    );
+const deleteSurveyResponseInputSchema = surveyResponseEntitySchema.pick({ rowKey: true }).extend({
+  // The partition key is the survey id, derived from this owner-checked id — never accepted from the caller
+  id: selectResourceSchema.shape.id,
+});
 
-    const blobName = `${newSurvey.id}/${SURVEY_MODEL_FILENAME}`;
-    await useUpload(AzureContainer.SurveyAssets, blobName, newSurvey.model);
-    return newSurvey;
+const countSurveyResponsesInputSchema = selectResourceSchema.pick({ id: true });
+
+export const surveyRouter = router({
+  ...createResourceProcedures(ResourceType.Survey, {
+    transformPublicReadContent: transformPublicReadSurvey,
+    transformPublishedContent: transformPublishedSurvey,
+    transformReadContent: transformReadSurvey,
   }),
+  countSurveyResponses: getOwnerProcedure(
+    ResourceType.Survey,
+    countSurveyResponsesInputSchema,
+    "id",
+  ).query<CountSurveyResponsesOutput>(({ ctx }) => countSurveyResponses(ctx.resource.id)),
   createSurveyResponse: standardRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
-    .mutation<SurveyResponseEntity>(async ({ input }) => {
+    .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
+      const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-      const newSurveyResponse = new SurveyResponseEntity(input);
+      const newSurveyResponse = new SurveyResponseEntity({ ...input, participantToken });
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
-  deleteFile: getCreatorProcedure(deleteFileInputSchema, "surveyId").mutation(
+  deleteFile: getOwnerProcedure(ResourceType.Survey, deleteFileInputSchema, "surveyId").mutation(
     async ({ input: { blobPath, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
+      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
       const blobName = `${surveyId}/${blobPath}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       await blockBlobClient.deleteIfExists();
     },
   ),
-  deleteSurvey: standardAuthedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
-    const deletedSurvey = requireMutation(
-      (
-        await ctx.db
-          .delete(surveys)
-          .where(ownedBy(surveys, input, ctx.getSessionPayload.user.id))
-          .returning()
-      )[0],
-      Operation.Delete,
-      DatabaseEntityType.Survey,
-      input,
-    );
-
-    const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
-    await deleteDirectory(containerClient, input, true);
-    return deletedSurvey;
-  }),
-  generateDownloadFileSasUrls: getCreatorProcedure(generateDownloadFileSasUrlsInputSchema, "surveyId").query<string[]>(
-    async ({ input: { files, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
-      return generateDownloadFileSasUrls(containerClient, files, surveyId);
+  deleteSurveyResponse: getOwnerProcedure(ResourceType.Survey, deleteSurveyResponseInputSchema, "id").mutation(
+    async ({ ctx, input: { rowKey } }) => {
+      const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+      // Existence is proven before deleting so a second delete of the same key errors rather than silently passing
+      await requireEntity(
+        getEntity(surveyResponseClient, SurveyResponseEntity, ctx.resource.id, rowKey),
+        AzureEntityType.SurveyResponse,
+        JSON.stringify({ partitionKey: ctx.resource.id, rowKey }),
+      );
+      await deleteEntity(surveyResponseClient, ctx.resource.id, rowKey);
     },
   ),
-  generateUploadFileSasEntities: getCreatorProcedure(generateUploadFileSasEntitiesInputSchema, "surveyId").query<
-    FileSasEntity[]
-  >(async ({ input: { files, surveyId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
-    return generateUploadFileSasEntities(containerClient, files, surveyId);
+  generateDownloadFileSasUrls: getOwnerProcedure(
+    ResourceType.Survey,
+    generateDownloadFileSasUrlsInputSchema,
+    "surveyId",
+  ).query<string[]>(async ({ input: { files, surveyId } }) => {
+    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    return generateDownloadFileSasUrls(containerClient, files, getFilesDirectoryName(surveyId));
   }),
-  publishSurvey: getCreatorProcedure(publishSurveyInputSchema, "id").mutation<Survey>(
-    async ({ ctx, input: { id, ...rest } }) => {
-      rest.publishVersion++;
-      if (rest.publishVersion <= ctx.survey.publishVersion)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Update,
-            DatabaseEntityType.Survey,
-            "cannot update survey publish with old publish version",
-          ).message,
-        });
-
-      const updatedSurvey = requireMutation(
-        (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning())[0],
-        Operation.Update,
-        DatabaseEntityType.Survey,
-        id,
-      );
-
-      const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
-      const blobUrls = extractBlobUrls(updatedSurvey.model);
-      const publishDirectory = getPublishDirectory(updatedSurvey);
-      await cloneBlobUrls(containerClient, blobUrls, updatedSurvey.id, publishDirectory);
-      return updatedSurvey;
-    },
-  ),
-  readSurvey: getCreatorProcedure(readSurveyInputSchema, "id").query(async ({ ctx }) => ({
-    ...ctx.survey,
-    model: await useUpdateBlobUrls(ctx.survey),
-  })),
-  readSurveyModel: standardRateLimitedProcedure
-    .input(readSurveyModelInputSchema)
-    .query<string>(async ({ ctx, input }) => {
-      const survey = await requireEntity(
-        ctx.db.query.surveys.findFirst({ where: { id: { eq: input } } }),
-        DatabaseEntityType.Survey,
-        input,
-      );
-      return useUpdateBlobUrls(survey, true);
-    }),
+  generateUploadFileSasEntities: getOwnerProcedure(
+    ResourceType.Survey,
+    generateUploadFileSasEntitiesInputSchema,
+    "surveyId",
+  ).query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
+    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    return generateUploadFileSasEntities(containerClient, files, getFilesDirectoryName(surveyId));
+  }),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
-    .query<null | SurveyResponseEntity>(async ({ input: { partitionKey, rowKey } }) => {
+    .query<null | SurveyResponseEntity>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
+      const resolvedParticipantToken = await resolveSurveyResponseRead(ctx.db, partitionKey, participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const surveyResponse = await getEntity(surveyResponseClient, SurveyResponseEntity, partitionKey, rowKey);
+      if (!surveyResponse) return null;
+      // A resume must present the identity the response was started with, so another participant's row is
+      // Indistinguishable from one that does not exist. Only Identified mode resolves a token to compare —
+      // Anonymous carries no identity to contradict, so a survey switched to it still resumes its
+      // Identified-era responses, exactly as the write boundary treats them
+      if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken) return null;
       return surveyResponse;
     }),
-  readSurveys: standardAuthedProcedure
-    .input(readSurveysInputSchema)
-    .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
-      const resultSurveys = await ctx.db.query.surveys.findMany({
-        columns: { model: false },
-        limit: limit + 1,
-        offset,
-        orderBy: (surveys, { desc }) =>
-          sortBy.length > 0 ? parseSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
-        where: { userId: { eq: ctx.getSessionPayload.user.id } },
-      });
-      return getOffsetPaginationData(resultSurveys, limit);
-    }),
-  updateSurvey: standardAuthedProcedure
-    .input(updateSurveyInputSchema)
-    .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
-      const updatedSurvey = requireMutation(
-        (
-          await ctx.db
-            .update(surveys)
-            .set(rest)
-            .where(ownedBy(surveys, id, ctx.getSessionPayload.user.id))
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.Survey,
-        id,
-      );
-      return updatedSurvey;
-    }),
-  updateSurveyModel: getCreatorProcedure(updateSurveyModelInputSchema, "id").mutation<Survey>(
-    async ({ ctx, input: { id, ...rest } }) => {
-      if (rest.model === ctx.survey.model)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, "duplicate model").message,
-        });
-
-      if (rest.model !== ctx.survey.model) rest.modelVersion++;
-      if (rest.modelVersion <= ctx.survey.modelVersion)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Update,
-            DatabaseEntityType.Survey,
-            "cannot update survey model with old model version",
-          ).message,
-        });
-
-      const updatedSurvey = requireMutation(
-        (
-          await ctx.db
-            .update(surveys)
-            .set(rest)
-            .where(ownedBy(surveys, id, ctx.getSessionPayload.user.id))
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.Survey,
-        id,
-      );
-
-      const blobName = `${updatedSurvey.id}/${SURVEY_MODEL_FILENAME}`;
-      await useUpload(AzureContainer.SurveyAssets, blobName, updatedSurvey.model);
-      return updatedSurvey;
-    },
-  ),
+  // The dataset contract carries no keys, so the blade reads rows keyed through its own procedure —
+  // A blade-local read concern, not a Dataset shape change
+  readSurveyResponseRecords: getOwnerProcedure(
+    ResourceType.Survey,
+    countSurveyResponsesInputSchema,
+    "id",
+  ).query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
   updateSurveyResponse: standardRateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
-    .mutation<SurveyResponseEntity>(async ({ input }) => {
+    .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
+      const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const surveyResponse = await requireEntity(
         getEntity(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
         AzureEntityType.SurveyResponse,
         JSON.stringify({ partitionKey: input.partitionKey, rowKey: input.rowKey }),
       );
-      if (input.model === surveyResponse.model)
+      // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
+      // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
+      if (participantToken && participantToken !== surveyResponse.participantToken)
+        throw invalidParticipantTokenError();
+      // Response models are plain records, so duplicates are detected structurally rather than by reference
+      if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model))
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model")
@@ -294,12 +194,14 @@ export const surveyRouter = router({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(
             Operation.Update,
-            DatabaseEntityType.Survey,
+            AzureEntityType.SurveyResponse,
             "cannot update survey response model with old model version",
           ).message,
         });
 
-      await updateEntity(surveyResponseClient, input);
-      return Object.assign(surveyResponse, input);
+      // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write
+      const updatedSurveyResponse = { ...input, participantToken };
+      await updateEntity(surveyResponseClient, updatedSurveyResponse);
+      return Object.assign(surveyResponse, updatedSurveyResponse);
     }),
 });

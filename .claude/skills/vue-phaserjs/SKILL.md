@@ -7,9 +7,18 @@ description: Esposter vue-phaserjs integration patterns — component inventory,
 
 ## Implemented Components (v1 complete)
 
-All game object components follow the same 4-file pattern: `{Name}Configuration.ts`, `{Name}EventEmitsOptions.ts`, `{Name}SetterMap.ts`, `{Name}.vue`.
+All game object components follow the same 4-file pattern, split across four trees:
 
-**Sprites / Images**: `<Sprite>`, `<Image>`, `<NineSlice>`, `<TileSprite>`, `<PathFollower>`
+| File                         | Path                                              |
+| ---------------------------- | ------------------------------------------------- |
+| `{Name}.vue`                 | `packages/vue-phaserjs/src/components/`           |
+| `{Name}Configuration.ts`     | `packages/vue-phaserjs/src/models/configuration/` |
+| `{Name}EventEmitsOptions.ts` | `packages/vue-phaserjs/src/models/emit/`          |
+| `{Name}SetterMap.ts`         | `packages/vue-phaserjs/src/util/setterMap/`       |
+
+**Root**: `<Game>` (mounts the Phaser game; hosts `<Scene>`)
+
+**Sprites / Images**: `<Sprite>`, `<Image>`, `<Nineslice>` (lowercase `s` — `NineSlice` resolves to nothing), `<TileSprite>`, `<PathFollower>`
 
 **Text**: `<Text>`, `<BitmapText>`
 
@@ -46,7 +55,9 @@ Multi-line setters already use braces naturally — no change needed.
 
 **Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store.**
 
-Pinia devtools traverse store state via Vue's `traverse`. Phaser 3.85+ `Frame.get glTexture()` returns `null` before WebGL upload — crash in dev when traversed. `markRaw(obj)` sets `__v_skip = true` to skip traversal.
+This package itself has zero `markRaw` usages — the rule bites in the consuming app (`packages/app/app/`: `store/`, `components/Dungeons/`, `composables/dungeons/`). Look there for real examples.
+
+Pinia devtools traverse store state via Vue's `traverse`. `TextureSource.glTexture` starts `null` and is only assigned on WebGL upload, and `Frame#glTexture` is a getter proxying straight to it — so traversing a Phaser object before its texture uploads reads `null` and crashes in dev. `markRaw(obj)` sets `__v_skip = true` to skip traversal.
 
 ```ts
 sprite.value = markRaw(newSprite); // traverse-safe
@@ -62,14 +73,14 @@ Any Phaser class that chains to `Scene → TextureManager → Texture → Frame 
 
 ## SSR / "Phaser is not defined" Fix
 
-**Rule**: In Rolldown `external`, always use `/^package-name/` (regex) instead of `"package-name"` (string) when the package may be imported via subpaths. String literals only match exact module IDs.
+**Rule**: In the shared `external` list, always use `/^package-name/u` (regex) instead of `"package-name"` (string) when the package may be imported via subpaths. String literals only match exact module IDs.
 
 Cause: `external` used `"phaser4-rex-plugins"`, which matched only the root package, not subpath imports like `"phaser4-rex-plugins/plugins/clickoutside.js"`. The bundled subpath code accesses `Phaser.Scene`/`Phaser.Game` as globals at module-eval time, failing in Node.js SSR.
 
-Fix (`packages/vue-phaserjs/vite.config.js`):
+The externals no longer live in this package — `packages/vue-phaserjs/vite.config.ts` just re-exports `getViteConfiguration()`. The entries are in the shared list at `packages/configuration/src/external/external.ts`, grouped by owning package:
 
-```js
-rolldownOptions: {
-  external: ["phaser", /^phaser4-rex-plugins/, "pinia", "vue"],
-},
+```ts
+// @esposter/vue-phaserjs
+"phaser",
+/^phaser4-rex-plugins/u,
 ```

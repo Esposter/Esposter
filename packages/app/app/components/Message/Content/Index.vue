@@ -6,11 +6,11 @@ const { copied, text } = storeToRefs(messageStore);
 </script>
 
 <template>
-  <div bg-surface flex flex-col h-full relative>
+  <v-sheet flex flex-col h-full relative>
     <MessageContentHeader />
     <v-divider />
     <MessageContentCallPanel />
     <MessageContentMessages />
     <StyledClipboardSnackbar v-model="copied" :source="text" />
-  </div>
+  </v-sheet>
 </template>

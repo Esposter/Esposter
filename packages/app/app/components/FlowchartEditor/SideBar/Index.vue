@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { NodeCategoryTypeMap } from "@/services/flowchartEditor/NodeCategoryTypeMap";
 import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
-import { useLayoutStore } from "@/store/layout";
+import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 
 const { height, width } = useWindowSize();
-const layoutStore = useLayoutStore();
-const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
+const flowchartEditorStore = useFlowchartEditorStore();
+const { isSidebarOpen } = storeToRefs(flowchartEditorStore);
 const { createNode, onDragStart } = useDragAndDrop();
+const nodeCategoryTypes = Object.entries(NodeCategoryTypeMap);
 </script>
 
 <template>
@@ -14,7 +15,7 @@ const { createNode, onDragStart } = useDragAndDrop();
     <v-list flex flex-1 flex-col gap-y-4 items-center>
       <v-expansion-panels variant="accordion">
         <v-expansion-panel
-          v-for="[nodeCategory, nodeTypes] of Object.entries(NodeCategoryTypeMap)"
+          v-for="[nodeCategory, nodeTypes] of nodeCategoryTypes"
           :key="nodeCategory"
           :title="nodeCategory"
         >
@@ -39,11 +40,10 @@ const { createNode, onDragStart } = useDragAndDrop();
       </v-expansion-panels>
     </v-list>
     <StyledTooltipIconButton
-      v-if="!isLeftDrawerOpenAuto"
       :button-props="{ class: 'self-end' }"
       icon="mdi-chevron-double-left"
       text="Collapse sidebar"
-      @click="isLeftDrawerOpen = false"
+      @click="isSidebarOpen = false"
     />
   </div>
 </template>

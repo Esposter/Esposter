@@ -11,6 +11,8 @@ import { likes } from "@/schema/likes";
 import { posts } from "@/schema/posts";
 import { pushSubscriptionsInMessage } from "@/schema/pushSubscriptionsInMessage";
 import { rateLimiterFlexible } from "@/schema/rateLimiterFlexible";
+import { resourcePublications } from "@/schema/resourcePublications";
+import { resources, resourceTypeEnum } from "@/schema/resources";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { roomFiltersInMessage } from "@/schema/roomFiltersInMessage";
 import { roomRolesInMessage } from "@/schema/roomRolesInMessage";
@@ -18,7 +20,6 @@ import { roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
 import { scheduledMessageJobsInMessage } from "@/schema/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "@/schema/searchHistoriesInMessage";
 import { sessions } from "@/schema/sessions";
-import { surveys } from "@/schema/surveys";
 import { userAchievements } from "@/schema/userAchievements";
 import { users } from "@/schema/users";
 import { noiseSuppressionModeEnum, userSettingsInMessage, voiceInputModeEnum } from "@/schema/userSettingsInMessage";
@@ -45,6 +46,9 @@ export const schema = {
   posts,
   pushSubscriptionsInMessage,
   rateLimiterFlexible,
+  resourcePublications,
+  resources,
+  resourceTypeEnum,
   roomCategoriesInMessage,
   roomFiltersInMessage,
   roomRolesInMessage,
@@ -53,7 +57,6 @@ export const schema = {
   scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessions,
-  surveys,
   userAchievements,
   users,
   userSettingsInMessage,

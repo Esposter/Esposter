@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
+
+### Bug Fixes
+
+* add db migrations ([fabe3e0](https://github.com/Esposter/Esposter/commit/fabe3e077cf7c464e278f1870600d6f16b9b8f15))
+* db schema ([831c8c1](https://github.com/Esposter/Esposter/commit/831c8c10aeda8a97a6f2b590a523f9edec2515c5))
+* dedupe items + fix tests ([e2275f8](https://github.com/Esposter/Esposter/commit/e2275f86a19aa376e6537759cf11bb32f81b67a5))
+* docs + skills ([fd274a1](https://github.com/Esposter/Esposter/commit/fd274a1db9f48dc3816a4ab00abe718f377605df))
+* enums and arrays ([faa3f2f](https://github.com/Esposter/Esposter/commit/faa3f2fc2d8e7453fead1ba02cb9b0f294b1b70f))
+* lint ([b048d55](https://github.com/Esposter/Esposter/commit/b048d55cf7f936c8012587c874607b16caa7f9da))
+* lint + sanitize html ([cebc09e](https://github.com/Esposter/Esposter/commit/cebc09e9f1cae9eee5da927ea5b1b49a58455dcb))
+* post-merge integration for esbabbler, platform, and posts branches ([a14af16](https://github.com/Esposter/Esposter/commit/a14af16951d55266948f62c378c7490a6854f166))
+* snapshot ([1a341c4](https://github.com/Esposter/Esposter/commit/1a341c4e45b737c6550a6c2d1239a6682f0fd0f0))
+* snapshots ([9764b23](https://github.com/Esposter/Esposter/commit/9764b23ba8be5cb84229baf997f54ce00c9cef98))
+* test bundle size and refactor ([ecd748e](https://github.com/Esposter/Esposter/commit/ecd748e2e964936c9afb3061ae5d57f9bd05547f))
+* types and partial lint ([b672a10](https://github.com/Esposter/Esposter/commit/b672a10ba489be55b40c1ef11b6aaef4c7e8f233))
+* types and tests ([e4ae90a](https://github.com/Esposter/Esposter/commit/e4ae90a1b0cbd5139b28e9e6ffb53dbd3dea0bdc))
+* wip ([cf2c92b](https://github.com/Esposter/Esposter/commit/cf2c92b108efb84bad50e151bb749b9cf3257bf8))
+
+### Features
+
+* dungeons milestone achievements ([4d630a7](https://github.com/Esposter/Esposter/commit/4d630a7a17347d2c1a4f52ef80ed18b25510c925))
+* esbabbler mention badges + push-to-talk keybind with release delay ([3cc0602](https://github.com/Esposter/Esposter/commit/3cc060227b201fcac212b11be6d401312a9b5f74))
+* **posts:** viewer-scoped likes, feed block filtering, and Hot/New/Top sort options ([72d5932](https://github.com/Esposter/Esposter/commit/72d5932e3f94ea2fd2f43f59b36cf3e830442d18))
+* wip ([f7d2acf](https://github.com/Esposter/Esposter/commit/f7d2acf6441b61339c5ba3f099a1ab18e1687166))
+* wip ([8789e7b](https://github.com/Esposter/Esposter/commit/8789e7baef6ac9a4730770e6e214f9f48bc997de))
+* wip ([d70d22b](https://github.com/Esposter/Esposter/commit/d70d22b1982ce9ed30f1af0fee36f269f8b32312))
+
 ## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
 
 ### Bug Fixes

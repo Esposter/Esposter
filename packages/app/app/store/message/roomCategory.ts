@@ -3,11 +3,18 @@ import type { DeleteRoomCategoryInput } from "#shared/models/db/roomCategory/Del
 import type { UpdateRoomCategoryInput } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
+import { useMutation } from "@/composables/shared/useMutation";
+import { authClient } from "@/services/auth/authClient";
+import { getCategoryPositionUpdates } from "@/services/message/roomCategory/getCategoryPositionUpdates";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
+  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
+  const executeDeleteRoomCategoryMutation = useMutation();
+  const executeUpdateRoomCategoryMutation = useMutation();
+  const executeReorderRoomCategoriesMutation = useMutation();
   const categories = ref<RoomCategoryInMessage[]>([]);
   const {
     createRoomCategory: storeCreateRoomCategory,
@@ -15,27 +22,85 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     updateRoomCategory: storeUpdateRoomCategory,
   } = createOperationData(categories, ["id"], DatabaseEntityType.RoomCategory);
 
+  // The server only adds userId and takes the position/timestamp column defaults, so the client can build the
+  // Row faithfully — insert a temp-id placeholder now and reconcile the server row onto it in onSuccess.
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
-    const newCategory = await $trpc.room.category.createRoomCategory.mutate(input);
-    storeCreateRoomCategory(newCategory);
-    return newCategory;
+    if (!session.value.data) return;
+
+    // Own executor per call — each create owns a distinct placeholder, so concurrent creates must never
+    // Supersede each other's reconcile (a skipped onSuccess would strand a temp id that isn't the server's)
+    const executeCreateRoomCategoryMutation = useMutation();
+    // Reactive so the onSuccess Object.assign onto this same object triggers the list re-render
+    const newCategory = reactive<RoomCategoryInMessage>({
+      createdAt: new Date(),
+      deletedAt: null,
+      id: crypto.randomUUID(),
+      name: input.name,
+      position: 0,
+      updatedAt: new Date(),
+      userId: session.value.data.user.id,
+    });
+    await executeCreateRoomCategoryMutation(() => $trpc.room.category.createRoomCategory.mutate(input), {
+      applyOptimistic: () => {
+        storeCreateRoomCategory(newCategory);
+        return () => {
+          storeDeleteRoomCategory({ id: newCategory.id });
+        };
+      },
+      // Reconcile onto the placeholder itself so it keeps its list position instead of being
+      // Removed and re-appended under the server id
+      onSuccess: (createdCategory) => {
+        Object.assign(newCategory, createdCategory);
+      },
+    });
   };
 
   const deleteRoomCategory = async (id: DeleteRoomCategoryInput) => {
-    await $trpc.room.category.deleteRoomCategory.mutate(id);
-    storeDeleteRoomCategory({ id });
+    const snapshot = [...categories.value];
+    await executeDeleteRoomCategoryMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
+      applyOptimistic: () => {
+        storeDeleteRoomCategory({ id });
+        return () => {
+          categories.value = snapshot;
+        };
+      },
+    });
   };
 
   const updateRoomCategory = async (input: UpdateRoomCategoryInput) => {
-    const updatedCategory = await $trpc.room.category.updateRoomCategory.mutate(input);
-    storeUpdateRoomCategory(updatedCategory);
-    return updatedCategory;
+    const snapshot = categories.value.map((category) => ({ ...category }));
+    await executeUpdateRoomCategoryMutation(() => $trpc.room.category.updateRoomCategory.mutate(input), {
+      applyOptimistic: () => {
+        storeUpdateRoomCategory(input);
+        return () => {
+          categories.value = snapshot;
+        };
+      },
+      onSuccess: (updatedCategory) => {
+        storeUpdateRoomCategory(updatedCategory);
+      },
+    });
+  };
+
+  const reorderRoomCategories = async (newCategories: RoomCategoryInMessage[]) => {
+    const updates = getCategoryPositionUpdates(newCategories);
+    if (updates.length === 0) return;
+    await executeReorderRoomCategoriesMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
+      applyOptimistic: () => {
+        const snapshot = categories.value.map((category) => ({ ...category }));
+        for (const update of updates) storeUpdateRoomCategory(update);
+        return () => {
+          categories.value = snapshot;
+        };
+      },
+    });
   };
 
   return {
     categories,
     createRoomCategory,
     deleteRoomCategory,
+    reorderRoomCategories,
     storeCreateRoomCategory,
     storeDeleteRoomCategory,
     storeUpdateRoomCategory,

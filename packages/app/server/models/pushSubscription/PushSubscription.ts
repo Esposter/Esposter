@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const pushSubscriptionSchema = z.object({
   endpoint: z.url(),
-  expirationTime: z.number().nullish(),
+  expirationTime: z.number().nonnegative().nullish(),
   keys: z.object({
     auth: z.string(),
     p256dh: z.string(),

@@ -11,14 +11,16 @@ defineEmits<{ end: [value: number] }>();
 </script>
 
 <template>
-  <div v-if="label" mb-1 text-body-medium>{{ label }}</div>
-  <div mb-2 text-body-small>{{ modelValue }}%</div>
-  <v-slider
-    v-model="modelValue"
-    :max="MAX_USER_VOLUME_PERCENTAGE"
-    :min="0"
-    :step="1"
-    hide-details
-    @end="$emit('end', $event)"
-  />
+  <div flex flex-col gap-y-1>
+    <div v-if="label" text-body-medium>{{ label }}</div>
+    <div text-body-small>{{ modelValue }}%</div>
+    <v-slider
+      v-model="modelValue"
+      :max="MAX_USER_VOLUME_PERCENTAGE"
+      :min="0"
+      :step="1"
+      hide-details
+      @end="$emit('end', $event)"
+    />
+  </div>
 </template>

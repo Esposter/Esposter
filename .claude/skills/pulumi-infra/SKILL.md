@@ -40,8 +40,6 @@ Every new resource must set the `parent` Pulumi option to the **nearest final Az
 
 **Deferral rule:** if the natural parent is still a legacy resource scheduled for rename/deletion, defer setting `parent` until the migration wave that creates the final parent. Create the child directly under the final parent in that same wave — never under the legacy parent.
 
-**Legacy resources:** existing resources with legacy names (`dShp*`, `pShp*`, `dshp*`, `pshp*`, `asp[Dd]shp*`) are being phased out and don't need `parent` retrofitted. Only newly created target resources follow this rule.
-
 **Re-parenting already-deployed resources:** changing `parent` in code changes the Pulumi URN (old = delete, new = create). `protect: true` blocks the delete, so preview errors. Migration sequence:
 
 1. Update `parent` in code to the correct final parent.
@@ -55,7 +53,7 @@ Every new resource must set the `parent` Pulumi option to the **nearest final Az
 - Add constants only for values external to managed resources, required as plain strings in Pulumi options/import IDs, or shared built-in/static identifiers (e.g. role definition IDs).
 - A local `const` within a file is fine when it is the **source of truth** for that name and reused more than once in the same file (e.g. `const workflowName = "dev-logic-esposter-ae-001"` used as the Pulumi resource name and the Azure property). Don't introduce a local const that merely duplicates a name owned by another resource file.
 - **Single-use UUIDs inline directly** — don't declare `const roleAssignmentName = "uuid"` if used once; inline it: `roleAssignmentName: "uuid"`. Applies to any UUID/identifier appearing exactly once.
-- **Named constants only for cross-file reuse** — create a constant file (e.g. `DShpFuncEsposterAuea001PrincipalId.ts`) only when the value is referenced in ≥2 resource files. External principal IDs not backed by managed resources live in named constants too — but only when used across multiple files.
+- **Named constants only for cross-file reuse** — create a constant file (e.g. `DevFuncEsposter001PrincipalId.ts`) only when the value is referenced in ≥2 resource files. External principal IDs not backed by managed resources live in named constants too — but only when used across multiple files.
 - During naming migration waves, prefer create/cutover/delete over aliases for resources whose final shape should also gain a `parent`. New target resources include the best parent from the start whenever the Azure hierarchy makes that natural.
 - **Renaming a resource whose final Azure name matches the legacy name** (e.g. event subscriptions reused under a new topic): no `New` suffix in the final code. Sequence depends on whether the resource holds data to migrate:
   - **No external data** (event subscriptions, role assignments): unprotect old → delete old file → create new file with final name → single `pulumi up` deletes old + creates new. The old Azure resource is deleted automatically when the file is removed.
@@ -73,12 +71,12 @@ Every new resource must set the `parent` Pulumi option to the **nearest final Az
 
 ## Docs
 
-- Durable infrastructure docs live in `packages/infra/docs/`, split by provider: provider-specific docs under `docs/azure/` (and `docs/github/`), cross-cutting docs at the `docs/` root. The forward roadmap is `features/infra/roadmap.md` (prioritized, checkbox backlog); the shipped log + index is `features/infra/README.md` (thin); completed design records live in `features/infra/reference/`.
+- Durable infrastructure docs live in `packages/infra/docs/`, split by provider: provider-specific docs under `docs/azure/` (and `docs/github/`), cross-cutting docs at the `docs/` root. The forward roadmap is `packages/app/content/docs/infra/roadmap.md` (every item links a proposal in `packages/app/content/docs/proposals/infra/`); the area index + shipped log is `packages/app/content/docs/infra/index.md`.
 - `docs/azure/naming-conventions.md` — Azure naming rules.
 - `docs/azure/overview.md` — Azure resource inventory.
 - `docs/azure/search-indexes.md` — Azure Search index/datasource/indexer setup.
 - `docs/azure/security-constraints.md` — security hardening blockers and app code references.
-- `features/infra/reference/optimization-review.md` — phase-2 cost/security findings.
+- `packages/app/content/docs/infra/optimization-review.md` — phase-2 cost/security findings.
 - `docs/stacks.md` — stack policy (cross-provider).
 - `docs/roadmap.md` — cleanup, optimization, naming-refactor, and production-stack phases.
 - Move completed one-off migration notes out of the package after their durable content is represented in `docs/`.

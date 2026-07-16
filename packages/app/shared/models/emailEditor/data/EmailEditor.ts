@@ -1,6 +1,8 @@
+import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { ToData } from "@esposter/shared";
 import type { z } from "zod";
 
+import { datasetReferenceSchema } from "#shared/models/dataset/DatasetReference";
 import { AGrapesJsEditor, grapesJsEditorSchema } from "#shared/models/grapesjs/AGrapesJsEditor";
 import {
   BLOGSPOT_BASE_URL,
@@ -10,6 +12,8 @@ import {
 import { html } from "@esposter/shared";
 
 export class EmailEditor extends AGrapesJsEditor {
+  // The bound dataset whose columns become merge-field blocks and drive personalized export
+  datasetReference?: DatasetReference;
   pages: unknown[] = [
     {
       component: html`
@@ -95,4 +99,6 @@ export class EmailEditor extends AGrapesJsEditor {
   }
 }
 
-export const emailEditorSchema = grapesJsEditorSchema satisfies z.ZodType<ToData<EmailEditor>>;
+export const emailEditorSchema = grapesJsEditorSchema.extend({
+  datasetReference: datasetReferenceSchema.optional(),
+}) satisfies z.ZodType<ToData<EmailEditor>>;

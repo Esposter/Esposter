@@ -1,11 +1,7 @@
-import type { User } from "@/schema/users";
-
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { users } from "@/schema/users";
 import { text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const pushSubscriptionsInMessage = pgTable(
   "pushSubscriptions",
@@ -24,11 +20,3 @@ export const pushSubscriptionsInMessage = pgTable(
     schema: messageSchema,
   },
 );
-
-export type PushSubscriptionInMessageEntity = typeof pushSubscriptionsInMessage.$inferSelect;
-
-export const selectPushSubscriptionInMessageSchema = createSelectSchema(pushSubscriptionsInMessage, {
-  endpoint: (schema) => schema.pipe(z.url()),
-});
-
-export type PushSubscriptionInMessageWithRelations = PushSubscriptionInMessageEntity & { user: User };

@@ -10,8 +10,6 @@ import SliderPlugin from "phaser4-rex-plugins/plugins/slider-plugin";
 import VirtualJoystickPlugin from "phaser4-rex-plugins/plugins/virtualjoystick-plugin";
 import { Game, usePhaserStore, useTextStore } from "vue-phaserjs";
 
-defineRouteRules({ ssr: false });
-
 await useReadDungeons();
 
 const phaserStore = usePhaserStore();
@@ -22,6 +20,7 @@ prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
 const textStore = useTextStore();
 const { defaultTextStyle } = storeToRefs(textStore);
 defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
+const sceneKeys = Object.entries(SceneKeyMap);
 </script>
 
 <template>
@@ -71,7 +70,7 @@ defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
         },
       }"
     >
-      <component :is="component" v-for="[sceneKey, component] of Object.entries(SceneKeyMap)" :key="sceneKey" />
+      <component :is="component" v-for="[sceneKey, component] of sceneKeys" :key="sceneKey" />
     </Game>
   </NuxtLayout>
 </template>

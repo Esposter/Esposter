@@ -74,3 +74,5 @@ export const SlashCommandDefinitionMap = {
     type: SlashCommandType.Unflip,
   },
 } as const satisfies Record<SlashCommandType, SlashCommand>;
+
+export const SlashCommandDefinitions = Object.values(SlashCommandDefinitionMap);

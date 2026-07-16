@@ -19,20 +19,28 @@ const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => creatorId === session.value?.user.id);
 const roomStore = useRoomStore();
 const { deleteRoom, leaveRoom } = roomStore;
+const { rooms } = storeToRefs(roomStore);
+// Deleting a room is irreversible (all messages/members), so the creator must type the room name to confirm
+const roomName = computed(() => rooms.value.find(({ id }) => id === roomId)?.name ?? "");
 </script>
 
 <template>
   <StyledDeleteFormDialog
     v-model="modelValue"
-    :card-props="
-      isCreator
-        ? { title: 'Delete Room', text: 'Are you sure you want to delete this room?' }
-        : { title: 'Leave Room', text: 'Are you sure you want to leave this room?' }
-    "
+    :card-props="{ title: isCreator ? 'Delete Room' : 'Leave Room' }"
     :confirm-button-props="{ text: isCreator ? 'Delete' : 'Leave' }"
+    :confirm-name="isCreator ? roomName : undefined"
     @delete="
       async (onComplete) => {
-        await withFinalizerAsync(() => (isCreator ? deleteRoom(roomId) : leaveRoom(roomId)), onComplete);
+        let isSuccessful = false;
+        await withFinalizerAsync(
+          async () => {
+            isSuccessful = isCreator ? await deleteRoom(roomId) : await leaveRoom(roomId);
+          },
+          () => {
+            onComplete(isSuccessful);
+          },
+        );
       }
     "
   >
@@ -43,5 +51,6 @@ const { deleteRoom, leaveRoom } = roomStore;
         </template>
       </v-tooltip>
     </template>
+    Are you sure you want to {{ isCreator ? "delete this room" : "leave this room" }}?
   </StyledDeleteFormDialog>
 </template>

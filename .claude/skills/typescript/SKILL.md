@@ -1,26 +1,25 @@
 ---
 name: typescript
-description: Esposter TypeScript conventions — banned patterns (any, Omit, !, forEach, parameter properties), error handling with InvalidOperationError, control flow guard clauses, and enum ref defaults. Apply when writing any TypeScript in this project.
+description: Esposter TypeScript conventions — banned patterns (Omit over Except, forEach, parameter properties, the void operator), as unknown as treated like any (model the type instead; the rare mock and library-seam exceptions), declare over ! on class fields, arrow functions and overloads, neverthrow promise style, InvalidOperationError, guard clauses, exhaustive switch guards, enum naming/refs/values arrays, discriminant-keyed maps for polymorphic dispatch, and the string "" sentinel with the null-vs-undefined rules. Apply when writing any TypeScript in this project.
 ---
 
 # TypeScript Conventions
 
 ## Core Rules
 
-- `strict` mode + `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
-- **Strict equality only** — `===`/`!==`, never `==`/`!=`. For null checks use `=== null || === undefined` (or optional chaining), never `== null`.
-- `Omit` is **BANNED** — use `Except` from `type-fest` (import directly; not re-exported from `@esposter/shared`).
+- `strict` mode + `tseslint.configs.strictTypeChecked`. `any`, non-null assertions (`!`), and `==`/`!=` are lint errors (`no-explicit-any`, `no-non-null-assertion`, `eqeqeq`) — for `!` prefer a guard clause or optional chaining over a cast, and see Class Fields for the `field!: T` form.
+- `Omit` → `Except` from `type-fest`, enforced by `@typescript-eslint/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
-- **The `private` keyword is BANNED** — use ECMAScript `#` private members instead (see Private Members). `protected` is still allowed (no `#` equivalent for subclass access).
-- Non-null assertions (`!`) are **BANNED** — both the expression operator (`foo!.bar`) and the field definite-assignment assertion (`field!: T`, see Class Fields). Use optional chaining or guard clauses.
-- `.forEach()` is **BANNED** — use `for...of`.
-- `type` aliases for object shapes are **BANNED** — use `interface`.
+- **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
+- `.forEach()` is **BANNED** — use `for...of` (see Loops). Not lint-enforced; hold the line in review.
+- `type` aliases for object shapes → `interface` (`consistent-type-definitions`).
 - **Prefer non-mutating array methods** (copy versions returning a new array):
   - `arr.toSorted(fn)` not `[...arr].sort(fn)` — `sort()` **BANNED**
   - `arr.toReversed()` not `[...arr].reverse()` — `reverse()` **BANNED**
   - `arr.toSpliced(...)` not manual splice+spread — `splice()` **BANNED** for producing new arrays (still allowed for in-place mutation of store/reactive arrays)
   - `arr.with(index, value)` not `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
 - **`new Set` only for dedup** — use `.some()` for unique arrays. `Set` only when (a) deduplication is the goal, or (b) collection large enough that O(n) `.some()` hurts perf.
+- **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
 - Named imports from libraries, but only when not auto-imported by Nuxt/modules (`ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; all VueUse composables are auto-imported — never import manually).
 - **Use the `node:` protocol for Node.js built-ins** — `import { readFileSync } from "node:fs"`, never bare `"fs"`/`"path"`/`"crypto"`. Enforced by `unicorn/prefer-node-protocol`.
 - **Never import ambient globals** — `process`, `console`, `Buffer`, `URL`, `fetch`, etc. are already global; use them directly, never `import process from "node:process"`. Only import the built-ins that aren't ambient (`node:fs`, `node:path`, `node:crypto`, …).
@@ -29,6 +28,31 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **No `current*` caching of `.value`** just to use it once. If narrowing is needed after a guard, assign a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source is already non-reactive (e.g. a `readonly` prop field).
 - **Cloning** — `structuredClone(obj)` for deep clones; `Object.assign(structuredClone(obj), { ...updates })` to clone+override. Never `{ ...spread }` to clone a class instance (loses prototype). **Exception**: `structuredClone(new ClassName(...))` when a plain object is explicitly required (e.g. Vjsf rejects class instances) — add a comment explaining why.
 - **Boolean casting** — never `!!`; always `Boolean(value)`.
+
+## Type Assertions — `as unknown as` Is `any` With Extra Steps
+
+`as unknown as T` launders a value past every check the compiler would have run, which is the same hole `no-explicit-any` exists to close — it just isn't lint-enforceable, so hold the line in review. Treat every one as needing a **stated reason the type cannot be modelled**; the default answer is that it was simply never modelled:
+
+| Instead of asserting                            | Model it                                                                                                       |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| External/boundary data into a type              | Parse it with Zod — the `zod` skill owns this, and it is the one case where the cast is a **bug**              |
+| A generic seam (a client, a db, a search index) | Pass the type parameter (`Library<TDocument>`), or return the driver-agnostic supertype both sides satisfy     |
+| A prototype you are extending                   | `Object.assign(Proto, { method() {} })` — a runtime lookup needs no static claim, so nothing has to be lied to |
+| An untyped third-party package                  | An ambient `declare module "pkg"` — one `.d.ts` beats a suppression per import site                            |
+| Two shapes that "are really the same"           | One discriminated union, or a `satisfies`-checked adapter at the seam                                          |
+
+What survives is **seams the type system genuinely cannot express**. Most live in a mock or a `.test.ts`:
+
+- **A fake standing in for an SDK type with private or branded members** — an Azure SDK response carries `_response`/private brands a mock cannot structurally satisfy. This is the whole job of `azure-mock`/`db-mock`, and the `testing` skill sanctions it.
+- **A `vi.mock` factory replacing an overloaded function** — `vi.fn<typeof overloadedFn>()` cannot reproduce an overload set, hence `mockFn as unknown as typeof overloadedFn`.
+- **The mixin limitation** — a class expression extending a generic `TBase` cannot be inferred back to its mapped return type.
+
+A few are unavoidable in production source, and both known kinds share a tell — **TS refuses the single `as T` for want of overlap**, which is the compiler confirming there is nothing to narrow rather than you overruling it:
+
+- **A library result type that cannot express what it carries** — e.g. a search hit that declares none of the fields the index was told to store. There is no index signature to annotate against and no overlap to cast through.
+- **A transform whose key mapping is runtime-only** — `Object.fromEntries` over renamed keys types as a bare `Record`, which overlaps no class. Restate the shape only where something else already pins it (the source's own document type).
+
+Prefer a single `as T` whenever TS accepts it, and comment **what the compiler cannot see** — never "this is safe". Adding one to production source earns the same scrutiny as reaching for `any`: if the shape is worth asserting, it is worth declaring.
 
 ## Class Fields — `declare` over `!`
 
@@ -49,30 +73,9 @@ export class FileEntity {
 - **Keep the inline initializer** for fields that have one (`id: string = crypto.randomUUID()`) — never convert to `declare` (drops the runtime default); they're mutually exclusive.
 - Optional fields (`direction?: Direction`) are already correct — leave them.
 
-## Private Members — `#` over `private`
-
-Class-private fields and methods use the ECMAScript `#` prefix, never the TypeScript `private` keyword. `#` gives true runtime privacy (not just compile-time); `private` is erased at runtime.
-
-```ts
-export class MoveColumnCommand {
-  readonly #fromIndex: number;
-  #moveColumn(item: DataSourceItem) {
-    columns.splice(this.#fromIndex, 1);
-  }
-}
-```
-
-- `private readonly foo: T` → `readonly #foo: T` — **keep `readonly`**; it is allowed on `#` fields and still enforces immutability.
-- `private foo()` → `#foo()`; `private async *foo()` → `async *#foo()`.
-- Access is always `this.#foo` — there is no `this.foo` form for `#` members.
-- **`protected` stays** — `#` is inaccessible to subclasses, so members a subclass must reach (e.g. `protected doExecute`) keep `protected`.
-
 ## Regex
 
-- **Regex literals** `/pattern/flags` for static patterns (`prefer-regex-literals`).
-- **Always include the `u` flag** — `/pattern/u`, `/pattern/gu`, `/pattern/gmu`.
-- **Dynamic patterns only**: `new RegExp(template, flags)` when the pattern contains interpolation — `new RegExp(\`\\b${escaped}\\s\*\\(\`, "u")`.
-- **Named constants use `_REGEX` suffix** — `EMPTY_TEXT_REGEX`. Never `_RE`/`_PATTERN`.
+Literals for static patterns, `new RegExp(template, flags)` only when the pattern interpolates, and always the `u` flag — all three are lint errors otherwise (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the naming skill's rule.
 
 ## Function Syntax
 
@@ -105,8 +108,17 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 - **`try`/`catch` is BANNED** for fallible work — use neverthrow `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup, never `try`/`finally`); never `.catch()` chains. Full patterns, utilities, consumption rules, and Azure Functions logging/retry live in the **error-handling** skill.
 - **`.then()` exception**: acceptable only for a **promise queue** (serialising sequential async ops in a sync context, e.g. `chain = chain.then(async () => {...})`) — can't be expressed with `await` in a sync watcher/callback. All other `.then()`/`.catch()` must be converted.
-- Fire-and-forget: extract to a named `async` function and call without `await`.
-- **Never `void asyncFn()`** — when passing an async function to a sync callback slot (`onScopeDispose`, event listeners, Phaser callbacks), wrap with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction`. This satisfies `no-misused-promises` without suppressing the rule.
+- **Never `await import(...)`** for code-splitting — always static top-level `import`. Components are already chunk-split per component by the build, so a nested dynamic import only hides the dependency and (in dev) defers Vite discovery until first use, which can trigger a mid-session re-optimization that leaves chunks referencing stale dep hashes. Only touch `optimizeDeps` when the dependency's own docs instruct it. Sole exception: a library-mandated lazy-loader contract (e.g. CodeMirror `LanguageDescription.of({ load })`).
+
+### Replacing `void asyncFn()`
+
+`no-void` is an error (`.oxlintrc.json`, covering `.ts` and `.vue`); the only `void` in the codebase lives inside `getSynchronizedFunction`. It's banned because it silences `no-floating-promises` by discarding the promise — rejections go unhandled and the caller can't await completion. When you reach for it, stop at the first step that applies:
+
+1. **Can the enclosing function be `async`?** Make it `async` and `await`. This covers nearly every case, including Vue template/emit handlers (`@click`, `@confirm`) and any callback typed `Promisable<void>` — Vue doesn't care that a handler returns a promise, so `onClick: async () => { await ... }` needs no wrapper.
+2. **Do you own the callback's type?** Widen it to `Promisable<void>` (`type-fest`) and `await` it at the call site. Never force callers to `void` their async work.
+3. **Third-party sync slot you genuinely cannot change** (`onScopeDispose`, `addEventListener`, Phaser callbacks) — wrap with `getSynchronizedFunction(asyncFn)` (`#shared/util/function/getSynchronizedFunction`, explicit import). The **only** sanctioned fire-and-forget: it drops the promise just like `void`, so it's a last resort, not a shortcut past steps 1–2.
+
+If none apply (sync body, no callback slot to widen), restructure so the sync teardown stays sync and the promise is awaited last — don't `void` it.
 
 ## Error Handling
 
@@ -115,6 +127,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 - Use the resource name (`file.name`, entity ID) as `name`; fall back to the calling function's name (`deserializeJson.name`) if none better.
 - User-supplied JSON (uploads, external input): use Zod `safeParse` and throw `InvalidOperationError` on failure — never bare `JSON.parse` with a cast.
 - Validated endpoint data: `jsonDateParse` from `@esposter/shared` is acceptable.
+- **JSON containing dates** (localStorage, blobs, any `JSON.stringify` round trip): parse with `jsonDateParse` — its reviver restores ISO strings to `Date`s, so the Zod schema keeps plain `z.date()`. Never `JSON.parse` + `z.coerce.date()`.
 
 ## Control Flow
 
@@ -204,16 +217,22 @@ export const stringTransformationTypeSchema = z.enum(
 
 ## Enum Values Array
 
-- **Export a pluralized `Set` from the enum file only when `Object.values` is actually used** — `export const EnumNames = new Set(Object.values(EnumName))` at the bottom (after the Zod schema). Don't add pre-emptively if never iterated/checked. Use it at every call site.
+- **Export a pluralized values collection from the enum file only when it's actually used** — at the bottom (after the Zod schema). Never pre-emptively: an export with zero call sites is dead code.
+- **Plain `Object.values` array by default, `new Set` only when Set functionality is genuinely used** — enum values are unique by construction, so a Set adds nothing for iteration and forces `[...EnumNames]` spreads at every array call site (`v-for`, `.map`, `.filter`, `.join` all want arrays). Reach for a Set only when call sites actually use `.has()`/`.difference()` or the source can contain duplicates (e.g. `ContentTypes` dedupes mime-type values):
 
   ```ts
-  export const BooleanFormats = new Set(Object.values(BooleanFormat));
-  BooleanFormats.has(format); // O(1)
-  for (const f of BooleanFormats) { ... } // Set is iterable
-  Array.from(BooleanFormats, fn); // map over a Set
+  // Default — plain array; iterate, map, filter, join directly with no spreads
+  export const PostSortTypes = Object.values(PostSortType);
+
+  // Set — earned by real membership checks at the call sites
+  export const NumberFormats: ReadonlySet<NumberFormat> = new Set(Object.values(NumberFormat));
+  NumberFormats.has(format); // O(1)
   ```
 
-- **Never write `Object.values(SomeEnum)` inline** — use the exported `Set`.
+  In published packages (`db-schema` etc., isolatedDeclarations) annotate the array explicitly: `export const MessageTypes: readonly MessageType[] = Object.values(MessageType);`. In the app, let it infer.
+
+- **Never write `Object.values(SomeEnum)` inline** — use the exported array.
+- **The values array lives in the source's own file, never at a consumption site** — a `const FooTypes = Object.values(FooType)` declared locally in a service/component (or duplicated across two consumers) is the violation shape even when typed and named correctly; move it to the enum's file and import it. Same rule for map-derived collections: `export const FooDefinitions = Object.values(FooDefinitionMap)` sits at the bottom of the map's file. Exception: test files may derive values locally when the point of the test is independently re-deriving them (e.g. exhaustiveness assertions against a map).
 
 ## Iterating Non-Array Iterables (Set, Map, etc.)
 
@@ -228,11 +247,8 @@ export const stringTransformationTypeSchema = z.enum(
 
   Spread + `.map()` is only acceptable when a plain array is already the source.
 
-- **Never `new Set` just to call `.has()` on a small non-enum array** — if values are unique and the array is small, use `.some()`. `Set` only for enums or large collections.
-
 ## Loops — `for...of` + `.entries()`, Destructure, No Dead Vars
 
-- **`.forEach()` is BANNED** — use `for...of`.
 - **No index-based `for (let i = 0; i < arr.length; i++)`** for plain array iteration — use `for...of`. When the index is needed (parallel arrays, offsets), use `.entries()`: `for (const [i, item] of arr.entries())`. The `.entries()` iterator cost is negligible (tiny per-element pair alloc, JIT-friendly) versus the readability win — it does not "drop perf hugely".
 - **Index-based `for` stays** only when the loop genuinely isn't sequential array iteration: step counters (`i += 4`, `i += BATCH_SIZE`), pure counts (`for (let i = 0; i < 3; i++)`), `<=` bounds, multi-condition bounds, or in-body index mutation/lookahead (e.g. `line.charAt(i + 1)` then `i++`).
 - **Destructure in the binding position (loop var, function param) straight to the props you use** — don't bind the whole object then read its fields. `for (const [i, { id }] of files.entries())` not `for (const [i, file] of ...) { ...file.id... }`. Destructure multiple: `for (const [i, { name, size, type }] of files.entries())`. This _removes_ the intermediate binding, so it does **not** conflict with the "no unnecessary destructure" rule (which bans adding a separate `const { x } = obj` line for a single use). Binding-position destructure = fewer vars; a standalone destructure statement for one use = more syntax. Keep the whole binding only when the object is passed on as a whole (`set(user.id, user)`) or used too many ways to enumerate cleanly.
@@ -270,6 +286,8 @@ const baseUrl = IS_PRODUCTION ? PRODUCTION_URL : DEVELOPMENT_URL;
 
 - **Never `ref<EnumType | null>(null)`** — default to a sensible first value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`.
 - **Never `ref<EnumType>(EnumValue)`** — TypeScript infers the type from the value: `ref(ColumnType.String)`.
+- **Filter/selection refs where "nothing selected" is a real state** use the string-enum `""` sentinel — `ref<"" | EnumType>("")` — never `| null` or `| undefined`. Pair with an explicit "All …" select item (`value: ""`), never `clearable` (see the vuetify skill).
+- **Prefer inferred refs** — `ref("")`, `ref(0)`, `ref(EnumType.Value)`. Annotate only when the value space genuinely exceeds the seed: `ref<"" | EnumType>("")`, literal-union inputs like `ref<CreateInviteInput["maxUses"]>(0)`.
 
 ## `string` — Always Use `""` as Empty Sentinel
 
@@ -288,6 +306,16 @@ Prefer `string` with `""` as the absent/empty sentinel. Do not use `string | und
 - Browser API properties genuinely optional with no default (e.g. `MediaRecorder.mimeType`).
 - Vue Router param casts: `route.params.x as string | undefined` — normalise at the boundary, guard with `if (x)` immediately after.
 - Node.js `req.socket.remoteAddress` and similar network properties.
+
+## Sentinels Propagate End-to-End
+
+A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends the field, so the API input declares it **required** with the sentinel in its value space — never `.partial()`/`.optional()`/`.default()` machinery or `?? undefined` normalisation at the call site. The server truthiness-guards (`if (type) ...`). Minimal code: one value space from ref to query.
+
+- Plain `string` fields already contain `""` — reuse the source schema untouched: `entitySchema.pick({ actorUserId: true })`, non-partial.
+- Enum fields union the sentinel: `type: entitySchema.shape.type.or(z.literal(""))`.
+- **Numbers use `0`** when `0` has no domain meaning — invite `expireAfterMinutes`/`maxUses`: `0` = never expires / unlimited (`z.literal([...OPTIONS, 0])`, never `.nullable()`).
+- **The DB schema itself carries the sentinel** — `maxUses: integer().notNull().default(0)`, never a nullable column plus manual `|| null` mapping in the router. The DB schema is the source of truth for types (that's why we use Drizzle); the sentinel flows ref → input → row → read untouched. Only types with no empty value (timestamps) stay nullable, mapped once at the insert site.
+- Reserve `.default("")` for fields genuinely omitted by some callers (e.g. `cursor` on the first page request).
 
 ## `null` vs `undefined`
 
@@ -320,136 +348,40 @@ When checking `null` at a boundary, use `=== null` (strict equality).
 
 **Track selections by stable ID, not name or index** — names change, indices shift on delete/reorder. Use `entity.id` (UUID) as the key for selected/active items. A stale ID is harmless; a stale name/index is a bug.
 
-## Generic Definition Arrays — `as const` Without `satisfies`
+## Discriminant-Keyed Maps — `as const satisfies` a Mapped Type
 
-When a definition array has entries typed `Definition<T>` where `T` controls a **contravariant** position (e.g. a callback parameter `format: (value: ColumnStats[T]) => string`), `satisfies readonly Definition[]` widens each entry to `Definition<KeyUnion>` and fails on contravariance.
-
-**Fix**: drop `satisfies`, use `as const` alone. Each entry keeps its specific `Definition<"specificKey">` type from the `define*` helper.
+A collection of per-variant definitions is an **object keyed by the discriminant**, closed with `as const satisfies { [K in Discriminant]: Definition<K> }` — never a flat array, and never `satisfies readonly Definition[]`. A union-typed `satisfies` widens each entry's `T` to the full key union, which breaks on any contravariant position (a `format: (value: Values[T]) => string` callback param); the mapped type pins each entry to its own key, so it typechecks _and_ keeps the specific type.
 
 ```ts
-// satisfies readonly ColumnStatDefinition[] FAILS (widens T → function param too broad)
-// as const alone PASSES — preserves ColumnStatDefinition<"nullCount">, etc.
-export const ColumnStatDefinitions = [
-  defineColumnStat({ key: "nullCount", format: (value) => String(value), ... }),
-  ...
-] as const;
+export const FooDefinitionMap = {
+  bar: defineFoo({ key: "bar", compute: (context) => ..., format: (value) => String(value) }),
+  // ...
+} as const satisfies { [K in FooKey]: FooDefinition<K> };
+
+export const FooDefinitions = Object.values(FooDefinitionMap);
 ```
 
-At call sites where the entry is destructured (losing key↔format correlation), cast with `as never`:
+The same shape drives **polymorphic dispatch**. Never write a function that switches over a discriminant to call different logic per case — it concentrates every variant in one place and forces each new variant to touch it. Key a map by the discriminant instead, and let the dispatcher be one expression:
 
 ```ts
-format(item[key] as never); // safe: key and format always come from the same entry
+export const FooComputeMap = {
+  [FooType.Bar]: (item, { resolve }) => computeBar(resolve(item.sourceId), item),
+  [FooType.Baz]: (item, { resolve, find }) => { ... },
+} as const satisfies { [K in FooType]: (item: Extract<Foo, { type: K }>, context: ComputeContext) => Value };
+
+return FooComputeMap[foo.type](foo as never, { find, resolve });
 ```
+
+- Each per-variant function lives in its own co-located file; the map file imports them. Adding a variant = one new file + one map entry.
+- Export the `ComputeContext` interface so callers can implement it.
+- **`as never` at the call site** is required and safe wherever the key↔entry correlation is lost — dispatching by a runtime key (`Map[foo.type](foo as never)`), or destructuring an entry (`format(item[key] as never)`). TypeScript can't correlate the key with the entry's parameter type.
+- Discriminant narrowing inside an entry (`if (column.type !== ColumnType.Date) return null;`) gives type-safe subtype access without casts.
 
 ## Filter-Based Type Narrowing
 
 **No redundant type guards after a filtering condition** — if a `.filter()` predicate narrows the type (e.g. `filter((v) => typeof v === "number")`), the result is already `number[]`. Don't add `: v is number` or a cast inside the callback.
 
 Exception: when the predicate is a function reference (`filter(Boolean)`) TypeScript can't narrow, a type predicate is still needed.
-
-## Polymorphic Dispatch — No Switch Statements
-
-**NEVER** write a function that switches over a discriminant enum to call different logic per case ("type switch dispatcher") — it concentrates all variant logic in one place, prevents co-location, and forces every new variant to touch the central function.
-
-**Instead, use a `*ComputeMap`** where each entry is a compute function receiving the typed transformation and a context object:
-
-```ts
-// services/column/transformation/computeConvertToTransformation.ts (per-type, co-located with schema)
-export const computeConvertToTransformation = (value, t: ConvertToTransformation) => ...;
-
-// services/column/transformation/ColumnTransformationComputeMap.ts
-export interface ComputeContext {
-  computeSource: (sourceColumnId: string) => ColumnValue;
-  findSource: (sourceColumnId: string) => DataSource["columns"][number] | undefined;
-}
-
-type TransformationComputer<T extends ColumnTransformation> = (transformation: T, context: ComputeContext) => ColumnValue;
-
-export const ColumnTransformationComputeMap = {
-  [ColumnTransformationType.ConvertTo]: (transformation, { computeSource }) =>
-    computeConvertToTransformation(computeSource(transformation.sourceColumnId), transformation),
-  [ColumnTransformationType.DatePart]: (transformation, { computeSource, findSource }) => {
-    const sourceColumn = findSource(transformation.sourceColumnId);
-    if (sourceColumn?.type !== ColumnType.Date) return null;
-    // discriminant narrowing makes sourceColumn.format accessible
-    return computeDatePartTransformation(computeSource(transformation.sourceColumnId), transformation, sourceColumn.format);
-  },
-  // ...
-} as const satisfies {
-  [K in ColumnTransformationType]: TransformationComputer<Extract<ColumnTransformation, { type: K }>>;
-};
-
-// Dispatcher builds the context closure and calls the map — one expression:
-return ColumnTransformationComputeMap[column.transformation.type](column.transformation as never, { computeSource, findSource });
-```
-
-**Rules:**
-
-- Each per-type function lives in `services/<feature>/transformation/compute<TypeName>Transformation.ts`.
-- The map file (`<Noun>ComputeMap.ts`) imports all per-type functions; each entry is a compute function.
-- Export the `ComputeContext` interface so callers can implement it.
-- Use `as const satisfies { [K in TheType]: TransformationComputer<Extract<Union, { type: K }>> }` — each entry typed to its specific subtype.
-- Call site uses `as never` on the transformation — TypeScript can't correlate the discriminant key with the entry's expected param type.
-- Discriminant narrowing (`someColumn.type !== ColumnType.Date`) gives type-safe subtype field access in computers without casts.
-- Adding a variant requires only: (1) a new per-type file, (2) one new map entry.
-
-## Opt-In Shared Interfaces for Discriminated Union Members
-
-When some (not all) union members share a common field, define a shared interface + Zod schema that members **opt into** by extending — never force the field onto all members.
-
-```ts
-// shared/models/.../SourceColumnId.ts — opt-in base; factory takes the vjsf context key to filter the dropdown
-export interface SourceColumnId {
-  sourceColumnId: string;
-}
-export const createSourceColumnIdSchema = (getItems = ColumnFormVjsfContextPropertyNames["context.columnItems"]) =>
-  z.object({
-    sourceColumnId: z.string().meta({ layout: { comp: "select", getItems }, title: "Source Column" }),
-  }) satisfies z.ZodType<SourceColumnId>;
-
-// shared/models/.../SourceColumnIds.ts — multi-source variant
-export interface SourceColumnIds {
-  sourceColumnIds: string[];
-}
-export const createSourceColumnIdsSchema = (getItems = ColumnFormVjsfContextPropertyNames["context.columnItems"]) =>
-  z.object({
-    sourceColumnIds: z.array(z.string()).meta({ layout: { getItems }, title: "Source Columns" }),
-  }) satisfies z.ZodType<SourceColumnIds>;
-
-// Each transformation spreads the factory's .shape, passing a pre-filtered context key to constrain column types:
-export const datePartTransformationSchema = z
-  .object({
-    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
-    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]).shape,
-    part: datePartTypeSchema,
-  })
-  .meta({ title: ColumnTransformationType.DatePart }) satisfies z.ZodType<DatePartTransformation>;
-
-// A transformation needing no source column uses z.object({...}) directly:
-export const mathOperationTransformationSchema = z.object({
-  first: mathOperandSchema,
-  steps: z.array(mathStepSchema).default([]),
-  type: z.literal(ColumnTransformationType.MathOperation),
-});
-```
-
-**Rules:**
-
-- Each shared interface/schema lives in its own file (one export per file).
-- Members spread the factory's `.shape` (never `.extend()` — see zod skill).
-- Members not needing the field use `z.object({...})` directly.
-- `SourceColumnId` (singular) for single-source, `SourceColumnIds` (plural) for multi-source.
-- **Column-type filtering** happens by passing the pre-filtered vjsf context key into the factory (`createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"])`), **not** via any `.meta()` field. `GlobalMeta` (`shared/types/zod.d.ts`) only carries `layout` (+ ajv keywords).
-- **`ApplicableColumnTypes`** — interface in `shared/models/.../transformation/ApplicableColumnTypes.ts` (`readonly applicableColumnTypes: readonly ColumnType[]`). Used **only by non-schema definitions** (`ColumnStatisticsDefinition` via `defineColumnStatistics` in `ColumnStatisticsDefinitionMap`) — never by Zod schemas:
-
-  ```ts
-  export interface ApplicableColumnTypes { readonly applicableColumnTypes: readonly ColumnType[]; }
-  export interface ColumnStatisticsDefinition<T extends ColumnStatisticsKey = ColumnStatisticsKey>
-    extends ApplicableColumnTypes { compute: ...; format: ...; key: T; title: string; }
-
-  // stat definition usage (NOT a schema):
-  defineColumnStatistics({ applicableColumnTypes: [ColumnType.Number], compute: ..., format: ..., key: "average", title: "..." })
-  ```
 
 ## Configuration Interfaces — `Pick` from Source Types
 
@@ -465,3 +397,17 @@ Use `Pick` for all properties derived directly from the source type. Keep explic
 - `Parameters<SourceType["method"]>` tuples — no readable property to pick
 - `Parameters<SourceType["method"]>[n]` — same
 - Plain primitives (`number`, `string`) representing constructor args with no matching readable property on the source type
+
+## Missing `NuxtConfig` Module Keys — Augment `nuxt.d.ts`, Never Touch tsconfig
+
+When `NuxtConfig["x"]` errors in `packages/app/configuration/*.ts` because a Nuxt module's config key isn't picked up (the module relies on the generated `.nuxt/types/modules.d.ts` instead of shipping its own `nuxt/schema` augmentation), **NEVER edit `tsconfig.root.json` or any tsconfig `include`**. Add the key to the existing `declare module "nuxt/schema"` block in `packages/app/shared/types/nuxt.d.ts`, importing the module's exported `ModuleOptions`:
+
+```ts
+import type { ModuleOptions as ContentModuleOptions } from "@nuxt/content";
+
+declare module "nuxt/schema" {
+  interface NuxtConfig {
+    content?: Partial<ContentModuleOptions>;
+  }
+}
+```

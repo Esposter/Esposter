@@ -22,7 +22,7 @@ const { editedItem, isDirty, isEditFormValid, isFullScreenDialog, isSavable, nam
   defineProps<EditFormDialogProps<T>>();
 const emit = defineEmits<{
   close: [];
-  delete: [onComplete: () => void];
+  delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
   "update:edit-form": [value: InstanceType<typeof VForm>];
   "update:fullscreen-dialog": [value: boolean];
@@ -30,6 +30,7 @@ const emit = defineEmits<{
 const editForm = ref<InstanceType<typeof VForm>>();
 const confirmCloseDialog = ref(false);
 const formId = useId();
+useConfirmBeforeNavigation(() => isDirty);
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;

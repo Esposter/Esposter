@@ -1,10 +1,13 @@
 import type { Promisable } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { withFinalizerAsync } from "@esposter/shared";
+import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
+import { createExponentialBackoff, withFinalizerAsync } from "@esposter/shared";
 
 export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
   const online = useOnline();
+  // The waypoint re-arms via onComplete even when the query fails, so pace retries instead of spinning hot
+  const executeWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
   const items = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {
@@ -58,7 +61,11 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
   ) => {
     await withFinalizerAsync(async () => {
       if (!online.value) return;
-      const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
+      const {
+        hasMore: newHasMore,
+        items: newItems,
+        nextCursor: newNextCursor,
+      } = await executeWithBackoff(() => query(nextCursor.value));
       hasMore.value = newHasMore;
       nextCursor.value = newNextCursor;
       items.value.push(...newItems);

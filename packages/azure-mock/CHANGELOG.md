@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
+
+### Bug Fixes
+
+* builds ([257b3e5](https://github.com/Esposter/Esposter/commit/257b3e505310d4dffb1676db75d8b0b8c7ff9bb3))
+* docs + skills ([fd274a1](https://github.com/Esposter/Esposter/commit/fd274a1db9f48dc3816a4ab00abe718f377605df))
+* lint ([5dbeaea](https://github.com/Esposter/Esposter/commit/5dbeaea947d76a2f5d820291572f695d14a12ddc))
+* regressions ([eae1fa7](https://github.com/Esposter/Esposter/commit/eae1fa7013c04e9919385130ec570d6c96d65639))
+* snapshots ([9764b23](https://github.com/Esposter/Esposter/commit/9764b23ba8be5cb84229baf997f54ce00c9cef98))
+* types and partial lint ([b672a10](https://github.com/Esposter/Esposter/commit/b672a10ba489be55b40c1ef11b6aaef4c7e8f233))
+
+### Features
+
+* migrate to service bus ([60572d9](https://github.com/Esposter/Esposter/commit/60572d945321e2953abd3bb43f61553c7221f43d))
+
 ## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
 
 ### Bug Fixes

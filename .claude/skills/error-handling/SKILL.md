@@ -11,6 +11,8 @@ description: Esposter Error Handling Conventions — neverthrow getResult/getRes
 
 Never write `try` anywhere (no `try`/`catch`, no `try`/`finally`) in any code — components, composables, stores, server routes, tRPC routers. Use `getResult`/`getResultAsync` + chain methods; for cleanup use `withFinalizer`/`withFinalizerAsync`.
 
+Only exception: published package README examples aimed at external consumers may use plain `try`/`finally` — a doc example shouldn't force consumers to install `@esposter/shared`.
+
 ## Core Utility
 
 ```typescript
@@ -23,7 +25,8 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 ```
 
 - Always use `getResult(() => expr)` / `getResultAsync(() => asyncExpr)`. Never call `fromThrowable` or `ResultAsync.fromPromise` directly.
-- Never leave a `Result`/`ResultAsync` unhandled — finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
+- Never leave a `Result`/`ResultAsync` unhandled — enforced by `neverthrow/must-use-result` (eslint, error). Finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
+- `.isOk()` / `.isErr()` are BANNED — branch with `.match(...)` instead so both branches are handled in one place. To rethrow/cleanup on failure, `throw` inside the err handler (works in sync and async handlers alike); to fall back, `.unwrapOr(fallback)`.
 - Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`.
 - Never `void` a ResultAsync — always `await` (ResultAsync never rejects, so awaiting is safe).
 - Never end a fire-and-forget chain with `.orTee(handler)` alone (lint flags it) — use `.match(noop, handler)`.
@@ -74,16 +77,18 @@ return getResultAsync(() => auth.save(value)).match(
 
 ### Discriminated error types
 
-For `instanceof` checks on the error, use `.match()` or `.isErr()`:
+For `instanceof` checks on the error, branch inside the `.match()` err handler (never `.isErr()` + `.error`):
 
 ```typescript
-const result = await getResultAsync(() => op());
-if (result.isErr()) {
-  if (result.error instanceof DOMException) createAlert(result.error.message, "error");
-  else console.error(result.error);
-  return;
-}
-const value = result.value;
+await getResultAsync(() => op()).match(
+  (value) => {
+    doSomethingWith(value);
+  },
+  (error) => {
+    if (error instanceof DOMException) createAlert(error.message, "error");
+    else console.error(error);
+  },
+);
 ```
 
 **A thrown value you want to `instanceof`-check on the err branch must extend `Error`.** `getResult`/`getResultAsync` route throws through `toAppError`, which passes `instanceof Error` through untouched but wraps anything else in `new Error(String(x), { cause: x })`. So a custom control-flow sentinel thrown to be caught later (e.g. an `ExitSignal` carrying an exit code) must `extends Error` — otherwise the err branch receives a plain `Error` and your `instanceof ExitSignal` silently fails (the original lands on `.cause`).
@@ -209,4 +214,8 @@ await withFinalizerAsync(
 );
 ```
 
-For simple loading flags around a `ResultAsync`, set the flag after `await` (ResultAsync resolves to a `Result` instead of rejecting). `useInFlight()` handles loading state automatically — prefer it over manual `isLoading` flags.
+For simple loading flags around a `ResultAsync`, set the flag after `await` (ResultAsync resolves to a `Result` instead of rejecting).
+
+## Client Reads/Writes — Don't Hand-Roll the Chain
+
+Most user-facing client reads/writes already have the `getResultAsync` + error-alert chain built in: `useQuery` / `useMutation` (`app/composables/shared/`). Reach for those before writing your own chain around a `$trpc` call — canonical reference and the documented raw-call exceptions: `content/docs/architecture/client-data.md`.

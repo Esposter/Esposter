@@ -1,11 +1,11 @@
 ---
 name: formatting
-description: Esposter code formatting — blank-line placement, comment attachment and style, import grouping, and LF line endings. Apply when writing or editing any file's whitespace, comments, import order, or line endings.
+description: Esposter code formatting — blank-line placement around consts/returns/blocks, the test-file exception, and comment attachment/content rules (comment only exceptional behaviour, describe the present never the history, keep error-text quotes). Apply when writing or editing any file's whitespace or comments.
 ---
 
 # Formatting
 
-Cross-cutting whitespace, comment, and line-ending rules for all files. Language/framework-specific structure lives in `vue`, `typescript`, `file-organization`; this skill owns only spacing and comments.
+Cross-cutting whitespace and comment rules for all files. Language/framework-specific structure lives in `vue`, `typescript`, `file-organization`; how to write a skill doc lives in `skill-authoring`. This skill owns only spacing and comments.
 
 ## Blank Lines
 
@@ -13,20 +13,7 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 - **No blank line before a `return`** that immediately follows a `const` in a small function (including composables that return a function directly — `return` follows the last setup line with no gap).
 - **Blank line after a closing `}`** of an `if`/`for`/block statement — unless it is the last statement in its scope or immediately followed by another opening block. (Exception: consecutive top-level `watch`/lifecycle-hook registrations in a Vue `<script setup>` each get a blank line between them — see the `vue` skill.)
 - **No blank lines within Vue templates.** A blank line inserted to visually separate template sections is a smell that the component owns more than one responsibility — extract each section into its own focused child component rather than spacing them apart. See the `vue-component-patterns` skill (maximal granularity / one concern per component).
-- **Imports** — a single blank line separates the `import type` group from the value `import` group. That is the _only_ blank line allowed among imports. Never insert a blank line **between two `import type` lines** (the whole type group stays contiguous, even when mixing external and `@/` alias sources) nor between value imports; all imports of the same kind stay contiguous regardless of source (`external-pkg`, `#shared`, `@vueuse/*`, `@/`).
-
-  ```ts
-  // CORRECT — type group contiguous, single blank before value group
-  import type { Foo } from "external-pkg";
-  import type { Bar } from "@/models/Bar";
-
-  import { baz } from "#shared/services/baz";
-
-  // WRONG — blank line splitting the type group
-  import type { Foo } from "external-pkg";
-
-  import type { Bar } from "@/models/Bar";
-  ```
+- **Imports** — order and blank lines are autofixed by `perfectionist/sort-imports` (`packages/configuration/eslint/plugins/perfectionist.js`); `pnpm lint:fix` settles it. `internalPattern: []` is what collapses every source (`external-pkg`, `#shared`, `@vueuse/*`, `@/`) into one bucket per kind, so the fixer produces a contiguous `import type` group, one blank line, then a contiguous value group. Don't hand-place import blank lines.
 
 ## Comments
 
@@ -69,7 +56,7 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 
   Keep comments for genuinely non-obvious _why_: a workaround for a specific external bug/quirk, a subtle ordering/race constraint, an overlayfs/kernel/platform footgun, a security boundary. When in doubt, prefer deleting — a wrong-but-confident comment is worse than none.
 
-- **CRITICAL — comments describe the present, never the history.** A comment states what the code does and why it does it _now_ — never how it used to work, what it replaced, or what a prior approach did. The diff/git history is the changelog; a comment is not. Delete any clause that only makes sense as a before/after story — it rots the moment the "before" is forgotten and adds nothing to a reader who only sees the current code. Strip phrases like `equivalent to the old X`, `replaces the former Y`, `now that Z, the old reason is moot`, `used to …`, `previously made …`, `no longer needed since …`. Rewrite to assert the current behaviour directly.
+- **CRITICAL — comments describe the present, never the history.** A comment states what the code does and why it does it _now_ — never how it used to work, what it replaced, or what a prior approach did. The diff/git history is the changelog; a comment is not. Delete any clause that only makes sense as a before/after story — it rots the moment the "before" is forgotten and adds nothing to a reader who only sees the current code. Strip phrases like `equivalent to the old X`, `replaces the former Y`, `now that Z, the old reason is moot`, `used to …`, `previously made …`, `no longer needed since …`. Rewrite to assert the current behaviour directly. This includes **migration/roadmap state**: never reference roadmap phases, "until X lands/renames", "folds in later", or transitional wiring in code comments — once a migration ships, those comments are stale history; sweep them in the same change that completes the migration (the roadmap/spec doc is where phase history lives). Mention a rejected **alternative** only when the reader needs it to not "fix" the code back to it — one clause on why it wasn't adopted, nothing more.
 
   ```ts
   // WRONG — narrates removed behaviour
@@ -88,19 +75,7 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 - **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Trim it to the minimal identifying fragment; drop surrounding example values.
 - **Don't fight the comment-capitalization hook** — a hook capitalizes the first letter of every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine. Only avoid starting a wrapped line with a case-sensitive code identifier the hook would corrupt — reword those.
 
-## Skill Doc Examples
+## Related
 
-- **Code examples in skill docs must use generic placeholders** — `Foo`/`Bar`/`baz`, `external-pkg`, `@/models/Bar`, etc. NEVER paste the concrete identifiers, package names, or file paths from the change that prompted the note. A skill is a reusable convention, not a changelog; task-specific names make the rule read as a one-off. Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine since they describe a class of import, not a specific symbol.
-
-## Declaration Layout
-
-- **Interfaces/types at the top** — within a `.vue` `<script setup>` or `.ts` module, group all local `interface`/`type` declarations together at the top of the block (after imports), before the runtime `const`/logic. Don't interleave a stray interface between logic blocks.
-
-## Line Endings
-
-- All files must use **LF** line endings (`\n`), not CRLF.
-- The `Write` tool on Windows always produces CRLF. **Immediately after every `Write` call**, convert:
-  ```bash
-  sed -i 's/\r//' "path/to/file"
-  ```
-  For multiple files: `find "path/to/dir" -name "*.md" | xargs -I{} sed -i 's/\r//' "{}"`.
+- Writing skill docs themselves (enforcer rule, generic placeholders, declaration layout) — see the `skill-authoring` skill.
+- **Line endings** are enforced by `.gitattributes` (`text eol=lf` for `.ts`/`.vue`/`.js`/`.json`/`.md`/`.yaml`/`.sh`; `.bat`/`.cmd`/`.ps1` are deliberately `crlf`) and settled by `oxfmt` (`pnpm format`). Never hand-convert line endings.

@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-/* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { VueWrapper } from "@vue/test-utils";
 import type { Promisable } from "type-fest";
 
@@ -133,7 +132,7 @@ describe(useOnlineSubscribable, () => {
   test("awaits async cleanup before re-calling callback on source change", async () => {
     expect.hasAssertions();
 
-    const { promise, resolve: resolveCleanup } = Promise.withResolvers<void>();
+    const { promise, resolve: resolveCleanup }: PromiseWithResolvers<void> = Promise.withResolvers();
     const asyncCleanup = vi.fn<() => Promise<void>>(() => promise);
     callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() => asyncCleanup);
     await mountSubscribable();
@@ -193,7 +192,7 @@ describe(useOnlineSubscribable, () => {
   test("awaits async cleanup before re-establishing callback when coming back online", async () => {
     expect.hasAssertions();
 
-    const { promise, resolve: resolveCleanup } = Promise.withResolvers<void>();
+    const { promise, resolve: resolveCleanup }: PromiseWithResolvers<void> = Promise.withResolvers();
     const asyncCleanup = vi.fn<() => Promise<void>>(() => promise);
     callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() => asyncCleanup);
     await mountSubscribable();

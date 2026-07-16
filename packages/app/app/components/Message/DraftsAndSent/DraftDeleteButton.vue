@@ -14,7 +14,7 @@ const { clearDraft } = inputStore;
 
 <template>
   <StyledDeleteFormDialog
-    :card-props="{ title: 'Delete draft', text: 'Are you sure you want to delete this draft?' }"
+    :card-props="{ title: 'Delete draft' }"
     @delete="
       (onComplete) => {
         clearDraft(draftItem.room.id);
@@ -25,5 +25,6 @@ const { clearDraft } = inputStore;
     <template #activator="{ updateIsOpen }">
       <MessageDraftsAndSentActionButton icon="mdi-delete-outline" text="Delete draft" @click="updateIsOpen(true)" />
     </template>
+    Are you sure you want to delete this draft?
   </StyledDeleteFormDialog>
 </template>

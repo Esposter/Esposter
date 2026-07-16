@@ -1,0 +1,30 @@
+<script setup lang="ts">
+import type { Resource } from "@esposter/db-schema";
+
+import { RoutePath } from "@esposter/shared";
+
+interface ResourceDeleteDialogProps {
+  remove: () => Promise<boolean>;
+  resource: Resource;
+}
+
+const isOpen = defineModel<boolean>({ default: false });
+const { remove, resource } = defineProps<ResourceDeleteDialogProps>();
+</script>
+
+<template>
+  <StyledDeleteFormDialog
+    v-model="isOpen"
+    :card-props="{ title: 'Delete resource' }"
+    :confirm-name="resource.name"
+    @delete="
+      async (onComplete) => {
+        const isDeleted = await remove();
+        onComplete(isDeleted);
+        if (isDeleted) await navigateTo(RoutePath.ResourcesAll);
+      }
+    "
+  >
+    Deleting this resource cannot be undone.
+  </StyledDeleteFormDialog>
+</template>

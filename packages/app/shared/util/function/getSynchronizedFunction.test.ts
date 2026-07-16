@@ -2,15 +2,13 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { describe, expect, test, vi } from "vitest";
 
 describe(getSynchronizedFunction, () => {
-  test("calls the original function", async () => {
+  test("calls the original function with the forwarded arguments", () => {
     expect.hasAssertions();
 
-    const value = true;
-    const fn = vi.fn<() => Promise<boolean>>().mockResolvedValue(value);
-    const synchronizedFunction = getSynchronizedFunction(fn);
+    const fn = vi.fn<(value: string) => Promise<string>>().mockResolvedValue("");
 
-    synchronizedFunction();
+    getSynchronizedFunction(fn)("");
 
-    await expect(fn.apply(this)).resolves.toBe(value);
+    expect(fn).toHaveBeenCalledExactlyOnceWith("");
   });
 });

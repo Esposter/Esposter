@@ -35,6 +35,19 @@ describe("like", () => {
     expect(readPost.noLikes).toBe(value);
   });
 
+  test("fails create with existing like", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await likeCaller.createLike({ postId: newPost.id, value });
+
+    await expect(
+      likeCaller.createLike({ postId: newPost.id, value: updatedValue }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Like, JSON.stringify({ postId: newPost.id, value: updatedValue })).message}]`,
+    );
+  });
+
   test("updates", async () => {
     expect.hasAssertions();
 
