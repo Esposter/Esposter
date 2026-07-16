@@ -87,7 +87,7 @@ const share = async () => {
         rows="3"
         :rules="[rules.maxLength(MESSAGE_MAX_LENGTH)]"
       />
-      <span op-medium-emphasis text-caption>The public link is posted as your own message in the room.</span>
+      <span text-caption op-medium-emphasis>The public link is posted as your own message in the room.</span>
     </div>
   </StyledFormDialog>
 </template>

@@ -2,10 +2,10 @@ import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCoun
 import type { ResourceListFilters } from "@/models/resource/list/ResourceListFilters";
 import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
+import type { Except } from "type-fest";
 
 import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
 import { getResultAsync, noop } from "@esposter/shared";
-
 // The summary cards read every filter except `types` — the cards are what sets it, so grouping by a type
 // The user already narrowed to would only ever render the one card they are standing on
 export const useReadResourceTypeCounts = ({
@@ -14,7 +14,7 @@ export const useReadResourceTypeCounts = ({
   updatedAfter = ref<Date>(),
   updatedBefore = ref<Date>(),
   updatedFilter = ref<"" | ResourceUpdatedFilter>(""),
-}: Partial<Omit<ResourceListFilters, "types">> = {}) => {
+}: Partial<Except<ResourceListFilters, "types">> = {}) => {
   const { $trpc } = useNuxtApp();
   const counts = ref<ResourceTypeCount[]>([]);
   const isLoading = ref(false);

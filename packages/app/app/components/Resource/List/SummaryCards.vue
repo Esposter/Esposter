@@ -16,7 +16,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
 </script>
 
 <template>
-  <div flex-1 overflow-y-auto p-4>
+  <div p-4 flex-1 overflow-y-auto>
     <StyledSkeleton v-if="isLoading" type="card@3" />
     <StyledEmptyState
       v-else-if="error"
@@ -41,7 +41,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
             <v-icon size="x-large" :icon="ResourceDefinitionMap[type].icon" />
             <div flex flex-col min-w-0>
               <span text-h5>{{ count }}</span>
-              <span op-medium-emphasis truncate>
+              <span truncate op-medium-emphasis>
                 {{ ResourceDefinitionMap[type].title }} {{ pluralize("resource", count) }}
               </span>
             </div>

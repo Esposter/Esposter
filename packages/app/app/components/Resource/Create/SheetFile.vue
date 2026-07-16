@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 
 import { DataSourceTypes } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { SHEET_IMPORT_PREVIEW_ROW_COUNT } from "@/services/resource/constants";
@@ -67,8 +67,8 @@ const onUpdateFile = async (newFile: File | File[]) => {
 </script>
 
 <template>
-  <div ref="dropZone" flex flex-col gap-2 rd b-2 b-dashed p-4 :b-primary="isOverDropZone" :b-border="!isOverDropZone">
-    <span op-medium-emphasis text-caption>
+  <div ref="dropZone" p-4 b-2 rd b-dashed flex flex-col gap-2 :b-primary="isOverDropZone" :b-border="!isOverDropZone">
+    <span text-caption op-medium-emphasis>
       Drop a {{ accept }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
     </span>
     <v-file-input
@@ -84,7 +84,7 @@ const onUpdateFile = async (newFile: File | File[]) => {
       @update:model-value="onUpdateFile"
     />
     <template v-if="sheetResource">
-      <span op-medium-emphasis text-caption>
+      <span text-caption op-medium-emphasis>
         Preview — first {{ previewRows.length }} of {{ sheetResource.data.rows.length }} rows
       </span>
       <v-data-table density="compact" hide-default-footer :headers="previewHeaders" :items="previewRows" />
