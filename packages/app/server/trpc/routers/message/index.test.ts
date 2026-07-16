@@ -813,6 +813,23 @@ describe("message", () => {
 
       expect(createdMessage).toBeDefined();
     });
+
+    test("second message within slowmode window from someone who can manage messages succeeds", async () => {
+      expect.hasAssertions();
+
+      // Slowmode throttles the room, not its moderators — the owner sends as fast as they like
+      const newRoom = await roomCaller.createRoom({ name });
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 2 });
+      const userId = getMockSession().user.id;
+      const message = getMessage(userId);
+      vi.advanceTimersByTime(1);
+      await messageCaller.createMessage({ message, roomId: newRoom.id });
+      vi.advanceTimersByTime(1);
+
+      const createdMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+
+      expect(createdMessage).toBeDefined();
+    });
   });
 
   describe("createMessage read-only guard", () => {
