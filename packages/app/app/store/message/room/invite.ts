@@ -13,6 +13,12 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   const storeInvite = (roomId: string, invite: InviteInMessage | undefined) => {
     invites.value.set(roomId, invite);
   };
+  // Reads seed only when absent so a createInvite that raced ahead of a slow readMyInvite
+  // Keeps the freshly regenerated link — the map is source of truth once any surface populated it
+  const seedInvite = (roomId: string, invite: InviteInMessage | undefined) => {
+    if (invites.value.has(roomId)) return;
+    storeInvite(roomId, invite);
+  };
   const createInvite = async (input: CreateInviteInput) => {
     await executeCreateInviteMutation(() => $trpc.room.createInvite.mutate(input), {
       onSuccess: (newInvite) => {
@@ -24,6 +30,7 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   return {
     createInvite,
     invites,
+    seedInvite,
     storeInvite,
   };
 });
