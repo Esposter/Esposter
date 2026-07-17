@@ -9,6 +9,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { createBoundProgram } from "@@/server/trpc/routers/createBoundProgram.test";
 import { programRouter } from "@@/server/trpc/routers/program";
+import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { AzureEntityType, AzureTable, resources, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
@@ -22,6 +23,7 @@ describe("survey", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;
+  let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   const name = "name";
   const model = "model";
@@ -65,6 +67,7 @@ describe("survey", () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(surveyRouter)(mockContext);
     programCaller = createCallerFactory(programRouter)(mockContext);
+    resourceCaller = createCallerFactory(resourceRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
   });
 
@@ -91,7 +94,7 @@ describe("survey", () => {
     expect(content).toStrictEqual({ model, settings });
   });
 
-  test("clears its response partition when the resource is deleted", async () => {
+  test("clears its response partition when the resource is purged", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
@@ -107,10 +110,13 @@ describe("survey", () => {
       rowKey: crypto.randomUUID(),
     });
 
+    // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
+    await caller.deleteResource({ id: newResource.id });
+
     expect(MockTableDatabase.get(AzureTable.SurveyResponses)?.size).toBe(1);
 
-    // Respondents' answers are the survey's own data, so they die with it instead of orphaning forever
-    await caller.deleteResource({ id: newResource.id });
+    // Respondents' answers are the survey's own data, so purge destroys them instead of orphaning forever
+    await resourceCaller.purgeResource({ id: newResource.id });
 
     expect(MockTableDatabase.get(AzureTable.SurveyResponses)?.size).toBe(0);
   });
