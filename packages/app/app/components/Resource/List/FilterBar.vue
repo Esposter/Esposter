@@ -13,6 +13,8 @@ const { hasActiveFilters } = defineProps<ResourceListFilterBarProps>();
 const types = defineModel<ResourceType[]>("types", { required: true });
 const status = defineModel<"" | ResourceStatusFilter>("status", { required: true });
 const updatedFilter = defineModel<"" | ResourceUpdatedFilter>("updatedFilter", { required: true });
+const tagName = defineModel<string>("tagName", { required: true });
+const tagValue = defineModel<string>("tagValue", { required: true });
 const updatedAfter = defineModel<Date | undefined>("updatedAfter", { required: true });
 const updatedBefore = defineModel<Date | undefined>("updatedBefore", { required: true });
 const emit = defineEmits<{ clear: [] }>();
@@ -25,9 +27,13 @@ const isStatusPillVisible = computed(
 const isUpdatedPillVisible = computed(
   () => Boolean(updatedFilter.value) || addedFilterTypes.value.includes(ResourceListFilterType.Updated),
 );
+const isTagPillVisible = computed(
+  () => Boolean(tagName.value) || addedFilterTypes.value.includes(ResourceListFilterType.Tag),
+);
 // Keyed by filter type so adding a new ResourceListFilterType is a compile error here instead of a silent fallthrough
 const filterTypeVisibilityMap: Record<ResourceListFilterType, ComputedRef<boolean>> = {
   [ResourceListFilterType.Status]: isStatusPillVisible,
+  [ResourceListFilterType.Tag]: isTagPillVisible,
   [ResourceListFilterType.Updated]: isUpdatedPillVisible,
 };
 const availableFilterTypes = computed(() =>
@@ -35,7 +41,10 @@ const availableFilterTypes = computed(() =>
 );
 const removeFilter = (filterType: ResourceListFilterType) => {
   if (filterType === ResourceListFilterType.Status) status.value = "";
-  else {
+  else if (filterType === ResourceListFilterType.Tag) {
+    tagName.value = "";
+    tagValue.value = "";
+  } else {
     updatedFilter.value = "";
     updatedAfter.value = undefined;
     updatedBefore.value = undefined;
@@ -55,6 +64,12 @@ const clearFilters = () => {
       v-if="isStatusPillVisible"
       v-model="status"
       @remove="removeFilter(ResourceListFilterType.Status)"
+    />
+    <ResourceListTagFilterPill
+      v-if="isTagPillVisible"
+      v-model:tag-name="tagName"
+      v-model:tag-value="tagValue"
+      @remove="removeFilter(ResourceListFilterType.Tag)"
     />
     <ResourceListUpdatedFilterPill
       v-if="isUpdatedPillVisible"

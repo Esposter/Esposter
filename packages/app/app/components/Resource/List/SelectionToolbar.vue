@@ -37,7 +37,7 @@ const confirmName = computed(() =>
           Delete ({{ selectedResources.length }})
         </v-btn>
       </template>
-      Deleting {{ selectedLabel }} cannot be undone.
+      Deleting {{ selectedLabel }} moves them to the Recycle bin for 30 days.
       <v-list density="compact">
         <v-list-item v-for="{ id, name } of selectedResources" :key="id" :title="name" />
       </v-list>

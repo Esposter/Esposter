@@ -1,4 +1,4 @@
-import type { FileEntity, FileSasEntity, Resource, ResourcePublication } from "@esposter/db-schema";
+import type { FileEntity, FileSasEntity, Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 export interface ResourceMutations {
   deleteFile?: (input: { blobPath: string; id: string }) => Promise<void>;
@@ -18,5 +18,6 @@ export interface ResourceMutations {
   readResourceViewCount?: (input: { id: string }) => Promise<number>;
   saveResourceContent: (input: { content: unknown; contentVersion: number; id: string }) => Promise<Resource>;
   unpublishResource?: (input: { id: string }) => Promise<Resource>;
-  updateResource: (input: { id: string; name: string }) => Promise<Resource>;
+  // Tags replace the whole record rather than merging, which is Azure's own tag update semantics
+  updateResource: (input: { id: string; name: string; tags?: ResourceTags }) => Promise<Resource>;
 }

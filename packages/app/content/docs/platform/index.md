@@ -25,7 +25,12 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Resource page parity](/docs/platform/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, type-the-name delete guard, save-conflict surface
 - [Share to esbabbler](/docs/platform/share-to-esbabbler) — Share command posting a published resource's public link into a room you pick
 - [Notifications bell](/docs/platform/notifications) — session-scoped operation-outcome toasts + app-bar bell panel
-- [Global search](/docs/platform/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, prefix-match ranking
+- [Global search](/docs/platform/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, relevance-ranked results
+- [Global search relevance](/docs/platform/global-search-relevance) — `pg_trgm` trigram index and `similarity()` ranking, so a typo still finds its resource
+- [Favorites & recents](/docs/platform/favorites-and-recents) — server-side stars and Home tabs over recently _viewed_ resources
+- [Resource tags](/docs/platform/tags) — name:value pairs in Essentials, edited in place, filterable on `/all`
+- [Recycle bin](/docs/platform/recycle-bin) — soft delete with restore, permanent purge, and a 30-day timer sweep
+- [Activity log](/docs/platform/activity-log) — the per-resource audit trail blade, in Azure Table Storage
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Create from file](/docs/platform/create-from-file) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
@@ -65,3 +70,4 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - FileAssets capability — Survey's `{id}/files` SAS machinery promoted onto the resource factory, adopted by Email and Webpage through a GrapesJS Asset Manager adapter (hosted images instead of base64)
 - Publish parity for the remaining visual types — Email (`/view/email/[id]` browser copy via save-time MJML capture) and Flowchart (read-only VueFlow render) both opted into Publishable; Sheet and TodoList stay non-publishable by design
 - Survey invite blocks in the webpage editor — the email block builder moved to a shared core with per-editor markup wrappers
+- Storage-backed explorer features — `resourceFavorites` + Home Recent/Favorites tabs, `tags` jsonb with Essentials editing and an `/all` pill, `deletedAt` soft delete with a Recycle bin and a 30-day timer purge, `pg_trgm` relevance ranking, and the Azure Table activity blade. Three Postgres migrations, one new Azure Table, no new Azure services.

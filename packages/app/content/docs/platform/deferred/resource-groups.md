@@ -13,4 +13,4 @@ Only surveys had grouping, and the explorer's type facets + search cover current
 
 ## Revisit when
 
-A user's flat resource list with type facets and search is no longer sufficient to find things — that is the signal to design proper resource groups (a first-class grouping entity, not a text column). If [tags](/docs/proposals/platform/tags) usage grows into "give me a folder", that is this trigger.
+A user's flat resource list with type facets and search is no longer sufficient to find things — that is the signal to design proper resource groups (a first-class grouping entity, not a text column). If [tags](/docs/platform/tags) usage grows into "give me a folder", that is this trigger.

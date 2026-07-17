@@ -5,6 +5,7 @@ import type { MessageMetadataType } from "@/models/message/metadata/MessageMetad
 import type { ModerationLogEntity } from "@/models/message/ModerationLogEntity";
 import type { WebhookMessageEntity } from "@/models/message/WebhookMessageEntity";
 import type { ProgramParticipantEntity } from "@/models/program/ProgramParticipantEntity";
+import type { ResourceActivityEntity } from "@/models/resource/ResourceActivityEntity";
 import type { ResourceViewEntity } from "@/models/resource/ResourceViewEntity";
 import type { SurveyResponseEntity } from "@/models/survey/SurveyResponseEntity";
 import type { TableEntity } from "@azure/data-tables";
@@ -15,6 +16,7 @@ export interface AzureTableEntityMap {
   [AzureTable.MessagesMetadata]: MessageMetadataEntity<MessageMetadataType>;
   [AzureTable.ModerationLog]: ModerationLogEntity;
   [AzureTable.ProgramParticipants]: ProgramParticipantEntity;
+  [AzureTable.ResourceActivity]: ResourceActivityEntity;
   [AzureTable.ResourceViews]: ResourceViewEntity;
   [AzureTable.SurveyResponses]: SurveyResponseEntity;
 }

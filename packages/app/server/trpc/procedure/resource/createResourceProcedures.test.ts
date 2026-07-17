@@ -10,6 +10,7 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
+import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { getBlobName, getTopNEntities, serializeClauses } from "@esposter/db";
@@ -40,6 +41,7 @@ vi.mock(
 describe("createResourceProcedures", () => {
   let mockContext: Context;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
+  let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   // Dashboard is the publishable representative; Webpage is the FileAssets one
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
@@ -50,6 +52,7 @@ describe("createResourceProcedures", () => {
   beforeAll(async () => {
     mockContext = await createMockContext();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
+    resourceCaller = createCallerFactory(resourceRouter)(mockContext);
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
@@ -336,14 +339,16 @@ describe("createResourceProcedures", () => {
     await expect(dashboardCaller.readResourceViewCount({ id: newResource.id })).resolves.toBe(0);
   });
 
-  test("deletes view counts with the resource", async () => {
+  test("purges view counts with the resource", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
     await dashboardCaller.readPublishedResourceContent(newResource.id);
+    // Delete is soft, so view history survives the Recycle bin window — purge is what sweeps it
     await dashboardCaller.deleteResource({ id: newResource.id });
+    await resourceCaller.purgeResource({ id: newResource.id });
     // The resource row is gone, so the cleared partition can only be observed against the table
     const clauses: Clause<ResourceViewEntity>[] = [
       { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: newResource.id },

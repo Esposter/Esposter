@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
+import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { hasCapability } from "#shared/services/resource/hasCapability";
@@ -12,13 +12,16 @@ interface ResourceOverviewProps {
   isLoading?: boolean;
   publication?: ResourcePublication;
   resource: Resource;
+  updateTags?: (tags: ResourceTags) => Promise<void>;
 }
 
-const { isLoading, publication, resource } = defineProps<ResourceOverviewProps>();
+const { isLoading, publication, resource, updateTags } = defineProps<ResourceOverviewProps>();
 // Essentials takes extra rows from the type (the grid owns the two columns, so a slot renders
 // A label/value pair); summary takes whole cards below the card
 defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
 const getResourceMutations = useResourceMutations();
+const isTagsEditorOpen = ref(false);
+const tagRows = computed(() => Object.entries(resource.tags));
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
 const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, resource.id) : undefined));
 // Best-effort telemetry, so a failed count leaves the row out rather than erroring the whole blade
@@ -77,10 +80,26 @@ const copyPublicLink = async () => {
               <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
             </div>
           </template>
+          <template v-if="updateTags">
+            <span op-medium-emphasis>Tags</span>
+            <div flex flex-wrap gap-2 items-center>
+              <v-chip v-for="[tagName, tagValue] of tagRows" :key="tagName" size="small">
+                {{ tagValue ? `${tagName}: ${tagValue}` : tagName }}
+              </v-chip>
+              <span v-if="tagRows.length === 0" op-medium-emphasis>None</span>
+              <v-btn size="small" variant="text" @click="isTagsEditorOpen = true">Edit</v-btn>
+            </div>
+          </template>
           <slot name="essentials" />
         </div>
       </v-card-text>
     </v-card>
     <slot name="summary" />
+    <ResourceTagsEditorDialog
+      v-if="updateTags && isTagsEditorOpen"
+      v-model="isTagsEditorOpen"
+      :tags="resource.tags"
+      :update-tags="updateTags"
+    />
   </div>
 </template>

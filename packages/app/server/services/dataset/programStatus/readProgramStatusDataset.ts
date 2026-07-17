@@ -13,6 +13,8 @@ import { TRPCError } from "@trpc/server";
 export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) => {
   const resource = await ctx.db.query.resources.findFirst({
     where: {
+      // A program in the Recycle bin must not keep feeding live datasets
+      deletedAt: { isNull: true },
       id: { eq: reference.id },
       type: { eq: ResourceType.Program },
       userId: { eq: ctx.getSessionPayload.user.id },

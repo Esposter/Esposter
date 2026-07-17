@@ -13,7 +13,7 @@ Azure "All resources" parity for `/resources/all`: a filter-pill row, checkbox m
   - **Type** — multi-select over `ResourceDefinitionMap` (icon + title), bound to the `types` ref `useReadResources` accepts.
   - **Status** — Published/Draft; `isPublished?: boolean` on `resourceFilterInputSchema`, implemented as an `exists`/`notExists` on `resource_publications` inside `createResourcesWhere` (the one filter source for both `count` and `readResources`).
   - **Updated** — date-range presets (24h / 7d / 30d / custom), `gte`/`lte` on `updatedAt`, resolved at fetch time (`getResourceUpdatedRange`) so relative presets stay anchored to "now".
-  - **Tags** — lands with [tags](/docs/proposals/platform/tags).
+  - **Tag** — name + optional value ([tags](/docs/platform/tags)): a value pins the tag through jsonb containment, a name alone matches any value through key-existence.
 - **URL state** (`useResourceListFilters`): `search`, `types`, `status`, `sortBy`, `page` mirror to query params via `useRouteQuery` (defaults drop out of the URL); `?search=` from Home stays the entry point. `sortBy` serializes to `key:order,…`. Named saved views are [deferred](/docs/platform/deferred/saved-views).
 
 ## Bulk operations

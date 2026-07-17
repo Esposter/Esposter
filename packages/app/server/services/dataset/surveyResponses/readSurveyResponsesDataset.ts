@@ -8,6 +8,8 @@ import { TRPCError } from "@trpc/server";
 export const readSurveyResponsesDataset: DatasetProvider = async (ctx, reference) => {
   const resource = await ctx.db.query.resources.findFirst({
     where: {
+      // A survey in the Recycle bin must not keep feeding live datasets
+      deletedAt: { isNull: true },
       id: { eq: reference.id },
       type: { eq: ResourceType.Survey },
       userId: { eq: ctx.getSessionPayload.user.id },

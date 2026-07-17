@@ -11,6 +11,11 @@ import { TRPCError } from "@trpc/server";
 export const readSheetDataset: DatasetProvider = async (ctx, reference) => {
   const resource = await ctx.db.query.resources.findFirst({
     where: {
+      // A resource in the Recycle bin is gone as far as every binding is concerned — it must not keep
+      // Feeding live datasets, and its consumers read that as a dangling binding
+      deletedAt: {
+        isNull: true,
+      },
       id: {
         eq: reference.id,
       },

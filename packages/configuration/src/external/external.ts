@@ -35,7 +35,10 @@ export const external: (RegExp | string)[] = [
   "@azure/storage-blob",
   "@azure/web-pubsub",
   // @esposter/db-mock
-  "@electric-sql/pglite",
+  // Covers the /contrib/* subpaths too: a contrib extension resolves its own .tar.gz bundle
+  // Relative to import.meta.url, so bundling one rebases that path onto the consumer and the
+  // Extension fails to load at runtime.
+  /^@electric-sql\/pglite(?:\/|$)/u,
   /^drizzle-kit/u,
   // @esposter/db-schema
   /^drizzle-orm/u,

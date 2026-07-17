@@ -1,4 +1,4 @@
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
+import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { getSequentialFunction } from "#shared/util/function/getSequentialFunction";
@@ -11,6 +11,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   const { $trpc } = useNuxtApp();
   const executeSaveMutation = useMutation();
   const executeRenameMutation = useMutation();
+  const executeUpdateTagsMutation = useMutation();
   const executeRemoveMutation = useMutation();
   const executeDuplicateMutation = useMutation();
   const executePublishMutation = useMutation();
@@ -104,6 +105,26 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
       },
     });
   };
+  // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag
+  const updateTags = async (tags: ResourceTags) => {
+    const current = resource.value;
+    if (!current) return;
+    await executeUpdateTagsMutation(
+      () => getResourceMutations(current.type).updateResource({ id: current.id, name: current.name, tags }),
+      {
+        applyOptimistic: () => {
+          resource.value = { ...current, tags };
+          return () => {
+            resource.value = current;
+          };
+        },
+        onError: createErrorNotification,
+        onSuccess: (newResource) => {
+          resource.value = newResource;
+        },
+      },
+    );
+  };
   const remove = async () => {
     const current = resource.value;
     if (!current) return false;
@@ -184,5 +205,6 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     save,
     setPersistedContent,
     unpublish,
+    updateTags,
   };
 };
