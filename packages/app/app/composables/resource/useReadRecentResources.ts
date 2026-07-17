@@ -32,13 +32,12 @@ export const useReadRecentResources = () => {
           ids: views.map(({ id }) => id),
           limit: RECENT_RESOURCES_LIMIT,
         });
-        const viewedAtById = new Map(views.map(({ id, viewedAt }) => [id, viewedAt]));
         // The server has no opinion on view order, so the localStorage order is what orders the card;
         // A view whose id no longer resolves was deleted and falls out here
-        recentResources.value = views
-          .map(({ id }) => items.find((item) => item.id === id))
-          .filter((item) => item !== undefined)
-          .map((item) => ({ ...item, viewedAt: viewedAtById.get(item.id) }));
+        recentResources.value = views.flatMap((view) => {
+          const item = items.find(({ id }) => id === view.id);
+          return item ? [Object.assign(item, { viewedAt: view.viewedAt })] : [];
+        });
       }
     }).match(
       () => {

@@ -4,6 +4,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { SNAPSHOT_FILENAME } from "@/constants";
 import { createMockDb } from "@/createMockDb";
 import { PGlite } from "@electric-sql/pglite";
+import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import { messageSchema, schema, users } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
 import { readFile } from "node:fs/promises";
@@ -29,13 +30,17 @@ describe(createMockDb, () => {
   test("snapshot matches a freshly generated migration", { timeout: 60_000 }, async () => {
     expect.hasAssertions();
 
-    const fresh = new PGlite();
+    const fresh = new PGlite({ extensions: { pg_trgm } });
     await fresh.exec(`CREATE SCHEMA "${messageSchema.schemaName}"`);
+    // Mirrors generateSnapshot.ts — the generated DDL includes the resources trigram index,
+    // Which cannot be created without pg_trgm installed
+    await fresh.exec("CREATE EXTENSION IF NOT EXISTS pg_trgm");
     const previousJson = await generateDrizzleJson({});
     const statements = await generateMigration(previousJson, await generateDrizzleJson(schema, previousJson.id));
     for (const statement of statements) await fresh.exec(statement);
 
     const snapshot = new PGlite({
+      extensions: { pg_trgm },
       loadDataDir: new Blob([await readFile(join(import.meta.dirname, SNAPSHOT_FILENAME))]),
     });
 

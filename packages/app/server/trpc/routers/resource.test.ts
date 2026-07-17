@@ -3,6 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
@@ -69,9 +70,11 @@ describe("resource", () => {
     const sheetResource = await sheetCaller.createResource({ name });
     const { items } = await caller.readResources();
 
-    expect(items.map(({ id }) => id).toSorted()).toStrictEqual([dashboardResource.id, sheetResource.id].toSorted());
-    expect(items.map(({ type }) => type).toSorted()).toStrictEqual(
-      [ResourceType.Dashboard, ResourceType.Sheet].toSorted(),
+    expect(items.map(({ id }) => id).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b))).toStrictEqual(
+      [dashboardResource.id, sheetResource.id].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+    );
+    expect(items.map(({ type }) => type).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b))).toStrictEqual(
+      [ResourceType.Dashboard, ResourceType.Sheet].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
     );
   });
 
@@ -241,8 +244,8 @@ describe("resource", () => {
     const deletedResources = await caller.deleteResources({ ids: [dashboardResource.id, sheetResource.id] });
     const count = await caller.count();
 
-    expect(deletedResources.map(({ id }) => id).toSorted()).toStrictEqual(
-      [dashboardResource.id, sheetResource.id].toSorted(),
+    expect(deletedResources.map(({ id }) => id).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b))).toStrictEqual(
+      [dashboardResource.id, sheetResource.id].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
     );
     expect(count).toBe(0);
   });
@@ -462,8 +465,10 @@ describe("resource", () => {
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const renamedActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Renamed);
 
-    expect(items.map(({ activityType }) => activityType).toSorted()).toStrictEqual(
-      [ResourceActivityType.Renamed, ResourceActivityType.Created].toSorted(),
+    expect(
+      items.map(({ activityType }) => activityType).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+    ).toStrictEqual(
+      [ResourceActivityType.Renamed, ResourceActivityType.Created].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
     );
     expect(renamedActivity?.oldName).toBe(name);
     expect(renamedActivity?.newName).toBe("renamed");
@@ -511,8 +516,12 @@ describe("resource", () => {
     });
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
-    expect(items.map(({ activityType }) => activityType).toSorted()).toStrictEqual(
-      [ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted(),
+    expect(
+      items.map(({ activityType }) => activityType).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+    ).toStrictEqual(
+      [ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted((a, b) =>
+        EN_US_COMPARATOR.compare(a, b),
+      ),
     );
   });
 
@@ -534,8 +543,12 @@ describe("resource", () => {
     });
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
-    expect(items.map(({ activityType }) => activityType).toSorted()).toStrictEqual(
-      [ResourceActivityType.ContentSaved, ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted(),
+    expect(
+      items.map(({ activityType }) => activityType).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+    ).toStrictEqual(
+      [ResourceActivityType.ContentSaved, ResourceActivityType.ContentSaved, ResourceActivityType.Created].toSorted(
+        (a, b) => EN_US_COMPARATOR.compare(a, b),
+      ),
     );
   });
 });

@@ -1,6 +1,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { useNotificationStore } from "@/store/notification";
+import { getResultAsync } from "@esposter/shared";
 
 // Favorites are server-side from day one — a star that vanishes on another device reads as data loss
 export const useFavoriteStore = defineStore("resource/favorite", () => {
@@ -13,7 +14,14 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   const isLoading = ref(false);
   const readFavorites = async () => {
     isLoading.value = true;
-    favorites.value = await $trpc.resource.readFavorites.query();
+    await getResultAsync(() => $trpc.resource.readFavorites.query()).match(
+      (newFavorites) => {
+        favorites.value = newFavorites;
+      },
+      (error) => {
+        notificationStore.createNotification({ severity: "error", title: error.message });
+      },
+    );
     isLoading.value = false;
   };
   const toggleFavorite = async (resource: Resource) => {

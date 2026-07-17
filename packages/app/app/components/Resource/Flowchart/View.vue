@@ -22,7 +22,7 @@ useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
   <ClientOnly>
     <!-- Editing is off across the board, but pan/zoom stays — a large diagram is unreadable without it -->
     <VueFlow
-      h="[calc(100dvh-var(--app-bar-height))]"
+      h="[calc(100dvh_-_--app-bar-height)]"
       :node-types
       :nodes="content.nodes"
       :edges="content.edges"

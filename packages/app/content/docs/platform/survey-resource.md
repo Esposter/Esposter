@@ -5,7 +5,7 @@ description: SurveyJS authoring as a resource — inline creator Editor blade, R
 
 # Survey Resource
 
-Survey is a resource type: the SurveyJS model lives in the content blob, the respondent page is Survey's published view, and only the genuinely survey-specific parts — responses and SAS file uploads — have bespoke procedures. The former `surveys` table and the standalone surveyer product are gone; the product is the **Survey** resource type.
+Survey is a resource type: the SurveyJS model lives in the content blob, the respondent page is Survey's published view, and only the genuinely survey-specific part — responses — has bespoke procedures; asset uploads come from the shared [FileAssets capability](/docs/platform/resource-file-assets). The former `surveys` table and the standalone surveyer product are gone; the product is the **Survey** resource type.
 
 ## Data model
 

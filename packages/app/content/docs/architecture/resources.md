@@ -148,7 +148,7 @@ One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/
 
 `saveResourceContent` bumps `contentVersion` and writes the blob in one transaction — the version check is part of the `UPDATE`'s `WHERE`, so concurrent saves cannot both pass and silently lose a write, and a failed blob upload rolls the version back.
 
-The factory also accepts two optional content-transform hooks, `transformPublishedContent` and `transformReadContent` — see [/docs/architecture/publishing](/docs/architecture/publishing).
+The factory also accepts three optional content-transform hooks, `transformPublishedContent`, `transformReadContent`, and `transformPublicReadContent` — see [/docs/architecture/publishing](/docs/architecture/publishing).
 
 Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`.
 
@@ -178,7 +178,7 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 | `packages/db-schema/src/schema/resourcePublications.ts`                   | publish state table                        |
 | `packages/app/shared/services/resource/ResourceDefinitionMap.ts`          | type definitions + capability declarations |
 | `packages/app/shared/models/resource/CapabilityResourceType.ts`           | derived capability unions                  |
-| `packages/app/server/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
+| `packages/app/shared/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
 | `packages/app/shared/services/resource/hasCapability.ts`                  | runtime capability guard                   |
 | `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | the procedure factory                      |
 | `packages/app/server/trpc/procedure/resource/getOwnerProcedure.ts`        | ownership middleware                       |

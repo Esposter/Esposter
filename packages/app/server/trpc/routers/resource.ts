@@ -155,26 +155,29 @@ export const resourceRouter = router({
     .mutation<Resource[]>(async ({ ctx, input: { ids } }) => {
       // Owner-scoped where so callers can only ever soft-delete their own rows.
       // The blob and the {id}/ directory survive until purge — that is what makes restore possible.
-      const deletedResources = await ctx.db
-        .update(resources)
-        .set({ deletedAt: new Date() })
-        .where(
-          and(
-            eq(resources.userId, ctx.getSessionPayload.user.id),
-            inArray(resources.id, ids),
-            isNull(resources.deletedAt),
-          ),
-        )
-        .returning();
-      // A deleted resource must not stay publicly served, so restore deliberately returns a Draft
-      if (deletedResources.length > 0)
-        await ctx.db.delete(resourcePublications).where(
-          inArray(
-            resourcePublications.resourceId,
-            deletedResources.map(({ id }) => id),
-          ),
-        );
-      return deletedResources;
+      // One transaction so a soft-deleted resource can never linger publicly served
+      return ctx.db.transaction(async (tx) => {
+        const deletedResources = await tx
+          .update(resources)
+          .set({ deletedAt: new Date() })
+          .where(
+            and(
+              eq(resources.userId, ctx.getSessionPayload.user.id),
+              inArray(resources.id, ids),
+              isNull(resources.deletedAt),
+            ),
+          )
+          .returning();
+        // A deleted resource must not stay publicly served, so restore deliberately returns a Draft
+        if (deletedResources.length > 0)
+          await tx.delete(resourcePublications).where(
+            inArray(
+              resourcePublications.resourceId,
+              deletedResources.map(({ id }) => id),
+            ),
+          );
+        return deletedResources;
+      });
     }),
   duplicateResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
     const { name, type, userId } = ctx.resource;

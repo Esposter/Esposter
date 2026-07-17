@@ -7,6 +7,7 @@ import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/of
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
@@ -14,7 +15,6 @@ import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
-import { getFilesDirectoryName } from "@@/server/services/resource/getFilesDirectoryName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
@@ -28,7 +28,6 @@ import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardR
 import { deleteDirectory, generateDownloadFileSasUrls, generateUploadFileSasEntities } from "@esposter/db";
 import {
   AzureContainer,
-  AzureTable,
   DatabaseEntityType,
   fileEntitySchema,
   ResourceActivityType,
@@ -230,7 +229,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const fileAssetsProcedures = {
     deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation(async ({ input: { blobPath, id } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      const blockBlobClient = containerClient.getBlockBlobClient(`${id}/${blobPath}`);
+      // The path is anchored under {id}/files/ so this can only ever delete uploaded assets,
+      // Never the content or published-content blobs that live beside the files directory
+      const blockBlobClient = containerClient.getBlockBlobClient(`${getFilesDirectoryName(id)}/${blobPath}`);
       await blockBlobClient.deleteIfExists();
     }),
     generateDownloadFileSasUrls: getOwnerProcedure(type, generateDownloadFileSasUrlsInputSchema, "id").query<string[]>(

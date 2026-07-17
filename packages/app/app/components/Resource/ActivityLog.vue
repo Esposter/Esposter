@@ -6,7 +6,9 @@ import { getResourceActivityDetail } from "@/services/resource/activity/getResou
 import { ResourceActivityIconMap } from "@/services/resource/activity/ResourceActivityIconMap";
 import { ResourceActivityTitleMap } from "@/services/resource/activity/ResourceActivityTitleMap";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
+import { useAlertStore } from "@/store/alert";
 import { useActivityStore } from "@/store/resource/activity";
+import { getResultAsync, noop } from "@esposter/shared";
 
 interface ResourceActivityLogProps {
   resourceId: Resource["id"];
@@ -16,10 +18,14 @@ const { resourceId } = defineProps<ResourceActivityLogProps>();
 const { readActivities, readMoreActivities } = useReadActivities(resourceId);
 const activityStore = useActivityStore();
 const { hasMore, items } = storeToRefs(activityStore);
+const { createAlert } = useAlertStore();
 const isLoading = ref(true);
 
 onMounted(async () => {
-  await readActivities();
+  // A failed read still clears the skeleton — the empty state renders instead of loading forever
+  await getResultAsync(readActivities).match(noop, (error) => {
+    createAlert(error.message, "error");
+  });
   isLoading.value = false;
 });
 </script>

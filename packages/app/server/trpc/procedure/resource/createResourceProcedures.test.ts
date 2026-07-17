@@ -333,6 +333,8 @@ describe("createResourceProcedures", () => {
     vi.spyOn(MockTableClient.prototype, "updateEntity").mockRejectedValue(new Error("Table write failed"));
     vi.spyOn(console, "error").mockImplementation(noop);
     const { content } = await dashboardCaller.readPublishedResourceContent(newResource.id);
+    // The failing increment is fire-and-forget off the read path, so drain it before asserting the count
+    await waitForSynchronizedFunctions();
 
     // Telemetry must never break serving the page
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
@@ -346,6 +348,8 @@ describe("createResourceProcedures", () => {
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
     await dashboardCaller.readPublishedResourceContent(newResource.id);
+    // Drain the fire-and-forget increment so the view write can never land after the purge sweep
+    await waitForSynchronizedFunctions();
     // Delete is soft, so view history survives the Recycle bin window — purge is what sweeps it
     await dashboardCaller.deleteResource({ id: newResource.id });
     await resourceCaller.purgeResource({ id: newResource.id });

@@ -46,7 +46,7 @@ flowchart LR
 | `packages/app/shared/models/resource/FileAssetsResourceType.ts`           | derived capability union                     |
 | `packages/app/shared/services/resource/ResourceDefinitionMap.ts`          | `fileAssets` declarations                    |
 | `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | conditionally spread asset procedures        |
-| `packages/app/server/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention             |
+| `packages/app/shared/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention             |
 | `packages/app/app/composables/resource/useUploadResourceFile.ts`          | SAS round-trip for one file                  |
 | `packages/app/app/composables/resource/useDeleteResourceFile.ts`          | url to blob path, then `deleteFile`          |
 | `packages/app/app/composables/grapesjs/useGrapesJsEditor.ts`              | Asset Manager upload adapter                 |
