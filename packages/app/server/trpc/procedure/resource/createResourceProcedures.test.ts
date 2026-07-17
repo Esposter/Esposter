@@ -5,6 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
+import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
@@ -293,10 +294,12 @@ describe("createResourceProcedures", () => {
 
     await dashboardCaller.readPublishedResourceContent(newResource.id);
     await dashboardCaller.readPublishedResourceContent(newResource.id);
+    // The increment is fire-and-forget off the read path, so drain it deterministically instead of racing it
+    await waitForSynchronizedFunctions();
+    const viewCount = await dashboardCaller.readResourceViewCount({ id: newResource.id });
 
-    // One person refreshing counts twice — these are views, never visitors.
-    // The increment is fire-and-forget off the read path, so poll instead of racing it
-    await expect.poll(() => dashboardCaller.readResourceViewCount({ id: newResource.id })).toBe(2);
+    // One person refreshing counts twice — these are views, never visitors
+    expect(viewCount).toBe(2);
   });
 
   test("counts no views for unpublished resources", async () => {
