@@ -11,6 +11,8 @@ import type { RoomRoleInMessage } from "@esposter/db-schema";
 import { checkIsManageable as checkIsManageableByPosition } from "#shared/services/room/rbac/checkIsManageable";
 import { MANAGEMENT_PERMISSIONS } from "#shared/services/room/rbac/constants";
 import { useMutation } from "@/composables/shared/useMutation";
+import { getTopRole } from "@/services/message/member/getTopRole";
+import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { useRoomStore } from "@/store/message/room";
 
 export const useRoleStore = defineStore("message/room/role", () => {
@@ -62,6 +64,15 @@ export const useRoleStore = defineStore("message/room/role", () => {
     const memberRoleMap = getMemberRoleMap(roomId) ?? new Map<string, RoomRoleInMessage[]>();
     memberRoleMap.set(userId, roles);
     setMemberRoleMap(roomId, memberRoleMap);
+  };
+  // Every role-membership MUTATION funnels through here (reads use setMemberRoles directly — the server
+  // Counts already include them) so top-role-derived state stays current via the registered hooks
+  const mutateMemberRoles = (roomId: string, userId: string, newRoles: RoomRoleInMessage[]) => {
+    const previousTopRoleId = getTopRole(getMemberRoles(roomId, userId))?.id ?? "";
+    const newTopRoleId = getTopRole(newRoles)?.id ?? "";
+    setMemberRoles(roomId, userId, newRoles);
+    if (previousTopRoleId === newTopRoleId) return;
+    for (const topRoleChangeHook of topRoleChangeHooks) topRoleChangeHook(roomId, previousTopRoleId, newTopRoleId);
   };
 
   const readRoles = async (input: ReadRolesInput) => {
@@ -158,15 +169,15 @@ export const useRoleStore = defineStore("message/room/role", () => {
       role
         ? {
             applyOptimistic: () => {
-              setMemberRoles(input.roomId, input.userId, [...existingMemberRoles, role]);
+              mutateMemberRoles(input.roomId, input.userId, [...existingMemberRoles, role]);
               return () => {
-                setMemberRoles(input.roomId, input.userId, existingMemberRoles);
+                mutateMemberRoles(input.roomId, input.userId, existingMemberRoles);
               };
             },
           }
         : {
             onSuccess: (newRole) => {
-              setMemberRoles(input.roomId, input.userId, [...existingMemberRoles, newRole]);
+              mutateMemberRoles(input.roomId, input.userId, [...existingMemberRoles, newRole]);
             },
           },
     );
@@ -175,13 +186,13 @@ export const useRoleStore = defineStore("message/room/role", () => {
     const existingMemberRoles = getMemberRoles(input.roomId, input.userId);
     await executeRevokeRoleMutation(() => $trpc.role.revokeRole.mutate(input), {
       applyOptimistic: () => {
-        setMemberRoles(
+        mutateMemberRoles(
           input.roomId,
           input.userId,
           existingMemberRoles.filter(({ id }) => id !== input.roleId),
         );
         return () => {
-          setMemberRoles(input.roomId, input.userId, existingMemberRoles);
+          mutateMemberRoles(input.roomId, input.userId, existingMemberRoles);
         };
       },
     });
@@ -196,6 +207,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     getMyPermissions,
     getRoles,
     memberRoleMap,
+    mutateMemberRoles,
     myPermissions,
     readMemberRoles,
     readMyPermissions,

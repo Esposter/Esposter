@@ -8,7 +8,7 @@ import { useMemberStore } from "@/store/message/user/member";
 const { readMembers, readMoreMembers } = useReadMembers();
 const { isPending } = await readMembers();
 const memberStore = useMemberStore();
-const { hasMore, members } = storeToRefs(memberStore);
+const { count, countsByTopRole, hasMore, members } = storeToRefs(memberStore);
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 const roleStore = useRoleStore();
@@ -18,6 +18,17 @@ const memberGroups = computed(() => {
   if (!room) return [];
   return getMemberGroups(members.value, (userId) => getMemberRoles(room.id, userId));
 });
+const memberCountByRoleId = computed(
+  () => new Map(countsByTopRole.value.map((countByTopRole) => [countByTopRole.roleId, countByTopRole.count])),
+);
+// Derived from the running total so member join/leave subscription updates keep the roleless group current
+const rolelessMemberCount = computed(
+  () => count.value - countsByTopRole.value.reduce((sum, countByTopRole) => sum + countByTopRole.count, 0),
+);
+const getMemberCountSuffix = (roleId: string) => {
+  const memberCount = roleId ? memberCountByRoleId.value.get(roleId) : rolelessMemberCount.value;
+  return memberCount === undefined ? "" : ` — ${memberCount}`;
+};
 </script>
 
 <template>
@@ -27,9 +38,8 @@ const memberGroups = computed(() => {
     </template>
     <template v-else-if="currentRoom">
       <template v-for="{ members: groupMembers, role } of memberGroups" :key="role?.id ?? ''">
-        <!-- Counts are only trustworthy once every page is loaded — a partial count reads as the room total -->
         <v-list-subheader font-bold uppercase text-body-small>
-          {{ role?.name ?? "Members" }}{{ hasMore ? "" : ` — ${groupMembers.length}` }}
+          {{ role?.name ?? "Members" }}{{ getMemberCountSuffix(role?.id ?? "") }}
         </v-list-subheader>
         <MessageModelMemberListItem v-for="member of groupMembers" :key="member.id" :member :room="currentRoom" />
       </template>

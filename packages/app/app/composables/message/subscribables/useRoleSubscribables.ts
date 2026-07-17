@@ -6,7 +6,7 @@ export const useRoleSubscribables = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const roleStore = useRoleStore();
-  const { getMemberRoleMap, getMemberRoles, getRoles, setMemberRoles, setRoles } = roleStore;
+  const { getMemberRoleMap, getMemberRoles, getRoles, mutateMemberRoles, setRoles } = roleStore;
 
   useOnlineSubscribable(currentRoomId, (roomId) => {
     if (!roomId) return undefined;
@@ -17,7 +17,7 @@ export const useRoleSubscribables = () => {
         onData: ({ userId, ...role }) => {
           const existingMemberRoles = getMemberRoles(role.roomId, userId);
           if (existingMemberRoles.some(({ id }) => id === role.id)) return;
-          setMemberRoles(role.roomId, userId, [...existingMemberRoles, role]);
+          mutateMemberRoles(role.roomId, userId, [...existingMemberRoles, role]);
         },
       },
     );
@@ -40,7 +40,7 @@ export const useRoleSubscribables = () => {
           const memberRoleMap = getMemberRoleMap(roomId);
           if (!memberRoleMap) return;
           for (const [userId, roles] of memberRoleMap)
-            setMemberRoles(
+            mutateMemberRoles(
               roomId,
               userId,
               roles.filter((role) => role.id !== id),
@@ -52,7 +52,7 @@ export const useRoleSubscribables = () => {
       { roomId },
       {
         onData: ({ roleId, roomId, userId }) => {
-          setMemberRoles(
+          mutateMemberRoles(
             roomId,
             userId,
             getMemberRoles(roomId, userId).filter(({ id }) => id !== roleId),

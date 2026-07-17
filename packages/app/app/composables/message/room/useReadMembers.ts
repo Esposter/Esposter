@@ -12,7 +12,7 @@ export const useReadMembers = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
   const { readItems, readMoreItems } = memberStore;
-  const { count } = storeToRefs(memberStore);
+  const { count, countsByTopRole } = storeToRefs(memberStore);
   const userStore = useUserStore();
   const { storeUsers } = userStore;
   const readUserStatuses = useReadUserStatuses();
@@ -30,8 +30,13 @@ export const useReadMembers = () => {
   const readMembers = () => {
     const roomId = requirePartitionKey(currentRoomId.value, readMembers.name);
     return readItems(async () => {
-      count.value = await $trpc.room.countMembers.query({ roomId });
-      const cursorPaginationData = await $trpc.room.readMembers.query({ roomId });
+      const [newCount, newCountsByTopRole, cursorPaginationData] = await Promise.all([
+        $trpc.room.countMembers.query({ roomId }),
+        $trpc.room.countMembersByTopRole.query({ roomId }),
+        $trpc.room.readMembers.query({ roomId }),
+      ]);
+      count.value = newCount;
+      countsByTopRole.value = newCountsByTopRole;
       await readMetadata(
         roomId,
         cursorPaginationData.items.map(({ id }) => id),

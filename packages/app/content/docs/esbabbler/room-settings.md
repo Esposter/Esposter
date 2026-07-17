@@ -5,7 +5,7 @@ description: The fullscreen room settings dialog — Discord Server Settings cat
 
 # Room Settings
 
-A Discord-style fullscreen settings dialog for a room, opened from the room list. Its information architecture matches Discord Server Settings: a two-level sidebar of category groups (`v-list-group`) whose items are the panels, with the first category headed by the room name itself and **Delete** kept as a standalone destructive item below the categories.
+A Discord-style fullscreen settings dialog for a room, opened from the room list. Opening settings for a room other than the one being viewed navigates to that room first — the Roles and Members panels load and key their data (roles, members, permissions, selection) by the current room, so the dialog always targets the room whose data is live. Its information architecture matches Discord Server Settings: a two-level sidebar of category groups (`v-list-group`) whose items are the panels, with the first category headed by the room name itself and **Delete** kept as a standalone destructive item below the categories.
 
 ## Categories and panels
 
