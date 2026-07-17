@@ -81,7 +81,7 @@ Verify before accepting. CodeRabbit reasons from names and prior "learnings" and
 
 ## PR File Budget
 
-CodeRabbit caps this repo at **100 files per review** — the Open Source tier's file limit is popularity-scaled and has moved before (it briefly dropped to 50 in mid-July 2026), so treat the number as current-best-known rather than fixed. If the limit needs re-checking, the bot's skip comment on an over-budget PR states the current number. Keep every chunk of work to **~80 changed files measured from the branch point** — work is committed and pushed continuously, so dirty-file counts see nothing:
+CodeRabbit caps this repo at **100 files per review** — the Open Source tier's file limit is popularity-scaled and can move, so treat the number as current-best-known rather than fixed. If the limit needs re-checking, the bot's skip comment on an over-budget PR states the current number. Keep every chunk of work to **~80 changed files measured from the branch point** — work is committed and pushed continuously, so dirty-file counts see nothing:
 
 ```bash
 git diff --name-only "$(git merge-base <base-branch> HEAD)" | wc -l   # committed changes since branching (base is what this branch was cut from, e.g. develop)
