@@ -452,7 +452,7 @@ describe("resource", () => {
 
   // Ordering is Azure's own partitionKey+rowKey contract, which MockTableClient does not reproduce
   // (it yields insertion order), so these assert the trail's contents and its reverse-ticked keys
-  // rather than the delivered order.
+  // Rather than the delivered order.
   test("records an activity trail", async () => {
     expect.hasAssertions();
 
