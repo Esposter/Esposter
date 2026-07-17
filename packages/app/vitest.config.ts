@@ -35,6 +35,7 @@ const vitestConfig = await defineVitestProject({
 // File, environmentOptions) plus one hardcoded `environment = "nuxt"` for every file. Restore the node
 // Default so only `// @vitest-environment nuxt` files pay the nuxt environment cost — the wiring stays
 // Intact, so per-file directives still resolve the nuxt environment.
+vitestConfig.test ??= {};
 vitestConfig.test.environment = "node";
 
 export default vitestConfig;
