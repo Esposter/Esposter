@@ -53,8 +53,8 @@ One command only: the `code-review` skill, for every review — the working diff
 
 Review workflow agents must not inherit the session model when it is a premium tier — finder/verifier/synthesis agents are execution roles, not the thinking role, so they run on `opus`. `.claude/workflows/code-review.js` is the project copy of the built-in review workflow with `model: "opus"` pinned on every agent. **`Workflow({ name: "code-review" })` does NOT resolve to it** (verified: the name always loads the built-in), so when the `code-review` skill says to invoke the workflow by name, invoke it by path instead, same args:
 
-```
-Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "<level> [PR# or target]" })
+```javascript
+Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "<level> [PR# or target]" });
 ```
 
 The script exits with `{ probe: true }` when args is exactly `probe` — a free way to confirm the file still parses after editing it.
