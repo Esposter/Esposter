@@ -16,7 +16,7 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     URL.revokeObjectURL(uploadFileUrl.url);
     fileUrlMap.value.delete(id);
   };
-  MessageHookMap.ResetSend.push(() => {
+  MessageHookMap.ResetSend.register(() => {
     const savedFiles = files.value;
     files.value = [];
     for (const { id } of savedFiles) removeFileUrl(id);

@@ -12,7 +12,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();
   const dataStore = useDataStore();
   const { data: fileUrlMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, DownloadFileUrl>());
-  MessageHookMap[Operation.Create].push(async (message) => {
+  MessageHookMap[Operation.Create].register(async (message) => {
     if (!roomStore.currentRoomId || message.files.length === 0) return;
 
     const downloadFileSasUrls = await $trpc.message.generateDownloadFileSasUrls.query({
@@ -23,7 +23,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     for (const [i, { id }] of message.files.entries())
       fileUrlMap.value.set(id, { url: takeOne(downloadFileSasUrls, i) });
   });
-  MessageHookMap[Operation.Delete].push((input) => {
+  MessageHookMap[Operation.Delete].register((input) => {
     const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);
     if (!message) return;
     for (const { id } of message.files) fileUrlMap.value.delete(id);

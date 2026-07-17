@@ -6,7 +6,6 @@ import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { useUserStore } from "@/store/message/user";
-import { getIsServer } from "@esposter/shared";
 
 export const useMemberStore = defineStore("message/user/member", () => {
   const roomStore = useRoomStore();
@@ -17,22 +16,19 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const count = ref(0);
   // Server-computed group totals for the member list headers — the paginated items only hold loaded pages
   const countsByTopRole = ref<MemberCountByTopRole[]>([]);
-  // Register on the client only — hooks fire from user-driven role mutations, never during SSR,
-  // And the module-level array outlives per-request server stores, so registering there would leak
-  if (!getIsServer())
-    topRoleChangeHooks.push((roomId, previousTopRoleId, newTopRoleId) => {
-      // Counts track the currently open room; the roleless group derives from the total, so "" is a no-op
-      if (roomId !== roomStore.currentRoomId) return;
-      for (const [roleId, delta] of [
-        [previousTopRoleId, -1],
-        [newTopRoleId, 1],
-      ] as const) {
-        if (!roleId) continue;
-        const countByTopRole = countsByTopRole.value.find((existingCount) => existingCount.roleId === roleId);
-        if (countByTopRole) countByTopRole.count += delta;
-        else if (delta > 0) countsByTopRole.value.push({ count: delta, roleId });
-      }
-    });
+  topRoleChangeHooks.register((roomId, previousTopRoleId, newTopRoleId) => {
+    // Counts track the currently open room; the roleless group derives from the total, so "" is a no-op
+    if (roomId !== roomStore.currentRoomId) return;
+    for (const [roleId, delta] of [
+      [previousTopRoleId, -1],
+      [newTopRoleId, 1],
+    ] as const) {
+      if (!roleId) continue;
+      const countByTopRole = countsByTopRole.value.find((existingCount) => existingCount.roleId === roleId);
+      if (countByTopRole) countByTopRole.count += delta;
+      else if (delta > 0) countsByTopRole.value.push({ count: delta, roleId });
+    }
+  });
   const {
     createMember: baseStoreCreateMember,
     deleteMember: baseStoreDeleteMember,

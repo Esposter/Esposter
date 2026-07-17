@@ -4,18 +4,12 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 import type { Promisable } from "type-fest";
 
+import { createHookRegistry } from "@/services/shared/createHookRegistry";
 import { Operation } from "@esposter/shared";
 
-interface MessageHookMap {
-  [Operation.Create]: ((message: MessageEntity) => Promisable<void>)[];
-  [Operation.Delete]: ((input: DeleteMessageInput) => Promisable<void>)[];
-  [Operation.Update]: ((input: MessageEvents["updateMessage"][number]) => Promisable<void>)[];
-  ResetSend: ((editor?: Editor) => Promisable<void>)[];
-}
-
-export const MessageHookMap: MessageHookMap = {
-  [Operation.Create]: [],
-  [Operation.Delete]: [],
-  [Operation.Update]: [],
-  ResetSend: [],
+export const MessageHookMap = {
+  [Operation.Create]: createHookRegistry<(message: MessageEntity) => Promisable<void>>(),
+  [Operation.Delete]: createHookRegistry<(input: DeleteMessageInput) => Promisable<void>>(),
+  [Operation.Update]: createHookRegistry<(input: MessageEvents["updateMessage"][number]) => Promisable<void>>(),
+  ResetSend: createHookRegistry<(editor?: Editor) => Promisable<void>>(),
 };

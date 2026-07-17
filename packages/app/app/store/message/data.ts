@@ -75,16 +75,16 @@ export const useDataStore = defineStore("message/data", () => {
     });
   };
   const storeCreateMessage = async (message: MessageEntity) => {
-    await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));
+    await MessageHookMap[Operation.Create].run(message);
     // Our messages list is reversed i.e. most recent messages are at the front
     baseStoreCreateMessage(message, true);
   };
   const storeUpdateMessage = async (input: MessageEvents["updateMessage"][number]) => {
-    await Promise.all(MessageHookMap[Operation.Update].map((fn) => Promise.resolve(fn(input))));
+    await MessageHookMap[Operation.Update].run(input);
     baseStoreUpdateMessage(input);
   };
   const storeDeleteMessage = async (input: DeleteMessageInput) => {
-    await Promise.all(MessageHookMap[Operation.Delete].map((fn) => Promise.resolve(fn(input))));
+    await MessageHookMap[Operation.Delete].run(input);
     baseStoreDeleteMessage(input);
   };
 
@@ -106,10 +106,10 @@ export const useDataStore = defineStore("message/data", () => {
     await storeSendMessage(input, editor);
   };
   const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
-    await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
+    await MessageHookMap.ResetSend.run(editor);
     if (await createMessage(input)) clearDraft(input.roomId);
   };
-  MessageHookMap.ResetSend.push((editor) => {
+  MessageHookMap.ResetSend.register((editor) => {
     editor?.commands.clearContent(true);
   });
   // Only expose the internal store CRUD functions for subscriptions; everything else directly calls

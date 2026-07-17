@@ -16,7 +16,7 @@ export const usePinStore = defineStore("message/pin", () => {
   const { createMessage, deleteMessage } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
   const messages = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const dataStore = useDataStore();
-  MessageHookMap[Operation.Update].push((input) => {
+  MessageHookMap[Operation.Update].register((input) => {
     if (!("isPinned" in input)) return;
 
     if (input.isPinned) {

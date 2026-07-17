@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — describe with function refs, canonical test values, takeOne for unsafe index access, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), mock cleanup by creation style, toThrowErrorMatchingInlineSnapshot as the only error assertion, when a test needs @vitest-environment nuxt, bundle-size snapshot tests, and type-level conventions for .test-d.ts files. Apply when writing .test.ts or .test-d.ts files.
+description: Esposter Vitest testing conventions — describe with function refs, canonical test values, takeOne for unsafe index access, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), mock cleanup by creation style, toThrowErrorMatchingInlineSnapshot as the only error assertion, the nuxt-default app test environment (stub window for server-path tests), bundle-size snapshot tests, and type-level conventions for .test-d.ts files. Apply when writing .test.ts or .test-d.ts files.
 ---
 
 # Testing Conventions (Vitest)
@@ -246,13 +246,13 @@ afterEach(() => vi.unstubAllGlobals());
 
 ## Vitest Environment
 
-Default environment is `node` — do **not** add `// @vitest-environment node`.
+**`packages/app` defaults to the `nuxt` environment** — `defineVitestProject` (`@nuxt/test-utils/config`) hardcodes `test.environment = "nuxt"` for the whole project (verified 2026-07: a directive-less app test file has `typeof window === "object"`). Library packages (`shared`, `virrun`, …) default to `node`.
 
-- **tRPC router tests need NO directive.** `createCallerFactory` is pure `@trpc/server`, and the Nuxt-dependent server composables the middleware reaches (e.g. `useIsProduction` → `useRuntimeConfig`) are mocked in `shared/test/setup.ts`. Node env is correct and much faster — don't add the directive by reflex.
-- **Add `// @vitest-environment nuxt` only when the Nuxt runtime is genuinely required** — a test using `mountSuspended`/`renderSuspended`, or importing a store/composable that calls `useNuxtApp()`/`useRouter()` at setup time. A handful of router tests carry it because they pull in such a store transitively; that's the exception, not the rule for routers.
-- **All other tests** — no directive needed.
+- **Never assume "no directive = no DOM" in app tests** — every app test file gets the nuxt env's happy-dom `window` regardless of directives. Code branching on `getIsServer()` therefore takes the **client** path in app tests by default; to exercise the server path, stub it: `vi.stubGlobal("window", undefined)` (+ `vi.unstubAllGlobals()` in `afterEach`) — never rely on the environment being window-less.
+- **Do not add environment directives.** The ~40 existing `// @vitest-environment nuxt` directives predate the project-wide default and are redundant (harmless; remove opportunistically, not as a sweep). `// @vitest-environment node` is unused in app and shouldn't be introduced without a real reason — setup.ts's warm-up guards tolerate it, but no current test needs it.
+- Nuxt-runtime features (`mountSuspended`/`renderSuspended`, stores/composables calling `useNuxtApp()`/`useRouter()` at setup time) just work in app tests — no directive needed.
 
-**DOM comes from the nuxt environment, not setup.ts.** The nuxt environment builds its own happy-dom `window`/`document` (and `mountSuspended` attaches to its own `#test-wrapper`), so there is **no** manual happy-dom registration — node-env tests run without a DOM. If a test touches the DOM (or imports something that does at module load), declare `// @vitest-environment nuxt`; do not reach for `window` in a node-env test. `fake-indexeddb/auto` stays a global setup file: it only assigns the IDB\* global constructors the `idb` library needs, is cheap in node, and the cache composables (`useCursorPaginationCache`/`useOffsetPaginationCache`) pull IndexedDB in transitively across many nuxt-env tests, so scoping it isn't worth the surface area.
+**DOM comes from the nuxt environment, not setup.ts.** The nuxt environment builds its own happy-dom `window`/`document` (and `mountSuspended` attaches to its own `#test-wrapper`), so there is **no** manual happy-dom registration. `fake-indexeddb/auto` stays a global setup file: it only assigns the IDB\* global constructors the `idb` library needs, and the cache composables (`useCursorPaginationCache`/`useOffsetPaginationCache`) pull IndexedDB in transitively across many tests, so scoping it isn't worth the surface area.
 
 ## Bundle Size Snapshot Tests
 

@@ -72,7 +72,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
     const newTopRoleId = getTopRole(newRoles)?.id ?? "";
     setMemberRoles(roomId, userId, newRoles);
     if (previousTopRoleId === newTopRoleId) return;
-    for (const topRoleChangeHook of topRoleChangeHooks) topRoleChangeHook(roomId, previousTopRoleId, newTopRoleId);
+    for (const topRoleChangeHook of topRoleChangeHooks.hooks)
+      topRoleChangeHook(roomId, previousTopRoleId, newTopRoleId);
   };
 
   const readRoles = async (input: ReadRolesInput) => {

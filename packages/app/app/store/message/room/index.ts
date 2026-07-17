@@ -110,7 +110,7 @@ export const useRoomStore = defineStore("message/room", () => {
     });
     return isSuccessful;
   };
-  MessageHookMap[Operation.Create].push(({ message, partitionKey, type }) => {
+  MessageHookMap[Operation.Create].register(({ message, partitionKey, type }) => {
     if (type !== MessageType.EditRoom) return;
     storeUpdateRoom({ id: partitionKey, name: message });
   });
