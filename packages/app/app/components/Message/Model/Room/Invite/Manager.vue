@@ -14,18 +14,23 @@ interface InviteManagerProps {
 }
 
 const { roomId } = defineProps<InviteManagerProps>();
+const { $trpc } = useNuxtApp();
 const runtimeConfig = useRuntimeConfig();
 const inviteStore = useInviteStore();
-const { createInvite, readMyInvite } = inviteStore;
+const { createInvite, storeInvite } = inviteStore;
 const { invites } = storeToRefs(inviteStore);
-await readMyInvite(roomId);
+// Display reads the shared per-room map so a link regenerated on any surface updates every mounted Manager
 const invite = computed(() => invites.value.get(roomId));
 const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
-// Seed from the loaded invite so regenerating via one option doesn't silently reset the other to unlimited
-// (expireAfterMinutes can't be recovered from the absolute expiresAt, so it falls back to the default)
-const maxUses = ref<CreateInviteInput["maxUses"]>(
-  INVITE_MAX_USES_OPTIONS.find((uses) => uses === invite.value?.maxUses) ?? 0,
-);
+const maxUses = ref<CreateInviteInput["maxUses"]>(0);
+useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
+  // Seed from the loaded invite so regenerating via one option doesn't silently reset the other to unlimited
+  // (expireAfterMinutes can't be recovered from the absolute expiresAt, so it falls back to the default)
+  onSuccess: (newInvite) => {
+    storeInvite(roomId, newInvite ?? undefined);
+    maxUses.value = INVITE_MAX_USES_OPTIONS.find((uses) => uses === newInvite?.maxUses) ?? 0;
+  },
+});
 const expireAfterItems: SelectItemCategoryDefinition<CreateInviteInput["expireAfterMinutes"]>[] = [
   ...Object.entries(InviteExpireAfterMinutesMap).map(([title, value]) => ({ title, value })),
   { title: "Never", value: 0 },

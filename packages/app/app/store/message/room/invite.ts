@@ -10,13 +10,13 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   // Settings > Invites) reads this shared map — regenerating a link in one keeps the others current
   const invites = ref(new Map<string, InviteInMessage | undefined>());
 
-  const readMyInvite = async (roomId: string) => {
-    invites.value.set(roomId, (await $trpc.room.readMyInvite.query({ roomId })) ?? undefined);
+  const storeInvite = (roomId: string, invite: InviteInMessage | undefined) => {
+    invites.value.set(roomId, invite);
   };
   const createInvite = async (input: CreateInviteInput) => {
     await executeCreateInviteMutation(() => $trpc.room.createInvite.mutate(input), {
       onSuccess: (newInvite) => {
-        invites.value.set(input.roomId, newInvite);
+        storeInvite(input.roomId, newInvite);
       },
     });
   };
@@ -24,6 +24,6 @@ export const useInviteStore = defineStore("message/room/invite", () => {
   return {
     createInvite,
     invites,
-    readMyInvite,
+    storeInvite,
   };
 });
