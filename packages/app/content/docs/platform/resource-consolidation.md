@@ -19,7 +19,7 @@ The consolidation program that turned every editor + the surveyer into resources
 ## Durable gotchas
 
 - **Content class names are frozen.** `FlowchartEditor`/`EmailEditor`/`WebpageEditor` classes (and their `store/`/`models/`/`services/` folder names) keep the legacy names — they are registered in `JSONClassMap`, so renaming breaks superjson deserialization of persisted blobs.
-- **Publish snapshots** live at `{id}/published/{n}/…`; Survey bakes 1-year SAS URLs at publish (`transformPublishedSurvey`) and re-signs working-copy URLs on read (`transformReadSurvey`).
+- **Publish snapshots** live at `{id}/published/{n}/…`; publish clones referenced asset blobs and rewrites content urls (`transformPublishedBlobUrls`), and owner and public reads re-sign urls (`transformReadBlobUrls`) — generic transforms shared by Survey, Email and Webpage.
 - **Create writes no blob** — the content blob first exists at the first `saveResourceContent`; one blob, one `contentVersion`, optimistic concurrency on save.
 - Publish **status** is deliberately not a `/all` list column — it is a capability surfaced on the Overview blade.
 - Migrations: `20260707004532_aberrant_emma_frost` (documents → resources + publish split), `20260710120004_talented_slayback` (drop `surveys`, drop `Table` from `resource_type`).

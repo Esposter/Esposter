@@ -2,7 +2,6 @@
 import { authClient } from "@/services/auth/authClient";
 import { MERGE_FIELD_BLOCK_CATEGORY } from "@/services/emailEditor/constants";
 import { createEmailSurveyInviteBlocks } from "@/services/emailEditor/createEmailSurveyInviteBlocks";
-import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
 import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { GRAPES_JS_EDITOR_CONTAINER_ID, SURVEY_INVITE_BLOCK_CATEGORY } from "@/services/grapesjs/constants";
 import { setBlocks } from "@/services/grapesjs/setBlocks";
@@ -20,7 +19,7 @@ const uploadFile = useUploadResourceFile(ResourceType.Email, () => emailEditorSt
 const { editor } = await useGrapesJsEditor(
   {
     load: () => readEmailEditor(),
-    store: (data, storeEditor) => saveEmailEditor(data, { html: getEmailHtml(storeEditor) }),
+    store: (data, storeEditor) => saveEmailEditor(data, storeEditor),
   },
   { plugins: [grapesJSMJML] },
   { upload: uploadFile },

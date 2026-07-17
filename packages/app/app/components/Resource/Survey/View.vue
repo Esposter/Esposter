@@ -5,7 +5,8 @@ import { DEFAULT_CLOSED_MESSAGE } from "#shared/services/resource/survey/constan
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { THEME_KEY } from "@/services/survey/constants";
-import { SurveyResponseMode } from "@esposter/db-schema";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
@@ -18,7 +19,7 @@ const { id } = defineProps<ResourceSurveyViewProps>();
 const { $trpc } = useNuxtApp();
 const route = useRoute();
 // Read once on load and threaded through every write — the URL carries an opaque token or nothing
-const participantToken = Array.isArray(route.query.t) ? (route.query.t[0] ?? "") : (route.query.t ?? "");
+const participantToken = getRouteParamString(route.query.t);
 
 let surveyResponse: null | SurveyResponseEntity = null;
 
@@ -65,11 +66,8 @@ const saveSurveyResponse = async (survey: Model) => {
   );
 };
 
-const { content, name } = await getResultAsync(() => $trpc.survey.readPublishedResourceContent.query(id)).match(
-  (publishedResource) => publishedResource,
-  () => {
-    throw createError({ statusCode: 404, statusMessage: "Survey not found" });
-  },
+const { content, name } = await useReadPublishedResourceContent(ResourceType.Survey, id, () =>
+  $trpc.survey.readPublishedResourceContent.query(id),
 );
 // Settings arrive live on the public read, so closing or gating takes effect without a re-publish and
 // The URL stays alive — unlike unpublish, which 404s every participant link already sent

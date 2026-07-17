@@ -21,14 +21,14 @@ flowchart LR
   CREATOR["SurveyJS creator<br/>onUploadFile"] -->|useUploadResourceFile| FACTORY
   FACTORY -->|SAS PUT target| BLOB[("{id}/files/…<br/>ResourceAssets container")]
   AM -->|"registers the returned url"| CANVAS["content blob stores the url, never the bytes"]
-  PUB["publishResource (Survey)"] -->|"transformPublishedContent<br/>clone assets + rewrite urls"| SNAP[("{id}/published/{n}/…")]
-  OWN["owner read"] -->|transformReadContent| SAS["refreshed SAS urls"]
+  PUB["publishResource"] -->|"transformPublishedBlobUrls<br/>clone assets + rewrite urls"| SNAP[("{id}/published/{n}/…")]
+  OWN["owner + public reads"] -->|transformReadBlobUrls| SAS["re-signed SAS urls"]
 ```
 
 - **Declaration** — `fileAssets: true` in `ResourceDefinitionMap`; `FileAssetsResourceType` is derived through the existing `CapabilityResourceType` mapped type. The three procedures are spread into the router conditionally, exactly like the publish procedures, so a non-declaring type has no asset endpoints at the type level.
 - **Upload** — the standard two-step SAS flow ([/docs/architecture/file-uploads](/docs/architecture/file-uploads)): the server signs a PUT target scoped to one blob path, the client uploads directly to Azure Blob, then asks for a read URL. `useUploadResourceFile(type, id)` owns that round-trip once for every consumer.
 - **GrapesJS wiring** — `useGrapesJsEditor` takes an optional asset adapter. With one, the Asset Manager's `uploadFile` handler runs the SAS round-trip and registers the returned URL. Without one, GrapesJS falls back to embedding dropped images as base64 — which bloats every save and is stripped by major email clients, so both editors pass an adapter.
-- **Publish** — Survey's `transformPublishedContent` clones referenced asset blobs into the publish directory and rewrites their URLs, so a published snapshot survives the owner replacing the working-copy asset ([/docs/architecture/publishing](/docs/architecture/publishing)).
+- **Publish and reads** — every adopter shares the generic blob-url transforms ([/docs/architecture/publishing](/docs/architecture/publishing)): `transformPublishedBlobUrls` clones referenced asset blobs into the publish directory and rewrites their URLs, so a published snapshot survives the owner replacing the working-copy asset, and `transformReadBlobUrls` re-signs the urls on every owner and public read, so neither the editor nor a published page ever serves an expired SAS.
 - **Delete** — `deleteResource` already removes the whole `{id}/` directory, so assets need no separate teardown. `deleteFile` exists for removing one asset while the resource lives on (SurveyJS deleting an image question).
 
 ## Procedures
@@ -55,5 +55,5 @@ flowchart LR
 ## Notes
 
 - A standalone Asset or Image-library resource type was rejected: assets are meaningless outside their owning resource, die with it, and need no name, list or blades — an identity row per image is pure overhead. Cross-resource asset reuse has no demonstrated need; revisit only with a [brand kit](/docs/platform/deferred/brand-kit-resource).
-- Email's exported HTML references owner-read SAS urls, which expire. Long-lived public asset urls are the [email sending](/docs/platform/deferred/email-sending) follow-on.
+- Served pages re-sign asset urls on every read, but a **downloaded artifact** (Email's personalized HTML export) freezes whatever urls it left with — those expire on the read-SAS horizon. Long-lived public asset urls are the [email sending](/docs/platform/deferred/email-sending) follow-on.
 - Asset uploads count toward no quota ([storage usage surface](/docs/platform/deferred/storage-usage-surface) unchanged).

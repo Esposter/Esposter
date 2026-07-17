@@ -11,7 +11,7 @@ import { createBoundProgram } from "@@/server/trpc/routers/createBoundProgram.te
 import { programRouter } from "@@/server/trpc/routers/program";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { AzureEntityType, resources, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
+import { AzureEntityType, AzureTable, resources, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -89,6 +89,30 @@ describe("survey", () => {
     const content = await caller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual({ model, settings });
+  });
+
+  test("clears its response partition when the resource is deleted", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: { model, settings },
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      participantToken: "",
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
+
+    expect(MockTableDatabase.get(AzureTable.SurveyResponses)?.size).toBe(1);
+
+    // Respondents' answers are the survey's own data, so they die with it instead of orphaning forever
+    await caller.deleteResource({ id: newResource.id });
+
+    expect(MockTableDatabase.get(AzureTable.SurveyResponses)?.size).toBe(0);
   });
 
   test("hides unpublished surveys from respondents", async () => {
@@ -400,6 +424,33 @@ describe("survey", () => {
     expect(anonymousSurveyResponse.participantToken).toBe("");
     // The mode governs the write boundary from now on; it never mutates responses already stored
     expect(existingSurveyResponse?.participantToken).toBe(token);
+  });
+
+  test(`updating an ${SurveyResponseMode.Identified}-era response after switching to ${SurveyResponseMode.Anonymous} keeps its token`, async () => {
+    expect.hasAssertions();
+
+    const { survey, token } = await setupIdentifiedSurvey();
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      participantToken: token,
+      partitionKey: survey.id,
+      rowKey: crypto.randomUUID(),
+    });
+    await caller.saveResourceContent({
+      content: { model, settings } satisfies SurveyResource,
+      contentVersion: survey.contentVersion + 1,
+      id: survey.id,
+    });
+    const updatedSurveyResponse = await caller.updateSurveyResponse({
+      model: { satisfaction: 1 },
+      modelVersion: newSurveyResponse.modelVersion,
+      participantToken: "",
+      partitionKey: survey.id,
+      rowKey: newSurveyResponse.rowKey,
+    });
+
+    // The funnel joins participants × responses by token, so an Anonymous-mode edit must not erase who answered
+    expect(updatedSurveyResponse.participantToken).toBe(token);
   });
 
   test("fails create with closed survey", async () => {

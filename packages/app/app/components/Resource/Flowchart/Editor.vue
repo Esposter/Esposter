@@ -2,7 +2,7 @@
 import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
-import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
+import { nodeTypes } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
 import { Panel, useVueFlow, VueFlow } from "@vue-flow/core";
@@ -14,9 +14,6 @@ const { flowchartEditor, isSidebarOpen } = storeToRefs(flowchartEditorStore);
 const { addEdges, onConnect } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
 const isLoading = ref(true);
-const nodeTypes = Object.fromEntries(
-  Object.entries(NodeTypeMap).map(([nodeType, { component }]) => [nodeType, component]),
-);
 // VueFlow emits on every drag frame; coalesce so overlapping saves don't fight over contentVersion
 const debouncedSave = useAutosaveFn(saveFlowchartEditor);
 

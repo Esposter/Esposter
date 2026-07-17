@@ -2,7 +2,9 @@ import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { Editor, ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getResult } from "@esposter/shared";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const route = useRoute();
@@ -20,8 +22,13 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     return content.value;
   };
   // GrapesJS project data doesn't know about the dataset binding, so saves carry it over; the compiled
-  // MJML is captured alongside it because only the client editor can compile it for the published web view
-  const saveEmailEditor = async (projectData: ProjectData, { html }: Pick<EmailEditor, "html">) => {
+  // MJML is captured alongside it because only the client editor can compile it for the published web view.
+  // A failed compile must not drop the save, so the last captured html rides along instead
+  const saveEmailEditor = async (projectData: ProjectData, editor: Editor) => {
+    const html = getResult(() => getEmailHtml(editor)).match(
+      (newHtml) => newHtml,
+      () => content.value.html,
+    );
     content.value = new EmailEditor({ ...projectData, datasetReference: datasetReference.value, html });
     await save(content.value);
   };

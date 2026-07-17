@@ -9,7 +9,7 @@ export const ResourceOwnedTablesMap: Record<ResourceType, AzureTable[]> = {
   [ResourceType.Flowchart]: [],
   [ResourceType.Program]: [AzureTable.ProgramParticipants],
   [ResourceType.Sheet]: [],
-  [ResourceType.Survey]: [],
+  [ResourceType.Survey]: [AzureTable.SurveyResponses],
   [ResourceType.TodoList]: [],
   [ResourceType.Webpage]: [],
 };

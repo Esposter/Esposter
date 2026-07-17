@@ -41,20 +41,23 @@ export const useGrapesJsEditor = async (
             assetManager: {
               ...configuration?.assetManager,
               uploadFile: async (event) => {
-                for (const file of readUploadFiles(event)) {
-                  if (!validateFile(file.size)) {
-                    useEmptyFileAlert();
-                    continue;
-                  }
+                // The uploads are independent, so they overlap instead of paying each round trip in sequence
+                await Promise.all(
+                  readUploadFiles(event).map(async (file) => {
+                    if (!validateFile(file.size)) {
+                      useEmptyFileAlert();
+                      return;
+                    }
 
-                  await getResultAsync(() => assets.upload(file))
-                    .andTee((url) => {
-                      newEditor.AssetManager.add(url);
-                    })
-                    .match(noop, (error) => {
-                      createAlert(error.message, "error");
-                    });
-                }
+                    await getResultAsync(() => assets.upload(file))
+                      .andTee((url) => {
+                        newEditor.AssetManager.add(url);
+                      })
+                      .match(noop, (error) => {
+                        createAlert(error.message, "error");
+                      });
+                  }),
+                );
               },
             },
           }

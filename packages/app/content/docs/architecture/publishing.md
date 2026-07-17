@@ -45,10 +45,11 @@ sequenceDiagram
 | `readResourcePublication`      | owner                | current publish state (for editor UI), or undefined        |
 | `readPublishedResourceContent` | public, rate-limited | serve the publish copy                                     |
 
-Two hooks on `createResourceProcedures` support publishing needs:
+Three hooks on `createResourceProcedures` support publishing needs:
 
-- `transformPublishedContent(ctx, resource, content)` — rewrite content at publish time with the **owner's** authority. Dashboard resolves every bound visual and bakes the result into `VisualDatasetBinding.snapshot` (public viewers render the static snapshot, never resolve references — live viewer data stays [deferred](/docs/platform/deferred/realtime-dataset-refresh)). Survey clones referenced asset blobs into the publish directory and rewrites their URLs ([resource file assets](/docs/platform/resource-file-assets)).
-- `transformReadContent(ctx, resource, content)` — rewrite on owner read (Survey refreshes SAS asset URLs).
+- `transformPublishedContent(ctx, resource, content)` — rewrite content at publish time with the **owner's** authority. Dashboard resolves every bound visual and bakes the result into `VisualDatasetBinding.snapshot` (public viewers render the static snapshot, never resolve references — live viewer data stays [deferred](/docs/platform/deferred/realtime-dataset-refresh)). Survey and Webpage use the generic `transformPublishedBlobUrls`, which clones referenced asset blobs into the publish directory and rewrites their URLs ([resource file assets](/docs/platform/resource-file-assets)); Email composes it with a guard that rejects publishing without compiled MJML html and strips the owner-only `datasetReference` so the snapshot can never leak it.
+- `transformPublicReadContent(ctx, resource, content)` — rewrite on the anonymous public read. Every FileAssets adopter re-signs baked asset SAS urls through the generic `transformReadBlobUrls` so a published page never breaks past a SAS expiry; Survey additionally merges live collection settings over the immutable snapshot.
+- `transformReadContent(ctx, resource, content)` — rewrite on owner read (the same `transformReadBlobUrls` re-sign against the working-copy blobs).
 
 ## Route
 

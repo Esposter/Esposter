@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
+import { nodeTypes } from "@/services/flowchartEditor/NodeTypeMap";
 import { Background } from "@vue-flow/background";
 import { VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
-import { getResultAsync } from "@esposter/shared";
+import { ResourceType } from "@esposter/db-schema";
 
 interface ResourceFlowchartViewProps {
   id: string;
@@ -11,14 +11,8 @@ interface ResourceFlowchartViewProps {
 
 const { id } = defineProps<ResourceFlowchartViewProps>();
 const { $trpc } = useNuxtApp();
-const { content, name } = await getResultAsync(() => $trpc.flowchart.readPublishedResourceContent.query(id)).match(
-  (publishedResource) => publishedResource,
-  () => {
-    throw createError({ statusCode: 404, statusMessage: "Flowchart not found" });
-  },
-);
-const nodeTypes = Object.fromEntries(
-  Object.entries(NodeTypeMap).map(([nodeType, { component }]) => [nodeType, component]),
+const { content, name } = await useReadPublishedResourceContent(ResourceType.Flowchart, id, () =>
+  $trpc.flowchart.readPublishedResourceContent.query(id),
 );
 useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>

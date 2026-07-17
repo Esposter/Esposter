@@ -7,9 +7,9 @@ import { invalidParticipantTokenError } from "@@/server/services/survey/invalidP
 import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
 import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurveyResponseRead";
 import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
+import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
+import { transformReadBlobUrls } from "@@/server/services/resource/transformReadBlobUrls";
 import { transformPublicReadSurvey } from "@@/server/services/survey/transformPublicReadSurvey";
-import { transformPublishedSurvey } from "@@/server/services/survey/transformPublishedSurvey";
-import { transformReadSurvey } from "@@/server/services/survey/transformReadSurvey";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
@@ -60,8 +60,8 @@ export const surveyRouter = router({
   // See ResourceDefinitionMap
   ...createResourceProcedures(ResourceType.Survey, {
     transformPublicReadContent: transformPublicReadSurvey,
-    transformPublishedContent: transformPublishedSurvey,
-    transformReadContent: transformReadSurvey,
+    transformPublishedContent: transformPublishedBlobUrls,
+    transformReadContent: transformReadBlobUrls,
   }),
   countSurveyResponses: getOwnerProcedure(
     ResourceType.Survey,
@@ -143,8 +143,10 @@ export const surveyRouter = router({
           ).message,
         });
 
-      // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write
-      const updatedSurveyResponse = { ...input, participantToken };
+      // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write.
+      // An empty resolution keeps the identity the response was created with, so a live switch to
+      // Anonymous never erases who answered from the program funnel
+      const updatedSurveyResponse = { ...input, participantToken: participantToken || surveyResponse.participantToken };
       await updateEntity(surveyResponseClient, updatedSurveyResponse);
       return Object.assign(surveyResponse, updatedSurveyResponse);
     }),

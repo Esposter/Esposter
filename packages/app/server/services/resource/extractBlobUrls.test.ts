@@ -1,4 +1,4 @@
-import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
+import { extractBlobUrls } from "@@/server/services/resource/extractBlobUrls";
 import { AzureContainer } from "@esposter/db-schema";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { describe, expect, test, vi } from "vitest";
@@ -52,5 +52,13 @@ describe(extractBlobUrls, () => {
     const url = `${MOCK_BLOB_BASE_URL}/${AzureContainer.ClickerAssets}/1`;
 
     expect(extractBlobUrls(`${url}"`)).toStrictEqual([]);
+  });
+
+  test("should stop at the escaped quote when the URL is embedded in JSON-serialized content", () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/1`;
+
+    expect(extractBlobUrls(JSON.stringify({ html: `<img src="${url}">` }))).toStrictEqual([url]);
   });
 });

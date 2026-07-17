@@ -53,6 +53,40 @@ describe("email", () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(emailEditor)));
   });
 
+  test("rejects publishing an email without compiled html", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new EmailEditor(),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+
+    await expect(caller.publishResource({ id: newResource.id })).rejects.toThrow(
+      "cannot publish email without compiled html",
+    );
+  });
+
+  test("strips the owner-only dataset binding from the published snapshot", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new EmailEditor({
+        datasetReference: { id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses },
+        html,
+      }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
+
+    expect(publishedContent.content.datasetReference).toBeUndefined();
+    expect(publishedContent.content.html).toBe(html);
+  });
+
   test("serves the compiled html to the published web view", async () => {
     expect.hasAssertions();
 
