@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Item } from "@/models/shared/Item";
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 import { hasCapability } from "#shared/services/resource/hasCapability";
@@ -26,6 +27,57 @@ const isPortable = computed(() => hasCapability(resource.type, "portable"));
 const isRenameOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isShareOpen = ref(false);
+const { exportFormats, importFormats } = usePortableFormats(() => resource);
+// The collapsed menu is the same command set as the wide bar, derived from the same gates
+// (isPublishable, publication, portable formats) so the two renderings cannot diverge
+const overflowItems = computed<Item[]>(() => [
+  { icon: "mdi-refresh", onClick: () => refresh(), title: "Refresh" },
+  {
+    icon: "mdi-pencil",
+    onClick: () => {
+      isRenameOpen.value = true;
+    },
+    title: "Rename",
+  },
+  {
+    color: "error",
+    icon: "mdi-delete",
+    onClick: () => {
+      isDeleteOpen.value = true;
+    },
+    title: "Delete",
+  },
+  { icon: "mdi-content-copy", onClick: () => duplicate(), title: "Duplicate" },
+  ...(isPublishable.value
+    ? [
+        publication
+          ? { icon: "mdi-cloud-off-outline", onClick: () => unpublish(), title: "Unpublish" }
+          : { icon: "mdi-cloud-upload", onClick: () => publish(), title: "Publish" },
+      ]
+    : []),
+  // An unpublished resource has no public URL, so there is nothing to share until it has one
+  ...(isPublishable.value && publication
+    ? [
+        {
+          icon: "mdi-share-variant",
+          onClick: () => {
+            isShareOpen.value = true;
+          },
+          title: "Share",
+        },
+      ]
+    : []),
+  ...importFormats.value.map(({ import: importFormat, label }) => ({
+    icon: "mdi-import",
+    onClick: () => importFormat?.(),
+    title: `Import ${label}`,
+  })),
+  ...exportFormats.value.map(({ export: exportFormat, label }) => ({
+    icon: "mdi-export",
+    onClick: () => exportFormat?.(),
+    title: `Export ${label}`,
+  })),
+]);
 </script>
 
 <template>
@@ -48,18 +100,7 @@ const isShareOpen = ref(false);
       <ResourcePortableActions :resource />
     </template>
   </template>
-  <ResourceBladeOverflowMenu
-    v-else
-    :duplicate
-    :publication
-    :publish
-    :refresh
-    :resource
-    :unpublish
-    @delete="isDeleteOpen = true"
-    @rename="isRenameOpen = true"
-    @share="isShareOpen = true"
-  />
+  <StyledOverflowMenu v-else icon="mdi-dots-horizontal" :items="overflowItems" />
   <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
   <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename :resource />
   <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove :resource />

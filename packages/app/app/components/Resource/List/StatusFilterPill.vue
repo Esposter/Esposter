@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
 
-import { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
+import { ResourceStatusFilterItems } from "@/services/resource/list/ResourceStatusFilterItems";
 
 const modelValue = defineModel<"" | ResourceStatusFilter>({ required: true });
 const emit = defineEmits<{ remove: [] }>();
-const statusItems: SelectItemCategoryDefinition<"" | ResourceStatusFilter>[] = [
-  { title: "All", value: "" },
-  { title: ResourceStatusFilter.Published, value: ResourceStatusFilter.Published },
-  { title: ResourceStatusFilter.Draft, value: ResourceStatusFilter.Draft },
-];
 </script>
 
 <template>
@@ -19,7 +14,7 @@ const statusItems: SelectItemCategoryDefinition<"" | ResourceStatusFilter>[] = [
     </template>
     <v-list density="compact">
       <v-list-item
-        v-for="{ title, value } of statusItems"
+        v-for="{ title, value } of ResourceStatusFilterItems"
         :key="title"
         :active="modelValue === value"
         :title

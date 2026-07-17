@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 import type { Item } from "@/models/shared/Item";
 import type { Resource, ResourceType } from "@esposter/db-schema";
@@ -6,7 +7,11 @@ import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { pluralize } from "#shared/util/text/pluralize";
-import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
+import {
+  DEFAULT_RESOURCE_SORT_BY,
+  RESOURCE_LIST_ITEMS_PER_PAGE,
+  RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS,
+} from "@/services/resource/constants";
 import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
@@ -32,19 +37,22 @@ const executeDeleteResourcesMutation = useMutation();
 const listDialogStore = useListDialogStore();
 const { deletingId, renamingId } = storeToRefs(listDialogStore);
 // The workbench filter state mirrors to query params (deep links from global search included);
-// The blade list never renders the filter UI, so it only ever reads the defaults
+// The blade list renders no filter UI and rides its host page's route, so its page/sort state
+// Lives in local refs instead of writing query params the workbench owns
 const {
   clearFilters,
   hasActiveFilters,
-  page,
+  page: routePage,
   searchQuery,
-  sortBy,
+  sortBy: routeSortBy,
   status,
   types,
   updatedAfter,
   updatedBefore,
   updatedFilter,
 } = useResourceListFilters();
+const page = isSearchable ? routePage : ref(1);
+const sortBy = isSearchable ? routeSortBy : ref<SortItem<keyof Resource>[]>([...DEFAULT_RESOURCE_SORT_BY]);
 // Typing buffers in a local clone so router.replace isn't spammed per keystroke;
 // UseCloned keeps route → field flowing (back-nav, clear filters) while the debounced value follows field → route
 const { cloned: searchInput } = useCloned(searchQuery);
@@ -175,10 +183,8 @@ const onContextMenuRow = (event: MouseEvent, { item }: ItemSlot<Resource>) => {
 };
 const onUpdateOptions = async (options: ReadResourcesOptions) => {
   itemsPerPage.value = options.itemsPerPage;
-  if (isSearchable) {
-    page.value = options.page;
-    sortBy.value = options.sortBy;
-  }
+  page.value = options.page;
+  sortBy.value = options.sortBy;
   await readResources(options);
 };
 </script>
@@ -232,12 +238,6 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         @clear="clearFilters()"
       />
     </template>
-    <!-- Rendered in both modes: the blade list paginates too, so a failed read must surface a retry there as well -->
-    <v-alert v-if="error && items.length > 0" density="compact" type="error" :text="error" :rounded="0">
-      <template #append>
-        <v-btn size="small" variant="text" @click="refresh()">Retry</v-btn>
-      </template>
-    </v-alert>
     <ResourceListSummaryCards
       v-if="isSummaryView"
       :counts="typeCounts"
