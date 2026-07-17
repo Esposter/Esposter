@@ -3,7 +3,7 @@ import { defineVitestProject } from "@nuxt/test-utils/config";
 
 import { dayjs } from "./shared/services/dayjs";
 
-export default await defineVitestProject({
+const vitestConfig = await defineVitestProject({
   // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire the bench plugin via the shared
   // Helper (inert unless the CodSpeed runner drives the run). The app benches, so it declares
   // `@codspeed/vitest-plugin` as a devDependency to satisfy configuration's optional peer.
@@ -31,3 +31,10 @@ export default await defineVitestProject({
     setupFiles: ["fake-indexeddb/auto", "./shared/test/setup.ts"],
   },
 });
+// `defineVitestProject` is `resolveConfig` (all the nuxt wiring: plugins, aliases, runtime entry setup
+// File, environmentOptions) plus one hardcoded `environment = "nuxt"` for every file. Restore the node
+// Default so only `// @vitest-environment nuxt` files pay the nuxt environment cost — the wiring stays
+// Intact, so per-file directives still resolve the nuxt environment.
+vitestConfig.test.environment = "node";
+
+export default vitestConfig;
