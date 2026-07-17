@@ -1,6 +1,7 @@
+import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
-import type { Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
+import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
@@ -14,6 +15,7 @@ import { deleteTablePartition } from "@@/server/services/azure/table/deleteTable
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
+import { getFilesDirectoryName } from "@@/server/services/resource/getFilesDirectoryName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
@@ -24,16 +26,24 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { deleteDirectory } from "@esposter/db";
+import { deleteDirectory, generateDownloadFileSasUrls, generateUploadFileSasEntities } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,
   DatabaseEntityType,
+  fileEntitySchema,
   resourcePublications,
   resources,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, Operation, streamToText } from "@esposter/shared";
+import {
+  createUniqueArraySchema,
+  InvalidOperationError,
+  jsonDateParse,
+  MAX_READ_LIMIT,
+  Operation,
+  streamToText,
+} from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -45,6 +55,25 @@ const createResourceInputSchema = selectResourceSchema.pick({ name: true });
 const updateResourceInputSchema = selectResourceSchema.pick({ id: true, name: true });
 
 const resourceIdInputSchema = selectResourceSchema.pick({ id: true });
+
+const generateUploadFileSasEntitiesInputSchema = z.object({
+  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true }), "filename")
+    .min(1)
+    .max(MAX_READ_LIMIT),
+  id: selectResourceSchema.shape.id,
+});
+
+const generateDownloadFileSasUrlsInputSchema = z.object({
+  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true, mimetype: true }), "id")
+    .min(1)
+    .max(MAX_READ_LIMIT),
+  id: selectResourceSchema.shape.id,
+});
+
+const deleteFileInputSchema = z.object({
+  blobPath: z.string().min(1).max(MAX_READ_LIMIT),
+  id: selectResourceSchema.shape.id,
+});
 
 type ResourceContent<TType extends ResourceType> = z.infer<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>;
 
@@ -167,6 +196,27 @@ export const createResourceProcedures = <TType extends ResourceType>(
         ),
     ),
   };
+  // Binary assets live under {id}/files/… — the owner uploads and reads them through short-lived SAS urls,
+  // And deleteResource already removes the whole {id}/ directory, so the assets need no separate teardown
+  const fileAssetsProcedures = {
+    deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation(async ({ input: { blobPath, id } }) => {
+      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+      const blockBlobClient = containerClient.getBlockBlobClient(`${id}/${blobPath}`);
+      await blockBlobClient.deleteIfExists();
+    }),
+    generateDownloadFileSasUrls: getOwnerProcedure(type, generateDownloadFileSasUrlsInputSchema, "id").query<string[]>(
+      async ({ input: { files, id } }) => {
+        const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+        return generateDownloadFileSasUrls(containerClient, files, getFilesDirectoryName(id));
+      },
+    ),
+    generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
+      FileSasEntity[]
+    >(async ({ input: { files, id } }) => {
+      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+      return generateUploadFileSasEntities(containerClient, files, getFilesDirectoryName(id));
+    }),
+  };
   const publishProcedures = {
     publishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourcePublication>(
       async ({ ctx, input: { id } }) => {
@@ -258,6 +308,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
   };
   return {
     ...baseProcedures,
+    ...(hasCapability(type, "fileAssets") ? fileAssetsProcedures : {}),
     ...(hasCapability(type, "publishable") ? publishProcedures : {}),
-  } as (TType extends PublishableResourceType ? typeof publishProcedures : unknown) & typeof baseProcedures;
+  } as (TType extends FileAssetsResourceType ? typeof fileAssetsProcedures : unknown) &
+    (TType extends PublishableResourceType ? typeof publishProcedures : unknown) &
+    typeof baseProcedures;
 };

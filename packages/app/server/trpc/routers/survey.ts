@@ -1,8 +1,6 @@
 import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
-import type { FileSasEntity } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
 import { invalidParticipantTokenError } from "@@/server/services/survey/invalidParticipantTokenError";
@@ -17,49 +15,17 @@ import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
+import { createEntity, deleteEntity, getEntity, updateEntity } from "@esposter/db";
 import {
-  createEntity,
-  deleteEntity,
-  generateDownloadFileSasUrls,
-  generateUploadFileSasEntities,
-  getEntity,
-  updateEntity,
-} from "@esposter/db";
-import {
-  AzureContainer,
   AzureEntityType,
   AzureTable,
-  fileEntitySchema,
   ResourceType,
   selectResourceSchema,
   SurveyResponseEntity,
   surveyResponseEntitySchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, InvalidOperationError, MAX_READ_LIMIT, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-
-// Type-owned binary assets (survey uploads) live under the standard {id}/files/… convention
-const getFilesDirectoryName = (surveyId: string) => `${surveyId}/files`;
-
-const generateUploadFileSasEntitiesInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true }), "filename")
-    .min(1)
-    .max(MAX_READ_LIMIT),
-  surveyId: selectResourceSchema.shape.id,
-});
-
-const generateDownloadFileSasUrlsInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true, mimetype: true }), "id")
-    .min(1)
-    .max(MAX_READ_LIMIT),
-  surveyId: selectResourceSchema.shape.id,
-});
-
-const deleteFileInputSchema = z.object({
-  blobPath: z.string().min(1).max(MAX_READ_LIMIT),
-  surveyId: selectResourceSchema.shape.id,
-});
 
 const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   participantToken: true,
@@ -90,6 +56,8 @@ const deleteSurveyResponseInputSchema = surveyResponseEntitySchema.pick({ rowKey
 const countSurveyResponsesInputSchema = selectResourceSchema.pick({ id: true });
 
 export const surveyRouter = router({
+  // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
+  // See ResourceDefinitionMap
   ...createResourceProcedures(ResourceType.Survey, {
     transformPublicReadContent: transformPublicReadSurvey,
     transformPublishedContent: transformPublishedSurvey,
@@ -109,14 +77,6 @@ export const surveyRouter = router({
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
-  deleteFile: getOwnerProcedure(ResourceType.Survey, deleteFileInputSchema, "surveyId").mutation(
-    async ({ input: { blobPath, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      const blobName = `${surveyId}/${blobPath}`;
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      await blockBlobClient.deleteIfExists();
-    },
-  ),
   deleteSurveyResponse: getOwnerProcedure(ResourceType.Survey, deleteSurveyResponseInputSchema, "id").mutation(
     async ({ ctx, input: { rowKey } }) => {
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
@@ -129,22 +89,6 @@ export const surveyRouter = router({
       await deleteEntity(surveyResponseClient, ctx.resource.id, rowKey);
     },
   ),
-  generateDownloadFileSasUrls: getOwnerProcedure(
-    ResourceType.Survey,
-    generateDownloadFileSasUrlsInputSchema,
-    "surveyId",
-  ).query<string[]>(async ({ input: { files, surveyId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-    return generateDownloadFileSasUrls(containerClient, files, getFilesDirectoryName(surveyId));
-  }),
-  generateUploadFileSasEntities: getOwnerProcedure(
-    ResourceType.Survey,
-    generateUploadFileSasEntitiesInputSchema,
-    "surveyId",
-  ).query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-    return generateUploadFileSasEntities(containerClient, files, getFilesDirectoryName(surveyId));
-  }),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
     .query<null | SurveyResponseEntity>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {

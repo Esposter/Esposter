@@ -5,7 +5,7 @@ description: The standard for product persistence and surface — one Postgres t
 
 # Resources
 
-The standard for product persistence and product surface. **Everything is a resource**: a file, a survey, a todo list, a dashboard, an email, a webpage, a flowchart. One Postgres table, one blob container, one procedure factory, one explorer UI. Cross-cutting behaviors (publishing, dataset serving, import/export) are opt-in **capabilities**, never baked into the core.
+The standard for product persistence and product surface. **Everything is a resource**: a file, a survey, a todo list, a dashboard, an email, a webpage, a flowchart. One Postgres table, one blob container, one procedure factory, one explorer UI. Cross-cutting behaviors (publishing, dataset serving, asset hosting, import/export) are opt-in **capabilities**, never baked into the core.
 
 ## Anatomy
 
@@ -22,11 +22,11 @@ flowchart LR
   subgraph blob [Azure Blob resource-assets container]
     CONTENT["{id}/content<br/>working copy — per-type Zod schema"]
     PUB["{id}/published/{publishVersion}<br/>immutable snapshots (Publishable only)"]
-    FILES["{id}/files/…<br/>binary assets (Survey uploads)"]
+    FILES["{id}/files/…<br/>binary assets (FileAssets)"]
   end
 
   subgraph def [ResourceDefinitionMap entry — shared, as-const]
-    D["contentSchema · icon · title<br/>capabilities: publishable? datasetProvider? portable?"]
+    D["contentSchema · icon · title<br/>capabilities: publishable? datasetProvider? fileAssets? portable?"]
   end
 
   ROW -- "id = blob path prefix" --> CONTENT
@@ -62,7 +62,7 @@ Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by i
 ```text
 {id}/content                      working copy (JSON, validated by the type's content schema)
 {id}/published/{publishVersion}   publish snapshots (Publishable only)
-{id}/files/…                      type-owned binary assets (e.g. Survey uploads)
+{id}/files/…                      binary assets (FileAssets types only)
 ```
 
 Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource deletes the row and the `{id}/` blob directory — identically for every type.
@@ -75,15 +75,16 @@ A capability is a cross-cutting mechanism a resource type opts into via its defi
 
 | Capability          | Contract                                                                                                                                               | Adopters                                                                |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [/docs/architecture/publishing](/docs/architecture/publishing) | Dashboard, Survey, Webpage                                              |
+| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [/docs/architecture/publishing](/docs/architecture/publishing) | Dashboard, Email, Flowchart, Survey, Webpage                            |
 | **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [/docs/architecture/datasets](/docs/architecture/datasets)                           | Sheet, Survey (responses)                                               |
+| **FileAssets**      | owner-only upload/download/delete of binary assets under `{id}/files/…` → [/docs/platform/resource-file-assets](/docs/platform/resource-file-assets)   | Email, Survey, Webpage                                                  |
 | **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands                                                   | Sheet (csv/json/xlsx, both ways), Email (personalized html export only) |
 
 Explicitly **not** capabilities: collecting public responses (Survey-only — stays survey-specific code) and dataset _consumption_ (just calling `dataset.readDataset` from a component; no per-type wiring to declare).
 
 ### Declaration — `ResourceDefinitionMap`
 
-One shared as-const-satisfies map (`packages/app/shared/services/resource/ResourceDefinitionMap.ts`) is the single source of truth for what a type is: its `contentSchema`, `icon`, `title`, and `capabilities` (`{ datasetProvider?: true; portable?: true; publishable?: true }`), keyed by `ResourceType`.
+One shared as-const-satisfies map (`packages/app/shared/services/resource/ResourceDefinitionMap.ts`) is the single source of truth for what a type is: its `contentSchema`, `icon`, `title`, and `capabilities` (`{ datasetProvider?: true; fileAssets?: true; portable?: true; publishable?: true }`), keyed by `ResourceType`.
 
 A generic mapped type derives the subset of types declaring each capability:
 
@@ -94,7 +95,7 @@ export type CapabilityResourceType<TCapability extends keyof ResourceCapabilitie
 }[ResourceType];
 ```
 
-`PublishableResourceType`, `DatasetProviderResourceType`, and `PortableResourceType` are its aliases, and `hasCapability(type, capability)` is the matching runtime type guard. Capability implementation maps are keyed by the derived unions — `ViewComponentMap: Record<PublishableResourceType, Component>`, `PortableFormatMap: Record<PortableResourceType, …>` — so a missing view page or format entry is a compile error, and adding one for a non-capable type is also a compile error.
+`PublishableResourceType`, `FileAssetsResourceType`, and `PortableResourceType` are its aliases, and `hasCapability(type, capability)` is the matching runtime type guard. Capability implementation maps are keyed by the derived unions — `ViewComponentMap: Record<PublishableResourceType, Component>`, `PortableFormatMap: Record<PortableResourceType, …>` — so a missing view page or format entry is a compile error, and adding one for a non-capable type is also a compile error.
 
 ### Wiring
 
@@ -102,12 +103,13 @@ export type CapabilityResourceType<TCapability extends keyof ResourceCapabilitie
 flowchart TB
   DEF["ResourceDefinitionMap[type].capabilities<br/>(shared, as-const-satisfies)"]
 
-  DEF -->|"derives literal unions"| UNIONS["PublishableResourceType<br/>DatasetProviderResourceType<br/>PortableResourceType"]
+  DEF -->|"derives literal unions"| UNIONS["PublishableResourceType<br/>FileAssetsResourceType<br/>PortableResourceType"]
 
   subgraph server [Server]
     FACTORY["createResourceProcedures(type, options?)"]
     BASE["base: create/read/update/delete<br/>readResourceContent/saveResourceContent"]
     PUBP["+ publishResource / unpublishResource /<br/>readResourcePublication / readPublishedResourceContent"]
+    FAP["+ generateUploadFileSasEntities /<br/>generateDownloadFileSasUrls / deleteFile"]
     DPM["DatasetProviderMap<br/>Record&lt;DatasetProviderType, provider&gt;"]
   end
 
@@ -121,6 +123,7 @@ flowchart TB
   UNIONS -->|"conditional return type:<br/>publish procedures exist iff publishable"| FACTORY
   FACTORY --> BASE
   FACTORY -.->|"publishable types only<br/>(compile error otherwise)"| PUBP
+  FACTORY -.->|"fileAssets types only"| FAP
   UNIONS --> VIEWS
   UNIONS --> FMT
   FMT --> CMDS
@@ -157,7 +160,7 @@ Router-per-type plus one thin cross-type router:
 | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `resource`                                                        | `readResource` (single row by id, cross-type), `readResources` (explorer list, all types), `count` (filtered total, shares its filter schema with the list so they stay in lockstep) |
 | `sheet`, `todoList`, `dashboard`, `email`, `webpage`, `flowchart` | `createResourceProcedures(type, …)`                                                                                                                                                  |
-| `survey`                                                          | factory + type-specific procedures (responses, SAS file uploads)                                                                                                                     |
+| `survey`                                                          | factory + type-specific procedures (public respondent responses)                                                                                                                     |
 
 Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key off the literal tRPC path (`"flowchart.saveResourceContent"`), and type-specific procedures need a home.
 
@@ -175,6 +178,7 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 | `packages/db-schema/src/schema/resourcePublications.ts`                   | publish state table                        |
 | `packages/app/shared/services/resource/ResourceDefinitionMap.ts`          | type definitions + capability declarations |
 | `packages/app/shared/models/resource/CapabilityResourceType.ts`           | derived capability unions                  |
+| `packages/app/server/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
 | `packages/app/shared/services/resource/hasCapability.ts`                  | runtime capability guard                   |
 | `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | the procedure factory                      |
 | `packages/app/server/trpc/procedure/resource/getOwnerProcedure.ts`        | ownership middleware                       |

@@ -19,9 +19,10 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     content.value = new EmailEditor(data ?? undefined);
     return content.value;
   };
-  // GrapesJS project data doesn't know about the dataset binding, so saves carry it over
-  const saveEmailEditor = async (projectData: ProjectData) => {
-    content.value = new EmailEditor({ ...projectData, datasetReference: datasetReference.value });
+  // GrapesJS project data doesn't know about the dataset binding, so saves carry it over; the compiled
+  // MJML is captured alongside it because only the client editor can compile it for the published web view
+  const saveEmailEditor = async (projectData: ProjectData, { html }: Pick<EmailEditor, "html">) => {
+    content.value = new EmailEditor({ ...projectData, datasetReference: datasetReference.value, html });
     await save(content.value);
   };
   const saveDatasetReference = async (newDatasetReference: DatasetReference | undefined) => {

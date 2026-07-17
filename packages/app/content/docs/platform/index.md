@@ -38,6 +38,10 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Dashboard data binding](/docs/platform/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Email personalization](/docs/platform/email-personalization) — merge fields, survey invite blocks, personalized HTML export
 - [Dataset row-cap warning](/docs/platform/dataset-row-cap-warning) — "showing N of M" wherever a dataset read hits the 1000-row cap
+- [Email web view](/docs/platform/email-web-view) — Email is Publishable: save-time HTML capture, `/view/email/[id]` browser copy
+- [Flowchart publish](/docs/platform/flowchart-publish) — Flowchart is Publishable: read-only VueFlow render at `/view/flowchart/[id]`
+- [Resource file assets](/docs/platform/resource-file-assets) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
+- [Webpage survey invite blocks](/docs/platform/webpage-survey-invite-blocks) — published surveys as drag-in invite buttons in both GrapesJS editors
 - [Resource Explorer consolidation](/docs/platform/resource-consolidation) — the shipped six-phase program record
 
 Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/platform/deferred) (with revisit triggers) and [rejected](/docs/platform/rejected).
@@ -58,3 +62,6 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - File resource renamed to **Sheet** — pg enum value, `sheet` router, models/components/store, and the docs area (`sheet-editor`, `sheet-resource`); no backwards compat
 - **End-to-end survey funnel** — the send → view → respond → analyze loop closed: survey `settings` (accepting-responses toggle + Anonymous/Identified response mode) enforced at one server write boundary, the **Program** resource issuing opaque participant tokens and serving the identity-free `ProgramStatus` dataset, owner-side response detail/delete/count, and best-effort view counts on every publishable type's public read. One new Postgres enum value and two new Azure Tables; no new services. The café-scenario chain is covered end to end by `surveyFunnel.integration.test.ts`.
 - Explorer parity smalls — `/all` Summary lens over a grouped `countsByType`, the dataset row cap surfaced as "showing N of M" in every consumer (`Dataset.totalRows` + `countEntities`), Sheet create-from-file landing in a ready Data blade, and a Share command posting a published link into an esbabbler room
+- FileAssets capability — Survey's `{id}/files` SAS machinery promoted onto the resource factory, adopted by Email and Webpage through a GrapesJS Asset Manager adapter (hosted images instead of base64)
+- Publish parity for the remaining visual types — Email (`/view/email/[id]` browser copy via save-time MJML capture) and Flowchart (read-only VueFlow render) both opted into Publishable; Sheet and TodoList stay non-publishable by design
+- Survey invite blocks in the webpage editor — the email block builder moved to a shared core with per-editor markup wrappers
