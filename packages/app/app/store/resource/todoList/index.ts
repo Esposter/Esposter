@@ -30,7 +30,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   // And its own next save is not rejected as stale; the adopted content is what is now persisted
   const storeSaveResourceContent = (content: TodoListResource, contentVersion: Resource["contentVersion"]) => {
     todoList.value = content;
-    if (resource.value) resource.value = { ...resource.value, contentVersion };
+    if (resource.value) resource.value.contentVersion = contentVersion;
     setPersistedContent(content);
   };
   const { createItem, deleteItem, updateItem } = createOperationData(items, ["id"], "Item");
