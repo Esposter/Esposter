@@ -115,7 +115,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 `no-void` is an error (`.oxlintrc.json`, covering `.ts` and `.vue`); the only `void` in the codebase lives inside `getSynchronizedFunction`. It's banned because it silences `no-floating-promises` by discarding the promise — rejections go unhandled and the caller can't await completion. When you reach for it, stop at the first step that applies:
 
 1. **Can the enclosing function be `async`?** Make it `async` and `await`. This covers nearly every case, including Vue template/emit handlers (`@click`, `@confirm`) and any callback typed `Promisable<void>` — Vue doesn't care that a handler returns a promise, so `onClick: async () => { await ... }` needs no wrapper.
-2. **Do you own the callback's type?** Widen it to `Promisable<void>` (`type-fest`) and `await` it at the call site. Never force callers to `void` their async work.
+2. **Do you own the callback's type?** Widen it to `Promisable<void>` (`type-fest`) and `await` it at the call site. Never force callers to `void` their async work. Always the `Promisable<T>` alias — never a hand-written `Promise<T> | T` union; this applies to every maybe-async signature, not just this replacement flow.
 3. **Third-party sync slot you genuinely cannot change** (`onScopeDispose`, `addEventListener`, Phaser callbacks) — wrap with `getSynchronizedFunction(asyncFn)` (`#shared/util/function/getSynchronizedFunction`, explicit import). The **only** sanctioned fire-and-forget: it drops the promise just like `void`, so it's a last resort, not a shortcut past steps 1–2.
 
 If none apply (sync body, no callback slot to widen), restructure so the sync teardown stays sync and the promise is awaited last — don't `void` it.

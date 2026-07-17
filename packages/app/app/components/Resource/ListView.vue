@@ -333,24 +333,19 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         />
       </template>
     </StyledDataTableServer>
-    <template v-if="isSearchable">
-      <ResourceListContextMenu
-        v-if="contextMenuResource"
-        v-model="isContextMenuOpen"
-        :position="contextMenuPosition"
-        :resource="contextMenuResource"
-      />
-      <ResourceListRenameDialog
-        v-if="renamingResource"
-        :key="renamingResource.id"
-        :resource="renamingResource"
-        @update="refresh()"
-      />
-      <ResourceListDeleteDialog
-        v-if="deletingResource"
-        :resource="deletingResource"
-        @delete="deleteResources($event)"
-      />
-    </template>
+    <ResourceListContextMenu
+      v-if="isSearchable && contextMenuResource"
+      v-model="isContextMenuOpen"
+      :position="contextMenuPosition"
+      :resource="contextMenuResource"
+    />
+    <!-- Outside the isSearchable gate: the blade list's row ⋮ menu opens these too -->
+    <ResourceListRenameDialog
+      v-if="renamingResource"
+      :key="renamingResource.id"
+      :resource="renamingResource"
+      @update="refresh()"
+    />
+    <ResourceListDeleteDialog v-if="deletingResource" :resource="deletingResource" @delete="deleteResources($event)" />
   </div>
 </template>
