@@ -1,3 +1,4 @@
+import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { InviteInMessage, RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
@@ -61,6 +62,7 @@ import {
   userIdSchema,
   userIdsSchema,
   users,
+  usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
 } from "@esposter/db-schema";
@@ -75,7 +77,7 @@ import {
 } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { and, count, desc, eq, getColumns, gt, ilike, inArray, isNull, lt, ne, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, getColumns, gt, ilike, inArray, isNull, lt, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
@@ -125,6 +127,27 @@ export const baseRoomRouter = router({
           .from(usersToRoomsInMessage)
           .where(eq(usersToRoomsInMessage.roomId, roomId)),
       ).count,
+  ),
+  countMembersByTopRole: getMemberProcedure(countMembersInputSchema, "roomId").query<MemberCountByTopRole[]>(
+    ({ ctx, input: { roomId } }) => {
+      // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups
+      const topRoles = ctx.db
+        .selectDistinctOn([usersToRoomRolesInMessage.userId], {
+          roleId: usersToRoomRolesInMessage.roleId,
+          userId: usersToRoomRolesInMessage.userId,
+        })
+        .from(usersToRoomRolesInMessage)
+        .innerJoin(
+          roomRolesInMessage,
+          and(eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId), not(roomRolesInMessage.isEveryone)),
+        )
+        .where(eq(usersToRoomRolesInMessage.roomId, roomId))
+        .orderBy(usersToRoomRolesInMessage.userId, desc(roomRolesInMessage.position))
+        .as("topRoles");
+      // Only role groups are returned — the roleless trailing group is derived client-side from the
+      // Total member count so join/leave subscription updates keep it current without a refetch
+      return ctx.db.select({ count: count(), roleId: topRoles.roleId }).from(topRoles).groupBy(topRoles.roleId);
+    },
   ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)

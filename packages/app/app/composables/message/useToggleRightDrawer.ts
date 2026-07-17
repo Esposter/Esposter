@@ -1,7 +1,7 @@
 import type { RightDrawer } from "@/models/message/RightDrawer";
 
 import { useLayoutStore } from "@/store/layout";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
+import { useMessageLayoutStore } from "@/store/message/ui/layout";
 
 export const useToggleRightDrawer = (drawer: RightDrawer) => {
   const layoutStore = useLayoutStore();

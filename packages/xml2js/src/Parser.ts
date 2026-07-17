@@ -151,7 +151,7 @@ export class Parser {
         this.#options.explicitChildren &&
         this.#options.preserveChildrenOrder &&
         this.#options.charsAsChildren &&
-        (this.#options.includeWhiteChars || text.replaceAll(String.raw`\\n`, "").trim() !== "")
+        (this.#options.includeWhiteChars || Boolean(text.replaceAll(String.raw`\\n`, "").trim()))
       ) {
         object[this.#options.childkey] ??= [];
         const charChild: Record<string, string> = {

@@ -9,7 +9,25 @@ One cohesive polish pass over the room shell, matching Discord's refinements. Vi
 
 ## Role-grouped member list
 
-The member sidebar groups members Discord-style: one group per top hoisted role ordered by role position (highest first), with roleless members trailing in a single "Members" group. Each group renders a subheader with the role name and member count. A member's display name is tinted with their top role's color; the implicit `@everyone` role never groups or tints. Grouping and top-role resolution are pure services (`getMemberGroups`, `getTopRole`) with co-located tests.
+The member sidebar groups members Discord-style: one group per top hoisted role ordered by role position (highest first), with roleless members trailing in a single "Members" group. A member's display name is tinted with their top role's color; the implicit `@everyone` role never groups or tints. Grouping and top-role resolution are pure services (`getMemberGroups`, `getTopRole`) with co-located tests.
+
+### Group counts
+
+Each group subheader shows the group's **total** member count, not the loaded-page count — the list is cursor-paginated, so counting loaded members would silently undercount. Totals stay correct through three mechanisms, each owning a different change source:
+
+```mermaid
+flowchart TD
+  readMembers["useReadMembers.readMembers<br/>(room switch)"] -- "countMembersByTopRole query" --> counts["memberStore.countsByTopRole<br/>(per-role totals)"]
+  joinLeave["member join/leave<br/>(subscriptions)"] -- "count++ / count--" --> total["memberStore.count"]
+  total -- "roleless = count - sum(role groups)" --> headers["group subheader counts"]
+  counts --> headers
+  roleMutation["role assign/revoke/delete<br/>(optimistic, rollback, subscription)"] -- "mutateMemberRoles diffs top role" --> hooks["topRoleChangeHooks"]
+  hooks -- "+-1 on the affected role groups" --> counts
+```
+
+- **Room switch** — `readMembers` fetches `room.countMembersByTopRole` (one `DISTINCT ON` query grouping members by their highest-positioned non-`@everyone` role) alongside the member page and total count.
+- **Join/leave** — the roleless group is never fetched; it is derived as `count - sum(role groups)`, so the member subscriptions that already maintain `count` keep it current for free (new members start roleless).
+- **Role changes** — every role-membership mutation (optimistic apply, rollback, `onSuccess`, and the role subscription handlers) funnels through the role store's `mutateMemberRoles`, which diffs the member's top role and fires `topRoleChangeHooks`; the member store registers a hook that shifts the affected role-group counts. Reads (`readMemberRoles`) bypass the hooks — server counts already include loaded members.
 
 ## Resizable, persisted sidebars
 
@@ -25,11 +43,11 @@ The generic `StyledEmptyState` (icon + title + description) backs welcome-style 
 
 ## Mobile action bar
 
-On `smAndDown` a bottom action bar sits above the composer, keeping room actions within thumb reach: room-list toggle, pinned messages, add friends, member-list toggle, and search. It reuses the same header action-button components, complementing the header's `⋮` overflow collapse.
+On `smAndDown` a bottom action bar sits above the composer, keeping room actions within thumb reach: room-list toggle, pinned messages, add friends, member-list toggle, and search. It reuses the same header action-button components and is the **only** small-screen surface for them — the header hides its room-list/search buttons and has no overflow menu on `smAndDown`, so every action keeps exactly one affordance.
 
 ## Category drag-reorder
 
-Room categories in the left sidebar reorder by dragging their headers (SortableJS via `vue-draggable-plus`); a ghost placeholder with a primary-colored top border marks the drop target. Alt+↑/Alt+↓ on a focused category header moves it without a pointer. The store applies the new positions optimistically (via [`useMutation`](/docs/architecture/client-data)), then persists only the rows whose position changed (`getCategoryPositionUpdates`) through the `reorderRoomCategories` procedure — a single DB transaction, so a drag either fully lands or fully rolls back. `readRoomCategories` orders by `position` first with `name` as tiebreaker.
+Room categories in the left sidebar reorder by dragging their headers (SortableJS via `vue-draggable-plus`); a ghost placeholder with a primary-colored top border marks the drop target. Touch drags wait `ROOM_CATEGORY_TOUCH_DRAG_DELAY_MS` (`delayOnTouchOnly`) so a swipe that starts on a header scrolls the list instead of reordering it. Alt+↑/Alt+↓ on a focused category header moves it without a pointer. The store applies the new positions optimistically (via [`useMutation`](/docs/architecture/client-data)), then persists only the rows whose position changed (`getCategoryPositionUpdates`) through the `reorderRoomCategories` procedure — a single DB transaction, so a drag either fully lands or fully rolls back. `readRoomCategories` orders by `position` first with `name` as tiebreaker, and `createRoomCategory` appends below the existing order (`max(position) + 1`) so a new category never jumps above a drag-assigned top.
 
 ## Key files
 
@@ -37,6 +55,8 @@ Room categories in the left sidebar reorder by dragging their headers (SortableJ
 | ------------------------------------------------------------------------------ | ------------------------------------------------- |
 | `packages/app/app/services/message/member/getMemberGroups.ts`                  | Discord-style member grouping by top role         |
 | `packages/app/app/services/message/member/getTopRole.ts`                       | Top hoisted role for grouping + name tint         |
+| `packages/app/app/services/message/member/topRoleChangeHooks.ts`               | Role store → member store count-sync hooks        |
+| `packages/app/shared/models/db/room/MemberCountByTopRole.ts`                   | Per-top-role count row from the server            |
 | `packages/app/app/store/message/ui/layout.ts`                                  | Persisted sidebar widths + right drawer selection |
 | `packages/app/app/components/Styled/ResizeHandle.vue`                          | Generic pointer-drag width handle                 |
 | `packages/app/app/store/message/ui/appearance.ts`                              | Persisted message display density                 |

@@ -300,6 +300,7 @@ Prefer `string` with `""` as the absent/empty sentinel. Do not use `string | und
 - **`nextCursor = ""`** — `CursorPaginationData.nextCursor` is always `string`; `""` means no next page.
 - **Resetting**: assign `""` not `undefined`. Never `value || undefined` before an API call — pass `""` directly.
 - **`currentRoomId`** and similar route-derived IDs return `""` (not `undefined`) when absent.
+- **Checking**: never compare against the sentinel (`value === ""` / `value !== ""`) — use the truthy/falsy check directly: `if (value)`, `value ? a : b`, `.filter((line) => Boolean(line))`. Comparing to `""` survives ONLY where falsy values diverge: `number | ""` unions (`0` is a real value, `""` is empty — `minimum !== ""` is load-bearing) and code that distinguishes `""` from `undefined` with different behavior for each (e.g. `image === ""` = clear it, `undefined` = leave unchanged).
 
 **Legitimate exceptions (third-party boundaries only):**
 

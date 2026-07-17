@@ -22,8 +22,8 @@ export const runNodeInProcess = (
   const originalExit = process.exit;
   const originalExitCode = process.exitCode;
   const originalRequire = globalThis.require;
-  const originalCwd = cwd === "" ? "" : process.cwd();
-  const baseDir = cwd === "" ? process.cwd() : cwd;
+  const originalCwd = cwd ? process.cwd() : "";
+  const baseDir = cwd || process.cwd();
   const fs = createPlatformaticFsProvider({ isOverlayEnabled: true });
   const isPipe = stdio === "pipe";
   const require = createRequire(resolve(baseDir, "[eval].js"));
@@ -46,13 +46,11 @@ export const runNodeInProcess = (
         const resolved = typeof code === "number" ? code : typeof process.exitCode === "number" ? process.exitCode : 0;
         throw new ExitSignalError(resolved);
       };
-      if (cwd !== "") process.chdir(cwd);
+      if (cwd) process.chdir(cwd);
       globalThis.require = require;
       fs.mount(baseDir);
       const run = () =>
-        file === ""
-          ? runInThisContext(code, { displayErrors: false })
-          : require(require.resolve(resolve(baseDir, file)));
+        file ? require(require.resolve(resolve(baseDir, file))) : runInThisContext(code, { displayErrors: false });
       return getResult(run).match(
         // An async result needs an event loop we will not spin, so defer it to native.
         (value): ExecResult | undefined =>
@@ -71,7 +69,7 @@ export const runNodeInProcess = (
       process.exit = originalExit;
       process.exitCode = originalExitCode;
       globalThis.require = originalRequire;
-      if (originalCwd !== "") process.chdir(originalCwd);
+      if (originalCwd) process.chdir(originalCwd);
       for (const key of Object.keys(require.cache)) if (!cachedBefore.has(key)) delete require.cache[key];
     },
   );

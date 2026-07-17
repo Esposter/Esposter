@@ -47,6 +47,18 @@ Plan the batch around what the agents touch:
 
 Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. Never sweep a long-lived branch you did not create.
 
+## Code reviews
+
+One command only: the `code-review` skill, for every review — the working diff (no args) and PR re-reviews (`/code-review <PR#>`, optional effort level first). Never use the `review` skill; two overlapping commands is how the wrong (shallower) one gets picked.
+
+Review workflow agents must not inherit the session model when it is a premium tier — finder/verifier/synthesis agents are execution roles, not the thinking role, so they run on `opus`. `.claude/workflows/code-review.js` is the project copy of the built-in review workflow with `model: "opus"` pinned on every agent. **`Workflow({ name: "code-review" })` does NOT resolve to it** (verified: the name always loads the built-in), so when the `code-review` skill says to invoke the workflow by name, invoke it by path instead, same args:
+
+```javascript
+Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "<level> [PR# or target]" });
+```
+
+The script exits with `{ probe: true }` when args is exactly `probe` — a free way to confirm the file still parses after editing it.
+
 ## Design for agents
 
 Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. The [Blueprint proposal](../../../packages/app/content/docs/proposals/platform/blueprint-resource.md) is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.

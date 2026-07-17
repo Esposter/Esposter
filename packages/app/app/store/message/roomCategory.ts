@@ -22,7 +22,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     updateRoomCategory: storeUpdateRoomCategory,
   } = createOperationData(categories, ["id"], DatabaseEntityType.RoomCategory);
 
-  // The server only adds userId and takes the position/timestamp column defaults, so the client can build the
+  // The server only adds userId and the appended position, so the client can build the
   // Row faithfully — insert a temp-id placeholder now and reconcile the server row onto it in onSuccess.
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
     if (!session.value.data) return;
@@ -36,7 +36,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
       deletedAt: null,
       id: crypto.randomUUID(),
       name: input.name,
-      position: 0,
+      // Mirror the server's append-below-existing-order position so the placeholder lands where the row will
+      position: categories.value.reduce((maxPosition, { position }) => Math.max(maxPosition, position), -1) + 1,
       updatedAt: new Date(),
       userId: session.value.data.user.id,
     });

@@ -112,7 +112,7 @@ v-for="entity of childMap.values()"
 Admin action hooks in `useCallStore` receive `roomId`. Compare against `callRoomId` (not `activeCallSessionId`) since admin actions are room-scoped:
 
 ```ts
-AdminActionHookMap[AdminActionType.ForceMute].push(async (roomId) => {
+AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
   if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, true);
   if (callRoomId.value !== roomId) return;
   await setMicrophone(false);

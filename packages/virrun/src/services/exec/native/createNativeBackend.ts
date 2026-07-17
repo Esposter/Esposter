@@ -18,7 +18,7 @@ export const createNativeBackend = (): ExecBackend => ({
       const spawnFile = isWindows && Array.isArray(command) ? "cmd.exe" : file;
       const spawnArgs = isWindows && Array.isArray(command) ? ["/d", "/s", "/c", file, ...args] : args;
       const child = spawnHidden(spawnFile, spawnArgs, {
-        cwd: options.cwd === "" ? undefined : options.cwd,
+        cwd: options.cwd || undefined,
         // Inherit the host env, with options.env merged over it (the `VIRRUN` signal, and anything else the
         // Orchestrator passes) — the same contract the bwrap backend honors, so the native path and the
         // Sandbox expose an identical environment to the command.

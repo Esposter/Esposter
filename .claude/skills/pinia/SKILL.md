@@ -304,6 +304,16 @@ const { storeUsers } = userStore;
 
 This keeps a single source of truth for user data.
 
+## Cross-Surface Server State — Store Map First, Hooks Only for Side Effects
+
+State the server keeps singular (one live invite per member per room, one member count per room) must never live in component-local refs/`useQuery` data when more than one surface can display or mutate it — two mounted instances silently diverge the moment one mutates. The ladder, simplest first:
+
+1. **Pinia store map keyed by `roomId`** — every surface reads a `computed` over the shared map; mutations write back through a `store*` setter. This alone solves display staleness across surfaces (e.g. `useInviteStore.invites` shared by the Add Friends dialog and Settings → Invites).
+2. **Subscription handlers update the store** — when the data drifts on server events (member joins, role changes), the owning `use*Subscribables` composable writes the store; components never refetch to reconcile.
+3. **Hook registry** — only when one typed action/event must fan out to side effects owned by _unrelated_ stores (the `AdminActionHookMap`/`MessageHookMap` cases; `topRoleChangeHooks` lets the member store keep its per-role group counts current on every role mutation without the role store importing it). Route every mutation path — optimistic apply, rollback, `onSuccess`, and subscription handlers — through one store function that fires the hooks (`mutateMemberRoles`); reads that hydrate from the server bypass it, since server-computed aggregates already include them. Hooks are for decoupling cross-store side effects, not for keeping shared data in sync — reaching for them where a shared store map suffices adds indirection without fixing ownership.
+
+   Every registry is created with `createHookRegistry<THook>()` (`services/shared/createHookRegistry.ts`), which returns `{ hooks, register, run }` — **never export a raw module-level hook array**. Store factories re-run per SSR request while the registry is module-scoped, so raw `.push()` leaks server memory; `register` centralizes the `getIsServer()` no-op (hooks only fire from client-side interactions). Stores call `.register(hook)` at setup; orchestrators fan out with `await registry.run(...args)`, or iterate `registry.hooks` directly from a sync context (`mutateMemberRoles`). Keyed variants are plain objects/Records of registries (`MessageHookMap[Operation.Create].register(...)`).
+
 ## Reactive Map Mutations
 
 Vue 3 tracks `Map` mutations (`set`, `delete`, `clear`) on a `ref(new Map(...))` — no need to clone and reassign.

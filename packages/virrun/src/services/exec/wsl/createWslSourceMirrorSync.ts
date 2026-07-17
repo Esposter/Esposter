@@ -102,19 +102,18 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     const publish = `mv ${shellQuote(`${entryPath}/${originTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`)} && mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
       `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(lockPath)}`;
-    const extract =
-      archivePath === ""
-        ? []
-        : [
-            // `--warning=no-unknown-keyword` quiets GNU tar's per-symlink "Ignoring unknown extended header keyword
-            // 'LIBARCHIVE.symlinktype'" line: a benign pax header the win32 bsdtar writer stamps on every archived
-            // Symlink to record its file-vs-dir target kind. That distinction is meaningless on Linux — extraction
-            // Recreates the symlink correctly and exits 0 with or without it — so it is pure noise at this boundary.
-            // This command only ever runs under WSL GNU tar (the mirror is win32-only; a native-Linux run uses the os
-            // Backend, not this archive), and the archive itself stays standard pax for any other reader.
-            `timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar --warning=no-unknown-keyword -xf ${shellQuote(archivePath)} -C ${shellQuote(mirrorPath)}`,
-            `chmod -R 777 ${shellQuote(mirrorPath)}`,
-          ];
+    const extract = archivePath
+      ? [
+          // `--warning=no-unknown-keyword` quiets GNU tar's per-symlink "Ignoring unknown extended header keyword
+          // 'LIBARCHIVE.symlinktype'" line: a benign pax header the win32 bsdtar writer stamps on every archived
+          // Symlink to record its file-vs-dir target kind. That distinction is meaningless on Linux — extraction
+          // Recreates the symlink correctly and exits 0 with or without it — so it is pure noise at this boundary.
+          // This command only ever runs under WSL GNU tar (the mirror is win32-only; a native-Linux run uses the os
+          // Backend, not this archive), and the archive itself stays standard pax for any other reader.
+          `timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar --warning=no-unknown-keyword -xf ${shellQuote(archivePath)} -C ${shellQuote(mirrorPath)}`,
+          `chmod -R 777 ${shellQuote(mirrorPath)}`,
+        ]
+      : [];
     let sync: string[];
     if (delta === undefined)
       // Materialize from scratch: clearing `tree/` before the extract is what self-heals mirror-vs-manifest drift —

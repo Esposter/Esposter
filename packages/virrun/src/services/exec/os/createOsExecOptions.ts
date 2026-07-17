@@ -15,20 +15,19 @@ import { readWslLoginPath } from "@/services/exec/wsl/readWslLoginPath";
 // PATH), whose binaries are the *win32* build. But the sandbox chdir's into the ext4 source mirror, not /mnt/c, so
 // That entry is the raw host tree, not the overlaid one — a bare `tsgo`/`eslint`/`oxlint` would resolve the win32
 // Binary and crash needing its `-linux-x64` sibling. Prepend the mirror's own node_modules/.bin (overlaid from the
-// Snapshot lower = current platform) so the Linux binary wins. Only on win32 (wslLoginPath !== ""): native Linux
+// Snapshot lower = current platform) so the Linux binary wins. Only on win32 (wslLoginPath is non-empty): native Linux
 // Overlays at cwd, so its PATH already resolves the correct binary and needs no prepend.
 export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions => {
   const sharedPackageStoreOptions = createSharedPackageStoreOptions(cwd, getOsCacheRoot(cwd));
   const wslLoginPath = process.platform === "win32" ? readWslLoginPath() : "";
-  const path =
-    wslLoginPath === ""
-      ? ""
-      : `${getWslSourceMirrorPath(resolveCwd(cwd))}/${NODE_MODULES_BIN_DIRECTORY}:${wslLoginPath}`;
+  const path = wslLoginPath
+    ? `${getWslSourceMirrorPath(resolveCwd(cwd))}/${NODE_MODULES_BIN_DIRECTORY}:${wslLoginPath}`
+    : "";
   return {
     ...sharedPackageStoreOptions,
     cwd,
     env: {
-      ...(path === "" ? {} : { PATH: path }),
+      ...(path ? { PATH: path } : {}),
       ...sharedPackageStoreOptions.env,
       [VIRRUN_ENV_KEY]: "true",
     },

@@ -21,7 +21,7 @@ export const buildSourceMirrorManifest = (cwd: string, excludes: readonly string
   const manifest: SourceMirrorManifest = {};
   const walk = (directory: string, relativeBase: string): void => {
     for (const entry of readdirSync(directory, { withFileTypes: true })) {
-      const relativePath = relativeBase === "" ? entry.name : `${relativeBase}/${entry.name}`;
+      const relativePath = relativeBase ? `${relativeBase}/${entry.name}` : entry.name;
       if (nameExcludes.has(entry.name) || pathExcludes.has(relativePath)) continue;
       const path = join(directory, entry.name);
       if (entry.isSymbolicLink()) {

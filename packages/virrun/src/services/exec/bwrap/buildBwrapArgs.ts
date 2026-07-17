@@ -31,8 +31,8 @@ export const buildBwrapArgs = (
       buildBwrapArgs.name,
       "a persistent overlay needs both upperDir and workDir",
     );
-  const dir = cwd === "" ? process.cwd() : cwd;
-  const source = sourceDir === "" ? dir : sourceDir;
+  const dir = cwd || process.cwd();
+  const source = sourceDir || dir;
   const commandArgs = Array.isArray(command) ? [...command] : ["/bin/sh", "-c", command];
   const topOverlay =
     upperDir !== undefined && workDir !== undefined ? ["--overlay", upperDir, workDir, dir] : ["--tmp-overlay", dir];

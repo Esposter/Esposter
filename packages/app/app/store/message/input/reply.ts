@@ -8,20 +8,20 @@ import { Operation } from "@esposter/shared";
 export const useReplyStore = defineStore("message/input/reply", () => {
   const roomStore = useRoomStore();
   const { data: rowKey } = useDataMap(() => roomStore.currentRoomId, "");
-  MessageHookMap.ResetSend.push(() => {
+  MessageHookMap.ResetSend.register(() => {
     rowKey.value = "";
   });
 
   const dataStore = useDataStore();
   // These are all the messages that have been replied to
   const { data: replyMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
-  MessageHookMap[Operation.Create].push(({ replyRowKey }) => {
+  MessageHookMap[Operation.Create].register(({ replyRowKey }) => {
     if (!replyRowKey) return;
     const reply = dataStore.items.find(({ rowKey }) => rowKey === replyRowKey);
     if (!reply) return;
     replyMap.value.set(replyRowKey, reply);
   });
-  MessageHookMap[Operation.Delete].push(({ rowKey }) => {
+  MessageHookMap[Operation.Delete].register(({ rowKey }) => {
     replyMap.value.delete(rowKey);
   });
 

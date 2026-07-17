@@ -271,32 +271,32 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, console.error);
   };
 
-  AdminActionHookMap[AdminActionType.CreateBan].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.CreateBan].register(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });
-  AdminActionHookMap[AdminActionType.ForceMute].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
     if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, true);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
-  AdminActionHookMap[AdminActionType.ForceUnmute].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.ForceUnmute].register(async (roomId) => {
     if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, false);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
   });
-  AdminActionHookMap[AdminActionType.KickFromRoom].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.KickFromRoom].register(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });
-  AdminActionHookMap[AdminActionType.KickFromCall].push(async () => {
+  AdminActionHookMap[AdminActionType.KickFromCall].register(async () => {
     await leaveCall();
   });
-  AdminActionHookMap[AdminActionType.StopScreenShare].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.StopScreenShare].register(async (roomId) => {
     if (callRoomId.value !== roomId) return;
     await setScreenShare(false);
   });
-  AdminActionHookMap[AdminActionType.TimeoutUser].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.TimeoutUser].register(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });
 

@@ -73,7 +73,14 @@ const mentionCount = computed(() => (isActive.value ? 0 : (getMyUserToRoom(room.
               icon="mdi-cog"
               variant="plain"
               size="small"
-              @click.stop="settingsRoomId = room.id"
+              @click.stop="
+                async () => {
+                  // Settings panels (Roles, Members) load and key their data by the current room,
+                  // so opening settings for another room navigates there first
+                  if (!isActive) await navigateTo(RoutePath.Messages(room.id));
+                  settingsRoomId = room.id;
+                }
+              "
             />
           </template>
         </v-tooltip>

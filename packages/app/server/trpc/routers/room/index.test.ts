@@ -13,6 +13,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
+import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { AzureContainer, DatabaseEntityType, friends, INVITE_ID_LENGTH, roomsInMessage } from "@esposter/db-schema";
@@ -25,6 +26,7 @@ describe("room", () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["room"]["directMessage"]>;
   let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
+  let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
@@ -35,6 +37,7 @@ describe("room", () => {
     roomCaller = createCallerFactory(roomRouter)(mockContext);
     directMessageCaller = createCallerFactory(directMessageRouter)(mockContext);
     friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
+    roleCaller = createCallerFactory(roleRouter)(mockContext);
   });
 
   beforeEach(() => {
@@ -636,6 +639,21 @@ describe("room", () => {
     const newCount = await roomCaller.countMembers({ roomId: newRoom.id });
 
     expect(newCount).toBe(1);
+  });
+
+  test("counts members by top role", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const rolelessCounts = await roomCaller.countMembersByTopRole({ roomId: newRoom.id });
+
+    expect(rolelessCounts).toStrictEqual([]);
+
+    const newRole = await roleCaller.createRole({ name, roomId: newRoom.id });
+    await roleCaller.assignRole({ roleId: newRole.id, roomId: newRoom.id, userId: getMockSession().user.id });
+    const counts = await roomCaller.countMembersByTopRole({ roomId: newRoom.id });
+
+    expect(counts).toStrictEqual([{ count: 1, roleId: newRole.id }]);
   });
 
   test("reads members", async () => {

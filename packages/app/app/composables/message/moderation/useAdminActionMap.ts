@@ -42,7 +42,7 @@ export const useAdminActionMap = () => {
     AdminActionTypes.map((adminActionType) => [
       adminActionType,
       async (roomId: string, durationMs?: number) => {
-        await Promise.all(AdminActionHookMap[adminActionType].map((fn) => Promise.resolve(fn(roomId))));
+        await AdminActionHookMap[adminActionType].run(roomId);
         await adminActionMap[adminActionType]?.(roomId, durationMs);
       },
     ]),

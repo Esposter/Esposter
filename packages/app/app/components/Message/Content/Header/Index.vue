@@ -46,7 +46,8 @@ const updateRoom = async (name: string) => {
     :style="{ paddingLeft: isLeftDrawerOpenAuto ? '.25rem' : undefined }"
     density="comfortable"
   >
-    <MessageContentShowRoomListButton />
+    <!-- On small screens the mobile action bar above the composer owns room list, room actions, and search -->
+    <MessageContentShowRoomListButton v-if="!smAndDown" />
     <StyledEditableNameDialogButton
       v-model="isEditRoomDialogOpen"
       :card-props="{ title: 'Edit Room' }"
@@ -72,8 +73,7 @@ const updateRoom = async (name: string) => {
       <MessageContentCallButton />
       <MessageContentNotificationSettingsMenuButton />
       <MessageContentHeaderActionButtons v-if="!smAndDown" />
-      <MessageContentShowSearchButton />
-      <MessageContentHeaderOverflowMenu v-if="smAndDown" />
+      <MessageContentShowSearchButton v-if="!smAndDown" />
     </template>
   </v-toolbar>
   <MessageContentHeaderDirectMessage v-else />

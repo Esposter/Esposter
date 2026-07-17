@@ -18,7 +18,7 @@ export const reapAbandonedSourceMirrors = (): void => {
       const origin = getResult(() => readFileSync(join(sourcesDir, name, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME), "utf8"))
         .unwrapOr("")
         .trim();
-      return origin !== "" && !existsSync(origin);
+      return Boolean(origin) && !existsSync(origin);
     });
   }).match(noop, noop);
 };
