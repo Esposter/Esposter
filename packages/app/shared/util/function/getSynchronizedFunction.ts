@@ -8,7 +8,9 @@ const pendingPromises = new Set<Promise<unknown>>();
 export const getSynchronizedFunction =
   <T extends unknown[]>(fn: (...args: T) => Promise<unknown>) =>
   (...args: T) => {
-    const promise = fn(...args).finally(() => pendingPromises.delete(promise));
+    const promise = fn(...args).finally(() => {
+      pendingPromises.delete(promise);
+    });
     pendingPromises.add(promise);
   };
 

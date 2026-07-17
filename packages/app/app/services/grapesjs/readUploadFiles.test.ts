@@ -2,14 +2,15 @@
 import { readUploadFiles } from "@/services/grapesjs/readUploadFiles";
 import { describe, expect, test } from "vitest";
 
+const createFileList = (files: File[]): FileList => {
+  const dataTransfer = new DataTransfer();
+  for (const file of files) dataTransfer.items.add(file);
+  return dataTransfer.files;
+};
+
 describe(readUploadFiles, () => {
   const filename = "a";
   const createFile = () => new File([""], filename);
-  const createFileList = (files: File[]): FileList => {
-    const dataTransfer = new DataTransfer();
-    for (const file of files) dataTransfer.items.add(file);
-    return dataTransfer.files;
-  };
 
   test("reads files from the drag payload", () => {
     expect.hasAssertions();

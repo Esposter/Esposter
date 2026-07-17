@@ -6,13 +6,14 @@ import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const renderButton = ({ label, url }: { label: string; url: string }) => `${label}|${url}`;
+
 describe(createSurveyInviteBlocks, () => {
   const id = crypto.randomUUID();
   const name = "name";
   const origin = "http://localhost:3000";
   const createSurvey = (survey?: Partial<Resource>): Resource =>
     ({ id, name, type: ResourceType.Survey, ...survey }) as Resource;
-  const renderButton = ({ label, url }: { label: string; url: string }) => `${label}|${url}`;
 
   test("builds one block per survey linking its public url", () => {
     expect.hasAssertions();

@@ -14,12 +14,12 @@ definePageMeta({
   validate: (route) => validate(route) && (!route.params.blade || typeof route.params.blade === "string"),
 });
 const route = useRoute();
-// Id is stable for this page instance (keyed by id), so a plain cast is safe; only blade changes without a remount
-const id = route.params.id as string;
+// Id is stable for this page instance (keyed by id), so a one-time read is safe; only blade changes without a remount
+const id = getRouteParamString(route.params.id);
 const { duplicate, isLoading, load, publication, publish, remove, rename, resource, unpublish } = useResource(id);
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
-const activeBlade = computed(() => (route.params.blade as string) || ResourceBladeType.Overview);
+const activeBlade = computed(() => getRouteParamString(route.params.blade) || ResourceBladeType.Overview);
 // Opening a resource feeds the global search dropdown's "Recently viewed" group
 useRecordResourceView(resource);
 
