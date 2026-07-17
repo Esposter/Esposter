@@ -2,13 +2,13 @@ import type { Promisable } from "type-fest";
 
 import { getIsServer } from "@esposter/shared";
 
-type AnyHook = (...args: never[]) => Promisable<void>;
-
 export interface HookRegistry<THook extends AnyHook> {
   hooks: readonly THook[];
   register: (hook: THook) => void;
   run: (...args: Parameters<THook>) => Promise<void>;
 }
+
+type AnyHook = (...args: never[]) => Promisable<void>;
 
 // The single owner of cross-store hook plumbing — module-scoped registries outlive per-request SSR
 // Store factories, so register is a client-only no-op (hooks only fire from client-side interactions)
