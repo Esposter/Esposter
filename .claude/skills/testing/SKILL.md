@@ -246,11 +246,14 @@ afterEach(() => vi.unstubAllGlobals());
 
 ## Vitest Environment
 
-**`packages/app` defaults to the `nuxt` environment** — `defineVitestProject` (`@nuxt/test-utils/config`) hardcodes `test.environment = "nuxt"` for the whole project (verified 2026-07: a directive-less app test file has `typeof window === "object"`). Library packages (`shared`, `virrun`, …) default to `node`.
+**`packages/app` defaults to the `nuxt` environment** — `defineVitestProject` (`@nuxt/test-utils/config`) hardcodes `test.environment = "nuxt"` for the whole project, and user config cannot override it (verified 2026-07: a directive-less app test file has `typeof window === "object"`). Library packages (`shared`, `virrun`, …) default to `node`.
+
+This flipped silently in the root-`projects` migration ("fix: unifying vitest", 2026-06-17): the previous `defineVitestConfig` defaulted to `node` and used `// @vitest-environment nuxt` directives to route marked files into a synthesized nuxt project — which is why ~40 app test files carry the directive. `defineVitestConfig` throws on `projects`, so the migration forced `defineVitestProject` and with it the nuxt-everywhere default.
 
 - **Never assume "no directive = no DOM" in app tests** — every app test file gets the nuxt env's happy-dom `window` regardless of directives. Code branching on `getIsServer()` therefore takes the **client** path in app tests by default; to exercise the server path, stub it: `vi.stubGlobal("window", undefined)` (+ `vi.unstubAllGlobals()` in `afterEach`) — never rely on the environment being window-less.
-- **Do not add environment directives.** The ~40 existing `// @vitest-environment nuxt` directives predate the project-wide default and are redundant (harmless; remove opportunistically, not as a sweep). `// @vitest-environment node` is unused in app and shouldn't be introduced without a real reason — setup.ts's warm-up guards tolerate it, but no current test needs it.
+- **Do not add environment directives.** The existing `// @vitest-environment nuxt` directives are redundant under the current default (harmless; remove opportunistically, not as a sweep). `// @vitest-environment node` is unused in app and shouldn't be introduced without a real reason — setup.ts's warm-up guards tolerate it, but no current test needs it.
 - Nuxt-runtime features (`mountSuspended`/`renderSuspended`, stores/composables calling `useNuxtApp()`/`useRouter()` at setup time) just work in app tests — no directive needed.
+- Restoring a node default would require a two-project split in the app config (a node project plus a nuxt project selected by include glob — what `defineVitestConfig` used to synthesize); `defineVitestProject` alone cannot express it.
 
 **DOM comes from the nuxt environment, not setup.ts.** The nuxt environment builds its own happy-dom `window`/`document` (and `mountSuspended` attaches to its own `#test-wrapper`), so there is **no** manual happy-dom registration. `fake-indexeddb/auto` stays a global setup file: it only assigns the IDB\* global constructors the `idb` library needs, and the cache composables (`useCursorPaginationCache`/`useOffsetPaginationCache`) pull IndexedDB in transitively across many tests, so scoping it isn't worth the surface area.
 
