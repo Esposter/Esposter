@@ -2,13 +2,12 @@ import type { SurveyResource } from "#shared/models/resource/survey/SurveyResour
 import type { SurveySettings } from "#shared/models/resource/survey/SurveySettings";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 
 export const useSurveyStore = defineStore("survey", () => {
   const route = useRoute();
   // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save } = useResource(() =>
-    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
-  );
+  const { load, readContent, resource, save } = useResource(() => getRouteParamString(route.params.id));
   // The SurveyJS creator owns editor/preview state; the resource layer only sees model JSON in/out
   const model = ref("");
   // Collection settings share the survey's single content blob, so the Overview toggle and the editor

@@ -5,13 +5,14 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { isCreatableResourceType } from "@/services/resource/CreatableResourceTypes";
 import { resourceNameRules } from "@/services/resource/resourceNameRules";
 import { useNotificationStore } from "@/store/notification";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
 
 const route = useRoute();
-const typeParam = (Array.isArray(route.params.type) ? route.params.type[0] : route.params.type) ?? "";
+const typeParam = getRouteParamString(route.params.type);
 if (!isCreatableResourceType(typeParam)) throw createError({ statusCode: 404, statusMessage: "Unknown resource type" });
 
 const type = typeParam;
@@ -26,6 +27,8 @@ const isSubmitting = ref(false);
 // Only Sheet has a file to start from today; every other type creates name-only
 const sheetResource = ref<SheetResource>();
 const fileError = ref("");
+// Submitting mid-parse would create an empty sheet and silently discard the import, so parsing blocks Create
+const isFileParsing = ref(false);
 // The create call writes no blob, so the parsed rows land through the same first save the Data blade would do.
 // A failed save still leaves a valid empty sheet, so the user keeps the resource and is told what is missing
 const submit = async () => {
@@ -77,7 +80,7 @@ const submit = async () => {
                 v-model="isValid"
                 @submit.prevent="
                   async () => {
-                    if (!isValid || fileError) return;
+                    if (!isValid || fileError || isFileParsing) return;
                     await submit();
                   }
                 "
@@ -93,13 +96,14 @@ const submit = async () => {
                   v-if="type === ResourceType.Sheet"
                   v-model="sheetResource"
                   v-model:error="fileError"
+                  v-model:is-parsing="isFileParsing"
                   @parse="name ||= $event"
                 />
                 <div mt-4 flex gap-2 justify-end>
                   <v-btn variant="text" :to="RoutePath.ResourcesCreate">Cancel</v-btn>
                   <StyledButton
                     type="submit"
-                    :button-props="{ disabled: !isValid || Boolean(fileError), loading: isSubmitting }"
+                    :button-props="{ disabled: !isValid || Boolean(fileError) || isFileParsing, loading: isSubmitting }"
                   >
                     Create
                   </StyledButton>

@@ -18,7 +18,7 @@ const nodeTypes = Object.fromEntries(
   Object.entries(NodeTypeMap).map(([nodeType, { component }]) => [nodeType, component]),
 );
 // VueFlow emits on every drag frame; coalesce so overlapping saves don't fight over contentVersion
-const debouncedSave = useDebounceFn(saveFlowchartEditor, 500);
+const debouncedSave = useAutosaveFn(saveFlowchartEditor);
 
 onConnect(addEdges);
 

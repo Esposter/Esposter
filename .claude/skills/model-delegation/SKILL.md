@@ -49,15 +49,7 @@ Agent worktrees and their branches outlive the agent. Sweep them once their PR m
 
 ## Code reviews
 
-One command only: the `code-review` skill, for every review — the working diff (no args) and PR re-reviews (`/code-review <PR#>`, optional effort level first). Never use the `review` skill; two overlapping commands is how the wrong (shallower) one gets picked.
-
-Review workflow agents must not inherit the session model when it is a premium tier — finder/verifier/synthesis agents are execution roles, not the thinking role, so they run on `opus`. `.claude/workflows/code-review.js` is the project copy of the built-in review workflow with `model: "opus"` pinned on every agent. **`Workflow({ name: "code-review" })` does NOT resolve to it** (verified: the name always loads the built-in), so when the `code-review` skill says to invoke the workflow by name, invoke it by path instead, same args:
-
-```javascript
-Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "<level> [PR# or target]" });
-```
-
-The script exits with `{ probe: true }` when args is exactly `probe` — a free way to confirm the file still parses after editing it.
+Reviews are execution roles, not the thinking role. The full convention — single entry point, opus-pinned workflow script, scriptPath invocation, findings handling — lives in the `code-review` skill; load it on any review request. Never review inline in the session and never use the `review` skill.
 
 ## Design for agents
 

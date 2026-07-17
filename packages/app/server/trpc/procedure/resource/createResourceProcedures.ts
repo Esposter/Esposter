@@ -6,6 +6,7 @@ import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/of
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
@@ -235,8 +236,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
           jsonDateParse(await streamToText(readableStreamBody)),
         ) as ResourceContent<TType>;
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
-        // The increment swallows its own failures — telemetry must never break serving the page
-        await incrementResourceViewCount(input);
+        // Fire-and-forget: the increment swallows its own failures and the viewer must never wait on telemetry
+        getSynchronizedFunction(incrementResourceViewCount)(input);
         if (!transformPublicReadContent) return { content, name: resource.name };
         return { content: await transformPublicReadContent(ctx, resource, content), name: resource.name };
       }),

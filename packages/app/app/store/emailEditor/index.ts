@@ -2,12 +2,11 @@ import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { Editor, ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const route = useRoute();
-  const { load, readContent, resource, save } = useResource(() =>
-    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
-  );
+  const { load, readContent, resource, save } = useResource(() => getRouteParamString(route.params.id));
   // Cast avoids the excessively deep UnwrapRef instantiation on the nested GrapesJS project types
   const content = ref(new EmailEditor()) as Ref<EmailEditor>;
   // The live GrapesJS editor, set by the blade — the export command (command bar) reads it from here

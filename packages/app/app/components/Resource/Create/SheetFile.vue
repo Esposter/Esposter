@@ -12,13 +12,14 @@ import { getResultAsync, normalizeString, takeOne } from "@esposter/shared";
 const sheetResource = defineModel<SheetResource>();
 // Surfaced to the form rather than kept here, because a file that failed to parse has to block Create
 const error = defineModel<string>("error", { default: "" });
+// Surfaced too — submitting mid-parse would create an empty sheet and silently discard the import
+const isParsing = defineModel<boolean>("isParsing", { default: false });
 // The filename is the best name the user never has to type, so the form takes it as its own
 const emit = defineEmits<{ parse: [name: string] }>();
 const accepts = DataSourceTypes.map((type) => DataSourceConfigurationMap[type].accept);
 const accept = accepts.join(",");
 const dropZone = useTemplateRef("dropZone");
 const file = ref<File>();
-const isParsing = ref(false);
 const parseFile = async (newFile: File) => {
   file.value = newFile;
   sheetResource.value = undefined;

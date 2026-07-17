@@ -2,14 +2,13 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { toRawDeep } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
   const route = useRoute();
   // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, save } = useResource(() =>
-    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
-  );
+  const { load, readContent, save } = useResource(() => getRouteParamString(route.params.id));
   const todoList = ref<TodoListResource>({ items: [] });
   const items = computed({
     get: () => todoList.value.items,
