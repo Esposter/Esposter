@@ -2,20 +2,11 @@ import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
 
 import { readSurveyResponseDatasetSource } from "@@/server/services/dataset/surveyResponses/readSurveyResponseDatasetSource";
 import { toSurveyResponseDatasetRow } from "@@/server/services/dataset/surveyResponses/toSurveyResponseDatasetRow";
+import { requireActiveOwnedResource } from "@@/server/services/resource/requireActiveOwnedResource";
 import { ResourceType } from "@esposter/db-schema";
-import { TRPCError } from "@trpc/server";
 
 export const readSurveyResponsesDataset: DatasetProvider = async (ctx, reference) => {
-  const resource = await ctx.db.query.resources.findFirst({
-    where: {
-      // A survey in the Recycle bin must not keep feeding live datasets
-      deletedAt: { isNull: true },
-      id: { eq: reference.id },
-      type: { eq: ResourceType.Survey },
-      userId: { eq: ctx.getSessionPayload.user.id },
-    },
-  });
-  if (!resource) throw new TRPCError({ code: "UNAUTHORIZED" });
+  const resource = await requireActiveOwnedResource(ctx, reference.id, ResourceType.Survey);
 
   const { columns, surveyResponses, totalRows } = await readSurveyResponseDatasetSource(resource.id);
   // The dataset contract carries no keys — row identity is the Responses blade's concern, and a

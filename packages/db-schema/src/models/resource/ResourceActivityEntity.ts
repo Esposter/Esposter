@@ -12,7 +12,6 @@ import { z } from "zod";
 // Payload fields are per-activityType and therefore all optional — Azure Table is schemaless per row.
 export class ResourceActivityEntity extends AzureEntity {
   declare activityType: ResourceActivityType;
-  format?: string;
   newName?: string;
   oldName?: string;
   publishVersion?: number;
@@ -36,7 +35,6 @@ export const resourceActivityEntitySchema = z.object({
     }),
   ).shape,
   activityType: resourceActivityTypeSchema,
-  format: z.string().optional(),
   newName: z.string().optional(),
   oldName: z.string().optional(),
   publishVersion: z.int().positive().optional(),

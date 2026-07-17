@@ -135,19 +135,21 @@ export const createResourceProcedures = <TType extends ResourceType>(
     // Soft: the row, its content blob and its {id}/ directory all survive the Recycle bin window,
     // Which is exactly what makes restore possible. Purge is what actually destroys them.
     deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { id } }) => {
-        const deletedResource = requireMutation(
-          (await ctx.db.update(resources).set({ deletedAt: new Date() }).where(eq(resources.id, id)).returning())[0],
-          Operation.Delete,
-          DatabaseEntityType.Resource,
-          id,
-        );
+      async ({ ctx, input: { id } }) =>
         // A deleted resource must not stay publicly served, so restore deliberately returns a Draft.
         // The blobs and the type's table partitions survive until purge — destroying them here would
-        // Make restore hand back an empty resource
-        await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
-        return deletedResource;
-      },
+        // Make restore hand back an empty resource.
+        // One transaction so a soft-deleted resource can never linger publicly served
+        ctx.db.transaction(async (tx) => {
+          const deletedResource = requireMutation(
+            (await tx.update(resources).set({ deletedAt: new Date() }).where(eq(resources.id, id)).returning())[0],
+            Operation.Delete,
+            DatabaseEntityType.Resource,
+            id,
+          );
+          await tx.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
+          return deletedResource;
+        }),
     ),
     // Every content write funnels through saveResourceContent, so one save event stream is all it
     // Takes to keep every other device's view of this resource live
@@ -212,7 +214,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
           await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(content));
           return updatedResource;
         });
-        await writeResourceActivity({
+        // Fire-and-forget: the activity trail is best-effort and autosave must not pay its coalescing
+        // Table scan on every save the user is waiting on
+        getSynchronizedFunction(writeResourceActivity)({
           activityType: ResourceActivityType.ContentSaved,
           resourceId: id,
           userId: ctx.getSessionPayload.user.id,

@@ -4,7 +4,6 @@ export enum ResourceActivityType {
   ContentSaved = "ContentSaved",
   Created = "Created",
   Duplicated = "Duplicated",
-  Imported = "Imported",
   Published = "Published",
   Renamed = "Renamed",
   Restored = "Restored",

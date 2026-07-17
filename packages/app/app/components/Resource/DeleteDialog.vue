@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db";
 import { RoutePath } from "@esposter/shared";
 
 interface ResourceDeleteDialogProps {
@@ -25,6 +26,6 @@ const { remove, resource } = defineProps<ResourceDeleteDialogProps>();
       }
     "
   >
-    Deleting this resource moves it to the Recycle bin for 30 days.
+    Deleting this resource moves it to the Recycle bin for {{ RECYCLE_BIN_RETENTION_DAYS }} days.
   </StyledDeleteFormDialog>
 </template>

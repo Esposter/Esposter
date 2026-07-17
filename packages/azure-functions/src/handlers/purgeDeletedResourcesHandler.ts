@@ -5,7 +5,7 @@ import { getContainerClient } from "@/services/getContainerClient";
 import { getTableClient } from "@/services/getTableClient";
 import { logAndRethrow } from "@/services/logAndRethrow";
 import { purgeResource, RECYCLE_BIN_RETENTION_MS } from "@esposter/db";
-import { AzureContainer, AzureFunction, AzureTable, ResourceOwnedTablesMap, resources } from "@esposter/db-schema";
+import { AzureContainer, AzureFunction, getResourceOwnedTableNames, resources } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, isNotNull, lt } from "drizzle-orm";
 
@@ -30,9 +30,7 @@ export const purgeDeletedResourcesHandler: TimerHandler = (_timer, context) =>
       await getResultAsync(async () => {
         // The type decides which partitions this resource owns, so the client list is per-resource
         const tableClients = await Promise.all(
-          [AzureTable.ResourceActivity, AzureTable.ResourceViews, ...ResourceOwnedTablesMap[type]].map((tableName) =>
-            getTableClient(tableName),
-          ),
+          getResourceOwnedTableNames(type).map((tableName) => getTableClient(tableName)),
         );
         await purgeResource(db, containerClient, tableClients, id);
       }).match(noop, (error) => {

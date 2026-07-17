@@ -20,13 +20,13 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
   if (!participantToken) throw invalidParticipantTokenError();
 
   const survey = await db.query.resources.findFirst({
-    where: { id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
+    where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
   });
   if (!survey) throw invalidParticipantTokenError();
 
   // Only the survey's owner can bind it to a program, so their programs are the whole candidate set
   const programs = await db.query.resources.findMany({
-    where: { type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
+    where: { deletedAt: { isNull: true }, type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
   });
   // Every candidate's binding is read at once: this runs on every submission to an identified survey, and
   // The owner's programs are independent of each other, so N sequential blob reads would be N latencies

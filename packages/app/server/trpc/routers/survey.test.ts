@@ -479,6 +479,22 @@ describe("survey", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${closedSurveyErrorMessage}]`);
   });
 
+  test("fails create for a recycle-binned survey", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.deleteResource({ id: newResource.id });
+
+    await expect(
+      caller.createSurveyResponse({
+        model: { satisfaction: 0 },
+        participantToken: "",
+        partitionKey: newResource.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+  });
+
   test("fails update with closed survey", async () => {
     expect.hasAssertions();
 

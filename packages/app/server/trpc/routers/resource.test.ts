@@ -293,6 +293,17 @@ describe("resource", () => {
     expect(content).toBeUndefined();
   });
 
+  test("copies tags when duplicating a resource", async () => {
+    expect.hasAssertions();
+
+    const tags = { env: "prod" };
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.updateResource({ id: dashboardResource.id, name, tags });
+    const duplicatedResource = await caller.duplicateResource({ id: dashboardResource.id });
+
+    expect(duplicatedResource.tags).toStrictEqual(tags);
+  });
+
   test("finds a resource whose name is mistyped", async () => {
     expect.hasAssertions();
 

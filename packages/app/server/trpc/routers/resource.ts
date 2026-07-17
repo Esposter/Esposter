@@ -28,15 +28,14 @@ import {
   BinaryOperator,
   CompositeKeyPropertyNames,
   DatabaseEntityType,
+  getResourceOwnedTableNames,
   RESOURCE_NAME_MAX_LENGTH,
   ResourceActivityEntity,
   resourceActivityEntitySchema,
   ResourceActivityType,
   resourceFavorites,
-  ResourceOwnedTablesMap,
   resourcePublications,
   resources,
-  resourceTagsSchema,
   resourceTypeSchema,
   selectResourceSchema,
 } from "@esposter/db-schema";
@@ -54,7 +53,10 @@ const resourceFilterInputSchema = z.object({
   // The Tag pill's value is optional, and containment cannot express "has this tag, any value" —
   // That is key-existence, so the two filters are separate inputs rather than one nullable record
   tagName: z.string().optional(),
-  tags: resourceTagsSchema.optional(),
+  // Filters are lookups, not writes: an unsaveable tag (over-length, blank name) can simply never
+  // Match, so reusing the write-time resourceTagsSchema here would only turn "no results" into a
+  // Rejected query that errors the whole list
+  tags: z.record(z.string(), z.string()).optional(),
   types: z.array(resourceTypeSchema).optional(),
   updatedAfter: z.date().optional(),
   updatedBefore: z.date().optional(),
@@ -152,11 +154,11 @@ export const resourceRouter = router({
     ),
   deleteResources: standardAuthedProcedure
     .input(deleteResourcesInputSchema)
-    .mutation<Resource[]>(async ({ ctx, input: { ids } }) => {
-      // Owner-scoped where so callers can only ever soft-delete their own rows.
-      // The blob and the {id}/ directory survive until purge — that is what makes restore possible.
-      // One transaction so a soft-deleted resource can never linger publicly served
-      return ctx.db.transaction(async (tx) => {
+    // Owner-scoped where so callers can only ever soft-delete their own rows.
+    // The blob and the {id}/ directory survive until purge — that is what makes restore possible.
+    // One transaction so a soft-deleted resource can never linger publicly served
+    .mutation<Resource[]>(({ ctx, input: { ids } }) =>
+      ctx.db.transaction(async (tx) => {
         const deletedResources = await tx
           .update(resources)
           .set({ deletedAt: new Date() })
@@ -177,16 +179,17 @@ export const resourceRouter = router({
             ),
           );
         return deletedResources;
-      });
-    }),
+      }),
+    ),
   duplicateResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
-    const { name, type, userId } = ctx.resource;
+    const { name, tags, type, userId } = ctx.resource;
     const newResource = requireMutation(
       (
         await ctx.db
           .insert(resources)
           .values({
             name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - duplicateNameSuffix.length)}${duplicateNameSuffix}`,
+            tags,
             type,
             userId,
           })
@@ -222,12 +225,9 @@ export const resourceRouter = router({
   purgeResource: getOwnerProcedure(undefined, readResourceInputSchema, "id", true).mutation<Resource>(
     async ({ ctx, input: { id } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      // Every partition keyed by this resource id: its activity trail, its view counters, and whatever
-      // Its type owns — purge is the only place they are destroyed, since delete is soft
+      // Purge is the only place these partitions are destroyed, since delete is soft
       const tableClients = await Promise.all(
-        [AzureTable.ResourceActivity, AzureTable.ResourceViews, ...ResourceOwnedTablesMap[ctx.resource.type]].map(
-          (tableName) => useTableClient(tableName),
-        ),
+        getResourceOwnedTableNames(ctx.resource.type).map((tableName) => useTableClient(tableName)),
       );
       await purgeResource(ctx.db, containerClient, tableClients, id);
       return ctx.resource;

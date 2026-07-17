@@ -9,6 +9,7 @@ import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeade
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
+import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
@@ -77,7 +78,9 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
       </StyledPageHeader>
       <v-sheet flex flex-1 flex-col min-w-0>
         <v-toolbar px-4 py-2 b-1 b-border b-solid flex gap-2 items-center>
-          <span op-medium-emphasis>Deleted resources are permanently removed after 30 days.</span>
+          <span op-medium-emphasis
+            >Deleted resources are permanently removed after {{ RECYCLE_BIN_RETENTION_DAYS }} days.</span
+          >
           <v-spacer />
           <StyledTooltipIconButton icon="mdi-refresh" text="Refresh" @click="refresh()" />
           <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
@@ -128,7 +131,7 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
               v-else
               icon="mdi-delete-outline"
               title="Recycle bin is empty"
-              description="Deleted resources appear here for 30 days before they are permanently removed."
+              :description="`Deleted resources appear here for ${RECYCLE_BIN_RETENTION_DAYS} days before they are permanently removed.`"
             />
           </template>
         </StyledDataTableServer>
