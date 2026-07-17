@@ -4,6 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
+import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
@@ -519,12 +520,16 @@ describe("resource", () => {
       contentVersion: webpageResource.contentVersion,
       id: webpageResource.id,
     });
+    // The activity write is fire-and-forget off the save path, so drain it before the next save's
+    // Coalescing scan can even see it
+    await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
     await webpageCaller.saveResourceContent({
       content: webpageEditor,
       contentVersion: webpageResource.contentVersion + 1,
       id: webpageResource.id,
     });
+    await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
     expect(
@@ -546,12 +551,16 @@ describe("resource", () => {
       contentVersion: webpageResource.contentVersion,
       id: webpageResource.id,
     });
+    // The activity write is fire-and-forget off the save path, so drain it before the next save's
+    // Coalescing scan can even see it
+    await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(CONTENT_SAVED_COALESCE_WINDOW_MS + 1);
     await webpageCaller.saveResourceContent({
       content: webpageEditor,
       contentVersion: webpageResource.contentVersion + 1,
       id: webpageResource.id,
     });
+    await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
     expect(
