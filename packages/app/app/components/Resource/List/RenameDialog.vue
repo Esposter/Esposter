@@ -18,7 +18,7 @@ const isOpen = useSingletonDialog(renamingId);
 const notificationStore = useNotificationStore();
 const { createNotification } = notificationStore;
 const getResourceMutations = useResourceMutations();
-const editedName = ref(resource.name);
+const { cloned: editedName } = useCloned(() => resource.name);
 </script>
 
 <template>

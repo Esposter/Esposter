@@ -6,7 +6,7 @@ import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArr
 
 const DatasetProviderTypeItemCategoryDefinitionMap = {
   [DatasetProviderType.ProgramStatus]: { title: "Program status" },
-  [DatasetProviderType.Sheet]: { title: "File" },
+  [DatasetProviderType.Sheet]: { title: "Sheet" },
   [DatasetProviderType.SurveyResponses]: { title: "Survey responses" },
 } as const satisfies Record<DatasetProviderType, Except<SelectItemCategoryDefinition<DatasetProviderType>, "value">>;
 

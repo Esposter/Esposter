@@ -10,7 +10,7 @@ Azure command-bar and destructive-operation parity on `/resources/[id]/[[blade]]
 ## Command bar
 
 - **Presentation** (`BladeActions`): `variant="text"` buttons with `prepend-icon` + label (Refresh, Rename, Delete, Duplicate, Publish/Unpublish, Import, Export), `v-divider vertical` between groups; Delete keeps `color="error"`.
-- **Overflow** (`BladeOverflowMenu`): on `smAndDown`, trailing commands collapse into a `…` `v-menu` (labels always visible in the menu); Refresh, Rename, Delete, and the close ✕ never collapse.
+- **Overflow**: on `smAndDown`, every command collapses into a single `…` menu (labels always visible in the menu), rendered by `BladeActions` from the same gates as the wide bar; the close ✕ never collapses.
 - **Refresh**: re-runs `useResource`'s `load` (row + publication) with the toolbar button showing the loading state.
 - **Duplicate**: `resource.duplicateResource` — copies the row as `{name} (copy)` + the content blob; never the publication (a copy starts as Draft). Routes to the new resource's Overview and raises a "Go to resource" [notification](/docs/platform/notifications). Capability-independent (every type supports it).
 
@@ -42,12 +42,11 @@ sequenceDiagram
 
 ## Key files
 
-| File                                            | Role                                                        |
-| ----------------------------------------------- | ----------------------------------------------------------- |
-| `app/components/Resource/BladeActions.vue`      | labeled buttons, dividers, Refresh, Duplicate               |
-| `app/components/Resource/BladeOverflowMenu.vue` | narrow-viewport `…` menu for the collapsible commands       |
-| `app/components/Styled/DeleteFormDialog.vue`    | `confirmName` guard prop                                    |
-| `app/composables/resource/useResource.ts`       | refresh/duplicate actions, conflict + outcome notifications |
+| File                                         | Role                                                        |
+| -------------------------------------------- | ----------------------------------------------------------- |
+| `app/components/Resource/BladeActions.vue`   | labeled buttons, dividers, narrow-viewport `…` menu         |
+| `app/components/Styled/DeleteFormDialog.vue` | `confirmName` guard prop                                    |
+| `app/composables/resource/useResource.ts`    | refresh/duplicate actions, conflict + outcome notifications |
 
 ## Notes
 

@@ -54,7 +54,12 @@ export const useReadResources = ({
       count.value = newCount;
       items.value = newItems;
     }).match(noop, (readError) => {
-      if (!checkIsStale()) error.value = readError.message;
+      if (checkIsStale()) return;
+
+      // A failed read clears the list — keeping the previous query's rows would pass them off as this query's result
+      items.value = [];
+      count.value = 0;
+      error.value = readError.message;
     });
     if (!checkIsStale()) isLoading.value = false;
   });
