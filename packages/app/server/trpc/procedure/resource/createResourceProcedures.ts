@@ -12,8 +12,11 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
+import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { on } from "@@/server/services/events/on";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
@@ -146,6 +149,21 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return deletedResource;
       },
     ),
+    // Every content write funnels through saveResourceContent, so one save event stream is all it
+    // Takes to keep every other device's view of this resource live
+    onSaveResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").subscription(async function* ({
+      ctx,
+      input: { id },
+      signal,
+    }): AsyncGenerator<{
+      content: ResourceContent<TType>;
+      contentVersion: Resource["contentVersion"];
+      id: Resource["id"];
+    }> {
+      for await (const [[data, device]] of on(resourceEventEmitter, "saveResourceContent", { signal }))
+        if (data.id === id && !getIsSameDevice(device, ctx.getSessionPayload))
+          yield { ...data, content: data.content as ResourceContent<TType> };
+    }),
     readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query(async ({ ctx, input: { id } }) => {
       const content = await readContent(id);
       if (content === undefined || !transformReadContent) return content;
@@ -199,6 +217,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
           resourceId: id,
           userId: ctx.getSessionPayload.user.id,
         });
+        resourceEventEmitter.emit("saveResourceContent", [
+          { content, contentVersion: updatedResource.contentVersion, id },
+          { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
+        ]);
         return updatedResource;
       },
     ),

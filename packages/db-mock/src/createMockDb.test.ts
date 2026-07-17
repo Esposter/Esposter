@@ -30,23 +30,23 @@ describe(createMockDb, () => {
   test("snapshot matches a freshly generated migration", { timeout: 60_000 }, async () => {
     expect.hasAssertions();
 
-    const fresh = new PGlite({ extensions: { pg_trgm } });
-    await fresh.exec(`CREATE SCHEMA "${messageSchema.schemaName}"`);
+    const newPGlite = new PGlite({ extensions: { pg_trgm } });
+    await newPGlite.exec(`CREATE SCHEMA "${messageSchema.schemaName}"`);
     // Mirrors generateSnapshot.ts — the generated DDL includes the resources trigram index,
     // Which cannot be created without pg_trgm installed
-    await fresh.exec("CREATE EXTENSION IF NOT EXISTS pg_trgm");
+    await newPGlite.exec("CREATE EXTENSION IF NOT EXISTS pg_trgm");
     const previousJson = await generateDrizzleJson({});
     const statements = await generateMigration(previousJson, await generateDrizzleJson(schema, previousJson.id));
-    for (const statement of statements) await fresh.exec(statement);
+    for (const statement of statements) await newPGlite.exec(statement);
 
-    const snapshot = new PGlite({
+    const snapshotPGlite = new PGlite({
       extensions: { pg_trgm },
       loadDataDir: new Blob([await readFile(join(import.meta.dirname, SNAPSHOT_FILENAME))]),
     });
 
-    const snapshotIntrospection = await introspect(snapshot);
+    const snapshotIntrospection = await introspect(snapshotPGlite);
 
-    expect(snapshotIntrospection).toStrictEqual(await introspect(fresh));
+    expect(snapshotIntrospection).toStrictEqual(await introspect(newPGlite));
   });
 
   test("returns a queryable db", async () => {

@@ -5,11 +5,13 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
+import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
@@ -151,6 +153,26 @@ describe("createResourceProcedures", () => {
     const content = await dashboardCaller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
+  });
+
+  test("emits saved content to other devices", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const dashboard = new Dashboard({ visuals: [new Visual()] });
+    // The mock session mints a fresh session id per call, so the subscription and the save
+    // Naturally run as different devices — the same-device echo filter stays out of the way
+    const onSaveResourceContent = await dashboardCaller.onSaveResourceContent({ id: newResource.id });
+    const data = await getFirstEmit(
+      () => onSaveResourceContent,
+      () => dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
+    );
+
+    expect(data.id).toBe(newResource.id);
+    expect(data.contentVersion).toBe(1);
+    // The emitted content is the schema-parsed input, which materialises optional keys as
+    // Undefined — serialising both sides compares what a client actually receives over the wire
+    expect(jsonDateParse(JSON.stringify(data.content))).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
   });
 
   test("fails save content with old content version", async () => {
@@ -404,8 +426,9 @@ describe("createResourceProcedures", () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
-    const blobPath = `files/${getBlobName(crypto.randomUUID(), filename)}`;
-    const blobName = `${newResource.id}/${blobPath}`;
+    // The input path is relative to the files directory — the server anchors it under {id}/files/
+    const blobPath = getBlobName(crypto.randomUUID(), filename);
+    const blobName = `${getFilesDirectoryName(newResource.id)}/${blobPath}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 
     await webpageCaller.deleteFile({ blobPath, id: newResource.id });
@@ -417,7 +440,7 @@ describe("createResourceProcedures", () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
-    const blobPath = `files/${getBlobName(crypto.randomUUID(), filename)}`;
+    const blobPath = getBlobName(crypto.randomUUID(), filename);
 
     await webpageCaller.deleteFile({ blobPath, id: newResource.id });
 

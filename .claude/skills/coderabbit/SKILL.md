@@ -81,7 +81,7 @@ Verify before accepting. CodeRabbit reasons from names and prior "learnings" and
 
 ## PR File Budget
 
-CodeRabbit caps this repo at **50 files per review** — the Open Source tier's file limit is popularity-scaled and a low-star repo sits at the floor, so don't expect it to lift. If the limit needs re-checking, the bot's skip comment on an over-budget PR states the current number. Keep every chunk of work to **~40 changed files measured from the branch point** — work is committed and pushed continuously, so dirty-file counts see nothing:
+CodeRabbit caps this repo at **100 files per review** — the Open Source tier's file limit is popularity-scaled and has moved before (it briefly dropped to 50 in mid-July 2026), so treat the number as current-best-known rather than fixed. If the limit needs re-checking, the bot's skip comment on an over-budget PR states the current number. Keep every chunk of work to **~80 changed files measured from the branch point** — work is committed and pushed continuously, so dirty-file counts see nothing:
 
 ```bash
 git diff --name-only "$(git merge-base <base-branch> HEAD)" | wc -l   # committed changes since branching (base is what this branch was cut from, e.g. develop)
@@ -90,7 +90,7 @@ git status --porcelain -uall | wc -l                                  # plus any
 
 Run both and sum before starting a sweep. When the budget is reached, stop and hand back for a PR.
 
-The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~40 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
+The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
 
 ## When to Exclude
 

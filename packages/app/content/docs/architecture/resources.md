@@ -144,9 +144,12 @@ One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/
 | `updateResource`                                                                                     | owner                                                              | rename                                                         |
 | `deleteResource`                                                                                     | owner                                                              | row + `{id}/` blob directory                                   |
 | `readResourceContent` / `saveResourceContent`                                                        | owner                                                              | blob read/write with `contentVersion` check                    |
+| `onSaveResourceContent`                                                                              | owner                                                              | subscription — streams each save's content to other devices    |
 | `publishResource` / `unpublishResource` / `readResourcePublication` / `readPublishedResourceContent` | see [/docs/architecture/publishing](/docs/architecture/publishing) | Publishable types only                                         |
 
 `saveResourceContent` bumps `contentVersion` and writes the blob in one transaction — the version check is part of the `UPDATE`'s `WHERE`, so concurrent saves cannot both pass and silently lose a write, and a failed blob upload rolls the version back.
+
+Every content write funnels through `saveResourceContent`, so real-time sync is one subscription: after a successful save the factory emits on `resourceEventEmitter` and `onSaveResourceContent` streams `{ content, contentVersion, id }` to the owner's other devices (the emitting device is filtered out, same as the messaging emitters). Subscribers adopt both the content and the `contentVersion`, so a remote save keeps their next save from being rejected as stale. TodoList wires this up client-side (`useTodoListSubscribables` → `storeSaveResourceContent`), making every item table operation live; other types can reuse the same subscription as needed.
 
 The factory also accepts three optional content-transform hooks, `transformPublishedContent`, `transformReadContent`, and `transformPublicReadContent` — see [/docs/architecture/publishing](/docs/architecture/publishing).
 
