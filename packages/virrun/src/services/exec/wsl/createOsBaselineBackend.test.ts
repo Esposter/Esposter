@@ -15,7 +15,7 @@ export const createOsBaselineBackend = (): ExecBackend => {
   return {
     exec: (command, options) =>
       new Promise((resolve, reject) => {
-        const cwd = readWslPath(options.cwd === "" ? process.cwd() : options.cwd);
+        const cwd = readWslPath(options.cwd || process.cwd());
         const commandArgs = Array.isArray(command)
           ? ["sh", "-c", `cd "$1" && shift && exec "$@"`, "virrun-baseline", cwd, ...command]
           : ["sh", "-c", `cd "$1" && ${command}`, "virrun-baseline", cwd];

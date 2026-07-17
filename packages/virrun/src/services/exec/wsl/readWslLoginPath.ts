@@ -65,6 +65,6 @@ export const readWslLoginPath = (): string => {
     })
     .unwrapOr("");
   isLoginPathCached = true;
-  if (cachedLoginPath !== "") writeWslEnvironmentCache(WSL_LOGIN_PATH_CACHE_FILENAME, { key, value: cachedLoginPath });
+  if (cachedLoginPath) writeWslEnvironmentCache(WSL_LOGIN_PATH_CACHE_FILENAME, { key, value: cachedLoginPath });
   return cachedLoginPath;
 };

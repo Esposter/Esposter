@@ -51,11 +51,11 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
           "sh",
           "-c",
           `{ ${[
-            ...(script === ""
-              ? []
-              : [
+            ...(script
+              ? [
                   `{ ${script}; } || { syncExitCode="$?"; printf '${WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER} with exit code %s\\n' "$syncExitCode" >&2; exit "$syncExitCode"; }`,
-                ]),
+                ]
+              : []),
             `flock -s -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 || exit "$?"`,
             `status="$(mktemp)"`,
             `bwrap --json-status-fd 3 "$@" 3>"$status"`,

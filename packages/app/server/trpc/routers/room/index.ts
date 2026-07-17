@@ -1,6 +1,6 @@
+import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { InviteInMessage, RoomInMessage, User } from "@esposter/db-schema";
-import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { SQL } from "drizzle-orm";
 
 import { createInviteInputSchema } from "#shared/models/db/room/CreateInviteInput";
@@ -129,7 +129,7 @@ export const baseRoomRouter = router({
       ).count,
   ),
   countMembersByTopRole: getMemberProcedure(countMembersInputSchema, "roomId").query<MemberCountByTopRole[]>(
-    async ({ ctx, input: { roomId } }) => {
+    ({ ctx, input: { roomId } }) => {
       // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups
       const topRoles = ctx.db
         .selectDistinctOn([usersToRoomRolesInMessage.userId], {

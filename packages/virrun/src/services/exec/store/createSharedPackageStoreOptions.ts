@@ -28,7 +28,7 @@ const ensureGitIgnoreEntry = (workspaceRoot: string) => {
   if (isIgnored) return;
   appendFileSync(
     gitignore,
-    `${gitignoreContent.endsWith("\n") || gitignoreContent === "" ? "" : "\n"}${VIRRUN_GITIGNORE_ENTRY}\n`,
+    `${!gitignoreContent || gitignoreContent.endsWith("\n") ? "" : "\n"}${VIRRUN_GITIGNORE_ENTRY}\n`,
   );
 };
 

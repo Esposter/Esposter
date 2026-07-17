@@ -39,7 +39,7 @@ export const persistRun = (
       persistRun.name,
       "no captured snapshot to persist over; provision one first",
     );
-  const hostDir = options.cwd === "" ? process.cwd() : options.cwd;
+  const hostDir = options.cwd || process.cwd();
   const persistUpperDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`)));
   const persistWorkDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`)));
   return withFinalizerAsync(

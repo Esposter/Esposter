@@ -9,7 +9,7 @@ export const tokenizeShellCommand = (input: string): string[] | undefined => {
   let quote = "";
   let hasToken = false;
   for (const char of input) {
-    if (quote !== "") {
+    if (quote) {
       if (char === quote) quote = "";
       else current += char;
       continue;
@@ -31,7 +31,7 @@ export const tokenizeShellCommand = (input: string): string[] | undefined => {
     current += char;
     hasToken = true;
   }
-  if (quote !== "") return undefined;
+  if (quote) return undefined;
   if (hasToken) tokens.push(current);
   return tokens;
 };

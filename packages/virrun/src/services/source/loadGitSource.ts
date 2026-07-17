@@ -20,7 +20,7 @@ export const loadGitSource = async (source: GitSource): Promise<LoadedSource> =>
     "-q",
     "--depth",
     "1",
-    ...(source.ref === "" ? [] : ["--branch", source.ref]),
+    ...(source.ref ? ["--branch", source.ref] : []),
     "--",
     source.repo,
     cwd,

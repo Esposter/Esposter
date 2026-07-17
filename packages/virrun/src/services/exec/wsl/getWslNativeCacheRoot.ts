@@ -49,7 +49,7 @@ export const getWslNativeCacheRoot = (): string => {
   )
     .map((output) => output.trim())
     .unwrapOr("");
-  if (distro === "" || home === "")
+  if (!distro || !home)
     throw new InvalidOperationError(
       Operation.Read,
       getWslNativeCacheRoot.name,

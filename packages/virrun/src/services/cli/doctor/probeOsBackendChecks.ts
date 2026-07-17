@@ -58,15 +58,15 @@ const probeWslNode = (): DiagnosticCheck => {
       type,
     };
   const nodePath = readProbeOutput("sh", ["-c", buildWslLoginShellCommand("command -v node")]) ?? "";
-  return nodePath === ""
-    ? {
+  return nodePath
+    ? { fix: "", label, note: nodePath, status: DiagnosticStatus.Ok, type }
+    : {
         fix: "install node inside your default WSL2 distro (e.g. via fnm/nvm)",
         label,
         note: "no node in the WSL login shell — node commands can't resolve inside the sandbox",
         status: DiagnosticStatus.Missing,
         type,
-      }
-    : { fix: "", label, note: nodePath, status: DiagnosticStatus.Ok, type };
+      };
 };
 
 const probePython3 = (): DiagnosticCheck => {

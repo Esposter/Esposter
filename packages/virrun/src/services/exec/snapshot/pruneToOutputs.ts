@@ -16,7 +16,7 @@ export const pruneToOutputs = (upperDir: string, outputs: readonly string[]): vo
   }
   const walk = (absoluteDir: string, relative: string): void => {
     for (const entry of readdirSync(absoluteDir, { withFileTypes: true })) {
-      const childRelative = relative === "" ? entry.name : `${relative}/${entry.name}`;
+      const childRelative = relative ? `${relative}/${entry.name}` : entry.name;
       const childAbsolute = join(absoluteDir, entry.name);
       // An output root — keep the whole subtree, never descend.
       if (outputSet.has(childRelative)) continue;

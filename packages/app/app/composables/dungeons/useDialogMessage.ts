@@ -8,8 +8,8 @@ export const useDialogMessage = <TTypeKey extends string = "">(typeKey: string |
   const dialogMessage = ref(new DialogMessage());
   const textDisplayWidth = ref<number>();
   return {
-    [`${typeKey}${typeKey === "" ? "d" : "D"}ialogMessage`]: dialogMessage,
-    [`${typeKey}${typeKey === "" ? "t" : "T"}extDisplayWidth`]: textDisplayWidth,
+    [`${typeKey}${typeKey ? "D" : "d"}ialogMessage`]: dialogMessage,
+    [`${typeKey}${typeKey ? "T" : "t"}extDisplayWidth`]: textDisplayWidth,
   } as {
     [P in DialogMessageKey<TTypeKey>]: P extends `${TTypeKey}${TTypeKey extends "" ? "d" : "D"}ialogMessage`
       ? typeof dialogMessage
