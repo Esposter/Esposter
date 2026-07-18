@@ -5,7 +5,7 @@ import { serializeClause } from "@/services/azure/transformer/serializeClause";
 import { UnaryOperator } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
-// isTableFilter threads down to serializeValue so Date literals render as the target service expects:
+// The isTableFilter flag threads down to serializeValue so Date literals render as the target service expects:
 // Azure Table needs datetime'<iso>', Azure Search needs the bare ISO string.
 export const serializeClausesCore = (clauses: Clause<Record<string, unknown>>[], isTableFilter: boolean): string => {
   if (clauses.length === 0) return "";

@@ -26,7 +26,7 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
 
   // Only the survey's owner can bind it to a program, so their programs are the whole candidate set.
   // A recycle-binned program stays in the set: its token links were already distributed to participants,
-  // and only an actual purge — not a recoverable soft-delete — should invalidate them.
+  // And only an actual purge — not a recoverable soft-delete — should invalidate them.
   const programs = await db.query.resources.findMany({
     where: { type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
   });
