@@ -6,13 +6,22 @@ import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { useUserStore } from "@/store/message/user";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
 export const useMemberStore = defineStore("message/user/member", () => {
   const roomStore = useRoomStore();
   const userStore = useUserStore();
   const { storeUser, storeUsers } = userStore;
+  const userToRoomStore = useUserToRoomStore();
+  const { getDisplayName } = userToRoomStore;
   const { items, ...restData } = useCursorPaginationData<User>();
   const members = computed(() => items.value.toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name)));
+  // Single source of truth for resolving a member id to its room display name (nickname over global name),
+  // Falling back to the raw id for actors/targets no longer in the loaded member list.
+  const getMemberName = (userId: User["id"]): string => {
+    const member = members.value.find(({ id }) => id === userId);
+    return member ? getDisplayName(member, roomStore.currentRoomId) : userId;
+  };
   const count = ref(0);
   // Server-computed group totals for the member list headers — the paginated items only hold loaded pages
   const countsByTopRole = ref<MemberCountByTopRole[]>([]);
@@ -56,6 +65,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   return {
     count,
     countsByTopRole,
+    getMemberName,
     members,
     ...restData,
     storeCreateMember,

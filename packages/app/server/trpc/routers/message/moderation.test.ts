@@ -459,6 +459,25 @@ describe("moderation", () => {
     });
   });
 
+  describe("countModerationNotes", () => {
+    test("counts all of the target member's notes regardless of page size", async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      const noteCount = 3;
+      for (let i = 0; i < noteCount; i++) {
+        vi.setSystemTime(i);
+        await moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id });
+      }
+
+      const firstPage = await moderationCaller.readModerationNotes({ limit: 1, roomId, targetUserId: member.id });
+      const count = await moderationCaller.countModerationNotes({ roomId, targetUserId: member.id });
+
+      expect(firstPage.items).toHaveLength(1);
+      expect(count).toBe(noteCount);
+    });
+  });
+
   describe("onAdminAction", () => {
     test("targeted user receives the emitted action", async () => {
       expect.hasAssertions();

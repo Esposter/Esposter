@@ -4,7 +4,7 @@ import type { ThreadReplyNotificationEventGridData } from "@esposter/db-schema";
 import { db } from "@/services/db";
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { sendWebPushNotifications } from "@/services/sendWebPushNotifications";
-import { getPushSubscriptionsForThreadFollowers } from "@esposter/db";
+import { getPushSubscriptionsForMessage, getPushSubscriptionsForThreadFollowers } from "@esposter/db";
 import { RoutePath } from "@esposter/shared";
 
 export const sendThreadReplyNotification = async (
@@ -23,7 +23,12 @@ export const sendThreadReplyNotification = async (
   });
   if (!payload) return;
 
+  // Recompute the generic message push recipients so thread followers already reached by ProcessPushNotification
+  // are excluded here — otherwise a follower with room NotificationType.All would get two pushes for one reply.
+  const messagePushSubscriptions = await getPushSubscriptionsForMessage(db, { message, partitionKey, userId });
+  const excludedUserIds = [...new Set(messagePushSubscriptions.map((pushSubscription) => pushSubscription.userId))];
   const readPushSubscriptions = await getPushSubscriptionsForThreadFollowers(db, {
+    excludedUserIds,
     roomId: partitionKey,
     senderUserId: userId,
     threadRootRowKey,

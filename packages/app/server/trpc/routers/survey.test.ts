@@ -227,6 +227,57 @@ describe("survey", () => {
     );
   });
 
+  test("persists a page-only advance for the same answers", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      pageNo: 0,
+      participantToken: "",
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
+    // Same answers, later page — a real progress write, so it is not a duplicate and the resume position advances
+    const updatedSurveyResponse = await caller.updateSurveyResponse({
+      model: { satisfaction: 0 },
+      modelVersion: newSurveyResponse.modelVersion,
+      pageNo: 1,
+      participantToken: "",
+      partitionKey: newSurveyResponse.partitionKey,
+      rowKey: newSurveyResponse.rowKey,
+    });
+
+    expect(updatedSurveyResponse.pageNo).toBe(1);
+  });
+
+  test("rejects a same-answer resubmit that does not advance the page", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      pageNo: 2,
+      participantToken: "",
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
+
+    // Navigating back and re-saving unchanged answers must not regress the stored resume page
+    await expect(
+      caller.updateSurveyResponse({
+        model: { satisfaction: 0 },
+        modelVersion: newSurveyResponse.modelVersion,
+        pageNo: 1,
+        participantToken: "",
+        partitionKey: newSurveyResponse.partitionKey,
+        rowKey: newSurveyResponse.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model").message}]`,
+    );
+  });
+
   test("fails update survey response with old model version", async () => {
     expect.hasAssertions();
 

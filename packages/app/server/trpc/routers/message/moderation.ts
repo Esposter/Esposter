@@ -1,6 +1,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { BanInMessage, BanInMessageWithRelations, Clause, StandardMessageEntity } from "@esposter/db-schema";
 
+import { countModerationNotesInputSchema } from "#shared/models/db/moderation/CountModerationNotesInput";
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
@@ -18,6 +19,7 @@ import { readCallSessionId } from "@@/server/services/message/call/readCallSessi
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
+import { countModerationNotes } from "@@/server/services/message/moderation/countModerationNotes";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
@@ -58,6 +60,14 @@ import { alias } from "drizzle-orm/pg-core";
 const onAdminActionInputSchema = roomIdSchema;
 
 export const moderationRouter = router({
+  countModerationNotes: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    countModerationNotesInputSchema,
+    "roomId",
+  ).query<number>(async ({ ctx, input: { roomId, targetUserId } }) => {
+    await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
+    return countModerationNotes(roomId, targetUserId);
+  }),
   createModerationNote: getPermissionsProcedure(
     RoomPermission.KickMembers,
     createModerationNoteInputSchema,

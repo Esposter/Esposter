@@ -29,6 +29,7 @@ import { readMessages } from "@@/server/services/message/readMessages";
 import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
+import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -63,7 +64,6 @@ import {
   fileEntitySchema,
   FilterType,
   getReverseTickedTimestamp,
-  MAX_FOLLOWED_THREADS,
   MessageEntityMap,
   MessageType,
   roomIdSchema,
@@ -228,13 +228,15 @@ export const baseMessageRouter = router({
         JSON.stringify({ partitionKey, rowKey }),
       );
 
-      await Promise.all(
-        roomIds.map((roomId) => assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, message)),
-      );
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-      await Promise.all(
+      // Couple each room's word-filter check to its own creation attempt (single-send semantics per room): a
+      // Room whose filter blocks times the sender out for THAT room only and posts nothing there, while every
+      // Other room still receives the forward. allSettled lets the unblocked rooms finish writing before the
+      // First per-room block is surfaced — never an all-rooms pre-flight that times out and then posts nothing.
+      const results = await Promise.allSettled(
         roomIds.map(async (roomId) => {
+          await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, message);
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
             // oxlint-disable-next-line typescript/no-misused-spread
@@ -265,6 +267,8 @@ export const baseMessageRouter = router({
           ]);
         }),
       );
+      // Surface the first per-room block like a single blocked send does, after the unblocked rooms posted.
+      for (const result of results) if (result.status === "rejected") throw result.reason;
     },
   ),
   generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
@@ -381,19 +385,16 @@ export const baseMessageRouter = router({
       ]);
     },
   ),
+  // Display list for the Threads drawer — deleted roots are dropped so it never lists a dangling follow.
+  // Follow-STATE is read separately via readFollowedThreadRootRowKeys, which keeps deleted-root follows.
   readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<StandardMessageEntity[]>(
     async ({ ctx, input: { roomId } }) => {
-      const follows = await ctx.db.query.threadFollowsInMessage.findMany({
-        columns: { threadRootRowKey: true },
-        limit: MAX_FOLLOWED_THREADS,
-        orderBy: { createdAt: "desc" },
-        where: { roomId: { eq: roomId }, userId: { eq: ctx.getSessionPayload.user.id } },
-      });
-      if (follows.length === 0) return [];
+      const threadRootRowKeys = await readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id);
+      if (threadRootRowKeys.length === 0) return [];
 
       const messageClient = await useTableClient(AzureTable.Messages);
       const rootMessages = await Promise.all(
-        follows.map(({ threadRootRowKey }) =>
+        threadRootRowKeys.map((threadRootRowKey) =>
           getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),
         ),
       );
@@ -402,6 +403,11 @@ export const baseMessageRouter = router({
         (rootMessage): rootMessage is StandardMessageEntity => rootMessage != null && !rootMessage.deletedAt,
       );
     },
+  ),
+  // Follow-STATE source of truth: all followed root rowKeys, including those whose root message was deleted,
+  // So the follow button can offer Unfollow on a thread whose root is gone but whose DB follow row remains.
+  readFollowedThreadRootRowKeys: getMemberProcedure(roomIdSchema, "roomId").query<StandardMessageEntity["rowKey"][]>(
+    ({ ctx, input: { roomId } }) => readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id),
   ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(

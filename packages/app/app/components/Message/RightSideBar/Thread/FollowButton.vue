@@ -16,16 +16,11 @@ useQuery(() => ensureFollowedThreadsLoaded(roomId));
 </script>
 
 <template>
-  <v-tooltip :text="isFollowing ? 'Unfollow thread' : 'Follow thread'" location="bottom">
-    <template #activator="{ props }">
-      <v-btn
-        :="props"
-        :color="isFollowing ? 'primary' : undefined"
-        :icon="isFollowing ? 'mdi-bell' : 'mdi-bell-outline'"
-        size="small"
-        variant="text"
-        @click="isFollowing ? unfollowThread(roomId, threadRootRowKey) : followThread(roomId, threadRootRowKey)"
-      />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ color: isFollowing ? 'primary' : undefined, size: 'small', variant: 'text' }"
+    :icon="isFollowing ? 'mdi-bell' : 'mdi-bell-outline'"
+    :text="isFollowing ? 'Unfollow thread' : 'Follow thread'"
+    :tooltip-props="{ location: 'bottom' }"
+    @click="isFollowing ? unfollowThread(roomId, threadRootRowKey) : followThread(roomId, threadRootRowKey)"
+  />
 </template>

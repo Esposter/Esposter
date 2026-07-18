@@ -1,6 +1,11 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
-import type { MessageEntity, PushNotificationEventGridData, StandardCreateMessageInput } from "@esposter/db-schema";
+import type {
+  MessageEntity,
+  NotificationOptions,
+  PushNotificationEventGridData,
+  StandardCreateMessageInput,
+} from "@esposter/db-schema";
 
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -44,8 +49,10 @@ export const createUserMessage = async (
     userToRoomEventEmitter.emit("updateUserToRoom", mentionedUserToRoom);
 
   const readPushSubscriptions = await getPushSubscriptionsForMessage(db, newMessageEntity);
-  if (readPushSubscriptions.length > 0) {
-    const eventGridPublisherClient = useEventGridPublisherClient();
+  // Resolve the sender's room title once — shared by the generic message push and the thread-reply push, so
+  // a reply never runs the same nickname lookup twice. Skip it entirely when no push path needs it.
+  let title = user.name;
+  if (readPushSubscriptions.length > 0 || newMessageEntity.replyRowKey) {
     const nickname = (
       await db.query.usersToRoomsInMessage.findFirst({
         columns: { nickname: true },
@@ -55,6 +62,12 @@ export const createUserMessage = async (
         },
       })
     )?.nickname;
+    title = nickname || user.name;
+  }
+  const notificationOptions: NotificationOptions = { icon: user.image, title };
+
+  if (readPushSubscriptions.length > 0) {
+    const eventGridPublisherClient = useEventGridPublisherClient();
     const data: PushNotificationEventGridData = {
       message: {
         message: newMessageEntity.message,
@@ -62,10 +75,7 @@ export const createUserMessage = async (
         rowKey: newMessageEntity.rowKey,
         userId: newMessageEntity.userId,
       },
-      notificationOptions: {
-        icon: user.image,
-        title: nickname || user.name,
-      },
+      notificationOptions,
     };
     await eventGridPublisherClient.send([
       {
@@ -78,13 +88,17 @@ export const createUserMessage = async (
   }
 
   // A reply auto-follows its thread (Discord behaviour) and notifies existing followers. Both run post-persist
-  // And best-effort — a follow/notify failure must never fail the reply that already landed.
+  // And best-effort — a follow/notify failure must never fail the reply that already landed. Anyone already
+  // reached by the generic message push above is excluded so a single reply never double-notifies a recipient.
   if (newMessageEntity.replyRowKey) {
     const threadRootRowKey = newMessageEntity.replyRowKey;
     await getResultAsync(() =>
       createThreadFollow(db, { roomId: newMessageEntity.partitionKey, threadRootRowKey, userId: user.id }),
     ).orTee(console.error);
-    await getResultAsync(() => notifyThreadReplyFollowers(db, newMessageEntity, user)).orTee(console.error);
+    const excludedUserIds = [...new Set(readPushSubscriptions.map((pushSubscription) => pushSubscription.userId))];
+    await getResultAsync(() =>
+      notifyThreadReplyFollowers(db, newMessageEntity, notificationOptions, excludedUserIds),
+    ).orTee(console.error);
   }
 
   const updatedRoom = requireMutation(

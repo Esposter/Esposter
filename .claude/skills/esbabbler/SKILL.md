@@ -23,6 +23,8 @@ All member name display goes through `getDisplayName(user, roomId)` from `useUse
 <StyledAvatar :name="getDisplayName(member, roomId)" />
 ```
 
+When you only have a member **id** (an actor/target id from a moderation log or note, possibly no longer in the loaded member list), use `getMemberName(userId)` from `useMemberStore` — it finds the member, resolves through `getDisplayName` (current room), and falls back to the raw id. Never rebuild a local `computed(() => new Map(members.value.map(({ id, name }) => [id, name])))` + `?? userId` lookup — that plain-`name` map both duplicates this primitive and bypasses nickname resolution.
+
 ### Where nickname is applied
 
 | Location                       | How                                                                                                       |

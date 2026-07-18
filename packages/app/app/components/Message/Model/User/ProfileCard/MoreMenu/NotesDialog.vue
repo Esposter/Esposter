@@ -19,13 +19,15 @@ const rules = useVRules();
 const { createAlert } = useAlertStore();
 const { readModerationNotes, readMoreModerationNotes } = useReadModerationNotes(roomId, () => user.id);
 const moderationNoteStore = useModerationNoteStore();
-const { hasMore, items } = storeToRefs(moderationNoteStore);
+const { currentTargetUserId, hasMore, items } = storeToRefs(moderationNoteStore);
+const { getModerationNoteCount } = moderationNoteStore;
 const memberStore = useMemberStore();
-const { members } = storeToRefs(memberStore);
-const memberNameById = computed(() => new Map(members.value.map(({ id, name }) => [id, name])));
-const getActorName = (actorUserId: string) => memberNameById.value.get(actorUserId) ?? actorUserId;
+const { getMemberName } = memberStore;
+const moderationNoteCount = computed(() => getModerationNoteCount(user.id));
 const note = ref("");
 const isNoteValid = computed(() => createModerationNoteInputSchema.shape.note.safeParse(note.value).success);
+// Scope the store's paginated slice to this target before loading so concurrent dialogs stay isolated.
+currentTargetUserId.value = user.id;
 // Load on setup (no Suspense boundary) so the count badge reflects existing notes before the dialog opens.
 useQuery(readModerationNotes);
 const executeMutation = useMutation();
@@ -45,6 +47,10 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
       },
     },
   );
+
+onUnmounted(() => {
+  currentTargetUserId.value = "";
+});
 </script>
 
 <template>
@@ -56,7 +62,7 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
     <template #activator="{ updateIsOpen }">
       <v-list-item prepend-icon="mdi-note-text-outline" title="Notes" @click.stop="updateIsOpen(true)">
         <template #append>
-          <v-badge v-if="items.length > 0" :content="items.length" color="primary" inline />
+          <v-badge v-if="moderationNoteCount > 0" :content="moderationNoteCount" color="primary" inline />
         </template>
       </v-list-item>
     </template>
@@ -66,7 +72,7 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
         <v-list-item v-for="{ actorUserId, createdAt, note: itemNote, rowKey } of items" :key="rowKey">
           <div whitespace-pre-wrap break-words>{{ itemNote }}</div>
           <v-list-item-subtitle
-            >{{ getActorName(actorUserId) }} · {{ dayjs(createdAt).fromNow() }}</v-list-item-subtitle
+            >{{ getMemberName(actorUserId) }} · {{ dayjs(createdAt).fromNow() }}</v-list-item-subtitle
           >
         </v-list-item>
         <StyledWaypoint :is-active="hasMore" @change="readMoreModerationNotes" />
