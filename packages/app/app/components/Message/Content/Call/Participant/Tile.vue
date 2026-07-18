@@ -1,15 +1,5 @@
 <script setup lang="ts">
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
-export interface CallParticipantTileProps {
-  isDeafened: boolean;
-  isHandRaised: boolean;
-  isScreenSharing: boolean;
-  isSelf: boolean;
-  isSpeaking: boolean;
-  participant: CallParticipant;
-  videoStream: MediaStream | undefined;
-}
+import type { CallParticipantTileProps } from "@/models/message/room/call/CallParticipantTileProps";
 
 const { isDeafened, isHandRaised, isScreenSharing, isSelf, isSpeaking, participant, videoStream } =
   defineProps<CallParticipantTileProps>();

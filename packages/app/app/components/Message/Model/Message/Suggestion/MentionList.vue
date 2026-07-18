@@ -3,7 +3,7 @@ import type { BroadcastMentionItem } from "@/models/message/BroadcastMentionItem
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
 import type { User } from "@esposter/db-schema";
-import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
+import type { SuggestionProps } from "@tiptap/suggestion";
 
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { MentionType, takeOne } from "@esposter/shared";
@@ -14,7 +14,6 @@ const title = computed(() => {
   const baseTitle = "MEMBERS";
   return query ? `${baseTitle} MATCHING ${SuggestionTrigger.Mention}${query}` : baseTitle;
 });
-const selectedIndex = ref(0);
 const isRoleMentionItem = (item: BroadcastMentionItem | RoleMentionItem | User): item is RoleMentionItem =>
   "type" in item && item.type === MentionType.Role;
 const selectItem = (index: number) => {
@@ -23,28 +22,7 @@ const selectItem = (index: number) => {
   if (isRoleMentionItem(item)) mentionNodeAttributes.type = item.type;
   command(mentionNodeAttributes);
 };
-const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
-  switch (event.key) {
-    case "ArrowDown":
-      selectedIndex.value = (selectedIndex.value + 1) % items.length;
-      return true;
-    case "ArrowUp":
-      selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
-      return true;
-    case "Enter":
-      selectItem(selectedIndex.value);
-      return true;
-    default:
-      return false;
-  }
-};
-
-watch(
-  () => items,
-  () => {
-    selectedIndex.value = 0;
-  },
-);
+const { onKeyDown, selectedIndex } = useSuggestionListNavigation(() => items, selectItem);
 
 defineExpose({ onKeyDown });
 </script>
