@@ -103,13 +103,13 @@ When adding a new feature, use Postgres for anything relational/queryable and Az
 ### Schema → Migration Workflow
 
 1. Edit schema file in `packages/db-schema/src/schema/` (use `pgTable` wrapper, not raw drizzle `pgTable`)
-2. Add the migration under `packages/app/server/db/migrations/<timestamp>_<name>/` — a `migration.sql` plus a `snapshot.json`
+2. Generate the migration with `pnpm db:gen` from `packages/db-schema/` — this is the **only** sanctioned way to produce `snapshot.json`. Inject the URL from the app env (`export DATABASE_URL="$(grep '^DATABASE_URL=' ../app/.env | cut -d= -f2-)"`); `db:gen` only reads it for config validation — the diff is schema-vs-snapshot and never touches the DB. Then rename the random codename folder descriptively (`20260714000000_file_to_sheet_rename`), keeping the timestamp prefix.
 3. If adding new exported types/functions, run `pnpm export:gen` in `packages/db-schema/`
 4. Migrations apply on next app startup (see the migrate plugin above) — there is no apply script to run
 
-**Agents: hand-craft the migration; do not run `db:gen`.** `db:gen` needs a live `DATABASE_URL` and generates a random codename folder. Clone the newest migration's `snapshot.json`, give it a fresh uuid `id` and set `prevIds` to `[<the cloned snapshot's id>]`, then write `migration.sql` by hand. Statements are separated by `--> statement-breakpoint`. Name the folder descriptively (`20260714000000_file_to_sheet_rename`, `20260530041000_fix_likes_created_at_default`) rather than in drizzle's codename style.
+**Never hand-clone `snapshot.json`.** Copying a previous snapshot and bumping `id`/`prevIds` by hand forks the migration chain the instant two migrations descend from the same parent, and the next `db:gen` fails with `Non-commutative migrations detected`. `snapshot.json` is machine state — always let `db:gen` produce it. Don't run `db:gen` as an unprompted side effect of a schema edit; note the pending migration and let the user decide when to run it (see the `drizzle` skill).
 
-Hand-writing is also the only correct option where drizzle-kit's diff is wrong — e.g. a rename: `ALTER TYPE "public"."resource_type" RENAME VALUE 'File' TO 'Sheet';` preserves data, whereas a generated diff would drop and recreate. Report to the user that a migration is pending; it applies when they next start the app.
+**Fixing up the generated `migration.sql` by hand is allowed and expected — but only the SQL, and only before it's applied.** The migrator's bookkeeping hash is `sha256(migration.sql)`, computed at apply time, so an un-applied `migration.sql` is free to edit; `snapshot.json` stays exactly as generated. Where drizzle-kit's diff is destructive, rewrite the SQL to preserve data — e.g. replace a generated drop/recreate with `ALTER TYPE "public"."resource_type" RENAME VALUE 'File' TO 'Sheet';`. Report to the user that a migration is pending; it applies when they next start the app.
 
 ### tRPC Router Organization
 
