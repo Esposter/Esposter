@@ -6,14 +6,14 @@ import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-describe(topoSortBlueprintEntries, () => {
-  const createEntry = (key: string, content: unknown = {}): BlueprintEntry => ({
-    content,
-    key,
-    name: key,
-    type: ResourceType.Program,
-  });
+const createEntry = (key: string, content: unknown = {}): BlueprintEntry => ({
+  content,
+  key,
+  name: key,
+  type: ResourceType.Program,
+});
 
+describe(topoSortBlueprintEntries, () => {
   test("orders dependencies before dependents", () => {
     expect.hasAssertions();
 

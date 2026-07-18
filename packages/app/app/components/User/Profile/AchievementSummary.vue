@@ -21,7 +21,7 @@ const recentUserAchievements = computed(() =>
 
 <template>
   <div flex flex-col gap-y-3>
-    <div flex items-center gap-x-2>
+    <div flex gap-x-2 items-center>
       <v-icon color="orange" icon="mdi-trophy" />
       <span font-bold text-title-large>{{ totalPoints }} achievement points</span>
       <span op-medium-emphasis text-body-small>{{ unlockedUserAchievements.length }} unlocked</span>

@@ -46,6 +46,6 @@ onMounted(async () => {
       <ResourceBlueprintDeployDialog />
     </div>
     <v-alert v-if="errorMessage" type="error" variant="tonal">{{ errorMessage }}</v-alert>
-    <v-textarea v-model="manifestJson" flex-1 class="font-mono" hide-details label="Manifest JSON" variant="outlined" />
+    <v-textarea v-model="manifestJson" class="font-mono" hide-details flex-1 label="Manifest JSON" variant="outlined" />
   </v-container>
 </template>

@@ -99,6 +99,7 @@ describe("blueprint", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid content for entry audience").message}]`,
     );
+
     const programs = await programCaller.readResources();
 
     // Pre-validation runs before any insert, so a rejected deploy creates nothing
