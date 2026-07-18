@@ -66,9 +66,8 @@ const selectedDomIndex = computed(() => {
             icon="mdi-plus"
             text="Create"
             :button-props="{ size: 'small', variant: 'text' }"
-            @click="
-              (event) => {
-                event.stopPropagation();
+            @click.stop="
+              () => {
                 navigateTo(createTo);
                 emit('select');
               }

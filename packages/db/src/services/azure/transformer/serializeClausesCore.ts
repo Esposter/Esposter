@@ -14,11 +14,11 @@ export const serializeClausesCore = (clauses: Clause<Record<string, unknown>>[],
   const groupedClauses = Object.groupBy(clauses, ({ key }) => key);
   const groupedStrings: string[] = [];
 
-  for (const clauses of Object.values(groupedClauses))
-    if (clauses.length === 1) groupedStrings.push(serializeClause(takeOne(clauses), isTableFilter));
+  for (const clauseGroup of Object.values(groupedClauses))
+    if (clauseGroup.length === 1) groupedStrings.push(serializeClause(takeOne(clauseGroup), isTableFilter));
     else {
-      const serializedClauses = clauses.map((c) => serializeClause(c, isTableFilter));
-      const isRangeClause = clauses.some(({ operator }) => RangeOperators.includes(operator));
+      const serializedClauses = clauseGroup.map((c) => serializeClause(c, isTableFilter));
+      const isRangeClause = clauseGroup.some(({ operator }) => RangeOperators.includes(operator));
       const groupedString = isRangeClause
         ? serializedClauses.join(` ${UnaryOperator.and} `)
         : `(${serializedClauses.join(` ${UnaryOperator.or} `)})`;
