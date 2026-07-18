@@ -3,13 +3,20 @@ import { useThreadStore } from "@/store/message/thread";
 
 const threadStore = useThreadStore();
 const { closeThread } = threadStore;
-const { activeRootRowKey, threadMessages } = storeToRefs(threadStore);
+const { activeRoomId, activeRootRowKey, threadMessages } = storeToRefs(threadStore);
 </script>
 
 <template>
   <div px-4 py-3 flex items-center justify-between>
     <span font-semibold>Thread</span>
-    <v-btn icon="mdi-close" size="small" variant="text" @click="closeThread()" />
+    <div flex items-center>
+      <MessageRightSideBarThreadFollowButton
+        v-if="activeRoomId && activeRootRowKey"
+        :room-id="activeRoomId"
+        :thread-root-row-key="activeRootRowKey"
+      />
+      <v-btn icon="mdi-close" size="small" variant="text" @click="closeThread()" />
+    </div>
   </div>
   <v-divider />
   <MessageModelMessageSearchList :messages="threadMessages">
