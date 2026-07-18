@@ -3,28 +3,6 @@ reviews:
     - "!pnpm-lock.yaml"
     # auto-generated migrations
     - "!packages/app/server/db/migrations/**"
-    # Mechanical single-line additions from resource storage features (enum values, barrel
-    # imports, map entries, interface fields, bundle snapshots); no reviewable content change.
-    # Remove these once PR #1008 merges.
-    - "!packages/app/app/models/resource/ResourceBladeType.ts"
-    - "!packages/app/app/models/resource/ResourceMutations.ts"
-    - "!packages/app/app/models/resource/list/ResourceFilterValues.ts"
-    - "!packages/app/app/models/resource/list/ResourceListFilterType.ts"
-    - "!packages/app/app/models/resource/list/ResourceListFilters.ts"
-    - "!packages/app/app/models/resource/search/RecentResourceView.ts"
-    - "!packages/app/app/services/docs/DocsSectionGroupsMap.ts"
-    - "!packages/app/app/services/resource/ResourceBladeTitleMap.ts"
-    - "!packages/app/app/services/resource/ResourceHeaders.ts"
-    - "!packages/app/app/services/resource/list/getResourcesCsv.test.ts"
-    - "!packages/db-mock/src/index.test.ts"
-    - "!packages/db-schema/src/models/azure/function/AzureFunction.ts"
-    - "!packages/db-schema/src/models/azure/table/AzureEntityType.ts"
-    - "!packages/db-schema/src/models/azure/table/AzureTable.ts"
-    - "!packages/db-schema/src/models/azure/table/AzureTableEntityMap.ts"
-    - "!packages/db-schema/src/models/shared/DatabaseEntityType.ts"
-    - "!packages/db-schema/src/relations.ts"
-    - "!packages/db-schema/src/schema.ts"
-    - "!packages/shared/src/models/router/RoutePath.ts"
 
   auto_review:
     ignore_usernames:
