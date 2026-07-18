@@ -397,7 +397,7 @@ export const baseMessageRouter = router({
       );
       // Drop roots that were deleted or purged so the drawer never lists a dangling follow.
       return rootMessages.filter(
-        (rootMessage): rootMessage is StandardMessageEntity => rootMessage !== undefined && !rootMessage.deletedAt,
+        (rootMessage): rootMessage is StandardMessageEntity => rootMessage != null && !rootMessage.deletedAt,
       );
     },
   ),

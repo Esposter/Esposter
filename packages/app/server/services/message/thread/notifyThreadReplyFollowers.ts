@@ -1,5 +1,6 @@
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
-import type { ThreadReplyNotificationEventGridData, User } from "@esposter/db-schema";
+import type { ThreadReplyNotificationEventGridData } from "@esposter/db-schema";
 
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { getPushSubscriptionsForThreadFollowers } from "@esposter/db";
@@ -10,7 +11,7 @@ import { AzureFunction } from "@esposter/db-schema";
 export const notifyThreadReplyFollowers = async (
   db: Context["db"],
   message: { message: string; partitionKey: string; replyRowKey?: string; rowKey: string; userId: string },
-  sender: Pick<User, "id" | "image" | "name">,
+  sender: Pick<GetSessionPayload["user"], "id" | "image" | "name">,
 ): Promise<void> => {
   if (!message.replyRowKey) return;
   const threadRootRowKey = message.replyRowKey;
