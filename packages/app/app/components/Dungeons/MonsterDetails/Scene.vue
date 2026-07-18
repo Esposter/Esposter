@@ -2,6 +2,7 @@
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { MenuExperienceTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuExperienceTextStyle";
+import { ExperienceLabelTextStyle } from "@/assets/dungeons/styles/ExperienceLabelTextStyle";
 import { MenuTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
@@ -66,11 +67,7 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
         x: 108,
         y: 392,
         text: 'EXP',
-        style: {
-          color: '#6505ff',
-          fontSize: 14,
-          fontStyle: 'italic',
-        },
+        style: ExperienceLabelTextStyle,
       }"
     />
     <DungeonsUIExperienceBar :position="{ x: 70, y: 200 }" :bar-percentage />
