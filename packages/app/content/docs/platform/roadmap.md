@@ -19,5 +19,4 @@ Azure-portal parity program for the Resource Explorer: the [consolidation](/docs
 
 - [ ] Blueprint resource ([spec](/docs/proposals/platform/blueprint-resource)): parameterized executable manifest of resources — deploy one blueprint, get a fully wired set with all the right settings and cross-references
 - [ ] Blueprint capture ([spec](/docs/proposals/platform/blueprint-capture)): Save-as-blueprint on selected resources — contents captured, cross-resource ids rewritten to aliases automatically (best after the Blueprint resource ships)
-- [ ] Publish history blade ([spec](/docs/proposals/platform/publish-history)): list `{id}/published/{n}` snapshots with view/restore-to-draft — verify snapshot retention first
 - [ ] TodoList due reminders ([spec](/docs/proposals/platform/todolist-due-reminders)): scheduled Service Bus + web-push when an item comes due

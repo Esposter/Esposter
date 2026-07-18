@@ -31,6 +31,7 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Resource tags](/docs/platform/tags) — name:value pairs in Essentials, edited in place, filterable on `/all`
 - [Recycle bin](/docs/platform/recycle-bin) — soft delete with restore, permanent purge, and a 30-day timer sweep
 - [Activity log](/docs/platform/activity-log) — the per-resource audit trail blade, in Azure Table Storage
+- [Publish history](/docs/platform/publish-history) — versioned snapshot blade with per-version view and restore-to-draft
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Create from file](/docs/platform/create-from-file) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
@@ -71,3 +72,4 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - Publish parity for the remaining visual types — Email (`/view/email/[id]` browser copy via save-time MJML capture) and Flowchart (read-only VueFlow render) both opted into Publishable; Sheet and TodoList stay non-publishable by design
 - Survey invite blocks in the webpage editor — the email block builder moved to a shared core with per-editor markup wrappers
 - Storage-backed explorer features — `resourceFavorites` + Home Recent/Favorites tabs, `tags` jsonb with Essentials editing and an `/all` pill, `deletedAt` soft delete with a Recycle bin and a 30-day timer purge, `pg_trgm` relevance ranking, and the Azure Table activity blade. Three Postgres migrations, one new Azure Table, no new Azure services.
+- Publish history blade — a capability-gated built-in blade listing every retained `{id}/published/{n}` snapshot from a blob prefix listing (no history table), an owner-only `?version=` preview on the view route, and a restore-to-draft copying a snapshot into the working copy. No new tables or Azure services.
