@@ -16,7 +16,7 @@ import { getResultAsync, Operation } from "@esposter/shared";
 // Substitute parameters → pre-validate every entry against its type's contentSchema → topologically create
 // Each entry (resources row + content blob) with real ids substituted for its `{{entry:key}}` references.
 // A mid-deploy failure deletes the rows and blobs it already created — best-effort all-or-nothing
-export const deployBlueprint = (
+export const deployBlueprint = async (
   ctx: AuthedContext,
   blueprint: BlueprintResource,
   parameterValues: Record<string, string>,
