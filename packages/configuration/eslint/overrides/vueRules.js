@@ -1,3 +1,5 @@
+import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
+
 export default {
   "@typescript-eslint/no-unused-vars": "off",
   "@typescript-eslint/unified-signatures": "off",
@@ -31,17 +33,11 @@ export default {
   // Script-setup const (static maps) or computed (reactive). Event handlers (@on) run per-event, so exempt.
   "vue/no-restricted-syntax": [
     "error",
+    ...restrictedSyntaxes,
     {
       message:
         "Don't call Object.* inline in a template render expression — it allocates a new reference every render. Hoist it to a script-setup const (static) or computed (reactive). (Event handlers are exempt.)",
       selector: "CallExpression[callee.object.name='Object']:not(VAttribute[key.name.name='on'] CallExpression)",
-    },
-    {
-      // `router.replace({ query })` is a query-string update, not navigation, so only `push` is banned.
-      message:
-        "Use `navigateTo(target, { replace: true })` instead of `router.push` for navigation. (`router.replace({ query })` for query-only updates is fine.)",
-      selector:
-        "CallExpression[callee.property.name='push']:matches([callee.object.name=/^\\$?router$/], [callee.object.callee.name='useRouter'], [callee.object.property.name='$router'])",
     },
     {
       // An unconditional call at the start of a handler is exactly what Vue event modifiers express. Raw calls
@@ -53,23 +49,11 @@ export default {
         ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/]",
     },
     {
-      // Banned outright (no Vue modifier exists for it, and it couples behavior to listener registration order).
-      message:
-        "stopImmediatePropagation is banned — it couples behavior to listener registration order. Restructure the handlers (or use @event.stop) instead.",
-      selector: "CallExpression[callee.property.name='stopImmediatePropagation']",
-    },
-    {
       // Vuetify's router integration is not Nuxt-native navigation and misbehaves in Nuxt — one pathway only.
-      // `:to` bound form (`:to="x"`) — only NuxtLink/NuxtInvisibleLink/Teleport may take it.
+      // Covers both the bound (`:to="x"`) and static (`to="..."`) forms.
       message: 'Use @click="navigateTo(...)" — :to is only allowed on NuxtLink/NuxtInvisibleLink/Teleport.',
       selector:
-        "VElement[rawName!=/^(NuxtLink|NuxtInvisibleLink|Teleport)$/] > VStartTag > VAttribute[directive=true][key.argument.name='to']",
-    },
-    {
-      // Static `to="..."` form — same rule.
-      message: 'Use @click="navigateTo(...)" — :to is only allowed on NuxtLink/NuxtInvisibleLink/Teleport.',
-      selector:
-        "VElement[rawName!=/^(NuxtLink|NuxtInvisibleLink|Teleport)$/] > VStartTag > VAttribute[directive=false][key.name='to']",
+        "VElement[rawName!=/^(NuxtLink|NuxtInvisibleLink|Teleport)$/] > VStartTag > :matches(VAttribute[directive=true][key.argument.name='to'], VAttribute[directive=false][key.name='to'])",
     },
   ],
   "vue/no-unused-vars": "off",

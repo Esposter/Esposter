@@ -1,3 +1,4 @@
+import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 import tseslint from "typescript-eslint";
 
 export default Object.assign(
@@ -48,6 +49,7 @@ export default Object.assign(
     // `protected` is still allowed — no `#` equivalent exists for subclass access.
     "no-restricted-syntax": [
       "error",
+      ...restrictedSyntaxes,
       {
         message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
         selector:
@@ -65,19 +67,6 @@ export default Object.assign(
           "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
         selector:
           ":matches(MemberExpression[object.name='expect'][property.name='poll'], MemberExpression[object.name='vi'][property.name=/^(waitFor|waitUntil)$/], CallExpression[callee.name=/^(waitFor|waitUntil)$/])",
-      },
-      {
-        // `router.replace({ query })` is a query-string update, not navigation, so only `push` is banned.
-        message:
-          "Use `navigateTo(target, { replace: true })` instead of `router.push` for navigation. (`router.replace({ query })` for query-only updates is fine.)",
-        selector:
-          "CallExpression[callee.property.name='push']:matches([callee.object.name=/^\\$?router$/], [callee.object.callee.name='useRouter'], [callee.object.property.name='$router'])",
-      },
-      {
-        // Banned outright (no Vue modifier exists for it, and it couples behavior to listener registration order).
-        message:
-          "stopImmediatePropagation is banned — it couples behavior to listener registration order. Restructure the handlers (or use @event.stop) instead.",
-        selector: "CallExpression[callee.property.name='stopImmediatePropagation']",
       },
     ],
     // Computationally expensive
