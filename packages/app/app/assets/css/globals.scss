@@ -9,6 +9,11 @@
   --v-loading-opacity: 0.5;
   --vue-gradient: linear-gradient(45deg, #42d392 25%, #647eff);
   --midnight-bloom: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+  // ApexCharts Facet design tokens — chart chrome follows the active Vuetify theme.
+  // Series colors are deliberately left to the ApexCharts palette, which stays legible in both modes.
+  --apx-fore: rgb(var(--v-theme-on-surface));
+  --apx-grid: rgba(var(--v-theme-on-surface), 0.12);
+  --apx-surface: rgb(var(--v-theme-surface));
 }
 // https://vuetifyjs.com/en/getting-started/upgrade-guide/#css-reset
 @layer vuetify-core.reset {
