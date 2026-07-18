@@ -394,5 +394,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       @update="refresh()"
     />
     <ResourceListDeleteDialog v-if="deletingResource" :resource="deletingResource" @delete="deleteResources($event)" />
+    <!-- One capture dialog for the whole list — the bulk toolbar and the row ⋮ menu both drive it -->
+    <ResourceBlueprintCaptureDialog />
   </div>
 </template>

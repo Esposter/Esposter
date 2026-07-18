@@ -10,6 +10,7 @@ import ResourceTodoListItems from "@/components/Resource/TodoList/Items.vue";
 import { ResourceType } from "@esposter/db-schema";
 // The type's own blades after the built-in Overview/Editor; slugs are route segments on /resources/[id]/[[blade]]
 export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]> = {
+  [ResourceType.Blueprint]: [],
   [ResourceType.Dashboard]: [],
   [ResourceType.Email]: [],
   [ResourceType.Flowchart]: [],

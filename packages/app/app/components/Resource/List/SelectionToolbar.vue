@@ -2,6 +2,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
+import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
@@ -12,6 +13,7 @@ interface ResourceListSelectionToolbarProps {
 const { selectedResources } = defineProps<ResourceListSelectionToolbarProps>();
 const emit = defineEmits<{ clear: []; delete: [resources: Resource[]] }>();
 const { exportResourcesCsv } = useExportResourcesCsv();
+const { captureIds } = storeToRefs(useBlueprintCaptureDialogStore());
 const selectedLabel = computed(() => `${selectedResources.length} ${pluralize("resource", selectedResources.length)}`);
 // One selection guards on the name, matching the row and blade delete dialogs;
 // Past one no single name identifies the set, so the guard falls back to the count phrase
@@ -45,6 +47,9 @@ const confirmName = computed(() =>
     </StyledDeleteFormDialog>
     <v-btn prepend-icon="mdi-file-export-outline" variant="text" @click="exportResourcesCsv(selectedResources)">
       Export CSV
+    </v-btn>
+    <v-btn prepend-icon="mdi-floor-plan" variant="text" @click="captureIds = selectedResources.map(({ id }) => id)">
+      Save as blueprint
     </v-btn>
     <v-spacer />
     <v-btn size="small" variant="text" @click="emit('clear')">Clear</v-btn>

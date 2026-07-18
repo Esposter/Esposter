@@ -60,7 +60,15 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "shell-cohesion",
       "resource-consolidation",
     ],
-    Resources: ["sheet-resource", "create-from-file", "survey-resource", "program-resource", "resource-file-assets"],
+    Resources: [
+      "sheet-resource",
+      "create-from-file",
+      "survey-resource",
+      "program-resource",
+      "blueprint-resource",
+      "blueprint-capture",
+      "resource-file-assets",
+    ],
     "Survey funnel": [
       "survey-response-controls",
       "survey-response-modes",

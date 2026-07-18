@@ -36,6 +36,8 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Create from file](/docs/platform/create-from-file) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
 - [Program resource](/docs/platform/program-resource) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
+- [Blueprint resource](/docs/platform/blueprint-resource) — a parameterized manifest of resources: deploy one blueprint, get a fully wired set with all the right cross-references
+- [Blueprint capture](/docs/platform/blueprint-capture) — Save as blueprint on selected resources: contents captured, cross-resource ids rewritten to aliases automatically
 - [Survey response controls](/docs/platform/survey-response-controls) — the accepting-responses toggle and the closed state that keeps participant links alive
 - [Survey response modes](/docs/platform/survey-response-modes) — Anonymous or Identified identity, enforced at the write boundary
 - [Survey response management](/docs/platform/survey-response-management) — response detail, owner delete, response count on Overview
@@ -70,4 +72,5 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - FileAssets capability — Survey's `{id}/files` SAS machinery promoted onto the resource factory, adopted by Email and Webpage through a GrapesJS Asset Manager adapter (hosted images instead of base64)
 - Publish parity for the remaining visual types — Email (`/view/email/[id]` browser copy via save-time MJML capture) and Flowchart (read-only VueFlow render) both opted into Publishable; Sheet and TodoList stay non-publishable by design
 - Survey invite blocks in the webpage editor — the email block builder moved to a shared core with per-editor markup wrappers
+- **Blueprint resource + capture** — a parameterized manifest resource: `deployBlueprint` substitutes `{{parameter:key}}`/`{{entry:key}}` tokens, validates every entry against its type's contentSchema, topologically creates the wired set (with mid-deploy compensating cleanup), and `captureBlueprint` turns a selection of live resources into that manifest by rewriting cross-resource ids to aliases. One Postgres enum value, no new services.
 - Storage-backed explorer features — `resourceFavorites` + Home Recent/Favorites tabs, `tags` jsonb with Essentials editing and an `/all` pill, `deletedAt` soft delete with a Recycle bin and a 30-day timer purge, `pg_trgm` relevance ranking, and the Azure Table activity blade. Three Postgres migrations, one new Azure Table, no new Azure services.

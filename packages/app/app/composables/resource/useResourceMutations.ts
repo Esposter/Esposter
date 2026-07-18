@@ -7,6 +7,13 @@ export const useResourceMutations = () => {
   const { $trpc } = useNuxtApp();
   return (type: ResourceType): ResourceMutations => {
     switch (type) {
+      case ResourceType.Blueprint:
+        return {
+          deleteResource: (input) => $trpc.blueprint.deleteResource.mutate(input),
+          readResourceContent: (input) => $trpc.blueprint.readResourceContent.query(input),
+          saveResourceContent: (input) => $trpc.blueprint.saveResourceContent.mutate(input as never),
+          updateResource: (input) => $trpc.blueprint.updateResource.mutate(input),
+        };
       case ResourceType.Dashboard:
         return {
           deleteResource: (input) => $trpc.dashboard.deleteResource.mutate(input),

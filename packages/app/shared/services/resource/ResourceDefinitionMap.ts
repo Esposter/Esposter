@@ -3,6 +3,7 @@ import type { ResourceDefinition } from "#shared/models/resource/ResourceDefinit
 import { dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
 import { emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { flowchartEditorSchema } from "#shared/models/flowchartEditor/data/FlowchartEditor";
+import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
@@ -11,6 +12,12 @@ import { webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEd
 import { ResourceType } from "@esposter/db-schema";
 
 export const ResourceDefinitionMap = {
+  [ResourceType.Blueprint]: {
+    capabilities: {},
+    contentSchema: blueprintResourceSchema,
+    icon: "mdi-floor-plan",
+    title: ResourceType.Blueprint,
+  },
   [ResourceType.Dashboard]: {
     capabilities: { publishable: true },
     contentSchema: dashboardSchema,
