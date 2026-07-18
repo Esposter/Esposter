@@ -12,7 +12,6 @@ import { getContentBlobName } from "@@/server/services/resource/getContentBlobNa
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { AzureContainer, DatabaseEntityType, resources } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
-
 // Substitute parameters → pre-validate every entry against its type's contentSchema → topologically create
 // Each entry (resources row + content blob) with real ids substituted for its `{{entry:key}}` references.
 // A mid-deploy failure deletes the rows and blobs it already created — best-effort all-or-nothing
@@ -37,7 +36,7 @@ export const deployBlueprint = async (
   const aliasToId: Record<string, string> = {};
   const createdIds: string[] = [];
   const deployments: BlueprintDeployment[] = [];
-  return getResultAsync(async () => {
+  await getResultAsync(async () => {
     for (const entry of sortedEntries) {
       const newResource = requireMutation(
         (await ctx.db.insert(resources).values({ name: entry.name, type: entry.type, userId }).returning())[0],
@@ -60,4 +59,5 @@ export const deployBlueprint = async (
       throw error;
     },
   );
+  return deployments;
 };
