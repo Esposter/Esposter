@@ -282,7 +282,7 @@ export const resourceRouter = router({
     ).map(({ resource }) => resource),
   ),
   // Snapshot versions come from a blob prefix listing — no history table, since the {id}/published/{n}
-  // blobs are already the source of truth
+  // Blobs are already the source of truth
   readPublishHistory: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<PublishHistoryVersion[]>(
     ({ ctx }) => readPublishHistory(ctx.resource.id),
   ),
@@ -312,7 +312,7 @@ export const resourceRouter = router({
     }),
   // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
   // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
-  // re-publish, mirroring the recycle bin's restore-returns-a-Draft rule
+  // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule
   restorePublishedVersion: getOwnerProcedure(undefined, restorePublishedVersionInputSchema, "id").mutation<Resource>(
     async ({ ctx, input: { id, version } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);

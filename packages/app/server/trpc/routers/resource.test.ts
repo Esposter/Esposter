@@ -501,7 +501,7 @@ describe("resource", () => {
     const publication = await webpageCaller.readResourcePublication({ id: webpageResource.id });
 
     // The v1 snapshot's content is copied back into the working copy, contentVersion advances, and the
-    // publication is never re-pointed — restore produces a Draft
+    // Publication is never re-pointed — restore produces a Draft
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
     expect(restoredResource.contentVersion).toBe(webpageResource.contentVersion + 3);
     expect(publication?.publishVersion).toBe(1);
