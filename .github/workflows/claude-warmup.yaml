@@ -26,6 +26,23 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
+      - name: 🤝 Trust the workspace
+        # A fresh runner has no ~/.claude.json, so Claude Code treats the checkout as
+        # untrusted and ignores every permissions.allow entry in .claude/settings.local.json.
+        # Pre-accepting the trust dialog for the checkout path silences that warning.
+        run: |
+          node -e '
+            const fs = require("fs");
+            const os = require("os");
+            const path = require("path");
+            const file = path.join(os.homedir(), ".claude.json");
+            const config = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
+            config.projects ??= {};
+            config.projects[process.env.GITHUB_WORKSPACE] ??= {};
+            config.projects[process.env.GITHUB_WORKSPACE].hasTrustDialogAccepted = true;
+            fs.writeFileSync(file, JSON.stringify(config, null, 2));
+          '
+
       - name: 🔥 Warm up Claude Code session
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
