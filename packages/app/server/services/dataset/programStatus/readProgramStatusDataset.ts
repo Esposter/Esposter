@@ -4,14 +4,14 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getUtcDateString } from "#shared/services/dayjs/getUtcDateString";
 import { countProgramParticipantEntities } from "@@/server/services/program/countProgramParticipantEntities";
 import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
-import { requireActiveOwnedResource } from "@@/server/services/resource/requireActiveOwnedResource";
+import { requireOwnedResource } from "@@/server/services/resource/requireOwnedResource";
 import { AZURE_MAX_PAGE_SIZE, ResourceType } from "@esposter/db-schema";
 // A dataset flows into dashboards and a dashboard is publishable, so its snapshot is a public read.
 // The participant column is therefore their non-secret publicId — never keyValue, which is the
 // Participant list, and never the token, which is the bearer credential survey writes accept.
 // Response-rate charting needs counts and dates, not identities
 export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) => {
-  const resource = await requireActiveOwnedResource(ctx, reference.id, ResourceType.Program);
+  const resource = await requireOwnedResource(ctx, reference.id, ResourceType.Program);
 
   const statusRows = await readProgramStatusRows(resource.id);
   // A read that fit under the cap answers for itself; only a read that filled it pays for the count
