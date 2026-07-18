@@ -28,6 +28,10 @@ const isFileParsing = ref(false);
 // The create call writes no blob, so the parsed rows land through the same first save the Data blade would do.
 // A failed save still leaves a valid empty sheet, so the user keeps the resource and is told what is missing
 const submit = async () => {
+  // Enter can re-fire the form while the first create mutation is still pending, which would create a
+  // duplicate resource — the button's loading state only guards clicks, not the keyboard
+  if (isSubmitting.value) return;
+
   isSubmitting.value = true;
   await executeMutation(() => createResource(type, name.value), {
     onError: createErrorNotification,

@@ -10,7 +10,12 @@ export const useRotatingCursors = () => {
     const cursorBuilding = clicker.value.boughtBuildings.find(({ id }) => id === Target.Cursor);
     return cursorBuilding?.amount ?? 0;
   });
-  const rotatingDivIds = computed(() => Array.from({ length: amount.value }, () => crypto.randomUUID()));
+  // A stable per-instance prefix keyed by index — regenerating ids on every amount change would rekey the
+  // v-for and make Vue destroy/recreate every cursor node, resetting all animations on each purchase
+  const instanceId = crypto.randomUUID();
+  const rotatingDivIds = computed(() =>
+    Array.from({ length: amount.value }, (_value, index) => `${instanceId}-${index}`),
+  );
   const animateCursors = (cursorCount: number) => {
     const initialRotationOffsets = Array.from({ length: cursorCount }, (_value, index) => (360 / cursorCount) * index);
 
@@ -20,6 +25,8 @@ export const useRotatingCursors = () => {
       const rotatingDiv = window.document.getElementById(rotatingDivId);
       if (!rotatingDiv) continue;
 
+      // Nodes are reused now, so clear any prior infinite animation before adding the new one
+      rotatingDiv.getAnimations().forEach((animation) => animation.cancel());
       rotatingDiv.animate(
         [{ transform: `rotate(${rotationOffset}deg)` }, { transform: `rotate(${rotationOffset + 360}deg)` }],
         { duration: dayjs.duration(60, "seconds").asMilliseconds(), iterations: Infinity },

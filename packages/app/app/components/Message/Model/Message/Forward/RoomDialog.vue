@@ -58,12 +58,16 @@ const forwardMessage = async () => {
       }),
     {
       onSuccess: async () => {
-        if (roomIds.value.length === 1) {
-          await navigateTo(RoutePath.Messages(takeOne(roomIds.value)));
-          createAlert("Message forwarded!", "success", { icon: "mdi-share", location: "top center" });
-        }
+        // Capture the destination, then reset before navigating: after navigateTo the forward store's
+        // useDataMap resolves against the destination room, so resetting afterwards would clear the
+        // destination's state instead of the source's
+        const destinationRoomId = roomIds.value.length === 1 ? takeOne(roomIds.value) : "";
         resetForward();
         searchQuery.value = "";
+        if (destinationRoomId) {
+          await navigateTo(RoutePath.Messages(destinationRoomId));
+          createAlert("Message forwarded!", "success", { icon: "mdi-share", location: "top center" });
+        }
       },
     },
   );

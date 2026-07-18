@@ -7,6 +7,9 @@ export const useSuggestionListNavigation = <TItem>(
   const selectedIndex = ref(0);
   const onKeyDown = ({ event }: Pick<SuggestionKeyDownProps, "event">) => {
     const itemsValue = toValue(items);
+    // An empty list makes the arrow-key modulo divide by zero (NaN), which Enter would then pass to takeOne
+    if (itemsValue.length === 0) return false;
+
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();

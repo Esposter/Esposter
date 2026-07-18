@@ -8,6 +8,9 @@ import { z } from "zod";
 export class SurveyResponseEntity extends AzureEntity {
   model: Record<string, unknown> = {};
   modelVersion = 0;
+  // Resume position, tracked apart from `model` so a question literally named "pageNo" can never collide
+  // with it — 0 means the respondent never advanced past the first page
+  pageNo = 0;
   // Opaque program-issued participant token, "" in Anonymous mode — resolvable only owner-side
   participantToken = "";
 
@@ -26,5 +29,6 @@ export const surveyResponseEntitySchema = z.object({
   ).shape,
   model: z.record(z.string().min(1), z.unknown()),
   modelVersion: z.int().nonnegative(),
+  pageNo: z.int().nonnegative().default(0),
   participantToken: z.union([z.literal(""), z.uuid()]).default(""),
 }) satisfies z.ZodType<ToData<SurveyResponseEntity>>;

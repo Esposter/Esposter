@@ -24,23 +24,31 @@ import {
   WebGPURenderer,
 } from "three/webgpu";
 
+// Everything the teardown must dispose, assembled only after onMounted finishes wiring three.js
+interface FluidResources {
+  box: Mesh<BoxGeometry, MeshStandardMaterial>;
+  controls: OrbitControls;
+  disposeRenderTarget: () => void;
+  pmremGenerator: PMREMGenerator;
+  renderer: WebGPURenderer;
+  renderPipeline: RenderPipeline;
+  sky: SkyMesh;
+  stopResize: () => void;
+  water: WaterMesh;
+}
+
 export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | undefined>) => {
   const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };
-  let renderer: WebGPURenderer;
-  let controls: OrbitControls;
-  let renderPipeline: RenderPipeline;
-  let water: WaterMesh;
-  let sky: SkyMesh;
-  let box: Mesh<BoxGeometry, MeshStandardMaterial>;
-  let pmremGenerator: PMREMGenerator;
-  let renderTarget: RenderTarget | undefined;
+  // Assigned only at the tail of onMounted (past every await), so an unmount that races setup leaves this
+  // undefined and teardown no-ops instead of dereferencing a handle that was never created
+  let fluidResources: FluidResources | undefined;
   const getHeight = () => window.innerHeight - APP_BAR_HEIGHT;
 
   onMounted(async () => {
     const containerValue = toValue(container);
     if (!containerValue) return;
     const { Inspector } = await import("three/examples/jsm/inspector/Inspector.js");
-    renderer = new WebGPURenderer();
+    const renderer = new WebGPURenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, getHeight());
     renderer.toneMapping = ACESFilmicToneMapping;
@@ -53,7 +61,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     const camera = new PerspectiveCamera(55, window.innerWidth / getHeight(), 1, 20000);
     camera.position.set(30, 30, 100);
 
-    renderPipeline = new RenderPipeline(renderer);
+    const renderPipeline = new RenderPipeline(renderer);
     const scenePass = pass(scene, camera);
     const scenePassColor = scenePass.getTextureNode("output");
     const bloomPass = bloom(scenePassColor);
@@ -67,7 +75,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     const textureLoader = new TextureLoader();
     const waterNormals = textureLoader.load(WATERS_NORMALS_TEXTURE_PATH);
     waterNormals.wrapS = waterNormals.wrapT = RepeatWrapping;
-    water = new WaterMesh(waterGeometry, {
+    const water = new WaterMesh(waterGeometry, {
       distortionScale: 3.7,
       sunColor: 0xffffff,
       sunDirection: new Vector3(),
@@ -77,7 +85,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     water.rotation.x = -Math.PI / 2;
     scene.add(water);
 
-    sky = new SkyMesh();
+    const sky = new SkyMesh();
     sky.scale.setScalar(10000);
     scene.add(sky);
     sky.turbidity.value = 10;
@@ -88,8 +96,9 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     sky.cloudDensity.value = 0.5;
     sky.cloudElevation.value = 0.5;
 
-    pmremGenerator = new PMREMGenerator(renderer);
+    const pmremGenerator = new PMREMGenerator(renderer);
     const sceneEnv = new Scene();
+    let renderTarget: RenderTarget | undefined;
 
     const updateSun = () => {
       const phi = MathUtils.degToRad(90 - parameters.elevation);
@@ -109,10 +118,10 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
 
     const boxGeometry = new BoxGeometry(30, 30, 30);
     const boxMaterial = new MeshStandardMaterial({ roughness: 0 });
-    box = new Mesh(boxGeometry, boxMaterial);
+    const box = new Mesh(boxGeometry, boxMaterial);
     scene.add(box);
 
-    controls = new OrbitControls(camera, renderer.domElement);
+    const controls = new OrbitControls(camera, renderer.domElement);
     controls.maxPolarAngle = Math.PI * 0.495;
     controls.target.set(0, 10, 0);
     controls.minDistance = 40;
@@ -137,7 +146,9 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     folderClouds.add(sky.cloudDensity, "value", 0, 1, 0.01).name("density");
     folderClouds.add(sky.cloudElevation, "value", 0, 1, 0.01).name("elevation");
 
-    useEventListener("resize", () => {
+    // Registered after awaits, so it is outside the synchronous setup scope and won't auto-dispose —
+    // its stop handle travels in the resources so teardown can detach it
+    const stopResize = useEventListener("resize", () => {
       camera.aspect = window.innerWidth / getHeight();
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, getHeight());
@@ -152,9 +163,29 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     };
 
     await renderer.setAnimationLoop(render);
+
+    fluidResources = {
+      box,
+      controls,
+      disposeRenderTarget: () => renderTarget?.dispose(),
+      pmremGenerator,
+      renderer,
+      renderPipeline,
+      sky,
+      stopResize,
+      water,
+    };
   });
 
+  // Idempotent, undefined-safe teardown: an early unmount (before or between the onMounted awaits) leaves
+  // fluidResources undefined, so nothing is dereferenced; clearing it first makes a repeat call a no-op
   onUnmounted(async () => {
+    if (!fluidResources) return;
+
+    const { box, controls, disposeRenderTarget, pmremGenerator, renderer, renderPipeline, sky, stopResize, water } =
+      fluidResources;
+    fluidResources = undefined;
+    stopResize();
     await renderer.setAnimationLoop(null);
     renderPipeline.dispose();
     water.geometry.dispose();
@@ -165,7 +196,9 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     box.geometry.dispose();
     box.material.dispose();
     pmremGenerator.dispose();
-    renderTarget?.dispose();
+    disposeRenderTarget();
     controls.dispose();
+    renderer.dispose();
+    renderer.domElement.remove();
   });
 };

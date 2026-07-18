@@ -11,7 +11,6 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess
   const saveSurveyResponse = async (survey: Model) => {
     const responseModel = survey.data;
-    responseModel.pageNo = survey.currentPageNo;
     const currentSurveyResponse = surveyResponse;
     if (!currentSurveyResponse) {
       const newSurveyResponseId = crypto.randomUUID();
@@ -19,6 +18,7 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         () =>
           $trpc.survey.createSurveyResponse.mutate({
             model: responseModel,
+            pageNo: survey.currentPageNo,
             participantToken,
             partitionKey: id,
             rowKey: newSurveyResponseId,
@@ -38,6 +38,7 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         $trpc.survey.updateSurveyResponse.mutate({
           model: responseModel,
           modelVersion: currentSurveyResponse.modelVersion,
+          pageNo: survey.currentPageNo,
           participantToken,
           partitionKey: currentSurveyResponse.partitionKey,
           rowKey: currentSurveyResponse.rowKey,
@@ -64,9 +65,9 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
       if (!surveyResponse) return;
 
       model.data = surveyResponse.model;
-      if (!surveyResponse.model.pageNo) return;
+      if (!surveyResponse.pageNo) return;
 
-      model.currentPageNo = surveyResponse.model.pageNo as number;
+      model.currentPageNo = surveyResponse.pageNo;
     }).match(noop, console.error);
   // The resume id must not outlive the submission — a shared device could otherwise reopen the answers
   const clearSurveyResponseId = () => {

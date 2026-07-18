@@ -5,9 +5,9 @@ definePageMeta({
   validate: (route) => typeof route.params.id === "string" && route.params.id.length > 0,
 });
 
-const user = await useReadUserFromRoute();
-const userAchievements = await useReadUserAchievements(user.id);
-const { readMoreUserPosts, readUserPosts } = useReadUserPosts(user.id);
+const { user, userId } = await useReadUserFromRoute();
+const userAchievements = await useReadUserAchievements(userId);
+const { readMoreUserPosts, readUserPosts } = useReadUserPosts(userId);
 const postStore = usePostStore();
 const { hasMore, items } = storeToRefs(postStore);
 await readUserPosts();

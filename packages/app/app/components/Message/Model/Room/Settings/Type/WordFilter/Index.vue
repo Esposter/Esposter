@@ -19,7 +19,12 @@ const { data: filter } = useQuery(() => $trpc.room.filter.readRoomFilter.query({
     </v-row>
     <v-row>
       <v-col cols="12" md="6" sm="8">
-        <MessageModelRoomSettingsTypeWordFilterForm v-if="filter !== undefined" :room-id="room.id" :filter />
+        <MessageModelRoomSettingsTypeWordFilterForm
+          v-if="filter !== undefined"
+          :key="room.id"
+          :room-id="room.id"
+          :filter
+        />
       </v-col>
     </v-row>
   </v-container>

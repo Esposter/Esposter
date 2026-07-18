@@ -35,6 +35,7 @@ const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
 
 const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   model: true,
+  pageNo: true,
   participantToken: true,
   partitionKey: true,
   rowKey: true,
@@ -43,6 +44,7 @@ const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
 const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   model: true,
   modelVersion: true,
+  pageNo: true,
   participantToken: true,
   partitionKey: true,
   rowKey: true,
@@ -124,8 +126,12 @@ export const surveyRouter = router({
       // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
       if (participantToken && participantToken !== surveyResponse.participantToken)
         throw invalidParticipantTokenError();
-      // Response models are plain records, so duplicates are detected structurally rather than by reference
-      if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model))
+      // Response models are plain records, so duplicates are detected structurally rather than by reference.
+      // A page-only advance (same answers, later pageNo) is a real progress write, so it is not a duplicate
+      if (
+        JSON.stringify(input.model) === JSON.stringify(surveyResponse.model) &&
+        input.pageNo === surveyResponse.pageNo
+      )
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model")

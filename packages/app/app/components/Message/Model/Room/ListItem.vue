@@ -51,7 +51,7 @@ const mentionCount = computed(() => (isActive.value ? 0 : (getMyUserToRoom(room.
             <v-icon :="activatorProps" icon="mdi-bullhorn-outline" size="x-small" op-medium-emphasis />
           </template>
         </v-tooltip>
-        <MessageModelRoomListItemSettingsButton :is-active :is-hovering="isHovering" :room />
+        <MessageModelRoomListItemSettingsButton :is-active :is-hovering="isHovering ?? false" :room />
       </template>
     </v-list-item>
   </v-hover>

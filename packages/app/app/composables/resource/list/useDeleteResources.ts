@@ -40,7 +40,13 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
             count.value = snapshotCount;
           };
         },
-        onError: createErrorNotification,
+        onError: async (error) => {
+          createErrorNotification(error);
+          // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure
+          // still leaves earlier chunks deleted server-side. The rollback restores every row, so re-read to
+          // reconcile the list with what actually persisted rather than resurrecting deleted resources
+          await refresh();
+        },
         onSuccess: () => {
           createNotification({
             // The undo toast: a single delete is one click away from coming back, no bin trip needed
