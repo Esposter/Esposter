@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
-import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
+import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
+import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
 import { useInviteStore } from "@/store/message/room/invite";
 import { RoutePath } from "@esposter/shared";
 
@@ -31,14 +31,6 @@ useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
     maxUses.value = INVITE_MAX_USES_OPTIONS.find((uses) => uses === invite.value?.maxUses) ?? 0;
   },
 });
-const expireAfterItems: SelectItemCategoryDefinition<CreateInviteInput["expireAfterMinutes"]>[] = [
-  ...Object.entries(InviteExpireAfterMinutesMap).map(([title, value]) => ({ title, value })),
-  { title: "Never", value: 0 },
-];
-const maxUsesItems: SelectItemCategoryDefinition<CreateInviteInput["maxUses"]>[] = [
-  { title: "No limit", value: 0 },
-  ...INVITE_MAX_USES_OPTIONS.map((uses) => ({ title: `${uses} use${uses === 1 ? "" : "s"}`, value: uses })),
-];
 const onCreateInvite = () =>
   createInvite({ expireAfterMinutes: expireAfterMinutes.value, maxUses: maxUses.value, roomId });
 // Changing options with a live link regenerates it — the old link is replaced (one invite per member per room)
@@ -70,7 +62,7 @@ const isCopied = ref(false);
       <v-select
         v-model="expireAfterMinutes"
         label="Expire after"
-        :items="expireAfterItems"
+        :items="InviteExpireAfterSelectItems"
         density="compact"
         hide-details
         @update:model-value="onUpdateOptions"
@@ -78,7 +70,7 @@ const isCopied = ref(false);
       <v-select
         v-model="maxUses"
         label="Max uses"
-        :items="maxUsesItems"
+        :items="InviteMaxUsesSelectItems"
         density="compact"
         hide-details
         @update:model-value="onUpdateOptions"
