@@ -10,7 +10,6 @@ import { readModerationNotesInputSchema } from "#shared/models/db/moderation/Rea
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
-import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
 import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
@@ -23,8 +22,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
-import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
-import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
+import { assertIsManageable } from "@@/server/services/room/rbac/assertIsManageable";
 import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -65,9 +63,12 @@ export const moderationRouter = router({
     createModerationNoteInputSchema,
     "roomId",
   ).mutation<ModerationNoteEntity>(async ({ ctx, input: { note, roomId, targetUserId } }) => {
+    const actorUserId = ctx.getSessionPayload.user.id;
+    await assertIsManageable(ctx.db, actorUserId, targetUserId, roomId);
+
     const moderationNotesClient = await useTableClient(AzureTable.ModerationNotes);
     const moderationNoteEntity = new ModerationNoteEntity({
-      actorUserId: ctx.getSessionPayload.user.id,
+      actorUserId,
       note,
       partitionKey: roomId,
       rowKey: getReverseTickedTimestamp(),
@@ -95,14 +96,11 @@ export const moderationRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { roomId, targetUserId } = input;
       const actorUserId = ctx.getSessionPayload.user.id;
-      const [isPermitted, actorContext, targetTopPosition] = await Promise.all([
+      const [isPermitted] = await Promise.all([
         hasPermission(ctx.db, actorUserId, roomId, AdminActionPermissionMap[input.type]),
-        getActorContext(ctx.db, actorUserId, roomId),
-        getTopRolePosition(ctx.db, targetUserId, roomId),
+        assertIsManageable(ctx.db, actorUserId, targetUserId, roomId),
       ]);
-
-      if (!isPermitted || !checkIsManageable(actorContext.actorTopPosition, targetTopPosition, actorContext.isOwner))
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       switch (input.type) {
         case AdminActionType.CreateBan:
@@ -257,7 +255,9 @@ export const moderationRouter = router({
     RoomPermission.KickMembers,
     readModerationNotesInputSchema,
     "roomId",
-  ).query(async ({ input: { cursor, limit, roomId, targetUserId } }) => {
+  ).query(async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
+    await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
+
     const sortBy: SortItem<keyof ModerationNoteEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
     const clauses: Clause<ModerationNoteEntity>[] = [
       { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },

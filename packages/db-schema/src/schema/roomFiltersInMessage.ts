@@ -37,10 +37,10 @@ export const roomFiltersInMessage = pgTable(
         "room_filters_words_size_check",
         sql`cardinality(${words}) <= ${sql.raw(FILTER_WORDS_MAX_LENGTH.toString())}`,
       ),
-      // A Timeout action requires a positive duration — every other action leaves the duration unset.
+      // A Timeout action requires a positive duration — every other action requires the duration unset.
       check(
         "room_filters_timeout_duration_check",
-        sql`${action} <> 'Timeout' OR (${timeoutDurationMs} IS NOT NULL AND ${timeoutDurationMs} > 0)`,
+        sql`(${action} = 'Timeout' AND ${timeoutDurationMs} IS NOT NULL AND ${timeoutDurationMs} > 0) OR (${action} <> 'Timeout' AND ${timeoutDurationMs} IS NULL)`,
       ),
     ],
     schema: messageSchema,

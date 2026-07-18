@@ -1,27 +1,15 @@
 <script setup lang="ts">
+import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
-import { TodoListItem, todoListItemSchema } from "#shared/models/resource/todoList/TodoListItem";
 import { getItemCategoryDefinition } from "@/services/resource/getItemCategoryDefinition";
 import { TodoListHeaders } from "@/services/resource/todoList/TodoListHeaders";
 import { TodoListItemTypeItemCategoryDefinitions } from "@/services/resource/todoList/TodoListItemTypeItemCategoryDefinitions";
 import { useTodoListStore } from "@/store/resource/todoList";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const todoListStore = useTodoListStore();
-const { editItem, loadContent, resetItem, saveItem } = todoListStore;
-const {
-  editedItem,
-  editForm,
-  editFormDialog,
-  isDirty,
-  isEditFormValid,
-  isFullScreenDialog,
-  isSavable,
-  items,
-  originalItem,
-  searchQuery,
-} = storeToRefs(todoListStore);
+const { editItem, loadContent } = todoListStore;
+const { items, searchQuery } = storeToRefs(todoListStore);
 const isLoading = ref(true);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<TodoListItem>) => editItem({ id: item.id });
 useTodoListSubscribables();
@@ -49,35 +37,7 @@ onMounted(async () => {
       @click:row="onClickRow"
     >
       <template #top>
-        <div pb-2 flex gap-2 items-center>
-          <v-text-field
-            v-model="searchQuery"
-            clearable
-            density="compact"
-            hide-details
-            label="Search"
-            max-width="16rem"
-            prepend-inner-icon="mdi-magnify"
-          />
-          <v-spacer />
-          <v-tooltip text="Add a todo">
-            <template #activator="{ props }">
-              <v-btn
-                variant="elevated"
-                :flat="false"
-                :="props"
-                @click="
-                  () => {
-                    editedItem = new TodoListItem();
-                    editFormDialog = true;
-                  }
-                "
-              >
-                <v-icon icon="mdi-plus" />
-              </v-btn>
-            </template>
-          </v-tooltip>
-        </div>
+        <ResourceTodoListTopSlot />
       </template>
       <template #[`item.type`]="{ item }">
         <v-chip label>
@@ -89,36 +49,6 @@ onMounted(async () => {
         <div class="rich-text-content" v-html="item.notes" />
       </template>
     </StyledDataTable>
-    <StyledEditFormDialog
-      v-if="editedItem"
-      v-model="editFormDialog"
-      :name="originalItem?.name ?? ''"
-      :edited-item
-      :original-item
-      :is-dirty
-      :is-edit-form-valid
-      :schema="todoListItemSchema"
-      :is-full-screen-dialog
-      :is-savable
-      @close="resetItem()"
-      @delete="
-        async (onComplete) => {
-          let isSuccessful = false;
-          await withFinalizerAsync(
-            async () => {
-              isSuccessful = await saveItem(true);
-            },
-            () => {
-              onComplete(isSuccessful);
-            },
-          );
-        }
-      "
-      @save="saveItem()"
-      @update:edit-form="editForm = $event"
-      @update:fullscreen-dialog="isFullScreenDialog = $event"
-    >
-      <ResourceTodoListEditForm v-model="editedItem" />
-    </StyledEditFormDialog>
+    <ResourceTodoListEditDialog />
   </v-container>
 </template>
