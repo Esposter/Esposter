@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { nodeTypes } from "@/services/flowchartEditor/NodeTypeMap";
+import { ResourceType } from "@esposter/db-schema";
 import { Background } from "@vue-flow/background";
 import { VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
-import { ResourceType } from "@esposter/db-schema";
 
 interface ResourceFlowchartViewProps {
   id: string;

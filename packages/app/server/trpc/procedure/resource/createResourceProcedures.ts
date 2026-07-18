@@ -5,9 +5,9 @@ import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from 
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";

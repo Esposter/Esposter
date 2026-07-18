@@ -41,7 +41,7 @@ const canAddRow = computed(() => rows.value.length < MAX_TAGS_COUNT);
       <v-btn v-if="canAddRow" prepend-icon="mdi-plus" variant="text" w-fit @click="rows.push({ name: '', value: '' })">
         Add tag
       </v-btn>
-      <span v-else op-medium-emphasis text-caption>A resource can have at most {{ MAX_TAGS_COUNT }} tags.</span>
+      <span v-else text-caption op-medium-emphasis>A resource can have at most {{ MAX_TAGS_COUNT }} tags.</span>
     </div>
   </StyledFormDialog>
 </template>

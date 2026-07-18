@@ -8,13 +8,13 @@ import { useAlertStore } from "@/store/alert";
 import { getResultAsync, noop } from "@esposter/shared";
 import grapesJS from "grapesjs";
 
+interface UseGrapesJsEditorAssets {
+  upload: (file: File) => Promise<string>;
+}
+
 interface UseGrapesJsEditorStorage {
   load: () => Promise<ProjectData>;
   store: (data: ProjectData, editor: Editor) => Promise<unknown>;
-}
-
-interface UseGrapesJsEditorAssets {
-  upload: (file: File) => Promise<string>;
 }
 
 export const useGrapesJsEditor = async (

@@ -5,8 +5,8 @@ import type { Resource, ResourceType } from "@esposter/db-schema";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeaders";
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
+import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeaders";
 import { useNotificationStore } from "@/store/notification";
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";

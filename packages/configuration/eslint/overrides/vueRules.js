@@ -32,6 +32,15 @@ export default {
         "CallExpression[callee.property.name='push']:matches([callee.object.name=/^\\$?router$/], [callee.object.callee.name='useRouter'], [callee.object.property.name='$router'])",
     },
     {
+      // An unconditional call at the start of a handler is exactly what Vue event modifiers express. Raw calls
+      // Remain allowed after a runtime guard (e.g. only preventDefault when the cursor is at position 0), where
+      // No modifier can encode the condition.
+      message:
+        "Use Vue event modifiers (@event.stop / @event.prevent, with key modifiers where applicable) instead of an unconditional event method call at the start of a handler. Raw calls are only for conditional use behind a guard.",
+      selector:
+        ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation|stopImmediatePropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation|stopImmediatePropagation)$/]",
+    },
+    {
       // Vuetify's router integration is not Nuxt-native navigation and misbehaves in Nuxt — one pathway only.
       // `:to` bound form (`:to="x"`) — only NuxtLink/NuxtInvisibleLink/Teleport may take it.
       message: 'Use @click="navigateTo(...)" — :to is only allowed on NuxtLink/NuxtInvisibleLink/Teleport.',

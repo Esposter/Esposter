@@ -99,7 +99,7 @@ const copyPublicLink = async () => {
       v-if="updateTags && isTagsEditorOpen"
       v-model="isTagsEditorOpen"
       :tags="resource.tags"
-      :update-tags="updateTags"
+      :update-tags
     />
   </div>
 </template>

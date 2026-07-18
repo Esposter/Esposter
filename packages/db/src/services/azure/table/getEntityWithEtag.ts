@@ -10,7 +10,7 @@ export const getEntityWithEtag = <TTableEntity extends AzureEntity, TEntity exte
   tableClient: CustomTableClient<TTableEntity>,
   cls: Class<TEntity>,
   ...args: Parameters<CustomTableClient<TTableEntity>["getEntity"]>
-): Promise<{ entity: TEntity; etag: string } | undefined> =>
+): Promise<undefined | { entity: TEntity; etag: string }> =>
   getResultAsync(async () => {
     const { etag, ...entity } = await tableClient.getEntity(...args);
     return { entity: deserializeEntity(entity, cls), etag };
