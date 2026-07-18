@@ -2,6 +2,7 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { AdminActionType, RoomInMessage } from "@esposter/db-schema";
 
+import { AUTOMOD_USER_ID } from "#shared/services/message/moderation/AUTOMOD_USER_ID";
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
 import { useModerationLogStore } from "@/store/message/moderation/log";
@@ -34,6 +35,11 @@ const memberItems = computed<SelectItemCategoryDefinition<string>[]>(() => [
   { title: "All members", value: "" },
   ...members.value.map(({ id, name }) => ({ title: name, value: id })),
 ]);
+const memberNameById = computed(() => new Map(members.value.map(({ id, name }) => [id, name])));
+// The actor may be the reserved AutoMod id (word-filter warn/timeout) — render it as "AutoMod".
+const getActorLabel = (userId: string) =>
+  userId === AUTOMOD_USER_ID ? "AutoMod" : (memberNameById.value.get(userId) ?? userId);
+const getMemberLabel = (userId: string) => memberNameById.value.get(userId) ?? userId;
 const adminActionTypeItems = [
   { title: "All actions", value: "" },
   ...AdminActionTypes.map((adminActionType) => ({
@@ -91,7 +97,9 @@ await Promise.all([readModerationLog(), readMembers()]);
         <template #prepend>
           <v-icon :color="AdminActionColorMap[entryType]">{{ AdminActionIconMap[entryType] }}</v-icon>
         </template>
-        <v-list-item-title>{{ entryType }} — {{ entryActorUserId }} acted on {{ entryTargetUserId }}</v-list-item-title>
+        <v-list-item-title>
+          {{ entryType }} — {{ getActorLabel(entryActorUserId) }} acted on {{ getMemberLabel(entryTargetUserId) }}
+        </v-list-item-title>
         <v-list-item-subtitle v-if="durationMs">{{ formatDuration(durationMs) }}</v-list-item-subtitle>
       </v-list-item>
       <StyledWaypoint :is-active="hasMore" @change="readMoreModerationLog" />

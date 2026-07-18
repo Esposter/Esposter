@@ -5,6 +5,8 @@ export enum AzureTable {
   MessagesAscending = "MessagesAscending",
   MessagesMetadata = "MessagesMetadata",
   ModerationLog = "ModerationLog",
+  // Private per-member moderator notes — partitioned by roomId, newest-first by reverse-ticked rowKey.
+  ModerationNotes = "ModerationNotes",
   ProgramParticipants = "ProgramParticipants",
   // Per-resource audit trail — partitioned by resourceId, newest-first by reverse-ticked rowKey.
   ResourceActivity = "ResourceActivity",
