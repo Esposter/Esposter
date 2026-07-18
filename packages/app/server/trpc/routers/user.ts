@@ -1,6 +1,7 @@
-import type { UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
+import type { User, UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
 
+import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { dayjs } from "#shared/services/dayjs";
@@ -10,8 +11,10 @@ import { on } from "@@/server/services/events/on";
 import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { ContainerSASPermissions } from "@azure/storage-blob";
 import {
   AzureContainer,
@@ -140,6 +143,20 @@ export const userRouter = router({
 
     return resultUserStatuses;
   }),
+  // Public profile identity — projects only the allowlisted columns so private fields (email) never
+  // Leave the database, and runs unauthenticated on the rate-limited procedure
+  readUser: standardRateLimitedProcedure
+    .input(readUserInputSchema)
+    .query<Pick<User, "biography" | "image" | "name">>(({ ctx, input }) =>
+      requireEntity(
+        ctx.db.query.users.findFirst({
+          columns: { biography: true, image: true, name: true },
+          where: { id: { eq: input } },
+        }),
+        DatabaseEntityType.User,
+        input,
+      ),
+    ),
   readUserSettings: standardAuthedProcedure.query(async ({ ctx }) => {
     const foundUserSettings = (
       await ctx.db
