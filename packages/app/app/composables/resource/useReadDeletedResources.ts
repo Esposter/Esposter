@@ -38,7 +38,8 @@ export const useReadDeletedResources = () => {
     isLoading.value = false;
   };
   // A restore or purge changes both the current page and the total, so Refresh re-reads both
-  const refresh = () =>
-    lastOptions ? Promise.all([readCount(), readDeletedResources(lastOptions)]) : Promise.resolve();
+  const refresh = async () => {
+    if (lastOptions) await Promise.all([readCount(), readDeletedResources(lastOptions)]);
+  };
   return { count, error, isLoading, items, readCount, readDeletedResources, refresh };
 };

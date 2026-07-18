@@ -38,12 +38,12 @@ describe("room/filter", () => {
   });
 
   describe("readRoomFilter", () => {
-    test("returns undefined when no filter configured", async () => {
+    test("returns null when no filter configured", async () => {
       expect.hasAssertions();
 
       const readFilter = await roomFilterCaller.readRoomFilter({ roomId });
 
-      expect(readFilter).toBeUndefined();
+      expect(readFilter).toBeNull();
     });
 
     test("returns the filter row after upsertRoomFilter", async () => {
