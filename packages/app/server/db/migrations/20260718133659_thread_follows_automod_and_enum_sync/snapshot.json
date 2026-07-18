@@ -1,9 +1,9 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "df8bc091-3db7-4ee1-8ff1-dcf77ff432fb",
+  "id": "b0ddb290-5b7d-4daf-929e-daa569e2dfe5",
   "prevIds": [
-    "a016e3cd-0934-4f4a-b740-eb9e823f54a5"
+    "df8bc091-3db7-4ee1-8ff1-dcf77ff432fb"
   ],
   "ddl": [
     {
@@ -13,12 +13,22 @@
     {
       "values": [
         "ClickerAddict",
+        "ClickerArchitect",
+        "ClickerBillionaire",
         "ClickerChampion",
+        "ClickerCompletionist",
+        "ClickerMillionaire",
         "ClickerNovice",
         "ClickerPro",
         "ClickerSaver",
+        "ClickerTrillionaire",
         "DungeonCrawler",
+        "DungeonHomeowner",
         "DungeonMaster",
+        "MonsterCatcher",
+        "MonsterCollector",
+        "MonsterElite",
+        "MonsterTrainer",
         "EmailMarketer",
         "ComplexFlow",
         "Flowcharter",
@@ -98,15 +108,25 @@
         "Blueprint",
         "Dashboard",
         "Email",
-        "Sheet",
         "Flowchart",
+        "Note",
+        "Program",
+        "Sheet",
         "Survey",
         "TodoList",
-        "Webpage",
-        "Program",
-        "Note"
+        "Webpage"
       ],
       "name": "resource_type",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "Reject",
+        "Timeout",
+        "Warn"
+      ],
+      "name": "word_filter_action",
       "entityType": "enums",
       "schema": "public"
     },
@@ -239,6 +259,12 @@
     },
     {
       "isRlsEnabled": false,
+      "name": "resource_favorites",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
       "name": "resource_publications",
       "entityType": "tables",
       "schema": "public"
@@ -290,6 +316,12 @@
       "name": "sessions",
       "entityType": "tables",
       "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "threadFollows",
+      "entityType": "tables",
+      "schema": "message"
     },
     {
       "isRlsEnabled": false,
@@ -1598,6 +1630,71 @@
       "name": "createdAt",
       "entityType": "columns",
       "schema": "public",
+      "table": "resource_favorites"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "resource_favorites"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "resource_favorites"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "resourceId",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "resource_favorites"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "resource_favorites"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "entityType": "columns",
+      "schema": "public",
       "table": "resource_publications"
     },
     {
@@ -1739,6 +1836,19 @@
       "generated": null,
       "identity": null,
       "name": "name",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "resources"
+    },
+    {
+      "type": "jsonb",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'{}'",
+      "generated": null,
+      "identity": null,
+      "name": "tags",
       "entityType": "columns",
       "schema": "public",
       "table": "resources"
@@ -1900,6 +2010,19 @@
       "table": "roomFilters"
     },
     {
+      "type": "word_filter_action",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'Reject'",
+      "generated": null,
+      "identity": null,
+      "name": "action",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "roomFilters"
+    },
+    {
       "type": "uuid",
       "typeSchema": null,
       "notNull": true,
@@ -1908,6 +2031,19 @@
       "generated": null,
       "identity": null,
       "name": "roomId",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "roomFilters"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "timeoutDurationMs",
       "entityType": "columns",
       "schema": "message",
       "table": "roomFilters"
@@ -2587,6 +2723,84 @@
       "entityType": "columns",
       "schema": "public",
       "table": "sessions"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "threadFollows"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "threadFollows"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "threadFollows"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "roomId",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "threadFollows"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "threadRootRowKey",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "threadFollows"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "threadFollows"
     },
     {
       "type": "timestamp",
@@ -3633,6 +3847,48 @@
       "nameExplicit": true,
       "columns": [
         {
+          "value": "tags",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "gin",
+      "concurrently": false,
+      "name": "resources_tags_index",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "resources"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "\"name\" gin_trgm_ops",
+          "isExpression": true,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "gin",
+      "concurrently": false,
+      "name": "resources_name_trgm_index",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "resources"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
           "value": "roomId",
           "isExpression": false,
           "asc": true,
@@ -4094,6 +4350,40 @@
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
+      "name": "resource_favorites_resourceId_resources_id_fk",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "resource_favorites"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "userId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "resource_favorites_userId_users_id_fk",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "resource_favorites"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "resourceId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "resources",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
       "name": "resource_publications_resourceId_resources_id_fkey",
       "entityType": "fks",
       "schema": "public",
@@ -4285,6 +4575,40 @@
       "entityType": "fks",
       "schema": "public",
       "table": "sessions"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "roomId"
+      ],
+      "schemaTo": "message",
+      "tableTo": "rooms",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "threadFollows_roomId_rooms_id_fkey",
+      "entityType": "fks",
+      "schema": "message",
+      "table": "threadFollows"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "userId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "threadFollows_userId_users_id_fkey",
+      "entityType": "fks",
+      "schema": "message",
+      "table": "threadFollows"
     },
     {
       "nameExplicit": false,
@@ -4541,6 +4865,29 @@
       "entityType": "pks",
       "schema": "public",
       "table": "likes"
+    },
+    {
+      "columns": [
+        "userId",
+        "resourceId"
+      ],
+      "nameExplicit": false,
+      "name": "resource_favorites_userId_resourceId_pk",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "resource_favorites"
+    },
+    {
+      "columns": [
+        "userId",
+        "roomId",
+        "threadRootRowKey"
+      ],
+      "nameExplicit": false,
+      "name": "threadFollows_pkey",
+      "entityType": "pks",
+      "schema": "message",
+      "table": "threadFollows"
     },
     {
       "columns": [
@@ -5007,6 +5354,13 @@
       "table": "roomFilters"
     },
     {
+      "value": "(\"action\" = 'Timeout' AND \"timeoutDurationMs\" IS NOT NULL AND \"timeoutDurationMs\" > 0) OR (\"action\" <> 'Timeout' AND \"timeoutDurationMs\" IS NULL)",
+      "name": "room_filters_timeout_duration_check",
+      "entityType": "checks",
+      "schema": "message",
+      "table": "roomFilters"
+    },
+    {
       "value": "LENGTH(\"color\") <= 9",
       "name": "room_roles_color_length_check",
       "entityType": "checks",
@@ -5152,177 +5506,6 @@
       "entityType": "checks",
       "schema": "message",
       "table": "webhooks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "resource_favorites",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "resource_favorites"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "resource_favorites"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "resource_favorites"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "resourceId",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "resource_favorites"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "resource_favorites"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "resourceId"
-      ],
-      "schemaTo": "public",
-      "tableTo": "resources",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "resource_favorites_resourceId_resources_id_fk",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "resource_favorites"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
-      ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "resource_favorites_userId_users_id_fk",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "resource_favorites"
-    },
-    {
-      "columns": [
-        "userId",
-        "resourceId"
-      ],
-      "nameExplicit": false,
-      "name": "resource_favorites_userId_resourceId_pk",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "resource_favorites"
-    },
-    {
-      "type": "jsonb",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "'{}'",
-      "generated": null,
-      "identity": null,
-      "name": "tags",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "resources"
-    },
-    {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "tags",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "gin",
-      "concurrently": false,
-      "name": "resources_tags_index",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "resources"
-    },
-    {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "\"name\" gin_trgm_ops",
-          "isExpression": true,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "gin",
-      "concurrently": false,
-      "name": "resources_name_trgm_index",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "resources"
     }
   ],
   "renames": []
