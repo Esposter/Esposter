@@ -262,5 +262,7 @@ overrides:
   pdfjs-dist: ^6.1.200
   vite: ^8.1.5
   vue-router: ^5.2.0
+  # 0.6.6+ dropped the walk export that rolldown-plugin-dts imports, breaking every build and vitest run
+  yuku-parser: 0.6.5
 
 shellEmulator: true
