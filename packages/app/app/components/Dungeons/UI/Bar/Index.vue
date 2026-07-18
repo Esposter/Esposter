@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
+import type { BarType } from "@/models/dungeons/UI/bar/BarType";
 import type { Tweens } from "phaser";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { dayjs } from "#shared/services/dayjs";
 import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
+import { BarTextureMap } from "@/services/dungeons/UI/bar/BarTextureMap";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Math } from "phaser";
 import { Image, useTween } from "vue-phaserjs";
@@ -28,19 +28,6 @@ const emit = defineEmits<{
 }>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
-const barTextureMap = computed<Record<BarOrigin, ImageKey>>(() =>
-  type === BarType.Experience
-    ? {
-        [BarOrigin.Left]: ImageKey.ExperienceBarLeftCap,
-        [BarOrigin.Middle]: ImageKey.ExperienceBarMiddle,
-        [BarOrigin.Right]: ImageKey.ExperienceBarRightCap,
-      }
-    : {
-        [BarOrigin.Left]: ImageKey.HealthBarLeftCap,
-        [BarOrigin.Middle]: ImageKey.HealthBarMiddle,
-        [BarOrigin.Right]: ImageKey.HealthBarRightCap,
-      },
-);
 const barWidth = computed(() => (width * barPercentage) / 100);
 const barDisplayWidth = ref(barWidth.value);
 const { leftCapDisplayWidth, middleDisplayWidth, rightCapDisplayWidth, syncDisplayWidths } = useVDisplayWidths(
@@ -99,19 +86,19 @@ watch(barWidth, (newBarWidth) => {
   <DungeonsUIBarLeftCap
     v-model:display-width="leftCapDisplayWidth"
     :image-position
-    :texture="barTextureMap[BarOrigin.Left]"
+    :texture="BarTextureMap[type][BarOrigin.Left]"
     :scale-y
   />
   <DungeonsUIBarMiddle
     :image-position="{ ...imagePosition, x: middleX }"
     :display-width="middleDisplayWidth"
-    :texture="barTextureMap[BarOrigin.Middle]"
+    :texture="BarTextureMap[type][BarOrigin.Middle]"
     :scale-y
   />
   <DungeonsUIBarRightCap
     v-model:display-width="rightCapDisplayWidth"
     :image-position="{ ...imagePosition, x: rightCapX }"
-    :texture="barTextureMap[BarOrigin.Right]"
+    :texture="BarTextureMap[type][BarOrigin.Right]"
     :scale-y
   />
 </template>
