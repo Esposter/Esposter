@@ -10,6 +10,7 @@ interface NavigationOverviewProps {
 }
 
 const { sections } = defineProps<NavigationOverviewProps>();
+const route = useRoute();
 const categories = computed(() =>
   DocsCategories.map((category) => ({
     category,
@@ -25,9 +26,11 @@ const categories = computed(() =>
       <v-list-item
         v-for="section of categorySections"
         :key="section.path"
+        link
+        :active="route.path === section.path"
         :prepend-icon="getSectionIcon(section.path)"
         :title="section.title"
-        :to="section.path"
+        @click="navigateTo(section.path)"
       />
     </template>
   </v-list>

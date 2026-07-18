@@ -19,15 +19,9 @@ const onUpdateType = (type: DataSourceType) => {
   sheetStore.sheetResource.settings = createDefaultSheetSettings(type);
 };
 
-// Autosave settings edits; guarded so the initial load populating the store does not write back
-watchDebounced(
-  settings,
-  async () => {
-    if (isLoading.value) return;
-    await saveSheet();
-  },
-  { debounce: 500, deep: true },
-);
+// Autosave settings edits; the store's dirty check drops the load echo, so no loading guard is needed here
+// (a guard could not work anyway — the debounced callback fires after loading has already finished)
+watchAutosave(settings, saveSheet);
 
 onMounted(async () => {
   await loadContent();

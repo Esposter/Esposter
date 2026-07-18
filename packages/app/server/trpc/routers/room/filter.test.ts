@@ -40,9 +40,9 @@ describe("room/filter", () => {
     test("returns empty array when no filter configured", async () => {
       expect.hasAssertions();
 
-      const words = await roomFilterCaller.readRoomFilter({ roomId });
+      const readWords = await roomFilterCaller.readRoomFilter({ roomId });
 
-      expect(words).toStrictEqual([]);
+      expect(readWords).toStrictEqual([]);
     });
 
     test("returns words after upsertRoomFilter", async () => {

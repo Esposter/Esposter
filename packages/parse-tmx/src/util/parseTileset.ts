@@ -14,7 +14,7 @@ export const parseTileset = (node: TMXTilesetNode): TMXTilesetParsed => {
   const { $, $$, tile } = node as TMXEmbeddedTilesetNode;
 
   for (const childNode of $$) {
-    const tmxNodeType = childNode["#name"] as TMXNodeType;
+    const tmxNodeType = childNode["#name"];
     if (tmxNodeType !== TMXNodeType.Image) continue;
 
     const image = structuredClone(childNode.$ as TMXImageShared);

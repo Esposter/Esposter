@@ -14,7 +14,9 @@ const hiddenParameters = computed(
 const requiredHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => isRequired));
 const optionalHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => !isRequired));
 const focusedParameter = computed(() => activeParameters.value[focusedIndex.value]);
-const error = computed(() => errors.value.find((error) => error.id === focusedParameter.value?.name)?.messages[0]);
+const error = computed(
+  () => errors.value.find((parameterError) => parameterError.id === focusedParameter.value?.name)?.messages[0],
+);
 </script>
 
 <template>

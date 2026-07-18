@@ -401,7 +401,7 @@ When you find duplicates, keep the affordance with the **largest hit target and 
   <NuxtLink text-info :to="RoutePath.Resource(item.id)" @click.stop>{{ item.name }}</NuxtLink>
 </template>
 <template #[`item.actions`]="{ item }">
-  <StyledTooltipIconButton icon="mdi-open-in-new" text="Open" :button-props="{ to: RoutePath.Resource(item.id) }" />
+  <StyledTooltipIconButton icon="mdi-open-in-new" text="Open" @click="navigateTo(RoutePath.Resource(item.id))" />
 </template>
 
 <!-- CORRECT — row click navigates; the name is plain text (drop the slot entirely), actions hold only what the row click can't do -->

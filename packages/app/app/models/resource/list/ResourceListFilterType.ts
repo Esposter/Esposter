@@ -1,5 +1,6 @@
 export enum ResourceListFilterType {
   Status = "Status",
+  Tag = "Tag",
   Updated = "Updated",
 }
 

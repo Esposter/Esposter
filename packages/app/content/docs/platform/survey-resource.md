@@ -5,7 +5,7 @@ description: SurveyJS authoring as a resource — inline creator Editor blade, R
 
 # Survey Resource
 
-Survey is a resource type: the SurveyJS model lives in the content blob, the respondent page is Survey's published view, and only the genuinely survey-specific parts — responses and SAS file uploads — have bespoke procedures. The former `surveys` table and the standalone surveyer product are gone; the product is the **Survey** resource type.
+Survey is a resource type: the SurveyJS model lives in the content blob, the respondent page is Survey's published view, and only the genuinely survey-specific part — responses — has bespoke procedures; asset uploads come from the shared [FileAssets capability](/docs/platform/resource-file-assets). The former `surveys` table and the standalone surveyer product are gone; the product is the **Survey** resource type.
 
 ## Data model
 
@@ -16,6 +16,7 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 
 ## Capabilities
 
+- **FileAssets** — asset uploads under `{id}/files/…` through the shared capability procedures ([resource file assets](/docs/platform/resource-file-assets)).
 - **Publishable** — publish goes through the generic `publishResource` plus the two factory hooks: `transformPublishedContent` clones referenced asset blobs into `{id}/published/{publishVersion}/` and rewrites URLs; `transformReadContent` refreshes SAS asset URLs on owner read; `transformPublicReadContent` merges the live `settings` onto the public read so closing or gating never needs a re-publish. Publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys. Public reads are counted ([view analytics](/docs/platform/published-view-analytics)).
 - **DatasetProvider** — `readSurveyResponsesDataset` serves responses through `dataset.readDataset`, auth keyed to resource ownership.
 
@@ -23,11 +24,12 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 
 The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus the type-specific procedures that are deliberately **not** capabilities (single consumer — see the admission rule in [/docs/architecture/resources](/docs/architecture/resources)):
 
-| Procedure                                                                      | Auth                 | Purpose                            |
-| ------------------------------------------------------------------------------ | -------------------- | ---------------------------------- |
-| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`         | public, rate-limited | respondent answers → Azure Table   |
-| `countSurveyResponses` / `deleteSurveyResponse` / `readSurveyResponseRowKeys`  | owner                | response management tooling        |
-| `generateUploadFileSasEntities` / `generateDownloadFileSasUrls` / `deleteFile` | owner                | asset uploads under `{id}/files/…` |
+| Procedure                                                                     | Auth                 | Purpose                          |
+| ----------------------------------------------------------------------------- | -------------------- | -------------------------------- |
+| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`        | public, rate-limited | respondent answers → Azure Table |
+| `countSurveyResponses` / `deleteSurveyResponse` / `readSurveyResponseRecords` | owner                | response management tooling      |
+
+Asset uploads are not listed here: they come from the shared FileAssets capability rather than a survey-owned set ([resource file assets](/docs/platform/resource-file-assets)).
 
 ## Blades / routes
 
@@ -44,7 +46,7 @@ The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus
 | `app/components/Resource/Survey/Responses.vue` | Responses blade (dataset table)                 |
 | `app/components/Resource/Survey/View.vue`      | public respondent renderer (`ViewComponentMap`) |
 | `app/composables/survey/useSurveyCreator.ts`   | creator setup + autosave wiring                 |
-| `server/trpc/routers/survey.ts`                | resource factory + response/file procedures     |
+| `server/trpc/routers/survey.ts`                | resource factory + response procedures          |
 
 ## Notes
 

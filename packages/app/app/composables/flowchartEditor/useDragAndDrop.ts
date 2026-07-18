@@ -48,10 +48,10 @@ export const useDragAndDrop = () => {
     const id = crypto.randomUUID();
     // Centre the dropped node on the mouse once initialized, then remove the listener.
     const { off } = onNodesInitialized(() => {
-      updateNode(id, ({ dimensions, position }) => ({
+      updateNode(id, ({ dimensions, position: nodePosition }) => ({
         position: {
-          x: position.x - dimensions.width / 2,
-          y: position.y - dimensions.height / 2,
+          x: nodePosition.x - dimensions.width / 2,
+          y: nodePosition.y - dimensions.height / 2,
         },
       }));
       off();

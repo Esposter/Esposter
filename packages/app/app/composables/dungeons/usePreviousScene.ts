@@ -26,12 +26,12 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
   };
 
   const switchToPreviousScene = (scene: SceneWithPlugins) => {
-    const previousSceneKey = previousSceneKeyStack.value.pop();
-    if (!previousSceneKey) return;
-    const previousScene = getScene(previousSceneKey);
+    const poppedSceneKey = previousSceneKeyStack.value.pop();
+    if (!poppedSceneKey) return;
+    const previousScene = getScene(poppedSceneKey);
     removeParallelScene(scene, currentSceneKey);
     useInitializeControls(previousScene);
-    scene.scene.resume(previousSceneKey);
+    scene.scene.resume(poppedSceneKey);
   };
 
   return { launchScene, previousSceneKey, removeScene, switchToPreviousScene };

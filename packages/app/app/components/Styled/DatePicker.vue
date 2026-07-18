@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useColorsStore } from "@/store/colors";
 import { VueDatePicker } from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
 interface StyledDatePickerProps {
   datePickerProps?: InstanceType<typeof VueDatePicker>["$props"];
@@ -22,10 +23,6 @@ const { border, surface } = storeToRefs(colorsStore);
     </template>
   </VueDatePicker>
 </template>
-
-<style lang="scss">
-@use "@vuepic/vue-datepicker/dist/main.css";
-</style>
 
 <style scoped>
 :deep(.dp__input) {

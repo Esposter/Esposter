@@ -74,9 +74,10 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     rowKey: string,
   ): Promise<GetTableEntityResponse<TableEntityResult<T>>> {
     const key = this.#getCompositeKey(partitionKey, rowKey);
-    const entity = this.table.get(key) as T | undefined;
+    const entity = this.table.get(key) as (T & { etag?: string }) | undefined;
     if (!entity) throw new MockRestError("The specified resource does not exist.", 404);
-    return Promise.resolve({ ...entity, etag: this.#getEtag() });
+    // The stored etag is served so a subsequent conditional update can match against the version read
+    return Promise.resolve({ ...entity, etag: entity.etag ?? this.#getEtag() });
   }
 
   listEntities<T extends object>(
@@ -166,8 +167,12 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     });
   }
 
-  updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
-    this.#applyUpdate(entity, mode);
+  updateEntity<T extends object>(
+    entity: TableEntity<T>,
+    mode: UpdateMode = "Merge",
+    options?: { etag?: string },
+  ): Promise<TableMergeEntityHeaders> {
+    this.#applyUpdate(entity, mode, options?.etag);
     return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
   }
 
@@ -179,7 +184,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   #applyCreate<T extends object>(entity: TableEntity<T>): void {
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     if (this.table.has(key)) throw new MockRestError("The specified entity already exists.", 409);
-    this.table.set(key, entity);
+    this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
 
   #applyDelete(partitionKey: string, rowKey: string): void {
@@ -188,35 +193,42 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     this.table.delete(key);
   }
 
-  #applyUpdate<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): void {
+  #applyUpdate<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge", etag?: string): void {
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     const existingEntity = this.table.get(key);
     if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
-    else if (mode === "Merge") this.table.set(key, { ...existingEntity, ...entity });
+    // A conditional update only lands when the caller saw the current version — the real service's
+    // Optimistic-concurrency contract ("*" is the wildcard that always matches)
+    else if (etag !== undefined && etag !== "*" && etag !== existingEntity.etag)
+      throw new MockRestError("The update condition specified in the request was not satisfied.", 412);
+    else if (mode === "Merge") this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
     // "Replace"
-    else this.table.set(key, entity);
+    else this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
 
   #applyUpsert<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): void {
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     const existingEntity = this.table.get(key);
-    if (existingEntity && mode === "Merge") this.table.set(key, { ...existingEntity, ...entity });
+    if (existingEntity && mode === "Merge")
+      this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
     // "Replace" or entity doesn't exist (which is an insert)
-    else this.table.set(key, entity);
+    else this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
 
   #getCompositeKey(partitionKey: string, rowKey: string): string {
     return `${partitionKey}${ID_SEPARATOR}${rowKey}`;
   }
 
+  // Random rather than timestamped: two writes can land within one clock tick, and equal etags across
+  // Versions would make a stale conditional update falsely match
   #getEtag(): string {
-    return `W/"datetime'${new Date().toISOString()}'"`;
+    return `W/"${crypto.randomUUID()}"`;
   }
 
-  #withMetadata<T extends object>(entity: T): T & { etag: string } {
+  #withMetadata<T extends object>(entity: T & { etag?: string }): T & { etag: string } {
     return {
       ...entity,
-      etag: this.#getEtag(),
+      etag: entity.etag ?? this.#getEtag(),
     };
   }
 }

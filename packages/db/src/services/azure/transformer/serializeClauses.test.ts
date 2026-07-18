@@ -46,6 +46,16 @@ describe(serializeClauses, () => {
     );
   });
 
+  test("renders a Date as an Azure Table datetime literal", () => {
+    expect.hasAssertions();
+
+    const epoch = new Date(0);
+
+    expect(
+      serializeClauses([{ key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.gt, value: epoch }]),
+    ).toBe(`${serializeKey(CompositeKeyPropertyNames.rowKey)} ${BinaryOperator.gt} datetime'${epoch.toISOString()}'`);
+  });
+
   test("different key groups are and-joined", () => {
     expect.hasAssertions();
 

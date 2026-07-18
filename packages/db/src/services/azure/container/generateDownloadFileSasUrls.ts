@@ -1,9 +1,8 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity } from "@esposter/db-schema";
 
+import { generateReadSasUrl } from "@/services/azure/container/generateReadSasUrl";
 import { getBlobName } from "@/services/azure/container/getBlobName";
-import { dayjs } from "@/services/dayjs";
-import { ContainerSASPermissions } from "@azure/storage-blob";
 
 export const generateDownloadFileSasUrls = (
   containerClient: ContainerClient,
@@ -16,11 +15,9 @@ export const generateDownloadFileSasUrls = (
       files.map(({ filename, id, mimetype }) => {
         const blobName = getBlobName(`${prefix}/${id}`, filename);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-        return blockBlobClient.generateSasUrl({
+        return generateReadSasUrl(blockBlobClient, {
           contentDisposition: `attachment; filename="${filename}"`,
           contentType: mimetype,
-          expiresOn: dayjs().add(1, "year").toDate(),
-          permissions: ContainerSASPermissions.from({ read: true }),
         });
       }),
     );

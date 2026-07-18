@@ -24,6 +24,7 @@ const {
 } = storeToRefs(todoListStore);
 const isLoading = ref(true);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<TodoListItem>) => editItem({ id: item.id });
+useTodoListSubscribables();
 
 onMounted(async () => {
   await loadContent();

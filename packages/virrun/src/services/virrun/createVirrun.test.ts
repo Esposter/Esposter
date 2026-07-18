@@ -30,10 +30,10 @@ vi.mock(import("@/services/exec/wsl/readWslLoginPath"), () => ({ readWslLoginPat
 // Same for the WSL native cache root: the real one spawns wsl.exe and would create dirs in the live WSL home.
 // Point it at an in-temp dir.
 vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), async () => {
-  const { tmpdir } = await import("node:os");
-  const { join } = await import("node:path");
-  const { TEST_WSL_CACHE_DIR_NAME } = await import("@/services/exec/wsl/constants.test");
-  return { getWslNativeCacheRoot: () => join(tmpdir(), TEST_WSL_CACHE_DIR_NAME) };
+  const { tmpdir: osTmpdir } = await import("node:os");
+  const { join: joinPath } = await import("node:path");
+  const { TEST_WSL_CACHE_DIR_NAME: testWslCacheDirName } = await import("@/services/exec/wsl/constants.test");
+  return { getWslNativeCacheRoot: () => joinPath(osTmpdir(), testWslCacheDirName) };
 });
 
 const mockOsBackend = () =>

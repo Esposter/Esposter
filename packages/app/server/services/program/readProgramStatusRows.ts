@@ -29,7 +29,7 @@ export const readProgramStatusRows = async (programId: Resource["id"]): Promise<
   const content = await readResourceContent(programResourceSchema, programId);
   const respondedTokens = new Set<string>();
   if (content?.surveyId) {
-    const surveyResponses = await readSurveyResponseEntities(content.surveyId);
+    const { surveyResponses } = await readSurveyResponseEntities(content.surveyId);
     for (const { participantToken } of surveyResponses) if (participantToken) respondedTokens.add(participantToken);
   }
   return participants.map(({ createdAt, keyValue, publicId, token }) => ({

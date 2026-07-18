@@ -31,7 +31,7 @@ export const useDataStore = defineStore("message/data", () => {
     updateMessage: baseStoreUpdateMessage,
     ...restOperationData
   } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
-  const files = computed(() => items.value.flatMap(({ files }) => files));
+  const files = computed(() => items.value.flatMap(({ files: messageFiles }) => messageFiles));
   const hasMoreNewer = ref(false);
   const nextCursorNewer = ref("");
   const typings = ref<CreateTypingInput[]>([]);

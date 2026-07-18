@@ -4,7 +4,7 @@ import type { Resource, SurveyResponseEntity } from "@esposter/db-schema";
 import { closedSurveyErrorReason } from "@@/server/services/survey/constants";
 import { readSurveySettings } from "@@/server/services/survey/readSurveySettings";
 import { SurveyResponseModeValidatorMap } from "@@/server/services/survey/SurveyResponseModeValidatorMap";
-import { AzureEntityType } from "@esposter/db-schema";
+import { AzureEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
@@ -15,6 +15,13 @@ export const resolveSurveyResponseWrite = async (
   surveyId: Resource["id"],
   participantToken: SurveyResponseEntity["participantToken"],
 ): Promise<SurveyResponseEntity["participantToken"]> => {
+  // A survey in the Recycle bin must not keep collecting responses — deleting it kills the
+  // Participant links immediately, even though the row and blob survive for restore
+  const survey = await db.query.resources.findFirst({
+    where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
+  });
+  if (!survey) throw new TRPCError({ code: "NOT_FOUND" });
+
   const { isAcceptingResponses, responseMode } = await readSurveySettings(surveyId);
   if (!isAcceptingResponses)
     throw new TRPCError({

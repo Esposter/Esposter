@@ -19,10 +19,10 @@ const icon = computed(() => {
   return images.Cursor;
 });
 
-const animateCursors = (amount: number) => {
-  const initialRotationOffsets = Array.from({ length: amount }, (_value, index) => (360 / amount) * index);
+const animateCursors = (cursorCount: number) => {
+  const initialRotationOffsets = Array.from({ length: cursorCount }, (_value, index) => (360 / cursorCount) * index);
 
-  for (let i = 0; i < amount; i++) {
+  for (let i = 0; i < cursorCount; i++) {
     const rotationOffset = takeOne(initialRotationOffsets, i);
     const rotatingDivId = takeOne(rotatingDivIds.value, i);
     const rotatingDiv = window.document.getElementById(rotatingDivId);

@@ -10,7 +10,7 @@ export const parseTile = (node: TMXTileNode): TMXTileParsed => {
   const tile = structuredClone($) as TMXTileParsed;
   if (animation)
     tile.animation = {
-      frames: takeOne(takeOne(animation), "frame").map(({ $ }) => structuredClone($)),
+      frames: takeOne(takeOne(animation), "frame").map(({ $: frameData }) => structuredClone(frameData)),
     };
   if (objectgroup) tile.objects = takeOne(takeOne(objectgroup), "object").map((o) => parseObject(o));
   if (properties) tile.properties = parseProperties(properties);

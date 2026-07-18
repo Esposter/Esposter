@@ -2,6 +2,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { useListDialogStore } from "@/store/resource/listDialog";
+import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 
 interface ResourceListDeleteDialogProps {
   resource: Resource;
@@ -28,6 +29,6 @@ const isOpen = useSingletonDialog(deletingId);
       }
     "
   >
-    Deleting this resource cannot be undone.
+    Deleting this resource moves it to the Recycle bin for {{ RECYCLE_BIN_RETENTION_DAYS }} days.
   </StyledDeleteFormDialog>
 </template>

@@ -4,6 +4,7 @@ import type { VBtn, VTooltip } from "vuetify/components";
 import { emojiIndex } from "@/services/message/emoji/emojiIndex";
 // @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
+import "emoji-mart-vue-fast/css/emoji-mart.css";
 import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledEmojiPickerProps {
@@ -48,7 +49,3 @@ const onSelectEmoji = (emoji: { native: string }) => {
     <Picker :data="emojiIndex" @select="onSelectEmoji" />
   </v-menu>
 </template>
-
-<style lang="scss">
-@use "emoji-mart-vue-fast/css/emoji-mart.css";
-</style>

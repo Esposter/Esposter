@@ -9,7 +9,7 @@ Azure's subscription-level Activity log: one feed on Home aggregating events (pu
 
 ## Why deferred
 
-The [activity log](/docs/proposals/platform/activity-log) partitions by resource id (`partitionKey = resourceId`) — the right shape for the per-resource blade, the wrong shape for a cross-partition feed. Aggregating needs either a second user-keyed table written in parallel or cross-partition queries; both are real cost for a feed whose content the owner generated themselves (you know what you did).
+The [activity log](/docs/platform/activity-log) partitions by resource id (`partitionKey = resourceId`) — the right shape for the per-resource blade, the wrong shape for a cross-partition feed. Aggregating needs either a second user-keyed table written in parallel or cross-partition queries; both are real cost for a feed whose content the owner generated themselves (you know what you did).
 
 ## Revisit when
 

@@ -41,8 +41,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { ContainerSASPermissions } from "@azure/storage-blob";
-import { deleteDirectory } from "@esposter/db";
+import { deleteDirectory, generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -256,10 +255,7 @@ export const baseRoomRouter = router({
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
       const blobName = getRoomProfileImageBlobName(roomId);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      const sasUrl = await blockBlobClient.generateSasUrl({
-        expiresOn: dayjs().add(1, "hour").toDate(),
-        permissions: ContainerSASPermissions.from({ write: true }),
-      });
+      const sasUrl = await generateWriteSasUrl(blockBlobClient);
       return { publicUrl: blockBlobClient.url, sasUrl };
     },
   ),
@@ -315,8 +311,8 @@ export const baseRoomRouter = router({
         DatabaseEntityType.UserToRoom,
         JSON.stringify(userToRoom),
       );
-      const { roomId, roomInMessage, user } = userToRoomWithRelations;
-      return { roomId, roomInMessage, user };
+      const { roomId: joinedRoomId, roomInMessage: joinedRoomInMessage, user: joinedUser } = userToRoomWithRelations;
+      return { roomId: joinedRoomId, roomInMessage: joinedRoomInMessage, user: joinedUser };
     });
 
     roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
@@ -423,7 +419,7 @@ export const baseRoomRouter = router({
     // Expired/exhausted invites behave exactly like unknown tokens — don't leak which
     if (!invite || !checkIsInviteUsable(invite)) return null;
 
-    const isMember = await ctx.db.query.usersToRoomsInMessage.findFirst({
+    const membership = await ctx.db.query.usersToRoomsInMessage.findFirst({
       where: {
         roomId: {
           eq: invite.roomId,
@@ -433,7 +429,7 @@ export const baseRoomRouter = router({
         },
       },
     });
-    return { ...invite, isMember: Boolean(isMember) };
+    return { ...invite, isMember: Boolean(membership) };
   }),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
@@ -488,20 +484,20 @@ export const baseRoomRouter = router({
     if (input) {
       const room = await ctx.db.query.roomsInMessage.findFirst({
         where: {
-          RAW: (roomsInMessage, { and, eq, exists }) => {
-            const where = and(
-              eq(roomsInMessage.id, input),
+          RAW: (roomTable, { and: andFilter, eq: eqFilter, exists }) => {
+            const where = andFilter(
+              eqFilter(roomTable.id, input),
               exists(
                 // Select a constant '1' - we only care if *any* row matches
                 ctx.db
                   .select({ _: sql`1` })
                   .from(usersToRoomsInMessage)
                   .where(
-                    and(
+                    andFilter(
                       // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
-                      eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
+                      eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
                       // Condition 2: Ensure the row belongs to the specific user
-                      eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+                      eqFilter(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
                     ),
                   ),
               ),

@@ -134,9 +134,9 @@ describe("pushSubscription", () => {
     await mockSessionOnce(mockContext.db, user);
     await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
 
-    const message = getMessage(user.id);
+    const messageText = getMessage(user.id);
     const newMessage = await messageCaller.createMessage({
-      message,
+      message: messageText,
       roomId: newRoom.id,
     });
 
@@ -148,7 +148,7 @@ describe("pushSubscription", () => {
     expect(processPushNotificationEvents).toHaveLength(1);
     expect(takeOne(processPushNotificationEvents).data as PushNotificationEventGridData).toStrictEqual({
       message: {
-        message,
+        message: messageText,
         partitionKey: newRoom.id,
         rowKey: newMessage.rowKey,
         userId: mockUser.id,

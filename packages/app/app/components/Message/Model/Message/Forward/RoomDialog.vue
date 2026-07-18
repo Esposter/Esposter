@@ -29,8 +29,8 @@ const {
   readMoreItemsSearched,
   searchQuery,
 } = useCursorSearcher(
-  (searchQuery, cursor, opts) => {
-    const normalizedSearchQuery = normalizeString(searchQuery);
+  (query, cursor, opts) => {
+    const normalizedSearchQuery = normalizeString(query);
     return $trpc.room.readRooms.query(
       {
         cursor,
@@ -46,14 +46,14 @@ const executeMutation = useMutation();
 // Forwarded messages land in the target rooms via the subscription echo — non-optimistic
 const forwardMessage = async () => {
   if (!forward.value) return;
-  const { partitionKey, rowKey } = forward.value;
+  const { partitionKey, rowKey: forwardRowKey } = forward.value;
   await executeMutation(
     () =>
       $trpc.message.forwardMessage.mutate({
         message: messageInput.value,
         partitionKey,
         roomIds: roomIds.value,
-        rowKey,
+        rowKey: forwardRowKey,
       }),
     {
       onSuccess: async () => {

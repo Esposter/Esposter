@@ -1,10 +1,9 @@
 import type { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export class BaseTMXNode<T> {
-  // Indexable signature, since TypeScript private properties block proper #name access.
+  // Indexable signature for the other dynamic keys xml2js parses onto the node.
   [key: string]: unknown;
   $!: T;
   // Property derived from xml parsing
-  // eslint-disable-next-line no-unused-private-class-members
-  readonly #name!: TMXNodeType;
+  readonly "#name"!: TMXNodeType;
 }

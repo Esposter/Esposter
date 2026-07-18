@@ -49,8 +49,8 @@ const editor = useEditor({
     useLinkClickExtension(linkCursorStyle),
     ...(extensions ?? []),
   ],
-  onUpdate: ({ editor }) => {
-    modelValue.value = editor.getHTML();
+  onUpdate: ({ editor: updatedEditor }) => {
+    modelValue.value = updatedEditor.getHTML();
   },
 });
 // https://github.com/ueberdosis/tiptap/issues/1044

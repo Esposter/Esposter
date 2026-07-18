@@ -26,7 +26,7 @@ export const filtersToClauses = (
 ): Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] => {
   const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [];
 
-  for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type }) => type)))
+  for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type: filterType }) => filterType)))
     switch (type) {
       case FilterType.From:
         for (const { value } of filtersByType)

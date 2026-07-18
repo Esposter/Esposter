@@ -4,14 +4,14 @@ import { withFinalizerAsync } from "@esposter/shared";
 export const useOffsetPaginationOperationData = <TItem>(offsetPaginationData: Ref<OffsetPaginationData<TItem>>) => {
   const items = computed({
     get: () => offsetPaginationData.value.items,
-    set: (items) => {
-      offsetPaginationData.value.items = items;
+    set: (newItems) => {
+      offsetPaginationData.value.items = newItems;
     },
   });
   const hasMore = computed({
     get: () => offsetPaginationData.value.hasMore,
-    set: (hasMore) => {
-      offsetPaginationData.value.hasMore = hasMore;
+    set: (newHasMore) => {
+      offsetPaginationData.value.hasMore = newHasMore;
     },
   });
 

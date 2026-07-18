@@ -1,9 +1,8 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity, FileSasEntity } from "@esposter/db-schema";
 
+import { generateWriteSasUrl } from "@/services/azure/container/generateWriteSasUrl";
 import { getBlobName } from "@/services/azure/container/getBlobName";
-import { dayjs } from "@/services/dayjs";
-import { ContainerSASPermissions } from "@azure/storage-blob";
 
 export const generateUploadFileSasEntities = (
   containerClient: ContainerClient,
@@ -17,14 +16,7 @@ export const generateUploadFileSasEntities = (
         const id: string = crypto.randomUUID();
         const blobName = getBlobName(`${prefix}/${id}`, filename);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-        return {
-          id,
-          sasUrl: await blockBlobClient.generateSasUrl({
-            contentType: mimetype,
-            expiresOn: dayjs().add(1, "hour").toDate(),
-            permissions: ContainerSASPermissions.from({ write: true }),
-          }),
-        };
+        return { id, sasUrl: await generateWriteSasUrl(blockBlobClient, { contentType: mimetype }) };
       }),
     );
 };

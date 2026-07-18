@@ -12,6 +12,8 @@ interface StyledDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];
   confirmButtonProps: VBtn["$props"];
+  // Informational dialogs only acknowledge — cancelling is meaningless when nothing is pending
+  hideCancelButton?: boolean;
 }
 
 defineSlots<{
@@ -20,7 +22,12 @@ defineSlots<{
   "prepend-actions": () => VNode;
 }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps } = defineProps<StyledDialogProps>();
+const {
+  cardProps = {},
+  confirmButtonAttrs = {},
+  confirmButtonProps,
+  hideCancelButton,
+} = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const isFullScreen = ref(false);
 </script>
@@ -50,7 +57,7 @@ const isFullScreen = ref(false);
       <v-card-actions>
         <slot name="prepend-actions" />
         <v-spacer />
-        <v-btn text-3 text="Cancel" variant="outlined" @click="modelValue = false" />
+        <v-btn v-if="!hideCancelButton" text-3 text="Cancel" variant="outlined" @click="modelValue = false" />
         <v-btn
           v-if="confirmButtonProps.color"
           text-3

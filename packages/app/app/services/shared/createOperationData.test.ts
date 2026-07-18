@@ -63,7 +63,7 @@ describe(createOperationData, () => {
     const updatedName = "updatedName";
     createItem(newItem);
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-spread
+    // oxlint-disable-next-line typescript/no-misused-spread
     const updatedItem = { ...newItem, name: updatedName };
     updateItem(updatedItem);
 

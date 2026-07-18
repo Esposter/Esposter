@@ -15,6 +15,7 @@ import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "@@/server/trpc/routers
 import { createBoundProgram } from "@@/server/trpc/routers/createBoundProgram.test";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { programRouter } from "@@/server/trpc/routers/program";
+import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { getTopNEntities, serializeClauses } from "@esposter/db";
@@ -47,6 +48,7 @@ describe("program", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["program"]>;
   let datasetCaller: DecorateRouterRecord<TRPCRouter["dataset"]>;
+  let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const name = "name";
@@ -75,6 +77,7 @@ describe("program", () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(programRouter)(mockContext);
     datasetCaller = createCallerFactory(datasetRouter)(mockContext);
+    resourceCaller = createCallerFactory(resourceRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     surveyCaller = createCallerFactory(surveyRouter)(mockContext);
   });
@@ -124,11 +127,11 @@ describe("program", () => {
     });
     const participants = await caller.generateProgramParticipants({ id: program.id });
 
-    expect(participants.map(({ keyValue }) => keyValue)).toStrictEqual([" ", "a"]);
+    expect(participants.map(({ keyValue: participantKeyValue }) => participantKeyValue)).toStrictEqual([" ", "a"]);
 
     // Tokens are UUIDs, never derived from the key — a derivable token could be minted by anyone
-    for (const { keyValue, token } of participants) {
-      expect(token).not.toBe(keyValue);
+    for (const { keyValue: participantKeyValue, token } of participants) {
+      expect(token).not.toBe(participantKeyValue);
       expect(z.uuid().safeParse(token).success).toBe(true);
     }
   });
@@ -293,7 +296,9 @@ describe("program", () => {
     });
     const statusRows = await caller.readProgramStatus({ id: program.id });
 
-    expect(statusRows.map(({ isResponded, keyValue }) => ({ isResponded, keyValue }))).toStrictEqual([
+    expect(
+      statusRows.map(({ isResponded, keyValue: statusKeyValue }) => ({ isResponded, keyValue: statusKeyValue })),
+    ).toStrictEqual([
       { isResponded: true, keyValue: respondedParticipant.keyValue },
       { isResponded: false, keyValue: unrespondedParticipant.keyValue },
     ]);
@@ -364,7 +369,11 @@ describe("program", () => {
     assert.exists(participant);
     const dataset = await datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus });
 
-    expect(dataset.columns.map(({ name }) => name)).toStrictEqual(["participant", "addedAt", "responded"]);
+    expect(dataset.columns.map(({ name: columnName }) => columnName)).toStrictEqual([
+      "participant",
+      "addedAt",
+      "responded",
+    ]);
     expect(dataset.rows.map(({ responded }) => responded)).toStrictEqual([false]);
     // A dashboard bound to this dataset is publishable, so neither the participant list nor the token
     // May enter it — the token is the credential survey writes accept, so publishing it would let any
@@ -391,7 +400,7 @@ describe("program", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("deletes program participants with the program", async () => {
+  test("purges program participants with the program", async () => {
     expect.hasAssertions();
 
     const survey = await setupIdentifiedSurvey();
@@ -403,7 +412,9 @@ describe("program", () => {
       surveyId: survey.id,
     });
     await caller.generateProgramParticipants({ id: program.id });
+    // Delete is soft, so the partition survives the Recycle bin window — purge is what sweeps it
     await caller.deleteResource({ id: program.id });
+    await resourceCaller.purgeResource({ id: program.id });
     // The program row is gone, so the partition can only be observed against the table itself
     const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
     const clauses: Clause<ProgramParticipantEntity>[] = [

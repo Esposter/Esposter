@@ -9,9 +9,10 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { createBoundProgram } from "@@/server/trpc/routers/createBoundProgram.test";
 import { programRouter } from "@@/server/trpc/routers/program";
+import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { AzureEntityType, resources, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
+import { AzureEntityType, AzureTable, resources, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -22,6 +23,7 @@ describe("survey", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;
+  let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   const name = "name";
   const model = "model";
@@ -58,13 +60,14 @@ describe("survey", () => {
     });
     const [participant] = await programCaller.generateProgramParticipants({ id: program.id });
     assert.exists(participant);
-    return { survey, token: participant.token };
+    return { program, survey, token: participant.token };
   };
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(surveyRouter)(mockContext);
     programCaller = createCallerFactory(programRouter)(mockContext);
+    resourceCaller = createCallerFactory(resourceRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
   });
 
@@ -89,6 +92,33 @@ describe("survey", () => {
     const content = await caller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual({ model, settings });
+  });
+
+  test("clears its response partition when the resource is purged", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: { model, settings },
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      participantToken: "",
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
+
+    // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
+    await caller.deleteResource({ id: newResource.id });
+
+    expect(MockTableDatabase.get(AzureTable.SurveyResponses)?.size).toBe(1);
+
+    // Respondents' answers are the survey's own data, so purge destroys them instead of orphaning forever
+    await resourceCaller.purgeResource({ id: newResource.id });
+
+    expect(MockTableDatabase.get(AzureTable.SurveyResponses)?.size).toBe(0);
   });
 
   test("hides unpublished surveys from respondents", async () => {
@@ -310,6 +340,22 @@ describe("survey", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
   });
 
+  test(`${SurveyResponseMode.Identified}: a recycle-binned program still resolves its token`, async () => {
+    expect.hasAssertions();
+
+    const { program, survey, token } = await setupIdentifiedSurvey();
+    // Soft-deleting the program must not invalidate token links already distributed to participants
+    await programCaller.deleteResource({ id: program.id });
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      participantToken: token,
+      partitionKey: survey.id,
+      rowKey: crypto.randomUUID(),
+    });
+
+    expect(newSurveyResponse.participantToken).toBe(token);
+  });
+
   test(`${SurveyResponseMode.Identified}: resumes with the same token`, async () => {
     expect.hasAssertions();
 
@@ -402,6 +448,33 @@ describe("survey", () => {
     expect(existingSurveyResponse?.participantToken).toBe(token);
   });
 
+  test(`updating an ${SurveyResponseMode.Identified}-era response after switching to ${SurveyResponseMode.Anonymous} keeps its token`, async () => {
+    expect.hasAssertions();
+
+    const { survey, token } = await setupIdentifiedSurvey();
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      participantToken: token,
+      partitionKey: survey.id,
+      rowKey: crypto.randomUUID(),
+    });
+    await caller.saveResourceContent({
+      content: { model, settings } satisfies SurveyResource,
+      contentVersion: survey.contentVersion + 1,
+      id: survey.id,
+    });
+    const updatedSurveyResponse = await caller.updateSurveyResponse({
+      model: { satisfaction: 1 },
+      modelVersion: newSurveyResponse.modelVersion,
+      participantToken: "",
+      partitionKey: survey.id,
+      rowKey: newSurveyResponse.rowKey,
+    });
+
+    // The funnel joins participants × responses by token, so an Anonymous-mode edit must not erase who answered
+    expect(updatedSurveyResponse.participantToken).toBe(token);
+  });
+
   test("fails create with closed survey", async () => {
     expect.hasAssertions();
 
@@ -420,6 +493,22 @@ describe("survey", () => {
         rowKey: crypto.randomUUID(),
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${closedSurveyErrorMessage}]`);
+  });
+
+  test("fails create for a recycle-binned survey", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.deleteResource({ id: newResource.id });
+
+    await expect(
+      caller.createSurveyResponse({
+        model: { satisfaction: 0 },
+        participantToken: "",
+        partitionKey: newResource.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
   test("fails update with closed survey", async () => {
