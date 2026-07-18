@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import type { SlashCommandParameter } from "@/models/message/slashCommands/SlashCommandParameter";
-
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 interface TrailingInputProps {
-  activeParametersLength: number;
-  hiddenParameters: SlashCommandParameter[];
   isFocused?: boolean;
 }
 
-const { activeParametersLength, hiddenParameters, isFocused } = defineProps<TrailingInputProps>();
+const { isFocused } = defineProps<TrailingInputProps>();
 const emit = defineEmits<{
   blur: [];
   collapse: [];
@@ -22,7 +18,7 @@ const emit = defineEmits<{
 }>();
 
 const slashCommandStore = useSlashCommandStore();
-const { selectedHiddenIndex, trailingMessage } = storeToRefs(slashCommandStore);
+const { activeParameters, hiddenParameters, selectedHiddenIndex, trailingMessage } = storeToRefs(slashCommandStore);
 const input = useTemplateRef("input");
 const optionsLabel = computed(
   () => `+${hiddenParameters.length} ${hiddenParameters.length === 1 ? "option" : "options"}`,
@@ -63,7 +59,7 @@ watch(
 
           if (event.key === 'Backspace' && !trailingMessage) {
             event.preventDefault();
-            if (activeParametersLength > 0) emit('deleteLastParameter');
+            if (activeParameters.length > 0) emit('deleteLastParameter');
             else emit('collapse');
             return;
           }

@@ -15,6 +15,12 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   const { data: focusedIndex } = useDataMap(() => roomStore.currentRoomId, 0);
   const { data: selectedHiddenIndex } = useDataMap(() => roomStore.currentRoomId, 0);
   const { data: lastAddedParameterName } = useDataMap<null | string>(() => roomStore.currentRoomId, null);
+  const activeParameters = computed(
+    () => pendingSlashCommand.value?.parameters.filter(({ name }) => activeParameterNames.value.includes(name)) ?? [],
+  );
+  const hiddenParameters = computed(
+    () => pendingSlashCommand.value?.parameters.filter(({ name }) => !activeParameterNames.value.includes(name)) ?? [],
+  );
 
   watch(activeParameterNames, () => {
     selectedHiddenIndex.value = 0;
@@ -80,11 +86,13 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
 
   return {
     activeParameterNames,
+    activeParameters,
     buildText,
     clearPendingSlashCommand,
     createParameter,
     errors,
     focusedIndex,
+    hiddenParameters,
     lastAddedParameterName,
     parameterValues,
     pendingSlashCommand,

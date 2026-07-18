@@ -13,7 +13,7 @@ import { useRoomStore } from "@/store/message/room";
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
-const { activeParameterNames, focusedIndex, lastAddedParameterName, parameterValues, pendingSlashCommand } =
+const { activeParameterNames, activeParameters, focusedIndex, hiddenParameters, lastAddedParameterName, parameterValues, pendingSlashCommand } =
   storeToRefs(slashCommandStore);
 const { buildText, clearPendingSlashCommand, createParameter, setErrors, setPendingSlashCommand } = slashCommandStore;
 const inputStore = useInputStore();
@@ -24,13 +24,6 @@ const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
 watch(pendingSlashCommand, (newPendingSlashCommand) => {
   if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
 });
-
-const activeParameters = computed(
-  () => pendingSlashCommand.value?.parameters.filter(({ name }) => activeParameterNames.value.includes(name)) ?? [],
-);
-const hiddenParameters = computed(
-  () => pendingSlashCommand.value?.parameters.filter(({ name }) => !activeParameterNames.value.includes(name)) ?? [],
-);
 
 const collapseToText = () => {
   input.value = buildText();
@@ -143,8 +136,6 @@ onKeyStroke("Backspace", () => {
           />
         </template>
         <MessageModelMessageInputSlashCommandParametersTrailingInput
-          :hidden-parameters
-          :active-parameters-length="activeParameters.length"
           :is-focused="focusedIndex === activeParameters.length"
           @create-parameter="createParameter"
           @update-parameter-value="updateParameterValue"
