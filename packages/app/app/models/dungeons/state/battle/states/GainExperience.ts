@@ -44,19 +44,21 @@ export const GainExperience: State<StateName> = {
     if (experienceGain - experienceToNextLevel.value >= 0) {
       // We will implement and thus assume the fact that the level up event
       // Will be triggered by the experience bar once it reaches 100%
-      const levelUpListener: PhaserEvents["levelUp"] = getSynchronizedFunction(async ({ key, stats }, onComplete) => {
-        const showLevelUpMessage = async () => {
-          await showMessages(scene, [`${key} leveled up to ${stats.level}!`]);
-          onComplete();
-          if (experienceToNextLevel.value > 0) phaserEventEmitter.emit("levelUpComplete");
-        };
+      const levelUpListener: PhaserEvents["levelUp"] = getSynchronizedFunction(
+        async ({ key, stats }, onLevelUpComplete) => {
+          const showLevelUpMessage = async () => {
+            await showMessages(scene, [`${key} leveled up to ${stats.level}!`]);
+            onLevelUpComplete();
+            if (experienceToNextLevel.value > 0) phaserEventEmitter.emit("levelUpComplete");
+          };
 
-        if (isSkipAnimations.value || isSettingsSkipAnimations.value)
-          while (experienceToNextLevel.value <= 0) levelUp(activeMonster.value);
-        else levelUp(activeMonster.value);
+          if (isSkipAnimations.value || isSettingsSkipAnimations.value)
+            while (experienceToNextLevel.value <= 0) levelUp(activeMonster.value);
+          else levelUp(activeMonster.value);
 
-        await showLevelUpMessage();
-      });
+          await showLevelUpMessage();
+        },
+      );
       phaserEventEmitter.on("levelUp", levelUpListener);
       phaserEventEmitter.once(
         "levelUpComplete",

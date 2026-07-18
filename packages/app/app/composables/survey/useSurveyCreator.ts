@@ -71,9 +71,9 @@ export const useSurveyCreator = () => {
       });
     });
     // Add all the possible delete file events
-    LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (model: LogoImageViewModel) => {
-      const url = model.survey.logo;
-      removeLogoImage(model);
+    LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (logoViewModel: LogoImageViewModel) => {
+      const url = logoViewModel.survey.logo;
+      removeLogoImage(logoViewModel);
       if (!url) return;
       await deleteFile(url);
     });

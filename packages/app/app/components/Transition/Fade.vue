@@ -8,6 +8,7 @@ defineSlots<{ default: () => VNode }>();
   </Transition>
 </template>
 
+<!-- eslint-disable-next-line vue/enforce-style-attribute -- transition classes land on slotted (often teleported Vuetify) content, which scoped/:slotted attributes cannot reach -->
 <style>
 .fade-enter-active,
 .fade-leave-active {

@@ -24,8 +24,8 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   // GrapesJS project data doesn't know about the dataset binding, so saves carry it over; the compiled
   // MJML is captured alongside it because only the client editor can compile it for the published web view.
   // A failed compile must not drop the save, so the last captured html rides along instead
-  const saveEmailEditor = async (projectData: ProjectData, editor: Editor) => {
-    const html = getResult(() => getEmailHtml(editor)).match(
+  const saveEmailEditor = async (projectData: ProjectData, editorInstance: Editor) => {
+    const html = getResult(() => getEmailHtml(editorInstance)).match(
       (newHtml) => newHtml,
       () => content.value.html,
     );

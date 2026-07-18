@@ -28,15 +28,15 @@ onMounted(() => {
   </div>
 </template>
 
-<style>
+<style scoped>
 /* When attached to the wrapper (PiP window only — otherwise the overlay teleports out and these
    selectors do not match), anchor the tooltip to the button instead of Vuetify's main-window coords. */
-.call-pip-tooltip-wrapper .v-overlay {
+.call-pip-tooltip-wrapper :deep(.v-overlay) {
   position: absolute !important;
   inset: 0 !important;
 }
 
-.call-pip-tooltip-wrapper .v-overlay__content {
+.call-pip-tooltip-wrapper :deep(.v-overlay__content) {
   position: absolute !important;
   inset: auto auto calc(100% + 4px) 50% !important;
   transform: translateX(-50%) !important;

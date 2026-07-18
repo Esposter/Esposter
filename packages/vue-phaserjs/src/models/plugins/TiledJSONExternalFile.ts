@@ -104,7 +104,7 @@ export class TiledJSONExternalFile extends MultiFile {
     loader.setPath(path);
     loader.setPrefix(prefix);
 
-    for (const [index, tileset] of tilesets.entries()) {
+    for (const [tilesetIndex, tileset] of tilesets.entries()) {
       // Tileset is relative to the tilemap filename, but we will expose our tilesets
       // In nuxt's public folder, so we just need to get the relative path past that
       const publicString = "public";
@@ -113,7 +113,7 @@ export class TiledJSONExternalFile extends MultiFile {
 
       const relativePath = tileset.source.slice(pathIndex + publicString.length);
       const tilesetFile = new TilesetFile(
-        index,
+        tilesetIndex,
         loader,
         `${file.key}${ID_SEPARATOR}Tileset${ID_SEPARATOR}${relativePath}`,
         relativePath,

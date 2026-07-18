@@ -62,7 +62,7 @@ export const runVirrunCommand = async (
     );
   });
   const exitCode = result.match(
-    ({ exitCode }) => exitCode,
+    ({ exitCode: resolvedExitCode }) => resolvedExitCode,
     (error) => {
       const message = toAppError(error).message;
       // A bare package-script name (e.g. `virrun run typecheck`) reaches the backend as a missing executable; swap

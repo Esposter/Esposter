@@ -48,10 +48,10 @@ export const useSound = (
     },
   );
 
-  const play = ({ forceSoundEnabled, id, rate }: PlayOptions = {}) => {
+  const play = ({ forceSoundEnabled, id, rate: playRate }: PlayOptions = {}) => {
     if (!sound.value || !(soundEnabled || forceSoundEnabled)) return;
     if (interrupt) sound.value.stop();
-    if (rate) sound.value.rate(rate);
+    if (playRate) sound.value.rate(playRate);
 
     sound.value.play(id);
     sound.value.once("end", () => {

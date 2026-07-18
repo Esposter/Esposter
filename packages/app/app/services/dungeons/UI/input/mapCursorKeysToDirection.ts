@@ -19,15 +19,15 @@ const getDirectionToCursorKeysMap = (
 export const mapCursorKeysToDirection = (cursorKeys: BaseCursorKeys, justDown?: true) => {
   const cursorKeyMap = getDirectionToCursorKeysMap(cursorKeys);
 
-  for (const [direction, cursorKeys] of Object.entries(cursorKeyMap)) {
+  for (const [direction, directionKeys] of Object.entries(cursorKeyMap)) {
     if (justDown) {
       // JustDown doesn't support multiple different key presses
-      if (cursorKeys.length > 1) continue;
-      if (cursorKeys.every((cursorKey) => Input.Keyboard.JustDown(cursorKey))) return direction as Direction;
+      if (directionKeys.length > 1) continue;
+      if (directionKeys.every((cursorKey) => Input.Keyboard.JustDown(cursorKey))) return direction as Direction;
       else continue;
     }
 
-    if (cursorKeys.every((cursorKey) => cursorKey.isDown)) return direction as Direction;
+    if (directionKeys.every((cursorKey) => cursorKey.isDown)) return direction as Direction;
   }
 
   return Direction.NONE;

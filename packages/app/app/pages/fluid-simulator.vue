@@ -176,6 +176,7 @@ onUnmounted(async () => {
   <NuxtLayout ref="layout" />
 </template>
 
+<!-- eslint-disable-next-line vue/enforce-style-attribute -- the three.js Inspector appends its profiler panels to document.body, outside this component's scope -->
 <style>
 #profiler-toggle {
   top: calc(var(--app-bar-height) + 15px) !important;

@@ -17,12 +17,12 @@ export const useReplyStore = defineStore("message/input/reply", () => {
   const { data: replyMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
   MessageHookMap[Operation.Create].register(({ replyRowKey }) => {
     if (!replyRowKey) return;
-    const reply = dataStore.items.find(({ rowKey }) => rowKey === replyRowKey);
+    const reply = dataStore.items.find(({ rowKey: itemRowKey }) => itemRowKey === replyRowKey);
     if (!reply) return;
     replyMap.value.set(replyRowKey, reply);
   });
-  MessageHookMap[Operation.Delete].register(({ rowKey }) => {
-    replyMap.value.delete(rowKey);
+  MessageHookMap[Operation.Delete].register(({ rowKey: deletedRowKey }) => {
+    replyMap.value.delete(deletedRowKey);
   });
 
   const isIndicatorActive = ref(false);

@@ -42,8 +42,9 @@ export const runNodeInProcess = (
         else originalStderrWrite(chunk);
         return true;
       };
-      process.exit = (code) => {
-        const resolved = typeof code === "number" ? code : typeof process.exitCode === "number" ? process.exitCode : 0;
+      process.exit = (exitCode) => {
+        const resolved =
+          typeof exitCode === "number" ? exitCode : typeof process.exitCode === "number" ? process.exitCode : 0;
         throw new ExitSignalError(resolved);
       };
       if (cwd) process.chdir(cwd);

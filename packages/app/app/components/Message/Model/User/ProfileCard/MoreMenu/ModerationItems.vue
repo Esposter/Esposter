@@ -21,18 +21,14 @@ const targetTopPosition = computed(() => {
   return roles.length > 0 ? Math.max(...roles.map(({ position }) => position)) : -1;
 });
 const manageablePermissions = computed(() => {
-  const manageablePermissions = myPermissions.value;
+  const permissions = myPermissions.value;
   if (
-    !manageablePermissions ||
+    !permissions ||
     targetTopPosition.value === undefined ||
-    !checkIsManageable(
-      manageablePermissions.topRolePosition,
-      targetTopPosition.value,
-      manageablePermissions.isRoomOwner,
-    )
+    !checkIsManageable(permissions.topRolePosition, targetTopPosition.value, permissions.isRoomOwner)
   )
     return null;
-  return manageablePermissions;
+  return permissions;
 });
 const checkHasManageablePermission = (permission: RoomPermission) =>
   Boolean(

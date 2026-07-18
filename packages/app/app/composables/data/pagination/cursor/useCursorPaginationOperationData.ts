@@ -10,20 +10,20 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
   const executeWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
   const items = computed({
     get: () => cursorPaginationData.value.items,
-    set: (items) => {
-      cursorPaginationData.value.items = items;
+    set: (newItems) => {
+      cursorPaginationData.value.items = newItems;
     },
   });
   const nextCursor = computed({
     get: () => cursorPaginationData.value.nextCursor,
-    set: (nextCursor) => {
-      cursorPaginationData.value.nextCursor = nextCursor;
+    set: (newNextCursor) => {
+      cursorPaginationData.value.nextCursor = newNextCursor;
     },
   });
   const hasMore = computed({
     get: () => cursorPaginationData.value.hasMore,
-    set: (hasMore) => {
-      cursorPaginationData.value.hasMore = hasMore;
+    set: (newHasMore) => {
+      cursorPaginationData.value.hasMore = newHasMore;
     },
   });
   const initializeCursorPaginationData = (data: CursorPaginationData<TItem>) => {

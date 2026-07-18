@@ -7,6 +7,11 @@ import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
 import { Panel, useVueFlow, VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
+import "@vue-flow/controls/dist/style.css";
+import "@vue-flow/core/dist/style.css";
+import "@vue-flow/core/dist/theme-default.css";
+import "@vue-flow/minimap/dist/style.css";
+import "@vue-flow/node-resizer/dist/style.css";
 
 const flowchartEditorStore = useFlowchartEditorStore();
 const { loadContent, saveFlowchartEditor } = flowchartEditorStore;
@@ -62,14 +67,6 @@ onMounted(async () => {
     <FlowchartEditorDropzoneBackground />
   </VueFlow>
 </template>
-
-<style lang="scss">
-@use "@vue-flow/controls/dist/style.css" as *;
-@use "@vue-flow/core/dist/style.css" as *;
-@use "@vue-flow/core/dist/theme-default.css";
-@use "@vue-flow/minimap/dist/style.css" as *;
-@use "@vue-flow/node-resizer/dist/style.css" as *;
-</style>
 
 <style scoped lang="scss">
 :deep(.selected .line) {
