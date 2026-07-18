@@ -92,6 +92,11 @@ export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
   mocks.getSession.mockImplementationOnce(() => getSessionPayload);
 };
 
+// Simulates an unauthenticated request for the next call — better-auth returns null when no session exists
+export const mockNoSessionOnce = () => {
+  mocks.getSession.mockImplementationOnce(() => null as unknown as GetSessionPayload);
+};
+
 export const getMockSession = () => mocks.getSession();
 
 const createSession = (userId: string): Session => {
