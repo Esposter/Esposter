@@ -9,7 +9,6 @@ Everything under this folder is **future work awaiting implementation** — one 
 
 Each product area's roadmap is the prioritized index over its proposals:
 
-- [posts roadmap](/docs/posts/roadmap)
 - [users roadmap](/docs/users/roadmap)
 - [esbabbler roadmap](/docs/esbabbler/roadmap)
 - [platform roadmap](/docs/platform/roadmap)
@@ -18,7 +17,7 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)
 
-vue-phaserjs, clicker, dungeons, anime, and fluid-simulator are mature with no roadmap and no open proposals.
+posts, vue-phaserjs, clicker, dungeons, anime, and fluid-simulator have no roadmap and no open proposals.
 
 Repo-wide refactor plans have no area roadmap and live here directly:
 
