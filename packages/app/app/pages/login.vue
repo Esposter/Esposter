@@ -1,35 +1,8 @@
 <script setup lang="ts">
-import type { LoginButtonProps } from "@/components/Login/Button.vue";
-
+import { LoginButtonItems } from "@/services/login/LoginButtonItems";
 import { SITE_NAME } from "@esposter/shared";
 
 definePageMeta({ middleware: "guest" });
-
-const loginButtonsProps = ref<LoginButtonProps[]>([
-  {
-    logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`))),
-    logoStyle: {
-      backgroundColor: "#fff",
-      borderRadius: "4px 0 0 4px",
-      height: "3rem",
-      padding: ".625rem",
-      width: "3rem",
-    },
-    provider: "google",
-    style: { backgroundColor: "#4285f4", paddingLeft: "0" },
-  },
-  {
-    logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Github.vue`))),
-    logoAttrs: { fill: "#fff" },
-    provider: "github",
-    style: { backgroundColor: "#252525" },
-  },
-  {
-    logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Facebook.vue`))),
-    provider: "facebook",
-    style: { backgroundColor: "#1877f2" },
-  },
-]);
 </script>
 
 <template>
@@ -45,7 +18,7 @@ const loginButtonsProps = ref<LoginButtonProps[]>([
           <div text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
           <div flex flex-col gap-y-3>
             <LoginButton
-              v-for="loginButtonProps of loginButtonsProps"
+              v-for="loginButtonProps of LoginButtonItems"
               :key="loginButtonProps.provider"
               :="loginButtonProps"
             />
