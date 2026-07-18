@@ -79,6 +79,11 @@ const deleteFileInputSchema = z.object({
   id: selectResourceSchema.shape.id,
 });
 
+const readPublishedVersionContentInputSchema = z.object({
+  ...resourceIdInputSchema.shape,
+  version: z.int().positive(),
+});
+
 type ResourceContent<TType extends ResourceType> = z.infer<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>;
 
 export const createResourceProcedures = <TType extends ResourceType>(
@@ -356,6 +361,24 @@ export const createResourceProcedures = <TType extends ResourceType>(
         if (!transformPublicReadContent) return { content, name: resource.name };
         return { content: await transformPublicReadContent(ctx, resource, content), name: resource.name };
       }),
+    // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
+    // visitors never reach this — the public read above always serves the latest publish
+    readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query(
+      async ({ ctx, input: { id, version } }) => {
+        const { readableStreamBody } = await useDownload(
+          AzureContainer.ResourceAssets,
+          getPublishedContentBlobName(id, version),
+        );
+        if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
+        const content = contentSchema.parse(
+          JSON.parse(await streamToText(readableStreamBody)),
+        ) as ResourceContent<TType>;
+        // Re-sign any expired asset SAS urls through the same transform the working-copy read uses, so an
+        // old snapshot still renders past a SAS expiry
+        if (!transformReadContent) return { content, name: ctx.resource.name };
+        return { content: await transformReadContent(ctx, ctx.resource, content), name: ctx.resource.name };
+      },
+    ),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
       ResourcePublication | undefined
     >(({ ctx }) => ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })),

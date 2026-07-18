@@ -6,12 +6,19 @@ import { generateHTML } from "@tiptap/core";
 
 interface ResourceNoteViewProps {
   id: string;
+  version?: number;
 }
 
-const { id } = defineProps<ResourceNoteViewProps>();
+const { id, version } = defineProps<ResourceNoteViewProps>();
 const { $trpc } = useNuxtApp();
-const { content, name } = await useReadPublishedResourceContent(ResourceType.Note, id, () =>
-  $trpc.note.readPublishedResourceContent.query(id),
+const { content, name } = await useReadPublishedResourceContent(
+  ResourceType.Note,
+  id,
+  () =>
+    version
+      ? $trpc.note.readPublishedVersionContent.query({ id, version })
+      : $trpc.note.readPublishedResourceContent.query(id),
+  version,
 );
 // JSON is the source of truth at rest — HTML is generated here and sanitized at the render boundary per the
 // String-utils standard. generateHTML needs a DOM (ProseMirror DOMSerializer), so the render is client-only.
