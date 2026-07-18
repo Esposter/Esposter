@@ -26,6 +26,7 @@ describe("moderation", () => {
   let moderationCaller: DecorateRouterRecord<TRPCRouter["message"]["moderation"]>;
   let roomId: string;
   const durationMs = 1;
+  const note = "note";
 
   beforeAll(() => {
     mockContext = getMockContext();
@@ -377,6 +378,59 @@ describe("moderation", () => {
 
       await expect(
         moderationCaller.deleteBan({ roomId, userId: crypto.randomUUID() }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    });
+  });
+
+  describe("createModerationNote", () => {
+    test("owner creates a note — readModerationNotes returns it", async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id });
+
+      const result = await moderationCaller.readModerationNotes({ roomId, targetUserId: member.id });
+
+      expect(result.items).toHaveLength(1);
+      expect(takeOne(result.items).note).toBe(note);
+      expect(takeOne(result.items).targetUserId).toBe(member.id);
+    });
+
+    test(`member without ${RoomPermission.KickMembers} permission cannot createModerationNote — throws UNAUTHORIZED`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await mockSessionOnce(mockContext.db, member);
+
+      await expect(
+        moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    });
+  });
+
+  describe("readModerationNotes", () => {
+    test("returns only the target member's notes", async () => {
+      expect.hasAssertions();
+
+      const [firstMember, secondMember] = await Promise.all([createMember(), createMember()]);
+      await moderationCaller.createModerationNote({ note, roomId, targetUserId: firstMember.id });
+      vi.setSystemTime(durationMs);
+      await moderationCaller.createModerationNote({ note, roomId, targetUserId: secondMember.id });
+
+      const result = await moderationCaller.readModerationNotes({ roomId, targetUserId: secondMember.id });
+
+      expect(result.items).toHaveLength(1);
+      expect(takeOne(result.items).targetUserId).toBe(secondMember.id);
+    });
+
+    test(`member without ${RoomPermission.KickMembers} permission cannot readModerationNotes — throws UNAUTHORIZED`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await mockSessionOnce(mockContext.db, member);
+
+      await expect(
+        moderationCaller.readModerationNotes({ roomId, targetUserId: member.id }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
   });
