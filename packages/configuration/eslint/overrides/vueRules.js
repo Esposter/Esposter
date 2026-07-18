@@ -1,8 +1,9 @@
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 
 export default {
+  // Not covered by eslint-plugin-oxlint on vue files — its vue-svelte-astro-exceptions config
+  // Deliberately keeps unused-vars rules enabled there, so this off is still load-bearing.
   "@typescript-eslint/no-unused-vars": "off",
-  "@typescript-eslint/unified-signatures": "off",
   // PascalCase for our components and PascalCase third-party (VueFlow, VuePdfEmbed); kebab-case is only for
   // Third-party libraries that ship kebab tags (Vuetify's v-*) and TresJS's lowercase <primitive> special
   // Element. registeredComponentsOnly is useless under Nuxt auto-imports (nothing is locally registered),
