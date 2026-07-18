@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+import { getIsCaretAtStart } from "@/util/dom/getIsCaretAtStart";
 
 interface TrailingInputProps {
   isFocused?: boolean;
@@ -52,7 +53,7 @@ watch(
         (event) => {
           const target = event.target as HTMLInputElement;
 
-          if (event.key === 'ArrowLeft' && target.selectionStart === 0 && target.selectionEnd === 0) {
+          if (event.key === 'ArrowLeft' && getIsCaretAtStart(target)) {
             event.preventDefault();
             emit('navigate:previous');
             return;
