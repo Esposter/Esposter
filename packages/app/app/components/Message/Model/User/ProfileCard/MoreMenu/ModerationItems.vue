@@ -66,6 +66,7 @@ const hasModActions = computed(() => isBannable.value || isKickable.value || isW
     />
     <MessageModelUserProfileCardMoreMenuTimeoutDialog v-if="isKickable" :user />
     <MessageModelUserProfileCardMoreMenuWarnDialog v-if="isWarnable" :user />
+    <MessageModelUserProfileCardMoreMenuNotesDialog v-if="isKickable" :room-id :user />
     <v-list-item py-2 min-height="auto">
       <v-divider />
     </v-list-item>

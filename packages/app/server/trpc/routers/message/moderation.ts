@@ -1,10 +1,12 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { BanInMessage, BanInMessageWithRelations, Clause, StandardMessageEntity } from "@esposter/db-schema";
 
+import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput";
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
+import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -29,7 +31,7 @@ import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { getTableNullClause, getTopNEntities, serializeClauses, serializeEntity } from "@esposter/db";
+import { createEntity, getTableNullClause, getTopNEntities, serializeClauses, serializeEntity } from "@esposter/db";
 import {
   AdminActionType,
   AZURE_MAX_BATCH_SIZE,
@@ -39,8 +41,11 @@ import {
   BinaryOperator,
   CompositeKeyPropertyNames,
   DatabaseEntityType,
+  getReverseTickedTimestamp,
   ModerationLogEntity,
   ModerationLogEntityPropertyNames,
+  ModerationNoteEntity,
+  ModerationNoteEntityPropertyNames,
   roomIdSchema,
   RoomPermission,
   StandardMessageEntityPropertyNames,
@@ -55,6 +60,22 @@ import { alias } from "drizzle-orm/pg-core";
 const onAdminActionInputSchema = roomIdSchema;
 
 export const moderationRouter = router({
+  createModerationNote: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    createModerationNoteInputSchema,
+    "roomId",
+  ).mutation<ModerationNoteEntity>(async ({ ctx, input: { note, roomId, targetUserId } }) => {
+    const moderationNotesClient = await useTableClient(AzureTable.ModerationNotes);
+    const moderationNoteEntity = new ModerationNoteEntity({
+      actorUserId: ctx.getSessionPayload.user.id,
+      note,
+      partitionKey: roomId,
+      rowKey: getReverseTickedTimestamp(),
+      targetUserId,
+    });
+    await createEntity(moderationNotesClient, moderationNoteEntity);
+    return moderationNoteEntity;
+  }),
   deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation(
     async ({ ctx, input: { roomId, userId } }) => {
       await requireEntity(
@@ -232,4 +253,23 @@ export const moderationRouter = router({
       return getCursorPaginationData(entries, limit, sortBy);
     },
   ),
+  readModerationNotes: getPermissionsProcedure(
+    RoomPermission.KickMembers,
+    readModerationNotesInputSchema,
+    "roomId",
+  ).query(async ({ input: { cursor, limit, roomId, targetUserId } }) => {
+    const sortBy: SortItem<keyof ModerationNoteEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
+    const clauses: Clause<ModerationNoteEntity>[] = [
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+      { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
+      getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+    ];
+    if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
+
+    const moderationNotesClient = await useTableClient(AzureTable.ModerationNotes);
+    const entries = await getTopNEntities(moderationNotesClient, limit + 1, ModerationNoteEntity, {
+      filter: serializeClauses(clauses),
+    });
+    return getCursorPaginationData(entries, limit, sortBy);
+  }),
 });
