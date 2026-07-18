@@ -10,6 +10,12 @@ interface MermaidProps {
   code: string;
 }
 
+interface MermaidZoomControl {
+  icon: string;
+  onClick: () => void;
+  text: string;
+}
+
 const { code } = defineProps<MermaidProps>();
 const theme = useTheme();
 const wrapper = useTemplateRef("wrapper");
@@ -18,6 +24,20 @@ const id = useId();
 const panzoom = shallowRef<PanzoomObject>();
 const { isFullscreen, isSupported: isFullscreenSupported, toggle: toggleFullscreen } = useFullscreen(wrapper);
 const zoomButtonProps = { density: "comfortable", size: "small", variant: "tonal" } as const;
+const zoomControls = computed<MermaidZoomControl[]>(() => {
+  const controls: MermaidZoomControl[] = [
+    { icon: "mdi-plus", onClick: () => panzoom.value?.zoomIn(), text: "Zoom in" },
+    { icon: "mdi-minus", onClick: () => panzoom.value?.zoomOut(), text: "Zoom out" },
+    { icon: "mdi-backup-restore", onClick: () => panzoom.value?.reset(), text: "Reset view" },
+  ];
+  if (isFullscreenSupported.value)
+    controls.push({
+      icon: isFullscreen.value ? "mdi-fullscreen-exit" : "mdi-fullscreen",
+      onClick: () => toggleFullscreen(),
+      text: isFullscreen.value ? "Exit full screen" : "Full screen",
+    });
+  return controls;
+});
 // Entering/leaving full screen changes the viewport, so recenter instead of keeping a stale pan/zoom
 watch(isFullscreen, () => {
   panzoom.value?.reset();
@@ -67,29 +87,12 @@ onUnmounted(() => {
     </div>
     <div v-if="panzoom" op-0 flex gap-1 transition-opacity right-2 top-2 absolute group-hover:op-100>
       <StyledTooltipIconButton
+        v-for="{ icon, onClick, text } of zoomControls"
+        :key="text"
         :button-props="zoomButtonProps"
-        icon="mdi-plus"
-        text="Zoom in"
-        @click="panzoom.zoomIn()"
-      />
-      <StyledTooltipIconButton
-        :button-props="zoomButtonProps"
-        icon="mdi-minus"
-        text="Zoom out"
-        @click="panzoom.zoomOut()"
-      />
-      <StyledTooltipIconButton
-        :button-props="zoomButtonProps"
-        icon="mdi-backup-restore"
-        text="Reset view"
-        @click="panzoom.reset()"
-      />
-      <StyledTooltipIconButton
-        v-if="isFullscreenSupported"
-        :button-props="zoomButtonProps"
-        :icon="isFullscreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'"
-        :text="isFullscreen ? 'Exit full screen' : 'Full screen'"
-        @click="toggleFullscreen()"
+        :icon
+        :text
+        @click="onClick()"
       />
     </div>
   </div>
