@@ -5,9 +5,11 @@ import { ResourceType } from "@esposter/db-schema";
 export const useCreateResource = () => {
   const { $trpc } = useNuxtApp();
   const ResourceCreateProcedureMap = {
+    [ResourceType.Blueprint]: $trpc.blueprint.createResource,
     [ResourceType.Dashboard]: $trpc.dashboard.createResource,
     [ResourceType.Email]: $trpc.email.createResource,
     [ResourceType.Flowchart]: $trpc.flowchart.createResource,
+    [ResourceType.Note]: $trpc.note.createResource,
     [ResourceType.Sheet]: $trpc.sheet.createResource,
     [ResourceType.Survey]: $trpc.survey.createResource,
     [ResourceType.TodoList]: $trpc.todoList.createResource,

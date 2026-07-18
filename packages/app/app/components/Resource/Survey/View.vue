@@ -13,9 +13,10 @@ import { SurveyComponent } from "survey-vue3-ui";
 
 interface ResourceSurveyViewProps {
   id: string;
+  version?: number;
 }
 
-const { id } = defineProps<ResourceSurveyViewProps>();
+const { id, version } = defineProps<ResourceSurveyViewProps>();
 const { $trpc } = useNuxtApp();
 const route = useRoute();
 // Read once on load and threaded through every write — the URL carries an opaque token or nothing
@@ -66,8 +67,14 @@ const saveSurveyResponse = async (survey: Model) => {
   );
 };
 
-const { content, name } = await useReadPublishedResourceContent(ResourceType.Survey, id, () =>
-  $trpc.survey.readPublishedResourceContent.query(id),
+const { content, name } = await useReadPublishedResourceContent(
+  ResourceType.Survey,
+  id,
+  () =>
+    version
+      ? $trpc.survey.readPublishedVersionContent.query({ id, version })
+      : $trpc.survey.readPublishedResourceContent.query(id),
+  version,
 );
 // Settings arrive live on the public read, so closing or gating takes effect without a re-publish and
 // The URL stays alive — unlike unpublish, which 404s every participant link already sent

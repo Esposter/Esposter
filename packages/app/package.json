@@ -94,6 +94,7 @@
     "@tiptap/extension-file-handler": "catalog:",
     "@tiptap/extension-mention": "catalog:",
     "@tiptap/extensions": "catalog:",
+    "@tiptap/html": "catalog:",
     "@tiptap/pm": "catalog:",
     "@tiptap/starter-kit": "catalog:",
     "@tiptap/suggestion": "catalog:",

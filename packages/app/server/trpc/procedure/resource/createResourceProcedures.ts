@@ -41,7 +41,6 @@ import {
 import {
   createUniqueArraySchema,
   InvalidOperationError,
-  jsonDateParse,
   MAX_READ_LIMIT,
   Operation,
   streamToText,
@@ -78,6 +77,11 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
 const deleteFileInputSchema = z.object({
   blobPath: z.string().min(1).max(MAX_READ_LIMIT),
   id: selectResourceSchema.shape.id,
+});
+
+const readPublishedVersionContentInputSchema = z.object({
+  ...resourceIdInputSchema.shape,
+  version: z.int().positive(),
 });
 
 type ResourceContent<TType extends ResourceType> = z.infer<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>;
@@ -346,9 +350,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
         );
         if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
         // The generic contentSchema parses to the union of all content types; the concrete caller's
-        // TType pins it back down so consumers read their own content shape
+        // TType pins it back down so consumers read their own content shape. Plain JSON.parse leaves
+        // Date coercion to the content schema, so ISO-datetime free-text fields survive as strings.
         const content = contentSchema.parse(
-          jsonDateParse(await streamToText(readableStreamBody)),
+          JSON.parse(await streamToText(readableStreamBody)),
         ) as ResourceContent<TType>;
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
         // Fire-and-forget: the increment swallows its own failures and the viewer must never wait on telemetry
@@ -356,6 +361,24 @@ export const createResourceProcedures = <TType extends ResourceType>(
         if (!transformPublicReadContent) return { content, name: resource.name };
         return { content: await transformPublicReadContent(ctx, resource, content), name: resource.name };
       }),
+    // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
+    // Visitors never reach this — the public read above always serves the latest publish
+    readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query(
+      async ({ ctx, input: { id, version } }) => {
+        const { readableStreamBody } = await useDownload(
+          AzureContainer.ResourceAssets,
+          getPublishedContentBlobName(id, version),
+        );
+        if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
+        const content = contentSchema.parse(
+          JSON.parse(await streamToText(readableStreamBody)),
+        ) as ResourceContent<TType>;
+        // Re-sign any expired asset SAS urls through the same transform the working-copy read uses, so an
+        // Old snapshot still renders past a SAS expiry
+        if (!transformReadContent) return { content, name: ctx.resource.name };
+        return { content: await transformReadContent(ctx, ctx.resource, content), name: ctx.resource.name };
+      },
+    ),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
       ResourcePublication | undefined
     >(({ ctx }) => ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })),

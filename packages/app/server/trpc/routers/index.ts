@@ -2,6 +2,7 @@ import { router } from "@@/server/trpc";
 import { achievementRouter } from "@@/server/trpc/routers/achievement";
 import { appRouter } from "@@/server/trpc/routers/app";
 import { blockRouter } from "@@/server/trpc/routers/block";
+import { blueprintRouter } from "@@/server/trpc/routers/blueprint";
 import { callRouter } from "@@/server/trpc/routers/call";
 import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
@@ -13,6 +14,7 @@ import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { messageRouter } from "@@/server/trpc/routers/message";
+import { noteRouter } from "@@/server/trpc/routers/note";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { programRouter } from "@@/server/trpc/routers/program";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
@@ -32,6 +34,7 @@ import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 const trpcRouterWithoutAchievements = router({
   app: appRouter,
   block: blockRouter,
+  blueprint: blueprintRouter,
   callSession: callRouter,
   clicker: clickerRouter,
   dashboard: dashboardRouter,
@@ -43,6 +46,7 @@ const trpcRouterWithoutAchievements = router({
   friendRequest: friendRequestRouter,
   like: likeRouter,
   message: messageRouter,
+  note: noteRouter,
   post: postRouter,
   program: programRouter,
   pushSubscription: pushSubscriptionRouter,

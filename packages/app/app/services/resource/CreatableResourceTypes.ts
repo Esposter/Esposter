@@ -8,7 +8,9 @@ export const CreatableResourceTypes = [
   ResourceType.Webpage,
   ResourceType.Email,
   ResourceType.Flowchart,
+  ResourceType.Note,
   ResourceType.Survey,
+  ResourceType.Blueprint,
 ] as const;
 
 export type CreatableResourceType = (typeof CreatableResourceTypes)[number];

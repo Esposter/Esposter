@@ -6,9 +6,11 @@ import { ResourceType } from "@/models/resource/ResourceType";
 // Capability rather than to any one type, so it is cleared for every type unconditionally.
 // It lives here rather than in the app because the Recycle bin's timer purge runs in azure-functions
 export const ResourceOwnedTablesMap: Record<ResourceType, AzureTable[]> = {
+  [ResourceType.Blueprint]: [],
   [ResourceType.Dashboard]: [],
   [ResourceType.Email]: [],
   [ResourceType.Flowchart]: [],
+  [ResourceType.Note]: [],
   [ResourceType.Program]: [AzureTable.ProgramParticipants],
   [ResourceType.Sheet]: [],
   [ResourceType.Survey]: [AzureTable.SurveyResponses],

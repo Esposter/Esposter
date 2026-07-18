@@ -7,6 +7,13 @@ export const useResourceMutations = () => {
   const { $trpc } = useNuxtApp();
   return (type: ResourceType): ResourceMutations => {
     switch (type) {
+      case ResourceType.Blueprint:
+        return {
+          deleteResource: (input) => $trpc.blueprint.deleteResource.mutate(input),
+          readResourceContent: (input) => $trpc.blueprint.readResourceContent.query(input),
+          saveResourceContent: (input) => $trpc.blueprint.saveResourceContent.mutate(input as never),
+          updateResource: (input) => $trpc.blueprint.updateResource.mutate(input),
+        };
       case ResourceType.Dashboard:
         return {
           deleteResource: (input) => $trpc.dashboard.deleteResource.mutate(input),
@@ -41,6 +48,18 @@ export const useResourceMutations = () => {
           saveResourceContent: (input) => $trpc.flowchart.saveResourceContent.mutate(input as never),
           unpublishResource: (input) => $trpc.flowchart.unpublishResource.mutate(input),
           updateResource: (input) => $trpc.flowchart.updateResource.mutate(input),
+        };
+      case ResourceType.Note:
+        return {
+          deleteResource: (input) => $trpc.note.deleteResource.mutate(input),
+          publishResource: (input) => $trpc.note.publishResource.mutate(input),
+          readResourceContent: (input) => $trpc.note.readResourceContent.query(input),
+          readResourcePublication: (input) => $trpc.note.readResourcePublication.query(input),
+          readResourceViewCount: (input) => $trpc.note.readResourceViewCount.query(input),
+          // Content is untyped at this cross-type dispatch; the calling store owns the concrete schema
+          saveResourceContent: (input) => $trpc.note.saveResourceContent.mutate(input as never),
+          unpublishResource: (input) => $trpc.note.unpublishResource.mutate(input),
+          updateResource: (input) => $trpc.note.updateResource.mutate(input),
         };
       case ResourceType.Program:
         return {
