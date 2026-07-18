@@ -222,8 +222,19 @@ All mutations calling `.returning()` must:
 
 ```sh
 pnpm db:gen   # generates migration SQL from schema diff
-pnpm db:up    # applies pending migrations to the DB
+pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format — NOT an apply command
 ```
+
+Nothing applies migrations from the CLI — they apply automatically at app startup (`packages/app/server/plugins/migrate.ts`). The migrator's bookkeeping hash is `sha256(migration.sql)` only, so `snapshot.json` metadata can be repaired freely for already-applied migrations without touching the DB.
+
+### Snapshot Chain Integrity (when the user asks for db:gen)
+
+- `db:gen` reads `DATABASE_URL` only to satisfy config validation — inject it from `packages/app/.env` (`export DATABASE_URL="$(grep '^DATABASE_URL=' ../app/.env | cut -d= -f2-)"`).
+- Every snapshot's `prevIds` must point at the actual head it was built on. Hand-cloning a snapshot from anything but the newest migration forks the chain, and `db:gen` later fails with `Non-commutative migrations detected`. Repair by rewriting the stray branch's snapshots as cumulative state on top of the true head (union the ddl entries, keyed by `entityType|schema|table|name`) and re-pointing `prevIds` — `migration.sql` files stay untouched so applied-hash bookkeeping is safe.
+- A hand-cloned snapshot's `ddl` must also be _cumulative_ — it is the base state for every future diff, so entries missing from it get re-emitted as spurious `CREATE`s later.
+- drizzle-kit `1.0.0-rc.2` crashes with `Error  Unexpected '''` when semantically comparing json/jsonb defaults stored in the old `'{}'::jsonb` snapshot form (the parse sits outside its try/catch). Normalize the head snapshot's default to `'{}'` and rerun.
+- After a successful generate: rename the codename folder descriptively (keep drizzle's timestamp prefix), verify the new snapshot's `prevIds` is the previous head's id, and rerun `db:gen` — it must report `No schema changes, nothing to migrate`.
+- Enum-value drift is real: generation may surface enum values that exist in schema + code but were never migrated (a hand-written chain silently misses them). Verify against the live DB (`select enum_range(null::my_enum)`) before assuming the diff is wrong. A value-order mismatch generates a data-preserving text-cast recreate (`SET DATA TYPE text` → `DROP TYPE` → `CREATE TYPE` → cast back) — safe when only one column uses the enum and it has no default.
 
 ## Empty-Sentinel Columns — DB Schema Is the Source of Truth
 
