@@ -63,6 +63,7 @@ import {
   fileEntitySchema,
   FilterType,
   getReverseTickedTimestamp,
+  MAX_FOLLOWED_THREADS,
   MessageEntityMap,
   MessageType,
   roomIdSchema,
@@ -384,6 +385,7 @@ export const baseMessageRouter = router({
     async ({ ctx, input: { roomId } }) => {
       const follows = await ctx.db.query.threadFollowsInMessage.findMany({
         columns: { threadRootRowKey: true },
+        limit: MAX_FOLLOWED_THREADS,
         orderBy: { createdAt: "desc" },
         where: { roomId: { eq: roomId }, userId: { eq: ctx.getSessionPayload.user.id } },
       });

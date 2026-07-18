@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { roomFilterWordSchema } from "#shared/models/db/room/RoomFilterWord";
 import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "@esposter/db-schema";
 
 const words = defineModel<string[]>({ required: true });
 const rules = useVRules();
 const newWord = ref("");
 const isAtMaxWords = computed(() => words.value.length >= FILTER_WORDS_MAX_LENGTH);
+const isNewWordValid = computed(() => roomFilterWordSchema.safeParse(newWord.value).success);
 const createWord = () => {
+  if (!isNewWordValid.value) return;
   words.value = [...words.value, newWord.value];
   newWord.value = "";
 };
@@ -24,7 +27,7 @@ const createWord = () => {
     >
       <template #append-inner>
         <StyledTooltipIconButton
-          :button-props="{ disabled: isAtMaxWords, size: 'x-small', variant: 'plain' }"
+          :button-props="{ disabled: isAtMaxWords || !isNewWordValid, size: 'x-small', variant: 'plain' }"
           icon="mdi-plus"
           text="Add word"
           @click="createWord()"

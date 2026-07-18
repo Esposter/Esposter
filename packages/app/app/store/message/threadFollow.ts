@@ -14,6 +14,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     () => [],
   );
   const loadedRoomIds = reactive(new Set<string>());
+  const loadingPromises = new Map<string, Promise<void>>();
 
   const readFollowedThreads = async (roomId: string) => {
     const threads = await $trpc.message.readFollowedThreads.query({ roomId });
@@ -21,9 +22,18 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     loadedRoomIds.add(roomId);
   };
   // Load once per room so the follow-state check is accurate without re-fetching on every thread open.
+  // Concurrent callers (follow button, threads drawer) share the in-flight promise instead of re-querying.
   const ensureFollowedThreadsLoaded = async (roomId: string) => {
     if (loadedRoomIds.has(roomId)) return;
-    await readFollowedThreads(roomId);
+
+    let loadingPromise = loadingPromises.get(roomId);
+    if (!loadingPromise) {
+      loadingPromise = readFollowedThreads(roomId).finally(() => {
+        loadingPromises.delete(roomId);
+      });
+      loadingPromises.set(roomId, loadingPromise);
+    }
+    await loadingPromise;
   };
   const checkIsFollowing = (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) =>
     Boolean(getFollowedThreads(roomId)?.some(({ rowKey }) => rowKey === threadRootRowKey));

@@ -406,6 +406,18 @@ describe("moderation", () => {
         moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
+
+    test("isManageable: member cannot createModerationNote on another member at equal position — throws UNAUTHORIZED", async () => {
+      expect.hasAssertions();
+
+      const { member: actor } = await setupMemberWithRole(RoomPermission.KickMembers, 5);
+      const { member: target } = await setupMemberWithRole(0n, 5);
+      await mockSessionOnce(mockContext.db, actor);
+
+      await expect(
+        moderationCaller.createModerationNote({ note, roomId, targetUserId: target.id }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    });
   });
 
   describe("readModerationNotes", () => {
@@ -431,6 +443,18 @@ describe("moderation", () => {
 
       await expect(
         moderationCaller.readModerationNotes({ roomId, targetUserId: member.id }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    });
+
+    test("isManageable: member cannot readModerationNotes of another member at equal position — throws UNAUTHORIZED", async () => {
+      expect.hasAssertions();
+
+      const { member: actor } = await setupMemberWithRole(RoomPermission.KickMembers, 5);
+      const { member: target } = await setupMemberWithRole(0n, 5);
+      await mockSessionOnce(mockContext.db, actor);
+
+      await expect(
+        moderationCaller.readModerationNotes({ roomId, targetUserId: target.id }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
   });

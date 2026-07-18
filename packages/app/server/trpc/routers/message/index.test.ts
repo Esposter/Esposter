@@ -966,6 +966,7 @@ describe("message", () => {
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite.id);
       await mockSessionOnce(mockContext.db, user);
+      const beforeCreateMessageTime = Date.now();
 
       await expect(
         messageCaller.createMessage({ message: `<p>this is spam</p>`, roomId: newRoom.id }),
@@ -976,7 +977,7 @@ describe("message", () => {
         .from(usersToRoomsInMessage)
         .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, user.id)));
 
-      expect(membership?.timeoutUntil).not.toBeNull();
+      expect(membership?.timeoutUntil?.getTime()).toBeGreaterThanOrEqual(beforeCreateMessageTime + timeoutDurationMs);
     });
   });
 

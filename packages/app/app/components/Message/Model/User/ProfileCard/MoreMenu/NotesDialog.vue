@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
+import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { dayjs } from "#shared/services/dayjs";
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { useMemberStore } from "@/store/message/user/member";
@@ -24,6 +25,7 @@ const { members } = storeToRefs(memberStore);
 const memberNameById = computed(() => new Map(members.value.map(({ id, name }) => [id, name])));
 const getActorName = (actorUserId: string) => memberNameById.value.get(actorUserId) ?? actorUserId;
 const note = ref("");
+const isNoteValid = computed(() => createModerationNoteInputSchema.shape.note.safeParse(note.value).success);
 // Load on setup (no Suspense boundary) so the count badge reflects existing notes before the dialog opens.
 useQuery(readModerationNotes);
 const executeMutation = useMutation();
@@ -48,7 +50,7 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
 <template>
   <StyledFormDialog
     :card-props="{ prependIcon: 'mdi-note-text-outline', title: `Notes for ${user.name}` }"
-    :confirm-button-props="{ disabled: !note, text: 'Add note' }"
+    :confirm-button-props="{ disabled: !isNoteValid, text: 'Add note' }"
     @submit="(_event, onComplete) => createNote(onComplete)"
   >
     <template #activator="{ updateIsOpen }">
@@ -61,11 +63,8 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
     <div flex flex-col gap-2>
       <div v-if="items.length === 0" op-medium-emphasis>No notes yet.</div>
       <v-list v-else lines="two" max-height="240" style="overflow-y: auto">
-        <v-list-item
-          v-for="{ actorUserId, createdAt, note: itemNote, rowKey } of items"
-          :key="rowKey"
-          :title="itemNote"
-        >
+        <v-list-item v-for="{ actorUserId, createdAt, note: itemNote, rowKey } of items" :key="rowKey">
+          <div whitespace-pre-wrap break-words>{{ itemNote }}</div>
           <v-list-item-subtitle
             >{{ getActorName(actorUserId) }} · {{ dayjs(createdAt).fromNow() }}</v-list-item-subtitle
           >
