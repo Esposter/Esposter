@@ -8,6 +8,8 @@ import { messageEventEmitter } from "@@/server/services/message/events/messageEv
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
+import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
+import { notifyThreadReplyFollowers } from "@@/server/services/message/thread/notifyThreadReplyFollowers";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { createMessage, getPushSubscriptionsForMessage, incrementMentionCounts } from "@esposter/db";
@@ -73,6 +75,16 @@ export const createUserMessage = async (
         subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
       },
     ]);
+  }
+
+  // A reply auto-follows its thread (Discord behaviour) and notifies existing followers. Both run post-persist
+  // And best-effort — a follow/notify failure must never fail the reply that already landed.
+  if (newMessageEntity.replyRowKey) {
+    const threadRootRowKey = newMessageEntity.replyRowKey;
+    await getResultAsync(() =>
+      createThreadFollow(db, { roomId: newMessageEntity.partitionKey, threadRootRowKey, userId: user.id }),
+    ).orTee(console.error);
+    await getResultAsync(() => notifyThreadReplyFollowers(db, newMessageEntity, user)).orTee(console.error);
   }
 
   const updatedRoom = requireMutation(
