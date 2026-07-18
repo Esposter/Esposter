@@ -57,5 +57,5 @@ Paths relative to `packages/virrun/src/services/exec/cache/`.
 
 - Recording is gated on **exit 0**; the write-back flush is not ([write-back](/docs/virrun/write-back)) — a failed run is flushed like native but never replayed.
 - Output capture respects the caller's stdio convention: a bare `virrun -- <cmd>` still streams live (tee) while capturing for the record; a hit prints a cache-hit label then the recorded streams.
-- Entries accumulate per tree-state (no superseded-entry prune yet — unlike snapshots, an old key can become current again on a branch switch); bounding this is proposed in [task-cache eviction](/docs/proposals/virrun/task-cache-eviction).
+- Entries accumulate per tree-state — unlike snapshots, an old key can become current again on a branch switch, so there is no superseded set. They are instead age-pruned on record, with recency touched on each hit; see [task-cache eviction](/docs/virrun/task-cache-eviction).
 - The native backend records nothing today — `persist` there is a plain exec; see [native task-cache recording](/docs/virrun/deferred/native-task-cache).
