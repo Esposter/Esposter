@@ -1,59 +1,22 @@
 <script setup lang="ts">
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
+import { MoreDropdownLinkItems } from "@/services/app/MoreDropdownLinkItems";
 import { authClient } from "@/services/auth/authClient";
 import { RoutePath } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { signOut } = authClient;
-const items = computed<ListLinkItem[]>(() => {
-  const commonItems: ListLinkItem[] = [
-    {
-      href: RoutePath.Achievements,
-      icon: "mdi-trophy",
-      title: "Achievements",
-    },
-    {
-      href: RoutePath.Anime,
-      icon: "custom:anime",
-      title: "Anime",
-    },
-    {
-      href: RoutePath.FluidSimulator,
-      icon: "mdi-water",
-      title: "Fluid Simulator",
-    },
-    {
-      href: RoutePath.About,
-      icon: "mdi-information",
-      title: "About",
-    },
-    {
-      href: RoutePath.Docs,
-      icon: "mdi-book-open-page-variant",
-      title: "Documentation",
-    },
-    {
-      href: RoutePath.PrivacyPolicy,
-      icon: "mdi-lock",
-      title: "Privacy Policy",
-    },
-    {
-      external: true,
-      href: RoutePath.Github,
-      icon: "mdi-github",
-      title: "Github",
-    },
-  ];
-  return session.value
+const items = computed<ListLinkItem[]>(() =>
+  session.value
     ? [
         {
           href: RoutePath.UserSettings,
           icon: "mdi-cog",
           title: "Settings",
         },
-        ...commonItems,
+        ...MoreDropdownLinkItems,
         {
           icon: "mdi-logout",
           onClick: async () => {
@@ -69,9 +32,9 @@ const items = computed<ListLinkItem[]>(() => {
           icon: "mdi-login",
           title: "Login",
         },
-        ...commonItems,
-      ];
-});
+        ...MoreDropdownLinkItems,
+      ],
+);
 const menu = ref(false);
 </script>
 
