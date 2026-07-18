@@ -23,7 +23,7 @@ const { activeParameters, hiddenParameters, selectedHiddenIndex, trailingMessage
 const { selectNextHiddenParameter, selectPreviousHiddenParameter } = slashCommandStore;
 const input = useTemplateRef("input");
 const optionsLabel = computed(
-  () => `+${hiddenParameters.length} ${hiddenParameters.length === 1 ? "option" : "options"}`,
+  () => `+${hiddenParameters.value.length} ${hiddenParameters.value.length === 1 ? "option" : "options"}`,
 );
 
 watch(

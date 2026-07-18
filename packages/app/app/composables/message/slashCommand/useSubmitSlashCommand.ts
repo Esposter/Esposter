@@ -25,7 +25,9 @@ export const useSubmitSlashCommand = () => {
       if (isRequired)
         setErrors(
           name,
-          slashCommandParameterValueSchema.safeParse(parameterValues.value[name]).success ? [] : [REQUIRED_ERROR_MESSAGE],
+          slashCommandParameterValueSchema.safeParse(parameterValues.value[name]).success
+            ? []
+            : [REQUIRED_ERROR_MESSAGE],
         );
 
     if (missingRequiredParameters.length > 0) {
@@ -33,7 +35,10 @@ export const useSubmitSlashCommand = () => {
         ({ name }) => !activeParameterNames.value.includes(name),
       );
       if (hiddenMissingParameters.length > 0)
-        activeParameterNames.value = [...activeParameterNames.value, ...hiddenMissingParameters.map(({ name }) => name)];
+        activeParameterNames.value = [
+          ...activeParameterNames.value,
+          ...hiddenMissingParameters.map(({ name }) => name),
+        ];
       return;
     }
 
