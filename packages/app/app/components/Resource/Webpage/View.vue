@@ -3,12 +3,19 @@ import { ResourceType } from "@esposter/db-schema";
 
 interface ResourceWebpageViewProps {
   id: string;
+  version?: number;
 }
 
-const { id } = defineProps<ResourceWebpageViewProps>();
+const { id, version } = defineProps<ResourceWebpageViewProps>();
 const { $trpc } = useNuxtApp();
-const { content, name } = await useReadPublishedResourceContent(ResourceType.Webpage, id, () =>
-  $trpc.webpage.readPublishedResourceContent.query(id),
+const { content, name } = await useReadPublishedResourceContent(
+  ResourceType.Webpage,
+  id,
+  () =>
+    version
+      ? $trpc.webpage.readPublishedVersionContent.query({ id, version })
+      : $trpc.webpage.readPublishedResourceContent.query(id),
+  version,
 );
 // The standalone render is captured at save time, so the published webpage serves without GrapesJS
 const srcdoc = `<style>${content.css ?? ""}</style>${content.html ?? ""}`;

@@ -1,4 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { PublishHistoryVersion } from "#shared/models/resource/PublishHistoryVersion";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { Context } from "@@/server/trpc/context";
 import type { Clause, Resource } from "@esposter/db-schema";
@@ -16,6 +17,8 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
+import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
+import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -45,6 +48,11 @@ import { and, count, desc, eq, exists, gte, ilike, inArray, isNull, lte, notExis
 import { z } from "zod";
 
 const readResourceInputSchema = selectResourceSchema.pick({ id: true });
+
+const restorePublishedVersionInputSchema = z.object({
+  ...readResourceInputSchema.shape,
+  version: z.int().positive(),
+});
 
 const resourceFilterInputSchema = z.object({
   // Hydrates the Home Recent tab from the per-device localStorage view list
@@ -273,6 +281,11 @@ export const resourceRouter = router({
         .limit(MAX_READ_LIMIT)
     ).map(({ resource }) => resource),
   ),
+  // Snapshot versions come from a blob prefix listing — no history table, since the {id}/published/{n}
+  // blobs are already the source of truth
+  readPublishHistory: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<PublishHistoryVersion[]>(
+    ({ ctx }) => readPublishHistory(ctx.resource.id),
+  ),
   readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query(({ ctx }) => ctx.resource),
   readResources: standardAuthedProcedure
     .input(readResourcesInputSchema.prefault({}))
@@ -297,6 +310,35 @@ export const resourceRouter = router({
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
+  // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
+  // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
+  // re-publish, mirroring the recycle bin's restore-returns-a-Draft rule
+  restorePublishedVersion: getOwnerProcedure(undefined, restorePublishedVersionInputSchema, "id").mutation<Resource>(
+    async ({ ctx, input: { id, version } }) => {
+      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+      // One transaction so a failed copy rolls the contentVersion bump back, keeping Postgres and blob storage consistent
+      return ctx.db.transaction(async (tx) => {
+        const restoredResource = requireMutation(
+          (
+            await tx
+              .update(resources)
+              .set({ contentVersion: sql`${resources.contentVersion} + 1` })
+              .where(eq(resources.id, id))
+              .returning()
+          )[0],
+          Operation.Update,
+          DatabaseEntityType.Resource,
+          id,
+        );
+        await copyBlob(
+          containerClient,
+          `${containerClient.url}/${getPublishedContentBlobName(id, version)}`,
+          getContentBlobName(id),
+        );
+        return restoredResource;
+      });
+    },
+  ),
   restoreResource: getOwnerProcedure(undefined, readResourceInputSchema, "id", true).mutation<Resource>(
     async ({ ctx, input: { id } }) => {
       // Names are not unique, so a restore can never conflict

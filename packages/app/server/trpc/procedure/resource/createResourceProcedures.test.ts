@@ -222,6 +222,33 @@ describe("createResourceProcedures", () => {
     expect(publishedContent.content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
   });
 
+  test("reads an older published version's content for the owner", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const firstDashboard = new Dashboard({ visuals: [new Visual()] });
+    await dashboardCaller.saveResourceContent({ content: firstDashboard, contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 1, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    const firstVersion = await dashboardCaller.readPublishedVersionContent({ id: newResource.id, version: 1 });
+
+    // The v1 snapshot survives republishing to v2, so the owner can still read it back
+    expect(firstVersion.name).toBe(name);
+    expect(firstVersion.content).toStrictEqual(jsonDateParse(JSON.stringify(firstDashboard)));
+  });
+
+  test("fails read published version content with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      dashboardCaller.readPublishedVersionContent({ id: newResource.id, version: 1 }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
   test("bumps publish version on republish", async () => {
     expect.hasAssertions();
 
@@ -302,6 +329,8 @@ describe("createResourceProcedures", () => {
     expect(nonPublishableProcedures).not.toContain("unpublishResource");
     expect(nonPublishableProcedures).not.toContain("readResourcePublication");
     expect(nonPublishableProcedures).not.toContain("readPublishedResourceContent");
+    expect(publishableProcedures).toContain("readPublishedVersionContent");
+    expect(nonPublishableProcedures).not.toContain("readPublishedVersionContent");
     // View counting rides the publishable capability, so it is gated by the same seam
     expect(publishableProcedures).toContain("readResourceViewCount");
     expect(nonPublishableProcedures).not.toContain("readResourceViewCount");

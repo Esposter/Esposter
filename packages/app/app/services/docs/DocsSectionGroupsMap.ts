@@ -57,6 +57,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "tags",
       "recycle-bin",
       "activity-log",
+      "publish-history",
       "shell-cohesion",
       "resource-consolidation",
     ],

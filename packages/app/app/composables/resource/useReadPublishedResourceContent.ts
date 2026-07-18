@@ -10,8 +10,9 @@ export const useReadPublishedResourceContent = async <T>(
   type: ResourceType,
   id: Resource["id"],
   read: () => Promise<T>,
+  version?: number,
 ) => {
-  const { data } = await useAsyncData(AsyncDataKey.ReadPublishedResourceContent(type, id), read);
+  const { data } = await useAsyncData(AsyncDataKey.ReadPublishedResourceContent(type, id, version), read);
   if (!data.value)
     throw createError({ statusCode: 404, statusMessage: `${ResourceDefinitionMap[type].title} not found` });
   return data.value;
