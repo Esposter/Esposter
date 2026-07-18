@@ -13,6 +13,7 @@ const { createAlert } = alertStore;
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
+const { resetForward } = forwardStore;
 const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
 const forward = computed(() => items.value.find((m) => m.rowKey === rowKey.value));
 const creator = useCreator(forward);
@@ -61,10 +62,8 @@ const forwardMessage = async () => {
           await navigateTo(RoutePath.Messages(takeOne(roomIds.value)));
           createAlert("Message forwarded!", "success", { icon: "mdi-share", location: "top center" });
         }
-        dialog.value = false;
+        resetForward();
         searchQuery.value = "";
-        roomIds.value = [];
-        messageInput.value = "";
       },
     },
   );
