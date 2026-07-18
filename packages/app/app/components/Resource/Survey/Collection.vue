@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MAX_CLOSED_MESSAGE_LENGTH } from "#shared/services/resource/survey/constants";
+import { DEFAULT_CLOSED_MESSAGE, MAX_CLOSED_MESSAGE_LENGTH } from "#shared/services/resource/survey/constants";
 import { SurveyResponseModeItemCategoryDefinitions } from "@/services/resource/survey/SurveyResponseModeItemCategoryDefinitions";
 import { useSurveyStore } from "@/store/survey";
 import { SurveyResponseMode } from "@esposter/db-schema";
@@ -34,7 +34,7 @@ const save = async () => {
         v-if="!cloned.isAcceptingResponses"
         v-model="cloned.closedMessage"
         label="Closed message"
-        placeholder="This survey is no longer accepting responses."
+        :placeholder="DEFAULT_CLOSED_MESSAGE"
         :counter="MAX_CLOSED_MESSAGE_LENGTH"
         :disabled="isPending"
         rows="2"

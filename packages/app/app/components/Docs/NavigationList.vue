@@ -6,6 +6,7 @@ interface NavigationListProps {
 }
 
 const { items } = defineProps<NavigationListProps>();
+const route = useRoute();
 </script>
 
 <template>
@@ -14,9 +15,15 @@ const { items } = defineProps<NavigationListProps>();
       <template #activator="{ props: activatorProps }">
         <v-list-item :="activatorProps" :title="item.title" />
       </template>
-      <v-list-item v-if="item.page !== false" title="Overview" :to="item.path" exact />
+      <v-list-item
+        v-if="item.page !== false"
+        link
+        :active="route.path === item.path"
+        title="Overview"
+        @click="navigateTo(item.path)"
+      />
       <DocsNavigationList :items="item.children" />
     </v-list-group>
-    <v-list-item v-else :title="item.title" :to="item.path" />
+    <v-list-item v-else link :active="route.path === item.path" :title="item.title" @click="navigateTo(item.path)" />
   </template>
 </template>

@@ -37,8 +37,8 @@ const setSoundSetting = (scene: SceneWithPlugins, soundSetting: SoundSetting) =>
   scene.sound.setMute(soundSetting === SoundSetting.Off);
 };
 
-const setVolumePercentage = (scene: SceneWithPlugins, volumePercentage: number) => {
-  scene.sound.setVolume(volumePercentage / 100);
+const setVolumePercentage = (scene: SceneWithPlugins, targetVolumePercentage: number) => {
+  scene.sound.setVolume(targetVolumePercentage / 100);
 };
 
 watch(

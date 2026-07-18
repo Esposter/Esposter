@@ -21,13 +21,13 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
   const expectedCount = map.width * map.height * 4;
 
   for (const node of $$) {
-    const tmxNodeType = node["#name"] as TMXNodeType;
+    const tmxNodeType = node["#name"];
     switch (tmxNodeType) {
       case TMXNodeType.Data:
         break;
       case TMXNodeType.EditorSettings:
         if (!node.$$) break;
-        map.editorsettings = Object.assign({}, ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })));
+        map.editorsettings = Object.assign({}, ...node.$$.map((n) => ({ [n["#name"]]: n.$ })));
         break;
       case TMXNodeType.Export:
       case TMXNodeType.Image:

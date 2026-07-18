@@ -2,12 +2,13 @@ import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { Editor, ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getResult } from "@esposter/shared";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const route = useRoute();
-  const { load, readContent, resource, save } = useResource(() =>
-    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
-  );
+  const { load, readContent, resource, save } = useResource(() => getRouteParamString(route.params.id));
   // Cast avoids the excessively deep UnwrapRef instantiation on the nested GrapesJS project types
   const content = ref(new EmailEditor()) as Ref<EmailEditor>;
   // The live GrapesJS editor, set by the blade — the export command (command bar) reads it from here
@@ -20,9 +21,15 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     content.value = new EmailEditor(data ?? undefined);
     return content.value;
   };
-  // GrapesJS project data doesn't know about the dataset binding, so saves carry it over
-  const saveEmailEditor = async (projectData: ProjectData) => {
-    content.value = new EmailEditor({ ...projectData, datasetReference: datasetReference.value });
+  // GrapesJS project data doesn't know about the dataset binding, so saves carry it over; the compiled
+  // MJML is captured alongside it because only the client editor can compile it for the published web view.
+  // A failed compile must not drop the save, so the last captured html rides along instead
+  const saveEmailEditor = async (projectData: ProjectData, editorInstance: Editor) => {
+    const html = getResult(() => getEmailHtml(editorInstance)).match(
+      (newHtml) => newHtml,
+      () => content.value.html,
+    );
+    content.value = new EmailEditor({ ...projectData, datasetReference: datasetReference.value, html });
     await save(content.value);
   };
   const saveDatasetReference = async (newDatasetReference: DatasetReference | undefined) => {

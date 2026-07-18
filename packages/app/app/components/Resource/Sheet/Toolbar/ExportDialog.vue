@@ -25,8 +25,8 @@ const { selectedRowIds } = storeToRefs(rowStore);
 const availableColumnIds = computed(() => dataSource.value.columns.map(({ id }) => id));
 const selectedColumnIds = ref<string[]>([]);
 const displayedSelectedColumnIds = computed(() => {
-  const displayedSelectedColumnIds = selectedColumnIds.value.filter((id) => availableColumnIds.value.includes(id));
-  return displayedSelectedColumnIds.length > 0 ? displayedSelectedColumnIds : availableColumnIds.value;
+  const filteredColumnIds = selectedColumnIds.value.filter((id) => availableColumnIds.value.includes(id));
+  return filteredColumnIds.length > 0 ? filteredColumnIds : availableColumnIds.value;
 });
 </script>
 

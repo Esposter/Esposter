@@ -4,7 +4,7 @@ import { serializeKey } from "@/services/azure/table/serializeKey";
 import { SearchOperator, serializeValue, UnaryOperator } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-export const serializeClause = (clause: Clause<Record<string, unknown>>): string => {
+export const serializeClause = (clause: Clause<Record<string, unknown>>, isTableFilter = false): string => {
   clause.key = serializeKey(clause.key);
 
   if (clause.operator === SearchOperator.arrayContains) {
@@ -17,6 +17,6 @@ export const serializeClause = (clause: Clause<Record<string, unknown>>): string
   }
 
   const { key, not, operator, value } = clause;
-  const baseClause = `${key} ${operator} ${serializeValue(value)}`;
+  const baseClause = `${key} ${operator} ${serializeValue(value, isTableFilter)}`;
   return not ? `${UnaryOperator.not}(${baseClause})` : baseClause;
 };

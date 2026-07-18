@@ -4,6 +4,8 @@ import { ID_SEPARATOR } from "@esposter/shared";
 const VALUE_REGEX = [
   true,
   false,
+  // Azure Table datetime'<iso>' literals
+  String.raw`datetime'[^']*'`,
   // ISO-8601 datetimes
   String.raw`\d{4}-\d{2}-\d{2}T[^\s]+`,
   String(null),

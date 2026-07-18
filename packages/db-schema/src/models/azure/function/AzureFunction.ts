@@ -3,5 +3,6 @@ export enum AzureFunction {
   ProcessPushNotification = "ProcessPushNotification",
   ProcessScheduledMessageJob = "ProcessScheduledMessageJob",
   ProcessWebhook = "ProcessWebhook",
+  PurgeDeletedResources = "PurgeDeletedResources",
   PushWebhook = "PushWebhook",
 }

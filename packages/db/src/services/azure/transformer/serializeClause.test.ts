@@ -12,6 +12,18 @@ describe(serializeClause, () => {
     ).toBe(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("")}`);
   });
 
+  test("serializes Date as table filter datetime literal", () => {
+    expect.hasAssertions();
+
+    const date = new Date(0);
+
+    expect(
+      serializeClause({ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: date }, true),
+    ).toBe(
+      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} datetime'${date.toISOString()}'`,
+    );
+  });
+
   test(`serializes ${SearchOperator.arrayContains} with simple collection key`, () => {
     expect.hasAssertions();
 

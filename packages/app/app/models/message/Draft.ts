@@ -7,5 +7,7 @@ export interface Draft {
 
 export const draftSchema = z.object({
   content: z.string(),
-  updatedAt: z.date(),
+  // Drafts are read back from localStorage with plain JSON.parse, so the persisted ISO string is
+  // Coerced here rather than blanket-revived — a draft body that is itself an ISO datetime stays a string.
+  updatedAt: z.coerce.date(),
 }) satisfies z.ZodType<Draft>;

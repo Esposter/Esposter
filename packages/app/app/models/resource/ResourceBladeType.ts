@@ -4,6 +4,8 @@
 export enum ResourceBladeType {
   Overview = "overview",
   Editor = "editor",
+  Activity = "activity",
+  PublishHistory = "publish-history",
 }
-// Set iteration preserves the declaration order, so the nav renders Overview → Editor.
+// Set iteration preserves the declaration order, so the nav renders Overview → Editor → Activity.
 export const ResourceBladeTypes: ReadonlySet<ResourceBladeType> = new Set(Object.values(ResourceBladeType));

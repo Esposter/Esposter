@@ -17,9 +17,10 @@ const { mutualRooms } = defineProps<ProfileCardMutualRoomsProps>();
       <v-chip
         v-for="{ id, image, name } of mutualRooms"
         :key="id"
-        :to="RoutePath.Messages(id)"
+        link
         density="compact"
         size="small"
+        @click="navigateTo(RoutePath.Messages(id))"
       >
         <StyledAvatar mr-1 :image :name="name ?? ''" :avatar-props="{ size: '1rem' }" />
         {{ name }}

@@ -1,14 +1,16 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
+import type { Resource } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { toRawDeep } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
   const route = useRoute();
   // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, save } = useResource(() =>
-    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
+  const { load, readContent, resource, save, setPersistedContent } = useResource(() =>
+    getRouteParamString(route.params.id),
   );
   const todoList = ref<TodoListResource>({ items: [] });
   const items = computed({
@@ -24,6 +26,13 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     todoList.value = (data as TodoListResource | undefined) ?? { items: [] };
   };
   const saveTodoList = () => save(todoList.value);
+  // Another device saved — adopt its content and contentVersion so this client renders live data
+  // And its own next save is not rejected as stale; the adopted content is what is now persisted
+  const storeSaveResourceContent = (content: TodoListResource, contentVersion: Resource["contentVersion"]) => {
+    todoList.value = content;
+    if (resource.value) resource.value.contentVersion = contentVersion;
+    setPersistedContent(content);
+  };
   const { createItem, deleteItem, updateItem } = createOperationData(items, ["id"], "Item");
   const { editedIndex, editedItem, editFormDialog, ...restEditFormData } = createEditFormData(
     computed(() => items.value),
@@ -55,6 +64,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     saveItem,
     saveTodoList,
     searchQuery,
+    storeSaveResourceContent,
     todoList,
   };
 });

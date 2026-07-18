@@ -7,10 +7,4 @@ import unocss from "@esposter/configuration/eslint/plugins/unocss.js";
 import vitest from "@esposter/configuration/eslint/plugins/vitest.js";
 import { defineConfig } from "eslint/config";
 
-export default defineConfig(depend, importPlugin, neverthrow, perfectionist, pinia, unocss, vitest, {
-  rules: {
-    curly: ["error", "multi"],
-    eqeqeq: "error",
-    "object-shorthand": ["error", "always"],
-  },
-});
+export default defineConfig(depend, importPlugin, neverthrow, perfectionist, pinia, unocss, vitest);

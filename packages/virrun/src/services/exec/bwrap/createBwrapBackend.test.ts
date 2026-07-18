@@ -65,7 +65,7 @@ describe(createBwrapBackend, () => {
     spawn.mockImplementation(() => createFakeChild({ stderr: commandStderr }));
     const message = (await getResultAsync(() => exec("pipe"))).match(
       () => "",
-      ({ message }) => message,
+      ({ message: errorMessage }) => errorMessage,
     );
 
     expect(message).toBe(
@@ -81,7 +81,7 @@ describe(createBwrapBackend, () => {
     spawn.mockImplementation(() => createFakeChild({ stderr: commandStderr }));
     const message = (await getResultAsync(() => exec("pipe"))).match(
       () => "",
-      ({ message }) => message,
+      ({ message: errorMessage }) => errorMessage,
     );
 
     expect(message).toBe(

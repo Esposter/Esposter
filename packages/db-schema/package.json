@@ -51,6 +51,9 @@
     "test": "vitest",
     "typecheck": "tsgo"
   },
+  "dependencies": {
+    "dayjs": "catalog:"
+  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@trpc/server": "catalog:",

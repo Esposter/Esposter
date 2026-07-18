@@ -4,6 +4,7 @@ import type { Editor } from "grapesjs";
 
 import { downloadFile } from "@/services/app/downloadFile";
 import { sanitizeFilename } from "@/services/app/sanitizeFilename";
+import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
 import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFields";
 import { strToU8, zipSync } from "fflate";
 
@@ -13,7 +14,7 @@ export const exportPersonalizedHtml = (
   resource: Resource,
   rows: Record<string, ColumnValue>[],
 ): number => {
-  const { html } = editor.runCommand("mjml-code-to-html") as { html: string };
+  const html = getEmailHtml(editor);
   const filename = sanitizeFilename(resource.name);
   const zip = zipSync(
     Object.fromEntries(

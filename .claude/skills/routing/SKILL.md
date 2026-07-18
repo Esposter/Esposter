@@ -1,18 +1,21 @@
 ---
 name: routing
-description: Esposter routing conventions — links via :to/NuxtLink (raw <a> banned), navigateTo for imperative navigation, useRouter for reactive route reads, route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
+description: Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink :to only (raw <a> and Vuetify :to both lint-banned; Vuetify navigates via @click navigateTo), navigateTo for imperative navigation, useRouter for reactive route reads, route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
 ---
 
 # Routing
 
-## Links — `:to` / `NuxtLink`, Never a Raw `<a>`
+## Links — `NuxtLink` / `NuxtInvisibleLink`, Never a Raw `<a>` or Vuetify `:to`
 
-- Internal: `<NuxtLink :to>`, or any Vuetify component with router integration (`v-btn`, `v-card`, `v-list-item`, `v-breadcrumbs`) — see the `vuetify` skill's Navigation section for passing `:to` through wrapper props.
+Declarative links use a Nuxt-native link component only. `:to` (or static `to=`) is allowed **only** on `NuxtLink`, `NuxtInvisibleLink`, and Vue's `<Teleport>` (different semantics).
+
+- Internal: `<NuxtLink :to>`, or `<NuxtInvisibleLink :to>` when the link should inherit surrounding styling.
 - External: `<NuxtLink :to external target="_blank">`.
 - In-page anchor: `<NuxtInvisibleLink :to="{ hash }">` (a `NuxtLink` clone that strips default link styling).
 - A link-styled control with no destination is a `<span text-info underline cursor-pointer>`, not an anchor.
+- **Vuetify components never take `:to`** (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) — their router integration bypasses Nuxt-level navigation and misbehaves in Nuxt. Navigate them imperatively with an inline `@click="navigateTo(...)"` (`v-card`/`v-list-item` also need the boolean `link` prop to keep the pointer/hover affordance). Route targets still come from `RoutePath`, never string-built.
 
-A raw `<a>` is enforced by `vue/no-restricted-html-elements` (`packages/configuration/eslint/overrides/vueRules.js`); its message lists the replacement for each case. Full standard: [navigation](/docs/architecture/navigation).
+Both bans are enforced by `packages/configuration/eslint/overrides/vueRules.js` — a raw `<a>` via `vue/no-restricted-html-elements`, and Vuetify `:to`/`to=` via `vue/no-restricted-syntax`. Full standard: [navigation](/docs/architecture/navigation).
 
 ## Imperative Navigation — `navigateTo`
 
@@ -80,6 +83,6 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
 
 **Rules:**
 
-- `<v-list-item :to>` / `<NuxtLink to>` are already SPA navigations — switching them to `navigateTo` does **not** fix a remount refetch. The remount comes from the per-segment page key, so fix it at the page level.
+- A `v-list-item` `@click="navigateTo(...)"` / a `<NuxtLink to>` are already SPA navigations — they do **not** cause (or fix) a remount refetch. The remount comes from the per-segment page key, so fix it at the page level.
 - The **keyed/stable** segment is a plain `route.params.x as string` (safe because `validate` gated it and the page remounts when it changes). Only the **changing** segment needs a `computed` — a captured `const` for it goes stale after reuse.
 - `takeOne` (`@esposter/shared`) is the `noUncheckedIndexedAccess` workaround for **array / first-element** access — not for `string | string[]` route params, which `validate` + a cast already handle.

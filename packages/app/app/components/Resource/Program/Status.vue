@@ -5,6 +5,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useProgramStore } from "@/store/resource/program";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { getResultAsync } from "@esposter/shared";
 
 const route = useRoute();
@@ -14,7 +15,7 @@ const { loadContent } = programStore;
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const executeGenerateMutation = useMutation();
-const id = computed(() => (Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? "")));
+const id = computed(() => getRouteParamString(route.params.id));
 const statusRows = ref<ProgramStatusRow[]>([]);
 const isLoading = ref(true);
 const respondedCount = computed(() => statusRows.value.filter(({ isResponded }) => isResponded).length);

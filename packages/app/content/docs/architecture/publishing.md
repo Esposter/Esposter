@@ -7,7 +7,7 @@ description: The Publishable capability — versioned publish copy plus a public
 
 The **Publishable capability** ([/docs/architecture/resources](/docs/architecture/resources)): the standard for making a resource publicly shareable — a versioned publish copy plus a public, rate-limited, read-only route. Whenever a product needs "share this with people who aren't logged in", it opts into this capability — never ad-hoc public reads of working data.
 
-Adopters: Dashboard, Survey, Webpage. A type opts in by declaring `publishable: true` in `ResourceDefinitionMap`; the derived `PublishableResourceType` union then _requires_ it to provide a view component and _grants_ it the publish procedures — a non-publishable type has no publish endpoints at the type level.
+Adopters: Dashboard, Email, Flowchart, Survey, Webpage. A type opts in by declaring `publishable: true` in `ResourceDefinitionMap`; the derived `PublishableResourceType` union then _requires_ it to provide a view component and _grants_ it the publish procedures — a non-publishable type has no publish endpoints at the type level.
 
 ## How it works
 
@@ -45,14 +45,15 @@ sequenceDiagram
 | `readResourcePublication`      | owner                | current publish state (for editor UI), or undefined        |
 | `readPublishedResourceContent` | public, rate-limited | serve the publish copy                                     |
 
-Two hooks on `createResourceProcedures` support publishing needs:
+Three hooks on `createResourceProcedures` support publishing needs:
 
-- `transformPublishedContent(ctx, resource, content)` — rewrite content at publish time with the **owner's** authority. Dashboard resolves every bound visual and bakes the result into `VisualDatasetBinding.snapshot` (public viewers render the static snapshot, never resolve references — live viewer data stays [deferred](/docs/platform/deferred/realtime-dataset-refresh)). Survey clones referenced asset blobs into the publish directory and rewrites their URLs.
-- `transformReadContent(ctx, resource, content)` — rewrite on owner read (Survey refreshes SAS asset URLs).
+- `transformPublishedContent(ctx, resource, content)` — rewrite content at publish time with the **owner's** authority. Dashboard resolves every bound visual and bakes the result into `VisualDatasetBinding.snapshot` (public viewers render the static snapshot, never resolve references — live viewer data stays [deferred](/docs/platform/deferred/realtime-dataset-refresh)). Survey and Webpage use the generic `transformPublishedBlobUrls`, which clones referenced asset blobs into the publish directory and rewrites their URLs ([resource file assets](/docs/platform/resource-file-assets)); Email composes it with a guard that rejects publishing without compiled MJML html and strips the owner-only `datasetReference` so the snapshot can never leak it.
+- `transformPublicReadContent(ctx, resource, content)` — rewrite on the anonymous public read. Every FileAssets adopter re-signs baked asset SAS urls through the generic `transformReadBlobUrls` so a published page never breaks past a SAS expiry; Survey additionally merges live collection settings over the immutable snapshot.
+- `transformReadContent(ctx, resource, content)` — rewrite on owner read (the same `transformReadBlobUrls` re-sign against the working-copy blobs).
 
 ## Route
 
-One dynamic public page, `pages/view/[type]/[id].vue`, dispatches through `ViewComponentMap: Record<PublishableResourceType, Component>` — a missing renderer is a compile error. The survey respondent experience is simply Survey's published view (an interactive renderer that writes responses). View pages set OG meta tags (`ogTitle`, `ogUrl`) so a published URL unfurls when shared. A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally.
+One dynamic public page, `pages/view/[type]/[id].vue`, dispatches through `ViewComponentMap: Record<PublishableResourceType, Component>` — a missing renderer is a compile error. The survey respondent experience is simply Survey's published view (an interactive renderer that writes responses); Email and Webpage serve their save-time captured HTML through a sandboxed iframe, and Flowchart a read-only VueFlow render. View pages set OG meta tags (`ogTitle`, `ogUrl`) so a published URL unfurls when shared. A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally.
 
 ## Key files
 

@@ -4,7 +4,6 @@ import type { PanzoomObject } from "@panzoom/panzoom";
 import { MAX_MERMAID_SCALE, MIN_MERMAID_SCALE } from "@/services/docs/constants";
 import { getResultAsync } from "@esposter/shared";
 import Panzoom from "@panzoom/panzoom";
-import mermaid from "mermaid";
 import { useTheme } from "vuetify";
 
 interface MermaidProps {
@@ -25,12 +24,18 @@ watch(isFullscreen, () => {
 });
 
 onMounted(async () => {
-  mermaid.initialize({ startOnLoad: false, theme: theme.global.current.value.dark ? "dark" : "default" });
   const result = await getResultAsync(async () => {
+    // Imported lazily after mount so the multi-megabyte mermaid chunk never resolves inside the docs
+    // Page's Suspense: a failed chunk (stale PWA/browser cache after a redeploy) would otherwise reject
+    // The pending tree and silently kill doc→doc navigation — the route reacts before the new tree
+    // Swaps in (https://github.com/nuxt/nuxt/issues/14456), and Nuxt's chunk-error auto-reload only
+    // Catches clean fetch failures, not stale-cache eval errors (https://github.com/nuxt/nuxt/issues/23612)
+    const { default: mermaid } = await import("mermaid");
+    mermaid.initialize({ startOnLoad: false, theme: theme.global.current.value.dark ? "dark" : "default" });
     const { svg } = await mermaid.render(`mermaid-${id}`, code);
     return svg;
   });
-  // On a render failure we keep showing the raw diagram source
+  // On a load or render failure we keep showing the raw diagram source
   result.match((svg) => {
     if (!container.value) return;
     container.value.innerHTML = svg;

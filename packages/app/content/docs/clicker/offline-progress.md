@@ -9,13 +9,14 @@ When the save loads, the game grants points for time spent away — the idle-gam
 
 ## How it works
 
-`useReadClicker` calls the offline-progress store's `applyOfflineProgress` immediately after hydrating the save (both the authed blob path and the anonymous localStorage path). The award is `allBuildingPower × cappedSeconds × OFFLINE_RATE`, where the elapsed time is capped at `OFFLINE_CAP` (one day) and `OFFLINE_RATE` (0.5) keeps active play strictly better than idling offline. The points go through `incrementPoints`, and each bought building's lifetime `producedValue` receives its proportional share, so the stats panel stays consistent.
+`useReadClicker` calls the offline-progress store's `applyOfflineProgress` immediately after hydrating the save (both the authed blob path and the anonymous localStorage path). The award is `allBuildingPower × cappedSeconds × OFFLINE_RATE`, where the elapsed time is capped at `OFFLINE_CAP` (one day) and `OFFLINE_RATE` (0.5) keeps active play strictly better than idling offline. The points go through `incrementPoints`, and each bought building's lifetime `producedValue` receives its proportional share, so the stats panel stays consistent. The award then saves immediately — the awarded fields are excluded from the autosave watcher, so persisting right away is what stamps a fresh `updatedAt` and keeps a reload from re-awarding the same offline window.
 
 ```mermaid
 flowchart TD
   load[useReadClicker: save hydrated] -->|updatedAt| apply[applyOfflineProgress]
   apply -->|allBuildingPower × capped seconds × OFFLINE_RATE| points[incrementPoints]
   apply -->|per-building share| produced[boughtBuilding.producedValue]
+  apply -->|stamps updatedAt| save[saveClicker]
   apply -->|elapsed ≥ MIN_OFFLINE_DIALOG_ELAPSED| dialog[OfflineProgressDialog welcome-back summary]
 ```
 

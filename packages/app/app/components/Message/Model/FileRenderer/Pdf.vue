@@ -5,6 +5,8 @@ import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { VPdfViewer } from "@vue-pdf-viewer/viewer";
 import PdfWorker from "pdfjs-dist/build/pdf.worker?url";
 import VuePdfEmbed from "vue-pdf-embed";
+import "vue-pdf-embed/dist/styles/annotationLayer.css";
+import "vue-pdf-embed/dist/styles/textLayer.css";
 
 const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
 const isDark = useIsDark();
@@ -42,8 +44,3 @@ const { cloned: darkMode } = useCloned(isDark);
     </StyledCard>
   </v-dialog>
 </template>
-
-<style lang="scss">
-@use "vue-pdf-embed/dist/styles/annotationLayer.css";
-@use "vue-pdf-embed/dist/styles/textLayer.css";
-</style>

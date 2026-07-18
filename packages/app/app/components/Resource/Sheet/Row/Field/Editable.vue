@@ -21,7 +21,9 @@ const { column, columns, item, rowIndex, rows } = defineProps<EditableProps>();
 const updateRow = useUpdateRow();
 const cellStore = useCellStore();
 const { clearFocus, requestFocus } = cellStore;
-const editableColumns = computed(() => columns.filter((column) => checkIsEditableColumnValue(column)));
+const editableColumns = computed(() =>
+  columns.filter((candidateColumn) => checkIsEditableColumnValue(candidateColumn)),
+);
 const localValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
 let isSubmitted = false;
 

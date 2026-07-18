@@ -9,7 +9,6 @@ export default {
       },
     },
   ],
-  "@typescript-eslint/no-unsafe-function-type": "off",
   "@typescript-eslint/no-unused-expressions": [
     "error",
     {
@@ -17,6 +16,4 @@ export default {
       allowTernary: true,
     },
   ],
-  "@typescript-eslint/no-useless-default-assignment": "off",
-  "@typescript-eslint/unified-signatures": "off",
 };

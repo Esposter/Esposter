@@ -42,10 +42,10 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const { user } = await setupFriendship();
-    const friends = await friendCaller.readFriends();
+    const fetchedFriends = await friendCaller.readFriends();
 
-    expect(friends).toHaveLength(1);
-    expect(takeOne(friends).id).toBe(user.id);
+    expect(fetchedFriends).toHaveLength(1);
+    expect(takeOne(fetchedFriends).id).toBe(user.id);
   });
 
   test("reads friends as receiver", async () => {
@@ -53,10 +53,10 @@ describe("friend", () => {
 
     const { user, userId } = await setupFriendship();
     await mockSessionOnce(mockContext.db, user);
-    const friends = await friendCaller.readFriends();
+    const fetchedFriends = await friendCaller.readFriends();
 
-    expect(friends).toHaveLength(1);
-    expect(takeOne(friends).id).toBe(userId);
+    expect(fetchedFriends).toHaveLength(1);
+    expect(takeOne(fetchedFriends).id).toBe(userId);
   });
 
   test("deletes friend", async () => {
@@ -65,9 +65,9 @@ describe("friend", () => {
     const { user } = await setupFriendship();
     await friendCaller.deleteFriend(user.id);
 
-    const friends = await friendCaller.readFriends();
+    const fetchedFriends = await friendCaller.readFriends();
 
-    expect(friends).toHaveLength(0);
+    expect(fetchedFriends).toHaveLength(0);
   });
 
   test("fails to delete self as friend", async () => {

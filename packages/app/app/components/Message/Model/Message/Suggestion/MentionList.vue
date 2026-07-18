@@ -11,8 +11,8 @@ import { MentionType, takeOne } from "@esposter/shared";
 const { command, items, query } =
   defineProps<SuggestionProps<BroadcastMentionItem | RoleMentionItem | User, MentionNodeAttributes>>();
 const title = computed(() => {
-  const title = "MEMBERS";
-  return query ? `${title} MATCHING ${SuggestionTrigger.Mention}${query}` : title;
+  const baseTitle = "MEMBERS";
+  return query ? `${baseTitle} MATCHING ${SuggestionTrigger.Mention}${query}` : baseTitle;
 });
 const selectedIndex = ref(0);
 const isRoleMentionItem = (item: BroadcastMentionItem | RoleMentionItem | User): item is RoleMentionItem =>

@@ -5,7 +5,7 @@ import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { RestError } from "@azure/storage-blob";
 import { AzureContainer } from "@esposter/db-schema";
-import { getResultAsync, jsonDateParse, streamToText } from "@esposter/shared";
+import { getResultAsync, streamToText } from "@esposter/shared";
 
 export const readResourceContent = async <TSchema extends z.ZodType>(
   contentSchema: TSchema,
@@ -23,5 +23,7 @@ export const readResourceContent = async <TSchema extends z.ZodType>(
     },
   );
   if (!readableStreamBody) return undefined;
-  return contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody)));
+  // Parse the blob as plain JSON: the content schema owns date coercion (z.coerce.date()) on its
+  // Genuine date fields, so ISO-datetime strings in free-text fields (e.g. Sheet cells) survive as strings.
+  return contentSchema.parse(JSON.parse(await streamToText(readableStreamBody)));
 };

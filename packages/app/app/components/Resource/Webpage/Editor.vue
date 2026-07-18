@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import type { Editor } from "grapesjs";
 
-import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
+import { GRAPES_JS_EDITOR_CONTAINER_ID, SURVEY_INVITE_BLOCK_CATEGORY } from "@/services/grapesjs/constants";
+import { setBlocks } from "@/services/grapesjs/setBlocks";
+import { createWebpageSurveyInviteBlocks } from "@/services/webpageEditor/createWebpageSurveyInviteBlocks";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
+import { ResourceType } from "@esposter/db-schema";
 import { usePlugin } from "grapesjs";
 import grapesJSBlocksBasic from "grapesjs-blocks-basic";
 import grapesJSComponentCountdown from "grapesjs-component-countdown";
 import grapesJSCustomCode from "grapesjs-custom-code";
 import grapesJSParserPostcss from "grapesjs-parser-postcss";
+import "grapesjs/dist/css/grapes.min.css";
 import grapesJSPluginExport from "grapesjs-plugin-export";
 import grapesJSPluginForms from "grapesjs-plugin-forms";
 import grapesJSPresetWebpage from "grapesjs-preset-webpage";
@@ -24,7 +28,9 @@ import jsBeautify from "js-beautify";
 const { css: cssFormat, html: htmlFormat } = jsBeautify;
 const webpageEditorStore = useWebpageEditorStore();
 const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
-await useGrapesJsEditor(
+const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => webpageEditorStore.resource?.id ?? "");
+const { publishedSurveys } = useReadPublishedSurveys();
+const { editor } = await useGrapesJsEditor(
   {
     load: () => readWebpageEditor(),
     store: (data, storeEditor) => saveWebpageEditor(data, { css: storeEditor.getCss(), html: storeEditor.getHtml() }),
@@ -57,9 +63,9 @@ await useGrapesJsEditor(
       }),
       grapesJSStyleBg,
       usePlugin(grapesJSPresetWebpage, {
-        modalImportContent: (editor: Editor) => {
-          const html = editor.getHtml();
-          const css = editor.getCss();
+        modalImportContent: (editorInstance: Editor) => {
+          const html = editorInstance.getHtml();
+          const css = editorInstance.getCss();
           return css ? `${htmlFormat(html)}<style>\n${cssFormat(css)}</style>` : htmlFormat(html);
         },
         modalImportLabel: "<div text-title-small mb-2.5>Paste here your HTML/CSS and click Import</div>",
@@ -361,16 +367,18 @@ await useGrapesJsEditor(
       ],
     },
   },
+  { upload: uploadFile },
 );
+
+watch([editor, publishedSurveys], ([newEditor, newPublishedSurveys]) => {
+  if (!newEditor) return;
+  setBlocks(newEditor, SURVEY_INVITE_BLOCK_CATEGORY, createWebpageSurveyInviteBlocks(newPublishedSurveys));
+});
 </script>
 
 <template>
   <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" h-full overflow-hidden />
 </template>
-
-<style lang="scss">
-@use "grapesjs/dist/css/grapes.min.css";
-</style>
 
 <style scoped lang="scss">
 :deep(.gjs-mdl-container) {

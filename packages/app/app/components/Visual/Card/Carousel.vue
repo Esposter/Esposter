@@ -91,17 +91,17 @@ const moveOneCard = () => {
 // Re-animate on every screen change to avoid cards getting stuck in weird positions.
 const { thresholds, width } = useVDisplay();
 const gap = computed<string>(() => {
-  let gap = 2;
-  if (width.value >= thresholds.value.xxl) gap = 6;
-  else if (width.value >= thresholds.value.xl) gap = 3;
-  return `${gap}rem`;
+  let gapSize = 2;
+  if (width.value >= thresholds.value.xxl) gapSize = 6;
+  else if (width.value >= thresholds.value.xl) gapSize = 3;
+  return `${gapSize}rem`;
 });
 // Each card from right -> left gains margin, multiplied by this breakpoint-dependent scale.
 const scale = computed<number>(() => {
-  let scale = 1;
-  if (width.value >= thresholds.value.xxl) scale = 2.5;
-  else if (width.value >= thresholds.value.xl) scale = 1.25;
-  return scale;
+  let scaleFactor = 1;
+  if (width.value >= thresholds.value.xxl) scaleFactor = 2.5;
+  else if (width.value >= thresholds.value.xl) scaleFactor = 1.25;
+  return scaleFactor;
 });
 const normalCardStyles = computed<CardStyleVariables[]>(() => {
   // Count the cards we care about, ignoring the moving card.

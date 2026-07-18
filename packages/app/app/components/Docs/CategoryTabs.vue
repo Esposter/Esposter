@@ -5,6 +5,7 @@ import type { ContentNavigationItem } from "@nuxt/content";
 import { DocsCategories } from "@/models/docs/DocsCategory";
 import { DocsCategoryIconMap } from "@/services/docs/DocsCategoryIconMap";
 import { getSectionCategory } from "@/services/docs/getSectionCategory";
+import { useLayoutStore } from "@/store/layout";
 import { RoutePath } from "@esposter/shared";
 
 interface CategoryTabsProps {
@@ -13,6 +14,8 @@ interface CategoryTabsProps {
 }
 
 const { activeCategory, sections } = defineProps<CategoryTabsProps>();
+const layoutStore = useLayoutStore();
+const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 // Each tab lands on its category's first section
 const categories = computed(() =>
   DocsCategories.map((category) => ({
@@ -24,8 +27,16 @@ const categories = computed(() =>
 
 <template>
   <div class="category-tabs" top="[--app-bar-height]" flex items-center sticky z-1>
+    <StyledTooltipIconButton
+      v-if="!isLeftDrawerOpenAuto"
+      :button-props="{ size: 'small' }"
+      icon="mdi-menu"
+      text="Show Navigation"
+      :tooltip-props="{ location: 'bottom' }"
+      @click="isLeftDrawerOpen = true"
+    />
     <v-tabs color="primary" :model-value="activeCategory ?? RoutePath.Docs" show-arrows>
-      <v-tab class="text-none" exact prepend-icon="mdi-home" :to="RoutePath.Docs" :value="RoutePath.Docs">
+      <v-tab class="text-none" prepend-icon="mdi-home" :value="RoutePath.Docs" @click="navigateTo(RoutePath.Docs)">
         Overview
       </v-tab>
       <v-tab
@@ -33,8 +44,8 @@ const categories = computed(() =>
         :key="category"
         class="text-none"
         :prepend-icon="DocsCategoryIconMap[category]"
-        :to="firstSection?.path"
         :value="category"
+        @click="firstSection && navigateTo(firstSection.path)"
       >
         {{ category }}
       </v-tab>

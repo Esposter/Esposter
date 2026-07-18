@@ -3,6 +3,7 @@ import type { ResourceDefinition } from "#shared/models/resource/ResourceDefinit
 import { dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
 import { emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { flowchartEditorSchema } from "#shared/models/flowchartEditor/data/FlowchartEditor";
+import { noteResourceSchema } from "#shared/models/resource/note/NoteResource";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
@@ -18,16 +19,22 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Dashboard,
   },
   [ResourceType.Email]: {
-    capabilities: { portable: true },
+    capabilities: { fileAssets: true, portable: true, publishable: true },
     contentSchema: emailEditorSchema,
     icon: "mdi-email-edit",
     title: ResourceType.Email,
   },
   [ResourceType.Flowchart]: {
-    capabilities: {},
+    capabilities: { publishable: true },
     contentSchema: flowchartEditorSchema,
     icon: "mdi-sitemap",
     title: ResourceType.Flowchart,
+  },
+  [ResourceType.Note]: {
+    capabilities: { publishable: true },
+    contentSchema: noteResourceSchema,
+    icon: "mdi-note-text",
+    title: ResourceType.Note,
   },
   [ResourceType.Program]: {
     capabilities: { datasetProvider: true },
@@ -42,7 +49,7 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Sheet,
   },
   [ResourceType.Survey]: {
-    capabilities: { datasetProvider: true, publishable: true },
+    capabilities: { datasetProvider: true, fileAssets: true, publishable: true },
     contentSchema: surveyResourceSchema,
     icon: "mdi-clipboard-list",
     title: ResourceType.Survey,
@@ -54,7 +61,7 @@ export const ResourceDefinitionMap = {
     title: "Todo List",
   },
   [ResourceType.Webpage]: {
-    capabilities: { publishable: true },
+    capabilities: { fileAssets: true, publishable: true },
     contentSchema: webpageEditorSchema,
     icon: "mdi-language-html5",
     title: ResourceType.Webpage,

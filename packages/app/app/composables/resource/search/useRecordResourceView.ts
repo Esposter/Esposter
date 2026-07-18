@@ -5,7 +5,8 @@ import { RECENT_RESOURCE_VIEWS_LIMIT } from "@/services/resource/search/constant
 import { pushRecent } from "@/services/resource/search/pushRecent";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 
-// Feeds the search dropdown's "Recently viewed" group — per-device by design (localStorage)
+// Feeds Home's Recent tab and the search dropdown's "Recently viewed" group.
+// Per-device by design (localStorage): a recent that differs per device is tolerable, unlike a favorite.
 export const useRecordResourceView = (resource: Ref<Resource | undefined>) => {
   const recentResourceViews = useLocalStorage<RecentResourceView[]>(LocalStorageKey.ResourceRecentViews, []);
 
@@ -14,7 +15,7 @@ export const useRecordResourceView = (resource: Ref<Resource | undefined>) => {
     const { id, name, type } = newResource;
     recentResourceViews.value = pushRecent(
       recentResourceViews.value,
-      { id, name, type },
+      { id, name, type, viewedAt: new Date().toISOString() },
       (a, b) => a.id === b.id,
       RECENT_RESOURCE_VIEWS_LIMIT,
     );

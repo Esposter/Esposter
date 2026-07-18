@@ -21,17 +21,38 @@ export const useResourceMutations = () => {
         };
       case ResourceType.Email:
         return {
+          deleteFile: (input) => $trpc.email.deleteFile.mutate(input),
           deleteResource: (input) => $trpc.email.deleteResource.mutate(input),
+          generateDownloadFileSasUrls: (input) => $trpc.email.generateDownloadFileSasUrls.query(input),
+          generateUploadFileSasEntities: (input) => $trpc.email.generateUploadFileSasEntities.query(input),
+          publishResource: (input) => $trpc.email.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.email.readResourceContent.query(input),
+          readResourcePublication: (input) => $trpc.email.readResourcePublication.query(input),
           saveResourceContent: (input) => $trpc.email.saveResourceContent.mutate(input as never),
+          unpublishResource: (input) => $trpc.email.unpublishResource.mutate(input),
           updateResource: (input) => $trpc.email.updateResource.mutate(input),
         };
       case ResourceType.Flowchart:
         return {
           deleteResource: (input) => $trpc.flowchart.deleteResource.mutate(input),
+          publishResource: (input) => $trpc.flowchart.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.flowchart.readResourceContent.query(input),
+          readResourcePublication: (input) => $trpc.flowchart.readResourcePublication.query(input),
           saveResourceContent: (input) => $trpc.flowchart.saveResourceContent.mutate(input as never),
+          unpublishResource: (input) => $trpc.flowchart.unpublishResource.mutate(input),
           updateResource: (input) => $trpc.flowchart.updateResource.mutate(input),
+        };
+      case ResourceType.Note:
+        return {
+          deleteResource: (input) => $trpc.note.deleteResource.mutate(input),
+          publishResource: (input) => $trpc.note.publishResource.mutate(input),
+          readResourceContent: (input) => $trpc.note.readResourceContent.query(input),
+          readResourcePublication: (input) => $trpc.note.readResourcePublication.query(input),
+          readResourceViewCount: (input) => $trpc.note.readResourceViewCount.query(input),
+          // Content is untyped at this cross-type dispatch; the calling store owns the concrete schema
+          saveResourceContent: (input) => $trpc.note.saveResourceContent.mutate(input as never),
+          unpublishResource: (input) => $trpc.note.unpublishResource.mutate(input),
+          updateResource: (input) => $trpc.note.updateResource.mutate(input),
         };
       case ResourceType.Program:
         return {
@@ -49,7 +70,10 @@ export const useResourceMutations = () => {
         };
       case ResourceType.Survey:
         return {
+          deleteFile: (input) => $trpc.survey.deleteFile.mutate(input),
           deleteResource: (input) => $trpc.survey.deleteResource.mutate(input),
+          generateDownloadFileSasUrls: (input) => $trpc.survey.generateDownloadFileSasUrls.query(input),
+          generateUploadFileSasEntities: (input) => $trpc.survey.generateUploadFileSasEntities.query(input),
           publishResource: (input) => $trpc.survey.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.survey.readResourceContent.query(input),
           readResourcePublication: (input) => $trpc.survey.readResourcePublication.query(input),
@@ -67,7 +91,10 @@ export const useResourceMutations = () => {
         };
       case ResourceType.Webpage:
         return {
+          deleteFile: (input) => $trpc.webpage.deleteFile.mutate(input),
           deleteResource: (input) => $trpc.webpage.deleteResource.mutate(input),
+          generateDownloadFileSasUrls: (input) => $trpc.webpage.generateDownloadFileSasUrls.query(input),
+          generateUploadFileSasEntities: (input) => $trpc.webpage.generateUploadFileSasEntities.query(input),
           publishResource: (input) => $trpc.webpage.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.webpage.readResourceContent.query(input),
           readResourcePublication: (input) => $trpc.webpage.readResourcePublication.query(input),

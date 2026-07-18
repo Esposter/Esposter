@@ -24,11 +24,11 @@ const { deleteNotifications, markAllAsRead } = notificationStore;
     <template #activator="{ props: menuProps }">
       <v-tooltip location="bottom" text="Notifications">
         <template #activator="{ props: tooltipProps }">
-          <v-avatar color="background">
+          <!-- The badge rides on the avatar itself (native badge prop wraps it in a v-badge) —
+            Nested inside, the avatar's circular overflow clip would cut the badge off -->
+          <v-avatar color="background" :badge="{ color: 'error', content: unreadCount, modelValue: unreadCount > 0 }">
             <v-btn aria-label="Notifications" icon :="mergeProps(menuProps, tooltipProps)">
-              <v-badge color="error" :content="unreadCount" :model-value="unreadCount > 0">
-                <v-icon icon="mdi-bell-outline" />
-              </v-badge>
+              <v-icon icon="mdi-bell-outline" />
             </v-btn>
           </v-avatar>
         </template>

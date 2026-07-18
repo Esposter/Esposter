@@ -75,7 +75,9 @@ const share = async () => {
       title="You're not in any rooms yet"
       description="Join or create a room in esbabbler and the public link can go straight there."
     >
-      <v-btn prepend-icon="mdi-open-in-new" variant="tonal" :to="RoutePath.MessagesIndex">Go to esbabbler</v-btn>
+      <v-btn prepend-icon="mdi-open-in-new" variant="tonal" @click="navigateTo(RoutePath.MessagesIndex)"
+        >Go to esbabbler</v-btn
+      >
     </StyledEmptyState>
     <div v-else flex flex-col gap-2>
       <v-select v-model="roomId" autofocus label="Room" :items="roomItems" />
