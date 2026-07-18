@@ -227,7 +227,6 @@ export const baseMessageRouter = router({
         roomIds.map(async (roomId) => {
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
-            // eslint-disable-next-line @typescript-eslint/no-misused-spread
             files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
             isForward: true,
             message: messageEntity.message,

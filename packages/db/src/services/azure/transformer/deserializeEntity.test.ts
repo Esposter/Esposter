@@ -33,7 +33,7 @@ describe(deserializeEntity, () => {
       partitionKey: "",
       rowKey: "",
       string: "",
-      // eslint-disable-next-line @typescript-eslint/no-misused-spread
+
       ...new ItemMetadata(),
     } as const satisfies Record<keyof ExcludeFunctionProperties<Entity>, SerializableValue>;
     const deserializedEntity = deserializeEntity(serializedEntity, Entity);

@@ -1,5 +1,5 @@
 // oxlint-disable no-control-regex, unicorn/no-hex-escape -- \x1b is the ANSI ESC this pattern matches, intentionally
-/* eslint-disable no-control-regex -- oxlint honours the directive above; eslint needs its own for the same ANSI ESC */
+
 import { describe } from "vitest";
 // Shared test helper: drops every ANSI SGR sequence from a string so a format-function assertion checks the message
 // Content alone, independent of whether color is on (isColorEnabled reads the ambient terminal/env, which differs
