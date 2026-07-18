@@ -18,10 +18,10 @@ const { friends } = storeToRefs(useFriendStore());
 const friendPicker = useTemplateRef("friendPicker");
 const selectedUserIds = ref<string[]>([]);
 const excludedUserIds = computed(() => {
-  const excludedUserIds: string[] = [];
-  if (session.value) excludedUserIds.push(session.value.user.id);
-  excludedUserIds.push(...(directMessageParticipantsMap.value.get(roomId) ?? []).map(({ id }) => id));
-  return excludedUserIds;
+  const userIds: string[] = [];
+  if (session.value) userIds.push(session.value.user.id);
+  userIds.push(...(directMessageParticipantsMap.value.get(roomId) ?? []).map(({ id }) => id));
+  return userIds;
 });
 const executeMutation = useMutation();
 const createDirectMessageParticipants = async (onComplete: () => void) => {

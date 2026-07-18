@@ -63,9 +63,9 @@ const { editor } = await useGrapesJsEditor(
       }),
       grapesJSStyleBg,
       usePlugin(grapesJSPresetWebpage, {
-        modalImportContent: (editor: Editor) => {
-          const html = editor.getHtml();
-          const css = editor.getCss();
+        modalImportContent: (editorInstance: Editor) => {
+          const html = editorInstance.getHtml();
+          const css = editorInstance.getCss();
           return css ? `${htmlFormat(html)}<style>\n${cssFormat(css)}</style>` : htmlFormat(html);
         },
         modalImportLabel: "<div text-title-small mb-2.5>Paste here your HTML/CSS and click Import</div>",

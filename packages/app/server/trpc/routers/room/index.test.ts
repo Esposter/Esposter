@@ -594,19 +594,19 @@ describe("room", () => {
     await roomCaller.joinRoom(newInvite.id);
     vi.advanceTimersByTime(1);
     await mockSessionOnce(mockContext.db, user);
-    const roomId = await roomCaller.leaveRoom(newRoom.id);
+    const leftRoomId = await roomCaller.leaveRoom(newRoom.id);
 
-    expect(roomId).toStrictEqual(newRoom.id);
+    expect(leftRoomId).toStrictEqual(newRoom.id);
   });
 
   test("leaves with creator to be deleted", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const roomId = await roomCaller.leaveRoom(newRoom.id);
+    const leftRoomId = await roomCaller.leaveRoom(newRoom.id);
 
-    await expect(roomCaller.readRoom(roomId)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, roomId).message}]`,
+    await expect(roomCaller.readRoom(leftRoomId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, leftRoomId).message}]`,
     );
   });
 

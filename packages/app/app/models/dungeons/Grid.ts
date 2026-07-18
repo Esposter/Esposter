@@ -31,11 +31,11 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   ) => UnwrapRef<ReturnType<typeof this.validate>>;
 
   constructor({ grid, position, validate, wrap }: SetRequired<Partial<Grid<TValue, TGrid>>, "grid">) {
-    this.validate = (position) => {
-      const value = this.getValue(position);
+    this.validate = (targetPosition) => {
+      const value = this.getValue(targetPosition);
       // We want to skip grid values that don't exist
       if (value === undefined) return false;
-      return validate?.bind(this)(position) ?? true;
+      return validate?.bind(this)(targetPosition) ?? true;
     };
     this.#internalValidate = (...args) => unref(this.validate(...args));
     this.grid = grid;

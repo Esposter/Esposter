@@ -83,8 +83,8 @@ watch(barWidth, (newBarWidth) => {
     onComplete: () => {
       emit("complete:display-width");
     },
-    onStart: (tween) => {
-      emit("start:display-width", tween);
+    onStart: (startedTween) => {
+      emit("start:display-width", startedTween);
     },
     onUpdate: (_tween, _key, _target, displayWidth) => {
       updateDisplayWidth(displayWidth);

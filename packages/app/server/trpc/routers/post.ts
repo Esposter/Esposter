@@ -244,12 +244,12 @@ export const postRouter = router({
         ? { parentId: { eq: parentId } }
         : { parentId: { isNull: true } };
       if (cursor || userId)
-        where.RAW = (posts) => {
+        where.RAW = (post) => {
           const rawWhere = and(
-            cursor ? getCursorWhere(posts, cursor, sortBy) : undefined,
+            cursor ? getCursorWhere(post, cursor, sortBy) : undefined,
             // Only feeds filter blocked users — `readPost` stays readable since navigating
             // Directly to a blocked user's post is an intentional act
-            userId ? getNotBlockedWhere(posts, ctx.db, userId) : undefined,
+            userId ? getNotBlockedWhere(post, ctx.db, userId) : undefined,
           );
           if (!rawWhere)
             throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
@@ -258,13 +258,13 @@ export const postRouter = router({
       const resultPosts = userId
         ? await ctx.db.query.posts.findMany({
             limit: limit + 1,
-            orderBy: (posts) => parseSortByToSql(posts, sortBy),
+            orderBy: (post) => parseSortByToSql(post, sortBy),
             where,
             with: getViewerPostRelations(userId),
           })
         : await ctx.db.query.posts.findMany({
             limit: limit + 1,
-            orderBy: (posts) => parseSortByToSql(posts, sortBy),
+            orderBy: (post) => parseSortByToSql(post, sortBy),
             where,
             with: PostRelations,
           });

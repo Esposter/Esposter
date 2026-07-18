@@ -127,11 +127,11 @@ describe("program", () => {
     });
     const participants = await caller.generateProgramParticipants({ id: program.id });
 
-    expect(participants.map(({ keyValue }) => keyValue)).toStrictEqual([" ", "a"]);
+    expect(participants.map(({ keyValue: participantKeyValue }) => participantKeyValue)).toStrictEqual([" ", "a"]);
 
     // Tokens are UUIDs, never derived from the key — a derivable token could be minted by anyone
-    for (const { keyValue, token } of participants) {
-      expect(token).not.toBe(keyValue);
+    for (const { keyValue: participantKeyValue, token } of participants) {
+      expect(token).not.toBe(participantKeyValue);
       expect(z.uuid().safeParse(token).success).toBe(true);
     }
   });
@@ -296,7 +296,9 @@ describe("program", () => {
     });
     const statusRows = await caller.readProgramStatus({ id: program.id });
 
-    expect(statusRows.map(({ isResponded, keyValue }) => ({ isResponded, keyValue }))).toStrictEqual([
+    expect(
+      statusRows.map(({ isResponded, keyValue: statusKeyValue }) => ({ isResponded, keyValue: statusKeyValue })),
+    ).toStrictEqual([
       { isResponded: true, keyValue: respondedParticipant.keyValue },
       { isResponded: false, keyValue: unrespondedParticipant.keyValue },
     ]);
@@ -367,7 +369,11 @@ describe("program", () => {
     assert.exists(participant);
     const dataset = await datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus });
 
-    expect(dataset.columns.map(({ name }) => name)).toStrictEqual(["participant", "addedAt", "responded"]);
+    expect(dataset.columns.map(({ name: columnName }) => columnName)).toStrictEqual([
+      "participant",
+      "addedAt",
+      "responded",
+    ]);
     expect(dataset.rows.map(({ responded }) => responded)).toStrictEqual([false]);
     // A dashboard bound to this dataset is publishable, so neither the participant list nor the token
     // May enter it — the token is the credential survey writes accept, so publishing it would let any

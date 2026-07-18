@@ -32,16 +32,16 @@ export const useRoleSubscribables = () => {
     const deleteRoleUnsubscribable = $trpc.role.onDeleteRole.subscribe(
       { roomId },
       {
-        onData: ({ id, roomId }) => {
+        onData: ({ id, roomId: eventRoomId }) => {
           setRoles(
-            roomId,
-            getRoles(roomId).filter((role) => role.id !== id),
+            eventRoomId,
+            getRoles(eventRoomId).filter((role) => role.id !== id),
           );
-          const memberRoleMap = getMemberRoleMap(roomId);
+          const memberRoleMap = getMemberRoleMap(eventRoomId);
           if (!memberRoleMap) return;
           for (const [userId, roles] of memberRoleMap)
             mutateMemberRoles(
-              roomId,
+              eventRoomId,
               userId,
               roles.filter((role) => role.id !== id),
             );
@@ -51,11 +51,11 @@ export const useRoleSubscribables = () => {
     const revokeRoleUnsubscribable = $trpc.role.onRevokeRole.subscribe(
       { roomId },
       {
-        onData: ({ roleId, roomId, userId }) => {
+        onData: ({ roleId, roomId: eventRoomId, userId }) => {
           mutateMemberRoles(
-            roomId,
+            eventRoomId,
             userId,
-            getMemberRoles(roomId, userId).filter(({ id }) => id !== roleId),
+            getMemberRoles(eventRoomId, userId).filter(({ id }) => id !== roleId),
           );
         },
       },

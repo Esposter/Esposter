@@ -27,7 +27,12 @@ export const deleteTablePartitionEntities = async (
     const batches: TransactionAction[][] = [];
     for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE)
       batches.push(
-        page.slice(i, i + AZURE_MAX_BATCH_SIZE).map(({ partitionKey, rowKey }) => ["delete", { partitionKey, rowKey }]),
+        page
+          .slice(i, i + AZURE_MAX_BATCH_SIZE)
+          .map(({ partitionKey: entityPartitionKey, rowKey }) => [
+            "delete",
+            { partitionKey: entityPartitionKey, rowKey },
+          ]),
       );
     await Promise.all(batches.map((batch) => tableClient.submitTransaction(batch)));
   }

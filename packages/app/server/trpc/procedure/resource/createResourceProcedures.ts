@@ -177,8 +177,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const resultResources = await ctx.db.query.resources.findMany({
           limit: limit + 1,
           offset,
-          orderBy: (resources, { desc }) =>
-            sortBy.length > 0 ? parseSortByToSql(resources, sortBy) : desc(resources.updatedAt),
+          orderBy: (resource, { desc }) =>
+            sortBy.length > 0 ? parseSortByToSql(resource, sortBy) : desc(resource.updatedAt),
           where: {
             // Soft-deleted resources belong to the Recycle bin, never to a type's own listing
             deletedAt: {
@@ -202,17 +202,17 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Keeping Postgres and blob storage consistent instead of stranding the resource at a version with stale content
         const updatedResource = await ctx.db.transaction(async (tx) => {
           // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
-          const updatedResource = (
+          const savedResource = (
             await tx
               .update(resources)
               .set({ contentVersion: contentVersion + 1 })
               .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
               .returning()
           )[0];
-          if (!updatedResource) throw new TRPCError({ code: "BAD_REQUEST", message: staleContentVersionErrorMessage });
+          if (!savedResource) throw new TRPCError({ code: "BAD_REQUEST", message: staleContentVersionErrorMessage });
 
           await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(content));
-          return updatedResource;
+          return savedResource;
         });
         // Fire-and-forget: the activity trail is best-effort and autosave must not pay its coalescing
         // Table scan on every save the user is waiting on

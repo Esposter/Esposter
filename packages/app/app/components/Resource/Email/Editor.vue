@@ -20,7 +20,7 @@ const uploadFile = useUploadResourceFile(ResourceType.Email, () => emailEditorSt
 const { editor } = await useGrapesJsEditor(
   {
     load: () => readEmailEditor(),
-    store: (data, storeEditor) => saveEmailEditor(data, storeEditor),
+    store: (data, editorInstance) => saveEmailEditor(data, editorInstance),
   },
   { plugins: [grapesJSMJML] },
   { upload: uploadFile },
