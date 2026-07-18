@@ -136,7 +136,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         v-model:is-summary-view="isSummaryView"
         v-model:is-grouped-by-type="isGroupedByType"
         v-model:hidden-column-keys="hiddenColumnKeys"
-        :close-to="closeTo"
+        :close-to
         @export="exportAllResourcesCsv(createResourcesPageReader())"
         @refresh="isSummaryView ? refreshTypeCounts() : refresh()"
       />
@@ -219,7 +219,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         </div>
       </template>
       <template #group-header="{ columns, isGroupOpen, item, toggleGroup }">
-        <ResourceListGroupHeaderRow :columns :is-group-open="isGroupOpen" :item :toggle-group="toggleGroup" />
+        <ResourceListGroupHeaderRow :columns :is-group-open :item :toggle-group />
       </template>
       <template #loading>
         <StyledSkeleton type="table-row@10" />

@@ -3,9 +3,9 @@ import type { User } from "@esposter/db-schema";
 
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { dayjs } from "#shared/services/dayjs";
+import { useAlertStore } from "@/store/alert";
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { useMemberStore } from "@/store/message/user/member";
-import { useAlertStore } from "@/store/alert";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface NotesDialogProps {
