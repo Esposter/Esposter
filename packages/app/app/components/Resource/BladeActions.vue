@@ -103,7 +103,7 @@ const overflowItems = computed<Item[]>(() => [
   <StyledOverflowMenu v-else icon="mdi-dots-horizontal" :items="overflowItems" />
   <!-- One click, one icon: the star stays out of the overflow menu like the close ✕ -->
   <ResourceFavoriteToggle :resource />
-  <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
+  <StyledTooltipIconButton icon="mdi-close" text="Close" @click="navigateTo(RoutePath.ResourcesAll)" />
   <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename :resource />
   <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove :resource />
   <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />

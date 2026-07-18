@@ -28,9 +28,10 @@ const { emptyDescription, emptyIcon, emptyTitle, isLoading, resources } = define
     <v-list-item
       v-for="resource in resources"
       :key="resource.id"
+      link
       :prepend-icon="ResourceDefinitionMap[resource.type].icon"
       :title="resource.name"
-      :to="RoutePath.Resource(resource.id)"
+      @click="navigateTo(RoutePath.Resource(resource.id))"
     >
       <template #subtitle>
         {{ ResourceDefinitionMap[resource.type].title }} ·

@@ -25,7 +25,7 @@ const categories = computed(() =>
 <template>
   <div class="category-tabs" top="[--app-bar-height]" flex items-center sticky z-1>
     <v-tabs color="primary" :model-value="activeCategory ?? RoutePath.Docs" show-arrows>
-      <v-tab class="text-none" exact prepend-icon="mdi-home" :to="RoutePath.Docs" :value="RoutePath.Docs">
+      <v-tab class="text-none" prepend-icon="mdi-home" :value="RoutePath.Docs" @click="navigateTo(RoutePath.Docs)">
         Overview
       </v-tab>
       <v-tab
@@ -33,8 +33,8 @@ const categories = computed(() =>
         :key="category"
         class="text-none"
         :prepend-icon="DocsCategoryIconMap[category]"
-        :to="firstSection?.path"
         :value="category"
+        @click="firstSection && navigateTo(firstSection.path)"
       >
         {{ category }}
       </v-tab>

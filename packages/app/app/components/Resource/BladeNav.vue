@@ -63,10 +63,11 @@ const activeItem = computed(() => items.value.find(({ blade }) => blade === acti
       <v-list-item
         v-for="item in items"
         :key="item.blade"
+        link
         :active="activeBlade === item.blade"
         :prepend-icon="item.icon"
         :title="item.title"
-        :to="item.to"
+        @click="navigateTo(item.to)"
       />
     </v-list>
   </v-menu>
@@ -74,10 +75,11 @@ const activeItem = computed(() => items.value.find(({ blade }) => blade === acti
     <v-list-item
       v-for="item in items"
       :key="item.blade"
+      link
       :active="activeBlade === item.blade"
       :prepend-icon="item.icon"
       :title="item.title"
-      :to="item.to"
+      @click="navigateTo(item.to)"
     />
   </v-list>
 </template>

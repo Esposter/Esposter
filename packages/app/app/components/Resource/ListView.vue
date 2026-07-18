@@ -253,7 +253,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         />
         <ResourceListColumnChooserMenu v-model="hiddenColumnKeys" />
         <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
-        <StyledTooltipIconButton v-if="closeTo" icon="mdi-close" text="Close" :button-props="{ to: closeTo }" />
+        <StyledTooltipIconButton v-if="closeTo" icon="mdi-close" text="Close" @click="navigateTo(closeTo)" />
       </v-toolbar>
       <ResourceListSelectionToolbar
         v-if="selectedResources.length > 0"

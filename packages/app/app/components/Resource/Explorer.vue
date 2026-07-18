@@ -57,7 +57,7 @@ const { smAndDown } = useVDisplay();
           <StyledTooltipIconButton
             icon="mdi-format-list-bulleted"
             text="All resources"
-            :button-props="{ to: RoutePath.ResourcesAll }"
+            @click="navigateTo(RoutePath.ResourcesAll)"
           />
         </template>
       </ResourceBladeToolbar>

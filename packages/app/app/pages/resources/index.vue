@@ -41,7 +41,10 @@ onMounted(async () => {
               <v-card-item>
                 <div flex flex-wrap gap-4 items-center justify-between>
                   <span text-h6>Create a resource</span>
-                  <StyledButton :button-props="{ prependIcon: 'mdi-plus', to: RoutePath.ResourcesCreate }">
+                  <StyledButton
+                    :button-props="{ prependIcon: 'mdi-plus' }"
+                    @click="navigateTo(RoutePath.ResourcesCreate)"
+                  >
                     Create a resource
                   </StyledButton>
                 </div>
@@ -54,7 +57,9 @@ onMounted(async () => {
               <v-card-item>
                 <div flex flex-wrap gap-4 items-center justify-between>
                   <span text-h6>Resources</span>
-                  <v-btn append-icon="mdi-arrow-right" variant="text" :to="RoutePath.ResourcesAll">See all</v-btn>
+                  <v-btn append-icon="mdi-arrow-right" variant="text" @click="navigateTo(RoutePath.ResourcesAll)"
+                    >See all</v-btn
+                  >
                 </div>
               </v-card-item>
               <v-tabs v-model="tab">

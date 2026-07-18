@@ -41,13 +41,13 @@ flowchart LR
 
 Drizzle table `resources` (`packages/db-schema/src/schema/resources.ts`) — pure identity + content lifecycle:
 
-| Column           | Type                   | Notes                                                         |
-| ---------------- | ---------------------- | ------------------------------------------------------------- |
-| `id`             | uuid PK                | becomes the blob path prefix                                  |
-| `type`           | `ResourceType` pg enum | Dashboard, Email, Flowchart, Sheet, Survey, TodoList, Webpage |
-| `name`           | text + length check    | `createNameSchema` pattern                                    |
-| `userId`         | FK → users, cascade    | owner; resources are single-owner                             |
-| `contentVersion` | integer                | optimistic concurrency on content saves                       |
+| Column           | Type                   | Notes                                                                  |
+| ---------------- | ---------------------- | ---------------------------------------------------------------------- |
+| `id`             | uuid PK                | becomes the blob path prefix                                           |
+| `type`           | `ResourceType` pg enum | Dashboard, Email, Flowchart, Program, Sheet, Survey, TodoList, Webpage |
+| `name`           | text + length check    | `createNameSchema` pattern                                             |
+| `userId`         | FK → users, cascade    | owner; resources are single-owner                                      |
+| `contentVersion` | integer                | optimistic concurrency on content saves                                |
 
 Publish state is **normalized into its own table**, `resource_publications` — a row exists iff the resource is currently published. Publishing is a capability, not a base attribute, so publish columns do not belong on every resource row:
 

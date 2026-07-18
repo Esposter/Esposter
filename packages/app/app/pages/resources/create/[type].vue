@@ -100,7 +100,7 @@ const submit = async () => {
                   @parse="name ||= $event"
                 />
                 <div mt-4 flex gap-2 justify-end>
-                  <v-btn variant="text" :to="RoutePath.ResourcesCreate">Cancel</v-btn>
+                  <v-btn variant="text" @click="navigateTo(RoutePath.ResourcesCreate)">Cancel</v-btn>
                   <StyledButton
                     type="submit"
                     :button-props="{ disabled: !isValid || Boolean(fileError) || isFileParsing, loading: isSubmitting }"
