@@ -9,6 +9,12 @@ import { SoundLoaders } from "@/models/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaders } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { TilemapLoaders } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaders } from "@/models/dungeons/loader/TilesetLoaderMap";
+import {
+  PROGRESS_BAR_HEIGHT,
+  PROGRESS_BAR_MAX_WIDTH,
+  PROGRESS_BOX_HEIGHT,
+  PROGRESS_BOX_WIDTH,
+} from "@/services/dungeons/scene/preloader/constants";
 import { prettify } from "@/util/text/prettify";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
@@ -18,11 +24,7 @@ const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
 const assetText = ref("");
-const progressBoxWidth = ref(320);
-const progressBoxHeight = ref(50);
-const progressBarMaxWidth = ref(300);
 const progressBarWidth = ref(0);
-const progressBarHeight = ref(30);
 
 const preload = (scene: SceneWithPlugins) => {
   const { height, width } = scene.cameras.main;
@@ -31,7 +33,7 @@ const preload = (scene: SceneWithPlugins) => {
 
   scene.load
     .on("progress", (value: number) => {
-      progressBarWidth.value = progressBarMaxWidth.value * value;
+      progressBarWidth.value = PROGRESS_BAR_MAX_WIDTH * value;
       percentageText.value = `${parseInt((value * 100).toString())}%`;
     })
     .on("fileprogress", (file: Loader.File) => {
@@ -57,7 +59,7 @@ const preload = (scene: SceneWithPlugins) => {
         x,
         y,
         width: progressBarWidth,
-        height: progressBarHeight,
+        height: PROGRESS_BAR_HEIGHT,
         fillColor: 0xffffff,
       }"
       immediate
@@ -66,8 +68,8 @@ const preload = (scene: SceneWithPlugins) => {
       :configuration="{
         x,
         y,
-        width: progressBoxWidth,
-        height: progressBoxHeight,
+        width: PROGRESS_BOX_WIDTH,
+        height: PROGRESS_BOX_HEIGHT,
         fillColor: 0x222222,
         alpha: 0.8,
       }"
