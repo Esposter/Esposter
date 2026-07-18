@@ -68,6 +68,8 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "survey-resource",
       "program-resource",
       "note-resource",
+      "blueprint-resource",
+      "blueprint-capture",
       "resource-file-assets",
     ],
     "Survey funnel": [

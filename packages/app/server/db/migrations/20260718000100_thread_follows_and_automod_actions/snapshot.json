@@ -1,8 +1,8 @@
 {
   "dialect": "postgres",
-  "id": "b6d73f7d-67f0-4c96-a192-64ad280a6617",
+  "id": "987eee8f-fc5f-4220-9180-9a06445b431a",
   "prevIds": [
-    "a016e3cd-0934-4f4a-b740-eb9e823f54a5"
+    "df8bc091-3db7-4ee1-8ff1-dcf77ff432fb"
   ],
   "version": "8",
   "ddl": [
@@ -121,6 +121,7 @@
     },
     {
       "values": [
+        "Blueprint",
         "Dashboard",
         "Email",
         "Flowchart",

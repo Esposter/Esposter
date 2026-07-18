@@ -3,7 +3,7 @@ import type { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 export class BaseTMXNode<T> {
   // Indexable signature for the other dynamic keys xml2js parses onto the node.
   [key: string]: unknown;
-  $!: T;
   // Property derived from xml parsing
   readonly "#name"!: TMXNodeType;
+  $!: T;
 }

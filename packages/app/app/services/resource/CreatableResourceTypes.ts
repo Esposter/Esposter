@@ -10,6 +10,7 @@ export const CreatableResourceTypes = [
   ResourceType.Flowchart,
   ResourceType.Note,
   ResourceType.Survey,
+  ResourceType.Blueprint,
 ] as const;
 
 export type CreatableResourceType = (typeof CreatableResourceTypes)[number];

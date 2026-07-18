@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export enum ResourceType {
+  Blueprint = "Blueprint",
   Dashboard = "Dashboard",
   Email = "Email",
   Flowchart = "Flowchart",
