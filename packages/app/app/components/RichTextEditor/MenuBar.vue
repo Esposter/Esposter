@@ -2,9 +2,6 @@
 import type { MenuItem } from "@/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
-import { checkIsDivider } from "@/services/shared/checkIsDivider";
-import { mergeProps } from "vue";
-
 interface MenuBarProps {
   editor?: Editor;
 }
@@ -78,13 +75,6 @@ const items = computed<MenuItem[]>(() => [
 
 <template>
   <div flex flex-wrap w-full>
-    <template v-for="(item, index) of items" :key="index">
-      <v-divider v-if="checkIsDivider(item)" thickness="2" vertical h-6 self-center />
-      <v-tooltip v-else :text="item.title">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn density="comfortable" tile :="mergeProps(item, tooltipProps)" />
-        </template>
-      </v-tooltip>
-    </template>
+    <RichTextEditorMenuBarButtons :items />
   </div>
 </template>
