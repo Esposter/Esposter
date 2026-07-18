@@ -4,6 +4,9 @@ import { ResourceType } from "@esposter/db-schema";
 import { Background } from "@vue-flow/background";
 import { VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
+import "@vue-flow/core/dist/style.css";
+import "@vue-flow/core/dist/theme-default.css";
+import "@vue-flow/minimap/dist/style.css";
 
 interface ResourceFlowchartViewProps {
   id: string;
@@ -35,9 +38,3 @@ useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
     </VueFlow>
   </ClientOnly>
 </template>
-
-<style lang="scss">
-@use "@vue-flow/core/dist/style.css" as *;
-@use "@vue-flow/core/dist/theme-default.css";
-@use "@vue-flow/minimap/dist/style.css" as *;
-</style>

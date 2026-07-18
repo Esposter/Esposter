@@ -10,6 +10,7 @@ import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { escapeHtml } from "@/util/text/escapeHtml";
 import { ResourceType } from "@esposter/db-schema";
 import grapesJSMJML from "grapesjs-mjml";
+import "grapesjs/dist/css/grapes.min.css";
 
 const session = authClient.useSession();
 const emailEditorStore = useEmailEditorStore();
@@ -68,7 +69,3 @@ watch([editor, publishedSurveys], ([newEditor, newPublishedSurveys]) => {
     <ResourceEmailExportTruncationDialog />
   </div>
 </template>
-
-<style lang="scss">
-@use "grapesjs/dist/css/grapes.min.css";
-</style>

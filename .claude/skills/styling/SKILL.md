@@ -362,6 +362,7 @@ Use `relative` on the parent and `absolute top-0 right-0` (or other corners) to 
 
 ## Style Block
 
-- Use `<style scoped>` — `scoped` always required.
+- Use `<style scoped>` — `scoped` always required, enforced by `vue/enforce-style-attribute`. A genuinely global block (transition classes targeting slotted/teleported content, overrides for third-party DOM appended to `document.body`) carries an `<!-- eslint-disable-next-line vue/enforce-style-attribute -- <reason> -->` comment naming why scoping cannot reach the target.
+- **Library CSS is imported in script setup** (`import "grapesjs/dist/css/grapes.min.css";`), never via an unscoped `<style>` `@use` block — the import stays code-split with the component and leaves no global style block behind.
 - Omit `lang="scss"` unless the block uses Sass features (variables, nesting, mixins). Plain CSS doesn't need it.
 - **Switch to `lang="scss"` the moment nesting simplifies the block** — e.g. many `:deep(...)` rules repeating one root selector (`.docs-content :deep(h1)`, `.docs-content :deep(h2)`, …) collapse to one nested root (`.docs-content { :deep(h1) {…} }`). If a plain-CSS block repeats an ancestor selector 3+ times, refactor it to nested SCSS; conversely never add `lang="scss"` to a block that stays flat.

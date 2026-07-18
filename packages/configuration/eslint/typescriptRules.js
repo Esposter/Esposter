@@ -73,6 +73,12 @@ export default Object.assign(
         selector:
           "CallExpression[callee.property.name='push']:matches([callee.object.name=/^\\$?router$/], [callee.object.callee.name='useRouter'], [callee.object.property.name='$router'])",
       },
+      {
+        // Banned outright (no Vue modifier exists for it, and it couples behavior to listener registration order).
+        message:
+          "stopImmediatePropagation is banned — it couples behavior to listener registration order. Restructure the handlers (or use @event.stop) instead.",
+        selector: "CallExpression[callee.property.name='stopImmediatePropagation']",
+      },
     ],
     // Computationally expensive
     // "@typescript-eslint/naming-convention": [

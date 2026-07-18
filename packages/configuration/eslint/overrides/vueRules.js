@@ -1,6 +1,18 @@
 export default {
   "@typescript-eslint/no-unused-vars": "off",
   "@typescript-eslint/unified-signatures": "off",
+  // PascalCase for our components and PascalCase third-party (VueFlow, VuePdfEmbed); kebab-case is only for
+  // Third-party libraries that ship kebab tags (Vuetify's v-*). registeredComponentsOnly is useless under
+  // Nuxt auto-imports (nothing is locally registered), so check every non-HTML tag.
+  "vue/component-name-in-template-casing": [
+    "error",
+    "PascalCase",
+    { ignores: ["/^v-/"], registeredComponentsOnly: false },
+  ],
+  // Styles are scoped by default; the rare global block (e.g. transition classes for slotted content,
+  // Third-party DOM appended to document.body) carries an eslint-disable with its reason. Library CSS
+  // Belongs in a script-setup `import "lib.css"` (code-split with the component), not a global style block.
+  "vue/enforce-style-attribute": ["error", { allow: ["scoped"] }],
   "vue/html-self-closing": "off",
   "vue/multi-word-component-names": "off",
   // Raw <a> bypasses client-side routing (full reloads) and default link styles. Use <NuxtLink :to> for internal
@@ -38,7 +50,13 @@ export default {
       message:
         "Use Vue event modifiers (@event.stop / @event.prevent, with key modifiers where applicable) instead of an unconditional event method call at the start of a handler. Raw calls are only for conditional use behind a guard.",
       selector:
-        ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation|stopImmediatePropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation|stopImmediatePropagation)$/]",
+        ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/]",
+    },
+    {
+      // Banned outright (no Vue modifier exists for it, and it couples behavior to listener registration order).
+      message:
+        "stopImmediatePropagation is banned — it couples behavior to listener registration order. Restructure the handlers (or use @event.stop) instead.",
+      selector: "CallExpression[callee.property.name='stopImmediatePropagation']",
     },
     {
       // Vuetify's router integration is not Nuxt-native navigation and misbehaves in Nuxt — one pathway only.
