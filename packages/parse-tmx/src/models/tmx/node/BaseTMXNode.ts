@@ -5,6 +5,6 @@ export class BaseTMXNode<T> {
   [key: string]: unknown;
   $!: T;
   // Property derived from xml parsing
-
+  // oxlint-disable-next-line no-unused-private-class-members
   readonly #name!: TMXNodeType;
 }

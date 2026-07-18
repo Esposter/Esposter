@@ -72,7 +72,7 @@ describe(useEmojiStore, () => {
     storeCreateEmoji(newEmoji);
 
     const userId = getMockSession().user.id;
-
+    // oxlint-disable-next-line typescript/no-misused-spread
     const updatedEmoji = { ...newEmoji, userIds: [userId] };
     storeUpdateEmoji(updatedEmoji);
     const emojis = getEmojis(messageRowKey);
