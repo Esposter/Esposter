@@ -41,8 +41,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { ContainerSASPermissions } from "@azure/storage-blob";
-import { deleteDirectory } from "@esposter/db";
+import { deleteDirectory, generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -256,10 +255,7 @@ export const baseRoomRouter = router({
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
       const blobName = getRoomProfileImageBlobName(roomId);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      const sasUrl = await blockBlobClient.generateSasUrl({
-        expiresOn: dayjs().add(1, "hour").toDate(),
-        permissions: ContainerSASPermissions.from({ write: true }),
-      });
+      const sasUrl = await generateWriteSasUrl(blockBlobClient);
       return { publicUrl: blockBlobClient.url, sasUrl };
     },
   ),

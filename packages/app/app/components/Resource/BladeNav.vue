@@ -34,6 +34,13 @@ const items = computed(() => {
       title: ResourceBladeTitleMap[ResourceBladeType.Editor],
       to: `${RoutePath.Resource(resource.id)}/${ResourceBladeType.Editor}`,
     });
+  // Activity is built-in for every type, and sits above the type's own blades like the portal's
+  results.push({
+    blade: ResourceBladeType.Activity,
+    icon: "mdi-history",
+    title: ResourceBladeTitleMap[ResourceBladeType.Activity],
+    to: `${RoutePath.Resource(resource.id)}/${ResourceBladeType.Activity}`,
+  });
   for (const { icon, slug, title } of ResourceBladeDefinitionMap[resource.type])
     results.push({ blade: slug, icon, title, to: `${RoutePath.Resource(resource.id)}/${slug}` });
   return results;
@@ -56,10 +63,11 @@ const activeItem = computed(() => items.value.find(({ blade }) => blade === acti
       <v-list-item
         v-for="item in items"
         :key="item.blade"
+        link
         :active="activeBlade === item.blade"
         :prepend-icon="item.icon"
         :title="item.title"
-        :to="item.to"
+        @click="navigateTo(item.to)"
       />
     </v-list>
   </v-menu>
@@ -67,10 +75,11 @@ const activeItem = computed(() => items.value.find(({ blade }) => blade === acti
     <v-list-item
       v-for="item in items"
       :key="item.blade"
+      link
       :active="activeBlade === item.blade"
       :prepend-icon="item.icon"
       :title="item.title"
-      :to="item.to"
+      @click="navigateTo(item.to)"
     />
   </v-list>
 </template>

@@ -2,6 +2,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
+import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 interface ResourceListSelectionToolbarProps {
@@ -37,7 +38,7 @@ const confirmName = computed(() =>
           Delete ({{ selectedResources.length }})
         </v-btn>
       </template>
-      Deleting {{ selectedLabel }} cannot be undone.
+      Deleting {{ selectedLabel }} moves them to the Recycle bin for {{ RECYCLE_BIN_RETENTION_DAYS }} days.
       <v-list density="compact">
         <v-list-item v-for="{ id, name } of selectedResources" :key="id" :title="name" />
       </v-list>

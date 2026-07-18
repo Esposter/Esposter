@@ -30,6 +30,8 @@ The single Azure-portal-like UI for every resource: one list, one resource page 
 
 `all` and `create` are static segments so they win over the dynamic `[id]` sibling. Blades are path segments (not query params) so they deep-link. Email invite blocks link the public respondent page via `RoutePath.View(ResourceType.Survey, id)`. `ProductListLinkItems` has one **Resources** entry (landing on Home) replacing the seven old editor entries.
 
+The whole explorer is **client-only rendered**: `packages/app/configuration/routeRules.ts` sets `ssr: false` for `/resources` and `/resources/**` (route-level, not just the per-blade `<ClientOnly>` wrappers). It is an auth-gated app surface with no SEO value that touches `window`/`localStorage` during setup, so there is nothing worth server-rendering. Only the public `/view/[type]/[id]` pages stay SSR, for SEO and social/OG unfurls.
+
 ## Navigation map
 
 ```mermaid
@@ -60,10 +62,10 @@ The Azure-portal landing. Not a table — a dashboard of entry points: the inlin
 
 `pages/resources/all.vue` is a `StyledPageHeader title="All"` (rendering the `Home › Resource Explorer › All` breadcrumb) above a `v-sheet flex-1` wrapping `ResourceListView` (`:close-to`; the blade list box passes `:is-searchable="false"` to strip the workbench) — `StyledDataTableServer` over `resource.readResources` (cross-type, owner, offset-paginated):
 
-- Columns: type (icon + label from `ResourceDefinitionMap`), name (a real `:to` link), createdAt, updatedAt — subject to the column chooser. Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
+- Columns: type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt — subject to the column chooser. Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
 - Toolbar (a fully-bordered `b-1` box, workbench only): search, group-by-type toggle, column chooser, Export CSV, Refresh, and a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
 - Filter-pill row, bulk select, context menu, URL-synced filter state, and the footer count are the list workbench — see [list filters & views](/docs/platform/list-filters-and-views).
-- Row click → `/resources/{id}` via `navigateTo`; the row's **Open** action and name cell link there with `:to`.
+- Row click → `/resources/{id}` via `navigateTo` — the single affordance for opening a resource (the name cell is plain text, not a competing link).
 - `?search=`, `?types=`, `?status=`, `?sortBy=`, and `?page=` deep-link the list, so [global search](/docs/platform/global-search) links land filtered.
 
 ## Create flow — `/resources/create` → `/resources/create/[type]`
@@ -90,7 +92,7 @@ Azure-portal-faithful **two flex boxes** on one surface (deliberately simple —
 - **Mobile-native** — on `smAndDown` (`useVDisplay`) the inline list box is removed entirely; the list becomes a temporary overlay drawer (`v-navigation-drawer temporary`) opened by a `mdi-menu` hamburger in the blade box header and closed on scrim tap or as soon as a resource is selected (a route-change watch), so the blade box owns the full width. The blade nav collapses from the vertical rail into a dropdown (`v-menu`) whose activator shows the active blade — its caret (`mdi-chevron-up`) renders only while the menu is open. Desktop keeps the inline rail and collapsible list box unchanged.
 - **Borders drawn exactly once** — no component double-draws an edge. The **blade box** owns the full-height list↔blade divider (`b-l` on its header and content, plus `b-t` under the header); the list box draws no right edge. The **list box header** owns its bottom separator (`b-b`); the **blade nav** is borderless. Both headers are the shared `v-toolbar` primitive (identical native height/padding, no bespoke sizing).
 - **Nested close** — the close ✕ peels back one layer: the blade box's ✕ → `/resources/all`; `/all`'s ✕ → Home. Each ✕ lives in its box's header, never on the breadcrumb's level.
-- **Single unified breadcrumb** — the base page owns the only breadcrumb; the blade box has none. Navigation uses `:to` on routable components (real anchors, keyboard + ARIA) everywhere the target is static — `navigateTo` only for dynamic targets (search submit, post-create/-delete redirects, table row clicks). Raw `<a>` is never used — see [navigation](/docs/architecture/navigation).
+- **Single unified breadcrumb** — the base page owns the only breadcrumb; the blade box has none. Vuetify components navigate with an inline `@click="navigateTo(...)"` (their `:to` router integration is banned by lint); declarative links use `NuxtLink`/`NuxtInvisibleLink`. Raw `<a>` is never used — see [navigation](/docs/architecture/navigation).
 - **Blade box header** — type icon + `{name} | {active blade}` with the resource type as a caption line, plus the command bar and close ✕.
 
 On a narrow viewport the two-box layout folds into a single full-width column with on-demand menus:
@@ -101,7 +103,7 @@ flowchart LR
   DRAWER -->|select resource — navigateTo| CLOSED["Drawer closes<br/>on route-change watch"]
   DRAWER -->|scrim tap| CLOSED
   BNAV["Blade dropdown<br/>v-menu activator = active blade"] -->|open| CARET["Caret mdi-chevron-up<br/>shown only while open"]
-  BNAV -->|pick blade — :to| BLADE["Active blade fills full width"]
+  BNAV -->|pick blade — navigateTo| BLADE["Active blade fills full width"]
 ```
 
 ### Blades

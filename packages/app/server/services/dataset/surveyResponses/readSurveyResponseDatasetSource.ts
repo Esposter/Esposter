@@ -7,7 +7,7 @@ import { getSurveyModelDatasetColumns } from "@@/server/services/dataset/surveyR
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { countSurveyResponseEntities } from "@@/server/services/survey/countSurveyResponseEntities";
 import { readSurveyResponseEntities } from "@@/server/services/survey/readSurveyResponseEntities";
-import { AZURE_MAX_PAGE_SIZE, ResourceType } from "@esposter/db-schema";
+import { ResourceType } from "@esposter/db-schema";
 
 // The one read behind both the dataset and the Responses blade, so a row and its key always come from
 // The same snapshot — two independent reads could interleave a submit or a delete and drift apart.
@@ -18,10 +18,9 @@ export const readSurveyResponseDatasetSource = async (
   // The blob is written on first save, so a freshly created survey serves an empty dataset
   const content = await readResourceContent(ResourceDefinitionMap[ResourceType.Survey].contentSchema, surveyId);
   const columns = getSurveyModelDatasetColumns(parseSurveyModel(content?.model ?? ""));
-  const surveyResponses = await readSurveyResponseEntities(surveyId);
-  // Counting is a full partition scan, so a read that fit under the cap answers for itself and only a
-  // Read that filled it pays for the count — the one case where the caller needs to know what it is missing
-  const totalRows =
-    surveyResponses.length < AZURE_MAX_PAGE_SIZE ? surveyResponses.length : await countSurveyResponseEntities(surveyId);
+  const { hasMore, surveyResponses } = await readSurveyResponseEntities(surveyId);
+  // Counting is a bounded partition scan, so only a read that saw rows past the cap pays for it —
+  // The one case where the caller needs to know what it is missing
+  const totalRows = hasMore ? await countSurveyResponseEntities(surveyId) : surveyResponses.length;
   return { columns, surveyResponses, totalRows };
 };

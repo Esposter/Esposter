@@ -16,6 +16,7 @@ import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useNotificationStore } from "@/store/notification";
+import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 
@@ -34,8 +35,13 @@ const { getActionItems } = useResourceListActionItems();
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const executeDeleteResourcesMutation = useMutation();
+const executeRestoreResourceMutation = useMutation();
 const listDialogStore = useListDialogStore();
 const { deletingId, renamingId } = storeToRefs(listDialogStore);
+const favoriteStore = useFavoriteStore();
+
+// Every row renders a star, so the favorites are read once for the list rather than once per row
+onMounted(() => favoriteStore.readFavorites());
 // The workbench filter state mirrors to query params (deep links from global search included);
 // The blade list renders no filter UI and rides its host page's route, so its page/sort state
 // Lives in local refs instead of writing query params the workbench owns
@@ -46,6 +52,8 @@ const {
   searchQuery,
   sortBy: routeSortBy,
   status,
+  tagName,
+  tagValue,
   types,
   updatedAfter,
   updatedBefore,
@@ -63,6 +71,8 @@ watch(search, (newSearch) => {
 const { count, createResourcesPageReader, error, isLoading, items, readResources, refresh } = useReadResources({
   searchQuery: search,
   status,
+  tagName,
+  tagValue,
   types,
   updatedAfter,
   updatedBefore,
@@ -74,6 +84,8 @@ const filterKey = computed(() =>
   JSON.stringify({
     search: search.value,
     status: status.value,
+    tagName: tagName.value,
+    tagValue: tagValue.value,
     types: types.value,
     updatedAfter: updatedAfter.value,
     updatedBefore: updatedBefore.value,
@@ -92,6 +104,8 @@ const {
 } = useReadResourceTypeCounts(() => ({
   searchQuery: search.value,
   status: status.value,
+  tagName: tagName.value,
+  tagValue: tagValue.value,
   updatedAfter: updatedAfter.value,
   updatedBefore: updatedBefore.value,
   updatedFilter: updatedFilter.value,
@@ -132,6 +146,13 @@ const toolbarItems = computed<Item[]>(() => [
     title: "Export CSV",
   },
   { icon: "mdi-refresh", onClick: () => (isSummaryView.value ? refreshTypeCounts() : refresh()), title: "Refresh" },
+  {
+    icon: "mdi-delete-outline",
+    onClick: async () => {
+      await navigateTo(RoutePath.ResourcesRecycleBin);
+    },
+    title: "Recycle bin",
+  },
 ]);
 // Owned here because the row leaves `items` optimistically, which unmounts the v-if-gated delete dialog mid-flight
 const deleteResources = async (resources: Resource[]) => {
@@ -166,10 +187,28 @@ const deleteResources = async (resources: Resource[]) => {
       },
       onError: createErrorNotification,
       onSuccess: () => {
-        createNotification({ severity: "success", title: deletedNotificationTitle });
+        createNotification({
+          // The undo toast: a single delete is one click away from coming back, no bin trip needed
+          action:
+            resources.length === 1
+              ? { handler: () => restoreResource(takeOne(resources)), title: "Restore" }
+              : { title: "Go to Recycle bin", to: RoutePath.ResourcesRecycleBin },
+          severity: "success",
+          title: deletedNotificationTitle,
+        });
       },
     },
   );
+};
+// A restore returns a Draft, so the row reappears in the list but its publication does not come back
+const restoreResource = async (resource: Resource) => {
+  await executeRestoreResourceMutation(() => $trpc.resource.restoreResource.mutate({ id: resource.id }), {
+    onError: createErrorNotification,
+    onSuccess: async () => {
+      createNotification({ severity: "success", title: `Restored "${resource.name}" as a draft` });
+      await refresh();
+    },
+  });
 };
 const getResourceIcon = (type: ResourceType) => ResourceDefinitionMap[type].icon;
 const getResourceTitle = (type: ResourceType) => ResourceDefinitionMap[type].title;
@@ -214,7 +253,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         />
         <ResourceListColumnChooserMenu v-model="hiddenColumnKeys" />
         <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
-        <StyledTooltipIconButton v-if="closeTo" icon="mdi-close" text="Close" :button-props="{ to: closeTo }" />
+        <StyledTooltipIconButton v-if="closeTo" icon="mdi-close" text="Close" @click="navigateTo(closeTo)" />
       </v-toolbar>
       <ResourceListSelectionToolbar
         v-if="selectedResources.length > 0"
@@ -230,6 +269,8 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       <ResourceListFilterBar
         v-else
         v-model:status="status"
+        v-model:tag-name="tagName"
+        v-model:tag-value="tagValue"
         v-model:types="types"
         v-model:updated-after="updatedAfter"
         v-model:updated-before="updatedBefore"
@@ -277,6 +318,12 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       @update:model-value="updateSelection"
       @update:options="onUpdateOptions"
     >
+      <template #[`item.favorite`]="{ item }">
+        <!-- stop keeps the row's navigateTo from firing when the star is clicked -->
+        <div @click.stop>
+          <ResourceFavoriteToggle :resource="item" />
+        </div>
+      </template>
       <template #[`item.type`]="{ item }">
         <div flex gap-2 items-center>
           <v-icon :icon="getResourceIcon(item.type)" />
@@ -333,24 +380,19 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         />
       </template>
     </StyledDataTableServer>
-    <template v-if="isSearchable">
-      <ResourceListContextMenu
-        v-if="contextMenuResource"
-        v-model="isContextMenuOpen"
-        :position="contextMenuPosition"
-        :resource="contextMenuResource"
-      />
-      <ResourceListRenameDialog
-        v-if="renamingResource"
-        :key="renamingResource.id"
-        :resource="renamingResource"
-        @update="refresh()"
-      />
-      <ResourceListDeleteDialog
-        v-if="deletingResource"
-        :resource="deletingResource"
-        @delete="deleteResources($event)"
-      />
-    </template>
+    <ResourceListContextMenu
+      v-if="isSearchable && contextMenuResource"
+      v-model="isContextMenuOpen"
+      :position="contextMenuPosition"
+      :resource="contextMenuResource"
+    />
+    <!-- Outside the isSearchable gate: the blade list's row ⋮ menu opens these too -->
+    <ResourceListRenameDialog
+      v-if="renamingResource"
+      :key="renamingResource.id"
+      :resource="renamingResource"
+      @update="refresh()"
+    />
+    <ResourceListDeleteDialog v-if="deletingResource" :resource="deletingResource" @delete="deleteResources($event)" />
   </div>
 </template>

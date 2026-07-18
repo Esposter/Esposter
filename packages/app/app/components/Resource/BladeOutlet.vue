@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
+import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import ResourceOverview from "@/components/Resource/Overview.vue";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
@@ -12,9 +12,10 @@ interface ResourceBladeOutletProps {
   isLoading?: boolean;
   publication?: ResourcePublication;
   resource: Resource;
+  updateTags?: (tags: ResourceTags) => Promise<void>;
 }
 
-const { activeBlade, isLoading, publication, resource } = defineProps<ResourceBladeOutletProps>();
+const { activeBlade, isLoading, publication, resource, updateTags } = defineProps<ResourceBladeOutletProps>();
 // The type's own blade wins over the built-ins; the Editor blade renders the type's inline editor
 const bladeComponent = computed(
   () => ResourceBladeDefinitionMap[resource.type].find(({ slug }) => slug === activeBlade)?.component,
@@ -31,6 +32,12 @@ const overviewComponent = computed(() => ResourceOverviewComponentMap[resource.t
     :is-loading
     :publication
     :resource
+    :update-tags
+  />
+  <ResourceActivityLog
+    v-else-if="activeBlade === ResourceBladeType.Activity"
+    :key="resource.id"
+    :resource-id="resource.id"
   />
   <Suspense v-else-if="bladeComponent">
     <component :is="bladeComponent" :key="`${resource.id}-${activeBlade}`" />

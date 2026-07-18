@@ -7,7 +7,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import { deserializeMessageSearchDocument } from "@@/server/services/message/deserializeMessageSearchDocument";
-import { getSearchNullClause, serializeClauses } from "@esposter/db";
+import { getSearchNullClause, serializeSearchClauses } from "@esposter/db";
 import { BinaryOperator, roomsInMessage, SearchIndex, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { inArray } from "drizzle-orm";
@@ -23,7 +23,7 @@ export const readMySentMessages = async (
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   const { count, results } = await client.search("*", {
-    filter: serializeClauses(clauses),
+    filter: serializeSearchClauses(clauses),
     includeTotalCount: true,
     orderBy: [`${ItemMetadataPropertyNames.createdAt} ${SortOrder.Desc}`],
     skip: offset,

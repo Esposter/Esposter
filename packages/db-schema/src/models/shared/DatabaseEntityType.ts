@@ -11,6 +11,7 @@ export enum DatabaseEntityType {
   Post = "Post",
   PushSubscription = "PushSubscription",
   Resource = "Resource",
+  ResourceFavorite = "ResourceFavorite",
   ResourcePublication = "ResourcePublication",
   Room = "Room",
   RoomCategory = "RoomCategory",

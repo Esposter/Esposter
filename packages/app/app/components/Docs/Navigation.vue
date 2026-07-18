@@ -34,7 +34,12 @@ const sectionsWithGroups = computed(() =>
           :title="section.title"
         />
       </template>
-      <v-list-item title="Overview" :to="section.path" exact />
+      <v-list-item
+        link
+        :active="router.currentRoute.value.path === section.path"
+        title="Overview"
+        @click="navigateTo(section.path)"
+      />
       <template v-for="group of groups" :key="group.title ?? ''">
         <v-list-subheader v-if="group.title">{{ group.title }}</v-list-subheader>
         <DocsNavigationList :items="group.items" />

@@ -60,6 +60,13 @@ export default Object.assign(
         selector: "MemberExpression[object.name='expect'][property.name='any']",
       },
       {
+        // Polling is banned repo-wide — see content/docs/architecture/no-polling.md.
+        message:
+          "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+        selector:
+          ":matches(MemberExpression[object.name='expect'][property.name='poll'], MemberExpression[object.name='vi'][property.name=/^(waitFor|waitUntil)$/], CallExpression[callee.name=/^(waitFor|waitUntil)$/])",
+      },
+      {
         // `router.replace({ query })` is a query-string update, not navigation, so only `push` is banned.
         message:
           "Use `navigateTo(target, { replace: true })` instead of `router.push` for navigation. (`router.replace({ query })` for query-only updates is fine.)",

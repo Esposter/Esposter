@@ -1,12 +1,11 @@
 import type { ProjectData } from "grapesjs";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const route = useRoute();
-  const { load, readContent, resource, save } = useResource(() =>
-    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
-  );
+  const { load, readContent, resource, save } = useResource(() => getRouteParamString(route.params.id));
   // Cast avoids the excessively deep UnwrapRef instantiation on the nested GrapesJS project types
   const content = ref(new WebpageEditor()) as Ref<WebpageEditor>;
   // GrapesJS storage adapter load: serve the selected resource's content
