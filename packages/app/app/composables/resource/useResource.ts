@@ -1,4 +1,4 @@
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
+import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { getSequentialFunction } from "#shared/util/function/getSequentialFunction";
@@ -11,6 +11,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   const { $trpc } = useNuxtApp();
   const executeSaveMutation = useMutation();
   const executeRenameMutation = useMutation();
+  const executeUpdateTagsMutation = useMutation();
   const executeRemoveMutation = useMutation();
   const executeDuplicateMutation = useMutation();
   const executePublishMutation = useMutation();
@@ -41,11 +42,20 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     if (!current) return Promise.resolve(undefined);
     return getResourceMutations(current.type).readResourceContent({ id: current.id });
   };
+  // The last content shape known to be persisted — save() skips the write when nothing changed, so a
+  // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
+  // Stores seed it after hydrating so the first debounced watch tick has something to compare against
+  let persistedContentJson: string | undefined;
+  const setPersistedContent = (content: unknown) => {
+    persistedContentJson = JSON.stringify(content);
+  };
   // Serialized so each save picks up the contentVersion the previous one wrote back.
   // The server's optimistic-concurrency rejection then only fires for genuine cross-session edits, not our own overlapping saves.
   const save = getSequentialFunction(async (content: unknown) => {
     const current = resource.value;
     if (!current) return false;
+    const contentJson = JSON.stringify(content);
+    if (contentJson === persistedContentJson) return true;
     let isSuccessful = false;
     await executeSaveMutation(
       () =>
@@ -72,6 +82,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
         },
         onSuccess: (newResource) => {
           resource.value = newResource;
+          persistedContentJson = contentJson;
           isSuccessful = true;
         },
       },
@@ -93,6 +104,26 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
         resource.value = newResource;
       },
     });
+  };
+  // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag
+  const updateTags = async (tags: ResourceTags) => {
+    const current = resource.value;
+    if (!current) return;
+    await executeUpdateTagsMutation(
+      () => getResourceMutations(current.type).updateResource({ id: current.id, name: current.name, tags }),
+      {
+        applyOptimistic: () => {
+          resource.value = { ...current, tags };
+          return () => {
+            resource.value = current;
+          };
+        },
+        onError: createErrorNotification,
+        onSuccess: (newResource) => {
+          resource.value = newResource;
+        },
+      },
+    );
   };
   const remove = async () => {
     const current = resource.value;
@@ -161,5 +192,19 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
       },
     });
   };
-  return { duplicate, isLoading, load, publication, publish, readContent, remove, rename, resource, save, unpublish };
+  return {
+    duplicate,
+    isLoading,
+    load,
+    publication,
+    publish,
+    readContent,
+    remove,
+    rename,
+    resource,
+    save,
+    setPersistedContent,
+    unpublish,
+    updateTags,
+  };
 };

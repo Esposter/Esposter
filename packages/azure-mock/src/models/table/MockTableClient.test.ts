@@ -50,4 +50,54 @@ describe(MockTableClient, () => {
 
     await expect(readByPage(client, 0)).rejects.toThrow("maxPageSize must be greater than 0.");
   });
+
+  test("applies a conditional update when the etag matches the stored version", async () => {
+    expect.hasAssertions();
+
+    const client = await createClient(1);
+    const { etag } = await client.getEntity(partitionKey, "0");
+    await client.updateEntity({ count: 1, partitionKey, rowKey: "0" }, "Merge", { etag });
+    const updatedEntity = await client.getEntity<{ count: number }>(partitionKey, "0");
+
+    expect(updatedEntity.count).toBe(1);
+  });
+
+  test("rejects a conditional update whose etag is stale and keeps the stored entity", async () => {
+    expect.hasAssertions();
+
+    const client = await createClient(1);
+    const { etag } = await client.getEntity(partitionKey, "0");
+    await client.updateEntity({ count: 1, partitionKey, rowKey: "0" }, "Merge", { etag });
+
+    // The mock applies updates synchronously before resolving, so the stale write throws rather than rejects
+    expect(() => client.updateEntity({ count: 2, partitionKey, rowKey: "0" }, "Merge", { etag })).toThrow(
+      "The update condition specified in the request was not satisfied.",
+    );
+
+    const storedEntity = await client.getEntity<{ count: number }>(partitionKey, "0");
+
+    expect(storedEntity.count).toBe(1);
+  });
+
+  test("applies a wildcard or unconditional update regardless of the stored version", async () => {
+    expect.hasAssertions();
+
+    const client = await createClient(1);
+    await client.updateEntity({ count: 1, partitionKey, rowKey: "0" }, "Merge", { etag: "*" });
+    await client.updateEntity({ count: 2, partitionKey, rowKey: "0" });
+    const updatedEntity = await client.getEntity<{ count: number }>(partitionKey, "0");
+
+    expect(updatedEntity.count).toBe(2);
+  });
+
+  test("serves a fresh etag for every write so a reread never matches a superseded version", async () => {
+    expect.hasAssertions();
+
+    const client = await createClient(1);
+    const { etag } = await client.getEntity(partitionKey, "0");
+    await client.updateEntity({ count: 1, partitionKey, rowKey: "0" }, "Merge", { etag });
+    const { etag: updatedEtag } = await client.getEntity(partitionKey, "0");
+
+    expect(updatedEtag).not.toBe(etag);
+  });
 });

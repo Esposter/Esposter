@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — StyledButton for primary actions, :to navigation, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, v-btn tooltips, mergeProps for nested activators, typed SelectItemCategoryDefinition for selects/lists/menus (clearable banned), enum-value-as-display-title, dialog form validity (StyledFormDialog vs StyledEditFormDialog), StyledList, useVRules form validation, StyledAvatar, CSS custom properties over SASS variables, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
+description: Esposter Vuetify 4 conventions — StyledButton for primary actions, @click navigateTo navigation (Vuetify :to lint-banned), v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, v-btn tooltips, mergeProps for nested activators, typed SelectItemCategoryDefinition for selects/lists/menus (clearable banned), enum-value-as-display-title, dialog form validity (StyledFormDialog vs StyledEditFormDialog), StyledList, useVRules form validation, StyledAvatar, CSS custom properties over SASS variables, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
 ---
 
 # Vuetify Conventions
@@ -9,18 +9,20 @@ description: Esposter Vuetify 4 conventions — StyledButton for primary actions
 
 Use `StyledButton` for every confirm / complete / primary call-to-action button (create, save, accept, publish, request, start). **Never use a raw `color="primary"` `v-btn`** — the global `VBtn` default has a transparent background, so a primary-coloured button reads badly on the app's transparent / `v-main` base; `StyledButton` renders the midnight-bloom gradient + white text instead.
 
-- Pass Vuetify props through `:button-props="{ ... }"` (camelCase — e.g. `{ prependIcon: 'mdi-plus', to: RoutePath.X, disabled: !isValid, loading: isSubmitting }`).
+- Pass Vuetify props through `:button-props="{ ... }"` (camelCase — e.g. `{ prependIcon: 'mdi-plus', disabled: !isValid, loading: isSubmitting }`). For navigation put `@click="navigateTo(RoutePath.X)"` on the `<StyledButton>` (it falls through to the root `v-btn`) — never a `to` inside `buttonProps`.
 - `type` is a **native attribute, not a typed `VBtn` prop** — put `type="submit"` directly on `<StyledButton>` (it falls through to the root `v-btn`), never inside `buttonProps` (which fails typecheck).
 - `@click` and other native listeners also fall through to the root `v-btn`.
 - Destructive confirms stay a `color="error"` `v-btn` (error red is visible on the transparent base) — `StyledButton` is for positive/primary actions only.
 
-## Navigation — prefer `:to` over `@click="navigateTo(...)"`
+## Navigation — `@click="navigateTo(...)"`, Never Vuetify `:to`
 
-Vuetify components with router integration (`v-btn`, `v-card`, `v-list-item`, `v-breadcrumbs` items) take a `:to` prop that renders a real `<a>` / `RouterLink` with keyboard focus, `aria-current`, and middleware handling for free. **Use `:to` for any navigation to a static route.** For wrapper components pass it through their props object — `StyledButton` / `StyledTooltipIconButton` → `:button-props="{ to: RoutePath.X }"`.
+Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) **must not** use `:to`/`to` — their router integration bypasses Nuxt-level navigation and misbehaves in Nuxt, so it is banned by lint (`vue/no-restricted-syntax`). Navigate them with an inline `@click="navigateTo(RoutePath.X)"` handler instead:
 
-Reserve `navigateTo(...)` inside a handler for **dynamic-only** targets where there is no element to hang `:to` on: search submit (`@keyup.enter`), a redirect after a create/delete mutation resolves, or a `v-data-table` `@click:row`.
+- `v-card` / `v-list-item` lose their link styling (pointer, hover overlay) when `:to` is dropped — add the boolean `link` prop to keep it. `v-btn`/`v-tab` need nothing.
+- For wrapper components put `@click` directly on the wrapper — `StyledButton` / `StyledTooltipIconButton` fall the listener through to the root `v-btn`. Never pass `to` inside `:button-props`.
+- Route targets always come from `RoutePath` (`@esposter/shared`), never string-built.
 
-When no Vuetify `:to` component fits, fall back to `NuxtLink`/`NuxtInvisibleLink` — see the **routing** skill, which owns link choice, the raw-`<a>` ban, and imperative navigation.
+Declarative links go on a Nuxt-native link component (`NuxtLink`/`NuxtInvisibleLink`) — `:to` is allowed there (and on `<Teleport>`) only. See the **routing** skill, which owns link choice, the raw-`<a>` ban, and imperative navigation.
 
 ## Auto-Imported Composables — `v` Prefix
 

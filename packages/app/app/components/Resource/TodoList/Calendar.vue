@@ -18,6 +18,8 @@ const events = computed<EventSourceInput>(() => {
   return results;
 });
 
+useTodoListSubscribables();
+
 onMounted(async () => {
   await loadContent();
   isLoading.value = false;

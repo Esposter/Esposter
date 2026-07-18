@@ -95,7 +95,7 @@ export const directMessageRouter = router({
 
         await tx
           .insert(usersToRoomsInMessage)
-          .values(allUserIds.map((userId) => ({ roomId: room.id, userId })))
+          .values(allUserIds.map((participantUserId) => ({ roomId: room.id, userId: participantUserId })))
           .onConflictDoNothing();
         await tx
           .update(usersToRoomsInMessage)
@@ -111,7 +111,7 @@ export const directMessageRouter = router({
     const { targetUsers, updatedRoom } = await ctx.db.transaction(async (tx) => {
       await assertIsRoom(tx, roomId, RoomType.DirectMessage);
       const participantIds = await readDirectMessageParticipantIds(tx, roomId);
-      const targetUsers: User[] = [];
+      const addedUsers: User[] = [];
 
       for (const userId of userIds) {
         if (participantIds.includes(userId))
@@ -141,16 +141,16 @@ export const directMessageRouter = router({
           JSON.stringify({ roomId, userId }),
         );
         participantIds.push(userId);
-        targetUsers.push(targetUser);
+        addedUsers.push(targetUser);
       }
 
-      const updatedRoom = requireMutation(
+      const updatedRoomRow = requireMutation(
         (await updateDirectMessageParticipantKey(tx, roomId, participantIds))[0],
         Operation.Update,
         DerivedDatabaseEntityType.DirectMessage,
         roomId,
       );
-      return { targetUsers, updatedRoom };
+      return { targetUsers: addedUsers, updatedRoom: updatedRoomRow };
     });
 
     for (const targetUser of targetUsers)
@@ -182,7 +182,7 @@ export const directMessageRouter = router({
           message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, userId).message,
         });
 
-      const targetUser = await requireEntity(
+      const removedUser = await requireEntity(
         tx.query.users.findFirst({ where: { id: { eq: userId } } }),
         DatabaseEntityType.User,
         userId,
@@ -198,7 +198,7 @@ export const directMessageRouter = router({
         DatabaseEntityType.UserToRoom,
         JSON.stringify({ roomId, userId }),
       );
-      const updatedRoom = requireMutation(
+      const updatedRoomRow = requireMutation(
         (
           await updateDirectMessageParticipantKey(
             tx,
@@ -210,7 +210,7 @@ export const directMessageRouter = router({
         DerivedDatabaseEntityType.DirectMessage,
         roomId,
       );
-      return { targetUser, updatedRoom };
+      return { targetUser: removedUser, updatedRoom: updatedRoomRow };
     });
     roomEventEmitter.emit("leaveRoom", {
       roomId,

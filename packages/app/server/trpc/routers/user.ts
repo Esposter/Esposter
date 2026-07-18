@@ -3,7 +3,6 @@ import type { SetNonNullable } from "type-fest";
 
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
-import { dayjs } from "#shared/services/dayjs";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
@@ -12,7 +11,7 @@ import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUse
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { ContainerSASPermissions } from "@azure/storage-blob";
+import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -86,10 +85,7 @@ export const userRouter = router({
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
     const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    const sasUrl = await blockBlobClient.generateSasUrl({
-      expiresOn: dayjs().add(1, "hour").toDate(),
-      permissions: ContainerSASPermissions.from({ write: true }),
-    });
+    const sasUrl = await generateWriteSasUrl(blockBlobClient);
     return { publicUrl: blockBlobClient.url, sasUrl };
   }),
   onUpsertStatus: standardAuthedProcedure.input(onUpsertStatusInputSchema).subscription(async function* ({

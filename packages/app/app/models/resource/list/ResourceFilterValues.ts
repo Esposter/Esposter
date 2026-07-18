@@ -6,6 +6,9 @@ import type { ResourceType } from "@esposter/db-schema";
 export interface ResourceFilterValues {
   searchQuery: string;
   status: "" | ResourceStatusFilter;
+  // Name and value are separate filters — a name alone means "has this tag, any value"
+  tagName: string;
+  tagValue: string;
   types: ResourceType[];
   updatedAfter?: Date;
   updatedBefore?: Date;

@@ -11,6 +11,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 export const useReadResources = ({
   searchQuery = ref(""),
   status = ref<"" | ResourceStatusFilter>(""),
+  tagName = ref(""),
+  tagValue = ref(""),
   types = ref<ResourceType[]>([]),
   updatedAfter = ref<Date>(),
   updatedBefore = ref<Date>(),
@@ -27,6 +29,8 @@ export const useReadResources = ({
     getResourceFilterInput({
       searchQuery: searchQuery.value,
       status: status.value,
+      tagName: tagName.value,
+      tagValue: tagValue.value,
       types: types.value,
       updatedAfter: updatedAfter.value,
       updatedBefore: updatedBefore.value,

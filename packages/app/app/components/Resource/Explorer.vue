@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
+import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import { RoutePath } from "@esposter/shared";
 
@@ -14,10 +14,22 @@ interface ResourceExplorerProps {
   rename: (name: string) => Promise<void>;
   resource: Resource;
   unpublish: () => Promise<void>;
+  updateTags: (tags: ResourceTags) => Promise<void>;
 }
 
-const { activeBlade, duplicate, isLoading, publication, publish, refresh, remove, rename, resource, unpublish } =
-  defineProps<ResourceExplorerProps>();
+const {
+  activeBlade,
+  duplicate,
+  isLoading,
+  publication,
+  publish,
+  refresh,
+  remove,
+  rename,
+  resource,
+  unpublish,
+  updateTags,
+} = defineProps<ResourceExplorerProps>();
 // On mobile the list box is dropped entirely — the full-width All resources page is the mobile list, reached
 // Via the toolbar button — so the blade box gets the whole surface instead of a cramped drawer.
 const { smAndDown } = useVDisplay();
@@ -45,7 +57,7 @@ const { smAndDown } = useVDisplay();
           <StyledTooltipIconButton
             icon="mdi-format-list-bulleted"
             text="All resources"
-            :button-props="{ to: RoutePath.ResourcesAll }"
+            @click="navigateTo(RoutePath.ResourcesAll)"
           />
         </template>
       </ResourceBladeToolbar>
@@ -53,7 +65,7 @@ const { smAndDown } = useVDisplay();
       <div b-b-0 b-l-1 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
         <ResourceBladeNav :active-blade :resource />
         <div flex-1 min-w-0 overflow-auto>
-          <ResourceBladeOutlet :active-blade :is-loading :publication :resource />
+          <ResourceBladeOutlet :active-blade :is-loading :publication :resource :update-tags />
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { SNAPSHOT_FILENAME } from "@/constants";
 import { PGlite } from "@electric-sql/pglite";
+import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import { relations } from "@esposter/db-schema";
 import { drizzle } from "drizzle-orm/pglite";
 import { readFile } from "node:fs/promises";
@@ -12,7 +13,9 @@ import { join } from "node:path";
 // The createMockDb.test.ts verification fails if the committed snapshot drifts from the schema.
 export const createMockDb = async (): Promise<PostgresJsDatabase<typeof relations>> => {
   const loadDataDir = new Blob([await readFile(join(import.meta.dirname, SNAPSHOT_FILENAME))]);
-  const client = new PGlite({ loadDataDir });
+  // The snapshot was dumped with pg_trgm installed, so the extension must be loaded here too —
+  // Otherwise the resources trigram index and similarity() ranking resolve against nothing.
+  const client = new PGlite({ extensions: { pg_trgm }, loadDataDir });
   // `new PGlite()` returns before init finishes, so the first query would otherwise pay the
   // Boot cost and blow past the per-test timeout. Await readiness here so it lands in `beforeAll`.
   await client.waitReady;

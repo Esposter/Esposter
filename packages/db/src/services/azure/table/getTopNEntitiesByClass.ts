@@ -3,6 +3,7 @@ import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
 import { deserializeEntity } from "@/services/azure/transformer/deserializeEntity";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
 
 export const getTopNEntitiesByClass = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
@@ -11,9 +12,17 @@ export const getTopNEntitiesByClass = async <TEntity extends CompositeKey>(
   queryOptions?: TableEntityQueryOptions,
 ): Promise<TEntity[]> => {
   // Filter out metadata like continuation token before deserializing the json
-  // Take the first page as the topEntries result
-  // This only sends a single request to the service
-  for await (const page of tableClient.listEntities({ queryOptions }).byPage({ maxPageSize: topN }))
-    return page.slice(0, topN).map(({ etag: _etag, ...entity }) => deserializeEntity(entity, getClass(entity)));
-  return [];
+  // Azure may return a short page even when more rows exist, so keep paging until topN entities
+  // Are collected or the partition is exhausted — a full first page still costs a single request,
+  // And a short result now proves there is genuinely nothing more to read.
+  // Azure rejects $top above its page-size cap, so a larger topN pages at the cap instead
+  const topEntities: TEntity[] = [];
+  for await (const page of tableClient
+    .listEntities({ queryOptions })
+    .byPage({ maxPageSize: Math.min(topN, AZURE_MAX_PAGE_SIZE) }))
+    for (const { etag: _etag, ...entity } of page) {
+      topEntities.push(deserializeEntity(entity, getClass(entity)));
+      if (topEntities.length === topN) return topEntities;
+    }
+  return topEntities;
 };

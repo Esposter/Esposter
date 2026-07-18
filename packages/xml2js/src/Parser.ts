@@ -208,8 +208,8 @@ export const parseStringPromise = <T>(
   convertableToString: convertableToString,
   options?: ParserOptions,
 ): Promise<T> => {
-  const parser = new Parser(options);
-  return parser.parseStringPromise(convertableToString);
+  const parserInstance = new Parser(options);
+  return parserInstance.parseStringPromise(convertableToString);
 };
 // Underscore has a nice function for this, but we go without dependencies.
 const isEmpty = (thing: unknown): boolean =>

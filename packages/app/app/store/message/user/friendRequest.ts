@@ -48,9 +48,9 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
         ),
     );
   };
-  const storeDeleteFriendRequestsByUser = (userId: string) => {
+  const storeDeleteFriendRequestsByUser = (targetUserId: string) => {
     friendRequests.value = friendRequests.value.filter(
-      (friendRequest) => friendRequest.senderId !== userId && friendRequest.receiverId !== userId,
+      (friendRequest) => friendRequest.senderId !== targetUserId && friendRequest.receiverId !== targetUserId,
     );
   };
 

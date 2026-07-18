@@ -18,13 +18,13 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Dashboard,
   },
   [ResourceType.Email]: {
-    capabilities: { portable: true },
+    capabilities: { fileAssets: true, portable: true, publishable: true },
     contentSchema: emailEditorSchema,
     icon: "mdi-email-edit",
     title: ResourceType.Email,
   },
   [ResourceType.Flowchart]: {
-    capabilities: {},
+    capabilities: { publishable: true },
     contentSchema: flowchartEditorSchema,
     icon: "mdi-sitemap",
     title: ResourceType.Flowchart,
@@ -42,7 +42,7 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Sheet,
   },
   [ResourceType.Survey]: {
-    capabilities: { datasetProvider: true, publishable: true },
+    capabilities: { datasetProvider: true, fileAssets: true, publishable: true },
     contentSchema: surveyResourceSchema,
     icon: "mdi-clipboard-list",
     title: ResourceType.Survey,
@@ -54,7 +54,7 @@ export const ResourceDefinitionMap = {
     title: "Todo List",
   },
   [ResourceType.Webpage]: {
-    capabilities: { publishable: true },
+    capabilities: { fileAssets: true, publishable: true },
     contentSchema: webpageEditorSchema,
     icon: "mdi-language-html5",
     title: ResourceType.Webpage,

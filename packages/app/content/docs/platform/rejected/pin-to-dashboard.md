@@ -9,4 +9,4 @@ Azure lets you pin resources/blades as tiles on portal dashboards — the analog
 
 ## Why not
 
-Our Dashboard is a data-visualization product (visuals bound to datasets), not a portal homepage; mixing navigation tiles into it muddles both. Quick access is what [favorites & recents](/docs/proposals/platform/favorites-and-recents) are for.
+Our Dashboard is a data-visualization product (visuals bound to datasets), not a portal homepage; mixing navigation tiles into it muddles both. Quick access is what [favorites & recents](/docs/platform/favorites-and-recents) are for.

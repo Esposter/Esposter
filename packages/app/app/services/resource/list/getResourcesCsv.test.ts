@@ -14,6 +14,7 @@ describe(getResourcesCsv, () => {
     deletedAt: null,
     id: crypto.randomUUID(),
     name,
+    tags: {},
     type: ResourceType.Sheet,
     updatedAt: epochDate,
     userId,

@@ -37,8 +37,8 @@ const { bottom, left, middle, right } = useFixedLayoutStyles(
 
 useResizeObserver(footer, (entries) => {
   const entry = takeOne(entries);
-  const { bottom } = entry.contentRect;
-  bottomOffset.value = bottom;
+  const { bottom: contentBottom } = entry.contentRect;
+  bottomOffset.value = contentBottom;
 });
 
 onMounted(() => {

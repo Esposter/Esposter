@@ -27,12 +27,13 @@ export const useInitializeGameObjectSetters = <
   ][]) {
     const setter = setterMap[key];
     if (!setter) continue;
-    setters.push((gameObject) => {
-      setter(gameObject, emit)(value);
+    setters.push((targetGameObject) => {
+      setter(targetGameObject, emit)(value);
       if (value !== undefined) emit(getUpdateEvent(key as string), value);
       // If we haven't defined a proper value for the game object property,
       // We should emit the intrinsic gameObject value so vue can grab it
-      else if (key in gameObject) emit(getUpdateEvent(key as string), gameObject[key as keyof typeof gameObject]);
+      else if (key in targetGameObject)
+        emit(getUpdateEvent(key as string), targetGameObject[key as keyof typeof targetGameObject]);
     });
 
     setterWatchHandles.push(
@@ -54,8 +55,8 @@ export const useInitializeGameObjectSetters = <
     );
   }
 
-  const initializeGameObjectSetters = (gameObject: TGameObject) => {
-    for (const setter of setters) setter(gameObject);
+  const initializeGameObjectSetters = (targetGameObject: TGameObject) => {
+    for (const setter of setters) setter(targetGameObject);
   };
   return { initializeGameObjectSetters, setterWatchHandles };
 };

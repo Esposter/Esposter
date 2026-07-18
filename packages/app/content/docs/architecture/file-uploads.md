@@ -27,14 +27,14 @@ Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/upl
 
 ## Upload procedures
 
-| Procedure                                          | Router    | Blob path                     | Size limit              | Auth         |
-| -------------------------------------------------- | --------- | ----------------------------- | ----------------------- | ------------ |
-| `generateUploadFileSasEntities({ files, roomId })` | `message` | `{roomId}/{fileId}`           | `MAX_FILE_REQUEST_SIZE` | member       |
-| `generateUploadFileSasEntities({ files, id })`     | `survey`  | `{surveyId}/files/{fileId}`   | `MAX_FILE_REQUEST_SIZE` | owner        |
-| `generateProfileImageUploadUrl()`                  | `user`    | `{userId}/ProfileImage`       | `MAX_FILE_REQUEST_SIZE` | authed       |
-| `generateProfileImageUploadUrl({ roomId })`        | `room`    | `rooms/{roomId}/ProfileImage` | `MAX_FILE_REQUEST_SIZE` | `ManageRoom` |
+| Procedure                                          | Router                                                     | Blob path                     | Size limit              | Auth         |
+| -------------------------------------------------- | ---------------------------------------------------------- | ----------------------------- | ----------------------- | ------------ |
+| `generateUploadFileSasEntities({ files, roomId })` | `message`                                                  | `{roomId}/{fileId}`           | `MAX_FILE_REQUEST_SIZE` | member       |
+| `generateUploadFileSasEntities({ files, id })`     | any [FileAssets](/docs/platform/resource-file-assets) type | `{id}/files/{fileId}`         | `MAX_FILE_REQUEST_SIZE` | owner        |
+| `generateProfileImageUploadUrl()`                  | `user`                                                     | `{userId}/ProfileImage`       | `MAX_FILE_REQUEST_SIZE` | authed       |
+| `generateProfileImageUploadUrl({ roomId })`        | `room`                                                     | `rooms/{roomId}/ProfileImage` | `MAX_FILE_REQUEST_SIZE` | `ManageRoom` |
 
-Message attachments land in `AzureContainer.MessageAssets`; survey asset files in `AzureContainer.ResourceAssets`; profile images (user + room) in `AzureContainer.PublicUserAssets`. The separate attachments container lets a lifecycle policy tier old attachments without touching hot, small profile images (see [/docs/architecture/azure-services](/docs/architecture/azure-services)).
+Message attachments land in `AzureContainer.MessageAssets`; resource asset files in `AzureContainer.ResourceAssets`; profile images (user + room) in `AzureContainer.PublicUserAssets`. The separate attachments container lets a lifecycle policy tier old attachments without touching hot, small profile images (see [/docs/architecture/azure-services](/docs/architecture/azure-services)).
 
 ## Size constants
 

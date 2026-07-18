@@ -6,7 +6,7 @@ import { dedupeFilters } from "#shared/services/message/dedupeFilters";
 import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import { deserializeMessageSearchDocument } from "@@/server/services/message/deserializeMessageSearchDocument";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
-import { filtersToClauses, getSearchNullClause, serializeClauses } from "@esposter/db";
+import { filtersToClauses, getSearchNullClause, serializeSearchClauses } from "@esposter/db";
 import {
   BinaryOperator,
   CompositeKeyPropertyNames,
@@ -28,7 +28,7 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
   ];
   if (dedupedFilters.length > 0) clauses.push(...filtersToClauses(dedupedFilters));
   const { count, results } = await client.search(query, {
-    filter: serializeClauses(clauses),
+    filter: serializeSearchClauses(clauses),
     includeTotalCount: true,
     orderBy: sortBy.map(({ key, order }) => `${key} ${order}`),
     searchFields: SearchIndexSearchableFieldsMap[SearchIndex.Messages],

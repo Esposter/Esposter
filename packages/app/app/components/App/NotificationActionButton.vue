@@ -9,5 +9,15 @@ const { action } = defineProps<AppNotificationActionButtonProps>();
 </script>
 
 <template>
-  <v-btn size="small" variant="tonal" :to="action.to" @click="action.handler?.()">{{ action.title }}</v-btn>
+  <v-btn
+    size="small"
+    variant="tonal"
+    @click="
+      async () => {
+        await action.handler?.();
+        if (action.to) navigateTo(action.to);
+      }
+    "
+    >{{ action.title }}</v-btn
+  >
 </template>

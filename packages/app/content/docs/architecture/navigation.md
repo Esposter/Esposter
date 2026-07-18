@@ -13,12 +13,12 @@ Every navigation in the app goes through Nuxt's client-side router. A raw `<a>` 
 flowchart TD
   START["Need to navigate?"] -->|declarative link| KIND{"What kind of target?"}
   START -->|imperative — after a mutation, form submit, guard| NAV["navigateTo(target, options)"]
-  KIND -->|internal app route| INTERNAL["NuxtLink :to (or Vuetify :to on a routable component)"]
+  KIND -->|internal app route| INTERNAL["NuxtLink :to (or NuxtInvisibleLink)"]
   KIND -->|external URL| EXTERNAL["NuxtLink :to external target=_blank"]
   KIND -->|in-page anchor / fragment| HASH["NuxtInvisibleLink :to=hash + custom @click.prevent"]
 ```
 
-- **Internal route** — `<NuxtLink :to="RoutePath.Resource(id)">`, or `:to` on a routable Vuetify component (`v-card`, `v-list-item`, `v-tab`, `v-btn`). Real anchors, so keyboard and middle-/ctrl-click work. Route targets always come from `RoutePath` (`@esposter/shared`), never string-built.
+- **Internal route** — `<NuxtLink :to="RoutePath.Resource(id)">` (or `<NuxtInvisibleLink>` when the link should inherit surrounding styling). Real anchors, so keyboard and middle-/ctrl-click work. Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`) **never** take `:to` — they navigate imperatively with an inline `@click="navigateTo(...)"` handler. Route targets always come from `RoutePath` (`@esposter/shared`), never string-built.
 - **External URL** — `<NuxtLink :to="url" external target="_blank">`; NuxtLink adds `rel="noopener noreferrer"` for `_blank`, so a manual `rel` is redundant.
 - **In-page anchor** — `<NuxtInvisibleLink :to="{ hash: '#id' }" @click.prevent="…">`; the `.prevent` suppresses router navigation so a custom smooth-scroll + `history.replaceState` handler drives the behavior (see the docs table of contents).
 - **Imperative** — `navigateTo(target, { replace: true })` for post-mutation redirects, form submits, and route-guard cases where there is no element to click. `router.push` is banned by lint (`no-restricted-syntax`) — use `navigateTo`. `router.replace({ query })` is a query-string update, not navigation, so it is exempt and allowed.
@@ -31,19 +31,19 @@ A link-styled affordance that has no destination (it only emits/handles an event
 
 ## Instant docs navigation
 
-The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between pages via the sidebar or the prev/next surround. It does **not** force a full component remount per route: `path` is a `computed` off the route and is passed as the reactive `useAsyncData` key (`watch: [path]`), so page content refetches in place instead of tearing down and rebuilding the page (and re-blocking on `await` during the transition). `useSeoMeta` takes getters so the title/description track the active page. Surround and sidebar links are ordinary `:to` links — no bespoke navigation.
+The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between pages via the sidebar or the prev/next surround. It does **not** force a full component remount per route: `path` is a `computed` off the route and is passed as the reactive `useAsyncData` key (`watch: [path]`), so page content refetches in place instead of tearing down and rebuilding the page (and re-blocking on `await` during the transition). `useSeoMeta` takes getters so the title/description track the active page. The surround and sidebar are Vuetify components that navigate via inline `@click="navigateTo(...)"` — no bespoke navigation.
 
 ## Key files
 
-| File                                                  | Role                                                                 |
-| ----------------------------------------------------- | -------------------------------------------------------------------- |
-| `app/components/Nuxt/InvisibleLink.vue`               | base link primitive — `NuxtLink` clone with default styling stripped |
-| `packages/configuration/eslint/overrides/vueRules.js` | bans the raw `a` element + `router.push` in templates                |
-| `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`) |
-| `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                 |
-| `app/components/Docs/TableOfContentsItem.vue`         | in-page hash anchor via `NuxtInvisibleLink` + custom smooth scroll   |
+| File                                                  | Role                                                                    |
+| ----------------------------------------------------- | ----------------------------------------------------------------------- |
+| `app/components/Nuxt/InvisibleLink.vue`               | base link primitive — `NuxtLink` clone with default styling stripped    |
+| `packages/configuration/eslint/overrides/vueRules.js` | bans the raw `a` element, `router.push`, and Vuetify `:to` in templates |
+| `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`)    |
+| `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                    |
+| `app/components/Docs/TableOfContentsItem.vue`         | in-page hash anchor via `NuxtInvisibleLink` + custom smooth scroll      |
 
 ## Notes
 
 - `RoutePath` in `@esposter/shared` is the single source of truth for internal routes; feed it to `:to` and `navigateTo` alike.
-- Vuetify's `:to` integration is wired by `vuetify-nuxt-module`; it performs client-side `router.push`, so it is a valid internal-link construct even though it is not literally `<NuxtLink>`.
+- **One navigation pathway only — Nuxt-native.** `NuxtLink`/`NuxtInvisibleLink` for declarative links, `navigateTo` for everything else. Vuetify's own `:to` router integration is not Nuxt-native navigation and misbehaves in Nuxt environments (it bypasses Nuxt-level navigation handling), so it is banned by lint (`vue/no-restricted-syntax`) — Vuetify components navigate with an inline `@click="navigateTo(...)"` instead.

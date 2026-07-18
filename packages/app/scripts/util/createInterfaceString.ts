@@ -10,7 +10,10 @@ export const createInterfaceString = (name: string, properties: InterfacePropert
         `export interface ${name} {`,
         properties
           .toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name))
-          .map(({ name, type }) => `  ${startsWithNumber(name) ? `"@${name}"` : name}: ${type};`)
+          .map(
+            ({ name: propertyName, type }) =>
+              `  ${startsWithNumber(propertyName) ? `"@${propertyName}"` : propertyName}: ${type};`,
+          )
           .join("\n"),
         "}\n",
       ].join("\n");

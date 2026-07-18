@@ -63,10 +63,10 @@ export const searchHistoryRouter = router({
       const where: RelationsFilter<(typeof relations)["searchHistoriesInMessage"], typeof relations> = {
         roomId: { eq: roomId },
       };
-      if (cursor) where.RAW = (searchHistoriesInMessage) => getCursorWhere(searchHistoriesInMessage, cursor, sortBy);
+      if (cursor) where.RAW = (searchHistory) => getCursorWhere(searchHistory, cursor, sortBy);
       const resultSearchHistories = await ctx.db.query.searchHistoriesInMessage.findMany({
         limit: limit + 1,
-        orderBy: (searchHistoriesInMessage) => parseSortByToSql(searchHistoriesInMessage, sortBy),
+        orderBy: (searchHistory) => parseSortByToSql(searchHistory, sortBy),
         where,
       });
       return getCursorPaginationData(resultSearchHistories, limit, sortBy);

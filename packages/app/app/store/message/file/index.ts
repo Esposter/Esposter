@@ -30,15 +30,15 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   });
 
   const viewableFiles = computed(() => {
-    const viewableFiles: { alt: string; id: string; src: string }[] = [];
+    const viewerImages: { alt: string; id: string; src: string }[] = [];
     for (const { filename, id, mimetype } of dataStore.files) {
       const fileUrl = fileUrlMap.value.get(id);
       if (!fileUrl) continue;
       const inferredMimetype = getInferredMimetype(mimetype);
       if (inferredMimetype !== "image") continue;
-      viewableFiles.push({ alt: filename, id, src: fileUrl.url });
+      viewerImages.push({ alt: filename, id, src: fileUrl.url });
     }
-    return viewableFiles;
+    return viewerImages;
   });
   const viewFiles = (initialViewIndex: number) => {
     viewerApi({ images: viewableFiles.value, options: { initialViewIndex } });

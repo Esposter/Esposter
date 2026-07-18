@@ -42,7 +42,9 @@ When `@electric-sql/pglite` changes between minor versions, regenerate the db-mo
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 
-Temporary overrides that force a transitive dep to a safe version (currently `crossws`, `h3`, `pdfjs-dist`, `vite`, `vue-router`). Remove when the upstream package catches up — none currently carry a comment explaining why, so check git blame before removing one.
+Temporary overrides that force a transitive dep to a safe version (currently `crossws`, `h3`, `pdfjs-dist`, `vite`, `vue-router`, `yuku-parser`). Remove when the upstream package catches up — most carry no comment explaining why, so check git blame before removing one.
+
+- **`yuku-parser`** — exact-pinned to `0.6.5`: 0.6.6+ removed the `walk` export that `rolldown-plugin-dts` imports unconditionally, which breaks every rolldown build and vitest run through the shared configs. Lift the pin only after `rolldown-plugin-dts` stops importing `walk` (verify with a clean install + any package's `pnpm build`).
 
 ## Tracked issues (update normally, but watch these)
 

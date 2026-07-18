@@ -14,8 +14,8 @@ export const usePopupStore = defineStore("clicker/popup", () => {
     const id = crypto.randomUUID();
     incrementPoints(mouseStore.mousePower);
     popups.value.push({ duration, id, left: event.pageX, points: mouseStore.mousePower, top: event.pageY });
-    useTimeoutFn((id: string) => {
-      const index = popups.value.findIndex((p) => p.id === id);
+    useTimeoutFn((popupId: string) => {
+      const index = popups.value.findIndex((p) => p.id === popupId);
       if (index === -1) return;
       popups.value.splice(index, 1);
     }, duration);

@@ -16,9 +16,9 @@ export const getLinkPreviewResponse = (message: string): Promise<LinkPreviewResp
 
   return getResultAsync(() =>
     getLinkPreview(link.href, {
-      resolveDNSHost: (url) =>
+      resolveDNSHost: (targetUrl) =>
         new Promise((resolve, reject) => {
-          const hostname = new URL(url).hostname;
+          const hostname = new URL(targetUrl).hostname;
           lookup(hostname, (err, address) => {
             if (err) {
               reject(err);

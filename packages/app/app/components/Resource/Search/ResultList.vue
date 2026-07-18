@@ -46,12 +46,17 @@ const selectedDomIndex = computed(() => {
       <v-list-subheader v-if="items[index - 1]?.group !== group">{{ group }}</v-list-subheader>
       <v-list-item
         :id="getResourceSearchOptionId(index)"
+        link
         :active="selectedIndex === index"
         :prepend-icon="icon"
         role="option"
         :subtitle
-        :to
-        @click="emit('select')"
+        @click="
+          () => {
+            navigateTo(to);
+            emit('select');
+          }
+        "
       >
         <template #title>
           <ResourceSearchHighlightedTitle :search-query :text="title" />
@@ -60,10 +65,10 @@ const selectedDomIndex = computed(() => {
           <StyledTooltipIconButton
             icon="mdi-plus"
             text="Create"
-            :button-props="{ size: 'small', variant: 'text', to: createTo }"
-            @click="
-              (event) => {
-                event.stopPropagation();
+            :button-props="{ size: 'small', variant: 'text' }"
+            @click.stop="
+              () => {
+                navigateTo(createTo);
                 emit('select');
               }
             "
@@ -74,12 +79,17 @@ const selectedDomIndex = computed(() => {
     <v-list-item
       v-if="searchQuery"
       :id="getResourceSearchOptionId(items.length)"
+      link
       :active="selectedIndex === items.length"
       append-icon="mdi-arrow-right"
       role="option"
       title="See all results"
-      :to="seeAllTo"
-      @click="emit('select')"
+      @click="
+        () => {
+          navigateTo(seeAllTo);
+          emit('select');
+        }
+      "
     />
   </StyledList>
 </template>
