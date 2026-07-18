@@ -29,6 +29,7 @@ export const RoutePath: {
   readonly ResourcesCreate: "/resources/create";
   readonly ResourcesCreateType: (type: string) => string;
   readonly ResourcesRecycleBin: "/resources/recycle-bin";
+  readonly User: (id: string) => string;
   readonly UserSettings: "/user/settings";
   readonly View: (type: string, id: string) => string;
 } = {
@@ -60,6 +61,7 @@ export const RoutePath: {
   ResourcesCreate: "/resources/create",
   ResourcesCreateType: (type: string) => `/resources/create/${type}`,
   ResourcesRecycleBin: "/resources/recycle-bin",
+  User: (id: string) => `/user/${id}`,
   UserSettings: "/user/settings",
   View: (type: string, id: string) => `/view/${type}/${id}`,
 } as const;

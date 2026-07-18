@@ -42,6 +42,18 @@ export const useResourceMutations = () => {
           unpublishResource: (input) => $trpc.flowchart.unpublishResource.mutate(input),
           updateResource: (input) => $trpc.flowchart.updateResource.mutate(input),
         };
+      case ResourceType.Note:
+        return {
+          deleteResource: (input) => $trpc.note.deleteResource.mutate(input),
+          publishResource: (input) => $trpc.note.publishResource.mutate(input),
+          readResourceContent: (input) => $trpc.note.readResourceContent.query(input),
+          readResourcePublication: (input) => $trpc.note.readResourcePublication.query(input),
+          readResourceViewCount: (input) => $trpc.note.readResourceViewCount.query(input),
+          // Content is untyped at this cross-type dispatch; the calling store owns the concrete schema
+          saveResourceContent: (input) => $trpc.note.saveResourceContent.mutate(input as never),
+          unpublishResource: (input) => $trpc.note.unpublishResource.mutate(input),
+          updateResource: (input) => $trpc.note.updateResource.mutate(input),
+        };
       case ResourceType.Program:
         return {
           deleteResource: (input) => $trpc.program.deleteResource.mutate(input),

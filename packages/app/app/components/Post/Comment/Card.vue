@@ -3,6 +3,7 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { useCommentDialogStore } from "@/store/post/comment/dialog";
+import { RoutePath } from "@esposter/shared";
 
 interface PostCommentCardProps {
   comment: PostWithRelations;
@@ -21,8 +22,12 @@ const isUpdateMode = ref(false);
   <div flex>
     <PostLikeSection :post="comment" is-comment-store pt-2 />
     <v-card px-2 pt-2 flex-1 shadow-none>
-      <StyledAvatar :image="comment.user.image" :name="comment.user.name" />
-      Posted by <span font-bold>{{ comment.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
+      <NuxtInvisibleLink :to="RoutePath.User(comment.userId)">
+        <StyledAvatar :image="comment.user.image" :name="comment.user.name" />
+      </NuxtInvisibleLink>
+      Posted by
+      <NuxtInvisibleLink font-bold :to="RoutePath.User(comment.userId)">{{ comment.user.name }}</NuxtInvisibleLink>
+      <span text-gray>{{ createdAtTimeAgo }}</span>
       <PostCommentUpdateRichTextEditor
         v-if="isUpdateMode"
         mt-2

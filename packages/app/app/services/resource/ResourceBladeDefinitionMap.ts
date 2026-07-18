@@ -13,6 +13,8 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
   [ResourceType.Dashboard]: [],
   [ResourceType.Email]: [],
   [ResourceType.Flowchart]: [],
+  // Note renders its Tiptap editor inline in the built-in Editor blade, so it declares no extra blades
+  [ResourceType.Note]: [],
   // A program has no canvas, so it declares no Editor — Setup and Status are the whole surface
   [ResourceType.Program]: [
     { component: ResourceProgramSetup, icon: "mdi-cog", slug: "setup", title: "Setup" },

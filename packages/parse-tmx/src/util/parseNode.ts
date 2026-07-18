@@ -17,7 +17,7 @@ export const parseNode = <
   expectedCount: number,
   translateFlips: boolean,
 ): Promise<TParsedNode> => {
-  const tmxNodeType = node["#name"] as TMXNodeType;
+  const tmxNodeType = node["#name"];
   switch (tmxNodeType) {
     case TMXNodeType.Group:
       return parseGroup(node as TMXGroupLayerNode, expectedCount, translateFlips) as Promise<TParsedNode>;

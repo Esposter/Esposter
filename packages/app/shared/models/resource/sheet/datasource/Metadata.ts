@@ -14,7 +14,8 @@ export interface Metadata {
 
 export const metadataSchema = z.object({
   dataSourceType: z.union([dataSourceTypeSchema, datasetProviderTypeSchema]),
-  importedAt: z.date(),
+  // Coerced because content is read back from the blob with plain JSON.parse (ISO string, not Date).
+  importedAt: z.coerce.date(),
   name: z.string(),
   size: z.int().nonnegative(),
 }) satisfies z.ZodType<Metadata>;

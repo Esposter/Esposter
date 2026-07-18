@@ -4,6 +4,7 @@ import type { PostWithRelations } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { usePostDialogStore } from "@/store/post/dialog";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { RoutePath } from "@esposter/shared";
 
 interface PostCardProps {
   // Comments page only: look up post data in the comment store instead.
@@ -24,8 +25,12 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
   <StyledCard pl-10 bg-surface-opacity-80>
     <PostLikeSection left-2 top-2 absolute :post :is-comment-store />
     <v-card px-2 pt-2>
-      <StyledAvatar :image="post.user.image" :name="post.user.name" />
-      Posted by <span font-bold>{{ post.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
+      <NuxtInvisibleLink :to="RoutePath.User(post.userId)">
+        <StyledAvatar :image="post.user.image" :name="post.user.name" />
+      </NuxtInvisibleLink>
+      Posted by
+      <NuxtInvisibleLink font-bold :to="RoutePath.User(post.userId)">{{ post.user.name }}</NuxtInvisibleLink>
+      <span text-gray>{{ createdAtTimeAgo }}</span>
       <v-card-title font-bold px-0 whitespace-normal text-title-large>
         {{ post.title }}
       </v-card-title>

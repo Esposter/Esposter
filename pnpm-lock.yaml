@@ -281,6 +281,9 @@ catalogs:
     '@tiptap/extensions':
       specifier: ^3.28.0
       version: 3.28.0
+    '@tiptap/html':
+      specifier: ^3.28.0
+      version: 3.28.0
     '@tiptap/pm':
       specifier: ^3.28.0
       version: 3.28.0
@@ -875,7 +878,7 @@ importers:
         version: 13.0.0
       '@azure/service-bus':
         specifier: 'catalog:'
-        version: 7.9.5(supports-color@10.2.2)
+        version: 7.9.5
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.33.0
@@ -960,6 +963,9 @@ importers:
       '@tiptap/extensions':
         specifier: 'catalog:'
         version: 3.28.0(@tiptap/core@3.28.0(@tiptap/pm@3.28.0))(@tiptap/pm@3.28.0)
+      '@tiptap/html':
+        specifier: 'catalog:'
+        version: 3.28.0(@tiptap/core@3.28.0(@tiptap/pm@3.28.0))(@tiptap/pm@3.28.0)(happy-dom@20.10.6)
       '@tiptap/pm':
         specifier: 'catalog:'
         version: 3.28.0
@@ -1419,7 +1425,7 @@ importers:
         version: 4.13.1
       '@azure/service-bus':
         specifier: 'catalog:'
-        version: 7.9.5(supports-color@10.2.2)
+        version: 7.9.5
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.33.0
@@ -1498,7 +1504,7 @@ importers:
         version: 13.0.0
       '@azure/service-bus':
         specifier: 'catalog:'
-        version: 7.9.5(supports-color@10.2.2)
+        version: 7.9.5
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.33.0
@@ -1632,7 +1638,7 @@ importers:
         version: 13.0.0
       '@azure/service-bus':
         specifier: 'catalog:'
-        version: 7.9.5(supports-color@10.2.2)
+        version: 7.9.5
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.33.0
@@ -7069,6 +7075,13 @@ packages:
     peerDependencies:
       '@tiptap/core': 3.28.0
       '@tiptap/pm': 3.28.0
+
+  '@tiptap/html@3.28.0':
+    resolution: {integrity: sha512-AnLu6ChKjJt90bjLHi5CqgCVJzjI0ipheDGVUMvJD4QIY0nG8FBchrFx2ARUn2Ktk2qjXdTFQ2YcYuZWB2MmOA==}
+    peerDependencies:
+      '@tiptap/core': 3.28.0
+      '@tiptap/pm': 3.28.0
+      happy-dom: ^20.8.9
 
   '@tiptap/markdown@3.28.0':
     resolution: {integrity: sha512-AefLVBgpjmBDbGDx8i0UDr4KyPxfsDnpIGYROTDSyGJswovGZDzCm3YjMGm8roxP31Opw4UCtts4WkFzWPI0og==}
@@ -15373,7 +15386,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@azure/core-amqp@4.5.0(supports-color@10.2.2)':
+  '@azure/core-amqp@4.5.0':
     dependencies:
       '@azure/abort-controller': 2.2.0
       '@azure/core-auth': 1.11.0
@@ -15382,7 +15395,7 @@ snapshots:
       buffer: 6.0.3
       events: 3.3.0
       process: 0.11.10
-      rhea: 3.0.5(supports-color@10.2.2)
+      rhea: 3.0.5
       rhea-promise: 3.0.3
       tslib: 2.8.1
       util: 0.12.5
@@ -15536,10 +15549,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/service-bus@7.9.5(supports-color@10.2.2)':
+  '@azure/service-bus@7.9.5':
     dependencies:
       '@azure/abort-controller': 1.1.0
-      '@azure/core-amqp': 4.5.0(supports-color@10.2.2)
+      '@azure/core-amqp': 4.5.0
       '@azure/core-auth': 1.11.0
       '@azure/core-client': 1.11.0
       '@azure/core-paging': 1.7.0
@@ -20654,6 +20667,12 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.28.0(@tiptap/pm@3.28.0)
       '@tiptap/pm': 3.28.0
+
+  '@tiptap/html@3.28.0(@tiptap/core@3.28.0(@tiptap/pm@3.28.0))(@tiptap/pm@3.28.0)(happy-dom@20.10.6)':
+    dependencies:
+      '@tiptap/core': 3.28.0(@tiptap/pm@3.28.0)
+      '@tiptap/pm': 3.28.0
+      happy-dom: 20.10.6
 
   '@tiptap/markdown@3.28.0(@tiptap/core@3.28.0(@tiptap/pm@3.28.0))(@tiptap/pm@3.28.0)':
     dependencies:
@@ -28666,12 +28685,12 @@ snapshots:
   rhea-promise@3.0.3:
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
-      rhea: 3.0.5(supports-color@10.2.2)
+      rhea: 3.0.5
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
-  rhea@3.0.5(supports-color@10.2.2):
+  rhea@3.0.5:
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
