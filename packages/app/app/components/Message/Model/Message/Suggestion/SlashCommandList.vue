@@ -10,11 +10,11 @@ const title = computed(() => {
   const baseTitle = "COMMANDS";
   return query ? `${baseTitle} MATCHING ${SuggestionTrigger.SlashCommand}${query}` : baseTitle;
 });
-const selectedIndex = ref(0);
 const selectItem = (index: number) => {
   const slashCommand = takeOne(items, index);
   command(slashCommand);
 };
+const { onKeyDown: onNavigationKeyDown, selectedIndex } = useSuggestionListNavigation(() => items, selectItem);
 const onKeyDown = ({ event }: Pick<SuggestionKeyDownProps, "event">) => {
   if (event.key === " ") {
     const matchedItemIndex = items.findIndex(
@@ -27,30 +27,8 @@ const onKeyDown = ({ event }: Pick<SuggestionKeyDownProps, "event">) => {
     }
   }
 
-  switch (event.key) {
-    case "ArrowDown":
-      event.preventDefault();
-      selectedIndex.value = (selectedIndex.value + 1) % items.length;
-      return true;
-    case "ArrowUp":
-      event.preventDefault();
-      selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
-      return true;
-    case "Enter":
-      event.preventDefault();
-      selectItem(selectedIndex.value);
-      return true;
-    default:
-      return false;
-  }
+  return onNavigationKeyDown({ event });
 };
-
-watch(
-  () => items,
-  () => {
-    selectedIndex.value = 0;
-  },
-);
 
 defineExpose({ onKeyDown });
 </script>
