@@ -26,6 +26,6 @@
   "search.followSymlinks": false,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.tsserver.maxTsServerMemory": 16384,
-  // typescript.tsserver.nodePath lives in the gitignored Esposter.code-workspace (machine-specific fnm path).
+  "typescript.tsserver.nodePath": "${env:FNM_DIR}/aliases/default/node.exe",
   "typescript.updateImportsOnFileMove.enabled": "always"
 }
