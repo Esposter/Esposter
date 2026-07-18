@@ -20,7 +20,8 @@ export class TodoListItem extends ANamedItemEntity implements ItemEntityType<Tod
 export const todoListItemSchema = z.object({
   ...aNamedItemEntitySchema.shape,
   ...createItemEntityTypeSchema(todoListItemTypeSchema).shape,
-  dueAt: z.date().nullable(),
+  // Coerced because content is read back from the blob with plain JSON.parse (ISO string, not Date).
+  dueAt: z.coerce.date().nullable(),
   // Notes are rich-text HTML rendered with v-html, so they are sanitized at the schema boundary
   notes: z.string().transform(sanitizeTextHtml).pipe(z.string().max(DESCRIPTION_MAX_LENGTH)),
 }) satisfies z.ZodType<ToData<TodoListItem>>;

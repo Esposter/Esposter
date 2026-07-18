@@ -32,7 +32,7 @@ import {
   resources,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, Operation, streamToText } from "@esposter/shared";
+import { InvalidOperationError, Operation, streamToText } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -230,9 +230,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
         );
         if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
         // The generic contentSchema parses to the union of all content types; the concrete caller's
-        // TType pins it back down so consumers read their own content shape
+        // TType pins it back down so consumers read their own content shape. Plain JSON.parse leaves
+        // Date coercion to the content schema, so ISO-datetime free-text fields survive as strings.
         const content = contentSchema.parse(
-          jsonDateParse(await streamToText(readableStreamBody)),
+          JSON.parse(await streamToText(readableStreamBody)),
         ) as ResourceContent<TType>;
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
         // The increment swallows its own failures — telemetry must never break serving the page
