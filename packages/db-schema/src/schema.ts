@@ -15,12 +15,13 @@ import { resourceFavorites } from "@/schema/resourceFavorites";
 import { resourcePublications } from "@/schema/resourcePublications";
 import { resources, resourceTypeEnum } from "@/schema/resources";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
-import { roomFiltersInMessage } from "@/schema/roomFiltersInMessage";
+import { roomFiltersInMessage, wordFilterActionEnum } from "@/schema/roomFiltersInMessage";
 import { roomRolesInMessage } from "@/schema/roomRolesInMessage";
 import { roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
 import { scheduledMessageJobsInMessage } from "@/schema/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "@/schema/searchHistoriesInMessage";
 import { sessions } from "@/schema/sessions";
+import { threadFollowsInMessage } from "@/schema/threadFollowsInMessage";
 import { userAchievements } from "@/schema/userAchievements";
 import { users } from "@/schema/users";
 import { noiseSuppressionModeEnum, userSettingsInMessage, voiceInputModeEnum } from "@/schema/userSettingsInMessage";
@@ -59,6 +60,7 @@ export const schema = {
   scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessions,
+  threadFollowsInMessage,
   userAchievements,
   users,
   userSettingsInMessage,
@@ -69,4 +71,5 @@ export const schema = {
   verifications,
   voiceInputModeEnum,
   webhooksInMessage,
+  wordFilterActionEnum,
 };
