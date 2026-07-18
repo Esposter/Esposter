@@ -24,8 +24,8 @@
   // oxc.path.node lives in the gitignored Esposter.code-workspace (machine-specific fnm path).
   // Reason: oxc cannot expand ${env:}/~ yet — https://github.com/oxc-project/oxc-vscode/issues/249
   "search.followSymlinks": false,
-  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.tsserver.maxTsServerMemory": 16384,
-  "typescript.tsserver.nodePath": "${env:FNM_DIR}\\aliases\\default\\node.exe",
+  // typescript.tsserver.nodePath lives in the gitignored Esposter.code-workspace (machine-specific fnm path).
   "typescript.updateImportsOnFileMove.enabled": "always"
 }
