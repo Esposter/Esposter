@@ -6,8 +6,8 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { AzureContainer } from "@esposter/db-schema";
 
 // The retained snapshots are the source of truth, so the history is enumerated straight from blob storage
-// with no history table. Each {version}.json blob directly under {id}/published/ is one snapshot — Survey's
-// per-version asset clones live in {version}/ subdirectories, which the hierarchy delimiter keeps out
+// With no history table. Each {version}.json blob directly under {id}/published/ is one snapshot — Survey's
+// Per-version asset clones live in {version}/ subdirectories, which the hierarchy delimiter keeps out
 export const readPublishHistory = async (id: Resource["id"]): Promise<PublishHistoryVersion[]> => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const prefix = `${id}/published/`;
@@ -19,7 +19,7 @@ export const readPublishHistory = async (id: Resource["id"]): Promise<PublishHis
     entries.push({ publishedAt: blob.properties.lastModified, version });
   }
   // The highest version is always the currently-published one — publishVersion only ever increments and
-  // unpublish clears the whole history, so no lower snapshot can be the live publication
-  const currentVersion = Math.max(0, ...entries.map(({ version }) => version));
-  return entries.map((entry) => ({ ...entry, isCurrent: entry.version === currentVersion }));
+  // Unpublish clears the whole history, so no lower snapshot can be the live publication
+  const currentVersion = entries.reduce((max, { version }) => Math.max(max, version), 0);
+  return entries.map((entry) => Object.assign(entry, { isCurrent: entry.version === currentVersion }));
 };

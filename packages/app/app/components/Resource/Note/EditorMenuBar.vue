@@ -113,7 +113,8 @@ const applyLink = () => {
       <v-divider v-if="checkIsDivider(item)" thickness="2" vertical h-6 self-center />
       <v-tooltip v-else :text="item.title">
         <template #activator="{ props: tooltipProps }">
-          <v-btn density="comfortable" tile :="mergeProps(item, tooltipProps)" />
+          <!-- item.title would otherwise land on the button as a native title attribute, doubling the tooltip -->
+          <v-btn density="comfortable" tile :="mergeProps(item, tooltipProps)" :title="undefined" />
         </template>
       </v-tooltip>
     </template>

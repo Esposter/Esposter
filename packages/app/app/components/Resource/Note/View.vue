@@ -2,7 +2,7 @@
 import { getNoteExtensions } from "@/services/resource/note/getNoteExtensions";
 import { ResourceType } from "@esposter/db-schema";
 import { sanitizeTextHtml } from "@esposter/shared";
-import { generateHTML } from "@tiptap/core";
+import { generateHTML } from "@tiptap/html";
 
 interface ResourceNoteViewProps {
   id: string;
@@ -21,7 +21,7 @@ const { content, name } = await useReadPublishedResourceContent(
   version,
 );
 // JSON is the source of truth at rest — HTML is generated here and sanitized at the render boundary per the
-// String-utils standard. generateHTML needs a DOM (ProseMirror DOMSerializer), so the render is client-only.
+// String-utils standard. @tiptap/html serializes without a browser DOM, so the render is SSR-safe.
 const html = computed(() => sanitizeTextHtml(generateHTML(content.doc, getNoteExtensions())));
 useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>
@@ -29,8 +29,6 @@ useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 <template>
   <v-container>
     <h1 px-4 pt-4>{{ name }}</h1>
-    <ClientOnly>
-      <div class="rich-text-content" px-4 pb-4 v-html="html" />
-    </ClientOnly>
+    <div class="rich-text-content" px-4 pb-4 v-html="html" />
   </v-container>
 </template>
