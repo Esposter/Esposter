@@ -5,12 +5,19 @@ import { ResourceType } from "@esposter/db-schema";
 
 interface ResourceDashboardViewProps {
   id: string;
+  version?: number;
 }
 
-const { id } = defineProps<ResourceDashboardViewProps>();
+const { id, version } = defineProps<ResourceDashboardViewProps>();
 const { $trpc } = useNuxtApp();
-const { content, name } = await useReadPublishedResourceContent(ResourceType.Dashboard, id, () =>
-  $trpc.dashboard.readPublishedResourceContent.query(id),
+const { content, name } = await useReadPublishedResourceContent(
+  ResourceType.Dashboard,
+  id,
+  () =>
+    version
+      ? $trpc.dashboard.readPublishedVersionContent.query({ id, version })
+      : $trpc.dashboard.readPublishedResourceContent.query(id),
+  version,
 );
 const dashboard = new DashboardModel(content as never);
 useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
