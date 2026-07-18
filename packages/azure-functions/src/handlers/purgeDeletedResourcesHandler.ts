@@ -4,8 +4,14 @@ import { db } from "@/services/db";
 import { getContainerClient } from "@/services/getContainerClient";
 import { getTableClient } from "@/services/getTableClient";
 import { logAndRethrow } from "@/services/logAndRethrow";
-import { purgeResource, RECYCLE_BIN_RETENTION_MS } from "@esposter/db";
-import { AzureContainer, AzureFunction, getResourceOwnedTableNames, resources } from "@esposter/db-schema";
+import { purgeResource } from "@esposter/db";
+import {
+  AzureContainer,
+  AzureFunction,
+  getResourceOwnedTableNames,
+  RECYCLE_BIN_RETENTION_MS,
+  resources,
+} from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, isNotNull, lt } from "drizzle-orm";
 

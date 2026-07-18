@@ -60,7 +60,7 @@ describe("survey", () => {
     });
     const [participant] = await programCaller.generateProgramParticipants({ id: program.id });
     assert.exists(participant);
-    return { survey, token: participant.token };
+    return { program, survey, token: participant.token };
   };
 
   beforeAll(async () => {
@@ -338,6 +338,22 @@ describe("survey", () => {
         rowKey: crypto.randomUUID(),
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
+  });
+
+  test(`${SurveyResponseMode.Identified}: a recycle-binned program still resolves its token`, async () => {
+    expect.hasAssertions();
+
+    const { program, survey, token } = await setupIdentifiedSurvey();
+    // Soft-deleting the program must not invalidate token links already distributed to participants
+    await programCaller.deleteResource({ id: program.id });
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      participantToken: token,
+      partitionKey: survey.id,
+      rowKey: crypto.randomUUID(),
+    });
+
+    expect(newSurveyResponse.participantToken).toBe(token);
   });
 
   test(`${SurveyResponseMode.Identified}: resumes with the same token`, async () => {

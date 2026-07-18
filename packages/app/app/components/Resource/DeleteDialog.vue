@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db";
+import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface ResourceDeleteDialogProps {

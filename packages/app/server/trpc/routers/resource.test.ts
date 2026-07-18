@@ -454,6 +454,8 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
+    // The Created write is fire-and-forget, so drain it before purge to prove purge sweeps the partition
+    await waitForSynchronizedFunctions();
     await caller.deleteResources({ ids: [dashboardResource.id] });
     await caller.purgeResource({ id: dashboardResource.id });
     const deletedCount = await caller.countDeletedResources();
@@ -474,6 +476,8 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     vi.advanceTimersByTime(1);
     await dashboardCaller.updateResource({ id: dashboardResource.id, name: "renamed" });
+    // Both the Created and Renamed writes are fire-and-forget off the mutation, so drain them first
+    await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const renamedActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Renamed);
 
@@ -492,6 +496,8 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     vi.advanceTimersByTime(1);
     await dashboardCaller.updateResource({ id: dashboardResource.id, name: "renamed" });
+    // Both the Created and Renamed writes are fire-and-forget off the mutation, so drain them first
+    await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const createdActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Created);
     const renamedActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Renamed);
@@ -505,6 +511,8 @@ describe("resource", () => {
 
     const dashboardResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.updateResource({ id: dashboardResource.id, name, tags: { env: "prod" } });
+    // The Created write is fire-and-forget off createResource, so drain it before reading the trail
+    await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
 
     expect(items.map(({ activityType }) => activityType)).toStrictEqual([ResourceActivityType.Created]);

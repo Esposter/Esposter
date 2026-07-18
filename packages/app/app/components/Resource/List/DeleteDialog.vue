@@ -2,7 +2,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { useListDialogStore } from "@/store/resource/listDialog";
-import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db";
+import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 
 interface ResourceListDeleteDialogProps {
   resource: Resource;

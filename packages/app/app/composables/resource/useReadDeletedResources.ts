@@ -10,29 +10,35 @@ export const useReadDeletedResources = () => {
   const count = ref(0);
   const isLoading = ref(false);
   const error = ref("");
-  // Remembered so Refresh, a restore, or a purge can re-run the exact query the table last asked for
+  // Remembered so Refresh, a restore, or a purge can re-run the exact page the table last asked for
   let lastOptions: ReadResourcesOptions | undefined;
+  // The total is independent of paging, so it loads once up front and again only when a restore or purge
+  // Changes it — a page or sort change reuses the same total instead of re-counting the whole partition
+  const readCount = () =>
+    getResultAsync(async () => {
+      count.value = await $trpc.resource.countDeletedResources.query();
+    }).match(noop, (readError) => {
+      error.value = readError.message;
+    });
   const readDeletedResources = async (options: ReadResourcesOptions) => {
     lastOptions = options;
     const { itemsPerPage, page, sortBy } = options;
     isLoading.value = true;
     error.value = "";
     await getResultAsync(async () => {
-      const [newCount, { items: newItems }] = await Promise.all([
-        $trpc.resource.countDeletedResources.query(),
-        $trpc.resource.readDeletedResources.query({
-          limit: itemsPerPage,
-          offset: (page - 1) * itemsPerPage,
-          sortBy,
-        }),
-      ]);
-      count.value = newCount;
+      const { items: newItems } = await $trpc.resource.readDeletedResources.query({
+        limit: itemsPerPage,
+        offset: (page - 1) * itemsPerPage,
+        sortBy,
+      });
       items.value = newItems;
     }).match(noop, (readError) => {
       error.value = readError.message;
     });
     isLoading.value = false;
   };
-  const refresh = () => (lastOptions ? readDeletedResources(lastOptions) : Promise.resolve());
-  return { count, error, isLoading, items, readDeletedResources, refresh };
+  // A restore or purge changes both the current page and the total, so Refresh re-reads both
+  const refresh = () =>
+    lastOptions ? Promise.all([readCount(), readDeletedResources(lastOptions)]) : Promise.resolve();
+  return { count, error, isLoading, items, readCount, readDeletedResources, refresh };
 };

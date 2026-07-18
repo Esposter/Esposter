@@ -6,6 +6,7 @@ import type { Clause, Resource } from "@esposter/db-schema";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { escapeLike } from "@@/server/services/db/escapeLike";
@@ -215,7 +216,8 @@ export const resourceRouter = router({
       await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
       throw error;
     });
-    await writeResourceActivity({
+    // Fire-and-forget: the activity trail is best-effort and the duplicate must not wait on telemetry
+    getSynchronizedFunction(writeResourceActivity)({
       activityType: ResourceActivityType.Duplicated,
       resourceId: newResource.id,
       userId,
@@ -304,7 +306,8 @@ export const resourceRouter = router({
         DatabaseEntityType.Resource,
         id,
       );
-      await writeResourceActivity({
+      // Fire-and-forget: the activity trail is best-effort and the restore must not wait on telemetry
+      getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Restored,
         resourceId: id,
         userId: ctx.getSessionPayload.user.id,

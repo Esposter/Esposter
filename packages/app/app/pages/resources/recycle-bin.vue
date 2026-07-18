@@ -9,7 +9,7 @@ import { DeletedResourceHeaders } from "@/services/resource/DeletedResourceHeade
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { useNotificationStore } from "@/store/notification";
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
-import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db";
+import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
@@ -18,7 +18,10 @@ const notificationStore = useNotificationStore();
 const { createNotification } = notificationStore;
 const executeRestoreMutation = useMutation();
 const executePurgeMutation = useMutation();
-const { count, error, isLoading, items, readDeletedResources, refresh } = useReadDeletedResources();
+const { count, error, isLoading, items, readCount, readDeletedResources, refresh } = useReadDeletedResources();
+// The page reads its rows through the table's @update:options, but the pagination-independent total is
+// Read once here so a page or sort change never re-counts it
+onMounted(readCount);
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
 const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));

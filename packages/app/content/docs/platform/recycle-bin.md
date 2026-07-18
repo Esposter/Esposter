@@ -37,7 +37,7 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 
 `resources.deletedAt` is a nullable timestamp — null is live. No migration was needed: `metadataSchema` already gives every table `createdAt`, `updatedAt`, and `deletedAt`, so soft delete was a column the table already had.
 
-`RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db` because both the app's "purges in {n} days" column and the timer that actually purges must agree on the window — one value, one source.
+`RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the "purges in {n} days" column, the delete dialogs) and the purge timer can import the one value from the same source.
 
 ## Procedures
 
@@ -53,7 +53,7 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 | File                                                              | Role                                      |
 | ----------------------------------------------------------------- | ----------------------------------------- |
 | `packages/db/src/services/resource/purgeResource.ts`              | The shared, retry-ordered purge protocol  |
-| `packages/db/src/services/resource/constants.ts`                  | `RECYCLE_BIN_RETENTION_MS`                |
+| `packages/db-schema/src/services/resource/constants.ts`           | `RECYCLE_BIN_RETENTION_MS`                |
 | `server/trpc/routers/resource.ts`                                 | Bin/restore/purge + the `where` predicate |
 | `server/trpc/procedure/resource/getOwnerProcedure.ts`             | Soft-delete guard + `isDeletedOnly` mode  |
 | `packages/azure-functions/src/functions/purgeDeletedResources.ts` | Daily 30-day timer sweep                  |

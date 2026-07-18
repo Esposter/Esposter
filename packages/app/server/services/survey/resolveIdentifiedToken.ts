@@ -24,9 +24,11 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
   });
   if (!survey) throw invalidParticipantTokenError();
 
-  // Only the survey's owner can bind it to a program, so their programs are the whole candidate set
+  // Only the survey's owner can bind it to a program, so their programs are the whole candidate set.
+  // A recycle-binned program stays in the set: its token links were already distributed to participants,
+  // and only an actual purge — not a recoverable soft-delete — should invalidate them.
   const programs = await db.query.resources.findMany({
-    where: { deletedAt: { isNull: true }, type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
+    where: { type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
   });
   // Every candidate's binding is read at once: this runs on every submission to an identified survey, and
   // The owner's programs are independent of each other, so N sequential blob reads would be N latencies

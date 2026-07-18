@@ -1,7 +1,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
-import { RECYCLE_BIN_RETENTION_MS } from "@esposter/db";
+import { RECYCLE_BIN_RETENTION_MS } from "@esposter/db-schema";
 import { pluralize } from "#shared/util/text/pluralize";
 
 // The bin's whole point is the deadline, so the column says how long is left rather than a date.

@@ -2,7 +2,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db";
+import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 interface ResourceListSelectionToolbarProps {

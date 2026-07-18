@@ -1,3 +1,4 @@
+import type { TransactionAction } from "@azure/data-tables";
 import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
 
 import { serializeClauses } from "@/services/azure/transformer/serializeClauses";
@@ -20,12 +21,14 @@ export const deleteTablePartitionEntities = async (
   ]);
   for await (const page of tableClient
     .listEntities<CompositeKey>({ queryOptions: { filter } })
-    .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-    // A transaction is capped at 100 actions and may not span partitions — both hold here
-    for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE) {
-      const batch = page.slice(i, i + AZURE_MAX_BATCH_SIZE);
-      await tableClient.submitTransaction(
-        batch.map(({ partitionKey, rowKey }) => ["delete", { partitionKey, rowKey }]),
+    .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })) {
+    // A transaction is capped at 100 actions and may not span partitions — both hold here. Each page's
+    // Batches hit disjoint rowKeys, so they submit concurrently; only the pagination itself is sequential.
+    const batches: TransactionAction[][] = [];
+    for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE)
+      batches.push(
+        page.slice(i, i + AZURE_MAX_BATCH_SIZE).map(({ partitionKey, rowKey }) => ["delete", { partitionKey, rowKey }]),
       );
-    }
+    await Promise.all(batches.map((batch) => tableClient.submitTransaction(batch)));
+  }
 };

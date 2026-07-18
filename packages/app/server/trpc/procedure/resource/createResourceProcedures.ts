@@ -125,7 +125,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
           DatabaseEntityType.Resource,
           ctx.getSessionPayload.user.id,
         );
-        await writeResourceActivity({
+        // Fire-and-forget: the activity trail is best-effort and the create must not wait on telemetry
+        getSynchronizedFunction(writeResourceActivity)({
           activityType: ResourceActivityType.Created,
           resourceId: newResource.id,
           userId: ctx.getSessionPayload.user.id,
@@ -237,9 +238,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
           DatabaseEntityType.Resource,
           id,
         );
-        // A tags-only edit is not a rename, so it leaves no Renamed entry
+        // A tags-only edit is not a rename, so it leaves no Renamed entry.
+        // Fire-and-forget: the activity trail is best-effort and the rename must not wait on telemetry
         if (updatedResource.name !== oldName)
-          await writeResourceActivity({
+          getSynchronizedFunction(writeResourceActivity)({
             activityType: ResourceActivityType.Renamed,
             newName: updatedResource.name,
             oldName,
@@ -316,7 +318,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
           );
           return newPublication;
         });
-        await writeResourceActivity({
+        // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
+        getSynchronizedFunction(writeResourceActivity)({
           activityType: ResourceActivityType.Published,
           publishVersion: publication.publishVersion,
           resourceId: id,
@@ -366,7 +369,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
 
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
       await deleteDirectory(containerClient, `${id}/published`, true);
-      await writeResourceActivity({
+      // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
+      getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,
         resourceId: id,
         userId: ctx.getSessionPayload.user.id,
