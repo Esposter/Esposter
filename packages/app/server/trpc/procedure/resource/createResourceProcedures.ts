@@ -371,7 +371,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         );
         if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
         const content = contentSchema.parse(
-          jsonDateParse(await streamToText(readableStreamBody)),
+          JSON.parse(await streamToText(readableStreamBody)),
         ) as ResourceContent<TType>;
         // Re-sign any expired asset SAS urls through the same transform the working-copy read uses, so an
         // old snapshot still renders past a SAS expiry
