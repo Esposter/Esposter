@@ -19,6 +19,7 @@ const emit = defineEmits<{
 
 const slashCommandStore = useSlashCommandStore();
 const { activeParameters, hiddenParameters, selectedHiddenIndex, trailingMessage } = storeToRefs(slashCommandStore);
+const { selectNextHiddenParameter, selectPreviousHiddenParameter } = slashCommandStore;
 const input = useTemplateRef("input");
 const optionsLabel = computed(
   () => `+${hiddenParameters.length} ${hiddenParameters.length === 1 ? "option" : "options"}`,
@@ -74,10 +75,10 @@ watch(
 
           if (event.key === 'ArrowUp') {
             event.preventDefault();
-            selectedHiddenIndex = Math.max(0, selectedHiddenIndex - 1);
+            selectPreviousHiddenParameter();
           } else if (event.key === 'ArrowDown') {
             event.preventDefault();
-            selectedHiddenIndex = Math.min(hiddenParameters.length - 1, selectedHiddenIndex + 1);
+            selectNextHiddenParameter();
           } else if (event.key === 'Enter') {
             event.preventDefault();
             const parameter = hiddenParameters[selectedHiddenIndex] ?? hiddenParameters[0];

@@ -2,11 +2,13 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SlashCommandParameterError } from "@/models/message/slashCommands/SlashCommandParameterError";
 
 import { parseTextAndParameters } from "@/services/message/slashCommands/parseTextAndParameters";
+import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
 import { ID_SEPARATOR, normalizeString, takeOne, toRawDeep } from "@esposter/shared";
 
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
   const roomStore = useRoomStore();
+  const inputStore = useInputStore();
   const { data: pendingSlashCommand } = useDataMap<null | SlashCommand>(() => roomStore.currentRoomId, null);
   const { data: parameterValues } = useDataMap<Record<string, string>>(() => roomStore.currentRoomId, {});
   const { data: activeParameterNames } = useDataMap<string[]>(() => roomStore.currentRoomId, []);
@@ -35,6 +37,20 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   const createParameter = (name: string) => {
     lastAddedParameterName.value = name;
     activeParameterNames.value = [...activeParameterNames.value, name];
+  };
+
+  const deleteParameter = (name: string) => {
+    activeParameterNames.value = activeParameterNames.value.filter((paramName) => paramName !== name);
+    parameterValues.value[name] = "";
+    setErrors(name, []);
+  };
+
+  const selectPreviousHiddenParameter = () => {
+    selectedHiddenIndex.value = Math.max(0, selectedHiddenIndex.value - 1);
+  };
+
+  const selectNextHiddenParameter = () => {
+    selectedHiddenIndex.value = Math.min(hiddenParameters.value.length - 1, selectedHiddenIndex.value + 1);
   };
 
   const setPendingSlashCommand = (slashCommand: SlashCommand, remainingText = "") => {
@@ -84,12 +100,19 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     lastAddedParameterName.value = null;
   };
 
+  const collapseToText = () => {
+    inputStore.input = buildText();
+    clearPendingSlashCommand();
+  };
+
   return {
     activeParameterNames,
     activeParameters,
     buildText,
     clearPendingSlashCommand,
+    collapseToText,
     createParameter,
+    deleteParameter,
     errors,
     focusedIndex,
     hiddenParameters,
@@ -97,6 +120,8 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     parameterValues,
     pendingSlashCommand,
     selectedHiddenIndex,
+    selectNextHiddenParameter,
+    selectPreviousHiddenParameter,
     setErrors,
     setPendingSlashCommand,
     trailingMessage,

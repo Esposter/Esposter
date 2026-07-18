@@ -6,7 +6,6 @@ import type { SlashCommandType } from "@/models/message/slashCommands/SlashComma
 import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
 import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
-import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
 
@@ -15,9 +14,8 @@ const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
 const { activeParameterNames, activeParameters, focusedIndex, hiddenParameters, lastAddedParameterName, parameterValues, pendingSlashCommand } =
   storeToRefs(slashCommandStore);
-const { buildText, clearPendingSlashCommand, createParameter, setErrors, setPendingSlashCommand } = slashCommandStore;
-const inputStore = useInputStore();
-const { input } = storeToRefs(inputStore);
+const { clearPendingSlashCommand, collapseToText, createParameter, deleteParameter: baseDeleteParameter, setErrors, setPendingSlashCommand } =
+  slashCommandStore;
 const executeSlashCommand = useExecuteSlashCommand();
 const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
 
@@ -25,18 +23,11 @@ watch(pendingSlashCommand, (newPendingSlashCommand) => {
   if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
 });
 
-const collapseToText = () => {
-  input.value = buildText();
-  clearPendingSlashCommand();
-};
-
 const deleteParameter = (index: number) => {
   const name = activeParameters.value[index]?.name;
   if (!name) return;
 
-  activeParameterNames.value = activeParameterNames.value.filter((paramName) => paramName !== name);
-  parameterValues.value[name] = "";
-  setErrors(name, []);
+  baseDeleteParameter(name);
   focus(index - 1);
 };
 const commandNavigateNext = async () => {
