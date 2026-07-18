@@ -9,6 +9,7 @@ export const useCreateResource = () => {
     [ResourceType.Dashboard]: $trpc.dashboard.createResource,
     [ResourceType.Email]: $trpc.email.createResource,
     [ResourceType.Flowchart]: $trpc.flowchart.createResource,
+    [ResourceType.Note]: $trpc.note.createResource,
     [ResourceType.Sheet]: $trpc.sheet.createResource,
     [ResourceType.Survey]: $trpc.survey.createResource,
     [ResourceType.TodoList]: $trpc.todoList.createResource,

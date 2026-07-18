@@ -44,6 +44,7 @@ const readPostsInputSchema = z
       { key: "id", order: SortOrder.Desc },
     ]).shape,
     [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null),
+    [selectPostSchema.keyof().enum.userId]: selectPostSchema.shape.userId.optional(),
   })
   .prefault({});
 
@@ -238,11 +239,13 @@ export const postRouter = router({
   }),
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
-    .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
+    .query(async ({ ctx, input: { cursor, limit, parentId, sortBy, userId: authorId } }) => {
       const userId = ctx.getSessionPayload?.user.id;
       const where: RelationsFilter<(typeof relations)["posts"], typeof relations> = parentId
         ? { parentId: { eq: parentId } }
         : { parentId: { isNull: true } };
+      // Profile feeds scope to a single author — composes with the parentId and cursor clauses
+      if (authorId) where.userId = { eq: authorId };
       if (cursor || userId)
         where.RAW = (post) => {
           const rawWhere = and(

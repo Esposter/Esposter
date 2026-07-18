@@ -3,7 +3,7 @@
   "dialect": "postgres",
   "id": "df8bc091-3db7-4ee1-8ff1-dcf77ff432fb",
   "prevIds": [
-    "57a19c55-1f6d-4536-adc8-19eb47be4460"
+    "a016e3cd-0934-4f4a-b740-eb9e823f54a5"
   ],
   "ddl": [
     {
@@ -103,7 +103,8 @@
         "Survey",
         "TodoList",
         "Webpage",
-        "Program"
+        "Program",
+        "Note"
       ],
       "name": "resource_type",
       "entityType": "enums",

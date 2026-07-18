@@ -39,13 +39,14 @@ Fan-out is earned by the prompt and paid for by the budget. The historical failu
 
 Plan the batch around what the agents touch:
 
+- Size each PR to **fill the review budget, not just stay under it** — ~80 changed files per PR (see the coderabbit skill's "PR File Budget"). A single proposal is typically 10–25 files; one-proposal-per-agent wastes most of a review slot and multiplies review rounds. Batch several related proposals from the same area into one agent's spec so its single PR approaches the budget.
 - Give each agent its own branch cut from `develop` and a stated merge order; a PR that depends on another's output is a stacked branch, not a parallel one — fold it into its parent's PR instead.
 - Overlap must be additive only (separate rows on a shared component, separate procedures in a shared router). Shared schema sections or a shared write path mean one PR, not two agents.
 - Each agent commits, pushes, and opens its own PR from its worktree. Verify each landed commit yourself before the next PR merges on top.
 
 ## Cleaning up worktrees
 
-Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. Never sweep a long-lived branch you did not create.
+Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. Never sweep a long-lived branch you did not create — `nuxt5` and `migrate-assets` in particular are keepers (user-confirmed 2026-07-18), even when asked to "clean up old branches"; staleness or a merged PR is not authorization to delete a named long-lived branch.
 
 ## Code reviews
 

@@ -265,6 +265,19 @@ describe("post", () => {
     expect(readPost.noComments).toBe(1);
   });
 
+  test("reads posts filtered by user excluding comments", async () => {
+    expect.hasAssertions();
+
+    const post = await postCaller.createPost({ title });
+    const { user: author } = await mockSessionOnce(mockContext.db);
+    const authorPost = await postCaller.createPost({ title });
+    await mockSessionOnce(mockContext.db, author);
+    await postCaller.createComment({ description, parentId: post.id });
+    const readPosts = await postCaller.readPosts({ userId: author.id });
+
+    expect(readPosts.items.map(({ id }) => id)).toStrictEqual([authorPost.id]);
+  });
+
   test("reads blocked user's post by id", async () => {
     expect.hasAssertions();
 

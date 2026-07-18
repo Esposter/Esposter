@@ -71,6 +71,7 @@ catalog:
   "@tiptap/extension-file-handler": ^3.28.0
   "@tiptap/extension-mention": ^3.28.0
   "@tiptap/extensions": ^3.28.0
+  "@tiptap/html": ^3.28.0
   "@tiptap/pm": ^3.28.0
   "@tiptap/starter-kit": ^3.28.0
   "@tiptap/suggestion": ^3.28.0

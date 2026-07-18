@@ -39,6 +39,12 @@ const overviewComponent = computed(() => ResourceOverviewComponentMap[resource.t
     :key="resource.id"
     :resource-id="resource.id"
   />
+  <Suspense v-else-if="activeBlade === ResourceBladeType.PublishHistory">
+    <ResourcePublishHistory :key="resource.id" :resource />
+    <template #fallback>
+      <StyledSkeleton />
+    </template>
+  </Suspense>
   <Suspense v-else-if="bladeComponent">
     <component :is="bladeComponent" :key="`${resource.id}-${activeBlade}`" />
     <template #fallback>

@@ -450,6 +450,85 @@ describe("resource", () => {
     );
   });
 
+  test("lists every published snapshot with the latest marked current", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await webpageCaller.saveResourceContent({
+      content: webpageEditor,
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    const versions = await caller.readPublishHistory({ id: webpageResource.id });
+
+    // The blob lastModified timestamp is non-deterministic, so only version + current are asserted
+    expect(
+      versions.map(({ isCurrent, version }) => ({ isCurrent, version })).toSorted((a, b) => a.version - b.version),
+    ).toStrictEqual([
+      { isCurrent: false, version: 1 },
+      { isCurrent: true, version: 2 },
+    ]);
+  });
+
+  test("reads empty publish history for an unpublished resource", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const versions = await caller.readPublishHistory({ id: webpageResource.id });
+
+    expect(versions).toStrictEqual([]);
+  });
+
+  test("restores a published version into the working draft", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await webpageCaller.saveResourceContent({
+      content: webpageEditor,
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    await webpageCaller.saveResourceContent({
+      content: new WebpageEditor({ css: "b", html: "b" }),
+      contentVersion: webpageResource.contentVersion + 1,
+      id: webpageResource.id,
+    });
+    const restoredResource = await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
+    const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
+    const publication = await webpageCaller.readResourcePublication({ id: webpageResource.id });
+
+    // The v1 snapshot's content is copied back into the working copy, contentVersion advances, and the
+    // Publication is never re-pointed — restore produces a Draft
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
+    expect(restoredResource.contentVersion).toBe(webpageResource.contentVersion + 3);
+    expect(publication?.publishVersion).toBe(1);
+  });
+
+  test("does not read publish history for another user's resource", async () => {
+    expect.hasAssertions();
+
+    await mockSessionOnce(mockContext.db);
+    const otherUserResource = await webpageCaller.createResource({ name });
+
+    await expect(caller.readPublishHistory({ id: otherUserResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+  });
+
+  test("does not restore a version of another user's resource", async () => {
+    expect.hasAssertions();
+
+    await mockSessionOnce(mockContext.db);
+    const otherUserResource = await webpageCaller.createResource({ name });
+
+    await expect(
+      caller.restorePublishedVersion({ id: otherUserResource.id, version: 1 }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
   test("purges a binned resource for good", async () => {
     expect.hasAssertions();
 
