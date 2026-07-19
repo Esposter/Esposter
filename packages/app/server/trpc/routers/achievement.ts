@@ -27,20 +27,6 @@ export const achievementRouter = router({
       if (updatedUserAchievements.length > 0) yield updatedUserAchievements;
     }
   }),
-  readPointsLeaderboard: standardRateLimitedProcedure.query(async ({ ctx }) => {
-    const userTotals = await ctx.db
-      .select({
-        points: achievementPointsSum,
-        unlockCount: count(),
-        user: { id: users.id, image: users.image, name: users.name },
-      })
-      .from(userAchievements)
-      .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
-      .innerJoin(users, eq(users.id, userAchievements.userId))
-      .where(isNotNull(userAchievements.unlockedAt))
-      .groupBy(users.id);
-    return buildPointsLeaderboard(userTotals, ctx.getSessionPayload?.user.id);
-  }),
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
@@ -60,6 +46,20 @@ export const achievementRouter = router({
         },
       ]),
     ) as typeof AchievementDefinitionMap;
+  }),
+  readPointsLeaderboard: standardRateLimitedProcedure.query(async ({ ctx }) => {
+    const userTotals = await ctx.db
+      .select({
+        points: achievementPointsSum,
+        unlockCount: count(),
+        user: { id: users.id, image: users.image, name: users.name },
+      })
+      .from(userAchievements)
+      .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
+      .innerJoin(users, eq(users.id, userAchievements.userId))
+      .where(isNotNull(userAchievements.unlockedAt))
+      .groupBy(users.id);
+    return buildPointsLeaderboard(userTotals, ctx.getSessionPayload?.user.id);
   }),
   readUserAchievements: standardRateLimitedProcedure.input(readUserAchievementsInputSchema).query(({ ctx, input }) => {
     const userId = input ?? ctx.getSessionPayload?.user.id;

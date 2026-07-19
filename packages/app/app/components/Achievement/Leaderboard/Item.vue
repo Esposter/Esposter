@@ -12,8 +12,8 @@ const { entry, isSelf } = defineProps<LeaderboardItemProps>();
 </script>
 
 <template>
-  <v-sheet flex gap-x-3 items-center py-2 px-3 rd :border="isSelf" :color="isSelf ? 'primary-opacity-10' : undefined">
-    <span font-bold text-title-medium w-8 text-center>{{ entry.rank }}</span>
+  <v-sheet px-3 py-2 rd flex gap-x-3 items-center :border="isSelf" :color="isSelf ? 'primary-opacity-10' : undefined">
+    <span font-bold text-center w-8 text-title-medium>{{ entry.rank }}</span>
     <NuxtInvisibleLink :to="RoutePath.User(entry.user.id)">
       <StyledAvatar :image="entry.user.image" :name="entry.user.name" />
     </NuxtInvisibleLink>

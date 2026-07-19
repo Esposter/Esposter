@@ -5,5 +5,5 @@ import type { PointsLeaderboardEntry } from "#shared/models/achievement/PointsLe
 // Caller is unauthenticated or has unlocked nothing.
 export interface PointsLeaderboard {
   entries: PointsLeaderboardEntry[];
-  self: PointsLeaderboardEntry | null;
+  self: null | PointsLeaderboardEntry;
 }
