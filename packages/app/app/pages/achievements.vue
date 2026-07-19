@@ -4,8 +4,6 @@ import { VIEW_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
 
 definePageMeta({ middleware: "auth" });
 
-const { $trpc } = useNuxtApp();
-const leaderboard = await $trpc.achievement.readPointsLeaderboard.query();
 const view = useEnumRouteQuery(VIEW_QUERY_PARAMETER_KEY, AchievementViews, AchievementView.Gallery);
 </script>
 
@@ -23,7 +21,7 @@ const view = useEnumRouteQuery(VIEW_QUERY_PARAMETER_KEY, AchievementViews, Achie
           <AchievementList />
         </v-window-item>
         <v-window-item :value="AchievementView.Leaderboard">
-          <AchievementLeaderboard :leaderboard />
+          <AchievementLeaderboard />
         </v-window-item>
       </v-window>
     </v-container>

@@ -9,14 +9,13 @@ A global ranking of every user by the summed `points` of their unlocked achievem
 
 ## How it works
 
-Points live in the definition map (`AchievementDefinitionMap`), not the database, so the summation happens in the server rather than in SQL. `readPointsLeaderboard` fetches every unlocked `userAchievements` row with its achievement name and the owner's public identity, then `buildPointsLeaderboard` aggregates points per user, ranks competition-style (users with equal totals share a rank), and returns the top window plus the caller's own entry.
+Points live in the definition map (`AchievementDefinitionMap`), not the database, so `readPointsLeaderboard` injects them into SQL as a `CASE` over the achievement name and sums per user with a `GROUP BY` — the result set is one row per user with an unlock, never one row per unlock. `buildPointsLeaderboard` then ranks the totals competition-style (users with equal totals share a rank) and returns the top window plus the caller's own entry.
 
 ```mermaid
 flowchart TB
-  query["readPointsLeaderboard\n(rate-limited)"] -->|"userAchievements where unlockedAt is not null\n+ achievement.name + user identity"| rows["unlocked rows"]
-  rows --> build["buildPointsLeaderboard"]
-  build -->|"sum AchievementDefinitionMap points per user"| totals["per-user totals"]
-  totals -->|"sort desc, competition rank"| ranked["ranked entries"]
+  query["readPointsLeaderboard\n(rate-limited)"] -->|"sum definition-map points as a CASE\ngroup by user where unlockedAt is not null"| totals["per-user totals"]
+  totals --> build["buildPointsLeaderboard"]
+  build -->|"sort desc, competition rank"| ranked["ranked entries"]
   ranked --> entries["top MAX_POINTS_LEADERBOARD_ENTRIES"]
   ranked --> self["caller entry + global rank"]
   entries --> page["Leaderboard tab on /achievements"]
@@ -38,17 +37,18 @@ flowchart TB
 
 Paths relative to `packages/app`.
 
-| File                                                    | Role                                        |
-| ------------------------------------------------------- | ------------------------------------------- |
-| `server/trpc/routers/achievement.ts`                    | `readPointsLeaderboard` procedure           |
-| `server/services/achievement/buildPointsLeaderboard.ts` | pure aggregation + competition ranking      |
-| `shared/models/achievement/PointsLeaderboard.ts`        | the `{ entries, self }` payload shape       |
-| `shared/services/achievement/constants.ts`              | `MAX_POINTS_LEADERBOARD_ENTRIES`            |
-| `app/pages/achievements.vue`                            | Gallery / Leaderboard view tabs             |
-| `app/components/Achievement/Leaderboard.vue`            | the ranking list + caller-row append        |
-| `app/components/Achievement/LeaderboardItem.vue`        | one ranked row (rank, avatar, name, points) |
+| File                                                    | Role                                               |
+| ------------------------------------------------------- | -------------------------------------------------- |
+| `server/trpc/routers/achievement.ts`                    | `readPointsLeaderboard` procedure + SQL points sum |
+| `server/services/achievement/buildPointsLeaderboard.ts` | pure competition ranking over per-user totals      |
+| `shared/models/achievement/PointsLeaderboard.ts`        | the `{ entries, self }` payload shape              |
+| `shared/services/achievement/constants.ts`              | `MAX_POINTS_LEADERBOARD_ENTRIES`                   |
+| `app/pages/achievements.vue`                            | Gallery / Leaderboard view tabs                    |
+| `app/components/Achievement/Leaderboard/Index.vue`      | wrapper — non-blocking `useQuery` fetch            |
+| `app/components/Achievement/Leaderboard/Card.vue`       | the ranking list + caller-row append               |
+| `app/components/Achievement/Leaderboard/Item.vue`       | one ranked row (rank, avatar, name, points)        |
 
 ## Notes
 
 - Opt-out/privacy is out of scope: achievements are already readable per user via `readUserAchievements`.
-- The aggregate fetches every unlocked row and sums in memory; this is the honest MVP given points live in the definition map. If the fetch ever hurts, denormalize a `points` total onto users and rank in SQL.
+- The aggregate returns one row per user with an unlock; ranking (and the caller's global rank) still happens in the server over that set. If it ever hurts, denormalize a `points` total onto users and rank in SQL.

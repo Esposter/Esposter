@@ -1,65 +1,51 @@
-import type { AchievementName } from "@esposter/db-schema";
-
-import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
 import { buildPointsLeaderboard } from "@@/server/services/achievement/buildPointsLeaderboard";
-import { SpecialAchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
-const createRow = (userId: string, name: AchievementName) => ({
-  achievement: { name },
+const createUserTotal = (userId: string, points: number, unlockCount = 1) => ({
+  points,
+  unlockCount,
   user: { id: userId, image: "", name: userId },
-  userId,
 });
-// SpecialAchievementName.Meta is worth more than AllCaps, so a single Meta unlock outscores two AllCaps unlocks.
-const HIGH_POINTS_NAME = SpecialAchievementName.Meta;
-const LOW_POINTS_NAME = SpecialAchievementName.AllCaps;
+const HIGH_POINTS = 50;
+const LOW_POINTS = 10;
 
 describe(buildPointsLeaderboard, () => {
-  test("ranks users by summed points descending and counts their unlocks", () => {
+  test("ranks users by summed points descending", () => {
     expect.hasAssertions();
 
     const { entries } = buildPointsLeaderboard([
-      createRow("low", LOW_POINTS_NAME),
-      createRow("low", SpecialAchievementName.AllLower),
-      createRow("high", HIGH_POINTS_NAME),
+      createUserTotal("low", LOW_POINTS, 2),
+      createUserTotal("high", HIGH_POINTS),
     ]);
 
     expect(entries).toStrictEqual([
-      {
-        points: AchievementDefinitionMap[HIGH_POINTS_NAME].points,
-        rank: 1,
-        unlockCount: 1,
-        user: { id: "high", image: "", name: "high" },
-      },
-      {
-        points:
-          AchievementDefinitionMap[LOW_POINTS_NAME].points +
-          AchievementDefinitionMap[SpecialAchievementName.AllLower].points,
-        rank: 2,
-        unlockCount: 2,
-        user: { id: "low", image: "", name: "low" },
-      },
+      { points: HIGH_POINTS, rank: 1, unlockCount: 1, user: { id: "high", image: "", name: "high" } },
+      { points: LOW_POINTS, rank: 2, unlockCount: 2, user: { id: "low", image: "", name: "low" } },
     ]);
   });
 
   test("gives users with equal totals the same competition rank", () => {
     expect.hasAssertions();
 
-    const { entries } = buildPointsLeaderboard([createRow("a", HIGH_POINTS_NAME), createRow("b", HIGH_POINTS_NAME)]);
+    const { entries } = buildPointsLeaderboard([
+      createUserTotal("a", HIGH_POINTS),
+      createUserTotal("b", HIGH_POINTS),
+      createUserTotal("c", LOW_POINTS),
+    ]);
 
-    expect(entries.map(({ rank }) => rank)).toStrictEqual([1, 1]);
+    expect(entries.map(({ rank }) => rank)).toStrictEqual([1, 1, 3]);
   });
 
   test("returns the caller's own entry with its global rank via self", () => {
     expect.hasAssertions();
 
     const { self } = buildPointsLeaderboard(
-      [createRow("high", HIGH_POINTS_NAME), createRow("low", LOW_POINTS_NAME)],
+      [createUserTotal("high", HIGH_POINTS), createUserTotal("low", LOW_POINTS)],
       "low",
     );
 
     expect(self).toStrictEqual({
-      points: AchievementDefinitionMap[LOW_POINTS_NAME].points,
+      points: LOW_POINTS,
       rank: 2,
       unlockCount: 1,
       user: { id: "low", image: "", name: "low" },
@@ -69,7 +55,7 @@ describe(buildPointsLeaderboard, () => {
   test("self is null when the caller has unlocked nothing", () => {
     expect.hasAssertions();
 
-    const { self } = buildPointsLeaderboard([createRow("high", HIGH_POINTS_NAME)], "absent");
+    const { self } = buildPointsLeaderboard([createUserTotal("high", HIGH_POINTS)], "absent");
 
     expect(self).toBeNull();
   });

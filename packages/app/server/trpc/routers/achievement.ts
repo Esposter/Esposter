@@ -5,10 +5,20 @@ import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { selectUserSchema, UserAchievementRelations } from "@esposter/db-schema";
+import { achievements, selectUserSchema, UserAchievementRelations, userAchievements, users } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
+import { count, eq, isNotNull, sql } from "drizzle-orm";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
+
+// Points live in the definition map, not the DB, so the summation injects them as a CASE over the
+// Achievement name — keeping the aggregation in SQL bounds the result set to one row per user.
+const achievementPointsSum = sql<number>`sum(case ${achievements.name} ${sql.join(
+  Object.entries(AchievementDefinitionMap).map(
+    ([achievementName, { points }]) => sql`when ${achievementName} then ${points}`,
+  ),
+  sql` `,
+)} else 0 end)::int`;
 
 export const achievementRouter = router({
   onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
@@ -18,12 +28,18 @@ export const achievementRouter = router({
     }
   }),
   readPointsLeaderboard: standardRateLimitedProcedure.query(async ({ ctx }) => {
-    const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
-      columns: { userId: true },
-      where: { unlockedAt: { isNotNull: true } },
-      with: { achievement: { columns: { name: true } }, user: { columns: { id: true, image: true, name: true } } },
-    });
-    return buildPointsLeaderboard(unlockedUserAchievements, ctx.getSessionPayload?.user.id);
+    const userTotals = await ctx.db
+      .select({
+        points: achievementPointsSum,
+        unlockCount: count(),
+        user: { id: users.id, image: users.image, name: users.name },
+      })
+      .from(userAchievements)
+      .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
+      .innerJoin(users, eq(users.id, userAchievements.userId))
+      .where(isNotNull(userAchievements.unlockedAt))
+      .groupBy(users.id);
+    return buildPointsLeaderboard(userTotals, ctx.getSessionPayload?.user.id);
   }),
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;

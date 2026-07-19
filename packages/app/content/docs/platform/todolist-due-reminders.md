@@ -11,7 +11,7 @@ A TodoList item with a due date pushes a web-push reminder to its owner when it 
 
 Reminder delivery adds no new Azure services: the Service Bus scheduled-message pattern (already used for [scheduled messages](/docs/esbabbler/scheduled-messages)) carries the timer, and the existing [push-notification pipeline](/docs/esbabbler/push-notifications) carries the notification.
 
-- **Scheduling** — after a TodoList `saveResourceContent` persists, the server reads the prior content blob and diffs due dates, enqueueing one scheduled Service Bus message per item whose `(itemId, dueAt)` is new or changed and still in the future. The diff is fire-and-forget and best-effort: a failed enqueue logs and never fails the user's save. Diffing keeps repeated saves from piling up duplicate reminders for an unchanged due date.
+- **Scheduling** — after a TodoList `saveResourceContent` persists, the server reads the prior content blob and diffs due dates, enqueueing one scheduled Service Bus message per item whose `(itemId, dueAt)` is new or changed and still in the future. The diff is fire-and-forget and best-effort: a failed enqueue logs and never fails the user's save, and an unreadable prior blob degrades to "no previous content" rather than blocking the save. Diffing keeps repeated saves from piling up duplicate reminders for an unchanged due date, and the queue's duplicate detection collapses a due date toggled away and back — the message id is the deterministic `(resourceId, itemId, dueAt)` triple, so re-enqueueing the same reminder within the detection window is a no-op.
 - **Fire-time verification is the consistency model** — the reminder carries only `{ resourceId, itemId, dueAt }`; there is no Postgres row backing it, so the scheduled message _is_ the state. When it fires, `SendTodoReminder` re-reads the live content blob and drops the reminder if the item was deleted or re-dated (a re-dated item enqueued its own fresh message at save time). This makes stale messages harmless, so saves never have to cancel previously enqueued ones.
 - **Delivery** — the reminder pushes `『{item}』 is due` to the owner's push subscriptions through the same `sendWebPushNotifications` path every other notification uses. Clicking the notification opens the resource's Items blade (`/resources/{id}/items`). TodoLists are single-owner resources, so the recipient set is just the owner's subscriptions — no fan-out.
 
@@ -35,7 +35,7 @@ sequenceDiagram
 
 ## Data model
 
-None in Postgres. The TodoList item already carries `dueAt` (the Items and Calendar blades render it), and the reminder is stateless — the scheduled Service Bus message holds the whole payload and the blob re-read is the truth check. The `todo-reminders` Service Bus queue is provisioned alongside the existing `scheduled-message-jobs` queue in `packages/infra`.
+None in Postgres. The TodoList item already carries `dueAt` (the Items and Calendar blades render it), and the reminder is stateless — the scheduled Service Bus message holds the whole payload and the blob re-read is the truth check. The `todo-reminders` Service Bus queue is provisioned alongside the existing `scheduled-message-jobs` queue in `packages/infra`, with duplicate detection enabled (the maximum `P7D` window) keyed on the deterministic message id.
 
 ## Key files
 

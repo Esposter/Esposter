@@ -41,6 +41,7 @@ import {
 } from "@esposter/db-schema";
 import {
   createUniqueArraySchema,
+  getResultAsync,
   InvalidOperationError,
   MAX_READ_LIMIT,
   Operation,
@@ -208,8 +209,15 @@ export const createResourceProcedures = <TType extends ResourceType>(
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
       async ({ ctx, input: { content, contentVersion, id } }) => {
         // Read the prior content before the upload overwrites it, so an afterSaveResourceContent hook can
-        // diff against it (undefined on the first save). Only paid when a hook is registered for this type
-        const previousContent = afterSaveResourceContent ? await readContent(id) : undefined;
+        // diff against it (undefined on the first save). Only paid when a hook is registered for this type.
+        // Best-effort: the hook itself is best-effort, so an unreadable or schema-invalid prior blob
+        // degrades to "no previous content" instead of blocking the save of valid new content
+        const previousContent = afterSaveResourceContent
+          ? await getResultAsync(() => readContent(id)).match(
+              (content) => content,
+              () => undefined,
+            )
+          : undefined;
         // Bump the version and write the blob in one transaction so a failed upload rolls the version back,
         // Keeping Postgres and blob storage consistent instead of stranding the resource at a version with stale content
         const updatedResource = await ctx.db.transaction(async (tx) => {

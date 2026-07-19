@@ -26,7 +26,11 @@ describe(scheduleTodoReminders, () => {
     await scheduleTodoReminders(resourceId, { items: [item] }, undefined);
 
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([
-      { body: { dueAt: futureDueAt, itemId: item.id, resourceId }, scheduledEnqueueTimeUtc: futureDueAt },
+      {
+        body: { dueAt: futureDueAt, itemId: item.id, resourceId },
+        messageId: `${resourceId}-${item.id}-${futureDueAt.getTime()}`,
+        scheduledEnqueueTimeUtc: futureDueAt,
+      },
     ]);
   });
 
@@ -66,7 +70,11 @@ describe(scheduleTodoReminders, () => {
     await scheduleTodoReminders(resourceId, { items: [item] }, { items: [previousItem] });
 
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([
-      { body: { dueAt: laterDueAt, itemId: item.id, resourceId }, scheduledEnqueueTimeUtc: laterDueAt },
+      {
+        body: { dueAt: laterDueAt, itemId: item.id, resourceId },
+        messageId: `${resourceId}-${item.id}-${laterDueAt.getTime()}`,
+        scheduledEnqueueTimeUtc: laterDueAt,
+      },
     ]);
   });
 });

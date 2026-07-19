@@ -8,8 +8,9 @@ import { AzureQueue } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Enqueues one scheduled Service Bus reminder per item whose due date is new or changed since the last
-// Save and still in the future. A duplicate is harmless (the function re-verifies against the blob at
-// Fire time), but diffing keeps repeated saves from piling reminders up for an unchanged due date.
+// Save and still in the future. Diffing keeps repeated saves from piling reminders up for an unchanged
+// Due date; a due date toggled away and back re-enqueues, which the queue's duplicate detection collapses
+// Via the deterministic messageId, and a re-dated item's stale reminder no-ops at fire time against the blob.
 export const scheduleTodoReminders = (
   resourceId: Resource["id"],
   content: ToData<TodoListResource>,
