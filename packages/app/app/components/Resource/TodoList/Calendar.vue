@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EventSourceInput } from "@fullcalendar/core";
+import type { EventSourceInput } from "@fullcalendar/vue3";
 
 import { useTodoListStore } from "@/store/resource/todoList";
 

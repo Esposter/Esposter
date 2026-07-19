@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import type { CalendarOptions } from "@fullcalendar/core";
+import type { CalendarOptions } from "@fullcalendar/vue3";
 
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/vue3";
+import dayGridPlugin from "@fullcalendar/vue3/daygrid";
+import interactionPlugin from "@fullcalendar/vue3/interaction";
+import monarchThemePlugin from "@fullcalendar/vue3/themes/monarch";
+import timeGridPlugin from "@fullcalendar/vue3/timegrid";
+import "@fullcalendar/vue3/skeleton.css";
+import "@fullcalendar/vue3/themes/monarch/palettes/green.css";
+import "@fullcalendar/vue3/themes/monarch/theme.css";
 
 interface StyledCalendarProps {
   calendarOptions?: CalendarOptions;
@@ -18,7 +22,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
   <FullCalendar
     :options="{
       ...calendarOptions,
-      plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+      plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, monarchThemePlugin],
       headerToolbar: {
         left: 'title',
         right: 'prevYear,prev,next,nextYear today',
@@ -32,10 +36,9 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
     <template #eventContent="{ event, timeText }">
       <v-tooltip>
         <template #activator="{ props }">
-          <div flex w-full items-center overflow-hidden :="props">
-            <div class="fc-daygrid-event-dot" />
-            <div class="fc-event-time">{{ timeText }}</div>
-            <div class="fc-event-title">{{ event.title }}</div>
+          <div flex w-full items-center gap-1 overflow-hidden :="props">
+            <div>{{ timeText }}</div>
+            <div truncate>{{ event.title }}</div>
           </div>
         </template>
         <div font-bold text-center>
@@ -51,9 +54,3 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
     </template>
   </FullCalendar>
 </template>
-
-<style scoped>
-:deep(.fc-icon) {
-  display: flex;
-}
-</style>
