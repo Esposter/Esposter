@@ -14,6 +14,10 @@ Use `StyledButton` for every confirm / complete / primary call-to-action button 
 - `@click` and other native listeners also fall through to the root `v-btn`.
 - Destructive confirms stay a `color="error"` `v-btn` (error red is visible on the transparent base) — `StyledButton` is for positive/primary actions only.
 
+### `StyledTooltipIconButton` shape — `isIconButton`
+
+Vuetify's `icon` prop on `v-btn` doesn't just place an icon — it switches the button to the icon-button variant: **circular, equal width/height, no min-width**. `StyledTooltipIconButton` passes `:icon` by default, so converting a regular `<v-tooltip>` + `<v-btn>` (icon as a `<v-icon>` child, rectangular shape) to it silently turns the button into a circle. When the rectangular default-button shape is intended, pass `:is-icon-button="false"` — the component then renders a regular `v-btn` with the icon as a child. `rounded`/`tile` in `buttonProps` cannot restore the rectangle (they only change corners, not the forced square dimensions).
+
 ## Navigation — `@click="navigateTo(...)"`, Never Vuetify `:to`
 
 Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) **must not** use `:to`/`to` — their router integration bypasses Nuxt-level navigation and misbehaves in Nuxt, so it is banned by lint (`vue/no-restricted-syntax`). Navigate them with an inline `@click="navigateTo(RoutePath.X)"` handler instead:
