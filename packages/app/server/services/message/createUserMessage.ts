@@ -94,11 +94,11 @@ export const createUserMessage = async (
     const threadRootRowKey = newMessageEntity.replyRowKey;
     await getResultAsync(() =>
       createThreadFollow(db, { roomId: newMessageEntity.partitionKey, threadRootRowKey, userId: user.id }),
-    ).orTee(console.error);
+    ).match(() => undefined, console.error);
     const excludedUserIds = [...new Set(readPushSubscriptions.map((pushSubscription) => pushSubscription.userId))];
     await getResultAsync(() =>
       notifyThreadReplyFollowers(db, newMessageEntity, notificationOptions, excludedUserIds),
-    ).orTee(console.error);
+    ).match(() => undefined, console.error);
   }
 
   const updatedRoom = requireMutation(

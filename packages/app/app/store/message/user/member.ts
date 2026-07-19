@@ -5,8 +5,8 @@ import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
-import { useUserStore } from "@/store/message/user";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { useUserStore } from "@/store/message/user";
 
 export const useMemberStore = defineStore("message/user/member", () => {
   const roomStore = useRoomStore();

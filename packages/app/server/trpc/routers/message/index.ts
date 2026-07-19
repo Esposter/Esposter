@@ -385,6 +385,11 @@ export const baseMessageRouter = router({
       ]);
     },
   ),
+  // Follow-STATE source of truth: all followed root rowKeys, including those whose root message was deleted,
+  // So the follow button can offer Unfollow on a thread whose root is gone but whose DB follow row remains.
+  readFollowedThreadRootRowKeys: getMemberProcedure(roomIdSchema, "roomId").query<StandardMessageEntity["rowKey"][]>(
+    ({ ctx, input: { roomId } }) => readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id),
+  ),
   // Display list for the Threads drawer — deleted roots are dropped so it never lists a dangling follow.
   // Follow-STATE is read separately via readFollowedThreadRootRowKeys, which keeps deleted-root follows.
   readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<StandardMessageEntity[]>(
@@ -403,11 +408,6 @@ export const baseMessageRouter = router({
         (rootMessage): rootMessage is StandardMessageEntity => rootMessage !== null && !rootMessage.deletedAt,
       );
     },
-  ),
-  // Follow-STATE source of truth: all followed root rowKeys, including those whose root message was deleted,
-  // So the follow button can offer Unfollow on a thread whose root is gone but whose DB follow row remains.
-  readFollowedThreadRootRowKeys: getMemberProcedure(roomIdSchema, "roomId").query<StandardMessageEntity["rowKey"][]>(
-    ({ ctx, input: { roomId } }) => readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id),
   ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
