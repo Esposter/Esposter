@@ -32,6 +32,7 @@ watch(isOpen, (newIsOpen) => {
       async (_event, onComplete) => {
         let isSuccessful = false;
         await executeMutation(() => $trpc.blueprint.captureBlueprint.mutate({ ids: captureIds, name }), {
+          key: Symbol('captureBlueprint'),
           onError: createErrorNotification,
           onSuccess: async (newBlueprint) => {
             createNotification({

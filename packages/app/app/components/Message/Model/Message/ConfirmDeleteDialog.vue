@@ -25,6 +25,7 @@ const deleteMessage = async (onComplete: () => void) => {
         items.value = snapshot;
       };
     },
+    key: rowKey,
   });
 };
 </script>

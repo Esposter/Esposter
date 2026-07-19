@@ -40,6 +40,8 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
             count.value = snapshotCount;
           };
         },
+        // A batch delete spans an arbitrary selection with no single entity id, so each gets a per-call symbol
+        key: Symbol("deleteResources"),
         onError: async (error) => {
           createErrorNotification(error);
           // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure

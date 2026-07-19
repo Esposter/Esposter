@@ -33,6 +33,8 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
             runAt: scheduledAt.value,
           }),
     {
+      // A reschedule targets the existing job; a fresh schedule has no id yet, so each gets a per-call symbol
+      key: currentTarget.scheduledMessageJobId || Symbol("scheduleMessage"),
       onSuccess: async () => {
         isSuccessful = true;
         if (!currentTarget.scheduledMessageJobId) clearDraft(currentTarget.roomId);

@@ -39,9 +39,10 @@ const save = async () => {
               statusMap.value.set(userId.value, previousStatus);
             };
           },
+          key: userId.value,
           onSuccess,
         }
-      : { onSuccess },
+      : { key: userId.value, onSuccess },
   );
 };
 </script>

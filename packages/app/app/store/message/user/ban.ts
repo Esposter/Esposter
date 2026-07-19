@@ -20,6 +20,8 @@ export const useBanStore = defineStore("message/user/ban", () => {
           items.value = snapshot;
         };
       },
+      // Keyed per room-user pair so concurrent unbans across bans never stale-drop each other
+      key: `${input.roomId}-${input.userId}`,
     });
   };
 

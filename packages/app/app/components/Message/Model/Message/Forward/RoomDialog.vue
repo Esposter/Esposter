@@ -57,6 +57,7 @@ const forwardMessage = async () => {
         rowKey: forwardRowKey,
       }),
     {
+      key: forwardRowKey,
       onSuccess: async () => {
         // Capture the destination, then reset before navigating. After navigateTo, the forward store's
         // Room-keyed useDataMap resolves against the destination room, so resetting afterwards would

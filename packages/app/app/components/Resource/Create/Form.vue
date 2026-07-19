@@ -34,6 +34,8 @@ const submit = async () => {
 
   isSubmitting.value = true;
   await executeMutation(() => createResource(type, name.value), {
+    // A brand-new resource has no id yet, so each create gets a per-call symbol
+    key: Symbol("createResource"),
     onError: createErrorNotification,
     onSuccess: async (resource) => {
       const sheetResourceValue = sheetResource.value;
@@ -51,6 +53,7 @@ const submit = async () => {
             id: resource.id,
           }),
         {
+          key: resource.id,
           onError: createErrorNotification,
           onSuccess: () => {
             isSaved = true;

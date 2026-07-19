@@ -32,6 +32,7 @@ const updateRoom = async (name: string) => {
         storeUpdateRoom({ id, image: oldImage, name: oldName });
       };
     },
+    key: id,
     onSuccess: async (updatedRoom) => {
       if (isNameChanged)
         await createMessage({ message: updatedRoom.name, roomId: updatedRoom.id, type: MessageType.EditRoom });

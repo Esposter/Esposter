@@ -29,6 +29,7 @@ const deleteLinkPreviewResponse = async (onComplete: () => void) => {
           message.linkPreviewResponse = previousLinkPreviewResponse;
       };
     },
+    key: rowKey,
   });
   onComplete();
 };

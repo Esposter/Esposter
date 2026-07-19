@@ -58,6 +58,7 @@ const save = async () => {
         storeUpdateRoom(snapshot);
       };
     },
+    key: room.id,
   });
 };
 </script>

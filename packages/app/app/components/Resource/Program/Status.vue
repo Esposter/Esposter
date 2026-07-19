@@ -31,6 +31,7 @@ const readStatus = async () => {
 };
 const generateParticipants = async () => {
   await executeGenerateMutation(() => $trpc.program.generateProgramParticipants.mutate({ id: id.value }), {
+    key: id.value,
     onError: createErrorNotification,
     onSuccess: async (participants) => {
       createNotification({ severity: "success", title: `${participants.length} participants ready` });

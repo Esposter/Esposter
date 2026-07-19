@@ -29,6 +29,7 @@ const deploy = async () => {
   await executeMutation(
     () => $trpc.blueprint.deployBlueprint.mutate({ id: current.id, parameterValues: parameterValues.value }),
     {
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: (newDeployments) => {
         deployments.value = newDeployments;

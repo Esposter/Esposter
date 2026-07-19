@@ -48,6 +48,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           storeDeleteRoomCategory({ id: newCategory.id });
         };
       },
+      // Each create owns a distinct placeholder with no server id yet, so it gets a per-call symbol
+      key: Symbol("createRoomCategory"),
       // Reconcile onto the placeholder itself so it keeps its list position instead of being
       // Removed and re-appended under the server id
       onSuccess: (createdCategory) => {
@@ -65,6 +67,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           categories.value = snapshot;
         };
       },
+      key: id,
     });
   };
 
@@ -77,6 +80,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           categories.value = snapshot;
         };
       },
+      key: input.id,
       onSuccess: (updatedCategory) => {
         storeUpdateRoomCategory(updatedCategory);
       },
@@ -94,6 +98,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           categories.value = snapshot;
         };
       },
+      // A stable key so the latest whole-list reorder supersedes any in-flight one
+      key: "reorderRoomCategories",
     });
   };
 

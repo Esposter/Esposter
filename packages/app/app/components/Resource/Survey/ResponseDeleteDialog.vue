@@ -19,6 +19,7 @@ const isOpen = useSingletonDialog(deletingRowKey);
 const deleteSurveyResponse = async () => {
   const rowKey = deletingRowKey.value;
   await executeDeleteMutation(() => $trpc.survey.deleteSurveyResponse.mutate({ id: surveyId, rowKey }), {
+    key: rowKey,
     onError: createErrorNotification,
     onSuccess: () => {
       createNotification({ severity: "success", title: "Deleted response" });

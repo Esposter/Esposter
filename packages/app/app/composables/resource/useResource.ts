@@ -65,6 +65,8 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           id: current.id,
         }),
       {
+        // Content saves of the current resource supersede one another, so they share the resource id
+        key: current.id,
         onError: (error) => {
           if (error.message === staleContentVersionErrorMessage)
             createNotification({
@@ -99,6 +101,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           resource.value = current;
         };
       },
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: (newResource) => {
         resource.value = newResource;
@@ -118,6 +121,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
             resource.value = current;
           };
         },
+        key: current.id,
         onError: createErrorNotification,
         onSuccess: (newResource) => {
           resource.value = newResource;
@@ -130,6 +134,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     if (!current) return false;
     let isSuccessful = false;
     await executeRemoveMutation(() => getResourceMutations(current.type).deleteResource({ id: current.id }), {
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: () => {
         createNotification({ severity: "success", title: `Deleted "${current.name}"` });
@@ -142,6 +147,8 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     const current = resource.value;
     if (!current) return;
     await executeDuplicateMutation(() => $trpc.resource.duplicateResource.mutate({ id: current.id }), {
+      // A duplicate produces a brand-new resource with no id yet, so each gets a per-call symbol
+      key: Symbol("duplicateResource"),
       onError: createErrorNotification,
       onSuccess: async (newResource) => {
         createNotification({
@@ -159,6 +166,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     const { publishResource } = getResourceMutations(current.type);
     if (!publishResource) return;
     await executePublishMutation(() => publishResource({ id: current.id }), {
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: (newPublication) => {
         publication.value = newPublication;
@@ -186,6 +194,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           publication.value = currentPublication;
         };
       },
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: () => {
         createNotification({ severity: "success", title: `Unpublished "${current.name}"` });

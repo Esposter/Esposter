@@ -39,11 +39,11 @@ On failure the real `Error.message` is raised as an alert and `data` stays `unde
 
 - **Optimistic apply + rollback** — write the change to the store immediately, roll it back if the server rejects it.
 - **Staleness guarding** — when the same action fires repeatedly (rapid clicks, drags, select changes), a slower earlier call can never overwrite a newer call's state. Staleness is tracked **per `key`**, so one instance serving many sibling items (a store action keyed by `postId`) never lets item B's call cancel item A's callbacks.
-- **Pending state** — `isPending` is true while any of the instance's calls is in flight. It is what the triggering control binds as `:loading`/`:disabled` (see [In-flight guarding](#in-flight-guarding)).
+- **Pending state** — `isPending` is true while any of the instance's calls is in flight; `getIsPending(key)` scopes it to one key for per-item surfaces (a table row's own button). They are what the triggering control binds as `:loading`/`:disabled` (see [In-flight guarding](#in-flight-guarding)).
 - **Error surfacing** — a failed mutation raises the actual error message as an alert; no call site writes `try`/`catch` or bespoke alert strings.
 
 ```ts
-const { executeMutation, isPending } = useMutation();
+const { executeMutation, getIsPending, isPending } = useMutation();
 
 await executeMutation(mutate, {
   applyOptimistic: () => {
@@ -52,14 +52,21 @@ await executeMutation(mutate, {
       // rollback closure — undo the write
     };
   },
+  key: input.id,
   onSuccess: (result) => {
     // rare: write a server-authoritative result
   },
 });
 ```
 
-- `mutate` — the tRPC call. The only required argument.
-- `key` — scopes staleness, pending, and exclusivity bookkeeping when one instance serves many sibling items; calls with different keys are fully independent. Omitted, every call shares one default key — correct only when overlapping calls genuinely supersede each other (repeated saves of the same single target). Any per-entity action keys by the entity id (`key: input.id`, a member-role pair, a blob path) so operations on different entities never stale-drop each other; a create with no natural entity key passes `key: Symbol()` per call, since every create is its own independent operation. Never call `useMutation()` inside an action to fake isolation — that leaks a detached effect scope; key the shared store-root instance instead.
+- `mutate` — the tRPC call.
+- `key` — **required**: the identity of the mutation's target, scoping staleness, pending, and exclusivity bookkeeping; calls with different keys are fully independent. It is explicit for the same reason a Pinia store id is — identity is the caller's knowledge, and a silently shared default was exactly the class of bug that kept resurfacing (operations on different entities stale-dropping each other's rollbacks and `onSuccess`). The choice is mechanical:
+  - **Operation on an existing entity** → its id or natural composite (`input.id`, `` `${userId}-${roleId}` ``, a blob path). Repeated saves of the same target share the key, so genuine latest-wins supersession still works.
+  - **Create with no id yet** → a per-call `Symbol("createRoom")` (every create is its own independent operation), or a stable key + `isExclusive` when a duplicate fire must be dropped instead (`createLike`, the initial survey response).
+  - **Singleton target** (current user's settings, one screen's single subject) → the scope's id when one exists, else a stable name string for the target (`key: "userSettings"`). Keys are scoped per instance, so names cannot collide across instances.
+
+  Never call `useMutation()` inside an action to fake isolation — that leaks a detached effect scope; key the shared store-root instance instead.
+
 - `isExclusive` — single-flight: while a call with the same key is in flight, further calls are dropped outright — nothing fires, no staleness bump. For non-idempotent creates that must never double-fire (`createLike`).
 - `applyOptimistic` — the normal path. Apply the local change and return its rollback closure. On failure the rollback runs (unless a newer call has superseded this one); the confirming server state still arrives via subscriptions, which idempotently re-apply the same value.
 - `onSuccess` — the rare path, for mutations whose result the client can't predict (server-generated ids/tokens like `createInvite`). Omit `applyOptimistic` and take the server result here; it is written only if this call is still the latest.
@@ -96,7 +103,7 @@ Call `useMutation()` once per logical action — each instance owns its own stal
 Latest-wins staleness protects **state**, not **the server**: every latest-wins `executeMutation` call still fires its network write (only an `isExclusive` drop prevents one). The surface that triggers a write is therefore responsible for making a second trigger impossible while the first is in flight. Exactly one guard applies per surface — pick by shape, never hand-roll a pending flag:
 
 - **Form dialogs** — free. `StyledFormDialog`'s submit path holds `isSubmitting`: it early-returns re-entrant submits and drives the confirm button's `loading`/`disabled`. Consumers wire nothing.
-- **Plain buttons firing a non-optimistic write** (publish, duplicate, deploy, generate, restore) — bind the instance's `isPending` as both `:loading` and `:disabled`. When the mutation lives in a composable, the composable returns the renamed ref (`isPublishPending`) and it threads down as an ordinary prop; overflow/action list items bind it as `disabled`.
+- **Plain buttons firing a non-optimistic write** (publish, duplicate, deploy, generate, restore) — bind the instance's `isPending` as both `:loading` and `:disabled`. When the mutation lives in a composable, the composable returns the renamed ref (`isPublishPending`) and it threads down as an ordinary prop; overflow/action list items bind it as `disabled`. For per-item surfaces (each table row has its own button), bind `getIsPending(item.id)` instead so one row's in-flight write doesn't disable its siblings.
 - **Per-item creates through a shared instance** — `key` + `isExclusive` (`createLike`), so one item's in-flight create drops only its own duplicates while sibling items stay live.
 - **Optimistic writes** — no guard. The state flips synchronously, so a second click reads the new state and means something new (a favorite toggle un-favorites); disabling the control would swallow real intent, and a superseded call is already staleness-guarded.
 - **Synchronous unmount** — closing/unmounting the triggering control before the round trip (`onComplete()`-first dialog closes, a selection toolbar cleared on click) is a complete guard by construction; don't add a second one.

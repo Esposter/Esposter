@@ -23,6 +23,8 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
           knockingCallSessionId.value = previousKnockingCallSessionId;
         };
       },
+      // A stable key so the latest knock supersedes any previous one, since only one knock is active at a time
+      key: "knockCall",
     });
   };
   const cancelKnock = () => {
@@ -49,6 +51,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
             knockers.value = previousKnockers;
           };
         },
+        key: sessionId,
       },
     );
   };
@@ -64,6 +67,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
             knockers.value = previousKnockers;
           };
         },
+        key: sessionId,
       },
     );
   };

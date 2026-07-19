@@ -32,6 +32,7 @@ const { cloned: editedName } = useCloned(() => resource.name);
         await executeMutation(
           () => getResourceMutations(resource.type).updateResource({ id: resource.id, name: editedName }),
           {
+            key: resource.id,
             onError: (error) => {
               createNotification({ severity: 'error', title: error.message });
             },

@@ -40,6 +40,7 @@ const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boole
           directMessageParticipantsMap.value.set(roomId, previousParticipants);
         };
       },
+      key: roomId,
       onSuccess: () => {
         isSuccessful = true;
         selectedUserIds.value = [];

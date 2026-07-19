@@ -28,6 +28,7 @@ export const useFriendStore = defineStore("message/user/friend", () => {
           friends.value = previousFriends;
         };
       },
+      key: friendId,
     });
   };
   return {

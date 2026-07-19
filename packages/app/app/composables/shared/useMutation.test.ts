@@ -19,7 +19,7 @@ describe(useMutation, () => {
     const rollback = vi.fn<() => void>();
     const applyOptimistic = vi.fn<() => () => void>(() => rollback);
     const { executeMutation } = useMutation();
-    await executeMutation(() => Promise.resolve(), { applyOptimistic });
+    await executeMutation(() => Promise.resolve(), { applyOptimistic, key });
 
     expect(applyOptimistic).toHaveBeenCalledTimes(1);
     expect(rollback).not.toHaveBeenCalled();
@@ -30,7 +30,7 @@ describe(useMutation, () => {
 
     const onSuccess = vi.fn<(result: string) => void>();
     const { executeMutation } = useMutation();
-    await executeMutation(() => Promise.resolve("result"), { onSuccess });
+    await executeMutation(() => Promise.resolve("result"), { key, onSuccess });
 
     expect(onSuccess).toHaveBeenCalledExactlyOnceWith("result");
   });
@@ -43,7 +43,7 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    await executeMutation(() => Promise.reject(new Error("error")), { applyOptimistic });
+    await executeMutation(() => Promise.reject(new Error("error")), { applyOptimistic, key });
 
     expect(rollback).toHaveBeenCalledTimes(1);
     expect(alerts.value).toHaveLength(1);
@@ -56,7 +56,7 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const { alerts } = storeToRefs(useAlertStore());
     const error = new Error("error");
-    await executeMutation(() => Promise.reject(error), { onError });
+    await executeMutation(() => Promise.reject(error), { key, onError });
 
     expect(onError).toHaveBeenCalledExactlyOnceWith(error);
     expect(alerts.value).toHaveLength(0);
@@ -76,9 +76,10 @@ describe(useMutation, () => {
         }),
       {
         applyOptimistic: () => staleRollback,
+        key,
       },
     );
-    await executeMutation(() => Promise.resolve());
+    await executeMutation(() => Promise.resolve(), { key });
     rejectStale(new Error("error"));
     await stale;
 
@@ -96,6 +97,7 @@ describe(useMutation, () => {
         new Promise<void>((resolve) => {
           resolveMutate = resolve;
         }),
+      { key },
     );
     const isPendingWhileInFlight = isPending.value;
     await flushPromises();
@@ -104,6 +106,30 @@ describe(useMutation, () => {
 
     expect(isPendingWhileInFlight).toBe(true);
     expect(isPending.value).toBe(false);
+  });
+
+  test("scopes getIsPending to its key while isPending aggregates", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation, getIsPending, isPending } = useMutation();
+    let resolveMutate: () => void = noop;
+    const pending = executeMutation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveMutate = resolve;
+        }),
+      { key },
+    );
+    const isKeyPendingWhileInFlight = getIsPending(key);
+    const isOtherKeyPendingWhileInFlight = getIsPending(otherKey);
+    await flushPromises();
+    resolveMutate();
+    await pending;
+
+    expect(isKeyPendingWhileInFlight).toBe(true);
+    expect(isOtherKeyPendingWhileInFlight).toBe(false);
+    expect(isPending.value).toBe(false);
+    expect(getIsPending(key)).toBe(false);
   });
 
   test("drops a concurrent exclusive call with the same key", async () => {

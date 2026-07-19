@@ -77,6 +77,7 @@ export const useExecuteSlashCommand = () => {
               storeUpdateRoom({ id: roomId, topic: oldTopic });
             };
           },
+          key: roomId,
         });
         break;
       }
