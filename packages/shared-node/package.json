@@ -56,6 +56,8 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
+    "@azure/eventgrid": "catalog:",
+    "@azure/storage-blob": "catalog:",
     "@esposter/shared": "workspace:*"
   },
   "devDependencies": {

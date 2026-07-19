@@ -1870,6 +1870,12 @@ importers:
 
   packages/shared-node:
     dependencies:
+      '@azure/eventgrid':
+        specifier: 'catalog:'
+        version: 5.12.0
+      '@azure/storage-blob':
+        specifier: 'catalog:'
+        version: 12.33.0
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
