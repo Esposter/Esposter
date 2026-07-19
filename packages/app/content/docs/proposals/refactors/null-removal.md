@@ -15,7 +15,7 @@ Eliminate `null` from all TypeScript / Vue source in favour of `undefined`, enfo
 
 ## Scope
 
-Nothing is implemented yet — no ESLint rule, no `nullToUndefined` helper. At the last audit, `null` appeared as roughly 70 union-type annotations in Vue refs/composables, 117 literal assignments/returns, 15 `.nullable()` Zod fields across three files, ~6 Azure external-API type members, 26 Drizzle schema files with nullable columns, and ~50 test-fixture values (`deletedAt: null`, `image: null`).
+Phase 1 has shipped the ESLint gate (at warn) and the `nullToUndefined` helper — see the Progress section below. At the last audit, `null` appeared as roughly 70 union-type annotations in Vue refs/composables, 117 literal assignments/returns, `.nullable()` Zod fields across six files (`ColumnStatistics.ts`, `HandleBounds.ts`, `TodoListItem.ts`, `UpsertRoomFilterInput.ts`, `AItemEntity.ts`, `ProgramResource.ts` — not three, as an earlier draft claimed), plus `ColumnValue.ts` using `z.null()` in a union, ~6 Azure external-API type members, 26 Drizzle schema files with nullable columns, and ~50 test-fixture values (`deletedAt: null`, `image: null`).
 
 ## Carve-outs (keep `null`)
 
@@ -38,15 +38,20 @@ Add `nullToUndefined` in `packages/shared` (`value === null ? undefined : value`
 
 ### Phase 3 — Zod schemas
 
-Replace `.nullable()` with `.optional()` in the three files that use it, then verify all consumers handle `undefined`:
+Six app-owned files use `.nullable()`. Phase 1 audited each and found they are all boundaries rather than sentinel-null, so none were mechanically converted — each needs its own strategy (see Progress → "Six `.nullable()` files"):
 
-| File                                                      | Fields                                                                             |
-| --------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `shared/models/resource/sheet/column/ColumnStatistics.ts` | `average`, `falseCount`, `trueCount`, `minimum`, `maximum`, `topFrequencies`, etc. |
-| `shared/models/flowchartEditor/data/HandleBounds.ts`      | `source`, `target`                                                                 |
-| `shared/models/resource/todoList/TodoListItem.ts`         | `dueAt`                                                                            |
+| File                                                      | Fields                                                        | Disposition                                                       |
+| --------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `shared/models/resource/sheet/column/ColumnStatistics.ts` | `average`, `falseCount`, `trueCount`, `minimum`, `maximum`, … | Kept — entangled with the sheet null-strategy domain carve-out    |
+| `shared/models/flowchartEditor/data/HandleBounds.ts`      | `source`, `target`                                            | Kept — satisfies the external `@vue-flow/core` `NodeHandleBounds` |
+| `shared/models/resource/todoList/TodoListItem.ts`         | `dueAt`                                                       | Kept — persisted blob already stores JSON `null`                  |
+| `shared/models/db/room/UpsertRoomFilterInput.ts`          | `timeoutDurationMs`                                           | Kept — tRPC input → nullable DB column; consumers in locked UI    |
+| `shared/models/entity/AItemEntity.ts`                     | `deletedAt`                                                   | Kept — nullable timestamp, mirrors the `ItemMetadata` mixin       |
+| `shared/models/resource/program/ProgramResource.ts`       | `audience`                                                    | Kept — persisted blob already stores JSON `null` via `.default`   |
 
-`ColumnValue.ts` uses `z.null()` in a union — replace with `z.undefined()` or drop the member if unused. `SerializableValue` in `packages/db-schema/src/models/azure/` stays as-is (carve-out).
+`ColumnValue.ts` uses `z.null()` in a union — but this is the sheet empty-cell value (the null-strategy domain carve-out), so it stays. `SerializableValue` in `packages/db-schema/src/models/azure/` stays as-is (carve-out).
+
+Converting the persisted-blob schemas (`TodoListItem`, `ProgramResource`) requires a read-tolerance step (accept stored `null`, emit `undefined`) or an accepted reset-on-parse-fail migration — a behaviour change, so deferred out of the types-only phase-1 PR.
 
 ### Phase 4 — Vue components & composables
 
@@ -64,12 +69,30 @@ Update mock row data (`deletedAt: null` → `deletedAt: undefined`, etc.). Fixtu
 
 Once all violations outside the carve-out paths are resolved, change the rule from warn to error and name the carve-outs in a comment in the ESLint config.
 
+## Progress
+
+### Phase 1 (shipped)
+
+**ESLint gate (warn).** A custom `esposter/no-null` rule (`packages/configuration/eslint/rules/noNull.js`, wired via `eslint/plugins/esposter.js`) flags both `TSNullKeyword` (the `| null` type position) and `null` literals at **warn**. It is a dedicated rule rather than a `no-restricted-syntax` entry because the existing `no-restricted-syntax` runs at `error`, and one ESLint rule cannot carry two severities on the same files — `unicorn/no-null` is not installed and only covers literals anyway. Phase 7 flips this rule to `error` and adds `ignores` for the carve-out paths.
+
+**Boundary helper.** `nullToUndefined` + the recursive `NullToUndefined<T>` type live in `@esposter/shared` (`util/object/` and `util/types/`). The function recurses through plain objects and arrays so a whole Drizzle select row converts at the query layer; Dates and class instances pass through untouched. First applied at the Drizzle/better-auth ingress in `server/services/message/call/createParticipant.ts`.
+
+**Sweep (types/idioms only, zero behaviour change).** Converted sentinel `null` → `undefined` in: `useDocumentPictureInPicture`, `usePushToTalk`, the `dungeons/settings/volume` store, `useSurveyResponse`, and `getSurroundingPages` (+ `Docs/Surround.vue` + its test).
+
+### Six `.nullable()` files
+
+All six were audited and **kept** with per-file reasons (see the Phase 3 table). The headline "mechanical `.nullable()` → `.optional()`" does not hold: each is an external-library type, a nullable DB timestamp, a tRPC input mapping to a nullable column, or a persisted blob that already stores JSON `null`.
+
+### Remaining
+
+Most remaining `null` in the codebase is **legitimate** and out of scope: DB timestamps (`deletedAt`/`expiresAt`), genuine JS `typeof`-object guards, external boundaries (DOM/`querySelector`, Vuetify, Vue Router, better-auth, Tiptap, three.js, Storage), `JSON.stringify(x, null, 2)` replacers, and the sheet null-strategy domain carve-out. Sentinel `null` still to convert (deferred to later phases / owned by parallel work): ~20 `T | null` type annotations and ~30 literals/guards across `app/app` (message-area components, poll voting, link-preview), plus the locked paths. The `packages/shared`, `app/shared`, and `app/server` layers are largely boundary/timestamp-only and had few sentinel sites.
+
 ## Checklist
 
-- [ ] Phase 1 — Add ESLint `TSNullKeyword` warning
-- [ ] Phase 2 — Add `nullToUndefined` utility + Drizzle mapped-type helper
-- [ ] Phase 3 — Zod schemas: `.nullable()` → `.optional()`
-- [ ] Phase 4 — Vue refs / models / computed: `T | null` → `T | undefined`
-- [ ] Phase 5 — Literal assignments, returns, guards
+- [x] Phase 1 — ESLint `null` gate at warn (`esposter/no-null`, both type + literal)
+- [x] Phase 2 — `nullToUndefined` + `NullToUndefined<T>` in `@esposter/shared`; first boundary application
+- [ ] Phase 3 — Zod schemas: all six audited and documented-kept (need per-file strategies, see above)
+- [ ] Phase 4 — Vue refs / models / computed: `T | null` → `T | undefined` (started)
+- [ ] Phase 5 — Literal assignments, returns, guards (started)
 - [ ] Phase 6 — Test fixtures
 - [ ] Phase 7 — Flip ESLint rule to error; verify CI is green
