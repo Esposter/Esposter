@@ -34,8 +34,9 @@ export const useNotificationStore = defineStore("notification", () => {
   const consumeNotificationAction = (id: string) => {
     notifications.value = notifications.value.map((notification) => {
       if (notification.id !== id || !notification.action?.isSingleUse) return notification;
-      const { action, ...rest } = notification;
-      return rest;
+      const consumedNotification = { ...notification };
+      delete consumedNotification.action;
+      return consumedNotification;
     });
   };
   const deleteNotification = (id: string) => {

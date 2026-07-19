@@ -11,12 +11,13 @@ const { clearDraft } = inputStore;
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
 const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic, store refresh in onSuccess
-const scheduleMessage = async (onComplete: () => void) => {
+const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => {
   const currentTarget = target.value;
   if (!currentTarget) {
     onComplete();
     return;
   }
+  let isSuccessful = false;
   await executeMutation(
     () =>
       currentTarget.scheduledMessageJobId
@@ -33,13 +34,15 @@ const scheduleMessage = async (onComplete: () => void) => {
           }),
     {
       onSuccess: async () => {
+        isSuccessful = true;
         if (!currentTarget.scheduledMessageJobId) clearDraft(currentTarget.roomId);
         await readScheduledMessageJobs();
         target.value = undefined;
       },
     },
   );
-  onComplete();
+  // A failed schedule keeps the dialog open with the chosen time intact so the user can retry
+  onComplete(isSuccessful);
 };
 </script>
 

@@ -23,6 +23,8 @@ const deleteDirectMessageParticipant = async (userId: string) => {
         directMessageParticipantsMap.value.set(roomId, previousParticipants);
       };
     },
+    // Keyed per participant so removing two people in quick succession never stale-drops a rollback
+    key: userId,
   });
 };
 </script>

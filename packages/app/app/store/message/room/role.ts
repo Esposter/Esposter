@@ -117,7 +117,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     // Server-generated role — non-optimistic, applied in onSuccess. Creates have no natural entity key,
     // So each call gets a unique one — overlapping creates must never stale-drop each other's onSuccess
     await executeCreateRoleMutation(() => $trpc.role.createRole.mutate(input), {
-      key: Symbol(),
+      key: Symbol("createRole"),
       onSuccess: (newRole) => {
         setRoles(input.roomId, [newRole, ...getRoles(input.roomId)]);
         setSelectedRoleId(input.roomId, newRole.id);

@@ -93,7 +93,7 @@ Call `useMutation()` once per logical action — each instance owns its own stal
 
 ## In-flight guarding
 
-Latest-wins staleness protects **state**, not **the server**: every `executeMutation` call still fires its network write. The surface that triggers a write is therefore responsible for making a second trigger impossible while the first is in flight. Exactly one guard applies per surface — pick by shape, never hand-roll a pending flag:
+Latest-wins staleness protects **state**, not **the server**: every latest-wins `executeMutation` call still fires its network write (only an `isExclusive` drop prevents one). The surface that triggers a write is therefore responsible for making a second trigger impossible while the first is in flight. Exactly one guard applies per surface — pick by shape, never hand-roll a pending flag:
 
 - **Form dialogs** — free. `StyledFormDialog`'s submit path holds `isSubmitting`: it early-returns re-entrant submits and drives the confirm button's `loading`/`disabled`. Consumers wire nothing.
 - **Plain buttons firing a non-optimistic write** (publish, duplicate, deploy, generate, restore) — bind the instance's `isPending` as both `:loading` and `:disabled`. When the mutation lives in a composable, the composable returns the renamed ref (`isPublishPending`) and it threads down as an ordinary prop; overflow/action list items bind it as `disabled`.

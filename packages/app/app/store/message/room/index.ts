@@ -51,7 +51,7 @@ export const useRoomStore = defineStore("message/room", () => {
     // Creates have no natural entity key, so each call gets a unique one — overlapping creates are
     // Independent operations and must never stale-drop each other's onSuccess
     await executeCreateRoomMutation(() => $trpc.room.createRoom.mutate(input), {
-      key: Symbol(),
+      key: Symbol("createRoom"),
       onSuccess: (newRoom) => {
         storeCreateRoom(newRoom, true);
       },

@@ -31,7 +31,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   // Entity key, so each call gets a unique one — overlapping creates must never stale-drop each other
   const createWebhook = async (roomId: RoomInMessage["id"], input: Except<CreateWebhookInput, "roomId">) => {
     await executeCreateWebhookMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {
-      key: Symbol(),
+      key: Symbol("createWebhook"),
       onSuccess: (newWebhook) => {
         storeCreateWebhook(newWebhook, true);
       },

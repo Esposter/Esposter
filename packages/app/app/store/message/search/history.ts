@@ -26,7 +26,7 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   // Key, so each call gets a unique one — rapid successive searches must all land, never stale-drop
   const createSearchHistory = async (input: CreateSearchHistoryInput) => {
     await executeCreateSearchHistoryMutation(() => $trpc.searchHistory.createSearchHistory.mutate(input), {
-      key: Symbol(),
+      key: Symbol("createSearchHistory"),
       onSuccess: (newHistory) => {
         baseCreateSearchHistory(newHistory);
       },
