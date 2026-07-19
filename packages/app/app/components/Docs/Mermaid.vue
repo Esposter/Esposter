@@ -62,9 +62,9 @@ onMounted(async () => {
     const svgElement = container.value.querySelector("svg");
     if (!svgElement) return;
     // Panzoom forces `touch-action: none` onto the SVG, so on a touch device the diagram becomes a scroll
-    // dead-zone — a large diagram (e.g. the client-data flow) then traps the page and blocks scrolling past
-    // it. Pan/zoom is a pointer affordance anyway, so only wire it up for fine pointers; touch keeps native
-    // page scrolling and pinch-zoom instead
+    // Dead-zone — a large diagram (e.g. the client-data flow) then traps the page and blocks scrolling past
+    // It. Pan/zoom is a pointer affordance anyway, so only wire it up for fine pointers; touch keeps native
+    // Page scrolling and pinch-zoom instead
     if (!window.matchMedia("(pointer: fine)").matches) return;
 
     panzoom.value = Panzoom(svgElement, { cursor: "grab", maxScale: MAX_MERMAID_SCALE, minScale: MIN_MERMAID_SCALE });

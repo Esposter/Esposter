@@ -24,7 +24,7 @@ export const sendThreadReplyNotification = async (
   if (!payload) return;
 
   // Recompute the generic message push recipients so thread followers already reached by ProcessPushNotification
-  // are excluded here — otherwise a follower with room NotificationType.All would get two pushes for one reply.
+  // Are excluded here — otherwise a follower with room NotificationType.All would get two pushes for one reply.
   const messagePushSubscriptions = await getPushSubscriptionsForMessage(db, { message, partitionKey, userId });
   const excludedUserIds = [...new Set(messagePushSubscriptions.map((pushSubscription) => pushSubscription.userId))];
   const readPushSubscriptions = await getPushSubscriptionsForThreadFollowers(db, {

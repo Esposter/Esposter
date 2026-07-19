@@ -43,8 +43,8 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
         onError: async (error) => {
           createErrorNotification(error);
           // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure
-          // still leaves earlier chunks deleted server-side. The rollback restores every row, so re-read to
-          // reconcile the list with what actually persisted rather than resurrecting deleted resources
+          // Still leaves earlier chunks deleted server-side. The rollback restores every row, so re-read to
+          // Reconcile the list with what actually persisted rather than resurrecting deleted resources
           await refresh();
         },
         onSuccess: () => {

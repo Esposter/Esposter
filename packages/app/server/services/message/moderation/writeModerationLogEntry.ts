@@ -9,7 +9,7 @@ import {
 } from "@esposter/db-schema";
 
 // Appends one row to the moderation audit log. Shared by the manual admin-action plugin and by automod,
-// so the reverse-ticked rowKey and table client are constructed in exactly one place.
+// So the reverse-ticked rowKey and table client are constructed in exactly one place.
 export const writeModerationLogEntry = async (
   entry: Pick<ModerationLogEntity, "actorUserId" | "durationMs" | "targetUserId" | "type"> & { roomId: string },
 ): Promise<void> => {

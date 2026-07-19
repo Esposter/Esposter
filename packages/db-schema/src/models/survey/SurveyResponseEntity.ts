@@ -9,7 +9,7 @@ export class SurveyResponseEntity extends AzureEntity {
   model: Record<string, unknown> = {};
   modelVersion = 0;
   // Resume position, tracked apart from `model` so a question literally named "pageNo" can never collide
-  // with it — 0 means the respondent never advanced past the first page
+  // With it — 0 means the respondent never advanced past the first page
   pageNo = 0;
   // Opaque program-issued participant token, "" in Anonymous mode — resolvable only owner-side
   participantToken = "";

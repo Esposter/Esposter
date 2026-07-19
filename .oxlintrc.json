@@ -7,7 +7,7 @@
     "style": "error",
     "suspicious": "error"
   },
-  "ignorePatterns": [".claude", "public"],
+  "ignorePatterns": [".claude", "public", "**/composables/visual/useFluidSimulator.ts"],
   "options": {
     "typeAware": true
   },

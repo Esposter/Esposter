@@ -8,7 +8,7 @@ const newWord = ref("");
 const isAtMaxWords = computed(() => words.value.length >= FILTER_WORDS_MAX_LENGTH);
 const parsedNewWord = computed(() => roomFilterWordSchema.safeParse(newWord.value));
 // The shared array schema rejects the whole save if two words normalize to the same value (e.g. case
-// variants), so block a normalized duplicate here rather than letting it fail at the boundary
+// Variants), so block a normalized duplicate here rather than letting it fail at the boundary
 const normalizedWords = computed(() => new Set(words.value.map((word) => roomFilterWordSchema.safeParse(word).data)));
 const isNewWordValid = computed(
   () => parsedNewWord.value.success && !normalizedWords.value.has(parsedNewWord.value.data),

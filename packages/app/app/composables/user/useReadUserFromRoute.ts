@@ -8,7 +8,7 @@ export const useReadUserFromRoute = async () => {
   const route = useRoute();
   const userId = route.params.id as string;
   // Only a genuine "user not found" becomes a 404 — transport/server failures propagate rather than being
-  // masked as an absent user
+  // Masked as an absent user
   const user = await getResultAsync(() => $trpc.user.readUser.query(userId)).match(
     (readUser) => readUser,
     (error) => {
@@ -17,7 +17,7 @@ export const useReadUserFromRoute = async () => {
       throw error;
     },
   );
-  // readUser projects only the public profile columns (no id), so hand the route's userId back for the
-  // callers that key achievements/posts by it
+  // The readUser query projects only the public profile columns (no id), so hand the route's userId
+  // Back to the callers that key achievements/posts by it
   return { user, userId };
 };

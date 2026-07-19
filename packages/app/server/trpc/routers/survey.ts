@@ -128,7 +128,7 @@ export const surveyRouter = router({
         throw invalidParticipantTokenError();
       // Response models are plain records, so duplicates are detected structurally rather than by reference.
       // A page-only write persists only when it advances the resume position — identical answers on the same
-      // or an earlier page is a no-op (and must not regress a stored later page)
+      // Or an earlier page is a no-op (and must not regress a stored later page)
       if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model) && input.pageNo <= surveyResponse.pageNo)
         throw new TRPCError({
           code: "BAD_REQUEST",

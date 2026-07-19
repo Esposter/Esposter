@@ -58,9 +58,9 @@ const forwardMessage = async () => {
       }),
     {
       onSuccess: async () => {
-        // Capture the destination, then reset before navigating: after navigateTo the forward store's
-        // useDataMap resolves against the destination room, so resetting afterwards would clear the
-        // destination's state instead of the source's
+        // Capture the destination, then reset before navigating. After navigateTo, the forward store's
+        // Room-keyed useDataMap resolves against the destination room, so resetting afterwards would
+        // Clear the destination's state instead of the source's
         const destinationRoomId = roomIds.value.length === 1 ? takeOne(roomIds.value) : "";
         resetForward();
         searchQuery.value = "";

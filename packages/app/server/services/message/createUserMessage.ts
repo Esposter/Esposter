@@ -50,7 +50,7 @@ export const createUserMessage = async (
 
   const readPushSubscriptions = await getPushSubscriptionsForMessage(db, newMessageEntity);
   // Resolve the sender's room title once — shared by the generic message push and the thread-reply push, so
-  // a reply never runs the same nickname lookup twice. Skip it entirely when no push path needs it.
+  // A reply never runs the same nickname lookup twice. Skip it entirely when no push path needs it.
   let title = user.name;
   if (readPushSubscriptions.length > 0 || newMessageEntity.replyRowKey) {
     const nickname = (
@@ -89,7 +89,7 @@ export const createUserMessage = async (
 
   // A reply auto-follows its thread (Discord behaviour) and notifies existing followers. Both run post-persist
   // And best-effort — a follow/notify failure must never fail the reply that already landed. Anyone already
-  // reached by the generic message push above is excluded so a single reply never double-notifies a recipient.
+  // Reached by the generic message push above is excluded so a single reply never double-notifies a recipient.
   if (newMessageEntity.replyRowKey) {
     const threadRootRowKey = newMessageEntity.replyRowKey;
     await getResultAsync(() =>

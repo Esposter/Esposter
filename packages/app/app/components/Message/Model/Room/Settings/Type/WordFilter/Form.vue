@@ -19,10 +19,10 @@ const { filter, roomId } = defineProps<WordFilterFormProps>();
 const { $trpc } = useNuxtApp();
 const actionSelectItems = Object.values(WordFilterAction).map((value) => ({ title: value, value }));
 const timeoutDurationSelectItems = Object.entries(TimeoutDurationMap).map(([title, value]) => ({ title, value }));
-const getWordFilterFormData = (filter: null | RoomFilterInMessage): WordFilterFormData => ({
-  action: filter?.action ?? WordFilterAction.Reject,
-  timeoutDurationMs: filter?.timeoutDurationMs ?? TimeoutDurationMap["5 minutes"],
-  words: filter?.words ?? [],
+const getWordFilterFormData = (roomFilter: null | RoomFilterInMessage): WordFilterFormData => ({
+  action: roomFilter?.action ?? WordFilterAction.Reject,
+  timeoutDurationMs: roomFilter?.timeoutDurationMs ?? TimeoutDurationMap["5 minutes"],
+  words: roomFilter?.words ?? [],
 });
 const baseline = ref(getWordFilterFormData(filter));
 const { cloned: formData, sync } = useCloned(baseline, { manual: true });
@@ -51,8 +51,8 @@ const saveFilter = async () => {
           baseline.value = previousBaseline;
         };
       },
-      onSuccess: (filter) => {
-        baseline.value = getWordFilterFormData(filter);
+      onSuccess: (updatedFilter) => {
+        baseline.value = getWordFilterFormData(updatedFilter);
         sync();
       },
     },
