@@ -16,6 +16,7 @@ const isLoading = ref(false);
   <v-btn
     :loading="isLoading"
     size="small"
+    :to="action.to"
     variant="tonal"
     @click="
       async () => {
@@ -26,7 +27,6 @@ const isLoading = ref(false);
         await withFinalizerAsync(
           async () => {
             await action.handler?.();
-            if (action.to) await navigateTo(action.to);
             emit('complete');
           },
           () => {

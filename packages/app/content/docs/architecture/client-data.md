@@ -35,7 +35,7 @@ On failure the real `Error.message` is raised as an alert and `data` stays `unde
 
 ## useMutation
 
-`useMutation` (`composables/shared/useMutation.ts`) returns `{ executeMutation, isPending }` and bundles the four things every write needs:
+`useMutation` (`composables/shared/useMutation.ts`) returns `{ executeMutation, getIsPending, isPending }` and bundles the four things every write needs:
 
 - **Optimistic apply + rollback** — write the change to the store immediately, roll it back if the server rejects it.
 - **Staleness guarding** — when the same action fires repeatedly (rapid clicks, drags, select changes), a slower earlier call can never overwrite a newer call's state. Staleness is tracked **per `key`**, so one instance serving many sibling items (a store action keyed by `postId`) never lets item B's call cancel item A's callbacks.
@@ -96,7 +96,7 @@ flowchart TD
 
 Call `useMutation()` once per logical action — each instance owns its own staleness and pending bookkeeping, so two independent actions must **never** share one. A shared instance lets a newer unrelated call supersede an older action's `onSuccess`/rollback (fire `deleteRole` while `createRole` is in flight and the created role never lands in the store). In a store with several mutations, declare one named instance per action via destructure renames (`const { executeMutation: executeCreateRoleMutation } = useMutation();`, with `isPending: isCreateRolePending` where the pending state is consumed); a single flow that branches into two tRPC calls (create-or-update save) correctly shares one instance, because its successive calls do supersede each other. One instance serving many sibling **items** of the same action is the `key` case, not a reason for per-item instances.
 
-**Placeholder creates instantiate their executor _inside_ the action, one per call** (`createRoomCategory`). Each call owns a distinct placeholder object, so successive creates are independent — they must never supersede each other. With a shared store-level instance, a second create marks the first stale and skips its `onSuccess`, stranding a temp-id placeholder for a row that exists server-side under a different id (a later rename/delete then 404s). Superseding is only correct when the later call targets the _same_ state as the earlier one.
+**Placeholder creates stay on the shared store-root instance with a per-call `Symbol` key** (`createRoomCategory`). Each call owns a distinct placeholder object, so successive creates are independent — they must never supersede each other. Under a shared key, a second create would mark the first stale and skip its `onSuccess`, stranding a temp-id placeholder for a row that exists server-side under a different id (a later rename/delete then 404s); the per-call `Symbol` gives every create its own key, so nothing supersedes anything. Superseding is only correct when the later call targets the _same_ state as the earlier one.
 
 ## In-flight guarding
 

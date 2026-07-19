@@ -1,7 +1,7 @@
 import type { Promisable } from "type-fest";
 
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> {
   applyOptimistic?: () => Promisable<() => void>;
@@ -33,24 +33,32 @@ export const useMutation = () => {
     callIds.set(key, id);
     const checkIsStale = () => id !== callIds.get(key);
     pendingCounts.value.set(key, (pendingCounts.value.get(key) ?? 0) + 1);
-    const rollback = await applyOptimistic?.();
-    await getResultAsync(mutate).match(
-      async (result) => {
-        if (!checkIsStale()) await onSuccess?.(result);
+    // The finalizer guarantees pending bookkeeping unwinds even when applyOptimistic or a callback throws,
+    // So a thrown callback can never strand the key as permanently pending
+    await withFinalizerAsync(
+      async () => {
+        const rollback = await applyOptimistic?.();
+        await getResultAsync(mutate).match(
+          async (result) => {
+            if (!checkIsStale()) await onSuccess?.(result);
+          },
+          async (error) => {
+            if (checkIsStale()) return;
+            rollback?.();
+            if (onError) await onError(error);
+            else createAlert(error.message, "error");
+          },
+        );
       },
-      async (error) => {
-        if (checkIsStale()) return;
-        rollback?.();
-        if (onError) await onError(error);
-        else createAlert(error.message, "error");
+      () => {
+        const pendingCount = pendingCounts.value.get(key) ?? 0;
+        if (pendingCount <= 1) {
+          // No call remains in flight for this key, so its bookkeeping can be dropped wholesale
+          pendingCounts.value.delete(key);
+          callIds.delete(key);
+        } else pendingCounts.value.set(key, pendingCount - 1);
       },
     );
-    const pendingCount = pendingCounts.value.get(key) ?? 0;
-    if (pendingCount <= 1) {
-      // No call remains in flight for this key, so its bookkeeping can be dropped wholesale
-      pendingCounts.value.delete(key);
-      callIds.delete(key);
-    } else pendingCounts.value.set(key, pendingCount - 1);
   };
   return { executeMutation, getIsPending, isPending };
 };

@@ -132,6 +132,57 @@ describe(useMutation, () => {
     expect(getIsPending(key)).toBe(false);
   });
 
+  test("clears pending state when onSuccess throws", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation, getIsPending, isPending } = useMutation();
+    await expect(
+      executeMutation(() => Promise.resolve(), {
+        key,
+        onSuccess: () => {
+          throw new Error("error");
+        },
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
+
+    expect(getIsPending(key)).toBe(false);
+    expect(isPending.value).toBe(false);
+  });
+
+  test("clears pending state when onError throws", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation, getIsPending, isPending } = useMutation();
+    await expect(
+      executeMutation(() => Promise.reject(new Error("error")), {
+        key,
+        onError: () => {
+          throw new Error(" ");
+        },
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+
+    expect(getIsPending(key)).toBe(false);
+    expect(isPending.value).toBe(false);
+  });
+
+  test("clears pending state when applyOptimistic throws", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation, getIsPending, isPending } = useMutation();
+    await expect(
+      executeMutation(() => Promise.resolve(), {
+        applyOptimistic: () => {
+          throw new Error("error");
+        },
+        key,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
+
+    expect(isPending.value).toBe(false);
+    expect(getIsPending(key)).toBe(false);
+  });
+
   test("drops a concurrent exclusive call with the same key", async () => {
     expect.hasAssertions();
 

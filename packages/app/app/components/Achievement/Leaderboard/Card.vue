@@ -7,7 +7,8 @@ interface LeaderboardProps {
 
 const { leaderboard } = defineProps<LeaderboardProps>();
 const isSelfAppended = computed(
-  () => leaderboard.self !== null && !leaderboard.entries.some(({ user }) => user.id === leaderboard.self?.user.id),
+  () =>
+    leaderboard.self !== undefined && !leaderboard.entries.some(({ user }) => user.id === leaderboard.self?.user.id),
 );
 </script>
 

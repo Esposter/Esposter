@@ -12,6 +12,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
+  const { executeMutation: executeCreateRoomCategoryMutation } = useMutation();
   const { executeMutation: executeDeleteRoomCategoryMutation } = useMutation();
   const { executeMutation: executeUpdateRoomCategoryMutation } = useMutation();
   const { executeMutation: executeReorderRoomCategoriesMutation } = useMutation();
@@ -27,9 +28,6 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
     if (!session.value.data) return;
 
-    // Own executor per call — each create owns a distinct placeholder, so concurrent creates must never
-    // Supersede each other's reconcile (a skipped onSuccess would strand a temp id that isn't the server's)
-    const { executeMutation: executeCreateRoomCategoryMutation } = useMutation();
     // Reactive so the onSuccess Object.assign onto this same object triggers the list re-render
     const newCategory = reactive<RoomCategoryInMessage>({
       createdAt: new Date(),

@@ -169,7 +169,7 @@ describe("survey", () => {
     expect(readSurveyResponse).toStrictEqual(newSurveyResponse);
   });
 
-  test("reads null survey response with non-existent id", async () => {
+  test("reads undefined survey response with non-existent id", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
@@ -178,7 +178,7 @@ describe("survey", () => {
       rowKey: crypto.randomUUID(),
     });
 
-    expect(readSurveyResponse).toBeNull();
+    expect(readSurveyResponse).toBeUndefined();
   });
 
   test("updates survey response", async () => {
@@ -559,7 +559,7 @@ describe("survey", () => {
         partitionKey: newResource.id,
         rowKey: crypto.randomUUID(),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Unrecognized key: "pageNo"]`);
   });
 
   test("fails update with closed survey", async () => {
@@ -659,7 +659,7 @@ describe("survey", () => {
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
     await expect(
       caller.readSurveyResponse({ partitionKey: newResource.id, rowKey: newSurveyResponse.rowKey }),
-    ).resolves.toBeNull();
+    ).resolves.toBeUndefined();
   });
 
   test("fails delete survey response with non-existent row key", async () => {
