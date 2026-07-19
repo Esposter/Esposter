@@ -15,12 +15,13 @@ describe(formatCacheListing, () => {
           repoStorePath: "/repo/.virrun/store",
           snapshotHashes: ["", " "],
           snapshotsPath: "/home/.virrun/snapshots",
+          taskBytes: 1536,
           taskCount: 3,
           tasksPath: "/home/.virrun/tasks",
         }),
       ),
     ).toBe(
-      "[virrun] repo store /repo/.virrun/store (present)\n[virrun] snapshots /home/.virrun/snapshots (2): ,  \n[virrun] prepare /home/.virrun/prepare (1): \n[virrun] tasks /home/.virrun/tasks (3)",
+      "[virrun] repo store /repo/.virrun/store (present)\n[virrun] snapshots /home/.virrun/snapshots (2): ,  \n[virrun] prepare /home/.virrun/prepare (1): \n[virrun] tasks /home/.virrun/tasks (3, 1.5 KiB)",
     );
   });
 
@@ -36,6 +37,7 @@ describe(formatCacheListing, () => {
           repoStorePath: "/repo/.virrun/store",
           snapshotHashes: [],
           snapshotsPath: "/home/.virrun/snapshots",
+          taskBytes: 0,
           taskCount: 0,
           tasksPath: "/home/.virrun/tasks",
         }),

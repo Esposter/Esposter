@@ -1,6 +1,7 @@
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
+import type { ResourceProcedureOptions } from "@@/server/models/resource/ResourceProcedureOptions";
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
@@ -40,6 +41,7 @@ import {
 } from "@esposter/db-schema";
 import {
   createUniqueArraySchema,
+  getResultAsync,
   InvalidOperationError,
   MAX_READ_LIMIT,
   Operation,
@@ -89,14 +91,18 @@ type ResourceContent<TType extends ResourceType> = z.infer<(typeof ResourceDefin
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
   ...args: TType extends PublishableResourceType
-    ? [options?: PublishableResourceProcedureOptions<ResourceContent<TType>>]
-    : []
+    ? [
+        options?: PublishableResourceProcedureOptions<ResourceContent<TType>> &
+          ResourceProcedureOptions<ResourceContent<TType>>,
+      ]
+    : [options?: ResourceProcedureOptions<ResourceContent<TType>>]
 ) => {
   const { contentSchema } = ResourceDefinitionMap[type];
   // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { transformPublicReadContent, transformPublishedContent, transformReadContent } = (args[0] ??
-    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
+  const { afterSaveResourceContent, transformPublicReadContent, transformPublishedContent, transformReadContent } =
+    (args[0] ?? {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>> &
+      ResourceProcedureOptions<ResourceContent<TType>>;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
   // Would erase the procedure's input type for consumers like achievement condition paths.
@@ -202,6 +208,16 @@ export const createResourceProcedures = <TType extends ResourceType>(
       }),
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
       async ({ ctx, input: { content, contentVersion, id } }) => {
+        // Read the prior content before the upload overwrites it, so an afterSaveResourceContent hook can
+        // Diff against it (undefined on the first save). Only paid when a hook is registered for this type.
+        // Best-effort: the hook itself is best-effort, so an unreadable or schema-invalid prior blob
+        // Degrades to "no previous content" instead of blocking the save of valid new content
+        const previousContent = afterSaveResourceContent
+          ? await getResultAsync(() => readContent(id)).match(
+              (priorContent) => priorContent,
+              () => undefined,
+            )
+          : undefined;
         // Bump the version and write the blob in one transaction so a failed upload rolls the version back,
         // Keeping Postgres and blob storage consistent instead of stranding the resource at a version with stale content
         const updatedResource = await ctx.db.transaction(async (tx) => {
@@ -229,6 +245,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
           { content, contentVersion: updatedResource.contentVersion, id },
           { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
         ]);
+        // Fire-and-forget: the hook (e.g. scheduling TodoList reminders) is best-effort and the save
+        // Must never wait on it or fail because of it
+        if (afterSaveResourceContent)
+          getSynchronizedFunction(afterSaveResourceContent)(ctx, updatedResource, content, previousContent);
         return updatedResource;
       },
     ),

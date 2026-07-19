@@ -19,7 +19,7 @@ The area is mature. Open work: [roadmap](/docs/sheet-editor/roadmap). New ideas 
 
 ## Shipped
 
-- **Editing** — inline cell editing, add/edit/delete rows and columns, bulk select + delete, undo/redo, row drag-reorder, keyboard cell navigation, Excel-style range copy/paste ([clipboard](/docs/sheet-editor/clipboard)).
+- **Editing** — inline cell editing, add/edit/delete rows and columns, bulk select + delete, undo/redo, row drag-reorder, keyboard cell navigation, Excel-style range copy/paste ([clipboard](/docs/sheet-editor/clipboard)) that materializes computed-column values on copy ([copy computed values](/docs/sheet-editor/copy-computed-values)).
 - **Columns** — reorder, visibility toggle, descriptions, type recast on change, format options (number/boolean/date), configurable footer aggregate; computed columns (Math via mathjs, ConvertTo, DatePart, RegexMatch, String, StringSplit, StringPattern, chained) and aggregation columns (average/count/min/max/rank/percent-of-total/running-sum) ([computed columns](/docs/sheet-editor/computed-columns)).
 - **Data quality** — null/empty strategy, duplicate-row detection, trim/normalize strings, global find & replace.
 - **Import** — CSV/TSV/JSON/XLSX, import preview, paste tabular data from Excel/Sheets.
