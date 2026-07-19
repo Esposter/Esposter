@@ -127,6 +127,7 @@ These tokens are official for Esposter infrastructure. If a new Azure resource t
 | `sbns`  | Service Bus namespace      | `Microsoft.ServiceBus/namespaces`           | CAF      |
 | `sbq`   | Service Bus queue          | `Microsoft.ServiceBus/namespaces/queues`    | CAF      |
 | `spch`  | Speech service             | `Microsoft.CognitiveServices/accounts`      | CAF      |
+| `sqr`   | Scheduled query rule       | `Microsoft.Insights/scheduledQueryRules`    | Esposter |
 | `srch`  | Azure AI Search            | `Microsoft.Search/searchServices`           | CAF      |
 | `st`    | Storage account            | `Microsoft.Storage/storageAccounts`         | CAF      |
 | `wps`   | Web PubSub                 | `Microsoft.SignalRService/webPubSub`        | CAF      |
