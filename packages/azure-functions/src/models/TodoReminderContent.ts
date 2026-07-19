@@ -4,7 +4,15 @@ import { z } from "zod";
 // (deleted/re-dated) and render its push. The full content schema lives in the app (#shared) which
 // Azure Functions cannot import, so this parses only what it needs and drops everything else.
 // DueAt is coerced because the blob is read back with plain JSON.parse (ISO string, not Date).
-export const todoReminderContentSchema = z.object({
+export const todoReminderContentSchema: z.ZodObject<{
+  items: z.ZodArray<
+    z.ZodObject<{
+      dueAt: z.ZodNullable<z.ZodCoercedDate>;
+      id: z.ZodUUID;
+      name: z.ZodString;
+    }>
+  >;
+}> = z.object({
   items: z.array(
     z.object({
       dueAt: z.coerce.date().nullable(),

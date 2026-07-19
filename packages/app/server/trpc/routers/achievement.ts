@@ -23,8 +23,8 @@ const achievementPointsSum = sql<number>`sum(case ${achievements.name} ${sql.joi
 export const achievementRouter = router({
   onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     for await (const [data] of on(achievementEventEmitter, "updateAchievement", { signal })) {
-      const userAchievements = data.filter(({ userId }) => userId === ctx.getSessionPayload.user.id);
-      if (userAchievements.length > 0) yield userAchievements;
+      const updatedUserAchievements = data.filter(({ userId }) => userId === ctx.getSessionPayload.user.id);
+      if (updatedUserAchievements.length > 0) yield updatedUserAchievements;
     }
   }),
   readPointsLeaderboard: standardRateLimitedProcedure.query(async ({ ctx }) => {

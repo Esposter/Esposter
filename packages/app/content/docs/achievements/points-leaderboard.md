@@ -5,7 +5,7 @@ description: A global ranking of users by their total unlocked achievement point
 
 # Points Leaderboard
 
-A global ranking of every user by the summed `points` of their unlocked achievements. Every achievement already carries a points value and unlocks live in Postgres, so the leaderboard is one aggregate over existing tables plus a page — no new schema. It gives the games and products a shared competitive surface.
+A global ranking of users with at least one unlocked achievement by the summed `points` of their unlocks. Every achievement already carries a points value and unlocks live in Postgres, so the leaderboard is one aggregate over existing tables plus a page — no new schema. It gives the games and products a shared competitive surface.
 
 ## How it works
 
@@ -24,7 +24,7 @@ flowchart TB
 
 - **Ranking** — competition-style: an entry's rank is one plus the number of strictly higher totals, so ties share a rank. The caller's `self` entry carries its global rank even when it falls outside the top window; the client highlights the caller's row and appends `self` when it is not already shown.
 - **Identity** — only the public profile columns (`id`, `name`, `image`) are carried, never email — mirroring the public-profile allowlist (`readUser`). Each row links to `/user/<id>`.
-- **Hidden achievements** count toward totals without being revealed — only names and descriptions are masked in the gallery, points are public metadata, so there is no leak.
+- **Hidden achievements** count toward totals. A total could in principle be decomposed to infer a hidden unlock, but that infers nothing new: any user's full unlock list — hidden included — is already public via `readUserAchievements`. Hiddenness masks names and descriptions in the gallery, not the fact of an unlock.
 - **No denormalized total** — points change only on unlock, so the aggregate runs off existing tables; a `points` column on users is added only if the query ever hurts.
 
 ## Procedures

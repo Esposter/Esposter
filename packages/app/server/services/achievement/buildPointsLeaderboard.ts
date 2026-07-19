@@ -19,7 +19,7 @@ export const buildPointsLeaderboard = (
   userTotals: readonly UserPointsTotal[],
   callerUserId?: string,
 ): PointsLeaderboard => {
-  const ranked = [...userTotals].sort(
+  const ranked = userTotals.toSorted(
     (first, second) =>
       second.points - first.points ||
       second.unlockCount - first.unlockCount ||

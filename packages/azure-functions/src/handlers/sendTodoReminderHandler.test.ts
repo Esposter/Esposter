@@ -39,7 +39,7 @@ describe(sendTodoReminderHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const name = "task";
   const userId = crypto.randomUUID();
-  const dueAt = new Date(Date.now() + dayjs.duration(1, "hour").asMilliseconds());
+  const dueAt = dayjs().add(1, "hour").toDate();
 
   const insertResource = async () => {
     const [resource] = await mockDb.insert(resources).values({ name, type: ResourceType.TodoList, userId }).returning();
@@ -100,7 +100,7 @@ describe(sendTodoReminderHandler, () => {
 
     const resource = await insertResource();
     const itemId = crypto.randomUUID();
-    const reDatedAt = new Date(dueAt.getTime() + dayjs.duration(1, "hour").asMilliseconds());
+    const reDatedAt = dayjs(dueAt).add(1, "hour").toDate();
     await seedContent(resource.id, [{ dueAt: reDatedAt.toISOString(), id: itemId, name }]);
     await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
 
