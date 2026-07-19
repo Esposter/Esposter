@@ -5,7 +5,7 @@ import { useNotificationStore } from "@/store/notification";
 export const usePurgeResource = (refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const { createNotification } = useNotificationStore();
-  const executePurgeMutation = useMutation();
+  const { executeMutation: executePurgeMutation } = useMutation();
   const purgeResource = async (resource: Resource) => {
     await executePurgeMutation(() => $trpc.resource.purgeResource.mutate({ id: resource.id }), {
       onError: (purgeError) => {

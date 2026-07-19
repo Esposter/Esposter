@@ -33,7 +33,7 @@ const isDirty = computed(
     formData.value.action !== baseline.value.action ||
     (isTimeout.value && formData.value.timeoutDurationMs !== baseline.value.timeoutDurationMs),
 );
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const saveFilter = async () => {
   await executeMutation(
     () =>

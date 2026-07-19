@@ -4,7 +4,7 @@ import { useRoomStore } from "@/store/message/room";
 
 export const useExecuteAdminAction = () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   const roomStore = useRoomStore();
   const { currentRoom } = storeToRefs(roomStore);
   // Moderation state applies via the subscription echo — non-optimistic

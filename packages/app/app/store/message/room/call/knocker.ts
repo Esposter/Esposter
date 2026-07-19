@@ -13,7 +13,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const knockers = ref<CallParticipant[]>([]);
 
   // Knocking targets one call session at a time, so a shared executor correctly lets the latest call supersede
-  const executeKnockCallMutation = useMutation();
+  const { executeMutation: executeKnockCallMutation } = useMutation();
   const knockCall = async (callId: string) => {
     const previousKnockingCallSessionId = knockingCallSessionId.value;
     await executeKnockCallMutation(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId }), {
@@ -38,7 +38,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   // Each knocker is admitted or dismissed independently, so they get an executor per call —
   // A shared one would treat the previous knocker's in-flight call as stale and swallow its rollback
   const admitKnocker = async (callSessionId: string, sessionId: string) => {
-    const executeAdmitKnockerMutation = useMutation();
+    const { executeMutation: executeAdmitKnockerMutation } = useMutation();
     const previousKnockers = knockers.value;
     await executeAdmitKnockerMutation(
       () => $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, sessionId }),
@@ -53,7 +53,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
     );
   };
   const dismissKnocker = async (callSessionId: string, sessionId: string) => {
-    const executeDismissKnockerMutation = useMutation();
+    const { executeMutation: executeDismissKnockerMutation } = useMutation();
     const previousKnockers = knockers.value;
     await executeDismissKnockerMutation(
       () => $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, sessionId }),

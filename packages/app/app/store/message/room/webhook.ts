@@ -23,10 +23,10 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const readWebhooks = async (roomId: RoomInMessage["id"]) => {
     items.value = await $trpc.webhook.readWebhooks.query({ roomId });
   };
-  const executeCreateWebhookMutation = useMutation();
-  const executeUpdateWebhookMutation = useMutation();
-  const executeRotateTokenMutation = useMutation();
-  const executeDeleteWebhookMutation = useMutation();
+  const { executeMutation: executeCreateWebhookMutation } = useMutation();
+  const { executeMutation: executeUpdateWebhookMutation } = useMutation();
+  const { executeMutation: executeRotateTokenMutation } = useMutation();
+  const { executeMutation: executeDeleteWebhookMutation } = useMutation();
   // Server-generated webhook (id, token) — non-optimistic, applied in onSuccess
   const createWebhook = async (roomId: RoomInMessage["id"], input: Except<CreateWebhookInput, "roomId">) => {
     await executeCreateWebhookMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {

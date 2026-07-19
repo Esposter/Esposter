@@ -7,7 +7,7 @@ import { RoutePath } from "@esposter/shared";
 export const useRestoreResource = (refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const { createErrorNotification, createNotification } = useNotificationStore();
-  const executeRestoreResourceMutation = useMutation();
+  const { executeMutation: executeRestoreResourceMutation, isPending: isRestorePending } = useMutation();
   const restoreResource = async (resource: Resource) => {
     await executeRestoreResourceMutation(() => $trpc.resource.restoreResource.mutate({ id: resource.id }), {
       onError: createErrorNotification,
@@ -22,5 +22,5 @@ export const useRestoreResource = (refresh: () => Promise<void>) => {
       },
     });
   };
-  return restoreResource;
+  return { isRestorePending, restoreResource };
 };

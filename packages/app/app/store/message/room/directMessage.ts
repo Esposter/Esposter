@@ -26,8 +26,8 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const currentDirectMessage = computed(() =>
     directMessages.value.find(({ id }) => id === currentDirectMessageId.value),
   );
-  const executeCreateDirectMessageMutation = useMutation();
-  const executeHideDirectMessageMutation = useMutation();
+  const { executeMutation: executeCreateDirectMessageMutation } = useMutation();
+  const { executeMutation: executeHideDirectMessageMutation } = useMutation();
   const createDirectMessage = async (userIds: string[]) => {
     // Server-generated room — non-optimistic, applied in onSuccess
     await executeCreateDirectMessageMutation(() => $trpc.room.directMessage.createDirectMessage.mutate(userIds), {

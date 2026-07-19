@@ -7,7 +7,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 export const useSurveyResponse = (id: string, participantToken: string) => {
   const { $trpc } = useNuxtApp();
   let surveyResponse: null | SurveyResponseEntity = null;
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess
   const saveSurveyResponse = async (survey: Model) => {
     const responseModel = survey.data;

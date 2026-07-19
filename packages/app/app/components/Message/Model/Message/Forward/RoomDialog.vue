@@ -43,7 +43,7 @@ const {
   true,
   true,
 );
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 // Forwarded messages land in the target rooms via the subscription echo — non-optimistic
 const forwardMessage = async () => {
   if (!forward.value) return;

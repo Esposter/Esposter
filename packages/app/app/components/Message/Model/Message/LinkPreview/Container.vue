@@ -16,7 +16,7 @@ const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const isActive = ref(false);
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const deleteLinkPreviewResponse = async (onComplete: () => void) => {
   const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }));
   const previousLinkPreviewResponse = message?.linkPreviewResponse;

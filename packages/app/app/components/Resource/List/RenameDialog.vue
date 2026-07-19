@@ -11,7 +11,7 @@ interface ResourceListRenameDialogProps {
 
 const { resource } = defineProps<ResourceListRenameDialogProps>();
 const emit = defineEmits<{ update: [] }>();
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const listDialogStore = useListDialogStore();
 const { renamingId } = storeToRefs(listDialogStore);
 const isOpen = useSingletonDialog(renamingId);

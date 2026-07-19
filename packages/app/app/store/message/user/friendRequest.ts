@@ -9,9 +9,9 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeSendFriendRequestMutation = useMutation();
-  const executeAcceptFriendRequestMutation = useMutation();
-  const executeDeclineFriendRequestMutation = useMutation();
+  const { executeMutation: executeSendFriendRequestMutation } = useMutation();
+  const { executeMutation: executeAcceptFriendRequestMutation } = useMutation();
+  const { executeMutation: executeDeclineFriendRequestMutation } = useMutation();
   const friendStore = useFriendStore();
   const { storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequests = ref<FriendRequestWithRelations[]>([]);

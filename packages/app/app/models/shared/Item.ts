@@ -5,6 +5,7 @@ export interface Item {
   active?: boolean;
   badges?: { count: number; icon: string }[];
   color?: string;
+  disabled?: boolean;
   icon: string;
   onClick?: (event: KeyboardEvent | MouseEvent) => Promisable<void>;
   shortTitle?: string;

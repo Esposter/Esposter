@@ -17,8 +17,8 @@ import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
   const { $trpc } = useNuxtApp();
-  const executeUnpinMessageMutation = useMutation();
-  const executeMarkUnreadMutation = useMutation();
+  const { executeMutation: executeUnpinMessageMutation } = useMutation();
+  const { executeMutation: executeMarkUnreadMutation } = useMutation();
   const messageStore = useMessageStore();
   const { copy } = messageStore;
   const { editingRowKey } = storeToRefs(messageStore);

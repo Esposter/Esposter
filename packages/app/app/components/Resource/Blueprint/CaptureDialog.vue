@@ -6,7 +6,7 @@ import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captu
 import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const captureDialogStore = useBlueprintCaptureDialogStore();
 const { captureIds } = storeToRefs(captureDialogStore);
 const { createErrorNotification, createNotification } = useNotificationStore();

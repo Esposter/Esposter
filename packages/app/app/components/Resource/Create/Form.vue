@@ -14,8 +14,8 @@ interface ResourceCreateFormProps {
 const { type } = defineProps<ResourceCreateFormProps>();
 const { $trpc } = useNuxtApp();
 const createResource = useCreateResource();
-const executeMutation = useMutation();
-const executeSaveMutation = useMutation();
+const { executeMutation } = useMutation();
+const { executeMutation: executeSaveMutation } = useMutation();
 const { createErrorNotification } = useNotificationStore();
 const name = ref("");
 const isValid = ref(false);

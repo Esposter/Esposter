@@ -16,7 +16,7 @@ const publishHistoryDialogStore = usePublishHistoryDialogStore();
 const { restoringVersion } = storeToRefs(publishHistoryDialogStore);
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
-const executeRestoreMutation = useMutation();
+const { executeMutation: executeRestoreMutation } = useMutation();
 const isOpen = useSingletonDialog(restoringVersion);
 const restore = async () => {
   const version = Number(restoringVersion.value);

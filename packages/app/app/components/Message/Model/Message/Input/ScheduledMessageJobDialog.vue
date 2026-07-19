@@ -22,7 +22,7 @@ const setDefaultScheduledAt = () => {
   scheduledAt.value = dayjs().add(1, "minute").toDate();
   minScheduledAt.value = new Date(scheduledAt.value);
 };
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic
 const scheduleJob = async (onComplete: () => void) => {
   const roomId = currentRoomId.value;

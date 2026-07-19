@@ -8,7 +8,7 @@ const directMessageName = useDirectMessageName(currentDirectMessage);
 const participants = computed(() =>
   currentDirectMessage.value ? (directMessageParticipantsMap.value.get(currentDirectMessage.value.id) ?? []) : [],
 );
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const deleteDirectMessageParticipant = async (userId: string) => {
   const roomId = currentDirectMessage.value?.id;
   if (!roomId) return;

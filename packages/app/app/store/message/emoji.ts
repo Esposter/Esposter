@@ -15,9 +15,9 @@ import { takeOne } from "@esposter/shared";
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeCreateEmojiMutation = useMutation();
-  const executeUpdateEmojiMutation = useMutation();
-  const executeDeleteEmojiMutation = useMutation();
+  const { executeMutation: executeCreateEmojiMutation } = useMutation();
+  const { executeMutation: executeUpdateEmojiMutation } = useMutation();
+  const { executeMutation: executeDeleteEmojiMutation } = useMutation();
   const { getEmojis, setEmojis } = useMessageMetadataMap(MessageMetadataType.Emoji);
   const createEmoji = async (input: CreateEmojiInput) => {
     if (!session.value.data) return;

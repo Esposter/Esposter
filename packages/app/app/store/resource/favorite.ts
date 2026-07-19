@@ -6,7 +6,7 @@ import { getResultAsync } from "@esposter/shared";
 // Favorites are server-side from day one — a star that vanishes on another device reads as data loss
 export const useFavoriteStore = defineStore("resource/favorite", () => {
   const { $trpc } = useNuxtApp();
-  const executeToggleFavoriteMutation = useMutation();
+  const { executeMutation: executeToggleFavoriteMutation } = useMutation();
   const notificationStore = useNotificationStore();
   const favorites = ref<Resource[]>([]);
   // Every row on /all asks "am I starred?", so the lookup is a Set rather than a scan per row

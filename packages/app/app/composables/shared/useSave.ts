@@ -32,7 +32,7 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
   { auth, toSave, unauth }: UseSaveOptions<TState, T, TDef>,
 ) => {
   const session = authClient.useSession();
-  const executeSaveMutation = useMutation();
+  const { executeMutation: executeSaveMutation } = useMutation();
   const saveToLocalStorage = useSaveToLocalStorage();
   // T defaults to TState when toSave is omitted, which TypeScript cannot follow — the single `as never` is the centralized cost
   const getSaveValue = (): T => (toSave ? toSave(state.value) : (state.value as never));

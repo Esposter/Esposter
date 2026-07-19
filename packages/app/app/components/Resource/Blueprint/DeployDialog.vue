@@ -6,7 +6,7 @@ import { useBlueprintStore } from "@/store/resource/blueprint";
 import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const blueprintStore = useBlueprintStore();
 const { blueprint, resource } = storeToRefs(blueprintStore);
 const { createErrorNotification } = useNotificationStore();

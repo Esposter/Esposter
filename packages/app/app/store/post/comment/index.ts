@@ -25,9 +25,9 @@ export const useCommentStore = defineStore("post/comment", () => {
     ...restOperationData
   } = createOperationData(items, ["id"], DerivedDatabaseEntityType.Comment);
 
-  const executeCreateCommentMutation = useMutation();
-  const executeUpdateCommentMutation = useMutation();
-  const executeDeleteCommentMutation = useMutation();
+  const { executeMutation: executeCreateCommentMutation } = useMutation();
+  const { executeMutation: executeUpdateCommentMutation } = useMutation();
+  const { executeMutation: executeDeleteCommentMutation } = useMutation();
   // Server-generated comment — non-optimistic, applied in onSuccess
   const createComment = async (input: CreateCommentInput) => {
     if (!currentPost.value || EMPTY_TEXT_REGEX.test(input.description)) return;

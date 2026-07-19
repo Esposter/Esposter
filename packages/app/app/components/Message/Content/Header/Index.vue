@@ -19,7 +19,7 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 const roomName = useRoomName(() => currentRoom.value?.id ?? "");
 const placeholder = useRoomPlaceholder(currentRoom);
 const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const updateRoom = async (name: string) => {
   if (!currentRoom.value) return;
   const { id, image: oldImage, name: oldName } = currentRoom.value;

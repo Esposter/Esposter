@@ -189,7 +189,7 @@ Add a store action only when it adds meaningful client logic:
 - Shared state updates not covered by subscriptions
 - Coordination of multiple stores, requests, or validation steps
 
-A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`) — declare `const executeMutation = useMutation()` at the store root and never hand-roll the alert/rollback wiring. It handles error surfacing (`createAlert` unless you pass `onError`) and discards stale responses, so only the latest call wins.
+A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`) — declare `const { executeMutation } = useMutation()` at the store root and never hand-roll the alert/rollback wiring. It handles error surfacing (`createAlert` unless you pass `onError`) and discards stale responses per `key`, so only the latest call wins. Destructure `isPending` only where a control consumes it, and never hand-roll a pending flag — the in-flight guard decision tree (dialog / plain button / keyed single-flight / optimistic / unmount) is in `packages/app/content/docs/architecture/client-data.md` § In-flight guarding.
 
 - **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. Snapshot the previous value outside the callback and restore it in the returned closure.
 - **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id) — apply those after the response instead of optimistically.
@@ -212,7 +212,7 @@ const deleteBan = async (input: DeleteBanInput) => {
 };
 ```
 
-Give each mutation in a store its own `useMutation()` instance (`executeCreateFooMutation`, `executeUpdateFooMutation`) so one action's staleness tracking can't cancel another's. Full rationale: `packages/app/content/docs/architecture/client-data.md`.
+Give each mutation in a store its own `useMutation()` instance via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` when consumed) so one action's staleness tracking can't cancel another's. One instance serving many sibling **items** of the same action passes `key` (and `isExclusive` for single-flight creates) instead of multiplying instances. Full rationale: `packages/app/content/docs/architecture/client-data.md`.
 
 ## createOperationData Usage
 

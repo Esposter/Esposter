@@ -9,13 +9,13 @@ import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 // Blade-scoped state for one resource (metadata + content + publication)
 export const useResource = (id: MaybeRefOrGetter<string>) => {
   const { $trpc } = useNuxtApp();
-  const executeSaveMutation = useMutation();
-  const executeRenameMutation = useMutation();
-  const executeUpdateTagsMutation = useMutation();
-  const executeRemoveMutation = useMutation();
-  const executeDuplicateMutation = useMutation();
-  const executePublishMutation = useMutation();
-  const executeUnpublishMutation = useMutation();
+  const { executeMutation: executeSaveMutation } = useMutation();
+  const { executeMutation: executeRenameMutation } = useMutation();
+  const { executeMutation: executeUpdateTagsMutation } = useMutation();
+  const { executeMutation: executeRemoveMutation } = useMutation();
+  const { executeMutation: executeDuplicateMutation, isPending: isDuplicatePending } = useMutation();
+  const { executeMutation: executePublishMutation, isPending: isPublishPending } = useMutation();
+  const { executeMutation: executeUnpublishMutation, isPending: isUnpublishPending } = useMutation();
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const getResourceMutations = useResourceMutations();
@@ -194,7 +194,10 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   };
   return {
     duplicate,
+    isDuplicatePending,
     isLoading,
+    isPublishPending,
+    isUnpublishPending,
     load,
     publication,
     publish,

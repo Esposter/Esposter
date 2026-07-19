@@ -42,9 +42,9 @@ export const useRoomStore = defineStore("message/room", () => {
   const session = authClient.useSession();
   const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);
 
-  const executeCreateRoomMutation = useMutation();
-  const executeJoinRoomMutation = useMutation();
-  const executeLeaveRoomMutation = useMutation();
+  const { executeMutation: executeCreateRoomMutation } = useMutation();
+  const { executeMutation: executeJoinRoomMutation } = useMutation();
+  const { executeMutation: executeLeaveRoomMutation } = useMutation();
   // Server-generated results (ids, navigation targets) — non-optimistic, applied in onSuccess
   const createRoom = async (input: CreateRoomInput) => {
     await executeCreateRoomMutation(() => $trpc.room.createRoom.mutate(input), {
@@ -56,7 +56,7 @@ export const useRoomStore = defineStore("message/room", () => {
   // Rooms are deleted independently, so each deletion gets its own executor — a shared one would treat an
   // Earlier in-flight deletion as stale and swallow both its rollback and its active-room navigation
   const deleteRoom = async (input: DeleteRoomInput) => {
-    const executeDeleteRoomMutation = useMutation();
+    const { executeMutation: executeDeleteRoomMutation } = useMutation();
     const snapshot = [...items.value];
     let isSuccessful = false;
     await executeDeleteRoomMutation(() => $trpc.room.deleteRoom.mutate(input), {

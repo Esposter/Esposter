@@ -7,7 +7,10 @@ import { RoutePath } from "@esposter/shared";
 
 interface ResourceBladeActionsProps {
   duplicate: () => Promise<void>;
+  isDuplicatePending?: boolean;
   isLoading?: boolean;
+  isPublishPending?: boolean;
+  isUnpublishPending?: boolean;
   publication?: ResourcePublication;
   publish: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -17,8 +20,20 @@ interface ResourceBladeActionsProps {
   unpublish: () => Promise<void>;
 }
 
-const { duplicate, isLoading, publication, publish, refresh, remove, rename, resource, unpublish } =
-  defineProps<ResourceBladeActionsProps>();
+const {
+  duplicate,
+  isDuplicatePending,
+  isLoading,
+  isPublishPending,
+  isUnpublishPending,
+  publication,
+  publish,
+  refresh,
+  remove,
+  rename,
+  resource,
+  unpublish,
+} = defineProps<ResourceBladeActionsProps>();
 // When narrow, every command collapses into the … overflow menu — the close ✕ never collapses
 const { smAndDown } = useVDisplay();
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
@@ -47,12 +62,17 @@ const overflowItems = computed<Item[]>(() => [
     },
     title: "Delete",
   },
-  { icon: "mdi-content-copy", onClick: () => duplicate(), title: "Duplicate" },
+  { disabled: isDuplicatePending, icon: "mdi-content-copy", onClick: () => duplicate(), title: "Duplicate" },
   ...(isPublishable.value
     ? [
         publication
-          ? { icon: "mdi-cloud-off-outline", onClick: () => unpublish(), title: "Unpublish" }
-          : { icon: "mdi-cloud-upload", onClick: () => publish(), title: "Publish" },
+          ? {
+              disabled: isUnpublishPending,
+              icon: "mdi-cloud-off-outline",
+              onClick: () => unpublish(),
+              title: "Unpublish",
+            }
+          : { disabled: isPublishPending, icon: "mdi-cloud-upload", onClick: () => publish(), title: "Publish" },
       ]
     : []),
   // An unpublished resource has no public URL, so there is nothing to share until it has one
@@ -86,10 +106,18 @@ const overflowItems = computed<Item[]>(() => [
     <v-btn prepend-icon="mdi-pencil" variant="text" @click="isRenameOpen = true">Rename</v-btn>
     <v-btn color="error" prepend-icon="mdi-delete" variant="text" @click="isDeleteOpen = true">Delete</v-btn>
     <v-divider vertical mx-1 />
-    <v-btn prepend-icon="mdi-content-copy" variant="text" @click="duplicate()">Duplicate</v-btn>
+    <v-btn
+      :disabled="isDuplicatePending"
+      :loading="isDuplicatePending"
+      prepend-icon="mdi-content-copy"
+      variant="text"
+      @click="duplicate()"
+    >
+      Duplicate
+    </v-btn>
     <template v-if="isPublishable">
       <v-divider vertical mx-1 />
-      <ResourcePublishToggle :publication :publish :unpublish />
+      <ResourcePublishToggle :is-publish-pending :is-unpublish-pending :publication :publish :unpublish />
       <!-- An unpublished resource has no public URL, so there is nothing to share until it has one -->
       <v-btn v-if="publication" prepend-icon="mdi-share-variant" variant="text" @click="isShareOpen = true">
         Share

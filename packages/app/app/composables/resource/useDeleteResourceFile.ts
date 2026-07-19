@@ -5,7 +5,7 @@ import { AzureContainer } from "@esposter/db-schema";
 
 export const useDeleteResourceFile = (type: ResourceType, id: MaybeRefOrGetter<string>) => {
   const getResourceMutations = useResourceMutations();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   return async (downloadFileSasUrl: string) => {
     const { deleteFile } = getResourceMutations(type);
     if (!deleteFile) return;

@@ -17,7 +17,7 @@ import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   const roomStore = useRoomStore();
   const session = authClient.useSession();
   const knockerStore = useKnockerStore();

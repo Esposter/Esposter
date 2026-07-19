@@ -19,9 +19,9 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   } = createOperationData(items, ["id"], DatabaseEntityType.SearchHistory);
   const { $trpc } = useNuxtApp();
 
-  const executeCreateSearchHistoryMutation = useMutation();
-  const executeUpdateSearchHistoryMutation = useMutation();
-  const executeDeleteSearchHistoryMutation = useMutation();
+  const { executeMutation: executeCreateSearchHistoryMutation } = useMutation();
+  const { executeMutation: executeUpdateSearchHistoryMutation } = useMutation();
+  const { executeMutation: executeDeleteSearchHistoryMutation } = useMutation();
   // Server-generated history row — non-optimistic, applied in onSuccess
   const createSearchHistory = async (input: CreateSearchHistoryInput) => {
     await executeCreateSearchHistoryMutation(() => $trpc.searchHistory.createSearchHistory.mutate(input), {

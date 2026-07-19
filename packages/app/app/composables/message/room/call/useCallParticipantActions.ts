@@ -8,8 +8,8 @@ import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
-  const executeLowerHandMutation = useMutation();
-  const executeAdminActionMutation = useMutation();
+  const { executeMutation: executeLowerHandMutation } = useMutation();
+  const { executeMutation: executeAdminActionMutation } = useMutation();
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
   const participantStore = useParticipantStore();

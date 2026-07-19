@@ -14,7 +14,7 @@ const programStore = useProgramStore();
 const { loadContent } = programStore;
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
-const executeGenerateMutation = useMutation();
+const { executeMutation: executeGenerateMutation } = useMutation();
 const id = computed(() => getRouteParamString(route.params.id));
 const statusRows = ref<ProgramStatusRow[]>([]);
 const isLoading = ref(true);

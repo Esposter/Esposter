@@ -13,7 +13,7 @@ const { $trpc } = useNuxtApp();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { removeScheduledMessageJob } = scheduledMessageJobStore;
 const { count, items } = storeToRefs(scheduledMessageJobStore);
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const sendScheduledMessageNow = async () => {
   if (scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
   await executeMutation(

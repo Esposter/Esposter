@@ -9,7 +9,7 @@ const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(scheduleDial
 const inputStore = useInputStore();
 const { clearDraft } = inputStore;
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic, store refresh in onSuccess
 const scheduleMessage = async (onComplete: () => void) => {
   const currentTarget = target.value;

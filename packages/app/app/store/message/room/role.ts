@@ -108,11 +108,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
     }
     for (const userId of input.userIds) setMemberRoles(input.roomId, userId, rolesByUserId.get(userId) ?? []);
   };
-  const executeCreateRoleMutation = useMutation();
-  const executeUpdateRoleMutation = useMutation();
-  const executeDeleteRoleMutation = useMutation();
-  const executeAssignRoleMutation = useMutation();
-  const executeRevokeRoleMutation = useMutation();
+  const { executeMutation: executeCreateRoleMutation } = useMutation();
+  const { executeMutation: executeUpdateRoleMutation } = useMutation();
+  const { executeMutation: executeDeleteRoleMutation } = useMutation();
+  const { executeMutation: executeAssignRoleMutation } = useMutation();
+  const { executeMutation: executeRevokeRoleMutation } = useMutation();
   const createRole = async (input: CreateRoleInput) => {
     // Server-generated role — non-optimistic, applied in onSuccess
     await executeCreateRoleMutation(() => $trpc.role.createRole.mutate(input), {

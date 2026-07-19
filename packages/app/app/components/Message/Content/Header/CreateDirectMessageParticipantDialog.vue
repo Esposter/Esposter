@@ -23,7 +23,7 @@ const excludedUserIds = computed(() => {
   userIds.push(...(directMessageParticipantsMap.value.get(roomId) ?? []).map(({ id }) => id));
   return userIds;
 });
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const createDirectMessageParticipants = async (onComplete: () => void) => {
   const previousParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
   const existingParticipantIds = new Set(previousParticipants.map(({ id }) => id));
