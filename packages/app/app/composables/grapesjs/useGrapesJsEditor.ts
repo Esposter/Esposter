@@ -44,8 +44,9 @@ export const useGrapesJsEditor = async (
                 // The uploads are independent, so they overlap instead of paying each round trip in sequence
                 await Promise.all(
                   readUploadFiles(event).map(async (file) => {
-                    if (!validateFile(file.size)) {
-                      useEmptyFileAlert();
+                    const validation = validateFile(file.size);
+                    if (!validation.isValid) {
+                      createAlert(validation.message, "error");
                       return;
                     }
 

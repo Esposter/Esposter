@@ -5,6 +5,11 @@ import { SettingsType } from "@/models/message/room/SettingsType";
 export const SettingsCategoryMap: Record<SettingsCategory, SettingsType[]> = {
   [SettingsCategory.General]: [SettingsType.Overview, SettingsType.Roles, SettingsType.Profile],
   [SettingsCategory.Integrations]: [SettingsType.Webhooks],
-  [SettingsCategory.Moderation]: [SettingsType.WordFilter, SettingsType.AuditLog, SettingsType.Bans],
+  [SettingsCategory.Moderation]: [
+    SettingsType.WordFilter,
+    SettingsType.AuditLog,
+    SettingsType.Bans,
+    SettingsType.Attachments,
+  ],
   [SettingsCategory.UserManagement]: [SettingsType.Members, SettingsType.Invites],
 };

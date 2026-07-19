@@ -7,6 +7,7 @@ export enum SettingsType {
   WordFilter = "Word Filter",
   AuditLog = "Audit Log",
   Bans = "Bans",
+  Attachments = "Attachments",
   Members = "Members",
   Invites = "Invites",
   Delete = "Delete",

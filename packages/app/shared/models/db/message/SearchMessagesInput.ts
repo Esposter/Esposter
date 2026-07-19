@@ -17,7 +17,9 @@ export const searchMessagesInputSchema = z
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ]).shape,
     filters: createUniqueArraySchema(filterSchema, "type").max(MAX_READ_LIMIT).default([]),
+    // The Files-in-room tab lists every message with an attachment, so an empty text query is valid here.
+    hasFiles: z.boolean().optional(),
     query: selectSearchHistoryInMessageSchema.shape.query,
   })
-  .refine(({ filters, query }) => !getIsSearchQueryEmpty(query, filters));
+  .refine(({ filters, hasFiles, query }) => Boolean(hasFiles) || !getIsSearchQueryEmpty(query, filters));
 export type SearchMessagesInput = z.infer<typeof searchMessagesInputSchema>;

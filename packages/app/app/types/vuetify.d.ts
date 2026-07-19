@@ -4,6 +4,5 @@ declare module "vuetify/labs/rules" {
   interface RuleAliases {
     isNotProfanity: ValidationRuleBuilderWithoutOptions;
     requireAtLeastN: ValidationRuleBuilderWithOptions<number>;
-    requireAtMostMaxFileSize: ValidationRuleBuilderWithoutOptions;
   }
 }

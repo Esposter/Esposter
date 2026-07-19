@@ -6,6 +6,7 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
+import { useAlertStore } from "@/store/alert";
 import { useSurveyStore } from "@/store/survey";
 import { ResourceType } from "@esposter/db-schema";
 import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/shared";
@@ -13,6 +14,8 @@ import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "su
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 
 export const useSurveyCreator = () => {
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const surveyStore = useSurveyStore();
   const { loadContent, saveModel } = surveyStore;
   const importJsonFile = useImportJsonFile();
@@ -54,9 +57,9 @@ export const useSurveyCreator = () => {
     newCreator.onUploadFile.add(async (_creator, { callback, element, files, propertyName }) => {
       await getResultAsync(async () => {
         const file = takeOne(files);
-
-        if (!validateFile(file.size)) {
-          useEmptyFileAlert();
+        const validation = validateFile(file.size);
+        if (!validation.isValid) {
+          createAlert(validation.message, "error");
           callback("error");
           return;
         }

@@ -41,6 +41,8 @@ const editor = useEditor({
   content: modelValue.value,
   extensions: [
     CharacterCount.configure({ limit }),
+    // Only onPaste is wired — onDrop is deliberately omitted so file drops fall through to the document-level
+    // useDropZone in MessageModelMessageFileDropzoneBackground, which owns drop-to-upload for the whole room.
     FileHandler.configure({
       onPaste: (...args) => emit("paste", ...args),
     }),

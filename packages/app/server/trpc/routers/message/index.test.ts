@@ -592,7 +592,7 @@ describe("message", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const sasEntities = await messageCaller.generateUploadFileSasEntities({
-      files: [{ filename, mimetype }],
+      files: [{ filename, mimetype, size }],
       roomId: newRoom.id,
     });
 
