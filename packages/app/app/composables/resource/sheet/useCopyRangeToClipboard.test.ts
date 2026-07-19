@@ -1,6 +1,8 @@
 // @vitest-environment nuxt
 import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
+import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
+import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useCopyRangeToClipboard } from "@/composables/resource/sheet/useCopyRangeToClipboard";
@@ -91,5 +93,20 @@ describe(useCopyRangeToClipboard, () => {
     await copyRangeToClipboard();
 
     expect(writeTextMock).toHaveBeenCalledWith("a\n2\n3");
+  });
+
+  test("materializes computed column values instead of empty cells", async () => {
+    expect.hasAssertions();
+
+    const rowStore = useRowStore();
+    rowStore.copyIncludesHeaders = true;
+    const sourceColumn = createNumberColumn("price");
+    const computedColumn = createComputedColumn("priceStr", sourceColumn.id);
+    setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ price: 42 })]));
+    selectRange(0, 0, 0, 1);
+    const copyRangeToClipboard = useCopyRangeToClipboard();
+    await copyRangeToClipboard();
+
+    expect(writeTextMock).toHaveBeenCalledWith("price\tpriceStr\n42\t42");
   });
 });

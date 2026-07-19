@@ -52,6 +52,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "resource-page-parity",
       "share-to-esbabbler",
       "notifications",
+      "todolist-due-reminders",
       "global-search",
       "global-search-relevance",
       "favorites-and-recents",
