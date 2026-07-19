@@ -11,8 +11,8 @@ describe(buildDriftReport, () => {
 
     const reports = buildDriftReport(
       new Map([
-        [tableHeavyRoomId, 2],
         [syncedRoomId, 1],
+        [tableHeavyRoomId, 2],
       ]),
       new Map([
         [indexOnlyRoomId, 1],
