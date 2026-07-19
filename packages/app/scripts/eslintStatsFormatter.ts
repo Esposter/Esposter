@@ -3,7 +3,7 @@ import { ESLint } from "eslint";
 const SLOWEST_FILE_COUNT = 15;
 const MILLISECONDS_DECIMAL_PLACES = 1;
 
-const getTimes = ({ stats }) => {
+const getTimes = ({ stats }: Pick<ESLint.LintResult, "stats">) => {
   let parseMilliseconds = 0;
   let rulesMilliseconds = 0;
   let totalMilliseconds = 0;
@@ -17,7 +17,7 @@ const getTimes = ({ stats }) => {
   return { parseMilliseconds, rulesMilliseconds, totalMilliseconds };
 };
 
-export default async (results, context) => {
+const eslintStatsFormatter: ESLint.FormatterFunction = async (results, context) => {
   const eslint = new ESLint();
   const stylish = await eslint.loadFormatter("stylish");
   const output = await stylish.format(results, context);
@@ -47,3 +47,5 @@ export default async (results, context) => {
   console.table(rows);
   return `${output}\n${summary}\n`;
 };
+
+export default eslintStatsFormatter;
