@@ -17,8 +17,21 @@ definePageMeta({
 const route = useRoute();
 // Id is stable for this page instance (keyed by id), so a one-time read is safe; only blade changes without a remount
 const id = getRouteParamString(route.params.id);
-const { duplicate, isLoading, load, publication, publish, remove, rename, resource, unpublish, updateTags } =
-  useResource(id);
+const {
+  duplicate,
+  isDuplicatePending,
+  isLoading,
+  isPublishPending,
+  isUnpublishPending,
+  load,
+  publication,
+  publish,
+  remove,
+  rename,
+  resource,
+  unpublish,
+  updateTags,
+} = useResource(id);
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
 const activeBlade = computed(() => getRouteParamString(route.params.blade) || ResourceBladeType.Overview);
@@ -50,7 +63,10 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
       <ResourceExplorer
         :active-blade
         :duplicate
+        :is-duplicate-pending
         :is-loading
+        :is-publish-pending
+        :is-unpublish-pending
         :publication
         :publish
         :refresh="load"
