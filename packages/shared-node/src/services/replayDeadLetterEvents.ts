@@ -55,7 +55,7 @@ export const replayDeadLetterEvents = async (): Promise<void> => {
       await containerClient.getBlockBlobClient(`${ARCHIVE_PREFIX}${blob.name}`).upload(buffer, buffer.length);
       await blockBlobClient.delete();
     }).match(noop, (error) => {
-      console.error(`Failed to replay dead-letter blob ${blob.name}: `, error);
+      console.error(`Failed to replay dead-letter blob ${blob.name}:`, error);
     });
   }
 };
