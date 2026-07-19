@@ -12,6 +12,6 @@ A room lockdown switch: temporarily block new joins (or hold them in a verificat
 - Raids are a scale problem; rooms are small and invite-gated today, and [invite expiry](/docs/esbabbler/invites) already shrinks the attack surface.
 - Meaningful raid handling needs join-rate telemetry to trigger on, which doesn't exist yet.
 
-**Cheaper interim:** slowmode, the word filter with [automod actions](/docs/proposals/esbabbler/automod-actions), bans, and invite deletion cover manual response.
+**Cheaper interim:** slowmode, the word filter with [automod actions](/docs/esbabbler/automod-actions), bans, and invite deletion cover manual response.
 
 **Revisit when:** a real raid happens, or rooms become publicly discoverable (see [room discovery](/docs/esbabbler/deferred/room-discovery)).

@@ -13,7 +13,7 @@ There are no quotas and no billing, so the number drives no decision; computing 
 
 ## Revisit when
 
-Storage quotas or any per-user limit become real (public signups, abuse concerns), or [publish history](/docs/proposals/platform/publish-history) retention makes snapshot growth worth seeing.
+Storage quotas or any per-user limit become real (public signups, abuse concerns), or [publish history](/docs/platform/publish-history) retention makes snapshot growth worth seeing.
 
 ## Cheaper interim
 

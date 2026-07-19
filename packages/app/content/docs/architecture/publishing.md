@@ -7,7 +7,7 @@ description: The Publishable capability — versioned publish copy plus a public
 
 The **Publishable capability** ([/docs/architecture/resources](/docs/architecture/resources)): the standard for making a resource publicly shareable — a versioned publish copy plus a public, rate-limited, read-only route. Whenever a product needs "share this with people who aren't logged in", it opts into this capability — never ad-hoc public reads of working data.
 
-Adopters: Dashboard, Email, Flowchart, Survey, Webpage. A type opts in by declaring `publishable: true` in `ResourceDefinitionMap`; the derived `PublishableResourceType` union then _requires_ it to provide a view component and _grants_ it the publish procedures — a non-publishable type has no publish endpoints at the type level.
+Adopters: Dashboard, Email, Flowchart, Note, Survey, Webpage. A type opts in by declaring `publishable: true` in `ResourceDefinitionMap`; the derived `PublishableResourceType` union then _requires_ it to provide a view component and _grants_ it the publish procedures — a non-publishable type has no publish endpoints at the type level.
 
 ## How it works
 

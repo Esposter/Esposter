@@ -41,13 +41,13 @@ flowchart LR
 
 Drizzle table `resources` (`packages/db-schema/src/schema/resources.ts`) — pure identity + content lifecycle:
 
-| Column           | Type                   | Notes                                                                  |
-| ---------------- | ---------------------- | ---------------------------------------------------------------------- |
-| `id`             | uuid PK                | becomes the blob path prefix                                           |
-| `type`           | `ResourceType` pg enum | Dashboard, Email, Flowchart, Program, Sheet, Survey, TodoList, Webpage |
-| `name`           | text + length check    | `createNameSchema` pattern                                             |
-| `userId`         | FK → users, cascade    | owner; resources are single-owner                                      |
-| `contentVersion` | integer                | optimistic concurrency on content saves                                |
+| Column           | Type                   | Notes                                                                                   |
+| ---------------- | ---------------------- | --------------------------------------------------------------------------------------- |
+| `id`             | uuid PK                | becomes the blob path prefix                                                            |
+| `type`           | `ResourceType` pg enum | Blueprint, Dashboard, Email, Flowchart, Note, Program, Sheet, Survey, TodoList, Webpage |
+| `name`           | text + length check    | `createNameSchema` pattern                                                              |
+| `userId`         | FK → users, cascade    | owner; resources are single-owner                                                       |
+| `contentVersion` | integer                | optimistic concurrency on content saves                                                 |
 
 Publish state is **normalized into its own table**, `resource_publications` — a row exists iff the resource is currently published. Publishing is a capability, not a base attribute, so publish columns do not belong on every resource row:
 
@@ -75,8 +75,8 @@ A capability is a cross-cutting mechanism a resource type opts into via its defi
 
 | Capability          | Contract                                                                                                                                               | Adopters                                                                |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [/docs/architecture/publishing](/docs/architecture/publishing) | Dashboard, Email, Flowchart, Survey, Webpage                            |
-| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [/docs/architecture/datasets](/docs/architecture/datasets)                           | Sheet, Survey (responses)                                               |
+| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command → [/docs/architecture/publishing](/docs/architecture/publishing) | Dashboard, Email, Flowchart, Note, Survey, Webpage                      |
+| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type → [/docs/architecture/datasets](/docs/architecture/datasets)                           | Program (participant status), Sheet, Survey (responses)                 |
 | **FileAssets**      | owner-only upload/download/delete of binary assets under `{id}/files/…` → [/docs/platform/resource-file-assets](/docs/platform/resource-file-assets)   | Email, Survey, Webpage                                                  |
 | **Portable**        | import/export via declared formats (self-contained `export()` / `import()`) + Import/Export commands                                                   | Sheet (csv/json/xlsx, both ways), Email (personalized html export only) |
 
@@ -159,11 +159,13 @@ Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey)` in `serve
 
 Router-per-type plus one thin cross-type router:
 
-| Router                                                            | Contents                                                                                                                                                                             |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `resource`                                                        | `readResource` (single row by id, cross-type), `readResources` (explorer list, all types), `count` (filtered total, shares its filter schema with the list so they stay in lockstep) |
-| `sheet`, `todoList`, `dashboard`, `email`, `webpage`, `flowchart` | `createResourceProcedures(type, …)`                                                                                                                                                  |
-| `survey`                                                          | factory + type-specific procedures (public respondent responses)                                                                                                                     |
+| Router                                                                    | Contents                                                                                                                                                                             |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `resource`                                                                | `readResource` (single row by id, cross-type), `readResources` (explorer list, all types), `count` (filtered total, shares its filter schema with the list so they stay in lockstep) |
+| `sheet`, `todoList`, `dashboard`, `email`, `webpage`, `flowchart`, `note` | `createResourceProcedures(type, …)`                                                                                                                                                  |
+| `survey`                                                                  | factory + type-specific procedures (public respondent responses)                                                                                                                     |
+| `program`                                                                 | factory + type-specific procedures (`generateProgramParticipants`, `readProgramStatus`)                                                                                              |
+| `blueprint`                                                               | factory + type-specific procedures (`captureBlueprint`, `deployBlueprint`)                                                                                                           |
 
 Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key off the literal tRPC path (`"flowchart.saveResourceContent"`), and type-specific procedures need a home.
 
