@@ -24,18 +24,24 @@ describe(getSurroundingPages, () => {
   test("first page has no previous", () => {
     expect.hasAssertions();
 
-    expect(getSurroundingPages(pages, `${RoutePath.Docs}/a`)).toStrictEqual([null, createItem(`${RoutePath.Docs}/b`)]);
+    expect(getSurroundingPages(pages, `${RoutePath.Docs}/a`)).toStrictEqual([
+      undefined,
+      createItem(`${RoutePath.Docs}/b`),
+    ]);
   });
 
   test("last page has no next", () => {
     expect.hasAssertions();
 
-    expect(getSurroundingPages(pages, `${RoutePath.Docs}/c`)).toStrictEqual([createItem(`${RoutePath.Docs}/b`), null]);
+    expect(getSurroundingPages(pages, `${RoutePath.Docs}/c`)).toStrictEqual([
+      createItem(`${RoutePath.Docs}/b`),
+      undefined,
+    ]);
   });
 
   test("unknown path has no surround", () => {
     expect.hasAssertions();
 
-    expect(getSurroundingPages(pages, `${RoutePath.Docs}/-1`)).toStrictEqual([null, null]);
+    expect(getSurroundingPages(pages, `${RoutePath.Docs}/-1`)).toStrictEqual([undefined, undefined]);
   });
 });
