@@ -130,8 +130,8 @@ describe(useMutation, () => {
   test("runs onSuccess for overlapping calls with different keys", async () => {
     expect.hasAssertions();
 
-    const staleOnSuccess = vi.fn<(result: void) => void>();
-    const freshOnSuccess = vi.fn<(result: void) => void>();
+    const staleOnSuccess = vi.fn<() => void>();
+    const freshOnSuccess = vi.fn<() => void>();
     const { executeMutation } = useMutation();
     let resolveFirst: () => void = noop;
     const first = executeMutation(
@@ -145,15 +145,15 @@ describe(useMutation, () => {
     resolveFirst();
     await first;
 
-    expect(staleOnSuccess).toHaveBeenCalledExactlyOnceWith(undefined);
-    expect(freshOnSuccess).toHaveBeenCalledExactlyOnceWith(undefined);
+    expect(staleOnSuccess).toHaveBeenCalledTimes(1);
+    expect(freshOnSuccess).toHaveBeenCalledTimes(1);
   });
 
   test("drops the superseded onSuccess for overlapping calls with the same key", async () => {
     expect.hasAssertions();
 
-    const staleOnSuccess = vi.fn<(result: void) => void>();
-    const freshOnSuccess = vi.fn<(result: void) => void>();
+    const staleOnSuccess = vi.fn<() => void>();
+    const freshOnSuccess = vi.fn<() => void>();
     const { executeMutation } = useMutation();
     let resolveStale: () => void = noop;
     const stale = executeMutation(
@@ -168,6 +168,6 @@ describe(useMutation, () => {
     await stale;
 
     expect(staleOnSuccess).not.toHaveBeenCalled();
-    expect(freshOnSuccess).toHaveBeenCalledExactlyOnceWith(undefined);
+    expect(freshOnSuccess).toHaveBeenCalledTimes(1);
   });
 });

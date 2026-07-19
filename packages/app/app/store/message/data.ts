@@ -57,6 +57,8 @@ export const useDataStore = defineStore("message/data", () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
         };
       },
+      // Keyed per message so edits to different messages through this shared executor never stale-drop each other
+      key: input.rowKey,
     });
   };
   const deleteFile = async ({ id, ...compositeKey }: DeleteFileInput) => {
@@ -72,6 +74,8 @@ export const useDataStore = defineStore("message/data", () => {
           baseStoreUpdateMessage({ ...compositeKey, files: previousFiles });
         };
       },
+      // Keyed per file so concurrent deletions never swallow each other's rollbacks
+      key: id,
     });
   };
   const storeCreateMessage = async (message: MessageEntity) => {

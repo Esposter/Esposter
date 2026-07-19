@@ -9,7 +9,9 @@ Azure-portal notifications parity: resource operation outcomes (duplicated, publ
 
 ## Model
 
-`AppNotification` (client model): `id`, `severity` (`success | info | warning | error`), `title`, `message?`, `action?` (`{ title, to? , handler? }`), `createdAt`, `isRead`.
+`AppNotification` (client model): `id`, `severity` (`success | info | warning | error`), `title`, `message?`, `action?` (`{ title, to?, handler?, isSingleUse? }`), `createdAt`, `isRead`.
+
+An action marked `isSingleUse` (undo-style mutations, e.g. the delete toast's **Restore**) is consumed on success: both surfaces call `consumeNotificationAction` when the button completes, stripping the button while keeping the notification as history — a second fire from the bell panel would target state the first fire already changed. Repeatable actions (navigation links, **Copy public link**) stay clickable from the bell for the whole session.
 
 Sources (fired from `useResource` and the `/all` list dialogs):
 

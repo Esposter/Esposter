@@ -212,7 +212,7 @@ const deleteBan = async (input: DeleteBanInput) => {
 };
 ```
 
-Give each mutation in a store its own `useMutation()` instance via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` when consumed) so one action's staleness tracking can't cancel another's. One instance serving many sibling **items** of the same action passes `key` (and `isExclusive` for single-flight creates) instead of multiplying instances. Full rationale: `packages/app/content/docs/architecture/client-data.md`.
+Give each mutation in a store its own `useMutation()` instance via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` when consumed) so one action's staleness tracking can't cancel another's. Within an action, key per entity: pass `key: input.id` (or the natural composite, e.g. a member-role pair) so operations on **different** entities never stale-drop each other, and `key: Symbol()` for creates with no natural key — every create is independent. Default (unkeyed) is right only when overlapping calls genuinely supersede each other (repeated saves of one target). `isExclusive` adds single-flight per key for non-idempotent creates. All instances are declared at the store root — never call `useMutation()` inside an action (detached effect scope leak). Full rationale: `packages/app/content/docs/architecture/client-data.md`.
 
 ## createOperationData Usage
 
