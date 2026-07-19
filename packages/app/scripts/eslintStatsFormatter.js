@@ -26,9 +26,9 @@ export default async (results, context) => {
   const cwd = process.cwd();
   const timedResults = results
     .map((result) => ({ filePath: result.filePath.replace(cwd, "").replaceAll("\\", "/"), ...getTimes(result) }))
-    .sort((a, b) => b.totalMilliseconds - a.totalMilliseconds);
-  // The first-parsed file absorbs the one-time TypeScript project initialization inside parseForESLint,
-  // which cannot be measured separately, so flag the outlier instead of letting it masquerade as a slow file
+    .toSorted((a, b) => b.totalMilliseconds - a.totalMilliseconds);
+  // The first-parsed file absorbs the one-time TypeScript project initialization inside parseForESLint
+  // It cannot be measured separately, so flag the outlier instead of letting it masquerade as a slow file
   const maxParseFilePath = timedResults.reduce((max, result) =>
     result.parseMilliseconds > max.parseMilliseconds ? result : max,
   ).filePath;
