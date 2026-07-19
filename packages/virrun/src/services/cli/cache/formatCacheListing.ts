@@ -1,4 +1,5 @@
 import { Color } from "@/models/cli/Color";
+import { formatByteSize } from "@/services/cli/cache/formatByteSize";
 import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 // Pure string-building over already-resolved paths so the IO stays in the command and the formatting is testable.
@@ -11,6 +12,7 @@ export const formatCacheListing = ({
   repoStorePath,
   snapshotHashes,
   snapshotsPath,
+  taskBytes,
   taskCount,
   tasksPath,
 }: {
@@ -20,6 +22,7 @@ export const formatCacheListing = ({
   repoStorePath: string;
   snapshotHashes: readonly string[];
   snapshotsPath: string;
+  taskBytes: number;
   taskCount: number;
   tasksPath: string;
 }): string => {
@@ -39,9 +42,12 @@ export const formatCacheListing = ({
       : formatVirrunLine(
           `prepare ${colorize(preparePath, Color.Blue)} (${colorize(String(prepareKeys.length), Color.Blue)}): ${prepareKeys.join(", ")}`,
         );
-  // Task entries are content-hash keyed and many, so report only the count, not every key.
+  // Task entries are content-hash keyed and many, so report count + total payload size, not every key — the size
+  // Makes the age-eviction bound (TASK_CACHE_MAX_AGE_DAYS) observable at a glance.
   const tasksLine = formatVirrunLine(
-    `tasks ${colorize(tasksPath, Color.Blue)} (${taskCount === 0 ? colorize("none", Color.Dim) : colorize(String(taskCount), Color.Blue)})`,
+    taskCount === 0
+      ? `tasks ${colorize(tasksPath, Color.Blue)} (${colorize("none", Color.Dim)})`
+      : `tasks ${colorize(tasksPath, Color.Blue)} (${colorize(String(taskCount), Color.Blue)}, ${colorize(formatByteSize(taskBytes), Color.Blue)})`,
   );
   return `${repoLine}\n${snapshotsLine}\n${prepareLine}\n${tasksLine}`;
 };

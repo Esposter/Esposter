@@ -7,6 +7,7 @@ import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
 import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
+import { computeDirectoryByteSize } from "@/services/exec/util/computeDirectoryByteSize";
 import { VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
@@ -36,6 +37,7 @@ export const cacheLsCommand: CommandDef = defineCommand({
         repoStorePath,
         snapshotHashes,
         snapshotsPath,
+        taskBytes: computeDirectoryByteSize(tasksPath),
         taskCount: existsSync(tasksPath) ? readdirSync(tasksPath).length : 0,
         tasksPath,
       });

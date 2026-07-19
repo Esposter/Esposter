@@ -7,6 +7,4 @@ description: Open work for achievements — prioritized checkboxes linking their
 
 Open work only. Decided ideas live in [rejected](/docs/achievements/rejected) — check it before adding an item. Per-product achievement content (the [clicker](/docs/clicker) and [dungeons](/docs/dungeons) milestones) is owned by those areas, not tracked here.
 
-## Later
-
-- [ ] Points leaderboard — global ranking by unlocked points → [proposal](/docs/proposals/achievements/points-leaderboard)
+No open work. The points leaderboard shipped — see [points leaderboard](/docs/achievements/points-leaderboard).

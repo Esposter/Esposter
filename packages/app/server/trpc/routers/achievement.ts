@@ -1,4 +1,5 @@
 import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
+import { buildPointsLeaderboard } from "@@/server/services/achievement/buildPointsLeaderboard";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
@@ -15,6 +16,14 @@ export const achievementRouter = router({
       const userAchievements = data.filter(({ userId }) => userId === ctx.getSessionPayload.user.id);
       if (userAchievements.length > 0) yield userAchievements;
     }
+  }),
+  readPointsLeaderboard: standardRateLimitedProcedure.query(async ({ ctx }) => {
+    const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
+      columns: { userId: true },
+      where: { unlockedAt: { isNotNull: true } },
+      with: { achievement: { columns: { name: true } }, user: { columns: { id: true, image: true, name: true } } },
+    });
+    return buildPointsLeaderboard(unlockedUserAchievements, ctx.getSessionPayload?.user.id);
   }),
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
