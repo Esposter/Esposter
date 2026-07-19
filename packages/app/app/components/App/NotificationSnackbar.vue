@@ -34,7 +34,11 @@ const timeout = computed(() =>
       <span>{{ snackbarNotification.title }}</span>
     </div>
     <template #actions>
-      <AppNotificationActionButton v-if="snackbarNotification.action" :action="snackbarNotification.action" />
+      <AppNotificationActionButton
+        v-if="snackbarNotification.action"
+        :action="snackbarNotification.action"
+        @complete="isOpen = false"
+      />
       <StyledTooltipIconButton icon="mdi-close" text="Dismiss" @click="isOpen = false" />
     </template>
   </v-snackbar>
