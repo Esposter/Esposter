@@ -60,7 +60,14 @@ export const readMessages = async ({
     const messages = await getTopNEntitiesByType(messageClient, limit, MessageEntityMap, {
       filter: serializeClauses(clauses),
     });
-    return Object.assign(getCursorPaginationData(messages, limit, sortBy), { hasMore, nextCursor });
+    // The Messages table scans newest-first (reverse-ticked rowKey), so re-project onto the ascending
+    // Sequence the MessagesAscending index established rather than trusting the join's scan order.
+    const messageMap = new Map(messages.map((message) => [message.rowKey, message]));
+    const ascendingMessages = items.flatMap((index) => {
+      const message = messageMap.get(getReverseTickedTimestamp(index.rowKey));
+      return message ? [message] : [];
+    });
+    return Object.assign(getCursorPaginationData(ascendingMessages, limit, sortBy), { hasMore, nextCursor });
   }
   // Default: Desc via reverse-ticked RowKey (efficient)
   if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));

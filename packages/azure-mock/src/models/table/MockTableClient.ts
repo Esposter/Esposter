@@ -20,6 +20,7 @@ import type { Except } from "type-fest";
 import { MOCK_TABLE_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
+import { compareByCompositeKey } from "@/services/table/compareByCompositeKey";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
 import { exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
@@ -85,7 +86,9 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   ): PagedAsyncIterableIterator<TableEntityResult<T>, TableEntityResultPage<T>> {
     const withMetadata = this.#withMetadata.bind(this);
     const filter = options?.queryOptions?.filter;
-    const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()];
+    // Azure Table Storage returns entities ordered by partitionKey then rowKey, not insertion order —
+    // The reverse-ticked message rowKey design relies on that scan order to read newest-first.
+    const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()].sort(compareByCompositeKey);
     const predicate = filter ? createFilterPredicate(filter) : undefined;
     const resultTableEntities = predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities;
     return {
@@ -106,6 +109,8 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
           for (let i = 0; i < allEntitiesWithMetadata.length; i += maxPageSize)
             yield await Promise.resolve(allEntitiesWithMetadata.slice(i, i + maxPageSize));
         })(resultTableEntities),
+      // Each next() call builds a fresh generator and returns its first element, so a bare
+      // For await over listEntities loops forever on the first entity — always paginate via byPage().
       next: () =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
           for (const entity of entities) yield await Promise.resolve(withMetadata(entity));

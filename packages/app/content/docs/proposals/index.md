@@ -25,4 +25,3 @@ Repo-wide refactor plans have no area roadmap and live here directly:
 - [Comment cleanup](/docs/proposals/refactors/comment-cleanup) — sweep ledger for keeping comments tight repo-wide.
 - [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
 - [File upload consolidation](/docs/proposals/refactors/file-upload-consolidation) — one SAS round-trip and one file validator instead of four and three.
-- [Mock table ordering fidelity](/docs/proposals/refactors/mock-table-ordering-fidelity) — `MockTableClient` returns insertion order where Azure returns `partitionKey` + `rowKey` order.

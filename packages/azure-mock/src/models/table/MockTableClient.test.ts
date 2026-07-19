@@ -24,6 +24,24 @@ describe(MockTableClient, () => {
     MockTableDatabase.clear();
   });
 
+  test("orders entities by partitionKey then rowKey regardless of insertion order", async () => {
+    expect.hasAssertions();
+
+    const client = new MockTableClient(tableName, tableName);
+    await client.createEntity<TableEntity>({ partitionKey: " ", rowKey: "1" });
+    await client.createEntity<TableEntity>({ partitionKey: "", rowKey: "1" });
+    await client.createEntity<TableEntity>({ partitionKey: " ", rowKey: "0" });
+    await client.createEntity<TableEntity>({ partitionKey: "", rowKey: "0" });
+    const entities = await readByPage(client);
+
+    expect(entities.map(({ partitionKey, rowKey }) => ({ partitionKey, rowKey }))).toStrictEqual([
+      { partitionKey: "", rowKey: "0" },
+      { partitionKey: "", rowKey: "1" },
+      { partitionKey: " ", rowKey: "0" },
+      { partitionKey: " ", rowKey: "1" },
+    ]);
+  });
+
   test("rejects a page size above the azure hard limit like real azure table storage", async () => {
     expect.hasAssertions();
 
