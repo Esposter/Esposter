@@ -1,5 +1,6 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { Resource } from "@esposter/db-schema";
+import type { ToData } from "@esposter/shared";
 
 import { useServiceBusSender } from "@@/server/composables/azure/serviceBus/useServiceBusSender";
 import { enqueueTodoReminder } from "@esposter/db";
@@ -11,8 +12,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Fire time), but diffing keeps repeated saves from piling reminders up for an unchanged due date.
 export const scheduleTodoReminders = (
   resourceId: Resource["id"],
-  content: TodoListResource,
-  previousContent: TodoListResource | undefined,
+  content: ToData<TodoListResource>,
+  previousContent: ToData<TodoListResource> | undefined,
 ): Promise<void> =>
   getResultAsync(async () => {
     const previousDueAtMap = new Map(
