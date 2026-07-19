@@ -13,6 +13,7 @@ const { createAlert } = alertStore;
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
+const { resetForward } = forwardStore;
 const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
 const forward = computed(() => items.value.find((m) => m.rowKey === rowKey.value));
 const creator = useCreator(forward);
@@ -57,14 +58,16 @@ const forwardMessage = async () => {
       }),
     {
       onSuccess: async () => {
-        if (roomIds.value.length === 1) {
-          await navigateTo(RoutePath.Messages(takeOne(roomIds.value)));
+        // Capture the destination, then reset before navigating. After navigateTo, the forward store's
+        // Room-keyed useDataMap resolves against the destination room, so resetting afterwards would
+        // Clear the destination's state instead of the source's
+        const destinationRoomId = roomIds.value.length === 1 ? takeOne(roomIds.value) : "";
+        resetForward();
+        searchQuery.value = "";
+        if (destinationRoomId) {
+          await navigateTo(RoutePath.Messages(destinationRoomId));
           createAlert("Message forwarded!", "success", { icon: "mdi-share", location: "top center" });
         }
-        dialog.value = false;
-        searchQuery.value = "";
-        roomIds.value = [];
-        messageInput.value = "";
       },
     },
   );

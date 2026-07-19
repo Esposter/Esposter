@@ -1,4 +1,4 @@
-import { AdminActionType, roomIdSchema, selectUserSchema } from "@esposter/db-schema";
+import { AdminActionType, MAX_TIMEOUT_DURATION_MS, roomIdSchema, selectUserSchema } from "@esposter/db-schema";
 import { normalizeString } from "@esposter/shared";
 import { z } from "zod";
 
@@ -10,7 +10,7 @@ const baseExecuteAdminActionInputSchema = z.object({
 export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
   z.object({
     ...baseExecuteAdminActionInputSchema.shape,
-    durationMs: z.int().positive(),
+    durationMs: z.int().positive().max(MAX_TIMEOUT_DURATION_MS),
     type: z.literal(AdminActionType.TimeoutUser),
   }),
   z.object({

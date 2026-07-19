@@ -25,6 +25,7 @@ import {
   SearchIndex,
   StandardMessageEntity,
   usersToRoomsInMessage,
+  WordFilterAction,
 } from "@esposter/db-schema";
 import {
   InvalidOperationError,
@@ -533,6 +534,59 @@ describe("message", () => {
     expect(takeOne(forwardedMessages.items, 1).isForward).toBeUndefined();
   });
 
+  test("forwarding a word-filtered message still posts to rooms that did not block, timing out only the blocking room", async () => {
+    expect.hasAssertions();
+
+    const sourceRoom = await roomCaller.createRoom({ name });
+    const ownerUserId = getMockSession().user.id;
+    const source = await messageCaller.createMessage({ message: getMessage(ownerUserId), roomId: sourceRoom.id });
+    const filteredRoom = await roomCaller.createRoom({ name });
+    await mockContext.db
+      .insert(roomFiltersInMessage)
+      .values({ action: WordFilterAction.Timeout, roomId: filteredRoom.id, timeoutDurationMs: 1, words: ["spam"] });
+    const unfilteredRoom = await roomCaller.createRoom({ name });
+    const sourceInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: sourceRoom.id });
+    const filteredInvite = await roomCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses: 0,
+      roomId: filteredRoom.id,
+    });
+    const unfilteredInvite = await roomCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses: 0,
+      roomId: unfilteredRoom.id,
+    });
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(sourceInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+    await roomCaller.joinRoom(filteredInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+    await roomCaller.joinRoom(unfilteredInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      messageCaller.forwardMessage({
+        message: `<p>this is spam</p>`,
+        partitionKey: source.partitionKey,
+        roomIds: [filteredRoom.id, unfilteredRoom.id],
+        rowKey: source.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
+
+    // The unblocked room still received the forward — the whole forward was not aborted for every room.
+    const unfilteredMessages = await messageCaller.readMessages({ roomId: unfilteredRoom.id });
+
+    expect(unfilteredMessages.items.filter(({ isForward }) => isForward)).toHaveLength(1);
+
+    // The sender is not timed out where nothing was blocked — the timeout only accompanies a real per-room block.
+    const [unfilteredMembership] = await mockContext.db
+      .select()
+      .from(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, unfilteredRoom.id), eq(usersToRoomsInMessage.userId, member.id)));
+
+    expect(unfilteredMembership?.timeoutUntil).toBeNull();
+  });
+
   test("generates upload file SAS entities", async () => {
     expect.hasAssertions();
 
@@ -951,6 +1005,100 @@ describe("message", () => {
       const createdMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
       expect(createdMessage).toBeDefined();
+    });
+
+    test(`blocked word with the ${WordFilterAction.Timeout} action rejects the message and times out the sender`, async () => {
+      expect.hasAssertions();
+
+      const timeoutDurationMs = 1;
+      const newRoom = await roomCaller.createRoom({ name });
+      await mockContext.db
+        .insert(roomFiltersInMessage)
+        .values({ action: WordFilterAction.Timeout, roomId: newRoom.id, timeoutDurationMs, words: ["spam"] });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+      const { user } = await mockSessionOnce(mockContext.db);
+      await roomCaller.joinRoom(invite.id);
+      await mockSessionOnce(mockContext.db, user);
+      const beforeCreateMessageTime = Date.now();
+
+      await expect(
+        messageCaller.createMessage({ message: `<p>this is spam</p>`, roomId: newRoom.id }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
+
+      const [membership] = await mockContext.db
+        .select()
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, user.id)));
+
+      expect(membership?.timeoutUntil?.getTime()).toBeGreaterThanOrEqual(beforeCreateMessageTime + timeoutDurationMs);
+    });
+  });
+
+  describe("thread follows", () => {
+    test("followThread then readFollowedThreads returns the thread root", async () => {
+      expect.hasAssertions();
+
+      const newRoom = await roomCaller.createRoom({ name });
+      const userId = getMockSession().user.id;
+      const root = await messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id });
+      await messageCaller.followThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
+
+      const followed = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
+
+      expect(followed).toHaveLength(1);
+      expect(takeOne(followed).rowKey).toBe(root.rowKey);
+    });
+
+    test("unfollowThread removes the follow", async () => {
+      expect.hasAssertions();
+
+      const newRoom = await roomCaller.createRoom({ name });
+      const userId = getMockSession().user.id;
+      const root = await messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id });
+      await messageCaller.followThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
+      await messageCaller.unfollowThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
+
+      const followed = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
+
+      expect(followed).toHaveLength(0);
+    });
+
+    test("readFollowedThreadRootRowKeys keeps a follow whose root was deleted while the display list drops it", async () => {
+      expect.hasAssertions();
+
+      const newRoom = await roomCaller.createRoom({ name });
+      const userId = getMockSession().user.id;
+      const root = await messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id });
+      await messageCaller.followThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
+      await messageCaller.deleteMessage({ partitionKey: root.partitionKey, rowKey: root.rowKey });
+
+      const followedRootRowKeys = await messageCaller.readFollowedThreadRootRowKeys({ roomId: newRoom.id });
+      const followed = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
+
+      expect(followedRootRowKeys).toStrictEqual([root.rowKey]);
+      expect(followed).toHaveLength(0);
+
+      await messageCaller.unfollowThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
+
+      const followedRootRowKeysAfterUnfollow = await messageCaller.readFollowedThreadRootRowKeys({
+        roomId: newRoom.id,
+      });
+
+      expect(followedRootRowKeysAfterUnfollow).toHaveLength(0);
+    });
+
+    test("replying to a message auto-follows its thread", async () => {
+      expect.hasAssertions();
+
+      const newRoom = await roomCaller.createRoom({ name });
+      const userId = getMockSession().user.id;
+      const root = await messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id });
+      await messageCaller.createMessage({ message: getMessage(userId), replyRowKey: root.rowKey, roomId: newRoom.id });
+
+      const followed = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
+
+      expect(followed).toHaveLength(1);
+      expect(takeOne(followed).rowKey).toBe(root.rowKey);
     });
   });
 });

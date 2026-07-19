@@ -90,6 +90,14 @@ git status --porcelain -uall | wc -l                                  # plus any
 
 Run both and sum before starting a sweep. When the budget is reached, stop and hand back for a PR.
 
+**Incremental reviews refresh the budget.** CodeRabbit reviews only the files changed _since its last completed review_ on the PR (the review body states it: "Reviewing files that changed … between `<sha1>` and `<sha2>`"), not the cumulative PR diff. So within one long-lived PR the ~80-file budget applies **per review cycle** and refreshes after each completed review — a retrigger (`@coderabbitai review`) or a new push only needs the _newly committed_ files to stay under budget. Once a PR has already been reviewed, measure the delta since the last reviewed commit, not the merge-base:
+
+```bash
+git diff --name-only <last-reviewed-sha>..HEAD | wc -l   # what the next incremental review will actually see
+```
+
+The merge-base count above still governs the **first** review of a PR (and any full re-review).
+
 The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
 
 ## When to Exclude

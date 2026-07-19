@@ -1,0 +1,52 @@
+---
+title: Automod actions
+description: Configurable automatic action — reject, warn, or timeout — when a message matches the room word filter.
+---
+
+# Automod Actions
+
+The room word filter does more than block: each filter carries a configurable action — **Reject** (the default), **Warn**, or **Timeout** — turning the shipped filter into a Discord-style AutoMod-lite. Every action still rejects the matching message (Discord blocks and acts) — the action decides what happens to the sender afterwards.
+
+## How it works
+
+`assertNotWordFiltered` runs on every message-producing path inside `assertCanCreateMessage`. On a match by a member who cannot manage messages, it dispatches on the filter's action before rejecting the message. Warn and Timeout call `executeAutomodAction`, which records a moderation-log row attributed to a reserved **AutoMod** actor id and emits the same `onAdminAction` event a manual warn or timeout would — so the targeted client reacts identically. Timeout additionally sets `timeoutUntil` on the member.
+
+```mermaid
+flowchart TD
+  CM["createMessage"] --> WF["assertNotWordFiltered"]
+  WF -->|no match or moderator| OK["allow"]
+  WF -->|match| A{"filter.action"}
+  A -->|Reject| ERR["reject the message"]
+  A -->|Warn| W["executeAutomodAction — log Warn"]
+  A -->|Timeout| T["executeAutomodAction — set timeoutUntil plus log TimeoutUser"]
+  W --> EM["emit onAdminAction"]
+  T --> EM
+  W --> ERR
+  T --> ERR
+  EM --> C["targeted client shows the moderation notification"]
+```
+
+The moderation-log write is best-effort — a logging failure never turns the block into a server error. The audit log renders the reserved actor as **AutoMod** instead of resolving a member name.
+
+## Data model
+
+`roomFiltersInMessage` gains `action` (Postgres enum `word_filter_action`: `Reject` default, `Warn`, `Timeout`) and `timeoutDurationMs` (nullable integer). A database CHECK enforces that a `Timeout` action always carries a positive duration, and the router clears the duration whenever the action is not `Timeout` so a stale value can never re-arm a timeout.
+
+## Procedures
+
+No new procedure — `room.filter.upsertRoomFilter` (gated `ManageRoom`) accepts the new `action` and `timeoutDurationMs` fields, and `readRoomFilter` now returns the full filter row so the settings panel can render them. Automod is a caller of the moderation internals, not a new moderation primitive.
+
+## Key files
+
+| File                                                                                | Role                                  |
+| :---------------------------------------------------------------------------------- | :------------------------------------ |
+| `packages/db-schema/src/schema/roomFiltersInMessage.ts`                             | `action` + `timeoutDurationMs` + enum |
+| `packages/app/server/services/message/moderation/assertNotWordFiltered.ts`          | dispatch on the configured action     |
+| `packages/app/server/services/message/moderation/executeAutomodAction.ts`           | timeout + moderation-log + event emit |
+| `packages/app/server/services/message/moderation/writeModerationLogEntry.ts`        | shared audit-log writer               |
+| `packages/app/shared/services/message/moderation/AUTOMOD_USER_ID.ts`                | reserved AutoMod actor id             |
+| `packages/app/app/components/Message/Model/Room/Settings/Type/WordFilter/Index.vue` | action + duration settings            |
+
+## Notes
+
+Raid-mode (bulk-join throttling) is intentionally not part of this — see [deferred](/docs/esbabbler/deferred/raid-mode).

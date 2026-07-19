@@ -218,12 +218,30 @@ All mutations calling `.returning()` must:
 
 ## Migrations
 
-**Never run `pnpm db:gen` or `pnpm db:up` automatically** — let the user decide. After schema changes, note the needed migration and instruct the user to run it manually from `packages/db-schema`:
+**`db:gen` is the only sanctioned way to produce a migration. Never hand-clone `snapshot.json`.** Copying a previous snapshot and bumping `id`/`prevIds` by hand forks the chain the instant two migrations descend from the same parent, and the next `db:gen` fails with `Non-commutative migrations detected` (this happened — the `add_program`/`add_note`/`add_blueprint` snapshots were cloned off the wrong head and had to be linearized). `snapshot.json` is machine state; only `db:gen` writes it.
+
+**Don't run `db:gen` as an unprompted side effect** of a schema edit — note the pending migration and let the user decide when to run it. When you do run it, from `packages/db-schema`:
 
 ```sh
-pnpm db:gen   # generates migration SQL from schema diff
-pnpm db:up    # applies pending migrations to the DB
+pnpm db:gen   # generates snapshot.json + a first-cut migration.sql from the schema diff
+pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format — NOT an apply command
 ```
+
+Nothing applies migrations from the CLI — they apply automatically at app startup (`packages/app/server/plugins/migrate.ts`).
+
+### Fixing Up After `db:gen`
+
+Editing the generated **`migration.sql`** by hand is allowed and expected — but only the SQL, and only before it's applied. The migrator's bookkeeping hash is `sha256(migration.sql)`, computed at apply time, so an un-applied `migration.sql` is free to edit; leave `snapshot.json` exactly as generated.
+
+- **Destructive diffs → rewrite the SQL to preserve data.** drizzle-kit emits drop/recreate where a data-preserving statement exists. Replace it: an enum-value rename should be `ALTER TYPE "public"."resource_type" RENAME VALUE 'File' TO 'Sheet';`, not `DROP TYPE` + `CREATE TYPE`. A value-order-only change generates a text-cast recreate (`SET DATA TYPE text` → `DROP TYPE` → `CREATE TYPE` → cast back). Postgres derives an enum's `ORDER BY`, `MIN`/`MAX`, and `<`/`>` from its declared value order, so a recreate that reorders values silently changes those results — it is **not** harmless by default. Leave the recreate as-is only after confirming the enum is compared for equality only (never ordered on) and has no default; otherwise rewrite the SQL to preserve the declared value order.
+- **Rename the codename folder** descriptively (keep drizzle's timestamp prefix), then rerun `db:gen` — it must report `No schema changes, nothing to migrate`.
+
+### Running `db:gen` — gotchas
+
+- `db:gen` reads `DATABASE_URL` only for config validation (the diff is schema-vs-snapshot, never the live DB) — inject it: `export DATABASE_URL="$(grep '^DATABASE_URL=' ../app/.env | cut -d= -f2-)"`.
+- drizzle-kit `1.0.0-rc.2` crashes with `Error  Unexpected '''` when semantically comparing json/jsonb defaults stored in the legacy `'{}'::jsonb` snapshot form (its JSON parse sits outside the try/catch). Normalize the offending snapshot's default to `'{}'` and rerun. In normal development this is the only sanctioned `snapshot.json` edit — a parser workaround, not a chain repair. The forked-chain recovery below is a separate, maintainer-only emergency procedure (back up the migrations folder first, then re-run `db:gen` to validate); it is never part of a routine schema change. This keeps the skill consistent with `AGENTS.md`, whose blanket "never hand-edit `snapshot.json`" is the rule for everyday work.
+- Generation surfaces real drift a hand-written chain silently missed — e.g. enum values present in schema + code but never migrated. Verify against the live DB (`select enum_range(null::my_enum)`) before assuming a surprising diff is wrong.
+- **Inherited a forked chain?** Prefer deleting the un-applied migration folders and regenerating from a correct head over hand-patching snapshots. If a repair is genuinely unavoidable, rewrite the stray branch's snapshots as cumulative state on the true head (union ddl entries keyed by `entityType|schema|table|name`, re-point `prevIds`) — but this is recovery for legacy damage, never a routine step.
 
 ## Empty-Sentinel Columns — DB Schema Is the Source of Truth
 

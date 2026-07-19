@@ -3,6 +3,7 @@ import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@e
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteFileInputSchema } from "#shared/models/db/message/DeleteFileInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import { followThreadInputSchema } from "#shared/models/db/message/FollowThreadInput";
 import { readMySentMessagesInputSchema } from "#shared/models/db/message/ReadMySentMessagesInput";
 import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
@@ -27,6 +28,8 @@ import { assertCanCreateMessage } from "@@/server/services/message/moderation/as
 import { readMessages } from "@@/server/services/message/readMessages";
 import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
+import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
+import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -69,6 +72,7 @@ import {
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
+  threadFollowsInMessage,
 } from "@esposter/db-schema";
 import {
   createUniqueArraySchema,
@@ -81,6 +85,7 @@ import {
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 // Azure Table Storage has no real sorting; messages are insert-sorted via a reverse-ticked timestamp rowKey.
 // We still pass a dummy default sortBy because cursor pagination always requires one.
@@ -208,6 +213,11 @@ export const baseMessageRouter = router({
       await deleteFiles(containerClient, messageEntity.files);
     },
   ),
+  followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation(
+    async ({ ctx, input: { roomId, threadRootRowKey } }) => {
+      await createThreadFollow(ctx.db, { roomId, threadRootRowKey, userId: ctx.getSessionPayload.user.id });
+    },
+  ),
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await isMember(ctx.db, ctx.getSessionPayload, roomIds);
@@ -218,13 +228,15 @@ export const baseMessageRouter = router({
         JSON.stringify({ partitionKey, rowKey }),
       );
 
-      await Promise.all(
-        roomIds.map((roomId) => assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, message)),
-      );
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-      await Promise.all(
+      // Couple each room's word-filter check to its own creation attempt (single-send semantics per room): a
+      // Room whose filter blocks times the sender out for THAT room only and posts nothing there, while every
+      // Other room still receives the forward. allSettled lets the unblocked rooms finish writing before the
+      // First per-room block is surfaced — never an all-rooms pre-flight that times out and then posts nothing.
+      const results = await Promise.allSettled(
         roomIds.map(async (roomId) => {
+          await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, message);
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
             // oxlint-disable-next-line typescript/no-misused-spread
@@ -255,6 +267,8 @@ export const baseMessageRouter = router({
           ]);
         }),
       );
+      // Surface the first per-room block like a single blocked send does, after the unblocked rooms posted.
+      for (const result of results) if (result.status === "rejected") throw result.reason;
     },
   ),
   generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
@@ -371,6 +385,30 @@ export const baseMessageRouter = router({
       ]);
     },
   ),
+  // Follow-STATE source of truth: all followed root rowKeys, including those whose root message was deleted,
+  // So the follow button can offer Unfollow on a thread whose root is gone but whose DB follow row remains.
+  readFollowedThreadRootRowKeys: getMemberProcedure(roomIdSchema, "roomId").query<StandardMessageEntity["rowKey"][]>(
+    ({ ctx, input: { roomId } }) => readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id),
+  ),
+  // Display list for the Threads drawer — deleted roots are dropped so it never lists a dangling follow.
+  // Follow-STATE is read separately via readFollowedThreadRootRowKeys, which keeps deleted-root follows.
+  readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<StandardMessageEntity[]>(
+    async ({ ctx, input: { roomId } }) => {
+      const threadRootRowKeys = await readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id);
+      if (threadRootRowKeys.length === 0) return [];
+
+      const messageClient = await useTableClient(AzureTable.Messages);
+      const rootMessages = await Promise.all(
+        threadRootRowKeys.map((threadRootRowKey) =>
+          getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),
+        ),
+      );
+      // Drop roots that were deleted or purged so the drawer never lists a dangling follow.
+      return rootMessages.filter(
+        (rootMessage): rootMessage is StandardMessageEntity => rootMessage !== null && !rootMessage.deletedAt,
+      );
+    },
+  ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
@@ -420,6 +458,19 @@ export const baseMessageRouter = router({
     else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds as string[]);
     return searchMessages(input);
   }),
+  unfollowThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation(
+    async ({ ctx, input: { roomId, threadRootRowKey } }) => {
+      await ctx.db
+        .delete(threadFollowsInMessage)
+        .where(
+          and(
+            eq(threadFollowsInMessage.userId, ctx.getSessionPayload.user.id),
+            eq(threadFollowsInMessage.roomId, roomId),
+            eq(threadFollowsInMessage.threadRootRowKey, threadRootRowKey),
+          ),
+        );
+    },
+  ),
   unpinMessage: getMessageProcedure(unpinMessageInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
       if (!PinnableMessageTypes.has(messageEntity.type))

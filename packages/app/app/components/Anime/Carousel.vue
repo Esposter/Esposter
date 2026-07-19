@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import { Drawings } from "@/services/anime/constants";
+import { mod } from "@/util/math/mod";
+
+const carousel = ref(0);
+</script>
+
+<template>
+  <div h-full>
+    <v-carousel v-model="carousel" height="100%" :touch="false" :show-arrows="false" hide-delimiters>
+      <v-carousel-item v-for="(drawing, index) of Drawings" :key="index">
+        <component
+          :is="drawing"
+          @click-left="carousel = mod(carousel - 1, Drawings.length)"
+          @click-right="carousel = mod(carousel + 1, Drawings.length)"
+        />
+      </v-carousel-item>
+    </v-carousel>
+  </div>
+</template>

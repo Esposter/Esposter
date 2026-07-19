@@ -30,6 +30,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "slash-commands",
       "scheduled-messages",
       "drafts-and-sent",
+      "thread-follows",
     ],
     "Members & profiles": [
       "friends-and-dms",
@@ -39,7 +40,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "settings",
       "room-settings",
     ],
-    Moderation: ["moderation", "rbac"],
+    Moderation: ["moderation", "automod-actions", "moderator-notes", "rbac"],
     Calls: ["voice-video", "push-to-talk", "calls"],
     Infrastructure: ["push-notifications", "offline-cache"],
   },

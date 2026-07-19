@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
-import { useDialogStore } from "@/store/message/room/dialog";
-import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { DatabaseEntityType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface RoomListItemProps {
@@ -15,7 +11,6 @@ interface RoomListItemProps {
 }
 
 const { room } = defineProps<RoomListItemProps>();
-const { data: session } = await authClient.useSession(useFetch);
 const roomName = useRoomName(() => room.id);
 const inputStore = useInputStore();
 const { drafts } = storeToRefs(inputStore);
@@ -23,12 +18,6 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const isActive = computed(() => room.id === currentRoomId.value);
 const hasDraft = computed(() => drafts.value.has(room.id) && room.id !== currentRoomId.value);
-const isCreator = computed(() => room.userId === session.value?.user.id);
-const roleStore = useRoleStore();
-const { checkIsManageable } = roleStore;
-const dialogStore = useDialogStore();
-const { settingsRoomId } = storeToRefs(dialogStore);
-const isVisible = computed(() => isCreator.value || checkIsManageable(room.id));
 const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom } = userToRoomStore;
 const hasUnread = computed(() => {
@@ -62,28 +51,7 @@ const mentionCount = computed(() => (isActive.value ? 0 : (getMyUserToRoom(room.
             <v-icon :="activatorProps" icon="mdi-bullhorn-outline" size="x-small" op-medium-emphasis />
           </template>
         </v-tooltip>
-        <v-tooltip :text="`${DatabaseEntityType.Room} Settings`">
-          <template #activator="{ props: tooltipProps }">
-            <v-btn
-              v-show="(isActive || isHovering) && isVisible"
-              bg-transparent
-              :="tooltipProps"
-              :ripple="false"
-              density="compact"
-              icon="mdi-cog"
-              variant="plain"
-              size="small"
-              @click.stop="
-                async () => {
-                  // Settings panels (Roles, Members) load and key their data by the current room,
-                  // so opening settings for another room navigates there first
-                  if (!isActive) await navigateTo(RoutePath.Messages(room.id));
-                  settingsRoomId = room.id;
-                }
-              "
-            />
-          </template>
-        </v-tooltip>
+        <MessageModelRoomListItemSettingsButton :is-active :is-hovering="isHovering ?? false" :room />
       </template>
     </v-list-item>
   </v-hover>

@@ -29,7 +29,10 @@ export const assertCanCreateMessage = async (
       columns: { lastMessageAt: true, timeoutUntil: true },
       where: { roomId: { eq: roomId }, userId: { eq: userId } },
     }),
-    db.query.roomFiltersInMessage.findFirst({ columns: { words: true }, where: { roomId: { eq: roomId } } }),
+    db.query.roomFiltersInMessage.findFirst({
+      columns: { action: true, timeoutDurationMs: true, words: true },
+      where: { roomId: { eq: roomId } },
+    }),
   ]);
   // Only a rule that actually engages asks whether the sender can moderate, and however many of them ask,
   // Storage answers once — the promise is what is memoized, so concurrent askers share the one lookup. An
@@ -40,5 +43,5 @@ export const assertCanCreateMessage = async (
   assertNotTimedOut(member);
   await assertNotReadOnly(room, getCanManageMessages);
   await assertNotInSlowmode(room, member, getCanManageMessages);
-  if (message) await assertNotWordFiltered(filter, message, getCanManageMessages);
+  if (message) await assertNotWordFiltered(db, roomId, userId, filter, message, getCanManageMessages);
 };

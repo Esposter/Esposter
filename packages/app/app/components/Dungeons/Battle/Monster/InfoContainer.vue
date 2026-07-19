@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { ExperienceLabelTextStyle } from "@/assets/dungeons/styles/ExperienceLabelTextStyle";
+import { HealthLabelTextStyle } from "@/assets/dungeons/styles/HealthLabelTextStyle";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
@@ -59,11 +61,7 @@ onUnmounted(() => {
         x: 30,
         y: 55,
         text: 'HP',
-        style: {
-          color: '#ff6505',
-          fontSize: 24,
-          fontStyle: 'italic',
-        },
+        style: HealthLabelTextStyle,
       }"
     />
     <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
@@ -86,11 +84,7 @@ onUnmounted(() => {
           x: 30,
           y: 100,
           text: 'EXP',
-          style: {
-            color: '#6505ff',
-            fontSize: 14,
-            fontStyle: 'italic',
-          },
+          style: ExperienceLabelTextStyle,
         }"
       />
       <DungeonsUIExperienceBar

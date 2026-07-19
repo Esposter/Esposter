@@ -2,24 +2,17 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
+import { useVotePoll } from "@/composables/message/poll/useVotePoll";
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
-import { useDataStore } from "@/store/message/data";
-import {
-  getResultAsync,
-  InvalidOperationError,
-  jsonDateParse,
-  noop,
-  Operation,
-  withFinalizerAsync,
-} from "@esposter/shared";
+import { getVoteCountMap } from "@/services/message/poll/getVoteCountMap";
+import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
+import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
 const { active, creator, isPreview = false, isSameBatch, message } = defineProps<PollProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const dataStore = useDataStore();
-const { storeUpdateMessage, updateMessage } = dataStore;
 const pollContent = computed(() => {
   const parsedMessage = jsonDateParse(message.message);
   const result = pollMessageContentSchema.safeParse(parsedMessage);
@@ -27,50 +20,17 @@ const pollContent = computed(() => {
   return result.data;
 });
 const totalVotes = computed(() => Object.keys(pollContent.value.votes).length);
-const voteCountMap = computed(() => {
-  const map = new Map<string, number>();
-  for (const optionId of Object.values(pollContent.value.votes)) map.set(optionId, (map.get(optionId) ?? 0) + 1);
-  return map;
-});
-const getVoteDescription = (count: number) => `${count} vote${count === 1 ? "" : "s"}`;
+const voteCountMap = computed(() => getVoteCountMap(pollContent.value.votes));
 const getVotePercentage = (optionId: string) => {
   const count = voteCountMap.value.get(optionId) ?? 0;
   return totalVotes.value > 0 ? Math.round((count / totalVotes.value) * 100) : 0;
 };
-const isVoting = ref(false);
 const userId = computed(() => session.value?.user.id);
-const vote = async (optionId: null | string) => {
-  if (!userId.value || isPreview || isVoting.value) return;
-  isVoting.value = true;
-  const previousMessage = message.message;
-  const updatedVotes = { ...pollContent.value.votes };
-  if (optionId === null) delete updatedVotes[userId.value];
-  else updatedVotes[userId.value] = optionId;
-  const updatedMessage = JSON.stringify({ ...pollContent.value, votes: updatedVotes });
-  await withFinalizerAsync(
-    () =>
-      getResultAsync(async () => {
-        await storeUpdateMessage({
-          message: updatedMessage,
-          partitionKey: message.partitionKey,
-          rowKey: message.rowKey,
-        });
-        await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-      }).match(noop, async (error) => {
-        await getResultAsync(() =>
-          storeUpdateMessage({
-            message: previousMessage,
-            partitionKey: message.partitionKey,
-            rowKey: message.rowKey,
-          }),
-        ).match(noop, console.error);
-        throw error;
-      }),
-    () => {
-      isVoting.value = false;
-    },
-  );
-};
+const { isVoting, vote } = await useVotePoll(
+  () => message,
+  () => pollContent.value,
+  isPreview,
+);
 </script>
 
 <template>

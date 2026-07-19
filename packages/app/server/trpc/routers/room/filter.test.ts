@@ -7,7 +7,7 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { RoomPermission, roomsInMessage } from "@esposter/db-schema";
+import { RoomPermission, roomsInMessage, WordFilterAction } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("room/filter", () => {
@@ -19,6 +19,7 @@ describe("room/filter", () => {
   const name = "name";
   const words = ["word"];
   const updatedWords = ["word", "updatedword"];
+  const timeoutDurationMs = 1;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -37,21 +38,21 @@ describe("room/filter", () => {
   });
 
   describe("readRoomFilter", () => {
-    test("returns empty array when no filter configured", async () => {
+    test("returns null when no filter configured", async () => {
       expect.hasAssertions();
 
-      const readWords = await roomFilterCaller.readRoomFilter({ roomId });
+      const readFilter = await roomFilterCaller.readRoomFilter({ roomId });
 
-      expect(readWords).toStrictEqual([]);
+      expect(readFilter).toBeNull();
     });
 
-    test("returns words after upsertRoomFilter", async () => {
+    test("returns the filter row after upsertRoomFilter", async () => {
       expect.hasAssertions();
 
       await roomFilterCaller.upsertRoomFilter({ roomId, words });
-      const readWords = await roomFilterCaller.readRoomFilter({ roomId });
+      const readFilter = await roomFilterCaller.readRoomFilter({ roomId });
 
-      expect(readWords).toStrictEqual(words);
+      expect(readFilter?.words).toStrictEqual(words);
     });
   });
 
@@ -63,6 +64,30 @@ describe("room/filter", () => {
       const result = await roomFilterCaller.upsertRoomFilter({ roomId, words: updatedWords });
 
       expect(result.words).toStrictEqual(updatedWords);
+    });
+
+    test(`persists the ${WordFilterAction.Timeout} action with its duration`, async () => {
+      expect.hasAssertions();
+
+      const result = await roomFilterCaller.upsertRoomFilter({
+        action: WordFilterAction.Timeout,
+        roomId,
+        timeoutDurationMs,
+        words,
+      });
+
+      expect(result.action).toBe(WordFilterAction.Timeout);
+      expect(result.timeoutDurationMs).toBe(timeoutDurationMs);
+    });
+
+    test(`clears the timeout duration when switching away from ${WordFilterAction.Timeout}`, async () => {
+      expect.hasAssertions();
+
+      await roomFilterCaller.upsertRoomFilter({ action: WordFilterAction.Timeout, roomId, timeoutDurationMs, words });
+      const result = await roomFilterCaller.upsertRoomFilter({ action: WordFilterAction.Warn, roomId, words });
+
+      expect(result.action).toBe(WordFilterAction.Warn);
+      expect(result.timeoutDurationMs).toBeNull();
     });
 
     test(`member without ${RoomPermission.ManageRoom} permission cannot upsertRoomFilter — throws UNAUTHORIZED`, async () => {

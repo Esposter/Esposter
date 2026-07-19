@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import type { SlashCommandParameter } from "@/models/message/slashCommands/SlashCommandParameter";
-
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+import { getIsCaretAtStart } from "@/util/dom/getIsCaretAtStart";
 
 interface TrailingInputProps {
-  activeParametersLength: number;
-  hiddenParameters: SlashCommandParameter[];
   isFocused?: boolean;
 }
 
-const { activeParametersLength, hiddenParameters, isFocused } = defineProps<TrailingInputProps>();
+const { isFocused } = defineProps<TrailingInputProps>();
 const emit = defineEmits<{
   blur: [];
   collapse: [];
@@ -22,10 +19,11 @@ const emit = defineEmits<{
 }>();
 
 const slashCommandStore = useSlashCommandStore();
-const { selectedHiddenIndex, trailingMessage } = storeToRefs(slashCommandStore);
+const { activeParameters, hiddenParameters, selectedHiddenIndex, trailingMessage } = storeToRefs(slashCommandStore);
+const { selectNextHiddenParameter, selectPreviousHiddenParameter } = slashCommandStore;
 const input = useTemplateRef("input");
 const optionsLabel = computed(
-  () => `+${hiddenParameters.length} ${hiddenParameters.length === 1 ? "option" : "options"}`,
+  () => `+${hiddenParameters.value.length} ${hiddenParameters.value.length === 1 ? "option" : "options"}`,
 );
 
 watch(
@@ -55,7 +53,7 @@ watch(
         (event) => {
           const target = event.target as HTMLInputElement;
 
-          if (event.key === 'ArrowLeft' && target.selectionStart === 0 && target.selectionEnd === 0) {
+          if (event.key === 'ArrowLeft' && getIsCaretAtStart(target)) {
             event.preventDefault();
             emit('navigate:previous');
             return;
@@ -63,7 +61,7 @@ watch(
 
           if (event.key === 'Backspace' && !trailingMessage) {
             event.preventDefault();
-            if (activeParametersLength > 0) emit('deleteLastParameter');
+            if (activeParameters.length > 0) emit('deleteLastParameter');
             else emit('collapse');
             return;
           }
@@ -78,10 +76,10 @@ watch(
 
           if (event.key === 'ArrowUp') {
             event.preventDefault();
-            selectedHiddenIndex = Math.max(0, selectedHiddenIndex - 1);
+            selectPreviousHiddenParameter();
           } else if (event.key === 'ArrowDown') {
             event.preventDefault();
-            selectedHiddenIndex = Math.min(hiddenParameters.length - 1, selectedHiddenIndex + 1);
+            selectNextHiddenParameter();
           } else if (event.key === 'Enter') {
             event.preventDefault();
             const parameter = hiddenParameters[selectedHiddenIndex] ?? hiddenParameters[0];

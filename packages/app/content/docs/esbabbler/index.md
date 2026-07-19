@@ -26,6 +26,9 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [/docs/esbabbler/friends-and-dms](/docs/esbabbler/friends-and-dms)                   | Friend requests, blocking, 1:1 and group direct messages          |
 | [/docs/esbabbler/rbac](/docs/esbabbler/rbac)                                         | Roles, permission bitfield, hierarchy, procedure guards           |
 | [/docs/esbabbler/moderation](/docs/esbabbler/moderation)                             | Admin actions, word filter, bans/timeouts, audit log              |
+| [/docs/esbabbler/automod-actions](/docs/esbabbler/automod-actions)                   | Word-filter reject/warn/timeout actions via the admin machinery   |
+| [/docs/esbabbler/moderator-notes](/docs/esbabbler/moderator-notes)                   | Private, append-only per-member moderator notes                   |
+| [/docs/esbabbler/thread-follows](/docs/esbabbler/thread-follows)                     | Follow threads, notify-on-reply, Followed Threads drawer          |
 | [/docs/esbabbler/invites](/docs/esbabbler/invites)                                   | Invite links with expiry and max-use options                      |
 | [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)                               | Per-room nicknames and display-name resolution                    |
 | [/docs/esbabbler/mention-badges](/docs/esbabbler/mention-badges)                     | Mention-only unread counts in the room sidebar                    |
@@ -57,10 +60,10 @@ Chronological, one line per feature group.
 - **Search & navigation** — Ctrl+K command palette, filtered search (`from:`/`in:`/`before:`/`after:`), pinned messages list, unread room dot, jump-to-message, Copy Message Link, Mark Unread From Here.
 - **Slash commands** — `/me` `/flip` `/shrug` `/tableflip` `/unflip` `/roll` `/topic` `/remind` `/schedule`.
 - **Friends & DMs** — friends system, blocked users, 1:1 + group DMs, group-DM participant management, DM calls.
-- **Mentions & notifications** — `@here`, `@everyone`, role mentions, mention highlighting, per-room notification preference, friend-request push notifications, mention badges (sidebar mention counts).
+- **Mentions & notifications** — `@here`, `@everyone`, role mentions, mention highlighting, per-room notification preference, friend-request push notifications, mention badges (sidebar mention counts), thread follows with notify-on-reply and a Followed Threads drawer.
 - **Presence & profiles** — Online/Idle/DND/Offline status, custom status message, profile card, profile editing (biography + avatar SAS upload), room profile image.
 - **Rooms** — categories with drag-reorder, read-only/announcement channels, slowmode, per-room nicknames, welcome screen, join/leave system messages, invite expiry & max uses.
-- **Moderation** — RBAC roles/permissions, force-mute, kick, ban/unban, timeout, warn, softban, word filter, audit log with action/actor/target filters.
+- **Moderation** — RBAC roles/permissions, force-mute, kick, ban/unban, timeout, warn, softban, word filter, automod word-filter actions (reject/warn/timeout), private moderator notes, audit log with action/actor/target filters.
 - **Calls** — persistent per-room drop-in audio, LiveKit migration, video, screenshare, call lobby (knock & admit), deafen, raise-hand, call-health indicator, call-end duration system message, Document PiP pop-out, per-user volume, push-to-talk.
 - **Integrations & infra** — inbound webhooks, offline message cache, scheduled messages (Service Bus worker + listing/cancel UI), Sent tab via Search index.
 - **Settings** — message-scoped user-settings dialog (Voice & Video / Notifications / Keybinds) backed by `userSettingsInMessage`, applied live to LiveKit calls; push-to-talk keybind + release delay; room settings Discord-parity IA (category groups, Roles rename, Members/Invites tabs, Integrations + Moderation groups).

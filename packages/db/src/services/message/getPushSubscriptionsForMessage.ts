@@ -25,7 +25,7 @@ export const getPushSubscriptionsForMessage = async (
   const mentionOrWheres = [eq(usersToRoomsInMessage.notificationType, NotificationType.All), ...mentionConditions];
   andWheres.push(or(...mentionOrWheres));
   return db
-    .select({ ...PUSH_SUBSCRIPTION_COLUMNS })
+    .select({ ...PUSH_SUBSCRIPTION_COLUMNS, userId: pushSubscriptionsInMessage.userId })
     .from(pushSubscriptionsInMessage)
     .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, pushSubscriptionsInMessage.userId))
     .leftJoin(userStatusesInMessage, eq(userStatusesInMessage.userId, pushSubscriptionsInMessage.userId))
