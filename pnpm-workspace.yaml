@@ -255,5 +255,6 @@ overrides:
   crossws: ^0.4.10
   h3: ^1.15.11
   pdfjs-dist: ^6.1.200
+  vite: ^8.1.5
 
 shellEmulator: true
