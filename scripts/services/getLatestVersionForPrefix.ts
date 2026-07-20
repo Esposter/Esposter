@@ -6,7 +6,7 @@ export const getLatestVersionForPrefix = (versions: string[], prefix: string): s
   const matching = versions
     .filter((version) => {
       const { major, minor, patch, prerelease } = getVersionParts(version);
-      if (prerelease !== undefined) return false;
+      if (prerelease) return false;
       const base = [major, minor, patch];
       return segments.every((segment, index) => base[index] === segment);
     })
