@@ -1,4 +1,4 @@
-import type { RoomDriftReport } from "@/services/message/searchIndex/models/RoomDriftReport";
+import type { RoomDriftReport } from "@@/scripts/searchIndex/models/RoomDriftReport";
 
 export const buildDriftReport = (
   tableCounts: Map<string, number>,

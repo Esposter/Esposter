@@ -1,4 +1,4 @@
-import { buildDriftReport } from "@/services/message/searchIndex/buildDriftReport";
+import { buildDriftReport } from "@@/scripts/searchIndex/buildDriftReport";
 import { describe, expect, test } from "vitest";
 
 describe(buildDriftReport, () => {

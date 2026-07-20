@@ -2,11 +2,10 @@
   "name": "@esposter/shared-node",
   "version": "2.35.0",
   "private": true,
-  "description": "Node-only shared tooling (benchmark reporting, dev scripts) reused across packages.",
+  "description": "Node-only shared tooling (benchmark reporting) reused across packages.",
   "keywords": [
     "benchmark",
     "codspeed",
-    "dev-scripts",
     "monorepo",
     "node",
     "reporting",
@@ -65,7 +64,6 @@
     "rolldown": "catalog:"
   },
   "peerDependencies": {
-    "vitest": "catalog:",
-    "zod": "catalog:"
+    "vitest": "catalog:"
   }
 }

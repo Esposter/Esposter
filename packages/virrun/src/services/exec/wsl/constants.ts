@@ -3,12 +3,16 @@
 // It makes the run's process tree findable Linux-side by cmdline (pgrep -f) so a Ctrl+C reaper can kill its whole
 // Process group without a Windows→WSL PID handoff. Kept generic ("virrun-bwrap") so it reads clearly in `ps`.
 export const VIRRUN_WSL_PROCESS_MARKER = "virrun-bwrap";
-// Markers bracketing the PATH that readWslLoginPath prints inside the interactive login shell, so an rc that writes
-// To stdout itself (prompts, MOTD, version-manager banners…) can't corrupt the capture — the parser slices strictly
-// Between them and treats their absence as "no PATH captured". Shared so the capture script and the parser (and the
-// Test that reconstructs marked output) never drift apart.
+// Markers bracketing each value readWslLoginEnvironment prints inside the interactive login shell, so an rc that
+// Writes to stdout itself (prompts, MOTD, version-manager banners…) can't corrupt the capture — the parser slices
+// Strictly between them and treats their absence as "not captured". A marker pair per value rather than one pair with
+// A delimiter: neither a PATH nor a version string can contain a marker, while any in-band delimiter has to assume
+// Something about the values. Shared so the capture script and the parser (and the test that reconstructs marked
+// Output) never drift apart.
 export const VIRRUN_LOGIN_PATH_BEGIN_MARKER = "__VIRRUN_LOGIN_PATH_BEGIN__";
 export const VIRRUN_LOGIN_PATH_END_MARKER = "__VIRRUN_LOGIN_PATH_END__";
+export const VIRRUN_LOGIN_NODE_BEGIN_MARKER = "__VIRRUN_LOGIN_NODE_BEGIN__";
+export const VIRRUN_LOGIN_NODE_END_MARKER = "__VIRRUN_LOGIN_NODE_END__";
 // Leaf under the WSL native ext4 cache root holding one per-repo source mirror (`sources/<sha256(hostCwd)>`), a
 // Sibling of `snapshots/` and `tasks/`. On win32 the sandbox reads the repo source from this ext4 mirror instead of
 // Straight from /mnt/c (v9fs, 15-64x slower); `cache clean --all` sweeps it. See createWslSourceMirrorSync.

@@ -44,7 +44,7 @@ const probeBubblewrap = (): DiagnosticCheck => {
   };
 };
 // Off win32 the host's own node runs the sandbox, so the check is N/A. On win32 it probes node via the user's real
-// WSL login + interactive shell (buildWslLoginShellCommand), matching how readWslLoginPath captures the toolchain the
+// WSL login + interactive shell (buildWslLoginShellCommand), matching how readWslLoginEnvironment captures the toolchain the
 // Backend can reach — a profile/rc-bound version manager (fnm/nvm) is invisible to a bare `wsl.exe --exec`.
 const probeWslNode = (): DiagnosticCheck => {
   const label = "WSL Linux node";

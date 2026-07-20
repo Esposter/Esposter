@@ -338,7 +338,7 @@ pnpm depcruise:graph
 | [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)             | Parser for Tiled Map Editor `.tmx` files                                        |     ✓     |
 | [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)                   | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated     |     ✓     |
 | [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                   | Shared TypeScript types, utilities, and error classes                           |     ✓     |
-| [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)         | Node-only shared tooling — benchmark reporting and dev scripts                  |     —     |
+| [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)         | Node-only shared tooling — benchmark reporting for vitest bench runs            |     —     |
 | [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)       | Phaser 4 game engine integration for Vue 3                                      |     ✓     |
 | [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                   | TypeScript rewrite of xml2js — XML ↔ JSON conversion                            |     ✓     |
 

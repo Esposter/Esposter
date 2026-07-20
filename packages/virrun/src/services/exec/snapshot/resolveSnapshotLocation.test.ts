@@ -1,4 +1,4 @@
-import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
+import { computeEnvironmentKey } from "@/services/exec/snapshot/computeEnvironmentKey";
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
@@ -12,14 +12,14 @@ import { describe, expect, test } from "vitest";
 describe(resolveSnapshotLocation, () => {
   const { createWorkspace, getCacheHome } = setupTemporaryCacheHome();
 
-  test("addresses the snapshot in the global cache under snapshots/<lockfile-hash> with its upper dir", () => {
+  test("addresses the snapshot in the global cache under snapshots/<environment-key> with its upper dir", () => {
     expect.hasAssertions();
 
     const dir = createWorkspace();
     const { dir: snapshotDir, hash, upperDir } = resolveSnapshotLocation(dir);
     const expectedDir = join(getCacheHome(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME, hash);
 
-    expect(hash).toBe(computeLockfileHash(dir));
+    expect(hash).toBe(computeEnvironmentKey(dir));
     expect(snapshotDir).toBe(expectedDir);
     expect(upperDir).toBe(join(expectedDir, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));
   });

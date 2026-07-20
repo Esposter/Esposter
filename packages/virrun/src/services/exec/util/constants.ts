@@ -38,8 +38,13 @@ export const CAPABILITY_CACHE_FILENAME = "capability.json";
 // Windows-side files caching the win32 WSL environment probes so a fresh `virrun -- <cmd>` process reuses them instead
 // Of re-spawning wsl.exe (an interactive-login shell for the PATH, two round-trips for the cache root). Stored via
 // GetLocalCacheDirectory (the Windows `~`), not the WSL-ext4 cache root. See readWslEnvironmentCache.
-export const WSL_LOGIN_PATH_CACHE_FILENAME = "wsl-login-path.json";
+export const WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME = "wsl-login-environment.json";
 export const WSL_CACHE_ROOT_CACHE_FILENAME = "wsl-cache-root.json";
+// How long a captured WSL login environment stays reusable. The host fingerprint (platform + kernel release) can't see
+// A toolchain change — switching the node manager's active version rewrites neither — so without an expiry a capture
+// Taken before a node upgrade pins the sandbox to the old node forever, silently, until a manual `cache clean`. The
+// Window trades one login-shell spawn per interval for drift that self-heals the same day.
+export const WSL_LOGIN_ENVIRONMENT_MAX_AGE_MS: number = dayjs.duration(6, "hours").asMilliseconds();
 // Set (to any value) to bypass the persisted capability cache and force a fresh probe — the escape hatch for a host
 // Whose bubblewrap/kernel capability changed without a cache-key change (e.g. bwrap was just installed).
 export const VIRRUN_FORCE_PROBE_KEY = "VIRRUN_FORCE_PROBE";

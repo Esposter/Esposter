@@ -55,6 +55,8 @@
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
+    "searchindex:rebuild": "tsx --tsconfig tsconfig.root.json scripts/rebuildMessageSearchIndex.ts",
+    "searchindex:status": "tsx --tsconfig tsconfig.root.json scripts/messageSearchIndexStatus.ts",
     "start": "node .output/server/index.mjs",
     "test": "vitest",
     "tiled:gen": "tsx --tsconfig tsconfig.root.json scripts/tiled/index.ts",

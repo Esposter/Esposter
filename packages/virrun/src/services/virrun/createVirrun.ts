@@ -26,6 +26,7 @@ import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapsho
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
 import { withColorEnv } from "@/services/exec/util/withColorEnv";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
+import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnvironment";
 import { loadSource } from "@/services/source/loadSource";
 import { existsSync } from "node:fs";
 // "auto" resolves to native until vfs beats it on the gates.
@@ -50,6 +51,11 @@ export const createVirrun = async ({
   // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store, login PATH, and
   // Network re-enable must still be injected (createOsExecOptions). Non-os backends need only the VIRRUN signal.
   const isOsBackend = execBackend.name === BackendType.Os;
+  // Capture the WSL login environment up front on win32, before any cache location is resolved. Every sandboxed
+  // Command needs its PATH anyway, and the capture is what tells getSandboxNodeVersion which node the guest runs — so
+  // Taking it first is what stops a cold host keying its very first snapshot on the Windows node's major and then
+  // Re-provisioning under the guest's on the next run.
+  if (isOsBackend && process.platform === "win32") readWslLoginEnvironment();
   // Resolve the framework prepare step once (preset-driven, no overrides). Only the os backend has overlay layers;
   // Other backends run in-place with the host's own artifacts, so there is nothing to regenerate. Throws loudly if
   // `environment` is set to a framework whose config file is absent — a misconfiguration, not a silent skip.

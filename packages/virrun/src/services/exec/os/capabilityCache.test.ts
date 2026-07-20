@@ -27,7 +27,11 @@ describe("capabilityCache", () => {
     writeCapabilityCache({ key, value: true });
     const content = readFileSync(join(getCacheHome(), CAPABILITY_CACHE_FILENAME), "utf8");
 
-    expect(createKeyedCacheSchema(z.boolean()).parse(JSON.parse(content))).toStrictEqual({ key, value: true });
+    expect(createKeyedCacheSchema(z.boolean()).parse(JSON.parse(content))).toStrictEqual({
+      key,
+      storedAtMs: expect.any(Number),
+      value: true,
+    });
     expect(readCapabilityCache(key)).toBe(true);
   });
 });
