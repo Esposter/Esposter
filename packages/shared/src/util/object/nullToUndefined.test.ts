@@ -5,6 +5,7 @@ describe(nullToUndefined, () => {
   test("converts a top-level null", () => {
     expect.hasAssertions();
 
+    // oxlint-disable-next-line typescript/no-confusing-void-expression -- NullToUndefined<null> resolves to undefined, not void
     expect(nullToUndefined(null)).toBeUndefined();
   });
 
