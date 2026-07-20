@@ -59,7 +59,7 @@ const validateFileRule = (fileValue: FileFieldValue) => {
                 const { publicUrl, sasUrl } = await $trpc.user.generateProfileImageUploadUrl.mutate();
                 await uploadFileToSas({
                   files: [file],
-                  generateUploadFileSasEntities: () => Promise.resolve([{ id: '', sasUrl }]),
+                  generateUploadFileSasEntities: async () => [{ id: '', sasUrl }],
                 });
                 modelValue = publicUrl;
               },

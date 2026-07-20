@@ -1,10 +1,10 @@
-import { MimeCategory } from "@/models/file/MimeCategory";
+import { MimeCategory, mimeCategorySchema } from "@/models/file/MimeCategory";
 import { createNameCheckSql } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { users } from "@/schema/users";
-import { createNormalizedStringSchema } from "@esposter/shared";
+import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -68,6 +68,7 @@ export const roomsInMessage = pgTable(
 export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
+  allowedMimeCategories: createUniqueArraySchema(mimeCategorySchema),
   maxFileSizeBytes: (schema) => schema.min(1),
   name: (schema) => createNormalizedStringSchema(ROOM_NAME_MAX_LENGTH, schema),
   slowmodeMs: (schema) => schema.min(1),

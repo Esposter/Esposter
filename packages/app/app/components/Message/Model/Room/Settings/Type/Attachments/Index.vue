@@ -14,7 +14,7 @@ const { room } = defineProps<AttachmentsProps>();
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { storeUpdateRoom } = roomStore;
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const maxFileSizeBytes = ref(room.maxFileSizeBytes);
 const allowedMimeCategories = ref([...room.allowedMimeCategories]);
 const maxFileSizeMegabytes = MAX_FILE_REQUEST_SIZE / MEGABYTE;
@@ -46,6 +46,7 @@ const save = async () => {
         storeUpdateRoom(snapshot);
       };
     },
+    key: room.id,
   });
 };
 </script>

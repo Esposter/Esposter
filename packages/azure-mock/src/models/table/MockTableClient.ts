@@ -88,7 +88,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     const filter = options?.queryOptions?.filter;
     // Azure Table Storage returns entities ordered by partitionKey then rowKey, not insertion order —
     // The reverse-ticked message rowKey design relies on that scan order to read newest-first.
-    const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()].sort(compareByCompositeKey);
+    const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()].toSorted(compareByCompositeKey);
     const predicate = filter ? createFilterPredicate(filter) : undefined;
     const resultTableEntities = predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities;
     return {

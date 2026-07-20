@@ -75,7 +75,7 @@ const isLoading = ref(false);
                     const { publicUrl, sasUrl } = await $trpc.room.generateProfileImageUploadUrl.mutate({ roomId });
                     await uploadFileToSas({
                       files: [file],
-                      generateUploadFileSasEntities: () => Promise.resolve([{ id: '', sasUrl }]),
+                      generateUploadFileSasEntities: async () => [{ id: '', sasUrl }],
                     });
                     modelValue = publicUrl;
                   },
