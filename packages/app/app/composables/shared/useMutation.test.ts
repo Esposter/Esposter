@@ -136,6 +136,7 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation, getIsPending, isPending } = useMutation();
+
     await expect(
       executeMutation(() => Promise.resolve(), {
         key,
@@ -153,6 +154,7 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation, getIsPending, isPending } = useMutation();
+
     await expect(
       executeMutation(() => Promise.reject(new Error("error")), {
         key,
@@ -170,6 +172,7 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation, getIsPending, isPending } = useMutation();
+
     await expect(
       executeMutation(() => Promise.resolve(), {
         applyOptimistic: () => {

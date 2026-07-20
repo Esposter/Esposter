@@ -31,7 +31,7 @@ export const useUploadFiles = () => {
     // Mirror the server chokepoint's platform-cap clamp so a room limit above the cap fails here, not at the SAS query.
     const maxFileSizeBytes = Math.min(room?.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     // Validate before the SAS query and before rendering metadata so a rejected file is surfaced loudly.
-    for (const file of newFiles) {
+    for (const file of newFiles)
       if (!validateFile(file.size, maxFileSizeBytes)) return;
       else if (room && !room.allowedMimeCategories.includes(getMimeCategory(file.type))) {
         createAlert(
@@ -40,7 +40,6 @@ export const useUploadFiles = () => {
         );
         return;
       }
-    }
 
     const roomId = currentRoomId.value;
     isFileLoading.value = true;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
+import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 
 import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
