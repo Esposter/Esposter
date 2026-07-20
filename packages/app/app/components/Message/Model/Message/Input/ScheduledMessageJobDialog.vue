@@ -22,23 +22,26 @@ const setDefaultScheduledAt = () => {
   scheduledAt.value = dayjs().add(1, "minute").toDate();
   minScheduledAt.value = new Date(scheduledAt.value);
 };
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic
 const scheduleJob = async (onComplete: () => void) => {
   const roomId = currentRoomId.value;
   if (roomId)
-    await executeMutation(() =>
-      isReminder.value
-        ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
-            roomId,
-            runAt: scheduledAt.value,
-            text: text.value,
-          })
-        : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-            message: marked.parse(text.value, { async: false }),
-            roomId,
-            runAt: scheduledAt.value,
-          }),
+    await executeMutation(
+      () =>
+        isReminder.value
+          ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+              roomId,
+              runAt: scheduledAt.value,
+              text: text.value,
+            })
+          : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+              message: marked.parse(text.value, { async: false }),
+              roomId,
+              runAt: scheduledAt.value,
+            }),
+      // A brand-new scheduled job has no id yet, so each gets a per-call symbol
+      { key: Symbol("scheduleJob") },
     );
   onComplete();
 };

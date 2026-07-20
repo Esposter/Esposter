@@ -4,7 +4,7 @@ import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob
 
 export const useCancelScheduledMessageJob = () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   const scheduledMessageJobStore = useScheduledMessageJobStore();
   const { removeScheduledMessageJob } = scheduledMessageJobStore;
   const { count, items } = storeToRefs(scheduledMessageJobStore);
@@ -19,6 +19,7 @@ export const useCancelScheduledMessageJob = () => {
           count.value = countSnapshot;
         };
       },
+      key: id,
     });
   };
 };

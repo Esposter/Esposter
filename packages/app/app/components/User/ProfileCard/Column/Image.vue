@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
+import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 
-import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
+import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
+import { uploadFileToSas } from "@/services/file/uploadFileToSas";
+import { validateFile } from "@/services/file/validateFile";
 import { takeOne, withFinalizerAsync } from "@esposter/shared";
 
 export interface UserProfileCardColumnImageProps {
@@ -12,9 +15,18 @@ export interface UserProfileCardColumnImageProps {
 
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnImageProps>();
-const rules = useVRules();
 const { $trpc } = useNuxtApp();
 const isLoading = ref(false);
+const validateFileRule = (fileValue: FileFieldValue) => {
+  if (!fileValue) return true;
+
+  for (const file of Array.isArray(fileValue) ? fileValue : [fileValue]) {
+    const result = validateFile(file.size);
+    if (!result.isValid) return result.message;
+  }
+
+  return true;
+};
 </script>
 
 <template>
@@ -26,7 +38,7 @@ const isLoading = ref(false);
       </v-avatar>
       <v-file-input
         :disabled="isLoading"
-        :rules="[rules.requireAtMostMaxFileSize()]"
+        :rules="[validateFileRule]"
         accept="image/*"
         prepend-icon=""
         prepend-inner-icon="mdi-upload"
@@ -40,12 +52,16 @@ const isLoading = ref(false);
             if (!files) return;
 
             const file = Array.isArray(files) ? takeOne(files) : files;
-            isLoading = true;
+            if (!validateFile(file.size).isValid) return;
 
+            isLoading = true;
             await withFinalizerAsync(
               async () => {
                 const { publicUrl, sasUrl } = await $trpc.user.generateProfileImageUploadUrl.mutate();
-                await uploadBlocks(file, sasUrl);
+                await uploadFileToSas({
+                  files: [file],
+                  generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
+                });
                 modelValue = publicUrl;
               },
               () => {

@@ -11,7 +11,7 @@ interface AppNotificationBellItemProps {
 
 const { notification } = defineProps<AppNotificationBellItemProps>();
 const notificationStore = useNotificationStore();
-const { deleteNotification } = notificationStore;
+const { consumeNotificationAction, deleteNotification } = notificationStore;
 </script>
 
 <template>
@@ -23,7 +23,11 @@ const { deleteNotification } = notificationStore;
       <div pt-1 flex flex-col gap-1 items-start>
         <span v-if="notification.message">{{ notification.message }}</span>
         <span op-medium-emphasis>{{ dayjs(notification.createdAt).fromNow() }}</span>
-        <AppNotificationActionButton v-if="notification.action" :action="notification.action" />
+        <AppNotificationActionButton
+          v-if="notification.action"
+          :action="notification.action"
+          @complete="consumeNotificationAction(notification.id)"
+        />
       </div>
     </template>
     <template #append>

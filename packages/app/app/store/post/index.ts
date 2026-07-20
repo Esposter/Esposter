@@ -19,12 +19,14 @@ export const usePostStore = defineStore("post", () => {
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Post);
 
-  const executeCreatePostMutation = useMutation();
-  const executeUpdatePostMutation = useMutation();
-  const executeDeletePostMutation = useMutation();
+  const { executeMutation: executeCreatePostMutation } = useMutation();
+  const { executeMutation: executeUpdatePostMutation } = useMutation();
+  const { executeMutation: executeDeletePostMutation } = useMutation();
   // Server-generated post — non-optimistic, applied in onSuccess
   const createPost = async (input: CreatePostInput) => {
     await executeCreatePostMutation(() => $trpc.post.createPost.mutate(input), {
+      // Server-generated post with no id yet, so each create gets a per-call symbol
+      key: Symbol("createPost"),
       onSuccess: (newPost) => {
         storeCreatePost(newPost);
       },
@@ -39,6 +41,7 @@ export const usePostStore = defineStore("post", () => {
           items.value = snapshot;
         };
       },
+      key: input.id,
       onSuccess: (updatedPost) => {
         storeUpdatePost(updatedPost);
       },
@@ -53,6 +56,7 @@ export const usePostStore = defineStore("post", () => {
           items.value = snapshot;
         };
       },
+      key: input,
     });
   };
 

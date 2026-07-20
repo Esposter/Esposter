@@ -6,7 +6,7 @@ import { useBlueprintStore } from "@/store/resource/blueprint";
 import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const executeMutation = useMutation();
+const { executeMutation, isPending: isDeployPending } = useMutation();
 const blueprintStore = useBlueprintStore();
 const { blueprint, resource } = storeToRefs(blueprintStore);
 const { createErrorNotification } = useNotificationStore();
@@ -29,6 +29,7 @@ const deploy = async () => {
   await executeMutation(
     () => $trpc.blueprint.deployBlueprint.mutate({ id: current.id, parameterValues: parameterValues.value }),
     {
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: (newDeployments) => {
         deployments.value = newDeployments;
@@ -64,7 +65,7 @@ const deploy = async () => {
             :key="deployed.id"
             :subtitle="key"
             :title="deployed.name"
-            @click="navigateTo(RoutePath.Resource(deployed.id))"
+            :to="RoutePath.Resource(deployed.id)"
           />
         </v-list>
       </v-card-text>
@@ -72,7 +73,10 @@ const deploy = async () => {
         <v-spacer />
         <template v-if="deployments.length === 0">
           <StyledButton :button-props="{ text: 'Cancel', variant: 'text' }" @click="isOpen = false" />
-          <StyledButton :button-props="{ text: 'Deploy' }" @click="deploy" />
+          <StyledButton
+            :button-props="{ disabled: isDeployPending, loading: isDeployPending, text: 'Deploy' }"
+            @click="deploy"
+          />
         </template>
         <StyledButton v-else :button-props="{ text: 'Done' }" @click="isOpen = false" />
       </v-card-actions>

@@ -52,8 +52,8 @@ const selectedDomIndex = computed(() => {
         role="option"
         :subtitle
         @click="
-          () => {
-            navigateTo(to);
+          async () => {
+            await navigateTo(to);
             emit('select');
           }
         "
@@ -67,8 +67,8 @@ const selectedDomIndex = computed(() => {
             text="Create"
             :button-props="{ size: 'small', variant: 'text' }"
             @click.stop="
-              () => {
-                navigateTo(createTo);
+              async () => {
+                await navigateTo(createTo);
                 emit('select');
               }
             "
@@ -85,8 +85,8 @@ const selectedDomIndex = computed(() => {
       role="option"
       title="See all results"
       @click="
-        () => {
-          navigateTo(seeAllTo);
+        async () => {
+          await navigateTo(seeAllTo);
           emit('select');
         }
       "

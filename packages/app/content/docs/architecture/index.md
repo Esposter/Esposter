@@ -25,4 +25,5 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Destructive confirmation](/docs/architecture/destructive-confirmation)                   | One shared delete dialog — StyledDeleteFormDialog + opt-in type-the-name guard           |
 | [Singleton dialogs](/docs/architecture/singleton-dialogs)                                 | Store-driven singleton dialogs — one mounted dialog per feature, never one per list item |
 | [Navigation](/docs/architecture/navigation)                                               | NuxtLink/navigateTo for every link — never a raw anchor — and instant docs routing       |
+| [No polling](/docs/architecture/no-polling)                                               | Polling banned repo-wide — every wait is event-driven or awaits a completion handle      |
 | [Search](/docs/architecture/search)                                                       | One search stack — StyledSearchDialog palettes + useAutoSearch/useCursorSearcher         |

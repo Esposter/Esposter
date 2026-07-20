@@ -15,7 +15,7 @@ Today an Event Grid delivery that exhausts retries is silently dropped — a pus
 
 1. A `deadletter` container in the existing storage account (no new resource cost — reuse, per the cheapest-viable rule).
 2. `deadLetterDestination` on each Event Grid subscription in Pulumi, plus a tightened retry policy (e.g. 10 attempts / 1h TTL — failures should land in the container while still relevant).
-3. **Replay**: a `packages/shared-node` script that lists dead-letter blobs, re-publishes each event via the existing publisher client, and archives the blob. Script-first, no UI (same posture as [search index tooling](/docs/proposals/esbabbler/search-index-tooling)).
+3. **Replay**: a `packages/shared-node` script that lists dead-letter blobs, re-publishes each event via the existing publisher client, and archives the blob. Script-first, no UI (same posture as [search index tooling](/docs/esbabbler/search-index-tooling)).
 4. A storage lifecycle rule expiring dead-letter blobs after 30 days.
 
 ## Key files

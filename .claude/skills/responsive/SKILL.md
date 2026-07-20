@@ -35,7 +35,7 @@ const toolbarItems = computed<Item[]>(() => [
     @click="onClick"
   />
   <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
-  <StyledTooltipIconButton icon="mdi-close" text="Close" @click="navigateTo(closeTo)" />
+  <StyledTooltipIconButton icon="mdi-close" text="Close" :to="closeTo" />
 </template>
 ```
 

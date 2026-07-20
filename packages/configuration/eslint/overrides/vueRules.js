@@ -50,13 +50,6 @@ export default {
       selector:
         ":matches(VOnExpression, ArrowFunctionExpression > BlockStatement, FunctionExpression > BlockStatement) > ExpressionStatement:first-child > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/], ArrowFunctionExpression > CallExpression[callee.property.name=/^(preventDefault|stopPropagation)$/]",
     },
-    {
-      // Vuetify's router integration is not Nuxt-native navigation and misbehaves in Nuxt — one pathway only.
-      // Covers both the bound (`:to="x"`) and static (`to="..."`) forms.
-      message: 'Use @click="navigateTo(...)" — :to is only allowed on NuxtLink/NuxtInvisibleLink/Teleport.',
-      selector:
-        "VElement[rawName!=/^(NuxtLink|NuxtInvisibleLink|Teleport)$/] > VStartTag > :matches(VAttribute[directive=true][key.argument.name='to'], VAttribute[directive=false][key.name='to'])",
-    },
   ],
   "vue/no-unused-vars": "off",
   "vue/no-v-html": "off",

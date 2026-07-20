@@ -14,7 +14,7 @@ import { marked } from "marked";
 
 export const useExecuteSlashCommand = () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   const roomStore = useRoomStore();
   const { storeUpdateRoom } = roomStore;
   const { currentRoom, currentRoomId } = storeToRefs(roomStore);
@@ -77,6 +77,7 @@ export const useExecuteSlashCommand = () => {
               storeUpdateRoom({ id: roomId, topic: oldTopic });
             };
           },
+          key: roomId,
         });
         break;
       }

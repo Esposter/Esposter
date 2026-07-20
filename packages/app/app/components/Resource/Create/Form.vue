@@ -14,8 +14,8 @@ interface ResourceCreateFormProps {
 const { type } = defineProps<ResourceCreateFormProps>();
 const { $trpc } = useNuxtApp();
 const createResource = useCreateResource();
-const executeMutation = useMutation();
-const executeSaveMutation = useMutation();
+const { executeMutation } = useMutation();
+const { executeMutation: executeSaveMutation } = useMutation();
 const { createErrorNotification } = useNotificationStore();
 const name = ref("");
 const isValid = ref(false);
@@ -34,6 +34,8 @@ const submit = async () => {
 
   isSubmitting.value = true;
   await executeMutation(() => createResource(type, name.value), {
+    // A brand-new resource has no id yet, so each create gets a per-call symbol
+    key: Symbol("createResource"),
     onError: createErrorNotification,
     onSuccess: async (resource) => {
       const sheetResourceValue = sheetResource.value;
@@ -51,6 +53,7 @@ const submit = async () => {
             id: resource.id,
           }),
         {
+          key: resource.id,
           onError: createErrorNotification,
           onSuccess: () => {
             isSaved = true;
@@ -93,7 +96,7 @@ const submit = async () => {
             @parse="name ||= $event"
           />
           <div mt-4 flex gap-2 justify-end>
-            <v-btn variant="text" @click="navigateTo(RoutePath.ResourcesCreate)">Cancel</v-btn>
+            <v-btn :to="RoutePath.ResourcesCreate" variant="text">Cancel</v-btn>
             <StyledButton
               type="submit"
               :button-props="{ disabled: !isValid || Boolean(fileError) || isFileParsing, loading: isSubmitting }"

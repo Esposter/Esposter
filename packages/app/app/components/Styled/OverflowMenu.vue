@@ -23,10 +23,11 @@ const { icon = "mdi-dots-vertical", items, text = "More commands" } = defineProp
     </template>
     <v-list density="compact">
       <v-list-item
-        v-for="{ active, color, icon: itemIcon, onClick, title } of items"
+        v-for="{ active, color, disabled, icon: itemIcon, onClick, title } of items"
         :key="title"
         :active
         :base-color="color"
+        :disabled
         :prepend-icon="itemIcon"
         :title
         @click="onClick"

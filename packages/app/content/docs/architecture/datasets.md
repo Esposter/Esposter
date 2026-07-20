@@ -25,6 +25,7 @@ interface Dataset {
 }
 
 enum DatasetProviderType {
+  ProgramStatus = "ProgramStatus",
   Sheet = "Sheet",
   SurveyResponses = "SurveyResponses",
 }
@@ -54,12 +55,14 @@ flowchart LR
   RD --> MAP["DatasetProviderMap[type]"]
   MAP --> SR["readSurveyResponsesDataset"] --> AT[("SurveyResponseEntity<br/>Azure Table")]
   MAP --> FR["readSheetDataset"] --> BLOB[("Sheet content blob")]
+  MAP --> PR["readProgramStatusDataset"] --> PT[("ProgramParticipantEntity<br/>Azure Table")]
 ```
 
 Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `DatasetProviderType` → provider function, one provider per folder. Each provider owns its auth check and its column/row derivation:
 
 - **`readSurveyResponsesDataset`** — columns from the survey model's questions (name + question-type → `ColumnType` mapping); rows flattened from `SurveyResponseEntity` JSON in Azure Table, non-primitive answers JSON-stringified; auth via resource ownership.
 - **`readSheetDataset`** — reads the Sheet resource's content blob and converts `content.data` via `dataSourceToDataset`; auth via resource ownership.
+- **`readProgramStatusDataset`** — participant/addedAt/responded rows from `ProgramParticipantEntity` in Azure Table, keyed by the non-secret `publicId` (never the token — dashboards bake dataset snapshots into public publishes); auth via resource ownership.
 
 ## Rules
 

@@ -9,9 +9,9 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeSendFriendRequestMutation = useMutation();
-  const executeAcceptFriendRequestMutation = useMutation();
-  const executeDeclineFriendRequestMutation = useMutation();
+  const { executeMutation: executeSendFriendRequestMutation } = useMutation();
+  const { executeMutation: executeAcceptFriendRequestMutation } = useMutation();
+  const { executeMutation: executeDeclineFriendRequestMutation } = useMutation();
   const friendStore = useFriendStore();
   const { storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequests = ref<FriendRequestWithRelations[]>([]);
@@ -58,6 +58,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   // Temp-id placeholder would race the echo's server-id row into a transient duplicate.
   const sendFriendRequest = async (receiverId: string) => {
     await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
+      // Keyed by receiver so concurrent requests to different users never stale-drop each other
+      key: receiverId,
       // The onSendFriendRequest echo covers the caller for a newly created request, but the already-exists
       // Conflict path returns the existing row WITHOUT emitting — so this write is the only one on that path.
       // It is idempotent: storeCreateFriendRequest dedups by id.
@@ -76,6 +78,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
           storeDeleteFriend(sender.id);
         };
       },
+      key: sender.id,
     });
   };
   const declineFriendRequest = async (senderId: string) => {
@@ -87,6 +90,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
           friendRequests.value = previousFriendRequests;
         };
       },
+      key: senderId,
     });
   };
 

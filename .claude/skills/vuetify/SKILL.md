@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — StyledButton for primary actions, @click navigateTo navigation (Vuetify :to lint-banned), v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, v-btn tooltips, mergeProps for nested activators, typed SelectItemCategoryDefinition for selects/lists/menus (clearable banned), enum-value-as-display-title, dialog form validity (StyledFormDialog vs StyledEditFormDialog), StyledList, useVRules form validation, StyledAvatar, CSS custom properties over SASS variables, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
+description: Esposter Vuetify 4 conventions — StyledButton for primary actions, :to for plain navigation with @click navigateTo for logic-then-navigate, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, v-btn tooltips, mergeProps for nested activators, typed SelectItemCategoryDefinition for selects/lists/menus (clearable banned), enum-value-as-display-title, dialog form validity (StyledFormDialog vs StyledEditFormDialog), StyledList, useVRules form validation, StyledAvatar, CSS custom properties over SASS variables, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
 ---
 
 # Vuetify Conventions
@@ -9,7 +9,7 @@ description: Esposter Vuetify 4 conventions — StyledButton for primary actions
 
 Use `StyledButton` for every confirm / complete / primary call-to-action button (create, save, accept, publish, request, start). **Never use a raw `color="primary"` `v-btn`** — the global `VBtn` default has a transparent background, so a primary-coloured button reads badly on the app's transparent / `v-main` base; `StyledButton` renders the midnight-bloom gradient + white text instead.
 
-- Pass Vuetify props through `:button-props="{ ... }"` (camelCase — e.g. `{ prependIcon: 'mdi-plus', disabled: !isValid, loading: isSubmitting }`). For navigation put `@click="navigateTo(RoutePath.X)"` on the `<StyledButton>` (it falls through to the root `v-btn`) — never a `to` inside `buttonProps`.
+- Pass Vuetify props through `:button-props="{ ... }"` (camelCase — e.g. `{ prependIcon: 'mdi-plus', disabled: !isValid, loading: isSubmitting }`). For navigation put `:to="RoutePath.X"` on the `<StyledButton>` (it falls through to the root `v-btn`) — never a `to` inside `buttonProps`.
 - `type` is a **native attribute, not a typed `VBtn` prop** — put `type="submit"` directly on `<StyledButton>` (it falls through to the root `v-btn`), never inside `buttonProps` (which fails typecheck).
 - `@click` and other native listeners also fall through to the root `v-btn`.
 - Destructive confirms stay a `color="error"` `v-btn` (error red is visible on the transparent base) — `StyledButton` is for positive/primary actions only.
@@ -18,15 +18,14 @@ Use `StyledButton` for every confirm / complete / primary call-to-action button 
 
 Vuetify's `icon` prop on `v-btn` doesn't just place an icon — it switches the button to the icon-button variant: **circular, equal width/height, no min-width**. `StyledTooltipIconButton` passes `:icon` by default, so converting a regular `<v-tooltip>` + `<v-btn>` (icon as a `<v-icon>` child, rectangular shape) to it silently turns the button into a circle. When the rectangular default-button shape is intended, pass `:is-icon-button="false"` — the component then renders a regular `v-btn` with the icon as a child. `rounded`/`tile` in `buttonProps` cannot restore the rectangle (they only change corners, not the forced square dimensions).
 
-## Navigation — `@click="navigateTo(...)"`, Never Vuetify `:to`
+## Navigation — `:to` for Plain Links, `@click="navigateTo(...)"` for Logic-Then-Navigate
 
-Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) **must not** use `:to`/`to` — their router integration bypasses Nuxt-level navigation and misbehaves in Nuxt, so it is banned by lint (`vue/no-restricted-syntax`). Navigate them with an inline `@click="navigateTo(RoutePath.X)"` handler instead:
+Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) with a plain destination take `:to` directly — it renders a real anchor, so cmd/ctrl/middle-click open-in-new-tab works. Use an `@click="navigateTo(...)"` handler only when the action runs logic before navigating or computes the target at click time:
 
-- `v-card` / `v-list-item` lose their link styling (pointer, hover overlay) when `:to` is dropped — add the boolean `link` prop to keep it. `v-btn`/`v-tab` need nothing.
-- For wrapper components put `@click` directly on the wrapper — `StyledButton` / `StyledTooltipIconButton` fall the listener through to the root `v-btn`. Never pass `to` inside `:button-props`.
+- For wrapper components put `:to`/`@click` directly on the wrapper — `StyledButton` / `StyledTooltipIconButton` fall them through to the root `v-btn`. Never pass `to` inside `:button-props`.
 - Route targets always come from `RoutePath` (`@esposter/shared`), never string-built.
 
-Declarative links go on a Nuxt-native link component (`NuxtLink`/`NuxtInvisibleLink`) — `:to` is allowed there (and on `<Teleport>`) only. See the **routing** skill, which owns link choice, the raw-`<a>` ban, and imperative navigation.
+See the **routing** skill, which owns link choice, the raw-`<a>` ban, and imperative navigation.
 
 ## Auto-Imported Composables — `v` Prefix
 

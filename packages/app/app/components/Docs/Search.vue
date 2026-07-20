@@ -61,8 +61,8 @@ const results = computed(() => {
           :subtitle="result.subtitle"
           :title="result.title"
           @click="
-            () => {
-              navigateTo(result.id);
+            async () => {
+              await navigateTo(result.id);
               isOpen = false;
             }
           "

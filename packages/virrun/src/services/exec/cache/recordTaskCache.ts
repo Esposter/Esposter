@@ -9,6 +9,7 @@ import {
   TASK_CACHE_PAYLOAD_DIRECTORY_NAME,
   TASK_CACHE_TEMP_PREFIX,
 } from "@/services/exec/cache/constants";
+import { pruneStaleTaskCacheEntries } from "@/services/exec/cache/pruneStaleTaskCacheEntries";
 import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
 import { applyFlushPlan } from "@/services/exec/snapshot/applyFlushPlan";
 import { reapStaleTemps } from "@/services/exec/snapshot/reapStaleTemps";
@@ -33,6 +34,9 @@ export const recordTaskCache = (key: string, upperDir: string, plan: readonly Fl
     // Reclaim any hard-killed recorder's pid-tagged temp stranded here (no other sweep touches the tasks dir), then
     // Mint this run's own — pid-tagged so a concurrent recorder's live temp is never mistaken for a corpse.
     reapStaleTemps(tasksRoot, [TASK_CACHE_TEMP_PREFIX]);
+    // Age-prune published entries beside the temp reap — the tasks dir has no superseded-entry sweep, so recency is
+    // The only bound. Detached and best-effort; a torn removal is re-swept next record and never aborts this run.
+    pruneStaleTaskCacheEntries(tasksRoot);
     tempDir = mkdtempSync(join(tasksRoot, withPidTempPrefix(TASK_CACHE_TEMP_PREFIX)));
     const payloadDir = join(tempDir, TASK_CACHE_PAYLOAD_DIRECTORY_NAME);
     mkdirSync(payloadDir, { recursive: true });

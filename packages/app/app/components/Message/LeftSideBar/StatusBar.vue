@@ -20,13 +20,12 @@ const callRoute = computed(() =>
     <TransitionFade>
       <v-list-item
         v-if="isInCall"
-        link
+        :to="callRoute"
         prepend-icon="mdi-phone"
         density="compact"
         base-color="success"
         mb-1
         rd
-        @click="navigateTo(callRoute)"
       >
         <template #title>
           <span text-body-small>In a call{{ callRoomName ? ` · ${callRoomName}` : "" }}</span>

@@ -26,11 +26,10 @@ const categories = computed(() =>
       <v-list-item
         v-for="section of categorySections"
         :key="section.path"
-        link
         :active="route.path === section.path"
         :prepend-icon="getSectionIcon(section.path)"
         :title="section.title"
-        @click="navigateTo(section.path)"
+        :to="section.path"
       />
     </template>
   </v-list>

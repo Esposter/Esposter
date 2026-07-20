@@ -14,7 +14,7 @@ const programStore = useProgramStore();
 const { loadContent } = programStore;
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
-const executeGenerateMutation = useMutation();
+const { executeMutation: executeGenerateMutation, isPending: isGeneratePending } = useMutation();
 const id = computed(() => getRouteParamString(route.params.id));
 const statusRows = ref<ProgramStatusRow[]>([]);
 const isLoading = ref(true);
@@ -31,6 +31,7 @@ const readStatus = async () => {
 };
 const generateParticipants = async () => {
   await executeGenerateMutation(() => $trpc.program.generateProgramParticipants.mutate({ id: id.value }), {
+    key: id.value,
     onError: createErrorNotification,
     onSuccess: async (participants) => {
       createNotification({ severity: "success", title: `${participants.length} participants ready` });
@@ -53,7 +54,14 @@ onMounted(async () => {
       <span text-h6>Status</span>
       <v-spacer />
       <span op-medium-emphasis>{{ respondedCount }} of {{ statusRows.length }} responded</span>
-      <StyledButton :button-props="{ prependIcon: 'mdi-ticket-confirmation' }" @click="generateParticipants">
+      <StyledButton
+        :button-props="{
+          disabled: isGeneratePending,
+          loading: isGeneratePending,
+          prependIcon: 'mdi-ticket-confirmation',
+        }"
+        @click="generateParticipants"
+      >
         Generate participants
       </StyledButton>
     </div>

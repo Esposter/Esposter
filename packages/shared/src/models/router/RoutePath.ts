@@ -24,6 +24,7 @@ export const RoutePath: {
   readonly PostUpdate: (id: string) => string;
   readonly PrivacyPolicy: "/privacy-policy";
   readonly Resource: (id: string) => string;
+  readonly ResourceItems: (id: string) => string;
   readonly Resources: "/resources";
   readonly ResourcesAll: "/resources/all";
   readonly ResourcesCreate: "/resources/create";
@@ -56,6 +57,7 @@ export const RoutePath: {
   PostUpdate: (id: string) => `/post/update/${id}`,
   PrivacyPolicy: "/privacy-policy",
   Resource: (id: string) => `/resources/${id}`,
+  ResourceItems: (id: string) => `/resources/${id}/items`,
   Resources: "/resources",
   ResourcesAll: "/resources/all",
   ResourcesCreate: "/resources/create",

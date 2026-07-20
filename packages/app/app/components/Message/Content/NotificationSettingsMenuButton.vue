@@ -12,7 +12,7 @@ const { setMyUserToRoom } = userToRoomStore;
 const { myUserToRoomMap } = storeToRefs(userToRoomStore);
 const notificationType = computed(() => myUserToRoomMap.value?.notificationType ?? NotificationType.DirectMessage);
 const notificationTypeLabels = Object.entries(NotificationTypeLabelMap);
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const updateNotificationType = async (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
   const userToRoom = myUserToRoomMap.value;
@@ -27,6 +27,7 @@ const updateNotificationType = async (newNotificationType: NotificationType) => 
           setMyUserToRoom(roomId, { ...userToRoom, notificationType: oldNotificationType });
         };
       },
+      key: roomId,
     },
   );
 };

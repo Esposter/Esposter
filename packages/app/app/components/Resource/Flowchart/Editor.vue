@@ -64,7 +64,7 @@ onMounted(async () => {
       </v-sheet>
     </Panel>
     <FlowchartEditorPanel />
-    <FlowchartEditorDropzoneBackground />
+    <FlowchartEditorNodeDropzoneBackground />
   </VueFlow>
 </template>
 

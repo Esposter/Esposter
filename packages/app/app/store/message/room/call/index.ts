@@ -17,7 +17,7 @@ import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   const roomStore = useRoomStore();
   const session = authClient.useSession();
   const knockerStore = useKnockerStore();
@@ -78,6 +78,8 @@ export const useCallStore = defineStore("message/room/call", () => {
             setHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
           };
         },
+        // Keyed per participant so a moderator lowering several hands never stale-drops a rollback
+        key: participantSessionId,
       },
     );
   };

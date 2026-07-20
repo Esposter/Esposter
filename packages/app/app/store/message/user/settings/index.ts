@@ -5,7 +5,7 @@ import { useMutation } from "@/composables/shared/useMutation";
 
 export const useUserSettingsStore = defineStore("message/user/settings", () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   const userSettings = ref<UserSettingsInMessage>();
   const readUserSettings = async () => {
     userSettings.value = await $trpc.user.readUserSettings.query();
@@ -21,6 +21,8 @@ export const useUserSettingsStore = defineStore("message/user/settings", () => {
           userSettings.value = snapshot;
         };
       },
+      // A singleton per-user settings record, so a stable target name keys its supersede-latest saves
+      key: "userSettings",
       onSuccess: (updatedUserSettings) => {
         userSettings.value = updatedUserSettings;
       },

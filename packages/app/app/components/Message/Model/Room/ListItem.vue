@@ -30,7 +30,7 @@ const mentionCount = computed(() => (isActive.value ? 0 : (getMyUserToRoom(room.
 
 <template>
   <v-hover #default="{ isHovering, props }">
-    <v-list-item :="props" :active="isActive" :value="room.id" @click="navigateTo(RoutePath.Messages(room.id))">
+    <v-list-item :="props" :active="isActive" :to="RoutePath.Messages(room.id)" :value="room.id">
       <template #prepend>
         <StyledAvatar :image="room.image" :name="roomName" />
       </template>

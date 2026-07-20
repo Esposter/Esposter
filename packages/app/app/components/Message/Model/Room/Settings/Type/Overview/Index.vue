@@ -14,7 +14,7 @@ const { room } = defineProps<OverviewProps>();
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { storeUpdateRoom } = roomStore;
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const { readRoomCategories } = useReadRoomCategories();
 await readRoomCategories();
 
@@ -58,6 +58,7 @@ const save = async () => {
         storeUpdateRoom(snapshot);
       };
     },
+    key: room.id,
   });
 };
 </script>

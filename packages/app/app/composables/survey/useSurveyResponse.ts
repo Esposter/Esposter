@@ -7,13 +7,16 @@ import { getResultAsync, noop } from "@esposter/shared";
 export const useSurveyResponse = (id: string, participantToken: string) => {
   const { $trpc } = useNuxtApp();
   let surveyResponse: SurveyResponseEntity | undefined;
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess
   const saveSurveyResponse = async (survey: Model) => {
     const responseModel = survey.data;
     const currentSurveyResponse = surveyResponse;
     if (!currentSurveyResponse) {
       const newSurveyResponseId = crypto.randomUUID();
+      // Single-flight: until the first save's onSuccess records the created row, every save takes this
+      // Branch, and a second concurrent create would write a duplicate response with a fresh rowKey.
+      // The dropped save's answers are not lost — the next autosave carries the full model
       await executeMutation(
         () =>
           $trpc.survey.createSurveyResponse.mutate({
@@ -24,6 +27,8 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
             rowKey: newSurveyResponseId,
           }),
         {
+          isExclusive: true,
+          key: id,
           onSuccess: (newSurveyResponse) => {
             surveyResponse = newSurveyResponse;
             localStorage.setItem(LocalStorageKey.SurveyResponseId(id, participantToken), newSurveyResponse.rowKey);
@@ -44,6 +49,8 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
           rowKey: currentSurveyResponse.rowKey,
         }),
       {
+        // Keyed per response row — repeated saves of the same response are genuine latest-wins
+        key: currentSurveyResponse.rowKey,
         onSuccess: (updatedSurveyResponse) => {
           surveyResponse = updatedSurveyResponse;
         },

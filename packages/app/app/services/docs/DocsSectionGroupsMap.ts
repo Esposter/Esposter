@@ -31,6 +31,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "scheduled-messages",
       "drafts-and-sent",
       "thread-follows",
+      "file-media",
     ],
     "Members & profiles": [
       "friends-and-dms",
@@ -42,7 +43,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     ],
     Moderation: ["moderation", "automod-actions", "moderator-notes", "rbac"],
     Calls: ["voice-video", "push-to-talk", "calls"],
-    Infrastructure: ["push-notifications", "offline-cache"],
+    Infrastructure: ["push-notifications", "offline-cache", "search-index-tooling"],
   },
   platform: {
     "Explorer & shell": [
@@ -52,6 +53,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "resource-page-parity",
       "share-to-esbabbler",
       "notifications",
+      "todolist-due-reminders",
       "global-search",
       "global-search-relevance",
       "favorites-and-recents",
@@ -89,7 +91,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
   },
   virrun: {
     Core: ["architecture", "orchestrator-api", "execution-backends", "configuration"],
-    Performance: ["cache", "task-cache", "snapshot-and-fork", "write-back", "wsl-source-mirror"],
+    Performance: ["cache", "task-cache", "task-cache-eviction", "snapshot-and-fork", "write-back", "wsl-source-mirror"],
     Guarantees: ["correctness", "benchmarking"],
     Background: ["adoption", "prior-art"],
   },

@@ -36,11 +36,7 @@ const items = computed(() => {
 <template>
   <v-breadcrumbs :items p-0>
     <template #item="{ item }">
-      <v-breadcrumbs-item
-        :class="item.to && !item.disabled ? 'cursor-pointer' : undefined"
-        :disabled="item.disabled"
-        @click="item.to && !item.disabled && navigateTo(item.to)"
-      >
+      <v-breadcrumbs-item :disabled="item.disabled" :to="item.to">
         {{ item.title }}
       </v-breadcrumbs-item>
     </template>

@@ -33,7 +33,7 @@ const isDirty = computed(
     formData.value.action !== baseline.value.action ||
     (isTimeout.value && formData.value.timeoutDurationMs !== baseline.value.timeoutDurationMs),
 );
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const saveFilter = async () => {
   await executeMutation(
     () =>
@@ -51,6 +51,7 @@ const saveFilter = async () => {
           baseline.value = previousBaseline;
         };
       },
+      key: roomId,
       onSuccess: (updatedFilter) => {
         baseline.value = getWordFilterFormData(updatedFilter);
         sync();

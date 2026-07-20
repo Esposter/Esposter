@@ -23,13 +23,14 @@ const excludedUserIds = computed(() => {
   userIds.push(...(directMessageParticipantsMap.value.get(roomId) ?? []).map(({ id }) => id));
   return userIds;
 });
-const executeMutation = useMutation();
-const createDirectMessageParticipants = async (onComplete: () => void) => {
+const { executeMutation } = useMutation();
+const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boolean) => void) => {
   const previousParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
   const existingParticipantIds = new Set(previousParticipants.map(({ id }) => id));
   const newParticipants = friends.value.filter(
     ({ id }) => selectedUserIds.value.includes(id) && !existingParticipantIds.has(id),
   );
+  let isSuccessful = false;
   await executeMutation(
     () => $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds: selectedUserIds.value }),
     {
@@ -39,13 +40,16 @@ const createDirectMessageParticipants = async (onComplete: () => void) => {
           directMessageParticipantsMap.value.set(roomId, previousParticipants);
         };
       },
+      key: roomId,
       onSuccess: () => {
+        isSuccessful = true;
         selectedUserIds.value = [];
         friendPicker.value?.reset();
       },
     },
   );
-  onComplete();
+  // A failed add keeps the dialog open with the selection intact so the user can retry
+  onComplete(isSuccessful);
 };
 </script>
 

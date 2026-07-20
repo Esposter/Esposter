@@ -25,14 +25,16 @@ export const useCommentStore = defineStore("post/comment", () => {
     ...restOperationData
   } = createOperationData(items, ["id"], DerivedDatabaseEntityType.Comment);
 
-  const executeCreateCommentMutation = useMutation();
-  const executeUpdateCommentMutation = useMutation();
-  const executeDeleteCommentMutation = useMutation();
+  const { executeMutation: executeCreateCommentMutation } = useMutation();
+  const { executeMutation: executeUpdateCommentMutation } = useMutation();
+  const { executeMutation: executeDeleteCommentMutation } = useMutation();
   // Server-generated comment — non-optimistic, applied in onSuccess
   const createComment = async (input: CreateCommentInput) => {
     if (!currentPost.value || EMPTY_TEXT_REGEX.test(input.description)) return;
 
     await executeCreateCommentMutation(() => $trpc.post.createComment.mutate(input), {
+      // Server-generated comment with no id yet, so each create gets a per-call symbol
+      key: Symbol("createComment"),
       onSuccess: (newComment) => {
         if (!currentPost.value) return;
         storeCreateComment(newComment);
@@ -49,6 +51,7 @@ export const useCommentStore = defineStore("post/comment", () => {
           items.value = snapshot;
         };
       },
+      key: input.id,
       onSuccess: (updatedComment) => {
         storeUpdateComment(updatedComment);
       },
@@ -68,6 +71,7 @@ export const useCommentStore = defineStore("post/comment", () => {
           if (currentPost.value) currentPost.value.noComments += 1;
         };
       },
+      key: input,
     });
   };
 

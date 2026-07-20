@@ -43,9 +43,9 @@ const headers = [
       <template #[`item.actions`]="{ item }">
         <div flex gap-1 justify-end>
           <StyledTooltipIconButton
+            :to="{ path: RoutePath.View(resource.type, resource.id), query: { version: item.version } }"
             icon="mdi-eye-outline"
             text="View version"
-            @click="navigateTo({ path: RoutePath.View(resource.type, resource.id), query: { version: item.version } })"
           />
           <StyledTooltipIconButton
             icon="mdi-restore"
