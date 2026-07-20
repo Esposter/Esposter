@@ -9,7 +9,7 @@ description: Esposter Vuetify 4 conventions — StyledButton for primary actions
 
 Use `StyledButton` for every confirm / complete / primary call-to-action button (create, save, accept, publish, request, start). **Never use a raw `color="primary"` `v-btn`** — the global `VBtn` default has a transparent background, so a primary-coloured button reads badly on the app's transparent / `v-main` base; `StyledButton` renders the midnight-bloom gradient + white text instead.
 
-- Pass Vuetify props through `:button-props="{ ... }"` (camelCase — e.g. `{ prependIcon: 'mdi-plus', disabled: !isValid, loading: isSubmitting }`). For navigation put `@click="navigateTo(RoutePath.X)"` on the `<StyledButton>` (it falls through to the root `v-btn`) — never a `to` inside `buttonProps`.
+- Pass Vuetify props through `:button-props="{ ... }"` (camelCase — e.g. `{ prependIcon: 'mdi-plus', disabled: !isValid, loading: isSubmitting }`). For navigation put `:to="RoutePath.X"` on the `<StyledButton>` (it falls through to the root `v-btn`) — never a `to` inside `buttonProps`.
 - `type` is a **native attribute, not a typed `VBtn` prop** — put `type="submit"` directly on `<StyledButton>` (it falls through to the root `v-btn`), never inside `buttonProps` (which fails typecheck).
 - `@click` and other native listeners also fall through to the root `v-btn`.
 - Destructive confirms stay a `color="error"` `v-btn` (error red is visible on the transparent base) — `StyledButton` is for positive/primary actions only.
