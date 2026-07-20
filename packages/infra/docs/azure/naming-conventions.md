@@ -22,6 +22,14 @@ For globally named resources that allow hyphens, omit the region unless a second
 <environment>-<assetType>-<workload>-<index>
 ```
 
+Subscription-scoped resources belong to no single environment or region, so they omit both tokens:
+
+```text
+<assetType>-<workload>-<index>
+```
+
+Example: `pa-esposter-001`, the subscription-wide policy assignment requiring the application tag.
+
 The target shape is intentionally ordered by scanning priority: environment first, resource type second, workload third, then region and index. It does not include the legacy `shp` scope token; ownership and platform scope are better represented by resource groups and tags.
 
 Current workload:
@@ -423,6 +431,7 @@ These tokens are the complete set of CAF abbreviations plus LibreDevOps fallback
 | Azure AI Search         | `prod-srch-esposter-001`    |
 | Event Grid subscription | `prod-evgs-esposter-ae-001` |
 | Web PubSub              | `prod-wps-esposter-001`     |
+| Policy assignment       | `pa-esposter-001`           |
 
 ## Source File Names
 
