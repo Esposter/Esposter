@@ -49,7 +49,6 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages)             | `/remind` + `/schedule` jobs and the Service Bus worker           |
 | [/docs/esbabbler/drafts-and-sent](/docs/esbabbler/drafts-and-sent)                   | Cross-room Drafts / Scheduled / Sent view                         |
 | [/docs/esbabbler/offline-cache](/docs/esbabbler/offline-cache)                       | IndexedDB offline mirror of Pinia state                           |
-| [/docs/esbabbler/search-index-tooling](/docs/esbabbler/search-index-tooling)         | Message search index status + rebuild scripts                     |
 | [/docs/esbabbler/deferred](/docs/esbabbler/deferred)                                 | Ideas deferred, each with a revisit trigger                       |
 | [/docs/esbabbler/rejected](/docs/esbabbler/rejected)                                 | Ideas decided against                                             |
 | [/docs/esbabbler/roadmap](/docs/esbabbler/roadmap)                                   | Open work — every item links its proposal                         |

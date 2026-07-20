@@ -52,7 +52,9 @@ Table names live in the `AzureTable` enum (`packages/db-schema/src/models/azure/
 
 Azure AI Search holds one index, `messages-index`, that powers filtered message search (`searchMessages`) and the Sent tab (`readMySentMessages`). Its full schema is a data-plane resource — not Pulumi-managed — recreated from `packages/infra/data/searchIndexes/messages-index.json`.
 
-The index is populated by a **scheduled Azure Table pull indexer** (`messages-indexer`), not by a push on write: the indexer reads the `Messages` table on an interval measured in minutes and upserts each row as a document. A newly sent message therefore becomes searchable shortly after it lands rather than synchronously, and a message the indexer never picked up simply never appears in search — the drift the status/rebuild tooling exists to catch (see [/docs/esbabbler/search-index-tooling](/docs/esbabbler/search-index-tooling)).
+The index is populated by a **scheduled Azure Table pull indexer** (`messages-indexer`), not by a push on write: the indexer reads the `Messages` table on an interval measured in minutes and upserts each row as a document. A newly sent message therefore becomes searchable shortly after it lands rather than synchronously.
+
+The indexer owns the index, so nothing in this repo writes documents to it. Its own control plane is the operational tooling: `GET /indexers/messages-indexer/status` reports the last runs, document counts, and per-document errors, and `POST /indexers/messages-indexer/reset` followed by `POST .../run` clears the high-water mark and re-reads the whole table. Both are one click each in the portal's indexer blade. Soft deletes need no special handling — `deletedAt` is a column the indexer already carries, and queries exclude it with a null clause.
 
 ```mermaid
 flowchart TD

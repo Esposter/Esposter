@@ -45,7 +45,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     ],
     Moderation: ["moderation", "automod-actions", "moderator-notes", "rbac"],
     Calls: ["voice-video", "push-to-talk", "calls"],
-    Infrastructure: ["push-notifications", "offline-cache", "search-index-tooling"],
+    Infrastructure: ["push-notifications", "offline-cache"],
   },
   platform: {
     "Explorer & shell": [

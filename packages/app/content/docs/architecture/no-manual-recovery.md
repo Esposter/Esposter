@@ -25,6 +25,6 @@ flowchart TD
 
 The attempt counter travels with the payload — as metadata on the stored artifact, not in the handler's memory — so the count survives the round trip through the failure sink. A counter that resets each cycle is the same infinite loop with more code.
 
-Manual operations scripts are still legitimate for work that is inherently a human decision — a one-off backfill, a search index rebuild — but never as the recovery path for a failure the system can see happening. Such a script also belongs in the package whose environment it uses, not hoisted into a shared package.
+Manual operations scripts are still legitimate for work that is inherently a human decision — a one-off backfill, a data migration — but never as the recovery path for a failure the system can see happening. Such a script also belongs in the package whose environment it uses, not hoisted into a shared package.
 
 The reference implementation is [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter).
