@@ -10,8 +10,3 @@ Prioritized top-down. Every item links a full proposal; the specs are the plan, 
 ## Later — larger or multi-area
 
 - [ ] [File & media enhancements](/docs/proposals/esbabbler/file-media-enhancements) — thumbnails, attachment limits, files filter
-
-## Hygiene
-
-- [ ] [Store subscription audit](/docs/proposals/esbabbler/store-subscription-audit) — one owner per state transition + idempotence tests
-- [ ] [Search index tooling](/docs/proposals/esbabbler/search-index-tooling) — index schema docs + status/rebuild scripts

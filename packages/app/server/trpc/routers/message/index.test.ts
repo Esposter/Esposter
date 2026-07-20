@@ -164,8 +164,9 @@ describe("message", () => {
     });
 
     expect(readMessages.items).toHaveLength(2);
-    expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
-    expect(takeOne(readMessages.items, 1).rowKey).toBe(secondMessage.rowKey);
+    // Default read is newest-first (reverse-ticked rowKey), so the included cursor value leads
+    expect(takeOne(readMessages.items).rowKey).toBe(secondMessage.rowKey);
+    expect(takeOne(readMessages.items, 1).rowKey).toBe(firstMessage.rowKey);
   });
 
   test("reads in ascending order with cursor and includes value", async () => {
@@ -530,8 +531,9 @@ describe("message", () => {
     const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
     expect(forwardedMessages.items).toHaveLength(2);
-    expect(takeOne(forwardedMessages.items).isForward).toBe(true);
-    expect(takeOne(forwardedMessages.items, 1).isForward).toBeUndefined();
+    // Default read is newest-first: the optional message posts after the forwarded copy, so it leads
+    expect(takeOne(forwardedMessages.items).isForward).toBeUndefined();
+    expect(takeOne(forwardedMessages.items, 1).isForward).toBe(true);
   });
 
   test("forwarding a word-filtered message still posts to rooms that did not block, timing out only the blocking room", async () => {
@@ -791,11 +793,12 @@ describe("message", () => {
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(2);
-    expect(takeOne(readMessages.items).partitionKey).toBe(newMessage.partitionKey);
-    expect(takeOne(readMessages.items).rowKey).toBe(newMessage.rowKey);
-    expect(takeOne(readMessages.items).isPinned).toBe(true);
-    expect(takeOne(readMessages.items, 1).type).toBe(MessageType.PinMessage);
-    expect(takeOne(readMessages.items, 1).replyRowKey).toBe(newMessage.rowKey);
+    // Default read is newest-first: the pin system message posts after the pinned message, so it leads
+    expect(takeOne(readMessages.items).type).toBe(MessageType.PinMessage);
+    expect(takeOne(readMessages.items).replyRowKey).toBe(newMessage.rowKey);
+    expect(takeOne(readMessages.items, 1).partitionKey).toBe(newMessage.partitionKey);
+    expect(takeOne(readMessages.items, 1).rowKey).toBe(newMessage.rowKey);
+    expect(takeOne(readMessages.items, 1).isPinned).toBe(true);
   });
 
   test("unpins message", async () => {
