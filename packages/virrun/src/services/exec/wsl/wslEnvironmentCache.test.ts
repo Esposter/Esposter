@@ -28,11 +28,10 @@ describe("wslEnvironmentCache", () => {
     writeWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, { key, value });
     const content = readFileSync(join(getCacheHome(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME), "utf8");
 
-    expect(createKeyedCacheSchema(z.string()).parse(JSON.parse(content))).toStrictEqual({
-      key,
-      storedAtMs: expect.any(Number),
-      value,
-    });
+    const { storedAtMs, ...cache } = createKeyedCacheSchema(z.string()).parse(JSON.parse(content));
+
+    expect(cache).toStrictEqual({ key, value });
+    expect(storedAtMs).toBeTypeOf("number");
     expect(readWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, z.string(), key)).toBe(value);
   });
 });

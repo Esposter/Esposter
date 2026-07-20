@@ -2,7 +2,9 @@ import { computeEnvironmentKey } from "@/services/exec/snapshot/computeEnvironme
 import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
 import { describe, expect, test, vi } from "vitest";
 
-const { getSandboxNodeVersion } = vi.hoisted(() => ({ getSandboxNodeVersion: vi.fn(() => "v26.5.0") }));
+const { getSandboxNodeVersion } = vi.hoisted(() => ({
+  getSandboxNodeVersion: vi.fn<() => string>(() => "v26.5.0"),
+}));
 
 vi.mock(import("@/services/exec/util/getSandboxNodeVersion"), () => ({ getSandboxNodeVersion }));
 
@@ -14,6 +16,7 @@ describe(computeEnvironmentKey, () => {
     expect.hasAssertions();
 
     getSandboxNodeVersion.mockReturnValue("v26.5.0");
+
     expect(computeEnvironmentKey(createWorkspace(lockfileContent))).toBe(
       computeEnvironmentKey(createWorkspace(lockfileContent)),
     );
@@ -23,6 +26,7 @@ describe(computeEnvironmentKey, () => {
     expect.hasAssertions();
 
     getSandboxNodeVersion.mockReturnValue("v26.5.0");
+
     expect(computeEnvironmentKey(createWorkspace(lockfileContent))).not.toBe(
       computeEnvironmentKey(createWorkspace(`${lockfileContent}  added: true\n`)),
     );

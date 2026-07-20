@@ -20,11 +20,10 @@ describe(writeKeyedCache, () => {
     const file = join(create(), TEST_FILENAME);
     writeKeyedCache(file, { key, value });
 
-    expect(createKeyedCacheSchema(z.string()).parse(JSON.parse(readFileSync(file, "utf8")))).toStrictEqual({
-      key,
-      storedAtMs: expect.any(Number),
-      value,
-    });
+    const { storedAtMs, ...cache } = createKeyedCacheSchema(z.string()).parse(JSON.parse(readFileSync(file, "utf8")));
+
+    expect(cache).toStrictEqual({ key, value });
+    expect(storedAtMs).toBeTypeOf("number");
   });
 
   test("stamps the capture time so a reader can bound the value's age", () => {
@@ -45,6 +44,9 @@ describe(writeKeyedCache, () => {
     const file = join(create(), TEST_FILENAME, TEST_FILENAME);
     writeKeyedCache(file, { key, value });
 
-    expect(JSON.parse(readFileSync(file, "utf8"))).toStrictEqual({ key, storedAtMs: expect.any(Number), value });
+    const { storedAtMs, ...cache } = createKeyedCacheSchema(z.string()).parse(JSON.parse(readFileSync(file, "utf8")));
+
+    expect(cache).toStrictEqual({ key, value });
+    expect(storedAtMs).toBeTypeOf("number");
   });
 });

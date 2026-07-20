@@ -23,4 +23,10 @@ describe(sliceBetweenMarkers, () => {
 
     expect(sliceBetweenMarkers(`${end}${value}${begin}`, begin, end)).toBe("");
   });
+
+  test("returns the value when the end marker also appears in the noise before the begin marker", () => {
+    expect.hasAssertions();
+
+    expect(sliceBetweenMarkers(`${end}motd\n${begin}${value}${end}`, begin, end)).toBe(value);
+  });
 });

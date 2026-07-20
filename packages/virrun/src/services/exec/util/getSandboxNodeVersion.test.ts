@@ -5,14 +5,14 @@ import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersio
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
 import { afterEach, describe, expect, test } from "vitest";
 
+const setPlatform = (value: string) => {
+  Object.defineProperty(process, "platform", { configurable: true, value });
+};
+
 describe(getSandboxNodeVersion, () => {
   setupTemporaryCacheHome();
   const nodeVersion = "v26.5.0";
   const { platform } = process;
-
-  const setPlatform = (value: string) => {
-    Object.defineProperty(process, "platform", { configurable: true, value });
-  };
 
   afterEach(() => {
     setPlatform(platform);
