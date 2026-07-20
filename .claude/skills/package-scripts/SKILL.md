@@ -37,7 +37,7 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 
 ## Check Suite (after edits)
 
-Run before declaring work done:
+On PR-bound work the suite runs **once on `develop` after the merge**, not on the feature branch — see the git skill's "Merge Then Verify". Run before declaring work done:
 
 1. `pnpm typecheck`
 2. `pnpm lint:fix` — **only for `packages/*` (non-app)**; skip when the change touches `packages/app` (slow), leave that to CI.
