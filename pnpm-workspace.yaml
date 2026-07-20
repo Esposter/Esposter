@@ -61,7 +61,7 @@ catalog:
   "@pulumi/github": ^6.14.0
   "@pulumi/pulumi": ^3.253.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^2.3.2
+  "@takumi-rs/core": ^2.3.3
   "@tiptap/core": ^3.28.0
   "@tiptap/extension-code-block-lowlight": ^3.28.0
   "@tiptap/extension-file-handler": ^3.28.0
@@ -167,7 +167,7 @@ catalog:
   js-beautify: ^2.0.3
   link-preview-js: ^4.0.4
   linkifyjs: ^4.3.3
-  livekit-client: ^2.20.1
+  livekit-client: ^2.20.2
   livekit-server-sdk: ^2.17.0
   lodash-omitdeep: ^1.10.1
   lowlight: ^3.3.0
@@ -194,7 +194,7 @@ catalog:
   postgres: ^3.4.9
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.2.0
-  read-excel-file: ^9.3.2
+  read-excel-file: ^9.3.3
   rolldown: ^1.2.0
   rolldown-plugin-dts: ^0.27.12
   rxjs: ^7.8.2
@@ -255,7 +255,5 @@ overrides:
   crossws: ^0.4.10
   h3: ^1.15.11
   pdfjs-dist: ^6.1.200
-  vite: ^8.1.5
-  vue-router: ^5.2.0
 
 shellEmulator: true
