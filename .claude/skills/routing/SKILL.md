@@ -1,27 +1,33 @@
 ---
 name: routing
-description: Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink :to only (raw <a> and Vuetify :to both lint-banned; Vuetify navigates via @click navigateTo), navigateTo for imperative navigation, useRouter for reactive route reads, route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
+description: Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or Vuetify :to (raw <a> lint-banned), navigateTo for imperative navigation (always awaited or returned — never a floating statement), useRouter for reactive route reads, route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
 ---
 
 # Routing
 
-## Links — `NuxtLink` / `NuxtInvisibleLink`, Never a Raw `<a>` or Vuetify `:to`
+## Links — `NuxtLink` / `NuxtInvisibleLink` or `:to`, Never a Raw `<a>`
 
-Declarative links use a Nuxt-native link component only. `:to` (or static `to=`) is allowed **only** on `NuxtLink`, `NuxtInvisibleLink`, and Vue's `<Teleport>` (different semantics).
+Declarative links use a Nuxt-native link component or a component's `:to` prop — a plain destination keeps real anchor semantics (cmd/ctrl/middle-click opens a new tab).
 
 - Internal: `<NuxtLink :to>`, or `<NuxtInvisibleLink :to>` when the link should inherit surrounding styling.
 - External: `<NuxtLink :to external target="_blank">`.
 - In-page anchor: `<NuxtInvisibleLink :to="{ hash }">` (a `NuxtLink` clone that strips default link styling).
 - A link-styled control with no destination is a `<span text-info underline cursor-pointer>`, not an anchor.
-- **Vuetify components never take `:to`** (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) — their router integration bypasses Nuxt-level navigation and misbehaves in Nuxt. Navigate them imperatively with an inline `@click="navigateTo(...)"` (`v-card`/`v-list-item` also need the boolean `link` prop to keep the pointer/hover affordance). Route targets still come from `RoutePath`, never string-built.
+- Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) with a plain destination take `:to` directly. Reserve `@click="navigateTo(...)"` for actions that run logic before navigating or compute the target at click time. Route targets still come from `RoutePath`, never string-built.
 
-Both bans are enforced by `packages/configuration/eslint/overrides/vueRules.js` — a raw `<a>` via `vue/no-restricted-html-elements`, and Vuetify `:to`/`to=` via `vue/no-restricted-syntax`. Full standard: [navigation](/docs/architecture/navigation).
+The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRules.js` via `vue/no-restricted-html-elements`. Full standard: [navigation](/docs/architecture/navigation).
 
 ## Imperative Navigation — `navigateTo`
 
 `navigateTo(target, options)` is the imperative form: post-mutation redirects, form submits, route guards, and dynamic-only targets with no element to hang `:to` on (search submit, `v-data-table` `@click:row`).
 
 `router.push` is lint-enforced against (`vue/no-restricted-syntax`, same file) — use `navigateTo(target, { replace: true })`. A query-only `router.replace({ query })` is not navigation and is fine.
+
+**Always `await` (or return) `navigateTo`** — it is async, and a floating statement-position call is a violation: the promise escapes Vue's async error handling and code after it runs before navigation settles.
+
+- Multi-statement handler or script code → `async` function with `await navigateTo(...)`.
+- Middleware → `return navigateTo(...)`.
+- A **single-expression** inline handler (`@click="navigateTo(...)"`, `@click="cond && navigateTo(...)"`, one-expression arrow) is already compliant — the expression's promise is implicitly returned into Vue's `callWithAsyncErrorHandling`, which is the sanctioned "or return" form. Do not churn these into `async () => await ...`.
 
 ## Reactive Route Reads — `useRouter()`, Not `useRoute()`
 

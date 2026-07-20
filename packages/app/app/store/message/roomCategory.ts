@@ -12,9 +12,10 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeDeleteRoomCategoryMutation = useMutation();
-  const executeUpdateRoomCategoryMutation = useMutation();
-  const executeReorderRoomCategoriesMutation = useMutation();
+  const { executeMutation: executeCreateRoomCategoryMutation } = useMutation();
+  const { executeMutation: executeDeleteRoomCategoryMutation } = useMutation();
+  const { executeMutation: executeUpdateRoomCategoryMutation } = useMutation();
+  const { executeMutation: executeReorderRoomCategoriesMutation } = useMutation();
   const categories = ref<RoomCategoryInMessage[]>([]);
   const {
     createRoomCategory: storeCreateRoomCategory,
@@ -27,9 +28,6 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
     if (!session.value.data) return;
 
-    // Own executor per call — each create owns a distinct placeholder, so concurrent creates must never
-    // Supersede each other's reconcile (a skipped onSuccess would strand a temp id that isn't the server's)
-    const executeCreateRoomCategoryMutation = useMutation();
     // Reactive so the onSuccess Object.assign onto this same object triggers the list re-render
     const newCategory = reactive<RoomCategoryInMessage>({
       createdAt: new Date(),
@@ -48,6 +46,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           storeDeleteRoomCategory({ id: newCategory.id });
         };
       },
+      // Each create owns a distinct placeholder with no server id yet, so it gets a per-call symbol
+      key: Symbol("createRoomCategory"),
       // Reconcile onto the placeholder itself so it keeps its list position instead of being
       // Removed and re-appended under the server id
       onSuccess: (createdCategory) => {
@@ -65,6 +65,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           categories.value = snapshot;
         };
       },
+      key: id,
     });
   };
 
@@ -77,6 +78,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           categories.value = snapshot;
         };
       },
+      key: input.id,
       onSuccess: (updatedCategory) => {
         storeUpdateRoomCategory(updatedCategory);
       },
@@ -94,6 +96,8 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
           categories.value = snapshot;
         };
       },
+      // A stable key so the latest whole-list reorder supersedes any in-flight one
+      key: "reorderRoomCategories",
     });
   };
 

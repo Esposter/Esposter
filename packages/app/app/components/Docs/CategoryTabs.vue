@@ -18,10 +18,10 @@ const layoutStore = useLayoutStore();
 const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 // Each tab lands on its category's first section
 const categories = computed(() =>
-  DocsCategories.map((category) => ({
-    category,
-    firstSection: sections.find(({ path }) => getSectionCategory(path) === category),
-  })).filter(({ firstSection }) => firstSection !== undefined),
+  DocsCategories.flatMap((category) => {
+    const firstSection = sections.find(({ path }) => getSectionCategory(path) === category);
+    return firstSection ? [{ category, firstSection }] : [];
+  }),
 );
 </script>
 
@@ -36,16 +36,14 @@ const categories = computed(() =>
       @click="isLeftDrawerOpen = true"
     />
     <v-tabs color="primary" :model-value="activeCategory ?? RoutePath.Docs" show-arrows>
-      <v-tab class="text-none" prepend-icon="mdi-home" :value="RoutePath.Docs" @click="navigateTo(RoutePath.Docs)">
-        Overview
-      </v-tab>
+      <v-tab class="text-none" prepend-icon="mdi-home" :to="RoutePath.Docs" :value="RoutePath.Docs"> Overview </v-tab>
       <v-tab
         v-for="{ category, firstSection } of categories"
         :key="category"
         class="text-none"
         :prepend-icon="DocsCategoryIconMap[category]"
+        :to="firstSection.path"
         :value="category"
-        @click="firstSection && navigateTo(firstSection.path)"
       >
         {{ category }}
       </v-tab>

@@ -17,8 +17,8 @@ import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
   const { $trpc } = useNuxtApp();
-  const executeUnpinMessageMutation = useMutation();
-  const executeMarkUnreadMutation = useMutation();
+  const { executeMutation: executeUnpinMessageMutation } = useMutation();
+  const { executeMutation: executeMarkUnreadMutation } = useMutation();
   const messageStore = useMessageStore();
   const { copy } = messageStore;
   const { editingRowKey } = storeToRefs(messageStore);
@@ -79,6 +79,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
                     message.isPinned = true;
                   };
                 },
+                key: message.rowKey,
               },
             );
           },
@@ -121,6 +122,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
             if (previousUserToRoom) setMyUserToRoom(roomId, previousUserToRoom);
           };
         },
+        key: roomId,
       });
     },
     title: "Mark Unread From Here",

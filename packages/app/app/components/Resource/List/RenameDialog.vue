@@ -11,7 +11,7 @@ interface ResourceListRenameDialogProps {
 
 const { resource } = defineProps<ResourceListRenameDialogProps>();
 const emit = defineEmits<{ update: [] }>();
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const listDialogStore = useListDialogStore();
 const { renamingId } = storeToRefs(listDialogStore);
 const isOpen = useSingletonDialog(renamingId);
@@ -32,6 +32,7 @@ const { cloned: editedName } = useCloned(() => resource.name);
         await executeMutation(
           () => getResourceMutations(resource.type).updateResource({ id: resource.id, name: editedName }),
           {
+            key: resource.id,
             onError: (error) => {
               createNotification({ severity: 'error', title: error.message });
             },

@@ -15,9 +15,9 @@ import { takeOne } from "@esposter/shared";
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeCreateEmojiMutation = useMutation();
-  const executeUpdateEmojiMutation = useMutation();
-  const executeDeleteEmojiMutation = useMutation();
+  const { executeMutation: executeCreateEmojiMutation } = useMutation();
+  const { executeMutation: executeUpdateEmojiMutation } = useMutation();
+  const { executeMutation: executeDeleteEmojiMutation } = useMutation();
   const { getEmojis, setEmojis } = useMessageMetadataMap(MessageMetadataType.Emoji);
   const createEmoji = async (input: CreateEmojiInput) => {
     if (!session.value.data) return;
@@ -29,6 +29,9 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           storeDeleteEmoji(newEmoji);
         };
       },
+      // Keyed per emoji identity so reacting with two emojis in quick succession never stale-drops
+      // The first one's rollback or server-entity assignment
+      key: `${input.messageRowKey}-${input.emojiTag}`,
       onSuccess: (result) => {
         Object.assign(newEmoji, result);
       },
@@ -44,6 +47,8 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           storeUpdateEmoji(input);
         };
       },
+      // Keyed per emoji entity so concurrent operations on different emojis never stale-drop each other
+      key: input.rowKey,
     });
   };
   const deleteEmoji = async (input: DeleteEmojiInput) => {
@@ -56,6 +61,8 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           if (deletedEmoji) storeCreateEmoji(deletedEmoji);
         };
       },
+      // Keyed per emoji entity so concurrent operations on different emojis never stale-drop each other
+      key: input.rowKey,
     });
   };
 

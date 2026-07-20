@@ -17,7 +17,7 @@ const message = computed(() => statusMap.value.get(userId.value)?.message ?? "")
 const selectedStatus = ref(status.value);
 const statusMessage = ref(message.value);
 const menu = ref(false);
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const save = async () => {
   menu.value = false;
   const previousStatus = statusMap.value.get(userId.value);
@@ -39,9 +39,10 @@ const save = async () => {
               statusMap.value.set(userId.value, previousStatus);
             };
           },
+          key: userId.value,
           onSuccess,
         }
-      : { onSuccess },
+      : { key: userId.value, onSuccess },
   );
 };
 </script>

@@ -6,7 +6,10 @@ import { RoutePath } from "@esposter/shared";
 interface ResourceExplorerProps {
   activeBlade: string;
   duplicate: () => Promise<void>;
+  isDuplicatePending?: boolean;
   isLoading?: boolean;
+  isPublishPending?: boolean;
+  isUnpublishPending?: boolean;
   publication?: ResourcePublication;
   publish: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -20,7 +23,10 @@ interface ResourceExplorerProps {
 const {
   activeBlade,
   duplicate,
+  isDuplicatePending,
   isLoading,
+  isPublishPending,
+  isUnpublishPending,
   publication,
   publish,
   refresh,
@@ -44,7 +50,10 @@ const { smAndDown } = useVDisplay();
       <ResourceBladeToolbar
         :active-blade
         :duplicate
+        :is-duplicate-pending
         :is-loading
+        :is-publish-pending
+        :is-unpublish-pending
         :publication
         :publish
         :refresh
@@ -54,11 +63,7 @@ const { smAndDown } = useVDisplay();
         :unpublish
       >
         <template v-if="smAndDown" #prepend>
-          <StyledTooltipIconButton
-            icon="mdi-format-list-bulleted"
-            text="All resources"
-            @click="navigateTo(RoutePath.ResourcesAll)"
-          />
+          <StyledTooltipIconButton :to="RoutePath.ResourcesAll" icon="mdi-format-list-bulleted" text="All resources" />
         </template>
       </ResourceBladeToolbar>
       <!-- The blade box owns the vertical divider (b-l) that meets the list toolbar's b-b at the corner -->

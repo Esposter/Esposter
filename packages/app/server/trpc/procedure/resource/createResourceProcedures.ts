@@ -23,6 +23,7 @@ import { getPublishedContentBlobName } from "@@/server/services/resource/getPubl
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
+import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -143,23 +144,16 @@ export const createResourceProcedures = <TType extends ResourceType>(
         });
         return newResource;
       }),
-    // Soft: the row, its content blob and its {id}/ directory all survive the Recycle bin window,
-    // Which is exactly what makes restore possible. Purge is what actually destroys them.
-    deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(({ ctx, input: { id } }) =>
-      // A deleted resource must not stay publicly served, so restore deliberately returns a Draft.
-      // The blobs and the type's table partitions survive until purge — destroying them here would
-      // Make restore hand back an empty resource.
-      // One transaction so a soft-deleted resource can never linger publicly served
-      ctx.db.transaction(async (tx) => {
-        const deletedResource = requireMutation(
-          (await tx.update(resources).set({ deletedAt: new Date() }).where(eq(resources.id, id)).returning())[0],
+    // The blobs and the type's table partitions survive until purge — destroying them here would
+    // Make restore hand back an empty resource
+    deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
+      async ({ ctx, input: { id } }) =>
+        requireMutation(
+          (await softDeleteResources(ctx.db, eq(resources.id, id)))[0],
           Operation.Delete,
           DatabaseEntityType.Resource,
           id,
-        );
-        await tx.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
-        return deletedResource;
-      }),
+        ),
     ),
     // Every content write funnels through saveResourceContent, so one save event stream is all it
     // Takes to keep every other device's view of this resource live

@@ -5,19 +5,16 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
   const { $trpc } = useNuxtApp();
-  const executeCreateLikeMutation = useMutation();
-  const executeUpdateLikeMutation = useMutation();
-  const executeDeleteLikeMutation = useMutation();
+  const { executeMutation: executeCreateLikeMutation } = useMutation();
+  const { executeMutation: executeUpdateLikeMutation } = useMutation();
+  const { executeMutation: executeDeleteLikeMutation } = useMutation();
   // CreateLike is non-optimistic (the row is server-generated), so viewerLike stays undefined for the whole
-  // Round trip. Without this guard a rapid second vote sees viewerLike undefined too and fires another
-  // CreateLike, hitting the likes primary-key constraint. Track in-flight posts so only the first create runs.
-  const pendingCreatePostIds = new Set<PostWithRelations["id"]>();
-
-  // Server-generated like row — non-optimistic, applied in onSuccess
+  // Round trip and a rapid second vote would fire another CreateLike, hitting the likes primary-key constraint.
+  // Keying the single-flight guard by postId drops the duplicate create while the first is still in flight.
   const createLike = async (input: CreateLikeInput) => {
-    if (pendingCreatePostIds.has(input.postId)) return;
-    pendingCreatePostIds.add(input.postId);
     await executeCreateLikeMutation(() => $trpc.like.createLike.mutate(input), {
+      isExclusive: true,
+      key: input.postId,
       onSuccess: (newLike) => {
         const post = toValue(allPosts).find(({ id }) => id === newLike.postId);
         if (!post) return;
@@ -26,7 +23,6 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
         post.noLikes += newLike.value;
       },
     });
-    pendingCreatePostIds.delete(input.postId);
   };
   const updateLike = async (input: UpdateLikeInput) => {
     const post = toValue(allPosts).find(({ id }) => id === input.postId);
@@ -43,6 +39,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
           post.noLikes -= delta;
         };
       },
+      key: input.postId,
       onSuccess: (updatedLike) => {
         post.viewerLike = updatedLike;
       },
@@ -62,6 +59,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
           post.noLikes += previousViewerLike.value;
         };
       },
+      key: postId,
     });
   };
 

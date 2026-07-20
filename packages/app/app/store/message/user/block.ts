@@ -7,8 +7,8 @@ import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
-  const executeBlockUserMutation = useMutation();
-  const executeUnblockUserMutation = useMutation();
+  const { executeMutation: executeBlockUserMutation } = useMutation();
+  const { executeMutation: executeUnblockUserMutation } = useMutation();
   const friendStore = useFriendStore();
   const { storeDeleteFriend } = friendStore;
   const friendRequestStore = useFriendRequestStore();
@@ -27,6 +27,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
           friendRequestStore.friendRequests = previousFriendRequests;
         };
       },
+      key: userId,
       // The blocked-user row is server-resolved, so it lands in onSuccess rather than optimistically
       onSuccess: (user) => {
         if (!blockedUsers.value.some(({ id }) => id === userId)) blockedUsers.value = [user, ...blockedUsers.value];
@@ -43,6 +44,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
           blockedUsers.value = previousBlockedUsers;
         };
       },
+      key: blockedUserId,
     });
   };
 

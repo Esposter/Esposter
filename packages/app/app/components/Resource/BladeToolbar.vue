@@ -4,7 +4,10 @@ import type { Resource, ResourcePublication } from "@esposter/db-schema";
 interface ResourceBladeToolbarProps {
   activeBlade: string;
   duplicate: () => Promise<void>;
+  isDuplicatePending?: boolean;
   isLoading?: boolean;
+  isPublishPending?: boolean;
+  isUnpublishPending?: boolean;
   publication?: ResourcePublication;
   publish: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -14,8 +17,21 @@ interface ResourceBladeToolbarProps {
   unpublish: () => Promise<void>;
 }
 
-const { activeBlade, duplicate, isLoading, publication, publish, refresh, remove, rename, resource, unpublish } =
-  defineProps<ResourceBladeToolbarProps>();
+const {
+  activeBlade,
+  duplicate,
+  isDuplicatePending,
+  isLoading,
+  isPublishPending,
+  isUnpublishPending,
+  publication,
+  publish,
+  refresh,
+  remove,
+  rename,
+  resource,
+  unpublish,
+} = defineProps<ResourceBladeToolbarProps>();
 defineSlots<{ prepend?: () => VNode }>();
 </script>
 
@@ -26,6 +42,19 @@ defineSlots<{ prepend?: () => VNode }>();
     </template>
     <ResourceBladeTitle :active-blade :resource />
     <v-spacer />
-    <ResourceBladeActions :duplicate :is-loading :publication :publish :refresh :remove :rename :resource :unpublish />
+    <ResourceBladeActions
+      :duplicate
+      :is-duplicate-pending
+      :is-loading
+      :is-publish-pending
+      :is-unpublish-pending
+      :publication
+      :publish
+      :refresh
+      :remove
+      :rename
+      :resource
+      :unpublish
+    />
   </v-toolbar>
 </template>

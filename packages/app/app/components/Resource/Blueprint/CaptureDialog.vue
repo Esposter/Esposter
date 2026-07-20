@@ -6,7 +6,7 @@ import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captu
 import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const captureDialogStore = useBlueprintCaptureDialogStore();
 const { captureIds } = storeToRefs(captureDialogStore);
 const { createErrorNotification, createNotification } = useNotificationStore();
@@ -32,6 +32,7 @@ watch(isOpen, (newIsOpen) => {
       async (_event, onComplete) => {
         let isSuccessful = false;
         await executeMutation(() => $trpc.blueprint.captureBlueprint.mutate({ ids: captureIds, name }), {
+          key: Symbol('captureBlueprint'),
           onError: createErrorNotification,
           onSuccess: async (newBlueprint) => {
             createNotification({

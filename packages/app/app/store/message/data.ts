@@ -22,7 +22,7 @@ import { Operation } from "@esposter/shared";
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   const roomStore = useRoomStore();
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
@@ -57,6 +57,8 @@ export const useDataStore = defineStore("message/data", () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
         };
       },
+      // Keyed per message so edits to different messages through this shared executor never stale-drop each other
+      key: input.rowKey,
     });
   };
   const deleteFile = async ({ id, ...compositeKey }: DeleteFileInput) => {
@@ -72,6 +74,8 @@ export const useDataStore = defineStore("message/data", () => {
           baseStoreUpdateMessage({ ...compositeKey, files: previousFiles });
         };
       },
+      // Keyed per file so concurrent deletions never swallow each other's rollbacks
+      key: id,
     });
   };
   const storeCreateMessage = async (message: MessageEntity) => {

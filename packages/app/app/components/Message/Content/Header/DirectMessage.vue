@@ -8,7 +8,7 @@ const directMessageName = useDirectMessageName(currentDirectMessage);
 const participants = computed(() =>
   currentDirectMessage.value ? (directMessageParticipantsMap.value.get(currentDirectMessage.value.id) ?? []) : [],
 );
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const deleteDirectMessageParticipant = async (userId: string) => {
   const roomId = currentDirectMessage.value?.id;
   if (!roomId) return;
@@ -23,6 +23,8 @@ const deleteDirectMessageParticipant = async (userId: string) => {
         directMessageParticipantsMap.value.set(roomId, previousParticipants);
       };
     },
+    // Keyed per participant so removing two people in quick succession never stale-drops a rollback
+    key: userId,
   });
 };
 </script>

@@ -17,10 +17,15 @@ onMounted(readCount);
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
 const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));
-const restoreResource = useRestoreResource(refresh);
+const { getIsRestorePending, restoreResource } = useRestoreResource(refresh);
 const purgeResource = usePurgeResource(refresh);
 const getActionItems = (resource: Resource): Item[] => [
-  { icon: "mdi-restore", onClick: () => restoreResource(resource), title: "Restore" },
+  {
+    disabled: getIsRestorePending(resource.id),
+    icon: "mdi-restore",
+    onClick: () => restoreResource(resource),
+    title: "Restore",
+  },
   {
     color: "error",
     icon: "mdi-delete-forever",
@@ -41,7 +46,7 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
       >
       <v-spacer />
       <StyledTooltipIconButton icon="mdi-refresh" text="Refresh" @click="refresh()" />
-      <StyledTooltipIconButton icon="mdi-close" text="Close" @click="navigateTo(RoutePath.ResourcesAll)" />
+      <StyledTooltipIconButton :to="RoutePath.ResourcesAll" icon="mdi-close" text="Close" />
     </v-toolbar>
     <v-alert v-if="error && items.length > 0" density="compact" type="error" :text="error" :rounded="0">
       <template #append>

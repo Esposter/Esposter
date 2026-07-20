@@ -52,11 +52,11 @@ describe(buildPointsLeaderboard, () => {
     });
   });
 
-  test("self is null when the caller has unlocked nothing", () => {
+  test("self is undefined when the caller has unlocked nothing", () => {
     expect.hasAssertions();
 
     const { self } = buildPointsLeaderboard([createUserTotal("high", HIGH_POINTS)], "absent");
 
-    expect(self).toBeNull();
+    expect(self).toBeUndefined();
   });
 });

@@ -26,3 +26,5 @@ Repo-wide refactor plans have no area roadmap and live here directly:
 - [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
 - [File upload consolidation](/docs/proposals/refactors/file-upload-consolidation) — one SAS round-trip and one file validator instead of four and three.
 - [Mock table ordering fidelity](/docs/proposals/refactors/mock-table-ordering-fidelity) — `MockTableClient` returns insertion order where Azure returns `partitionKey` + `rowKey` order.
+- [Docs consistency tests](/docs/proposals/refactors/docs-consistency-tests) — fail CI on broken `/docs` links, unregistered pages, and dead Key Files paths.
+- [Migration chain guard](/docs/proposals/refactors/migration-chain-guard) — assert the Drizzle snapshot chain is linear in CI instead of at the next `db:gen`.

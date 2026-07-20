@@ -30,12 +30,14 @@ const isNoteValid = computed(() => createModerationNoteInputSchema.shape.note.sa
 currentTargetUserId.value = user.id;
 // Load on setup (no Suspense boundary) so the count badge reflects existing notes before the dialog opens.
 useQuery(readModerationNotes);
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 // Adding a note keeps the dialog open (onComplete(false)) so a moderator can keep reviewing while writing.
 const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
   executeMutation(
     () => $trpc.message.moderation.createModerationNote.mutate({ note: note.value, roomId, targetUserId: user.id }),
     {
+      // Each note is an independent server-generated create with no id yet, so it gets a per-call symbol
+      key: Symbol("createModerationNote"),
       onError: (error) => {
         createAlert(error.message, "error");
         onComplete(false);

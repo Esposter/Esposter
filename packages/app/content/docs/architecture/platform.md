@@ -27,12 +27,15 @@ New products join the platform by adding one `ResourceType` and one `ResourceDef
 flowchart TB
   subgraph explorer [Resource Explorer — /resources]
     SHEET[Sheet<br/>datasetProvider · portable]
-    SURVEY[Survey<br/>publishable · datasetProvider]
+    SURVEY[Survey<br/>publishable · datasetProvider · fileAssets]
     TODO[TodoList]
     DASH[Dashboard<br/>publishable]
-    EMAIL[Email<br/>portable]
-    WEB[Webpage<br/>publishable]
-    FLOW[Flowchart]
+    EMAIL[Email<br/>publishable · fileAssets · portable]
+    WEB[Webpage<br/>publishable · fileAssets]
+    FLOW[Flowchart<br/>publishable]
+    NOTE[Note<br/>publishable]
+    PROG[Program<br/>datasetProvider]
+    BP[Blueprint]
   end
 
   subgraph platform [Platform layers]
@@ -44,12 +47,16 @@ flowchart TB
   explorer --- RES
   SHEET -- Sheet provider --> DS
   SURVEY -- SurveyResponses provider --> DS
+  PROG -- ProgramStatus provider --> DS
   DS -- bind / import / merge fields --> DASH
   DS --> SHEET
   DS --> EMAIL
   SURVEY --> PUB
   DASH --> PUB
   WEB --> PUB
+  EMAIL --> PUB
+  FLOW --> PUB
+  NOTE --> PUB
   PUB -- "public /view URLs (shareable in esbabbler)" --> WORLD((Viewers))
 
   ACH[Achievements<br/>tRPC path middleware]
@@ -78,7 +85,7 @@ sequenceDiagram
   Respondent->>AT: 4. Respond → rows (partitionKey = survey resource id)
   Note over SV,AT: Respondents are served the published snapshot — unpublished 404s
   Creator->>SH: 5. Import responses (dataset.readDataset → one-time copy into a Sheet resource)
-  SH->>SH: 6. Computed columns — Aggregation / Math / Regex / String
+  SH->>SH: 6. Computed columns (Aggregation, Math, RegexMatch, …)
   Creator->>DB: 7. Bind visual to a DatasetReference (live re-resolve on load)
   DB->>PUB: 8. Publish dashboard — bakes dataset snapshots → shareable /view/dashboard/{id}
 ```
@@ -87,14 +94,17 @@ sequenceDiagram
 
 `ResourceDefinitionMap` ([/docs/architecture/resources](/docs/architecture/resources)) is the authoritative declaration; this is the summary:
 
-| ResourceType | Publishable | DatasetProvider | Portable  | Blades beyond Overview/Editor |
-| ------------ | :---------: | :-------------: | :-------: | ----------------------------- |
-| Dashboard    |     ✅      |                 |           |                               |
-| Email        |             |                 | ✅ export |                               |
-| Flowchart    |             |                 |           |                               |
-| Sheet        |             |       ✅        |    ✅     | Data, Settings                |
-| Survey       |     ✅      |  ✅ responses   |           | Responses                     |
-| TodoList     |             |                 |           | Items, Calendar               |
-| Webpage      |     ✅      |                 |           |                               |
+| ResourceType | Publishable | DatasetProvider | FileAssets | Portable  | Blades beyond Overview/Editor |
+| ------------ | :---------: | :-------------: | :--------: | :-------: | ----------------------------- |
+| Blueprint    |             |                 |            |           |                               |
+| Dashboard    |     ✅      |                 |            |           |                               |
+| Email        |     ✅      |                 |     ✅     | ✅ export |                               |
+| Flowchart    |     ✅      |                 |            |           |                               |
+| Note         |     ✅      |                 |            |           |                               |
+| Program      |             |    ✅ status    |            |           | Setup, Status                 |
+| Sheet        |             |       ✅        |            |    ✅     | Data, Settings                |
+| Survey       |     ✅      |  ✅ responses   |     ✅     |           | Responses                     |
+| TodoList     |             |                 |            |           | Items, Calendar               |
+| Webpage      |     ✅      |                 |     ✅     |           |                               |
 
 Outside the resource model: **Posts** (relational Postgres, social feed semantics), **Esbabbler** (distribution channel for published links), **Achievements** (the events layer itself), and **games/anime/fluid** (blob save state or none; achievements only). Single-blob-per-user save state (`useSave`, blob `${userId}/save`) remains only for genuinely one-per-user saves: clicker and dungeons.

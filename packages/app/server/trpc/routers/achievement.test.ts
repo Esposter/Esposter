@@ -88,7 +88,7 @@ describe("achievement", () => {
     const emptyLeaderboard = await caller.achievement.readPointsLeaderboard();
 
     expect(emptyLeaderboard.entries).toStrictEqual([]);
-    expect(emptyLeaderboard.self).toBeNull();
+    expect(emptyLeaderboard.self).toBeUndefined();
 
     const newResource = await caller.webpage.createResource({ name });
     await caller.webpage.saveResourceContent({

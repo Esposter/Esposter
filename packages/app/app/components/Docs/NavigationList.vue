@@ -15,15 +15,9 @@ const route = useRoute();
       <template #activator="{ props: activatorProps }">
         <v-list-item :="activatorProps" :title="item.title" />
       </template>
-      <v-list-item
-        v-if="item.page !== false"
-        link
-        :active="route.path === item.path"
-        title="Overview"
-        @click="navigateTo(item.path)"
-      />
+      <v-list-item v-if="item.page !== false" :active="route.path === item.path" title="Overview" :to="item.path" />
       <DocsNavigationList :items="item.children" />
     </v-list-group>
-    <v-list-item v-else link :active="route.path === item.path" :title="item.title" @click="navigateTo(item.path)" />
+    <v-list-item v-else :active="route.path === item.path" :title="item.title" :to="item.path" />
   </template>
 </template>

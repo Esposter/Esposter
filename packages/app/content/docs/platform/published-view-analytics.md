@@ -47,4 +47,4 @@ The increment is internal to the public read, not a procedure.
 - Riding `createResourceProcedures` makes this automatic for every current and future publishable type — no per-type wiring, consistent with the capability model. It is gated by the same `publishable` seam as the publish procedures: a type with no public URL has no views to count.
 - It counts views of the _content read_, so SSR/proxy prefetches and one person refreshing five times all count. The UI says "views", never "visitors". Precision is not the point; direction and magnitude are.
 - This is platform-side counting, not client analytics — no script on the view page, nothing for ad-blockers to eat, and it works for OG-unfurl bots too (which is fine at this fidelity).
-- Per-version stats are out of scope; they would belong to [publish history](/docs/proposals/platform/publish-history) if ever needed.
+- Per-version stats are out of scope; they would belong to [publish history](/docs/platform/publish-history) if ever needed.

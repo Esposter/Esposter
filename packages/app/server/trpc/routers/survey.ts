@@ -93,16 +93,16 @@ export const surveyRouter = router({
   ),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
-    .query<null | SurveyResponseEntity>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
+    .query<SurveyResponseEntity | undefined>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
       const resolvedParticipantToken = await resolveSurveyResponseRead(ctx.db, partitionKey, participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const surveyResponse = await getEntity(surveyResponseClient, SurveyResponseEntity, partitionKey, rowKey);
-      if (!surveyResponse) return null;
+      if (!surveyResponse) return undefined;
       // A resume must present the identity the response was started with, so another participant's row is
       // Indistinguishable from one that does not exist. Only Identified mode resolves a token to compare —
       // Anonymous carries no identity to contradict, so a survey switched to it still resumes its
       // Identified-era responses, exactly as the write boundary treats them
-      if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken) return null;
+      if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken) return undefined;
       return surveyResponse;
     }),
   // The dataset contract carries no keys, so the blade reads rows keyed through its own procedure —

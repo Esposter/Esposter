@@ -5,7 +5,7 @@ import { AzureContainer } from "@esposter/db-schema";
 
 export const useDeleteResourceFile = (type: ResourceType, id: MaybeRefOrGetter<string>) => {
   const getResourceMutations = useResourceMutations();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   return async (downloadFileSasUrl: string) => {
     const { deleteFile } = getResourceMutations(type);
     if (!deleteFile) return;
@@ -18,6 +18,7 @@ export const useDeleteResourceFile = (type: ResourceType, id: MaybeRefOrGetter<s
     if (!pathname.startsWith(filesDirectoryPrefix)) return;
 
     const blobPath = pathname.slice(filesDirectoryPrefix.length);
-    await executeMutation(() => deleteFile({ blobPath, id: idValue }));
+    // Keyed per blob so concurrent file deletions never stale-drop each other
+    await executeMutation(() => deleteFile({ blobPath, id: idValue }), { key: blobPath });
   };
 };

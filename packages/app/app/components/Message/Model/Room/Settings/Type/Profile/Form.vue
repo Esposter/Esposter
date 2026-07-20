@@ -12,7 +12,7 @@ const { roomId, userToRoom } = defineProps<ProfileFormProps>();
 const { $trpc } = useNuxtApp();
 const userToRoomStore = useUserToRoomStore();
 const { setMyUserToRoom } = userToRoomStore;
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const nickname = ref(userToRoom.nickname);
 const save = async () => {
   const newNickname = nickname.value;
@@ -24,6 +24,7 @@ const save = async () => {
         setMyUserToRoom(roomId, { ...userToRoom, nickname: oldNickname });
       };
     },
+    key: roomId,
   });
 };
 </script>

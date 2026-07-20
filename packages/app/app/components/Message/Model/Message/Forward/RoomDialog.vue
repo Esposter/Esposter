@@ -43,7 +43,7 @@ const {
   true,
   true,
 );
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 // Forwarded messages land in the target rooms via the subscription echo — non-optimistic
 const forwardMessage = async () => {
   if (!forward.value) return;
@@ -57,6 +57,7 @@ const forwardMessage = async () => {
         rowKey: forwardRowKey,
       }),
     {
+      key: forwardRowKey,
       onSuccess: async () => {
         // Capture the destination, then reset before navigating. After navigateTo, the forward store's
         // Room-keyed useDataMap resolves against the destination room, so resetting afterwards would

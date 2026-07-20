@@ -19,6 +19,7 @@ import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constan
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
+import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -163,32 +164,16 @@ export const resourceRouter = router({
     ),
   deleteResources: standardAuthedProcedure
     .input(deleteResourcesInputSchema)
-    // Owner-scoped where so callers can only ever soft-delete their own rows.
-    // The blob and the {id}/ directory survive until purge — that is what makes restore possible.
-    // One transaction so a soft-deleted resource can never linger publicly served
+    // Owner-scoped where so callers can only ever soft-delete their own rows
     .mutation<Resource[]>(({ ctx, input: { ids } }) =>
-      ctx.db.transaction(async (tx) => {
-        const deletedResources = await tx
-          .update(resources)
-          .set({ deletedAt: new Date() })
-          .where(
-            and(
-              eq(resources.userId, ctx.getSessionPayload.user.id),
-              inArray(resources.id, ids),
-              isNull(resources.deletedAt),
-            ),
-          )
-          .returning();
-        // A deleted resource must not stay publicly served, so restore deliberately returns a Draft
-        if (deletedResources.length > 0)
-          await tx.delete(resourcePublications).where(
-            inArray(
-              resourcePublications.resourceId,
-              deletedResources.map(({ id }) => id),
-            ),
-          );
-        return deletedResources;
-      }),
+      softDeleteResources(
+        ctx.db,
+        and(
+          eq(resources.userId, ctx.getSessionPayload.user.id),
+          inArray(resources.id, ids),
+          isNull(resources.deletedAt),
+        ),
+      ),
     ),
   duplicateResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
     const { name, tags, type, userId } = ctx.resource;
