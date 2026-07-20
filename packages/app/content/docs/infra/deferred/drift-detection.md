@@ -9,7 +9,6 @@ A scheduled CI job running `pulumi refresh --preview-only` (or `preview --refres
 
 **Why deferred**
 
-- Meaningful only after [Pulumi becomes the full source of truth](/docs/proposals/infra/pulumi-source-of-truth) — until then it would permanently report the known Function App settings drift.
 - Needs Azure + Pulumi credentials in a scheduled workflow — a standing secret surface for a single-operator estate that rarely changes out-of-band.
 
-**Revisit when:** the source-of-truth proposal lands and more than one person operates the infrastructure.
+**Revisit when:** more than one person operates the infrastructure. [Pulumi is already the source of truth](/docs/infra/pulumi-source-of-truth), so the remaining blocker is only the standing credential surface.

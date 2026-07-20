@@ -9,7 +9,9 @@
   "logging": {
     "applicationInsights": {
       "samplingSettings": {
-        "excludedTypes": "Request"
+        "excludedTypes": "Exception",
+        "isEnabled": true,
+        "maxTelemetryItemsPerSecond": 20
       }
     },
     "fileLoggingMode": "never",

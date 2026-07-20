@@ -24,7 +24,7 @@ export const prodLogEsposterAe001: azure_native.operationalinsights.Workspace =
         ...ApplicationTags,
       },
       workspaceCapping: {
-        dailyQuotaGb: -1,
+        dailyQuotaGb: 0.5,
       },
       workspaceName,
     },

@@ -107,35 +107,40 @@ Other approved region tokens:
 
 ## Asset Type Tokens
 
-Use Microsoft Cloud Adoption Framework abbreviations when one exists. Esposter-specific tokens are allowed only where CAF does not define a resource-type abbreviation.
+Token sources are tried in order:
+
+1. **CAF** — the [Microsoft Cloud Adoption Framework abbreviations list](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations). Always wins when it defines the resource type.
+2. **LibreDevOps** — the [LibreDevOps Azure naming convention table](https://libredevops.org/docs/documents/azure-naming-convention/), which covers resource types CAF omits. Take only the resource-type abbreviation (without its trailing hyphen), never the surrounding name shape: LibreDevOps orders names prefix-infix-outfix-suffix and uses `prd`/`tst` style environment tokens, both of which conflict with the Esposter shape above.
+3. **Esposter** — a token defined here, allowed only when neither source covers the resource type.
 
 These tokens are official for Esposter infrastructure. If a new Azure resource type is introduced and no token exists here, add the token in the same change as the resource. Unused tokens do not require migration.
 
-| Token   | Asset Type                 | Azure ARM Type                              | Source   |
-| ------- | -------------------------- | ------------------------------------------- | -------- |
-| `ag`    | Azure Monitor action group | `Microsoft.Insights/actionGroups`           | CAF      |
-| `apic`  | API connection             | `Microsoft.Web/connections`                 | Esposter |
-| `appi`  | Application Insights       | `Microsoft.Insights/components`             | CAF      |
-| `bgt`   | Budget                     | `Microsoft.Consumption/budgets`             | Esposter |
-| `evgs`  | Event Grid subscription    | `Microsoft.EventGrid/eventSubscriptions`    | CAF      |
-| `evgt`  | Event Grid topic           | `Microsoft.EventGrid/topics`                | CAF      |
-| `func`  | Function app               | `Microsoft.Web/sites`                       | CAF      |
-| `log`   | Log Analytics workspace    | `Microsoft.OperationalInsights/workspaces`  | CAF      |
-| `logic` | Logic app                  | `Microsoft.Logic/workflows`                 | CAF      |
-| `pa`    | Policy assignment          | `Microsoft.Authorization/policyAssignments` | Esposter |
-| `rg`    | Resource group             | `Microsoft.Resources/resourceGroups`        | CAF      |
-| `sbns`  | Service Bus namespace      | `Microsoft.ServiceBus/namespaces`           | CAF      |
-| `sbq`   | Service Bus queue          | `Microsoft.ServiceBus/namespaces/queues`    | CAF      |
-| `spch`  | Speech service             | `Microsoft.CognitiveServices/accounts`      | CAF      |
-| `srch`  | Azure AI Search            | `Microsoft.Search/searchServices`           | CAF      |
-| `st`    | Storage account            | `Microsoft.Storage/storageAccounts`         | CAF      |
-| `wps`   | Web PubSub                 | `Microsoft.SignalRService/webPubSub`        | CAF      |
+| Token   | Asset Type                 | Azure ARM Type                              | Source      |
+| ------- | -------------------------- | ------------------------------------------- | ----------- |
+| `ag`    | Azure Monitor action group | `Microsoft.Insights/actionGroups`           | CAF         |
+| `apic`  | API connection             | `Microsoft.Web/connections`                 | Esposter    |
+| `appi`  | Application Insights       | `Microsoft.Insights/components`             | CAF         |
+| `bgt`   | Budget                     | `Microsoft.Consumption/budgets`             | Esposter    |
+| `evgs`  | Event Grid subscription    | `Microsoft.EventGrid/eventSubscriptions`    | CAF         |
+| `evgt`  | Event Grid topic           | `Microsoft.EventGrid/topics`                | CAF         |
+| `func`  | Function app               | `Microsoft.Web/sites`                       | CAF         |
+| `log`   | Log Analytics workspace    | `Microsoft.OperationalInsights/workspaces`  | CAF         |
+| `logic` | Logic app                  | `Microsoft.Logic/workflows`                 | CAF         |
+| `pa`    | Policy assignment          | `Microsoft.Authorization/policyAssignments` | LibreDevOps |
+| `rg`    | Resource group             | `Microsoft.Resources/resourceGroups`        | CAF         |
+| `sbns`  | Service Bus namespace      | `Microsoft.ServiceBus/namespaces`           | CAF         |
+| `sbq`   | Service Bus queue          | `Microsoft.ServiceBus/namespaces/queues`    | CAF         |
+| `spch`  | Speech service             | `Microsoft.CognitiveServices/accounts`      | CAF         |
+| `sqr`   | Scheduled query rule       | `Microsoft.Insights/scheduledQueryRules`    | LibreDevOps |
+| `srch`  | Azure AI Search            | `Microsoft.Search/searchServices`           | CAF         |
+| `st`    | Storage account            | `Microsoft.Storage/storageAccounts`         | CAF         |
+| `wps`   | Web PubSub                 | `Microsoft.SignalRService/webPubSub`        | CAF         |
 
 Do not use `a` for Azure Monitor actions. Action behavior belongs inside the owning action group resource.
 
 ## Reserved Asset Type Tokens
 
-These tokens are the complete set of CAF abbreviations plus Esposter-specific additions, all approved for future use. Source column indicates whether the token comes from the [CAF abbreviations list](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations) or is Esposter-defined. They are not migration work unless a live resource currently uses a different token.
+These tokens are the complete set of CAF abbreviations plus LibreDevOps fallbacks and Esposter-specific additions, all approved for future use. The Source column names which of the three tiers above a token came from. They are not migration work unless a live resource currently uses a different token.
 
 ### AI and machine learning
 
@@ -240,25 +245,25 @@ These tokens are the complete set of CAF abbreviations plus Esposter-specific ad
 
 ### Databases
 
-| Token    | Asset Type                          | Azure ARM Type                                       | Source   |
-| -------- | ----------------------------------- | ---------------------------------------------------- | -------- |
-| `amr`    | Azure Managed Redis                 | `Microsoft.Cache/RedisEnterprise`                    | CAF      |
-| `cosmos` | Azure Cosmos DB database            | `Microsoft.DocumentDB/databaseAccounts/sqlDatabases` | CAF      |
-| `coscas` | Azure Cosmos DB for Cassandra       | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
-| `cosgrm` | Azure Cosmos DB for Gremlin         | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
-| `cosmon` | Azure Cosmos DB for MongoDB         | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
-| `cosno`  | Azure Cosmos DB for NoSQL           | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
-| `cospos` | Azure Cosmos DB PostgreSQL cluster  | `Microsoft.DBforPostgreSQL/serverGroupsv2`           | CAF      |
-| `costab` | Azure Cosmos DB for Table           | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
-| `dms`    | Database Migration Service instance | `Microsoft.DataMigration/services`                   | CAF      |
-| `mysql`  | MySQL database                      | `Microsoft.DBforMySQL/servers`                       | CAF      |
-| `psql`   | PostgreSQL database                 | `Microsoft.DBforPostgreSQL/servers`                  | CAF      |
-| `redis`  | Azure Cache for Redis               | `Microsoft.Cache/redis`                              | Esposter |
-| `sql`    | Azure SQL Database server           | `Microsoft.Sql/servers`                              | CAF      |
-| `sqldb`  | Azure SQL database                  | `Microsoft.Sql/servers/databases`                    | CAF      |
-| `sqlep`  | SQL Elastic Pool                    | `Microsoft.Sql/servers/elasticpool`                  | CAF      |
-| `sqlja`  | SQL Elastic Job agent               | `Microsoft.Sql/servers/jobAgents`                    | CAF      |
-| `sqlmi`  | SQL Managed Instance                | `Microsoft.Sql/managedInstances`                     | CAF      |
+| Token    | Asset Type                          | Azure ARM Type                                       | Source      |
+| -------- | ----------------------------------- | ---------------------------------------------------- | ----------- |
+| `amr`    | Azure Managed Redis                 | `Microsoft.Cache/RedisEnterprise`                    | CAF         |
+| `cosmos` | Azure Cosmos DB database            | `Microsoft.DocumentDB/databaseAccounts/sqlDatabases` | CAF         |
+| `coscas` | Azure Cosmos DB for Cassandra       | `Microsoft.DocumentDB/databaseAccounts`              | CAF         |
+| `cosgrm` | Azure Cosmos DB for Gremlin         | `Microsoft.DocumentDB/databaseAccounts`              | CAF         |
+| `cosmon` | Azure Cosmos DB for MongoDB         | `Microsoft.DocumentDB/databaseAccounts`              | CAF         |
+| `cosno`  | Azure Cosmos DB for NoSQL           | `Microsoft.DocumentDB/databaseAccounts`              | CAF         |
+| `cospos` | Azure Cosmos DB PostgreSQL cluster  | `Microsoft.DBforPostgreSQL/serverGroupsv2`           | CAF         |
+| `costab` | Azure Cosmos DB for Table           | `Microsoft.DocumentDB/databaseAccounts`              | CAF         |
+| `dms`    | Database Migration Service instance | `Microsoft.DataMigration/services`                   | CAF         |
+| `mysql`  | MySQL database                      | `Microsoft.DBforMySQL/servers`                       | CAF         |
+| `psql`   | PostgreSQL database                 | `Microsoft.DBforPostgreSQL/servers`                  | CAF         |
+| `redis`  | Azure Cache for Redis               | `Microsoft.Cache/redis`                              | LibreDevOps |
+| `sql`    | Azure SQL Database server           | `Microsoft.Sql/servers`                              | CAF         |
+| `sqldb`  | Azure SQL database                  | `Microsoft.Sql/servers/databases`                    | CAF         |
+| `sqlep`  | SQL Elastic Pool                    | `Microsoft.Sql/servers/elasticpool`                  | CAF         |
+| `sqlja`  | SQL Elastic Job agent               | `Microsoft.Sql/servers/jobAgents`                    | CAF         |
+| `sqlmi`  | SQL Managed Instance                | `Microsoft.Sql/managedInstances`                     | CAF         |
 
 ### Developer tools
 
@@ -286,21 +291,21 @@ These tokens are the complete set of CAF abbreviations plus Esposter-specific ad
 
 ### Management and governance
 
-| Token    | Asset Type                          | Azure ARM Type                                   | Source   |
-| -------- | ----------------------------------- | ------------------------------------------------ | -------- |
-| `a`      | Azure Monitor action                | Action group receiver, not a standalone resource | Esposter |
-| `aa`     | Automation account                  | `Microsoft.Automation/automationAccounts`        | CAF      |
-| `apr`    | Azure Monitor alert processing rule | `Microsoft.AlertsManagement/actionRules`         | CAF      |
-| `bp`     | Blueprint                           | `Microsoft.Blueprint/blueprints`                 | Esposter |
-| `bpa`    | Blueprint assignment                | `Microsoft.Blueprint/blueprintAssignments`       | Esposter |
-| `dce`    | Data collection endpoint            | `Microsoft.Insights/dataCollectionEndpoints`     | CAF      |
-| `dcr`    | Azure Monitor data collection rule  | `Microsoft.Insights/dataCollectionRules`         | CAF      |
-| `mg`     | Management group                    | `Microsoft.Management/managementGroups`          | CAF      |
-| `pack`   | Log Analytics query packs           | `Microsoft.OperationalInsights/querypacks`       | CAF      |
-| `policy` | Policy definition                   | `Microsoft.Authorization/policyDefinitions`      | Esposter |
-| `pview`  | Microsoft Purview instance          | `Microsoft.Purview/accounts`                     | CAF      |
-| `script` | Deployment scripts                  | `Microsoft.Resources/deploymentScripts`          | CAF      |
-| `ts`     | Template specs                      | `Microsoft.Resources/templateSpecs`              | CAF      |
+| Token    | Asset Type                          | Azure ARM Type                                   | Source      |
+| -------- | ----------------------------------- | ------------------------------------------------ | ----------- |
+| `a`      | Azure Monitor action                | Action group receiver, not a standalone resource | Esposter    |
+| `aa`     | Automation account                  | `Microsoft.Automation/automationAccounts`        | CAF         |
+| `apr`    | Azure Monitor alert processing rule | `Microsoft.AlertsManagement/actionRules`         | CAF         |
+| `bp`     | Blueprint                           | `Microsoft.Blueprint/blueprints`                 | LibreDevOps |
+| `bpa`    | Blueprint assignment                | `Microsoft.Blueprint/blueprintAssignments`       | LibreDevOps |
+| `dce`    | Data collection endpoint            | `Microsoft.Insights/dataCollectionEndpoints`     | CAF         |
+| `dcr`    | Azure Monitor data collection rule  | `Microsoft.Insights/dataCollectionRules`         | CAF         |
+| `mg`     | Management group                    | `Microsoft.Management/managementGroups`          | CAF         |
+| `pack`   | Log Analytics query packs           | `Microsoft.OperationalInsights/querypacks`       | CAF         |
+| `pd`     | Policy definition                   | `Microsoft.Authorization/policyDefinitions`      | LibreDevOps |
+| `pview`  | Microsoft Purview instance          | `Microsoft.Purview/accounts`                     | CAF         |
+| `script` | Deployment scripts                  | `Microsoft.Resources/deploymentScripts`          | CAF         |
+| `ts`     | Template specs                      | `Microsoft.Resources/templateSpecs`              | CAF         |
 
 ### Migration
 
@@ -401,9 +406,10 @@ These tokens are the complete set of CAF abbreviations plus Esposter-specific ad
 ### Notes
 
 - `a` (Azure Monitor action) — concept token, not a standalone Azure resource; behavior belongs inside the owning action group
-- `amr` vs `redis` — CAF defines `amr` for Azure Managed Redis (`Microsoft.Cache/RedisEnterprise`); `redis` is an Esposter token for standard Azure Cache for Redis (`Microsoft.Cache/redis`) which CAF does not currently abbreviate
+- `amr` vs `redis` — CAF defines `amr` for Azure Managed Redis (`Microsoft.Cache/RedisEnterprise`); `redis` comes from LibreDevOps for standard Azure Cache for Redis (`Microsoft.Cache/redis`) which CAF does not currently abbreviate
+- `bgt` — LibreDevOps abbreviates consumption budgets as `conbudg`; `bgt` predates the LibreDevOps fallback and names live budget resources, so it stays
 - `bp` / `bpa` — Azure Blueprints is deprecated; use Template Specs (`ts`) for new work
-- `policy` — CAF recommends descriptive names for policy definitions rather than a fixed abbreviation; `policy` is Esposter-defined for cases where a short token is needed
+- `pd` — CAF recommends descriptive names for policy definitions rather than a fixed abbreviation, so the LibreDevOps token applies
 - `ergw` vs `vgw` — both map to `Microsoft.Network/virtualNetworkGateways`; `ergw` is the CAF token for ExpressRoute gateways specifically, `vgw` is for VPN/general virtual network gateways
 - `afwp` vs `waf` — both map to `Microsoft.Network/firewallPolicies`; `afwp` is for Azure Firewall policies, `waf` is for Web Application Firewall policies
 
