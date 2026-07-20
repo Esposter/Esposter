@@ -127,8 +127,8 @@ catalog:
   defu: ^6.1.7
   dependency-cruiser: ^18.1.0
   dotenv: ^17.4.2
-  drizzle-kit: 1.0.0-rc.2
-  drizzle-orm: 1.0.0-rc.2
+  drizzle-kit: 1.0.0-rc.4
+  drizzle-orm: 1.0.0-rc.4
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.7.0
   eslint-plugin-depend: ^1.5.0
