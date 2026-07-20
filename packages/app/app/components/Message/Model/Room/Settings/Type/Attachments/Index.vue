@@ -25,7 +25,7 @@ const categoryItems = Object.values(MimeCategory).map<SelectItemCategoryDefiniti
 const isDirty = computed(
   () =>
     maxFileSizeBytes.value !== room.maxFileSizeBytes ||
-    allowedMimeCategories.value.join() !== room.allowedMimeCategories.join(),
+    allowedMimeCategories.value.join(",") !== room.allowedMimeCategories.join(","),
 );
 const save = async () => {
   if (!isDirty.value) return;
