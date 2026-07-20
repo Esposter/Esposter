@@ -3,7 +3,6 @@ import type { ThemeTabPlugin } from "survey-creator-core";
 
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
 import { useSurveyStore } from "@/store/survey";
@@ -13,6 +12,7 @@ import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "su
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 
 export const useSurveyCreator = () => {
+  const validateFile = useValidateFile();
   const surveyStore = useSurveyStore();
   const { loadContent, saveModel } = surveyStore;
   const importJsonFile = useImportJsonFile();
@@ -54,9 +54,7 @@ export const useSurveyCreator = () => {
     newCreator.onUploadFile.add(async (_creator, { callback, element, files, propertyName }) => {
       await getResultAsync(async () => {
         const file = takeOne(files);
-
         if (!validateFile(file.size)) {
-          useEmptyFileAlert();
           callback("error");
           return;
         }

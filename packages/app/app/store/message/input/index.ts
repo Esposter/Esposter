@@ -81,7 +81,7 @@ export const useInputStore = defineStore("message/input", () => {
   };
 
   const validateInput = (editor?: Editor, isDisplayError?: true) => {
-    if (isDisplayError && !uploadFileStore.files.every(({ size }) => validateFile(size))) {
+    if (isDisplayError && !uploadFileStore.files.every(({ size }) => validateFile(size).isValid)) {
       useEmptyFileAlert();
       return false;
     } else

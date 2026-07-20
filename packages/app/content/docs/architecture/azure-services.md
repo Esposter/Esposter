@@ -48,6 +48,35 @@ Table names live in the `AzureTable` enum (`packages/db-schema/src/models/azure/
 | `ModerationLog`      | Moderation/admin action log per room                                                                               |
 | `SurveyResponses`    | Survey responses, `partitionKey = survey resource id` → [/docs/architecture/datasets](/docs/architecture/datasets) |
 
+## Search index (`messages-index`)
+
+Azure AI Search holds one index, `messages-index`, that powers filtered message search (`searchMessages`) and the Sent tab (`readMySentMessages`). Its full schema is a data-plane resource — not Pulumi-managed — recreated from `packages/infra/data/searchIndexes/messages-index.json`.
+
+The index is populated by a **scheduled Azure Table pull indexer** (`messages-indexer`), not by a push on write: the indexer reads the `Messages` table on an interval measured in minutes and upserts each row as a document. A newly sent message therefore becomes searchable shortly after it lands rather than synchronously, and a message the indexer never picked up simply never appears in search — the drift the status/rebuild tooling exists to catch (see [/docs/esbabbler/search-index-tooling](/docs/esbabbler/search-index-tooling)).
+
+```mermaid
+flowchart TD
+  MT["Messages table (Azure Table)"] -->|"messages-indexer pull, minute-scale interval"| IDX["messages-index (Azure AI Search)"]
+  IDX -->|"searchMessages"| SM["Filtered full-text search"]
+  IDX -->|"readMySentMessages"| SENT["Sent tab"]
+```
+
+Each document is keyed by `RowKey` (the message's reverse-ticked `rowKey`), so re-feeding the same message is an idempotent upsert. The fields that matter:
+
+| Field                                                                          | Role                                                                    |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `RowKey`                                                                       | Document key — `Edm.String`, sortable, filterable                       |
+| `PartitionKey`                                                                 | Owning room id — filterable (scopes search to a room)                   |
+| `message`                                                                      | Searchable body text, analyzer `en.lucene`                              |
+| `files/filename`                                                               | Searchable attachment name, analyzer `standard.lucene`                  |
+| `appUser/name`                                                                 | Searchable sender name, analyzer `standard.lucene`                      |
+| `userId`                                                                       | Filterable — the Sent tab filters to the caller's own messages          |
+| `deletedAt`                                                                    | Filterable — a null clause excludes soft-deleted messages at query time |
+| `createdAt` / `updatedAt`                                                      | Filterable + sortable — the Sent tab orders by `createdAt` descending   |
+| `type`, `isEdited`, `isForward`, `isPinned`, `mentions`, `linkPreviewResponse` | Retrievable/filterable message attributes                               |
+
+Relevance uses BM25 similarity with the `messageBoost` scoring profile as default — the `message` field is weighted 3× and `appUser/name` 1.5×, so a query hitting the body outranks one hitting only the sender name. The canonical searchable-field list lives in `SearchIndexSearchableFieldsMap` (`packages/db-schema`).
+
 ## Azure Table vs Postgres
 
 Use **Azure Table** for high-volume, append-heavy, time-ordered data with no complex joins (messages, moderation logs, survey responses). `partitionKey = <owning entity id>`, `rowKey = reverseTickedTimestamp` gives newest-first ordering for free.

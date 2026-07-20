@@ -5,7 +5,7 @@ import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/conf
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { RoomType, StandardMessageEntity } from "@esposter/db-schema";
+import { MimeCategory, RoomType, StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -13,12 +13,14 @@ describe(writeIndexedDb, () => {
   const { message1, message2, message3 } = setupIndexedDbSuite();
   const userId = crypto.randomUUID();
   const room = {
+    allowedMimeCategories: Object.values(MimeCategory),
     categoryId: null,
     createdAt: new Date(),
     deletedAt: null,
     id: crypto.randomUUID(),
     image: "",
     isReadOnly: false,
+    maxFileSizeBytes: null,
     name: "",
     participantKey: null,
     slowmodeMs: null,

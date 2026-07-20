@@ -10,6 +10,8 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   const { data: searchQuery } = useDataMap(() => roomStore.currentRoomId, "");
   const menu = ref(false);
   const isSearching = ref(false);
+  // Files-in-room tab mode — lists every message with an attachment instead of a text/filter search.
+  const hasFiles = ref(false);
   const { data: selectedFilters } = useDataMap<Filter[]>(() => roomStore.currentRoomId, []);
   const activeSelectedFilter = computed({
     get: () => selectedFilters.value.at(-1),
@@ -39,6 +41,7 @@ export const useSearchMessageStore = defineStore("message/search", () => {
     count,
     createFilter,
     deleteFilter,
+    hasFiles,
     hasFilters,
     isSearching,
     isSearchQueryEmpty,

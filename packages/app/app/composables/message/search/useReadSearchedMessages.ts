@@ -18,7 +18,7 @@ export const useReadSearchedMessages = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
   const { getReadMoreItems } = searchMessageStore;
-  const { count, isSearching, menu, page, searchQuery } = storeToRefs(searchMessageStore);
+  const { count, hasFiles, isSearching, menu, page, searchQuery } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
@@ -37,6 +37,7 @@ export const useReadSearchedMessages = () => {
       rightDrawer.value = RightDrawer.Search;
       const { count: newCount, data } = await $trpc.message.searchMessages.query({
         filters: dedupeFilters(selectedFilters.value),
+        hasFiles: hasFiles.value,
         offset,
         query: searchQuery.value,
         roomId: currentRoomId.value,
@@ -44,11 +45,13 @@ export const useReadSearchedMessages = () => {
       // No offset means a fresh search rather than reading the next offset page.
       if (!offset) {
         page.value = 1;
-        await createSearchHistory({
-          filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
-          query: searchQuery.value,
-          roomId: currentRoomId.value,
-        });
+        // The Files tab is a browse, not a text query, so it is never written to search history.
+        if (!hasFiles.value)
+          await createSearchHistory({
+            filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
+            query: searchQuery.value,
+            roomId: currentRoomId.value,
+          });
       }
       if (newCount !== undefined) count.value = newCount;
       return data;

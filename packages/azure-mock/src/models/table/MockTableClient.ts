@@ -20,6 +20,7 @@ import type { Except } from "type-fest";
 import { MOCK_TABLE_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
+import { compareByCompositeKey } from "@/services/table/compareByCompositeKey";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
 import { exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
@@ -85,9 +86,16 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   ): PagedAsyncIterableIterator<TableEntityResult<T>, TableEntityResultPage<T>> {
     const withMetadata = this.#withMetadata.bind(this);
     const filter = options?.queryOptions?.filter;
-    const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()];
+    // Azure Table Storage returns entities ordered by partitionKey then rowKey, not insertion order —
+    // The reverse-ticked message rowKey design relies on that scan order to read newest-first.
+    const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()].toSorted(compareByCompositeKey);
     const predicate = filter ? createFilterPredicate(filter) : undefined;
     const resultTableEntities = predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities;
+    // One shared generator retains iteration state across next() calls so a bare for await terminates,
+    // Matching the real SDK where the returned iterator is single-use.
+    const entityIterator = (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
+      for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
+    })(resultTableEntities);
     return {
       byPage: ({ maxPageSize } = {}) =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
@@ -106,10 +114,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
           for (let i = 0; i < allEntitiesWithMetadata.length; i += maxPageSize)
             yield await Promise.resolve(allEntitiesWithMetadata.slice(i, i + maxPageSize));
         })(resultTableEntities),
-      next: () =>
-        (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
-          for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
-        })(resultTableEntities).next(),
+      next: () => entityIterator.next(),
       [Symbol.asyncIterator]() {
         return this;
       },
