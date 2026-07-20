@@ -26,5 +26,6 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Singleton dialogs](/docs/architecture/singleton-dialogs)                                 | Store-driven singleton dialogs — one mounted dialog per feature, never one per list item |
 | [Navigation](/docs/architecture/navigation)                                               | NuxtLink/navigateTo for every link — never a raw anchor — and instant docs routing       |
 | [No polling](/docs/architecture/no-polling)                                               | Polling banned repo-wide — every wait is event-driven or awaits a completion handle      |
+| [No manual recovery](/docs/architecture/no-manual-recovery)                               | Failed async work retries itself on an event, with an attempt cap and a quarantine       |
 | [Null vs undefined](/docs/architecture/null-vs-undefined)                                 | One absent-value sentinel in app-owned code — null survives only in boundary shapes      |
 | [Search](/docs/architecture/search)                                                       | One search stack — StyledSearchDialog palettes + useAutoSearch/useCursorSearcher         |

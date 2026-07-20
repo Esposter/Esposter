@@ -14,6 +14,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "persisted-data-latest-shape-only",
       "destructive-confirmation",
       "no-polling",
+      "no-manual-recovery",
       "null-vs-undefined",
       "singleton-dialogs",
       "navigation",

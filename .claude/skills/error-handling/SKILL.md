@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch banned), chaining patterns, finalizers, tRPC backend guards, and Azure Functions logging/retry (context.error, logAndRethrow, fatal vs best-effort). Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
+description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch banned), chaining patterns, finalizers, tRPC backend guards, and Azure Functions logging/retry (context.error, logAndRethrow, fatal vs best-effort, capped dead-letter replay with quarantine). Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
 ---
 
 # Error Handling Conventions
@@ -187,6 +187,14 @@ await getResultAsync(() => webPubSubServiceClient.group(newMessage.partitionKey)
 ```
 
 Canonical: `createAndBroadcastMessage` (broadcast) and `processWebhookHandler` (push dispatch) — both best-effort so a transient post-persist failure can't duplicate the message. The rule of thumb: everything before the persist is fatal/retryable; everything after it is best-effort.
+
+### Past the retries — automatic replay, capped, then quarantined
+
+When retries are exhausted the delivery dead-letters, and recovery from there is automatic and event-triggered, never a script someone remembers to run (`/docs/architecture/no-manual-recovery`). A replay handler:
+
+- **Validates before republishing.** A payload that fails its schema can never succeed — quarantine it immediately instead of spending the attempt budget on it.
+- **Carries the attempt count with the payload** (metadata on the stored artifact), so it survives the round trip back through the dead-letter sink. A counter held in the handler resets every cycle and loops forever.
+- **Quarantines past the cap** — move the payload under a prefix the trigger's filter excludes, then `context.error(...)`. Never leave a poison payload where the trigger can pick it up again.
 
 ## Finalizers
 
