@@ -26,6 +26,9 @@ export const SettingsListItemMap: Record<SettingsType, Except<Item, "onClick" | 
   [SettingsType.Bans]: {
     icon: "mdi-account-cancel-outline",
   },
+  [SettingsType.Attachments]: {
+    icon: "mdi-paperclip",
+  },
   [SettingsType.Members]: {
     icon: "mdi-account-multiple-outline",
   },

@@ -13,10 +13,20 @@ import {
   FilterType,
   SearchIndex,
   SearchIndexSearchableFieldsMap,
+  StandardMessageEntityPropertyNames,
+  UnaryOperator,
 } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
-export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
+export const searchMessages = async ({
+  filters,
+  hasFiles,
+  limit,
+  offset,
+  query,
+  roomId,
+  sortBy,
+}: SearchMessagesInput) => {
   const client = useSearchClient(SearchIndex.Messages);
   const dedupedFilters = dedupeFilters(filters);
   const hasRoomInFilter = dedupedFilters.some(({ type }) => type === FilterType.In);
@@ -27,8 +37,13 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   if (dedupedFilters.length > 0) clauses.push(...filtersToClauses(dedupedFilters));
+  const serializedClauses = serializeSearchClauses(clauses);
+  // "Has files" is a non-empty-collection test rather than a value clause, so it appends as a raw OData any().
+  const filter = hasFiles
+    ? `${serializedClauses} ${UnaryOperator.and} ${StandardMessageEntityPropertyNames.files}/any()`
+    : serializedClauses;
   const { count, results } = await client.search(query, {
-    filter: serializeSearchClauses(clauses),
+    filter,
     includeTotalCount: true,
     orderBy: sortBy.map(({ key, order }) => `${key} ${order}`),
     searchFields: SearchIndexSearchableFieldsMap[SearchIndex.Messages],

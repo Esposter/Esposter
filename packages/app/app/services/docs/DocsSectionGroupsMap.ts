@@ -31,6 +31,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "scheduled-messages",
       "drafts-and-sent",
       "thread-follows",
+      "file-media",
     ],
     "Members & profiles": [
       "friends-and-dms",

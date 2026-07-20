@@ -1,10 +1,10 @@
 import type { ResourceType } from "@esposter/db-schema";
 
-import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
+import { uploadFileToSas } from "@/services/file/uploadFileToSas";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
-// The FileAssets round-trip for one file: SAS PUT target -> direct blob upload -> refreshed read url
+// The FileAssets round-trip for one file, delegated to the shared uploadFileToSas service.
 export const useUploadResourceFile = (type: ResourceType, id: MaybeRefOrGetter<string>) => {
   const getResourceMutations = useResourceMutations();
   return async (file: File) => {
@@ -14,14 +14,11 @@ export const useUploadResourceFile = (type: ResourceType, id: MaybeRefOrGetter<s
       throw new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, type);
 
     const idValue = toValue(id);
-    const { id: fileId, sasUrl } = takeOne(
-      await generateUploadFileSasEntities({ files: [{ filename: file.name, mimetype: file.type }], id: idValue }),
-    );
-    await uploadBlocks(file, sasUrl);
     return takeOne(
-      await generateDownloadFileSasUrls({
-        files: [{ filename: file.name, id: fileId, mimetype: file.type }],
-        id: idValue,
+      await uploadFileToSas({
+        files: [file],
+        generateDownloadFileSasUrls: (files) => generateDownloadFileSasUrls({ files, id: idValue }),
+        generateUploadFileSasEntities: (files) => generateUploadFileSasEntities({ files, id: idValue }),
       }),
     );
   };

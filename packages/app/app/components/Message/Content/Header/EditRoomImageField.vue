@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
+import { uploadFileToSas } from "@/services/file/uploadFileToSas";
+import { validateFile } from "@/services/file/validateFile";
+import { useAlertStore } from "@/store/alert";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mergeProps } from "vue";
 
@@ -14,6 +15,8 @@ interface EditRoomImageFieldProps {
 const modelValue = defineModel<RoomInMessage["image"]>({ required: true });
 const { name, roomId } = defineProps<EditRoomImageFieldProps>();
 const { $trpc } = useNuxtApp();
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const input = useTemplateRef("input");
 const isLoading = ref(false);
 </script>
@@ -58,12 +61,22 @@ const isLoading = ref(false);
             @change="
               async (event) => {
                 const file = (event.target as HTMLInputElement).files?.[0];
-                if (!file || file.size > MAX_FILE_REQUEST_SIZE) return;
+                if (!file) return;
+
+                const validation = validateFile(file.size);
+                if (!validation.isValid) {
+                  createAlert(validation.message, 'error');
+                  return;
+                }
+
                 isLoading = true;
                 await withFinalizerAsync(
                   async () => {
                     const { publicUrl, sasUrl } = await $trpc.room.generateProfileImageUploadUrl.mutate({ roomId });
-                    await uploadBlocks(file, sasUrl);
+                    await uploadFileToSas({
+                      files: [file],
+                      generateUploadFileSasEntities: () => Promise.resolve([{ id: '', sasUrl }]),
+                    });
                     modelValue = publicUrl;
                   },
                   () => {
