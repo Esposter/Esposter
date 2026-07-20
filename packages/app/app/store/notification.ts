@@ -1,5 +1,5 @@
 import type { AppNotification } from "@/models/notification/AppNotification";
-import type { Except, Absolute } from "type-fest";
+import type { Except } from "type-fest";
 
 import { getIsServer } from "@esposter/shared";
 // Session-scoped by design — never persisted; durable history is the activity log's job
