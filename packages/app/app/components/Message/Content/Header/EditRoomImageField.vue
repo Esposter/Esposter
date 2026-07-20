@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
 import { validateFile } from "@/services/file/validateFile";
 import { useAlertStore } from "@/store/alert";
@@ -75,7 +76,7 @@ const isLoading = ref(false);
                     const { publicUrl, sasUrl } = await $trpc.room.generateProfileImageUploadUrl.mutate({ roomId });
                     await uploadFileToSas({
                       files: [file],
-                      generateUploadFileSasEntities: async () => [{ id: '', sasUrl }],
+                      generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
                     });
                     modelValue = publicUrl;
                   },

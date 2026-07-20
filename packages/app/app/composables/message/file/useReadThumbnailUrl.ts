@@ -1,6 +1,7 @@
 import type { FileEntity } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
+import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getMimeCategory, MimeCategory } from "@esposter/db-schema";
 import { getResultAsync, noop, takeOne } from "@esposter/shared";
 
@@ -13,17 +14,24 @@ export const useReadThumbnailUrl = (
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const thumbnailUrl = ref("");
-  watchImmediate([() => toValue(file), () => toValue(isPreview)], async ([newFile, newIsPreview]) => {
-    thumbnailUrl.value = "";
-    const roomId = currentRoomId.value;
-    if (import.meta.server || newIsPreview || !roomId || getMimeCategory(newFile.mimetype) !== MimeCategory.Image)
-      return;
+  // Concurrent so a slow response for a previous file cannot overwrite the latest one
+  const readThumbnailUrl = getConcurrentFunction(
+    async (checkIsStale, newFile: FileEntity, newIsPreview: boolean | undefined) => {
+      thumbnailUrl.value = "";
+      const roomId = currentRoomId.value;
+      if (import.meta.server || newIsPreview || !roomId || getMimeCategory(newFile.mimetype) !== MimeCategory.Image)
+        return;
 
-    await getResultAsync(() =>
-      $trpc.message.generateDownloadThumbnailSasUrls.query({ files: [{ id: newFile.id }], roomId }),
-    ).match((urls) => {
-      thumbnailUrl.value = takeOne(urls);
-    }, noop);
-  });
+      await getResultAsync(() =>
+        $trpc.message.generateDownloadThumbnailSasUrls.query({ files: [{ id: newFile.id }], roomId }),
+      ).match((urls) => {
+        if (checkIsStale()) return;
+        thumbnailUrl.value = takeOne(urls);
+      }, noop);
+    },
+  );
+  watchImmediate([() => toValue(file), () => toValue(isPreview)], ([newFile, newIsPreview]) =>
+    readThumbnailUrl(newFile, newIsPreview),
+  );
   return thumbnailUrl;
 };

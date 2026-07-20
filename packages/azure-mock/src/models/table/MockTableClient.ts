@@ -91,6 +91,11 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()].toSorted(compareByCompositeKey);
     const predicate = filter ? createFilterPredicate(filter) : undefined;
     const resultTableEntities = predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities;
+    // One shared generator retains iteration state across next() calls so a bare for await terminates,
+    // Matching the real SDK where the returned iterator is single-use.
+    const entityIterator = (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
+      for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
+    })(resultTableEntities);
     return {
       byPage: ({ maxPageSize } = {}) =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
@@ -109,12 +114,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
           for (let i = 0; i < allEntitiesWithMetadata.length; i += maxPageSize)
             yield await Promise.resolve(allEntitiesWithMetadata.slice(i, i + maxPageSize));
         })(resultTableEntities),
-      // Each next() call builds a fresh generator and returns its first element, so a bare
-      // For await over listEntities loops forever on the first entity — always paginate via byPage().
-      next: () =>
-        (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
-          for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
-        })(resultTableEntities).next(),
+      next: () => entityIterator.next(),
       [Symbol.asyncIterator]() {
         return this;
       },

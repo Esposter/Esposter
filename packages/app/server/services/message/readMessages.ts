@@ -67,7 +67,7 @@ export const readMessages = async ({
       const message = messageMap.get(getReverseTickedTimestamp(index.rowKey));
       return message ? [message] : [];
     });
-    return Object.assign(getCursorPaginationData(ascendingMessages, limit, sortBy), { hasMore, nextCursor });
+    return { hasMore, items: ascendingMessages, nextCursor };
   }
   // Default: Desc via reverse-ticked RowKey (efficient)
   if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));

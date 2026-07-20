@@ -28,7 +28,8 @@ export const useUploadFiles = () => {
     }
 
     const room = currentRoom.value;
-    const maxFileSizeBytes = room?.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE;
+    // Mirror the server chokepoint's platform-cap clamp so a room limit above the cap fails here, not at the SAS query.
+    const maxFileSizeBytes = Math.min(room?.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     // Validate before the SAS query and before rendering metadata so a rejected file is surfaced loudly.
     for (const file of newFiles) {
       const result = validateFile(file.size, maxFileSizeBytes);

@@ -24,6 +24,16 @@ describe(MockTableClient, () => {
     MockTableDatabase.clear();
   });
 
+  test("iterates every entity exactly once with a bare for await", async () => {
+    expect.hasAssertions();
+
+    const client = await createClient(2);
+    const rowKeys = [];
+    for await (const entity of client.listEntities()) rowKeys.push(entity.rowKey);
+
+    expect(rowKeys).toStrictEqual(["0", "1"]);
+  });
+
   test("orders entities by partitionKey then rowKey regardless of insertion order", async () => {
     expect.hasAssertions();
 
