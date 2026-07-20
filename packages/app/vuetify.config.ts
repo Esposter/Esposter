@@ -77,12 +77,7 @@ const theme: ThemeOptions = {
 
 const defaults: DefaultsOptions = {
   VAutocomplete: { variant: "outlined" },
-  VBtn: {
-    flat: true,
-    style: {
-      backgroundColor: "transparent",
-    },
-  },
+  VBtn: { flat: true },
   VColorInput: { variant: "outlined" },
   VCombobox: { variant: "outlined" },
   VDataTable: {
