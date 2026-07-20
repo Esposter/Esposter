@@ -49,6 +49,6 @@ export const rasterizeSvg = (svgUrl: string) =>
     (rasterizedSvgBlobUrl) => rasterizedSvgBlobUrl,
     (error) => {
       console.error(error);
-      return null;
+      return undefined;
     },
   );

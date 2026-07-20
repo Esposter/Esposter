@@ -6,7 +6,7 @@ import type { TweenBuilderConfiguration } from "vue-phaserjs";
 import { Image } from "vue-phaserjs";
 
 interface MiddleProps {
-  displayWidth: number | undefined;
+  displayWidth?: number;
   imagePosition: ImagePosition;
   scaleY: number;
   texture: ImageKey;

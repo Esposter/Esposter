@@ -329,6 +329,7 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 
 - String refs use `ref("")` (see above), not `ref<string>()`.
 - Optional interface fields use `?:` (implies `| undefined`), not `| null`.
+- **A property whose absent form is `undefined` must be declared `field?: T`, never `field: T | undefined`** — `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js` (covers interface/type-literal members, class fields, and `defineProps` interfaces in `.vue`). Non-property positions — parameters, return types, generic arguments, array/tuple members — keep `| undefined`, since `?:` can't express them.
 - **Never synthesize an explicit `undefined` value.** Model absence as the _missing optional key_, not `{ key: undefined }` — build the object conditionally (`environment ? { backend, environment } : { backend }`) so no `undefined` literal is ever written, and tests `toStrictEqual({ backend })` rather than `{ backend, key: undefined }`.
 - Uninitialised state, optional params, absent returns lean on `""`/omission; add `| undefined` to a type **only** when the distinct-from-`""` rule above applies.
 - Never `?? null` — if the left side is already `T | undefined`, drop the fallback. Likewise never `?? SomeEnum.None` (see enums below).
@@ -342,7 +343,7 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 
 **External boundary — keep `null` where required:**
 
-- **Drizzle ORM** — nullable columns infer as `T | null`; convert via `nullToUndefined` from `@esposter/shared` before values enter app code.
+- **Drizzle ORM** — nullable columns infer as `T | null`; leave the boundary shape as-is and consume it at the call site (`??` onto a sentinel, truthiness guard) only where the app-owned shape is actually needed — there is no conversion layer. See `/docs/architecture/null-vs-undefined`.
 - **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.
 - **Vuetify** — a few Vuetify props are typed `T | null`; use `null` only where the prop type requires it, with a comment explaining why.
 

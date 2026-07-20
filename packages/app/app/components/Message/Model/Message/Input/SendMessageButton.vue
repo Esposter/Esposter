@@ -12,15 +12,7 @@ const backgroundColor = computed(() => (disabled ? "transparent" : "currentColor
 <template>
   <v-tooltip text="Send (Enter)">
     <template #activator="{ props: tooltipProps }">
-      <v-btn
-        icon="mdi-send"
-        size="small"
-        bg-transparent
-        :disabled
-        :loading="isLoading"
-        :="tooltipProps"
-        @click="emit('click')"
-      />
+      <v-btn icon="mdi-send" size="small" :disabled :loading="isLoading" :="tooltipProps" @click="emit('click')" />
     </template>
   </v-tooltip>
 </template>

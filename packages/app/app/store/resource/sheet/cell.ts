@@ -8,11 +8,11 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
   const editingCell = computed(() =>
     cellState.value.mode === CellMode.Edit
       ? { columnName: cellState.value.columnName, rowIndex: cellState.value.rowIndex }
-      : null,
+      : undefined,
   );
 
   const selectedCellRange = computed(() => {
-    if (cellState.value.mode !== CellMode.Select) return null;
+    if (cellState.value.mode !== CellMode.Select) return undefined;
     const { anchor, focus } = cellState.value;
     return {
       columnEnd: Math.max(anchor.columnIndex, focus.columnIndex),
@@ -33,7 +33,7 @@ export const useCellStore = defineStore("resource/sheet/cell", () => {
     cellState.value.rowIndex === rowIndex &&
     cellState.value.columnName === columnName;
 
-  const focusCell = computed(() => (cellState.value.mode === CellMode.Select ? cellState.value.focus : null));
+  const focusCell = computed(() => (cellState.value.mode === CellMode.Select ? cellState.value.focus : undefined));
 
   const startCellSelection = (rowIndex: number, columnIndex: number) => {
     cellState.value = {

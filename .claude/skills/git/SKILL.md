@@ -57,3 +57,13 @@ Batch commits and push **once** per coherent chunk of work. Several pushes in qu
 - Always create feature branches from `develop`, not `main`
 - PRs target `develop`; `develop` merges to `main` for releases
 - Delete branches after merging
+
+## Merge Then Verify
+
+The local check suite runs **once, on `develop`, after the merge** — never iteratively on the feature branch:
+
+1. **Feature branch** — implement and commit only. PR CI is the branch's gate; don't burn local runs of typecheck/lint/tests there.
+2. **Merge** — merge `develop` into the branch first if it has drifted (resolve conflicts there), then merge the PR into `develop`.
+3. **Verify on `develop`** — run the check suite (see the package-scripts skill) once, post-merge, and fix forward directly on `develop`.
+
+Rationale: branch-side local checks duplicate PR CI and get invalidated by the merge anyway — the merged state on `develop` is the only state worth verifying locally.

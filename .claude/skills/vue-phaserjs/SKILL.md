@@ -1,6 +1,6 @@
 ---
 name: vue-phaserjs
-description: Esposter vue-phaserjs integration patterns — component inventory, markRaw for Phaser objects in Pinia stores, configuration Pick pattern. Apply when writing Phaser game objects, stores, or vue-phaserjs components.
+description: Esposter vue-phaserjs integration patterns — component inventory, markRaw for Phaser objects in Pinia stores, configuration Pick pattern, all-configuration-keys-present-at-setup. Apply when writing Phaser game objects, stores, or vue-phaserjs components.
 ---
 
 # vue-phaserjs Conventions
@@ -40,6 +40,24 @@ export interface ArcConfiguration
 ```
 
 Keep explicit declarations only for `Parameters<GameObjects.X["method"]>` tuples and plain primitives (`number`, `string`) that are constructor args without a matching readable property.
+
+## Configuration Keys Must All Be Present at Setup
+
+A `configuration` object must carry **every key it will ever want to update**, even when the value is `undefined`. `useInitializeGameObjectSetters` enumerates `Object.entries(toValue(configuration))` once during setup and registers a setter plus a watcher only for the keys present at that moment. A key absent then gets neither, for the lifetime of the game object — later values are silently dropped with no error.
+
+`key: undefined` is fine and explicitly handled: the setter still runs, and the composable emits the intrinsic game object value instead of the missing one.
+
+So build configurations as complete inline object literals, and never spread an optional-prop object straight into one:
+
+```vue
+<!-- correct — displayWidth is always a key, undefined or not -->
+<Image :configuration="{ visible: isVisible, ...imagePosition, texture, displayWidth, scaleY, tween }" />
+
+<!-- wrong — an omitted optional prop leaves the key absent, so it never gets a watcher -->
+<Image :configuration="props" />
+```
+
+A `displayWidth?: number` props declaration is still correct; the component just has to name the key when it builds the configuration.
 
 ## SetterMap void-return
 

@@ -16,7 +16,7 @@ interface ItemSlotProps {
 const { column, columns, item, rowIndex, rows } = defineProps<ItemSlotProps>();
 const cellStore = useCellStore();
 const { isEditingCell } = cellStore;
-const editableColumn = computed(() => (checkIsEditableColumnValue(column) ? column : null));
+const editableColumn = computed(() => (checkIsEditableColumnValue(column) ? column : undefined));
 </script>
 
 <template>

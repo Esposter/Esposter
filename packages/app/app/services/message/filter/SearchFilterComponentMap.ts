@@ -23,4 +23,4 @@ export const SearchFilterComponentMap = {
     () => import("@/components/Message/RightSideBar/Search/Filter/PinPicker.vue"),
   ),
   // [FilterType.AuthorType]: null,
-} as const satisfies Record<FilterType, Component | null>;
+} as const satisfies Record<FilterType, Component>;

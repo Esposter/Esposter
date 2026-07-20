@@ -154,7 +154,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.Camera) return;
-    setRemoteVideoStream(participant.identity, null);
+    setRemoteVideoStream(participant.identity, undefined);
   };
   const attachRemoteScreenShare = (
     track: RemoteTrack,
@@ -170,27 +170,27 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.ScreenShare) return;
-    setRemoteScreenShareStream(participant.identity, null);
+    setRemoteScreenShareStream(participant.identity, undefined);
   };
   const setLocalCameraTrack = async (publication: LocalTrackPublication | undefined) => {
     if (!publication?.videoTrack) {
       if (localCameraTrack?.getProcessor()) await localCameraTrack.stopProcessor();
       virtualBackgroundProcessor = undefined;
       localCameraTrack = undefined;
-      mediaStore.localVideoStream = null;
+      mediaStore.localVideoStream = undefined;
       mediaStore.isCameraEnabled = false;
       return;
     }
 
     localCameraTrack = publication.videoTrack;
-    mediaStore.localVideoStream = publication.videoTrack.mediaStream ?? null;
+    mediaStore.localVideoStream = publication.videoTrack.mediaStream;
     mediaStore.isCameraEnabled = true;
     if (mediaStore.selectedVirtualBackground) await setVirtualBackground(mediaStore.selectedVirtualBackground);
   };
   const onLocalTrackPublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
     if (publication.source === Track.Source.Camera) await setLocalCameraTrack(publication);
     else if (publication.source === Track.Source.ScreenShare) {
-      setLocalScreenShareStream(publication.track?.mediaStream ?? null);
+      setLocalScreenShareStream(publication.track?.mediaStream);
       mediaStore.isScreenSharing = true;
     } else if (publication.source === Track.Source.Microphone && publication.audioTrack) {
       microphoneProcessor = new MicrophoneProcessor();
@@ -201,7 +201,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const onLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
     if (publication.source === Track.Source.Camera) await setLocalCameraTrack(undefined);
     else if (publication.source === Track.Source.ScreenShare) {
-      setLocalScreenShareStream(null);
+      setLocalScreenShareStream(undefined);
       mediaStore.isScreenSharing = false;
     } else if (publication.source === Track.Source.Microphone) microphoneProcessor = undefined;
   });
@@ -217,7 +217,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;
     if (!isCameraEnabled) {
-      mediaStore.localVideoStream = null;
+      mediaStore.localVideoStream = undefined;
       await localCameraTrack?.stopProcessor();
       virtualBackgroundProcessor = undefined;
     }
@@ -237,7 +237,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       surfaceSwitching: "include",
     });
     mediaStore.isScreenSharing = isScreenSharing;
-    if (!isScreenSharing) setLocalScreenShareStream(null);
+    if (!isScreenSharing) setLocalScreenShareStream(undefined);
   };
   const setVirtualBackground = getConcurrentFunction(async (checkIsStale, imagePath: string) => {
     mediaStore.selectedVirtualBackground = imagePath;

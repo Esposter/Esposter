@@ -15,6 +15,7 @@ export const useVotePoll = async (
   const { storeUpdateMessage, updateMessage } = dataStore;
   const isVoting = ref(false);
   const userId = computed(() => session.value?.user.id);
+  // The option id is bound straight to v-radio-group's update:model-value, whose Vuetify emit type is `string | null`
   const vote = async (optionId: null | string) => {
     if (!userId.value || isPreview || isVoting.value) return;
     isVoting.value = true;
@@ -22,8 +23,8 @@ export const useVotePoll = async (
     const pollContentValue = toValue(pollContent);
     const previousMessage = messageValue.message;
     const updatedVotes = { ...pollContentValue.votes };
-    if (optionId === null) delete updatedVotes[userId.value];
-    else updatedVotes[userId.value] = optionId;
+    if (optionId) updatedVotes[userId.value] = optionId;
+    else delete updatedVotes[userId.value];
     const updatedMessage = JSON.stringify({ ...pollContentValue, votes: updatedVotes });
     await withFinalizerAsync(
       () =>

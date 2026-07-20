@@ -13,7 +13,7 @@ export const createStandaloneCallSessionId = async (db: Context["db"], userId: s
     ).match(
       (value) => value[0]?.id,
       (error) => {
-        if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") return null;
+        if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") return undefined;
         throw error;
       },
     );

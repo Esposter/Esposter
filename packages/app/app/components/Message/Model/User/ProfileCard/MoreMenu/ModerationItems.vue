@@ -27,7 +27,7 @@ const manageablePermissions = computed(() => {
     targetTopPosition.value === undefined ||
     !checkIsManageable(permissions.topRolePosition, targetTopPosition.value, permissions.isRoomOwner)
   )
-    return null;
+    return undefined;
   return permissions;
 });
 const checkHasManageablePermission = (permission: RoomPermission) =>

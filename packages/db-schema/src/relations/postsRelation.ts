@@ -34,4 +34,4 @@ export const PostRelations = {
 } as const;
 // The likes relation is only a server-side fetch strategy filtered to the viewer's row,
 // So every procedure returns at most one like — the viewer's — instead of all of them
-export type PostWithRelations = Post & { user: User; viewerLike: Like | undefined };
+export type PostWithRelations = Post & { user: User; viewerLike?: Like };
