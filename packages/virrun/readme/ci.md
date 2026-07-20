@@ -33,9 +33,9 @@ This dropped an entire serialization stage from the critical path (the former `w
 
 ## Snapshot + prepare cache (win32 / local)
 
-The `os` backend keys a warm post-install snapshot by the pnpm lockfile hash and stores it at `~/.virrun/snapshots/<hash>`; with an `environment` preset it also provisions a source-keyed prepare layer (`~/.virrun/prepare/<key>`, the framework's Linux-generated `.nuxt`). A `fork()` stacks both read-only beside the source, so a routed command reuses the dep tree and generated artifacts instead of reinstalling and re-running `nuxt prepare`. These layers are consumed by overlay lower-stacking, so they are inherently os-backend artifacts — the native backend's equivalents are the host's own real `node_modules` and `.nuxt`, which is exactly what Linux CI uses above. `virrun warm` provisions both ahead of time on an os-backend host.
+The `os` backend keys a warm post-install snapshot by the environment it was installed under — the pnpm lockfile digest plus the node major the sandbox runs — and stores it at `~/.virrun/snapshots/<hash>`; with an `environment` preset it also provisions a source-keyed prepare layer (`~/.virrun/prepare/<key>`, the framework's Linux-generated `.nuxt`). A `fork()` stacks both read-only beside the source, so a routed command reuses the dep tree and generated artifacts instead of reinstalling and re-running `nuxt prepare`. These layers are consumed by overlay lower-stacking, so they are inherently os-backend artifacts — the native backend's equivalents are the host's own real `node_modules` and `.nuxt`, which is exactly what Linux CI uses above. `virrun warm` provisions both ahead of time on an os-backend host.
 
-The snapshot upper is built with pnpm `package-import-method=copy`, so it is self-contained — a fork never reads the repo-local `.virrun/store` (which is recreated empty if absent). A dependency change yields a new lockfile hash → a new snapshot, so a stale snapshot is never reused.
+The snapshot upper is built with pnpm `package-import-method=copy`, so it is self-contained — a fork never reads the repo-local `.virrun/store` (which is recreated empty if absent). A dependency change — or a node major change, since the installed tree is ABI-bound — yields a new key → a new snapshot, so a stale snapshot is never reused.
 
 ## Task cache in CI
 

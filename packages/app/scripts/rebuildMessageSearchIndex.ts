@@ -13,7 +13,6 @@ import {
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { config } from "dotenv";
-
 // Re-feeds a room's (or every room's) messages from the `Messages` table back into the `messages-index` search
 // Index, keyed by document id (`RowKey`), so re-running it is an idempotent upsert. Scope it to specific rooms
 // With the `ROOM_IDS` env var (comma-separated) or omit it to cover every room.

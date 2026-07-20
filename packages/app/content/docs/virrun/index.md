@@ -31,7 +31,7 @@ Correctness beats speed; a fast wrong answer is worthless.
 
 - **Backend** — the one axis that changes what actually runs: `native` (host passthrough), `vfs` (in-process pure-JS over a virtual FS), `os` (real process exec inside a bubblewrap RAM overlay). See [execution backends](/docs/virrun/execution-backends).
 - **The subprocess wall** — an in-process VFS is blind to child processes; only the `os` backend puts a real `pnpm install` in RAM. See [architecture](/docs/virrun/architecture).
-- **Warm snapshot / fork** — "clone + install" happens once into a lockfile-hash-keyed overlay layer; each run forks it. See [snapshot and fork](/docs/virrun/snapshot-and-fork).
+- **Warm snapshot / fork** — "clone + install" happens once into an environment-keyed overlay layer (lockfile + sandbox node major); each run forks it. See [snapshot and fork](/docs/virrun/snapshot-and-fork).
 - **Write-back** — a mutation command's produced files are flushed back to the host so disk matches native, while `node_modules` structurally never flushes. See [write-back](/docs/virrun/write-back).
 - **Task cache** — a persist run keyed by lockfile + working-tree + command hash; a hit skips the sandbox and replays the recorded diff and streams.
 - **The prefix is the switch** — `virrun -- <cmd>` opts one command in; removing it opts out. No allowlist, no env flag.
@@ -63,7 +63,7 @@ Open work: [roadmap](/docs/virrun/roadmap). Decided ideas: [deferred](/docs/virr
 - **VFS layer** — `FsProvider` over `@platformatic/vfs` (the lone import, doubling as the `node:vfs` swap shim); mounting patches `require`/`fs` to serve virtual files.
 - **`vfs` backend** — runs `node -e` and `node <file>` in-process over the overlay FS, falling back to native for anything it cannot run faithfully.
 - **`os` backend** — real process exec inside a rootless bubblewrap RAM overlay, a lazy content-addressable pnpm dep store, and the WSL2 bridge from Windows.
-- **Snapshot + warm-fork** — lockfile-hash-keyed overlay snapshot with atomic publish, exposed as `fork()` on the orchestrator.
+- **Snapshot + warm-fork** — environment-keyed overlay snapshot with atomic publish, exposed as `fork()` on the orchestrator.
 - **Prepare layer** — a second, source-keyed overlay layer capturing framework codegen (`nuxt prepare` → `.nuxt`) so type-aware tooling reads Linux-generated artifacts.
 - **Write-back** — a persist run reconciles its overlay upper onto the host so disk matches native; the default for a bare `virrun -- <cmd>`.
 - **Task cache** — content-keyed replay of unchanged persist runs; default-on locally, off in CI.

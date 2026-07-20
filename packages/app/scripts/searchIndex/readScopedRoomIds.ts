@@ -3,7 +3,6 @@ import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@espost
 import { serializeKey } from "@esposter/db";
 import { AZURE_MAX_PAGE_SIZE, CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { normalizeString } from "@esposter/shared";
-
 // Omitting ROOM_IDS covers every room that has messages, which costs a keys-only walk of the whole table.
 export const readScopedRoomIds = async (
   messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,

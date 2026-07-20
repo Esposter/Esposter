@@ -35,7 +35,7 @@ flowchart TB
     fsp --> vmem[("in-process virtual FS\n(only this process sees it)")]
     os --> sandboxprim["bubblewrap\nLinux direct / Windows WSL2"]
     sandboxprim --> ram[("tmpfs + overlayfs\nRAM FS — every process sees it")]
-    os --> snap["snapshot + warm-fork\ndeps: lockfile-hash · prepare: source-hash"]
+    os --> snap["snapshot + warm-fork\ndeps: environment-key · prepare: source-hash"]
     os --> wb["write-back\nflush top upper → host\nmutation runs only"]
     wb --> disk
 ```
@@ -83,7 +83,7 @@ Detail: [execution backends](/docs/virrun/execution-backends).
 1. **RAM filesystem** (`tmpfs` upperdir) — `node_modules` never touches disk.
 2. **Shared content-addressable store** — deps download once into `.virrun/store/pnpm`, then are reused by each sandbox.
 3. **Snapshot + warm-fork** — "clone repo + install" happens once; each run forks the warm state → near-instant repeated runs. The biggest win.
-4. **[Task cache](/docs/virrun/task-cache)** — skip a persist run whose inputs are unchanged, keyed by `sha256(lockfile-hash + working-tree-hash + command)`; a hit skips the sandbox and replays the recorded output diff + streams. A dev-loop lever — off in CI, where a fresh commit means ~0 hits.
+4. **[Task cache](/docs/virrun/task-cache)** — skip a persist run whose inputs are unchanged, keyed by `sha256(environment-key + working-tree-hash + command)`; a hit skips the sandbox and replays the recorded output diff + streams. A dev-loop lever — off in CI, where a fresh commit means ~0 hits.
 5. **[WSL source mirror + manifest delta (win32)](/docs/virrun/wsl-source-mirror)** — the sandbox reads source from an ext4 mirror instead of `/mnt/c` (v9fs, 15–64× slower), kept fresh by a host-side manifest diff that ships only changed files.
 
 A blunt caveat the numbers force: per **cold command**, the os backend is marginally _slower_ than native (inherent overlayfs read overhead, ~30–50% on the file I/O a command does) — the OS page cache already serves a warm native run's reads from RAM, so "RAM filesystem" is not a per-command speedup. Items 3–5 are the actual product: skip the install, skip the unchanged re-run, and don't pay bridge taxes for the privilege.
