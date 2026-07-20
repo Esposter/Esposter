@@ -1,16 +1,7 @@
+import { deadLetteredEventsSchema } from "@/models/DeadLetteredEvent";
 import { AzureKeyCredential, EventGridPublisherClient } from "@azure/eventgrid";
 import { BlobServiceClient } from "@azure/storage-blob";
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
-
-// Event Grid writes each exhausted delivery to the dead-letter container as a JSON array of the original
-// Events in the Event Grid schema. Only these four fields are needed to re-publish; the delivery metadata
-// (deadLetterReason, deliveryAttempts, ...) is intentionally dropped so the replayed event is a clean resend.
-interface DeadLetteredEvent {
-  data: unknown;
-  dataVersion: string;
-  eventType: string;
-  subject: string;
-}
 
 const DEAD_LETTER_CONTAINER_NAME = "deadletter";
 const ARCHIVE_PREFIX = "archived/";
@@ -43,7 +34,7 @@ export const replayDeadLetterEvents = async (): Promise<void> => {
     const blockBlobClient = containerClient.getBlockBlobClient(blob.name);
     await getResultAsync(async () => {
       const buffer = await blockBlobClient.downloadToBuffer();
-      const events: DeadLetteredEvent[] = JSON.parse(buffer.toString("utf8"));
+      const events = deadLetteredEventsSchema.parse(JSON.parse(buffer.toString("utf8")));
       await eventGridPublisherClient.send(
         events.map((event) => ({
           data: event.data,

@@ -11,7 +11,7 @@ When an Event Grid delivery exhausts its retries — a push notification, friend
 
 Every Event Grid subscription carries a `deadLetterDestination` pointing at the `deadletter` container in the same-environment storage account, alongside a tightened retry policy of ten attempts over a one-hour time-to-live. The shorter window means a permanently failing event lands in the container while it is still relevant, rather than after a full day of doomed retries. Event Grid writes each exhausted delivery as a JSON blob holding the original events.
 
-The replay script `replayDeadLetterEvents` lists the container, re-publishes each blob's events through the same key-authenticated Event Grid publisher the app uses, then copies the blob under an `archived/` prefix and deletes the original so a rerun never processes it twice. It is a manual operations tool run against a resource group's storage and Event Grid credentials — script-first, no UI, the same posture as the search index tooling. A storage lifecycle rule deletes everything under the dead-letter prefix after 30 days, so both live and archived blobs expire on their own.
+The replay script `packages/shared-node/src/scripts/replayDeadLetterEvents.ts` lists the container, re-publishes each blob's events through the same key-authenticated Event Grid publisher the app uses, then copies the blob under an `archived/` prefix and deletes the original so a rerun never processes it twice. Each blob is validated against the dead-lettered event schema before anything is published, so a malformed blob is reported and left in place rather than resent as a broken event. It is a manual operations tool run against a resource group's storage and Event Grid credentials — script-first, no UI, the same posture as the search index tooling. A storage lifecycle rule deletes everything under the dead-letter prefix after 30 days, so both live and archived blobs expire on their own.
 
 Replayed events can double-deliver — Event Grid's at-least-once contract still holds — but the Function App handlers are idempotent-or-tolerant per the Azure Functions error-handling rules, so a resend is safe.
 
@@ -34,6 +34,8 @@ flowchart TD
 | `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/`                                         | Six subscriptions: `deadLetterDestination` + 10-attempt / 1h retry policy |
 | `packages/infra/src/azure/resources/Microsoft.Storage/storageAccounts/managementPolicies/`                           | 30-day lifecycle delete rule for the dead-letter prefix                   |
 | `packages/shared-node/src/services/replayDeadLetterEvents.ts`                                                        | List, re-publish, and archive dead-lettered events                        |
+| `packages/shared-node/src/scripts/replayDeadLetterEvents.ts`                                                         | Entry point — checks the env vars, then runs the replay                   |
+| `packages/shared-node/src/models/DeadLetteredEvent.ts`                                                               | Schema each dead-letter blob is validated against before replay           |
 
 ## Notes
 
