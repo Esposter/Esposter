@@ -27,9 +27,10 @@
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
   "bin": {
-    "virrun": "dist/cli.js"
+    "virrun": "bin/cli.js"
   },
   "files": [
+    "bin",
     "dist",
     "schema.json"
   ],
