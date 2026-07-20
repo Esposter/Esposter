@@ -7,13 +7,17 @@ const thumbnailUrl = useReadThumbnailUrl(
   () => file,
   () => isPreview,
 );
+// Thumbnail SAS urls are minted from the mimetype alone, so the blob can be missing (pre-feature uploads,
+// Failed client-side generation) — fall back to the original on load error.
+const failedThumbnailUrl = ref("");
 </script>
 
 <template>
   <v-img
-    :src="thumbnailUrl || url"
+    :src="thumbnailUrl && thumbnailUrl !== failedThumbnailUrl ? thumbnailUrl : url"
     :alt="file.filename"
     :cover="isPreview"
     :class="isPreview ? 'size-full' : undefined"
+    @error="failedThumbnailUrl = thumbnailUrl"
   />
 </template>

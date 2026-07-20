@@ -1,7 +1,6 @@
 import type { Editor, EditorConfig, ProjectData } from "grapesjs";
 
 import { authClient } from "@/services/auth/authClient";
-import { validateFile } from "@/services/file/validateFile";
 import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { readUploadFiles } from "@/services/grapesjs/readUploadFiles";
 import { useAlertStore } from "@/store/alert";
@@ -26,6 +25,7 @@ export const useGrapesJsEditor = async (
   const currentInstance = getCurrentInstance();
   const { data: session } = await authClient.useSession(useFetch);
   const { createAlert } = useAlertStore();
+  const validateFile = useValidateFile();
   const editor = shallowRef<Editor>();
   // The document stores branch between the authenticated document path and local storage,
   // So a single storage adapter suffices; re-initialize on session change to reload from the right source
@@ -44,11 +44,7 @@ export const useGrapesJsEditor = async (
                 // The uploads are independent, so they overlap instead of paying each round trip in sequence
                 await Promise.all(
                   readUploadFiles(event).map(async (file) => {
-                    const validation = validateFile(file.size);
-                    if (!validation.isValid) {
-                      createAlert(validation.message, "error");
-                      return;
-                    }
+                    if (!validateFile(file.size)) return;
 
                     await getResultAsync(() => assets.upload(file))
                       .andTee((url) => {

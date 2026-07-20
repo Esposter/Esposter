@@ -3,7 +3,7 @@ import type { FileEntity } from "@esposter/db-schema";
 import { useRoomStore } from "@/store/message/room";
 import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getMimeCategory, MimeCategory } from "@esposter/db-schema";
-import { getResultAsync, noop, takeOne } from "@esposter/shared";
+import { getIsServer, getResultAsync, noop, takeOne } from "@esposter/shared";
 
 // Lazily resolves an image file's thumbnail read url; stays empty for non-images, previews, or missing thumbnails.
 export const useReadThumbnailUrl = (
@@ -19,8 +19,7 @@ export const useReadThumbnailUrl = (
     async (checkIsStale, newFile: FileEntity, newIsPreview: boolean | undefined) => {
       thumbnailUrl.value = "";
       const roomId = currentRoomId.value;
-      if (import.meta.server || newIsPreview || !roomId || getMimeCategory(newFile.mimetype) !== MimeCategory.Image)
-        return;
+      if (getIsServer() || newIsPreview || !roomId || getMimeCategory(newFile.mimetype) !== MimeCategory.Image) return;
 
       await getResultAsync(() =>
         $trpc.message.generateDownloadThumbnailSasUrls.query({ files: [{ id: newFile.id }], roomId }),

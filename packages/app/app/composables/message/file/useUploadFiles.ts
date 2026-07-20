@@ -5,7 +5,6 @@ import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { generateImageThumbnail } from "@/services/file/generateImageThumbnail";
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
-import { validateFile } from "@/services/file/validateFile";
 import { useAlertStore } from "@/store/alert";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
@@ -20,6 +19,7 @@ export const useUploadFiles = () => {
   const { currentRoom, currentRoomId } = storeToRefs(roomStore);
   const uploadFileStore = useUploadFileStore();
   const { files, fileUrlMap, isFileLoading } = storeToRefs(uploadFileStore);
+  const validateFile = useValidateFile();
   return async (newFiles: File[] | null) => {
     if (!currentRoomId.value || !newFiles) return;
     else if (files.value.length + newFiles.length > FILE_MAX_LENGTH) {
@@ -32,11 +32,8 @@ export const useUploadFiles = () => {
     const maxFileSizeBytes = Math.min(room?.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     // Validate before the SAS query and before rendering metadata so a rejected file is surfaced loudly.
     for (const file of newFiles) {
-      const result = validateFile(file.size, maxFileSizeBytes);
-      if (!result.isValid) {
-        createAlert(result.message, "error");
-        return;
-      } else if (room && !room.allowedMimeCategories.includes(getMimeCategory(file.type))) {
+      if (!validateFile(file.size, maxFileSizeBytes)) return;
+      else if (room && !room.allowedMimeCategories.includes(getMimeCategory(file.type))) {
         createAlert(
           `This room only allows ${room.allowedMimeCategories.join(", ").toLowerCase()} attachments!`,
           "error",
