@@ -559,7 +559,7 @@ describe("survey", () => {
         partitionKey: newResource.id,
         rowKey: crypto.randomUUID(),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Unrecognized key: "pageNo"]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
   test("fails update with closed survey", async () => {

@@ -205,9 +205,7 @@ describe("dataset", () => {
 
     await expect(
       caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: (0 , __vite_ssr_import_1__.getContentBlobName) is not a function]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
   test("fails read file dataset with wrong user", async () => {

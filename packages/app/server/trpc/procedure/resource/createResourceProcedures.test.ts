@@ -280,7 +280,7 @@ describe("createResourceProcedures", () => {
     const newResource = await dashboardCaller.createResource({ name });
 
     await expect(dashboardCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: (0 , __vite_ssr_import_1__.getContentBlobName) is not a function]`,
+      `[TRPCError: Invalid operation: Update, name: Resource, cannot publish resource without content]`,
     );
   });
 
