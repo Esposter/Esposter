@@ -77,7 +77,7 @@ const disabled = computed(
           <v-btn text="Cancel" variant="outlined" @click="editMode = false" />
           <StyledButton type="submit" :button-props="{ disabled, text: 'Save' }" />
         </template>
-        <v-btn v-else font-bold color="border" text="Edit Settings" variant="elevated" @click="editMode = true" />
+        <v-btn v-else font-bold color="border" text="Edit Settings" @click="editMode = true" />
       </v-card-actions>
     </StyledCard>
   </v-form>

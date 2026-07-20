@@ -35,6 +35,7 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
           favorites.value = snapshot;
         };
       },
+      key: resource.id,
       onError: (error) => {
         notificationStore.createNotification({ severity: "error", title: error.message });
       },

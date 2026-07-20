@@ -19,6 +19,7 @@ export const useCancelScheduledMessageJob = () => {
           count.value = countSnapshot;
         };
       },
+      key: id,
     });
   };
 };

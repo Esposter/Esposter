@@ -27,18 +27,21 @@ const { executeMutation } = useMutation();
 const scheduleJob = async (onComplete: () => void) => {
   const roomId = currentRoomId.value;
   if (roomId)
-    await executeMutation(() =>
-      isReminder.value
-        ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
-            roomId,
-            runAt: scheduledAt.value,
-            text: text.value,
-          })
-        : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-            message: marked.parse(text.value, { async: false }),
-            roomId,
-            runAt: scheduledAt.value,
-          }),
+    await executeMutation(
+      () =>
+        isReminder.value
+          ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+              roomId,
+              runAt: scheduledAt.value,
+              text: text.value,
+            })
+          : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+              message: marked.parse(text.value, { async: false }),
+              roomId,
+              runAt: scheduledAt.value,
+            }),
+      // A brand-new scheduled job has no id yet, so each gets a per-call symbol
+      { key: Symbol("scheduleJob") },
     );
   onComplete();
 };

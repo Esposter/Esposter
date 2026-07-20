@@ -51,6 +51,7 @@ const saveFilter = async () => {
           baseline.value = previousBaseline;
         };
       },
+      key: roomId,
       onSuccess: (updatedFilter) => {
         baseline.value = getWordFilterFormData(updatedFilter);
         sync();

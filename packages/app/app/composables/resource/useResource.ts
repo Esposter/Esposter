@@ -30,6 +30,8 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
       async () => {
         resource.value = await $trpc.resource.readResource.query({ id: idValue });
         publication.value = await getResourceMutations(resource.value.type).readResourcePublication?.({ id: idValue });
+        // A fresh read carries the current contentVersion, so saving is meaningful again
+        isContentStale = false;
       },
       () => {
         isLoading.value = false;
@@ -49,11 +51,15 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   const setPersistedContent = (content: unknown) => {
     persistedContentJson = JSON.stringify(content);
   };
+  // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
+  // Retry is a guaranteed rejection — the flag turns save() into a no-op (and the warning into a
+  // One-shot) until the next load() reads a fresh version
+  let isContentStale = false;
   // Serialized so each save picks up the contentVersion the previous one wrote back.
   // The server's optimistic-concurrency rejection then only fires for genuine cross-session edits, not our own overlapping saves.
   const save = getSequentialFunction(async (content: unknown) => {
     const current = resource.value;
-    if (!current) return false;
+    if (!current || isContentStale) return false;
     const contentJson = JSON.stringify(content);
     if (contentJson === persistedContentJson) return true;
     let isSuccessful = false;
@@ -65,8 +71,11 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           id: current.id,
         }),
       {
+        // Content saves of the current resource supersede one another, so they share the resource id
+        key: current.id,
         onError: (error) => {
-          if (error.message === staleContentVersionErrorMessage)
+          if (error.message === staleContentVersionErrorMessage) {
+            isContentStale = true;
             createNotification({
               action: {
                 // A hard reload is the one path guaranteed to re-run every blade's content loader
@@ -78,10 +87,14 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
               severity: "warning",
               title: `"${current.name}" was modified elsewhere — refresh to load the latest`,
             });
-          else createErrorNotification(error);
+          } else createErrorNotification(error);
         },
         onSuccess: (newResource) => {
-          resource.value = newResource;
+          // The save only bumps contentVersion, so only its fields are merged — replacing the whole ref
+          // With this row snapshot would clobber a concurrently in-flight optimistic rename/tag edit
+          resource.value = resource.value
+            ? { ...resource.value, contentVersion: newResource.contentVersion, updatedAt: newResource.updatedAt }
+            : newResource;
           persistedContentJson = contentJson;
           isSuccessful = true;
         },
@@ -93,15 +106,20 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     const current = resource.value;
     if (!current) return;
     await executeRenameMutation(() => getResourceMutations(current.type).updateResource({ id: current.id, name }), {
+      // Apply, rollback and success all touch only the name — the ref may have absorbed other
+      // Concurrent edits (autosave contentVersion, tags) by the time they run
       applyOptimistic: () => {
         resource.value = { ...current, name };
         return () => {
-          resource.value = current;
+          resource.value = resource.value ? { ...resource.value, name: current.name } : current;
         };
       },
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: (newResource) => {
-        resource.value = newResource;
+        resource.value = resource.value
+          ? { ...resource.value, name: newResource.name, updatedAt: newResource.updatedAt }
+          : newResource;
       },
     });
   };
@@ -112,15 +130,20 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     await executeUpdateTagsMutation(
       () => getResourceMutations(current.type).updateResource({ id: current.id, name: current.name, tags }),
       {
+        // Apply, rollback and success all touch only the tags — the ref may have absorbed other
+        // Concurrent edits (autosave contentVersion, rename) by the time they run
         applyOptimistic: () => {
           resource.value = { ...current, tags };
           return () => {
-            resource.value = current;
+            resource.value = resource.value ? { ...resource.value, tags: current.tags } : current;
           };
         },
+        key: current.id,
         onError: createErrorNotification,
         onSuccess: (newResource) => {
-          resource.value = newResource;
+          resource.value = resource.value
+            ? { ...resource.value, tags: newResource.tags, updatedAt: newResource.updatedAt }
+            : newResource;
         },
       },
     );
@@ -130,6 +153,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     if (!current) return false;
     let isSuccessful = false;
     await executeRemoveMutation(() => getResourceMutations(current.type).deleteResource({ id: current.id }), {
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: () => {
         createNotification({ severity: "success", title: `Deleted "${current.name}"` });
@@ -142,6 +166,8 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     const current = resource.value;
     if (!current) return;
     await executeDuplicateMutation(() => $trpc.resource.duplicateResource.mutate({ id: current.id }), {
+      // A duplicate produces a brand-new resource with no id yet, so each gets a per-call symbol
+      key: Symbol("duplicateResource"),
       onError: createErrorNotification,
       onSuccess: async (newResource) => {
         createNotification({
@@ -159,6 +185,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     const { publishResource } = getResourceMutations(current.type);
     if (!publishResource) return;
     await executePublishMutation(() => publishResource({ id: current.id }), {
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: (newPublication) => {
         publication.value = newPublication;
@@ -186,6 +213,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           publication.value = currentPublication;
         };
       },
+      key: current.id,
       onError: createErrorNotification,
       onSuccess: () => {
         createNotification({ severity: "success", title: `Unpublished "${current.name}"` });

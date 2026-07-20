@@ -280,13 +280,7 @@ describe("createResourceProcedures", () => {
     const newResource = await dashboardCaller.createResource({ name });
 
     await expect(dashboardCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${
-        new InvalidOperationError(
-          Operation.Update,
-          DatabaseEntityType.Resource,
-          "cannot publish resource without content",
-        ).message
-      }]`,
+      `[TRPCError: Invalid operation: Update, name: Resource, cannot publish resource without content]`,
     );
   });
 

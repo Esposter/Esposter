@@ -21,6 +21,8 @@ export const useUserSettingsStore = defineStore("message/user/settings", () => {
           userSettings.value = snapshot;
         };
       },
+      // A singleton per-user settings record, so a stable target name keys its supersede-latest saves
+      key: "userSettings",
       onSuccess: (updatedUserSettings) => {
         userSettings.value = updatedUserSettings;
       },

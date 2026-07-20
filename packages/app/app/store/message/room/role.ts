@@ -114,8 +114,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const { executeMutation: executeAssignRoleMutation } = useMutation();
   const { executeMutation: executeRevokeRoleMutation } = useMutation();
   const createRole = async (input: CreateRoleInput) => {
-    // Server-generated role — non-optimistic, applied in onSuccess
+    // Server-generated role — non-optimistic, applied in onSuccess. Creates have no natural entity key,
+    // So each call gets a unique one — overlapping creates must never stale-drop each other's onSuccess
     await executeCreateRoleMutation(() => $trpc.role.createRole.mutate(input), {
+      key: Symbol("createRole"),
       onSuccess: (newRole) => {
         setRoles(input.roomId, [newRole, ...getRoles(input.roomId)]);
         setSelectedRoleId(input.roomId, newRole.id);
@@ -134,6 +136,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
           setRoles(input.roomId, previousRoles);
         };
       },
+      // Keyed per role so concurrent operations on different roles never stale-drop each other
+      key: input.id,
       onSuccess: (updatedRole) => {
         setRoles(
           input.roomId,
@@ -155,6 +159,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
           setRoles(input.roomId, previousRoles);
         };
       },
+      // Keyed per role so concurrent operations on different roles never stale-drop each other
+      key: input.id,
       onSuccess: () => {
         isSuccessful = true;
       },
@@ -165,6 +171,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
     const existingMemberRoles = getMemberRoles(input.roomId, input.userId);
     if (existingMemberRoles.some(({ id }) => id === input.roleId)) return;
     const role = getRoles(input.roomId).find(({ id }) => id === input.roleId);
+    // Keyed per member-role pair so concurrent assignments across members/roles never stale-drop each other
+    const key = `${input.userId}-${input.roleId}`;
     await executeAssignRoleMutation(
       () => $trpc.role.assignRole.mutate(input),
       role
@@ -175,8 +183,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
                 mutateMemberRoles(input.roomId, input.userId, existingMemberRoles);
               };
             },
+            key,
           }
         : {
+            key,
             onSuccess: (newRole) => {
               mutateMemberRoles(input.roomId, input.userId, [...existingMemberRoles, newRole]);
             },
@@ -196,6 +206,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
           mutateMemberRoles(input.roomId, input.userId, existingMemberRoles);
         };
       },
+      // Keyed per member-role pair so concurrent revocations across members/roles never stale-drop each other
+      key: `${input.userId}-${input.roleId}`,
     });
   };
   return {

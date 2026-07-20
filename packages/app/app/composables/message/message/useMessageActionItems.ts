@@ -79,6 +79,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
                     message.isPinned = true;
                   };
                 },
+                key: message.rowKey,
               },
             );
           },
@@ -121,6 +122,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
             if (previousUserToRoom) setMyUserToRoom(roomId, previousUserToRoom);
           };
         },
+        key: roomId,
       });
     },
     title: "Mark Unread From Here",

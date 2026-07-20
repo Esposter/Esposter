@@ -8,7 +8,7 @@ import { useNotificationStore } from "@/store/notification";
 
 const notificationStore = useNotificationStore();
 const { snackbarNotification } = storeToRefs(notificationStore);
-const { deleteSnackbar } = notificationStore;
+const { consumeNotificationAction, deleteSnackbar } = notificationStore;
 // Closing (timeout or dismiss) pops the queue head, so the next queued notification toasts
 const isOpen = computed({
   get: () => Boolean(snackbarNotification.value),
@@ -37,7 +37,13 @@ const timeout = computed(() =>
       <AppNotificationActionButton
         v-if="snackbarNotification.action"
         :action="snackbarNotification.action"
-        @complete="isOpen = false"
+        @complete="
+          () => {
+            if (!snackbarNotification) return;
+            consumeNotificationAction(snackbarNotification.id);
+            isOpen = false;
+          }
+        "
       />
       <StyledTooltipIconButton icon="mdi-close" text="Dismiss" @click="isOpen = false" />
     </template>

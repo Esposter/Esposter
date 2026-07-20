@@ -24,6 +24,7 @@ const pinMessage = async (onComplete: () => void) => {
         delete target.isPinned;
       };
     },
+    key: rowKey,
   });
 };
 </script>

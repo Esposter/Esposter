@@ -24,6 +24,7 @@ const save = async () => {
         setMyUserToRoom(roomId, { ...userToRoom, nickname: oldNickname });
       };
     },
+    key: roomId,
   });
 };
 </script>

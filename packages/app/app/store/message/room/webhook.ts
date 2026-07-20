@@ -27,9 +27,11 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const { executeMutation: executeUpdateWebhookMutation } = useMutation();
   const { executeMutation: executeRotateTokenMutation } = useMutation();
   const { executeMutation: executeDeleteWebhookMutation } = useMutation();
-  // Server-generated webhook (id, token) — non-optimistic, applied in onSuccess
+  // Server-generated webhook (id, token) — non-optimistic, applied in onSuccess. Creates have no natural
+  // Entity key, so each call gets a unique one — overlapping creates must never stale-drop each other
   const createWebhook = async (roomId: RoomInMessage["id"], input: Except<CreateWebhookInput, "roomId">) => {
     await executeCreateWebhookMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {
+      key: Symbol("createWebhook"),
       onSuccess: (newWebhook) => {
         storeCreateWebhook(newWebhook, true);
       },
@@ -44,6 +46,8 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
           items.value = snapshot;
         };
       },
+      // Keyed per webhook so concurrent operations on different webhooks never stale-drop each other
+      key: input.id,
       onSuccess: (updatedWebhook) => {
         storeUpdateWebhook(updatedWebhook);
       },
@@ -52,6 +56,8 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   // Server-generated token — non-optimistic, applied in onSuccess
   const rotateToken = async (roomId: RoomInMessage["id"], input: Except<RotateTokenInput, "roomId">) => {
     await executeRotateTokenMutation(() => $trpc.webhook.rotateToken.mutate({ ...input, roomId }), {
+      // Keyed per webhook so concurrent operations on different webhooks never stale-drop each other
+      key: input.id,
       onSuccess: (updatedWebhook) => {
         storeUpdateWebhook(updatedWebhook);
       },
@@ -66,6 +72,8 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
           items.value = snapshot;
         };
       },
+      // Keyed per webhook so concurrent operations on different webhooks never stale-drop each other
+      key: input.id,
     });
   };
   return {

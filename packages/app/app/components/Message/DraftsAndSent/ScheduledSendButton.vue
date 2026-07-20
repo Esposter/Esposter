@@ -28,6 +28,7 @@ const sendScheduledMessageNow = async () => {
           count.value = countSnapshot;
         };
       },
+      key: scheduledMessageJob.id,
     },
   );
 };

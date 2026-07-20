@@ -151,7 +151,7 @@ describe(useSlashCommandStore, () => {
     setPendingSlashCommand(mockSlashCommand, `${parameter1}${ID_SEPARATOR}`);
     clearPendingSlashCommand();
 
-    expect(pendingSlashCommand.value).toBeNull();
+    expect(pendingSlashCommand.value).toBeUndefined();
     expect(parameterValues.value).toStrictEqual({});
     expect(activeParameterNames.value).toStrictEqual([]);
     expect(focusedIndex.value).toBe(0);

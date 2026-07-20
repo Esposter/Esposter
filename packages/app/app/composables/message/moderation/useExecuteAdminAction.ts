@@ -10,7 +10,11 @@ export const useExecuteAdminAction = () => {
   // Moderation state applies via the subscription echo — non-optimistic
   return async (getInput: (roomId: string) => ExecuteAdminActionInput, onComplete: () => void) => {
     const roomId = currentRoom.value?.id;
-    if (roomId) await executeMutation(() => $trpc.message.moderation.executeAdminAction.mutate(getInput(roomId)));
+    if (roomId)
+      await executeMutation(() => $trpc.message.moderation.executeAdminAction.mutate(getInput(roomId)), {
+        // Each admin action is an independent, non-optimistic moderation call with no natural entity key
+        key: Symbol("executeAdminAction"),
+      });
     onComplete();
   };
 };

@@ -13,7 +13,12 @@ export const useOutlierStore = defineStore("resource/sheet/outlier", () => {
     const { dataSource } = sheetStore;
     const result = new Set<string>();
     for (const { average, columnName, columnType, standardDeviation } of computeColumnStatistics(dataSource)) {
-      if (columnType !== ColumnType.Number || average === null || standardDeviation === null || standardDeviation <= 0)
+      if (
+        columnType !== ColumnType.Number ||
+        average === undefined ||
+        standardDeviation === undefined ||
+        standardDeviation <= 0
+      )
         continue;
       const threshold = OUTLIER_STANDARD_DEVIATION_MULTIPLIER * standardDeviation;
       for (const row of dataSource.rows) {

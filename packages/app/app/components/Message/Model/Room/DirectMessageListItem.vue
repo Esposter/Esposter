@@ -18,7 +18,7 @@ const isActive = computed(() => room.id === currentDirectMessageId.value);
 
 <template>
   <v-hover #default="{ isHovering, props }">
-    <v-list-item :="props" :active="isActive" :value="room.id" @click="navigateTo(RoutePath.Messages(room.id))">
+    <v-list-item :="props" :active="isActive" :to="RoutePath.Messages(room.id)" :value="room.id">
       <template #prepend>
         <StyledAvatar :name="directMessageName" />
       </template>
@@ -28,7 +28,6 @@ const isActive = computed(() => room.id === currentDirectMessageId.value);
       <template #append>
         <v-btn
           v-show="isActive || isHovering"
-          bg-transparent
           density="compact"
           icon="mdi-close"
           variant="plain"

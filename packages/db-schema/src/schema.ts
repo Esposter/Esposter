@@ -17,7 +17,7 @@ import { resources, resourceTypeEnum } from "@/schema/resources";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { roomFiltersInMessage, wordFilterActionEnum } from "@/schema/roomFiltersInMessage";
 import { roomRolesInMessage } from "@/schema/roomRolesInMessage";
-import { roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
+import { mimeCategoryEnum, roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
 import { scheduledMessageJobsInMessage } from "@/schema/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "@/schema/searchHistoriesInMessage";
 import { sessions } from "@/schema/sessions";
@@ -43,6 +43,7 @@ export const schema = {
   friends,
   invitesInMessage,
   likes,
+  mimeCategoryEnum,
   noiseSuppressionModeEnum,
   notificationTypeEnum,
   posts,

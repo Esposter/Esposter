@@ -10,6 +10,7 @@ import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessa
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { PinnableMessageTypes } from "#shared/services/message/PinnableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
@@ -45,6 +46,7 @@ import {
   createMessage,
   deleteFiles,
   generateDownloadFileSasUrls,
+  generateDownloadThumbnailSasUrls,
   generateUploadFileSasEntities,
   getBlobName,
   getEntity,
@@ -60,9 +62,11 @@ import {
   AzureWebPubSubHub,
   BinaryOperator,
   CompositeKeyPropertyNames,
+  DatabaseEntityType,
   FileEntity,
   fileEntitySchema,
   FilterType,
+  getMimeCategory,
   getReverseTickedTimestamp,
   MessageEntityMap,
   MessageType,
@@ -107,7 +111,14 @@ const readMessagesByRowKeysInputSchema = z.object({
   rowKeys: createUniqueArraySchema(standardMessageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
 });
 const generateUploadFileSasEntitiesInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true }), "filename")
+  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true, size: true }), "filename")
+    .min(1)
+    .max(MAX_READ_LIMIT),
+  ...roomIdSchema.shape,
+});
+
+const generateDownloadThumbnailSasUrlsInputSchema = z.object({
+  files: createUniqueArraySchema(fileEntitySchema.pick({ id: true }), "id")
     .min(1)
     .max(MAX_READ_LIMIT),
   ...roomIdSchema.shape,
@@ -277,11 +288,35 @@ export const baseMessageRouter = router({
       return generateDownloadFileSasUrls(containerClient, files, roomId);
     },
   ),
-  generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").query<
-    FileSasEntity[]
+  generateDownloadThumbnailSasUrls: getMemberProcedure(generateDownloadThumbnailSasUrlsInputSchema, "roomId").query<
+    string[]
   >(async ({ input: { files, roomId } }) => {
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-    return generateUploadFileSasEntities(containerClient, files, roomId);
+    return generateDownloadThumbnailSasUrls(containerClient, files, roomId);
+  }),
+  generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").query<
+    FileSasEntity[]
+  >(async ({ ctx, input: { files, roomId } }) => {
+    const room = await requireEntity(
+      ctx.db.query.roomsInMessage.findFirst({
+        columns: { allowedMimeCategories: true, maxFileSizeBytes: true },
+        where: { id: { eq: roomId } },
+      }),
+      DatabaseEntityType.Room,
+      roomId,
+    );
+    // Enforce the room's attachment limits at the only server chokepoint — the direct-to-blob PUT bypasses Nitro.
+    const maxFileSizeBytes = Math.min(room.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
+    for (const { mimetype, size } of files)
+      if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, AzureEntityType.File, JSON.stringify({ mimetype, size }))
+            .message,
+        });
+
+    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+    return generateUploadFileSasEntities(containerClient, files, roomId, { withThumbnail: true });
   }),
   getWebPubSubClientAccessUrl: getMemberProcedure(getWebPubSubClientAccessUrlInputSchema, "roomId").query(
     async ({ ctx, input: { roomId }, signal }) => {

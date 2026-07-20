@@ -8,6 +8,8 @@ export const usePurgeResource = (refresh: () => Promise<void>) => {
   const { executeMutation: executePurgeMutation } = useMutation();
   const purgeResource = async (resource: Resource) => {
     await executePurgeMutation(() => $trpc.resource.purgeResource.mutate({ id: resource.id }), {
+      // Keyed per resource so concurrent purges never stale-drop each other's notifications
+      key: resource.id,
       onError: (purgeError) => {
         createNotification({ severity: "error", title: purgeError.message });
       },

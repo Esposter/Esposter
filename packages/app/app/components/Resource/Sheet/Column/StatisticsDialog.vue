@@ -7,7 +7,7 @@ import { ChartableColumnTypes } from "@/services/resource/sheet/column/computeCo
 const isOpen = defineModel<boolean>();
 const columnStatistics = useColumnStatistics();
 const isChartOpen = ref(false);
-const selectedStatistics = ref<ColumnStatistics | null>(null);
+const selectedStatistics = ref<ColumnStatistics | undefined>();
 const headers = [
   { key: "chart", sortable: false, title: "" },
   { key: "columnName", sortable: false, title: "Column" },

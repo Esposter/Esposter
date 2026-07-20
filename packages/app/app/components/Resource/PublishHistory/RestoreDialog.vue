@@ -21,6 +21,8 @@ const isOpen = useSingletonDialog(restoringVersion);
 const restore = async () => {
   const version = Number(restoringVersion.value);
   await executeRestoreMutation(() => $trpc.resource.restorePublishedVersion.mutate({ id: resource.id, version }), {
+    // Every restore overwrites this resource's single working draft, so it keys by the resource id
+    key: resource.id,
     onError: createErrorNotification,
     onSuccess: async () => {
       createNotification({ severity: "success", title: `Restored "${resource.name}" from v${version} into a draft` });

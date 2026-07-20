@@ -40,6 +40,8 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
             count.value = snapshotCount;
           };
         },
+        // A batch delete spans an arbitrary selection with no single entity id, so each gets a per-call symbol
+        key: Symbol("deleteResources"),
         onError: async (error) => {
           createErrorNotification(error);
           // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure
@@ -52,7 +54,9 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
             // The undo toast: a single delete is one click away from coming back, no bin trip needed
             action:
               resources.length === 1
-                ? { handler: () => restoreResource(takeOne(resources)), title: "Restore" }
+                ? // Single-use: once the restore lands, a second fire from the bell would target a resource
+                  // No longer in the bin, so the action consumes itself on success
+                  { handler: () => restoreResource(takeOne(resources)), isSingleUse: true, title: "Restore" }
                 : { title: "Go to Recycle bin", to: RoutePath.ResourcesRecycleBin },
             severity: "success",
             title: deletedNotificationTitle,

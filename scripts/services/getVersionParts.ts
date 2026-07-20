@@ -1,7 +1,7 @@
 export const getVersionParts = (
   version: string,
-): { major: number; minor: number; patch: number; prerelease: string | undefined } => {
-  const [versionBase = "", prerelease] = version.split("-", 2);
+): { major: number; minor: number; patch: number; prerelease: string } => {
+  const [versionBase = "", prerelease = ""] = version.split("-", 2);
   const [major = 0, minor = 0, patch = 0] = versionBase.split(".").map((part) => Math.trunc(Number(part)) || 0);
   return { major, minor, patch, prerelease };
 };

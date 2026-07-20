@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
+import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
+import { uploadFileToSas } from "@/services/file/uploadFileToSas";
 import { withFinalizerAsync } from "@esposter/shared";
 import { mergeProps } from "vue";
 
@@ -14,6 +14,7 @@ interface EditRoomImageFieldProps {
 const modelValue = defineModel<RoomInMessage["image"]>({ required: true });
 const { name, roomId } = defineProps<EditRoomImageFieldProps>();
 const { $trpc } = useNuxtApp();
+const validateFile = useValidateFile();
 const input = useTemplateRef("input");
 const isLoading = ref(false);
 </script>
@@ -58,12 +59,18 @@ const isLoading = ref(false);
             @change="
               async (event) => {
                 const file = (event.target as HTMLInputElement).files?.[0];
-                if (!file || file.size > MAX_FILE_REQUEST_SIZE) return;
+                if (!file) return;
+
+                if (!validateFile(file.size)) return;
+
                 isLoading = true;
                 await withFinalizerAsync(
                   async () => {
                     const { publicUrl, sasUrl } = await $trpc.room.generateProfileImageUploadUrl.mutate({ roomId });
-                    await uploadBlocks(file, sasUrl);
+                    await uploadFileToSas({
+                      files: [file],
+                      generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
+                    });
                     modelValue = publicUrl;
                   },
                   () => {

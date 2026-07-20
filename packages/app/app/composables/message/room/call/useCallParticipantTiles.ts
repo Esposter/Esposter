@@ -39,9 +39,7 @@ export const useCallParticipantTiles = () => {
     isSpeaking: speakingIds.value.includes(participant.id),
     participant,
     videoStream:
-      participant.id === sessionId.value
-        ? (localVideoStream.value ?? undefined)
-        : remoteVideoStreams.value.get(participant.id),
+      participant.id === sessionId.value ? localVideoStream.value : remoteVideoStreams.value.get(participant.id),
   });
   return { callParticipantMap, getParticipantTileProps, presenterName, sessionId };
 };

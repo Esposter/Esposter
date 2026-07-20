@@ -2,7 +2,7 @@
 import type { ContentNavigationItem } from "@nuxt/content";
 
 interface SurroundProps {
-  surround: [ContentNavigationItem | null, ContentNavigationItem | null];
+  surround: [ContentNavigationItem | undefined, ContentNavigationItem | undefined];
 }
 
 const { surround } = defineProps<SurroundProps>();
@@ -12,7 +12,7 @@ const next = computed(() => surround[1]);
 
 <template>
   <div v-if="previous || next" mt-12 gap-4 grid grid-cols-1 md:grid-cols-2>
-    <v-card v-if="previous" link variant="outlined" hover @click="navigateTo(previous.path)">
+    <v-card v-if="previous" :to="previous.path" variant="outlined" hover>
       <v-card-item>
         <p mb-1 flex gap-x-1 items-center op-medium-emphasis text-body-small>
           <v-icon icon="mdi-arrow-left" size="small" />
@@ -23,7 +23,7 @@ const next = computed(() => surround[1]);
       </v-card-item>
     </v-card>
     <div v-else />
-    <v-card v-if="next" link variant="outlined" hover text-right @click="navigateTo(next.path)">
+    <v-card v-if="next" :to="next.path" variant="outlined" hover text-right>
       <v-card-item>
         <p mb-1 flex gap-x-1 items-center justify-end op-medium-emphasis text-body-small>
           Next

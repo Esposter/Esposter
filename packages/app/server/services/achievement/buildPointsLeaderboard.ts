@@ -14,7 +14,7 @@ interface UserPointsTotal {
 // Ranking is competition-style — users with equal totals share a rank (1 + the number of strictly higher
 // Totals) — matching a "COUNT(*) WHERE total > mine" caller-rank query. The caller's own entry is always
 // Returned (with its global rank) so the client can highlight and append it when it falls outside the top
-// Window; null when the caller is unauthenticated or has unlocked nothing.
+// Window; undefined when the caller is unauthenticated or has unlocked nothing.
 export const buildPointsLeaderboard = (
   userTotals: readonly UserPointsTotal[],
   callerUserId?: string,
@@ -36,6 +36,6 @@ export const buildPointsLeaderboard = (
   }
   return {
     entries: rankedEntries.slice(0, MAX_POINTS_LEADERBOARD_ENTRIES),
-    self: rankedEntries.find(({ user }) => user.id === callerUserId) ?? null,
+    self: rankedEntries.find(({ user }) => user.id === callerUserId),
   };
 };

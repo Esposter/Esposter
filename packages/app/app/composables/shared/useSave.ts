@@ -47,6 +47,8 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
     let isSuccessful = false;
     if (session.value.data && auth)
       await executeSaveMutation(() => auth.save(value), {
+        // This composable persists a single state, so its saves supersede one another under a stable key
+        key: "save",
         onSuccess: () => {
           isSuccessful = true;
         },

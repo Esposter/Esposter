@@ -27,6 +27,7 @@ const updateNotificationType = async (newNotificationType: NotificationType) => 
           setMyUserToRoom(roomId, { ...userToRoom, notificationType: oldNotificationType });
         };
       },
+      key: roomId,
     },
   );
 };

@@ -59,11 +59,11 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const dateFormatChange =
       column.type === ColumnType.Date && this.#updatedColumn.type === ColumnType.Date
         ? { newFormat: this.#updatedColumn.format, oldFormat: column.format }
-        : null;
+        : undefined;
     const newColumn = ColumnTypeCreateMap[this.#updatedColumn.type].create();
     Object.assign(newColumn, this.#updatedColumn);
     dataSource.columns[columnIndex] = newColumn;
-    if (dateFormatChange !== null && dateFormatChange.oldFormat !== dateFormatChange.newFormat) {
+    if (dateFormatChange && dateFormatChange.oldFormat !== dateFormatChange.newFormat) {
       const { newFormat, oldFormat } = dateFormatChange;
       let size = 0;
       for (const row of dataSource.rows) {

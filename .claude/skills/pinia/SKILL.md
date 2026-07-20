@@ -212,7 +212,7 @@ const deleteBan = async (input: DeleteBanInput) => {
 };
 ```
 
-Give each mutation in a store its own `useMutation()` instance via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` when consumed) so one action's staleness tracking can't cancel another's. One instance serving many sibling **items** of the same action passes `key` (and `isExclusive` for single-flight creates) instead of multiplying instances. Full rationale: `packages/app/content/docs/architecture/client-data.md`.
+Give each mutation in a store its own `useMutation()` instance via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed) so one action's staleness tracking can't cancel another's. `key` is **required** on every call (like a Pinia store id — identity is always explicit): the entity id or natural composite for per-entity operations (`key: input.id`, `` key: `${userId}-${roleId}` ``), a per-call `Symbol("createFoo")` for creates with no natural key (every create is independent; a stable key + `isExclusive` instead when duplicate fires must drop), or the scope's id / a stable target name for singleton targets. Same key = genuine latest-wins supersession (repeated saves of one target). All instances are declared at the store root — never call `useMutation()` inside an action (detached effect scope leak). Full rationale: `packages/app/content/docs/architecture/client-data.md`.
 
 ## createOperationData Usage
 

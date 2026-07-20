@@ -15,9 +15,6 @@ describe(defineVuetifyConfiguration, () => {
           },
           "VBtn": {
             "flat": true,
-            "style": {
-              "backgroundColor": "transparent",
-            },
           },
           "VColorInput": {
             "variant": "outlined",

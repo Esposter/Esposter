@@ -23,12 +23,14 @@ describe("deepOptionalUndefined type", () => {
   test("optionalizes property", () => {
     expect.hasAssertions();
 
+    // eslint-disable-next-line no-restricted-syntax -- the non-optional input is the fixture this utility transforms
     expectTypeOf<DeepOptionalUndefined<{ "": undefined | unknown }>>().toEqualTypeOf<{ ""?: unknown }>();
   });
 
   test("optionalizes nested property", () => {
     expect.hasAssertions();
 
+    // eslint-disable-next-line no-restricted-syntax -- the non-optional input is the fixture this utility transforms
     expectTypeOf<DeepOptionalUndefined<{ "": { "": undefined | unknown } }>>().toEqualTypeOf<{
       "": { ""?: unknown };
     }>();

@@ -1,11 +1,11 @@
 {
   "[javascript][typescript][vue]": {
-    "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.oxc"]
+    "editor.codeActionsOnSave": { "source.fixAll.oxc": "explicit", "source.organizeImports": "explicit" }
   },
   "[xml]": {
     "editor.formatOnSave": false
   },
-  "azureFunctions.deploySubpath": "packages\\azure-functions",
+  "azureFunctions.deploySubpath": "packages/azure-functions",
   "azureFunctions.postDeployTask": "pnpm i (functions)",
   "azureFunctions.preDeployTask": "pnpm prune (functions)",
   "azureFunctions.projectLanguage": "TypeScript",
@@ -18,6 +18,14 @@
     ".env": "env",
     ".env.example": "env",
     ".tsx": "xml"
+  },
+  // Keeps the file watcher (and therefore tsserver's project reloads) out of generated trees.
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.nuxt/**": true,
+    "**/.output/**": true,
+    "**/dist/**": true,
+    "**/node_modules/**": true
   },
   "javascript.updateImportsOnFileMove.enabled": "always",
   "oxc.enable": true,

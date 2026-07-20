@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface CameraPreviewProps {
   isCameraEnabled: boolean;
-  stream: MediaStream | undefined;
+  stream?: MediaStream;
 }
 
 const { isCameraEnabled, stream } = defineProps<CameraPreviewProps>();
