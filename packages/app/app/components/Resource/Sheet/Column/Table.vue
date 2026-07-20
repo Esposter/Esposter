@@ -21,8 +21,8 @@ const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore)
 const isChartOpen = useSingletonDialog(chartingColumnName);
 const chartingColumnStatistics = computed(() =>
   chartingColumnName.value
-    ? (computeColumnStatistics(dataSource).find(({ columnName }) => columnName === chartingColumnName.value) ?? null)
-    : null,
+    ? computeColumnStatistics(dataSource).find(({ columnName }) => columnName === chartingColumnName.value)
+    : undefined,
 );
 const editingColumn = computed(() => dataSource.columns.find(({ name }) => name === editingColumnName.value));
 const reorderColumns = useReorderColumns();

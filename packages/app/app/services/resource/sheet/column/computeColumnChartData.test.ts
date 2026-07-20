@@ -68,10 +68,10 @@ describe(computeColumnChartData, () => {
     expect(result?.series).toStrictEqual([{ data: [0, 1, 2], name: "" }]);
   });
 
-  test(`number column with all null statistics returns null`, () => {
+  test(`number column with all null statistics returns undefined`, () => {
     expect.hasAssertions();
 
-    expect(computeColumnChartData(createNumberStats({ average: null, maximum: null, minimum: null }))).toBeNull();
+    expect(computeColumnChartData(createNumberStats({ average: null, maximum: null, minimum: null }))).toBeUndefined();
   });
 
   test(`boolean column returns pie chart with trueCount, falseCount, nullCount`, () => {
@@ -91,10 +91,10 @@ describe(computeColumnChartData, () => {
     expect(result?.series).toStrictEqual([0, 0, 2]);
   });
 
-  test(`string column with no top frequencies returns null`, () => {
+  test(`string column with no top frequencies returns undefined`, () => {
     expect.hasAssertions();
 
-    expect(computeColumnChartData(createStringStats({ topFrequencies: null }))).toBeNull();
+    expect(computeColumnChartData(createStringStats({ topFrequencies: null }))).toBeUndefined();
   });
 
   test(`string column returns horizontal bar chart of top frequencies`, () => {

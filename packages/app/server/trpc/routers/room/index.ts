@@ -165,7 +165,7 @@ export const baseRoomRouter = router({
             .insert(invitesInMessage)
             .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
             .returning(),
-        ).unwrapOr(null);
+        ).unwrapOr(undefined);
         if (invites) return takeOne(invites);
       }
       throw new TRPCError({

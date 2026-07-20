@@ -15,14 +15,14 @@ export const useVotePoll = async (
   const { storeUpdateMessage, updateMessage } = dataStore;
   const isVoting = ref(false);
   const userId = computed(() => session.value?.user.id);
-  const vote = async (optionId: null | string) => {
+  const vote = async (optionId: string | undefined) => {
     if (!userId.value || isPreview || isVoting.value) return;
     isVoting.value = true;
     const messageValue = toValue(message);
     const pollContentValue = toValue(pollContent);
     const previousMessage = messageValue.message;
     const updatedVotes = { ...pollContentValue.votes };
-    if (optionId === null) delete updatedVotes[userId.value];
+    if (!optionId) delete updatedVotes[userId.value];
     else updatedVotes[userId.value] = optionId;
     const updatedMessage = JSON.stringify({ ...pollContentValue, votes: updatedVotes });
     await withFinalizerAsync(

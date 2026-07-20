@@ -84,7 +84,7 @@ onKeyStroke("Backspace", () => {
           <MessageModelMessageInputSlashCommandParametersChip
             :is-required
             :name
-            :autofocus="lastAddedParameterName === name || (lastAddedParameterName === null && index === 0)"
+            :autofocus="lastAddedParameterName === name || (!lastAddedParameterName && index === 0)"
             :is-focused="focusedIndex === index"
             :model-value="parameterValues[name] ?? ''"
             @update:model-value="updateParameterValue(name, $event)"

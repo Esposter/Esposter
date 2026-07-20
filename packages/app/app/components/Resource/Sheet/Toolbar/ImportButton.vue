@@ -9,12 +9,12 @@ const { settings } = storeToRefs(sheetStore);
 const setDataSource = useSetDataSource();
 const importFile = useImportFile();
 const dataSourceConfiguration = useDataSourceConfiguration(settings);
-const previewDataSource = ref<DataSource | null>(null);
+const previewDataSource = ref<DataSource | undefined>();
 const pendingName = ref("");
 const isPreviewOpen = computed({
-  get: () => previewDataSource.value !== null,
+  get: () => Boolean(previewDataSource.value),
   set: (newIsPreviewOpen) => {
-    if (!newIsPreviewOpen) previewDataSource.value = null;
+    if (!newIsPreviewOpen) previewDataSource.value = undefined;
   },
 });
 </script>

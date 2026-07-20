@@ -3,12 +3,12 @@ import type { LinkPreviewResponse } from "@esposter/db-schema";
 
 const props = defineProps<LinkPreviewResponse>();
 const { contentType } = toRefs(props);
-const component = computed<Component | null>(() => {
+const component = computed<Component | undefined>(() => {
   if (contentType.value === "text/html")
     return defineAsyncComponent(() => import("@/components/Message/Model/Message/LinkPreview/URL.vue"));
   else if (contentType.value)
     return defineAsyncComponent(() => import("@/components/Message/Model/Message/LinkPreview/Default.vue"));
-  else return null;
+  else return undefined;
 });
 </script>
 
