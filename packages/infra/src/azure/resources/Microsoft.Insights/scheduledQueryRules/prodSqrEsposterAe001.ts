@@ -22,7 +22,9 @@ export const prodSqrEsposterAe001: azure_native.monitor.ScheduledQueryRule =
               minFailingPeriodsToAlert: 1,
               numberOfEvaluationPeriods: 1,
             },
-            operator: azure_native.monitor.ConditionOperator.GreaterThan,
+            // Azure-native types this as ConditionOperator, whose values are the metric-alert forms ("gt").
+            // Scheduled query rules of kind LogAlert take the ARM spelling, which the API rejects otherwise.
+            operator: "GreaterThan",
             query: '_LogOperation | where Operation == "Data collection Status" | where Detail contains "OverQuota"',
             threshold: 0,
             timeAggregation: azure_native.monitor.TimeAggregation.Count,
