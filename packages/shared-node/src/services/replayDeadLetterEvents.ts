@@ -1,30 +1,26 @@
 import { deadLetteredEventsSchema } from "@/models/DeadLetteredEvent";
 import { AzureKeyCredential, EventGridPublisherClient } from "@azure/eventgrid";
 import { BlobServiceClient } from "@azure/storage-blob";
-import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const DEAD_LETTER_CONTAINER_NAME = "deadletter";
 const ARCHIVE_PREFIX = "archived/";
-
-const readRequiredEnvironmentVariable = (name: string): string => {
-  const value = process.env[name];
-  if (!value) throw new InvalidOperationError(Operation.Read, name, "environment variable is not set");
-  return value;
-};
 
 // Lists every blob the Event Grid dead-letter destination has written, re-publishes its events through the
 // Existing key-authenticated publisher client, then archives the processed blob under `archived/` so a rerun
 // Never double-sends it. Handlers are idempotent-or-tolerant, so a replayed event double-delivering is safe.
 // The archived copy expires via the storage account's 30-day dead-letter lifecycle rule. Run manually against
 // A resource group's storage + Event Grid credentials — never scheduled.
-export const replayDeadLetterEvents = async (): Promise<void> => {
-  const blobServiceClient = BlobServiceClient.fromConnectionString(
-    readRequiredEnvironmentVariable("AZURE_STORAGE_ACCOUNT_CONNECTION_STRING"),
-  );
+export const replayDeadLetterEvents = async (
+  connectionString: string,
+  topicEndpoint: string,
+  topicKey: string,
+): Promise<void> => {
+  const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
   const eventGridPublisherClient = new EventGridPublisherClient(
-    readRequiredEnvironmentVariable("AZURE_EVENT_GRID_TOPIC_ENDPOINT"),
+    topicEndpoint,
     "EventGrid",
-    new AzureKeyCredential(readRequiredEnvironmentVariable("AZURE_EVENT_GRID_TOPIC_KEY")),
+    new AzureKeyCredential(topicKey),
   );
   const containerClient = blobServiceClient.getContainerClient(DEAD_LETTER_CONTAINER_NAME);
 
