@@ -7,7 +7,7 @@ import { RoutePath } from "@esposter/shared";
     <v-card-item>
       <div flex flex-wrap gap-4 items-center justify-between>
         <span text-h6>Create a resource</span>
-        <StyledButton :button-props="{ prependIcon: 'mdi-plus' }" @click="navigateTo(RoutePath.ResourcesCreate)">
+        <StyledButton :button-props="{ prependIcon: 'mdi-plus' }" :to="RoutePath.ResourcesCreate">
           Create a resource
         </StyledButton>
       </div>

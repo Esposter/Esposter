@@ -65,7 +65,7 @@ const deploy = async () => {
             :key="deployed.id"
             :subtitle="key"
             :title="deployed.name"
-            @click="navigateTo(RoutePath.Resource(deployed.id))"
+            :to="RoutePath.Resource(deployed.id)"
           />
         </v-list>
       </v-card-text>

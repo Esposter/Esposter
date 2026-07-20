@@ -67,6 +67,6 @@ const toolbarItems = computed<Item[]>(() => [
     />
     <ResourceListColumnChooserMenu v-model="hiddenColumnKeys" />
     <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
-    <StyledTooltipIconButton v-if="closeTo" icon="mdi-close" text="Close" @click="navigateTo(closeTo)" />
+    <StyledTooltipIconButton v-if="closeTo" :to="closeTo" icon="mdi-close" text="Close" />
   </v-toolbar>
 </template>

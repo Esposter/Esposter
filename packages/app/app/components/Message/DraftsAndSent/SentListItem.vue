@@ -17,7 +17,7 @@ const { message, room } = defineProps<MessageDraftsAndSentSentListItemProps>();
     :display-time="getDisplayTime(message.createdAt)"
     :subtitle="message.message"
     :title="room.name"
-    @click="navigateTo(RoutePath.MessagesMessage(message.partitionKey, message.rowKey))"
+    :to="RoutePath.MessagesMessage(message.partitionKey, message.rowKey)"
   >
     <template #prepend>
       <StyledAvatar :image="room.image" :name="room.name" />

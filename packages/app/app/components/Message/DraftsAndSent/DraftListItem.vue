@@ -16,7 +16,7 @@ const { draftItem } = defineProps<MessageDraftsAndSentDraftListItemProps>();
     :display-time="getDisplayTime(draftItem.updatedAt)"
     :subtitle="draftItem.content"
     :title="draftItem.room.name"
-    @click="navigateTo(RoutePath.Messages(draftItem.room.id))"
+    :to="RoutePath.Messages(draftItem.room.id)"
   >
     <template #prepend>
       <StyledAvatar :image="draftItem.room.image" :name="draftItem.room.name" />

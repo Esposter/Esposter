@@ -46,7 +46,7 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
       >
       <v-spacer />
       <StyledTooltipIconButton icon="mdi-refresh" text="Refresh" @click="refresh()" />
-      <StyledTooltipIconButton icon="mdi-close" text="Close" @click="navigateTo(RoutePath.ResourcesAll)" />
+      <StyledTooltipIconButton :to="RoutePath.ResourcesAll" icon="mdi-close" text="Close" />
     </v-toolbar>
     <v-alert v-if="error && items.length > 0" density="compact" type="error" :text="error" :rounded="0">
       <template #append>

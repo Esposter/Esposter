@@ -63,11 +63,7 @@ const { smAndDown } = useVDisplay();
         :unpublish
       >
         <template v-if="smAndDown" #prepend>
-          <StyledTooltipIconButton
-            icon="mdi-format-list-bulleted"
-            text="All resources"
-            @click="navigateTo(RoutePath.ResourcesAll)"
-          />
+          <StyledTooltipIconButton :to="RoutePath.ResourcesAll" icon="mdi-format-list-bulleted" text="All resources" />
         </template>
       </ResourceBladeToolbar>
       <!-- The blade box owns the vertical divider (b-l) that meets the list toolbar's b-b at the corner -->
