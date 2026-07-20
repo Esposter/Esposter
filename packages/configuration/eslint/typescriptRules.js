@@ -52,6 +52,13 @@ export default Object.assign(
         selector:
           ":matches(MemberExpression[object.name='expect'][property.name='poll'], MemberExpression[object.name='vi'][property.name=/^(waitFor|waitUntil)$/], CallExpression[callee.name=/^(waitFor|waitUntil)$/])",
       },
+      {
+        // The child combinators are load-bearing — they match only the property's own annotation, so
+        // `Ref<T | undefined>`, `(T | undefined)[]`, tuple members and function params are untouched.
+        message: "Declare the property optional (`field?: T`) instead of `field: T | undefined`.",
+        selector:
+          ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
+      },
     ],
     // Computationally expensive
     // "@typescript-eslint/naming-convention": [

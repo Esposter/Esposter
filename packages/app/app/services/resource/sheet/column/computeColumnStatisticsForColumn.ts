@@ -22,7 +22,7 @@ export const computeColumnStatisticsForColumn = (dataSource: DataSource, column:
   const statisticsValues = Object.fromEntries(
     ColumnStatisticsDefinitions.map(({ applicableColumnTypes, compute, key }) => [
       key,
-      applicableColumnTypes.includes(effectiveColumnType) ? compute(context) : null,
+      applicableColumnTypes.includes(effectiveColumnType) ? compute(context) : undefined,
     ]),
   ) as Pick<ColumnStatistics, ColumnStatisticsKey>;
   const topFrequencies =
@@ -30,6 +30,6 @@ export const computeColumnStatisticsForColumn = (dataSource: DataSource, column:
       ? computeTopFrequencies(context.nonNullStrings)
       : effectiveColumnType === ColumnType.Date
         ? computeMonthFrequencies(context.nonNullStrings)
-        : null;
+        : undefined;
   return { columnName: column.name, columnType: column.type, ...statisticsValues, topFrequencies };
 };

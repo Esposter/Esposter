@@ -29,7 +29,11 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
     };
   },
   [ColumnType.Number]: (columnStatistics) => {
-    if (columnStatistics.minimum === null || columnStatistics.average === null || columnStatistics.maximum === null)
+    if (
+      columnStatistics.minimum === undefined ||
+      columnStatistics.average === undefined ||
+      columnStatistics.maximum === undefined
+    )
       return undefined;
     return {
       options: {

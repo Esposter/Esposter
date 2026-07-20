@@ -14,7 +14,7 @@ const BROADCAST_MENTION_IDS = new Set([MENTION_EVERYONE_ID, MENTION_HERE_ID]);
 export const classifyMentions = (message: string): ClassifiedMentions => {
   const mentions = getMentions(message)
     .map((m) => ({ id: m.getAttribute(MENTION_ID_ATTRIBUTE), type: m.getAttribute(MENTION_ITEM_TYPE_ATTRIBUTE) }))
-    .filter((m): m is { id: string; type: string | undefined } => Boolean(m.id));
+    .filter((m): m is { id: string; type?: string } => Boolean(m.id));
   return {
     broadcastIds: mentions.filter(({ id }) => BROADCAST_MENTION_IDS.has(id)).map(({ id }) => id),
     regularUserIds: mentions

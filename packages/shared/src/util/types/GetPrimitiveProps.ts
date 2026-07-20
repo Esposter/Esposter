@@ -7,5 +7,6 @@ export type GetPrimitiveProps<T, P extends string, D extends unknown[], R extend
         | (D extends [unknown, ...infer Rest]
             ? GetProperties<string | undefined, R extends true ? "description" : `${P}.description`, Rest, false>
             : never)
+        // eslint-disable-next-line no-restricted-syntax -- mirrors `Symbol.description`, which is genuinely `string | undefined`
         | { path: R extends true ? "description" : `${P}.description`; value: string | undefined }
     : never;
