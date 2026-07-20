@@ -10,5 +10,7 @@ export interface KeyedCache<TValue> {
   readonly value: TValue;
 }
 
-export const createKeyedCacheSchema = <TValue>(valueSchema: z.ZodType<TValue>): z.ZodType<KeyedCache<TValue>> =>
-  z.object({ key: z.string(), value: valueSchema });
+export const createKeyedCacheSchema = <TValue>(
+  valueSchema: z.ZodType<TValue>,
+): z.ZodObject<{ key: z.ZodString; value: z.ZodType<TValue> }> =>
+  z.object({ key: z.string(), value: valueSchema }) satisfies z.ZodType<KeyedCache<TValue>>;
