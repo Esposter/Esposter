@@ -121,6 +121,7 @@ These tokens are official for Esposter infrastructure. If a new Azure resource t
 | `apic`  | API connection             | `Microsoft.Web/connections`                 | Esposter    |
 | `appi`  | Application Insights       | `Microsoft.Insights/components`             | CAF         |
 | `bgt`   | Budget                     | `Microsoft.Consumption/budgets`             | Esposter    |
+| `egst`  | Event Grid system topic    | `Microsoft.EventGrid/systemTopics`          | CAF         |
 | `evgs`  | Event Grid subscription    | `Microsoft.EventGrid/eventSubscriptions`    | CAF         |
 | `evgt`  | Event Grid topic           | `Microsoft.EventGrid/topics`                | CAF         |
 | `func`  | Function app               | `Microsoft.Web/sites`                       | CAF         |
@@ -179,7 +180,6 @@ These tokens are the complete set of CAF abbreviations plus LibreDevOps fallback
 | `dedb`   | Azure Data Explorer cluster database | `Microsoft.Kusto/clusters/databases`                  | CAF    |
 | `dls`    | Data Lake Store account              | `Microsoft.DataLakeStore/accounts`                    | CAF    |
 | `dt`     | Azure Digital Twin instance          | `Microsoft.DigitalTwins/digitalTwinsInstances`        | CAF    |
-| `egst`   | Event Grid system topic              | `Microsoft.EventGrid/systemTopics`                    | CAF    |
 | `evgd`   | Event Grid domain                    | `Microsoft.EventGrid/domains`                         | CAF    |
 | `evgns`  | Event Grid namespace                 | `Microsoft.EventGrid/namespaces`                      | CAF    |
 | `evh`    | Event hub                            | `Microsoft.EventHub/namespaces/eventHubs`             | CAF    |

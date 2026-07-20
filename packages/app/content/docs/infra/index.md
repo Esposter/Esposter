@@ -9,7 +9,7 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 
 - [Azure Pulumi migration](/docs/infra/azure-pulumi-migration) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
 - [Cost & Security Posture](/docs/infra/optimization-review) — the budget guard cycle, retention settings, and why each hardening step is deliberately deferred.
-- [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) — failed deliveries land in a blob container and a replay script re-publishes them.
+- [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) — failed deliveries land in a blob container whose writes push-trigger an automatic, attempt-capped replay.
 - [Observability caps](/docs/infra/observability-caps) — daily Log Analytics ingestion cap, cap-reached alert, and adaptive App Insights sampling.
 - [Pulumi source of truth](/docs/infra/pulumi-source-of-truth) — Function App runtime settings and App Insights wiring managed in Pulumi.
 - [Roadmap](/docs/infra/roadmap) — open items (key-auth-gated hardening); every item links its proposal.
@@ -30,6 +30,6 @@ Deeper operational reference lives beside the code in `packages/infra/docs/` (na
 - **Naming migration** — migrated all dev + prod resources (stateless, stateful, monitoring) to the convention with `parent` hierarchy, including storage/table/search data migration and the Railway endpoint cutover.
 - **Provider split + GitHub** — split `src/azure/`; added `@pulumi/github` managing repo settings, labels, environments, and secrets (via ESC); migrated branch protection to a single `develop`+`main` ruleset with `required_approving_review_count: 0`.
 - **Post-migration verification** — smoke-tested uploads, messages, push, search, Web PubSub, and function processing; confirmed the prod search indexer populated `messages-index`.
-- **Event Grid dead-letter** — `deadletter` container + `deadLetterDestination` on all six subscriptions, tightened retry (10 attempts / 1h), 30-day lifecycle expiry, and a `pnpm deadletter:replay` script. → [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter)
+- **Event Grid dead-letter** — `deadletter` container + `deadLetterDestination` on all six subscriptions, tightened retry (10 attempts / 1h), 30-day lifecycle expiry, and a storage system topic that push-triggers the `ReplayDeadLetterEvent` function with a two-attempt cap and a quarantine prefix. → [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter)
 - **Observability caps** — `0.5` GB daily Log Analytics cap with a `_LogOperation` cap-reached alert, plus adaptive App Insights sampling that keeps exceptions. → [Observability caps](/docs/infra/observability-caps)
 - **Pulumi source of truth** — adopted the Function Apps' runtime app settings and App Insights wiring into Pulumi; secrets flow from ESC. → [Pulumi source of truth](/docs/infra/pulumi-source-of-truth)

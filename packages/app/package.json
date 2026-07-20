@@ -41,7 +41,6 @@
     "bench": "vitest bench --run",
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",
-    "deadletter:replay": "tsx --tsconfig tsconfig.root.json scripts/replayDeadLetterEvents.ts",
     "dev": "nuxt dev",
     "env:gen": "pnpx gen-env-types .env -o shared/types/env.d.ts -e .",
     "format": "oxfmt",

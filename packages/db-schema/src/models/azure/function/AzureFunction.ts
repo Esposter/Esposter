@@ -6,5 +6,6 @@ export enum AzureFunction {
   ProcessWebhook = "ProcessWebhook",
   PurgeDeletedResources = "PurgeDeletedResources",
   PushWebhook = "PushWebhook",
+  ReplayDeadLetterEvent = "ReplayDeadLetterEvent",
   SendTodoReminder = "SendTodoReminder",
 }
