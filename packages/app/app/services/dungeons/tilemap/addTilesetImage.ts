@@ -24,8 +24,7 @@ export const addTilesetImage = (tilemap: Tilemaps.Tilemap, tilemapKey: TilemapKe
   return tileset;
 };
 
-const baseAddTilesetImage = (tilemap: Tilemaps.Tilemap, tilesetKey: TilesetKey) => {
+const baseAddTilesetImage = (tilemap: Tilemaps.Tilemap, tilesetKey: TilesetKey) =>
   // Phaser warns on tileset keys the tilemap doesn't require, which is fine since we always create
   // All of them; the tileset name must exactly match the tileset key.
-  return ignoreWarn(() => tilemap.addTilesetImage(tilesetKey));
-};
+  ignoreWarn(() => tilemap.addTilesetImage(tilesetKey));
