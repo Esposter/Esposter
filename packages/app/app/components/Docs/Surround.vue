@@ -2,7 +2,7 @@
 import type { ContentNavigationItem } from "@nuxt/content";
 
 interface SurroundProps {
-  surround: [ContentNavigationItem | null, ContentNavigationItem | null];
+  surround: [ContentNavigationItem | undefined, ContentNavigationItem | undefined];
 }
 
 const { surround } = defineProps<SurroundProps>();

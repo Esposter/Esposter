@@ -3,7 +3,7 @@ import type { ColumnChartData } from "@/models/resource/sheet/column/ColumnChart
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 
-const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatistics) => ColumnChartData | null>> = {
+const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatistics) => ColumnChartData | undefined>> = {
   [ColumnType.Boolean]: (columnStatistics) => ({
     options: {
       chart: { toolbar: { show: false } },
@@ -13,7 +13,7 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
     type: "pie",
   }),
   [ColumnType.Date]: (columnStatistics) => {
-    if (!columnStatistics.topFrequencies?.length) return null;
+    if (!columnStatistics.topFrequencies?.length) return undefined;
     return {
       options: {
         chart: { toolbar: { show: false } },
@@ -30,7 +30,7 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
   },
   [ColumnType.Number]: (columnStatistics) => {
     if (columnStatistics.minimum === null || columnStatistics.average === null || columnStatistics.maximum === null)
-      return null;
+      return undefined;
     return {
       options: {
         chart: { toolbar: { show: false } },
@@ -47,7 +47,7 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
     };
   },
   [ColumnType.String]: (columnStatistics) => {
-    if (!columnStatistics.topFrequencies?.length) return null;
+    if (!columnStatistics.topFrequencies?.length) return undefined;
     const entries = [...columnStatistics.topFrequencies].toReversed();
     return {
       options: {
@@ -63,7 +63,7 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
 
 export const ChartableColumnTypes: ReadonlySet<ColumnType> = new Set(Object.keys(ColumnChartDataMap) as ColumnType[]);
 
-export const computeColumnChartData = (columnStatistics: ColumnStatistics): ColumnChartData | null => {
+export const computeColumnChartData = (columnStatistics: ColumnStatistics): ColumnChartData | undefined => {
   const compute = ColumnChartDataMap[columnStatistics.columnType];
-  return compute ? compute(columnStatistics) : null;
+  return compute ? compute(columnStatistics) : undefined;
 };

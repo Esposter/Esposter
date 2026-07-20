@@ -75,6 +75,13 @@ canvas {
 }
 // https://vuetifyjs.com/en/getting-started/grid-legacy-mode/#css-override
 @layer vuetify-overrides {
+  // Colorless flat buttons (our default via the VBtn flat prop) blend into their parent surface instead
+  // of painting Vuetify's surface background; the color prop still fills via bg-* in the later
+  // vuetify-utilities layer
+  .v-btn--flat:not([class*="bg-"]),
+  .v-btn--variant-flat:not([class*="bg-"]) {
+    background-color: transparent;
+  }
   .v-row {
     gap: unset;
     margin: calc(var(--v-col-gap-y) * -0.5) calc(var(--v-col-gap-x) * -0.5);

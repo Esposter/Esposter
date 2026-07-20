@@ -9,14 +9,14 @@ import { ID_SEPARATOR, normalizeString, takeOne, toRawDeep } from "@esposter/sha
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
   const roomStore = useRoomStore();
   const inputStore = useInputStore();
-  const { data: pendingSlashCommand } = useDataMap<null | SlashCommand>(() => roomStore.currentRoomId, null);
+  const { data: pendingSlashCommand } = useDataMap<SlashCommand | undefined>(() => roomStore.currentRoomId, undefined);
   const { data: parameterValues } = useDataMap<Record<string, string>>(() => roomStore.currentRoomId, {});
   const { data: activeParameterNames } = useDataMap<string[]>(() => roomStore.currentRoomId, []);
   const { data: errors } = useDataMap<SlashCommandParameterError[]>(() => roomStore.currentRoomId, []);
   const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
   const { data: focusedIndex } = useDataMap(() => roomStore.currentRoomId, 0);
   const { data: selectedHiddenIndex } = useDataMap(() => roomStore.currentRoomId, 0);
-  const { data: lastAddedParameterName } = useDataMap<null | string>(() => roomStore.currentRoomId, null);
+  const { data: lastAddedParameterName } = useDataMap<string | undefined>(() => roomStore.currentRoomId, undefined);
   const activeParameters = computed(
     () => pendingSlashCommand.value?.parameters.filter(({ name }) => activeParameterNames.value.includes(name)) ?? [],
   );
@@ -73,7 +73,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     activeParameterNames.value = parameters.map(({ name }) => name);
     errors.value = [];
     focusedIndex.value = 0;
-    lastAddedParameterName.value = null;
+    lastAddedParameterName.value = undefined;
   };
 
   const buildText = (): string => {
@@ -91,13 +91,13 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   };
 
   const clearPendingSlashCommand = () => {
-    pendingSlashCommand.value = null;
+    pendingSlashCommand.value = undefined;
     parameterValues.value = {};
     activeParameterNames.value = [];
     errors.value = [];
     trailingMessage.value = "";
     focusedIndex.value = 0;
-    lastAddedParameterName.value = null;
+    lastAddedParameterName.value = undefined;
   };
 
   const collapseToText = () => {

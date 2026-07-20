@@ -28,7 +28,6 @@ const isActive = computed(() => room.id === currentDirectMessageId.value);
       <template #append>
         <v-btn
           v-show="isActive || isHovering"
-          bg-transparent
           density="compact"
           icon="mdi-close"
           variant="plain"

@@ -15,7 +15,7 @@ export const createCallSessionId = async (db: Context["db"], roomId: string, use
       db.insert(callSessionsInMessage).values({ id, roomId, userId }).returning(),
     )
       .orTee(console.error)
-      .unwrapOr(null);
+      .unwrapOr(undefined);
     if (callSession?.[0]) return callSession[0].id;
   }
 

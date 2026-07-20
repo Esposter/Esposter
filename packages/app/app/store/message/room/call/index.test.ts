@@ -231,7 +231,7 @@ describe(useMediaStore, () => {
         storeToRefs(mediaStore);
       setRemoteScreenShareStream(participantId, stream);
       pinnedParticipantId.value = participantId;
-      setRemoteScreenShareStream(participantId, null);
+      setRemoteScreenShareStream(participantId, undefined);
 
       expect(hasScreenShare.value).toBe(false);
       expect(remoteScreenShareStreams.value.has(participantId)).toBe(false);

@@ -12,8 +12,8 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   const pinnedParticipantId = ref("");
   const selectedVirtualBackground = ref("");
   const screenSharingParticipantIds = ref<string[]>([]);
-  const localScreenShareStream = ref<MediaStream | null>(null);
-  const localVideoStream = ref<MediaStream | null>(null);
+  const localScreenShareStream = ref<MediaStream | undefined>();
+  const localVideoStream = ref<MediaStream | undefined>();
   const remoteScreenShareStreams = ref(new Map<string, MediaStream>());
   const remoteVideoStreams = ref(new Map<string, MediaStream>());
   const sessionId = computed(() => session.value.data?.session.id);
@@ -28,10 +28,10 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   );
   const activeScreenShareStream = computed(() => {
     if (!activeScreenShareParticipantId.value) return undefined;
-    if (activeScreenShareParticipantId.value === sessionId.value) return localScreenShareStream.value ?? undefined;
+    if (activeScreenShareParticipantId.value === sessionId.value) return localScreenShareStream.value;
     return remoteScreenShareStreams.value.get(activeScreenShareParticipantId.value);
   });
-  const setLocalScreenShareStream = (stream: MediaStream | null) => {
+  const setLocalScreenShareStream = (stream: MediaStream | undefined) => {
     localScreenShareStream.value = stream;
     const id = sessionId.value;
     if (!id) return;
@@ -48,11 +48,11 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   const deleteParticipantVolumePercentage = (participantId: string) => {
     participantVolumePercentageMap.value.delete(participantId);
   };
-  const setRemoteVideoStream = (identity: string, stream: MediaStream | null) => {
+  const setRemoteVideoStream = (identity: string, stream: MediaStream | undefined) => {
     if (stream) remoteVideoStreams.value.set(identity, stream);
     else remoteVideoStreams.value.delete(identity);
   };
-  const setRemoteScreenShareStream = (identity: string, stream: MediaStream | null) => {
+  const setRemoteScreenShareStream = (identity: string, stream: MediaStream | undefined) => {
     if (stream) {
       remoteScreenShareStreams.value.set(identity, stream);
       screenSharingParticipantIds.value = [
@@ -78,8 +78,8 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
     pinnedParticipantId.value = "";
     selectedVirtualBackground.value = "";
     screenSharingParticipantIds.value = [];
-    localScreenShareStream.value = null;
-    localVideoStream.value = null;
+    localScreenShareStream.value = undefined;
+    localVideoStream.value = undefined;
     remoteScreenShareStreams.value.clear();
     remoteVideoStreams.value.clear();
   };

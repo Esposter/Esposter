@@ -28,7 +28,6 @@ const isVisible = computed(() => isCreator.value || checkIsManageable(room.id));
     <template #activator="{ props: tooltipProps }">
       <v-btn
         v-show="(isActive || isHovering) && isVisible"
-        bg-transparent
         :="tooltipProps"
         :ripple="false"
         density="compact"
