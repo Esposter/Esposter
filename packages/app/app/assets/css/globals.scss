@@ -72,8 +72,7 @@ canvas {
   // Colorless flat buttons (our default via the VBtn flat prop) blend into their parent surface instead
   // of painting Vuetify's surface background; the color prop still fills via bg-* in the later
   // vuetify-utilities layer
-  .v-btn--flat:not([class*="bg-"]),
-  .v-btn--variant-flat:not([class*="bg-"]) {
+  .v-btn--flat:not([class*="bg-"]) {
     background-color: transparent;
   }
   .v-row {

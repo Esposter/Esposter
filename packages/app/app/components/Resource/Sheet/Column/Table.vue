@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { ColumnHeaders } from "@/services/resource/sheet/column/ColumnHeaders";
-import { computeColumnStatistics } from "@/services/resource/sheet/column/computeColumnStatistics";
+import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
 import { getEffectiveColumnColor } from "@/services/resource/sheet/column/getEffectiveColumnColor";
 import { DRAG_HANDLE_CLASS } from "@/services/resource/sheet/constants";
 import { useColumnStore } from "@/store/resource/sheet/column";
@@ -19,11 +19,10 @@ const { search, selectedColumnIds, sortBy } = storeToRefs(columnStore);
 const columnDialogStore = useColumnDialogStore();
 const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
 const isChartOpen = useSingletonDialog(chartingColumnName);
-const chartingColumnStatistics = computed(() =>
-  chartingColumnName.value
-    ? computeColumnStatistics(dataSource).find(({ columnName }) => columnName === chartingColumnName.value)
-    : undefined,
-);
+const chartingColumnStatistics = computed(() => {
+  const chartingColumn = dataSource.columns.find(({ name }) => name === chartingColumnName.value);
+  return chartingColumn ? computeColumnStatisticsForColumn(dataSource, chartingColumn) : undefined;
+});
 const editingColumn = computed(() => dataSource.columns.find(({ name }) => name === editingColumnName.value));
 const reorderColumns = useReorderColumns();
 const isDraggable = computed(() => !search.value && sortBy.value.length === 0);
