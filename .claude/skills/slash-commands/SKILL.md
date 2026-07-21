@@ -134,7 +134,7 @@ Always use `SlashCommandType.X` enum values, never `"Me"`, `"Shrug"`, etc.
 
 ## Existing Commands
 
-The enum, the map, and the switch must stay in sync (`exhaustiveGuard` enforces the last two):
+The enum, the map, and the switch must stay in sync (the map is enforced by `satisfies Record<SlashCommandType, SlashCommand>`, the switch by `exhaustiveGuard`):
 
 | Command      | Parameters                                | Behaviour                                                                                               |
 | ------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |

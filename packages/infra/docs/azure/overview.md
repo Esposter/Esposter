@@ -10,7 +10,7 @@ What each Azure service is actually used _for_ is in [azure services](/docs/arch
 
 One resource declaration per file, under the resource's own ARM provider namespace and type:
 
-```
+```text
 src/azure/resources/<Microsoft.Provider>/<resourceType>/<resourceName>.ts
 ```
 

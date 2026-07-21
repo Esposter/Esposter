@@ -66,7 +66,7 @@ nickname: (schema) => createNormalizedStringSchema(NICKNAME_MAX_LENGTH, schema),
 
 ## Matching a Token Inside Authored Content
 
-Before writing or widening any regex that finds something inside content a user authored (a blob url, a `{{variable}}`, a blueprint alias), read [/docs/architecture/content-token-rewriting](/docs/architecture/content-token-rewriting) — it is canonical. The four rules that get broken:
+Before writing or widening any regex that finds something inside content a user authored (a blob url, a `{{variable}}`, a blueprint alias), read [/docs/architecture/content-token-rewriting](/docs/architecture/content-token-rewriting) — it is canonical. The four rules that are broken:
 
 - **Never define the match as a negated charset** (`[^"'()<>\s\\]*`) — "everything except the delimiters I thought of" is a guess at a set that is never closed. Either the token carries its own delimiters (`{{…}}`), or anchor the match on the delimiter that opened it via lookbehind, so each context permits the characters the others reserve. An opener the content escapes (an html-escaped quote) is still an opener; a position with no recognised opener falls back to the conservative body, and that fallback is reached from **any** position — never an enumerated set of characters a token may follow, which silently matches nothing after every character the list forgets.
 - **Walk the parsed value's string leaves, never regex its serialized form** — use `deepReplaceStrings` (`#shared/util/object/deepReplaceStrings`) rather than matching over `JSON.stringify(content)`, which makes the matcher read the serializer's escaping on top of the content's own.
