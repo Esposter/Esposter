@@ -25,6 +25,8 @@ flowchart TD
 
 The attempt counter travels **with the payload itself**, not in the handler's memory and not on the artifact the sink happens to store it in — so the count survives the round trip through the failure sink. Pick the carrier by asking what the sink round-trips verbatim: the dead-letter replay puts the count on each event's own id, because every failed cycle writes a brand-new blob and a blob-scoped counter would restart at zero forever. A counter that resets each cycle is the same infinite loop with more code.
 
+**Delivery is at-least-once, so redelivery is normal input, not corruption.** A replayed batch may repeat an event id, and the same blob may be handed to the handler again after a partial failure — neither is a malformed payload, so neither is a validation bar: rejecting a batch for repeating an id would quarantine every healthy event batched alongside it. Handle it in the handler instead — make each step idempotent, and make the steps that page a human (quarantine, sev-1 logs) fire only on the delivery that actually created the artifact, so one poison payload pages once rather than once per retry.
+
 Cap **per unit of work, not per batch**. A sink usually lands whatever failed together, and judging the whole batch by its worst member lets one poison payload strand every transient failure beside it — so partition the batch, quarantine only what is over the cap, and retry the rest.
 
 Manual operations scripts are still legitimate for work that is inherently a human decision — a one-off backfill, a data migration — but never as the recovery path for a failure the system can see happening. Such a script also belongs in the package whose environment it uses, not hoisted into a shared package.

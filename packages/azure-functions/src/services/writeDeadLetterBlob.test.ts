@@ -30,4 +30,15 @@ describe(writeDeadLetterBlob, () => {
       `${DEAD_LETTER_ARCHIVED_PREFIX}${blobName}`,
     ]);
   });
+
+  test("reports only the write that created the copy, not a rewrite of it", async () => {
+    expect.hasAssertions();
+
+    const containerClient = await getContainerClient(AzureContainer.DeadLetter);
+    const isCreated = await writeDeadLetterBlob(containerClient, blobName, DEAD_LETTER_QUARANTINE_PREFIX, content);
+    const isRewritten = await writeDeadLetterBlob(containerClient, blobName, DEAD_LETTER_QUARANTINE_PREFIX, content);
+
+    expect(isCreated).toBe(true);
+    expect(isRewritten).toBe(false);
+  });
 });

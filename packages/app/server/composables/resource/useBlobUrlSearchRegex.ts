@@ -1,16 +1,16 @@
 import { useContainerBaseUrl } from "@@/server/composables/azure/container/useContainerBaseUrl";
 import { AzureContainer } from "@esposter/db-schema";
-// Blob urls never contain quotes or backslashes, so stopping at either lets the regex match urls
-// Embedded in raw html/css strings and in JSON-serialized content (where `\"` ends the string) alike.
-// The blob name carries the uploaded filename verbatim, so the path may hold `'`, `(` or `)` and can only
-// End at a quote — but the SAS query that follows it cannot, so bounding the query to its own charset is
-// What stops a match inside `url('…?sig=…')` from swallowing the closing `')` and the rest of the stylesheet
-const SAS_QUERY_PATTERN = String.raw`(?:\?[\w%&=+:.,~-]*)?`;
+// Every url we hand out is canonicalized by `encodeBlobUrl`, which percent-encodes the `!'()*` that Azure's
+// Own encoder leaves literal — so a blob url can no longer contain any character that delimits it in content.
+// Terminating on all of them at once is what makes one regex correct for urls embedded in html attributes,
+// In css `url('…')` and `url(…)`, and in JSON-serialized content (where `\"` ends the string) alike:
+// The match can neither stop short inside a SAS query nor run past the delimiter that closes it
+const BLOB_URL_TERMINATOR_PATTERN = String.raw`[^"'()<>\s\\]*`;
 
 export const useBlobUrlSearchRegex = (blobUrl?: string) => {
   const containerBaseUrl = useContainerBaseUrl();
   return new RegExp(
-    `${blobUrl ? RegExp.escape(blobUrl) : `${containerBaseUrl}/${AzureContainer.ResourceAssets}`}[^"\\\\?]*${SAS_QUERY_PATTERN}`,
+    `${blobUrl ? RegExp.escape(blobUrl) : `${containerBaseUrl}/${AzureContainer.ResourceAssets}`}${BLOB_URL_TERMINATOR_PATTERN}`,
     "gu",
   );
 };

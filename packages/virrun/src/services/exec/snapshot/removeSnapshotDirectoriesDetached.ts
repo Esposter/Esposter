@@ -18,7 +18,10 @@ import { getResult, noop } from "@esposter/shared";
 // Warranted: a directory whose entry names could overflow ARG_MAX would have overflowed readdir's own use long first.
 //
 // Best-effort per entry: a local removal that throws (a file the host still has open) must not cost the remaining
-// Dirs their teardown, so each is guarded rather than the batch.
+// Dirs their teardown, so each is guarded rather than the batch. The batched launch is guarded too — spawnBackground
+// Deliberately lets a synchronous spawn throw (EAGAIN/EMFILE, an argv past the win32 32767-char command-line limit
+// When a sweep batches hundreds of stale entries) reach its caller, and here that caller is pure cache hygiene: the
+// Sweep runs off the critical path for dirs this run never touches, so its failure must never fail the user's command.
 export const removeSnapshotDirectoriesDetached = (dirs: readonly string[]): void => {
   const linuxDirs: string[] = [];
   for (const dir of dirs)
@@ -27,5 +30,8 @@ export const removeSnapshotDirectoriesDetached = (dirs: readonly string[]): void
       getResult(() => {
         removeSnapshotDirectory(dir);
       }).match(noop, noop);
-  if (linuxDirs.length > 0) spawnBackground("wsl.exe", ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", ...linuxDirs]);
+  if (linuxDirs.length > 0)
+    getResult(() => {
+      spawnBackground("wsl.exe", ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", ...linuxDirs]);
+    }).match(noop, noop);
 };

@@ -9,6 +9,7 @@ import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
 import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import {
+  CACHE_CLEAN_TIMEOUT_MS,
   CAPABILITY_CACHE_FILENAME,
   WSL_CACHE_ROOT_CACHE_FILENAME,
   WSL_EXEC_NODE_VERSION_CACHE_FILENAME,
@@ -41,17 +42,17 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
   run: ({ args }) => {
     getResult(() => {
       const repoCacheDirectory = getRepoCacheDirectory("");
-      removeSnapshotDirectory(repoCacheDirectory);
+      removeSnapshotDirectory(repoCacheDirectory, CACHE_CLEAN_TIMEOUT_MS);
       process.stderr.write(`${formatVirrunLine(`removed ${colorize(repoCacheDirectory, Color.Red)}`)}\n`);
       if (args.all) {
         const snapshotsPath = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
-        removeSnapshotDirectory(snapshotsPath);
+        removeSnapshotDirectory(snapshotsPath, CACHE_CLEAN_TIMEOUT_MS);
         process.stderr.write(`${formatVirrunLine(`removed ${colorize(snapshotsPath, Color.Red)}`)}\n`);
         const preparePath = join(getGlobalCacheDirectory(), VIRRUN_PREPARE_DIRECTORY_NAME);
-        removeSnapshotDirectory(preparePath);
+        removeSnapshotDirectory(preparePath, CACHE_CLEAN_TIMEOUT_MS);
         process.stderr.write(`${formatVirrunLine(`removed ${colorize(preparePath, Color.Red)}`)}\n`);
         const tasksPath = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME);
-        removeSnapshotDirectory(tasksPath);
+        removeSnapshotDirectory(tasksPath, CACHE_CLEAN_TIMEOUT_MS);
         process.stderr.write(`${formatVirrunLine(`removed ${colorize(tasksPath, Color.Red)}`)}\n`);
         // The persisted host probe caches survive a snapshot sweep, so clear them here too: they are keyed on platform
         // + kernel release, which cannot see a toolchain change, and a stale login capture is exactly what pins the
@@ -72,7 +73,7 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
         // Win32, where the source is read in place and never mirrored.
         if (process.platform === "win32") {
           const sourcesPath = join(getWslNativeCacheRoot(), VIRRUN_SOURCES_DIRECTORY_NAME);
-          removeSnapshotDirectory(sourcesPath);
+          removeSnapshotDirectory(sourcesPath, CACHE_CLEAN_TIMEOUT_MS);
           process.stderr.write(`${formatVirrunLine(`removed ${colorize(sourcesPath, Color.Red)}`)}\n`);
         }
       }

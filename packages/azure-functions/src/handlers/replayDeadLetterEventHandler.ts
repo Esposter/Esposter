@@ -16,6 +16,7 @@ import {
   DEAD_LETTER_ARCHIVED_PREFIX,
   DEAD_LETTER_BLOB_SUBJECT_PREFIX,
   DEAD_LETTER_QUARANTINE_PREFIX,
+  DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX,
 } from "@esposter/db-schema";
 import { getResult, getResultAsync, noop } from "@esposter/shared";
 import { z } from "zod";
@@ -74,15 +75,20 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
       getIsReplayable(deadLetteredEvent.eventType, replayAttempts),
     );
     if (quarantinedReplays.length > 0) {
-      await writeDeadLetterBlob(
+      const isQuarantineCreated = await writeDeadLetterBlob(
         containerClient,
         blobName,
         DEAD_LETTER_QUARANTINE_PREFIX,
         Buffer.from(JSON.stringify(quarantinedReplays.map(({ deadLetteredEvent }) => deadLetteredEvent))),
       );
-      context.error(
-        `${AzureFunction.ReplayDeadLetterEvent} quarantined ${quarantinedReplays.length} of ${replays.length} events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
-      );
+      // Quarantining stays ahead of the republish so a poison payload never rides along in the resend batch, which
+      // Means a send that throws below reruns this whole step on the redelivered blob. Rewriting the quarantine copy
+      // Is harmless — same path, same bytes — but this line is the alert an operator is paged on, so it is tied to the
+      // Delivery that created the copy: a redelivery of an already-quarantined payload is not a new incident.
+      if (isQuarantineCreated)
+        context.error(
+          `${AzureFunction.ReplayDeadLetterEvent} quarantined ${quarantinedReplays.length} of ${replays.length} events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
+        );
     }
     // Nothing left to resend: the quarantine copy is the record of what arrived, so the original is simply dropped.
     if (replayableReplays.length === 0) {

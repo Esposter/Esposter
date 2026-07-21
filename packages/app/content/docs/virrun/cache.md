@@ -72,7 +72,7 @@ Teardown has exactly three call styles, classified by ownership, and they are no
 | `removeSnapshotDirectoryBestEffort` | swallowed  | on the critical path, where a leftover directory is tolerable                                       |
 | `removeSnapshotDirectory`           | thrown     | the caller depends on the removal — `cache clean`, capture-time prunes whose output would be wrong  |
 
-Every `wsl.exe` call that runs inside the distro is bounded by `execWsl`, which defaults to `PROBE_TIMEOUT_MS`; a call doing real work (`removeSnapshotDirectory`'s `rm -rf`, `runOverlayScript`'s apply) overrides it to `WSL_WORK_TIMEOUT_MS`, which is why the bound lives in `execWsl` rather than at each site. The detached sweep is the deliberate exception: it goes through `spawnBackground`, outlives this process, and is bounded by nothing.
+Every `wsl.exe` call that runs inside the distro is bounded by `execWsl`, which defaults to `PROBE_TIMEOUT_MS`; a call doing real work (`removeSnapshotDirectory`'s `rm -rf`, `runOverlayScript`'s apply) overrides it to `WSL_WORK_TIMEOUT_MS`, which is why the bound lives in `execWsl` rather than at each site. Two removals are deliberately unbounded: the detached sweep, which goes through `spawnBackground` and outlives this process; and `cache clean`, which passes `removeSnapshotDirectory` a `CACHE_CLEAN_TIMEOUT_MS` override — the work cap is sized for one cache entry, while a clean unlinks the whole cache, and a SIGTERM mid-`rm -rf` would leave it half-swept with no record of which roots survived. The bound exists so a wedged WSL service can't hang an implicit background prune; an explicit, user-invoked clean may block until it finishes.
 
 ## Key files
 

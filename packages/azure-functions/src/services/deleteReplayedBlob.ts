@@ -1,5 +1,5 @@
-import type { BlockBlobClient } from "@azure/storage-blob";
 import type { InvocationContext } from "@azure/functions";
+import type { BlockBlobClient } from "@azure/storage-blob";
 
 import { AzureFunction } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

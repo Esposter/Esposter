@@ -79,6 +79,12 @@ export const PROBE_TIMEOUT_MS: number = dayjs.duration(10, "seconds").asMillisec
 // Bridge fails the call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents:
 // A run that never returns and no error to explain it.
 export const WSL_WORK_TIMEOUT_MS: number = dayjs.duration(5, "minutes").asMilliseconds();
+// The bound `cache clean` removes its roots under: none (0 is execFileSync's own "no timeout"). The work cap is sized
+// For one cache entry, while a clean unlinks the entire cache — tens of GB of small files on WSL ext4 routinely runs
+// Past five minutes, and a SIGTERM mid-`rm -rf` leaves a half-swept cache and no record of which roots survived. The
+// Bound exists to stop a wedged WSL service hanging an implicit background prune; a clean is explicit and
+// User-invoked, so it may block until it finishes and the user may Ctrl+C it.
+export const CACHE_CLEAN_TIMEOUT_MS: number = 0;
 // How old a source-mirror entry carrying no `origin` marker must be before the reaper may reclaim it. The marker is
 // Written (atomically) as soon as the entry dir exists, so its absence means a sync died in that same instant — a
 // Corpse, not a live planner — and any window measured in a day is orders of magnitude beyond that gap. Without this

@@ -12,14 +12,17 @@ const makeTraversable = (dir: string): void => {
   for (const entry of readdirSync(dir, { withFileTypes: true }))
     if (entry.isDirectory()) makeTraversable(join(dir, entry.name));
 };
-export const removeSnapshotDirectory = (dir: string): void => {
+// `timeoutMs` bounds the WSL-side removal only, defaulting to the work cap that suits a single cache entry. A caller
+// Removing a whole cache root (`cache clean`) overrides it — that removal is explicit, user-invoked, and must run to
+// Completion rather than be SIGTERM'd into a half-swept cache. See CACHE_CLEAN_TIMEOUT_MS.
+export const removeSnapshotDirectory = (dir: string, timeoutMs: number = WSL_WORK_TIMEOUT_MS): void => {
   // A snapshot on the WSL distro's ext4 (reached via a `\\wsl.localhost` UNC) has an overlay workDir whose
   // `work/work` scratch is owned by the sandbox's namespaced root — the 9p bridge identity Windows uses can't
   // Chmod or remove it (EPERM), so neither makeTraversable nor rmSync works from here. Tear it down inside WSL
   // Instead, where the distro user owns it (WSL_REMOVE_SCRIPT). rm -rf is idempotent, so a missing dir is a no-op.
   if (WSL_UNC_REGEX.test(dir)) {
     const linuxDir = readWslPath(dir);
-    execWsl(["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir], { timeout: WSL_WORK_TIMEOUT_MS });
+    execWsl(["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir], { timeout: timeoutMs });
     return;
   }
   // Only a real directory needs the top-down +rwx restore before rmSync will descend it; a file or symlink (e.g. a

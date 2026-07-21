@@ -58,6 +58,7 @@ describe(replayDeadLetterEventHandler, () => {
     subject: blobSubject,
     topic: "",
   });
+
   afterEach(() => {
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
@@ -261,5 +262,41 @@ describe(replayDeadLetterEventHandler, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(readContainer()).toStrictEqual({ [blobName]: content });
+  });
+
+  test("quarantines and alerts exactly once when the send fails and the blob is redelivered", async () => {
+    expect.hasAssertions();
+
+    const cappedEvent = createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS}`);
+    const replayableEvent = createDeadLetteredEvent(
+      `${secondEventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS - 1}`,
+    );
+    const content = JSON.stringify([cappedEvent, replayableEvent]);
+    const error = new Error(" ");
+    const blobEvent = createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`);
+    const errorSpy = vi.spyOn(context, "error");
+    await seedBlob(content);
+    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(error);
+
+    await expect(replayDeadLetterEventHandler(blobEvent, context)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error:  ]`,
+    );
+    await expect(replayDeadLetterEventHandler(blobEvent, context)).resolves.toBeUndefined();
+
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toStrictEqual([
+      createDeadLetteredEvent(`${secondEventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS}`),
+    ]);
+    expect(readContainer()).toStrictEqual({
+      [`${DEAD_LETTER_ARCHIVED_PREFIX}${blobName}`]: content,
+      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([cappedEvent]),
+    });
+    // The redelivery rewrites the same quarantine copy, so only the whole call list proves the alert fired once: the
+    // Rethrow of the first delivery contributes the second line, which is the retry request, not a second incident.
+    expect(errorSpy.mock.calls).toStrictEqual([
+      [
+        `${AzureFunction.ReplayDeadLetterEvent} quarantined 1 of 2 events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
+      ],
+      [`${AzureFunction.ReplayDeadLetterEvent} failed: `, error],
+    ]);
   });
 });

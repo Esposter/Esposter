@@ -57,9 +57,27 @@ describe(extractBlobUrls, () => {
   test("should stop at the end of the SAS query when the URL is embedded in a single-quoted css url()", () => {
     expect.hasAssertions();
 
-    const url = `${containerUrl}/1/photo (1).png`;
+    const url = `${containerUrl}/1/photo%20%281%29.png`;
 
     expect(extractBlobUrls(`background-image:url('${url}?sv=2025-01-05&sig=a%2Fb');color:red`)).toStrictEqual([url]);
+  });
+
+  test("should stop at the closing quote of a single-quoted css url() when the URL has no SAS query", () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/1/photo.png`;
+
+    expect(extractBlobUrls(`background-image:url('${url}');color:red`)).toStrictEqual([url]);
+  });
+
+  test("should extract the whole SAS query of a canonicalized download URL", () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/1/photo%20%281%29.png`;
+
+    expect(
+      extractBlobUrls(`"${url}?rscd=attachment%3B%20filename%3D%22photo%20%281%29.png%22&sig=a%2Fb"`),
+    ).toStrictEqual([url]);
   });
 
   test("should not extract URLs from a different container", () => {
