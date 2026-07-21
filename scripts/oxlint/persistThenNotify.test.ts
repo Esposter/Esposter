@@ -100,6 +100,6 @@ describe(RULE, () => {
   test("reports nothing but this rule", () => {
     expect.hasAssertions();
 
-    expect(codes.every((code) => code === `persist-then-notify(no-unhandled-effect-after-emit)`)).toBe(true);
+    expect([...new Set(codes)]).toStrictEqual(["persist-then-notify(no-unhandled-effect-after-emit)"]);
   });
 });
