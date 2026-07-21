@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export enum AzureFunction {
+  ProcessBlobDeletion = "ProcessBlobDeletion",
   ProcessFriendRequestNotification = "ProcessFriendRequestNotification",
   ProcessPushNotification = "ProcessPushNotification",
   ProcessScheduledMessageJob = "ProcessScheduledMessageJob",

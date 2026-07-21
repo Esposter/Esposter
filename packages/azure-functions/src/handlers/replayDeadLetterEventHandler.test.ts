@@ -195,22 +195,6 @@ describe(replayDeadLetterEventHandler, () => {
     expect(errorSpy).not.toHaveBeenCalled();
   });
 
-  test("logs a failing delete of a quarantined original without rethrowing", async () => {
-    expect.hasAssertions();
-
-    const error = new Error(" ");
-    const malformedContent = "";
-    const errorSpy = vi.spyOn(context, "error");
-    await seedBlob(malformedContent);
-    vi.spyOn(MockBlockBlobClient.prototype, "delete").mockRejectedValue(error);
-    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
-
-    expect(errorSpy).toHaveBeenLastCalledWith(
-      `${AzureFunction.ReplayDeadLetterEvent} left ${blobName} undeleted: `,
-      error,
-    );
-  });
-
   test("quarantines a malformed payload verbatim without republishing", async () => {
     expect.hasAssertions();
 

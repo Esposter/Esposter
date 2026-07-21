@@ -60,7 +60,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
   test("tears down every WSL-UNC dir in ONE hidden, unref'd WSL process off the critical path", () => {
     expect.hasAssertions();
 
-    const linuxDirs = ["stale", "superseded"].map(
+    const linuxDirs = [TEST_FILENAME, `${TEST_FILENAME}/${TEST_FILENAME}`].map(
       (name) => `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_PREPARE_DIRECTORY_NAME}/${name}`,
     );
 

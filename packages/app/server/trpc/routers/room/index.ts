@@ -1,6 +1,6 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { InviteInMessage, RoomInMessage, User } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, InviteInMessage, RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createInviteInputSchema } from "#shared/models/db/room/CreateInviteInput";
@@ -15,6 +15,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
@@ -41,9 +42,11 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { deleteDirectory, generateWriteSasUrl } from "@esposter/db";
+import { generateWriteSasUrl, listBlobNames } from "@esposter/db";
 import {
   AzureContainer,
+  AzureFunction,
+  createEventGridEvent,
   DatabaseEntityType,
   INVITE_ID_LENGTH,
   InviteInMessageRelations,
@@ -247,11 +250,16 @@ export const baseRoomRouter = router({
     }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
-    // Best-effort after the row delete — a failed cleanup leaves orphaned room assets in blob storage, never
-    // The deletion that already landed.
+    // Best-effort publish after the row delete — a failed listing or publish leaves orphaned room assets in blob
+    // Storage, never the deletion that already landed. A publish that lands makes the cleanup durable: the handler
+    // Retries it to completion, so a read SAS url signed for a year can no longer outlive the room it points into
     await getResultAsync(async () => {
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-      await deleteDirectory(containerClient, input, true);
+      const blobNames = await listBlobNames(containerClient, input, true);
+      if (blobNames.length === 0) return;
+
+      const data: BlobDeletionEventGridData = { blobNames, containerName: AzureContainer.MessageAssets };
+      await useEventGridPublisherClient().send([createEventGridEvent(AzureFunction.ProcessBlobDeletion, input, data)]);
     }).match(noop, console.error);
     return deletedRoom;
   }),

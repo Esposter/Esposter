@@ -7,6 +7,9 @@ import { AzureFunction } from "@/models/azure/function/AzureFunction";
 // Exhaustive over AzureFunction on purpose — a new function has to state its answer here rather than inherit a default
 // That silently makes its dead-letters replayable.
 export const IsIdempotentAzureFunctionMap = {
+  // Deletes each blob with deleteIfExists, so a blob an earlier attempt already removed is a no-op rather than a
+  // 404: a replay converges on the same empty state instead of duplicating work.
+  [AzureFunction.ProcessBlobDeletion]: true,
   // Sends a push to the subscriptions of an already-persisted message: a second send is a duplicate notification for a
   // Notification that was never delivered in the first place, which is the outcome the replay exists to produce.
   [AzureFunction.ProcessFriendRequestNotification]: true,

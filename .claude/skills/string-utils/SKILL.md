@@ -1,6 +1,6 @@
 ---
 name: string-utils
-description: Esposter string normalization and HTML sanitization conventions — normalizeString is the default trim in app code and in base Zod schemas (never in Vue — the vue skill owns that); sanitizeTextHtml is declared at the Zod boundary in base db-schema schemas (never manual frontend calls). Exceptions — user-facing transformation actions, standalone packages, and localStorage drafts. Also covers matching or rewriting a token inside authored content (urls, merge fields, blueprint aliases).
+description: Esposter string normalization and HTML sanitization conventions — normalizeString is the default trim in app code and in base Zod schemas (never in Vue — the vue skill owns that); sanitizeTextHtml is declared at the Zod boundary in base db-schema schemas (never manual frontend calls). Exceptions — user-facing transformation actions, standalone packages, and localStorage drafts. Also covers matching or rewriting a token inside authored content (urls, merge fields, blueprint aliases) — opener-anchored matching over negated charsets, walking string leaves instead of the serialized form, one pass keyed by a Map, and widening the reader instead of backfilling.
 ---
 
 # String Normalization
@@ -66,9 +66,10 @@ nickname: (schema) => createNormalizedStringSchema(NICKNAME_MAX_LENGTH, schema),
 
 ## Matching a Token Inside Authored Content
 
-Before writing or widening any regex that finds something inside content a user authored (a blob url, a `{{variable}}`, a blueprint alias), read [/docs/architecture/content-token-rewriting](/docs/architecture/content-token-rewriting) — it is canonical. The three rules that get broken:
+Before writing or widening any regex that finds something inside content a user authored (a blob url, a `{{variable}}`, a blueprint alias), read [/docs/architecture/content-token-rewriting](/docs/architecture/content-token-rewriting) — it is canonical. The four rules that get broken:
 
-- **Never define the match as a negated charset** (`[^"'()<>\s\\]*`) — "everything except the delimiters I thought of" is a guess at a set that is never closed. Either the token carries its own delimiters (`{{…}}`), or anchor the match on the delimiter that opened it via lookbehind, so each context permits the characters the others reserve.
+- **Never define the match as a negated charset** (`[^"'()<>\s\\]*`) — "everything except the delimiters I thought of" is a guess at a set that is never closed. Either the token carries its own delimiters (`{{…}}`), or anchor the match on the delimiter that opened it via lookbehind, so each context permits the characters the others reserve. An opener the content escapes (an html-escaped quote) is still an opener; a position with no recognised opener falls back to the conservative body, and that fallback is reached from **any** position — never an enumerated set of characters a token may follow, which silently matches nothing after every character the list forgets.
+- **Walk the parsed value's string leaves, never regex its serialized form** — use `deepReplaceStrings` (`#shared/util/object/deepReplaceStrings`) rather than matching over `JSON.stringify(content)`, which makes the matcher read the serializer's escaping on top of the content's own.
 - **One pass keyed by a `Map`, never a per-token regex loop** over the whole document — a loop lets a token consume a longer token it is a prefix of, and scales cost with tokens × content size.
 - **Widen the reader, don't backfill**, when a token's canonical form changes: content is rewritten on every read, so it converges on its own.
 
