@@ -51,6 +51,7 @@ import {
   INVITE_ID_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
+  MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
   refineRoomSchema,
   roomIdSchema,
   roomIdsSchema,
@@ -252,14 +253,20 @@ export const baseRoomRouter = router({
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
     // Best-effort publish after the row delete — a failed listing or publish leaves orphaned room assets in blob
     // Storage, never the deletion that already landed. A publish that lands makes the cleanup durable: the handler
-    // Retries it to completion, so a read SAS url signed for a year can no longer outlive the room it points into
+    // Retries it to completion, so a read SAS url signed for a year can no longer outlive the room it points into.
+    // A room can hold more names than one event may carry, so the listing is split into one event per chunk and
+    // Each chunk published on its own — a publish that fails midway still made every chunk before it durable
     await getResultAsync(async () => {
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       const blobNames = await listBlobNames(containerClient, input, true);
-      if (blobNames.length === 0) return;
-
-      const data: BlobDeletionEventGridData = { blobNames, containerName: AzureContainer.MessageAssets };
-      await useEventGridPublisherClient().send([createEventGridEvent(AzureFunction.ProcessBlobDeletion, input, data)]);
+      const eventGridPublisherClient = useEventGridPublisherClient();
+      for (let index = 0; index < blobNames.length; index += MAX_BLOB_DELETION_EVENT_BLOB_NAMES) {
+        const data: BlobDeletionEventGridData = {
+          blobNames: blobNames.slice(index, index + MAX_BLOB_DELETION_EVENT_BLOB_NAMES),
+          containerName: AzureContainer.MessageAssets,
+        };
+        await eventGridPublisherClient.send([createEventGridEvent(AzureFunction.ProcessBlobDeletion, input, data)]);
+      }
     }).match(noop, console.error);
     return deletedRoom;
   }),
@@ -597,13 +604,18 @@ export const baseRoomRouter = router({
     );
     roomEventEmitter.emit("updateRoom", updatedRoom);
 
-    if (rest.image === "")
-      // Best-effort after the row update — a failed delete orphans the old room image blob, never the room update.
-      await getResultAsync(async () => {
-        const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-        const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(id));
-        await blockBlobClient.deleteIfExists();
-      }).match(noop, console.error);
+    if (rest.image === "") {
+      const data: BlobDeletionEventGridData = {
+        blobNames: [getRoomProfileImageBlobName(id)],
+        containerName: AzureContainer.PublicUserAssets,
+      };
+      // Best-effort publish after the row update — a failed publish orphans the old room image blob, never the room
+      // Update. A dropped delete costs a public blob rather than a privacy leak here, but every blob delete goes
+      // Through the one durable mechanism so no call site keeps a second, weaker one
+      await getResultAsync(() =>
+        useEventGridPublisherClient().send([createEventGridEvent(AzureFunction.ProcessBlobDeletion, id, data)]),
+      ).match(noop, console.error);
+    }
 
     return updatedRoom;
   }),

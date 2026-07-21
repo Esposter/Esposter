@@ -1,6 +1,7 @@
 import type { DeleteMemberInput } from "#shared/models/db/room/DeleteMemberInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { User } from "better-auth";
 
@@ -9,6 +10,7 @@ import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants"
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { createId } from "#shared/util/math/random/createId";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getRoomProfileImageBlobName } from "@@/server/services/room/getRoomProfileImageBlobName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
@@ -16,9 +18,16 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { AzureContainer, DatabaseEntityType, friends, INVITE_ID_LENGTH, roomsInMessage } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  DatabaseEntityType,
+  friends,
+  INVITE_ID_LENGTH,
+  MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
+  roomsInMessage,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MOCK_BLOB_BASE_URL, MockContainerDatabase } from "azure-mock";
+import { MOCK_BLOB_BASE_URL, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("room", () => {
@@ -48,6 +57,7 @@ describe("room", () => {
   afterEach(async () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
+    MockEventGridDatabase.clear();
     await mockContext.db.delete(friends);
     await mockContext.db.delete(roomsInMessage);
   });
@@ -201,11 +211,11 @@ describe("room", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("deletes profile image on clear", async () => {
+  test("publishes profile image deletion on clear", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const blobName = `${newRoom.id}/ProfileImage`;
+    const blobName = getRoomProfileImageBlobName(newRoom.id);
     const publicUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${blobName}`;
     MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
@@ -214,9 +224,16 @@ describe("room", () => {
       () => onUpdateRoom,
       () => roomCaller.updateRoom({ id: newRoom.id, image: "" }),
     );
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
 
     expect(data.image).toBe("");
-    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(false);
+    expect(blobDeletionEvents).toHaveLength(1);
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [blobName],
+      containerName: AzureContainer.PublicUserAssets,
+    });
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
   });
 
   test("updates", async () => {
@@ -278,6 +295,32 @@ describe("room", () => {
     const deletedRoom = await roomCaller.deleteRoom(newRoom.id);
 
     expect(deletedRoom.id).toBe(newRoom.id);
+  });
+
+  test("publishes one deletion event per blob name chunk on delete", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const blobNames = Array.from(
+      { length: MAX_BLOB_DELETION_EVENT_BLOB_NAMES + 1 },
+      (_value, index) => `${newRoom.id}/${index}`,
+    );
+    MockContainerDatabase.set(
+      AzureContainer.MessageAssets,
+      new Map(blobNames.map((blobName) => [blobName, Buffer.alloc(0)])),
+    );
+    await roomCaller.deleteRoom(newRoom.id);
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    expect(blobDeletionEvents).toHaveLength(2);
+    expect((takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).blobNames).toHaveLength(
+      MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
+    );
+    expect(takeOne(blobDeletionEvents, 1).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [takeOne(blobNames, MAX_BLOB_DELETION_EVENT_BLOB_NAMES)],
+      containerName: AzureContainer.MessageAssets,
+    });
   });
 
   test("fails delete with wrong user", async () => {

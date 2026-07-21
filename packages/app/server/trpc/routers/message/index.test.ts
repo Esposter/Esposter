@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { MessageEntity } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, MessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -14,7 +14,7 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { getBlobName } from "@esposter/db";
+import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import {
   AzureContainer,
   AzureEntityType,
@@ -634,6 +634,50 @@ describe("message", () => {
 
     expect(updatedMessages).toHaveLength(1);
     expect(takeOne(updatedMessages).files).toHaveLength(0);
+  });
+
+  test("publishes thumbnail deletion on delete file", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const id = crypto.randomUUID();
+    const newMessage = await messageCaller.createMessage({
+      files: [{ filename, id, mimetype, size }],
+      roomId: newRoom.id,
+    });
+
+    await messageCaller.deleteFile({ id, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    expect(blobDeletionEvents).toHaveLength(1);
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [getBlobName(`${newRoom.id}/${id}`, filename), getThumbnailBlobName(newRoom.id, id)],
+      containerName: AzureContainer.MessageAssets,
+    });
+  });
+
+  test("publishes thumbnail deletion on delete message", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const id = crypto.randomUUID();
+    const newMessage = await messageCaller.createMessage({
+      files: [{ filename, id, mimetype, size }],
+      roomId: newRoom.id,
+    });
+
+    await messageCaller.deleteMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    expect(blobDeletionEvents).toHaveLength(1);
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [getBlobName(`${newRoom.id}/${id}`, filename), getThumbnailBlobName(newRoom.id, id)],
+      containerName: AzureContainer.MessageAssets,
+    });
   });
 
   test("fails delete file with wrong user", async () => {

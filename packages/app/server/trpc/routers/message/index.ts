@@ -58,6 +58,7 @@ import {
   getBlobName,
   getEntity,
   getTableNullClause,
+  getThumbnailBlobName,
   getTopNEntitiesByType,
   serializeClauses,
   updateEntity,
@@ -190,10 +191,12 @@ export const baseMessageRouter = router({
           message: new NotFoundError(AzureEntityType.File, id).message,
         });
 
-      const blobName = getBlobName(
-        `${messageEntity.partitionKey}/${id}`,
-        takeOne(messageEntity.files.splice(index, 1)).filename,
-      );
+      const blobNames = [
+        getBlobName(`${messageEntity.partitionKey}/${id}`, takeOne(messageEntity.files.splice(index, 1)).filename),
+        // Only images carry a thumbnail, but the handler deletes if the blob exists, so naming it unconditionally
+        // Costs a no-op for every other file type and needs no mime check here
+        getThumbnailBlobName(messageEntity.partitionKey, id),
+      ];
       const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         files: messageEntity.files,
         partitionKey,
@@ -201,10 +204,7 @@ export const baseMessageRouter = router({
       };
       await updateMessage(messageClient, updatedMessageEntity);
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
-      const data: BlobDeletionEventGridData = {
-        blobNames: [blobName],
-        containerName: AzureContainer.MessageAssets,
-      };
+      const data: BlobDeletionEventGridData = { blobNames, containerName: AzureContainer.MessageAssets };
       // Best-effort publish after the message write — a failed publish leaves an orphaned blob, never the file the
       // User asked to remove. A publish that lands makes the delete durable: the handler retries it to completion,
       // So a read SAS url signed for a year can no longer outlive the file it points at
@@ -243,9 +243,12 @@ export const baseMessageRouter = router({
 
       if (messageEntity.files.length > 0) {
         const data: BlobDeletionEventGridData = {
-          blobNames: messageEntity.files.map(({ filename, id }) =>
+          // Only images carry a thumbnail, but the handler deletes if the blob exists, so naming it unconditionally
+          // Costs a no-op for every other file type and needs no mime check here
+          blobNames: messageEntity.files.flatMap(({ filename, id }) => [
             getBlobName(`${messageEntity.partitionKey}/${id}`, filename),
-          ),
+            getThumbnailBlobName(messageEntity.partitionKey, id),
+          ]),
           containerName: AzureContainer.MessageAssets,
         };
         // Best-effort publish after the soft-delete write — a failed publish leaves orphaned attachment blobs, never

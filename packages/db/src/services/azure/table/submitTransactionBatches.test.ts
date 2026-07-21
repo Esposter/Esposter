@@ -5,6 +5,10 @@ import { AZURE_MAX_BATCH_SIZE } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
+const getAction = (entity: { partitionKey: string; rowKey: string }): TransactionAction => ["delete", entity];
+const getSubmittedBatchSizes = (submitTransaction: ReturnType<typeof vi.fn<TableClient["submitTransaction"]>>) =>
+  submitTransaction.mock.calls.map(([actions]) => actions.length);
+
 describe(submitTransactionBatches, () => {
   const partitionKey = "";
   const transactionResponse: TableTransactionResponse = {
@@ -16,9 +20,6 @@ describe(submitTransactionBatches, () => {
     partitionKey,
     rowKey: String(index),
   }));
-  const getAction = (entity: (typeof entities)[number]): TransactionAction => ["delete", entity];
-  const getSubmittedBatchSizes = (submitTransaction: ReturnType<typeof vi.fn<TableClient["submitTransaction"]>>) =>
-    submitTransaction.mock.calls.map(([actions]) => actions.length);
 
   test("splits entities into batches of at most AZURE_MAX_BATCH_SIZE actions", async () => {
     expect.hasAssertions();

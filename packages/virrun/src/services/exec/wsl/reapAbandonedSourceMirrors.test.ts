@@ -20,13 +20,14 @@ vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => cacheRootHolder.value,
 }));
 
+const ageOut = (entry: string): void => {
+  const aged = new Date(Date.now() - SOURCE_MIRROR_UNMARKED_MAX_AGE_MS - 1);
+  utimesSync(entry, aged, aged);
+};
+
 describe(reapAbandonedSourceMirrors, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   const sourcesDir = (): string => join(cacheRootHolder.value, VIRRUN_SOURCES_DIRECTORY_NAME);
-  const ageOut = (entry: string): void => {
-    const aged = new Date(Date.now() - SOURCE_MIRROR_UNMARKED_MAX_AGE_MS - 1);
-    utimesSync(entry, aged, aged);
-  };
   // Seed a mirror entry (`sources/<hash>/tree` + an optional `origin` marker) and return its entry dir.
   const seedMirror = (hash: string, origin?: string): string => {
     const entry = join(sourcesDir(), hash);

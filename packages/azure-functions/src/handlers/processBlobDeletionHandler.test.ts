@@ -10,6 +10,23 @@ import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/getContainerClient"), () => import("@/services/getContainerClient.test"));
 
+const readContainer = () => {
+  const container = MockContainerDatabase.get(AzureContainer.MessageAssets);
+  assert.exists(container);
+  return [...container.keys()];
+};
+
+const createEvent = (blobNames: string[]): EventGridEvent => ({
+  data: { blobNames, containerName: AzureContainer.MessageAssets } satisfies BlobDeletionEventGridData,
+  dataVersion: "1.0",
+  eventTime: "1970-01-01T00:00:00.000Z",
+  eventType: "",
+  id: crypto.randomUUID(),
+  metadataVersion: "1",
+  subject: "",
+  topic: "",
+});
+
 describe(processBlobDeletionHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const blobName = "";
@@ -19,22 +36,6 @@ describe(processBlobDeletionHandler, () => {
     const containerClient = await getContainerClient(AzureContainer.MessageAssets);
     await containerClient.getBlockBlobClient(name).upload(content, content.length);
   };
-  const readContainer = () => {
-    const container = MockContainerDatabase.get(AzureContainer.MessageAssets);
-    assert.exists(container);
-    return [...container.keys()];
-  };
-  const createEvent = (blobNames: string[]): EventGridEvent => ({
-    data: { blobNames, containerName: AzureContainer.MessageAssets } satisfies BlobDeletionEventGridData,
-    dataVersion: "1.0",
-    eventTime: "1970-01-01T00:00:00.000Z",
-    eventType: "",
-    id: crypto.randomUUID(),
-    metadataVersion: "1",
-    subject: "",
-    topic: "",
-  });
-
   afterEach(() => {
     MockContainerDatabase.clear();
     vi.restoreAllMocks();
