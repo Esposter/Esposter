@@ -72,20 +72,13 @@ const isEmitCall = (node: ESTree.CallExpression): boolean =>
 
 const rule = defineRule({
   create(context: Context) {
-    // Per-function frame: the first emit seen and the innermost loop enclosing it (streaming exception).
-    const functionStack: { emit?: ESTree.CallExpression; emitLoop?: ESTree.Node }[] = [];
-    const loopStack: ESTree.Node[] = [];
+    // Per-function frame: the first emit seen. Every later await must be best-effort.
+    const functionStack: { emit?: ESTree.CallExpression }[] = [];
     const enterFunction = () => {
       functionStack.push({});
     };
     const exitFunction = () => {
       functionStack.pop();
-    };
-    const enterLoop = (node: ESTree.Node) => {
-      loopStack.push(node);
-    };
-    const exitLoop = () => {
-      loopStack.pop();
     };
     return {
       ArrowFunctionExpression: enterFunction,
@@ -97,9 +90,6 @@ const rule = defineRule({
         if (node.start < frame.emit.start) return;
         // Never rejects
         if (isSafeAwait(node.argument)) return;
-        // Streaming: the emit's enclosing loop is still open, so this await is a later iteration of a
-        // Per-item write+emit stream (a batched purge, a per-room fan-out), not a post-notify tail.
-        if (frame.emitLoop && loopStack.includes(frame.emitLoop)) return;
         context.report({
           message:
             "Unhandled `await` after a notify (`emit`). Post-persist effects must be best-effort — wrap in getResultAsync(...).match(noop, console.error) — or move fatal work before the emit. See /docs/architecture/persist-then-notify.",
@@ -109,25 +99,12 @@ const rule = defineRule({
       CallExpression(node) {
         if (!isEmitCall(node)) return;
         const frame = functionStack.at(-1);
-        if (frame && !frame.emit) {
-          frame.emit = node;
-          frame.emitLoop = loopStack.at(-1);
-        }
+        if (frame && !frame.emit) frame.emit = node;
       },
-      DoWhileStatement: enterLoop,
-      "DoWhileStatement:exit": exitLoop,
-      ForInStatement: enterLoop,
-      "ForInStatement:exit": exitLoop,
-      ForOfStatement: enterLoop,
-      "ForOfStatement:exit": exitLoop,
-      ForStatement: enterLoop,
-      "ForStatement:exit": exitLoop,
       FunctionDeclaration: enterFunction,
       "FunctionDeclaration:exit": exitFunction,
       FunctionExpression: enterFunction,
       "FunctionExpression:exit": exitFunction,
-      WhileStatement: enterLoop,
-      "WhileStatement:exit": exitLoop,
     };
   },
   meta: { type: "problem" },

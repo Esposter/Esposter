@@ -12,7 +12,7 @@ const VALUE_REGEX = [
   // Numbers
   String.raw`-?\d+(?:\.\d+)?`,
   String(Number.NaN),
-  // Quoted strings, whose embedded quotes escapeValue doubles
+  // Quoted strings, whose embedded quotes are escaped by being doubled
   "'(?:[^']|'')*'",
 ].join(ID_SEPARATOR);
 // oxlint-disable-next-line typescript/no-inferrable-types
