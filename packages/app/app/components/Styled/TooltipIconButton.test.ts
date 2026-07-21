@@ -4,7 +4,7 @@ import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
-describe("StyledTooltipIconButton", () => {
+describe("styledTooltipIconButton", () => {
   test("routes a fallthrough attr to the button rather than the tooltip", async () => {
     expect.hasAssertions();
 
