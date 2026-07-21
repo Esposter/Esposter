@@ -127,7 +127,7 @@ Scheduled messages and reminders use a two-step pattern: Postgres row + Azure **
 
 1. tRPC mutation (`server/trpc/routers/message/scheduledMessageJob.ts`) inserts a row into `scheduledMessageJobsInMessage`.
 2. Same mutation calls `enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt)` — a thin wrapper (`@esposter/db`) over `serviceBusSender.scheduleMessages(body, runAt)`. Pass `runAt` as a `Date` directly: **no clamping, no delay maths** — Service Bus takes an absolute enqueue time and delivers past-dated messages immediately.
-3. Azure Functions Service Bus queue-trigger (`ProcessScheduledMessageJob`) reads the row, re-checks `cancelledAt`/`completedAt` for idempotency, executes, marks `completedAt`. If `job.runAt` is still in the future it re-enqueues itself instead of executing.
+3. Azure Functions Service Bus queue-trigger (`ProcessScheduledMessageJob`) reads the row, atomically claims it on `processingStartedAt IS NULL` (the single-shot claim that makes the handler idempotent under at-least-once delivery), executes, marks `completedAt`. If `job.runAt` is still in the future it re-enqueues itself instead of executing.
 
 **No timer function** — a separate polling timer is unnecessary; Service Bus scheduled delivery handles the delay.
 

@@ -1,6 +1,6 @@
 ---
 name: readme-standards
-description: Esposter README conventions — the anchor+emoji heading template, the published-vs-private split that drives both badges and the docs link target, when Getting Started is omitted, the 14-package summary table, and GitHub blob/tree URL rules. Apply when creating or updating any README.md in this monorepo, including the root one.
+description: Esposter README conventions — the anchor+emoji heading template, the published-vs-private split that drives both badges and the docs link target, when Getting Started is omitted, the package summary table, and GitHub blob/tree URL rules. Apply when creating or updating any README.md in this monorepo, including the root one.
 ---
 
 # README Standards — Esposter

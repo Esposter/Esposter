@@ -2,9 +2,8 @@ import type { Clause, StandardMessageEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
-import { getTableNullClause, serializeClauses, serializeEntity } from "@esposter/db";
+import { getTableNullClause, serializeClauses, serializeEntity, submitTransactionBatches } from "@esposter/db";
 import {
-  AZURE_MAX_BATCH_SIZE,
   AZURE_MAX_PAGE_SIZE,
   AzureTable,
   BinaryOperator,
@@ -26,14 +25,16 @@ export const softDeleteRoomMessagesByUser = async (roomId: string, targetUserId:
   for await (const page of messageClient
     .listEntities<StandardMessageEntity>({ queryOptions: { filter } })
     .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-    for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE) {
-      const batch = page.slice(i, i + AZURE_MAX_BATCH_SIZE);
-      await messageClient.submitTransaction(
-        batch.map(({ partitionKey, rowKey }) => [
-          "update",
-          serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now }),
-        ]),
-      );
-      for (const { partitionKey, rowKey } of batch) messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
-    }
+    await submitTransactionBatches(
+      messageClient,
+      page,
+      ({ partitionKey, rowKey }) => [
+        "update",
+        serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now }),
+      ],
+      (batch) => {
+        for (const { partitionKey, rowKey } of batch)
+          messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
+      },
+    );
 };

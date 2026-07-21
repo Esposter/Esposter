@@ -20,6 +20,18 @@ const ALLOWED_ROOTS = new Set([
   "withFinalizerAsync",
 ]);
 const PROMISE_COMBINATORS = new Set(["all", "allSettled", "any", "race"]);
+const FUNCTION_NODE_TYPES = new Set(["ArrowFunctionExpression", "FunctionDeclaration", "FunctionExpression"]);
+// Every value a block can return without crossing into a nested function — what the callback's promise
+// Actually settles on. A block with no return settles on `undefined`, which never rejects
+const getReturnArguments = (value: unknown): ESTree.Expression[] => {
+  if (Array.isArray(value)) return value.flatMap((item) => getReturnArguments(item));
+  if (value === null || typeof value !== "object") return [];
+  const node = value as ESTree.Node;
+  if (typeof node.type !== "string" || FUNCTION_NODE_TYPES.has(node.type)) return [];
+  if (node.type === "ReturnStatement") return node.argument ? [node.argument] : [];
+  // Nodes carry a `parent` backreference, so walking every value would cycle
+  return Object.entries(node).flatMap(([key, child]) => (key === "parent" ? [] : getReturnArguments(child)));
+};
 // The identifier a call chain ultimately dispatches on: `getResultAsync(...).orTee(...).unwrapOr(...)`
 // Roots at `getResultAsync`; `containerClient.deleteBlob(...)` roots at nothing nameable (undefined).
 const rootCalleeName = (expression: ESTree.Expression): string | undefined => {
@@ -57,7 +69,9 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
     ) {
       const [callback] = collection.arguments;
       if (callback?.type === "ArrowFunctionExpression")
-        return callback.body.type === "BlockStatement" ? false : isSafeAwait(callback.body);
+        return callback.body.type === "BlockStatement"
+          ? getReturnArguments(callback.body).every((returnArgument) => isSafeAwait(returnArgument))
+          : isSafeAwait(callback.body);
     }
   }
   return false;
@@ -98,8 +112,11 @@ const rule = defineRule({
       },
       CallExpression(node) {
         if (!isEmitCall(node)) return;
-        const frame = functionStack.at(-1);
-        if (frame && !frame.emit) frame.emit = node;
+        // An emit inside a nested callback still notifies every function that runs it, so it arms the whole
+        // Enclosing chain — otherwise wrapping the write+emit in `getResultAsync(async () => …)` hides the
+        // Notify from every await that follows it. Emits propagate outward only: a frame opened after the
+        // Emit (the `nestedFunction` case) is a separate deferred body and stays unarmed
+        for (const frame of functionStack) if (!frame.emit) frame.emit = node;
       },
       FunctionDeclaration: enterFunction,
       "FunctionDeclaration:exit": exitFunction,

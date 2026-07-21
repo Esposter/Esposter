@@ -1,5 +1,5 @@
 import { BLUEPRINT_ENTRY_TOKEN_REGEX } from "#shared/services/resource/blueprint/constants";
-import { deepReplaceStrings } from "@@/server/services/blueprint/deepReplaceStrings";
+import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 
 // The distinct `{{entry:key}}` aliases a value references — the edges the topological create order is
 // Built from. Deduped, since the same alias may be referenced by several strings in one entry

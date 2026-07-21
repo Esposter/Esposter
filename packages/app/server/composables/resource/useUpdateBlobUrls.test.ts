@@ -36,14 +36,39 @@ describe(useUpdateBlobUrls, () => {
     );
   });
 
-  test("should re-sign a url in a single-quoted css url() without consuming the declarations that follow", async () => {
+  test("should re-sign a legacy url whose path was signed before urls were canonicalized", async () => {
     expect.hasAssertions();
 
-    const url = `${containerUrl}/1/photo.png`;
+    const url = `${containerUrl}/1/photo%20(1).png?sig=a%2Fb`;
 
-    await expect(useUpdateBlobUrls(`background-image:url('${url}');color:red`)).resolves.toBe(
-      `background-image:url('${getReadSasUrl("1/photo.png")}');color:red`,
+    await expect(useUpdateBlobUrls(`<img src="${url}">`)).resolves.toBe(
+      `<img src="${getReadSasUrl("1/photo (1).png")}">`,
     );
+  });
+
+  test("should re-sign a url and the longer url it is a prefix of independently", async () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/1/logo.png`;
+
+    await expect(useUpdateBlobUrls(`<img src="${url}"><img src="${url}.webp">`)).resolves.toBe(
+      `<img src="${getReadSasUrl("1/logo.png")}"><img src="${getReadSasUrl("1/logo.png.webp")}">`,
+    );
+  });
+
+  test("should re-sign urls in every string leaf, leaving the content's shape and non-string leaves untouched", async () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/a`;
+    const updatedAt = new Date(0);
+
+    await expect(
+      useUpdateBlobUrls({ pages: [{ styles: `background:url(${url})` }], publishVersion: 1, updatedAt }),
+    ).resolves.toStrictEqual({
+      pages: [{ styles: `background:url(${getReadSasUrl("a")})` }],
+      publishVersion: 1,
+      updatedAt,
+    });
   });
 
   test("should re-sign the valid urls when another url has an invalid percent escape", async () => {

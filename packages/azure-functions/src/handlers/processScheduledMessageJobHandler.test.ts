@@ -2,10 +2,12 @@ import type { relations, ScheduledMessageJobPayload } from "@esposter/db-schema"
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { processScheduledMessageJobHandler } from "@/handlers/processScheduledMessageJobHandler";
+import { sendPushNotification } from "@/services/sendPushNotification";
 import { InvocationContext } from "@azure/functions";
 import { dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
+  AzureFunction,
   AzureQueue,
   AzureTable,
   DatabaseEntityType,
@@ -28,6 +30,9 @@ vi.mock(import("@/services/db"), () => ({
 }));
 
 vi.mock(import("@/services/getServiceBusSender"), () => import("@/services/getServiceBusSender.test"));
+vi.mock(import("@/services/sendPushNotification"), () => ({
+  sendPushNotification: vi.fn<typeof sendPushNotification>(),
+}));
 vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
 vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
 vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
@@ -47,7 +52,7 @@ describe(processScheduledMessageJobHandler, () => {
   const getJob = (id: string) => mockDb.query.scheduledMessageJobsInMessage.findFirst({ where: { id: { eq: id } } });
   const insertJob = async (
     payload: ScheduledMessageJobPayload,
-    overrides?: { cancelledAt?: Date; completedAt?: Date; roomId?: string; runAt?: Date },
+    overrides?: { cancelledAt?: Date; completedAt?: Date; processingStartedAt?: Date; roomId?: string; runAt?: Date },
   ) =>
     takeOne(
       await mockDb
@@ -70,6 +75,7 @@ describe(processScheduledMessageJobHandler, () => {
     await mockDb.delete(scheduledMessageJobsInMessage);
     MockServiceBusDatabase.clear();
     MockTableDatabase.clear();
+    vi.restoreAllMocks();
   });
 
   afterAll(async () => {
@@ -107,6 +113,19 @@ describe(processScheduledMessageJobHandler, () => {
 
     expect(skippedJob?.processingStartedAt).toBeNull();
     expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
+  });
+
+  test("skips when job already claimed for processing", async () => {
+    expect.hasAssertions();
+
+    const logSpy = vi.spyOn(context, "log");
+    const job = await insertJob(scheduledMessagePayload, { processingStartedAt: new Date("1970-01-01") });
+    await processScheduledMessageJobHandler({ id: job.id }, context);
+
+    expect(logSpy).toHaveBeenCalledWith(`${AzureFunction.ProcessScheduledMessageJob} skipped: lost processing race`, {
+      id: job.id,
+    });
+    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
   });
 
   test("requeues when job is visible before runAt", async () => {
@@ -147,6 +166,19 @@ describe(processScheduledMessageJobHandler, () => {
 
     expect(processedJob?.completedAt).toBeInstanceOf(Date);
     expect(processedJob?.processingStartedAt).toBeInstanceOf(Date);
+    expect(MockTableDatabase.get(AzureTable.Messages)?.size).toBe(1);
+  });
+
+  test("completes job when notifying fails after the message is created", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(sendPushNotification).mockRejectedValueOnce(new Error(" "));
+    const job = await insertJob(scheduledMessagePayload);
+    await processScheduledMessageJobHandler({ id: job.id }, context);
+
+    const processedJob = await getJob(job.id);
+
+    expect(processedJob?.completedAt).toBeInstanceOf(Date);
     expect(MockTableDatabase.get(AzureTable.Messages)?.size).toBe(1);
   });
 

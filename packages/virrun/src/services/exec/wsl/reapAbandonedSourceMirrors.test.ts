@@ -1,6 +1,7 @@
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
 import { SOURCE_MIRROR_UNMARKED_MAX_AGE_MS } from "@/services/exec/util/constants";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import {
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
@@ -18,6 +19,11 @@ const { cacheRootHolder } = vi.hoisted(() => ({ cacheRootHolder: { value: "" } }
 vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => cacheRootHolder.value,
 }));
+
+const ageOut = (entry: string): void => {
+  const aged = new Date(Date.now() - SOURCE_MIRROR_UNMARKED_MAX_AGE_MS - 1);
+  utimesSync(entry, aged, aged);
+};
 
 describe(reapAbandonedSourceMirrors, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
@@ -42,7 +48,7 @@ describe(reapAbandonedSourceMirrors, () => {
   test("reaps a mirror whose origin host dir no longer exists", () => {
     expect.hasAssertions();
 
-    const abandoned = seedMirror("0", join(cacheRootHolder.value, "deleted-worktree"));
+    const abandoned = seedMirror("0", join(cacheRootHolder.value, TEST_FILENAME));
 
     reapAbandonedSourceMirrors();
 
@@ -75,18 +81,20 @@ describe(reapAbandonedSourceMirrors, () => {
     expect.hasAssertions();
 
     const abandoned = seedMirror("0");
-    const aged = new Date(Date.now() - SOURCE_MIRROR_UNMARKED_MAX_AGE_MS - 1);
-    utimesSync(abandoned, aged, aged);
+    ageOut(abandoned);
 
     reapAbandonedSourceMirrors();
 
     expect(existsSync(abandoned)).toBe(false);
   });
 
-  test("keeps a mirror whose origin marker is blank so a mid-write partial is never reaped", () => {
+  // A marker that exists settles the entry whatever it says, so the age fallback never sees it. Aged deliberately:
+  // Collapsing an unreadable or blank marker into the no-marker case is what deletes a live run's mirror.
+  test("keeps a mirror whose origin marker is blank however old the entry is", () => {
     expect.hasAssertions();
 
     const midWrite = seedMirror("0", "  ");
+    ageOut(midWrite);
 
     reapAbandonedSourceMirrors();
 

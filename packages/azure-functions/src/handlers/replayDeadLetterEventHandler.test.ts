@@ -195,22 +195,6 @@ describe(replayDeadLetterEventHandler, () => {
     expect(errorSpy).not.toHaveBeenCalled();
   });
 
-  test("logs a failing delete of a quarantined original without rethrowing", async () => {
-    expect.hasAssertions();
-
-    const error = new Error(" ");
-    const malformedContent = "";
-    const errorSpy = vi.spyOn(context, "error");
-    await seedBlob(malformedContent);
-    vi.spyOn(MockBlockBlobClient.prototype, "delete").mockRejectedValue(error);
-    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
-
-    expect(errorSpy).toHaveBeenLastCalledWith(
-      `${AzureFunction.ReplayDeadLetterEvent} left ${blobName} undeleted: `,
-      error,
-    );
-  });
-
   test("quarantines a malformed payload verbatim without republishing", async () => {
     expect.hasAssertions();
 
@@ -225,6 +209,31 @@ describe(replayDeadLetterEventHandler, () => {
       `${AzureFunction.ReplayDeadLetterEvent} quarantined ${blobName}, malformed dead-letter payload: `,
       getResult(() => JSON.parse(malformedContent) as unknown).match(noop, (error) => error),
     );
+  });
+
+  test("alerts on a malformed payload only for the delivery that created the quarantine copy", async () => {
+    expect.hasAssertions();
+
+    const malformedContent = "";
+    const error = new Error(" ");
+    const blobEvent = createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`);
+    const errorSpy = vi.spyOn(context, "error");
+    await seedBlob(malformedContent);
+    // The failing delete leaves the original in place, so the redelivery reruns the quarantine step on a copy that
+    // Already exists — the only way one poison payload can page on-call twice.
+    vi.spyOn(MockBlockBlobClient.prototype, "delete").mockRejectedValueOnce(error);
+    await replayDeadLetterEventHandler(blobEvent, context);
+    await replayDeadLetterEventHandler(blobEvent, context);
+
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+    expect(readContainer()).toStrictEqual({ [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: malformedContent });
+    expect(errorSpy.mock.calls).toStrictEqual([
+      [
+        `${AzureFunction.ReplayDeadLetterEvent} quarantined ${blobName}, malformed dead-letter payload: `,
+        getResult(() => JSON.parse(malformedContent) as unknown).match(noop, (parseError) => parseError),
+      ],
+      [`${AzureFunction.ReplayDeadLetterEvent} left ${blobName} undeleted: `, error],
+    ]);
   });
 
   test("logs a failing archive without rethrowing, leaving the original in place", async () => {

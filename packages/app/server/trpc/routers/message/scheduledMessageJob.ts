@@ -30,10 +30,13 @@ import {
 import { Operation } from "@esposter/shared";
 import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
 
-// Not yet cancelled or completed.
+// Not yet cancelled, completed, or claimed by the delivery handler. `processingStartedAt` is what makes the claim
+// Single-shot: once ProcessScheduledMessageJob has stamped it the job is being delivered, so the owner can no
+// Longer cancel, reschedule or send it — every one of those would race a message that is already on its way out
 const isActiveScheduledMessageJob = and(
   isNull(scheduledMessageJobsInMessage.cancelledAt),
   isNull(scheduledMessageJobsInMessage.completedAt),
+  isNull(scheduledMessageJobsInMessage.processingStartedAt),
 );
 // An active scheduled-message job owned by the user — the precondition for cancelling/rescheduling/sending it.
 const isCancellableScheduledMessage = (id: string, userId: string) =>
@@ -210,10 +213,15 @@ export const scheduledMessageJobRouter = router({
         input.id,
         "NOT_FOUND",
       );
-      // Membership is a guard, so it runs before the job is flipped to cancelled — checked afterwards a
-      // Non-member would burn the job without ever sending its message
-      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
       const payload = scheduledMessageScheduledMessageJobPayloadSchema.parse(scheduledMessageJob.payload);
+      // Every guard `createUserMessage` would reject on runs before the job is flipped to cancelled. Checked
+      // Afterwards, a rejection — non-member, slowmode, timeout, word filter — burns the job without ever
+      // Sending its message, and nothing reschedules it: the send fails and the scheduled message is gone
+      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
+      await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, scheduledMessageJob.roomId, payload.message);
+      // The claim is this update, not the select above: `isCancellableScheduledMessage` excludes a job the
+      // Delivery handler has already stamped, so a handler that wins the gap leaves nothing to cancel here and
+      // The caller is told NOT_FOUND rather than both paths posting the same message
       requireMutation(
         (
           await ctx.db.update(scheduledMessageJobsInMessage).set({ cancelledAt: new Date() }).where(where).returning()

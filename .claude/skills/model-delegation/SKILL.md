@@ -46,7 +46,7 @@ Plan the batch around what the agents touch:
 
 ## Cleaning up worktrees
 
-Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. Never sweep a long-lived branch you did not create — `nuxt5` and `migrate-assets` in particular are keepers (user-confirmed 2026-07-18), even when asked to "clean up old branches"; staleness or a merged PR is not authorization to delete a named long-lived branch.
+Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. **Only branches you created for an agent are yours to sweep.** A branch with a name someone chose deliberately (not the `worktree-agent-*` pattern) is presumed long-lived: leave it and ask, even when asked to "clean up old branches" — staleness or a merged PR is not authorization to delete it.
 
 ## Code reviews
 
@@ -54,4 +54,4 @@ Reviews are execution roles, not the thinking role. The full convention — sing
 
 ## Design for agents
 
-Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. The [Blueprint proposal](../../../packages/app/content/docs/proposals/platform/blueprint-resource.md) is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.
+Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. The [Blueprint feature page](../../../packages/app/content/docs/platform/blueprint-resource.md) is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.

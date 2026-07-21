@@ -43,6 +43,9 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       return;
     }
 
+    // Claiming on `processingStartedAt IS NULL` is what makes this handler idempotent
+    // (IsIdempotentAzureFunctionMap): delivery is at-least-once, and a message carries a fresh reverse-ticked
+    // RowKey, so a redelivery that could re-pass this guard would post a second copy rather than repair the first
     const [processingJob] = await db
       .update(scheduledMessageJobsInMessage)
       .set({ processingStartedAt: new Date() })
@@ -51,6 +54,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
           eq(scheduledMessageJobsInMessage.id, id),
           isNull(scheduledMessageJobsInMessage.cancelledAt),
           isNull(scheduledMessageJobsInMessage.completedAt),
+          isNull(scheduledMessageJobsInMessage.processingStartedAt),
         ),
       )
       .returning();
@@ -79,32 +83,39 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         rowKey: newMessage.rowKey,
       });
 
-      const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
-        columns: { nickname: true },
-        where: { roomId: { eq: processingJob.roomId }, userId: { eq: processingJob.userId } },
-        with: { user: { columns: { image: true, name: true } } },
-      });
-      if (userToRoom)
-        await sendPushNotification(
-          context,
-          getPushNotificationData(newMessage, {
-            icon: userToRoom.user.image,
-            title: userToRoom.nickname || userToRoom.user.name,
-          }),
-        );
+      // Best-effort after the message write ([persist then notify](/docs/architecture/persist-then-notify)). A
+      // Rethrow here cannot retry these steps anyway — the claim above is single-shot, so the redelivery it asks
+      // For is skipped — it would only leave the job stuck mid-delivery with `completedAt` never stamped
+      await getResultAsync(async () => {
+        const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
+          columns: { nickname: true },
+          where: { roomId: { eq: processingJob.roomId }, userId: { eq: processingJob.userId } },
+          with: { user: { columns: { image: true, name: true } } },
+        });
+        if (userToRoom)
+          await sendPushNotification(
+            context,
+            getPushNotificationData(newMessage, {
+              icon: userToRoom.user.image,
+              title: userToRoom.nickname || userToRoom.user.name,
+            }),
+          );
 
-      await Promise.all([
-        db
-          .update(usersToRoomsInMessage)
-          .set({ lastMessageAt: new Date() })
-          .where(
-            and(
-              eq(usersToRoomsInMessage.roomId, processingJob.roomId),
-              eq(usersToRoomsInMessage.userId, processingJob.userId),
+        await Promise.all([
+          db
+            .update(usersToRoomsInMessage)
+            .set({ lastMessageAt: new Date() })
+            .where(
+              and(
+                eq(usersToRoomsInMessage.roomId, processingJob.roomId),
+                eq(usersToRoomsInMessage.userId, processingJob.userId),
+              ),
             ),
-          ),
-        db.update(roomsInMessage).set({ updatedAt: new Date() }).where(eq(roomsInMessage.id, processingJob.roomId)),
-      ]);
+          db.update(roomsInMessage).set({ updatedAt: new Date() }).where(eq(roomsInMessage.id, processingJob.roomId)),
+        ]);
+      }).match(noop, (error) => {
+        context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to notify`, { error, id });
+      });
     }
 
     await db

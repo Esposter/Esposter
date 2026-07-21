@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, generic placeholders over identifiers from one change, magnitudes over incident numbers, and declaration layout. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
+description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, and declaration layout. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
 ---
 
 # Skill Authoring
@@ -39,6 +39,17 @@ A rule mechanically enforced by typecheck, an ESLint/oxlint rule, `no-restricted
 When a convention is enforced, the note is **one line**: state it, give the non-obvious _why_ or the fix the error message can't, and point at the enforcer (rule name / file). Don't enumerate every banned form, paste the error text, or re-explain what the rule already says.
 
 Reserve full prose for conventions with **no** enforcer — naming, structure, when-to-use-X, architectural intent. Those are exactly what skills exist to capture.
+
+## Is it a reproducible pattern? If not, it does not belong here
+
+Before writing anything down, ask whether a reader would apply it **again, to different code**. A skill holds repeatable patterns; git holds what happened.
+
+- **Reproducible** — a rule that fires on a whole class of situations ("a token embedded in authored content is matched on its opening delimiter"). Write it, generically.
+- **A one-off** — the specific thing that went wrong once, the file it went wrong in, the fix that was applied. Do **not** write it down at all, and delete it when found. It is not "context worth preserving": the commit, its message and its diff already hold it, in more detail and with a date attached, and a one-off in a skill is read as a standing rule by everyone after you.
+
+The failure mode is subtle because a one-off _feels_ like hard-won knowledge. The test is not "was this expensive to learn" but "will the next reader be in this situation". A war story that generalises should be rewritten as its rule and the story dropped; a war story that doesn't generalise should just go.
+
+This is also why a rule with a live example beats a rule with a historical one: an example lifted from a past change decays into a claim about code that has since moved, which is how a skill starts asserting things that are no longer true.
 
 ## Generic placeholders, never identifiers from one change
 

@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — StyledButton for primary actions, :to for plain navigation with @click navigateTo for logic-then-navigate, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, v-btn tooltips, mergeProps for nested activators, typed SelectItemCategoryDefinition for selects/lists/menus (clearable banned), enum-value-as-display-title, dialog form validity (StyledFormDialog vs StyledEditFormDialog), StyledList, useVRules form validation, StyledAvatar, CSS custom properties over SASS variables, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
+description: Esposter Vuetify 4 conventions — StyledButton for primary actions, :to never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, v-btn tooltips, mergeProps for nested activators, typed SelectItemCategoryDefinition for selects/lists/menus (clearable banned), enum-value-as-display-title, dialog form validity (StyledFormDialog vs StyledEditFormDialog), StyledList, useVRules form validation, StyledAvatar, CSS custom properties over SASS variables, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
 ---
 
 # Vuetify Conventions
@@ -18,14 +18,9 @@ Use `StyledButton` for every confirm / complete / primary call-to-action button 
 
 Vuetify's `icon` prop on `v-btn` doesn't just place an icon — it switches the button to the icon-button variant: **circular, equal width/height, no min-width**. `StyledTooltipIconButton` passes `:icon` by default, so converting a regular `<v-tooltip>` + `<v-btn>` (icon as a `<v-icon>` child, rectangular shape) to it silently turns the button into a circle. When the rectangular default-button shape is intended, pass `:is-icon-button="false"` — the component then renders a regular `v-btn` with the icon as a child. `rounded`/`tile` in `buttonProps` cannot restore the rectangle (they only change corners, not the forced square dimensions).
 
-## Navigation — `:to` for Plain Links, `@click="navigateTo(...)"` for Logic-Then-Navigate
+## Navigation — Never `to` Inside `:button-props`
 
-Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) with a plain destination take `:to` directly — it renders a real anchor, so cmd/ctrl/middle-click open-in-new-tab works. Use an `@click="navigateTo(...)"` handler only when the action runs logic before navigating or computes the target at click time:
-
-- For wrapper components put `:to`/`@click` directly on the wrapper — `StyledButton` / `StyledTooltipIconButton` fall them through to the root `v-btn`. Never pass `to` inside `:button-props`.
-- Route targets always come from `RoutePath` (`@esposter/shared`), never string-built.
-
-See the **routing** skill, which owns link choice, the raw-`<a>` ban, and imperative navigation.
+Link choice (`:to` vs `@click="navigateTo(...)"`), the raw-`<a>` ban, `RoutePath` targets, and imperative navigation are the **routing** skill's. Vuetify-specific: put `:to`/`@click` directly on the wrapper — `StyledButton` / `StyledTooltipIconButton` fall them through to the root `v-btn`. Never pass `to` inside `:button-props`.
 
 ## Auto-Imported Composables — `v` Prefix
 
@@ -205,7 +200,7 @@ Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navi
 - Use the auto-imported `useVRules()` composable (Vuetify's rules plugin; `prefixComposables: true` renames `useRules` → `useVRules`). Declare `const rules = useVRules();` at the top of `<script setup>` with the other composables, then reference rules as builders: `:rules="[rules.required(), rules.maxLength(100)]"`. One-off inline arrow rules in the template are fine (same convention as inline event handlers); extract to script only when a rule is shared or the expression gets unwieldy.
 - Rules validate **what is submitted, not what was typed**: when the sent value is composed from the field (markup wrapper, appended link/suffix), the rule checks the composed value's constraint — the field's `counter` may still track the raw input.
 - Built-in aliases (`required`, `maxLength`, `minLength`, `email`, `pattern`, …) come from Vuetify — don't reimplement them; their default messages live in Vuetify's locale (e.g. `required` → "This field is required", `maxLength` → "You must enter a maximum of {0} characters").
-- Custom stateless/parameterized rules live in `app/rules.config.ts` (wired via `vuetify.moduleOptions.rulesConfiguration.configFile`): currently `isNotProfanity`, `requireAtLeastN(n)`, `requireAtMostMaxFileSize`. Add new global rules there as `aliases` builders (`(err) => (value) => …` or `(options, err) => (value) => …`, threading `err` for a caller-supplied message), end the file with `satisfies RulesOptions`, then call `rules.<name>(...)`.
+- Custom stateless/parameterized rules live in `app/rules.config.ts` (wired via `vuetify.moduleOptions.rulesConfiguration.configFile`). Add new global rules there as `aliases` builders (`(err) => (value) => …` or `(options, err) => (value) => …`, threading `err` for a caller-supplied message), end the file with `satisfies RulesOptions`, then call `rules.<name>(...)`.
 - Declare each custom alias's type in `app/types/vuetify.d.ts` so it gets autocomplete + option-type checking — use Vuetify's canonical builder helpers, not hand-rolled signatures:
 
 ```ts
@@ -277,19 +272,19 @@ The CSS custom-property form (`var(--border-width)`) is only acceptable when a s
 
 ## Keyboard Shortcut Components
 
-A button and its keyboard shortcut are one component — see the **vue-component-patterns** skill (Maximal Component Granularity).
+A button and its keyboard shortcut are one component — see the **vue-page-composition** skill (Maximal Component Granularity).
 
 ## Scrollspy Sub-Nav (Two-Level List + `useElementVisibility` + `useVGoTo`)
 
 For a settings-style surface where a sidebar tracks the section scrolled into view:
 
 - **Two-level nav** — `v-list` with `:opened="[activeCategory]"` (controlled, so only the active category expands) + `v-list-group` per category. Sub-items render the active category's sections.
-- **Scroll tracking — `useElementVisibility` per section, active = topmost visible.** Each section reports its own visibility (`const isVisible = useElementVisibility(sectionRef)`) into a shared `Set` of visible section ids; the active section is the **first in section order that is in the set**. When the current section scrolls out of view the next visible one takes over. **Do NOT use `v-intersect` / `IntersectionObserver` for this** — the observer re-fires on _any_ layout change, so clicking a button in the content (a warning toggling, a slider expanding) reflows the page and spuriously moves the sidebar highlight. Visibility-driven topmost-selection only changes on real scroll. It also needs no `rootMargin` band math, no "only on `isIntersecting`" logic, and no bottom-edge special-casing.
-- **Keep the panel header _outside_ the scroll container**, not `sticky` inside it. Put it in a fixed bar above the scroll area (a `#header` slot on the shared content shell, which is `flex flex-col` with the scroll `div` as `flex-1`). This is what makes everything else simple: a section clipped above the scroll area is genuinely not visible, so "topmost visible" is the section sitting right under the header (header-aware for free), and `goTo` lands a section's title at the scroll-area top = below the header, with **no offset hack**. A sticky in-flow header overlaps the content and breaks both.
-- **Click-to-scroll** — `useVGoTo()` (auto-imported, `v` prefix — never `import { useGoTo } from "vuetify"`). Scroll within the panel's scroll container: `goTo(element, { container: '#<scroll-container-id>' })`. Resolve the target with `document.getElementById(id)` so section ids may contain spaces (enum values), avoiding selector escaping. The container id is still needed for this one reason (`goTo` must know the scroll element — it is not the window).
-- **Click vs. scrollspy race** — set the active id immediately on click, and guard the visibility watcher with an `isScrollingToSection` flag (true before `await goTo(...)`, false after) so the animated scroll keeps the clicked value and doesn't flicker the highlight through intermediate sections.
+- **Scroll tracking — `useElementVisibility` per section, active = topmost visible.** Each section reports its own visibility (`const isVisible = useElementVisibility(sectionRef)`) into a shared `Set` of visible section ids; the active section is the **first in section order that is in the set**. **Do NOT use `v-intersect` / `IntersectionObserver`** — the observer re-fires on _any_ layout change, so an in-content reflow (a warning toggling, a slider expanding) spuriously moves the sidebar highlight. Visibility-driven topmost-selection only changes on real scroll, and needs no `rootMargin` band math or bottom-edge special-casing.
+- **Keep the header outside the scroll container**, not `sticky` inside it — a section clipped above the scroll area is then genuinely not visible, so "topmost visible" and `goTo`'s landing position are both header-aware with no offset hack.
+- **Click-to-scroll** — `useVGoTo()` (auto-imported, `v` prefix — never `import { useGoTo } from "vuetify"`), scrolling within the panel's scroll container: `goTo(element, { container: '#<scroll-container-id>' })`. Resolve the target with `document.getElementById(id)` so ids may contain spaces (enum values), avoiding selector escaping.
+- **Click vs. scrollspy race** — set the active id immediately on click, and guard the visibility watcher with an `isScrollingToSection` flag (true before `await goTo(...)`, false after) so the animated scroll keeps the clicked value.
 
-Section identity comes from a **per-subsection enum** whose values double as titles and DOM ids (one enum per panel, e.g. `VoiceSettingsSection`); a `Record<ParentType, EnumValues[]>` map drives the sidebar sub-items. See the esbabbler `specs/user-settings.md` for the concrete wiring.
+Section identity comes from a **per-subsection enum** whose values double as titles and DOM ids; a `Record<ParentType, EnumValues[]>` map drives the sidebar sub-items.
 
 ### Animated active rail — `StyledSlideIndicator`
 

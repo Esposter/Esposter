@@ -45,7 +45,7 @@ Singleton-dialog targets (`deletingId`, `editingColumnName`, `settingsRoomId`, �
 - `store/message/dialog.ts` → `useMessageDialogStore`; `store/post/dialog.ts` → `usePostDialogStore` (folder exists → `<folder>/dialog.ts`)
 - `store/message/roomCategoryDialog.ts` → `useRoomCategoryDialogStore`; `store/resource/sheet/rowDialog.ts` → `useRowDialogStore` (no feature folder → `<feature>Dialog.ts` beside the business store file)
 
-Targets are strings defaulting to `""` (never `undefined`), and components derive `v-model` from them via `useSingletonDialog`. Full pattern: the Singleton Dialogs section in the `vue-component-patterns` skill and `packages/app/content/docs/architecture/singleton-dialogs.md`.
+Targets are strings defaulting to `""` (never `undefined`), and components derive `v-model` from them via `useSingletonDialog`. Full pattern: the Singleton Dialogs section in the `vue-page-composition` skill and `packages/app/content/docs/architecture/singleton-dialogs.md`.
 
 ## Blade-Scoped Store State — the Owning Component Tears It Down
 
@@ -212,7 +212,14 @@ const deleteBan = async (input: DeleteBanInput) => {
 };
 ```
 
-Give each mutation in a store its own `useMutation()` instance via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed) so one action's staleness tracking can't cancel another's. `key` is **required** on every call (like a Pinia store id — identity is always explicit): the entity id or natural composite for per-entity operations (`key: input.id`, `` key: `${userId}-${roleId}` ``), a per-call `Symbol("createFoo")` for creates with no natural key (every create is independent; a stable key + `isExclusive` instead when duplicate fires must drop), or the scope's id / a stable target name for singleton targets. Same key = genuine latest-wins supersession (repeated saves of one target). All instances are declared at the store root — never call `useMutation()` inside an action (detached effect scope leak). Full rationale: `packages/app/content/docs/architecture/client-data.md`.
+- **One `useMutation()` instance per mutation**, via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's staleness tracking can't cancel another's.
+- **All instances are declared at the store root** — never call `useMutation()` inside an action (detached effect scope leak).
+- **`key` is required on every call** — like a Pinia store id, identity is always explicit. Same key = genuine latest-wins supersession (repeated saves of one target). Pick it by case:
+  - Per-entity operations → the entity id or natural composite (`key: input.id`, `` key: `${userId}-${roleId}` ``).
+  - Creates with no natural key → a per-call `Symbol("createFoo")`, since every create is independent. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
+  - Singleton targets → the scope's id or a stable target name.
+
+Full rationale: `packages/app/content/docs/architecture/client-data.md`.
 
 ## createOperationData Usage
 
@@ -325,7 +332,10 @@ rolesMap.value.set(roomId, result);
 
 ## Storing Class Instances — markRaw
 
-Pinia `ref`/`reactive` state is **deep** — pushing a class instance into a reactive array (or assigning it to a reactive field) recursively wraps the instance in a reactive `Proxy`. A `Proxy` **breaks ECMAScript `#` private field/method access**: when a method runs with `this` bound to the Proxy, the `#field` brand check fails with `TypeError: Cannot read private member #x from an object whose class did not declare it`.
+Pinia `ref`/`reactive` state is **deep** — pushing a class instance into a reactive array (or assigning it to a reactive field) recursively wraps the instance in a reactive `Proxy`. Two things break as a result:
+
+- **ECMAScript `#` private field/method access.** When a method runs with `this` bound to the Proxy, the `#field` brand check fails with `TypeError: Cannot read private member #x from an object whose class did not declare it`.
+- **Devtools traversal.** Pinia devtools walk store state via Vue's `traverse`, which reads every nested getter. An instance whose graph exposes a lazily-initialised getter (a Phaser `Frame#glTexture` proxying to a `TextureSource.glTexture` that is `null` until WebGL upload) crashes in dev the moment it is traversed. `markRaw` sets `__v_skip = true`, so traversal skips it.
 
 Wrap class instances in `markRaw` at the single point they enter reactive state. The container stays reactive (its `length`/identity still drives computeds); only the instance opts out of proxying — correct since command/controller instances hold no reactive state of their own.
 
@@ -337,7 +347,7 @@ const push = (command: ADataSourceCommand) => {
 };
 ```
 
-This is the same pattern used for Phaser objects (`markRaw(new KeyboardControls())`) — see the `vue-phaserjs` skill. Prefer it over downgrading `#` fields to the TS `private` keyword: keep the strictest ECMAScript form and stop the proxying instead. `shallowRef` is not a substitute when the container relies on in-place `.push()`/mutation — shallowRef only tracks `.value` reassignment.
+The same applies to any third-party instance holding a live graph — Phaser game objects, tilemaps, input keys, and plugin instances (see the `vue-phaserjs` skill for which classes are at risk). Prefer `markRaw` over downgrading `#` fields to the TS `private` keyword: keep the strictest ECMAScript form and stop the proxying instead. `shallowRef` is not a substitute when the container relies on in-place `.push()`/mutation — shallowRef only tracks `.value` reassignment.
 
 ## Optimistic Input Clearing on Submit
 

@@ -7,14 +7,16 @@ import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
-import { scheduledMessageJobsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
+import { AzureTable, scheduledMessageJobsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("scheduledMessageJob", () => {
-  const { getMockContext, getRoomId } = setupRoomSuite();
+  const { createMember, getMockContext, getRoomCaller, getRoomId } = setupRoomSuite();
   let mockContext: Context;
+  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let scheduledMessageJobCaller: DecorateRouterRecord<TRPCRouter["message"]["scheduledMessageJob"]>;
   let roomId: string;
   const message = "message";
@@ -23,6 +25,7 @@ describe("scheduledMessageJob", () => {
 
   beforeAll(() => {
     mockContext = getMockContext();
+    roomCaller = getRoomCaller();
     scheduledMessageJobCaller = createCallerFactory(scheduledMessageJobRouter)(mockContext);
   });
 
@@ -155,6 +158,43 @@ describe("scheduledMessageJob", () => {
     await expect(
       scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("fails send scheduled message now with read-only room", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    await roomCaller.updateRoom({ id: roomId, isReadOnly: true });
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      scheduledMessageJobCaller.sendScheduledMessageNow({ id: scheduledMessageJob.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
+
+    await mockSessionOnce(mockContext.db, member);
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+
+    expect(scheduledMessageJobCount).toBe(1);
+  });
+
+  test("fails send scheduled message now with job claimed for delivery", async () => {
+    expect.hasAssertions();
+
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    await mockContext.db
+      .update(scheduledMessageJobsInMessage)
+      .set({ processingStartedAt: new Date() })
+      .where(eq(scheduledMessageJobsInMessage.id, scheduledMessageJob.id));
+
+    await expect(
+      scheduledMessageJobCaller.sendScheduledMessageNow({ id: scheduledMessageJob.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: ScheduledMessageJob, ${scheduledMessageJob.id}]`,
+    );
+
+    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
   });
 
   test("fails read scheduled jobs with non-member", async () => {

@@ -28,8 +28,7 @@ packages/app/content/docs/
   architecture/
     index.md                  ← index of cross-cutting topics
     <topic>.md                ← as-built system explanation shared by multiple areas
-  <area>/                     ← achievements · anime · clicker · dungeons · esbabbler · fluid-simulator
-                              ·  infra · platform · posts · sheet-editor · users · virrun · vue-phaserjs
+  <area>/                     ← one kebab-case directory per product area (`ls content/docs` for the current set)
     index.md                  ← what the area is, key concepts, terse chronological shipped log
     <feature>.md              ← one page per implemented feature (or <feature>/ folder with index.md + sub-feature pages)
     deferred/
@@ -50,7 +49,7 @@ Area folders and file names: kebab-case (they become URL slugs). One topic per f
 
 **Mechanical follow-through.** After a rename, grep the whole docs tree for the old term. After adding a page, register it in **both** the area `index.md` table and `DocsSectionGroupsMap.ts`.
 
-**File format is always `.md`, never `.mdx`.** MDX is the React ecosystem's format; @nuxt/content parses MDC syntax (`::component` blocks, `{.class}` props) inside plain `.md`, and `.md` stays readable on GitHub/editors/grep. Decided 2026-07-11 — don't revisit.
+**File format is always `.md`, never `.mdx`.** MDX is the React ecosystem's format; @nuxt/content parses MDC syntax (`::component` blocks, `{.class}` props) inside plain `.md`, and `.md` stays readable on GitHub/editors/grep. Settled — don't revisit.
 
 **Write plain GFM markdown — no MDC syntax yet.** MDC callouts (`::note`/`::tip`/`::warning`, as the Nuxt docs use) require prose components registered in our docs renderer, which don't exist. If they land later, adopt MDC sparingly for callouts only; never for layout.
 
@@ -72,8 +71,9 @@ Nothing else unless the renderer needs it. No status/date/author fields — loca
 Write for a new engineer reading in the browser, not for an agent grepping a repo:
 
 - Prose first. Complete sentences; spell out a term on first use (blade, capability, reverse-ticked rowKey…). Tables only for short enumerable facts (procedures, key files).
-- **Magnitudes, not measurements.** Cite orders of magnitude ("milliseconds into whole seconds", "hundreds of kilobytes"), never precise profiling numbers ("4,008 ms INP", "845 KB") — exact figures go stale with the next change and add no decision value beyond their magnitude.
+- **Magnitudes, not measurements.** State a number only at a granularity that is _stable_. Anything that moves with routine work — test files, stores, routers, profiling figures — is written as its magnitude ("several hundred test files", "milliseconds into whole seconds"), never as today's exact reading: the precise figure carries no decision value beyond its magnitude and is wrong by the next merge. A number that moves only by deliberate act — the package count, a configured limit, a score — may be exact, because changing it is already the kind of change someone updates the prose for. This applies to every hand-written file in the repo, not only pages under `content/docs`: `SCORE.md`, `AGENTS.md` and the READMEs rot exactly the same way.
 - **Every line earns its place.** If another page already says it, link instead (`/docs/architecture/resources` — absolute route paths, no `.md` suffix, so links work in-app).
+- **Never write down what the repo can count.** File counts, per-type tallies, "N packages", an exhaustive list of a directory's contents, a table whose every row is `X` → `path/X` — all restate what one `ls`/`find` answers, and all rot silently, because nothing fails when they drift. Record the **convention that generates** the fact (`src/azure/resources/<ARM type>/`) and let the reader run the command. A hand-maintained list is worth it only when every row carries something the tree cannot: a role, a purpose, a caveat — which is exactly why the Key Files table stays.
 - Self-contained over link-chained: a page must be understandable without following links; links add depth, never required context.
 - Keep the **Key Files** table on feature pages — path + one-line role. It's the bridge from docs to code.
 - Nothing is frozen: trim, rename, and split freely as understanding improves — but never merge files (see single-responsibility rule).

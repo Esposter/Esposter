@@ -26,18 +26,19 @@ Azure Table `AzureTable.ModerationNotes`: `partitionKey = roomId`, `rowKey = rev
 
 ## Procedures
 
-Both under `message.moderation.` (`server/trpc/routers/message/moderation.ts`), gated on `KickMembers` — the lowest "acts on members" moderation bit, consistent with warn and timeout being visible to the same audience:
+All under `message.moderation.` (`server/trpc/routers/message/moderation.ts`), gated on `KickMembers` — the lowest "acts on members" moderation bit, consistent with warn and timeout being visible to the same audience:
 
 | Procedure                                               | Purpose                          |
 | ------------------------------------------------------- | -------------------------------- |
 | `createModerationNote({ roomId, targetUserId, note })`  | append a note                    |
 | `readModerationNotes({ roomId, targetUserId, cursor })` | cursor-paginated per-member view |
+| `countModerationNotes({ roomId, targetUserId })`        | note count for the menu badge    |
 
 ## Key files
 
 | File                                                                                  | Role                   |
 | :------------------------------------------------------------------------------------ | :--------------------- |
 | `packages/db-schema/src/models/message/ModerationNoteEntity.ts`                       | note entity            |
-| `packages/app/server/trpc/routers/message/moderation.ts`                              | the two procedures     |
+| `packages/app/server/trpc/routers/message/moderation.ts`                              | the three procedures   |
 | `packages/app/app/store/message/moderation/note.ts`                                   | client note list store |
 | `packages/app/app/components/Message/Model/User/ProfileCard/MoreMenu/NotesDialog.vue` | notes menu + dialog    |

@@ -22,10 +22,18 @@ export const reapAbandonedSourceMirrors = (): void => {
     const sourcesDir = join(getWslNativeCacheRoot(), VIRRUN_SOURCES_DIRECTORY_NAME);
     sweepStaleEntries(sourcesDir, (name) => {
       const entryPath = join(sourcesDir, name);
-      const origin = getResult(() => readFileSync(join(entryPath, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME), "utf8"))
-        .unwrapOr("")
-        .trim();
-      if (origin) return !existsSync(origin);
+      const originPath = join(entryPath, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME);
+      // A marker that exists settles the entry on its own, whatever it says: a path that is gone means abandoned, a
+      // Path that is there means live, and a marker we cannot read or that is still blank (a first-run partial
+      // Another process is mid-writing) proves nothing either way, so the entry is left for a later sweep. Only the
+      // Age fallback below may reclaim it, and only when there is no marker at all — collapsing an unreadable
+      // Marker into that case is how a live run's mirror gets deleted out from under it
+      if (existsSync(originPath)) {
+        const origin = getResult(() => readFileSync(originPath, "utf8"))
+          .unwrapOr("")
+          .trim();
+        return origin ? !existsSync(origin) : false;
+      }
       return getResult(() => statSync(entryPath).mtimeMs)
         .map((mtimeMs) => Date.now() - mtimeMs > SOURCE_MIRROR_UNMARKED_MAX_AGE_MS)
         .unwrapOr(false);

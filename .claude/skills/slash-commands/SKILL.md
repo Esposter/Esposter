@@ -70,7 +70,7 @@ Components (`app/components/Message/Model/Message/Input/`):
 
 | File                                       | Role                                                                           |
 | ------------------------------------------ | ------------------------------------------------------------------------------ |
-| `SlashCommandParameters/Index.vue`         | Chip row + focus/submit orchestration                                          |
+| `SlashCommandParameters/Index.vue`         | Chip row + focus orchestration (delegates submit to `useSubmitSlashCommand`)   |
 | `SlashCommandParameters/CommandInput.vue`  | Editable `/command` name at the head of the row                                |
 | `SlashCommandParameters/Chip.vue`          | One parameter: bold name label + bare `<input>`                                |
 | `SlashCommandParameters/TrailingInput.vue` | Free-text tail; adds hidden parameters                                         |
@@ -89,7 +89,7 @@ setErrors(
 
 `REQUIRED_ERROR_MESSAGE` comes from `app/services/message/slashCommands/constants.ts` — never inline the string.
 
-`submit()` in `Index.vue` re-validates every required parameter, and if any required one is missing it **reveals** the hidden chip (appends to `activeParameterNames`) and returns instead of sending.
+`useSubmitSlashCommand` (`app/composables/message/slashCommand/useSubmitSlashCommand.ts`) re-validates every required parameter on submit, and if any required one is missing it **reveals** the hidden chip (appends to `activeParameterNames`) and returns instead of sending; `Index.vue` only calls it. Parameter mutations (`createParameter`, `deleteParameter`, `collapseToText`, `clearPendingSlashCommand`) all live in the store, not the components.
 
 ### Focus model
 
@@ -134,7 +134,7 @@ Always use `SlashCommandType.X` enum values, never `"Me"`, `"Shrug"`, etc.
 
 ## Existing Commands
 
-All 10 — the enum, the map, and the switch must stay in sync (`exhaustiveGuard` enforces the last two):
+The enum, the map, and the switch must stay in sync (`exhaustiveGuard` enforces the last two):
 
 | Command      | Parameters                                | Behaviour                                                                                               |
 | ------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |

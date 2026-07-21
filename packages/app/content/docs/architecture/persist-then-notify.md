@@ -81,3 +81,13 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 
 - Per-item fan-out (forwarding into several rooms, notifying several followers) runs each item through the full shape independently under `Promise.allSettled`, so one item's guard rejection never strands another item's already-persisted write.
 - "Best-effort" is not a licence to skip the effect on the happy path. If losing it is genuinely unacceptable, it doesn't become fatal — it becomes durable: published as an event and retried by a handler ([no manual recovery](/docs/architecture/no-manual-recovery)).
+
+## When best-effort is not enough: the escalation
+
+Deleting a message attachment is the worked example. The delete sits after the primary write, so it cannot be fatal — but `console.error` on a failed delete was not enough either, because read urls are signed for a year ([resource file assets](/docs/platform/resource-file-assets)): a dropped delete leaves a file the user believes is gone downloadable to anyone already holding its url, for as long as that signature lives.
+
+So the effect escalates rather than changing severity. The call site publishes `ProcessBlobDeletion` and `processBlobDeletionHandler` performs the delete, retried by Event Grid and then by [dead-letter replay](/docs/infra/eventgrid-dead-letter). The handler deletes with `deleteIfExists`, which is what earns its `true` in `IsIdempotentAzureFunctionMap` — a replayed batch converges on the same empty state instead of failing on the blobs the first attempt already removed.
+
+**The publish itself stays best-effort and post-persist.** That is the honest boundary: what changed is not that failure became impossible, but that a publish which _lands_ carries the delete to completion instead of dropping it after one attempt.
+
+Reach for this when the answer to "what does losing this cost?" is something a user would consider a broken promise — data that outlives a delete, a payment not captured, an invite never sent. A lost badge count is not that; a file that stays downloadable after deletion is. Blob deletion is the canonical case: read SAS urls are signed for a year, so a dropped delete would leave the file downloadable long after it should be gone — the call site publishes a `ProcessBlobDeletion` event (the publish itself stays best-effort) and the idempotent handler retries the delete to completion.

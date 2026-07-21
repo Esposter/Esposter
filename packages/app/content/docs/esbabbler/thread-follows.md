@@ -32,11 +32,12 @@ Postgres table `threadFollowsInMessage`: `userId`, `roomId`, and `threadRootRowK
 
 All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 
-| Procedure                                      | Purpose                                          |
-| ---------------------------------------------- | ------------------------------------------------ |
-| `followThread({ roomId, threadRootRowKey })`   | explicit follow (idempotent)                     |
-| `unfollowThread({ roomId, threadRootRowKey })` | remove the follow                                |
-| `readFollowedThreads({ roomId })`              | the caller's followed thread roots, newest-first |
+| Procedure                                      | Purpose                                                                               |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `followThread({ roomId, threadRootRowKey })`   | explicit follow (idempotent)                                                          |
+| `unfollowThread({ roomId, threadRootRowKey })` | remove the follow                                                                     |
+| `readFollowedThreads({ roomId })`              | the caller's followed thread roots, newest-first                                      |
+| `readFollowedThreadRootRowKeys({ roomId })`    | all followed root rowKeys, including deleted roots — the follow-state source of truth |
 
 ## Key files
 

@@ -1,5 +1,5 @@
 import { BLUEPRINT_PARAMETER_TOKEN_REGEX } from "#shared/services/resource/blueprint/constants";
-import { deepReplaceStrings } from "@@/server/services/blueprint/deepReplaceStrings";
+import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 
 // Replaces every `{{parameter:key}}` with its resolved deploy-time value; an unknown key is left as its
 // Raw token so a missing parameter surfaces at validation rather than silently vanishing from the content

@@ -7,9 +7,9 @@
 | Architecture         | 20 / 20 | 14 packages, clean DAG, data-driven maps, command pattern                  |
 | TypeScript           | 10 / 10 | Maximum strictness; `skipLibCheck` only trade-off                          |
 | Code Quality         | 10 / 10 | Guard clauses, `InvalidOperationError`, `neverthrow` over `try`/`catch`    |
-| Testing              | 10 / 10 | 473 test files; only Phaser store gaps remain                              |
+| Testing              | 10 / 10 | Several hundred test files; only Phaser store gaps remain                  |
 | Security             | 8 / 10  | CSP trade-offs documented; `xssValidator` pending upstream                 |
-| Dependencies         | 8 / 10  | 7 pre-release packages (Drizzle RC, Survey betas)                          |
+| Dependencies         | 8 / 10  | A few pre-release packages (Drizzle RC, Survey betas)                      |
 | Styling              | 9 / 10  | Attributify enforced; Vuetify token bridge; no visual regression tests     |
 | CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; Pulumi preview |
 | Bundle & Performance | 8 / 10  | Vite auto-splits; ~65 MB known footprint; no automated budget              |
@@ -20,7 +20,7 @@ A TypeScript-strict monorepo with strong architectural discipline and comprehens
 
 ## Architecture & Organisation — 20 / 20
 
-14 packages with clear responsibilities and a sensible dependency DAG (`shared` has no Vue deps, `db-schema` has no server deps). Data-driven map pattern (`*TypeColorMap`, `ColumnStatDefinitionMap`) enforces single-entry extension. Command pattern for undo/redo is well-scoped. 35 tRPC routers, 122 Pinia store files across 12 modules. Barrel files managed by ctix — no accidental re-export drift.
+14 packages with clear responsibilities and a sensible dependency DAG (`shared` has no Vue deps, `db-schema` has no server deps). Data-driven map pattern (`*TypeColorMap`, `ColumnStatDefinitionMap`) enforces single-entry extension. Command pattern for undo/redo is well-scoped. Dozens of tRPC routers and well over a hundred Pinia store files, split across a dozen feature modules. Barrel files managed by ctix — no accidental re-export drift.
 
 ## TypeScript — 10 / 10
 
@@ -34,13 +34,13 @@ Guard clauses over nested conditionals. `InvalidOperationError` for impossible s
 
 ## Testing — 10 / 10
 
-473 test files (app 214, virrun 150, shared 28, azure-functions 20, vue-phaserjs 17, parse-tmx 12, db 9, db-schema 8, azure-mock 7, remainder across shared-node/db-mock/configuration/infra/xml2js). 14 benchmark files cover sheet editor hot paths. PGlite provides in-memory PostgreSQL for server tests — no real DB required. Azure Functions logic lives in extracted, directly-tested `handlers/`, leaving only thin `app.eventGrid(...)` registration glue uncovered.
+Several hundred test files, concentrated in `app` and `virrun` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. PGlite provides in-memory PostgreSQL for server tests — no real DB required. Azure Functions logic lives in extracted, directly-tested `handlers/`, leaving only thin `app.eventGrid(...)` registration glue uncovered.
 
 **Accepted trade-off:** untested Pinia stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
 
 ## Security — 8 / 10
 
-Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.23 with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle parameterized queries prevent SQL injection. Tiered rate limiting via `RateLimiterDrizzleNonAtomic` — NonAtomic is deliberate, as rate limiting is not a hard security boundary here; `nuxt-security`'s own `rateLimiter` is disabled in favour of these app-level limiters.
+Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle parameterized queries prevent SQL injection. Tiered rate limiting via `RateLimiterDrizzleNonAtomic` — NonAtomic is deliberate, as rate limiting is not a hard security boundary here; `nuxt-security`'s own `rateLimiter` is disabled in favour of these app-level limiters.
 
 **Accepted trade-offs:**
 

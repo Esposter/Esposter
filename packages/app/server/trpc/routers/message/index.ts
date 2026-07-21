@@ -1,4 +1,10 @@
-import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
+import type {
+  AzureUpdateEntity,
+  BlobDeletionEventGridData,
+  Clause,
+  FileSasEntity,
+  MessageEntity,
+} from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteFileInputSchema } from "#shared/models/db/message/DeleteFileInput";
@@ -17,6 +23,7 @@ import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessage
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
@@ -45,13 +52,13 @@ import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/schedu
 import {
   cloneFiles,
   createMessage,
-  deleteFiles,
   generateDownloadFileSasUrls,
   generateDownloadThumbnailSasUrls,
   generateUploadFileSasEntities,
   getBlobName,
   getEntity,
   getTableNullClause,
+  getThumbnailBlobName,
   getTopNEntitiesByType,
   serializeClauses,
   updateEntity,
@@ -59,10 +66,12 @@ import {
 import {
   AzureContainer,
   AzureEntityType,
+  AzureFunction,
   AzureTable,
   AzureWebPubSubHub,
   BinaryOperator,
   CompositeKeyPropertyNames,
+  createEventGridEvent,
   DatabaseEntityType,
   FileEntity,
   fileEntitySchema,
@@ -182,11 +191,12 @@ export const baseMessageRouter = router({
           message: new NotFoundError(AzureEntityType.File, id).message,
         });
 
-      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-      const blobName = getBlobName(
-        `${messageEntity.partitionKey}/${id}`,
-        takeOne(messageEntity.files.splice(index, 1)).filename,
-      );
+      const blobNames = [
+        getBlobName(`${messageEntity.partitionKey}/${id}`, takeOne(messageEntity.files.splice(index, 1)).filename),
+        // Only images carry a thumbnail, but the handler deletes if the blob exists, so naming it unconditionally
+        // Costs a no-op for every other file type and needs no mime check here
+        getThumbnailBlobName(messageEntity.partitionKey, id),
+      ];
       const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         files: messageEntity.files,
         partitionKey,
@@ -194,9 +204,15 @@ export const baseMessageRouter = router({
       };
       await updateMessage(messageClient, updatedMessageEntity);
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
-      // Best-effort after the message write — a failed delete leaves an orphaned blob, never the file the user
-      // Asked to remove
-      await getResultAsync(() => containerClient.deleteBlob(blobName)).match(noop, console.error);
+      const data: BlobDeletionEventGridData = { blobNames, containerName: AzureContainer.MessageAssets };
+      // Best-effort publish after the message write — a failed publish leaves an orphaned blob, never the file the
+      // User asked to remove. A publish that lands makes the delete durable: the handler retries it to completion,
+      // So a read SAS url signed for a year can no longer outlive the file it points at
+      await getResultAsync(() =>
+        useEventGridPublisherClient().send([
+          createEventGridEvent(AzureFunction.ProcessBlobDeletion, `${partitionKey}/${rowKey}`, data),
+        ]),
+      ).match(noop, console.error);
     },
   ),
   deleteLinkPreviewResponse: getMessageProcedure(deleteLinkPreviewResponseInputSchema).mutation(
@@ -225,12 +241,29 @@ export const baseMessageRouter = router({
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
       messageEventEmitter.emit("deleteMessage", input);
 
-      // Best-effort after the soft-delete write — a failed cleanup leaves orphaned attachment blobs, never the
-      // Delete the user asked for
-      await getResultAsync(async () => {
-        const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-        await deleteFiles(containerClient, messageEntity.files);
-      }).match(noop, console.error);
+      if (messageEntity.files.length > 0) {
+        const data: BlobDeletionEventGridData = {
+          // Only images carry a thumbnail, but the handler deletes if the blob exists, so naming it unconditionally
+          // Costs a no-op for every other file type and needs no mime check here
+          blobNames: messageEntity.files.flatMap(({ filename, id }) => [
+            getBlobName(`${messageEntity.partitionKey}/${id}`, filename),
+            getThumbnailBlobName(messageEntity.partitionKey, id),
+          ]),
+          containerName: AzureContainer.MessageAssets,
+        };
+        // Best-effort publish after the soft-delete write — a failed publish leaves orphaned attachment blobs, never
+        // The delete the user asked for. A publish that lands makes the cleanup durable: the handler retries it to
+        // Completion, so a read SAS url signed for a year can no longer outlive the message it points into
+        await getResultAsync(() =>
+          useEventGridPublisherClient().send([
+            createEventGridEvent(
+              AzureFunction.ProcessBlobDeletion,
+              `${messageEntity.partitionKey}/${messageEntity.rowKey}`,
+              data,
+            ),
+          ]),
+        ).match(noop, console.error);
+      }
     },
   ),
   followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation(

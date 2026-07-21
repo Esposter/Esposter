@@ -73,12 +73,18 @@ export const CI_ENV_VALUE = "true";
 // Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
 // The probe fail (degrade to unsupported) instead of blocking the whole CLI.
 export const PROBE_TIMEOUT_MS: number = dayjs.duration(10, "seconds").asMilliseconds();
-// Upper bound for a synchronous WSL-side `rm -rf` of a cache dir (removeSnapshotDirectory) and for the write-back's
-// Overlay python program (runOverlayScript). Both do real work — a node_modules closure to unlink, a run's whole diff
-// To copy — so they get minutes rather than the probe's seconds; the bound exists only so a wedged WSL service or 9p
-// Bridge fails the call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents:
-// A run that never returns and no error to explain it.
+// Upper bound for a synchronous WSL-side `rm -rf` of a cache dir (removeSnapshotDirectory). Real work — a
+// Node_modules closure to unlink — so it gets minutes rather than the probe's seconds, and its size is bounded by
+// One cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails
+// The call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents: a run that
+// Never returns and no error to explain it. See [subprocess timeouts](/docs/virrun/subprocess-timeouts).
 export const WSL_WORK_TIMEOUT_MS: number = dayjs.duration(5, "minutes").asMilliseconds();
+// Upper bound for the write-back's overlay python program (runOverlayScript). Sized apart from the work cap because
+// This is the one bound whose work scales with the run rather than with a cache entry: the diff copied back is
+// Whatever the command wrote, so a cold `pnpm install` moves a whole node_modules across the 9p bridge. Sharing the
+// Work cap SIGTERMs that copy partway and reports failure for a command that succeeded, so the bound is sized for
+// The largest realistic diff and still exists only as a hang guard.
+export const OVERLAY_WRITE_BACK_TIMEOUT_MS: number = dayjs.duration(30, "minutes").asMilliseconds();
 // The bound `cache clean` removes its roots under: none (0 is execFileSync's own "no timeout"). The work cap is sized
 // For one cache entry, while a clean unlinks the entire cache — tens of GB of small files on WSL ext4 routinely runs
 // Past five minutes, and a SIGTERM mid-`rm -rf` leaves a half-swept cache and no record of which roots survived. The
