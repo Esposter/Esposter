@@ -21,6 +21,12 @@ import { afterEach, assert, describe, expect, test, vi } from "vitest";
 vi.mock(import("@/services/eventGridPublisherClient"), () => import("@/services/eventGridPublisherClient.test"));
 vi.mock(import("@/services/getContainerClient"), () => import("@/services/getContainerClient.test"));
 
+const blobName = "";
+const seedBlob = async (content: string, name: string = blobName) => {
+  const containerClient = await getContainerClient(AzureContainer.DeadLetter);
+  await containerClient.getBlockBlobClient(name).upload(content, content.length);
+};
+
 const readContainer = () => {
   const container = MockContainerDatabase.get(AzureContainer.DeadLetter);
   assert.exists(container);
@@ -29,7 +35,6 @@ const readContainer = () => {
 
 describe(replayDeadLetterEventHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
-  const blobName = "";
   const data = "data";
   const dataVersion = "1.0";
   const eventType = AzureFunction.ProcessPushNotification;
@@ -53,11 +58,6 @@ describe(replayDeadLetterEventHandler, () => {
     subject: blobSubject,
     topic: "",
   });
-  const seedBlob = async (content: string, name: string = blobName) => {
-    const containerClient = await getContainerClient(AzureContainer.DeadLetter);
-    await containerClient.getBlockBlobClient(name).upload(content, content.length);
-  };
-
   afterEach(() => {
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();

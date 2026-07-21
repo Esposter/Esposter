@@ -51,17 +51,18 @@ flowchart TB
     next --> reap["reapStaleTemps\nremove upper./work. temps whose owner pid is dead"]
     corpse -.->|"reclaimed once pid dead"| reap
 
-    startup["os-backend startup (win32)"] --> mirrors["reapAbandonedSourceMirrors\nsweep mirrors whose origin host dir is gone"]
+    startup["os-backend startup (win32)"] --> mirrors["reapAbandonedSourceMirrors\nsweep mirrors whose origin host dir is gone
+or that aged out unmarked"]
     startup --> orphans["reapOrphanedWslRuns\ngroup-kill WSL bwrap trees reparented off their Relay"]
 ```
 
 - **Finalizer teardown (clean exit)** — each run captures into a private pid-tagged `mkdtemp` sibling (`upper.<pid>.<rand>` + `work.<pid>.<rand>`); its finalizer removes that temp on success and handled error. The published layer is promoted by an atomic `renameSync`, so the temp never survives a normal exit.
 - **Stale-entry prune (next run)** — only the current environment key / source key is reused, so `ensureSnapshot`/`ensurePrepareLayer` sweep every superseded `snapshots/<hash>` and `prepare/<key>` before hitting or minting the live one. A superseded dir may still be _another_ live run's current one, so each is spared while it holds a live **lease** — a `leases/<pid>` file written on mount and dropped on dispose; dead-pid leases are reaped in passing, so a hard-killed run's lease self-heals.
 - **Temp-corpse reap (next run)** — a hard kill skips the finalizer, stranding a temp inside the live hash dir, which the prune deliberately skips. `reapStaleTemps` removes an `upper.`/`work.`-prefixed sibling **only when its owner pid is dead** (`parseTempOwnerPid` → `isProcessAlive`), never the published bare `upper`/`work` or `leases/`. The task cache's recorder temps use the same pid-gated reaper.
-- **Abandoned-mirror reap (win32, startup)** — the source mirror is the one cache entry keyed on a live repo path rather than a lockfile/source hash, so nothing supersedes it; `reapAbandonedSourceMirrors` instead sweeps entries whose `origin` marker points to a now-absent host path (deleted worktree, moved repo). A missing or blank marker is spared — reap only what is provably abandoned.
+- **Abandoned-mirror reap (win32, startup)** — the source mirror is the one cache entry keyed on a live repo path rather than a lockfile/source hash, so nothing supersedes it; `reapAbandonedSourceMirrors` instead sweeps entries whose `origin` marker points to a now-absent host path (deleted worktree, moved repo). A blank marker is spared — that is a first-run partial mid-write. A **missing** marker is spared only until the entry is a day old: the marker is published the instant the entry dir is created, so an aged unmarked entry is the corpse of a sync that died in that instant, and sparing it forever leaked one entry per aborted run.
 - **Orphaned-WSL-run reap (win32, startup)** — a hard kill also skips the SIGINT/SIGTERM reaper that group-kills the run's WSL-side bwrap tree, leaving `sh`+bwrap reparented to init and pinning the store/snapshot open. `reapOrphanedWslRuns` group-kills exactly those orphans, identified precisely rather than by TTL: a live run's shell is parented by the `wsl.exe` `Relay(<pid>)`, so a shell whose parent is not a `Relay` is orphaned.
 
-The prune and the reaps share one primitive, `sweepStaleEntries(dir, isStale)` — list a cache dir's child directories and detach-remove each the predicate selects — so "iterate + guarded detached teardown" lives in exactly one place. The pid-gated selectors build on one liveness check, `isProcessAlive(pid)` (`process.kill(pid, 0)`).
+The prune and the reaps share one primitive, `sweepStaleEntries(dir, isStale)` — list a cache dir's child directories and hand every entry the predicate selects to a single batched `removeSnapshotDirectoriesDetached` — so "iterate + guarded detached teardown" lives in exactly one place. The batch is load-bearing on win32: WSL-side teardown costs one `wsl.exe` launch **per sweep**, not per entry, because each launch is a service RPC plus a relay process and a fan-out of a hundred wedges the WSL service for every later call. The pid-gated selectors build on one liveness check, `isProcessAlive(pid)` (`process.kill(pid, 0)`).
 
 ## Key files
 

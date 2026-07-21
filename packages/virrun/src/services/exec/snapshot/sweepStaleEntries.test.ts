@@ -4,10 +4,19 @@ import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The shared predicate under test: everything whose name starts with the stale marker is swept, the rest kept.
 const isStale = (name: string): boolean => name.startsWith(" ");
+
+const { removeSnapshotDirectoriesDetached } = vi.hoisted(() => ({ removeSnapshotDirectoriesDetached: vi.fn() }));
+// Spied, not stubbed: the teardown still really runs (the removal assertions below are the point), while the batching
+// Test can see that a sweep of N entries reaches it as ONE call — the property that keeps a sweep to one wsl.exe.
+vi.mock(import("@/services/exec/snapshot/removeSnapshotDirectoriesDetached"), async (importOriginal) => {
+  const original = await importOriginal();
+  removeSnapshotDirectoriesDetached.mockImplementation(original.removeSnapshotDirectoriesDetached);
+  return { removeSnapshotDirectoriesDetached };
+});
 
 describe(sweepStaleEntries, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
@@ -15,6 +24,7 @@ describe(sweepStaleEntries, () => {
   const seedEntry = (name: string): string => seedDirectory(join(dir, name));
 
   beforeEach(() => {
+    vi.clearAllMocks();
     dir = create();
   });
 
@@ -41,6 +51,16 @@ describe(sweepStaleEntries, () => {
     sweepStaleEntries(dir, isStale);
 
     expect(existsSync(file)).toBe(true);
+  });
+
+  test("hands every selected entry to one teardown call, never one call per entry", () => {
+    expect.hasAssertions();
+
+    const stale = [" ", "  "].map((name) => seedEntry(name));
+
+    sweepStaleEntries(dir, isStale);
+
+    expect(removeSnapshotDirectoriesDetached).toHaveBeenCalledExactlyOnceWith(stale);
   });
 
   test("is a no-op when the directory does not exist", () => {

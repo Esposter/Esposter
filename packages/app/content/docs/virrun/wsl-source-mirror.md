@@ -22,14 +22,15 @@ flowchart TB
     plan["createWslSourceMirrorSync (host side)"] --> walk["buildSourceMirrorManifest\nwalk working tree on NTFS (sub-second)\napplying resolveMirrorExcludes"]
     walk --> diff["diffSourceMirrorManifests\nvs published manifest.json"]
     diff -->|"no delta"| skipped["empty script — run pays no sync"]
-    diff -->|"delta"| delta["stage pid-tagged temps over UNC:\nhost tar archive of copied paths + delete list\n→ xargs -0 rm -rf + local tar -x into tree/"]
-    diff -->|"no readable manifest / missing tree"| full["full materialize: archive of the whole\nmanifest set, extracted into a cleared tree/\n(first run, cache clean, drift self-heal)"]
+    diff -->|"delta or no readable manifest"| mark["create the entry and publish its origin marker\nhost-side (staged temp → atomic rename)\nso it is reapable from birth"]
+    mark -->|"delta"| delta["stage pid-tagged temps over UNC:\nhost tar archive of copied paths + delete list\n→ xargs -0 rm -rf + local tar -x into tree/"]
+    mark -->|"no readable manifest / missing tree"| full["full materialize: archive of the whole\nmanifest set, extracted into a cleared tree/\n(first run, cache clean, drift self-heal)"]
     delta --> archive["createSourceMirrorArchive\nhost tar builds the archive"]
     full --> archive
     archive -->|"tar ok"| publish
     archive -->|"per-entry skip:\nlocked or vanished path"| prune["prune every listed path the archive's\nown members lack from the manifest"] --> publish
     archive -->|"any other failure"| abort["abort the plan —\nnothing published"]
-    publish["atomic mv: manifest + origin\n(inside the exclusive flock)"] --> bwrap["folded into the run's own wsl.exe invocation\n{ <sync>; } || exit — ahead of bwrap,\nall under the shared reader flock"]
+    publish["atomic mv: manifest\n(inside the exclusive flock)"] --> bwrap["folded into the run's own wsl.exe invocation\n{ <sync>; } || exit — ahead of bwrap,\nall under the shared reader flock"]
 ```
 
 - **Manifest delta** — the planner walks the working tree on the host FS (posix relative path → type/size/mtimeMs/symlink target — rsync's classic quick-check signal; a symlink's signal is its _own_ lstat plus its link target, since the archive ships it as a link) and diffs it against the published manifest. The walk is synchronous, unconditional, and on the hot path deliberately: it _is_ the change detector, and off-threading it would add IPC without cutting wall time.
@@ -38,7 +39,7 @@ flowchart TB
 - **Excludes** — `node_modules` (supplied by the snapshot lower), `.git` (large, churns every commit, unread by dev-loop commands), `.claude/worktrees` (agent worktrees are whole sibling working trees nested inside the repo — each is its own virrun cwd with its own mirror entry, and before this exclude a real run's delta was tens of thousands of worktree paths dwarfing a few hundred real changes), and an active `environment` preset's prepare outputs (`.nuxt` — owned by the prepare layer; the host's platform-specific copy must stay out of the sandbox or it shadows the layer). Everything else is mirrored: **over-copy is correctness-safe, under-copy is a bug.** The walk's manifest is the single source of truth for the mirrored set — the archive carries exactly its paths, so the two sides agree by construction.
 - **Folded invocation** — a non-empty sync script rides the run's own `wsl.exe` invocation as a preamble ahead of bwrap, not a separate spawn. A failed sync prints the `WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER` line and exits before the sandbox starts; `createBwrapBackend` keys on that marker so the failure surfaces as a sync failure instead of masquerading as "bubblewrap failed to set up the sandbox" (no status block reaches stderr on this path). Never a stale mirror, never an `os` → native fallback. On success the sync is silent, so the child's streams stay byte-exact vs native for the differential/task-cache captures.
 - **Concurrency** — one per-mirror lock file, two sides. The whole mutation runs under the **exclusive** `flock`, so concurrent syncs serialize and a manifest is never published for a half-applied delta. Every run then holds the **shared** side for bwrap's whole duration, so a concurrent same-cwd sync waits for live readers to drain instead of tearing the source lower out from under a running sandbox — while concurrent clean-tree runs stay fully parallel. `flock -w` + `timeout` bound a stalled lock or ext4 volume (`SOURCE_MIRROR_TIMEOUT_SECONDS`) as pure hang guards — the bounded work is one local extract, not a cross-boundary copy — and the host `tar` spawn has its own bound (`SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS`); both fail loudly rather than corrupting a reader.
-- **Reaping** — `reapAbandonedSourceMirrors` sweeps entries whose `origin` points to a now-absent host path at os-backend startup; `reapStaleSourceMirrorTemps` unlinks staged temps whose host owner pid is dead. Both best-effort, off the critical path ([cache](/docs/virrun/cache)).
+- **Reaping** — `reapAbandonedSourceMirrors` sweeps entries whose `origin` points to a now-absent host path at os-backend startup, plus entries that aged out carrying no marker at all; `reapStaleSourceMirrorTemps` unlinks staged temps whose host owner pid is dead. Both best-effort, off the critical path ([cache](/docs/virrun/cache)).
 
 ## Key files
 

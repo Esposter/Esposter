@@ -7,7 +7,7 @@ import { getResult, noop } from "@esposter/shared";
 // ReapAbandonedSourceMirrors) — dirs the current run never touches, so their removal has no bearing on correctness
 // And must not block the command from starting. A `\\wsl.localhost` snapshot's rm -rf is the expensive case: a full
 // Node_modules / .nuxt closure torn down inside WSL, and during active dev every source edit strands a superseded
-// prepare layer that the next run would otherwise block on. spawnBackground runs it Linux-side off the 9p bridge,
+// Prepare layer that the next run would otherwise block on. spawnBackground runs it Linux-side off the 9p bridge,
 // Outliving this process. A plain win32/Linux path stays a synchronous removeSnapshotDirectory: local fs teardown is
 // Cheap, and keeping it synchronous keeps the sweep deterministic for tests and needs no extra process.
 //
