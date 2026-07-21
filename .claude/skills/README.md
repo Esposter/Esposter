@@ -33,12 +33,15 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 - `error-handling` — neverthrow `getResult`, tRPC guards, Azure Functions logging/retry.
 - `string-utils` — `normalizeString` / `sanitizeTextHtml` boundaries.
 - `zod` — schema conventions. **Shares its topic with `~/.claude/rules/zod.md`** — see "Skills vs global rules".
+- `vjsf` — form schemas rendered by Vjsf: `*Form` schemas, `layout` meta, ajv keywords, discriminated-union form quirks, options/context typing.
 
 ### Vue / frontend
 
 - `vue` — SFC semantics: macro/declaration order, template patterns, watch, refs, SSR guards.
-- `vue-component-patterns` — component _architecture_: granularity, generics, slots, co-location, emit naming, local copies.
-- `vue-composable-patterns` — composable _authoring_: `MaybeRefOrGetter`, resource lifecycle, pagination, search.
+- `vue-component-patterns` — component _authoring_: shell primitives, generics, slots, co-location, emit naming, local state init.
+- `vue-page-composition` — page/list _composition_: page decomposition, granularity, `v-for` list items, action items, singleton dialogs.
+- `vue-composable-patterns` — composable _authoring_: `MaybeRefOrGetter`, validation layers, resource lifecycle, async sequencing.
+- `pagination` — paginated lists: the cursor read pattern, `StyledWaypoint`, search-as-you-type, the offline IndexedDB cache.
 - `routing` — links/`:to`, `navigateTo`, route reads, route-synced tabs, `definePageMeta` `validate`/`key`.
 - `styling` / `unocss` — attributify styling usage vs. UnoCSS config.
 - `vuetify` — Vuetify 4 components, dialogs, selects, forms, lists.
@@ -46,7 +49,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 - `pinia` — store conventions.
 - `tiptap` / `grapesjs` / `vue-phaserjs` / `slash-commands` — feature-library integrations.
 
-The `vue` / `vue-component-patterns` / `vue-composable-patterns` boundary is **semantics vs architecture vs composables**: a rule about _how an SFC is written_ is `vue`; about _how components are decomposed_ is `vue-component-patterns`; about _a `use*` function_ is `vue-composable-patterns`. A rule that seems to fit two goes to the more specific one and the other links to it — never state it in both.
+The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-patterns` boundary is **semantics vs one component vs many components vs composables**: a rule about _how an SFC is written_ is `vue`; about _how a single component is built, typed and named_ is `vue-component-patterns`; about _how a page or list is assembled from components_ is `vue-page-composition`; about _a `use*` function_ is `vue-composable-patterns`. A rule that seems to fit two goes to the more specific one and the other links to it — never state it in both.
 
 ### Backend / data
 

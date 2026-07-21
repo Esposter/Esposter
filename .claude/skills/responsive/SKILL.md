@@ -65,4 +65,4 @@ Wrapping a button row to a second line is allowed **only** when the surface genu
 ## Related
 
 - Breakpoint composable naming (`useVDisplay`, never `import { useDisplay } from "vuetify"`) — see the `vuetify` skill.
-- Overflow-menu item shape (`Item`) and the composable + `v-for` pattern — see the `vue-component-patterns` skill.
+- Overflow-menu item shape (`Item`) and the composable + `v-for` pattern — see the `vue-page-composition` skill.

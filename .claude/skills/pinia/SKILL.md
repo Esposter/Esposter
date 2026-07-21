@@ -45,7 +45,7 @@ Singleton-dialog targets (`deletingId`, `editingColumnName`, `settingsRoomId`, �
 - `store/message/dialog.ts` → `useMessageDialogStore`; `store/post/dialog.ts` → `usePostDialogStore` (folder exists → `<folder>/dialog.ts`)
 - `store/message/roomCategoryDialog.ts` → `useRoomCategoryDialogStore`; `store/resource/sheet/rowDialog.ts` → `useRowDialogStore` (no feature folder → `<feature>Dialog.ts` beside the business store file)
 
-Targets are strings defaulting to `""` (never `undefined`), and components derive `v-model` from them via `useSingletonDialog`. Full pattern: the Singleton Dialogs section in the `vue-component-patterns` skill and `packages/app/content/docs/architecture/singleton-dialogs.md`.
+Targets are strings defaulting to `""` (never `undefined`), and components derive `v-model` from them via `useSingletonDialog`. Full pattern: the Singleton Dialogs section in the `vue-page-composition` skill and `packages/app/content/docs/architecture/singleton-dialogs.md`.
 
 ## Blade-Scoped Store State — the Owning Component Tears It Down
 

@@ -1,6 +1,6 @@
 ---
 name: styling
-description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, layout dimensions (no magic rem on regions; Vuetify grid, flex-1), full-page surface layout (v-sheet over bg-surface) and borders drawn exactly once, slash/fraction utilities, theme colours and text-info links, arbitrary values and CSS variables, abbreviated utilities (op-, b-, rd-), gap directionality, the parent owning spacing (gap/padding over child margins), rem over px, and style-block rules. Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
+description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, class only for scoped CSS refs / dynamic bindings / third-party selectors, layout dimensions (no magic rem on regions; Vuetify grid, flex-1), full-page surface layout (v-sheet over bg-surface) and borders drawn exactly once, slash/fraction utilities, theme colours and text-info links, state variants (hover:/focus-within:) instead of scoped &:hover blocks, arbitrary values and CSS variables, transition utilities, abbreviated utilities (op-, b-, rd-), gap directionality, the parent owning spacing (gap/padding over child margins), rem over px, and style-block rules. Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border.
 ---
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
@@ -85,6 +85,8 @@ Only when technically required:
 - **SVG classes** — e.g. `fclass1`, `a`, `b`
 - **`group`** — UnoCSS group variant token; must stay in `class` so descendant `group-hover:` variants work
 
+A scoped class (with `v-bind()` for reactive values) also stays correct where attributify cannot reach: structural pseudo-selectors (`:nth-child`, `:not()`, `:first-of-type`), `:deep()` rules, bare element/tag selectors, and non-colour reactive values (`transform`, `top`, `height`, `fill`, `animation`). Everything else — a class that only sets a theme colour, a hover colour, or arbitrary-value properties — is an attribute.
+
 ## What can be attributify (including Vuetify utilities)
 
 `presetAttributify()` is active in `uno.config.ts`, so ALL of these work as standalone attributify attributes:
@@ -114,37 +116,13 @@ When reading hyphenated theme colours from `useColorsStore()`, destructure quote
 const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore);
 ```
 
-## `v-bind(themeColor)` in CSS → attributify
+### State variants are utilities, not `&:hover` blocks
 
-When a scoped CSS class exists _only_ to set a Vuetify theme colour with `v-bind()`, convert to attributify and delete the class (also remove the `storeToRefs` destructure, and `useColorsStore()` if nothing else uses it):
+A colour that changes on hover/focus/disabled is a variant utility (`hover:text-primary-darken-1`, `focus-within:b-info`, `disabled:op-30`), never a scoped `&:hover` rule. Colons inside attribute names are valid in Vue templates — only a **leading** `:` triggers `v-bind`.
 
-```diff
-- <StyledCard class="card">
-+ <StyledCard bg-surface-opacity-80>
-
-- <style scoped lang="scss">
-- .card { background-color: v-bind(surfaceOpacityColor); }
-- </style>
+```html
+<NuxtInvisibleLink text-primary hover:text-primary-darken-1 transition-colors duration-[--transition-duration] />
 ```
-
-### Hover state → `hover:utility`
-
-`&:hover { color: v-bind(primary-darken-1); }` migrates to a standalone `hover:text-primary-darken-1`:
-
-```diff
-- <NuxtInvisibleLink class="author" ...>
-+ <NuxtInvisibleLink text-primary hover:text-primary-darken-1 transition-colors duration-[--transition-duration] ...>
-```
-
-Colons inside attribute names (`hover:text-primary-darken-1`) are valid in Vue templates — only a leading `:` triggers `v-bind`.
-
-**Do NOT convert** when `v-bind` appears in:
-
-- Structural pseudo-selectors: `:nth-of-type`, `:nth-child`, `:not()`, `:first-of-type`
-- `:deep()` rules
-- Complex shorthand properties with non-colour reactive values (`animation: ... v-bind(dur)`, `transform: ... v-bind(x)`)
-- Non-colour reactive values (`transform`, `top`, `left`, `height`, `fill`, `stroke`)
-- Element/tag selectors (`p`, `a`, `ul`, `li`)
 
 ## `!important` Variant
 
@@ -157,23 +135,13 @@ Append `!` inside the attribute value to generate `!important`. Use only when ov
 
 ## `field-sizing-content`
 
-Replaces `field-sizing: content` in scoped CSS — use directly as an attribute on `<input>` / `<textarea>`:
-
-```diff
-- <input class="input" ... />
-+ <input field-sizing-content ... />
-
-- <style scoped>
-- .input { field-sizing: content; }
-- </style>
-```
+`field-sizing: content` is an attributify utility — put `field-sizing-content` directly on the `<input>` / `<textarea>`, never in a scoped class.
 
 ## Arbitrary CSS Values
 
 Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and CSS variable references — directly as props:
 
 ```html
-<!-- Instead of scoped .sidebar { top: calc(1rem + var(--app-bar-height)) } -->
 <UserSideBar sticky top="[calc(1rem+--app-bar-height)]" />
 <div h="[calc(100dvh_-_--app-bar-height)]" overflow-y-auto />
 <div bg="[#f0f0f0]" />
@@ -196,18 +164,17 @@ Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` no
 
 `var()` inside brackets is not an error — it's the natural form for composite values like `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`. Just prefer the shorthand for the simple single-variable case.
 
-Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is. When converting a scoped class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
+Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is.
 
-## Transition Splitting
+## Transitions
 
-Split the CSS `transition` shorthand into separate UnoCSS attributes — one for property, one for duration:
+The CSS `transition` shorthand is written as separate UnoCSS attributes — one for property, one for duration:
 
 ```html
 <!-- Single property + CSS-variable duration -->
-<NuxtInvisibleLink transition-colors duration-[--transition-duration] ...>
-  <!-- Multi-property with same static duration: single arbitrary value -->
-  <button transition="[box-shadow_0.2s,transform_0.2s]" ...></button
-></NuxtInvisibleLink>
+<NuxtInvisibleLink transition-colors duration-[--transition-duration] />
+<!-- Multi-property with the same static duration: single arbitrary value -->
+<button transition="[box-shadow_0.2s,transform_0.2s]" />
 ```
 
 Rules:
@@ -257,20 +224,7 @@ Always use UnoCSS abbreviated shorthand forms — they are first-class utilities
 </div>
 ```
 
-**`custom-border` / `border-color` scoped-class pattern → attributify:**
-
-```diff
-- <div class="custom-border" ...>
-+ <div b-solid b-1 b-text ...>
-
-- <style scoped>
-- .custom-border { border: var(--border-width) var(--border-style) v-bind(text); }
-- </style>
-```
-
-`--border-width: thin` = 1px → `b-1`. `--border-style: solid` → `b-solid` (explicit, not automatic). The theme colour becomes the `b-*` suffix.
-
-**BEM border class with focus/error variants** — when error and focus-within are mutually exclusive, put both colours in the `:class` conditional so only the active state's colour class is present, and keep the theme colour as a `b-*` utility rather than a raw rgba arbitrary value. Shipped example: `Message/Model/Message/Input/SlashCommandParameters/Chip.vue` (no `<style>` block at all):
+**State-dependent border colour** — when error and focus-within are mutually exclusive, put both colours in the `:class` conditional so only the active state's colour class is present, and keep the theme colour as a `b-*` utility rather than a raw rgba arbitrary value:
 
 ```vue
 <div

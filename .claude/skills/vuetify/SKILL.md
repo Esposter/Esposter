@@ -272,7 +272,7 @@ The CSS custom-property form (`var(--border-width)`) is only acceptable when a s
 
 ## Keyboard Shortcut Components
 
-A button and its keyboard shortcut are one component — see the **vue-component-patterns** skill (Maximal Component Granularity).
+A button and its keyboard shortcut are one component — see the **vue-page-composition** skill (Maximal Component Granularity).
 
 ## Scrollspy Sub-Nav (Two-Level List + `useElementVisibility` + `useVGoTo`)
 
