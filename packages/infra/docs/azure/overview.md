@@ -1,76 +1,21 @@
 # Infrastructure Overview
 
-Pulumi currently has 116 tracked source files under `src/azure/resources/`. Both development and production resources are declared in one unified stack.
+Both development and production resources are declared in **one unified stack**, distinguished by the `dev-`/`prod-` prefix in each resource name ([naming conventions](./naming-conventions.md)). A handful of resources — the subscription owner role assignment and the policy assignment — are shared and carry no prefix.
 
-`pulumi stack` reports 118 total resources: 116 source-file resources plus two Pulumi meta-resources that require no TypeScript declarations — `pulumi:pulumi:Stack` (the stack record itself) and `pulumi:providers:azure-native` (the provider instance). Both are auto-managed by Pulumi.
+`pulumi stack` reports two resources more than there are source files: `pulumi:pulumi:Stack` (the stack record) and `pulumi:providers:azure-native` (the provider instance). Both are auto-managed and need no TypeScript declaration, so a mismatch of exactly two is expected rather than drift.
 
-## Summary By Environment
-
-| Environment           | Scope                                               | Resource Count |
-| --------------------- | --------------------------------------------------- | -------------: |
-| Development           | `dev-*` Azure resources and their role assignments  |             57 |
-| Production            | `prod-*` Azure resources and their role assignments |             57 |
-| Shared / Subscription | owner, policy                                       |              2 |
-
-## Summary By Asset Type
-
-| Asset Type                     | Count |
-| ------------------------------ | ----: |
-| API connection                 |     8 |
-| App Service plan               |     2 |
-| Application Insights           |     2 |
-| Azure AI Search                |     2 |
-| Azure Monitor action group     |     6 |
-| Budget                         |     4 |
-| Event Grid system topic        |     2 |
-| Event Grid topic               |     2 |
-| Event Grid topic subscription  |    12 |
-| Function app                   |     2 |
-| Log Analytics workspace        |     2 |
-| Logic app                      |     8 |
-| Logic Apps Management solution |     2 |
-| Policy assignment              |     1 |
-| Resource group                 |     2 |
-| Role assignment                |    25 |
-| Scheduled query rule           |     6 |
-| Service Bus namespace          |     2 |
-| Service Bus queue              |     4 |
-| Smart Detector Alert Rule      |    12 |
-| Storage account                |     2 |
-| Storage blob container         |     2 |
-| Storage blob service           |     2 |
-| Storage lifecycle policy       |     2 |
-| Web PubSub                     |     2 |
+What each Azure service is actually used _for_ is in [azure services](/docs/architecture/azure-services); this page covers only how the declarations are laid out.
 
 ## Source Tree
 
-Resource files are grouped by Azure ARM provider namespace and resource type:
+One resource declaration per file, under the resource's own ARM provider namespace and type:
 
-| Azure ARM Type                                         | Source Folder                                                               |
-| ------------------------------------------------------ | --------------------------------------------------------------------------- |
-| `Microsoft.AlertsManagement/smartDetectorAlertRules`   | `src/azure/resources/Microsoft.AlertsManagement/smartDetectorAlertRules/`   |
-| `Microsoft.Authorization/policyAssignments`            | `src/azure/resources/Microsoft.Authorization/policyAssignments/`            |
-| `Microsoft.Authorization/roleAssignments`              | `src/azure/resources/Microsoft.Authorization/roleAssignments/`              |
-| `Microsoft.Consumption/budgets`                        | `src/azure/resources/Microsoft.Consumption/budgets/`                        |
-| `Microsoft.EventGrid/eventSubscriptions`               | `src/azure/resources/Microsoft.EventGrid/eventSubscriptions/`               |
-| `Microsoft.EventGrid/topics`                           | `src/azure/resources/Microsoft.EventGrid/topics/`                           |
-| `Microsoft.Insights/actionGroups`                      | `src/azure/resources/Microsoft.Insights/actionGroups/`                      |
-| `Microsoft.Insights/components`                        | `src/azure/resources/Microsoft.Insights/components/`                        |
-| `Microsoft.Logic/workflows`                            | `src/azure/resources/Microsoft.Logic/workflows/`                            |
-| `Microsoft.OperationalInsights/workspaces`             | `src/azure/resources/Microsoft.OperationalInsights/workspaces/`             |
-| `Microsoft.OperationsManagement/solutions`             | `src/azure/resources/Microsoft.OperationsManagement/solutions/`             |
-| `Microsoft.Resources/resourceGroups`                   | `src/azure/resources/Microsoft.Resources/resourceGroups/`                   |
-| `Microsoft.Search/searchServices`                      | `src/azure/resources/Microsoft.Search/searchServices/`                      |
-| `Microsoft.ServiceBus/namespaces`                      | `src/azure/resources/Microsoft.ServiceBus/namespaces/`                      |
-| `Microsoft.ServiceBus/namespaces/queues`               | `src/azure/resources/Microsoft.ServiceBus/namespaces/queues/`               |
-| `Microsoft.SignalRService/webPubSub`                   | `src/azure/resources/Microsoft.SignalRService/webPubSub/`                   |
-| `Microsoft.Storage/storageAccounts`                    | `src/azure/resources/Microsoft.Storage/storageAccounts/`                    |
-| `Microsoft.Storage/storageAccounts/blobServices`       | `src/azure/resources/Microsoft.Storage/storageAccounts/blobServices/`       |
-| `Microsoft.Storage/storageAccounts/managementPolicies` | `src/azure/resources/Microsoft.Storage/storageAccounts/managementPolicies/` |
-| `Microsoft.Web/connections`                            | `src/azure/resources/Microsoft.Web/connections/`                            |
-| `Microsoft.Web/serverFarms`                            | `src/azure/resources/Microsoft.Web/serverFarms/`                            |
-| `Microsoft.Web/sites`                                  | `src/azure/resources/Microsoft.Web/sites/`                                  |
+```
+src/azure/resources/<Microsoft.Provider>/<resourceType>/<resourceName>.ts
+```
+
+The path is the ARM type verbatim, so a new resource type needs no registration anywhere — create the folder that matches its type. To see which types are currently declared, list the tree.
 
 ## Protection
 
-Imported resources keep `protect: true`. Remove protection only as part of an explicit lifecycle change after a clean preview confirms Pulumi state and Azure reality match.
+Imported resources keep `protect: true`. Remove protection only as part of an explicit lifecycle change, after a clean preview confirms Pulumi state and Azure reality match.

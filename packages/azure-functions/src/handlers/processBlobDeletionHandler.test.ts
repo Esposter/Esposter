@@ -36,6 +36,7 @@ describe(processBlobDeletionHandler, () => {
     const containerClient = await getContainerClient(AzureContainer.MessageAssets);
     await containerClient.getBlockBlobClient(name).upload(content, content.length);
   };
+
   afterEach(() => {
     MockContainerDatabase.clear();
     vi.restoreAllMocks();
