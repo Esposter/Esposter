@@ -20,6 +20,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Serialization](/docs/architecture/serialization)                                         | How class instances survive the three transport paths (Azure Table, Nuxt payload, tRPC)  |
 | [Client data access](/docs/architecture/client-data)                                      | The useQuery + useMutation primitives — non-blocking fetch, optimistic apply, staleness  |
 | [Persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only) | No legacy-shape schemas or migration code — parse the latest shape or reset              |
+| [Content token rewriting](/docs/architecture/content-token-rewriting)                     | Finding tokens in authored content — self-delimiting matches, one pass, converge on read |
 | [Monorepo tooling](/docs/architecture/monorepo-tooling)                                   | pnpm workspace orchestration, virrun routing, publishing, installs, and CI job shape     |
 | [Server testing](/docs/architecture/server-testing)                                       | tRPC router test wiring — in-memory DB, mocked Azure services, controlled auth session   |
 | [Destructive confirmation](/docs/architecture/destructive-confirmation)                   | One shared delete dialog — StyledDeleteFormDialog + opt-in type-the-name guard           |

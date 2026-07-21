@@ -1,6 +1,6 @@
 ---
 name: string-utils
-description: Esposter string normalization and HTML sanitization conventions — normalizeString is the default trim in app code and in base Zod schemas (never in Vue — the vue skill owns that); sanitizeTextHtml is declared at the Zod boundary in base db-schema schemas (never manual frontend calls). Exceptions — user-facing transformation actions, standalone packages, and localStorage drafts.
+description: Esposter string normalization and HTML sanitization conventions — normalizeString is the default trim in app code and in base Zod schemas (never in Vue — the vue skill owns that); sanitizeTextHtml is declared at the Zod boundary in base db-schema schemas (never manual frontend calls). Exceptions — user-facing transformation actions, standalone packages, and localStorage drafts. Also covers matching or rewriting a token inside authored content (urls, merge fields, blueprint aliases).
 ---
 
 # String Normalization
@@ -63,6 +63,14 @@ Base select schemas normalize so server validation matches client input. Always 
 topic: (schema) => createNormalizedStringSchema(ROOM_TOPIC_MAX_LENGTH, schema),
 nickname: (schema) => createNormalizedStringSchema(NICKNAME_MAX_LENGTH, schema),
 ```
+
+## Matching a Token Inside Authored Content
+
+Before writing or widening any regex that finds something inside content a user authored (a blob url, a `{{variable}}`, a blueprint alias), read [/docs/architecture/content-token-rewriting](/docs/architecture/content-token-rewriting) — it is canonical. The three rules that get broken:
+
+- **Never define the match as a negated charset** (`[^"'()<>\s\\]*`) — "everything except the delimiters I thought of" is a guess at a set that is never closed. Either the token carries its own delimiters (`{{…}}`), or anchor the match on the delimiter that opened it via lookbehind, so each context permits the characters the others reserve.
+- **One pass keyed by a `Map`, never a per-token regex loop** over the whole document — a loop lets a token consume a longer token it is a prefix of, and scales cost with tokens × content size.
+- **Widen the reader, don't backfill**, when a token's canonical form changes: content is rewritten on every read, so it converges on its own.
 
 ## HTML Sanitization at the Zod Boundary
 
