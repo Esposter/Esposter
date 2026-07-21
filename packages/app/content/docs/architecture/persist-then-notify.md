@@ -58,6 +58,10 @@ Both reduce to the same sentence: after the persist, the only honest thing a fai
 
 Idempotent post-write steps are the one place a rethrow is admissible — a step that can rerun without duplicating anything loses nothing by being retried. Handlers declare this explicitly rather than by inference (`IsIdempotentAzureFunctionMap`), and everything not on that list is best-effort.
 
+## Enforcement
+
+The tail half is lint-enforced, not left to review. A custom oxlint JS plugin (`scripts/oxlint/persistThenNotify.ts`, scoped to `packages/app/server` in `.oxlintrc.json`) errors on any `await` that follows a `*EventEmitter.emit(...)` in the same function unless it never rejects — a `getResultAsync`/`withFinalizer*` chain, an internally-best-effort helper like `createSystemRoomMessage`, or a `Promise` combinator over a fan-out of those. It runs in oxlint's single root pass because the check is purely syntactic. What it deliberately can't see is the rarer _gap_ — a fatal `await` sitting **before** the emit — since there's no syntactic marker for "the primary write"; that half stays a review concern, kept small by firing the emit the instant the entity exists.
+
 ## Where a failure surfaces
 
 Server-side (tRPC routers, services, Nitro routes) the terminal handler is `console.error`, via `.orTee(console.error)`. Azure Functions log through their `InvocationContext` instead, so the message is attached to the invocation an operator can find. Neither ever swallows silently — a best-effort effect is one whose failure doesn't fail the caller, not one nobody hears about.

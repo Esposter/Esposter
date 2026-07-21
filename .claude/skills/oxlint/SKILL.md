@@ -46,6 +46,15 @@ pnpm dlx oxlint --disable-nested-config --report-unused-disable-directives
 eslint . --report-unused-disable-directives
 ```
 
+## Custom JS plugins
+
+The repo authors its own oxlint rules as **JS plugins** (`jsPlugins` in `.oxlintrc.json`) — for repo-specific conventions no off-the-shelf rule covers. Only viable for **purely syntactic** rules: oxlint JS plugins get no type information (type-aware linting goes through Rust/tsgolint, which can't run JS rules), so anything needing the type checker (e.g. `neverthrow/must-use-result`) stays on ESLint.
+
+- Plugin files live in `packages/configuration/oxlint/`, one rule-set per file, ESLint-compatible shape (`export default { meta: { name }, rules: { "<rule>": { create(context) {...} } } }`). Reference them by path in the root `jsPlugins` array; enable the rule under `rules` (or a scoped `overrides` entry) as `<meta.name>/<rule>`.
+- **Scope with `overrides`** when a rule only applies to part of the tree — e.g. `persistThenNotify.js` (the [persist-then-notify](/docs/architecture/persist-then-notify) enforcer) is scoped to `packages/app/server/**/*.ts`, because an `EventEmitter.emit` only means "realtime notify" in server mutations; client emitters (the Phaser game bus) are unrelated. `overrides` objects reject unknown keys — no `"//"` comment field; document intent in the plugin file's header instead.
+- The plugin runs in oxlint's single root pass, so it's fast enough to stay always-on. **The JS plugin API is alpha and not subject to semver** — keep `oxlint` pinned and re-verify plugins after a bump.
+- Verify a new plugin empirically before wiring it in: run it over the whole repo to measure false positives, and plant a violation in a matching path to confirm it actually fires under the real config (a mis-scoped `files` glob or wrong rule name fails silently to zero hits).
+
 ## `typescript/method-signature-style` (oxlint)
 
 Interface method signatures must be property signatures:

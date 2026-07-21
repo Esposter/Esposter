@@ -8,9 +8,18 @@
     "suspicious": "error"
   },
   "ignorePatterns": [".claude", "public", "**/composables/visual/useFluidSimulator.ts"],
+  "jsPlugins": ["./scripts/oxlint/persistThenNotify.ts"],
   "options": {
     "typeAware": true
   },
+  "overrides": [
+    {
+      "files": ["packages/app/server/**/*.ts"],
+      "rules": {
+        "persist-then-notify/no-unhandled-effect-after-emit": "error"
+      }
+    }
+  ],
   "plugins": ["import", "oxc", "typescript", "unicorn", "vue"],
   "rules": {
     "curly": ["error", "multi"],

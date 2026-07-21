@@ -23,24 +23,27 @@ export const leaveCallAsParticipant = async (
 
   if (callSessionParticipantMap.has(callSessionId)) return true;
 
-  const callSession = await db.query.callSessionsInMessage.findFirst({
-    columns: { roomId: true },
-    where: { id: { eq: callSessionId } },
-  });
   const callStart = callStartTimeMap.get(callSessionId);
   callStartTimeMap.delete(callSessionId);
-  if (!callSession?.roomId) return true;
-
-  const callDurationSeconds = callStart ? Math.round(dayjs.duration(Date.now() - callStart.getTime()).asSeconds()) : 0;
-  const { roomId } = callSession;
+  // Best-effort after the leaveCall notify — the call-summary read and write are the last participant's
+  // Bookkeeping, so a failed lookup or write loses the summary message, never the leave that already happened
   await getResultAsync(async () => {
+    const callSession = await db.query.callSessionsInMessage.findFirst({
+      columns: { roomId: true },
+      where: { id: { eq: callSessionId } },
+    });
+    if (!callSession?.roomId) return;
+
+    const callDurationSeconds = callStart
+      ? Math.round(dayjs.duration(Date.now() - callStart.getTime()).asSeconds())
+      : 0;
     const [messageClient, messageAscendingClient] = await Promise.all([
       useTableClient(AzureTable.Messages),
       useTableClient(AzureTable.MessagesAscending),
     ]);
     const systemMessage = await createMessage(messageClient, messageAscendingClient, {
       message: String(callDurationSeconds),
-      roomId,
+      roomId: callSession.roomId,
       type: MessageType.Call,
       userId,
     });
