@@ -29,9 +29,36 @@ flowchart LR
 - **Upload** — the standard two-step SAS flow ([/docs/architecture/file-uploads](/docs/architecture/file-uploads)): the server signs a PUT target scoped to one blob path, the client uploads directly to Azure Blob, then asks for a read URL. `useUploadResourceFile(type, id)` owns that round-trip once for every consumer.
 - **GrapesJS wiring** — `useGrapesJsEditor` takes an optional asset adapter. With one, the Asset Manager's `uploadFile` handler runs the SAS round-trip and registers the returned URL. Without one, GrapesJS falls back to embedding dropped images as base64 — which bloats every save and is stripped by major email clients, so both editors pass an adapter.
 - **Publish and reads** — every adopter shares the generic blob-url transforms ([/docs/architecture/publishing](/docs/architecture/publishing)): `transformPublishedBlobUrls` clones referenced asset blobs into the publish directory and rewrites their URLs, so a published snapshot survives the owner replacing the working-copy asset, and `transformReadBlobUrls` re-signs the urls on every owner and public read, so neither the editor nor a published page ever serves an expired SAS.
-- **Canonical urls, one grammar** — blob names carry the uploaded filename verbatim, and Azure signs urls with `encodeURIComponent`, which leaves `!'()*` literal — exactly the characters that also delimit a url inside content (`url('…')`, `url(…)`) and that appear unescaped in a download SAS's `rscd`. No matcher charset can satisfy both readings, so every url is canonicalized on the way out by `encodeBlobUrl` (percent-encoding those five; transparent to Azure, which decodes before validating `sig`). The search regex can then terminate unambiguously on `" ' ( ) < > \` and whitespace, and one regex is correct for HTML attributes, both css `url()` forms, and JSON-serialized content alike. A string that does not match is left untouched — never rewritten, never an error.
-- **Encoded in, decoded once** — `extractBlobUrls` returns each url percent-encoded exactly as the content carries it, because every consumer searches the content for it verbatim (`replaceAll` in `useUpdateBlobUrls`, the copy source in `cloneBlobUrls`). Decoding is the _blob name's_ business: a name is the decoded path suffix of a url, while the url itself stays encoded wherever it is matched or fetched. Never decode before the search, and never search with a decoded url.
+- **Canonical urls, one grammar** — see [finding a url in content](#finding-a-url-in-content) below; the matcher is the part of this capability that has drawn the most redundant review, so its decisions are recorded in full there.
+- **Encoded in, decoded once** — `extractBlobUrls` returns each url percent-encoded exactly as the content carries it, because every consumer searches the content for it verbatim (the `replaceAll` in `useUpdateBlobUrls`, the copy source in `cloneBlobUrls`). Decoding is the _blob name's_ business: a name is the decoded path suffix of a url, while the url itself stays encoded wherever it is matched or fetched. Never decode before the search, and never search with a decoded url.
 - **Delete** — `deleteResource` already removes the whole `{id}/` directory, so assets need no separate teardown. `deleteFile` exists for removing one asset while the resource lives on (SurveyJS deleting an image question).
+
+## Finding a url in content
+
+Blob names carry the uploaded filename verbatim, and Azure signs urls with `encodeURIComponent`, which leaves `!'()*` literal — exactly the characters that also delimit a url inside content (`url('…')`, `url(…)`) and that appear unescaped in a download SAS's `rscd`. Every url handed out is therefore canonicalized by `encodeBlobUrl` (percent-encoding those five; transparent to Azure, which decodes before validating `sig`).
+
+Canonicalization alone does not decide where a url **ends**, because content persisted before it existed still carries the literal characters. The matcher is anchored on the **opening delimiter** instead, which makes the terminator known rather than guessed:
+
+```mermaid
+flowchart TD
+  C["serialized content"] --> O{"character opening the url"}
+  O -->|"double quote"| DQ["url may contain ' ( ) — ends at the quote"]
+  O -->|"single quote"| SQ["url may contain \" ( ) — ends at the quote"]
+  O -->|"paren — unquoted css url()"| P["url ends at the closing paren"]
+  O -->|"none — start, whitespace, unquoted attribute ="| N["conservative: ends at any delimiter"]
+  DQ --> M["whole url matched"]
+  SQ --> M
+  P --> M
+  N --> M
+```
+
+Consequences, all deliberate:
+
+- **No backfill migration.** A url signed before canonicalization is matched whole by the delimiter that opened it, so it resolves to the right blob name and is rewritten to a canonical url on the next read. Content converges as it is read; a migration over stored content blobs would buy nothing.
+- **One matcher, one pass.** `useUpdateBlobUrls` rewrites with a single `replaceAll` over that matcher, driven by a `Map` from url to freshly signed url. Per-url regexes are what let a url consume a longer url it is a prefix of (`logo.png` inside `logo.png.webp`), and made the rewrite cost scale with assets × document size. Never reintroduce a per-url search.
+- **The un-anchored reading stays conservative.** A url opened by nothing keeps the narrow charset that terminates on every delimiter, because nothing narrows it. `srcset` lists and other space-separated positions fall here.
+- **Known limit, accepted.** A pre-canonicalization url containing a literal `)` inside an _unquoted_ `url(…)` is genuinely ambiguous and truncates at that paren. CSS requires those parens escaped, so such a declaration was already broken in the browser before it reached us.
+- **A url that names no blob is skipped, not an error.** Owner-authored content can carry a hand-written url with invalid percent escapes (`100%off.png`); `getBlobNameFromUrl` returns `undefined` and both `cloneBlobUrls` and `useUpdateBlobUrls` skip it, so one bad url never fails the save or publish of every other asset. The published snapshot then keeps that url pointing at the working-copy path — accepted, because no upload can produce an undecodable url (the SDK percent-encodes the blob name), so the url names no blob under either path and there is nothing to clone.
 
 ## Procedures
 

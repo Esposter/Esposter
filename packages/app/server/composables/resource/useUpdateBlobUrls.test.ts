@@ -46,6 +46,26 @@ describe(useUpdateBlobUrls, () => {
     );
   });
 
+  test("should re-sign a legacy url whose path was signed before urls were canonicalized", async () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/1/photo%20(1).png?sig=a%2Fb`;
+
+    await expect(useUpdateBlobUrls(`<img src="${url}">`)).resolves.toBe(
+      `<img src="${getReadSasUrl("1/photo (1).png")}">`,
+    );
+  });
+
+  test("should re-sign a url and the longer url it is a prefix of independently", async () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/1/logo.png`;
+
+    await expect(useUpdateBlobUrls(`<img src="${url}"><img src="${url}.webp">`)).resolves.toBe(
+      `<img src="${getReadSasUrl("1/logo.png")}"><img src="${getReadSasUrl("1/logo.png.webp")}">`,
+    );
+  });
+
   test("should re-sign the valid urls when another url has an invalid percent escape", async () => {
     expect.hasAssertions();
 
