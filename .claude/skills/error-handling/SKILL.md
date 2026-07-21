@@ -159,7 +159,7 @@ const updated = requireMutation(
 
 Handlers receive an `InvocationContext`. Log through it — `context.error(...)` / `context.log(...)`, never `console.*`. When a service needs to log, `context` is its **first** parameter (`sendPushNotification`, `sendWebPushNotifications`, `createAndBroadcastMessage`).
 
-EventGrid delivery is **at-least-once**: a handler that throws is redelivered. So in a handler a throw is a _retry request_, not just an error — split every handler into a fatal path (rethrow → retry) and a best-effort path (log only).
+Which steps may fail the caller is the repo-wide **persist then notify** standard (`/docs/architecture/persist-then-notify`) — guards and the primary write are fatal, everything after the notify is best-effort. A handler adds one mechanic on top: EventGrid delivery is at-least-once, so here a throw is a _retry request_, and the two phases get different loggers.
 
 ### Fatal path — rethrow to trigger retry
 
@@ -173,9 +173,9 @@ return getResultAsync(async () => {
 }).match(noop, logAndRethrow(context, AzureFunction.ProcessWebhook));
 ```
 
-### Best-effort path — log, never rethrow
+### Best-effort path — log through `context`, never rethrow
 
-Side effects **after** the entity is persisted (realtime broadcast, push dispatch) must not rethrow — the row already exists with a fresh time-based `rowKey`, so replaying the event would create a **duplicate** message. Log and swallow:
+Rethrowing here asks for a redelivery that reruns the handler from the top, and a message's fresh time-based `rowKey` makes that rerun a **duplicate** rather than an overwrite. Log and swallow — through `context.error`, not `console.error`, so the failure is attached to the invocation:
 
 ```typescript
 await getResultAsync(() => webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage)).match(
@@ -186,7 +186,7 @@ await getResultAsync(() => webPubSubServiceClient.group(newMessage.partitionKey)
 );
 ```
 
-Canonical: `createAndBroadcastMessage` (broadcast) and `processWebhookHandler` (push dispatch) — both best-effort so a transient post-persist failure can't duplicate the message. The rule of thumb: everything before the persist is fatal/retryable; everything after it is best-effort.
+Canonical: `createAndBroadcastMessage` (broadcast) and `processWebhookHandler` (push dispatch).
 
 ### Past the retries — automatic replay, capped, then quarantined
 

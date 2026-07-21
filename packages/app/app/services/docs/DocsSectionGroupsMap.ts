@@ -13,6 +13,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "client-data",
       "persisted-data-latest-shape-only",
       "destructive-confirmation",
+      "persist-then-notify",
       "no-polling",
       "no-manual-recovery",
       "null-vs-undefined",
