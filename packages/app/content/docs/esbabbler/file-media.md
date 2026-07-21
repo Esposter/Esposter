@@ -49,6 +49,8 @@ Two columns on `rooms` (`packages/db-schema/src/schema/roomsInMessage.ts`):
 
 Removing an attachment (`deleteFile`), deleting a message with attachments, or deleting a whole room does not delete the blobs inline. Read SAS urls are signed for a year, so a delete that silently failed would leave the file downloadable long after it should be gone. Instead the mutation publishes a `ProcessBlobDeletion` Event Grid event carrying the blob names, and an idempotent Azure Function (`deleteIfExists` per blob) retries the delete to completion — through Event Grid's retries and, past those, the [dead-letter replay](/docs/infra/eventgrid-dead-letter). The publish itself stays best-effort after the primary write ([persist then notify](/docs/architecture/persist-then-notify)): a failed publish leaves an orphaned blob, never a failed delete for the user. A room deletion lists the room's blobs and splits them into one event per `MAX_BLOB_DELETION_EVENT_BLOB_NAMES` chunk, so the listing can never outgrow Event Grid's per-event size cap.
 
+**Every delete names the thumbnail too**, unconditionally — `{roomId}/{fileId}.thumb` sits in the same container as its original, so it rides the same event. There is no is-this-an-image check because there is no need for one: `deleteIfExists` makes naming a thumbnail that was never generated a no-op, and the alternative — deriving image-ness at delete time — is exactly how the thumbnail outlived its attachment before.
+
 ## Key files
 
 | File                                                                                 | Role                                                        |
