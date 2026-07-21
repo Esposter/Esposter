@@ -249,6 +249,9 @@ export const baseMessageRouter = router({
       const results = await Promise.allSettled(
         roomIds.map(async (roomId) => {
           await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, message);
+          // A forward is a send like any other, so it advances the slowmode clock it was just checked against —
+          // With the guards, before the write, so it can never fail open behind an already-persisted forward
+          await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, { lastMessageAt: new Date(), roomId });
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
             // oxlint-disable-next-line typescript/no-misused-spread
@@ -272,9 +275,6 @@ export const baseMessageRouter = router({
             });
             messages.push(newMessageEntity);
           }
-          // A forward is a send like any other, so it has to advance the slowmode clock it was just checked
-          // Against — otherwise the same stale lastMessageAt keeps passing and slowmode never applies here
-          await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, { lastMessageAt: new Date(), roomId });
           // Forwarding needs no isLoading effect, so let the subscription auto-add the message.
           messageEventEmitter.emit("createMessage", [
             messages,

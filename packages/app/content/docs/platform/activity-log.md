@@ -11,7 +11,7 @@ Every resource has an **Activity** blade: created, renamed, saved, published, un
 
 A publish or a rename used to leave no trace. Activity events are message-shaped — high write volume, time-ordered, no joins — so per the storage split they belong in Azure Table Storage. No Postgres migration, no new Azure service.
 
-Events are emitted inside the `createResourceProcedures` mutations **after** the primary write, and they are best-effort: the resource is already saved, so a failed activity write logs and never fails the user's mutation. Losing an audit line is bad; losing someone's save because an audit line failed is worse.
+Events are emitted inside the `createResourceProcedures` mutations, in the best-effort tail after the primary write ([persist then notify](/docs/architecture/persist-then-notify)). Losing an audit line is bad; losing someone's save because an audit line failed is worse.
 
 `ContentSaved` is coalesced, or autosave would flood the partition with one entry per keystroke burst. The rule is "this user already has a `ContentSaved` inside the last hour" — an existence question, asked with a filter, rather than an inspection of the newest entry. Phrasing it that way makes the answer independent of the order entities come back in.
 

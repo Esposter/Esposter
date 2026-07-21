@@ -16,16 +16,9 @@ import { assertCanCreateMessage } from "@@/server/services/message/moderation/as
 import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
 import { notifyThreadReplyFollowers } from "@@/server/services/message/thread/notifyThreadReplyFollowers";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { createMessage, getPushSubscriptionsForMessage, incrementMentionCounts } from "@esposter/db";
-import {
-  AzureFunction,
-  AzureTable,
-  createEventGridEvent,
-  DatabaseEntityType,
-  roomsInMessage,
-} from "@esposter/db-schema";
-import { getResultAsync, noop, Operation } from "@esposter/shared";
+import { AzureFunction, AzureTable, createEventGridEvent, roomsInMessage } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 export const createUserMessage = async (
@@ -34,16 +27,19 @@ export const createUserMessage = async (
   input: StandardCreateMessageInput,
 ): Promise<MessageEntity> => {
   await assertCanCreateMessage(db, user.id, input.roomId, input.message);
-  const messageClient = await useTableClient(AzureTable.Messages);
-  const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
   const now = new Date();
-  const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
-    ...input,
-    userId: user.id,
-  });
+  // The slowmode clock is what the NEXT send is checked against, so it advances with the guards rather than
+  // After the write: a failed update behind a successful write leaves a stale lastMessageAt that keeps passing
+  // And slowmode silently stops applying, while advancing first can only cost one window on a write that throws
   await updateUserToRoom(db, user.id, {
     lastMessageAt: now,
     roomId: input.roomId,
+  });
+  const messageClient = await useTableClient(AzureTable.Messages);
+  const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+  const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
+    ...input,
+    userId: user.id,
   });
   messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: session.id }]);
 
@@ -109,12 +105,16 @@ export const createUserMessage = async (
     ).match(noop, console.error);
   }
 
-  const updatedRoom = requireMutation(
-    (await db.update(roomsInMessage).set({ updatedAt: now }).where(eq(roomsInMessage.id, input.roomId)).returning())[0],
-    Operation.Update,
-    DatabaseEntityType.Room,
-    input.roomId,
-  );
-  roomEventEmitter.emit("updateRoom", updatedRoom);
+  // Best-effort after the Table write — a failed touch leaves the room list sorted one send behind until the
+  // Next one lands, never costs the message that already landed
+  const updatedRoom = await getResultAsync(
+    async () =>
+      (
+        await db.update(roomsInMessage).set({ updatedAt: now }).where(eq(roomsInMessage.id, input.roomId)).returning()
+      )[0],
+  )
+    .orTee(console.error)
+    .unwrapOr(undefined);
+  if (updatedRoom) roomEventEmitter.emit("updateRoom", updatedRoom);
   return newMessageEntity;
 };

@@ -22,7 +22,7 @@ flowchart TD
   B["thread header bell toggle"] --> FT["followThread / unfollowThread"]
 ```
 
-Auto-follow and the follower notification both run after the reply has persisted and are best-effort — a follow or push failure never fails the reply that already landed (the same rule as the [message push path](/docs/esbabbler/push-notifications)). The notification's recipient set is recomputed inside the Azure Function, so it always reflects the live follower list.
+Auto-follow and the follower notification both sit in the reply's best-effort tail ([persist then notify](/docs/architecture/persist-then-notify)), so a lost follow costs one subscription and a lost push costs one notification. The notification's recipient set is recomputed inside the Azure Function, so it always reflects the live follower list.
 
 ## Data model
 
