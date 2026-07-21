@@ -1,19 +1,20 @@
-import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
-import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
 import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
 import { readWslExecNodeVersion } from "@/services/exec/wsl/readWslExecNodeVersion";
-import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
+import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnvironment";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/exec/wsl/readWslExecNodeVersion"), () => ({ readWslExecNodeVersion: vi.fn(() => "") }));
+vi.mock(import("@/services/exec/wsl/readWslExecNodeVersion"), () => ({
+  readWslExecNodeVersion: vi.fn<typeof readWslExecNodeVersion>(() => ""),
+}));
+vi.mock(import("@/services/exec/wsl/readWslLoginEnvironment"), () => ({
+  readWslLoginEnvironment: vi.fn<typeof readWslLoginEnvironment>(() => ({ nodeVersion: "", path: "" })),
+}));
 
 const setPlatform = (value: string) => {
   Object.defineProperty(process, "platform", { configurable: true, value });
 };
 
 describe(getSandboxNodeVersion, () => {
-  setupTemporaryCacheHome();
   const nodeVersion = "v26.5.0";
   const { platform } = process;
 
@@ -25,20 +26,18 @@ describe(getSandboxNodeVersion, () => {
     expect.hasAssertions();
 
     setPlatform("win32");
-    writeWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, {
-      key: getHostFingerprint(),
-      value: { nodeVersion, path: "/usr/bin" },
-    });
+    vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({ nodeVersion, path: "/usr/bin" });
 
     expect(getSandboxNodeVersion()).toBe(nodeVersion);
   });
 
-  test("probes the guest's default-PATH node on win32 when no capture has been persisted yet", () => {
+  test("probes the guest's default-PATH node on win32 when the capture yields no PATH to inject", () => {
     expect.hasAssertions();
 
-    // The degraded run injects no PATH, so it runs whatever node `wsl.exe --exec` resolves — never this process's
-    // Windows node, which would key an installed node_modules under a major the sandbox does not run.
+    // The degraded run injects no PATH, so it runs whatever node `wsl.exe --exec` resolves — never the capture's node,
+    // Which would key an installed node_modules under a major the sandbox does not run.
     setPlatform("win32");
+    vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({ nodeVersion: "v27.0.0", path: "" });
     vi.mocked(readWslExecNodeVersion).mockReturnValueOnce(nodeVersion);
 
     expect(getSandboxNodeVersion()).toBe(nodeVersion);

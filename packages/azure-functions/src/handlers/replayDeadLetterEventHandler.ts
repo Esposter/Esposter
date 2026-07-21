@@ -1,9 +1,11 @@
 import type { EventGridHandler } from "@azure/functions";
 
 import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "@/services/constants";
+import { deleteReplayedBlob } from "@/services/deleteReplayedBlob";
 import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { formatReplayId } from "@/services/formatReplayId";
 import { getContainerClient } from "@/services/getContainerClient";
+import { getIsReplayable } from "@/services/getIsReplayable";
 import { logAndRethrow } from "@/services/logAndRethrow";
 import { parseReplayId } from "@/services/parseReplayId";
 import { writeDeadLetterBlob } from "@/services/writeDeadLetterBlob";
@@ -34,6 +36,10 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     const blobName = event.subject.slice(DEAD_LETTER_BLOB_SUBJECT_PREFIX.length);
     const containerClient = await getContainerClient(AzureContainer.DeadLetter);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    // Delivery is at-least-once, and every terminal path here deletes the blob it just handled, so a redelivered
+    // Event finds nothing left to replay. That is a completed replay, not a failure: downloading it anyway would 404
+    // Into logAndRethrow and spend all ten delivery attempts logging errors for work that already succeeded.
+    if (!(await blockBlobClient.exists())) return;
     const content = await blockBlobClient.downloadToBuffer();
     const events = getResult(() => deadLetteredEventsSchema.parse(JSON.parse(content.toString("utf8"))))
       .orTee((error) => {
@@ -47,20 +53,22 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Rather than republished — republishing a broken payload would just dead-letter it again.
     if (!events) {
       await writeDeadLetterBlob(containerClient, blobName, DEAD_LETTER_QUARANTINE_PREFIX, content);
-      await blockBlobClient.delete();
+      await deleteReplayedBlob(context, blockBlobClient, blobName);
       return;
     }
-    // Capped per event, not per blob: Event Grid batches whatever expired together, so one poison payload must not
+    // Judged per event, not per blob: Event Grid batches whatever expired together, so one poison payload must not
     // Strand the transient failures sharing its blob, and a blob-level count would be meaningless anyway once the
-    // Batch splits across cycles.
+    // Batch splits across cycles. GetIsReplayable owns both bars — the replay cap and handler idempotency.
     const replays = events.map((deadLetteredEvent) => {
       const { eventId, replayAttempts } = parseReplayId(deadLetteredEvent.id);
       return { deadLetteredEvent, eventId, replayAttempts };
     });
     const quarantinedReplays = replays.filter(
-      ({ replayAttempts }) => replayAttempts >= MAX_DEAD_LETTER_REPLAY_ATTEMPTS,
+      ({ deadLetteredEvent, replayAttempts }) => !getIsReplayable(deadLetteredEvent.eventType, replayAttempts),
     );
-    const replayableReplays = replays.filter(({ replayAttempts }) => replayAttempts < MAX_DEAD_LETTER_REPLAY_ATTEMPTS);
+    const replayableReplays = replays.filter(({ deadLetteredEvent, replayAttempts }) =>
+      getIsReplayable(deadLetteredEvent.eventType, replayAttempts),
+    );
     if (quarantinedReplays.length > 0) {
       await writeDeadLetterBlob(
         containerClient,
@@ -69,18 +77,19 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
         Buffer.from(JSON.stringify(quarantinedReplays.map(({ deadLetteredEvent }) => deadLetteredEvent))),
       );
       context.error(
-        `${AzureFunction.ReplayDeadLetterEvent} quarantined ${quarantinedReplays.length} of ${replays.length} events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times`,
+        `${AzureFunction.ReplayDeadLetterEvent} quarantined ${quarantinedReplays.length} of ${replays.length} events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
       );
     }
     // Nothing left to resend: the quarantine copy is the record of what arrived, so the original is simply dropped.
     if (replayableReplays.length === 0) {
-      await blockBlobClient.delete();
+      await deleteReplayedBlob(context, blockBlobClient, blobName);
       return;
     }
     // Each republish carries the incremented count on its id, which Event Grid writes back verbatim if this delivery
     // Dead-letters again — that is what makes the cap hold across cycles instead of restarting on every new blob.
     // Delivery is at-least-once: a send that throws mid-batch is retried whole by the redelivered blob event, so a
-    // Handler that already ran can run twice. Handlers are idempotent for exactly this reason.
+    // Handler that already ran can run twice. Only the handlers IsIdempotentAzureFunctionMap marks idempotent get
+    // Here for exactly that reason; the rest were quarantined above rather than duplicated.
     await eventGridPublisherClient.send(
       replayableReplays.map(
         ({ deadLetteredEvent: { data, dataVersion, eventType, subject }, eventId, replayAttempts }) => ({

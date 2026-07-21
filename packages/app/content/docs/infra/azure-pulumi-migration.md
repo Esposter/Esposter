@@ -34,7 +34,7 @@ What each provider namespace under `src/azure/resources/` holds:
 | `Microsoft.Insights`                                               | Application Insights components and action groups                                                                   |
 | `Microsoft.OperationalInsights` / `Microsoft.OperationsManagement` | Log Analytics workspaces and solutions                                                                              |
 | `Microsoft.AlertsManagement`                                       | Alert processing rules                                                                                              |
-| `Microsoft.Authorization`                                          | Least-privilege role assignments for managed identities                                                             |
+| `Microsoft.Authorization`                                          | Least-privilege role assignments for managed identities, and the subscription policy assignment                     |
 
 ## Key files
 
@@ -49,4 +49,5 @@ What each provider namespace under `src/azure/resources/` holds:
 ## Notes
 
 - App-plane settings were the last gap the import left open, and they are now closed: each Function App's runtime settings and App Insights wiring live in its `WebApp` declaration — see [Pulumi source of truth](/docs/infra/pulumi-source-of-truth).
+- The tag policy assignment was renamed onto the naming convention (`pa-require-application-tag` → `pa-esposter-001`), which is a replace, not an update. `protect: true` stays on the declaration, so the delete half needs one operator step first: `pulumi state unprotect "<old-urn>"`, then a single `pulumi up` deletes the old assignment and creates the renamed one. Without it the update aborts on the protected resource and nothing else in the plan lands either.
 - The import-era scaffolding (the `packages/infra/data/` CSV asset inventory and the `buildAzureImportManifest` generator) has been deleted now that the import is done — `packages/infra/data/` holds only the `messages-index` search index definition.

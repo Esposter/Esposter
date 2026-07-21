@@ -1,5 +1,5 @@
-import type { EventGridEventInput } from "@esposter/db-schema";
 import type { EventGridEvent } from "@azure/functions";
+import type { EventGridEventInput } from "@esposter/db-schema";
 
 import { replayDeadLetterEventHandler } from "@/handlers/replayDeadLetterEventHandler";
 import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "@/services/constants";
@@ -32,14 +32,14 @@ describe(replayDeadLetterEventHandler, () => {
   const blobName = "";
   const data = "data";
   const dataVersion = "1.0";
-  const eventType = "eventType";
+  const eventType = AzureFunction.ProcessPushNotification;
   const subject = "subject";
   const eventId = crypto.randomUUID();
   const secondEventId = crypto.randomUUID();
-  const createDeadLetteredEvent = (id: string): EventGridEventInput<unknown> => ({
+  const createDeadLetteredEvent = (id: string, type: AzureFunction = eventType): EventGridEventInput<unknown> => ({
     data,
     dataVersion,
-    eventType,
+    eventType: type,
     id,
     subject,
   });
@@ -105,7 +105,7 @@ describe(replayDeadLetterEventHandler, () => {
       [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify(cappedEvents),
     });
     expect(errorSpy).toHaveBeenCalledExactlyOnceWith(
-      `${AzureFunction.ReplayDeadLetterEvent} quarantined 2 of 2 events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times`,
+      `${AzureFunction.ReplayDeadLetterEvent} quarantined 2 of 2 events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
     );
   });
 
@@ -129,7 +129,53 @@ describe(replayDeadLetterEventHandler, () => {
       [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([cappedEvent]),
     });
     expect(errorSpy).toHaveBeenCalledExactlyOnceWith(
-      `${AzureFunction.ReplayDeadLetterEvent} quarantined 1 of 2 events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times`,
+      `${AzureFunction.ReplayDeadLetterEvent} quarantined 1 of 2 events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
+    );
+  });
+
+  test("quarantines a non-idempotent handler's event rather than duplicating the work it already did", async () => {
+    expect.hasAssertions();
+
+    const webhookEvent = createDeadLetteredEvent(eventId, AzureFunction.ProcessWebhook);
+    const errorSpy = vi.spyOn(context, "error");
+    await seedBlob(JSON.stringify([webhookEvent]));
+    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+    expect(readContainer()).toStrictEqual({
+      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([webhookEvent]),
+    });
+    expect(errorSpy).toHaveBeenCalledExactlyOnceWith(
+      `${AzureFunction.ReplayDeadLetterEvent} quarantined 1 of 1 events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
+    );
+  });
+
+  test("no-ops on a redelivery whose blob a prior delivery already replayed and deleted", async () => {
+    expect.hasAssertions();
+
+    const errorSpy = vi.spyOn(context, "error");
+
+    await expect(
+      replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context),
+    ).resolves.toBeUndefined();
+
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  test("logs a failing delete of a quarantined original without rethrowing", async () => {
+    expect.hasAssertions();
+
+    const error = new Error(" ");
+    const malformedContent = "";
+    const errorSpy = vi.spyOn(context, "error");
+    await seedBlob(malformedContent);
+    vi.spyOn(MockBlockBlobClient.prototype, "delete").mockRejectedValue(error);
+    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+
+    expect(errorSpy).toHaveBeenLastCalledWith(
+      `${AzureFunction.ReplayDeadLetterEvent} left ${blobName} undeleted: `,
+      error,
     );
   });
 

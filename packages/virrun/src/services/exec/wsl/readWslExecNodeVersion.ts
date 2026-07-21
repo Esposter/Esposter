@@ -1,7 +1,7 @@
 import {
   PROBE_TIMEOUT_MS,
-  WSL_ENVIRONMENT_MAX_AGE_MS,
   VIRRUN_FORCE_PROBE_KEY,
+  WSL_ENVIRONMENT_MAX_AGE_MS,
   WSL_EXEC_NODE_VERSION_CACHE_FILENAME,
 } from "@/services/exec/util/constants";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";

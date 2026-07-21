@@ -133,7 +133,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   exists(): Promise<boolean> {
-    throw new Error("Method not implemented.");
+    return Promise.resolve(this.container.has(this.name));
   }
 
   generateSasStringToSign(): string {

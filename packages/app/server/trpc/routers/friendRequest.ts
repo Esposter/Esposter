@@ -12,8 +12,8 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { getPushSubscriptionsForUser } from "@esposter/db";
 import {
   AzureFunction,
-  DatabaseEntityType,
   createEventGridEvent,
+  DatabaseEntityType,
   FriendRequestRelations,
   friendRequests,
   friends,

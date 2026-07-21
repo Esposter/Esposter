@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum AzureFunction {
   ProcessFriendRequestNotification = "ProcessFriendRequestNotification",
   ProcessPushNotification = "ProcessPushNotification",
@@ -9,3 +11,5 @@ export enum AzureFunction {
   ReplayDeadLetterEvent = "ReplayDeadLetterEvent",
   SendTodoReminder = "SendTodoReminder",
 }
+
+export const azureFunctionSchema = z.enum(AzureFunction);
