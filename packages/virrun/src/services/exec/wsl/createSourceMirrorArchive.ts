@@ -2,6 +2,7 @@ import type { SourceMirrorArchive } from "@/models/exec/wsl/SourceMirrorArchive"
 
 import { SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
@@ -47,9 +48,13 @@ export const createSourceMirrorArchive = (
   const copyListUnc = join(entryUnc, copyListFilename);
   writeFileSync(copyListUnc, joinNullDelimited(copyPaths));
   const archiveResult = getResult(() =>
-    execFileHidden("tar", ["-c", "--no-recursion", "--null", "-f", archiveUnc, "-C", cwd, "-T", copyListUnc], {
-      timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS,
-    }),
+    execFileHidden(
+      getTarExecutable(),
+      ["-c", "--no-recursion", "--null", "-f", archiveUnc, "-C", cwd, "-T", copyListUnc],
+      {
+        timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS,
+      },
+    ),
   );
   // The list is tar's input and nothing else's, so it is spent the moment tar returns either way — unlinking
   // Before the verdict is read keeps the aborting path from leaving the reaper a corpse it never needed

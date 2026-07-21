@@ -6,6 +6,7 @@ import { isVersionAtLeast } from "@/services/cli/run/isVersionAtLeast";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult, takeOne } from "@esposter/shared";
 // The oldest bubblewrap exposing `--overlay-src` / `--tmp-overlay` (the RAM-overlay flags the os backend needs).
@@ -99,7 +100,7 @@ const probeTar = (): DiagnosticCheck => {
       status: DiagnosticStatus.NotApplicable,
       type,
     };
-  const output = getResult(() => execFileHidden("tar", ["--version"], { timeout: PROBE_TIMEOUT_MS }))
+  const output = getResult(() => execFileHidden(getTarExecutable(), ["--version"], { timeout: PROBE_TIMEOUT_MS }))
     .map((stdout) => stdout.trim())
     .unwrapOr(null);
   return output === null

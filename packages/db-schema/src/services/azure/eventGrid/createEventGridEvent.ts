@@ -1,5 +1,6 @@
-import type { AzureFunction } from "@/models/azure/function/AzureFunction";
 import type { EventGridEventInput } from "@/models/azure/eventGrid/EventGridEventInput";
+import type { AzureFunction } from "@/models/azure/function/AzureFunction";
+import type { Except } from "type-fest";
 
 import { EVENT_GRID_DATA_VERSION } from "@/services/azure/eventGrid/constants";
 // The envelope every publisher sends. Publishers differ only in event type, subject and payload, so those are the
@@ -11,7 +12,7 @@ export const createEventGridEvent = <TData>(
   eventType: AzureFunction,
   subject: string,
   data: TData,
-): Omit<EventGridEventInput<TData>, "id"> => ({
+): Except<EventGridEventInput<TData>, "id"> => ({
   data,
   dataVersion: EVENT_GRID_DATA_VERSION,
   eventType,

@@ -2,6 +2,7 @@ import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemp
 import { isSymlinkSupported } from "@/services/exec/test/isSymlinkSupported.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
@@ -86,7 +87,7 @@ describe(createSourceMirrorArchive, () => {
       const { archiveFilename } = createSourceMirrorArchive(cwd, entryUnc, [linkFilename], TAG);
 
       const extractDirectory = create();
-      execFileHidden("tar", ["-xf", join(entryUnc, archiveFilename), "-C", extractDirectory]);
+      execFileHidden(getTarExecutable(), ["-xf", join(entryUnc, archiveFilename), "-C", extractDirectory]);
 
       const extractedLinkPath = join(extractDirectory, linkFilename);
 

@@ -68,7 +68,7 @@ flowchart TD
 | `packages/azure-functions/src/services/formatReplayId.ts`                                                            | Write the `<eventId>\|<attempt>` id a republished event is sent with        |
 | `packages/azure-functions/src/services/constants.ts`                                                                 | `MAX_DEAD_LETTER_REPLAY_ATTEMPTS`                                           |
 | `packages/azure-functions/src/models/ReplayId.ts`                                                                    | The parsed `{ eventId, replayAttempts }` pair                               |
-| `packages/azure-functions/src/models/DeadLetteredEvent.ts`                                                           | Zod schema for the dead-lettered event payload, `id` included               |
+| `packages/db-schema/src/models/azure/eventGrid/EventGridEventInput.ts`                                               | The shared event envelope and its `createEventGridEventSchema` factory      |
 | `packages/db-schema/src/services/azure/container/constants.ts`                                                       | Subject, `archived/`, and `quarantine/` prefixes shared with the infra code |
 | `packages/infra/src/azure/resources/Microsoft.EventGrid/systemTopics/`                                               | Per-environment system topic over the storage account                       |
 | `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/`                                         | Six application subscriptions plus the two filtered replay subscriptions    |
