@@ -54,6 +54,14 @@ describe(extractBlobUrls, () => {
     expect(extractBlobUrls(`${url}?sasToken"`)).toStrictEqual([url]);
   });
 
+  test("should stop at the end of the SAS query when the URL is embedded in a single-quoted css url()", () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/1/photo (1).png`;
+
+    expect(extractBlobUrls(`background-image:url('${url}?sv=2025-01-05&sig=a%2Fb');color:red`)).toStrictEqual([url]);
+  });
+
   test("should not extract URLs from a different container", () => {
     expect.hasAssertions();
 

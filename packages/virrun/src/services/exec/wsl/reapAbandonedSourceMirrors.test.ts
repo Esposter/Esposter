@@ -1,12 +1,13 @@
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
+import { SOURCE_MIRROR_UNMARKED_MAX_AGE_MS } from "@/services/exec/util/constants";
 import {
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
   VIRRUN_SOURCES_DIRECTORY_NAME,
 } from "@/services/exec/wsl/constants";
 import { reapAbandonedSourceMirrors } from "@/services/exec/wsl/reapAbandonedSourceMirrors";
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -58,7 +59,7 @@ describe(reapAbandonedSourceMirrors, () => {
     expect(existsSync(live)).toBe(true);
   });
 
-  test("keeps a mirror with no origin marker so an unproven entry is never reaped", () => {
+  test("keeps a freshly created mirror with no origin marker, which a live planner is mid-writing", () => {
     expect.hasAssertions();
 
     const unmarked = seedMirror("0");
@@ -66,6 +67,20 @@ describe(reapAbandonedSourceMirrors, () => {
     reapAbandonedSourceMirrors();
 
     expect(existsSync(unmarked)).toBe(true);
+  });
+
+  // The marker is written the instant the entry dir exists, so an aged unmarked entry is a corpse of a sync that
+  // Died in that instant — the case that leaked forever while "unmarked" alone meant untouchable
+  test("reaps an unmarked mirror once it is older than the grace window", () => {
+    expect.hasAssertions();
+
+    const abandoned = seedMirror("0");
+    const aged = new Date(Date.now() - SOURCE_MIRROR_UNMARKED_MAX_AGE_MS - 1);
+    utimesSync(abandoned, aged, aged);
+
+    reapAbandonedSourceMirrors();
+
+    expect(existsSync(abandoned)).toBe(false);
   });
 
   test("keeps a mirror whose origin marker is blank so a mid-write partial is never reaped", () => {

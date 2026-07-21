@@ -46,7 +46,11 @@ flowchart TD
   topic[Event Grid topic] -->|deliver| sub[Event Grid subscription]
   sub -->|10 attempts over 1h fail| dead[deadletter blob container]
   dead -->|BlobCreated| egst[Event Grid system topic]
-  egst -->|filtered subscription| fn[ReplayDeadLetterEvent function]
+  egst -->|filtered subscription| guard{"subject under the dead-letter container<br/>and not an archived/ or quarantine/ copy"}
+  guard -->|no| ignored["return — nothing downloaded, nothing deleted"]
+  guard -->|yes| exists{"blob still present?"}
+  exists -->|no, a prior delivery already finished it| ignored
+  exists -->|yes| fn[ReplayDeadLetterEvent function]
   dead -->|download blob| fn
   fn -->|payload fails schema validation| quarantine[quarantine prefix]
   fn -->|parsed| split{"partition the batch by attempt count<br/>and handler idempotency"}
@@ -61,6 +65,26 @@ flowchart TD
   fn -->|delete original once every copy lands| dead
   dead -->|30-day lifecycle rule| gone[Deleted]
 ```
+
+That flowchart is one pass over one blob. Across passes the unit that matters is the single event, because the counter rides on its id — so an event loops between delivery and dead-letter until one of the three terminal outcomes claims it:
+
+```mermaid
+stateDiagram-v2
+  [*] --> Delivering: app publishes to the topic
+  Delivering --> Delivered: handler accepts the event
+  Delivering --> DeadLettered: 10 attempts over 1h all fail
+  DeadLettered --> Judged: BlobCreated triggers the replay
+  DeadLettered --> Discarded: the replay's own delivery exhausts its 10 attempts
+  Judged --> Republished: under the cap and its handler is idempotent
+  Judged --> Quarantined: at the cap, handler not idempotent, or the payload failed schema validation
+  Republished --> Delivering: republished with attempt + 1 on its id
+  Quarantined --> Expired: 30-day lifecycle rule, after a sev-1 page
+  Discarded --> Expired: 30-day lifecycle rule, after a sev-1 page
+  Delivered --> [*]
+  Expired --> [*]
+```
+
+`Delivered` is the only outcome that needs nobody. `Quarantined` pages a human who can move the blob back to the container root to resume it, and `Discarded` — the replay subscription failing persistently, the one path with no dead-letter destination of its own — pages too, but leaves an inert blob no event points at any more.
 
 ## Key files
 

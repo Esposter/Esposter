@@ -73,6 +73,18 @@ export const CI_ENV_VALUE = "true";
 // Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
 // The probe fail (degrade to unsupported) instead of blocking the whole CLI.
 export const PROBE_TIMEOUT_MS: number = dayjs.duration(10, "seconds").asMilliseconds();
+// Upper bound for a synchronous WSL-side `rm -rf` of a cache dir (removeSnapshotDirectory) and for the write-back's
+// Overlay python program (runOverlayScript). Both do real work — a node_modules closure to unlink, a run's whole diff
+// To copy — so they get minutes rather than the probe's seconds; the bound exists only so a wedged WSL service or 9p
+// Bridge fails the call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents:
+// A run that never returns and no error to explain it.
+export const WSL_WORK_TIMEOUT_MS: number = dayjs.duration(5, "minutes").asMilliseconds();
+// How old a source-mirror entry carrying no `origin` marker must be before the reaper may reclaim it. The marker is
+// Written (atomically) as soon as the entry dir exists, so its absence means a sync died in that same instant — a
+// Corpse, not a live planner — and any window measured in a day is orders of magnitude beyond that gap. Without this
+// The unmarked corpses are unattributable and accumulate forever: a test suite that runs virrun in temp dirs strands
+// One per aborted run, hundreds of them holding gigabytes of ext4.
+export const SOURCE_MIRROR_UNMARKED_MAX_AGE_MS: number = dayjs.duration(1, "day").asMilliseconds();
 // Minimum age (`ps -o etimes`) before the startup orphan sweep may judge a marker-matched process. Every transient
 // Misread window lasts milliseconds — a fork that hasn't exec'd yet (its cmdline still carries the parent's marker),
 // A spawning run whose Relay parent isn't established, a finishing run whose Relay died first — while a true corpse

@@ -21,7 +21,7 @@ import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceM
 import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
 import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
@@ -79,8 +79,16 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
   return getResult(() => {
     const tag = `${process.pid}.${crypto.randomUUID()}`;
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
-    const originTempFilename = `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${tag}`;
     mkdirSync(entryUnc, { recursive: true });
+    // The abandonment reaper can only reclaim an entry it can attribute, so the origin marker is published the moment
+    // The entry dir exists rather than at the end of a successful sync: a materialize that dies midway (a killed run,
+    // A failed archive) would otherwise leave an unattributable dir no sweep may ever touch, and those corpses
+    // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp dirs.
+    // Staged-then-renamed because a torn marker is worse than none: a reaper reading a truncated path would judge the
+    // Repo deleted and reap a LIVE mirror, while rename is atomic on the ext4 the entry sits on.
+    const originTempPath = join(entryUnc, `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${tag}`);
+    writeFileSync(originTempPath, cwd);
+    renameSync(originTempPath, join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME));
     const copyPaths = delta === undefined ? Object.keys(manifest).toSorted() : delta.copyPaths;
     const consumedPaths: string[] = [];
     let archivePath = "";
@@ -93,13 +101,12 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
       // Skipped file hard-failing the run.
       for (const unarchivedPath of unarchivedPaths) delete manifest[unarchivedPath];
     }
+    // The manifest is staged host-side as a pid-tagged temp and published by the script via `mv` (atomic same-fs
+    // Rename) as the last step inside the lock, so it never claims a state the mirror doesn't hold and a concurrent
+    // Planner reads either the old or the new one, never a torn file. The temp carries the *host* pid
+    // ReapStaleSourceMirrorTemps can attribute (a Linux-side `$$` temp would sit in the wrong pid domain forever).
     writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(manifest));
-    // The origin marker is staged host-side like the manifest and published via `mv` (atomic same-fs rename), so a
-    // Concurrent reaper reads either the old or the complete new marker, never a half-written path it would misjudge
-    // As a dead source — and the temp carries the *host* pid reapStaleSourceMirrorTemps can actually attribute (a
-    // Linux-side `$$` temp would sit in the wrong pid domain forever).
-    writeFileSync(join(entryUnc, originTempFilename), cwd);
-    const publish = `mv ${shellQuote(`${entryPath}/${originTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`)} && mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
+    const publish = `mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
       `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(lockPath)}`;
     const extract = archivePath

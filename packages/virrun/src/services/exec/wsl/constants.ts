@@ -48,7 +48,10 @@ export const VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX = "delete.";
 // (`.test`): removeSnapshotDirectory(Detached) uses it to route a WSL-ext4 snapshot's teardown through WSL rather than
 // Node, since the 9p bridge identity can't chmod/remove the overlay workDir's namespaced-root scratch.
 export const WSL_UNC_REGEX: RegExp = /^\\\\wsl(?:\.localhost|\$)\\[^\\]+(?<linuxPath>\\.*)?$/iu;
-// Teardown run inside WSL where the distro user owns the tree: chmod it traversable, then rm -rf (idempotent, so a
-// Missing dir is a no-op). The path is passed as a positional arg ($1), never interpolated into the body — a cache
-// Path containing a single quote would otherwise break the quoting and inject extra shell syntax.
-export const WSL_REMOVE_SCRIPT = 'chmod -R u+rwx -- "$1" 2>/dev/null; rm -rf -- "$1"';
+// Teardown run inside WSL where the distro user owns the trees: chmod each traversable, then rm -rf (idempotent, so a
+// Missing dir is a no-op). Paths are passed as positional args and iterated, never interpolated into the body — a
+// Cache path containing a single quote would otherwise break the quoting and inject extra shell syntax. The loop is
+// What lets a sweep of N stale entries cost ONE wsl.exe launch: a launch is a service RPC plus a relay process, so
+// The per-entry fan-out this replaced (one launch per entry, >100 at once once a test suite had stranded that many
+// Mirrors) saturated the WSL service until it answered every later call with Wsl/Service/E_UNEXPECTED.
+export const WSL_REMOVE_SCRIPT = 'for dir; do chmod -R u+rwx -- "$dir" 2>/dev/null; rm -rf -- "$dir"; done';

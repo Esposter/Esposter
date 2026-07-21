@@ -1,3 +1,4 @@
+import { WSL_WORK_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { WSL_REMOVE_SCRIPT, WSL_UNC_REGEX } from "@/services/exec/wsl/constants";
 import { execWsl } from "@/services/exec/wsl/execWsl";
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
@@ -18,7 +19,7 @@ export const removeSnapshotDirectory = (dir: string): void => {
   // Instead, where the distro user owns it (WSL_REMOVE_SCRIPT). rm -rf is idempotent, so a missing dir is a no-op.
   if (WSL_UNC_REGEX.test(dir)) {
     const linuxDir = readWslPath(dir);
-    execWsl(["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir]);
+    execWsl(["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir], { timeout: WSL_WORK_TIMEOUT_MS });
     return;
   }
   // Only a real directory needs the top-down +rwx restore before rmSync will descend it; a file or symlink (e.g. a
