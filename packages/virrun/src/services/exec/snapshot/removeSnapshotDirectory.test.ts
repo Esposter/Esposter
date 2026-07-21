@@ -7,7 +7,9 @@ import {
 } from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { WSL_WORK_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { WSL_REMOVE_SCRIPT } from "@/services/exec/wsl/constants";
 import {
     TEST_WSL_CACHE_ROOT_LINUX,
     TEST_WSL_LEGACY_UNC_PREFIX,
@@ -26,12 +28,14 @@ vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unk
 const snapshotLeaf = (leaf: string): string =>
   `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SNAPSHOTS_DIRECTORY_NAME}/h/${leaf}`;
 // The WSL-side teardown removeSnapshotDirectory shells out for a UNC snapshot dir: chmod traversable, then rm -rf.
-// The path is passed as a positional arg ($1), never interpolated, so a quote in it can't break the shell quoting.
+// Paths are passed as positional args, never interpolated, so a quote in one can't break the shell quoting — and the
+// Bound is the work timeout, not the probe's: unlinking a node_modules closure is minutes of real work, while an
+// Unbounded call against a wedged WSL service would never return at all.
 const expectWslRemoval = (linuxDir: string) => {
   expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
     "wsl.exe",
-    ["--exec", "sh", "-c", 'chmod -R u+rwx -- "$1" 2>/dev/null; rm -rf -- "$1"', "sh", linuxDir],
-    { encoding: "buffer", stdio: "pipe", windowsHide: true },
+    ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir],
+    { encoding: "buffer", stdio: "pipe", timeout: WSL_WORK_TIMEOUT_MS, windowsHide: true },
   );
 };
 

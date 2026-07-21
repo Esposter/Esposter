@@ -193,7 +193,7 @@ Canonical: `createAndBroadcastMessage` (broadcast) and `processWebhookHandler` (
 When retries are exhausted the delivery dead-letters, and recovery from there is automatic and event-triggered, never a script someone remembers to run (`/docs/architecture/no-manual-recovery`). A replay handler:
 
 - **Validates before republishing.** A payload that fails its schema can never succeed — quarantine it immediately instead of spending the attempt budget on it.
-- **Carries the attempt count with the payload** (metadata on the stored artifact), so it survives the round trip back through the dead-letter sink. A counter held in the handler resets every cycle and loops forever.
+- **Carries the attempt count on the event id** (`<eventId>|<attempt>`), the only field republished verbatim into the next dead-letter payload. Anything attached to the stored artifact instead — blob metadata, name, prefix — is lost the moment a failed replay is dead-lettered into a brand-new blob, so that counter restarts at zero every cycle and loops forever (`\docs\infra\eventgrid-dead-letter`).
 - **Quarantines past the cap** — move the payload under a prefix the trigger's filter excludes, then `context.error(...)`. Never leave a poison payload where the trigger can pick it up again.
 
 ## Finalizers

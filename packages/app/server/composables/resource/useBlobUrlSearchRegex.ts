@@ -5,7 +5,7 @@ import { AzureContainer } from "@esposter/db-schema";
 // The blob name carries the uploaded filename verbatim, so the path may hold `'`, `(` or `)` and can only
 // End at a quote — but the SAS query that follows it cannot, so bounding the query to its own charset is
 // What stops a match inside `url('…?sig=…')` from swallowing the closing `')` and the rest of the stylesheet
-const SAS_QUERY_PATTERN = "(?:\\?[\\w%&=+:.,~-]*)?";
+const SAS_QUERY_PATTERN = String.raw`(?:\?[\w%&=+:.,~-]*)?`;
 
 export const useBlobUrlSearchRegex = (blobUrl?: string) => {
   const containerBaseUrl = useContainerBaseUrl();

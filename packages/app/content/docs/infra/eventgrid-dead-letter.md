@@ -114,7 +114,7 @@ The container and system topic reuse the existing storage account, and Event Gri
 
 Two outcomes page a human, and both alerts are infrastructure rather than an operator's saved query — a scheduled query rule per environment, hourly over the App Insights `traces` table, notifying the action group whenever the count exceeds zero:
 
-- `sqr…002` matches the `ReplayDeadLetterEvent quarantined` prefix. Quarantine is the only outcome that logs through `context.error` with that prefix, so an event that will never succeed pages exactly once and nothing else does.
+- `sqr…002` matches the `ReplayDeadLetterEvent quarantined` prefix. Quarantine is the only outcome that logs through `context.error` with that prefix, so nothing else can trip that alert. The quarantine copy and its log deliberately precede the fatal republish — a poison payload must be out of the resend batch before anything is resent — which means a republish failure re-runs both on redelivery: the copy overwrites itself at the same blob path, and the rule's hourly window collapses the repeated logs into one page.
 - `sqr…003` matches `ReplayDeadLetterEvent failed: ` — the message `logAndRethrow` writes, and the only one with that exact prefix, so the handler's best-effort logs (`failed to archive`, `left … undeleted`) don't trip it. This is the replay's own failure path, where the subscription has no dead-letter destination and the events are discarded once its ten attempts run out.
 
 Adaptive sampling excludes `Trace` telemetry precisely so these queries cannot miss one — see /docs/infra/observability-caps.
