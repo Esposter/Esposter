@@ -30,7 +30,9 @@ vi.mock(import("@/services/db"), () => ({
 }));
 
 vi.mock(import("@/services/getServiceBusSender"), () => import("@/services/getServiceBusSender.test"));
-vi.mock(import("@/services/sendPushNotification"), () => ({ sendPushNotification: vi.fn() }));
+vi.mock(import("@/services/sendPushNotification"), () => ({
+  sendPushNotification: vi.fn<typeof sendPushNotification>(),
+}));
 vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
 vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
 vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
