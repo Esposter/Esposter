@@ -13,7 +13,7 @@ import { getPushSubscriptionsForUser } from "@esposter/db";
 import {
   AzureFunction,
   DatabaseEntityType,
-  EVENT_GRID_DATA_VERSION,
+  createEventGridEvent,
   FriendRequestRelations,
   friendRequests,
   friends,
@@ -198,12 +198,7 @@ export const friendRequestRouter = router({
           receiverId,
         };
         await eventGridPublisherClient.send([
-          {
-            data,
-            dataVersion: EVENT_GRID_DATA_VERSION,
-            eventType: AzureFunction.ProcessFriendRequestNotification,
-            subject: `${userId}/${receiverId}`,
-          },
+          createEventGridEvent(AzureFunction.ProcessFriendRequestNotification, `${userId}/${receiverId}`, data),
         ]);
       }
       return friendRequest;

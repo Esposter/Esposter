@@ -6,7 +6,7 @@ import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { getPushNotificationData } from "@/services/getPushNotificationData";
 import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessageInput";
 import { logAndRethrow } from "@/services/logAndRethrow";
-import { AzureFunction, EVENT_GRID_DATA_VERSION } from "@esposter/db-schema";
+import { AzureFunction, createEventGridEvent } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const processWebhookHandler: EventGridHandler = (event, context) => {
@@ -23,12 +23,11 @@ export const processWebhookHandler: EventGridHandler = (event, context) => {
     // Replay the event and duplicate the message.
     await getResultAsync(() =>
       eventGridPublisherClient.send([
-        {
+        createEventGridEvent(
+          AzureFunction.ProcessPushNotification,
+          `${newMessage.partitionKey}/${newMessage.rowKey}`,
           data,
-          dataVersion: EVENT_GRID_DATA_VERSION,
-          eventType: AzureFunction.ProcessPushNotification,
-          subject: `${newMessage.partitionKey}/${newMessage.rowKey}`,
-        },
+        ),
       ]),
     ).match(
       () => {

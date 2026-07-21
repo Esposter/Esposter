@@ -3,7 +3,7 @@ import type { NotificationOptions, ThreadReplyNotificationEventGridData } from "
 
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { getPushSubscriptionsForThreadFollowers } from "@esposter/db";
-import { AzureFunction, EVENT_GRID_DATA_VERSION } from "@esposter/db-schema";
+import { AzureFunction, createEventGridEvent } from "@esposter/db-schema";
 
 // Publishes a thread-reply push event to the room's thread followers, excluding anyone the caller already
 // Reached via the generic message push (excludedUserIds) so no recipient is notified twice for one reply.
@@ -38,11 +38,10 @@ export const notifyThreadReplyFollowers = async (
     threadRootRowKey,
   };
   await useEventGridPublisherClient().send([
-    {
+    createEventGridEvent(
+      AzureFunction.ProcessThreadReplyNotification,
+      `${message.partitionKey}/${message.rowKey}`,
       data,
-      dataVersion: EVENT_GRID_DATA_VERSION,
-      eventType: AzureFunction.ProcessThreadReplyNotification,
-      subject: `${message.partitionKey}/${message.rowKey}`,
-    },
+    ),
   ]);
 };

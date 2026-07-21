@@ -1,6 +1,5 @@
 import type { EventGridHandler } from "@azure/functions";
 
-import { deadLetteredEventSchema } from "@/models/DeadLetteredEvent";
 import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "@/services/constants";
 import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { formatReplayId } from "@/services/formatReplayId";
@@ -11,12 +10,19 @@ import { writeDeadLetterBlob } from "@/services/writeDeadLetterBlob";
 import {
   AzureContainer,
   AzureFunction,
+  createEventGridEventSchema,
   DEAD_LETTER_ARCHIVED_PREFIX,
   DEAD_LETTER_BLOB_SUBJECT_PREFIX,
   DEAD_LETTER_QUARANTINE_PREFIX,
 } from "@esposter/db-schema";
-import { getResult, getResultAsync, noop } from "@esposter/shared";
+import { createUniqueArraySchema, getResult, getResultAsync, noop } from "@esposter/shared";
 import { z } from "zod";
+
+// The replay is payload-agnostic — it resends whatever it finds, and only each event's handler knows how to read its
+// `data` — so the envelope is parsed with the shared factory over an opaque payload. Keyed unique on `id` because the
+// Id is what carries each event's replay count: two entries sharing one would share one counter, so a batch that
+// Repeats an id is malformed and belongs in quarantine rather than back on the topic.
+const deadLetteredEventsSchema = createUniqueArraySchema(createEventGridEventSchema(z.unknown()), "id");
 
 export const replayDeadLetterEventHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ReplayDeadLetterEvent} processed blob: `, event.subject);
@@ -29,7 +35,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     const containerClient = await getContainerClient(AzureContainer.DeadLetter);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     const content = await blockBlobClient.downloadToBuffer();
-    const events = getResult(() => z.array(deadLetteredEventSchema).parse(JSON.parse(content.toString("utf8"))))
+    const events = getResult(() => deadLetteredEventsSchema.parse(JSON.parse(content.toString("utf8"))))
       .orTee((error) => {
         context.error(
           `${AzureFunction.ReplayDeadLetterEvent} quarantined ${blobName}, malformed dead-letter payload: `,

@@ -84,12 +84,11 @@ export const createUserMessage = async (
       notificationOptions,
     };
     await eventGridPublisherClient.send([
-      {
+      createEventGridEvent(
+        AzureFunction.ProcessPushNotification,
+        `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
         data,
-        dataVersion: EVENT_GRID_DATA_VERSION,
-        eventType: AzureFunction.ProcessPushNotification,
-        subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
-      },
+      ),
     ]);
   }
 

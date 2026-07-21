@@ -1,4 +1,4 @@
-import type { DeadLetteredEvent } from "@/models/DeadLetteredEvent";
+import type { EventGridEventInput } from "@esposter/db-schema";
 import type { EventGridEvent } from "@azure/functions";
 
 import { replayDeadLetterEventHandler } from "@/handlers/replayDeadLetterEventHandler";
@@ -36,7 +36,13 @@ describe(replayDeadLetterEventHandler, () => {
   const subject = "subject";
   const eventId = crypto.randomUUID();
   const secondEventId = crypto.randomUUID();
-  const createDeadLetteredEvent = (id: string): DeadLetteredEvent => ({ data, dataVersion, eventType, id, subject });
+  const createDeadLetteredEvent = (id: string): EventGridEventInput<unknown> => ({
+    data,
+    dataVersion,
+    eventType,
+    id,
+    subject,
+  });
   const createEvent = (blobSubject: string): EventGridEvent => ({
     data: {},
     dataVersion,
