@@ -79,7 +79,7 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
 
 // The client recovers this from a download SAS url, so it is always the single `{id}|{filename}` segment
 // GetBlobName emits — a separator or a `..` could only ever be an attempt to climb out of {id}/files/
-const BLOB_PATH_REGEX = new RegExp(String.raw`^(?!\.{1,2}$)[^/\\]+$`, "u");
+const BLOB_PATH_REGEX = /^(?!\.{1,2}$)[^/\\]+$/u;
 
 const deleteFileInputSchema = z.object({
   blobPath: z.string().min(1).max(MAX_READ_LIMIT).regex(BLOB_PATH_REGEX),
