@@ -1,9 +1,10 @@
 import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
+import DeadLetterReplayFailedQuery from "@/azure/constants/DeadLetterReplayFailedQuery";
+import GreaterThanConditionOperator from "@/azure/constants/GreaterThanConditionOperator";
 import { prodAgEsposter002 } from "@/azure/resources/Microsoft.Insights/actionGroups/prodAgEsposter002";
 import { prodAppiEsposterAe001 } from "@/azure/resources/Microsoft.Insights/components/prodAppiEsposterAe001";
 import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
-import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 
 const ruleName = "prod-sqr-esposter-ae-003";
@@ -23,10 +24,8 @@ export const prodSqrEsposterAe003: azure_native.monitor.ScheduledQueryRule =
               minFailingPeriodsToAlert: 1,
               numberOfEvaluationPeriods: 1,
             },
-            // Azure-native types this as ConditionOperator, whose values are the metric-alert forms ("gt").
-            // Scheduled query rules of kind LogAlert take the ARM spelling, which the API rejects otherwise.
-            operator: "GreaterThan",
-            query: `traces | where message startswith "${AzureFunction.ReplayDeadLetterEvent} failed: "`,
+            operator: GreaterThanConditionOperator,
+            query: DeadLetterReplayFailedQuery,
             threshold: 0,
             timeAggregation: azure_native.monitor.TimeAggregation.Count,
           },

@@ -49,7 +49,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     const events = getResult(() => deadLetteredEventsSchema.parse(JSON.parse(content.toString("utf8"))))
       .orTee((error) => {
         context.error(
-          `${AzureFunction.ReplayDeadLetterEvent} quarantined ${blobName}, malformed dead-letter payload: `,
+          `${AzureFunction.ReplayDeadLetterEvent}${DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX} ${blobName}, malformed dead-letter payload: `,
           error,
         );
       })
@@ -87,7 +87,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
       // Delivery that created the copy: a redelivery of an already-quarantined payload is not a new incident.
       if (isQuarantineCreated)
         context.error(
-          `${AzureFunction.ReplayDeadLetterEvent} quarantined ${quarantinedReplays.length} of ${replays.length} events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
+          `${AzureFunction.ReplayDeadLetterEvent}${DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX} ${quarantinedReplays.length} of ${replays.length} events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
         );
     }
     // Nothing left to resend: the quarantine copy is the record of what arrived, so the original is simply dropped.

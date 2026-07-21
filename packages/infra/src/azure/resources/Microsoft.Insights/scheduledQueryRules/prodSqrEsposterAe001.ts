@@ -1,5 +1,7 @@
 import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
+import GreaterThanConditionOperator from "@/azure/constants/GreaterThanConditionOperator";
+import LogAnalyticsOverQuotaQuery from "@/azure/constants/LogAnalyticsOverQuotaQuery";
 import { prodAgEsposter002 } from "@/azure/resources/Microsoft.Insights/actionGroups/prodAgEsposter002";
 import { prodLogEsposterAe001 } from "@/azure/resources/Microsoft.OperationalInsights/workspaces/prodLogEsposterAe001";
 import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
@@ -22,10 +24,8 @@ export const prodSqrEsposterAe001: azure_native.monitor.ScheduledQueryRule =
               minFailingPeriodsToAlert: 1,
               numberOfEvaluationPeriods: 1,
             },
-            // Azure-native types this as ConditionOperator, whose values are the metric-alert forms ("gt").
-            // Scheduled query rules of kind LogAlert take the ARM spelling, which the API rejects otherwise.
-            operator: "GreaterThan",
-            query: '_LogOperation | where Operation == "Data collection Status" | where Detail contains "OverQuota"',
+            operator: GreaterThanConditionOperator,
+            query: LogAnalyticsOverQuotaQuery,
             threshold: 0,
             timeAggregation: azure_native.monitor.TimeAggregation.Count,
           },
