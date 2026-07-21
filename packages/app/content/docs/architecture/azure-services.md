@@ -26,15 +26,16 @@ EventGrid vs Service Bus: EventGrid is fire-and-forget **now** (push a notificat
 
 Container names live in the `AzureContainer` enum (`packages/db-schema/src/models/azure/container/AzureContainer.ts`):
 
-| Container (`AzureContainer`) | Contents                                                                                                                       |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `AppAssets`                  | App-owned static assets                                                                                                        |
-| `ClickerAssets`              | Clicker game save state (`{userId}/save`)                                                                                      |
-| `DungeonsAssets`             | Dungeons game save state (`{userId}/save`)                                                                                     |
-| `MessageAssets`              | Message file attachments (`{roomId}/{fileId}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost           |
-| `PrivateUserAssets`          | Per-user private blobs                                                                                                         |
-| `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage`)                             |
-| `ResourceAssets`             | Resource content blobs, publish snapshots, and type-owned files → [/docs/architecture/resources](/docs/architecture/resources) |
+| Container (`AzureContainer`) | Contents                                                                                                                                                 |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AppAssets`                  | App-owned static assets                                                                                                                                  |
+| `ClickerAssets`              | Clicker game save state (`{userId}/save`)                                                                                                                |
+| `DeadLetter`                 | Event Grid dead-letter payloads plus their `archived/` and `quarantine/` copies → [/docs/infra/eventgrid-dead-letter](/docs/infra/eventgrid-dead-letter) |
+| `DungeonsAssets`             | Dungeons game save state (`{userId}/save`)                                                                                                               |
+| `MessageAssets`              | Message file attachments (`{roomId}/{fileId}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost                                     |
+| `PrivateUserAssets`          | Per-user private blobs                                                                                                                                   |
+| `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage`)                                                       |
+| `ResourceAssets`             | Resource content blobs, publish snapshots, and type-owned files → [/docs/architecture/resources](/docs/architecture/resources)                           |
 
 ## Table Storage tables
 

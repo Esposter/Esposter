@@ -64,6 +64,16 @@ or that aged out unmarked"]
 
 The prune and the reaps share one primitive, `sweepStaleEntries(dir, isStale)` — list a cache dir's child directories and hand every entry the predicate selects to a single batched `removeSnapshotDirectoriesDetached` — so "iterate + guarded detached teardown" lives in exactly one place. The batch is load-bearing on win32: WSL-side teardown costs one `wsl.exe` launch **per sweep**, not per entry, because each launch is a service RPC plus a relay process and a fan-out of a hundred wedges the WSL service for every later call. The pid-gated selectors build on one liveness check, `isProcessAlive(pid)` (`process.kill(pid, 0)`).
 
+Teardown has exactly three call styles, classified by ownership, and they are not interchangeable:
+
+| Entry point                         | Failure is | Use for                                                                                             |
+| ----------------------------------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| `removeSnapshotDirectoriesDetached` | swallowed  | sweeps of entries this run never touches — batched into one `wsl.exe` launch, off the critical path |
+| `removeSnapshotDirectoryBestEffort` | swallowed  | on the critical path, where a leftover directory is tolerable                                       |
+| `removeSnapshotDirectory`           | thrown     | the caller depends on the removal — `cache clean`, capture-time prunes whose output would be wrong  |
+
+Every `wsl.exe` call that runs inside the distro is bounded by `execWsl`, which defaults to `PROBE_TIMEOUT_MS`; a call doing real work (`removeSnapshotDirectory`'s `rm -rf`, `runOverlayScript`'s apply) overrides it to `WSL_WORK_TIMEOUT_MS`, which is why the bound lives in `execWsl` rather than at each site. The detached sweep is the deliberate exception: it goes through `spawnBackground`, outlives this process, and is bounded by nothing.
+
 ## Key files
 
 Paths relative to `packages/virrun/src/`.
