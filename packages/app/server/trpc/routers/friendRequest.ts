@@ -18,7 +18,7 @@ import {
   friendRequests,
   friends,
 } from "@esposter/db-schema";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 
@@ -202,7 +202,7 @@ export const friendRequestRouter = router({
           eventGridPublisherClient.send([
             createEventGridEvent(AzureFunction.ProcessFriendRequestNotification, `${userId}/${receiverId}`, data),
           ]),
-        ).match(() => undefined, console.error);
+        ).match(noop, console.error);
       }
       return friendRequest;
     }),

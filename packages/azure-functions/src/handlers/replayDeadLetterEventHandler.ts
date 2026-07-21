@@ -17,14 +17,14 @@ import {
   DEAD_LETTER_BLOB_SUBJECT_PREFIX,
   DEAD_LETTER_QUARANTINE_PREFIX,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, getResult, getResultAsync, noop } from "@esposter/shared";
+import { getResult, getResultAsync, noop } from "@esposter/shared";
 import { z } from "zod";
 
 // The replay is payload-agnostic — it resends whatever it finds, and only each event's handler knows how to read its
-// `data` — so the envelope is parsed with the shared factory over an opaque payload. Keyed unique on `id` because the
-// Id is what carries each event's replay count: two entries sharing one would share one counter, so a batch that
-// Repeats an id is malformed and belongs in quarantine rather than back on the topic.
-const deadLetteredEventsSchema = createUniqueArraySchema(createEventGridEventSchema(z.unknown()), "id");
+// `data` — so the envelope is parsed with the shared factory over an opaque payload. Duplicate ids are valid, not
+// Malformed: delivery is at-least-once and a send retried whole after a partial failure puts two copies of one id on
+// The topic, so rejecting the array would quarantine every replayable event batched alongside them.
+const deadLetteredEventsSchema = createEventGridEventSchema(z.unknown()).array();
 
 export const replayDeadLetterEventHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ReplayDeadLetterEvent} processed blob: `, event.subject);
@@ -34,6 +34,10 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     if (!event.subject.startsWith(DEAD_LETTER_BLOB_SUBJECT_PREFIX)) return;
 
     const blobName = event.subject.slice(DEAD_LETTER_BLOB_SUBJECT_PREFIX.length);
+    // The subscription's advanced filter already excludes both prefixes; repeated here so a hand-fired or mis-scoped
+    // Event cannot make the replay consume — and delete — the archived or quarantined copies it wrote itself.
+    if (blobName.startsWith(DEAD_LETTER_ARCHIVED_PREFIX) || blobName.startsWith(DEAD_LETTER_QUARANTINE_PREFIX)) return;
+
     const containerClient = await getContainerClient(AzureContainer.DeadLetter);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     // Delivery is at-least-once, and every terminal path here deletes the blob it just handled, so a redelivered

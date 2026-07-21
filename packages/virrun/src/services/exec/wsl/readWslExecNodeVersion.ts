@@ -19,10 +19,11 @@ import { z } from "zod";
 // (getHostFingerprint-keyed, age-bounded because a node upgrade changes neither the key nor the fingerprint,
 // VIRRUN_FORCE_PROBE bypass), then the probe. Only a successful probe is persisted, so a transient WSL failure
 // Re-probes next process rather than caching "".
+let isWslExecNodeVersionCached = false;
 let wslExecNodeVersion = "";
 
 export const readWslExecNodeVersion = (): string => {
-  if (wslExecNodeVersion) return wslExecNodeVersion;
+  if (isWslExecNodeVersionCached) return wslExecNodeVersion;
   const key = getHostFingerprint();
   if (process.env[VIRRUN_FORCE_PROBE_KEY] === undefined) {
     const cached = readWslEnvironmentCache(
@@ -32,6 +33,7 @@ export const readWslExecNodeVersion = (): string => {
       WSL_ENVIRONMENT_MAX_AGE_MS,
     );
     if (cached !== undefined) {
+      isWslExecNodeVersionCached = true;
       wslExecNodeVersion = cached;
       return cached;
     }
@@ -39,6 +41,7 @@ export const readWslExecNodeVersion = (): string => {
   wslExecNodeVersion = getResult(() => execWsl(["--exec", "node", "--version"], { timeout: PROBE_TIMEOUT_MS }))
     .map((output) => output.trim())
     .unwrapOr("");
+  isWslExecNodeVersionCached = true;
   if (wslExecNodeVersion)
     writeWslEnvironmentCache(WSL_EXEC_NODE_VERSION_CACHE_FILENAME, { key, value: wslExecNodeVersion });
   return wslExecNodeVersion;

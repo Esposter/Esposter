@@ -53,9 +53,9 @@ describe(replayDeadLetterEventHandler, () => {
     subject: blobSubject,
     topic: "",
   });
-  const seedBlob = async (content: string) => {
+  const seedBlob = async (content: string, name: string = blobName) => {
     const containerClient = await getContainerClient(AzureContainer.DeadLetter);
-    await containerClient.getBlockBlobClient(blobName).upload(content, content.length);
+    await containerClient.getBlockBlobClient(name).upload(content, content.length);
   };
 
   afterEach(() => {
@@ -73,6 +73,37 @@ describe(replayDeadLetterEventHandler, () => {
 
     expect(readContainer()).toStrictEqual({ [blobName]: content });
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+  });
+
+  test.each([DEAD_LETTER_ARCHIVED_PREFIX, DEAD_LETTER_QUARANTINE_PREFIX])(
+    "ignores the %s copy it wrote itself",
+    async (prefix) => {
+      expect.hasAssertions();
+
+      const content = JSON.stringify([createDeadLetteredEvent(eventId)]);
+      await seedBlob(content, `${prefix}${blobName}`);
+      await replayDeadLetterEventHandler(
+        createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${prefix}${blobName}`),
+        context,
+      );
+
+      expect(readContainer()).toStrictEqual({ [`${prefix}${blobName}`]: content });
+      expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+    },
+  );
+
+  test("republishes both copies of a repeated id rather than quarantining the batch", async () => {
+    expect.hasAssertions();
+
+    const content = JSON.stringify([createDeadLetteredEvent(eventId), createDeadLetteredEvent(eventId)]);
+    await seedBlob(content);
+    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toStrictEqual([
+      createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}1`),
+      createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}1`),
+    ]);
+    expect(readContainer()).toStrictEqual({ [`${DEAD_LETTER_ARCHIVED_PREFIX}${blobName}`]: content });
   });
 
   test("republishes never-replayed events, then archives and deletes the original", async () => {

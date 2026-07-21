@@ -25,7 +25,7 @@ import {
   DatabaseEntityType,
   roomsInMessage,
 } from "@esposter/db-schema";
-import { getResultAsync, Operation } from "@esposter/shared";
+import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 export const createUserMessage = async (
@@ -92,7 +92,7 @@ export const createUserMessage = async (
           data,
         ),
       ]),
-    ).match(() => undefined, console.error);
+    ).match(noop, console.error);
   }
 
   // A reply auto-follows its thread (Discord behaviour) and notifies existing followers. Both run post-persist
@@ -102,11 +102,11 @@ export const createUserMessage = async (
     const threadRootRowKey = newMessageEntity.replyRowKey;
     await getResultAsync(() =>
       createThreadFollow(db, { roomId: newMessageEntity.partitionKey, threadRootRowKey, userId: user.id }),
-    ).match(() => undefined, console.error);
+    ).match(noop, console.error);
     const excludedUserIds = [...new Set(readPushSubscriptions.map((pushSubscription) => pushSubscription.userId))];
     await getResultAsync(() =>
       notifyThreadReplyFollowers(db, newMessageEntity, notificationOptions, excludedUserIds),
-    ).match(() => undefined, console.error);
+    ).match(noop, console.error);
   }
 
   const updatedRoom = requireMutation(

@@ -13,7 +13,9 @@ Every Event Grid subscription on the application topic carries a `deadLetterDest
 
 An Event Grid **system topic** over the storage account turns that write into a `Microsoft.Storage.BlobCreated` event, and a subscription on that system topic delivers it to the `ReplayDeadLetterEvent` function. The subscription is filtered so it fires only for blobs directly under the dead-letter container path, and advanced filters exclude the `archived/` and `quarantine/` prefixes — the replay writes its own copies into that same container, so without those exclusions it would retrigger itself in a loop.
 
-The function downloads the blob and validates it against a Zod schema. A payload that is not an array of dead-lettered events can never become publishable, so it is copied straight under `quarantine/`, the original is deleted, and the parse error is logged — republishing a broken payload would only dead-letter it again.
+The handler repeats those two prefix exclusions itself, so a hand-fired or mis-scoped event naming one of its own copies cannot make the replay consume — and delete — the record it wrote.
+
+The function downloads the blob and validates it against a Zod schema. A payload that is not an array of dead-lettered events can never become publishable, so it is copied straight under `quarantine/`, the original is deleted, and the parse error is logged — republishing a broken payload would only dead-letter it again. The schema deliberately allows a repeated event id: delivery is at-least-once, so a send retried whole after a partial failure puts two copies of one id on the topic, and rejecting the array over that would quarantine every replayable event batched alongside them.
 
 ### The counter rides on the event id
 

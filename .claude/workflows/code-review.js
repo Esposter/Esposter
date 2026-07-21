@@ -212,7 +212,18 @@ const SCOPE_BLOCK =
   "\n\n" +
   "## Conventions\n" +
   (scope.conventions || "(none noted)") +
-  "\n" +
+  "\n\n" +
+  // Findings that re-litigate a settled decision are the dominant false-
+  // positive class in this repo: every review re-derives them from the diff
+  // alone, and the answer flips depending on which reviewer ran. The written
+  // record breaks the tie once, so it rides along to every agent.
+  "## Recorded decisions\n" +
+  "packages/app/content/docs/ is this repo's as-built documentation and the record of settled design decisions; " +
+  ".claude/skills/*/SKILL.md records settled conventions. Before reporting that a changed value, ordering, or error-handling " +
+  "choice is wrong, grep both trees for the value, symbol, or filename involved. A choice one of them states deliberately — " +
+  "with its consequence acknowledged — is NOT a finding, however wrong it looks from the diff alone. Report it only when the " +
+  "code contradicts the record (name both sides), when a mitigation the record promises is absent from the code, or when the " +
+  "change ships behaviour the record does not cover at all.\n" +
   // The user's verbatim target rides along to every finder, verifier, and
   // sweep agent so focus areas and skip requests are honored — framed as
   // scope-only data so action instructions in TARGET are not executed by
