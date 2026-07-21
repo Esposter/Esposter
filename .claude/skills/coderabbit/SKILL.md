@@ -23,7 +23,7 @@ git show develop:.coderabbit.yaml | head -20   # the config CodeRabbit actually 
 
 CodeRabbit's `path_filters` are static globs with no notion of "this file was only renamed". A glob like `!packages/app/app/services/resource/sheet/**` excludes that tree for **every future PR**, permanently blinding review of real changes until someone remembers to revert it.
 
-List every excluded file explicitly instead. It is verbose, and that verbosity is the point — a several-hundred-line block (the live File → Sheet block is ~732 entries) is obviously temporary and obviously scoped, where a 3-line glob quietly rots.
+List every excluded file explicitly instead. It is verbose, and that verbosity is the point — a several-hundred-line block is obviously temporary and obviously scoped, where a 3-line glob quietly rots.
 
 Keep permanent structural entries (`!pnpm-lock.yaml`, generated migrations) at the top of `path_filters`, above any temporary block.
 
@@ -144,7 +144,7 @@ Exclusions are always temporary. Every exclusion commit names its own revert so 
 ```text
 chore: exclude File -> Sheet rename files from CodeRabbit review
 
-The File -> Sheet resource rename touches 800+ files, of which 732 are pure
+The File -> Sheet resource rename touches <total> files, of which <excluded> are pure
 renames or rename-token-only edits with no reviewable content change. Exclude
 those so the review stays under the free-tier file limit and focuses on the
 files that actually changed.

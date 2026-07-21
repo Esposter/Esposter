@@ -1,6 +1,6 @@
+import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { useBlobUrlSearchRegex } from "@@/server/composables/resource/useBlobUrlSearchRegex";
 import { getBlobUrlWithoutSasQuery } from "@@/server/services/resource/getBlobUrlWithoutSasQuery";
-import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 
 // Every distinct asset a document embeds, read from the document's own string leaves. Any content shape works
 // Without knowing where its urls live, and no leaf is ever handed to the matcher wearing a serializer's escaping.
