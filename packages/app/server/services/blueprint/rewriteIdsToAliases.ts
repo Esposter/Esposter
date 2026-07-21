@@ -1,4 +1,4 @@
-import { deepReplaceStrings } from "@@/server/services/blueprint/deepReplaceStrings";
+import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 
 // The capture rewrite: replaces any string that is exactly a selected resource's id with that resource's
 // `{{entry:key}}` alias. Ids are UUIDs and cross-resource references are bare id strings, so a whole-string

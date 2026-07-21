@@ -1,16 +1,19 @@
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useBlobUrlSearchRegex } from "@@/server/composables/resource/useBlobUrlSearchRegex";
-import { extractBlobUrls } from "@@/server/services/resource/extractBlobUrls";
 import { getBlobUrlWithoutSasQuery } from "@@/server/services/resource/getBlobUrlWithoutSasQuery";
+import { getContentBlobUrls } from "@@/server/services/resource/getContentBlobUrls";
 import { generateReadSasUrl, getBlobNameFromUrl } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
 import { lookup } from "mime-types";
 import { extname } from "node:path";
+import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 
-export const useUpdateBlobUrls = async (serializedContent: string, publishedDirectoryName?: string) => {
-  const blobUrls = extractBlobUrls(serializedContent);
-  if (blobUrls.length === 0) return serializedContent;
+export const useUpdateBlobUrls = async <TContent>(
+  content: TContent,
+  publishedDirectoryName?: string,
+): Promise<TContent> => {
+  const blobUrls = getContentBlobUrls(content);
+  if (blobUrls.length === 0) return content;
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   // A url whose percent escapes are invalid yields no blob name, so it is left exactly as the content carries
@@ -29,18 +32,24 @@ export const useUpdateBlobUrls = async (serializedContent: string, publishedDire
         },
       ];
   });
-  const updatedBlobUrls = await Promise.all(
-    blobEntries.map(({ blobName }) => {
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      const extension = extname(blobName).toLowerCase();
-      return generateReadSasUrl(blockBlobClient, { contentType: lookup(extension) || undefined });
-    }),
+  const updatedBlobUrlMap = new Map(
+    await Promise.all(
+      blobEntries.map(async ({ blobName, blobUrl }) => {
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+        const extension = extname(blobName).toLowerCase();
+        const updatedBlobUrl = await generateReadSasUrl(blockBlobClient, {
+          contentType: lookup(extension) || undefined,
+        });
+        return [blobUrl, updatedBlobUrl] as const;
+      }),
+    ),
   );
-  const updatedBlobUrlMap = new Map(blobEntries.map(({ blobUrl }, i) => [blobUrl, takeOne(updatedBlobUrls, i)]));
-  // One pass rewrites every url the same matcher found, so a url that is a prefix of another can never consume
-  // It, and the cost stays independent of how many assets the document embeds
-  return serializedContent.replaceAll(
-    useBlobUrlSearchRegex(),
-    (blobUrl) => updatedBlobUrlMap.get(getBlobUrlWithoutSasQuery(blobUrl)) ?? blobUrl,
+  // One pass per leaf rewrites every url the same matcher found, so a url that is a prefix of another can never
+  // Consume it, and the cost stays independent of how many assets the document embeds
+  return deepReplaceStrings(content, (value) =>
+    value.replaceAll(
+      useBlobUrlSearchRegex(),
+      (blobUrl) => updatedBlobUrlMap.get(getBlobUrlWithoutSasQuery(blobUrl)) ?? blobUrl,
+    ),
   );
 };

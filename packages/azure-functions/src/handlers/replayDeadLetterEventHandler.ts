@@ -46,18 +46,29 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Into logAndRethrow and spend all ten delivery attempts logging errors for work that already succeeded.
     if (!(await blockBlobClient.exists())) return;
     const content = await blockBlobClient.downloadToBuffer();
+    let parseError: Error | undefined;
     const events = getResult(() => deadLetteredEventsSchema.parse(JSON.parse(content.toString("utf8"))))
       .orTee((error) => {
-        context.error(
-          `${AzureFunction.ReplayDeadLetterEvent}${DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX} ${blobName}, malformed dead-letter payload: `,
-          error,
-        );
+        parseError = error;
       })
       .unwrapOr(undefined);
     // A blob that is not a dead-letter event array can never become publishable, so it is quarantined
     // Rather than republished — republishing a broken payload would just dead-letter it again.
     if (!events) {
-      await writeDeadLetterBlob(containerClient, blobName, DEAD_LETTER_QUARANTINE_PREFIX, content);
+      const isQuarantineCreated = await writeDeadLetterBlob(
+        containerClient,
+        blobName,
+        DEAD_LETTER_QUARANTINE_PREFIX,
+        content,
+      );
+      // Rewriting the quarantine copy is harmless — same path, same bytes — but this line is the alert an operator is
+      // Paged on, so it is tied to the delivery that created the copy: a redelivery of an already-quarantined payload
+      // Is not a new incident, and delivery is at-least-once.
+      if (isQuarantineCreated)
+        context.error(
+          `${AzureFunction.ReplayDeadLetterEvent}${DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX} ${blobName}, malformed dead-letter payload: `,
+          parseError,
+        );
       await deleteReplayedBlob(context, blockBlobClient, blobName);
       return;
     }

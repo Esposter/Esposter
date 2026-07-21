@@ -39,7 +39,7 @@ Always import from `@esposter/db-schema`, never redefine locally.
 
 Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`. `submitTransaction` accepts max 100 actions per call, and all actions in one transaction **must share the same `partitionKey`** (Azure requirement).
 
-`submitTransactionBatches` (`@esposter/db`) owns the chunking — never hand-roll the slice loop. A page's batches hit disjoint rowKeys, so it submits them concurrently; only the pagination that feeds them is sequential. Pass `onSubmit` when each batch must be announced as it commits, so a run that stops partway keeps everything it committed:
+`submitTransactionBatches` (`@esposter/db`) owns the chunking — never hand-roll the slice loop. Every batch of a page targets the same partition, so it submits them **sequentially**, pacing the writes against that partition's throughput limit — firing them concurrently draws `429`/`TableTransactionFailedError`. Pass `onSubmit` when each batch must be announced as it commits, so a run that stops partway keeps everything it committed:
 
 ```typescript
 for await (const page of tableClient
