@@ -7,7 +7,7 @@ import { describe, expect, test, vi } from "vitest";
 const containerUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.ResourceAssets}`;
 // Percent-encoded by `encodeBlobUrl`, so it carries no character any context reserves and belongs in all of them.
 // Its query is what a real SAS looks like: an `&` between parameters, and `%22`/`%3B` inside `rscd`
-const canonicalUrl = `${containerUrl}/1/photo%20%281%29.png?rscd=attachment%3B%20filename%3D%22photo%20%281%29.png%22&sig=a%2Fb`;
+const canonicalUrl = `${containerUrl}/a%20%281%29?rscd=%22a%22&sig=a%2Fb`;
 const matchOne = (content: string) => takeOne(content.match(useBlobUrlSearchRegex()) ?? []);
 
 vi.mock(import("@@/server/composables/azure/container/useContainerBaseUrl"), () => ({
@@ -41,12 +41,12 @@ const BlobUrlContextCases = [
 // Anchored on the opener — a quoted url() carries the parens an unquoted one closes on, and css forbids an unquoted
 // Url() from carrying a quote at all, so no context is asked to read a url its syntax could not have produced
 const LegacyBlobUrlCases = [
-  { name: "double-quoted html attribute", path: `photo!'()*.png`, wrap: (url: string) => `<img src="${url}" alt="a">` },
-  { name: "single-quoted css url()", path: `photo!()*.png`, wrap: (url: string) => `background-image:url('${url}')` },
-  { name: "unquoted css url()", path: `photo!*.png`, wrap: (url: string) => `background-image:url(${url});x:y` },
+  { name: "double-quoted html attribute", path: `a!'()*`, wrap: (url: string) => `<img src="${url}" alt="a">` },
+  { name: "single-quoted css url()", path: `a!()*`, wrap: (url: string) => `background-image:url('${url}')` },
+  { name: "unquoted css url()", path: `a!*`, wrap: (url: string) => `background-image:url(${url});x:y` },
   {
     name: "escaped-quote css url()",
-    path: `photo!*.png`,
+    path: `a!*`,
     wrap: (url: string) => `<div style="url(&quot;${url}&quot;)">`,
   },
 ] as const;
@@ -62,7 +62,7 @@ describe(useBlobUrlSearchRegex, () => {
     ({ path, wrap }) => {
       expect.hasAssertions();
 
-      const url = `${containerUrl}/1/${path}?sig=a%2Fb`;
+      const url = `${containerUrl}/${path}?sig=a%2Fb`;
 
       expect(matchOne(wrap(url))).toBe(url);
     },
@@ -71,14 +71,14 @@ describe(useBlobUrlSearchRegex, () => {
   test("should match a URL and the longer URL it is a prefix of as separate whole URLs", () => {
     expect.hasAssertions();
 
-    const url = `${containerUrl}/1/logo.png`;
-    const longerUrl = `${url}.webp`;
+    const url = `${containerUrl}/a`;
+    const longerUrl = `${url}b`;
 
     expect(`<img src="${url}"><img src="${longerUrl}">`.match(useBlobUrlSearchRegex())).toStrictEqual([url, longerUrl]);
   });
 
   test("should not match a URL from a different container", () => {
     expect.hasAssertions();
-    expect(matchOne(`"${MOCK_BLOB_BASE_URL}/${AzureContainer.ClickerAssets}/1/photo.png"`)).toBeUndefined();
+    expect(matchOne(`"${MOCK_BLOB_BASE_URL}/${AzureContainer.ClickerAssets}/a"`)).toBeUndefined();
   });
 });

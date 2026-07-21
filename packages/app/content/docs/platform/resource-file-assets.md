@@ -30,7 +30,7 @@ flowchart LR
 - **GrapesJS wiring** — `useGrapesJsEditor` takes an optional asset adapter. With one, the Asset Manager's `uploadFile` handler runs the SAS round-trip and registers the returned URL. Without one, GrapesJS falls back to embedding dropped images as base64 — which bloats every save and is stripped by major email clients, so both editors pass an adapter.
 - **Publish and reads** — every adopter shares the generic blob-url transforms ([/docs/architecture/publishing](/docs/architecture/publishing)): `transformPublishedBlobUrls` clones referenced asset blobs into the publish directory and rewrites their URLs, so a published snapshot survives the owner replacing the working-copy asset, and `transformReadBlobUrls` re-signs the urls on every owner and public read, so neither the editor nor a published page ever serves an expired SAS.
 - **Canonical urls, one grammar** — see [finding a url in content](#finding-a-url-in-content) below; the matcher is the part of this capability that has drawn the most redundant review, so its decisions are recorded in full there.
-- **Encoded in, decoded once** — `extractBlobUrls` returns each url percent-encoded exactly as the content carries it, because every consumer searches the content for it verbatim (the `replaceAll` in `useUpdateBlobUrls`, the copy source in `cloneBlobUrls`). Decoding is the _blob name's_ business: a name is the decoded path suffix of a url, while the url itself stays encoded wherever it is matched or fetched. Never decode before the search, and never search with a decoded url.
+- **Encoded in, decoded once** — `getContentBlobUrls` returns each url percent-encoded exactly as the content carries it, because every consumer searches the content for it verbatim (the `replaceAll` in `useUpdateBlobUrls`, the copy source in `cloneBlobUrls`). Decoding is the _blob name's_ business: a name is the decoded path suffix of a url, while the url itself stays encoded wherever it is matched or fetched. Never decode before the search, and never search with a decoded url.
 - **Delete** — `deleteResource` already removes the whole `{id}/` directory, so assets need no separate teardown. `deleteFile` exists for removing one asset while the resource lives on (SurveyJS deleting an image question).
 
 ## Finding a url in content
@@ -41,21 +41,24 @@ Canonicalization alone does not decide where a url **ends**, because content per
 
 ```mermaid
 flowchart TD
-  C["serialized content"] --> O{"character opening the url"}
+  C["one string leaf of the content"] --> O{"character opening the url"}
   O -->|"double quote"| DQ["parens and single quotes are url text — ends at the double quote"]
   O -->|"single quote"| SQ["parens and double quotes are url text — ends at the single quote"]
   O -->|"open paren, unquoted css url"| P["ends at the closing paren"]
-  O -->|"none: start, whitespace, unquoted attribute"| N["conservative — ends at any delimiter"]
+  O -->|"escaped quote: &quot; &#39;"| EQ["ends at the matching escape, not at the SAS ampersands before it"]
+  O -->|"anything else"| N["conservative — ends at any delimiter"]
   DQ --> M["whole url matched"]
   SQ --> M
   P --> M
+  EQ --> M
   N --> M
 ```
 
 What this settles for assets specifically:
 
 - **No backfill migration.** A url signed before canonicalization is matched whole by the delimiter that opened it, so it resolves to the right blob name and is rewritten canonical on the next read — the [converge on read](/docs/architecture/content-token-rewriting#converge-on-read-do-not-backfill) rule. A migration over stored content blobs would buy nothing.
-- **The un-anchored reading stays conservative.** A url opened by nothing keeps the narrow charset that terminates on every delimiter, because nothing narrows it. `srcset` lists and other space-separated positions fall here.
+- **The conservative reading is the fallback, not its own delimiter.** A url opened by nothing recognized keeps the narrow charset that terminates on every delimiter, because nothing narrows it — and it is reached from _any_ position rather than an enumerated one. Enumerating the characters a url may follow is the same closed-set guess the first rule bans, one level up: every character the list forgets matches nothing at all, which is a silent miss rather than a truncation. `srcset` lists, markdown, and text after an html entity's `;` all fall here.
+- **An escaped quote is a delimiter.** `&quot;`/`&#39;` is how a style attribute survives serialization into another attribute, and it closes the url exactly as the quote it stands for. Its own `&` is the reason the conservative body stops at an entity but not at a SAS `&sig=`.
 - **Known limit, accepted.** A pre-canonicalization url containing a literal `)` inside an _unquoted_ `url(…)` is genuinely ambiguous and truncates at that paren. CSS requires those parens escaped, so such a declaration was already broken in the browser before it reached us.
 - **A url that names no blob is skipped.** Owner-authored content can carry a hand-written url with invalid percent escapes (`100%off.png`); `getBlobNameFromUrl` returns `undefined` and both `cloneBlobUrls` and `useUpdateBlobUrls` skip it. The published snapshot then keeps that url pointing at the working-copy path — accepted, because no upload can produce an undecodable url (the SDK percent-encodes the blob name), so the url names no blob under either path and there is nothing to clone.
 

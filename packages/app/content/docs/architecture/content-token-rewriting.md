@@ -35,11 +35,13 @@ Never loop a per-token search over the whole document instead. That shape is wro
 - **Correctness** — a token that is a prefix of another token consumes it. `logo.png` searched on its own matches inside `logo.png.webp` and overwrites it, and the longer token is then gone before its own turn comes.
 - **Cost** — the document is rescanned once per token, so the work scales with tokens × content size on a path that runs on every read and every publish.
 
-## Walk the parsed structure when the token is a whole string
+## Walk the parsed structure, never the serialized form
 
-When the token occupies an entire string value, walk the parsed structure and map its string leaves (`deepReplaceStrings`) rather than regexing serialized JSON — there is no escaping to reason about, and structure and non-string leaves are untouched by construction.
+Always walk the parsed value and map its string leaves (`deepReplaceStrings`), never regex `JSON.stringify(content)`. A serializer adds an escaping layer of its own, so a matcher pointed at the serialized form has to read the content's grammar _and_ the serializer's — and the second one it must model without ever being the thing that produced it.
 
-Regexing the serialized form is correct only when the token is embedded _inside_ a larger string, as a url is inside an HTML attribute or a css declaration. Then the serialized `\"` boundary is part of the grammar the matcher has to read, which is exactly why it must be anchored on its opener.
+This holds whether the token occupies a whole string value (a blueprint alias) or sits embedded inside a larger one (a url inside an HTML attribute or a css declaration). Walking settles the outer layer by construction; only the inner one is left, and that is what the opener anchoring above reads. Structure and non-string leaves are untouched either way.
+
+`deepReplaceStrings` reproduces exactly what a `JSON.stringify` → `jsonDateParse` round trip produced — own enumerable entries, `undefined` values dropped, Dates preserved — so replacing that round trip with a walk is a drop-in.
 
 ## Converge on read, do not backfill
 

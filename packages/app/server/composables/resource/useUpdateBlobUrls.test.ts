@@ -56,6 +56,21 @@ describe(useUpdateBlobUrls, () => {
     );
   });
 
+  test("should re-sign urls in every string leaf, leaving the content's shape and non-string leaves untouched", async () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/a`;
+    const updatedAt = new Date(0);
+
+    await expect(
+      useUpdateBlobUrls({ pages: [{ styles: `background:url(${url})` }], publishVersion: 1, updatedAt }),
+    ).resolves.toStrictEqual({
+      pages: [{ styles: `background:url(${getReadSasUrl("a")})` }],
+      publishVersion: 1,
+      updatedAt,
+    });
+  });
+
   test("should re-sign the valid urls when another url has an invalid percent escape", async () => {
     expect.hasAssertions();
 
