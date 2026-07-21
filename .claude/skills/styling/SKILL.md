@@ -6,7 +6,7 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 # Styling — UnoCSS Attributify Mode (MANDATORY)
 
 - Prop-based styling for ALL static styles: `<div text-red p-4>`.
-- **UnoCSS attributes go first** — before Vue/component props: `<StyledAvatar flex-none :image="image" :name="name" />`.
+- Where UnoCSS attributes sit relative to component props is the `vue` skill's template attribute order.
 - `flex` not `d-flex`.
 - `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
 - Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index unless the layout needs them. Don't add z-index defensively; rely on DOM order and positioning first.

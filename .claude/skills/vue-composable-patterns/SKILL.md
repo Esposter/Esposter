@@ -63,7 +63,7 @@ await readFoos();
 - **Never** call `readItems`/`readMoreItems` from a component directly — always via a `useRead*` composable.
 - Optimistic mutations update `items.value` directly (spread for create, filter for delete) — no re-fetch.
 - `readMoreItems` appends; `readItems` resets the full `CursorPaginationData` ref (handles navigating back to first page).
-- For multi-list pagination (e.g. messages per room) use `useCursorPaginationDataMap` instead of `useCursorPaginationOperationData`.
+- Which pagination helper a store uses (single list vs per-key lists) is the `pinia` skill's ("Cursor Pagination in Stores").
 
 ## StyledWaypoint — Infinite Scroll
 
@@ -238,21 +238,7 @@ When a dialog has a selector (column type, chart type) that controls **which Vjs
 
 ## Type-Driven State Reset: Watch + Create Map
 
-When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, use `watch` with a **create map** abstracting per-type construction.
-
-**Step 1 — define a create map in services**, keyed by the discriminant, each entry a `create` taking a `Partial` of the target minus its discriminant. The `as const satisfies` mapped type ties each key to its own constructor, so `Map[type].create(...)` returns the right subtype:
-
-```ts
-// FooTypeCreateMap.ts
-export const FooTypeCreateMap = {
-  [FooType.Bar]: { create: (init?: Partial<Except<BarFoo, "type">>) => new BarFoo({ ...init }) },
-  [FooType.Baz]: { create: (init?: Partial<Except<BazFoo, "type">>) => new BazFoo({ ...init }) },
-} as const satisfies {
-  [K in FooType]: { create: (init?: Partial<Except<Extract<Foo, { type: K }>, "type">>) => Foo };
-};
-```
-
-**Step 2 — use watch + map in the component:**
+When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, `watch` it and rebuild through a **create map** in `services/` keyed by the discriminant, each entry a `create` taking a `Partial` of the target minus its discriminant. The map's shape (`as const satisfies` over a mapped type, so each key returns its own subtype) is the `typescript` skill's discriminant-keyed-map rule; the schema side is the `zod` skill's.
 
 ```ts
 const fooType = ref(FooType.Bar);
@@ -264,16 +250,7 @@ watch(fooType, (newType) => {
 });
 ```
 
-For **external sync** (a parent can reset the model), add a second watch on the model's discriminant field to keep the local type ref in sync:
-
-```ts
-watch(
-  () => editedFoo.value.type,
-  (newType) => {
-    fooType.value = newType;
-  },
-);
-```
+For **external sync** (a parent can reset the model), add a second watch on the model's discriminant field writing back into the local type ref.
 
 **Notes:**
 

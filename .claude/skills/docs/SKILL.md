@@ -28,8 +28,7 @@ packages/app/content/docs/
   architecture/
     index.md                  ← index of cross-cutting topics
     <topic>.md                ← as-built system explanation shared by multiple areas
-  <area>/                     ← achievements · anime · clicker · dungeons · esbabbler · fluid-simulator
-                              ·  infra · platform · posts · sheet-editor · users · virrun · vue-phaserjs
+  <area>/                     ← one kebab-case directory per product area (`ls content/docs` for the current set)
     index.md                  ← what the area is, key concepts, terse chronological shipped log
     <feature>.md              ← one page per implemented feature (or <feature>/ folder with index.md + sub-feature pages)
     deferred/
@@ -50,7 +49,7 @@ Area folders and file names: kebab-case (they become URL slugs). One topic per f
 
 **Mechanical follow-through.** After a rename, grep the whole docs tree for the old term. After adding a page, register it in **both** the area `index.md` table and `DocsSectionGroupsMap.ts`.
 
-**File format is always `.md`, never `.mdx`.** MDX is the React ecosystem's format; @nuxt/content parses MDC syntax (`::component` blocks, `{.class}` props) inside plain `.md`, and `.md` stays readable on GitHub/editors/grep. Decided 2026-07-11 — don't revisit.
+**File format is always `.md`, never `.mdx`.** MDX is the React ecosystem's format; @nuxt/content parses MDC syntax (`::component` blocks, `{.class}` props) inside plain `.md`, and `.md` stays readable on GitHub/editors/grep. Settled — don't revisit.
 
 **Write plain GFM markdown — no MDC syntax yet.** MDC callouts (`::note`/`::tip`/`::warning`, as the Nuxt docs use) require prose components registered in our docs renderer, which don't exist. If they land later, adopt MDC sparingly for callouts only; never for layout.
 

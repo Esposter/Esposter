@@ -59,22 +59,9 @@ Canonical reference (primitive semantics, "Optimistic by default", and the full 
 
 ## Router Structure
 
-Routers nested by domain. Root merger: `server/trpc/routers/index.ts`.
+Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The client path mirrors the file path segment for segment — `trpc.<feature>.*` is `routers/<feature>/index.ts` and `trpc.<feature>.<sub>.*` is `routers/<feature>/<sub>.ts` — so a nested key is never flattened, and the file for any path is derivable rather than looked up. The two diverge only where a key was renamed to dodge a `Function.prototype` collision (see Router Key Naming).
 
-| Client path                          | Router file                              |
-| ------------------------------------ | ---------------------------------------- |
-| `trpc.callSession.*`                 | `routers/call/index.ts`                  |
-| `trpc.callSession.knocker.*`         | `routers/call/knocker.ts`                |
-| `trpc.message.*`                     | `routers/message/index.ts`               |
-| `trpc.message.emoji.*`               | `routers/message/emoji.ts`               |
-| `trpc.message.moderation.*`          | `routers/message/moderation.ts`          |
-| `trpc.message.scheduledMessageJob.*` | `routers/message/scheduledMessageJob.ts` |
-| `trpc.room.*`                        | `routers/room/index.ts`                  |
-| `trpc.room.category.*`               | `routers/room/category.ts`               |
-| `trpc.room.directMessage.*`          | `routers/room/directMessage.ts`          |
-| `trpc.room.filter.*`                 | `routers/room/filter.ts`                 |
-
-Exception: `achievement` merged separately to avoid circular dep with the router that fires achievement events.
+Exception: `achievement` is merged separately (via `mergeRouters`) to avoid a circular dep with the router that fires achievement events.
 
 ## Router Key Naming
 
@@ -183,6 +170,15 @@ Two factory functions in `shared/models/pagination/`:
 - **`createOffsetPaginationParamsSchema(sortKeySchema, defaultSortBy?)`** — offset-based; `minimumSortBy` hard-coded to `0` (offset skips N rows without a stable sort key); `defaultSortBy` defaults to `[]`.
 
 Both use `.prefault(defaultSortBy)` (not `.default()`) on `sortBy` — `prefault` applies the default _before_ inner validation, so the default array is itself validated against `.min(minimumSortBy)`. The `defaultSortBy` must satisfy the minimum.
+
+**Never define `limit`/`cursor` manually.** The factories bake in `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT`, and `cursor: z.string().optional()` — never override them. Non-cursor endpoints use `createBasePaginationParamsSchema`. When sort order is fixed, omit `sortBy`: `createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true })`. Server-side, wire the cursor into `getCursorWhereAzureTable` (Azure Table) or `getCursorWhere` (Postgres), fetch `limit + 1` rows, and return `getCursorPaginationData(items, limit, sortBy)`:
+
+```ts
+const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
+if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
+const items = await getTopNEntities(client, limit + 1, ModerationLogEntity, { filter: serializeClauses(clauses) });
+return getCursorPaginationData(items, limit, sortBy);
+```
 
 ```ts
 // CORRECT — cursor: non-empty defaultSortBy, .prefault({}) on outer object

@@ -56,7 +56,7 @@ const sanitizedOld = oldValue !== undefined ? normalizeString(oldValue) : oldVal
 
 Base select schemas normalize so server validation matches client input. Always transform first, then validators in the pipe. Never add trim transforms to derived schemas (`UpdateRoomInput`, `UpdateSurveyInput`, etc.) — only in the base select schema.
 
-**Prefer the shared helpers over hand-rolling the transform+pipe**: `createNormalizedStringSchema(maxLength, schema?)` from `@esposter/shared` and `createNameSchema(maxLength)` from `@esposter/db-schema` (see the `zod` skill).
+Prefer the shared schema helpers over hand-rolling the transform+pipe — see the `zod` skill.
 
 ```ts
 // db-schema createSelectSchema overrides — the canonical form

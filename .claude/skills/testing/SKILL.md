@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — describe with function refs, canonical test values, takeOne for unsafe index access, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), mock cleanup by creation style, toThrowErrorMatchingInlineSnapshot as the only error assertion, the node-default test environment (nuxt only via per-file directive; stub window for client/server paths), bundle-size snapshot tests, and type-level conventions for .test-d.ts files. Apply when writing .test.ts or .test-d.ts files.
+description: Esposter Vitest testing conventions — describe with function refs, canonical test values, takeOne for unsafe index access, no unnecessary destructure of plain objects, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), mock cleanup by creation style, toThrowErrorMatchingInlineSnapshot as the only error assertion, the node-default test environment (nuxt only via per-file directive; stub window for client/server paths), bundle-size snapshot tests, and type-level conventions for .test-d.ts files. Apply when writing .test.ts or .test-d.ts files.
 ---
 
 # Testing Conventions (Vitest)
@@ -22,7 +22,7 @@ description: Esposter Vitest testing conventions — describe with function refs
   - **Another assertion already follows** in the same test (e.g. a mock `not.toHaveBeenCalled`, or a follow-up read) → just `await fn();` as a bare statement. The trailing assertion satisfies `hasAssertions()`; a `.resolves.toBeUndefined()` there is pure ceremony.
   - **Success is the only thing checked** → `await expect(fn()).resolves.toBeUndefined();` — the minimal positive assertion, the mirror of the `.rejects.` negative case, and it satisfies `hasAssertions()` (a bare `await` alone would run zero assertions and fail it).
   - When the promise resolves to a **real value**, `await` into a `const` and assert on it: `const count = await caller.count(); expect(count).toBe(x);`. `.rejects.` stays the only accepted async **error** assertion (see **Error Assertions**).
-- **Sync `void` returns — never assert them at runtime.** `no-confusing-void-expression` bans a void expression _both_ inside another expression (`expect(fn())`) and as an assignment source (`const result = fn()`), so hoisting into a `const` does not silence it. The rule is **oxlint's** (`typescript/no-confusing-void-expression`); the ESLint copy is deleted in `packages/configuration/eslint/typescriptRules.js` as computationally expensive, so `pnpm lint` will not reproduce it — only the root oxlint pass will. The lint error is a **design signal, not an obstacle**: a `void` return is a _type-level_ contract, so asserting it belongs in a `.test-d.ts` (`expectTypeOf(fn<[string]>).returns.returns.toEqualTypeOf<void>()`), while the `.test.ts` asserts only observable effects (a mock call, a mutated value). Never reach for an `oxlint-disable` here — the repo has zero of them for this rule, and a runtime `expect(result).toBeUndefined()` on a void expression is strictly weaker than the type assertion it should have been.
+- **Sync `void` returns — never assert them at runtime.** `no-confusing-void-expression` bans a void expression _both_ inside another expression (`expect(fn())`) and as an assignment source (`const result = fn()`), so hoisting into a `const` does not silence it. The rule is enforced by oxlint (`typescript/no-confusing-void-expression`) and ships enabled through tseslint's `strictTypeChecked` as well, so both passes flag it. The lint error is a **design signal, not an obstacle**: a `void` return is a _type-level_ contract, so asserting it belongs in a `.test-d.ts` (`expectTypeOf(fn<[string]>).returns.returns.toEqualTypeOf<void>()`), while the `.test.ts` asserts only observable effects (a mock call, a mutated value). Never reach for an `oxlint-disable` here — the repo has zero of them for this rule, and a runtime `expect(result).toBeUndefined()` on a void expression is strictly weaker than the type assertion it should have been.
 - **`toStrictEqual` always** — never `toEqual`/`toMatchObject`. Assert exact counts: no `.toBeGreaterThan(0)` on collections.
 - **`.toBe` for deterministic values** — when the full expected value is knowable (URL, ID, enum string), always `.toBe(fullValue)`, never `.toContain`/`.toMatch`. Inline the expected value in the `expect` call — never an intermediate `const expected*`.
 - **Never fragment-match a full deterministic output** — a `.toContain`/`.toMatch` against a value fully determined by the inputs asserts one slice and ignores the rest. Assert the whole output: `.toBe(fullValue)`, else `toMatchInlineSnapshot()` (leave empty, fill with `pnpm test -u`) for bulky/multiline values. A full snapshot **subsumes** paired negative assertions — drop the `.not.toContain(...)`. Keep `.toContain` only for genuine membership on non-deterministic content (array membership, a string carrying a runtime UUID/temp path). If the whole output embeds a machine-specific path/UUID it isn't snapshot-safe — fragment-match or assert behavior portably.
@@ -78,11 +78,11 @@ Never repeat the same literal value or object across tests. If 2+ tests (or rows
 
 - **`takeOne(arr, index)`** — instead of `arr[index]` where `noUncheckedIndexedAccess` makes it `T | undefined`. Not universal — prefer `find` when more idiomatic.
 - **`assert.exists(value)`** — narrow nullable values and fail fast instead of `?? []` coalescing.
-- **Cloning** — `structuredClone(obj)` for deep clones; `Object.assign(structuredClone(obj), updates)` to clone + override. Never `{ ...spread }` (loses prototype).
+- **Cloning** — see the `typescript` skill.
 
 ## Destructuring
 
-- **Stores and composables** — always destructure: `const { deleteRow, isUndoable } = operations`, `const { editedItem } = storeToRefs(store)`. Never chain `useX().method()` — destructure first.
+- Stores and composables destructure per the `pinia` skill's ordering rule — that applies in tests unchanged.
 - **No unnecessary destructure** — for plain objects (not stores/composables), access a property directly when used only once.
 
 ## Mock Session Patterns
@@ -207,7 +207,7 @@ vi.mock(import("@/services/db"), () => ({
 
 ### InvocationContext logHandler
 
-Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. Never `vi.fn()` — it returns `unknown`, violating `strict-void-return`.
+Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. Never `vi.fn()` — its `unknown` return does not satisfy the `void`-returning `logHandler` contract.
 
 ## Error Assertions
 
@@ -249,7 +249,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 **Every package defaults to the `node` environment**, including `packages/app`. `defineVitestProject` (`@nuxt/test-utils/config`) hardcodes `test.environment = "nuxt"` for the whole project, so `packages/app/vitest.config.ts` explicitly resets it to `"node"` after the call — `defineVitestProject` is just `resolveConfig` (all the nuxt wiring: plugins, aliases, runtime entry setup file, environmentOptions) plus that one hardcode, so the reset restores the pre-`projects`-migration `defineVitestConfig` semantics: node by default, per-file `// @vitest-environment nuxt` directives opt into the nuxt environment (the wiring stays intact, so the directive resolves).
 
-History: the root-`projects` migration ("fix: unifying vitest", 2026-06-17) forced the switch from `defineVitestConfig` (node default) to `defineVitestProject` (nuxt hardcode), silently making every app test nuxt-env until the explicit reset landed (2026-07-17). The ~41 `// @vitest-environment nuxt` directives are **load-bearing** — never remove one without moving the test off nuxt-runtime features.
+The `// @vitest-environment nuxt` directives are **load-bearing** — never remove one without moving the test off nuxt-runtime features.
 
 - **No directive = no DOM.** A directive-less app test runs in node: no `window`, `getIsServer()` returns `true`. To exercise a **client** path in a node-env test, stub it: `vi.stubGlobal("window", {})`; server path in any env: `vi.stubGlobal("window", undefined)` (+ `vi.unstubAllGlobals()` in `afterEach`). Prefer env-agnostic stubbing over relying on the ambient environment when the code branches on `getIsServer()`.
 - **Add `// @vitest-environment nuxt` only when the test needs the nuxt runtime**: `mountSuspended`/`renderSuspended` from `@nuxt/test-utils/runtime`, or stores/composables calling `useNuxtApp()`/`useRouter()` at setup time. Apply the criteria; don't copy another file because it has the directive.

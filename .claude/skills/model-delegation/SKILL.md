@@ -46,7 +46,7 @@ Plan the batch around what the agents touch:
 
 ## Cleaning up worktrees
 
-Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. Never sweep a long-lived branch you did not create — `nuxt5` and `migrate-assets` in particular are keepers (user-confirmed 2026-07-18), even when asked to "clean up old branches"; staleness or a merged PR is not authorization to delete a named long-lived branch.
+Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. **Only branches you created for an agent are yours to sweep.** A branch with a name someone chose deliberately (not the `worktree-agent-*` pattern) is presumed long-lived: leave it and ask, even when asked to "clean up old branches" — staleness or a merged PR is not authorization to delete it.
 
 ## Code reviews
 

@@ -112,7 +112,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 ### Replacing `void asyncFn()`
 
-`no-void` is an error (`.oxlintrc.json`, covering `.ts` and `.vue`); the only `void` in the codebase lives inside `getSynchronizedFunction`. It's banned because it silences `no-floating-promises` by discarding the promise — rejections go unhandled and the caller can't await completion. When you reach for it, stop at the first step that applies:
+`no-void` is an error (`.oxlintrc.json`, covering `.ts` and `.vue`); `getSynchronizedFunction` is the one place permitted to use it, because it is the sanctioned fire-and-forget primitive (step 3 below). It's banned because it silences `no-floating-promises` by discarding the promise — rejections go unhandled and the caller can't await completion. When you reach for it, stop at the first step that applies:
 
 1. **Can the enclosing function be `async`?** Make it `async` and `await`. This covers nearly every case, including Vue template/emit handlers (`@click`, `@confirm`) and any callback typed `Promisable<void>` — Vue doesn't care that a handler returns a promise, so `onClick: async () => { await ... }` needs no wrapper.
 2. **Do you own the callback's type?** Widen it to `Promisable<void>` (`type-fest`) and `await` it at the call site. Never force callers to `void` their async work. Always the `Promisable<T>` alias — never a hand-written `Promise<T> | T` union; this applies to every maybe-async signature, not just this replacement flow.
@@ -318,7 +318,7 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 - Plain `string` fields already contain `""` — reuse the source schema untouched: `entitySchema.pick({ actorUserId: true })`, non-partial.
 - Enum fields union the sentinel: `type: entitySchema.shape.type.or(z.literal(""))`.
 - **Numbers use `0`** when `0` has no domain meaning — invite `expireAfterMinutes`/`maxUses`: `0` = never expires / unlimited (`z.literal([...OPTIONS, 0])`, never `.nullable()`).
-- **The DB schema itself carries the sentinel** — `maxUses: integer().notNull().default(0)`, never a nullable column plus manual `|| null` mapping in the router. The DB schema is the source of truth for types (that's why we use Drizzle); the sentinel flows ref → input → row → read untouched. Only types with no empty value (timestamps) stay nullable, mapped once at the insert site.
+- **The DB schema itself carries the sentinel** so it flows ref → input → row → read untouched — the column-level rules are the `drizzle` skill's.
 - Reserve `.default("")` for fields genuinely omitted by some callers (e.g. `cursor` on the first page request).
 
 ## `null` vs `undefined`

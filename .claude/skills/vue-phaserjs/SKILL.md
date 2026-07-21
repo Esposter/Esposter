@@ -71,11 +71,9 @@ Multi-line setters already use braces naturally — no change needed.
 
 ## Phaser Objects in Pinia Stores
 
-**Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store.**
+**Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store** — the rule and its rationale live in the `pinia` skill ("Storing Class Instances — markRaw").
 
 This package itself has zero `markRaw` usages — the rule bites in the consuming app (`packages/app/app/`: `store/`, `components/Dungeons/`, `composables/dungeons/`). Look there for real examples.
-
-Pinia devtools traverse store state via Vue's `traverse`. `TextureSource.glTexture` starts `null` and is only assigned on WebGL upload, and `Frame#glTexture` is a getter proxying straight to it — so traversing a Phaser object before its texture uploads reads `null` and crashes in dev. `markRaw(obj)` sets `__v_skip = true` to skip traversal.
 
 ```ts
 sprite.value = markRaw(newSprite); // traverse-safe

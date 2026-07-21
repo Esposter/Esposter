@@ -226,4 +226,4 @@ For simple loading flags around a `ResultAsync`, set the flag after `await` (Res
 
 ## Client Reads/Writes — Don't Hand-Roll the Chain
 
-Most user-facing client reads/writes already have the `getResultAsync` + error-alert chain built in: `useQuery` / `useMutation` (`app/composables/shared/`). Reach for those before writing your own chain around a `$trpc` call — canonical reference and the documented raw-call exceptions: `content/docs/architecture/client-data.md`.
+`useQuery` / `useMutation` already carry this chain for client reads/writes — see the `trpc` skill before writing your own around a `$trpc` call.

@@ -1,6 +1,6 @@
 ---
 name: vue-component-patterns
-description: Esposter Vue 3 component architecture — the shared Styled/App shell primitives, same level of abstraction, the wrapper + pure-child pattern for async data, generic SFCs, per-variant type correctness, is-prefixed boolean props typed as the non-default literal, present-tense emit names, component folder naming and Nuxt auto-import name collapse, defineSlots and conditional slot forwarding, slot extraction, array + v-for over hardcoded list items, shared list-item shells with action slots, permission-filtered action items, one affordance per action, singleton dialogs over per-item dialogs, page decomposition, and maximal component granularity. Apply when designing, decomposing, naming, or refactoring Vue components.
+description: Esposter Vue 3 component architecture — the shared Styled/App shell primitives, same level of abstraction, :key-remount and props-down initialisation of local state, the wrapper + pure-child pattern for async data, generic SFCs, per-variant type correctness, is-prefixed boolean props typed as the non-default literal, present-tense emit names, component folder naming and Nuxt auto-import name collapse, defineSlots and conditional slot forwarding, slot extraction, array + v-for over hardcoded list items, shared list-item shells with action slots, permission-filtered action items, one affordance per action, singleton dialogs over per-item dialogs, page decomposition, and maximal component granularity. Apply when designing, decomposing, naming, or refactoring Vue components.
 ---
 
 # Vue Component Patterns (Esposter)
@@ -61,6 +61,16 @@ When a child has **local mutable state initialized from a prop**, don't watch th
 <!-- ✅ :key remounts FooEditor on selection change -->
 <FooEditor v-if="selectedFoo" :key="selectedFoo.id" :foo="selectedFoo" />
 ```
+
+**Prefer props-down when the parent is adjacent and already has the data.** The child initializes from the prop — no watch, no store duplication:
+
+```typescript
+// Parent: :category-id="room?.categoryId ?? null"
+const { categoryId } = defineProps<Props>();
+const selectedCategoryId = ref(categoryId);
+```
+
+Only pass through an intermediate generic router component (e.g. `Content.vue`) if the prop is truly shared by all children. If only one leaf needs it, keep the store read in that leaf and initialize its ref directly.
 
 ## Async Data: Wrapper + Pure Child Pattern
 
@@ -278,11 +288,14 @@ import { FooItems } from "@/services/foo/FooItems";
 
 When the items **are** an enum with no extra per-item data, iterate the enum directly instead of mirroring it into an array — but hoist the `Object.entries` call to a script-setup `const` (see the `vue` skill's render-position rule).
 
+**Sub-case — icon buttons with tooltips.** Repeated `v-tooltip` + `v-btn` blocks are the same pattern with a reactive array: the items live in a `computed` (in a composable) rather than a module constant, because icon/color/tooltip text depend on state. The template is still one `v-for` over the computed, destructuring the item into the `v-btn`.
+
 **When to apply:**
 
 - 3+ list items with the same props shape — always extract
 - 2 items — extract if they'll grow or props are non-trivial
 - Items differing in non-trivial ways (different slots, conditional logic) — keep separate or use a dispatcher child
+- Items rendering fundamentally different components (`StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — never extract; the template structure diverges too much for a shared shape
 
 ## Shared List-Item Shell with an Action Slot
 
@@ -311,7 +324,7 @@ When the shell's consumers need different root interactions (one passes `@click`
 
 When list items or icon buttons are guarded by `v-if` permission checks, **move filtering into a composable** — the template gets a plain `v-for` with no conditions.
 
-Use the existing `Item` type (`@/models/shared/Item`) for the array element shape. The composable reads permissions from stores internally; only pass per-item runtime data (e.g. `userId`, `isMuted`) as getter arguments.
+Use the existing `Item` type (`@/models/shared/Item`) for the array element shape — never re-declare an inline `{ title, icon, … }` shape, in a component or in a UI metadata map. `Item` carries `title`, `icon`, optional `color`/`active`/`shortTitle`, and an optional `onClick`, so it covers both display-only metadata and actionable menu items. Reach for a narrower interface only when it matches exactly — `SelectItemCategoryDefinition<T>` (value), `ListItemCategoryDefinition<T>` (value + icon). The composable reads permissions from stores internally; only pass per-item runtime data (e.g. `userId`, `isMuted`) as getter arguments.
 
 ```ts
 // composables/feature/useFeatureActionItems.ts
@@ -345,55 +358,11 @@ export const useFeatureActionItems = () => {
 />
 ```
 
-## Icon Buttons with Tooltips: Computed Array + v-for
-
-Repeated `v-tooltip` + `v-btn` (icon button) blocks with the same structure should be extracted to a `computed` array in a composable. Dynamic props (icon, color, tooltip text) that depend on reactive state belong in the `computed`.
-
-```ts
-// Composable defines the interface and computed
-interface ControlItem {
-  color?: string;
-  icon: string;
-  onClick: () => void;
-  tooltip: string;
-  variant: "plain" | "tonal";
-}
-
-const controlItems = computed<ControlItem[]>(() => [
-  {
-    tooltip: isActive.value ? "Deactivate" : "Activate",
-    icon: isActive.value ? "mdi-off" : "mdi-on",
-    color: isActive.value ? "error" : undefined,
-    variant: "plain",
-    onClick: toggle,
-  },
-  { tooltip: "Leave", icon: "mdi-exit", color: "error", variant: "tonal", onClick: leave },
-]);
-```
-
-```vue
-<!-- CORRECT: single v-for -->
-<v-tooltip
-  v-for="{ tooltip, icon, color, variant, onClick } of controlItems"
-  :key="tooltip"
-  :text="tooltip"
-  location="bottom"
->
-  <template #activator="{ props }">
-    <v-btn :="props" :icon :color size="x-small" :variant :ripple="false" @click="onClick" />
-  </template>
-</v-tooltip>
-```
-
-**When NOT to extract:** Items rendering fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.
-
 ## One Affordance Per Action — No Duplicate Behaviour
 
 **Every action gets exactly one visible way to trigger it.** Two controls that do the identical thing are not "convenience" — they make the user stop and ask whether the two differ, and they double the surface that has to stay in sync.
 
-The resource list had three routes to the same destination per row: the row's `@click:row`, a `text-info` `NuxtLink` on the name, and an `Open` icon button in the actions column (plus an `Open` item in the right-click menu). All four navigated to `RoutePath.Resource(item.id)`. Now the row click is the only one, and the name renders as plain text.
-
-When you find duplicates, keep the affordance with the **largest hit target and the least chrome**, and delete the rest:
+When you find duplicates, keep the affordance with the **largest hit target and the least chrome**, and delete the rest — in a table row that is the row click itself, so a name cell and an open button pointing at the same route both go:
 
 ```vue
 <!-- WRONG — the name link and the Open button both repeat the row click -->

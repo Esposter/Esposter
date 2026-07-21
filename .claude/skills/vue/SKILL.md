@@ -25,7 +25,7 @@ Declare composables and state in this order:
 0. **Page-metadata side-effects** — `useHead`, `useSeoMeta` belong near the **top**. A metadata call with no local-state dependency may sit even **above** `defineSlots`/the macros. One that references reactive state (a store ref, `useRuntimeConfig`) stays just after that state is declared (still above unrelated logic).
 1. **Macros** — `defineSlots` → `defineModel` → `defineProps` → `defineEmits` (see above). No blank line between the macros and the declarations that follow.
 2. **Framework / third-party value composables** — those returning reusable reactive state/values: `useNuxtApp`, `useRoute`, `useRouter`, `useRuntimeConfig`, VueUse value composables (`useVDisplay`, `useWindowSize`, …), auth (`authClient.useSession`). Group these together immediately after the macros.
-3. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods, using per-store grouping (init → `storeToRefs` → methods, then the next store; never batch all inits then all refs).
+3. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods; the per-store grouping order is the `pinia` skill's.
 4. **Custom composables, refs, computeds, watches, functions** — everything else (`useRoomName`, `useTemplateRef`, `ref`, `computed`, `watch`, handlers).
 
 ```ts
@@ -167,9 +167,9 @@ The only acceptable client-side validation is Vuetify form field rules (inline e
   ```
 
 - **`v-for` destructuring** — destructure when properties are accessed: `v-for="{ value, icon, title } of items"` not `item.value`. Keep a full reference only when the whole object is needed (passed as prop or stored); name the loop var to match the target prop for `:propName` shorthand.
-- **`#activator` always first** — in `v-tooltip`/`v-menu` etc., place `#activator` as the first child.
+- **`#activator` slot ordering** — see the `vuetify` skill.
 - **Dotted slot names need dynamic binding** — Vue rejects dots in static slot names; Vuetify item slots use brackets: `#[`item.drag`]`, `#[`item.actions`]`. Only dot-free names are static (`#top`, `#activator`).
-- **Always use `:` shorthand** — `:disabled="..."` not `v-bind:disabled`. Object spread: `:="object"` not `v-bind="object"`.
+- **`v-bind` shorthand** — the `:` forms (including `:="object"` and same-name `:prop`) are autofixed by `vue/v-bind-style` with `sameNameShorthand: "always"` (`packages/configuration/eslint/overrides/vueRules.js`); `pnpm lint:fix` settles it.
 - **Never use `.value` in templates** — Vue auto-unwraps refs. `ref.value` in a template reads `.value` on the unwrapped object (usually `undefined`). Write `fn(ref)`. `.value` is only for `<script setup>` outside template expressions.
 - **No allocating expressions in render positions** — `Object.*` calls in a `:prop` bind, `v-for` source, or `{{ }}` allocate a fresh reference every render. Enforced by `vue/no-restricted-syntax` (`packages/configuration/eslint/overrides/vueRules.js`); its message states the fix (hoist to a script-setup `const` for static sources, a `computed` for reactive ones) and exempts event handlers.
 - **Event modifiers over raw event methods** — an unconditional `preventDefault()`/`stopPropagation()` at the start of a template handler is what modifiers express: `@click.stop`, `@keydown.enter.prevent` (combine with key modifiers to scope per key). Enforced for the first-statement shape by `vue/no-restricted-syntax`. Raw calls stay correct where no modifier can encode the trigger: behind a runtime guard (e.g. `preventDefault` only when the cursor sits at position 0), and in programmatic listeners (`useEventListener`, `onKeyStroke`, Tiptap `onKeyDown`) where modifiers don't exist. `stopImmediatePropagation()` is banned outright (lint-enforced) — it couples behavior to listener registration order.
@@ -310,15 +310,7 @@ const { cloned: selectedCategoryId } = useCloned(() => room.value?.categoryId ??
 
 `useCloned` also covers writable local copies driven by an imperative consumer (a `v-model` an external widget mutates) that must still resync from a reactive source — e.g. `const { cloned: darkMode } = useCloned(isDark)` bound to `v-model:dark-mode`.
 
-**Prefer props-down when the parent is adjacent and already has the data.** Child initializes from the prop — no watch, no store duplication:
-
-```typescript
-// Parent: :category-id="room?.categoryId ?? null"
-const { categoryId } = defineProps<Props>();
-const selectedCategoryId = ref(categoryId);
-```
-
-Only pass through an intermediate generic router component (e.g. `Content.vue`) if the prop is truly shared by all children. If only one settings type needs it, keep the store read in the leaf and initialize the ref directly.
+Where the initialising value should come from — a prop from an adjacent parent vs a store read in the leaf — is a decomposition question owned by the `vue-component-patterns` skill.
 
 ### 3. Reset form state on dialog/menu open → only if data changes externally
 

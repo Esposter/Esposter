@@ -32,7 +32,7 @@ const schema = base.transform(normalizeString).pipe(z.string().min(1).max(maxLen
 // → { minLength: 1, maxLength: N } ✓
 ```
 
-**Rule:** consolidate all string constraints (`min`, `max`, `regex`, etc.) on the **single final `.pipe()` output**, never spread across layers. (Root cause of `name` missing `maxLength` in `ColumnForm` — `createNameSchema` nested three pipe layers and lost `max`.)
+**Rule:** consolidate all string constraints (`min`, `max`, `regex`, etc.) on the **single final `.pipe()` output**, never spread across layers. A helper that nests pipe layers silently drops the constraints declared on the inner ones.
 
 ## Arrays — Always Use `createUniqueArraySchema`
 
@@ -81,29 +81,13 @@ Rules:
 - **`.nullish()` is allowed here** — the app-owned `.nullable()` ban doesn't apply at the external boundary. EventGrid `notificationOptions` fields are `null | string`, so `z.string().nullish()` is correct.
 - **Under `--isolatedDeclarations` (on for `packages/*` libraries; not the app, and `db-schema` opts out via `isolatedDeclarations: false`), annotate the concrete `z.ZodObject<{...}>` shape AND keep `satisfies`.** **Never shortcut with `: z.ZodType<T>`** — it erases the shape, so the built `dist/*.d.ts` exposes no `.shape` and consumers spreading `...someSchema.shape` break against the published package (this bit `itemMetadataSchema`, spread in `AItemEntity` and `AzureEntity`).
 
-  **The annotation is always required for an exported schema const** — `tsgo` cannot emit a `z.object({...})` expression's type without the checker, so even an all-primitive `z.object({ a: z.boolean(), b: z.string() })` fails with TS9010/9013 (verified). There is no "simple schema needs no annotation" exception; a primitive-field object still gets the full `z.ZodObject<{ a: z.ZodBoolean; b: z.ZodString }>` annotation (canonical: `virrun/src/models/exec/OverlayManifestEntry.ts`).
+  **The annotation is always required for an exported schema const** — `tsgo` cannot emit a `z.object({...})` expression's type without the checker, so even an all-primitive object fails with TS9010/9013 (verified). There is no "simple schema needs no annotation" exception.
 
   ```typescript
-  // Wrappers present (.nullable) → annotate. Canonical: ItemMetadata.ts, shared-node/src/models/Benchmark*.ts
   export const itemMetadataSchema: z.ZodObject<{
     createdAt: z.ZodDate;
     deletedAt: z.ZodNullable<z.ZodDate>;
-    updatedAt: z.ZodDate;
-  }> = z.object({
-    createdAt: z.date(),
-    deletedAt: z.date().nullable(),
-    updatedAt: z.date(),
-  }) satisfies z.ZodType<ItemMetadata>;
-
-  // strictObject + .optional() + .default(z.enum(...)) → annotate, incl. the `z.core.$strict` config param.
-  // Canonical: virrun/src/models/virrun/VirrunConfiguration.ts
-  export const virrunConfigurationSchema: z.ZodObject<
-    { $schema: z.ZodOptional<z.ZodString>; backend: z.ZodDefault<z.ZodEnum<typeof BackendType>> },
-    z.core.$strict
-  > = z.strictObject({
-    $schema: z.string().optional(),
-    backend: z.enum(BackendType).default(BackendType.Auto),
-  }) satisfies z.ZodType<VirrunConfiguration>;
+  }> = z.object({ createdAt: z.date(), deletedAt: z.date().nullable() }) satisfies z.ZodType<ItemMetadata>;
   ```
 
   Annotation pins a portable shape (`.shape` survives emit); `satisfies` still enforces interface conformance. Match each field's zod type exactly (`z.array(x)`→`z.ZodArray<typeof x>`; `z.enum(MyEnum)`→`z.ZodEnum<typeof MyEnum>`; `z.strictObject` carries a second `z.core.$strict` config param; reference an imported/`.pick()`-ed sub-schema via `typeof`, extracting an inline `.pick()` to a local `const` first). Annotate unions/enums with their concrete type too (`z.ZodDiscriminatedUnion<...>`, `z.ZodEnum<...>`), never `z.ZodType<T>`. **To discover the exact type to write**, temporarily assign the schema to `const _: null = mySchema;` and run the package's `typecheck` — the `TS2322` error prints the full inferred `ZodObject<...>` type verbatim; paste it into the annotation and delete the probe. In the **app** and **db-schema** (no `--isolatedDeclarations`), keep plain `satisfies z.ZodType<T>` — inference emits the full `ZodObject`.
@@ -329,20 +313,7 @@ Rules:
   - Constrained variants (e.g. adding `.min(1)` to `userIds`) → chain from the shape field: `userIds: userIdsSchema.shape.userIds.min(1)`, not `selectUserSchema.shape.id.array().min(1)...`.
   - Named schemas `roomIdSchema`, `userIdSchema`, `userIdsSchema` from `@esposter/db-schema`. For differently-named fields (`targetUserId`, `actorUserId`), use `selectUserSchema.shape.id` directly.
 - **Record maps over switch statements** — when a switch on an enum drives different async operations, prefer `const actionMap: Record<EnumType, (args) => Promise<void>> = {...}` and `await actionMap[type](args)`. Exhaustiveness is enforced by the Record key type; no `exhaustiveGuard` needed.
-- **Paginated endpoint schemas** — never define `limit`/`cursor` manually. Use `createCursorPaginationParamsSchema` (cursor-based) or `createBasePaginationParamsSchema` (non-cursor). When sort order is fixed, omit `sortBy`: `createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true })`. The factory bakes in `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT`, `cursor: z.string().optional()` — never override. Server-side, wire cursor into `getCursorWhereAzureTable` (Azure Table) or `getCursorWhere` (Postgres), fetch `limit + 1` rows, return `getCursorPaginationData(items, limit, sortBy)`:
-
-  ```typescript
-  // shared factory — never define limit/cursor manually
-  const readModerationLogsInputSchema = z.object({
-    ...createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true }).shape,
-  });
-  // Query impl:
-  const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
-  if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-  const items = await getTopNEntities(client, limit + 1, ModerationLogEntity, { filter: serializeClauses(clauses) });
-  return getCursorPaginationData(items, limit, sortBy);
-  ```
-
+- **Paginated endpoint schemas** — see the `trpc` skill (Pagination Params Schemas).
 - **`refineAtLeastOne`** — when an update/patch schema has all-optional fields and at least one must be provided, use `refineAtLeastOne(schema, ["field1", "field2"])` from `#shared/services/zod/refineAtLeastOne`. Never inline `.refine((data) => ...)`:
 
   ```typescript
