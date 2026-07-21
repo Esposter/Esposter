@@ -21,8 +21,8 @@ import { createMessage, getPushSubscriptionsForMessage, incrementMentionCounts }
 import {
   AzureFunction,
   AzureTable,
+  createEventGridEvent,
   DatabaseEntityType,
-  EVENT_GRID_DATA_VERSION,
   roomsInMessage,
 } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
@@ -83,13 +83,16 @@ export const createUserMessage = async (
       },
       notificationOptions,
     };
-    await eventGridPublisherClient.send([
-      createEventGridEvent(
-        AzureFunction.ProcessPushNotification,
-        `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
-        data,
-      ),
-    ]);
+    // Best-effort after the Table write — a failed publish loses one push, never the message that already landed.
+    await getResultAsync(() =>
+      eventGridPublisherClient.send([
+        createEventGridEvent(
+          AzureFunction.ProcessPushNotification,
+          `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
+          data,
+        ),
+      ]),
+    ).match(() => undefined, console.error);
   }
 
   // A reply auto-follows its thread (Discord behaviour) and notifies existing followers. Both run post-persist

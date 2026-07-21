@@ -18,7 +18,7 @@ import {
   friendRequests,
   friends,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 
@@ -197,9 +197,12 @@ export const friendRequestRouter = router({
           notificationOptions: { icon: senderUser.image, title: senderUser.name },
           receiverId,
         };
-        await eventGridPublisherClient.send([
-          createEventGridEvent(AzureFunction.ProcessFriendRequestNotification, `${userId}/${receiverId}`, data),
-        ]);
+        // Best-effort after the insert — a failed publish loses one push, never the friend request that already landed.
+        await getResultAsync(() =>
+          eventGridPublisherClient.send([
+            createEventGridEvent(AzureFunction.ProcessFriendRequestNotification, `${userId}/${receiverId}`, data),
+          ]),
+        ).match(() => undefined, console.error);
       }
       return friendRequest;
     }),
