@@ -25,5 +25,5 @@ export const transformPublishedBlobUrls = async <TContent>(
   const publishedDirectoryName = getPublishedDirectoryName(resource.id, (publication?.publishVersion ?? 0) + 1);
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   await cloneBlobUrls(containerClient, blobUrls, resource.id, publishedDirectoryName);
-  return useUpdateBlobUrls(content, publishedDirectoryName);
+  return useUpdateBlobUrls(content, publishedDirectoryName, blobUrls);
 };

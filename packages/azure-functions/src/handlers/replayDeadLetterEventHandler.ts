@@ -77,14 +77,15 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Batch splits across cycles. GetIsReplayable owns both bars — the replay cap and handler idempotency.
     const replays = events.map((deadLetteredEvent) => {
       const { eventId, replayAttempts } = parseReplayId(deadLetteredEvent.id);
-      return { deadLetteredEvent, eventId, replayAttempts };
+      return {
+        deadLetteredEvent,
+        eventId,
+        isReplayable: getIsReplayable(deadLetteredEvent.eventType, replayAttempts),
+        replayAttempts,
+      };
     });
-    const quarantinedReplays = replays.filter(
-      ({ deadLetteredEvent, replayAttempts }) => !getIsReplayable(deadLetteredEvent.eventType, replayAttempts),
-    );
-    const replayableReplays = replays.filter(({ deadLetteredEvent, replayAttempts }) =>
-      getIsReplayable(deadLetteredEvent.eventType, replayAttempts),
-    );
+    const quarantinedReplays = replays.filter(({ isReplayable }) => !isReplayable);
+    const replayableReplays = replays.filter(({ isReplayable }) => isReplayable);
     if (quarantinedReplays.length > 0) {
       const isQuarantineCreated = await writeDeadLetterBlob(
         containerClient,

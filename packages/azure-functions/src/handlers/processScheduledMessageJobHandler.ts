@@ -43,6 +43,14 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       return;
     }
 
+    const payload = scheduledMessageJobPayloadSchema.parse(job.payload);
+    // Every delivery-time guard runs before the claim, mirroring `sendScheduledMessageNow`: the claim below is
+    // Single-shot, so a rejection — non-member, read-only, slowmode, timeout, word filter — after it would burn
+    // The job (the redelivery a rethrow asks for is skipped). Thrown here the job is still unclaimed, so Service
+    // Bus redelivers and retries, and a job whose retries exhaust stays visible to cancel/reschedule/send-now
+    if (payload.type === ScheduledMessageJobType.ScheduledMessage)
+      await assertCanCreateMessage(job.userId, job.roomId, payload.message);
+
     // Claiming on `processingStartedAt IS NULL` is what makes this handler idempotent
     // (IsIdempotentAzureFunctionMap): delivery is at-least-once, and a message carries a fresh reverse-ticked
     // RowKey, so a redelivery that could re-pass this guard would post a second copy rather than repair the first
@@ -63,7 +71,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       return;
     }
 
-    const payload = scheduledMessageJobPayloadSchema.parse(processingJob.payload);
     if (payload.type === ScheduledMessageJobType.Reminder)
       await sendReminderNotification(context, {
         roomId: processingJob.roomId,
@@ -71,7 +78,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         userId: processingJob.userId,
       });
     else {
-      await assertCanCreateMessage(processingJob.userId, processingJob.roomId, payload.message);
       const newMessage = await createAndBroadcastMessage(context, {
         message: payload.message,
         roomId: processingJob.roomId,

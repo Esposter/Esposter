@@ -11,8 +11,8 @@ import { extname } from "node:path";
 export const useUpdateBlobUrls = async <TContent>(
   content: TContent,
   publishedDirectoryName?: string,
+  blobUrls: string[] = getContentBlobUrls(content),
 ): Promise<TContent> => {
-  const blobUrls = getContentBlobUrls(content);
   if (blobUrls.length === 0) return content;
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);

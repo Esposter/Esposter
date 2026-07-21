@@ -182,7 +182,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect(MockTableDatabase.get(AzureTable.Messages)?.size).toBe(1);
   });
 
-  test("leaves job incomplete when processing fails", async () => {
+  test("leaves job unclaimed when delivery precondition rejects", async () => {
     expect.hasAssertions();
 
     const job = await insertJob(scheduledMessagePayload, { roomId: otherRoomId });
@@ -194,6 +194,7 @@ describe(processScheduledMessageJobHandler, () => {
     const failedJob = await getJob(job.id);
 
     expect(failedJob?.completedAt).toBeNull();
-    expect(failedJob?.processingStartedAt).toBeInstanceOf(Date);
+    expect(failedJob?.processingStartedAt).toBeNull();
+    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
   });
 });
