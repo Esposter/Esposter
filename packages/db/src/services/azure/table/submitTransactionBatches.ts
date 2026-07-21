@@ -17,7 +17,7 @@ export const submitTransactionBatches = async <TEntity>(
     batches.push(entities.slice(i, i + AZURE_MAX_BATCH_SIZE));
   await Promise.all(
     batches.map(async (batch) => {
-      await tableClient.submitTransaction(batch.map(getAction));
+      await tableClient.submitTransaction(batch.map((entity) => getAction(entity)));
       onSubmit?.(batch);
     }),
   );

@@ -36,16 +36,6 @@ describe(useUpdateBlobUrls, () => {
     );
   });
 
-  test("should re-sign a url in a single-quoted css url() without consuming the declarations that follow", async () => {
-    expect.hasAssertions();
-
-    const url = `${containerUrl}/1/photo.png`;
-
-    await expect(useUpdateBlobUrls(`background-image:url('${url}');color:red`)).resolves.toBe(
-      `background-image:url('${getReadSasUrl("1/photo.png")}');color:red`,
-    );
-  });
-
   test("should re-sign a legacy url whose path was signed before urls were canonicalized", async () => {
     expect.hasAssertions();
 

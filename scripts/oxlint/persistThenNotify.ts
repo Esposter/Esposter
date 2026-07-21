@@ -24,7 +24,7 @@ const FUNCTION_NODE_TYPES = new Set(["ArrowFunctionExpression", "FunctionDeclara
 // Every value a block can return without crossing into a nested function — what the callback's promise
 // Actually settles on. A block with no return settles on `undefined`, which never rejects
 const getReturnArguments = (value: unknown): ESTree.Expression[] => {
-  if (Array.isArray(value)) return value.flatMap(getReturnArguments);
+  if (Array.isArray(value)) return value.flatMap((item) => getReturnArguments(item));
   if (value === null || typeof value !== "object") return [];
   const node = value as ESTree.Node;
   if (typeof node.type !== "string" || FUNCTION_NODE_TYPES.has(node.type)) return [];
@@ -70,7 +70,7 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
       const [callback] = collection.arguments;
       if (callback?.type === "ArrowFunctionExpression")
         return callback.body.type === "BlockStatement"
-          ? getReturnArguments(callback.body).every(isSafeAwait)
+          ? getReturnArguments(callback.body).every((returnArgument) => isSafeAwait(returnArgument))
           : isSafeAwait(callback.body);
     }
   }

@@ -52,20 +52,13 @@ describe(useBlobUrlSearchRegex, () => {
     expect(matchOne(url)).toBe(url);
   });
 
-  test("should keep the literal parens of a legacy URL signed before urls were canonicalized", () => {
-    expect.hasAssertions();
-
-    const url = `${containerUrl}/1/photo%20(1).png?sig=a%2Fb`;
-
-    expect(matchOne(`<img src="${url}">`)).toBe(url);
-  });
-
+  // Signed before `encodeBlobUrl` existed, so the path still carries every sub-delimiter Azure leaves literal
   test("should keep every literal sub-delimiter of a legacy URL in a double-quoted attribute", () => {
     expect.hasAssertions();
 
-    const url = `${containerUrl}/1/photo!'()*.png`;
+    const url = `${containerUrl}/1/photo!'()*.png?sig=a%2Fb`;
 
-    expect(matchOne(`<img src="${url}">`)).toBe(url);
+    expect(matchOne(`<img src="${url}" alt="a">`)).toBe(url);
   });
 
   test("should keep the literal parens of a legacy URL in a single-quoted css url()", () => {
@@ -74,14 +67,6 @@ describe(useBlobUrlSearchRegex, () => {
     const url = `${containerUrl}/1/photo(1).png?sig=a%2Fb`;
 
     expect(matchOne(`background-image:url('${url}');color:red`)).toBe(url);
-  });
-
-  test("should not run past the closing quote into the content that follows it", () => {
-    expect.hasAssertions();
-
-    const url = `${containerUrl}/1/photo.png`;
-
-    expect(matchOne(`<img src="${url}" alt="a">`)).toBe(url);
   });
 
   test("should match a URL and the longer URL it is a prefix of as separate whole URLs", () => {

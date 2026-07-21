@@ -39,17 +39,20 @@ Always import from `@esposter/db-schema`, never redefine locally.
 
 Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`. `submitTransaction` accepts max 100 actions per call, and all actions in one transaction **must share the same `partitionKey`** (Azure requirement).
 
+`submitTransactionBatches` (`@esposter/db`) owns the chunking — never hand-roll the slice loop. A page's batches hit disjoint rowKeys, so it submits them concurrently; only the pagination that feeds them is sequential. Pass `onSubmit` when each batch must be announced as it commits, so a run that stops partway keeps everything it committed:
+
 ```typescript
 for await (const page of tableClient
   .listEntities<TEntity>({ queryOptions: { filter } })
-  .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })) {
-  for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE) {
-    const batch = page.slice(i, i + AZURE_MAX_BATCH_SIZE);
-    await tableClient.submitTransaction(
-      batch.map(({ partitionKey, rowKey }) => ["update", serializeEntity({ ...fields, partitionKey, rowKey })]),
-    );
-  }
-}
+  .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
+  await submitTransactionBatches(
+    tableClient,
+    page,
+    ({ partitionKey, rowKey }) => ["update", serializeEntity({ ...fields, partitionKey, rowKey })],
+    (batch) => {
+      for (const { partitionKey, rowKey } of batch) messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
+    },
+  );
 ```
 
 ## Batching Writes That Can Conflict
@@ -62,14 +65,14 @@ const isBatchCreated = await getResultAsync(() =>
 ).match(
   () => true,
   (error) => {
-    if (error instanceof RestError && error.statusCode === 409) return false;
+    if (getIsConflict(error)) return false;
     throw error;
   },
 );
 // isBatchCreated === false → replay `batch` insert by insert, applying the per-row 409 handling there
 ```
 
-Only a `409` may fall back — any other failure is a real fault and must propagate, or a transient error silently degrades into a per-row storm that fails anyway. `RestError` comes from `@azure/data-tables`; `serializeEntity` from `@esposter/db` (`submitTransaction` takes raw entities, so unlike `createEntity` it does not serialize for you).
+Only a `409` may fall back — any other failure is a real fault and must propagate, or a transient error silently degrades into a per-row storm that fails anyway. `getIsConflict` and `serializeEntity` both come from `@esposter/db` — never re-test `statusCode === 409` inline (`getIsConflict` covers a blob's conditional create too). `submitTransaction` takes raw entities, so unlike `createEntity` it does not serialize for you.
 
 `MockTableClient.submitTransaction` applies its actions **synchronously** precisely so this is testable: awaiting between actions would let a concurrent caller interleave writes that the rollback then drops. Trust it to model atomicity faithfully under `Promise.all` in tests.
 

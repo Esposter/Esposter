@@ -49,10 +49,12 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
     options?: BlockBlobUploadOptions,
   ): Promise<BlockBlobUploadResponse> {
     // `ifNoneMatch: "*"` is the create-only upload: the service rejects it with 409 when the blob is already
-    // There, which is what makes a create atomic against a concurrent one
+    // There. The body is buffered first so the check and the write share one tick, because a concurrent create
+    // Is the only thing this condition exists to lose against — awaiting between them would model no condition
+    const buffer = await bodyToBuffer(body);
     if (options?.conditions?.ifNoneMatch === "*" && this.container.has(this.name))
       throw new MockRestError("The specified blob already exists.", 409);
-    this.container.set(this.name, await bodyToBuffer(body));
+    this.container.set(this.name, buffer);
     return { _response: createMockResponse(201) };
   }
 
