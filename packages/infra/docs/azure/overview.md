@@ -1,15 +1,15 @@
 # Infrastructure Overview
 
-Pulumi currently has 98 tracked source files under `src/azure/resources/`. Both development and production resources are declared in one unified stack.
+Pulumi currently has 116 tracked source files under `src/azure/resources/`. Both development and production resources are declared in one unified stack.
 
-`pulumi stack` reports 100 total resources: 98 source-file resources plus two Pulumi meta-resources that require no TypeScript declarations — `pulumi:pulumi:Stack` (the stack record itself) and `pulumi:providers:azure-native` (the provider instance). Both are auto-managed by Pulumi.
+`pulumi stack` reports 118 total resources: 116 source-file resources plus two Pulumi meta-resources that require no TypeScript declarations — `pulumi:pulumi:Stack` (the stack record itself) and `pulumi:providers:azure-native` (the provider instance). Both are auto-managed by Pulumi.
 
 ## Summary By Environment
 
 | Environment           | Scope                                               | Resource Count |
 | --------------------- | --------------------------------------------------- | -------------: |
-| Development           | `dev-*` Azure resources and their role assignments  |             48 |
-| Production            | `prod-*` Azure resources and their role assignments |             48 |
+| Development           | `dev-*` Azure resources and their role assignments  |             57 |
+| Production            | `prod-*` Azure resources and their role assignments |             57 |
 | Shared / Subscription | owner, policy                                       |              2 |
 
 ## Summary By Asset Type
@@ -22,8 +22,9 @@ Pulumi currently has 98 tracked source files under `src/azure/resources/`. Both 
 | Azure AI Search                |     2 |
 | Azure Monitor action group     |     6 |
 | Budget                         |     4 |
+| Event Grid system topic        |     2 |
 | Event Grid topic               |     2 |
-| Event Grid topic subscription  |     4 |
+| Event Grid topic subscription  |    12 |
 | Function app                   |     2 |
 | Log Analytics workspace        |     2 |
 | Logic app                      |     8 |
@@ -31,10 +32,12 @@ Pulumi currently has 98 tracked source files under `src/azure/resources/`. Both 
 | Policy assignment              |     1 |
 | Resource group                 |     2 |
 | Role assignment                |    25 |
+| Scheduled query rule           |     6 |
 | Service Bus namespace          |     2 |
-| Service Bus queue              |     2 |
+| Service Bus queue              |     4 |
 | Smart Detector Alert Rule      |    12 |
 | Storage account                |     2 |
+| Storage blob container         |     2 |
 | Storage blob service           |     2 |
 | Storage lifecycle policy       |     2 |
 | Web PubSub                     |     2 |

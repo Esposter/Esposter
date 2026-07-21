@@ -5,7 +5,7 @@ description: Failed Event Grid deliveries land in a blob container that push-tri
 
 # Event Grid Dead-Letter
 
-When an Event Grid delivery exhausts its retries — a push notification, friend-request or thread-reply notification, or webhook event that the Function App never accepts — the event is written to a `deadletter` blob container instead of being silently dropped. Writing that blob is itself an event, and it drives an Azure Function that republishes the events automatically. Nothing is scheduled and nothing is run by hand.
+When an Event Grid delivery exhausts its retries — a push notification, friend-request or thread-reply notification, webhook event, or blob-deletion cleanup that the Function App never accepts — the event is written to a `deadletter` blob container instead of being silently dropped. Writing that blob is itself an event, and it drives an Azure Function that republishes the events automatically. Nothing is scheduled and nothing is run by hand.
 
 ## How it works
 
@@ -28,7 +28,7 @@ So a republished event is sent with `id = <originalEventId>|<attempt>`, joined b
 Event Grid batches whatever expired together, so the handler partitions the parsed batch rather than judging the blob as a whole. `getIsReplayable` applies both bars:
 
 - Events at or over `MAX_DEAD_LETTER_REPLAY_ATTEMPTS` (two) are written as a JSON array under `quarantine/` and logged through `context.error` with the blob name and how many of the batch were quarantined.
-- Events whose handler is **not idempotent** are quarantined the same way, whatever their count — republishing one does not retry the work, it duplicates it. `IsIdempotentAzureFunctionMap` in `packages/db-schema` is the register, exhaustive over `AzureFunction` so a new function has to state its answer rather than inherit a replayable default. `ProcessWebhook` is the case that matters: `createMessage` mints a fresh reverse-ticked `rowKey` per call, so a rerun posts a second, indistinguishable message into the room instead of repairing the first.
+- Events whose handler is **not idempotent** are quarantined the same way, whatever their count — republishing one does not retry the work, it duplicates it. `IsIdempotentAzureFunctionMap` in `packages/db-schema` is the register, exhaustive over `AzureFunction` so a new function has to state its answer rather than inherit a replayable default. `ProcessWebhook` is the case that matters: `createMessage` mints a fresh reverse-ticked `rowKey` per call, so a rerun posts a second, indistinguishable message into the room instead of repairing the first. `ProcessBlobDeletion` is the mirror image and the shape to copy — it deletes with `deleteIfExists`, so a replayed batch converges on the same empty state rather than failing on the blobs the first attempt already removed. Idempotency is a property a handler is _written_ to have, not one its subject matter grants it.
 - Everything else is republished through the same Event Grid publisher the Function App already uses, each carrying the incremented id.
 
 One poison event therefore no longer strands the transient failures batched with it, and the count holds across cycles instead of restarting on every new blob.
@@ -103,7 +103,7 @@ stateDiagram-v2
 | `packages/db-schema/src/models/azure/eventGrid/EventGridEventInput.ts`                                               | The shared event envelope and its `createEventGridEventSchema` factory      |
 | `packages/db-schema/src/services/azure/container/constants.ts`                                                       | Subject, `archived/`, and `quarantine/` prefixes shared with the infra code |
 | `packages/infra/src/azure/resources/Microsoft.EventGrid/systemTopics/`                                               | Per-environment system topic over the storage account                       |
-| `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/`                                         | Eight application subscriptions plus the two filtered replay subscriptions  |
+| `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/`                                         | Ten application subscriptions plus the two filtered replay subscriptions    |
 | `packages/infra/src/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/prodstesposter001Deadletter.ts` | `deadletter` container                                                      |
 | `packages/infra/src/azure/resources/Microsoft.Storage/storageAccounts/managementPolicies/`                           | 30-day lifecycle delete rule for the dead-letter prefix                     |
 | `packages/infra/src/azure/resources/Microsoft.Insights/scheduledQueryRules/`                                         | Per-environment quarantine and replay-failure alert rules over `traces`     |
