@@ -70,6 +70,7 @@ import {
   InvalidOperationError,
   ItemMetadataPropertyNames,
   MAX_READ_LIMIT,
+  noop,
   NotFoundError,
   Operation,
   takeOne,
@@ -246,8 +247,12 @@ export const baseRoomRouter = router({
     }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
-    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-    await deleteDirectory(containerClient, input, true);
+    // Best-effort after the row delete — a failed cleanup leaves orphaned room assets in blob storage, never
+    // The deletion that already landed.
+    await getResultAsync(async () => {
+      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+      await deleteDirectory(containerClient, input, true);
+    }).match(noop, console.error);
     return deletedRoom;
   }),
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
@@ -349,17 +354,21 @@ export const baseRoomRouter = router({
 
       roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.getSessionPayload.session.id });
 
-      const leavingMember = await ctx.db.query.users.findFirst({
-        columns: { name: true },
-        where: { id: { eq: userId } },
-      });
-      if (leavingMember)
-        await createSystemRoomMessage(
-          userToRoom.roomId,
-          userId,
-          `${leavingMember.name} left the room.`,
-          ctx.getSessionPayload.session.id,
-        );
+      // Best-effort after the membership delete — the name lookup only exists to word the system message, so
+      // A failure costs the room one "X left" line, never the leave that already landed.
+      await getResultAsync(async () => {
+        const leavingMember = await ctx.db.query.users.findFirst({
+          columns: { name: true },
+          where: { id: { eq: userId } },
+        });
+        if (leavingMember)
+          await createSystemRoomMessage(
+            userToRoom.roomId,
+            userId,
+            `${leavingMember.name} left the room.`,
+            ctx.getSessionPayload.session.id,
+          );
+      }).match(noop, console.error);
 
       return userToRoom.roomId;
     }),
@@ -578,12 +587,16 @@ export const baseRoomRouter = router({
       DatabaseEntityType.Room,
       id,
     );
-    if (rest.image === "") {
-      const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(id));
-      await blockBlobClient.deleteIfExists();
-    }
     roomEventEmitter.emit("updateRoom", updatedRoom);
+
+    if (rest.image === "")
+      // Best-effort after the row update — a failed delete orphans the old room image blob, never the room update.
+      await getResultAsync(async () => {
+        const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+        const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(id));
+        await blockBlobClient.deleteIfExists();
+      }).match(noop, console.error);
+
     return updatedRoom;
   }),
 });

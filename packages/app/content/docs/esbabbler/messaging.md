@@ -23,6 +23,7 @@ sequenceDiagram
     participant F as processPushNotification (Azure Function)
 
     C->>T: createMessage({ roomId, message })
+    T->>T: assertCanCreateMessage, then advance the slowmode clock
     T->>AT: insert Messages + MessagesAscending rows
     T->>E: emit("createMessage", entity)
     E-->>C: onCreateMessage subscription delivers to connected members

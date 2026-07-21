@@ -81,9 +81,11 @@ import {
 } from "@esposter/db-schema";
 import {
   createUniqueArraySchema,
+  getResultAsync,
   InvalidOperationError,
   ItemMetadataPropertyNames,
   MAX_READ_LIMIT,
+  noop,
   NotFoundError,
   Operation,
   takeOne,
@@ -192,7 +194,9 @@ export const baseMessageRouter = router({
       };
       await updateMessage(messageClient, updatedMessageEntity);
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
-      await containerClient.deleteBlob(blobName);
+      // Best-effort after the message write — a failed delete leaves an orphaned blob, never the file the user
+      // Asked to remove
+      await getResultAsync(() => containerClient.deleteBlob(blobName)).match(noop, console.error);
     },
   ),
   deleteLinkPreviewResponse: getMessageProcedure(deleteLinkPreviewResponseInputSchema).mutation(
@@ -221,8 +225,12 @@ export const baseMessageRouter = router({
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
       messageEventEmitter.emit("deleteMessage", input);
 
-      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-      await deleteFiles(containerClient, messageEntity.files);
+      // Best-effort after the soft-delete write — a failed cleanup leaves orphaned attachment blobs, never the
+      // Delete the user asked for
+      await getResultAsync(async () => {
+        const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+        await deleteFiles(containerClient, messageEntity.files);
+      }).match(noop, console.error);
     },
   ),
   followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation(
@@ -411,17 +419,21 @@ export const baseMessageRouter = router({
       await updateEntity(messageClient, updatedMessageEntity);
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
 
-      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-      const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-        replyRowKey: input.rowKey,
-        roomId: input.partitionKey,
-        type: MessageType.PinMessage,
-        userId: getSessionPayload.user.id,
-      });
-      messageEventEmitter.emit("createMessage", [
-        [systemMessage],
-        { isSendToSelf: true, sessionId: getSessionPayload.session.id },
-      ]);
+      // Best-effort after the pin write — a failure leaves the pin in place without its system message, never
+      // Costs the pin itself
+      await getResultAsync(async () => {
+        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+          replyRowKey: input.rowKey,
+          roomId: input.partitionKey,
+          type: MessageType.PinMessage,
+          userId: getSessionPayload.user.id,
+        });
+        messageEventEmitter.emit("createMessage", [
+          [systemMessage],
+          { isSendToSelf: true, sessionId: getSessionPayload.session.id },
+        ]);
+      }).match(noop, console.error);
     },
   ),
   // Follow-STATE source of truth: all followed root rowKeys, including those whose root message was deleted,

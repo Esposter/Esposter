@@ -28,6 +28,13 @@ export const friendRequestRouter = router({
     .mutation(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
       const friendshipId = getFriendshipId(senderId, userId);
+      // The sender is both the emit payload and the return value, so it is resolved as a guard — a sender that
+      // Does not exist fails before anything is written, and nothing fallible sits between the write and the emit.
+      const senderUser = await requireEntity(
+        ctx.db.query.users.findFirst({ where: { id: { eq: senderId } } }),
+        DatabaseEntityType.User,
+        senderId,
+      );
       requireMutation(
         (
           await ctx.db.transaction(async (tx) => {
@@ -43,11 +50,6 @@ export const friendRequestRouter = router({
         DatabaseEntityType.Friend,
         friendshipId,
         "NOT_FOUND",
-      );
-      const senderUser = await requireEntity(
-        ctx.db.query.users.findFirst({ where: { id: { eq: senderId } } }),
-        DatabaseEntityType.User,
-        senderId,
       );
       const receiverUser: User = {
         ...ctx.getSessionPayload.user,
@@ -190,7 +192,11 @@ export const friendRequestRouter = router({
       };
       friendEventEmitter.emit("sendFriendRequest", { friendRequest, receiverId, senderId: userId });
 
-      const readPushSubscriptions = await getPushSubscriptionsForUser(ctx.db, receiverId);
+      // Best-effort after the insert — a failed read skips this request's pushes, never the friend request that
+      // Already landed.
+      const readPushSubscriptions = await getResultAsync(() => getPushSubscriptionsForUser(ctx.db, receiverId))
+        .orTee(console.error)
+        .unwrapOr([]);
       if (readPushSubscriptions.length > 0) {
         const eventGridPublisherClient = useEventGridPublisherClient();
         const data: FriendRequestNotificationEventGridData = {

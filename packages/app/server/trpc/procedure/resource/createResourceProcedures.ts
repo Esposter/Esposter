@@ -45,6 +45,7 @@ import {
   getResultAsync,
   InvalidOperationError,
   MAX_READ_LIMIT,
+  noop,
   Operation,
   streamToText,
 } from "@esposter/shared";
@@ -407,8 +408,12 @@ export const createResourceProcedures = <TType extends ResourceType>(
       const { id } = ctx.resource;
       await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
 
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      await deleteDirectory(containerClient, `${id}/published`, true);
+      // Best-effort after the publications delete — a failed cleanup leaves the published snapshot's blobs
+      // Lingering unreferenced, and the resource is already unpublished and unreachable either way.
+      await getResultAsync(async () => {
+        const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+        await deleteDirectory(containerClient, `${id}/published`, true);
+      }).match(noop, console.error);
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,

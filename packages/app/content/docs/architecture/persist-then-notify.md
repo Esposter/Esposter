@@ -42,6 +42,10 @@ const mentionedUsersToRooms = await getResultAsync(() => incrementMentionCounts(
 
 The comment is part of the pattern: state what the failure actually costs, so the next reader can see the trade was made deliberately rather than by omission.
 
+A tail step that nothing downstream reads may be fired rather than awaited — `getSynchronizedFunction(writeResourceActivity)(...)` returns immediately and still lets tests drain it deterministically ([no polling](/docs/architecture/no-polling)). Same rule, one less `await`.
+
+Where the side effect is a write with its own event — a system message announcing that someone left a room — the write and its emit are wrapped **together** as one unit (`createSystemRoomMessage`), because relative to the mutation that triggered it the pair is a single best-effort effect.
+
 ## Why best-effort, specifically
 
 Rethrowing after a successful write is wrong in two distinct ways, and the second one is why this is a standard rather than a preference.
@@ -60,13 +64,14 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 
 ## Key files
 
-| File                                                                 | Role                                                                   |
-| -------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `packages/app/server/services/message/createUserMessage.ts`          | Canonical shape — guard, slowmode clock, write, emit, best-effort tail |
-| `packages/app/server/trpc/routers/message/index.ts`                  | `forwardMessage` — the same shape per room, under `Promise.allSettled` |
-| `packages/app/server/services/resource/writeResourceActivity.ts`     | Best-effort activity write behind every resource mutation              |
-| `packages/azure-functions/src/services/createAndBroadcastMessage.ts` | Handler-side write then best-effort broadcast                          |
-| `packages/azure-functions/src/services/deleteReplayedBlob.ts`        | Best-effort cleanup of an artifact whose real work already succeeded   |
+| File                                                                 | Role                                                                    |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `packages/app/server/services/message/createUserMessage.ts`          | Canonical shape — guards, slowmode clock, write, emit, best-effort tail |
+| `packages/app/server/trpc/routers/message/index.ts`                  | `forwardMessage` — the same shape per room, under `Promise.allSettled`  |
+| `packages/app/server/services/message/createSystemRoomMessage.ts`    | A write and its emit wrapped together as one best-effort effect         |
+| `packages/app/server/trpc/plugins/achievementPlugin.ts`              | Post-mutation work that always returns the original mutation's result   |
+| `packages/app/server/services/resource/writeResourceActivity.ts`     | Best-effort activity write behind every resource mutation               |
+| `packages/azure-functions/src/services/createAndBroadcastMessage.ts` | Handler-side write then best-effort broadcast                           |
 
 ## Notes
 

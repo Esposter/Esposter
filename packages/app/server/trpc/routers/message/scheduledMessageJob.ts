@@ -202,21 +202,27 @@ export const scheduledMessageJobRouter = router({
   sendScheduledMessageNow: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
+      const where = isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id);
       const scheduledMessageJob = requireMutation(
+        (await ctx.db.select().from(scheduledMessageJobsInMessage).where(where).limit(1))[0],
+        Operation.Update,
+        DatabaseEntityType.ScheduledMessageJob,
+        input.id,
+        "NOT_FOUND",
+      );
+      // Membership is a guard, so it runs before the job is flipped to cancelled — checked afterwards a
+      // Non-member would burn the job without ever sending its message
+      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
+      const payload = scheduledMessageScheduledMessageJobPayloadSchema.parse(scheduledMessageJob.payload);
+      requireMutation(
         (
-          await ctx.db
-            .update(scheduledMessageJobsInMessage)
-            .set({ cancelledAt: new Date() })
-            .where(isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id))
-            .returning()
+          await ctx.db.update(scheduledMessageJobsInMessage).set({ cancelledAt: new Date() }).where(where).returning()
         )[0],
         Operation.Update,
         DatabaseEntityType.ScheduledMessageJob,
         input.id,
         "NOT_FOUND",
       );
-      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
-      const payload = scheduledMessageScheduledMessageJobPayloadSchema.parse(scheduledMessageJob.payload);
       return createUserMessage(ctx.db, ctx.getSessionPayload, {
         files: [],
         message: payload.message,
