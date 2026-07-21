@@ -53,7 +53,10 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Capped per event, not per blob: Event Grid batches whatever expired together, so one poison payload must not
     // Strand the transient failures sharing its blob, and a blob-level count would be meaningless anyway once the
     // Batch splits across cycles.
-    const replays = events.map((deadLetteredEvent) => ({ ...parseReplayId(deadLetteredEvent.id), deadLetteredEvent }));
+    const replays = events.map((deadLetteredEvent) => {
+      const { eventId, replayAttempts } = parseReplayId(deadLetteredEvent.id);
+      return { deadLetteredEvent, eventId, replayAttempts };
+    });
     const quarantinedReplays = replays.filter(
       ({ replayAttempts }) => replayAttempts >= MAX_DEAD_LETTER_REPLAY_ATTEMPTS,
     );

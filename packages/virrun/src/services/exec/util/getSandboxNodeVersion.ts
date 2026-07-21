@@ -4,8 +4,8 @@ import { readWslLoginEnvironmentCache } from "@/services/exec/wsl/readWslLoginEn
 // Guest whose PATH comes from readWslLoginEnvironment), a different install — and often a different version — from the
 // Windows node hosting this process; everywhere else the sandbox inherits the caller's own node.
 //
-// Never reports the Windows node on win32. This feeds the cache keys (computeEnvironmentKey), and a snapshot holds an
-// *installed* node_modules, so a key that names a major the sandbox does not run is not a stale key but a wrong one —
+// Never reports the Windows node on win32. This feeds the cache keys (computeEnvironmentKey), and a snapshot holds
+// An *installed* node_modules, so a key naming a major the sandbox does not run is not a stale key but a wrong one —
 // The next run under the same mislabel replays native addons built for another ABI. The login capture is read from its
 // Persisted tier (createVirrun warms it before any location is resolved, so the hot path never spawns for a label);
 // When it is absent the run is already degraded to the guest's default PATH, and readWslExecNodeVersion reports that
