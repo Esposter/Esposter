@@ -16,7 +16,7 @@ const { execFileSync, rmSync } = vi.hoisted(() => ({
 }));
 
 vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
-// node:fs stays real except for rmSync, which delegates to the real one until a case makes the local removal throw —
+// Node:fs stays real except for rmSync, which delegates to the real one until a case makes the local removal throw —
 // The only portable way to reach that arm, since what a doomed path raises differs per OS and `force` swallows the rest.
 vi.mock(import("node:fs"), async (importOriginal) => {
   const actual = await importOriginal();

@@ -36,9 +36,9 @@ export const executeAutomodAction = async (
   }
 
   const type = action === WordFilterAction.Timeout ? AdminActionType.TimeoutUser : AdminActionType.Warn;
+  moderationEventEmitter.emit("adminAction", { durationMs, roomId, targetUserId: userId, type });
   // The audit-log write is best-effort — a logging failure must never turn the block into a 500.
   await getResultAsync(() =>
     writeModerationLogEntry({ actorUserId: AUTOMOD_USER_ID, durationMs, roomId, targetUserId: userId, type }),
   ).match(noop, console.error);
-  moderationEventEmitter.emit("adminAction", { durationMs, roomId, targetUserId: userId, type });
 };

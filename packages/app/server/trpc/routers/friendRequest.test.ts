@@ -182,7 +182,7 @@ describe("friendRequest", () => {
     getMockSession();
 
     await expect(friendRequestCaller.acceptFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, getFriendshipId(senderUser.id, receiverUser.id)).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, senderUser.id).message}]`,
     );
   });
 

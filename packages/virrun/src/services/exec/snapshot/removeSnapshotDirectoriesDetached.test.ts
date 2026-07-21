@@ -21,7 +21,7 @@ const { rmSync, spawn } = vi.hoisted(() => ({
 // Only spawn (the background teardown) is mocked; readWslPath maps a UNC via its regex without a subprocess, and the
 // Local branch's removeSnapshotDirectory uses node:fs, so no other child_process export is exercised here.
 vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
-// node:fs stays real except for rmSync, which delegates to the real one until a case makes a single local removal
+// Node:fs stays real except for rmSync, which delegates to the real one until a case makes a single local removal
 // Throw — the only portable way to reach that arm, since what a doomed path raises (ENOTDIR/EPERM) differs per OS and
 // Rm's `force` swallows the rest.
 vi.mock(import("node:fs"), async (importOriginal) => {
@@ -90,7 +90,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
   test("swallows a failing background spawn so the detached sweep never blocks the command", () => {
     expect.hasAssertions();
 
-    // spawnBackground deliberately lets a synchronous spawn throw reach its caller (EAGAIN/EMFILE, an argv past the
+    // SpawnBackground deliberately lets a synchronous spawn throw reach its caller (EAGAIN/EMFILE, an argv past the
     // Win32 command-line limit once a sweep batches hundreds of entries) — here that caller is cache hygiene for dirs
     // This run never touches, so it must not fail the user's command.
     spawn.mockImplementation(() => {

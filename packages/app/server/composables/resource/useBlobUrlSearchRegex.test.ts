@@ -16,7 +16,7 @@ describe(useBlobUrlSearchRegex, () => {
 
     const url = `${containerUrl}/1/photo%20%281%29.png?rscd=attachment%3B%20filename%3D%22photo%20%281%29.png%22&sig=a%2Fb`;
 
-    expect(takeOne(`"${url}"`.match(useBlobUrlSearchRegex()))).toBe(url);
+    expect(takeOne(`"${url}"`.match(useBlobUrlSearchRegex()) ?? [])).toBe(url);
   });
 
   test("should stop at the closing quote of a single-quoted css url() when the URL has no SAS query", () => {
@@ -24,7 +24,7 @@ describe(useBlobUrlSearchRegex, () => {
 
     const url = `${containerUrl}/1/photo.png`;
 
-    expect(takeOne(`background-image:url('${url}');color:red`.match(useBlobUrlSearchRegex()))).toBe(url);
+    expect(takeOne(`background-image:url('${url}');color:red`.match(useBlobUrlSearchRegex()) ?? [])).toBe(url);
   });
 
   test("should stop at the closing paren of an unquoted css url()", () => {
@@ -32,7 +32,7 @@ describe(useBlobUrlSearchRegex, () => {
 
     const url = `${containerUrl}/1/photo.png?sig=a%2Fb`;
 
-    expect(takeOne(`background-image:url(${url});color:red`.match(useBlobUrlSearchRegex()))).toBe(url);
+    expect(takeOne(`background-image:url(${url});color:red`.match(useBlobUrlSearchRegex()) ?? [])).toBe(url);
   });
 
   test("should match only the URL it is given when one is passed", () => {
@@ -41,6 +41,6 @@ describe(useBlobUrlSearchRegex, () => {
     const url = `${containerUrl}/1/photo.png`;
     const otherUrl = `${containerUrl}/2/photo.png`;
 
-    expect(takeOne(`"${otherUrl}""${url}"`.match(useBlobUrlSearchRegex(url)))).toBe(url);
+    expect(takeOne(`"${otherUrl}""${url}"`.match(useBlobUrlSearchRegex(url)) ?? [])).toBe(url);
   });
 });
