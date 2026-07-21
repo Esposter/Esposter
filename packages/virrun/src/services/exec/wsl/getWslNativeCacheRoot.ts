@@ -4,8 +4,8 @@ import {
   VIRRUN_FORCE_PROBE_KEY,
   WSL_CACHE_ROOT_CACHE_FILENAME,
 } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
+import { execWsl } from "@/services/exec/wsl/execWsl";
 import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
@@ -34,9 +34,7 @@ export const getWslNativeCacheRoot = (): string => {
   }
   // `wsl.exe -l -q` lists installed distros (default first) as UTF-16LE; the first non-empty line is the distro
   // `wsl.exe --exec` runs commands in, so its `$HOME` is the matching home directory.
-  const distro = getResult(() =>
-    execFileHidden("wsl.exe", ["-l", "-q"], { encoding: "utf16le", timeout: PROBE_TIMEOUT_MS }),
-  )
+  const distro = getResult(() => execWsl(["-l", "-q"], { encoding: "utf16le", timeout: PROBE_TIMEOUT_MS }))
     .map(
       (output) =>
         output
@@ -45,9 +43,7 @@ export const getWslNativeCacheRoot = (): string => {
           .find(Boolean) ?? "",
     )
     .unwrapOr("");
-  const home = getResult(() =>
-    execFileHidden("wsl.exe", ["--exec", "sh", "-c", "echo $HOME"], { timeout: PROBE_TIMEOUT_MS }),
-  )
+  const home = getResult(() => execWsl(["--exec", "sh", "-c", "echo $HOME"], { timeout: PROBE_TIMEOUT_MS }))
     .map((output) => output.trim())
     .unwrapOr("");
   if (!distro || !home)

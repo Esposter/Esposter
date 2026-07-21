@@ -31,7 +31,7 @@ const expectWslRemoval = (linuxDir: string) => {
   expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
     "wsl.exe",
     ["--exec", "sh", "-c", 'chmod -R u+rwx -- "$1" 2>/dev/null; rm -rf -- "$1"', "sh", linuxDir],
-    { encoding: "utf8", stdio: "pipe", windowsHide: true },
+    { encoding: "buffer", stdio: "pipe", windowsHide: true },
   );
 };
 

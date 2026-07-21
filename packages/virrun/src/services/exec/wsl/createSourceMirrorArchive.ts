@@ -1,5 +1,6 @@
 import type { SourceMirrorArchive } from "@/models/exec/wsl/SourceMirrorArchive";
 
+import { ExecFileError } from "@/models/exec/util/ExecFileError";
 import { SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
@@ -62,9 +63,7 @@ export const createSourceMirrorArchive = (
   const unarchivedPaths = archiveResult.match(
     (): string[] => [],
     (error) => {
-      const stderr =
-        error instanceof Error && "stderr" in error && typeof error.stderr === "string" ? error.stderr : "";
-      if (!getIsTolerableArchiveFailure(stderr)) throw error;
+      if (!(error instanceof ExecFileError) || !getIsTolerableArchiveFailure(error.stderr)) throw error;
       const members = getResult(() => readSourceMirrorArchiveMembers(archiveUnc)).match(
         (value) => new Set(value),
         () => {

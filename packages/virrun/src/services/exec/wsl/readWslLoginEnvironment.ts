@@ -2,7 +2,6 @@ import type { WslLoginEnvironment } from "@/models/exec/wsl/WslLoginEnvironment"
 
 import { dayjs } from "@/services/dayjs";
 import { VIRRUN_FORCE_PROBE_KEY, WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import {
@@ -11,6 +10,7 @@ import {
   VIRRUN_LOGIN_PATH_BEGIN_MARKER,
   VIRRUN_LOGIN_PATH_END_MARKER,
 } from "@/services/exec/wsl/constants";
+import { execWsl } from "@/services/exec/wsl/execWsl";
 import { readWslLoginEnvironmentCache } from "@/services/exec/wsl/readWslLoginEnvironmentCache";
 import { sliceBetweenMarkers } from "@/services/exec/wsl/sliceBetweenMarkers";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
@@ -69,7 +69,7 @@ export const readWslLoginEnvironment = (): WslLoginEnvironment => {
     }
   }
   cachedLoginEnvironment = getResult(() =>
-    execFileHidden("wsl.exe", ["--exec", "sh", "-c", CAPTURE_SCRIPT], { timeout: WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS }),
+    execWsl(["--exec", "sh", "-c", CAPTURE_SCRIPT], { timeout: WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS }),
   )
     .map((stdout) => ({
       nodeVersion: sliceBetweenMarkers(stdout, VIRRUN_LOGIN_NODE_BEGIN_MARKER, VIRRUN_LOGIN_NODE_END_MARKER),

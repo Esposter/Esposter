@@ -4,8 +4,8 @@ import {
   WSL_ENVIRONMENT_MAX_AGE_MS,
   WSL_EXEC_NODE_VERSION_CACHE_FILENAME,
 } from "@/services/exec/util/constants";
-import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
+import { execWsl } from "@/services/exec/wsl/execWsl";
 import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
 import { getResult } from "@esposter/shared";
@@ -36,9 +36,7 @@ export const readWslExecNodeVersion = (): string => {
       return cached;
     }
   }
-  wslExecNodeVersion = getResult(() =>
-    execFileHidden("wsl.exe", ["--exec", "node", "--version"], { timeout: PROBE_TIMEOUT_MS }),
-  )
+  wslExecNodeVersion = getResult(() => execWsl(["--exec", "node", "--version"], { timeout: PROBE_TIMEOUT_MS }))
     .map((output) => output.trim())
     .unwrapOr("");
   if (wslExecNodeVersion)
