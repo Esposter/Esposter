@@ -13,7 +13,7 @@ import { pruneStaleTaskCacheEntries } from "@/services/exec/cache/pruneStaleTask
 import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
 import { applyFlushPlan } from "@/services/exec/snapshot/applyFlushPlan";
 import { reapStaleTemps } from "@/services/exec/snapshot/reapStaleTemps";
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
 import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync, writeFileSync } from "node:fs";
@@ -52,10 +52,10 @@ export const recordTaskCache = (key: string, upperDir: string, plan: readonly Fl
     }).match(noop, (error) => {
       // A race-loser renames onto a populated dir and fails; keep the winner's entry and drop our temp.
       if (!existsSync(location.metaFile)) throw error;
-      removeSnapshotDirectory(tempDir);
+      removeSnapshotDirectoryBestEffort(tempDir);
     });
   }).match(noop, (error) => {
     writeVirrunDebug(`task cache record failed — ${error.message}`);
-    if (tempDir) removeSnapshotDirectory(tempDir);
+    if (tempDir) removeSnapshotDirectoryBestEffort(tempDir);
   });
 };

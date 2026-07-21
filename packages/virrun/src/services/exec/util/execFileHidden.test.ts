@@ -60,6 +60,19 @@ describe(execFileHidden, () => {
     });
   });
 
+  test("encodes a string stdin with the caller's encoding, never the capture's", () => {
+    expect.hasAssertions();
+
+    execFileHidden("python3", ["-"], { input: "a" });
+
+    expect(execFileSync).toHaveBeenCalledExactlyOnceWith("python3", ["-"], {
+      encoding: "buffer",
+      input: Buffer.from("a"),
+      stdio: "pipe",
+      windowsHide: true,
+    });
+  });
+
   test("returns an empty string when stdout was not piped", () => {
     expect.hasAssertions();
 

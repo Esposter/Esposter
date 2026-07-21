@@ -18,11 +18,20 @@ const readStderr = (error: Error, stderrEncoding: BufferEncoding): string =>
 export const execFileHidden = (
   file: string,
   args: readonly string[],
-  { encoding = "utf8", stderrEncoding = encoding, stdio = "pipe", ...rest }: ExecFileHiddenOptions = {},
+  { encoding = "utf8", input, stderrEncoding = encoding, stdio = "pipe", ...rest }: ExecFileHiddenOptions = {},
 ): string =>
   getResult(
-    // Null whenever stdout wasn't piped (an "inherit" stdio streams it to the host terminal instead).
-    (): Buffer | null => execFileSync(file, args, { ...rest, encoding: "buffer", stdio, windowsHide: true }),
+    // Null whenever stdout wasn't piped (an "inherit" stdio streams it to the host terminal instead). stdin is encoded
+    // Here rather than left to Node, which would encode a string `input` with the capture encoding — `buffer` — and
+    // Reject it as an unknown encoding; the caller's `encoding` is what its text is really in.
+    (): Buffer | null =>
+      execFileSync(file, args, {
+        ...rest,
+        ...(input === undefined ? {} : { input: Buffer.from(input, encoding) }),
+        encoding: "buffer",
+        stdio,
+        windowsHide: true,
+      }),
   ).match(
     (stdout) => stdout?.toString(encoding) ?? "",
     (error) => {

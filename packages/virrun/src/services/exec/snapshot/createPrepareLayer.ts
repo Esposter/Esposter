@@ -8,7 +8,7 @@ import {
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
 import { pruneToOutputs } from "@/services/exec/snapshot/pruneToOutputs";
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
 import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
@@ -60,15 +60,15 @@ export const createPrepareLayer = (
       noop,
       (error) => {
         if (!existsSync(upperDir)) throw error;
-        removeSnapshotDirectory(captureUpperDir);
+        removeSnapshotDirectoryBestEffort(captureUpperDir);
       },
     );
-    removeSnapshotDirectory(captureWorkDir);
+    removeSnapshotDirectoryBestEffort(captureWorkDir);
   }).match(
     noop,
     (error) => {
-      if (captureUpperDir) removeSnapshotDirectory(captureUpperDir);
-      if (captureWorkDir) removeSnapshotDirectory(captureWorkDir);
+      if (captureUpperDir) removeSnapshotDirectoryBestEffort(captureUpperDir);
+      if (captureWorkDir) removeSnapshotDirectoryBestEffort(captureWorkDir);
       throw error;
     },
   );

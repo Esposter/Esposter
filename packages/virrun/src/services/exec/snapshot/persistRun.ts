@@ -9,7 +9,7 @@ import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
@@ -59,8 +59,8 @@ export const persistRun = (
       return result;
     },
     () => {
-      removeSnapshotDirectory(persistUpperDir);
-      removeSnapshotDirectory(persistWorkDir);
+      removeSnapshotDirectoryBestEffort(persistUpperDir);
+      removeSnapshotDirectoryBestEffort(persistWorkDir);
     },
   );
 };
