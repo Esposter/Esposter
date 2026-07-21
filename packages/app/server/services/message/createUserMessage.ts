@@ -17,8 +17,14 @@ import { createThreadFollow } from "@@/server/services/message/thread/createThre
 import { notifyThreadReplyFollowers } from "@@/server/services/message/thread/notifyThreadReplyFollowers";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { createMessage, getPushSubscriptionsForMessage, incrementMentionCounts } from "@esposter/db";
-import { AzureFunction, AzureTable, createEventGridEvent, roomsInMessage } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import {
+  AzureFunction,
+  AzureTable,
+  createEventGridEvent,
+  DatabaseEntityType,
+  roomsInMessage,
+} from "@esposter/db-schema";
+import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 export const createUserMessage = async (
@@ -125,6 +131,10 @@ export const createUserMessage = async (
   )
     .orTee(console.error)
     .unwrapOr(undefined);
+  // A zero-row update is not a rejection, so it arrives here as `undefined` rather than through `orTee`: the room
+  // The message was just written into is gone. Still best-effort — the message landed and the caller keeps it —
+  // But never silent, or the room list simply stops re-sorting with nothing anywhere saying why
   if (updatedRoom) roomEventEmitter.emit("updateRoom", updatedRoom);
+  else console.error(new NotFoundError(DatabaseEntityType.Room, input.roomId));
   return newMessageEntity;
 };
