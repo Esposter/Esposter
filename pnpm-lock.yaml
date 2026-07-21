@@ -1619,6 +1619,9 @@ importers:
       '@azure/data-tables':
         specifier: 'catalog:'
         version: 13.3.2(supports-color@10.2.2)
+      '@azure/eventgrid':
+        specifier: 'catalog:'
+        version: 5.12.0(supports-color@10.2.2)
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.33.0(supports-color@10.2.2)

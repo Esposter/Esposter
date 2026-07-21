@@ -2,8 +2,11 @@ import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCach
 import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
 import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
+import { readWslExecNodeVersion } from "@/services/exec/wsl/readWslExecNodeVersion";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("@/services/exec/wsl/readWslExecNodeVersion"), () => ({ readWslExecNodeVersion: vi.fn(() => "") }));
 
 const setPlatform = (value: string) => {
   Object.defineProperty(process, "platform", { configurable: true, value });
@@ -30,14 +33,15 @@ describe(getSandboxNodeVersion, () => {
     expect(getSandboxNodeVersion()).toBe(nodeVersion);
   });
 
-  test("falls back to the host node on win32 when no capture has been persisted yet", () => {
+  test("probes the guest's default-PATH node on win32 when no capture has been persisted yet", () => {
     expect.hasAssertions();
 
-    // Deliberately never probes: this feeds every run's cache key, so a missing capture degrades rather than paying a
-    // Login-shell spawn to label one.
+    // The degraded run injects no PATH, so it runs whatever node `wsl.exe --exec` resolves — never this process's
+    // Windows node, which would key an installed node_modules under a major the sandbox does not run.
     setPlatform("win32");
+    vi.mocked(readWslExecNodeVersion).mockReturnValueOnce(nodeVersion);
 
-    expect(getSandboxNodeVersion()).toBe(process.version);
+    expect(getSandboxNodeVersion()).toBe(nodeVersion);
   });
 
   test("reports the host node off win32, where the sandbox inherits the caller's toolchain", () => {

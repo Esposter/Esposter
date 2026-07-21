@@ -50,7 +50,7 @@ const CAPTURE_SCRIPT = buildWslLoginShellCommand(
 // Three-tier so a fresh `virrun -- <cmd>` process (one per command) never re-pays the interactive-login capture on a
 // Warm host: the in-process memo short-circuits repeat calls within a run; the persisted cross-process cache
 // (getHostFingerprint-keyed, so it self-invalidates on a kernel change, and age-bounded so a toolchain switch the
-// Fingerprint can't see self-heals within WSL_LOGIN_ENVIRONMENT_MAX_AGE_MS) reuses a prior process's capture — the
+// Fingerprint can't see self-heals within WSL_ENVIRONMENT_MAX_AGE_MS) reuses a prior process's capture — the
 // Real win, since the capture is otherwise a login-shell spawn whose rc startup is not free. VIRRUN_FORCE_PROBE
 // Bypasses the persisted cache (not the in-process memo, which is always sound). Only a successful (non-empty
 // PATH) capture is persisted, so a transient WSL/shell failure re-probes next process rather than caching the default.

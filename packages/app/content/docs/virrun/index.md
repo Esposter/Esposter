@@ -33,7 +33,7 @@ Correctness beats speed; a fast wrong answer is worthless.
 - **The subprocess wall** — an in-process VFS is blind to child processes; only the `os` backend puts a real `pnpm install` in RAM. See [architecture](/docs/virrun/architecture).
 - **Warm snapshot / fork** — "clone + install" happens once into an environment-keyed overlay layer (lockfile + sandbox node major); each run forks it. See [snapshot and fork](/docs/virrun/snapshot-and-fork).
 - **Write-back** — a mutation command's produced files are flushed back to the host so disk matches native, while `node_modules` structurally never flushes. See [write-back](/docs/virrun/write-back).
-- **Task cache** — a persist run keyed by lockfile + working-tree + command hash; a hit skips the sandbox and replays the recorded diff and streams.
+- **Task cache** — a persist run keyed by environment key + working-tree + command hash; a hit skips the sandbox and replays the recorded diff and streams.
 - **The prefix is the switch** — `virrun -- <cmd>` opts one command in; removing it opts out. No allowlist, no env flag.
 
 ## Pages

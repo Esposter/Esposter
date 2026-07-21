@@ -18,7 +18,13 @@ import { notifyThreadReplyFollowers } from "@@/server/services/message/thread/no
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { createMessage, getPushSubscriptionsForMessage, incrementMentionCounts } from "@esposter/db";
-import { AzureFunction, AzureTable, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
+import {
+  AzureFunction,
+  AzureTable,
+  DatabaseEntityType,
+  EVENT_GRID_DATA_VERSION,
+  roomsInMessage,
+} from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
@@ -80,7 +86,7 @@ export const createUserMessage = async (
     await eventGridPublisherClient.send([
       {
         data,
-        dataVersion: "1.0",
+        dataVersion: EVENT_GRID_DATA_VERSION,
         eventType: AzureFunction.ProcessPushNotification,
         subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
       },

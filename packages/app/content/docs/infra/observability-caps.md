@@ -1,6 +1,6 @@
 ---
 title: Observability caps
-description: Log Analytics has a daily ingestion cap with a cap-reached alert, and App Insights samples adaptively while keeping exceptions.
+description: Log Analytics has a daily ingestion cap with a cap-reached alert, and App Insights samples adaptively while keeping exceptions and traces.
 ---
 
 # Observability Caps
@@ -11,11 +11,11 @@ Log Analytics and Application Insights are the one place a telemetry burst could
 
 Each Log Analytics workspace sets `workspaceCapping.dailyQuotaGb` to a conservative `0.5` GB (previously uncapped at `-1`). When a workspace hits its cap it stops ingesting for the rest of the UTC day and drops telemetry silently — acceptable by design, since this estate prefers losing logs to paying for them. A `sqr` scheduled-query alert rule on each workspace queries `_LogOperation` for the daily-cap-reached signal and, when it fires, notifies the SmartDetect action group so the drop is at least visible.
 
-The Function Apps' `host.json` enables App Insights adaptive sampling with `excludedTypes: Exception`, so high-volume request and trace telemetry is thinned under load while exceptions are always kept — errors survive the cap even when everything else is being sampled away.
+The Function Apps' `host.json` enables App Insights adaptive sampling at 20 telemetry items per second with `excludedTypes: "Exception;Trace"`, so high-volume request and dependency telemetry is thinned under load while exceptions and the handlers' own `context.log`/`context.error` traces are never sampled away. That exclusion is load-bearing beyond error visibility: the dead-letter quarantine alert queries the `traces` table, so a sampled trace would be a missed page.
 
 ```mermaid
 flowchart TD
-  fn[Function Apps] -->|adaptive sampling keeps exceptions| appi[Application Insights]
+  fn[Function Apps] -->|adaptive sampling keeps exceptions and traces| appi[Application Insights]
   appi --> ws[Log Analytics workspace]
   ws -->|0.5 GB daily cap| drop[Ingestion stops for the day]
   ws -->|_LogOperation cap-reached| sqr[Scheduled query alert rule]
@@ -28,7 +28,7 @@ flowchart TD
 | :----------------------------------------------------------------------------- | :------------------------------------------------------ |
 | `packages/infra/src/azure/resources/Microsoft.OperationalInsights/workspaces/` | `dailyQuotaGb: 0.5` on the dev and prod workspaces      |
 | `packages/infra/src/azure/resources/Microsoft.Insights/scheduledQueryRules/`   | Cap-reached alert rule on `_LogOperation` per workspace |
-| `packages/azure-functions/host.json`                                           | Adaptive sampling with exceptions excluded              |
+| `packages/azure-functions/host.json`                                           | Adaptive sampling with exceptions and traces excluded   |
 
 ## Notes
 

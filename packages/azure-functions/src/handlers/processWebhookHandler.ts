@@ -6,7 +6,7 @@ import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { getPushNotificationData } from "@/services/getPushNotificationData";
 import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessageInput";
 import { logAndRethrow } from "@/services/logAndRethrow";
-import { AzureFunction } from "@esposter/db-schema";
+import { AzureFunction, EVENT_GRID_DATA_VERSION } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const processWebhookHandler: EventGridHandler = (event, context) => {
@@ -25,7 +25,7 @@ export const processWebhookHandler: EventGridHandler = (event, context) => {
       eventGridPublisherClient.send([
         {
           data,
-          dataVersion: "1.0",
+          dataVersion: EVENT_GRID_DATA_VERSION,
           eventType: AzureFunction.ProcessPushNotification,
           subject: `${newMessage.partitionKey}/${newMessage.rowKey}`,
         },

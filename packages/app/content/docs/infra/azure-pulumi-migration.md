@@ -48,5 +48,5 @@ What each provider namespace under `src/azure/resources/` holds:
 
 ## Notes
 
-- App-plane settings are not fully represented: Function App runtime settings and App Insights connection settings remain external to the imported `WebApp` declarations (open roadmap item — see /docs/infra/roadmap).
+- App-plane settings were the last gap the import left open, and they are now closed: each Function App's runtime settings and App Insights wiring live in its `WebApp` declaration — see [Pulumi source of truth](/docs/infra/pulumi-source-of-truth).
 - The import-era scaffolding (the `packages/infra/data/` CSV asset inventory and the `buildAzureImportManifest` generator) has been deleted now that the import is done — `packages/infra/data/` holds only the `messages-index` search index definition.

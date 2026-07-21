@@ -24,8 +24,9 @@ Everything virrun materializes on disk to make sandboxed runs fast. Local, machi
   capability.json      # persisted os-backend capability probe verdict
 
 # win32 only — Windows-side (%USERPROFILE%\.virrun), NOT the WSL-ext4 ~/.virrun above
-  wsl-login-environment.json  # persisted WSL interactive-login PATH + that PATH's node version
-  wsl-cache-root.json  # persisted WSL native ext4 cache root
+  wsl-login-environment.json    # persisted WSL interactive-login PATH + that PATH's node version
+  wsl-exec-node-version.json    # persisted `wsl.exe --exec node --version` — the guest's default-PATH node
+  wsl-cache-root.json           # persisted WSL native ext4 cache root
 ```
 
 - **`store/pnpm/`** (repo-local) — deps download once; the `os` backend bind-mounts `<repo>/.virrun/store/pnpm` writable into each sandbox and exposes it through pnpm env. Repo-local is fine because it is a **bind** mount, and binds may overlap the working-dir overlay. Package imports use copy — hardlinks cannot cross from the on-disk store into the RAM overlay.
@@ -34,7 +35,7 @@ Everything virrun materializes on disk to make sandboxed runs fast. Local, machi
 - **`tasks/`** (host-global) — the [task cache](/docs/virrun/task-cache).
 - **`sources/`** (host-global, win32) — the [WSL source mirrors](/docs/virrun/wsl-source-mirror).
 - **`capability.json`** — the persisted verdict of the os-backend capability probe (`isOsBackendSupported`), keyed by `platform:kernel-release`. Every `virrun -- <cmd>` is a fresh process; without this each command would re-run the probe — a bwrap overlay mount on Linux, three `wsl.exe` round-trips on win32. The key self-invalidates on a kernel change; a change it can't see (bwrap just installed) is covered by `VIRRUN_FORCE_PROBE` or `cache clean --all`.
-- **`wsl-login-environment.json` / `wsl-cache-root.json`** (win32, Windows-side) — the persisted results of the two WSL environment probes: the interactive-login capture (`PATH` plus the node version that `PATH` resolves — a login-shell spawn, the expensive one) and the WSL native ext4 cache root. Stored Windows-side rather than in the WSL-ext4 `~/.virrun` because locating that root _is_ `getWslNativeCacheRoot` — caching it there would be circular. Only a **successful** probe is persisted; a transient WSL failure returns the degraded default and re-probes next run rather than caching the miss. The login capture also carries a **6-hour age bound**: its key is `platform:kernel-release`, which cannot see a node-manager version switch, so without an expiry a capture taken before a node upgrade would pin every sandbox to the old node until a manual clean.
+- **`wsl-login-environment.json` / `wsl-exec-node-version.json` / `wsl-cache-root.json`** (win32, Windows-side) — the persisted results of the three WSL environment probes: the interactive-login capture (`PATH` plus the node version that `PATH` resolves — a login-shell spawn, the expensive one), the guest's default-`PATH` node version (`wsl.exe --exec node --version`, the fallback the environment key uses when the login capture is missing, so a degraded run still keys on the node it will really run), and the WSL native ext4 cache root. Stored Windows-side rather than in the WSL-ext4 `~/.virrun` because locating that root _is_ `getWslNativeCacheRoot` — caching it there would be circular. Only a **successful** probe is persisted; a transient WSL failure returns the degraded default and re-probes next run rather than caching the miss. Both node-version captures also carry a **6-hour age bound**: the key is `platform:kernel-release`, which cannot see a node-manager version switch, so without an expiry a capture taken before a node upgrade would pin every sandbox to the old node until a manual clean.
 
 ## Cleanup and self-healing
 

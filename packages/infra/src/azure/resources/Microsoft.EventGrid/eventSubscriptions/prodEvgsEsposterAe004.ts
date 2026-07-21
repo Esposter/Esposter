@@ -53,5 +53,6 @@ export const prodEvgsEsposterAe004: azure_native.eventgrid.SystemTopicEventSubsc
     },
     {
       parent: prodEgstEsposterAe001,
+      protect: true,
     },
   );

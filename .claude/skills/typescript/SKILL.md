@@ -403,6 +403,8 @@ Use `Pick` for all properties derived directly from the source type. Keep explic
 - `Parameters<SourceType["method"]>[n]` — same
 - Plain primitives (`number`, `string`) representing constructor args with no matching readable property on the source type
 
+The same rule covers **third-party SDK envelopes**: when our code authors or reads a subset of an SDK's own shape, `Pick` from the SDK type instead of restating the fields, and make it generic over the part that actually varies. `EventGridEventInput<TData>` in `packages/db-schema/src/models/azure/eventGrid/` is `Pick<EventGridEvent<TData>, "data" | "dataVersion" | "eventType" | "id" | "subject">` — one definition for every publisher and consumer, and it follows the SDK when the SDK moves. Never define a per-feature alias (`DeadLetteredEvent`, `WebhookEvent`, …) that just re-declares the same envelope; instantiate the generic.
+
 ## Missing `NuxtConfig` Module Keys — Augment `nuxt.d.ts`, Never Touch tsconfig
 
 When `NuxtConfig["x"]` errors in `packages/app/configuration/*.ts` because a Nuxt module's config key isn't picked up (the module relies on the generated `.nuxt/types/modules.d.ts` instead of shipping its own `nuxt/schema` augmentation), **NEVER edit `tsconfig.root.json` or any tsconfig `include`**. Add the key to the existing `declare module "nuxt/schema"` block in `packages/app/shared/types/nuxt.d.ts`, importing the module's exported `ModuleOptions`:

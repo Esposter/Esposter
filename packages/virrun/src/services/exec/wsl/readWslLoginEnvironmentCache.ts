@@ -1,7 +1,7 @@
 import type { WslLoginEnvironment } from "@/models/exec/wsl/WslLoginEnvironment";
 
 import { wslLoginEnvironmentSchema } from "@/models/exec/wsl/WslLoginEnvironment";
-import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, WSL_LOGIN_ENVIRONMENT_MAX_AGE_MS } from "@/services/exec/util/constants";
+import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, WSL_ENVIRONMENT_MAX_AGE_MS } from "@/services/exec/util/constants";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
 import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
 // The persisted login-environment capture for this host, or undefined when there is none to reuse (never captured,
@@ -13,5 +13,5 @@ export const readWslLoginEnvironmentCache = (): undefined | WslLoginEnvironment 
     WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME,
     wslLoginEnvironmentSchema,
     getHostFingerprint(),
-    WSL_LOGIN_ENVIRONMENT_MAX_AGE_MS,
+    WSL_ENVIRONMENT_MAX_AGE_MS,
   );

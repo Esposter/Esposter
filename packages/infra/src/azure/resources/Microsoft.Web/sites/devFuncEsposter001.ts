@@ -66,6 +66,10 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
         { name: "AZURE_EVENT_GRID_TOPIC_ENDPOINT", value: devEvgtEsposterAe001.endpoint },
         { name: "AZURE_EVENT_GRID_TOPIC_KEY", value: config.requireSecret("devFuncEsposter001EventGridTopicKey") },
         {
+          name: "AZURE_SERVICE_BUS_CONNECTION_STRING",
+          value: config.requireSecret("devFuncEsposter001ServiceBusConnectionString"),
+        },
+        {
           name: "AZURE_STORAGE_ACCOUNT_CONNECTION_STRING",
           value: config.requireSecret("devFuncEsposter001StorageAccountConnectionString"),
         },
@@ -90,10 +94,6 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
         {
           name: "WEBSITE_RUN_FROM_PACKAGE",
           value: "https://devstesposter001.blob.core.windows.net/dev-func-esposter-001/release.zip",
-        },
-        {
-          name: "AZURE_SERVICE_BUS_CONNECTION_STRING",
-          value: config.requireSecret("devFuncEsposter001ServiceBusConnectionString"),
         },
       ],
       use32BitWorkerProcess: false,
