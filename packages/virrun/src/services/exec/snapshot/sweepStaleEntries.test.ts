@@ -5,10 +5,8 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
 // The shared predicate under test: everything whose name starts with the stale marker is swept, the rest kept.
 const isStale = (name: string): boolean => name.startsWith(" ");
-
 const { removeSnapshotDirectoriesDetached } = vi.hoisted(() => ({ removeSnapshotDirectoriesDetached: vi.fn() }));
 // Spied, not stubbed: the teardown still really runs (the removal assertions below are the point), while the batching
 // Test can see that a sweep of N entries reaches it as ONE call — the property that keeps a sweep to one wsl.exe.
