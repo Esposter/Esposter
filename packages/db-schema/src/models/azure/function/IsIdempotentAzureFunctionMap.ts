@@ -11,7 +11,8 @@ export const IsIdempotentAzureFunctionMap = {
   // Notification that was never delivered in the first place, which is the outcome the replay exists to produce.
   [AzureFunction.ProcessFriendRequestNotification]: true,
   [AzureFunction.ProcessPushNotification]: true,
-  // Delivers already-scheduled messages by id, so a rerun re-delivers the same rows.
+  // Creates a message like ProcessWebhook does, but claims its job on `processingStartedAt IS NULL` first: a rerun
+  // Finds the job already claimed and does nothing, so the second copy the fresh rowKey would produce never lands.
   [AzureFunction.ProcessScheduledMessageJob]: true,
   [AzureFunction.ProcessThreadReplyNotification]: true,
   // Creates a message whose rowKey is a fresh reverse-ticked timestamp (createMessage), so a rerun writes a second,

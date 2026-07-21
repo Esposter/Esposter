@@ -47,6 +47,7 @@ Correctness beats speed; a fast wrong answer is worthless.
 | [Task cache](/docs/virrun/task-cache)                   | content-keyed replay of unchanged persist runs, the two honesty guards            |
 | [Task-cache eviction](/docs/virrun/task-cache-eviction) | age-prune the unbounded tasks dir, touch-on-hit recency, payload size in cache ls |
 | [WSL source mirror](/docs/virrun/wsl-source-mirror)     | win32 ext4 source mirror + host-side manifest delta sync                          |
+| [Subprocess timeouts](/docs/virrun/subprocess-timeouts) | which bound a spawned child gets, and the one case that gets none                 |
 | [Adoption](/docs/virrun/adoption)                       | the prefix-is-the-switch model, opt-in levels, auto-fallback, CLI subcommands     |
 | [Configuration](/docs/virrun/configuration)             | the committed `virrun.config.*` — backend selection + environment preset          |
 | [Cache](/docs/virrun/cache)                             | the gitignored `.virrun` layout, probe caches, cleanup & self-healing             |

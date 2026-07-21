@@ -96,7 +96,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
   virrun: {
     Core: ["architecture", "orchestrator-api", "execution-backends", "configuration"],
     Performance: ["cache", "task-cache", "task-cache-eviction", "snapshot-and-fork", "write-back", "wsl-source-mirror"],
-    Guarantees: ["correctness", "benchmarking"],
+    Guarantees: ["correctness", "benchmarking", "subprocess-timeouts"],
     Background: ["adoption", "prior-art"],
   },
 };
