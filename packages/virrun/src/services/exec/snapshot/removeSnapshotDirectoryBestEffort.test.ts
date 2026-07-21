@@ -43,8 +43,8 @@ describe(removeSnapshotDirectoryBestEffort, () => {
       throw new Error("Command failed");
     });
 
-    expect(() =>
-      removeSnapshotDirectoryBestEffort(createTestWslUnc(`${TEST_WSL_CACHE_ROOT_LINUX}/${TEST_FILENAME}`)),
+    expect(() =>{ 
+      removeSnapshotDirectoryBestEffort(createTestWslUnc(`${TEST_WSL_CACHE_ROOT_LINUX}/${TEST_FILENAME}`)); },
     ).not.toThrow();
     expect(execFileSync).toHaveBeenCalledOnce();
   });

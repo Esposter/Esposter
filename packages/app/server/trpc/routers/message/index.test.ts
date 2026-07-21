@@ -818,7 +818,7 @@ describe("message", () => {
     expect(takeOne(readMessages.items).isPinned).toBeUndefined();
   });
 
-  describe("createMessage slowmode guard", () => {
+  describe("slowmode guard", () => {
     beforeEach(() => {
       vi.useFakeTimers();
       vi.setSystemTime(0);
@@ -868,6 +868,37 @@ describe("message", () => {
       const createdMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
       expect(createdMessage).toBeDefined();
+    });
+
+    test("second forward within slowmode window throws TOO_MANY_REQUESTS", async () => {
+      expect.hasAssertions();
+
+      // A forward is a send, so it advances the same clock it was checked against — otherwise the stale
+      // LastMessageAt keeps passing and forwarding floods a room slowmode is supposed to throttle
+      const newRoom = await roomCaller.createRoom({ name });
+      const source = await messageCaller.createMessage({
+        message: getMessage(getMockSession().user.id),
+        roomId: newRoom.id,
+      });
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 2 });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+      const { user } = await mockSessionOnce(mockContext.db);
+      await roomCaller.joinRoom(invite.id);
+      const forwardInput = {
+        partitionKey: source.partitionKey,
+        roomIds: [newRoom.id],
+        rowKey: source.rowKey,
+      };
+
+      await mockSessionOnce(mockContext.db, user);
+      vi.advanceTimersByTime(1);
+      await messageCaller.forwardMessage(forwardInput);
+      await mockSessionOnce(mockContext.db, user);
+      vi.advanceTimersByTime(1);
+
+      await expect(messageCaller.forwardMessage(forwardInput)).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: TOO_MANY_REQUESTS]`,
+      );
     });
 
     test("second message within slowmode window from someone who can manage messages succeeds", async () => {

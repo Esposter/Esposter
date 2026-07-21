@@ -32,6 +32,7 @@ import { searchMessages } from "@@/server/services/message/searchMessages";
 import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
 import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { updateMessage } from "@@/server/services/message/updateMessage";
+import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
@@ -271,6 +272,9 @@ export const baseMessageRouter = router({
             });
             messages.push(newMessageEntity);
           }
+          // A forward is a send like any other, so it has to advance the slowmode clock it was just checked
+          // Against — otherwise the same stale lastMessageAt keeps passing and slowmode never applies here
+          await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, { lastMessageAt: new Date(), roomId });
           // Forwarding needs no isLoading effect, so let the subscription auto-add the message.
           messageEventEmitter.emit("createMessage", [
             messages,

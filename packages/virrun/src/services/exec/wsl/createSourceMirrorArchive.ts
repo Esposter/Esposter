@@ -63,14 +63,17 @@ export const createSourceMirrorArchive = (
   const unarchivedPaths = archiveResult.match(
     (): string[] => [],
     (error) => {
-      if (!(error instanceof ExecFileError) || !getIsTolerableArchiveFailure(error.stderr)) throw error;
+      // A killed tar (the archive timeout's SIGTERM) stopped mid-write, so whatever skips its partial stderr
+      // Happens to carry describe an archive that is truncated at an arbitrary point, not complete-but-for-those
+      if (!(error instanceof ExecFileError) || error.signal || !getIsTolerableArchiveFailure(error.stderr)) throw error;
       const members = getResult(() => readSourceMirrorArchiveMembers(archiveUnc)).match(
         (value) => new Set(value),
         () => {
           throw error;
         },
       );
-      return copyPaths.filter((path) => !members.has(path));
+      // Compared in the members' normalized shape, but reported as the manifest's own key
+      return copyPaths.filter((path) => !members.has(path.normalize()));
     },
   );
   return { archiveFilename, unarchivedPaths };

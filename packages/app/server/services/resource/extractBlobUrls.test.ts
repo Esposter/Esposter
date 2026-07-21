@@ -46,6 +46,14 @@ describe(extractBlobUrls, () => {
     expect(extractBlobUrls(`${url}"${url}"`)).toStrictEqual([url]);
   });
 
+  test("should keep the URL percent-encoded so it can be found in the content verbatim", () => {
+    expect.hasAssertions();
+
+    const url = `${containerUrl}/1/my%20photo.png`;
+
+    expect(extractBlobUrls(`${url}?sasToken"`)).toStrictEqual([url]);
+  });
+
   test("should not extract URLs from a different container", () => {
     expect.hasAssertions();
 

@@ -3,9 +3,10 @@ import { useBlobUrlSearchRegex } from "@@/server/composables/resource/useBlobUrl
 export const extractBlobUrls = (serializedContent: string): string[] => [
   ...new Set(
     serializedContent.matchAll(useBlobUrlSearchRegex()).map(([blobUrl]) => {
-      // We don't need the SAS token query parameters
+      // We don't need the SAS token query parameters. The url stays percent-encoded exactly as the content
+      // Carries it, because callers search the content for it verbatim — decoding is the blob name's business
       const queryParamIndex = blobUrl.indexOf("?");
-      return decodeURIComponent(queryParamIndex === -1 ? blobUrl : blobUrl.slice(0, queryParamIndex));
+      return queryParamIndex === -1 ? blobUrl : blobUrl.slice(0, queryParamIndex);
     }),
   ),
 ];

@@ -1,6 +1,7 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { getResult, noop } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
@@ -8,7 +9,7 @@ const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExec
 vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
 
 // The shape Node raises for a failed spawn: an Error carrying the child's UNDECODED stderr, since the spawn always
-// Captures in `buffer`. wsl.exe writes its own diagnostics as UTF-16LE, which only stderrEncoding can read back.
+// Captures in `buffer`. wsl.exe writes its own diagnostics as UTF-16LE, which the wrapper detects from the bytes.
 const mockFailure = (stderr: string, stderrEncoding: BufferEncoding): void => {
   execFileSync.mockImplementation(() => {
     throw Object.assign(new Error("Command failed"), { status: 1, stderr: Buffer.from(stderr, stderrEncoding) });
@@ -39,7 +40,7 @@ describe(execFileHidden, () => {
 
     execFileSync.mockReturnValue(Buffer.from("a", "utf16le"));
 
-    expect(execFileHidden("wsl.exe", ["-l", "-q"], { encoding: "utf16le", stderrEncoding: "utf16le" })).toBe("a");
+    expect(execFileHidden("wsl.exe", ["-l", "-q"], { encoding: "utf16le" })).toBe("a");
     expect(execFileSync).toHaveBeenCalledExactlyOnceWith("wsl.exe", ["-l", "-q"], {
       encoding: "buffer",
       stdio: "pipe",
@@ -82,19 +83,20 @@ describe(execFileHidden, () => {
     expect(execFileHidden("git", ["status"], { stdio: "inherit" })).toBe("");
   });
 
-  test("raises the failure with its stderr decoded by stderrEncoding", () => {
+  // The call site declares nothing about stderr, which is the point: runOverlayScript spawned wsl.exe straight
+  // Through here and its every launch failure arrived as an empty reason until the encoding was detected instead
+  test("detects a UTF-16LE stderr no caller declared", () => {
     expect.hasAssertions();
 
     mockFailure("Wsl/Service/E_UNEXPECTED", "utf16le");
 
-    expect(() => execFileHidden("wsl.exe", ["--exec", "sh"], { stderrEncoding: "utf16le" }))
-      .toThrowErrorMatchingInlineSnapshot(`
-      [ExecFileError: Command failed: wsl.exe --exec sh
+    expect(() => execFileHidden("wsl.exe", ["--exec", "python3"])).toThrowErrorMatchingInlineSnapshot(`
+      [ExecFileError: Command failed: wsl.exe --exec python3
       Wsl/Service/E_UNEXPECTED]
     `);
   });
 
-  test("defaults stderrEncoding to the stdout encoding", () => {
+  test("reads a utf8 stderr as written", () => {
     expect.hasAssertions();
 
     mockFailure("tar: Cannot open", "utf8");
@@ -103,6 +105,37 @@ describe(execFileHidden, () => {
       [ExecFileError: Command failed: tar -c
       tar: Cannot open]
     `);
+  });
+
+  // The utf16le shape is an even byte count of NUL-padded characters; a utf8 traceback that happens to be even-length
+  // Must not be mistaken for one, since decoding it that way would render it as unreadable CJK
+  test("reads an even-length utf8 stderr as utf8", () => {
+    expect.hasAssertions();
+
+    mockFailure("OSError: [Errno 1] Operation not permitted", "utf8");
+
+    expect(() => execFileHidden("wsl.exe", ["--exec", "python3"])).toThrowErrorMatchingInlineSnapshot(`
+      [ExecFileError: Command failed: wsl.exe --exec python3
+      OSError: [Errno 1] Operation not permitted]
+    `);
+  });
+
+  test("carries the signal of a child the timeout killed", () => {
+    expect.hasAssertions();
+
+    // A killed child's stderr is whatever it had written when it died, so callers that classify that text need
+    // The kill itself surfaced — otherwise a truncated fragment reads like a complete verdict
+    execFileSync.mockImplementation(() => {
+      throw Object.assign(new Error("Command failed"), {
+        signal: "SIGTERM",
+        status: null,
+        stderr: Buffer.from("tar: Couldn't open a: b"),
+      });
+    });
+
+    const error = getResult(() => execFileHidden("tar", ["-c"])).match(noop, (failure) => failure);
+
+    expect(error).toMatchObject({ signal: "SIGTERM" });
   });
 
   test("raises the failure with an empty stderr when it was not piped", () => {

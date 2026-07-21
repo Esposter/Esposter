@@ -46,6 +46,23 @@ describe(deserializeClause, () => {
     });
   });
 
+  test("deserializes a value whose embedded quote was doubled", () => {
+    expect.hasAssertions();
+
+    const value = "Jimmy's";
+
+    expect(
+      deserializeClause(
+        `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue(value)}`,
+      ),
+    ).toStrictEqual({
+      key: CompositeKeyPropertyNames.partitionKey,
+      not: false,
+      operator: BinaryOperator.eq,
+      value,
+    });
+  });
+
   test("deserializes numeric literal", () => {
     expect.hasAssertions();
 

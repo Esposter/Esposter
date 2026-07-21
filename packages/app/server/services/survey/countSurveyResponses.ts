@@ -2,7 +2,7 @@ import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/
 import type { Clause, Resource } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { serializeClauses } from "@esposter/db";
+import { serializeClauses, serializeKey } from "@esposter/db";
 import {
   AZURE_MAX_PAGE_SIZE,
   AzureTable,
@@ -23,7 +23,7 @@ export const countSurveyResponses = async (surveyId: Resource["id"]): Promise<Co
   // Which short-circuits immediately, keeping this to two requests at worst
   for await (const page of surveyResponseClient
     .listEntities({
-      queryOptions: { filter: serializeClauses(clauses), select: [CompositeKeyPropertyNames.rowKey] },
+      queryOptions: { filter: serializeClauses(clauses), select: [serializeKey(CompositeKeyPropertyNames.rowKey)] },
     })
     .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })) {
     count += page.length;

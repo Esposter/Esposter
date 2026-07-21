@@ -77,8 +77,12 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
   id: selectResourceSchema.shape.id,
 });
 
+// The client recovers this from a download SAS url, so it is always the single `{id}|{filename}` segment
+// GetBlobName emits — a separator or a `..` could only ever be an attempt to climb out of {id}/files/
+const BLOB_PATH_REGEX = new RegExp(String.raw`^(?!\.{1,2}$)[^/\\]+$`, "u");
+
 const deleteFileInputSchema = z.object({
-  blobPath: z.string().min(1).max(MAX_READ_LIMIT),
+  blobPath: z.string().min(1).max(MAX_READ_LIMIT).regex(BLOB_PATH_REGEX),
   id: selectResourceSchema.shape.id,
 });
 
@@ -274,8 +278,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const fileAssetsProcedures = {
     deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation(async ({ input: { blobPath, id } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      // The path is anchored under {id}/files/ so this can only ever delete uploaded assets,
-      // Never the content or published-content blobs that live beside the files directory
+      // The path is a single separator-free segment (BLOB_PATH_REGEX) anchored under {id}/files/, so this can
+      // Only ever delete uploaded assets, never the content or published-content blobs beside the files directory
       const blockBlobClient = containerClient.getBlockBlobClient(`${getFilesDirectoryName(id)}/${blobPath}`);
       await blockBlobClient.deleteIfExists();
     }),

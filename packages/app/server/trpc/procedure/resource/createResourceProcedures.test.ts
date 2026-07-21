@@ -459,6 +459,29 @@ describe("createResourceProcedures", () => {
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).toBe(false);
   });
 
+  test("rejects a file path that climbs out of the files directory", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+
+    await expect(
+      webpageCaller.deleteFile({ blobPath: `../../${crypto.randomUUID()}/content.json`, id: newResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "origin": "string",
+          "code": "invalid_format",
+          "format": "regex",
+          "pattern": "/^(?!\\\\.{1,2}$)[^/\\\\\\\\]+$/u",
+          "path": [
+            "blobPath"
+          ],
+          "message": "Invalid string: must match pattern /^(?!\\\\.{1,2}$)[^/\\\\\\\\]+$/u"
+        }
+      ]]
+    `);
+  });
+
   test("deleteFile is idempotent", async () => {
     expect.hasAssertions();
 

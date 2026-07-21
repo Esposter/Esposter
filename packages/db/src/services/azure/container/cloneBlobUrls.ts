@@ -12,7 +12,9 @@ export const cloneBlobUrls = (
   else
     return Promise.all(
       blobUrls.map((blobUrl) => {
-        const destinationBlobPath = blobUrl.slice(`${containerClient.url}/${sourcePrefix}/`.length);
+        // The urls arrive percent-encoded as the content carries them — a blob NAME is the decoded form,
+        // While the copy source stays the encoded url the service has to fetch
+        const destinationBlobPath = decodeURIComponent(blobUrl.slice(`${containerClient.url}/${sourcePrefix}/`.length));
         return copyBlob(containerClient, blobUrl, `${destinationPrefix}/${destinationBlobPath}`);
       }),
     );

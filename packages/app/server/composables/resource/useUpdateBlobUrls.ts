@@ -13,7 +13,9 @@ export const useUpdateBlobUrls = async (serializedContent: string, publishedDire
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const blobNames = blobUrls.map((blobUrl) => {
-    const blobName = blobUrl.slice(`${containerClient.url}/`.length);
+    // The url is percent-encoded as the content carries it, so it can be searched for verbatim below —
+    // A blob name is that url's decoded form
+    const blobName = decodeURIComponent(blobUrl.slice(`${containerClient.url}/`.length));
     // Published snapshots serve the assets cloned under the publish directory, not the mutable working copies
     return publishedDirectoryName ? `${publishedDirectoryName}/${blobName.slice(blobName.indexOf("/") + 1)}` : blobName;
   });
