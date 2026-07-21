@@ -433,6 +433,12 @@ These tokens are the complete set of CAF abbreviations plus LibreDevOps fallback
 | Web PubSub              | `prod-wps-esposter-001`     |
 | Policy assignment       | `pa-esposter-001`           |
 
+## Renames Onto The Convention
+
+Moving a resource onto the shape above is a deliberate rename, and it changes the Azure resource name property — not just the Pulumi logical name. Legacy resources created through the portal often carry a GUID as their Azure name (a policy assignment named `7b87693e9a494c838ffac3d7`); renaming that to `pa-esposter-001` replaces the resource, because under the new name it is genuinely a different Azure resource.
+
+Pulumi `aliases` are therefore **not** used for these renames. An alias only remaps the Pulumi URN, so it cannot avoid a replacement driven by the name property. Renames go through the create/cutover/delete sequences instead, and a rename already applied needs no follow-up migration option — the checked-in name is the final one.
+
 ## Source File Names
 
 One resource declaration per file. Pulumi source files use lower camel case derived from the naming components, not a character-for-character copy of the Azure resource name. This keeps compact Azure names readable in TypeScript.
