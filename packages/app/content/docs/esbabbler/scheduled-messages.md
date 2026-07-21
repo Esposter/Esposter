@@ -29,42 +29,50 @@ sequenceDiagram
     else runAt still in the future (clock skew guard)
         F->>Q: re-schedule same id at runAt
     else due
-        F->>DB: UPDATE processingStartedAt = now()
-        F->>F: re-check membership + read-only/slowmode/filter
-        F->>F: Reminder → web-push · ScheduledMessage → createUserMessage
-        F->>DB: UPDATE completedAt = now()
+        F->>DB: UPDATE processingStartedAt = now() WHERE all three tombstones IS NULL
+        alt zero rows — another delivery already claimed it
+            F->>F: exit (no-op)
+        else claimed
+            F->>F: re-check membership + read-only/slowmode/filter
+            F->>F: Reminder → web-push · ScheduledMessage → createAndBroadcastMessage
+            F->>DB: UPDATE completedAt = now()
+        end
     end
 ```
 
-Failure semantics: on error the function throws, Service Bus redelivers, and the job retries — `completedAt` stays null until success. `processingStartedAt` records the latest attempt for observability; it is **not** a lock. Cancellation is DB-only (tombstone): `cancelScheduledJob` sets `cancelledAt`, the scheduled Service Bus message still fires, and the worker guard skips it.
+Failure semantics: the `processingStartedAt` update is a **single-shot claim** — it stamps the job only while `cancelledAt`, `completedAt` and `processingStartedAt` are all still null, so of two concurrent deliveries exactly one proceeds. The claim is what lets `IsIdempotentAzureFunctionMap` mark the handler idempotent: a posted message carries a fresh reverse-ticked `rowKey`, so an unclaimed rerun would duplicate it rather than repair it. The claim also splits retries in two: a failure **before** it throws, Service Bus redelivers, and the job retries — while a failure **after** it is skipped by the redelivery and leaves the job stuck mid-delivery with `completedAt` never stamped, which is the cost of never posting twice. Cancellation is DB-only (tombstone): `cancelScheduledJob` sets `cancelledAt`, the scheduled Service Bus message still fires, and the worker guard skips it.
+
+The same three tombstones gate the owner's side: `cancel`, `reschedule` and `send now` only touch a job the delivery handler has not claimed, so neither path can post the message the other is already sending. `sendScheduledMessageNow` runs every guard **before** flipping `cancelledAt`, so a rejection — read-only room, slowmode, word filter, lost membership — leaves the job scheduled instead of burning it.
 
 ## Data model
 
 Postgres table `scheduledMessageJobsInMessage`:
 
-| Field                 | Notes                                                                                  |
-| --------------------- | -------------------------------------------------------------------------------------- |
-| `id`                  | UUID primary key — the only thing put on the queue                                     |
-| `userId`              | creator / recipient                                                                    |
-| `roomId`              | required room scope                                                                    |
-| `payload`             | discriminated JSON by `type`: `Reminder` (`text`) or `ScheduledMessage` (`message`)    |
-| `runAt`               | timestamp                                                                              |
-| `processingStartedAt` | nullable; latest processing attempt start, for observability (not a lock)              |
-| `completedAt`         | nullable; set after success; failure leaves null so the queue retry runs the job again |
-| `cancelledAt`         | nullable; user-initiated cancellation; workers skip jobs where this is set             |
+| Field                 | Notes                                                                                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`                  | UUID primary key — the only thing put on the queue                                                                                                                 |
+| `userId`              | creator / recipient                                                                                                                                                |
+| `roomId`              | required room scope                                                                                                                                                |
+| `payload`             | discriminated JSON by `type`: `Reminder` (`text`) or `ScheduledMessage` (`message`)                                                                                |
+| `runAt`               | timestamp                                                                                                                                                          |
+| `processingStartedAt` | nullable; the delivery handler's single-shot claim, stamped atomically on `IS NULL` — a claimed job is invisible to cancel/reschedule/send-now and to the listings |
+| `completedAt`         | nullable; set after success; a pre-claim failure leaves it null so redelivery retries, a post-claim failure leaves the job mid-delivery rather than posting twice  |
+| `cancelledAt`         | nullable; set by `cancelScheduledJob`, `rescheduleMessage` (on the old row) and `sendScheduledMessageNow`; workers skip jobs where this is set                     |
 
 ## Procedures
 
 All under `message.scheduledMessageJob.`:
 
-| Procedure                                     | Notes                                                                                                     |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `scheduleReminder({ roomId, runAt, text })`   | self-addressed push at `runAt` → [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications) |
-| `scheduleMessage({ roomId, runAt, message })` | behind `SendMessages` + read-only/slowmode checks at creation **and** execution time                      |
-| `cancelScheduledJob({ id })`                  | sets `cancelledAt` tombstone                                                                              |
-| `readScheduledJobs({ roomId })`               | per-room listing                                                                                          |
-| `readMyScheduledJobs({ offset, limit })`      | cross-room listing (Scheduled tab → [/docs/esbabbler/drafts-and-sent](/docs/esbabbler/drafts-and-sent))   |
-| `readMyScheduledJobsCount()`                  | tab badge count                                                                                           |
+| Procedure                                           | Notes                                                                                                     |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `scheduleReminder({ roomId, runAt, text })`         | self-addressed push at `runAt` → [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications) |
+| `scheduleMessage({ roomId, runAt, message })`       | behind `SendMessages` + read-only/slowmode checks at creation **and** execution time                      |
+| `cancelScheduledJob({ id })`                        | sets `cancelledAt` tombstone                                                                              |
+| `rescheduleMessage({ id, roomId, runAt, message })` | one transaction: tombstones the old row, inserts the replacement, re-enqueues — guards re-checked         |
+| `sendScheduledMessageNow({ id })`                   | guards first, then tombstones the job and posts via `createUserMessage` — a rejection leaves it scheduled |
+| `readScheduledJobs({ roomId })`                     | per-room listing                                                                                          |
+| `readMyScheduledJobs({ offset, limit })`            | cross-room listing (Scheduled tab → [/docs/esbabbler/drafts-and-sent](/docs/esbabbler/drafts-and-sent))   |
+| `readMyScheduledJobsCount()`                        | tab badge count                                                                                           |
 
 ## Notes
 
