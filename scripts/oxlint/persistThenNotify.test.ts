@@ -30,10 +30,21 @@ const FIXTURES = [
     source: `aEventEmitter.emit(); await Promise.all(xs.map((x) => g(x)));`,
     violations: 1,
   },
-  // A block-bodied callback hides its return from the syntactic check, so it is treated as unsafe.
+  // A block body settles on what it returns, so the check reads the returns rather than giving up on the block.
   {
-    name: "promiseAllOverBlockBodyMap",
-    source: `aEventEmitter.emit(); await Promise.all(xs.map((x) => { return createSystemRoomMessage(x); }));`,
+    name: "promiseAllOverSafeBlockBodyMap",
+    source: `aEventEmitter.emit(); await Promise.all(xs.map((x) => { const y = f(x); return getResultAsync(() => g(y)); }));`,
+    violations: 0,
+  },
+  {
+    name: "promiseAllOverUnsafeBlockBodyMap",
+    source: `aEventEmitter.emit(); await Promise.all(xs.map((x) => { return g(x); }));`,
+    violations: 1,
+  },
+  // The emit is the innermost frame's, but it still notifies for the function that awaits that frame.
+  {
+    name: "emitInNestedCallback",
+    source: `await getResultAsync(async () => { await p(); aEventEmitter.emit(); }); await g();`,
     violations: 1,
   },
   // A nested function opens its own frame, so the outer emit does not reach into it.

@@ -8,8 +8,14 @@ import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMa
 import { danglingProgramBindingError } from "@@/server/services/program/danglingProgramBindingError";
 import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { RestError } from "@azure/data-tables";
-import { createEntity, getEntity, getTopNEntities, serializeClauses, serializeEntity } from "@esposter/db";
+import {
+  createEntity,
+  getEntity,
+  getIsConflict,
+  getTopNEntities,
+  serializeClauses,
+  serializeEntity,
+} from "@esposter/db";
 import {
   AZURE_MAX_BATCH_SIZE,
   AZURE_MAX_PAGE_SIZE,
@@ -20,10 +26,6 @@ import {
 } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-
-// The recipient already holding this key value is the only thing storage rejects an insert for, whether
-// It surfaces from a single insert or from the transaction it was batched into
-const getIsConflict = (error: unknown): boolean => error instanceof RestError && error.statusCode === 409;
 
 // Idempotent by the audience key value: re-running after the audience grows issues only the missing
 // Tokens and never rotates an existing one, because a rotated token would dead-link a link already sent out.

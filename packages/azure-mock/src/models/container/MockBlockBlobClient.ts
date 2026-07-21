@@ -7,12 +7,14 @@ import type {
   BlockBlobPutBlobFromUrlResponse,
   BlockBlobStageBlockFromURLResponse,
   BlockBlobStageBlockResponse,
+  BlockBlobUploadOptions,
   BlockBlobUploadResponse,
   HttpRequestBody,
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
 import { MockBlobClient } from "@/models/container/MockBlobClient";
+import { MockRestError } from "@/models/MockRestError";
 import { bodyToBuffer } from "@/services/container/bodyToBuffer";
 import { createMockResponse } from "@/services/createMockResponse";
 
@@ -41,7 +43,15 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
     throw new Error("Method not implemented.");
   }
 
-  async upload(body: HttpRequestBody, _contentLength: number): Promise<BlockBlobUploadResponse> {
+  async upload(
+    body: HttpRequestBody,
+    _contentLength: number,
+    options?: BlockBlobUploadOptions,
+  ): Promise<BlockBlobUploadResponse> {
+    // `ifNoneMatch: "*"` is the create-only upload: the service rejects it with 409 when the blob is already
+    // There, which is what makes a create atomic against a concurrent one
+    if (options?.conditions?.ifNoneMatch === "*" && this.container.has(this.name))
+      throw new MockRestError("The specified blob already exists.", 409);
     this.container.set(this.name, await bodyToBuffer(body));
     return { _response: createMockResponse(201) };
   }
