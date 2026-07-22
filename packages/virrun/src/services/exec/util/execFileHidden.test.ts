@@ -107,7 +107,26 @@ describe(execFileHidden, () => {
     `);
   });
 
-  // The utf16le shape is an even byte count of NUL-padded characters; a utf8 traceback that happens to be even-length
+  // A capture the timeout killed mid-write can end on an odd byte; the padding still identifies utf16le and the
+  // Decoder drops the dangling byte, instead of falling back to utf8 and rendering NUL-interleaved garbage
+  test("detects a truncated odd-length UTF-16LE stderr", () => {
+    expect.hasAssertions();
+
+    execFileSync.mockImplementation(() => {
+      throw Object.assign(new Error("Command failed"), {
+        signal: "SIGTERM",
+        status: null,
+        stderr: Buffer.from("Wsl/Service/E_UNEXPECTED", "utf16le").subarray(0, -1),
+      });
+    });
+
+    expect(() => execFileHidden("wsl.exe", ["--exec", "python3"])).toThrowErrorMatchingInlineSnapshot(`
+      [ExecFileError: Command failed: wsl.exe --exec python3
+      Wsl/Service/E_UNEXPECTE]
+    `);
+  });
+
+  // The utf16le shape is NUL-padded characters; a utf8 traceback that happens to be even-length
   // Must not be mistaken for one, since decoding it that way would render it as unreadable CJK
   test("reads an even-length utf8 stderr as utf8", () => {
     expect.hasAssertions();
