@@ -53,7 +53,7 @@ describe(useDataStore, () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    // createMessage reads only session.value.data.user.id off the reactive session
+    // CreateMessage reads only session.value.data.user.id off the reactive session
     vi.spyOn(authClient, "useSession").mockReturnValue(
       ref({ data: { user: { id: userId } } }) as unknown as ReturnType<typeof authClient.useSession>,
     );
