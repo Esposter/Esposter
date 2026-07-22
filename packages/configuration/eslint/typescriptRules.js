@@ -9,11 +9,7 @@ export default Object.assign(
     delete rules["@typescript-eslint/no-unnecessary-condition"];
     return rules;
   }),
-  ...tseslint.configs.stylisticTypeChecked.map((c) => {
-    const rules = c.rules ?? {};
-    delete rules["@typescript-eslint/no-empty-function"];
-    return rules;
-  }),
+  ...tseslint.configs.stylisticTypeChecked,
   {
     "no-restricted-imports": [
       "error",
