@@ -15,8 +15,8 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { checkIsInviteUsable } from "@@/server/services/message/checkIsInviteUsable";
@@ -248,7 +248,7 @@ export const baseRoomRouter = router({
     }),
   deleteRoom: standardAuthedProcedure
     .input(deleteRoomInputSchema)
-    .mutation<RoomInMessage>(async ({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
+    .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
     async ({ input: { roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
@@ -582,7 +582,6 @@ export const baseRoomRouter = router({
       id,
     );
     roomEventEmitter.emit("updateRoom", updatedRoom);
-
     // A dropped publish orphans the old room image blob, never the room update. A public blob rather than a privacy
     // Leak here, but every blob delete goes through the one durable mechanism so no call site keeps a weaker one
     if (rest.image === "")
