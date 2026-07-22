@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "strict": true,
+    "target": "esnext"
+  },
+  "include": [".generated/*.js", "workflow-globals.d.ts"]
+}
