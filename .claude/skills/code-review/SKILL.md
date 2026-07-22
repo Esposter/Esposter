@@ -34,6 +34,7 @@ The finder/verifier agents carry this rule in their scope block, so grep both tr
 
 ## Handling findings
 
+0. **Always show the user every finding first.** Before (or alongside) any fixing, the session's final message must list every finding the workflow reported — a markdown table with file:line, category, verdict, a one-line summary, and the disposition (fixed / by-design rationale / stale). Include workflow-refuted candidates as a short footnote. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
 1. Verify each finding against current HEAD before fixing — post-merge findings can be stale (fixed by a later commit, file renamed), and check it against the written record above before treating it as real.
 2. Fix confirmed findings; disposition PLAUSIBLE ones explicitly (fix or by-design rationale) in the report.
 3. Verify per the package-scripts skill (typecheck → tests), then commit per the git skill. Before pushing to a branch with an open PR, check CodeRabbit state (coderabbit skill).
