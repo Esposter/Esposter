@@ -32,14 +32,10 @@ const {
   resource,
   unpublish,
 } = defineProps<ResourceBladeToolbarProps>();
-defineSlots<{ prepend?: () => VNode }>();
 </script>
 
 <template>
   <v-toolbar pl-4 b-l-1 b-border b-solid>
-    <template v-if="$slots.prepend" #prepend>
-      <slot name="prepend" />
-    </template>
     <ResourceBladeTitle :active-blade :resource />
     <v-spacer />
     <ResourceBladeActions

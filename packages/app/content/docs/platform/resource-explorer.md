@@ -151,22 +151,22 @@ stateDiagram-v2
 
 ## Key files
 
-| File                                                  | Role                                                                                                                |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `app/pages/resources/[id]/[[blade]].vue`              | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>`                        |
-| `app/components/Resource/Explorer.vue`                | the two-flex-box body (list box \| blade box); owns the mobile list drawer + close-on-navigate watch                |
-| `app/components/Resource/ExplorerList.vue`            | desktop-only collapsible list box (owns `isListCollapsed`); mobile renders the list in `Explorer.vue`'s drawer      |
-| `app/components/Resource/ListView.vue`                | `StyledDataTableServer` over `resource.readResources` (shared by `/all` — the workbench)                            |
-| `app/components/Resource/BladeToolbar.vue`            | blade box header composing `BladeTitle` + `BladeActions`; forwards a `#prepend` slot (mobile hamburger)             |
-| `app/components/Resource/BladeActions.vue`            | command bar: refresh, rename, delete, duplicate, `PublishToggle`, `PortableActions`, `…` overflow, close ✕          |
-| `app/components/Resource/BladeNav.vue`                | blade menu from `ResourceBladeTypes` + type blades; desktop rail, mobile dropdown (`v-menu`, caret only while open) |
-| `app/components/Resource/BladeOutlet.vue`             | Overview vs inline editor vs type blade on the active slug                                                          |
-| `app/components/Resource/Overview.vue`                | generic Overview blade (Essentials + type summary slot)                                                             |
-| `app/services/resource/ResourceBladeDefinitionMap.ts` | type → its own blade definitions                                                                                    |
-| `app/services/resource/ResourceEditorComponentMap.ts` | type → inline Editor-blade component                                                                                |
-| `app/services/resource/PortableFormatMap.ts`          | portable type → formats (Import/Export)                                                                             |
-| `app/services/resource/ViewComponentMap.ts`           | publishable type → public view renderer                                                                             |
-| `app/composables/resource/useResource.ts`             | row + typed content + save/capability actions                                                                       |
+| File                                                  | Role                                                                                                                   |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `app/pages/resources/[id]/[[blade]].vue`              | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>`                           |
+| `app/components/Resource/Explorer.vue`                | the two-flex-box body (list box \| blade box); on mobile drops the list box so the blade takes the whole surface       |
+| `app/components/Resource/ExplorerList.vue`            | desktop-only collapsible list box (owns `isListCollapsed`); on mobile the full-width `/resources/all` page is the list |
+| `app/components/Resource/ListView.vue`                | `StyledDataTableServer` over `resource.readResources` (shared by `/all` — the workbench)                               |
+| `app/components/Resource/BladeToolbar.vue`            | blade box header composing `BladeTitle` + `BladeActions`                                                               |
+| `app/components/Resource/BladeActions.vue`            | command bar: refresh, rename, delete, duplicate, `PublishToggle`, `PortableActions`, `…` overflow, close ✕             |
+| `app/components/Resource/BladeNav.vue`                | blade menu from `ResourceBladeTypes` + type blades; desktop rail, mobile dropdown (`v-menu`, caret only while open)    |
+| `app/components/Resource/BladeOutlet.vue`             | Overview vs inline editor vs type blade on the active slug                                                             |
+| `app/components/Resource/Overview.vue`                | generic Overview blade (Essentials + type summary slot)                                                                |
+| `app/services/resource/ResourceBladeDefinitionMap.ts` | type → its own blade definitions                                                                                       |
+| `app/services/resource/ResourceEditorComponentMap.ts` | type → inline Editor-blade component                                                                                   |
+| `app/services/resource/PortableFormatMap.ts`          | portable type → formats (Import/Export)                                                                                |
+| `app/services/resource/ViewComponentMap.ts`           | publishable type → public view renderer                                                                                |
+| `app/composables/resource/useResource.ts`             | row + typed content + save/capability actions                                                                          |
 
 ## Notes
 
