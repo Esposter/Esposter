@@ -36,7 +36,7 @@ export const getWslNativeCacheRoot: () => string = createProbeCache({
     if (!distro || !home)
       throw new InvalidOperationError(
         Operation.Read,
-        getWslNativeCacheRoot.name,
+        "getWslNativeCacheRoot",
         "could not resolve the WSL distro or home directory",
       );
     return `\\\\wsl.localhost\\${distro}\\${home.replace(/^\//u, "").replaceAll("/", "\\")}\\${VIRRUN_CACHE_DIRECTORY_NAME}`;

@@ -65,7 +65,7 @@ describe("getWslNativeCacheRoot", () => {
     const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
 
     expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getWslNativeCacheRoot.name, "could not resolve the WSL distro or home directory").message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "getWslNativeCacheRoot", "could not resolve the WSL distro or home directory").message}]`,
     );
   });
 
@@ -76,7 +76,7 @@ describe("getWslNativeCacheRoot", () => {
     const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
 
     expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getWslNativeCacheRoot.name, "could not resolve the WSL distro or home directory").message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "getWslNativeCacheRoot", "could not resolve the WSL distro or home directory").message}]`,
     );
   });
 
@@ -87,7 +87,7 @@ describe("getWslNativeCacheRoot", () => {
     const { getWslNativeCacheRoot } = await import("@/services/exec/wsl/getWslNativeCacheRoot");
 
     expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getWslNativeCacheRoot.name, "could not resolve the WSL distro or home directory").message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "getWslNativeCacheRoot", "could not resolve the WSL distro or home directory").message}]`,
     );
     expect(existsSync(join(getCacheHome(), WSL_CACHE_ROOT_CACHE_FILENAME))).toBe(false);
   });
