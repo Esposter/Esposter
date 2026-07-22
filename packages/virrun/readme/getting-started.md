@@ -37,7 +37,7 @@ export default defineConfig({
 
 See [configuration](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/configuration.md) and [cache](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/cache.md).
 
-On an `os`-backend run the CLI prints a one-time provisioning line on stderr so a multi-minute first install is explained, not a silent stall:
+On an `os`-backend run the CLI prints a one-time provisioning line on stderr so a multi-minute first install is explained, not a silent stall. The provisioning build's own output streams to stderr too — never stdout — so piping virrun's stdout (`virrun -- <cmd> | other`) stays safe even on a cold build:
 
 ```text
 [virrun] snapshot cache miss (environment a1b2c3d4e5f6) — installing toolchain once (may take minutes); later runs reuse it
