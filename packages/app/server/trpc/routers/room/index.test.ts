@@ -326,6 +326,23 @@ describe("room", () => {
     });
   });
 
+  test("publishes profile image deletion on delete", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
+    MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    await roomCaller.deleteRoom(newRoom.id);
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    expect(blobDeletionEvents).toHaveLength(1);
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [blobName],
+      containerName: AzureContainer.PublicUserAssets,
+    });
+  });
+
   test("fails delete with wrong user", async () => {
     expect.hasAssertions();
 
