@@ -33,6 +33,7 @@
     "import/group-exports": "off",
     "import/max-dependencies": "off",
     "import/no-anonymous-default-export": "off",
+    "import/no-cycle": "off",
     "import/no-default-export": "off",
     "import/no-named-export": "off",
     "import/no-nodejs-modules": "off",
