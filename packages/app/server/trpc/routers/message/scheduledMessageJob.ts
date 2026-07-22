@@ -27,7 +27,7 @@ import {
   ScheduledMessageJobType,
   scheduledMessageScheduledMessageJobPayloadSchema,
 } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getResultAsync, Operation } from "@esposter/shared";
 import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
 
 // Not yet cancelled, completed, or claimed by the delivery handler. `processingStartedAt` is what makes the claim
@@ -231,11 +231,24 @@ export const scheduledMessageJobRouter = router({
         input.id,
         "NOT_FOUND",
       );
-      return createUserMessage(ctx.db, ctx.getSessionPayload, {
-        files: [],
-        message: payload.message,
-        roomId: scheduledMessageJob.roomId,
-        type: MessageType.Message,
-      });
+      // A send that fails past the guards — a transient Table write, a serialization error — must not burn the
+      // Job: lifting the claim leaves the message scheduled, so the caller's error means "not sent", never "lost"
+      return getResultAsync(() =>
+        createUserMessage(ctx.db, ctx.getSessionPayload, {
+          files: [],
+          message: payload.message,
+          roomId: scheduledMessageJob.roomId,
+          type: MessageType.Message,
+        }),
+      ).match(
+        (message) => message,
+        async (error) => {
+          await ctx.db
+            .update(scheduledMessageJobsInMessage)
+            .set({ cancelledAt: null })
+            .where(ownedBy(scheduledMessageJobsInMessage, input.id, ctx.getSessionPayload.user.id));
+          throw error;
+        },
+      );
     }),
 });

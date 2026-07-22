@@ -12,6 +12,8 @@ const REPLAY_ID_REGEX = new RegExp(String.raw`^(?<eventId>.+)[${ID_SEPARATOR}](?
 // This function has never replayed, so it starts at zero.
 export const parseReplayId = (id: string): ReplayId => {
   const groups = REPLAY_ID_REGEX.exec(id)?.groups;
+  // `.+` and `\d+` can never capture empty on a match, so the group disjuncts exist only to narrow the
+  // Indexed accesses under `noUncheckedIndexedAccess` — the sole runtime branch is "did the regex match"
   if (!groups?.eventId || !groups.replayAttempts) return { eventId: id, replayAttempts: 0 };
   return { eventId: groups.eventId, replayAttempts: Number(groups.replayAttempts) };
 };

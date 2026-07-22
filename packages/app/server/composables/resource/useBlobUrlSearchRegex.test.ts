@@ -77,6 +77,13 @@ describe(useBlobUrlSearchRegex, () => {
     expect(`<img src="${url}"><img src="${longerUrl}">`.match(useBlobUrlSearchRegex())).toStrictEqual([url, longerUrl]);
   });
 
+  // A body halting on a legacy path character may be a url truncated mid-name, and a truncated match would be
+  // Re-signed and rewritten over the front of the real url — so the fallback fails whole instead
+  test("should not match a truncated prefix of an undelimited legacy URL", () => {
+    expect.hasAssertions();
+    expect(matchOne(`${containerUrl}/a(1).png?sig=a%2Fb`)).toBeUndefined();
+  });
+
   test("should not match a URL from a different container", () => {
     expect.hasAssertions();
     expect(matchOne(`"${MOCK_BLOB_BASE_URL}/${AzureContainer.ClickerAssets}/a"`)).toBeUndefined();

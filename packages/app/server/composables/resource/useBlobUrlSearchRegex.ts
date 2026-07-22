@@ -10,7 +10,11 @@ import { AzureContainer } from "@esposter/db-schema";
 // A url with no recognized opening delimiter keeps the conservative reading that terminates on every delimiter,
 // Because nothing narrows it. That reading is the fallback for any position, not its own delimiter: enumerating the
 // Characters a url may follow leaves every unenumerated one — `;` closing an html entity, `[` in markdown — matching
-// Nothing at all, which is a silent miss rather than an over-broad match
+// Nothing at all, which is a silent miss rather than an over-broad match.
+// The miss must also hold where the body *stops*: `'()` are characters a legacy path carries literally, so a body
+// That halts on one may be a url truncated mid-name — and a truncated match is worse than a miss, because its
+// Prefix would be re-signed and rewritten over the front of the real url. The body therefore asserts its terminator
+// Is one no url can carry — an escaped quote, a hard delimiter, or the end of the leaf — and fails whole otherwise
 
 // An `&`-escaped quote delimits exactly like the quote it stands for: html-escaped markup is how a style attribute
 // Survives serialization into another attribute. Its own `&` must not be read as the start of a SAS parameter, so
@@ -18,7 +22,7 @@ import { AzureContainer } from "@esposter/db-schema";
 // The undelimited body stops on every character a url may not carry literally: the delimiters above plus the
 // Remaining RFC 3986 gen-delims and the braces a merge field is written in, none of which survive `encodeBlobUrl`
 const EscapedQuote = String.raw`&(?:quot|apos|#34|#39);`;
-const UndelimitedBody = String.raw`(?:(?!${EscapedQuote})[^"'()[\]{}\\\s<>])*`;
+const UndelimitedBody = String.raw`(?:(?!${EscapedQuote})[^"'()[\]{}\\\s<>])*(?=${EscapedQuote}|["[\]{}\\\s<>]|$)`;
 const BlobUrlContexts: readonly { body: string; opener?: string }[] = [
   { body: String.raw`[^"\\\s<>]*`, opener: String.raw`"` },
   { body: String.raw`[^'\\\s<>]*`, opener: String.raw`'` },

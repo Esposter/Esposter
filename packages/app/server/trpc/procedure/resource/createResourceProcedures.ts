@@ -14,6 +14,7 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { on } from "@@/server/services/events/on";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -30,7 +31,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { deleteDirectory, generateDownloadFileSasUrls, generateUploadFileSasEntities } from "@esposter/db";
+import { generateDownloadFileSasUrls, generateUploadFileSasEntities, listBlobNames } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -45,7 +46,6 @@ import {
   getResultAsync,
   InvalidOperationError,
   MAX_READ_LIMIT,
-  noop,
   Operation,
   streamToText,
 } from "@esposter/shared";
@@ -408,12 +408,13 @@ export const createResourceProcedures = <TType extends ResourceType>(
       const { id } = ctx.resource;
       await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
 
-      // Best-effort after the publications delete — a failed cleanup leaves the published snapshot's blobs
-      // Lingering unreferenced, and the resource is already unpublished and unreachable either way.
-      await getResultAsync(async () => {
+      // Best-effort after the publications delete, but durable: the snapshot's assets were served with year-long
+      // Read SAS urls, so a lingering blob stays downloadable to anyone still holding one — cleanup goes through
+      // The one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)
+      await publishBlobDeletion(id, AzureContainer.ResourceAssets, async () => {
         const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-        await deleteDirectory(containerClient, `${id}/published`, true);
-      }).match(noop, console.error);
+        return listBlobNames(containerClient, `${id}/published`, true);
+      });
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,

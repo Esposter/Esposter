@@ -65,16 +65,16 @@ Postgres table `scheduledMessageJobsInMessage`:
 
 All under `message.scheduledMessageJob.`:
 
-| Procedure                                           | Notes                                                                                                     |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `scheduleReminder({ roomId, runAt, text })`         | self-addressed push at `runAt` → [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications) |
-| `scheduleMessage({ roomId, runAt, message })`       | behind `SendMessages` + read-only/slowmode checks at creation **and** execution time                      |
-| `cancelScheduledJob({ id })`                        | sets `cancelledAt` tombstone                                                                              |
-| `rescheduleMessage({ id, roomId, runAt, message })` | one transaction: tombstones the old row, inserts the replacement, re-enqueues — guards re-checked         |
-| `sendScheduledMessageNow({ id })`                   | guards first, then tombstones the job and posts via `createUserMessage` — a rejection leaves it scheduled |
-| `readScheduledJobs({ roomId })`                     | per-room listing                                                                                          |
-| `readMyScheduledJobs({ offset, limit })`            | cross-room listing (Scheduled tab → [/docs/esbabbler/drafts-and-sent](/docs/esbabbler/drafts-and-sent))   |
-| `readMyScheduledJobsCount()`                        | tab badge count                                                                                           |
+| Procedure                                           | Notes                                                                                                                                                                               |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scheduleReminder({ roomId, runAt, text })`         | self-addressed push at `runAt` → [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications)                                                                           |
+| `scheduleMessage({ roomId, runAt, message })`       | behind `SendMessages` + read-only/slowmode checks at creation **and** execution time                                                                                                |
+| `cancelScheduledJob({ id })`                        | sets `cancelledAt` tombstone                                                                                                                                                        |
+| `rescheduleMessage({ id, roomId, runAt, message })` | one transaction: tombstones the old row, inserts the replacement, re-enqueues — guards re-checked                                                                                   |
+| `sendScheduledMessageNow({ id })`                   | guards first, then tombstones the job and posts via `createUserMessage` — a guard rejection leaves it scheduled, and a failed send lifts the tombstone so the message is never lost |
+| `readScheduledJobs({ roomId })`                     | per-room listing                                                                                                                                                                    |
+| `readMyScheduledJobs({ offset, limit })`            | cross-room listing (Scheduled tab → [/docs/esbabbler/drafts-and-sent](/docs/esbabbler/drafts-and-sent))                                                                             |
+| `readMyScheduledJobsCount()`                        | tab badge count                                                                                                                                                                     |
 
 ## Notes
 

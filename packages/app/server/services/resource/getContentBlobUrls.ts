@@ -1,4 +1,4 @@
-import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
+import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useBlobUrlSearchRegex } from "@@/server/composables/resource/useBlobUrlSearchRegex";
 import { getBlobUrlWithoutSasQuery } from "@@/server/services/resource/getBlobUrlWithoutSasQuery";
 
@@ -9,9 +9,8 @@ import { getBlobUrlWithoutSasQuery } from "@@/server/services/resource/getBlobUr
 export const getContentBlobUrls = (content: unknown): string[] => {
   const blobUrlSearchRegex = useBlobUrlSearchRegex();
   const blobUrls = new Set<string>();
-  deepReplaceStrings(content, (value) => {
+  deepVisitStrings(content, (value) => {
     for (const [blobUrl] of value.matchAll(blobUrlSearchRegex)) blobUrls.add(getBlobUrlWithoutSasQuery(blobUrl));
-    return value;
   });
   return [...blobUrls];
 };
