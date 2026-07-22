@@ -66,5 +66,4 @@ Paths relative to `packages/virrun/src/`.
 ## Notes
 
 - One token to opt in, one token to opt out — symmetry is the whole point. What's adopted lives in version control as the prefix on a script; the backend choice lives in the config — both reviewable and revertible like any code change.
-- On an `os` run the CLI prints a one-time provisioning line on stderr (`snapshot cache miss … installing toolchain once`) so a multi-minute first install is explained, not a silent stall.
-- The package-facing how-to lives in `packages/virrun/readme/getting-started.md` (published npm docs); this page is the design rationale.
+- The package-facing how-to lives in `packages/virrun/readme/getting-started.md` (published npm docs) — including the CLI's provisioning output behavior (one-time stderr provisioning line, stdout kept clean for piped callers); this page is the design rationale.
