@@ -1,7 +1,7 @@
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
-import type { Game } from "phaser";
 
-import { useGame } from "@/composables/useGame";
+import { NotInitializedError } from "@esposter/shared";
+import { Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
   // Use a writable computed, not a ref, to keep the Game object unproxied: ref() would wrap it in
@@ -21,7 +21,9 @@ export const usePhaserStore = defineStore("phaser", () => {
   const switchToScene = async (newSceneKey: SceneWithPlugins["scene"]["key"]) => {
     if (isSameScene(newSceneKey)) return;
 
-    const activeGame = useGame();
+    const activeGame = game.value;
+    if (!activeGame) throw new NotInitializedError(Game.name);
+
     const oldSceneKey = sceneKey.value;
     sceneKey.value = newSceneKey;
     // Wait for the new scene's vue components to render and their hooks to run before starting it.

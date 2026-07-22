@@ -1,3 +1,4 @@
+/* oxlint-disable no-param-reassign -- faithful xml2js port mutates the element accumulator in place */
 import type { BuilderOptions } from "xml2js";
 import type { XMLBuilder } from "xmlbuilder2/lib/interfaces";
 

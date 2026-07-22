@@ -60,7 +60,6 @@
     "rolldown": "catalog:",
     "rolldown-plugin-dts": "catalog:",
     "type-fest": "catalog:",
-    "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-dts": "catalog:",
     "vite": "catalog:",

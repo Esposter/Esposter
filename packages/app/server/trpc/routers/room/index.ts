@@ -28,7 +28,7 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
-import { getRoomProfileImageBlobName } from "@@/server/services/room/getRoomProfileImageBlobName";
+import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -42,7 +42,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { generateWriteSasUrl } from "@esposter/db";
+import { generateWriteSasUrl, listBlobNames } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -252,7 +252,9 @@ export const baseRoomRouter = router({
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
     async ({ input: { roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      const blobName = getRoomProfileImageBlobName(roomId);
+      // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
+      // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
+      const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${crypto.randomUUID()}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const sasUrl = await generateWriteSasUrl(blockBlobClient);
       return { publicUrl: blockBlobClient.url, sasUrl };
@@ -582,10 +584,17 @@ export const baseRoomRouter = router({
       id,
     );
     roomEventEmitter.emit("updateRoom", updatedRoom);
-    // A dropped publish orphans the old room image blob, never the room update. A public blob rather than a privacy
-    // Leak here, but every blob delete goes through the one durable mechanism so no call site keeps a weaker one
-    if (rest.image === "")
-      await publishBlobDeletion(id, AzureContainer.PublicUserAssets, [getRoomProfileImageBlobName(id)]);
+    // The image was cleared or replaced: drop every prior upload under the room's profile-image prefix except the
+    // Version the room now points at. Upload urls are per-upload unique, so a concurrent re-upload lands on a name
+    // This snapshot cannot contain — the delayed delete can never remove the new image. A dropped publish only
+    // Orphans a public blob, never the room update; every blob delete goes through the one durable mechanism so no
+    // Call site keeps a weaker one (/docs/architecture/persist-then-notify)
+    if (rest.image !== undefined)
+      await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
+        const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+        const blobNames = await listBlobNames(containerClient, getRoomProfileImageBlobPrefix(id), true);
+        return blobNames.filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== rest.image);
+      });
 
     return updatedRoom;
   }),

@@ -3,7 +3,6 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { VoiceInputModeLabelMap } from "@/services/message/user/settings/VoiceInputModeLabelMap";
 import { useUserSettingsStore } from "@/store/message/user/settings";
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { VoiceInputMode, VoiceInputModes } from "@esposter/db-schema";
 
 interface InputModeProps {

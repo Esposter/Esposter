@@ -13,7 +13,7 @@ describe(getFileSize, () => {
   test("returns 0 B for non-finite sizes", () => {
     expect.hasAssertions();
 
-    expect(getFileSize(NaN)).toBe("0 B");
+    expect(getFileSize(Number.NaN)).toBe("0 B");
     expect(getFileSize(Infinity)).toBe("0 B");
   });
 

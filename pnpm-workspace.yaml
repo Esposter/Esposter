@@ -217,7 +217,6 @@ catalog:
   type-fest: ^5.8.0
   typedoc: ^0.28.20
   typescript: ^6.0.3
-  typescript-eslint: ^8.64.0
   unconfig: ^7.5.0
   unocss: ^66.7.5
   unocss-preset-vuetify: ^0.3.0

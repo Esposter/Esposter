@@ -1,3 +1,4 @@
+/* oxlint-disable no-param-reassign -- Phaser file-plugin base contract reassigns loader params */
 import type { TilemapFile } from "@/models/plugins/TilemapFile";
 import type { TMXEmbeddedTilesetNode, TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
 import type { Types } from "phaser";

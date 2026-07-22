@@ -15,7 +15,7 @@ export const computeMathTransformation = (
     }),
   );
   return getResult(() => evaluate(transformation.expression, scope)).match(
-    (result) => (typeof result === "number" && isFinite(result) ? result : null),
+    (result) => (typeof result === "number" && Number.isFinite(result) ? result : null),
     () => null,
   );
 };

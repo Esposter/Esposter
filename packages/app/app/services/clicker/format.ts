@@ -29,20 +29,21 @@ for (const suffixLong of suffixesLong)
   for (const prefixLong of prefixesLong) formatLong.push(` ${prefixLong}${suffixLong}`);
 
 const formatEveryThirdPower = (notations: string[]) => (number: number, fractionDigits?: number) => {
-  if (!isFinite(number)) return "Infinity";
+  if (!Number.isFinite(number)) return "Infinity";
 
   let base = -1;
   let notation = "";
+  let currentNumber = number;
 
-  while (Math.round(number) >= 1e3) {
-    number /= 1e3;
+  while (Math.round(currentNumber) >= 1e3) {
+    currentNumber /= 1e3;
     base++;
   }
 
   if (base > notations.length - 1) return "Infinity";
   else if (base >= 0) notation = takeOne(notations, base);
 
-  let formattedNumber: number | string = Math.round(number * 1e3) / 1e3;
+  let formattedNumber: number | string = Math.round(currentNumber * 1e3) / 1e3;
   if (fractionDigits !== undefined) formattedNumber = formattedNumber.toFixed(fractionDigits);
 
   return `${formattedNumber}${notation}`;

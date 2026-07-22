@@ -16,7 +16,7 @@ import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AzureContainer, AzureTable, ResourceActivityType, resources, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("resource", () => {
   let mockContext: Context;
@@ -277,6 +277,8 @@ describe("resource", () => {
     await webpageCaller.publishResource({ id: webpageResource.id });
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
+    assert.exists(content);
+
     const publication = await webpageCaller.readResourcePublication({ id: duplicatedResource.id });
     // The copy owns its assets: the same file segment is cloned under the new id and the url rewritten to it
     const duplicatedBlobName = `${duplicatedResource.id}/${blobName.slice(`${webpageResource.id}/`.length)}`;
@@ -286,7 +288,13 @@ describe("resource", () => {
     expect(duplicatedResource.type).toBe(ResourceType.Webpage);
     expect(content).toStrictEqual(
       jsonDateParse(
-        JSON.stringify(new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(duplicatedBlobName)}">` })),
+        JSON.stringify(
+          new WebpageEditor({
+            css: "a",
+            html: `<img src="${getResourceAssetUrl(duplicatedBlobName)}">`,
+            id: content.id,
+          }),
+        ),
       ),
     );
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
