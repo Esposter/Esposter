@@ -12,14 +12,7 @@ Oxlint runs as **repo-wide passes**, never per-package — there are no per-pack
 - `pnpm lint` / `pnpm lint:fix` (root) — `oxlint` over the whole repo, then ESLint.
 - `pnpm lint:fix:packages` / `pnpm lint:packages` (root) — `oxlint packages` (all packages), then ESLint over non-app packages.
 
-**To verify `packages/*` (non-app) changes, run `pnpm lint:fix:packages` from the repo root** — it's fast and includes both oxlint and eslint. Skip it whenever the change touches `packages/app` (Nuxt makes the eslint pass slow); leave app lint to CI. `pnpm lint` is **CI-only** (check, no fix) — never run it locally. Never hand-fix lint errors either — let the fix script do it.
-
-```bash
-# verify packages/* changes (oxlint + eslint, non-app, fast):
-pnpm lint:fix:packages
-# CI-only, do not run locally:
-pnpm lint       # whole-repo check, no fix
-```
+**Local verification runs the fix variants**: `pnpm lint:fix:packages` (root) for `packages/*` (non-app) changes; `pnpm lint:fix` from `packages/app/` for app changes (light ESLint config — `lint:all:fix` is the slower full pass). Reserve the check-only scripts (`pnpm lint`, `pnpm lint:all`) for CI. Never hand-fix lint errors — let the fix script do it.
 
 ## `.oxlintrc.json` categories — always list `correctness` explicitly
 

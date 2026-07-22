@@ -51,7 +51,7 @@ All commands run from `packages/app/` unless noted.
 ```bash
 pnpm dev              # start dev server
 pnpm typecheck        # vue-tsc type check
-pnpm lint             # eslint (CI/check-only; avoid locally unless requested). Oxlint runs once from repo root, not per-package.
+pnpm lint             # eslint check-only (CI parity). Oxlint runs once from repo root, not per-package.
 pnpm lint:fix         # eslint --fix (use this for local lint verification)
 pnpm test             # vitest watch mode
 pnpm test path/to/file.test.ts          # run single test file
