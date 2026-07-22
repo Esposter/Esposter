@@ -1,45 +1,55 @@
 ---
 title: Storage quotas
-description: Per-user blob-storage quotas (Free tier = 10 GiB) enforced at the upload boundary by a tRPC middleware, with a Gmail-like usage surface and a tier model ready for paid plans.
+description: Per-user blob-storage quotas (Free tier = 10 GiB) enforced by a reserve-and-reconcile flow — atomically reserve at SAS issuance, reconcile to actual bytes via Event Grid, release abandoned reservations — with a Gmail-like usage surface and a tier model ready for paid plans.
 ---
 
 # Storage quotas
 
-Give every user a bounded, tier-derived blob-storage allowance — Free = 10 GiB today — enforced before an upload is issued, and shown back to them as a Gmail-style "X of Y used" bar. This supersedes the previously-deferred storage usage surface: once a quota exists the usage number drives a real decision, so the display and the limit ship together rather than the display alone.
+Give every user a bounded, tier-derived blob-storage allowance — Free = 10 GiB today — that they genuinely cannot exceed by hammering uploads, shown back to them as a Gmail-style "X of Y used" bar. This supersedes the previously-deferred storage usage surface: once a quota exists the usage number drives a real decision, so the display and the limit ship together rather than the display alone.
 
-## Scope
+## Why a plain pre-flight check is not enough
 
-**Works today.** Uploads go through a two-step SAS flow (server mints a scoped write SAS, client PUTs bytes straight to Azure). Per-file caps exist — `MAX_FILE_REQUEST_SIZE` (10 MB) and the per-room `maxFileSizeBytes` — enforced at `message.generateUploadFileSasEntities`. File size is persisted in **one** place only: the client-declared `FileEntity.size` embedded in message rows (Azure Table, partitioned by `roomId`). Resource file assets, resource `content.json`, published snapshots, avatars, and room images record **no size at all**. There is no per-user usage counter, no tier, and no per-user blob prefix that spans containers.
+The obvious design — "read `bytesUsed`, if under quota issue the SAS" — does not stop abuse, for two structural reasons:
 
-**What this adds.**
+1. **It races.** Read-then-check is not atomic. A client firing many upload requests concurrently has them all read the same low `bytesUsed`, all pass, and all upload — blowing past the quota by an unbounded amount.
+2. **The SAS carries no byte cap.** Uploads use a two-step flow: the server mints a scoped write SAS, the client PUTs bytes **directly to Azure Blob**. The server is never in the data path, so it cannot stop a client that declares 1 MB and PUTs 1 GB, and it cannot abort a transfer mid-stream.
 
-- A `StorageTier` model and a per-user quota derived from it (Free = 10 GiB).
-- A per-user `bytesUsed` counter maintained in Postgres, incremented when an upload's owning record is persisted and decremented when its blobs are deleted.
-- A pre-flight **quota-check tRPC middleware** on the two upload chokepoints that rejects an upload which would exceed the quota, before any SAS is issued.
-- A `storage.getUsage` query and a Gmail-like usage bar on the account settings page.
+This is the difference from Gmail/Drive: their uploads flow **through Google's servers** (resumable-upload protocol), so the server reserves quota at session start, counts bytes as they stream, and hard-aborts with `storageQuotaExceeded` the instant you cross the line. We structurally cannot hard-abort a direct-to-blob upload — so instead of one server-side gate we use **reserve-and-reconcile**.
 
-**Explicitly out of scope for v1** (later phases / deferred): billing and paid-tier purchase flow; per-resource storage breakdown on the Overview blade (needs resource-asset sizes, added here, then a separate aggregation); hard byte-level enforcement against a client that PUTs more than it declared (see failure semantics).
+## How it works — reserve, confirm, reconcile, release
 
-## How it works
+The counter (`users.storageBytesUsed`) is a running total that is moved through a small state machine so that concurrency, over-declaring, and abandoned uploads are all handled:
 
-The quota has two independent halves: a **pre-flight check** (fast rejection, uses the client-declared size) at the SAS-issuing chokepoints, and a **counter** (the source of truth for "how much is used") maintained where the owning record is written and deleted. Keeping them separate is deliberate — the check must run before the SAS is minted (there is nothing persisted yet to count), while the counter must only move on a _confirmed_ upload (a persisted message/asset row), never on a SAS that may never be used.
+1. **Reserve** (at SAS issuance). The quota middleware does an **atomic conditional increment**: `UPDATE users SET storageBytesUsed = storageBytesUsed + :declared WHERE id = :id AND storageBytesUsed + :declared <= :quota`. Zero rows updated ⇒ over quota ⇒ reject with `FORBIDDEN` before any SAS is minted. The `WHERE` makes it a compare-and-swap, so concurrent requests serialize on the row and cannot collectively overshoot. A `storageReservation` row (`userId`, blob name, `declaredBytes`, `expiresAt`) records the provisional hold so it can later be confirmed or released.
+2. **Confirm** (at persistence). When the owning record is written (`createMessage`, resource file-asset create), the reservation is marked confirmed. The counter already holds the declared bytes, so confirmation is bookkeeping, not a second increment.
+3. **Reconcile to actual** (Event Grid `BlobCreated`). The real `contentLength` is only knowable after the bytes land. A `BlobCreated` handler adjusts the counter by `actual − declared`, making usage the authoritative sum of stored object sizes — this is what closes the "client under-declared" gap.
+4. **Release** (abandoned reservation). If a reservation's `expiresAt` (the SAS TTL) passes with no `BlobCreated`, a sweep decrements the counter by `declaredBytes` and drops the row — the rollback half. Deletion of a stored blob decrements by its actual size through the existing `publishBlobDeletion` path.
 
 ```mermaid
 flowchart TD
-  client[Client upload] -->|"generateUploadFileSasEntities (declared size)"| mw{"assertStorageQuota middleware<br/>bytesUsed + incoming ≤ quota?"}
-  mw -->|over quota| reject["TRPCError FORBIDDEN<br/>STORAGE_QUOTA_EXCEEDED"]
-  mw -->|under quota| sas[Issue write SAS]
+  client[Client upload] -->|"generateUploadFileSasEntities (declared size)"| reserve{"Atomic reserve<br/>bytesUsed + declared ≤ quota?"}
+  reserve -->|no rows updated| reject["FORBIDDEN — STORAGE_QUOTA_EXCEEDED"]
+  reserve -->|reserved| sas[Issue SAS + write storageReservation]
   sas --> put[Client PUTs bytes to Azure Blob]
-  put --> persist["Owning record persisted<br/>(message create / resource file asset)"]
-  persist -->|increment| counter[("users.storageBytesUsed")]
-  del["Blob deletion (publishBlobDeletion)"] -->|decrement| counter
-  counter -->|storage.getUsage| ui["Usage bar: 3.2 GB of 10 GB"]
+  put --> persist["Owning record persisted — confirm reservation"]
+  sas -.->|SAS TTL passes, no BlobCreated| sweep[Release sweep]
+  sweep -->|decrement declared| counter[("users.storageBytesUsed")]
+  persist --> counter
+  created["Event Grid BlobCreated — actual bytes"] -->|reconcile actual minus declared| counter
+  del["Blob deletion — publishBlobDeletion"] -->|decrement actual| counter
+  counter -->|storage.getUsage| ui["Usage bar — 3.2 GB of 10 GB"]
   tier[("users.storageTier")] -->|StorageTierQuotaMap| quota[Quota bytes]
-  quota --> mw
+  quota --> reserve
   quota --> ui
 ```
 
-The quota is **resolved from the tier at read time**, never copied onto the user row — so moving a user to a new tier changes their limit instantly, with no backfill. Only the _usage_ (`bytesUsed`) is stored, because it is expensive to recompute (there is no per-user blob prefix or size index — enumerating every `{resourceId}/` directory and message-attachment entity is exactly what got the display deferred).
+The quota itself is **resolved from the tier at read time**, never copied onto the user row — moving a user to a new tier changes their limit instantly, with no backfill. Only the _usage_ is stored, because it is expensive to recompute (there is no per-user blob prefix or size index — enumerating every `{resourceId}/` directory and message-attachment entity is exactly what got the display deferred).
+
+## The residual gap, and why it is acceptable
+
+Because we cannot abort a single in-flight direct-to-blob upload, a client that under-declares can overshoot its quota by **at most one upload** before the `BlobCreated` reconcile corrects the counter and the next reserve is rejected. That overshoot is already bounded by the per-file cap (`MAX_FILE_REQUEST_SIZE`, 10 MB), and the abuser only ever exhausts **their own** allowance — never another user's, never the account globally (the budget guard still backstops spend). For a free tier that is a fine trade.
+
+True Gmail-style hard enforcement would require **proxying uploads through our own server** so it can count bytes and abort mid-stream. That is rejected: it puts our compute in the data path for every upload (cost, latency, and re-architecting the entire SAS flow) to close a 10 MB, self-inflicted gap.
 
 ## Data model
 
@@ -47,51 +57,52 @@ New, in `packages/db-schema`:
 
 - `StorageTier` enum (`src/models/user/StorageTier.ts`) — `Free` only for now; the enum exists so paid tiers are a value add, not a schema change.
 - `StorageTierQuotaMap` (`src/services/user/StorageTierQuotaMap.ts`) — `{ [StorageTier.Free]: 10 * GIBIBYTE }` as `const satisfies Record<StorageTier, number>`. Needs a `GIBIBYTE` constant (`MEGABYTE * KIBIBYTE`) added beside `KIBIBYTE`/`MEGABYTE` in `#shared/services/app/constants` (and the node-side `@esposter/configuration` mirror).
-- `users` gains two columns: `storageTier` (pg enum, `notNull().default(StorageTier.Free)`) and `storageBytesUsed` (`bigint` mode `"number"`, `notNull().default(0)` — 10 GiB is ~1e10, far under the 2^53 safe-integer ceiling).
+- `users` gains `storageTier` (pg enum, `notNull().default(StorageTier.Free)`) and `storageBytesUsed` (`bigint` mode `"number"`, `notNull().default(0)` — 10 GiB is ~1e10, far under the 2^53 safe-integer ceiling).
+- `storageReservation` table — `userId`, blob name, `declaredBytes`, `expiresAt`, `confirmed`. The pending-hold ledger that makes confirm/release possible; rows are short-lived (dropped on confirm-then-reconcile or on release).
 
-This is a Postgres migration: edit the Drizzle schema, then the user runs `pnpm db:gen` and applies it on next app start (never auto-run `db:gen`). Existing users backfill `storageBytesUsed` lazily — it starts at `0` and self-heals on the first Phase-2 reconciliation sweep; until then the pre-flight check simply under-counts historical usage, which is safe (it never over-rejects).
+This is a Postgres migration: edit the Drizzle schema, then the user runs `pnpm db:gen` and applies it on next app start (never auto-run `db:gen`). Existing users start at `storageBytesUsed = 0` and self-heal on the first reconciliation sweep (below); under-counting historical usage only ever _under_-rejects, which is safe.
 
 ## Enforcement architecture
 
-The enforcement seam is a **targeted tRPC middleware**, not a global plugin. `achievementPlugin`/`moderationLogPlugin` `.concat` onto every authed procedure because they run _after_ every mutation; a quota check is the mirror image — it runs _before_, and only on the two procedures that consume storage, so a global plugin would have to special-case which paths are uploads. Instead:
+The reserve step is a **targeted tRPC middleware**, not a global plugin. `achievementPlugin`/`moderationLogPlugin` `.concat` onto every authed procedure because they run _after_ every mutation; the reserve is the mirror image — it runs _before_, and only on the two procedures that issue upload SASs, so a global plugin would have to special-case which paths are uploads. Instead:
 
-- A factory `getStorageQuotaMiddleware(getIncomingBytes)` returns a `standardAuthedProcedure`-compatible `.use()` step. It sums the declared incoming bytes from the procedure input, resolves the caller's quota (`StorageTierQuotaMap[user.storageTier]`), reads `storageBytesUsed`, and throws `TRPCError` `FORBIDDEN` with a `STORAGE_QUOTA_EXCEEDED` code when `bytesUsed + incoming > quota`.
-- It is applied to **both** upload chokepoints: `message.generateUploadFileSasEntities` (already receives `size` per file) and the resource `generateUploadFileSasEntities` inside `createResourceProcedures` (whose input schema must be **widened to carry `size`**, matching the message path — the single required change to an existing contract).
+- A factory `getStorageReservationMiddleware(getDeclaredBytes)` returns a `standardAuthedProcedure`-compatible `.use()` step. It sums the declared bytes from the input, resolves the caller's quota (`StorageTierQuotaMap[user.storageTier]`), runs the atomic conditional `UPDATE`, and on zero rows throws `TRPCError FORBIDDEN` with a `STORAGE_QUOTA_EXCEEDED` code. On success it writes the `storageReservation` row before returning the SAS.
+- Applied to **both** upload chokepoints: `message.generateUploadFileSasEntities` (already receives `size` per file) and the resource `generateUploadFileSasEntities` inside `createResourceProcedures` (whose input schema must be **widened to carry `size`**, matching the message path — the single required change to an existing contract).
 
-The **counter** is maintained where the owning record's lifecycle already lives, so it stays transactional with the write:
-
-- **Increment** on successful persistence of the record that owns the blobs — `createMessage` (sum of `files[].size`) and the resource file-asset create — not at SAS issuance (a SAS that is never used must not count).
-- **Decrement** on deletion through the existing `publishBlobDeletion` path (message `deleteFile`/`deleteMessage`, resource `unpublishResource`, room-image replace), which already funnels every blob delete.
+Confirm/reconcile/release live where each signal already arrives: confirmation at the persistence procedures, reconciliation in a `BlobCreated` Event Grid handler, release in a scheduled sweep of expired reservations (Service Bus timer, the same mechanism scheduled-message jobs use), and the decrement in the existing `publishBlobDeletion` path.
 
 ## Usage surface
 
-`storage.getUsage` (a `standardAuthedProcedure` query) returns `{ bytesUsed, quotaBytes, tier }`. The account/settings page renders a `v-progress-linear` bar with the existing `getFileSize` formatter — "3.2 GB of 10 GB used" — turning red near the cap. This is the deferred usage surface, now with a number that means something. A per-resource breakdown stays deferred until resource-asset sizes (added above) have accumulated enough to aggregate.
+`storage.getUsage` (a `standardAuthedProcedure` query) returns `{ bytesUsed, quotaBytes, tier }`. The account/settings page renders a `v-progress-linear` bar with the existing `getFileSize` formatter — "3.2 GB of 10 GB used" — turning red near the cap. This is the deferred usage surface, now with a number that means something. A per-resource breakdown stays deferred until resource-asset sizes have accumulated enough to aggregate.
 
 ## Phasing
 
-- **Phase 1 (this proposal).** Tier + counter + pre-flight middleware + usage bar, all in Postgres, using the client-declared size. Simple, transactional, no new Azure resources.
-- **Phase 2 (hardening, separate spec).** Reconcile against reality: an Event Grid `BlobCreated` handler reads the actual `contentLength` and corrects the counter (the estate already runs Event Grid blob plumbing — `publishBlobDeletion`/`processBlobDeletionHandler`), plus a periodic `listBlobsFlat` sweep that recomputes a user's usage to self-heal drift and backfill pre-existing users.
+- **Phase 1 — the gate.** Tier + `storageBytesUsed` + `storageReservation`, the atomic reserve middleware, confirm-at-persistence, the release sweep, decrement-on-delete, and the usage bar. Uses the client-declared size; the reserve is what actually caps abuse. No new Azure resources. The over-declare gap is open but bounded (one file).
+- **Phase 2 — the truth.** The Event Grid `BlobCreated` reconciliation (declared → actual) plus a periodic `listBlobsFlat` sweep that recomputes a user's usage from real object sizes to correct drift and backfill pre-existing users. Reuses the existing Event Grid blob plumbing (`publishBlobDeletion` / `processBlobDeletionHandler`), no new standing-cost resource.
 
 ## Failure and retry semantics
 
-- **The write SAS has no size cap**, so a client can PUT more bytes than it declared. Phase 1 therefore under-counts a misbehaving client; the quota is advisory-but-enforced-at-issuance, not byte-hard. Phase 2's reconciliation is what closes this — v1 accepts the gap because the threat is a user overspending their _own_ allowance, not one user exhausting another's.
-- **SAS issued but record never persisted** (client abandons the upload): the counter never moves (it increments only on persistence), so an orphaned blob does not consume quota. Existing blob-lifecycle / dangling-asset cleanup sweeps the orphan.
-- **Decrement is best-effort**: `publishBlobDeletion` failures leave the counter high; the Phase-2 sweep reconciles. A stale-high counter can only _under_-serve the user (rejects slightly early), never over-serve — the safe direction.
+- **Client under-declares / PUTs more than reserved:** counter is low until `BlobCreated` reconciles it up; the next reserve then rejects. Bounded to one file (per-file cap), self-inflicted.
+- **SAS issued, upload abandoned (no persistence, no `BlobCreated`):** the reservation expires and the sweep releases the declared bytes; any orphan blob is swept by existing dangling-asset cleanup. The counter self-heals rather than leaking the hold forever.
+- **Persistence fails after a successful PUT:** the reservation is never confirmed → released on expiry; the blob is an orphan, swept. No permanent quota consumed.
+- **Decrement / release best-effort:** a missed `publishBlobDeletion` or sweep leaves the counter high, which only _under_-serves the user (rejects slightly early) — the safe direction — and the Phase-2 recompute sweep corrects it.
 
 ## Key files
 
-| File                                                                      | Role                                                                     |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `packages/db-schema/src/models/user/StorageTier.ts`                       | Tier enum (`Free`)                                                       |
-| `packages/db-schema/src/services/user/StorageTierQuotaMap.ts`             | Tier → quota bytes                                                       |
-| `packages/db-schema/src/schema/users.ts`                                  | `storageTier` + `storageBytesUsed` columns (migration)                   |
-| `packages/app/shared/services/app/constants.ts`                           | Add `GIBIBYTE`                                                           |
-| `packages/app/server/trpc/middleware/getStorageQuotaMiddleware.ts`        | Pre-flight quota-check middleware factory                                |
-| `packages/app/server/trpc/routers/message/index.ts`                       | Apply middleware to `generateUploadFileSasEntities`; increment on create |
-| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | Widen upload input with `size`; apply middleware; increment              |
-| `packages/app/server/trpc/routers/storage.ts`                             | `getUsage` query                                                         |
-| `packages/app/app/components/.../StorageUsageBar.vue`                     | Gmail-like usage bar on account settings                                 |
+| File                                                                      | Role                                                          |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `packages/db-schema/src/models/user/StorageTier.ts`                       | Tier enum (`Free`)                                            |
+| `packages/db-schema/src/services/user/StorageTierQuotaMap.ts`             | Tier → quota bytes                                            |
+| `packages/db-schema/src/schema/users.ts`                                  | `storageTier` + `storageBytesUsed` columns (migration)        |
+| `packages/db-schema/src/schema/storageReservation.ts`                     | Pending-hold ledger for confirm/release (migration)           |
+| `packages/app/shared/services/app/constants.ts`                           | Add `GIBIBYTE`                                                |
+| `packages/app/server/trpc/middleware/getStorageReservationMiddleware.ts`  | Atomic reserve + write reservation at SAS issuance            |
+| `packages/app/server/trpc/routers/message/index.ts`                       | Reserve on `generateUploadFileSasEntities`; confirm on create |
+| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | Widen upload input with `size`; reserve; confirm              |
+| `packages/azure-functions/src/handlers/reconcileStorageUsageHandler.ts`   | Phase 2: `BlobCreated` declared→actual reconcile              |
+| `packages/app/server/trpc/routers/storage.ts`                             | `getUsage` query                                              |
+| `packages/app/app/components/.../StorageUsageBar.vue`                     | Gmail-like usage bar on account settings                      |
 
 ## Notes
 
-Cheapest viable infrastructure: Phase 1 adds **no** Azure resources — it is two Postgres columns, one middleware, one query, and a component. Phase 2 reuses the existing Event Grid system topic already wired for blob-deletion cleanup, adding one subscription + handler, no new standing-cost resource.
+Cheapest viable infrastructure: Phase 1 adds **no** Azure resources — Postgres columns + a table, one middleware, a confirm/release path on existing procedures, one query, and a component. Phase 2 reuses the existing Event Grid system topic already wired for blob-deletion cleanup, adding one subscription + handler.
