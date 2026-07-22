@@ -2,6 +2,7 @@ import { Environment } from "#shared/models/environment/Environment";
 import { getIsServer } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
+
 // The nuxt test env provides `window`/`document`/`DOMParser` but not `localStorage`/`sessionStorage`,
 // So install a minimal in-memory `Storage` — cheaper than registering a full DOM, harmless in node.
 class MemoryStorage implements Storage {
@@ -39,7 +40,7 @@ vi.mock(import("@@/server/composables/azure/container/useContainerBaseUrl"), () 
   useContainerBaseUrl: () => MOCK_BLOB_BASE_URL,
 }));
 
-vi.mock("nitropack/runtime", () => ({
+vi.mock(import("nitropack/runtime"), () => ({
   useRuntimeConfig: () => ({
     // Nuxt 4.5's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
     // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.

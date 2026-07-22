@@ -84,17 +84,17 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
         .returning(),
     );
   const getSessionPayload = { session: createSession(user.id), user } as const satisfies GetSessionPayload;
-  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
+  mocks.getSession.mockReturnValueOnce(getSessionPayload);
   return getSessionPayload;
 };
 
 export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
-  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
+  mocks.getSession.mockReturnValueOnce(getSessionPayload);
 };
 
 // Simulates an unauthenticated request for the next call — better-auth returns null when no session exists
 export const mockNoSessionOnce = () => {
-  mocks.getSession.mockImplementationOnce(() => null as unknown as GetSessionPayload);
+  mocks.getSession.mockReturnValueOnce(null as unknown as GetSessionPayload);
 };
 
 export const getMockSession = () => mocks.getSession();

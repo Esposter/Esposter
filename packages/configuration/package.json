@@ -50,7 +50,6 @@
     "@types/node": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
-    "@vitest/eslint-plugin": "catalog:",
     "@vue/language-core": "catalog:",
     "ctix": "catalog:",
     "eslint-plugin-depend": "catalog:",

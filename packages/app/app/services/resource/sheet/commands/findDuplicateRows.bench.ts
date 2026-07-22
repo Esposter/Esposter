@@ -17,79 +17,79 @@ import { bench, describe } from "vitest";
 // Against the all-unique-First baseline, instead of conflating shape with scale.
 describe(findDuplicateRows, () => {
   describe("100 rows", () => {
-    bench("All unique — First mode", () => {
+    bench("all unique — First mode", () => {
       findDuplicateRows(benchDataSource100AllUnique, KeepDuplicateMode.First);
     });
 
-    bench("All unique — Last mode", () => {
+    bench("all unique — Last mode", () => {
       findDuplicateRows(benchDataSource100AllUnique, KeepDuplicateMode.Last);
     });
 
-    bench("Half duplicates — First mode", () => {
+    bench("half duplicates — First mode", () => {
       findDuplicateRows(benchDataSource100HalfDuplicates, KeepDuplicateMode.First);
     });
 
-    bench("Half duplicates — Last mode", () => {
+    bench("half duplicates — Last mode", () => {
       findDuplicateRows(benchDataSource100HalfDuplicates, KeepDuplicateMode.Last);
     });
 
-    bench("All duplicates — First mode", () => {
+    bench("all duplicates — First mode", () => {
       findDuplicateRows(benchDataSource100AllDuplicates, KeepDuplicateMode.First);
     });
 
-    bench("All duplicates — Last mode", () => {
+    bench("all duplicates — Last mode", () => {
       findDuplicateRows(benchDataSource100AllDuplicates, KeepDuplicateMode.Last);
     });
   });
 
   describe("1000 rows", () => {
-    bench("All unique — First mode", () => {
+    bench("all unique — First mode", () => {
       findDuplicateRows(benchDataSource1kAllUnique, KeepDuplicateMode.First);
     });
 
-    bench("All unique — Last mode", () => {
+    bench("all unique — Last mode", () => {
       findDuplicateRows(benchDataSource1kAllUnique, KeepDuplicateMode.Last);
     });
 
-    bench("Half duplicates — First mode", () => {
+    bench("half duplicates — First mode", () => {
       findDuplicateRows(benchDataSource1kHalfDuplicates, KeepDuplicateMode.First);
     });
 
-    bench("Half duplicates — Last mode", () => {
+    bench("half duplicates — Last mode", () => {
       findDuplicateRows(benchDataSource1kHalfDuplicates, KeepDuplicateMode.Last);
     });
 
-    bench("All duplicates — First mode", () => {
+    bench("all duplicates — First mode", () => {
       findDuplicateRows(benchDataSource1kAllDuplicates, KeepDuplicateMode.First);
     });
 
-    bench("All duplicates — Last mode", () => {
+    bench("all duplicates — Last mode", () => {
       findDuplicateRows(benchDataSource1kAllDuplicates, KeepDuplicateMode.Last);
     });
   });
 
   describe("10000 rows", () => {
-    bench("All unique — First mode", () => {
+    bench("all unique — First mode", () => {
       findDuplicateRows(benchDataSource10kAllUnique, KeepDuplicateMode.First);
     });
 
-    bench("All unique — Last mode", () => {
+    bench("all unique — Last mode", () => {
       findDuplicateRows(benchDataSource10kAllUnique, KeepDuplicateMode.Last);
     });
 
-    bench("Half duplicates — First mode", () => {
+    bench("half duplicates — First mode", () => {
       findDuplicateRows(benchDataSource10kHalfDuplicates, KeepDuplicateMode.First);
     });
 
-    bench("Half duplicates — Last mode", () => {
+    bench("half duplicates — Last mode", () => {
       findDuplicateRows(benchDataSource10kHalfDuplicates, KeepDuplicateMode.Last);
     });
 
-    bench("All duplicates — First mode", () => {
+    bench("all duplicates — First mode", () => {
       findDuplicateRows(benchDataSource10kAllDuplicates, KeepDuplicateMode.First);
     });
 
-    bench("All duplicates — Last mode", () => {
+    bench("all duplicates — Last mode", () => {
       findDuplicateRows(benchDataSource10kAllDuplicates, KeepDuplicateMode.Last);
     });
   });
