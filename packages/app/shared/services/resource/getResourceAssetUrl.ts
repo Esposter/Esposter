@@ -1,5 +1,4 @@
 import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
-
 // `encodeURIComponent` leaves `!'()*` literal — the same characters that delimit a css `url('…')` — so they
 // Are additionally percent-encoded to close the emitted charset to `[\w.~%-]`. Mirrors `encodeBlobUrl` in
 // `@esposter/db`, which is server-only and cannot be imported here
@@ -19,4 +18,7 @@ const encodeSegment = (segment: string) =>
   );
 
 export const getResourceAssetUrl = (blobName: string) =>
-  `${RESOURCE_ASSETS_URL_PREFIX}/${blobName.split("/").map(encodeSegment).join("/")}`;
+  `${RESOURCE_ASSETS_URL_PREFIX}/${blobName
+    .split("/")
+    .map((s) => encodeSegment(s))
+    .join("/")}`;
