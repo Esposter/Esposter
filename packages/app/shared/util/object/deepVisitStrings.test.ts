@@ -6,9 +6,9 @@ describe(deepVisitStrings, () => {
     expect.hasAssertions();
 
     const visited: string[] = [];
-    deepVisitStrings({ a: "one", b: ["two", { c: "three" }], d: 1, e: null, f: undefined, g: new Date(0) }, (value) =>
-      visited.push(value),
-    );
+    deepVisitStrings({ a: "one", b: ["two", { c: "three" }], d: 1, e: null, f: undefined, g: new Date(0) }, (value) => {
+      visited.push(value);
+    });
 
     expect(visited).toStrictEqual(["one", "two", "three"]);
   });
@@ -17,7 +17,9 @@ describe(deepVisitStrings, () => {
     expect.hasAssertions();
 
     const visited: string[] = [];
-    deepVisitStrings("one", (value) => visited.push(value));
+    deepVisitStrings("one", (value) => {
+      visited.push(value);
+    });
 
     expect(visited).toStrictEqual(["one"]);
   });
