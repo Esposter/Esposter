@@ -1,7 +1,11 @@
-import { createProbeCache } from "@/services/exec/util/createProbeCache";
+import type { KeyedCache } from "@/models/exec/KeyedCache";
+
 import { VIRRUN_FORCE_PROBE_KEY } from "@/services/exec/util/constants";
+import { createProbeCache } from "@/services/exec/util/createProbeCache";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
 import { afterEach, describe, expect, test, vi } from "vitest";
+
+type WritePersistedCache = (cache: Pick<KeyedCache<string>, "key" | "value">) => undefined;
 
 describe(createProbeCache, () => {
   const value = "value";
@@ -13,8 +17,8 @@ describe(createProbeCache, () => {
   test("probes once on a cold cache, memoizes, and persists the fingerprint-keyed value", () => {
     expect.hasAssertions();
 
-    const probe = vi.fn(() => value);
-    const writePersistedCache = vi.fn(() => undefined);
+    const probe = vi.fn<() => string>(() => value);
+    const writePersistedCache = vi.fn<WritePersistedCache>(() => undefined);
     const readValue = createProbeCache({
       probe,
       readPersistedCache: () => undefined,
@@ -31,8 +35,8 @@ describe(createProbeCache, () => {
   test("reuses the persisted value without probing or re-persisting", () => {
     expect.hasAssertions();
 
-    const probe = vi.fn(() => value);
-    const writePersistedCache = vi.fn(() => undefined);
+    const probe = vi.fn<() => string>(() => value);
+    const writePersistedCache = vi.fn<WritePersistedCache>(() => undefined);
     const readValue = createProbeCache({
       probe,
       readPersistedCache: () => value,
@@ -49,8 +53,8 @@ describe(createProbeCache, () => {
     expect.hasAssertions();
 
     process.env[VIRRUN_FORCE_PROBE_KEY] = "1";
-    const probe = vi.fn(() => value);
-    const readPersistedCache = vi.fn(() => value);
+    const probe = vi.fn<() => string>(() => value);
+    const readPersistedCache = vi.fn<(key: string) => string | undefined>(() => value);
     const readValue = createProbeCache({
       probe,
       readPersistedCache,
@@ -67,7 +71,7 @@ describe(createProbeCache, () => {
   test("does not persist a value shouldPersist rejects", () => {
     expect.hasAssertions();
 
-    const writePersistedCache = vi.fn(() => undefined);
+    const writePersistedCache = vi.fn<WritePersistedCache>(() => undefined);
     const readValue = createProbeCache({
       probe: () => "",
       readPersistedCache: () => undefined,
@@ -85,7 +89,7 @@ describe(createProbeCache, () => {
     const probe = vi.fn<() => string>(() => {
       throw new Error("probe failed");
     });
-    const writePersistedCache = vi.fn(() => undefined);
+    const writePersistedCache = vi.fn<WritePersistedCache>(() => undefined);
     const readValue = createProbeCache({
       probe,
       readPersistedCache: () => undefined,

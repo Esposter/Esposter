@@ -1,9 +1,9 @@
-import { createProbeCache } from "@/services/exec/util/createProbeCache";
 import {
   PROBE_TIMEOUT_MS,
   VIRRUN_CACHE_DIRECTORY_NAME,
   WSL_CACHE_ROOT_CACHE_FILENAME,
 } from "@/services/exec/util/constants";
+import { createProbeCache } from "@/services/exec/util/createProbeCache";
 import { execWsl } from "@/services/exec/wsl/execWsl";
 import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
