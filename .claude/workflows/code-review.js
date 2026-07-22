@@ -523,7 +523,7 @@ for (const d of decisions) {
   const merged = (Array.isArray(d.merge) ? d.merge : []).filter(claim).map((i) => ranked[i]);
   const verdict = merged.some((m) => m.verdict === "CONFIRMED") ? "CONFIRMED" : c.verdict;
   // A merged group escalates to its most severe member, mirroring the verdict escalation above.
-  const severity = [c, ...merged].toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity;
+  const severity = [c, ...merged].toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity ?? "major";
   const also = merged.length > 0 ? " [same root cause also at: " + merged.map(loc).join(", ") + "]" : "";
   findings.push({
     file: c.file,
@@ -548,18 +548,29 @@ for (let i = 0; i < ranked.length && findings.length < P.maxFindings; i++) {
     summary: c.summary,
     failure_scenario: c.failure_scenario,
     category: c.kind,
-    severity: c.severity,
+    severity: c.severity ?? "major",
     verdict: c.verdict,
   });
   backfilled++;
 }
+// No silent caps: verified findings that lost their slot to maxFindings are disclosed, not dropped quietly.
+const omitted = ranked.length - seen.size - backfilled;
 const summary =
-  usedDecisions && report
+  (usedDecisions && report
     ? report.summary +
       (backfilled > 0
         ? " (" + backfilled + " additional verified finding" + (backfilled === 1 ? "" : "s") + " appended unmerged.)"
         : "")
-    : "Synthesis step was skipped or its decisions were unusable — returning verified findings ranked, unmerged.";
+    : "Synthesis step was skipped or its decisions were unusable — returning verified findings ranked, unmerged.") +
+  (omitted > 0
+    ? " (" +
+      omitted +
+      " lower-ranked verified finding" +
+      (omitted === 1 ? "" : "s") +
+      " omitted at the " +
+      P.maxFindings +
+      "-finding cap.)"
+    : "");
 
 return {
   level: LEVEL,
@@ -567,5 +578,5 @@ return {
   summary,
   findings,
   refuted: refuted.map((c) => ({ file: c.file, line: c.line, summary: c.summary })),
-  stats: { ...stats, reported: findings.length },
+  stats: { ...stats, omitted, reported: findings.length },
 };
