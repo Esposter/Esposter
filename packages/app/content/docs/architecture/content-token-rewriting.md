@@ -5,7 +5,7 @@ description: Finding and rewriting tokens inside authored content — self-delim
 
 # Content Token Rewriting
 
-Several features find a token inside content someone else authored and rewrite it: blob urls in a resource's saved content ([/docs/platform/resource-file-assets](/docs/platform/resource-file-assets)), `{{variable}}` merge fields in email personalization, `{{entry:key}}` aliases in a blueprint. The content is arbitrary — HTML, CSS, JSON, or all three nested — so "where does this token end" is the whole problem, and getting it wrong silently corrupts a document rather than failing.
+Several features find a token inside content someone else authored and rewrite it: stable asset urls in a resource's saved content ([/docs/platform/resource-file-assets](/docs/platform/resource-file-assets) — the token-we-control case), `{{variable}}` merge fields in email personalization, `{{entry:key}}` aliases in a blueprint. The content is arbitrary — HTML, CSS, JSON, or all three nested — so "where does this token end" is the whole problem, and getting it wrong silently corrupts a document rather than failing.
 
 These rules apply to every such rewrite.
 
@@ -13,10 +13,10 @@ These rules apply to every such rewrite.
 
 A match must be **self-delimiting**. There are exactly two ways to earn that:
 
-- **The token carries its own delimiters.** `{{key}}` is bounded by the delimiters that define it, so a lazy body between them is unambiguous. Prefer this whenever the token format is ours to choose.
-- **The match is anchored on the delimiter that opened it.** A token we do not control the shape of — a url — is still always introduced by something: a quote, a css `url(`, whitespace. Anchor on that opener and the terminator is _known_, so each context can permit the characters the others reserve.
+- **The token carries its own delimiters — or a closed charset by construction.** `{{key}}` is bounded by the delimiters that define it, so a lazy body between them is unambiguous. A stable asset url earns the same property through its emitter: every segment is percent-encoded into a positive charset, so a prefix-anchored match can never run past the token. Prefer this whenever the token format is ours to choose.
+- **The match is anchored on the delimiter that opened it.** A token we do not control the shape of is still always introduced by something: a quote, a css `url(`, whitespace. Anchor on that opener and the terminator is _known_, so each context can permit the characters the others reserve.
 
-What is banned is the third option: defining the match as "everything except the characters that might end it". A negated charset is a guess at a closed set that is never closed — every character it forgets truncates a token mid-way, and every character it over-claims is one that can no longer appear inside a token. The blob-url matcher was rewritten three times under that model before being anchored on its opener.
+What is banned is the third option: defining the match as "everything except the characters that might end it". A negated charset is a guess at a closed set that is never closed — every character it forgets truncates a token mid-way, and every character it over-claims is one that can no longer appear inside a token. The former blob-url matcher was rewritten repeatedly under that model before the url itself was redesigned into the first case — a token whose charset the emitter closes.
 
 ## Rewrite in one pass, keyed by a map
 

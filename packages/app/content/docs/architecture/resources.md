@@ -109,7 +109,7 @@ flowchart TB
     FACTORY["createResourceProcedures(type, options?)"]
     BASE["base: create/read/update/delete<br/>readResourceContent/saveResourceContent"]
     PUBP["+ publishResource / unpublishResource /<br/>readResourcePublication / readPublishedResourceContent"]
-    FAP["+ generateUploadFileSasEntities /<br/>generateDownloadFileSasUrls / deleteFile"]
+    FAP["+ generateUploadFileSasEntities / deleteFile"]
     DPM["DatasetProviderMap<br/>Record&lt;DatasetProviderType, provider&gt;"]
   end
 

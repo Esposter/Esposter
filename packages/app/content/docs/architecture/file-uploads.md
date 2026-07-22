@@ -36,6 +36,8 @@ Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/upl
 
 Message attachments land in `AzureContainer.MessageAssets`; resource asset files in `AzureContainer.ResourceAssets`; profile images (user + room) in `AzureContainer.PublicUserAssets`. The separate attachments container lets a lifecycle policy tier old attachments without touching hot, small profile images (see [/docs/architecture/azure-services](/docs/architecture/azure-services)).
 
+Reads differ per domain: message attachments fetch fresh download SAS urls per read (`message.generateDownloadFileSasUrls`), while resource assets embed a stable app url built client-side after the upload and served through `/api/resource-assets` ([resource file assets](/docs/platform/resource-file-assets)) — resource types have no download procedure.
+
 ## Size constants
 
 ```ts
