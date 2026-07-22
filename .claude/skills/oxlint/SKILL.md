@@ -12,7 +12,7 @@ Oxlint runs as **repo-wide passes**, never per-package — there are no per-pack
 - `pnpm lint` / `pnpm lint:fix` (root) — `oxlint` over the whole repo, then ESLint.
 - `pnpm lint:fix:packages` / `pnpm lint:packages` (root) — `oxlint packages` (all packages), then ESLint over non-app packages.
 
-**Local verification runs the fix variants**: `pnpm lint:fix:packages` (root) for `packages/*` (non-app) changes; `pnpm lint:fix` from `packages/app/` for app changes (light ESLint config — `lint:all:fix` is the slower full pass). Reserve the check-only scripts (`pnpm lint`, `pnpm lint:all`) for CI. Never hand-fix lint errors — let the fix script do it.
+**Local verification runs the fix variants**: `pnpm lint:fix:packages` (root) for `packages/*` (non-app) changes; `pnpm lint:fix` from `packages/app/` for app changes (light ESLint config — `lint:all:fix` is the slower full pass). Neither local path oxlints the app — `lint:fix:packages` ignores `packages/app/**` and the app-local script is ESLint-only; app oxlint coverage comes solely from the root `pnpm lint` in CI. Reserve the check-only scripts (`pnpm lint`, `pnpm lint:all`) for CI. Never hand-fix lint errors — let the fix script do it.
 
 ## `.oxlintrc.json` categories — always list `correctness` explicitly
 

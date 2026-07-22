@@ -66,7 +66,10 @@ export const createVirrun = async ({
   // Caller (`virrun -- depcruise | dot`) gets its stdout stream poisoned by setup logs on a cold build. An interactive
   // Caller ("inherit") still sees the build live via a stderr tee, so a multi-minute install is never a silent stall.
   const toInstallOptions = (stdio: ExecStdio): ExecOptions => {
-    const options = isOsBackend ? withColorEnv(createOsInstallOptions(cwd, "pipe")) : toOptions("pipe");
+    // Only the os backend provisions (fork/persist fall back to plain exec elsewhere), and tee is os-only — so any
+    // Other backend just honors the requested stdio.
+    if (!isOsBackend) return toOptions(stdio);
+    const options = withColorEnv(createOsInstallOptions(cwd, "pipe"));
     return stdio === "inherit" ? { ...options, tee: "stderr" } : options;
   };
   // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork and
