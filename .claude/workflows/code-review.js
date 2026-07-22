@@ -150,9 +150,14 @@ const REPORT_SCHEMA = {
       type: "array",
       items: {
         type: "object",
-        required: ["index"],
+        required: ["index", "shortSummary"],
         properties: {
           index: { type: "number", description: "the [i] label of a finding to keep in the report" },
+          shortSummary: {
+            type: "string",
+            description:
+              "≤60-char compressed claim for the compact one-line findings table — the defect alone, no rationale and no consequence clause",
+          },
           merge: {
             type: "array",
             items: { type: "number" },
@@ -477,11 +482,12 @@ const report = await agent(
     "## Instructions\n" +
     "Return decisions about findings BY INDEX — never re-emit finding text.\n" +
     "1. For each distinct defect, emit one decision with its index. When several findings describe the same defect (same root cause), keep one entry and list the others in its merge array.\n" +
-    "2. Order decisions most-severe first. Correctness bugs always outrank cleanup findings.\n" +
-    "3. Keep at most " +
+    "2. Give each decision a shortSummary: a ≤60-char compressed claim for the compact one-line findings table — the defect alone, no rationale and no consequence clause (e.g. 'Reordered write drops entity on DB failure').\n" +
+    "3. Order decisions most-severe first. Correctness bugs always outrank cleanup findings.\n" +
+    "4. Keep at most " +
     P.maxFindings +
     " decisions; omit the least severe beyond the cap.\n" +
-    "4. Write a 2-3 sentence summary of the review.\n\nStructured output only.",
+    "5. Write a 2-3 sentence summary of the review.\n\nStructured output only.",
   { label: "synthesize", model: AGENT_MODEL, schema: REPORT_SCHEMA },
 );
 
@@ -495,6 +501,20 @@ const report = await agent(
 const decisions = report && Array.isArray(report.decisions) ? report.decisions : [];
 const seen = new Set();
 const claim = (i) => (inBounds(i, ranked.length) && !seen.has(i) ? (seen.add(i), true) : false);
+// The compact one-line table renders shortSummary verbatim. The synthesizer supplies it per decision;
+// backfilled findings (appended without a decision) fall back to a clipped first-clause of the summary
+// so the table column is never a full paragraph.
+const deriveShort = (s) => {
+  const oneLine = s
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(/[—.;:]/)[0]
+    .trim();
+  if (oneLine.length <= 60) return oneLine;
+  const cut = oneLine.slice(0, 60);
+  const lastSpace = cut.lastIndexOf(" ");
+  return (lastSpace > 30 ? cut.slice(0, lastSpace) : cut) + "…";
+};
 const findings = [];
 for (const d of decisions) {
   if (findings.length >= P.maxFindings) break;
@@ -508,6 +528,7 @@ for (const d of decisions) {
   findings.push({
     file: c.file,
     line: c.line,
+    shortSummary: (typeof d.shortSummary === "string" && d.shortSummary.trim()) || deriveShort(c.summary),
     summary: c.summary + also,
     failure_scenario: c.failure_scenario,
     category: c.kind,
@@ -523,6 +544,7 @@ for (let i = 0; i < ranked.length && findings.length < P.maxFindings; i++) {
   findings.push({
     file: c.file,
     line: c.line,
+    shortSummary: deriveShort(c.summary),
     summary: c.summary,
     failure_scenario: c.failure_scenario,
     category: c.kind,

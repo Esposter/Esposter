@@ -34,15 +34,15 @@ The finder/verifier agents carry this rule in their scope block, so grep both tr
 
 ## Handling findings
 
-0. **Always show the user every finding, and keep it short.** The final message lists every reported finding in a compact table — one line each, no failure-scenario prose, no category column, summaries trimmed to the claim. Render the workflow's `severity` as a color dot: 🔴 critical, 🟡 major, 🟢 minor (default 🟡 if absent). Sort by severity. Disposition is a few words; put a longer rationale below the table only when it changes what the user should do. Workflow-refuted candidates get one footnote line naming them, nothing more. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
+0. **Always show the user every finding, and keep it short.** The final message is the compact table below — one row per reported finding and nothing per-finding beyond it. The Finding column is the workflow's `shortSummary` field rendered **verbatim** (it is already the ≤60-char claim — never substitute the longer `summary`, and never re-expand it into a sentence). No failure-scenario prose, no category column. Render `severity` as a color dot: 🔴 critical, 🟡 major, 🟢 minor (default 🟡 if absent). Sort by severity. Disposition is a few words. Do **not** write a paragraph per finding — add at most one line below the table, and only when a disposition needs the user to decide something (e.g. a deferred fix). Workflow-refuted candidates get one footnote line naming them, nothing more. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
 
    ```markdown
-   | #   | Finding                                           | Where              | Severity    | Verdict   | Disposition                          |
-   | --- | ------------------------------------------------- | ------------------ | ----------- | --------- | ------------------------------------ |
-   | 1   | Reordered write drops the entity on a DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED | Fixed (abc1234)                      |
-   | 2   | Truncated buffer falls back to the wrong decoding | decodeOutput.ts:15 | 🟡 major    | PLAUSIBLE | Fixed (abc1234)                      |
-   | 3   | Error swallowed instead of surfaced to the caller | updateThing.ts:88  | 🟡 major    | PLAUSIBLE | By-design (architecture/standard.md) |
-   | 4   | Comment names a deleted symbol                    | helper.ts:6        | 🟢 minor    | CONFIRMED | Fixed (abc1234)                      |
+   | #   | Finding                                     | Where              | Severity    | Verdict   | Disposition                          |
+   | --- | ------------------------------------------- | ------------------ | ----------- | --------- | ------------------------------------ |
+   | 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED | Fixed (abc1234)                      |
+   | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | PLAUSIBLE | Fixed (abc1234)                      |
+   | 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | PLAUSIBLE | By-design (architecture/standard.md) |
+   | 4   | Comment names a deleted symbol              | helper.ts:6        | 🟢 minor    | CONFIRMED | Fixed (abc1234)                      |
 
    Refuted by verifiers: removeThing timeout bound ×2, batch submission ordering.
    ```
