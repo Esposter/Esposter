@@ -42,7 +42,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { generateWriteSasUrl, listBlobNames } from "@esposter/db";
+import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -246,15 +246,9 @@ export const baseRoomRouter = router({
           ctx.getSessionPayload.session.id,
         );
     }),
-  deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
-    // A dropped listing or publish leaves orphaned room assets, never the deletion that already landed
-    await publishBlobDeletion(input, AzureContainer.MessageAssets, async () => {
-      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-      return listBlobNames(containerClient, input, true);
-    });
-    return deletedRoom;
-  }),
+  deleteRoom: standardAuthedProcedure
+    .input(deleteRoomInputSchema)
+    .mutation<RoomInMessage>(async ({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
     async ({ input: { roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
