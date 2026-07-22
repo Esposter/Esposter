@@ -349,7 +349,9 @@ describe("resource", () => {
     assert(container);
     container.set(getContentBlobName(webpageResource.id), Buffer.from("a"));
 
-    await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot();
+    await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Unexpected token 'a', "a" is not valid JSON]`,
+    );
 
     const { items } = await caller.readResources();
 
