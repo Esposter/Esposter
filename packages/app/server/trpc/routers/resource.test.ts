@@ -26,7 +26,7 @@ describe("resource", () => {
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
-  const fileName = "image.png";
+  const filename = "filename";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
 
   beforeAll(async () => {
@@ -269,7 +269,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${fileName}`;
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
@@ -307,8 +307,8 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${fileName}`;
-    const missingBlobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${fileName}`;
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    const missingBlobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({
