@@ -49,7 +49,6 @@ logs
 *.code-workspace
 
 # Claude
-.claude/workflows/.generated
 scheduled_tasks.lock
 
 # OS

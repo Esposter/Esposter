@@ -23,7 +23,6 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "<level>
 - `target` — optional: PR number, branch, ref range, path, or free-form instructions (`"only review src/foo.ts"`). Omit for the working diff.
 - **Never `Workflow({ name: "code-review" })`** — name resolution always loads the built-in, which inherits the premium session model onto ~20 finder/verifier agents (verified 2026-07-17, ~1.46M tokens). The project script pins `model: "opus"` on every agent (execution role per the model-delegation skill).
 - `args: "probe"` exits instantly with `{ probe: true }` — free parse check after editing the script.
-- After editing the script, also run `node .claude/workflows/typecheck.mjs` — the Workflow sandbox accepts plain JavaScript only (TypeScript syntax fails its parser, verified 2026-07-22), so the harness typechecks a `.generated/` shadow copy (top-level `return` wrapped in an async arrow) against `workflow-globals.d.ts` via tsgo.
 
 ## The written record wins — never re-litigate a settled decision
 
