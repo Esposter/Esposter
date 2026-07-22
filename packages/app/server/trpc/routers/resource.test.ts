@@ -4,6 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
+import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
@@ -14,7 +15,7 @@ import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AzureContainer, AzureTable, ResourceActivityType, resources, ResourceType } from "@esposter/db-schema";
-import { jsonDateParse, takeOne } from "@esposter/shared";
+import { ID_SEPARATOR, jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -25,6 +26,7 @@ describe("resource", () => {
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
+  const fileName = "image.png";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
 
   beforeAll(async () => {
@@ -267,7 +269,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const blobName = `${webpageResource.id}/files/${crypto.randomUUID()}|image.png`;
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${fileName}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
@@ -299,6 +301,35 @@ describe("resource", () => {
     );
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
     expect(publication).toBeUndefined();
+  });
+
+  test("cleans up the copy when duplicating its content fails", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${fileName}`;
+    const missingBlobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${fileName}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await webpageCaller.saveResourceContent({
+      content: new WebpageEditor({
+        css: "a",
+        html: `<img src="${getResourceAssetUrl(blobName)}"><img src="${getResourceAssetUrl(missingBlobName)}">`,
+      }),
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+
+    await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Source blob not found]`,
+    );
+
+    const { items } = await caller.readResources();
+    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    assert(container);
+
+    // The half-cloned copy is fully reverted: no row and no blobs outside the original's directory
+    expect(items.map(({ id }) => id)).toStrictEqual([webpageResource.id]);
+    expect([...container.keys()].every((key) => key.startsWith(`${webpageResource.id}/`))).toBe(true);
   });
 
   test("duplicates a resource without content", async () => {

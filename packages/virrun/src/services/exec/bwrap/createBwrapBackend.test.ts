@@ -1,4 +1,4 @@
-import type { ExecStdio } from "@/models/exec/ExecOptions";
+import type { ExecStdio, ExecTeeTarget } from "@/models/exec/ExecOptions";
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
 import {
@@ -48,7 +48,7 @@ describe(createBwrapBackend, () => {
       () => ({ command: ["wsl.exe"], env: {}, statusSource: "stderr" }),
       ERROR_NAME,
     );
-  const exec = (stdio: ExecStdio) => createBackend().exec(["tsgo"], { cwd: "", stdio });
+  const exec = (stdio: ExecStdio, tee?: ExecTeeTarget) => createBackend().exec(["tsgo"], { cwd: "", stdio, tee });
 
   beforeEach(() => {
     spawn.mockReset();
@@ -167,6 +167,34 @@ describe(createBwrapBackend, () => {
 
     expect(write.mock.calls.map(([chunk]) => chunk).join("")).toBe(line);
   });
+
+  // One case per tee target: the child's stdout must land ONLY on the declared host stream (provisioning tees to
+  // Stderr so a piped caller's stdout — e.g. `virrun -- depcruise | dot` — is never poisoned; the task cache's miss
+  // Path tees to stdout) while the result still captures it for recording.
+  test.each<ExecTeeTarget>(["stderr", "stdout"])(
+    "tees the child's stdout live to host %s only under pipe while still capturing it",
+    async (teeTarget) => {
+      expect.hasAssertions();
+
+      const commandStdout = "digraph {}\n";
+      const writes = {
+        stderr: vi.spyOn(process.stderr, "write").mockReturnValue(true),
+        stdout: vi.spyOn(process.stdout, "write").mockReturnValue(true),
+      };
+      spawn.mockImplementation(() =>
+        createFakeChild({
+          stderr: `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":0}\n${WSL_BWRAP_STATUS_END}`,
+          stdout: commandStdout,
+        }),
+      );
+      const { exitCode, stdout } = await exec("pipe", teeTarget);
+
+      expect(exitCode).toBe(0);
+      expect(stdout).toBe(commandStdout);
+      expect(writes[teeTarget]).toHaveBeenCalledExactlyOnceWith(commandStdout);
+      expect(writes[teeTarget === "stderr" ? "stdout" : "stderr"]).not.toHaveBeenCalled();
+    },
+  );
 
   test("returns the cleaned stderr in the result under pipe without writing to the host", async () => {
     expect.hasAssertions();

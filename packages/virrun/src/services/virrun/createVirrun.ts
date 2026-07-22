@@ -62,8 +62,13 @@ export const createVirrun = async ({
   const prepareStep = isOsBackend ? resolvePrepareStep(environment, cwd) : undefined;
   const toOptions = (stdio: ExecStdio): ExecOptions =>
     withColorEnv(isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio });
-  const toInstallOptions = (stdio: ExecStdio): ExecOptions =>
-    isOsBackend ? withColorEnv(createOsInstallOptions(cwd, stdio)) : toOptions(stdio);
+  // Provisioning (deps install / prepare) always pipes: its output must never land on the host's stdout, or a piped
+  // Caller (`virrun -- depcruise | dot`) gets its stdout stream poisoned by setup logs on a cold build. An interactive
+  // Caller ("inherit") still sees the build live via a stderr tee, so a multi-minute install is never a silent stall.
+  const toInstallOptions = (stdio: ExecStdio): ExecOptions => {
+    const options = isOsBackend ? withColorEnv(createOsInstallOptions(cwd, "pipe")) : toOptions("pipe");
+    return stdio === "inherit" ? { ...options, tee: "stderr" } : options;
+  };
   // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork and
   // Persist so the two warm-cache paths can't drift.
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {

@@ -10,7 +10,6 @@ import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants"
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { createId } from "#shared/util/math/random/createId";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
-import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
@@ -194,8 +193,9 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl, sasUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     // The leaf is a per-upload uuid, so the knowable part is the versioned prefix; the sas url is the exact public
-    // Url plus the mock write-sas query, which is what actually needs asserting
-    const blobPrefix = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${getRoomProfileImageBlobPrefix(newRoom.id)}/`;
+    // Url plus the mock write-sas query, which is what actually needs asserting. The prefix is spelled out
+    // Rather than built from the helper so the documented rooms/ namespace is pinned by the test
+    const blobPrefix = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/rooms/${newRoom.id}/ProfileImage/`;
 
     expect(publicUrl.startsWith(blobPrefix)).toBe(true);
     expect(sasUrl).toBe(
@@ -218,7 +218,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const blobName = `${getRoomProfileImageBlobPrefix(newRoom.id)}/${crypto.randomUUID()}`;
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
     const publicUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${blobName}`;
     MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
