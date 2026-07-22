@@ -34,15 +34,17 @@ The finder/verifier agents carry this rule in their scope block, so grep both tr
 
 ## Handling findings
 
-0. **Always show the user every finding, and keep it short.** The final message lists every reported finding in a compact table — one line each, no failure-scenario prose, no category column, summaries trimmed to the claim. Disposition is a few words; put a longer rationale below the table only when it changes what the user should do. Workflow-refuted candidates get one footnote line naming them, nothing more. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
+0. **Always show the user every finding, and keep it short.** The final message lists every reported finding in a compact table — one line each, no failure-scenario prose, no category column, summaries trimmed to the claim. Render the workflow's `severity` as a color dot: 🔴 critical, 🟡 major, 🟢 minor (default 🟡 if absent). Sort by severity. Disposition is a few words; put a longer rationale below the table only when it changes what the user should do. Workflow-refuted candidates get one footnote line naming them, nothing more. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
 
    ```markdown
-   | #   | Finding                                                                   | Where                   | Verdict   | Disposition                        |
-   | --- | ------------------------------------------------------------------------- | ----------------------- | --------- | ---------------------------------- |
-   | 1   | Slowmode update reordered before Table write — DB blip now fails the send | createUserMessage.ts:40 | CONFIRMED | By-design (persist-then-notify.md) |
-   | 2   | Odd-length stderr forced to utf8, garbling truncated utf16le diagnostics  | execFileHidden.ts:15    | PLAUSIBLE | Fixed (abc1234)                    |
+   | #   | Finding                                           | Where              | Severity    | Verdict   | Disposition                          |
+   | --- | ------------------------------------------------- | ------------------ | ----------- | --------- | ------------------------------------ |
+   | 1   | Reordered write drops the entity on a DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED | Fixed (abc1234)                      |
+   | 2   | Truncated buffer falls back to the wrong decoding | decodeOutput.ts:15 | 🟡 major    | PLAUSIBLE | Fixed (abc1234)                      |
+   | 3   | Error swallowed instead of surfaced to the caller | updateThing.ts:88  | 🟡 major    | PLAUSIBLE | By-design (architecture/standard.md) |
+   | 4   | Comment names a deleted symbol                    | helper.ts:6        | 🟢 minor    | CONFIRMED | Fixed (abc1234)                      |
 
-   Refuted by verifiers: removeSnapshotDirectory timeout ×2, deleteTablePartitionEntities sequential batches.
+   Refuted by verifiers: removeThing timeout bound ×2, batch submission ordering.
    ```
 
 1. Verify each finding against current HEAD before fixing — post-merge findings can be stale (fixed by a later commit, file renamed), and check it against the written record above before treating it as real.

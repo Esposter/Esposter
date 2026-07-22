@@ -77,6 +77,8 @@ const VERDICT_LADDER =
   "- **CONFIRMED** — can name the inputs/state that trigger it and the wrong\n  output or crash. Quote the line.\n- **PLAUSIBLE** — mechanism is real, trigger is uncertain (timing, env,\n  config). State what would confirm it.\n- **REFUTED** — factually wrong (code doesn't say that) or guarded elsewhere.\n  Quote the line that proves it.";
 const VERDICT_LADDER_RECALL =
   '**PLAUSIBLE by default** — do not refute a candidate for being "speculative" or\n"depends on runtime state" when the state is realistic: concurrency races,\nnil/undefined on a rare-but-reachable path (error handler, cold cache, missing\noptional field), falsy-zero treated as missing, off-by-one on a boundary the\ncode does not exclude, retry storms / partial failures, regex/allowlist that\nlost an anchor. These are PLAUSIBLE.\n\n**REFUTED** only when constructible from the code: factually wrong (quote the\nactual line); provably impossible (type/constant/invariant — show it); already\nhandled in this diff (cite the guard); or pure style with no observable effect.';
+const SEVERITY_LADDER =
+  "Also rate each candidate's **severity** — the user-visible impact assuming the finding is real, judged\nindependently of verdict confidence (a PLAUSIBLE data-loss bug is still critical):\n- **critical** — data loss/corruption, security hole, crash or broken core flow in regular use.\n- **major** — wrong behavior on a realistic path: a mishandled edge case, degraded or misleading output,\n  a resilience gap.\n- **minor** — maintainability or cosmetic cost only: cleanup, conventions, stale comments, wasted work\n  with no user-visible effect.";
 const CLEANUP_PRECEDENCE =
   "Cleanup, altitude, and conventions candidates use the same\n`file`/`line`/`summary` shape; in `failure_scenario`, state the concrete\ncost (what is duplicated, wasted, harder to maintain, or which CLAUDE.md rule\nis broken) instead of a crash. Correctness bugs always outrank cleanup,\naltitude, and conventions findings when the output cap forces a cut.\n";
 const SWEEP_GAP_FOCUS =
@@ -128,10 +130,11 @@ const GROUP_VERDICT_SCHEMA = {
       type: "array",
       items: {
         type: "object",
-        required: ["index", "verdict", "evidence"],
+        required: ["index", "verdict", "severity", "evidence"],
         properties: {
           index: { type: "number", description: "the [i] label of the candidate this verdict is for" },
           verdict: { enum: ["CONFIRMED", "PLAUSIBLE", "REFUTED"] },
+          severity: { enum: ["critical", "major", "minor"] },
           evidence: { type: "string" },
         },
       },
@@ -304,6 +307,8 @@ const GROUP_VERIFIER_PROMPT = (group) =>
   "\n\n" +
   VERDICT_LADDER_RECALL +
   "\n\n" +
+  SEVERITY_LADDER +
+  "\n\n" +
   "Structured output only. Evidence must quote or cite the relevant line(s).";
 
 // ─── Same-location verifier merge — group ingested candidates by loc(c),
@@ -333,7 +338,9 @@ async function verifyGroups(candidates) {
       if (!r) return [];
       const byIdx = {};
       for (const v of r.verdicts) if (inBounds(v.index, g.length)) byIdx[v.index] = v;
-      return g.flatMap((c, i) => (byIdx[i] ? [{ ...c, verdict: byIdx[i].verdict, evidence: byIdx[i].evidence }] : []));
+      return g.flatMap((c, i) =>
+        byIdx[i] ? [{ ...c, evidence: byIdx[i].evidence, severity: byIdx[i].severity, verdict: byIdx[i].verdict }] : [],
+      );
     }),
   );
   return out.filter(Boolean).flat();
@@ -429,9 +436,11 @@ if (surviving.length === 0) {
 
 // ─── Synthesize: rank, merge semantic dupes, cap ───
 phase("Synthesize");
-// Correctness bugs outrank cleanup findings when the cap forces a cut;
-// CONFIRMED outranks PLAUSIBLE within each group.
-const rank = (c) => (c.kind === "cleanup" ? 2 : 0) + (c.verdict === "PLAUSIBLE" ? 1 : 0);
+// Severity first; within a severity tier correctness outranks cleanup and
+// CONFIRMED outranks PLAUSIBLE. An unrated candidate ranks as major.
+const SEVERITY_RANK = { critical: 0, major: 1, minor: 2 };
+const severityRank = (c) => SEVERITY_RANK[c.severity] ?? 1;
+const rank = (c) => severityRank(c) * 4 + (c.kind === "cleanup" ? 2 : 0) + (c.verdict === "PLAUSIBLE" ? 1 : 0);
 const ranked = surviving.slice().sort((a, b) => rank(a) - rank(b));
 const block = ranked
   .map(
@@ -442,6 +451,8 @@ const block = ranked
       loc(c) +
       " (" +
       c.verdict +
+      ", " +
+      (c.severity ?? "major") +
       (c.kind === "cleanup" ? ", cleanup" : "") +
       ")\n" +
       c.summary +
@@ -491,6 +502,8 @@ for (const d of decisions) {
   const c = ranked[d.index];
   const merged = (Array.isArray(d.merge) ? d.merge : []).filter(claim).map((i) => ranked[i]);
   const verdict = merged.some((m) => m.verdict === "CONFIRMED") ? "CONFIRMED" : c.verdict;
+  // A merged group escalates to its most severe member, mirroring the verdict escalation above.
+  const severity = [c, ...merged].toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity;
   const also = merged.length > 0 ? " [same root cause also at: " + merged.map(loc).join(", ") + "]" : "";
   findings.push({
     file: c.file,
@@ -498,6 +511,7 @@ for (const d of decisions) {
     summary: c.summary + also,
     failure_scenario: c.failure_scenario,
     category: c.kind,
+    severity,
     verdict,
   });
 }
@@ -512,6 +526,7 @@ for (let i = 0; i < ranked.length && findings.length < P.maxFindings; i++) {
     summary: c.summary,
     failure_scenario: c.failure_scenario,
     category: c.kind,
+    severity: c.severity,
     verdict: c.verdict,
   });
   backfilled++;
