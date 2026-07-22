@@ -12,10 +12,10 @@ import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/Composi
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { useAlertStore } from "@/store/alert";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
-import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
@@ -38,7 +38,7 @@ export const useDataStore = defineStore("message/data", () => {
   const nextCursorNewer = ref("");
   const typings = ref<CreateTypingInput[]>([]);
 
-  const createMessage = async (input: StandardCreateMessageInput) => {
+  const createMessage = (input: StandardCreateMessageInput) => {
     if (!session.value.data) return false;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
