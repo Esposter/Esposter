@@ -89,7 +89,7 @@ Azure-portal-faithful **two flex boxes** on one surface (deliberately simple —
 ```
 
 - **Collapse caret next to the list title (desktop)** — the list box header is `« Resources`; clicking `«` collapses the whole list box to a thin `shrink-0` strip containing just `»` to restore it, so the blade box simply grows to fill. No width animation math, no overlay. The collapse/restore carets are each shown only in their own state (`«` when open, `»` when collapsed).
-- **Mobile-native** — on `smAndDown` (`useVDisplay`) the inline list box is removed entirely; the list becomes a temporary overlay drawer (`v-navigation-drawer temporary`) opened by a `mdi-menu` hamburger in the blade box header and closed on scrim tap or as soon as a resource is selected (a route-change watch), so the blade box owns the full width. The blade nav collapses from the vertical rail into a dropdown (`v-menu`) whose activator shows the active blade — its caret (`mdi-chevron-up`) renders only while the menu is open. Desktop keeps the inline rail and collapsible list box unchanged.
+- **Mobile-native** — on `smAndDown` (`useVDisplay`) the inline list box is removed entirely; there is no drawer — the full-width `/resources/all` page is the mobile list, reached via the blade box's Close ✕ (which peels back to `/resources/all`), so the blade box owns the full width. The blade nav collapses from the vertical rail into a dropdown (`v-menu`) whose activator shows the active blade — its caret (`mdi-chevron-up`) renders only while the menu is open. Desktop keeps the inline rail and collapsible list box unchanged.
 - **Borders drawn exactly once** — no component double-draws an edge. The **blade box** owns the full-height list↔blade divider (`b-l` on its header and content, plus `b-t` under the header); the list box draws no right edge. The **list box header** owns its bottom separator (`b-b`); the **blade nav** is borderless. Both headers are the shared `v-toolbar` primitive (identical native height/padding, no bespoke sizing).
 - **Nested close** — the close ✕ peels back one layer: the blade box's ✕ → `/resources/all`; `/all`'s ✕ → Home. Each ✕ lives in its box's header, never on the breadcrumb's level.
 - **Single unified breadcrumb** — the base page owns the only breadcrumb; the blade box has none. Vuetify components with a plain destination take `:to`; an inline `@click="navigateTo(...)"` is for logic-then-navigate actions. Declarative links use `NuxtLink`/`NuxtInvisibleLink`. Raw `<a>` is never used — see [navigation](/docs/architecture/navigation).
@@ -99,9 +99,7 @@ On a narrow viewport the two-box layout folds into a single full-width column wi
 
 ```mermaid
 flowchart LR
-  HB["Hamburger (mdi-menu)<br/>blade box header"] -->|open| DRAWER["List drawer<br/>v-navigation-drawer temporary"]
-  DRAWER -->|select resource — navigateTo| CLOSED["Drawer closes<br/>on route-change watch"]
-  DRAWER -->|scrim tap| CLOSED
+  CLOSE["Close ✕<br/>blade box header"] -->|peels back| ALL["/resources/all<br/>full-width mobile list"]
   BNAV["Blade dropdown<br/>v-menu activator = active blade"] -->|open| CARET["Caret mdi-chevron-up<br/>shown only while open"]
   BNAV -->|pick blade — navigateTo| BLADE["Active blade fills full width"]
 ```

@@ -1,12 +1,14 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
+import { authClient } from "@/services/auth/authClient";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { Operation, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useDataStore, () => {
   let router: Router;
@@ -21,6 +23,10 @@ describe(useDataStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     router.currentRoute.value.params.id = roomId;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   test("storeCreateMessage is idempotent", async () => {
@@ -41,6 +47,26 @@ describe(useDataStore, () => {
     await storeCreateMessage(newMessage);
 
     expect(items.value).toHaveLength(1);
+  });
+
+  test("createMessage rolls back the optimistic message when the Create hook rejects", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    // createMessage reads only session.value.data.user.id off the reactive session
+    vi.spyOn(authClient, "useSession").mockReturnValue(
+      ref({ data: { user: { id: userId } } }) as unknown as ReturnType<typeof authClient.useSession>,
+    );
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { createMessage } = dataStore;
+    // A Create hook fetches attachment download URLs over the network; a rejection there must roll the
+    // Optimistically-rendered bubble back out instead of leaving a permanent loading entity in the list.
+    vi.spyOn(MessageHookMap[Operation.Create], "run").mockRejectedValueOnce(new Error(message));
+    const created = await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+
+    expect(created).toBe(false);
+    expect(items.value).toHaveLength(0);
   });
 
   test("storeUpdateMessage is idempotent", async () => {

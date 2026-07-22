@@ -15,14 +15,16 @@ import { createOperationData } from "@/services/shared/createOperationData";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
+import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getResultAsync, Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
+  const { createAlert } = useAlertStore();
   const roomStore = useRoomStore();
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
@@ -40,10 +42,20 @@ export const useDataStore = defineStore("message/data", () => {
     if (!session.value.data) return false;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
-    await storeCreateMessage(newMessage);
-    Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
-    delete newMessage.isLoading;
-    return true;
+    return getResultAsync(async () => {
+      await storeCreateMessage(newMessage);
+      Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
+      delete newMessage.isLoading;
+    }).match(
+      () => true,
+      (error) => {
+        // A rejected Create hook (e.g. the attachment URL fetch) or mutation must not strand the optimistic
+        // Loading bubble in the list, so roll the entity back out before surfacing the failure.
+        baseStoreDeleteMessage(newMessage);
+        createAlert(error.message, "error");
+        return false;
+      },
+    );
   };
   const updateMessage = async (input: UpdateMessageInput) => {
     const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
