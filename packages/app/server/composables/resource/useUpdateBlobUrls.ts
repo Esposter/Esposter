@@ -46,9 +46,10 @@ export const useUpdateBlobUrls = async <TContent>(
   );
   // One pass per leaf rewrites every url the same matcher found, so a url that is a prefix of another can never
   // Consume it, and the cost stays independent of how many assets the document embeds
+  const blobUrlSearchRegex = useBlobUrlSearchRegex();
   return deepReplaceStrings(content, (value) =>
     value.replaceAll(
-      useBlobUrlSearchRegex(),
+      blobUrlSearchRegex,
       (blobUrl) => updatedBlobUrlMap.get(getBlobUrlWithoutSasQuery(blobUrl)) ?? blobUrl,
     ),
   );
