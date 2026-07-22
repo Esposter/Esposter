@@ -1,4 +1,4 @@
-import languageOptions from "@esposter/configuration/eslint/anguageOptions.js";
+import languageOptions from "@esposter/configuration/eslint/languageOptions.js";
 import vitest from "@vitest/eslint-plugin";
 import { defineConfig } from "eslint/config";
 

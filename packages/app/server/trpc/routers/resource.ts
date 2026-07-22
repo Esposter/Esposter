@@ -29,7 +29,7 @@ import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { copyBlob, getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
+import { copyBlob, deleteDirectory, getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,
@@ -206,7 +206,11 @@ export const resourceRouter = router({
       const clonedContent = await cloneContentAssets(content, newResource.id);
       await useUpload(AzureContainer.ResourceAssets, getContentBlobName(newResource.id), JSON.stringify(clonedContent));
     }).match(noop, async (error) => {
-      // Never leave a content-less orphan copy behind when the content clone fails
+      // Never leave a content-less orphan copy behind when the content clone fails. Ordered like purgeResource:
+      // Partially cloned blobs first (already-gone is success), the row last as the durable marker — a failed
+      // Blob cleanup keeps the copy reachable through the resource API instead of stranding its blobs
+      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+      await deleteDirectory(containerClient, newResource.id, true);
       await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
       throw error;
     });

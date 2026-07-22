@@ -151,7 +151,7 @@ One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/
 
 Every content write funnels through `saveResourceContent`, so real-time sync is one subscription: after a successful save the factory emits on `resourceEventEmitter` and `onSaveResourceContent` streams `{ content, contentVersion, id }` to the owner's other devices (the emitting device is filtered out, same as the messaging emitters). Subscribers adopt both the content and the `contentVersion`, so a remote save keeps their next save from being rejected as stale. TodoList wires this up client-side (`useTodoListSubscribables` → `storeSaveResourceContent`), making every item table operation live; other types can reuse the same subscription as needed.
 
-The factory also accepts three optional content-transform hooks, `transformPublishedContent`, `transformReadContent`, and `transformPublicReadContent` — see [/docs/architecture/publishing](/docs/architecture/publishing).
+The factory also accepts two optional content-transform hooks, `transformPublishedContent` and `transformPublicReadContent` — see [/docs/architecture/publishing](/docs/architecture/publishing).
 
 Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`.
 
