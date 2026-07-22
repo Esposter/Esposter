@@ -60,7 +60,7 @@ Idempotent post-write steps are the one place a rethrow is admissible — a step
 
 ## Enforcement
 
-The tail half is lint-enforced, not left to review. A custom oxlint JS plugin (`scripts/oxlint/persistThenNotify.ts`, scoped to `packages/app/server` in `.oxlintrc.json`) errors on any `await` that follows a `*EventEmitter.emit(...)` in the same function unless it never rejects — a `getResultAsync`/`withFinalizer*` chain, an internally-best-effort helper like `createSystemRoomMessage`, or a `Promise` combinator over a fan-out of those. It runs in oxlint's single root pass because the check is purely syntactic. What it deliberately can't see is the rarer _gap_ — a fatal `await` sitting **before** the emit — since there's no syntactic marker for "the primary write"; that half stays a review concern, kept small by firing the emit the instant the entity exists.
+The tail half is lint-enforced, not left to review. A custom oxlint JS plugin (`scripts/oxlint/persistThenNotify.ts`, scoped to `packages/app/server` in `.oxlintrc.json`) errors on any `await` that follows a `*EventEmitter.emit(...)` in the same function unless it never rejects — a `getResultAsync`/`withFinalizer*` chain, an internally-best-effort helper like `createSystemRoomMessage` or `publishBlobDeletion`, or a `Promise` combinator over a fan-out of those. It runs in oxlint's single root pass because the check is purely syntactic. What it deliberately can't see is the rarer _gap_ — a fatal `await` sitting **before** the emit — since there's no syntactic marker for "the primary write"; that half stays a review concern, kept small by firing the emit the instant the entity exists.
 
 ## Where a failure surfaces
 
@@ -68,14 +68,15 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 
 ## Key files
 
-| File                                                                 | Role                                                                    |
-| -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `packages/app/server/services/message/createUserMessage.ts`          | Canonical shape — guards, slowmode clock, write, emit, best-effort tail |
-| `packages/app/server/trpc/routers/message/index.ts`                  | `forwardMessage` — the same shape per room, under `Promise.allSettled`  |
-| `packages/app/server/services/message/createSystemRoomMessage.ts`    | A write and its emit wrapped together as one best-effort effect         |
-| `packages/app/server/trpc/plugins/achievementPlugin.ts`              | Post-mutation work that always returns the original mutation's result   |
-| `packages/app/server/services/resource/writeResourceActivity.ts`     | Best-effort activity write behind every resource mutation               |
-| `packages/azure-functions/src/services/createAndBroadcastMessage.ts` | Handler-side write then best-effort broadcast                           |
+| File                                                                  | Role                                                                          |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `packages/app/server/services/message/createUserMessage.ts`           | Canonical shape — guards, slowmode clock, write, emit, best-effort tail       |
+| `packages/app/server/trpc/routers/message/index.ts`                   | `forwardMessage` — the same shape per room, under `Promise.allSettled`        |
+| `packages/app/server/services/message/createSystemRoomMessage.ts`     | A write and its emit wrapped together as one best-effort effect               |
+| `packages/app/server/trpc/plugins/achievementPlugin.ts`               | Post-mutation work that always returns the original mutation's result         |
+| `packages/app/server/services/resource/writeResourceActivity.ts`      | Best-effort activity write behind every resource mutation                     |
+| `packages/app/server/services/azure/eventGrid/publishBlobDeletion.ts` | The one chunked best-effort blob-cleanup publish every delete funnels through |
+| `packages/azure-functions/src/services/createAndBroadcastMessage.ts`  | Handler-side write then best-effort broadcast                                 |
 
 ## Notes
 
@@ -86,8 +87,8 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 
 Deleting a message attachment is the worked example. The delete sits after the primary write, so it cannot be fatal — but `console.error` on a failed delete was not enough either, because read urls are signed for a year ([resource file assets](/docs/platform/resource-file-assets)): a dropped delete leaves a file the user believes is gone downloadable to anyone already holding its url, for as long as that signature lives.
 
-So the effect escalates rather than changing severity. The call site publishes `ProcessBlobDeletion` and `processBlobDeletionHandler` performs the delete, retried by Event Grid and then by [dead-letter replay](/docs/infra/eventgrid-dead-letter). The handler deletes with `deleteIfExists`, which is what earns its `true` in `IsIdempotentAzureFunctionMap` — a replayed batch converges on the same empty state instead of failing on the blobs the first attempt already removed.
+So the effect escalates rather than changing severity. Every delete funnels through one helper, `publishBlobDeletion` (`packages/app/server/services/azure/eventGrid/`), which publishes `ProcessBlobDeletion` best-effort — chunked, and accepting a thunk so a fallible blob listing runs inside the same best-effort unit — and `processBlobDeletionHandler` performs the delete, retried by Event Grid and then by [dead-letter replay](/docs/infra/eventgrid-dead-letter). The handler deletes with `deleteIfExists`, which is what earns its `true` in `IsIdempotentAzureFunctionMap` — a replayed batch converges on the same empty state instead of failing on the blobs the first attempt already removed.
 
 **The publish itself stays best-effort and post-persist.** That is the honest boundary: what changed is not that failure became impossible, but that a publish which _lands_ carries the delete to completion instead of dropping it after one attempt.
 
-Reach for this when the answer to "what does losing this cost?" is something a user would consider a broken promise — data that outlives a delete, a payment not captured, an invitation never sent. A lost badge count is not that; a file that stays downloadable after deletion is. Blob deletion is the canonical case: read SAS urls are signed for a year, so a dropped delete would leave the file downloadable long after it should be gone — the call site publishes a `ProcessBlobDeletion` event (the publish itself stays best-effort) and the idempotent handler retries the delete to completion.
+Reach for this when the answer to "what does losing this cost?" is something a user would consider a broken promise — data that outlives a delete, a payment not captured, an invitation never sent. A lost badge count is not that; a file that stays downloadable after deletion is.

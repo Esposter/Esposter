@@ -10,12 +10,13 @@ import { definePlugin, defineRule } from "@oxlint/plugins";
 // Scoped to packages/app/server in the root .oxlintrc.json: only there does an emitter carry the
 // Persist-then-notify meaning. Client emitters (e.g. the Phaser game bus) are a different concept.
 
-// Calls that never reject: the neverthrow wrappers, plus helpers that wrap their own write+emit
+// Calls that never reject: the neverthrow wrappers, plus helpers that wrap their own effect
 // Best-effort internally (so awaiting them never rejects).
 const ALLOWED_ROOTS = new Set([
   "createSystemRoomMessage",
   "getResult",
   "getResultAsync",
+  "publishBlobDeletion",
   "withFinalizer",
   "withFinalizerAsync",
 ]);
