@@ -8,9 +8,8 @@ Goals:
 
 - reduce unnecessary Azure spend;
 - remove duplicated or obsolete resources;
-- review budgets, alerts, action groups, Logic Apps, and Event Grid subscriptions;
+- review budgets, action groups, Logic Apps, and Event Grid subscriptions;
 - reduce always-on compute where possible;
-- align diagnostics, logging retention, and alert thresholds with actual operational needs;
 - verify least-privilege access for identities, connections, keys, and callback URLs;
 - convert imported literal settings into maintainable constants or components where that reduces risk.
 
@@ -23,8 +22,6 @@ Operational rule:
 Candidate review areas:
 
 - Function App hosting plan, scaling, and idle behavior;
-- Application Insights sampling and retention;
-- Log Analytics retention;
 - Cognitive Search SKU and replica/partition count;
 - Web PubSub SKU and unit count;
 - Event Grid subscription filters and retry behavior;
