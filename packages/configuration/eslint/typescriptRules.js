@@ -6,8 +6,6 @@ export default Object.assign(
   // Leaves enabled need hand-deleting here.
   ...tseslint.configs.strictTypeChecked.map((c) => {
     const rules = c.rules ?? {};
-    delete rules["@typescript-eslint/no-dynamic-delete"];
-    delete rules["@typescript-eslint/no-empty-object-type"];
     delete rules["@typescript-eslint/no-unnecessary-condition"];
     return rules;
   }),
@@ -17,7 +15,6 @@ export default Object.assign(
     return rules;
   }),
   {
-    "@typescript-eslint/consistent-type-exports": "error",
     "no-restricted-imports": [
       "error",
       {

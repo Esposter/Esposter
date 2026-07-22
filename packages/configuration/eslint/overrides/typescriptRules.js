@@ -1,6 +1,4 @@
 export default {
-  "@typescript-eslint/no-dynamic-delete": "off",
-  "@typescript-eslint/no-empty-object-type": "off",
   "@typescript-eslint/no-restricted-types": [
     "error",
     {
