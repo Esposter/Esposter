@@ -10,7 +10,6 @@ export const external: (RegExp | string)[] = [
   "@azure/core-http-compat",
   "@azure/core-rest-pipeline",
   "@azure/eventgrid",
-  "@azure/storage-queue",
   // @esposter/configuration
   // GetBenchmarkPlugins imports codspeedPlugin: must stay external (never bundle) because the plugin loads
   // Sibling runtime files (globalSetup, the mode runners) and its native prebuilds via __dirname — inlining

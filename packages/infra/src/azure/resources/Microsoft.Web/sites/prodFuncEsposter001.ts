@@ -1,7 +1,6 @@
 import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAustraliaEastDisplayLocation from "@/azure/constants/AzureAustraliaEastDisplayLocation";
 import { prodEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
-import { prodAppiEsposterAe001 } from "@/azure/resources/Microsoft.Insights/components/prodAppiEsposterAe001";
 import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodAspEsposterAe001 } from "@/azure/resources/Microsoft.Web/serverFarms/prodAspEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
@@ -60,9 +59,6 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
     serverFarmId: prodAspEsposterAe001.id,
     siteConfig: {
       appSettings: [
-        { name: "APPINSIGHTS_INSTRUMENTATIONKEY", value: prodAppiEsposterAe001.instrumentationKey },
-        { name: "APPLICATIONINSIGHTS_AUTHENTICATION_STRING", value: "Authorization=AAD" },
-        { name: "APPLICATIONINSIGHTS_CONNECTION_STRING", value: prodAppiEsposterAe001.connectionString },
         { name: "AZURE_EVENT_GRID_TOPIC_ENDPOINT", value: prodEvgtEsposterAe001.endpoint },
         { name: "AZURE_EVENT_GRID_TOPIC_KEY", value: config.requireSecret("prodFuncEsposter001EventGridTopicKey") },
         {

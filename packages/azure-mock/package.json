@@ -11,7 +11,6 @@
     "mock",
     "search",
     "service-bus",
-    "storage-queue",
     "table-storage",
     "testing",
     "typescript",
@@ -67,7 +66,6 @@
     "@azure/eventgrid": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/service-bus": "catalog:",
-    "@azure/storage-blob": "catalog:",
-    "@azure/storage-queue": "catalog:"
+    "@azure/storage-blob": "catalog:"
   }
 }

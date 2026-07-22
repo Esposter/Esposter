@@ -1,7 +1,6 @@
 import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAustraliaEastDisplayLocation from "@/azure/constants/AzureAustraliaEastDisplayLocation";
 import { devEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
-import { devAppiEsposterAe001 } from "@/azure/resources/Microsoft.Insights/components/devAppiEsposterAe001";
 import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devAspEsposterAe001 } from "@/azure/resources/Microsoft.Web/serverFarms/devAspEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
@@ -60,9 +59,6 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
     serverFarmId: devAspEsposterAe001.id,
     siteConfig: {
       appSettings: [
-        { name: "APPINSIGHTS_INSTRUMENTATIONKEY", value: devAppiEsposterAe001.instrumentationKey },
-        { name: "APPLICATIONINSIGHTS_AUTHENTICATION_STRING", value: "Authorization=AAD" },
-        { name: "APPLICATIONINSIGHTS_CONNECTION_STRING", value: devAppiEsposterAe001.connectionString },
         { name: "AZURE_EVENT_GRID_TOPIC_ENDPOINT", value: devEvgtEsposterAe001.endpoint },
         { name: "AZURE_EVENT_GRID_TOPIC_KEY", value: config.requireSecret("devFuncEsposter001EventGridTopicKey") },
         {

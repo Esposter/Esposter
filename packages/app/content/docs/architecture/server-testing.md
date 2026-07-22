@@ -81,7 +81,6 @@ flowchart TD
 | `MockEventGridPublisherClient` | `EventGridPublisherClient`                | `MockEventGridDatabase` (static `Map`)  |
 | `MockServiceBusSender`         | `ServiceBusSender`                        | `MockServiceBusDatabase` (static `Map`) |
 | `MockSearchClient`             | `SearchClient` (Azure AI Search)          | `MockSearchDatabase` (static `Map`)     |
-| `MockQueueClient`              | `QueueClient` (Azure Queue Storage)       | `MockQueueDatabase` (static `Map`)      |
 | `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`                  | none (`sendToAll` no-op)                |
 
 The static maps persist across calls within a test run. Clear whichever ones your suite writes to in `afterEach` — `MockEventGridPublisherClient.send` accumulates events, so a suite that fires events must clear `MockEventGridDatabase` or it leaks into the next test:

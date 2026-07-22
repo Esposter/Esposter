@@ -37,7 +37,7 @@ One poison event therefore no longer strands the transient failures batched with
 
 A quarantined blob is never republished and, because of the advanced filter, never retriggers replay. Because the counter travels on the events themselves, a blob an operator restores into the container root resumes where it left off with nothing to keep in sync.
 
-The replay subscription deliberately has **no** dead-letter destination of its own: dead-lettering it would write a new blob into the very container it watches. That makes a persistently failing replay the one path where events are discarded for good — after ten delivery attempts the `BlobCreated` event is gone, and the blob it pointed at sits inert until the lifecycle rule deletes it. A second alert rule covers exactly that (see below), so the loss is never silent. A storage lifecycle rule deletes everything under the dead-letter prefix after 30 days, so live, archived, and quarantined blobs all expire on their own.
+The replay subscription deliberately has **no** dead-letter destination of its own: dead-lettering it would write a new blob into the very container it watches. That makes a persistently failing replay the one path where events are discarded for good — after ten delivery attempts the `BlobCreated` event is gone, and the blob it pointed at sits inert until the lifecycle rule deletes it. That discard is now silent — the scheduled-query alert that used to cover it ran on App Insights, which has been removed ([observability](/docs/infra/observability)) — so it is found by inspecting the container rather than by a page. A storage lifecycle rule deletes everything under the dead-letter prefix after 30 days, so live, archived, and quarantined blobs all expire on their own.
 
 Delivery is at-least-once, and the replay does not pretend otherwise. It shows up twice. A `send` that throws part-way through a batch is retried whole by the redelivered blob event, so a handler that already ran can run twice — which is why only the handlers `IsIdempotentAzureFunctionMap` marks idempotent are ever republished. And a redelivery of a blob a prior delivery already finished with finds nothing: every terminal path deletes the blob it handled, so the handler treats a missing blob as a completed replay and returns. Downloading it anyway would 404 into `logAndRethrow` and spend all ten delivery attempts logging errors for work that already succeeded. Failures split the usual way — everything up to and including the republish is fatal and rethrown so Event Grid retries it, while the archive afterwards is best-effort and only logged, because rethrowing there would republish events that already went out. An un-archived original merely lingers until the lifecycle rule sweeps it; it cannot retrigger a replay, since only a `BlobCreated` event does that.
 
@@ -59,9 +59,7 @@ flowchart TD
   split -->|replayable| republish["republish with id = eventId pipe attempt+1"]
   republish --> topic
   republish -->|then, best-effort| archived[archived prefix]
-  quarantine -->|traces query| alert[Quarantine alert rule]
   fn -->|rethrown failure| failed["context.error ReplayDeadLetterEvent failed"]
-  failed -->|traces query| failedAlert[Replay failure alert rule]
   fn -->|delete original once every copy lands| dead
   dead -->|30-day lifecycle rule| gone[Deleted]
 ```
@@ -78,13 +76,13 @@ stateDiagram-v2
   Judged --> Republished: under the cap and its handler is idempotent
   Judged --> Quarantined: at the cap, handler not idempotent, or the payload failed schema validation
   Republished --> Delivering: republished with attempt + 1 on its id
-  Quarantined --> Expired: 30-day lifecycle rule, after a sev-1 page
-  Discarded --> Expired: 30-day lifecycle rule, after a sev-1 page
+  Quarantined --> Expired: 30-day lifecycle rule
+  Discarded --> Expired: 30-day lifecycle rule
   Delivered --> [*]
   Expired --> [*]
 ```
 
-`Delivered` is the only outcome that needs nobody. `Quarantined` pages a human who can move the blob back to the container root to resume it, and `Discarded` — the replay subscription failing persistently, the one path with no dead-letter destination of its own — pages too, but leaves an inert blob no event points at any more.
+`Delivered` is the only outcome that needs nobody. `Quarantined` needs a human to inspect the `deadletter` container and move the blob back to the container root to resume it, and `Discarded` — the replay subscription failing persistently, the one path with no dead-letter destination of its own — leaves an inert blob no event points at any more. Neither raises an alert ([observability](/docs/infra/observability)), so both are found by inspecting the container.
 
 ## Key files
 
@@ -106,18 +104,15 @@ stateDiagram-v2
 | `packages/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/`                                         | Ten application subscriptions plus the two filtered replay subscriptions    |
 | `packages/infra/src/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/prodstesposter001Deadletter.ts` | `deadletter` container                                                      |
 | `packages/infra/src/azure/resources/Microsoft.Storage/storageAccounts/managementPolicies/`                           | 30-day lifecycle delete rule for the dead-letter prefix                     |
-| `packages/infra/src/azure/resources/Microsoft.Insights/scheduledQueryRules/`                                         | Per-environment quarantine and replay-failure alert rules over `traces`     |
 
 ## Notes
 
 The container and system topic reuse the existing storage account, and Event Grid system topics carry no standing cost, so the automation adds no new resource spend. The function builds its clients from the same environment the rest of the Function App uses — `AZURE_STORAGE_ACCOUNT_CONNECTION_STRING` for the container and `AZURE_EVENT_GRID_TOPIC_ENDPOINT` with `DefaultAzureCredential` for the publisher.
 
-Two outcomes page a human, and both alerts are infrastructure rather than an operator's saved query — a scheduled query rule per environment, hourly over the App Insights `traces` table, notifying the action group whenever the count exceeds zero:
+Two outcomes emit a distinct `context.error` log rather than an alert — the scheduled-query rules that watched them were removed with App Insights ([observability](/docs/infra/observability)), so these logs now surface only in the Functions live log stream and are not paged on:
 
-- `sqr…002` matches the `ReplayDeadLetterEvent quarantined` prefix. Quarantine is the only outcome that logs through `context.error` with that prefix, so nothing else can trip that alert. The quarantine copy and its log deliberately precede the fatal republish — a poison payload must be out of the resend batch before anything is resent — so a republish failure re-runs the whole prefix on redelivery. `writeDeadLetterBlob` therefore reports whether _this_ delivery created the copy, and the log is gated on that: one poison payload pages exactly once, however many times its batch is redelivered. The copy is written with `ifNoneMatch: "*"` so that report is decided by the service, not by a preceding existence check — two deliveries running concurrently would both read "not there yet" and both claim the copy, which is the one way the alert could still fire twice for a single payload.
-- `sqr…003` matches `ReplayDeadLetterEvent failed: ` — the message `logAndRethrow` writes, and the only one with that exact prefix, so the handler's best-effort logs (`failed to archive`, `left … undeleted`) don't trip it. This is the replay's own failure path, where the subscription has no dead-letter destination and the events are discarded once its ten attempts run out.
-
-Adaptive sampling excludes `Trace` telemetry precisely so these queries cannot miss one — see /docs/infra/observability-caps.
+- Quarantine logs the `ReplayDeadLetterEvent quarantined` prefix. The quarantine copy and its log deliberately precede the fatal republish — a poison payload must be out of the resend batch before anything is resent — so a republish failure re-runs the whole prefix on redelivery. `writeDeadLetterBlob` therefore reports whether _this_ delivery created the copy, and the log is gated on that: one poison payload logs exactly once, however many times its batch is redelivered. The copy is written with `ifNoneMatch: "*"` so that report is decided by the service, not by a preceding existence check — two deliveries running concurrently would both read "not there yet" and both claim the copy, the one way the log could still double for a single payload.
+- The replay's own failure path logs `ReplayDeadLetterEvent failed: ` — the message `logAndRethrow` writes, and the only one with that exact prefix, so the handler's best-effort logs (`failed to archive`, `left … undeleted`) are distinguishable from it. This is where the subscription has no dead-letter destination and the events are discarded once its ten attempts run out.
 
 The replay subscription can only be created after the environment's Function App already hosts `ReplayDeadLetterEvent`: Event Grid validates the endpoint at create time and rejects an unknown function with `Webhook endpoint validation failed … StatusCode: NotFound`. So the order per environment is deploy the Function App release first, then `pulumi up` the subscription — the dev subscription exists because dev runs `develop`, and the prod one lands only once this change is released to prod.
 
