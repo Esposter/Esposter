@@ -1,4 +1,3 @@
-import languageOptions from "@esposter/configuration/eslint/languageOptions.js";
 import nuxtOverrides from "@esposter/configuration/eslint/overrides/nuxt.js";
 import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
@@ -11,7 +10,6 @@ import { withNuxt } from "../../app/.nuxt/eslint.config.mjs";
  */
 export default withNuxt(plugins, {
   files: ["**/*.ts"],
-  languageOptions,
   rules: typescriptRules,
 })
   .overrides(nuxtOverrides)

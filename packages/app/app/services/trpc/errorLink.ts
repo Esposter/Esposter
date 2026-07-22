@@ -29,6 +29,8 @@ export const errorLink: TRPCLink<TRPCRouter> =
             case "UNAUTHORIZED":
               await navigateTo(RoutePath.Login);
               break;
+            default:
+              break;
           }
         }),
         next: observer.next,

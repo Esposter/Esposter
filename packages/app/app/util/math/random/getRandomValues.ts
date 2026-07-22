@@ -12,9 +12,10 @@ export const getRandomValues = <T>(values: T[], takenLength: number) => {
   const resultValues: T[] = [];
   const takenValues: number[] = [];
 
-  while (takenLength--) {
+  let remainingLength = takenLength;
+  while (remainingLength--) {
     const x = Math.floor(Math.random() * length);
-    resultValues[takenLength] = takeOne(values, x in takenValues ? takeOne(takenValues, x) : x);
+    resultValues[remainingLength] = takeOne(values, x in takenValues ? takeOne(takenValues, x) : x);
     takenValues[x] = --length in takenValues ? takeOne(takenValues, length) : length;
   }
 
