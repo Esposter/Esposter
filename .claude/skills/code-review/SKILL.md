@@ -34,7 +34,17 @@ The finder/verifier agents carry this rule in their scope block, so grep both tr
 
 ## Handling findings
 
-0. **Always show the user every finding first.** Before (or alongside) any fixing, the session's final message must list every finding the workflow reported — a markdown table with file:line, category, verdict, a one-line summary, and the disposition (fixed / by-design rationale / stale). Include workflow-refuted candidates as a short footnote. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
+0. **Always show the user every finding, and keep it short.** The final message lists every reported finding in a compact table — one line each, no failure-scenario prose, no category column, summaries trimmed to the claim. Disposition is a few words; put a longer rationale below the table only when it changes what the user should do. Workflow-refuted candidates get one footnote line naming them, nothing more. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
+
+   ```markdown
+   | #   | Finding                                                                   | Where                   | Verdict   | Disposition                        |
+   | --- | ------------------------------------------------------------------------- | ----------------------- | --------- | ---------------------------------- |
+   | 1   | Slowmode update reordered before Table write — DB blip now fails the send | createUserMessage.ts:40 | CONFIRMED | By-design (persist-then-notify.md) |
+   | 2   | Odd-length stderr forced to utf8, garbling truncated utf16le diagnostics  | execFileHidden.ts:15    | PLAUSIBLE | Fixed (abc1234)                    |
+
+   Refuted by verifiers: removeSnapshotDirectory timeout ×2, deleteTablePartitionEntities sequential batches.
+   ```
+
 1. Verify each finding against current HEAD before fixing — post-merge findings can be stale (fixed by a later commit, file renamed), and check it against the written record above before treating it as real.
 2. Fix confirmed findings; disposition PLAUSIBLE ones explicitly (fix or by-design rationale) in the report.
 3. Verify per the package-scripts skill (typecheck → tests), then commit per the git skill. Before pushing to a branch with an open PR, check CodeRabbit state (coderabbit skill).
