@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";

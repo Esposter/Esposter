@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import type { ComponentMountingOptions, VueWrapper } from "@vue/test-utils";
 
 import { getTestPinia, removeTestScene } from "@/test/fixtures/headlessGame.test";

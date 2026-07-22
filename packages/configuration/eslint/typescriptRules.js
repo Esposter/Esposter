@@ -13,7 +13,6 @@ export default {
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
     },
     {
-      // `expect.any` also trips a vitest/valid-expect false positive.
       message: "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
       selector: "MemberExpression[object.name='expect'][property.name='any']",
     },

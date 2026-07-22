@@ -1,6 +1,6 @@
 ---
 name: oxlint
-description: Esposter oxlint + ESLint linting conventions — the explicit correctness category rule in .oxlintrc.json (eslint-plugin-oxlint replaces default categories), method-signature-style exceptions (built-in augmentations, third-party .d.ts), prefer-named-capture-group naming patterns, and when to use disable directives. Apply when fixing lint errors, editing .oxlintrc.json, investigating slow ESLint rules, or adding regexes/interface declarations.
+description: Esposter oxlint + ESLint linting conventions — the explicit correctness category rule in .oxlintrc.json (eslint-plugin-oxlint replaces default categories), the vitest plugin's configured/paired/off rules, method-signature-style exceptions (built-in augmentations, third-party .d.ts), prefer-named-capture-group naming patterns, and when to use disable directives. Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, or adding regexes/interface declarations.
 ---
 
 # Oxlint + ESLint Conventions
@@ -27,12 +27,21 @@ Oxlint keeps the `correctness` category enabled by default even when the config 
 
 **Manual ESLint disables for oxlint-covered rules are dead weight** — `eslint-plugin-oxlint` is appended last in every flat config, so its `"off"` entries win; hand-written deletes/offs stay only for rules it leaves enabled. Notable exception: its `vue-svelte-astro-exceptions` config deliberately keeps `no-unused-vars`, `@typescript-eslint/no-unused-vars`, and `@typescript-eslint/consistent-type-imports` **enabled on `.vue` files**, so vue-side offs for those are load-bearing. Verify with `eslint --print-config <file>` on both a `.ts` and a `.vue` file before deleting a manual disable.
 
+## `vitest/` rules run under oxlint
+
+The vitest rules come from oxlint's `vitest` plugin (`@vitest/eslint-plugin` is removed). All categories are on, so every plugin rule is an error unless configured in `.oxlintrc.json`. Non-obvious entries there:
+
+- **Configured, not enabled** — `consistent-test-it` (`fn: "test"`; the default demands `it` inside `describe`) and `valid-title` (`ignoreTypeOfDescribeName`/`ignoreTypeOfTestName` allow the repo's `describe(functionRef)` convention). The rules are already on via categories; the entries exist only to pass options.
+- **Pair rules** — oxlint ships both sides of style pairs; exactly one must be off or they fight: `prefer-called-once` is off because `prefer-called-times` matches the repo's `toHaveBeenCalledTimes(1)`; `no-importing-vitest-globals` is off because the repo imports vitest APIs explicitly (its counterpart `prefer-importing-vitest-globals` stays on).
+- **`prefer-describe-function-title` is off** — its fixer only checks that an identifier matching the title is in scope, not that it's a function; for arrays, Zod schemas, routers, or plugin objects the fix produces a `[object Object]` suite title.
+- **`warn-todo`/`require-test-timeout`/`require-top-level-describe` are off** — `describe.todo` placeholders and hook-registering `setup*`/test-setup files are conventions here, and per-test timeouts are not used.
+
 ## Which directive to use
 
 Pick the directive by **which linter reports the rule**, and spell the rule the way that linter names it:
 
-- **Oxlint rule** → `oxlint-disable`, using oxlint's plugin prefix: `typescript/`, `unicorn/`, `import/`, `oxc/`, `vue/`. Never `@typescript-eslint/` — oxlint accepts it as an alias, so it silently works and drifts. Core rules take no prefix (`no-void`, `prefer-spread`). `no-inferrable-types` and `require-await` exist under both a core and a `typescript/` name — prefix them.
-- **ESLint-only rule** → `eslint-disable`, using the plugin's real name (`perfectionist/sort-objects`, `vitest/require-top-level-describe`, `@typescript-eslint/no-misused-spread`). Rules oxlint owns are switched off in ESLint by `eslint-plugin-oxlint`, so an `eslint-disable` for one is dead weight.
+- **Oxlint rule** → `oxlint-disable`, using oxlint's plugin prefix: `typescript/`, `unicorn/`, `import/`, `oxc/`, `vitest/`, `vue/`. Never `@typescript-eslint/` — oxlint accepts it as an alias, so it silently works and drifts. Core rules take no prefix (`no-void`, `prefer-spread`). `no-inferrable-types` and `require-await` exist under both a core and a `typescript/` name — prefix them.
+- **ESLint-only rule** → `eslint-disable`, using the plugin's real name (`perfectionist/sort-objects`, `@typescript-eslint/no-misused-spread`). Rules oxlint owns are switched off in ESLint by `eslint-plugin-oxlint`, so an `eslint-disable` for one is dead weight.
 
 Oxlint honours **both** prefixes; ESLint honours only its own. A rule needing both (e.g. `no-control-regex`) needs one directive each — see `stripAnsi.test.ts`.
 
@@ -40,7 +49,7 @@ To find stale directives, let each linter judge its own — never read one's ver
 
 ```bash
 # oxlint: only "Unused oxlint-disable" lines are real. It flags every
-# eslint-disable for a plugin it lacks (perfectionist/vitest) as unused — false.
+# eslint-disable for a plugin it lacks (perfectionist) as unused — false.
 pnpm dlx oxlint --disable-nested-config --report-unused-disable-directives
 # eslint: reports unused directives even for rules it has turned off
 eslint . --report-unused-disable-directives
@@ -110,7 +119,7 @@ interface Foo {
 
 ## `no-restricted-syntax` — `expect.any` is banned (ESLint)
 
-`expect.any(...)` (and the other `expect.<asymmetric>` matchers) are banned in tests via `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`. They are loose (they assert only the type, not the value) and they trip a `vitest/valid-expect` false positive in the current `@vitest/eslint-plugin` (the static `expect.any` is misparsed as an `expect(x).any` modifier → `Expect has an unknown modifier`).
+`expect.any(...)` (and the other `expect.<asymmetric>` matchers) are banned in tests via `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`. They are loose — they assert only the type, not the value.
 
 Instead, capture the real argument from the mock's `mock.calls` and assert it exactly:
 

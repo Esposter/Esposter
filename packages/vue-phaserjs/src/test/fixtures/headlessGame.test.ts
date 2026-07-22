@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 
 import { Lifecycle } from "@/models/lifecycle/Lifecycle";
