@@ -4,7 +4,7 @@ import plugins from "@esposter/configuration/eslint/plugins/index.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
 import { withNuxt } from "../../app/.nuxt/eslint.config.mjs";
-// typescriptRules is now just the surviving `no-restricted-syntax` bans (everything else moved to oxlint), scoped to
+// TypescriptRules is now just the surviving `no-restricted-syntax` bans (everything else moved to oxlint), scoped to
 // The `.ts` source these non-Vue packages hold.
 export default withNuxt(plugins, {
   files: ["**/*.ts"],
