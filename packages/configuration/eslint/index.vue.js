@@ -1,6 +1,5 @@
 import languageOptions from "@esposter/configuration/eslint/languageOptions.js";
 import nuxtOverrides from "@esposter/configuration/eslint/overrides/nuxt.js";
-import typescriptRulesOverrides from "@esposter/configuration/eslint/overrides/typescriptRules.js";
 import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
@@ -12,10 +11,7 @@ export default withNuxt(plugins)
     ...nuxtOverrides,
     "nuxt/typescript/rules": {
       languageOptions,
-      rules: {
-        ...typescriptRules,
-        ...typescriptRulesOverrides,
-      },
+      rules: typescriptRules,
     },
   })
   .append(oxlint)

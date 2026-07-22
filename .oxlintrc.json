@@ -59,10 +59,23 @@
     "no-namespace": "off",
     "no-nested-ternary": "off",
     "no-plusplus": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "importNames": ["randomUUID"],
+            "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+            "name": "node:crypto"
+          }
+        ]
+      }
+    ],
     "no-ternary": "off",
     "no-unassigned-import": "off",
     "no-undefined": "off",
     "no-underscore-dangle": ["error", { "allow": ["_def"] }],
+    "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }],
     "no-useless-return": "off",
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
@@ -81,6 +94,14 @@
     "typescript/no-empty-interface": "off",
     "typescript/no-empty-object-type": "off",
     "typescript/no-redundant-type-constituents": "off",
+    "typescript/no-restricted-types": [
+      "error",
+      {
+        "types": {
+          "Omit": "Use `Except` from `type-fest` instead of `Omit` — `Except` errors when a key is absent from the source type, catching the typos `Omit` silently ignores."
+        }
+      }
+    ],
     "typescript/no-unsafe-argument": "off",
     "typescript/no-unsafe-assignment": "off",
     "typescript/no-unsafe-call": "off",
@@ -90,6 +111,7 @@
     "typescript/no-unsafe-return": "off",
     "typescript/no-unsafe-type-assertion": "off",
     "typescript/prefer-nullish-coalescing": "off",
+    "typescript/prefer-optional-chain": "error",
     "typescript/prefer-readonly-parameter-types": "off",
     "typescript/promise-function-async": "off",
     "typescript/restrict-plus-operands": "off",
