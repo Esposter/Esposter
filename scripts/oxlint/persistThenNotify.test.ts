@@ -41,6 +41,18 @@ const FIXTURES = [
     source: `aEventEmitter.emit(); await Promise.all(xs.map((x) => { return g(x); }));`,
     violations: 1,
   },
+  // A block body with no return still rejects if one of its awaits does, so the check reads the awaits too —
+  // Not only the returns, or a bare `await g(x)` fan-out would slip through as vacuously safe.
+  {
+    name: "promiseAllOverAwaitingBlockBodyMap",
+    source: `aEventEmitter.emit(); await Promise.all(xs.map(async (x) => { await g(x); }));`,
+    violations: 1,
+  },
+  {
+    name: "promiseAllOverSafeAwaitingBlockBodyMap",
+    source: `aEventEmitter.emit(); await Promise.all(xs.map(async (x) => { await getResultAsync(() => g(x)); }));`,
+    violations: 0,
+  },
   // The emit is the innermost frame's, but it still notifies for the function that awaits that frame.
   {
     name: "emitInNestedCallback",

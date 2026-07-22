@@ -21,16 +21,19 @@ const ALLOWED_ROOTS = new Set([
 ]);
 const PROMISE_COMBINATORS = new Set(["all", "allSettled", "any", "race"]);
 const FUNCTION_NODE_TYPES = new Set(["ArrowFunctionExpression", "FunctionDeclaration", "FunctionExpression"]);
-// Every value a block can return without crossing into a nested function — what the callback's promise
-// Actually settles on. A block with no return settles on `undefined`, which never rejects
-const getReturnArguments = (value: unknown): ESTree.Expression[] => {
-  if (Array.isArray(value)) return value.flatMap((item) => getReturnArguments(item));
+// Every value a block's promise can settle OR reject on without crossing into a nested function: the
+// Arguments of its `return`s (what it resolves to, which chains if a promise) and of its `await`s (what a
+// Rejection propagates from). A block with neither settles on `undefined`, which never rejects — reading
+// Only the returns would miss a bare `await g(x)` in a block body, deeming the whole fan-out safe
+const getBlockEffects = (value: unknown): ESTree.Expression[] => {
+  if (Array.isArray(value)) return value.flatMap((item) => getBlockEffects(item));
   if (value === null || typeof value !== "object") return [];
   const node = value as ESTree.Node;
   if (typeof node.type !== "string" || FUNCTION_NODE_TYPES.has(node.type)) return [];
   if (node.type === "ReturnStatement") return node.argument ? [node.argument] : [];
+  if (node.type === "AwaitExpression") return [node.argument];
   // Nodes carry a `parent` backreference, so walking every value would cycle
-  return Object.entries(node).flatMap(([key, child]) => (key === "parent" ? [] : getReturnArguments(child)));
+  return Object.entries(node).flatMap(([key, child]) => (key === "parent" ? [] : getBlockEffects(child)));
 };
 // The identifier a call chain ultimately dispatches on: `getResultAsync(...).orTee(...).unwrapOr(...)`
 // Roots at `getResultAsync`; `containerClient.deleteBlob(...)` roots at nothing nameable (undefined).
@@ -70,7 +73,7 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
       const [callback] = collection.arguments;
       if (callback?.type === "ArrowFunctionExpression")
         return callback.body.type === "BlockStatement"
-          ? getReturnArguments(callback.body).every((returnArgument) => isSafeAwait(returnArgument))
+          ? getBlockEffects(callback.body).every((effect) => isSafeAwait(effect))
           : isSafeAwait(callback.body);
     }
   }
