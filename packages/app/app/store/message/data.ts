@@ -79,9 +79,11 @@ export const useDataStore = defineStore("message/data", () => {
     });
   };
   const storeCreateMessage = async (message: MessageEntity) => {
-    await MessageHookMap[Operation.Create].run(message);
-    // Our messages list is reversed i.e. most recent messages are at the front
+    // Push first (our list is reversed — most recent at the front) so the bubble renders immediately in its loading
+    // State, THEN run the Create hooks. One of those hooks fetches attachment download URLs over the network, so
+    // Running it before the push would gate the "optimistic" render behind a round-trip for any message with files.
     baseStoreCreateMessage(message, true);
+    await MessageHookMap[Operation.Create].run(message);
   };
   const storeUpdateMessage = async (input: MessageEvents["updateMessage"][number]) => {
     await MessageHookMap[Operation.Update].run(input);
