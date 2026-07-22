@@ -12,6 +12,8 @@ Move lint rules from ESLint to oxlint whenever oxlint gains coverage, prioritize
 - One root `.oxlintrc.json` runs oxlint repo-wide with `typeAware: true` — `oxlint-tsgolint` executes the type-aware `typescript/*` rules (`no-floating-promises`, `await-thenable`, `no-duplicate-type-constituents`, …) natively.
 - `eslint-plugin-oxlint` (`packages/configuration/eslint/oxlint.js`) reads the same `.oxlintrc.json` via `buildFromOxlintConfigFile` and appends `"off"` entries for every ESLint rule oxlint already covers. It is appended **last** in both flat configs, so its disables win.
 - The `correctness` category is listed explicitly in `.oxlintrc.json`. This matters: oxlint itself keeps `correctness` enabled by default even when other categories are configured, but `eslint-plugin-oxlint` **replaces** its default categories with the configured ones. Before `correctness` was explicit, the plugin assumed the category was off and left the ESLint twins of every correctness rule enabled — so ESLint re-ran the four most expensive type-aware rules (roughly half its rule time) that oxlint was already checking.
+- The whole `typescript-eslint` `strictTypeChecked` + `stylisticTypeChecked` rule set is now covered by oxlint's 110 `typescript/*` rules. `packages/configuration/eslint/typescriptRules.js` no longer spreads those configs (and the `typescript-eslint` package has been removed) — it holds only `no-restricted-syntax`, the one rule oxlint cannot express yet (no AST-selector rule). `prefer-optional-chain`, `no-restricted-imports` (the `randomUUID` ban), `no-restricted-types` (the `Omit` → `Except` ban), and `no-unused-expressions` were moved into `.oxlintrc.json`.
+- **A migrated ban must be _configured_ in oxlint, not merely un-deleted from ESLint.** `eslint-plugin-oxlint` disables the ESLint twin of any rule oxlint _has_ (e.g. `no-restricted-imports`, `no-restricted-types`, `no-unused-expressions`) regardless of whether oxlint's copy is configured. So an ESLint-side ban for such a rule is silently dead the moment oxlint ships the rule name — the ban only lives if it is written into `.oxlintrc.json`. Verify with `eslint --print-config <file>` (the rule should read `[0]`/off) plus a planted violation run through oxlint.
 
 ```mermaid
 flowchart LR
@@ -33,8 +35,9 @@ The remaining expensive rules, in descending cost order, and the trigger for mig
 | `neverthrow/must-use-result` | ~a third           | Type-aware custom plugin — oxlint's JS plugin API has no type information, and tsgolint has no custom-rule API | oxlint ships type-aware JS plugins, or tsgolint gains a custom-rule API                    |
 | `vue/no-child-content`       | ~a tenth           | Not implemented in oxlint's vue plugin                                                                         | upstream implements it (check `eslint-plugin-oxlint`'s generated rule maps after upgrades) |
 | `perfectionist/sort-imports` | small              | oxlint has no import-sorting rule                                                                              | upstream implements sorting                                                                |
+| `no-restricted-syntax`       | small              | oxlint has no AST-selector rule                                                                                | oxlint ships a selector-based rule (the custom bans move into `.oxlintrc.json`)            |
 
-Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a `typescript-eslint` rule oxlint has not implemented; none of them individually costs meaningful time.
+Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a plugin oxlint has not implemented (`perfectionist/*`, `pinia/*`, `unocss/*`); none of them individually costs meaningful time. `typescript/naming-convention` is parked as a commented-out block in `typescriptRules.js` — it was too expensive under typescript-eslint to ever ship, and is waiting on oxlint to support it.
 
 ## Ongoing process
 
@@ -47,12 +50,12 @@ On every oxlint / `eslint-plugin-oxlint` catalog bump:
 
 ## Key files
 
-| File                                                                | Role                                                                                                |
-| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `.oxlintrc.json`                                                    | Single source of truth: categories (list `correctness` explicitly), per-rule overrides, `typeAware` |
-| `packages/configuration/eslint/oxlint.js`                           | Builds the ESLint disable config from `.oxlintrc.json`                                              |
-| `packages/configuration/eslint/index.typescript.js`, `index.vue.js` | Append the oxlint disables last so they win                                                         |
-| `packages/configuration/eslint/typescriptRules.js`                  | ESLint-only type-aware rule set (strictTypeChecked minus deletions)                                 |
+| File                                                                | Role                                                                                                        |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `.oxlintrc.json`                                                    | Single source of truth: categories (list `correctness` explicitly), per-rule overrides, `typeAware`         |
+| `packages/configuration/eslint/oxlint.js`                           | Builds the ESLint disable config from `.oxlintrc.json`                                                      |
+| `packages/configuration/eslint/index.typescript.js`, `index.vue.js` | Append the oxlint disables last so they win                                                                 |
+| `packages/configuration/eslint/typescriptRules.js`                  | ESLint-only rules oxlint cannot express — just `no-restricted-syntax` (plus the parked `naming-convention`) |
 
 ## Notes
 

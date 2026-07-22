@@ -8,7 +8,7 @@
     "style": "error",
     "suspicious": "error"
   },
-  "ignorePatterns": [".claude", "public", "**/composables/visual/useFluidSimulator.ts"],
+  "ignorePatterns": [".claude", "public", "**/auto-imports.d.ts", "**/composables/visual/useFluidSimulator.ts"],
   "jsPlugins": ["./scripts/oxlint/persistThenNotify.ts"],
   "options": {
     "typeAware": true
@@ -23,6 +23,8 @@
   ],
   "plugins": ["import", "oxc", "typescript", "unicorn", "vue"],
   "rules": {
+    "class-methods-use-this": "off",
+    "complexity": "off",
     "curly": ["error", "multi"],
     "func-names": "off",
     "id-length": "off",
@@ -53,6 +55,7 @@
     "no-continue": "off",
     "no-duplicate-imports": "off",
     "no-else-return": "off",
+    "no-empty-function": "off",
     "no-inline-comments": "off",
     "no-magic-numbers": "off",
     "no-multi-assign": "off",
@@ -76,6 +79,7 @@
     "no-undefined": "off",
     "no-underscore-dangle": ["error", { "allow": ["_def"] }],
     "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }],
+    "no-use-before-define": "off",
     "no-useless-return": "off",
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
@@ -88,6 +92,7 @@
     "typescript/ban-types": "off",
     "typescript/consistent-type-imports": "off",
     "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-member-accessibility": ["error", { "accessibility": "no-public" }],
     "typescript/explicit-module-boundary-types": "off",
     "typescript/no-base-to-string": "off",
     "typescript/no-dynamic-delete": "off",
@@ -122,6 +127,7 @@
     "unicorn/filename-case": "off",
     "unicorn/import-style": "off",
     "unicorn/max-nested-calls": "off",
+    "unicorn/no-array-reduce": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",
     "unicorn/no-object-as-default-parameter": "off",

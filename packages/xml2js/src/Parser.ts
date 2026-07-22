@@ -8,33 +8,6 @@ import { stripBOM } from "@/stripBOM";
 import { takeOne } from "@esposter/shared";
 import { parser } from "sax";
 
-export const parseStringPromise = <T>(
-  convertableToString: convertableToString,
-  options?: ParserOptions,
-): Promise<T> => {
-  const parserInstance = new Parser(options);
-  return parserInstance.parseStringPromise(convertableToString);
-};
-// Underscore has a nice function for this, but we go without dependencies.
-const isEmpty = (thing: unknown): boolean =>
-  typeof thing === "object" && thing !== null && Object.keys(thing).length === 0;
-
-const processItem = (processors: ((value: string, name: string) => string)[], item: string, key: string): string => {
-  let processedItem = item;
-  for (const processor of processors) processedItem = processor(processedItem, key);
-  return processedItem;
-};
-
-const defineProperty = (object: Record<string, unknown>, key: string, value: unknown): void => {
-  // Make sure the descriptor hasn't been prototype polluted
-  const descriptor = Object.create(null);
-  descriptor.value = value;
-  descriptor.writable = true;
-  descriptor.enumerable = true;
-  descriptor.configurable = true;
-  Object.defineProperty(object, key, descriptor);
-};
-
 export class Parser {
   get xmlnsKey(): string {
     return `${this.#options.attrkey}ns`;
@@ -230,3 +203,30 @@ export class Parser {
     return this.#saxParser.write(string).close();
   }
 }
+
+export const parseStringPromise = <T>(
+  convertableToString: convertableToString,
+  options?: ParserOptions,
+): Promise<T> => {
+  const parserInstance = new Parser(options);
+  return parserInstance.parseStringPromise(convertableToString);
+};
+// Underscore has a nice function for this, but we go without dependencies.
+const isEmpty = (thing: unknown): boolean =>
+  typeof thing === "object" && thing !== null && Object.keys(thing).length === 0;
+
+const processItem = (processors: ((value: string, name: string) => string)[], item: string, key: string): string => {
+  let processedItem = item;
+  for (const processor of processors) processedItem = processor(processedItem, key);
+  return processedItem;
+};
+
+const defineProperty = (object: Record<string, unknown>, key: string, value: unknown): void => {
+  // Make sure the descriptor hasn't been prototype polluted
+  const descriptor = Object.create(null);
+  descriptor.value = value;
+  descriptor.writable = true;
+  descriptor.enumerable = true;
+  descriptor.configurable = true;
+  Object.defineProperty(object, key, descriptor);
+};
