@@ -30,6 +30,12 @@ const FIXTURES = [
     source: `aEventEmitter.emit(); await Promise.all(xs.map((x) => g(x)));`,
     violations: 1,
   },
+  // `Promise.allSettled` never rejects regardless of its elements, so any fan-out under it is best-effort.
+  {
+    name: "promiseAllSettledOverUnsafeMap",
+    source: `aEventEmitter.emit(); await Promise.allSettled(xs.map((x) => g(x)));`,
+    violations: 0,
+  },
   // A block body settles on what it returns, so the check reads the returns rather than giving up on the block.
   {
     name: "promiseAllOverSafeBlockBodyMap",

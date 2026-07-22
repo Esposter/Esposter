@@ -20,7 +20,7 @@ const ALLOWED_ROOTS = new Set([
   "withFinalizer",
   "withFinalizerAsync",
 ]);
-const PROMISE_COMBINATORS = new Set(["all", "allSettled", "any", "race"]);
+const PROMISE_COMBINATORS = new Set(["all", "any", "race"]);
 const FUNCTION_NODE_TYPES = new Set(["ArrowFunctionExpression", "FunctionDeclaration", "FunctionExpression"]);
 // Every value a block's promise can settle OR reject on without crossing into a nested function: the
 // Arguments of its `return`s (what it resolves to, which chains if a promise) and of its `await`s (what a
@@ -47,8 +47,9 @@ const rootCalleeName = (expression: ESTree.Expression): string | undefined => {
   if (expression.type === "MemberExpression") return rootCalleeName(expression.object);
   return undefined;
 };
-// Never rejects: an allowed wrapper, or a Promise combinator over a fan-out (array literal or `.map`
-// Callback) of such calls — e.g. `Promise.all(users.map((u) => createSystemRoomMessage(u)))`.
+// Never rejects: an allowed wrapper, `Promise.allSettled` over anything, or a rejecting Promise combinator
+// Over a fan-out (array literal or `.map` callback) of such calls — e.g.
+// `Promise.all(users.map((u) => createSystemRoomMessage(u)))`.
 const isSafeAwait = (argument: ESTree.Expression): boolean => {
   const rootName = rootCalleeName(argument);
   if (rootName !== undefined && ALLOWED_ROOTS.has(rootName)) return true;
@@ -57,9 +58,11 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
     argument.callee.type === "MemberExpression" &&
     argument.callee.object.type === "Identifier" &&
     argument.callee.object.name === "Promise" &&
-    argument.callee.property.type === "Identifier" &&
-    PROMISE_COMBINATORS.has(argument.callee.property.name)
+    argument.callee.property.type === "Identifier"
   ) {
+    // `Promise.allSettled` resolves an array of outcomes and never rejects regardless of its elements
+    if (argument.callee.property.name === "allSettled") return true;
+    if (!PROMISE_COMBINATORS.has(argument.callee.property.name)) return false;
     const [collection] = argument.arguments;
     if (collection?.type === "ArrayExpression")
       return collection.elements.every(

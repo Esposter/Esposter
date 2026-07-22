@@ -8,6 +8,7 @@ import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirecto
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
+import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
@@ -303,7 +304,7 @@ describe("resource", () => {
     expect(publication).toBeUndefined();
   });
 
-  test("cleans up the copy when duplicating its content fails", async () => {
+  test("duplicates a resource with a dangling asset reference by carrying the url verbatim", async () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
@@ -318,16 +319,41 @@ describe("resource", () => {
       contentVersion: webpageResource.contentVersion,
       id: webpageResource.id,
     });
+    const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
+    const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
+    assert.exists(content);
 
-    await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Source blob not found]`,
-    );
-
-    const { items } = await caller.readResources();
+    const duplicatedBlobName = `${duplicatedResource.id}/${blobName.slice(`${webpageResource.id}/`.length)}`;
     const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
     assert(container);
 
-    // The half-cloned copy is fully reverted: no row and no blobs outside the original's directory
+    // The existing asset is cloned and rewritten; the dangling url is data, carried verbatim instead of
+    // Failing the whole clone
+    expect(content.html).toBe(
+      `<img src="${getResourceAssetUrl(duplicatedBlobName)}"><img src="${getResourceAssetUrl(missingBlobName)}">`,
+    );
+    expect(container.has(duplicatedBlobName)).toBe(true);
+  });
+
+  test("cleans up the copy when duplicating its content fails", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await webpageCaller.saveResourceContent({
+      content: webpageEditor,
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
+    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    assert(container);
+    container.set(getContentBlobName(webpageResource.id), Buffer.from("a"));
+
+    await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot();
+
+    const { items } = await caller.readResources();
+
+    // The copy is fully reverted: no row and no blobs outside the original's directory
     expect(items.map(({ id }) => id)).toStrictEqual([webpageResource.id]);
     expect([...container.keys()].every((key) => key.startsWith(`${webpageResource.id}/`))).toBe(true);
   });

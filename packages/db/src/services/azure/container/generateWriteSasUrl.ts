@@ -1,15 +1,16 @@
 import type { BlobGenerateSasUrlOptions, BlockBlobClient } from "@azure/storage-blob";
 
-import { encodeBlobUrl } from "@/services/azure/container/encodeBlobUrl";
 import { dayjs } from "@/services/dayjs";
 import { BlobSASPermissions } from "@azure/storage-blob";
+import { encodeUrlSubDelimiters } from "@esposter/shared";
 
-// Uploads finish quickly, so every write SAS shares one short-lived signer
+// Uploads finish quickly, so every write SAS shares one short-lived signer. Encoding the sub-delimiters is
+// Transparent to Azure, which decodes the request before validating the signature
 export const generateWriteSasUrl = async (
   blockBlobClient: BlockBlobClient,
   options?: Pick<BlobGenerateSasUrlOptions, "contentType">,
 ) =>
-  encodeBlobUrl(
+  encodeUrlSubDelimiters(
     await blockBlobClient.generateSasUrl({
       ...options,
       expiresOn: dayjs().add(1, "hour").toDate(),

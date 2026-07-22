@@ -3,12 +3,14 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { getPublishedDirectoryName } from "@@/server/services/resource/getPublishedDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AzureContainer, resources, ResourceType } from "@esposter/db-schema";
-import { jsonDateParse } from "@esposter/shared";
+import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -52,7 +54,7 @@ describe("webpage", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const blobName = `${newResource.id}/files/${crypto.randomUUID()}|image.png`;
+    const blobName = `${getFilesDirectoryName(newResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     const url = getResourceAssetUrl(blobName);
     await caller.saveResourceContent({
@@ -66,7 +68,7 @@ describe("webpage", () => {
     expect(content?.html).toBe(`<img src="${url}">`);
 
     await caller.publishResource({ id: newResource.id });
-    const clonedBlobName = `${newResource.id}/published/1/${blobName.slice(`${newResource.id}/`.length)}`;
+    const clonedBlobName = `${getPublishedDirectoryName(newResource.id, 1)}/${blobName.slice(`${newResource.id}/`.length)}`;
 
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(clonedBlobName)).toBe(true);
 
