@@ -1,4 +1,4 @@
-import languageOptions from "@esposter/configuration/languageOptions";
+import languageOptions from "@esposter/configuration/languageOptions.js";
 import neverthrow from "@ninoseki/eslint-plugin-neverthrow";
 import { defineConfig } from "eslint/config";
 
