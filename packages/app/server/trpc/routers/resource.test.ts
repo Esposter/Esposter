@@ -4,11 +4,13 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
+import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
+import { getPublishedDirectoryName } from "@@/server/services/resource/getPublishedDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
@@ -302,6 +304,32 @@ describe("resource", () => {
     );
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
     expect(publication).toBeUndefined();
+  });
+
+  test("duplicates a resource with a published asset reference by cloning it under the copy", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const publishedBlobName = `${getPublishedDirectoryName(webpageResource.id, 1)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[publishedBlobName, Buffer.alloc(1)]]));
+    await webpageCaller.saveResourceContent({
+      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` }),
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
+    const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
+    assert.exists(content);
+
+    const duplicatedBlobName = `${duplicatedResource.id}/${publishedBlobName.slice(`${webpageResource.id}/`.length)}`;
+    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    assert(container);
+
+    // The copy is fully self-contained: the published snapshot asset is cloned under the copy's own
+    // Directory with the source-relative path preserved, so unpublishing or deleting the original never
+    // Strands the copy
+    expect(content.html).toBe(`<img src="${getResourceAssetUrl(duplicatedBlobName)}">`);
+    expect(container.has(duplicatedBlobName)).toBe(true);
   });
 
   test("duplicates a resource with a dangling asset reference by carrying the url verbatim", async () => {

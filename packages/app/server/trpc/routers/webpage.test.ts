@@ -3,6 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getPublishedDirectoryName } from "@@/server/services/resource/getPublishedDirectoryName";
@@ -55,17 +56,25 @@ describe("webpage", () => {
 
     const newResource = await caller.createResource({ name });
     const blobName = `${getFilesDirectoryName(newResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    const publishedBlobName = `${getPublishedDirectoryName(crypto.randomUUID(), 1)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
+    MockContainerDatabase.set(
+      AzureContainer.ResourceAssets,
+      new Map([
+        [blobName, Buffer.alloc(1)],
+        [publishedBlobName, Buffer.alloc(1)],
+      ]),
+    );
     const url = getResourceAssetUrl(blobName);
+    const publishedUrl = getResourceAssetUrl(publishedBlobName);
     await caller.saveResourceContent({
-      content: new WebpageEditor({ html: `<img src="${url}">` }),
+      content: new WebpageEditor({ html: `<img src="${url}"><img src="${publishedUrl}">` }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
     const content = await caller.readResourceContent({ id: newResource.id });
 
     // The owner read returns content exactly as saved — a stable url never expires, so nothing rewrites it
-    expect(content?.html).toBe(`<img src="${url}">`);
+    expect(content?.html).toBe(`<img src="${url}"><img src="${publishedUrl}">`);
 
     await caller.publishResource({ id: newResource.id });
     const clonedBlobName = `${getPublishedDirectoryName(newResource.id, 1)}/${blobName.slice(`${newResource.id}/`.length)}`;
@@ -74,6 +83,10 @@ describe("webpage", () => {
 
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
-    expect(publishedContent.content.html).toBe(`<img src="${getResourceAssetUrl(clonedBlobName)}">`);
+    // The working-copy asset is cloned and rewritten, an already-published reference is immutable and
+    // Carried as-is
+    expect(publishedContent.content.html).toBe(
+      `<img src="${getResourceAssetUrl(clonedBlobName)}"><img src="${publishedUrl}">`,
+    );
   });
 });

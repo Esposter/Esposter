@@ -16,5 +16,9 @@ export const transformPublishedBlobUrls = async <TContent>(
   const publication = await ctx.db.query.resourcePublications.findFirst({
     where: { resourceId: { eq: resource.id } },
   });
-  return cloneContentAssets(content, getPublishedDirectoryName(resource.id, (publication?.publishVersion ?? 0) + 1));
+  return cloneContentAssets(
+    content,
+    getPublishedDirectoryName(resource.id, (publication?.publishVersion ?? 0) + 1),
+    false,
+  );
 };

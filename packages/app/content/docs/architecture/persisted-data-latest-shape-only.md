@@ -19,4 +19,6 @@ Migration code is permanent cost for a temporary population: it doubles the sche
 
 ## Scope
 
-This governs client-authoritative blobs and localStorage state. Relational data in Postgres migrates through real Drizzle migrations (`pnpm db:gen`) — that is schema evolution of a server-owned store, not a legacy-shape read path, and is unaffected by this rule.
+This governs app-code-owned persisted state: client-authoritative blobs and localStorage state. Relational data in Postgres migrates through real Drizzle migrations (`pnpm db:gen`) — that is schema evolution of a server-owned store, not a legacy-shape read path, and is unaffected by this rule.
+
+User resource content (`content.json` blobs) sits between the two. The blob is the **user's** data, so a resource must be self-contained — a duplicate clones every asset its content references, working-copy and published alike ([resource file assets](/docs/platform/resource-file-assets)) — and never resets to a fresh default. But the content schema itself is app-owned, so reads still parse latest-shape-only: when app code changes a content schema, a draft written before the change failing to read (editor, duplicate, publish) is accepted, not migrated.

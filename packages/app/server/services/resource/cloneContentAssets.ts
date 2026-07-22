@@ -27,13 +27,14 @@ const cloneAsset = async (
 };
 
 // Publish and duplicate both snapshot content whose assets must survive the source's working copies
-// Changing: every referenced working-copy asset blob is cloned under the destination directory and the
-// Content rewritten to the clone's url. The destination path drops the *source* resource id, so a foreign-id
-// Url (duplicated or blueprint-deployed content) clones correctly by construction — which is also why the
-// Rewrite is a per-url map, never a prefix replace
+// Changing: every referenced asset blob is cloned under the destination directory and the content rewritten
+// To the clone's url. The destination path drops the *source* resource id, so a foreign-id url (duplicated
+// Or blueprint-deployed content) clones correctly by construction — which is also why the rewrite is a
+// Per-url map, never a prefix replace
 export const cloneContentAssets = async <TContent>(
   content: TContent,
   destinationDirectoryName: string,
+  isPublishedAssetCloned: boolean,
 ): Promise<TContent> => {
   const urls = new Set<string>();
   deepVisitStrings(content, (value) => {
@@ -45,9 +46,11 @@ export const cloneContentAssets = async <TContent>(
   const updatedUrlEntries = await Promise.all(
     [...urls].flatMap((url) => {
       const resourceAssetPath = parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length));
-      // An unparseable url is data, not an error, and an already-published url points at an immutable
-      // Snapshot — both are carried exactly as the content wrote them
-      if (!resourceAssetPath || resourceAssetPath.isPublished) return [];
+      // An unparseable url is data, not an error — carried exactly as the content wrote it. A published url
+      // Is an immutable snapshot reference: a duplicate clones it too (the copy must be fully self-contained
+      // Under its own directory), while a publish carries it as-is — re-cloning under a publish directory
+      // Would nest an unparseable published/{n}/published/{m} path
+      if (!resourceAssetPath || (resourceAssetPath.isPublished && !isPublishedAssetCloned)) return [];
       const { blobName } = resourceAssetPath;
       const destinationBlobName = `${destinationDirectoryName}/${blobName.slice(blobName.indexOf("/") + 1)}`;
       return [cloneAsset(containerClient, url, blobName, destinationBlobName)];

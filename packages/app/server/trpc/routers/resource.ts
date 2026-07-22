@@ -197,13 +197,14 @@ export const resourceRouter = router({
       ctx.resource.id,
     );
     // A copy starts as Draft, so only the draft content is copied — never the publication. The clone gives
-    // The copy its own asset blobs under {newId}/files/ and rewrites the embedded urls, so the copy's editor
-    // Can delete its files and deleting the original never strands it
+    // The copy its own blobs for every referenced asset — working-copy and published — under {newId}/ with
+    // The source-relative path preserved, and rewrites the embedded urls, so the copy is fully self-contained:
+    // Its editor can delete its files, and deleting or unpublishing the original never strands it
     await getResultAsync(async () => {
       const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
       // The blob is written on first save, so missing content just means there is nothing to copy yet
       if (content === undefined) return;
-      const clonedContent = await cloneContentAssets(content, newResource.id);
+      const clonedContent = await cloneContentAssets(content, newResource.id, true);
       await useUpload(AzureContainer.ResourceAssets, getContentBlobName(newResource.id), JSON.stringify(clonedContent));
     }).match(noop, async (error) => {
       // Never leave a content-less orphan copy behind when the content clone fails. Ordered like purgeResource:
