@@ -3,13 +3,13 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
-import { ContainerSASPermissions } from "@azure/storage-blob";
 import { AzureContainer, resources, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
-import { getMockSasUrl, MOCK_BLOB_BASE_URL, MockContainerDatabase } from "azure-mock";
+import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
@@ -48,22 +48,22 @@ describe("webpage", () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
   });
 
-  test("clones referenced assets into the publish directory and re-signs their urls on every read", async () => {
+  test("clones referenced assets into the publish directory and rewrites their stable urls", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const blobName = `${newResource.id}/files/${crypto.randomUUID()}/image.png`;
+    const blobName = `${newResource.id}/files/${crypto.randomUUID()}|image.png`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    const blobUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.ResourceAssets}/${blobName}`;
+    const url = getResourceAssetUrl(blobName);
     await caller.saveResourceContent({
-      content: new WebpageEditor({ html: `<img src="${blobUrl}">` }),
+      content: new WebpageEditor({ html: `<img src="${url}">` }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
-    const readPermissions = ContainerSASPermissions.from({ read: true });
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    expect(content?.html).toBe(`<img src="${getMockSasUrl(blobUrl, readPermissions, "b")}">`);
+    // The owner read returns content exactly as saved — a stable url never expires, so nothing rewrites it
+    expect(content?.html).toBe(`<img src="${url}">`);
 
     await caller.publishResource({ id: newResource.id });
     const clonedBlobName = `${newResource.id}/published/1/${blobName.slice(`${newResource.id}/`.length)}`;
@@ -71,8 +71,7 @@ describe("webpage", () => {
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(clonedBlobName)).toBe(true);
 
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
-    const clonedBlobUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.ResourceAssets}/${clonedBlobName}`;
 
-    expect(publishedContent.content.html).toBe(`<img src="${getMockSasUrl(clonedBlobUrl, readPermissions, "b")}">`);
+    expect(publishedContent.content.html).toBe(`<img src="${getResourceAssetUrl(clonedBlobName)}">`);
   });
 });

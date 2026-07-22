@@ -2,6 +2,7 @@ import type { PublishHistoryVersion } from "#shared/models/resource/PublishHisto
 import type { Resource } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
+import { PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { AzureContainer } from "@esposter/db-schema";
 
@@ -10,7 +11,7 @@ import { AzureContainer } from "@esposter/db-schema";
 // Per-version asset clones live in {version}/ subdirectories, which the hierarchy delimiter keeps out
 export const readPublishHistory = async (id: Resource["id"]): Promise<PublishHistoryVersion[]> => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-  const prefix = `${id}/published/`;
+  const prefix = `${id}/${PUBLISHED_DIRECTORY_SEGMENT}/`;
   const entries: Except<PublishHistoryVersion, "isCurrent">[] = [];
   for await (const blob of containerClient.listBlobsByHierarchy("/", { prefix })) {
     if (blob.kind !== "blob") continue;

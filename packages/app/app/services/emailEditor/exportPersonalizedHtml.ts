@@ -2,6 +2,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { Resource } from "@esposter/db-schema";
 import type { Editor } from "grapesjs";
 
+import { RESOURCE_ASSET_URL_REGEX } from "#shared/services/resource/constants";
 import { downloadFile } from "@/services/app/downloadFile";
 import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
@@ -14,7 +15,9 @@ export const exportPersonalizedHtml = (
   resource: Resource,
   rows: Record<string, ColumnValue>[],
 ): number => {
-  const html = getEmailHtml(editor);
+  // Asset urls are absolutized so the downloaded artifact resolves them outside the app origin — they render
+  // For owner sessions; durable public asset urls are the email-sending follow-on
+  const html = getEmailHtml(editor).replaceAll(RESOURCE_ASSET_URL_REGEX, (url) => `${window.location.origin}${url}`);
   const filename = sanitizeFilename(resource.name);
   const zip = zipSync(
     Object.fromEntries(

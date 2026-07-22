@@ -4,6 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
+import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
 import { createCallerFactory } from "@@/server/trpc";
@@ -12,7 +13,7 @@ import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
-import { AzureTable, ResourceActivityType, resources, ResourceType } from "@esposter/db-schema";
+import { AzureContainer, AzureTable, ResourceActivityType, resources, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -266,8 +267,10 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = `${webpageResource.id}/files/${crypto.randomUUID()}|image.png`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
-      content: webpageEditor,
+      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
       contentVersion: webpageResource.contentVersion,
       id: webpageResource.id,
     });
@@ -275,11 +278,18 @@ describe("resource", () => {
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     const publication = await webpageCaller.readResourcePublication({ id: duplicatedResource.id });
+    // The copy owns its assets: the same file segment is cloned under the new id and the url rewritten to it
+    const duplicatedBlobName = `${duplicatedResource.id}/${blobName.slice(`${webpageResource.id}/`.length)}`;
 
     expect(duplicatedResource.id).not.toBe(webpageResource.id);
     expect(duplicatedResource.name).toBe(`${name} (copy)`);
     expect(duplicatedResource.type).toBe(ResourceType.Webpage);
-    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
+    expect(content).toStrictEqual(
+      jsonDateParse(
+        JSON.stringify(new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(duplicatedBlobName)}">` })),
+      ),
+    );
+    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
     expect(publication).toBeUndefined();
   });
 

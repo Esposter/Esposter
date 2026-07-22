@@ -71,8 +71,10 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     const pathSegments = url.pathname.split("/").filter(Boolean);
     if (pathSegments.length < 2) throw new MockRestError("Invalid copy source URL format", 400);
 
-    const sourceContainerName = takeOne(pathSegments);
-    const sourceBlobName = pathSegments.slice(1).join("/");
+    // The URL constructor percent-encodes the pathname while the store is keyed by decoded blob names
+    // (real Azure decodes the copy source the same way), so the segments are decoded before lookup
+    const sourceContainerName = decodeURIComponent(takeOne(pathSegments));
+    const sourceBlobName = decodeURIComponent(pathSegments.slice(1).join("/"));
     const sourceContainer = MockContainerDatabase.get(sourceContainerName);
     if (!sourceContainer) throw new MockRestError("Source container not found", 404);
 

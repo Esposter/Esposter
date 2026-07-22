@@ -30,7 +30,6 @@ export const useResourceMutations = () => {
         return {
           deleteFile: (input) => $trpc.email.deleteFile.mutate(input),
           deleteResource: (input) => $trpc.email.deleteResource.mutate(input),
-          generateDownloadFileSasUrls: (input) => $trpc.email.generateDownloadFileSasUrls.query(input),
           generateUploadFileSasEntities: (input) => $trpc.email.generateUploadFileSasEntities.query(input),
           publishResource: (input) => $trpc.email.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.email.readResourceContent.query(input),
@@ -79,7 +78,6 @@ export const useResourceMutations = () => {
         return {
           deleteFile: (input) => $trpc.survey.deleteFile.mutate(input),
           deleteResource: (input) => $trpc.survey.deleteResource.mutate(input),
-          generateDownloadFileSasUrls: (input) => $trpc.survey.generateDownloadFileSasUrls.query(input),
           generateUploadFileSasEntities: (input) => $trpc.survey.generateUploadFileSasEntities.query(input),
           publishResource: (input) => $trpc.survey.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.survey.readResourceContent.query(input),
@@ -100,7 +98,6 @@ export const useResourceMutations = () => {
         return {
           deleteFile: (input) => $trpc.webpage.deleteFile.mutate(input),
           deleteResource: (input) => $trpc.webpage.deleteResource.mutate(input),
-          generateDownloadFileSasUrls: (input) => $trpc.webpage.generateDownloadFileSasUrls.query(input),
           generateUploadFileSasEntities: (input) => $trpc.webpage.generateUploadFileSasEntities.query(input),
           publishResource: (input) => $trpc.webpage.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.webpage.readResourceContent.query(input),

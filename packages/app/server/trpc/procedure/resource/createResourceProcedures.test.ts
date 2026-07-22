@@ -422,18 +422,6 @@ describe("createResourceProcedures", () => {
     expect(sasEntities).toHaveLength(1);
   });
 
-  test("generates download file sas urls", async () => {
-    expect.hasAssertions();
-
-    const newResource = await webpageCaller.createResource({ name });
-    const sasUrls = await webpageCaller.generateDownloadFileSasUrls({
-      files: [{ filename, id: crypto.randomUUID(), mimetype }],
-      id: newResource.id,
-    });
-
-    expect(sasUrls).toHaveLength(1);
-  });
-
   test("fails generate upload file sas entities with wrong user", async () => {
     expect.hasAssertions();
 
@@ -501,7 +489,6 @@ describe("createResourceProcedures", () => {
 
     expect(fileAssetsProcedures).toContain("generateUploadFileSasEntities");
     expect(nonFileAssetsProcedures).not.toContain("generateUploadFileSasEntities");
-    expect(nonFileAssetsProcedures).not.toContain("generateDownloadFileSasUrls");
     expect(nonFileAssetsProcedures).not.toContain("deleteFile");
   });
 });
