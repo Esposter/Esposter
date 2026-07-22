@@ -1,8 +1,8 @@
 import type { WslLoginEnvironment } from "@/models/exec/wsl/WslLoginEnvironment";
 
 import { dayjs } from "@/services/dayjs";
-import { VIRRUN_FORCE_PROBE_KEY, WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
-import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
+import { createProbeCache } from "@/services/exec/util/createProbeCache";
+import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import {
   VIRRUN_LOGIN_NODE_BEGIN_MARKER,
@@ -46,38 +46,20 @@ const CAPTURE_SCRIPT = buildWslLoginShellCommand(
 // Captures the environment a WSL interactive login shell sees, so the os backend can run profile-bound toolchains and
 // Key its caches on the node the sandbox will really use. GetResult turns a missing WSL/shell (or a non-zero exit)
 // Into the empty environment rather than a throw: the caller then injects nothing and the command runs under the
-// Default PATH, so a broken capture degrades to today's behaviour.
-// Three-tier so a fresh `virrun -- <cmd>` process (one per command) never re-pays the interactive-login capture on a
-// Warm host: the in-process memo short-circuits repeat calls within a run; the persisted cross-process cache
-// (getHostFingerprint-keyed, so it self-invalidates on a kernel change, and age-bounded so a toolchain switch the
-// Fingerprint can't see self-heals within WSL_ENVIRONMENT_MAX_AGE_MS) reuses a prior process's capture — the
-// Real win, since the capture is otherwise a login-shell spawn whose rc startup is not free. VIRRUN_FORCE_PROBE
-// Bypasses the persisted cache (not the in-process memo, which is always sound). Only a successful (non-empty
-// PATH) capture is persisted, so a transient WSL/shell failure re-probes next process rather than caching the default.
-let cachedLoginEnvironment = EMPTY_LOGIN_ENVIRONMENT;
-let isLoginEnvironmentCached = false;
-
-export const readWslLoginEnvironment = (): WslLoginEnvironment => {
-  if (isLoginEnvironmentCached) return cachedLoginEnvironment;
-  const key = getHostFingerprint();
-  if (process.env[VIRRUN_FORCE_PROBE_KEY] === undefined) {
-    const cached = readWslLoginEnvironmentCache();
-    if (cached !== undefined) {
-      cachedLoginEnvironment = cached;
-      isLoginEnvironmentCached = true;
-      return cached;
-    }
-  }
-  cachedLoginEnvironment = getResult(() =>
-    execWsl(["--exec", "sh", "-c", CAPTURE_SCRIPT], { timeout: WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS }),
-  )
-    .map((stdout) => ({
-      nodeVersion: sliceBetweenMarkers(stdout, VIRRUN_LOGIN_NODE_BEGIN_MARKER, VIRRUN_LOGIN_NODE_END_MARKER),
-      path: sliceBetweenMarkers(stdout, VIRRUN_LOGIN_PATH_BEGIN_MARKER, VIRRUN_LOGIN_PATH_END_MARKER),
-    }))
-    .unwrapOr(EMPTY_LOGIN_ENVIRONMENT);
-  isLoginEnvironmentCached = true;
-  if (cachedLoginEnvironment.path)
-    writeWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, { key, value: cachedLoginEnvironment });
-  return cachedLoginEnvironment;
-};
+// Default PATH, so a broken capture degrades to today's behaviour. The persisted tier is the real win — the capture
+// Is otherwise a login-shell spawn whose rc startup is not free. Only a successful (non-empty PATH) capture is
+// Persisted, so a transient WSL/shell failure re-probes next process rather than caching the default.
+export const readWslLoginEnvironment: () => WslLoginEnvironment = createProbeCache({
+  probe: () =>
+    getResult(() => execWsl(["--exec", "sh", "-c", CAPTURE_SCRIPT], { timeout: WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS }))
+      .map((stdout) => ({
+        nodeVersion: sliceBetweenMarkers(stdout, VIRRUN_LOGIN_NODE_BEGIN_MARKER, VIRRUN_LOGIN_NODE_END_MARKER),
+        path: sliceBetweenMarkers(stdout, VIRRUN_LOGIN_PATH_BEGIN_MARKER, VIRRUN_LOGIN_PATH_END_MARKER),
+      }))
+      .unwrapOr(EMPTY_LOGIN_ENVIRONMENT),
+  readPersistedCache: readWslLoginEnvironmentCache,
+  shouldPersist: ({ path }) => Boolean(path),
+  writePersistedCache: (cache) => {
+    writeWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, cache);
+  },
+});
