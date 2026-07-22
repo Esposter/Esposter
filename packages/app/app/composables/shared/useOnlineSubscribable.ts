@@ -30,7 +30,7 @@ export function useOnlineSubscribable<TSource>(
 ): void;
 export function useOnlineSubscribable(
   source: MultiWatchSources | WatchSource,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   callback: (value: any) => Promisable<(() => Promisable<void>) | undefined>,
   context?: OnlineSubscribableContext,
 ) {

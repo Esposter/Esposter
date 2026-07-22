@@ -1,9 +1,11 @@
+import languageOptions from "@esposter/configuration/languageOptions";
 import vitest from "@vitest/eslint-plugin";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig({
   files: ["**/**.test.ts", "**/**.test-d.ts"],
   languageOptions: {
+    ...languageOptions,
     globals: vitest.environments.env.globals,
   },
   plugins: {
