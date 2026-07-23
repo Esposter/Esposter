@@ -1,6 +1,8 @@
+import { WordFilteredError } from "@/models/WordFilteredError";
 import { db } from "@/services/db";
-import { hasPermission } from "@esposter/db";
-import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
+import { getTableClient } from "@/services/getTableClient";
+import { executeAutomodAction, hasPermission } from "@esposter/db";
+import { AzureTable, DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const assertCanCreateMessage = async (userId: string, roomId: string, message: string): Promise<void> => {
@@ -14,7 +16,7 @@ export const assertCanCreateMessage = async (userId: string, roomId: string, mes
       where: { roomId: { eq: roomId }, userId: { eq: userId } },
     }),
     db.query.roomFiltersInMessage.findFirst({
-      columns: { words: true },
+      columns: { action: true, timeoutDurationMs: true, words: true },
       where: { roomId: { eq: roomId } },
     }),
   ]);
@@ -32,6 +34,17 @@ export const assertCanCreateMessage = async (userId: string, roomId: string, mes
       throw new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId);
   }
 
-  if (!canManageMessages && filter?.words.some((word) => message.toLowerCase().includes(word.toLowerCase())))
-    throw new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId);
+  if (!canManageMessages && filter?.words.some((word) => message.toLowerCase().includes(word.toLowerCase()))) {
+    // A scheduled send that trips the filter carries the same consequence a live one does — the configured
+    // Warn/Timeout is applied and audited here, since this is where the message is rejected.
+    await executeAutomodAction(db, () => getTableClient(AzureTable.ModerationLog), {
+      action: filter.action,
+      roomId,
+      timeoutDurationMs: filter.timeoutDurationMs,
+      userId,
+    });
+    throw new WordFilteredError(
+      new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message,
+    );
+  }
 };

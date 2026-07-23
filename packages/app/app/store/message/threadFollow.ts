@@ -26,10 +26,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const loadingPromises = new Map<string, Promise<void>>();
 
   const readFollowedThreads = async (roomId: string) => {
-    const [threads, threadRootRowKeys] = await Promise.all([
-      $trpc.message.readFollowedThreads.query({ roomId }),
-      $trpc.message.readFollowedThreadRootRowKeys.query({ roomId }),
-    ]);
+    const { threadRootRowKeys, threads } = await $trpc.message.readFollowedThreads.query({ roomId });
     setFollowedThreads(roomId, threads);
     setFollowedThreadRootRowKeys(roomId, threadRootRowKeys);
     loadedRoomIds.add(roomId);
@@ -50,8 +47,17 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   };
   const checkIsFollowing = (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) =>
     Boolean(getFollowedThreadRootRowKeys(roomId)?.includes(threadRootRowKey));
+  // Follow STATE only — the drawer's display list needs the server-resolved root entity, which callers that
+  // Merely learn about a follow (a reply auto-follows its thread server-side) do not hold.
+  const storeFollowThread = (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) => {
+    const threadRootRowKeys = getFollowedThreadRootRowKeys(roomId) ?? [];
+    if (threadRootRowKeys.includes(threadRootRowKey)) return;
+
+    setFollowedThreadRootRowKeys(roomId, [...threadRootRowKeys, threadRootRowKey]);
+  };
   const followThread = async (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) => {
     await $trpc.message.followThread.mutate({ roomId, threadRootRowKey });
+    // Re-read rather than mirror locally: the drawer lists the root message entity, which only the server resolves.
     await readFollowedThreads(roomId);
   };
   const unfollowThread = async (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) => {
@@ -72,6 +78,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     followedThreads,
     followThread,
     readFollowedThreads,
+    storeFollowThread,
     unfollowThread,
   };
 });

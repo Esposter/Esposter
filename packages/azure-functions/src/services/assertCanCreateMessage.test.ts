@@ -9,6 +9,7 @@ import {
   roomsInMessage,
   users,
   usersToRoomsInMessage,
+  WordFilterAction,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -21,6 +22,7 @@ vi.mock(import("@/services/db"), () => ({
     return mockDb;
   },
 }));
+vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
 
 describe(assertCanCreateMessage, () => {
   const memberUserId = crypto.randomUUID();
@@ -132,8 +134,27 @@ describe(assertCanCreateMessage, () => {
     await mockDb.insert(roomFiltersInMessage).values({ roomId, words: ["a"] });
 
     await expect(assertCanCreateMessage(memberUserId, roomId, "a")).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
+      `[WordFilteredError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
+  });
+
+  test("times the member out when the filter action is timeout", async () => {
+    expect.hasAssertions();
+
+    const timeoutDurationMs = 1;
+    await mockDb
+      .insert(roomFiltersInMessage)
+      .values({ action: WordFilterAction.Timeout, roomId, timeoutDurationMs, words: ["a"] });
+
+    await expect(assertCanCreateMessage(memberUserId, roomId, "a")).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[WordFilteredError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
+    );
+
+    const member = await mockDb.query.usersToRoomsInMessage.findFirst({
+      columns: { timeoutUntil: true },
+      where: { roomId: { eq: roomId }, userId: { eq: memberUserId } },
+    });
+    expect(member?.timeoutUntil).toStrictEqual(new Date(timeoutDurationMs));
   });
 
   test("passes when all conditions are met", async () => {

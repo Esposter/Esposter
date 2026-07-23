@@ -85,7 +85,7 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 
 ## When best-effort is not enough: the escalation
 
-Deleting a message attachment is the worked example. The delete sits after the primary write, so it cannot be fatal — but `console.error` on a failed delete was not enough either, because read urls are signed for a year ([resource file assets](/docs/platform/resource-file-assets)): a dropped delete leaves a file the user believes is gone downloadable to anyone already holding its url, for as long as that signature lives.
+Deleting a message attachment is the worked example. The delete sits after the primary write, so it cannot be fatal — but `console.error` on a failed delete was not enough either, because read urls are signed for a day ([resource file assets](/docs/platform/resource-file-assets)): a dropped delete leaves a file the user believes is gone downloadable to anyone already holding its url, for as long as that signature lives.
 
 So the effect escalates rather than changing severity. Every delete funnels through one helper, `publishBlobDeletion` (`packages/app/server/services/azure/eventGrid/`), which publishes `ProcessBlobDeletion` best-effort — chunked, and accepting a thunk so a fallible blob listing runs inside the same best-effort unit — and `processBlobDeletionHandler` performs the delete, retried by Event Grid and then by [dead-letter replay](/docs/infra/eventgrid-dead-letter). The handler deletes with `deleteIfExists`, which is what earns its `true` in `IsIdempotentAzureFunctionMap` — a replayed batch converges on the same empty state instead of failing on the blobs the first attempt already removed.
 

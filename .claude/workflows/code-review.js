@@ -1,7 +1,7 @@
 export const meta = {
   name: "code-review",
   description:
-    "Workflow-backed code review — one finder per correctness angle plus one finder covering all cleanup angles, an independent verifier for every distinct (file, line) location across the pooled candidates, then a ranked, capped findings report.",
+    "Workflow-backed code review — one finder per correctness angle plus one finder covering all cleanup angles, an independent verifier for every distinct (file, line) location across the pooled candidates, then a ranked report of every verified finding.",
   whenToUse:
     'Launched by the /code-review skill at high, xhigh, or max effort when workflows are enabled. Pass args as "<level> [target]" — level is high, xhigh, or max; target is an optional PR number, branch, ref range, path, or free-form review instructions (e.g. "only review src/foo.ts", "focus on error handling").',
   phases: [
@@ -16,7 +16,7 @@ export const meta = {
         "One independent verifier per distinct (file, line) location — CONFIRMED / PLAUSIBLE / REFUTED per candidate",
     },
     { title: "Sweep", detail: "Fresh finder hunting only for gaps (xhigh/max)" },
-    { title: "Synthesize", detail: "Merge duplicates, rank, cap the report" },
+    { title: "Synthesize", detail: "Merge duplicates and rank — every verified finding is reported" },
   ],
 };
 
@@ -25,13 +25,15 @@ export const meta = {
 // keeps one finder per angle; cleanup is one finder covering all cleanup
 // angles, capped at (cleanup-angle count × perAngle) so the merged finder
 // has the same total cleanup-candidate budget the old per-angle finders had.
-//   high  → 3 correctness + 1 cleanup (5 angles, ≤30 cands) → ≤10 findings
-//   xhigh → 5 correctness + 1 cleanup (5 angles, ≤40 cands) → sweep → ≤15 findings
+//   high  → 3 correctness + 1 cleanup (5 angles, ≤30 cands)
+//   xhigh → 5 correctness + 1 cleanup (5 angles, ≤40 cands) → sweep
 //   max   → same structure as xhigh (the API reasoning effort differs, not the fan-out)
+// Every finding that survives verification is reported — the level sets how wide the
+// search is, never how much of what it found the user is allowed to see.
 const LEVEL_PARAMS = {
-  high: { correctnessAngles: 3, perAngle: 6, maxFindings: 10, sweep: false },
-  xhigh: { correctnessAngles: 5, perAngle: 8, maxFindings: 15, sweep: true },
-  max: { correctnessAngles: 5, perAngle: 8, maxFindings: 15, sweep: true },
+  high: { correctnessAngles: 3, perAngle: 6, sweep: false },
+  xhigh: { correctnessAngles: 5, perAngle: 8, sweep: true },
+  max: { correctnessAngles: 5, perAngle: 8, sweep: true },
 };
 const SWEEP_MAX = 8;
 
@@ -484,16 +486,15 @@ const report = await agent(
     "1. For each distinct defect, emit one decision with its index. When several findings describe the same defect (same root cause), keep one entry and list the others in its merge array.\n" +
     "2. Give each decision a shortSummary: a ≤60-char compressed claim for the compact one-line findings table — the defect alone, no rationale and no consequence clause (e.g. 'Reordered write drops entity on DB failure').\n" +
     "3. Order decisions most-severe first. Correctness bugs always outrank cleanup findings.\n" +
-    "4. Keep at most " +
-    P.maxFindings +
-    " decisions; omit the least severe beyond the cap.\n" +
+    "4. Account for EVERY index — each one is either a decision's index or listed in some decision's merge array. Nothing is dropped for being minor; there is no cap.\n" +
     "5. Write a 2-3 sentence summary of the review.\n\nStructured output only.",
   { label: "synthesize", model: AGENT_MODEL, schema: REPORT_SCHEMA },
 );
 
 // Assembler invariants:
-//   1. No silent drops while there is room: every verified finding either appears
-//      (as primary or merge note) or is omitted only because the cap is full.
+//   1. No drops at all: every verified finding appears, as a primary row or as a
+//      merge note on the row that shares its root cause. A synthesizer that skips
+//      an index does not bury it — the backfill loop appends what it left out.
 //   2. The displayed primary is the synthesizer's choice (d.index) — it picks the
 //      best-described representative; we only escalate the verdict label when a
 //      merged member is CONFIRMED.
@@ -517,7 +518,6 @@ const deriveShort = (s) => {
 };
 const findings = [];
 for (const d of decisions) {
-  if (findings.length >= P.maxFindings) break;
   if (!claim(d.index)) continue;
   const c = ranked[d.index];
   const merged = (Array.isArray(d.merge) ? d.merge : []).filter(claim).map((i) => ranked[i]);
@@ -538,7 +538,7 @@ for (const d of decisions) {
 }
 const usedDecisions = findings.length > 0;
 let backfilled = 0;
-for (let i = 0; i < ranked.length && findings.length < P.maxFindings; i++) {
+for (let i = 0; i < ranked.length; i++) {
   if (seen.has(i)) continue;
   const c = ranked[i];
   findings.push({
@@ -553,24 +553,13 @@ for (let i = 0; i < ranked.length && findings.length < P.maxFindings; i++) {
   });
   backfilled++;
 }
-// No silent caps: verified findings that lost their slot to maxFindings are disclosed, not dropped quietly.
-const omitted = ranked.length - seen.size - backfilled;
 const summary =
-  (usedDecisions && report
+  usedDecisions && report
     ? report.summary +
       (backfilled > 0
         ? " (" + backfilled + " additional verified finding" + (backfilled === 1 ? "" : "s") + " appended unmerged.)"
         : "")
-    : "Synthesis step was skipped or its decisions were unusable — returning verified findings ranked, unmerged.") +
-  (omitted > 0
-    ? " (" +
-      omitted +
-      " lower-ranked verified finding" +
-      (omitted === 1 ? "" : "s") +
-      " omitted at the " +
-      P.maxFindings +
-      "-finding cap.)"
-    : "");
+    : "Synthesis step was skipped or its decisions were unusable — returning verified findings ranked, unmerged.";
 
 return {
   level: LEVEL,
@@ -578,5 +567,5 @@ return {
   summary,
   findings,
   refuted: refuted.map((c) => ({ file: c.file, line: c.line, summary: c.summary })),
-  stats: { ...stats, omitted, reported: findings.length },
+  stats: { ...stats, reported: findings.length },
 };

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ModerationLogEntity } from "@esposter/db-schema";
 
-import { AUTOMOD_USER_ID } from "#shared/services/message/moderation/AUTOMOD_USER_ID";
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
 import { useMemberStore } from "@/store/message/user/member";
 import { formatDuration } from "@/util/text/formatDuration";
+import { AUTOMOD_USER_ID } from "@esposter/db-schema";
 
 interface AuditLogListItemProps {
   item: ModerationLogEntity;

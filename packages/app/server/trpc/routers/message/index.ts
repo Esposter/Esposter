@@ -1,3 +1,4 @@
+import type { ReadFollowedThreadsOutput } from "#shared/models/message/thread/ReadFollowedThreadsOutput";
 import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
@@ -441,17 +442,14 @@ export const baseMessageRouter = router({
       }).match(noop, console.error);
     },
   ),
-  // Follow-STATE source of truth: all followed root rowKeys, including those whose root message was deleted,
-  // So the follow button can offer Unfollow on a thread whose root is gone but whose DB follow row remains.
-  readFollowedThreadRootRowKeys: getMemberProcedure(roomIdSchema, "roomId").query<StandardMessageEntity["rowKey"][]>(
-    ({ ctx, input: { roomId } }) => readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id),
-  ),
-  // Display list for the Threads drawer — deleted roots are dropped so it never lists a dangling follow.
-  // Follow-STATE is read separately via readFollowedThreadRootRowKeys, which keeps deleted-root follows.
-  readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<StandardMessageEntity[]>(
+  // One read for both shapes the client needs, since the display list is derived from the follow state:
+  // `threadRootRowKeys` is the follow-STATE source of truth — every followed root, including those whose root
+  // Message was deleted, so the follow button can offer Unfollow on a thread whose root is gone but whose DB
+  // Follow row remains — while `threads` drops deleted roots so the drawer never lists a dangling follow.
+  readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<ReadFollowedThreadsOutput>(
     async ({ ctx, input: { roomId } }) => {
       const threadRootRowKeys = await readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id);
-      if (threadRootRowKeys.length === 0) return [];
+      if (threadRootRowKeys.length === 0) return { threadRootRowKeys, threads: [] };
 
       const messageClient = await useTableClient(AzureTable.Messages);
       const rootMessages = await Promise.all(
@@ -459,10 +457,12 @@ export const baseMessageRouter = router({
           getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),
         ),
       );
-      // Drop roots that were deleted or purged so the drawer never lists a dangling follow.
-      return rootMessages.filter(
-        (rootMessage): rootMessage is StandardMessageEntity => rootMessage !== null && !rootMessage.deletedAt,
-      );
+      return {
+        threadRootRowKeys,
+        threads: rootMessages.filter(
+          (rootMessage): rootMessage is StandardMessageEntity => rootMessage !== null && !rootMessage.deletedAt,
+        ),
+      };
     },
   ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),

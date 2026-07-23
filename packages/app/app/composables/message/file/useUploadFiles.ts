@@ -9,7 +9,7 @@ import { useAlertStore } from "@/store/alert";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
 import { FILE_MAX_LENGTH, getMimeCategory } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { getResultAsync, noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 
 export const useUploadFiles = () => {
   const { $trpc } = useNuxtApp();
@@ -53,25 +53,51 @@ export const useUploadFiles = () => {
         fileUrlMap.value.set(id, reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) }));
       }
     };
-    const fileSasEntities = await uploadFileToSas({
-      files: newFiles,
-      generateUploadFileSasEntities: (uploadFiles) =>
-        $trpc.message.generateUploadFileSasEntities.query({ files: uploadFiles, roomId }),
-      onUploadProgress: ({ id }, progress) => {
+    // A failed upload takes its seeded metadata and object urls back out — the composer renders from those,
+    // And the send button gates on isFileLoading, so leaving either behind strands the room's whole composer.
+    const revertUploadFiles = (fileSasEntities: FileSasEntity[]) => {
+      for (const { id } of fileSasEntities) {
         const uploadFileUrl = fileUrlMap.value.get(id);
-        if (uploadFileUrl) uploadFileUrl.progress = progress;
+        if (uploadFileUrl) URL.revokeObjectURL(uploadFileUrl.url);
+        fileUrlMap.value.delete(id);
+      }
+
+      const ids = new Set(fileSasEntities.map(({ id }) => id));
+      files.value = files.value.filter(({ id }) => !ids.has(id));
+    };
+    let seededFileSasEntities: FileSasEntity[] = [];
+    await withFinalizerAsync(
+      () =>
+        getResultAsync(async () => {
+          const fileSasEntities = await uploadFileToSas({
+            files: newFiles,
+            generateUploadFileSasEntities: (uploadFiles) =>
+              $trpc.message.generateUploadFileSasEntities.query({ files: uploadFiles, roomId }),
+            onUploadProgress: ({ id }, progress) => {
+              const uploadFileUrl = fileUrlMap.value.get(id);
+              if (uploadFileUrl) uploadFileUrl.progress = progress;
+            },
+            onUploadStart: (fileSasEntities) => {
+              seededFileSasEntities = fileSasEntities;
+              seedUploadFiles(fileSasEntities);
+            },
+          });
+          const thumbnails = await thumbnailsPromise;
+          await Promise.all(
+            fileSasEntities.map((fileSasEntity, index) => {
+              const thumbnail = takeOne(thumbnails, index);
+              return fileSasEntity.thumbnailSasUrl && thumbnail
+                ? uploadBlocks(thumbnail, fileSasEntity.thumbnailSasUrl)
+                : Promise.resolve();
+            }),
+          );
+        }).match(noop, (error) => {
+          revertUploadFiles(seededFileSasEntities);
+          createAlert(error.message, "error");
+        }),
+      () => {
+        isFileLoading.value = false;
       },
-      onUploadStart: seedUploadFiles,
-    });
-    const thumbnails = await thumbnailsPromise;
-    await Promise.all(
-      fileSasEntities.map((fileSasEntity, index) => {
-        const thumbnail = takeOne(thumbnails, index);
-        return fileSasEntity.thumbnailSasUrl && thumbnail
-          ? uploadBlocks(thumbnail, fileSasEntity.thumbnailSasUrl)
-          : Promise.resolve();
-      }),
     );
-    isFileLoading.value = false;
   };
 };

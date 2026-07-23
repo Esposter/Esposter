@@ -10,10 +10,7 @@ import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-const { count, error, isLoading, items, readCount, readDeletedResources, refresh } = useReadDeletedResources();
-// The page reads its rows through the table's @update:options, but the pagination-independent total is
-// Read once here so a page or sort change never re-counts it
-onMounted(readCount);
+const { count, error, isLoading, items, readDeletedResources, refresh } = useReadDeletedResources();
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
 const purgingResource = computed(() => items.value.find(({ id }) => id === purgingId.value));

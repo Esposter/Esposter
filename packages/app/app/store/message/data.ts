@@ -17,6 +17,7 @@ import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
+import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 
@@ -26,6 +27,7 @@ export const useDataStore = defineStore("message/data", () => {
   const { executeMutation } = useMutation();
   const { createAlert } = useAlertStore();
   const roomStore = useRoomStore();
+  const threadFollowStore = useThreadFollowStore();
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
@@ -46,6 +48,9 @@ export const useDataStore = defineStore("message/data", () => {
       await storeCreateMessage(newMessage);
       Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
       delete newMessage.isLoading;
+      // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
+      // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
+      if (input.replyRowKey) threadFollowStore.storeFollowThread(input.roomId, input.replyRowKey);
     }).match(
       () => true,
       (error) => {

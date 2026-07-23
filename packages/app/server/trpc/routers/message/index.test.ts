@@ -1121,10 +1121,10 @@ describe("message", () => {
       const root = await messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id });
       await messageCaller.followThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
 
-      const followed = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
+      const { threads } = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
 
-      expect(followed).toHaveLength(1);
-      expect(takeOne(followed).rowKey).toBe(root.rowKey);
+      expect(threads).toHaveLength(1);
+      expect(takeOne(threads).rowKey).toBe(root.rowKey);
     });
 
     test("unfollowThread removes the follow", async () => {
@@ -1136,12 +1136,12 @@ describe("message", () => {
       await messageCaller.followThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
       await messageCaller.unfollowThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
 
-      const followed = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
+      const { threads } = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
 
-      expect(followed).toHaveLength(0);
+      expect(threads).toHaveLength(0);
     });
 
-    test("readFollowedThreadRootRowKeys keeps a follow whose root was deleted while the display list drops it", async () => {
+    test("readFollowedThreads keeps a follow whose root was deleted while the display list drops it", async () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
@@ -1150,19 +1150,18 @@ describe("message", () => {
       await messageCaller.followThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
       await messageCaller.deleteMessage({ partitionKey: root.partitionKey, rowKey: root.rowKey });
 
-      const followedRootRowKeys = await messageCaller.readFollowedThreadRootRowKeys({ roomId: newRoom.id });
-      const followed = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
+      const { threadRootRowKeys, threads } = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
 
-      expect(followedRootRowKeys).toStrictEqual([root.rowKey]);
-      expect(followed).toHaveLength(0);
+      expect(threadRootRowKeys).toStrictEqual([root.rowKey]);
+      expect(threads).toHaveLength(0);
 
       await messageCaller.unfollowThread({ roomId: newRoom.id, threadRootRowKey: root.rowKey });
 
-      const followedRootRowKeysAfterUnfollow = await messageCaller.readFollowedThreadRootRowKeys({
+      const { threadRootRowKeys: threadRootRowKeysAfterUnfollow } = await messageCaller.readFollowedThreads({
         roomId: newRoom.id,
       });
 
-      expect(followedRootRowKeysAfterUnfollow).toHaveLength(0);
+      expect(threadRootRowKeysAfterUnfollow).toHaveLength(0);
     });
 
     test("replying to a message auto-follows its thread", async () => {
@@ -1173,10 +1172,10 @@ describe("message", () => {
       const root = await messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id });
       await messageCaller.createMessage({ message: getMessage(userId), replyRowKey: root.rowKey, roomId: newRoom.id });
 
-      const followed = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
+      const { threads } = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
 
-      expect(followed).toHaveLength(1);
-      expect(takeOne(followed).rowKey).toBe(root.rowKey);
+      expect(threads).toHaveLength(1);
+      expect(takeOne(threads).rowKey).toBe(root.rowKey);
     });
   });
 });

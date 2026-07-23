@@ -9,6 +9,7 @@ export const validateFile = (size: FileEntity["size"], maxSize = MAX_FILE_REQUES
   if (!fileEntitySchema.shape.size.safeParse(size).success)
     return { isValid: false, message: "You can only upload non-empty files!" };
   else if (size > maxSize)
-    return { isValid: false, message: `You can only upload files up to ${maxSize / MEGABYTE} MB!` };
+    // A room limit is stored in bytes and need not be a whole number of megabytes, so the message rounds
+    return { isValid: false, message: `You can only upload files up to ${Math.floor(maxSize / MEGABYTE)} MB!` };
   else return { isValid: true };
 };

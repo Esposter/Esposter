@@ -1,5 +1,6 @@
 import type { ServiceBusQueueHandler } from "@azure/functions";
 
+import { WordFilteredError } from "@/models/WordFilteredError";
 import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
 import { createAndBroadcastMessage } from "@/services/createAndBroadcastMessage";
 import { db } from "@/services/db";
@@ -48,8 +49,28 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
     // Single-shot, so a rejection — non-member, read-only, slowmode, timeout, word filter — after it would burn
     // The job (the redelivery a rethrow asks for is skipped). Thrown here the job is still unclaimed, so Service
     // Bus redelivers and retries, and a job whose retries exhaust stays visible to cancel/reschedule/send-now
-    if (payload.type === ScheduledMessageJobType.ScheduledMessage)
-      await assertCanCreateMessage(job.userId, job.roomId, payload.message);
+    if (payload.type === ScheduledMessageJobType.ScheduledMessage) {
+      // A word-filter block is the one guard a redelivery can never clear, and it has already applied the
+      // Room's automod action — so the job is tombstoned below rather than retried, which would re-apply that
+      // Action once per delivery. Every other rejection rethrows and retries with the job still unclaimed.
+      const isWordFiltered = await getResultAsync(() =>
+        assertCanCreateMessage(job.userId, job.roomId, payload.message),
+      ).match(
+        () => false,
+        (error) => {
+          if (!(error instanceof WordFilteredError)) throw error;
+          return true;
+        },
+      );
+      if (isWordFiltered) {
+        await db
+          .update(scheduledMessageJobsInMessage)
+          .set({ cancelledAt: new Date() })
+          .where(eq(scheduledMessageJobsInMessage.id, id));
+        context.log(`${AzureFunction.ProcessScheduledMessageJob} cancelled: message is word filtered`, { id });
+        return;
+      }
+    }
 
     // Claiming on `processingStartedAt IS NULL` is what makes this handler idempotent
     // (IsIdempotentAzureFunctionMap): delivery is at-least-once, and a message carries a fresh reverse-ticked

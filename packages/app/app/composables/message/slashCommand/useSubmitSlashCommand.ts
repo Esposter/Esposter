@@ -16,19 +16,13 @@ export const useSubmitSlashCommand = () => {
   return async () => {
     if (!pendingSlashCommand.value || !currentRoomId.value) return;
 
-    const missingRequiredParameters = pendingSlashCommand.value.parameters.filter(
-      ({ isRequired, name }) =>
-        isRequired && !slashCommandParameterValueSchema.safeParse(parameterValues.value[name]).success,
-    );
+    const missingRequiredParameters = pendingSlashCommand.value.parameters.filter(({ isRequired, name }) => {
+      if (!isRequired) return false;
 
-    for (const { isRequired, name } of pendingSlashCommand.value.parameters)
-      if (isRequired)
-        setErrors(
-          name,
-          slashCommandParameterValueSchema.safeParse(parameterValues.value[name]).success
-            ? []
-            : [REQUIRED_ERROR_MESSAGE],
-        );
+      const isMissing = !slashCommandParameterValueSchema.safeParse(parameterValues.value[name]).success;
+      setErrors(name, isMissing ? [REQUIRED_ERROR_MESSAGE] : []);
+      return isMissing;
+    });
 
     if (missingRequiredParameters.length > 0) {
       const hiddenMissingParameters = missingRequiredParameters.filter(

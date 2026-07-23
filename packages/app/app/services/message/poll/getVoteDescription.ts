@@ -1,1 +1,3 @@
-export const getVoteDescription = (count: number) => `${count} vote${count === 1 ? "" : "s"}`;
+import { pluralize } from "#shared/util/text/pluralize";
+
+export const getVoteDescription = (count: number) => `${count} ${pluralize("vote", count)}`;
