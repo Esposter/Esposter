@@ -12,6 +12,7 @@ import {
 import { resolveCwd } from "@/services/exec/util/resolveCwd";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnvironment";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 // The os backend's ExecOptions: bind the shared pnpm store and the corepack home writable, inject the VIRRUN presence
@@ -36,6 +37,17 @@ export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions 
   const corepackHome = join(getOsCacheRoot(cwd), VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
   mkdirSync(corepackHome, { recursive: true });
   const wslLoginPath = process.platform === "win32" ? readWslLoginEnvironment().path : "";
+  // On win32 the os backend REQUIRES the login-shell capture to place a Linux node on PATH; the support probe already
+  // Proved WSL is present, so an empty capture is a *failed* capture (a cold-WSL login shell overrunning
+  // WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS, or a blocking rc), not "no WSL". Proceeding would run the command under the
+  // Windows-interop PATH, where `corepack` resolves to the /mnt/c fnm shim and dies with a cryptic `node: not found`
+  // (exit 127). Fail loud so the cause reads as a timeout to retry, not a real toolchain error.
+  if (process.platform === "win32" && !wslLoginPath)
+    throw new InvalidOperationError(
+      Operation.Read,
+      createOsExecOptions.name,
+      "WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); rerun once WSL is warm, or raise WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS",
+    );
   const path = wslLoginPath
     ? `${getWslSourceMirrorPath(resolveCwd(cwd))}/${NODE_MODULES_BIN_DIRECTORY}:${wslLoginPath}`
     : "";

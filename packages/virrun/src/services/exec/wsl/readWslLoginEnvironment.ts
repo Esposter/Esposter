@@ -17,8 +17,12 @@ import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmen
 import { getResult } from "@esposter/shared";
 // Cap the interactive-login capture: a blocking rc/profile (a prompt, a hung version-manager hook) would
 // Otherwise stall createVirrun indefinitely. On timeout execFileSync throws, getResult turns it into the empty
-// Environment, and the command falls back to the default PATH — the same degraded path as a missing WSL.
-const WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS = dayjs.duration(5, "seconds").asMilliseconds();
+// Environment, and the command falls back to the default PATH — which on win32 is the WSL Windows-interop PATH,
+// Where `corepack` resolves to the /mnt/c fnm shim that can't exec a Linux node (exit 127). So the timeout must
+// Clear a *cold* WSL start: warm capture is ~1s, but a first-of-session run pays the WSL2 VM boot plus full rc
+// Sourcing (fnm + plugins + profile), which overshoots a few-second cap and produced spurious `node: not found`
+// Failures on the first `virrun` of the day. One minute clears cold boot while still bounding a genuinely hung rc.
+const WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS = dayjs.duration(1, "minute").asMilliseconds();
 const EMPTY_LOGIN_ENVIRONMENT: WslLoginEnvironment = { nodeVersion: "", path: "" };
 // Run a marked capture inside the user's real login + interactive shell (buildWslLoginShellCommand), so it sources the
 // Exact profile + rc files a real terminal would — that is where a version manager (fnm, nvm, asdf, Volta…) activates

@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
-import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { getMockSession } from "@@/server/trpc/context.test";
@@ -9,6 +8,17 @@ import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and
+// Cannot be spied on directly — mock the module and drive useSession through a hoisted mock instead. The
+// Store reads only session.value.data.user.id, so the mock returns just that slice of the session ref.
+interface MockSessionValue {
+  data?: { user: { id: string } };
+}
+const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => Ref<MockSessionValue>>() }));
+
+vi.mock(import("@/services/auth/authClient"), () => ({
+  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
+}));
 
 describe(useDataStore, () => {
   let router: Router;
@@ -23,6 +33,7 @@ describe(useDataStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     router.currentRoute.value.params.id = roomId;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 
   afterEach(() => {
@@ -54,9 +65,7 @@ describe(useDataStore, () => {
 
     const userId = getMockSession().user.id;
     // CreateMessage reads only session.value.data.user.id off the reactive session
-    vi.spyOn(authClient, "useSession").mockReturnValue(
-      ref({ data: { user: { id: userId } } }) as unknown as ReturnType<typeof authClient.useSession>,
-    );
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { createMessage } = dataStore;

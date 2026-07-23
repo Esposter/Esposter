@@ -10,7 +10,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Cache root is a real temp dir per test, since the corepack home under it is materialized, not merely named.
 const loginPath = "/usr/local/bin:/usr/bin";
 
-const { osCacheRoot } = vi.hoisted(() => ({ osCacheRoot: { value: "" } }));
+const { loginEnvironmentPath, osCacheRoot } = vi.hoisted(() => ({
+  loginEnvironmentPath: { value: "" },
+  osCacheRoot: { value: "" },
+}));
 
 vi.mock(import("@/services/exec/store/createSharedPackageStoreOptions"), () => ({
   createSharedPackageStoreOptions: () => ({ bindDirs: [], env: {} }),
@@ -26,7 +29,7 @@ vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
 }));
 
 vi.mock(import("@/services/exec/wsl/readWslLoginEnvironment"), () => ({
-  readWslLoginEnvironment: () => ({ nodeVersion: "v26.5.0", path: loginPath }),
+  readWslLoginEnvironment: () => ({ nodeVersion: "v26.5.0", path: loginEnvironmentPath.value }),
 }));
 
 describe(createOsExecOptions, () => {
@@ -35,6 +38,7 @@ describe(createOsExecOptions, () => {
 
   beforeEach(() => {
     osCacheRoot.value = create();
+    loginEnvironmentPath.value = loginPath;
   });
 
   afterEach(() => {
@@ -56,6 +60,19 @@ describe(createOsExecOptions, () => {
 
       expect(createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe").env?.PATH).toBe(
         `${mirror}/${NODE_MODULES_BIN_DIRECTORY}:${loginPath}`,
+      );
+    });
+
+    test("fails loud on an empty login capture instead of running under the interop PATH's broken corepack shim", () => {
+      expect.hasAssertions();
+
+      // An empty capture on win32 is a *failed* capture (cold-WSL timeout / blocking rc), not "no WSL": the support
+      // Probe already proved WSL is present. Proceeding would resolve `corepack` to the /mnt/c fnm shim and die with a
+      // Cryptic `node: not found` (127), so surface the timeout cause here rather than deep in the sandbox.
+      loginEnvironmentPath.value = "";
+
+      expect(() => createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe")).toThrowErrorMatchingInlineSnapshot(
+        `[InvalidOperationError: Invalid operation: Read, name: createOsExecOptions, WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); rerun once WSL is warm, or raise WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS]`,
       );
     });
   });
