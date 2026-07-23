@@ -4,24 +4,19 @@ import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { Operation, takeOne } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 import { api as viewerApi } from "v-viewer";
 
 export const useDownloadFileStore = defineStore("message/file", () => {
-  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const dataStore = useDataStore();
+  const readFileUrls = useReadFileUrls();
   const { data: fileUrlMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, DownloadFileUrl>());
   MessageHookMap[Operation.Create].register(async (message) => {
     if (!roomStore.currentRoomId || message.files.length === 0) return;
 
-    const downloadFileSasUrls = await $trpc.message.generateDownloadFileSasUrls.query({
-      files: message.files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
-      roomId: roomStore.currentRoomId,
-    });
-
-    for (const [i, { id }] of message.files.entries())
-      fileUrlMap.value.set(id, { url: takeOne(downloadFileSasUrls, i) });
+    const newFileUrlMap = await readFileUrls(message.files, roomStore.currentRoomId);
+    for (const [id, fileUrl] of newFileUrlMap) fileUrlMap.value.set(id, fileUrl);
   });
   MessageHookMap[Operation.Delete].register((input) => {
     const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);

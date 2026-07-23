@@ -10,6 +10,7 @@ import type { MapValue } from "@esposter/shared";
 
 import { getAzureErrorXml } from "@/services/container/getAzureErrorXml";
 import { createMockResponse } from "@/services/createMockResponse";
+import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders } from "@azure/core-rest-pipeline";
@@ -62,6 +63,7 @@ export class MockBlobBatchClient implements BlobBatchClient {
 
       if (container.has(blobName)) {
         container.delete(blobName);
+        MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(containerName, blobName));
         subResponses.push({
           _request: { credential, url: this.url },
           headers: toHttpHeadersLike(createHttpHeaders()),

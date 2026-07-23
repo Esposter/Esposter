@@ -396,7 +396,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       // Goes through the one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)
       await publishBlobDeletion(id, AzureContainer.ResourceAssets, async () => {
         const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-        return listBlobNames(containerClient, `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`, true);
+        return listBlobNames(containerClient, `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`, { isDeep: true });
       });
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
       getSynchronizedFunction(writeResourceActivity)({

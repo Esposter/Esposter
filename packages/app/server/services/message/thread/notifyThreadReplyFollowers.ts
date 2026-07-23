@@ -16,6 +16,8 @@ export const notifyThreadReplyFollowers = async (
   notificationOptions: NotificationOptions,
   excludedUserIds: string[],
 ): Promise<void> => {
+  // Load-bearing narrowing, not a redundant guard: the caller gates on the same field, but the entity it hands
+  // Over still types replyRowKey as optional, and everything below needs the thread root as a defined value
   if (!message.replyRowKey) return;
   const threadRootRowKey = message.replyRowKey;
 

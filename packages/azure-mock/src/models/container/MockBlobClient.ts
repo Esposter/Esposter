@@ -33,6 +33,7 @@ import { MOCK_BLOB_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
+import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 import { getOrCreate, noop, takeOne } from "@esposter/shared";
@@ -82,6 +83,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     if (!sourceData) throw new MockRestError("Source blob not found", 404);
 
     this.container.set(this.name, Buffer.from(sourceData));
+    MockContainerCreatedOnDatabase.set(getMockContainerCreatedOnKey(this.containerName, this.name), new Date());
     const response: BlobBeginCopyFromURLResponse = { _response: createMockResponse(202, `${this.url}?comp=copy`) };
     return Promise.resolve({
       cancelOperation: () => Promise.resolve(),
@@ -103,12 +105,16 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   delete(): Promise<BlobDeleteResponse> {
     if (!this.container.has(this.name)) throw new MockRestError("The specified blob does not exist.", 404);
     this.container.delete(this.name);
+    MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, this.name));
     return Promise.resolve({ _response: createMockResponse(200) });
   }
 
   deleteIfExists(): Promise<BlobDeleteIfExistsResponse> {
     const succeeded = this.container.has(this.name);
-    if (succeeded) this.container.delete(this.name);
+    if (succeeded) {
+      this.container.delete(this.name);
+      MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, this.name));
+    }
     return Promise.resolve({ _response: createMockResponse(succeeded ? 200 : 404), succeeded });
   }
 

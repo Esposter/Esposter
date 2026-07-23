@@ -54,7 +54,7 @@ export const useSurveyCreator = () => {
     newCreator.onUploadFile.add(async (_creator, { callback, element, files, propertyName }) => {
       await getResultAsync(async () => {
         const file = takeOne(files);
-        if (!validateFile(file.size)) {
+        if (!validateFile(file)) {
           callback("error");
           return;
         }

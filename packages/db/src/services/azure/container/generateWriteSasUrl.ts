@@ -2,6 +2,7 @@ import type { BlobGenerateSasUrlOptions, BlockBlobClient } from "@azure/storage-
 
 import { dayjs } from "@/services/dayjs";
 import { BlobSASPermissions } from "@azure/storage-blob";
+import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { encodeUrlSubDelimiters } from "@esposter/shared";
 
 // Uploads finish quickly, so every write SAS shares one short-lived signer. Encoding the sub-delimiters is
@@ -13,7 +14,7 @@ export const generateWriteSasUrl = async (
   encodeUrlSubDelimiters(
     await blockBlobClient.generateSasUrl({
       ...options,
-      expiresOn: dayjs().add(1, "hour").toDate(),
+      expiresOn: dayjs().add(WRITE_SAS_DURATION_MS, "ms").toDate(),
       permissions: BlobSASPermissions.from({ write: true }),
     }),
   );

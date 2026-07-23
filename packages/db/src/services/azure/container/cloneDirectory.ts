@@ -9,7 +9,7 @@ export const cloneDirectory = async (
   destinationPrefix: string,
   isDeep?: true,
 ) => {
-  const sourceBlobNames = await listBlobNames(containerClient, sourcePrefix, isDeep);
+  const sourceBlobNames = await listBlobNames(containerClient, sourcePrefix, { isDeep });
   if (sourceBlobNames.length === 0) return undefined;
 
   return Promise.all(

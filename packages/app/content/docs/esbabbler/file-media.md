@@ -15,6 +15,8 @@ Thumbnails are generated on the client with a canvas — each image is scaled so
 
 Per-room limits live as columns on the `rooms` table and are enforced at the only server chokepoint that sees every upload — the SAS-issuing procedure — because the block PUT goes straight to Azure and never passes back through Nitro. The composer mirrors the same limits so a rejected file is surfaced before any network call.
 
+One rejected file rejects the whole drop, and the alert names it — the repo-wide rule for batch input ([file uploads](/docs/architecture/file-uploads)).
+
 ```mermaid
 flowchart TD
   drop[User drops files into the composer] --> validate[useUploadFiles checks size and category]

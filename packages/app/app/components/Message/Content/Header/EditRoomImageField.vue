@@ -61,7 +61,7 @@ const isLoading = ref(false);
                 const file = (event.target as HTMLInputElement).files?.[0];
                 if (!file) return;
 
-                if (!validateFile(file.size)) return;
+                if (!validateFile(file)) return;
 
                 isLoading = true;
                 await withFinalizerAsync(

@@ -26,7 +26,7 @@ import {
   roomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MOCK_BLOB_BASE_URL, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import { MOCK_BLOB_BASE_URL, MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("room", () => {
@@ -236,6 +236,20 @@ describe("room", () => {
       blobNames: [blobName],
       containerName: AzureContainer.PublicUserAssets,
     });
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
+  });
+
+  test("keeps a profile image blob younger than the write sas out of the deletion sweep", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    // Uploaded through the client, so the mock dates it now — the state a second admin's in-flight save is in
+    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+    await roomCaller.updateRoom({ id: newRoom.id, image: "" });
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
     expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
   });
 

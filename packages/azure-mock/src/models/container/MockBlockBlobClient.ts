@@ -17,6 +17,7 @@ import { MockBlobClient } from "@/models/container/MockBlobClient";
 import { MockRestError } from "@/models/MockRestError";
 import { bodyToBuffer } from "@/services/container/bodyToBuffer";
 import { createMockResponse } from "@/services/createMockResponse";
+import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
 
 export class MockBlockBlobClient extends MockBlobClient implements Except<BlockBlobClient, "accountName"> {
   commitBlockList(): Promise<BlockBlobCommitBlockListResponse> {
@@ -55,6 +56,7 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
     if (options?.conditions?.ifNoneMatch === "*" && this.container.has(this.name))
       throw new MockRestError("The specified blob already exists.", 409);
     this.container.set(this.name, buffer);
+    MockContainerCreatedOnDatabase.set(getMockContainerCreatedOnKey(this.containerName, this.name), new Date());
     return { _response: createMockResponse(201) };
   }
 

@@ -80,7 +80,7 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 
 ## Notes
 
-- Per-item fan-out (forwarding into several rooms, notifying several followers) runs each item through the full shape independently under `Promise.allSettled`, so one item's guard rejection never strands another item's already-persisted write.
+- Per-item fan-out (forwarding into several rooms, notifying several followers) runs each item through the full shape independently under `Promise.allSettled`, so one item's guard rejection never strands another item's already-persisted write. **This is deliberately not all-or-nothing**, and an all-items pre-flight is not the fix: a fan-out has no cross-item transaction to roll back into, so a pre-flight only moves the partial-failure window rather than closing it, and it makes a rule that fires per item (a word filter that times the sender out in one room) either fire twice or not fire at all. The accepted cost is the one every at-least-once path carries — the first rejection surfaces to the caller, and a user who retries the whole forward duplicates it into the rooms that already accepted it.
 - "Best-effort" is not a licence to skip the effect on the happy path. If losing it is genuinely unacceptable, it doesn't become fatal — it becomes durable: published as an event and retried by a handler ([no manual recovery](/docs/architecture/no-manual-recovery)).
 
 ## When best-effort is not enough: the escalation

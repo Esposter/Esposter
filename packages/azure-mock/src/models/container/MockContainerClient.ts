@@ -40,6 +40,11 @@ import { getBlobPrefixXml } from "@/services/container/getBlobPrefixXml";
 import { getListBlobsXml } from "@/services/container/getListBlobsXml";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
+import {
+  getMockContainerCreatedOnKey,
+  MOCK_BLOB_SEEDED_CREATED_ON,
+  MockContainerCreatedOnDatabase,
+} from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 import { getOrCreate } from "@esposter/shared";
@@ -84,6 +89,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
     if (!this.container.has(blobName)) throw new MockRestError("The specified blob does not exist.", 404);
     this.container.delete(blobName);
+    MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, blobName));
     return Promise.resolve({ _response: createMockResponse(200, `${this.url}/${blobName}`) });
   }
 
@@ -301,6 +307,9 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
             blobType: "BlockBlob",
             contentLength: buffer.length,
             contentType: "application/octet-stream",
+            createdOn:
+              MockContainerCreatedOnDatabase.get(getMockContainerCreatedOnKey(this.containerName, name)) ??
+              MOCK_BLOB_SEEDED_CREATED_ON,
             etag: `"${crypto.randomUUID()}"`,
             lastModified: new Date(),
             leaseState: "available",
@@ -329,6 +338,9 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
           blobType: "BlockBlob",
           contentLength: buffer.length,
           contentType: "application/octet-stream",
+          createdOn:
+            MockContainerCreatedOnDatabase.get(getMockContainerCreatedOnKey(this.containerName, name)) ??
+            MOCK_BLOB_SEEDED_CREATED_ON,
           etag: `"${crypto.randomUUID()}"`,
           lastModified: new Date(),
           leaseState: "available",

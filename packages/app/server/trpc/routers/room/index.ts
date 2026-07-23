@@ -65,6 +65,7 @@ import {
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
+  WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import {
   getResultAsync,
@@ -585,14 +586,18 @@ export const baseRoomRouter = router({
     );
     roomEventEmitter.emit("updateRoom", updatedRoom);
     // The image was cleared or replaced: drop every prior upload under the room's profile-image prefix except the
-    // Version the room now points at. Upload urls are per-upload unique, so a concurrent re-upload lands on a name
-    // This snapshot cannot contain — the delayed delete can never remove the new image. A dropped publish only
-    // Orphans a public blob, never the room update; every blob delete goes through the one durable mechanism so no
-    // Call site keeps a weaker one (/docs/architecture/persist-then-notify)
+    // Version the room now points at. Upload names are per-upload unique, so "not the url I was handed" would also
+    // Match a blob a second admin uploaded moments ago but has not saved yet — the age filter is what keeps this
+    // Sweep to genuine orphans, since no upload can outlive the write SAS that authorized it. A dropped publish
+    // Only orphans a public blob, never the room update; every blob delete goes through the one durable mechanism
+    // So no call site keeps a weaker one (/docs/architecture/persist-then-notify)
     if (rest.image !== undefined)
       await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
         const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-        const blobNames = await listBlobNames(containerClient, getRoomProfileImageBlobPrefix(id), true);
+        const blobNames = await listBlobNames(containerClient, getRoomProfileImageBlobPrefix(id), {
+          createdBefore: dayjs().subtract(WRITE_SAS_DURATION_MS, "ms").toDate(),
+          isDeep: true,
+        });
         return blobNames.filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== rest.image);
       });
 

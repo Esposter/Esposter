@@ -27,11 +27,11 @@ export const deleteRoom = async (db: Context["db"], { session, user }: GetSessio
   // A dropped listing or publish leaves orphaned room assets, never the deletion that already landed
   await publishBlobDeletion(id, AzureContainer.MessageAssets, async () => {
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-    return listBlobNames(containerClient, id, true);
+    return listBlobNames(containerClient, id, { isDeep: true });
   });
   await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-    return listBlobNames(containerClient, getRoomProfileImageBlobPrefix(id), true);
+    return listBlobNames(containerClient, getRoomProfileImageBlobPrefix(id), { isDeep: true });
   });
   roomEventEmitter.emit("deleteRoom", {
     roomId: deletedRoom.id,

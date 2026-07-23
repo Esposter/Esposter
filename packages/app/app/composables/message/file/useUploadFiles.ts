@@ -30,12 +30,13 @@ export const useUploadFiles = () => {
     const room = currentRoom.value;
     // Mirror the server chokepoint's platform-cap clamp so a room limit above the cap fails here, not at the SAS query.
     const maxFileSizeBytes = Math.min(room?.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
-    // Validate before the SAS query and before rendering metadata so a rejected file is surfaced loudly.
+    // Validate before the SAS query and before rendering metadata so a rejected file is surfaced loudly. One
+    // Rejected file rejects the whole drop, naming it, rather than silently uploading the rest of the selection.
     for (const file of newFiles)
-      if (!validateFile(file.size, maxFileSizeBytes)) return;
+      if (!validateFile(file, maxFileSizeBytes)) return;
       else if (room && !room.allowedMimeCategories.includes(getMimeCategory(file.type))) {
         createAlert(
-          `This room only allows ${room.allowedMimeCategories.join(", ").toLowerCase()} attachments!`,
+          `${file.name}: this room only allows ${room.allowedMimeCategories.join(", ").toLowerCase()} attachments!`,
           "error",
         );
         return;

@@ -38,6 +38,16 @@ Message attachments land in `AzureContainer.MessageAssets`; resource asset files
 
 Reads differ per domain: message attachments fetch fresh download SAS urls per read (`message.generateDownloadFileSasUrls`), while resource assets embed a stable app url built client-side after the upload and served through `/api/resource-assets` ([resource file assets](/docs/platform/resource-file-assets)) — resource types have no download procedure.
 
+## Sweeping orphans: never delete a blob younger than its write SAS
+
+A blob whose owning row is updated to a new upload leaves the old one behind, so the update sweeps the entity's blob prefix and publishes everything that is not the url it was just handed ([persist then notify](/docs/architecture/persist-then-notify)). "Not the current url" is not on its own a safe test for staleness: upload names are per-upload unique, so a blob a second editor uploaded seconds ago — and has not saved yet — also fails it, and sweeping it points that editor's save at a blob that no longer exists.
+
+**Every prefix sweep therefore filters on age, keeping only blobs created before `now - WRITE_SAS_DURATION_MS`** (`listBlobNames(client, prefix, { createdBefore, isDeep })`). The write SAS that authorized an upload expires after `WRITE_SAS_DURATION_MS`, so no upload can still be in flight past that age, while a blob older than it is either the previous version or an abandoned upload — an orphan either way. This applies to any sweep that infers staleness from the current row rather than from a name it stored, and it is why the sweep is a filtered listing rather than a plain "delete everything else".
+
+## Batch input is validated all-or-nothing
+
+Client-side validation of a multi-item input (a multi-file drop, a bulk paste, a multi-select action) **rejects the whole batch on the first invalid item, and the alert names that item**. Never filter the batch down to its valid members: the user would be left holding a set they never chose, with the dropped item easy to miss before they commit. `useValidateFile(file, maxSize)` takes the whole `File` for exactly this reason — it needs the name for the message.
+
 ## Size constants
 
 ```ts

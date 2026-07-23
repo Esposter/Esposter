@@ -44,7 +44,7 @@ export const useGrapesJsEditor = async (
                 // The uploads are independent, so they overlap instead of paying each round trip in sequence
                 await Promise.all(
                   readUploadFiles(event).map(async (file) => {
-                    if (!validateFile(file.size)) return;
+                    if (!validateFile(file)) return;
 
                     await getResultAsync(() => assets.upload(file))
                       .andTee((url) => {
