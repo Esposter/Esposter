@@ -24,7 +24,6 @@ export const paEsposter001: azure_native.authorization.PolicyAssignment =
       scope: `subscriptions/${AzureSubscriptionId}`,
     },
     {
-      aliases: [{ name: "pa-require-application-tag" }],
       protect: true,
     },
   );
