@@ -46,15 +46,18 @@ export const useUploadFiles = () => {
     isFileLoading.value = true;
     // Downscale image thumbnails while the originals upload so both land in one pass.
     const thumbnailsPromise = Promise.all(newFiles.map((file) => generateImageThumbnail(file)));
-    // Seed each file's metadata + object url once the write targets exist so Vue renders progress during upload.
+    // Seed each file's metadata + object url once the write targets exist so Vue renders progress during upload,
+    // Remembering what was seeded so a failure downstream can take exactly those entries back out.
+    let seededFileSasEntities: FileSasEntity[] = [];
     const seedUploadFiles = (fileSasEntities: FileSasEntity[]) => {
+      seededFileSasEntities = fileSasEntities;
       for (const [index, { id }] of fileSasEntities.entries()) {
         const file = takeOne(newFiles, index);
         files.value.push({ filename: file.name, id, mimetype: file.type, size: file.size });
         fileUrlMap.value.set(id, reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) }));
       }
     };
-    // A failed upload takes its seeded metadata and object urls back out — the composer renders from those,
+    // A failed upload takes the seeded metadata and object urls back out — the composer renders from those,
     // And the send button gates on isFileLoading, so leaving either behind strands the room's whole composer.
     const revertUploadFiles = (fileSasEntities: FileSasEntity[]) => {
       for (const { id } of fileSasEntities) {
@@ -66,7 +69,6 @@ export const useUploadFiles = () => {
       const ids = new Set(fileSasEntities.map(({ id }) => id));
       files.value = files.value.filter(({ id }) => !ids.has(id));
     };
-    let seededFileSasEntities: FileSasEntity[] = [];
     await withFinalizerAsync(
       () =>
         getResultAsync(async () => {
@@ -78,10 +80,7 @@ export const useUploadFiles = () => {
               const uploadFileUrl = fileUrlMap.value.get(id);
               if (uploadFileUrl) uploadFileUrl.progress = progress;
             },
-            onUploadStart: (fileSasEntities) => {
-              seededFileSasEntities = fileSasEntities;
-              seedUploadFiles(fileSasEntities);
-            },
+            onUploadStart: seedUploadFiles,
           });
           const thumbnails = await thumbnailsPromise;
           await Promise.all(
