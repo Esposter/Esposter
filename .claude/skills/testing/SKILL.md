@@ -148,7 +148,7 @@ When a file mixes `vi.spyOn` spies AND a module-level `vi.fn()` whose count is a
 
 When a service is mocked across multiple test files, create a colocated `*.test.ts` next to the service. Import via `vi.mock(import(...), () => import(...))` — **no `async` keyword** (`import()` already returns a Promise).
 
-**Reach for the colocated mock file before hand-rolling a factory.** An inline `vi.mock(import("@/services/x"), () => ({ x: vi.fn().mockResolvedValue(…) }))` returns `any`-shaped stubs that satisfy neither the module's declared types nor `isolatedDeclarations`, so it fails typecheck/lint even while the test passes — and it duplicates a double that usually already exists. If a mock genuinely has no colocated file and must stay inline, type the function itself (`vi.fn<() => Promise<Foo>>()`), never a bare `vi.fn()`.
+**Reach for the colocated mock file before hand-rolling a factory.** A hand-rolled inline factory duplicates a double that usually already exists, and every file that rolls its own drifts from the others. Inline factories are fine where no colocated file exists — plenty of suites use them — but type the function itself (`vi.fn<() => Promise<Foo>>()`), never a bare `vi.fn()`: an untyped `vi.fn()` is `any`-shaped, so it silently stops matching the module's declared signature when that signature changes.
 
 ### Placement & export
 

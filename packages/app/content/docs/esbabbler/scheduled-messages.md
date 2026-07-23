@@ -29,7 +29,7 @@ sequenceDiagram
     else runAt still in the future (clock skew guard)
         F->>Q: re-schedule same id at runAt
     else due
-        F->>F: ScheduledMessage → re-check membership + read-only/slowmode/filter — a rejection throws pre-claim, so redelivery retries
+        F->>F: ScheduledMessage → re-check membership + read-only/slowmode — a rejection throws pre-claim, so redelivery retries
         F->>DB: word filter blocked → apply the room's automod action, UPDATE cancelledAt = now(), exit
         F->>DB: UPDATE processingStartedAt = now() WHERE all three tombstones IS NULL
         alt zero rows — another delivery already claimed it
