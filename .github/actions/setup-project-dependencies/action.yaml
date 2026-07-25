@@ -30,7 +30,7 @@ runs:
         node-version-file: ${{ inputs.node-version == '' && inputs.node-version-file || '' }}
 
     - name: 📦 Install pnpm
-      uses: pnpm/action-setup@f3a8b277983693e5066601662d556c36746815ef # v6.0.9
+      uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
     # GitHub's Ubuntu image ships neither bubblewrap nor permissive unprivileged user namespaces, so the
     # virrun os-backend suites would self-gate and silently skip. Test/bench jobs opt into this so the
     # sandbox is available before Vitest collects host-capability checks.
