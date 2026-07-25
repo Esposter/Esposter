@@ -9,6 +9,8 @@ Token budgets are the constraint: the main session's context is where design qua
 
 The split is by **role, not by model**. Whatever model the session happens to run (`~/.claude/settings.json` sets it), the main session is the thinker and subagents are the implementers — the rule holds when the config changes, and the same model may well sit on both sides.
 
+**Never name a model version anywhere in this repo** — not in skills, docs, workflow scripts, or delegation prompts. Model families ship new versions every few weeks and this project always wants the latest, so write the unversioned alias only (`opus`, `sonnet`, `haiku`, `fable`). A pinned `claude-opus-4-8`-style id or a prose "Opus 4.8" is stale the moment it's written and silently keeps work on an old model.
+
 ## Division of labor
 
 - **Main session**: specs, proposals, architecture decisions, triage, naming, docs conventions, reviewing agent output. Anything where judgment compounds.
