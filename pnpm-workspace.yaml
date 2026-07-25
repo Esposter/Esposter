@@ -25,7 +25,7 @@ catalog:
   "@azure/storage-blob": ^12.33.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.1.0
-  "@better-auth/drizzle-adapter": ^1.6.24
+  "@better-auth/drizzle-adapter": ^1.6.25
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.4
   "@codemirror/language-data": ^6.5.2
@@ -33,21 +33,21 @@ catalog:
   "@codemirror/theme-one-dark": ^6.1.3
   "@codemirror/view": ^6.43.6
   "@codspeed/vitest-plugin": ^5.7.1
-  "@dxup/nuxt": ^0.5.3
+  "@dxup/nuxt": ^0.5.4
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.5.4
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.0.1
   "@floating-ui/dom": ^1.8.0
-  "@fullcalendar/vue3": ^7.0.1
+  "@fullcalendar/vue3": ^7.0.2
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.4
-  "@lerna-lite/cli": ^5.4.1
-  "@lerna-lite/publish": ^5.4.1
+  "@lerna-lite/cli": ^5.4.2
+  "@lerna-lite/publish": ^5.4.2
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
   "@ninoseki/eslint-plugin-neverthrow": ^0.2.0
-  "@nuxt/content": ^3.15.1
+  "@nuxt/content": ^3.15.2
   "@nuxt/eslint": ^1.16.0
   "@nuxt/fonts": ^0.14.0
   "@nuxt/scripts": ^1.3.2
@@ -59,19 +59,19 @@ catalog:
   "@platformatic/vfs": ^0.4.0
   "@pulumi/azure-native": ^3.23.0
   "@pulumi/github": ^6.14.1
-  "@pulumi/pulumi": ^3.253.0
+  "@pulumi/pulumi": ^3.254.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^2.4.1
-  "@tiptap/core": ^3.28.0
-  "@tiptap/extension-code-block-lowlight": ^3.28.0
-  "@tiptap/extension-file-handler": ^3.28.0
-  "@tiptap/extension-mention": ^3.28.0
-  "@tiptap/extensions": ^3.28.0
-  "@tiptap/html": ^3.28.0
-  "@tiptap/pm": ^3.28.0
-  "@tiptap/starter-kit": ^3.28.0
-  "@tiptap/suggestion": ^3.28.0
-  "@tiptap/vue-3": ^3.28.0
+  "@takumi-rs/core": ^2.4.2
+  "@tiptap/core": ^3.29.0
+  "@tiptap/extension-code-block-lowlight": ^3.29.0
+  "@tiptap/extension-file-handler": ^3.29.0
+  "@tiptap/extension-mention": ^3.29.0
+  "@tiptap/extensions": ^3.29.0
+  "@tiptap/html": ^3.29.0
+  "@tiptap/pm": ^3.29.0
+  "@tiptap/starter-kit": ^3.29.0
+  "@tiptap/suggestion": ^3.29.0
+  "@tiptap/vue-3": ^3.29.0
   "@tresjs/cientos": ^5.8.1
   "@tresjs/core": ^5.8.3
   "@tresjs/nuxt": ^5.6.3
@@ -114,7 +114,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^6.5.0
-  better-auth: ^1.6.24
+  better-auth: ^1.6.25
   citty: ^0.2.2
   codemirror: ^6.0.2
   crossws: ^0.4.10
@@ -129,7 +129,7 @@ catalog:
   drizzle-kit: 1.0.0-rc.4
   drizzle-orm: 1.0.0-rc.4
   emoji-mart-vue-fast: ^15.0.5
-  eslint: ^10.7.0
+  eslint: ^10.8.0
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-oxlint: ^1.75.0
   eslint-plugin-perfectionist: ^5.10.0
@@ -139,8 +139,8 @@ catalog:
   fast-check: ^4.9.0
   fast-deep-equal: ^3.1.3
   fflate: ^0.8.3
-  fs-extra: ^11.3.6
-  grapesjs: ^0.23.2
+  fs-extra: ^11.4.0
+  grapesjs: ^0.23.3
   grapesjs-blocks-basic: ^1.0.2
   grapesjs-component-countdown: ^1.0.2
   grapesjs-custom-code: ^1.0.2
@@ -166,7 +166,7 @@ catalog:
   js-beautify: ^2.0.3
   link-preview-js: ^4.0.4
   linkifyjs: ^4.3.3
-  livekit-client: ^2.20.2
+  livekit-client: ^2.21.0
   livekit-server-sdk: ^2.17.0
   lodash-omitdeep: ^1.10.1
   lowlight: ^3.3.0
@@ -195,11 +195,11 @@ catalog:
   rate-limiter-flexible: ^11.2.0
   read-excel-file: ^9.3.4
   rolldown: ^1.2.0
-  rolldown-plugin-dts: ^0.27.13
+  rolldown-plugin-dts: ^0.27.14
   rxjs: ^7.8.2
   sanitize-html: ^2.17.6
   sass-embedded: ^1.100.0
-  sax: ^1.6.0
+  sax: ^1.6.1
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
@@ -232,7 +232,7 @@ catalog:
   vue-router: ^5.2.0
   vue-tsc: ^3.3.8
   vue3-apexcharts: ^1.11.1
-  vuetify: ^4.1.5
+  vuetify: ^4.1.6
   vuetify-nuxt-module: ^1.0.0-rc.3
   web-push: ^3.6.7
   worker-timers: ^8.0.34
