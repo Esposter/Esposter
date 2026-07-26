@@ -108,9 +108,6 @@ catalogs:
     '@mdi/font':
       specifier: ^7.4.47
       version: 7.4.47
-    '@ninoseki/eslint-plugin-neverthrow':
-      specifier: ^0.2.0
-      version: 0.2.0
     '@nuxt/content':
       specifier: ^3.15.2
       version: 3.15.2
@@ -1440,9 +1437,6 @@ importers:
       '@eslint/json':
         specifier: 'catalog:'
         version: 2.0.1
-      '@ninoseki/eslint-plugin-neverthrow':
-        specifier: 'catalog:'
-        version: 0.2.0(eslint@10.8.0(jiti@2.7.0)(supports-color@10.2.2))(typescript@6.0.3)
       '@rolldown/plugin-node-polyfills':
         specifier: 'catalog:'
         version: 1.0.3
@@ -4059,11 +4053,6 @@ packages:
     peerDependencies:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
-
-  '@ninoseki/eslint-plugin-neverthrow@0.2.0':
-    resolution: {integrity: sha512-2QBatGYQO8DX1vc0CoHdm5xww55D3eq0vWEcr+qnQYmWzpMHxqVR7YNHdk4x8ye4rW6hOVSO+vJxJB0CstiSXg==}
-    peerDependencies:
-      eslint: '>=10.0.3'
 
   '@noble/ciphers@2.2.0':
     resolution: {integrity: sha512-Z6pjIZ/8IJcCGzb2S/0Px5J81yij85xASuk1teLNeg75bfT07MV3a/O2Mtn1I2se43k3lkVEcFaR10N4cgQcZA==}
@@ -13824,17 +13813,8 @@ packages:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
     engines: {node: '>=6'}
 
-  tslib@1.14.1:
-    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
-
-  tsutils@3.21.0:
-    resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}
-    engines: {node: '>= 6'}
-    peerDependencies:
-      typescript: '>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta'
 
   tsx@4.23.1:
     resolution: {integrity: sha512-GQHnkIfxyx1wYCOS/wonik5MVRZU9hi1TEZmzGZSCJB1y9YgoZ8H6itNE/u4suE+yLmOzuE4E5S4TZ/ZX2wcWQ==}
@@ -17502,13 +17482,6 @@ snapshots:
       '@emnapi/runtime': 1.11.2
       '@tybys/wasm-util': 0.10.3
     optional: true
-
-  '@ninoseki/eslint-plugin-neverthrow@0.2.0(eslint@10.8.0(jiti@2.7.0)(supports-color@10.2.2))(typescript@6.0.3)':
-    dependencies:
-      eslint: 10.8.0(jiti@2.7.0)(supports-color@10.2.2)
-      tsutils: 3.21.0(typescript@6.0.3)
-    transitivePeerDependencies:
-      - typescript
 
   '@noble/ciphers@2.2.0': {}
 
@@ -29317,14 +29290,7 @@ snapshots:
       minimist: 1.2.8
       strip-bom: 3.0.0
 
-  tslib@1.14.1: {}
-
   tslib@2.8.1: {}
-
-  tsutils@3.21.0(typescript@6.0.3):
-    dependencies:
-      tslib: 1.14.1
-      typescript: 6.0.3
 
   tsx@4.23.1:
     dependencies:

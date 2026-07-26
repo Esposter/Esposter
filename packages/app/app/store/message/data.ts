@@ -19,7 +19,7 @@ import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
-import { getResultAsync, Operation } from "@esposter/shared";
+import { getResult, getResultAsync, noop, Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
@@ -44,18 +44,31 @@ export const useDataStore = defineStore("message/data", () => {
     if (!session.value.data) return false;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
+    // Only the two steps that run before the server commits may roll the bubble back out. A rejection after
+    // The mutation resolves means the message exists — deleting it then would hide a sent message from its own
+    // Sender (the subscription echo is filtered for the sending session, so nothing restores it) and invite a
+    // Duplicate resend. Those steps are local bookkeeping, so a failure leaves the bubble and surfaces the alert
     return getResultAsync(async () => {
+      // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the
+      // List, so roll the entity back out before surfacing the failure — nothing has reached the server yet
       await storeCreateMessage(newMessage);
-      Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
-      delete newMessage.isLoading;
-      // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
-      // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
-      if (input.replyRowKey) threadFollowStore.storeFollowThread(input.roomId, input.replyRowKey);
+      return $trpc.message.createMessage.mutate(input);
     }).match(
-      () => true,
+      (createdMessage) => {
+        Object.assign(newMessage, createdMessage);
+        delete newMessage.isLoading;
+        // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
+        // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
+        // Best-effort: the message is already sent, so a failure here costs a stale Follow label, and neither
+        // Rolling the bubble back nor rejecting the send would be a truthful way to report it
+        if (input.replyRowKey)
+          getResult(() => threadFollowStore.storeFollowThread(input.roomId, input.replyRowKey)).match(
+            noop,
+            console.error,
+          );
+        return true;
+      },
       (error) => {
-        // A rejected Create hook (e.g. the attachment URL fetch) or mutation must not strand the optimistic
-        // Loading bubble in the list, so roll the entity back out before surfacing the failure.
         baseStoreDeleteMessage(newMessage);
         createAlert(error.message, "error");
         return false;

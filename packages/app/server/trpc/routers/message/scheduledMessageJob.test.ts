@@ -7,7 +7,13 @@ import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
-import { AzureTable, scheduledMessageJobsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
+import {
+  AzureTable,
+  roomFiltersInMessage,
+  scheduledMessageJobsInMessage,
+  ScheduledMessageJobType,
+  WordFilterAction,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
@@ -34,6 +40,8 @@ describe("scheduledMessageJob", () => {
   });
 
   afterEach(async () => {
+    MockTableDatabase.clear();
+    await mockContext.db.delete(roomFiltersInMessage);
     await mockContext.db.delete(scheduledMessageJobsInMessage);
   });
 
@@ -177,6 +185,42 @@ describe("scheduledMessageJob", () => {
     const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
 
     expect(scheduledMessageJobCount).toBe(1);
+  });
+
+  // The two features that meet here shipped separately: guards run before the claim so a rejection leaves the
+  // Job schedulable, and the word-filter guard applies the room's automod action. Only the word filter is
+  // Non-idempotent, so it is the one rejection that must burn the job — a job left scheduled hands the worker
+  // The same block at runAt, and the user serves a second timeout and a second audit row for one message
+  test("burns the job when send scheduled message now is word filtered", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    // The filter arrives after the job is scheduled — the only way a stored message can be blocked at delivery
+    await mockContext.db.insert(roomFiltersInMessage).values({
+      action: WordFilterAction.Timeout,
+      roomId,
+      timeoutDurationMs: 1,
+      words: [message],
+    });
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      scheduledMessageJobCaller.sendScheduledMessageNow({ id: scheduledMessageJob.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
+
+    const timedOutMembership = await mockContext.db.query.usersToRoomsInMessage.findFirst({
+      columns: { timeoutUntil: true },
+      where: { roomId: { eq: roomId }, userId: { eq: member.id } },
+    });
+
+    expect(timedOutMembership?.timeoutUntil).not.toBeNull();
+
+    await mockSessionOnce(mockContext.db, member);
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+
+    expect(scheduledMessageJobCount).toBe(0);
   });
 
   test("fails send scheduled message now with job claimed for delivery", async () => {

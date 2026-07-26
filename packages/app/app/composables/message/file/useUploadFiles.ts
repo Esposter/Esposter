@@ -56,7 +56,9 @@ export const useUploadFiles = () => {
     };
     // A failed upload takes its seeded metadata and object urls back out — the composer renders from those,
     // And the send button gates on isFileLoading, so leaving either behind strands the room's whole composer.
-    const revertUploadFiles = (fileSasEntities: FileSasEntity[]) => {
+    // Whatever already reached blob storage is dropped with it: the composer is the only thing that knows
+    // These ids, so a blob the user can no longer attach is unreferenced the moment its row leaves the list.
+    const revertUploadFiles = async (fileSasEntities: FileSasEntity[]) => {
       for (const { id } of fileSasEntities) {
         const uploadFileUrl = fileUrlMap.value.get(id);
         if (uploadFileUrl) URL.revokeObjectURL(uploadFileUrl.url);
@@ -64,7 +66,17 @@ export const useUploadFiles = () => {
       }
 
       const ids = new Set(fileSasEntities.map(({ id }) => id));
+      const revertedFiles = files.value.filter(({ id }) => ids.has(id));
       files.value = files.value.filter(({ id }) => !ids.has(id));
+      if (revertedFiles.length === 0) return;
+      // Best-effort: the composer is already consistent without it, and a failure here costs storage, not
+      // Correctness — surfacing a second alert over the one the user is reading would only obscure it
+      await getResultAsync(() =>
+        $trpc.message.deleteUploadFiles.mutate({
+          files: revertedFiles.map(({ filename, id }) => ({ filename, id })),
+          roomId,
+        }),
+      ).match(noop, console.error);
     };
     let seededFileSasEntities: FileSasEntity[] = [];
     await withFinalizerAsync(
@@ -83,17 +95,22 @@ export const useUploadFiles = () => {
               seedUploadFiles(newFileSasEntities);
             },
           });
-          const thumbnails = await thumbnailsPromise;
-          await Promise.all(
-            fileSasEntities.map((fileSasEntity, index) => {
-              const thumbnail = takeOne(thumbnails, index);
-              return fileSasEntity.thumbnailSasUrl && thumbnail
-                ? uploadBlocks(thumbnail, fileSasEntity.thumbnailSasUrl)
-                : Promise.resolve();
-            }),
-          );
-        }).match(noop, (error) => {
-          revertUploadFiles(seededFileSasEntities);
+          // Thumbnails are decorative and best-effort: the renderer falls back to the original whenever the
+          // Thumbnail blob is missing, so a failed downscale or a failed thumbnail PUT costs a bigger image,
+          // Never an attachment. Reverting here instead would throw away originals that uploaded perfectly
+          await getResultAsync(async () => {
+            const thumbnails = await thumbnailsPromise;
+            await Promise.all(
+              fileSasEntities.map((fileSasEntity, index) => {
+                const thumbnail = takeOne(thumbnails, index);
+                return fileSasEntity.thumbnailSasUrl && thumbnail
+                  ? uploadBlocks(thumbnail, fileSasEntity.thumbnailSasUrl)
+                  : Promise.resolve();
+              }),
+            );
+          }).match(noop, console.error);
+        }).match(noop, async (error) => {
+          await revertUploadFiles(seededFileSasEntities);
           createAlert(error.message, "error");
         }),
       () => {

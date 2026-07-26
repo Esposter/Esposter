@@ -30,12 +30,13 @@ flowchart LR
 
 The remaining expensive rules, in descending cost order, and the trigger for migrating each:
 
-| Rule                         | Share of rule time | Blocker                                                                                                        | Migrate when                                                                               |
-| ---------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `neverthrow/must-use-result` | ~a third           | Type-aware custom plugin — oxlint's JS plugin API has no type information, and tsgolint has no custom-rule API | oxlint ships type-aware JS plugins, or tsgolint gains a custom-rule API                    |
-| `vue/no-child-content`       | ~a tenth           | Not implemented in oxlint's vue plugin                                                                         | upstream implements it (check `eslint-plugin-oxlint`'s generated rule maps after upgrades) |
-| `perfectionist/sort-imports` | small              | oxlint has no import-sorting rule                                                                              | upstream implements sorting                                                                |
-| `no-restricted-syntax`       | small              | oxlint has no AST-selector rule                                                                                | oxlint ships a selector-based rule (the custom bans move into `.oxlintrc.json`)            |
+| Rule                         | Share of rule time | Blocker                                | Migrate when                                                                               |
+| ---------------------------- | ------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `vue/no-child-content`       | ~a tenth           | Not implemented in oxlint's vue plugin | upstream implements it (check `eslint-plugin-oxlint`'s generated rule maps after upgrades) |
+| `perfectionist/sort-imports` | small              | oxlint has no import-sorting rule      | upstream implements sorting                                                                |
+| `no-restricted-syntax`       | small              | oxlint has no AST-selector rule        | oxlint ships a selector-based rule (the custom bans move into `.oxlintrc.json`)            |
+
+**`neverthrow/must-use-result` was dropped, not migrated.** It was the single most expensive rule (~a third of rule time) because it is the only one that needed `parserOptions.projectService`, and type-aware parsing dominates the whole ESLint pass rather than just that rule's share. Deleting it — plugin file, config entry and `@ninoseki/eslint-plugin-neverthrow` dependency — is what makes `pnpm lint` fast enough to run on every change. The cost is real and accepted: an unterminated `Result` chain is now caught only by review, and it fails silently (the call never runs, no error surfaces). Re-adding any type-aware ESLint plugin gives back the same multiplier, so the answer to "this convention needs types" is a review rule or a runtime assertion, never a rule here.
 
 Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a plugin oxlint has not implemented (`perfectionist/*`, `pinia/*`, `unocss/*`); none of them individually costs meaningful time. `typescript/naming-convention` is parked as a commented-out block in `typescriptRules.js` — it was too expensive under typescript-eslint to ever ship, and is waiting on oxlint to support it.
 
@@ -45,7 +46,7 @@ On every oxlint / `eslint-plugin-oxlint` catalog bump:
 
 1. Re-measure with `TIMING=10` on the app ESLint run to see which rules now dominate.
 2. Check whether the top ESLint rules appear in `eslint-plugin-oxlint`'s generated rule maps (`dist/generated/rules-by-category.*` — including the `*TypeAwareRules` sets). If a rule is newly covered, it disappears from ESLint automatically via the appended config — verify with `eslint --print-config` on a sample file rather than editing anything.
-3. For custom rules (`neverthrow`, `no-restricted-syntax` selectors), evaluate oxlint's JS-plugin support as it matures — non-type-aware custom rules can move as soon as oxlint's plugin API supports the needed AST surface for `.vue` and `.ts` files.
+3. For custom rules (`no-restricted-syntax` selectors), evaluate oxlint's JS-plugin support as it matures — non-type-aware custom rules can move as soon as oxlint's plugin API supports the needed AST surface for `.vue` and `.ts` files.
 4. Remove ESLint-side manual `"off"` entries that only existed to duplicate oxlint coverage (they are dead weight once `eslint-plugin-oxlint` disables the rule).
 
 ## Key files

@@ -1,9 +1,8 @@
-import { WordFilteredError } from "@/models/WordFilteredError";
 import { db } from "@/services/db";
 import { getTableClient } from "@/services/getTableClient";
 import { executeAutomodAction, hasPermission } from "@esposter/db";
 import { AzureTable, DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, WordFilteredError } from "@esposter/shared";
 
 export const assertCanCreateMessage = async (userId: string, roomId: string, message: string): Promise<void> => {
   const [room, member, filter] = await Promise.all([

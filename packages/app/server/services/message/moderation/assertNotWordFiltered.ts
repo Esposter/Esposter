@@ -2,6 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
 import { executeAutomodAction } from "@@/server/services/message/moderation/executeAutomodAction";
+import { WordFilteredError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const assertNotWordFiltered = async (
@@ -25,6 +26,13 @@ export const assertNotWordFiltered = async (
       timeoutDurationMs: filter.timeoutDurationMs,
       userId,
     });
-    throw new TRPCError({ code: "FORBIDDEN", message: "Message contains blocked content." });
+    // The `cause` marks the one rejection that has already spent a consequence, so a caller re-checking a
+    // Stored message (send-now on a scheduled job) can burn the job rather than leave it for the worker to
+    // Block — and punish — a second time. Every other rejection is safe to re-run.
+    throw new TRPCError({
+      cause: new WordFilteredError("Message contains blocked content."),
+      code: "FORBIDDEN",
+      message: "Message contains blocked content.",
+    });
   }
 };

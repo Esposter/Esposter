@@ -1,6 +1,5 @@
 import type { ServiceBusQueueHandler } from "@azure/functions";
 
-import { WordFilteredError } from "@/models/WordFilteredError";
 import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
 import { createAndBroadcastMessage } from "@/services/createAndBroadcastMessage";
 import { db } from "@/services/db";
@@ -21,7 +20,7 @@ import {
   ScheduledMessageJobType,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, noop, WordFilteredError } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 
 export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (message, context) =>

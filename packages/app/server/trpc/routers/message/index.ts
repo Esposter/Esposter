@@ -122,6 +122,13 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
   ...roomIdSchema.shape,
 });
 
+const deleteUploadFilesInputSchema = z.object({
+  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true }), "id")
+    .min(1)
+    .max(MAX_READ_LIMIT),
+  ...roomIdSchema.shape,
+});
+
 const generateDownloadThumbnailSasUrlsInputSchema = z.object({
   files: createUniqueArraySchema(fileEntitySchema.pick({ id: true }), "id")
     .min(1)
@@ -235,6 +242,23 @@ export const baseMessageRouter = router({
         messageEntity.files.flatMap(({ filename, id }) => [
           getBlobName(`${messageEntity.partitionKey}/${id}`, filename),
           getThumbnailBlobName(messageEntity.partitionKey, id),
+        ]),
+      );
+    },
+  ),
+  // Reclaims blobs that were uploaded against a write SAS but never reached a message — the composer's revert
+  // Path. Nothing else can: every other deletion walks a persisted message entity's `files`, and an upload the
+  // Composer threw away is referenced by no entity at all, so the bytes would sit in the container until the
+  // Whole room is deleted. Membership is the only check available for the same reason, and it is enough: the
+  // Blob names are derived from the caller's room, so a member can only ever name blobs inside their own room
+  deleteUploadFiles: getMemberProcedure(deleteUploadFilesInputSchema, "roomId").mutation(
+    async ({ input: { files, roomId } }) => {
+      await publishBlobDeletion(
+        roomId,
+        AzureContainer.MessageAssets,
+        files.flatMap(({ filename, id }) => [
+          getBlobName(`${roomId}/${id}`, filename),
+          getThumbnailBlobName(roomId, id),
         ]),
       );
     },

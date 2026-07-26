@@ -27,7 +27,8 @@ import {
   ScheduledMessageJobType,
   scheduledMessageScheduledMessageJobPayloadSchema,
 } from "@esposter/db-schema";
-import { getResultAsync, Operation } from "@esposter/shared";
+import { getResultAsync, noop, Operation, WordFilteredError } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
 
 // Not yet cancelled, completed, or claimed by the delivery handler. `processingStartedAt` is what makes the claim
@@ -218,7 +219,16 @@ export const scheduledMessageJobRouter = router({
       // Afterwards, a rejection — non-member, slowmode, timeout, word filter — burns the job without ever
       // Sending its message, and nothing reschedules it: the send fails and the scheduled message is gone
       await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
-      await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, scheduledMessageJob.roomId, payload.message);
+      // The word filter is the exception: it already applied the room's automod action, and its inputs are
+      // Both stored, so leaving the job scheduled hands the worker the same block at `runAt` — a second
+      // Timeout and a second audit row for one message. Burn it here instead, exactly as the worker does
+      await getResultAsync(() =>
+        assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, scheduledMessageJob.roomId, payload.message),
+      ).match(noop, async (error) => {
+        if (error instanceof TRPCError && error.cause instanceof WordFilteredError)
+          await ctx.db.update(scheduledMessageJobsInMessage).set({ cancelledAt: new Date() }).where(where);
+        throw error;
+      });
       // The claim is this update, not the select above: `isCancellableScheduledMessage` excludes a job the
       // Delivery handler has already stamped, so a handler that wins the gap leaves nothing to cancel here and
       // The caller is told NOT_FOUND rather than both paths posting the same message
