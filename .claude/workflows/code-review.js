@@ -24,7 +24,7 @@ export const meta = {
   ],
 };
 
-// code-review: Scope → Find (barrier) → group-by-file → Verify → Sweep (xhigh/max) → Synthesize
+// code-review: Scope → Find (barrier) → group-by-file → Verify → Sweep (xhigh/max) → Resolve → Synthesize
 // Effort parameterization mirrors the inline /code-review cells. Correctness
 // keeps one finder per angle; cleanup is one finder covering all cleanup
 // angles, capped at (cleanup-angle count × perAngle) so the merged finder
