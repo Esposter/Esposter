@@ -1,3 +1,4 @@
+import type { ExecutedAutomodAction } from "@/models/message/moderation/ExecutedAutomodAction";
 import type { CustomTableClient, ModerationLogEntity, relations, RoomFilterInMessage } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
@@ -5,12 +6,6 @@ import { writeModerationLogEntry } from "@/services/message/moderation/writeMode
 import { AdminActionType, AUTOMOD_USER_ID, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, sql } from "drizzle-orm";
-
-export interface ExecutedAutomodAction {
-  durationMs?: number;
-  type: AdminActionType;
-}
-
 // Runs the automatic moderation action configured on a word filter when a non-privileged message matches.
 // The message itself is always rejected by the caller — this only records/executes the follow-up action, so
 // Every path that blocks a message (live send, forward, scheduled delivery) applies the same consequence.
