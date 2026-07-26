@@ -27,8 +27,17 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
   getResultAsync(async () => {
     const { id } = scheduledMessageJobQueueMessageSchema.parse(message);
     context.log(`${AzureFunction.ProcessScheduledMessageJob} dequeued job`, { id });
+    // Every column the claim below requires to be unset must be unset here too. This read gates the guards that
+    // Follow, and those guards have side effects — the word filter times the user out and writes an audit row —
+    // So a redelivery of an already-claimed job would apply them a second time before the claim rejected it,
+    // Punishing a user twice for one message. The claim stays authoritative; this only stops paying for it.
     const job = await db.query.scheduledMessageJobsInMessage.findFirst({
-      where: { cancelledAt: { isNull: true }, completedAt: { isNull: true }, id: { eq: id } },
+      where: {
+        cancelledAt: { isNull: true },
+        completedAt: { isNull: true },
+        id: { eq: id },
+        processingStartedAt: { isNull: true },
+      },
     });
     if (!job) {
       context.log(`${AzureFunction.ProcessScheduledMessageJob} skipped: no active job`, { id });

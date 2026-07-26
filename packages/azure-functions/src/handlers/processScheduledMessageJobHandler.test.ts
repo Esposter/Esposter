@@ -115,14 +115,17 @@ describe(processScheduledMessageJobHandler, () => {
     expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
   });
 
-  test("skips when job already claimed for processing", async () => {
+  // The claim is authoritative, but a claimed job must be skipped by the head read — everything between the two
+  // Runs guards with side effects (the word filter times the user out and writes an audit row), so reaching the
+  // Claim to lose the race means a redelivery punishes the user a second time for one message
+  test("skips a claimed job before running any guard", async () => {
     expect.hasAssertions();
 
     const logSpy = vi.spyOn(context, "log");
     const job = await insertJob(scheduledMessagePayload, { processingStartedAt: new Date("1970-01-01") });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
-    expect(logSpy).toHaveBeenCalledWith(`${AzureFunction.ProcessScheduledMessageJob} skipped: lost processing race`, {
+    expect(logSpy).toHaveBeenCalledWith(`${AzureFunction.ProcessScheduledMessageJob} skipped: no active job`, {
       id: job.id,
     });
     expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
