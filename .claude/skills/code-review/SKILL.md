@@ -20,6 +20,7 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "<level>
 ```
 
 - `level` — `high` (default), `xhigh`, or `max`. Post-merge PR audits in this project run `high` unless asked otherwise.
+- **The Find phase partitions itself by diff size** — nothing to pass. Below 50 changed files the finders split by _lens_ (one angle each over the whole diff), which is right while the territory is small enough that every finder reads every hunk. Above it they split by _seam_ — one finder per subsystem, tracing it end to end plus the boundary it hands data across, since lens-splitting a release-sized diff degenerates into parallel skims that all converge on whatever is loudest. Seam mode adds a whole-diff finder so a bad seam split cannot leave territory unread. The chosen mode is logged and lands in `stats.findMode`; a run is not comparable to another without it.
 - `target` — optional: PR number, branch, ref range, path, or free-form instructions (`"only review src/foo.ts"`). Omit for the working diff.
 - **Never `Workflow({ name: "code-review" })`** — name resolution always loads the built-in, which inherits the premium session model onto ~20 finder/verifier agents (verified 2026-07-17, ~1.46M tokens). The project script pins `model: "opus"` on every agent (execution role per the model-delegation skill).
 - `args: "probe"` exits instantly with `{ probe: true }` — free parse check after editing the script.
