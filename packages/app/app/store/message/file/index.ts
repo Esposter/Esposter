@@ -4,7 +4,8 @@ import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { Operation } from "@esposter/shared";
+import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
+import { getIsServer, Operation } from "@esposter/shared";
 import { api as viewerApi } from "v-viewer";
 
 export const useDownloadFileStore = defineStore("message/file", () => {
@@ -23,6 +24,27 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     if (!message) return;
     for (const { id } of message.files) fileUrlMap.value.delete(id);
   });
+
+  // Read SAS urls expire, and the only other thing that mints them is a page read — which skips every file it
+  // Already holds a url for. A room left open past the SAS duration would therefore render every attachment
+  // Broken and fail every download until reload. Sweeping re-mints only the entries inside the refresh margin;
+  // A tick that finds none issues no query at all, which is the overwhelmingly common case.
+  // The server renders once and discards the store, so the timer would only ever be a leak there.
+  if (!getIsServer())
+    useIntervalFn(async () => {
+      const roomId = roomStore.currentRoomId;
+      if (!roomId) return;
+
+      const expiredAt = Date.now() + READ_SAS_REFRESH_INTERVAL_MS;
+      const expiredFiles = dataStore.files.filter(({ id }) => {
+        const fileUrl = fileUrlMap.value.get(id);
+        return fileUrl && fileUrl.expiresAt <= expiredAt;
+      });
+      if (expiredFiles.length === 0) return;
+
+      const newFileUrlMap = await readFileUrls(expiredFiles, roomId);
+      for (const [id, fileUrl] of newFileUrlMap) fileUrlMap.value.set(id, fileUrl);
+    }, READ_SAS_REFRESH_INTERVAL_MS);
 
   const viewableFiles = computed(() => {
     const viewerImages: { alt: string; id: string; src: string }[] = [];

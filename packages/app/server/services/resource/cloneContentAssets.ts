@@ -12,6 +12,7 @@ import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { copyBlob } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 // The rewrite entry for one working-copy asset url, or nothing when the referenced blob is missing — a
 // Dangling reference (the asset was deleted but the content still embeds its url) is data like an
@@ -48,6 +49,12 @@ export const cloneContentAssets = async <TContent>(
   if (urls.size === 0) return content;
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  // Two source blobs can reduce to one destination: a working copy and a published snapshot of the same file
+  // Share everything from `files/` onwards, and content can embed both (a blueprint deploy, a pasted block).
+  // Left alone they would name one destination twice, and the two copies race it — Azure rejects the second
+  // With a pending-copy conflict and the whole clone unwinds. The loser is re-identified instead: nothing
+  // Reads the id back out of a blob name, and the rewrite map is what points content at it
+  const claimedDestinationBlobNames = new Set<string>();
   const updatedUrlEntries = await Promise.all(
     [...urls].flatMap((url) => {
       const resourceAssetPath = parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length));
@@ -57,7 +64,14 @@ export const cloneContentAssets = async <TContent>(
       // Would nest an unparseable published/{n}/published/{m} path
       if (!resourceAssetPath || (resourceAssetPath.isPublished && !isPublishedAssetCloned)) return [];
       const { blobName } = resourceAssetPath;
-      const destinationBlobName = `${destinationDirectoryName}/${blobName.slice(blobName.indexOf(`/${FILES_DIRECTORY_SEGMENT}/`) + 1)}`;
+      const filesRelativeName = blobName.slice(blobName.indexOf(`/${FILES_DIRECTORY_SEGMENT}/`) + 1);
+      let destinationBlobName = `${destinationDirectoryName}/${filesRelativeName}`;
+      if (claimedDestinationBlobNames.has(destinationBlobName)) {
+        const filename = filesRelativeName.slice(filesRelativeName.indexOf(ID_SEPARATOR) + 1);
+        destinationBlobName = `${destinationDirectoryName}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+      }
+
+      claimedDestinationBlobNames.add(destinationBlobName);
       return [cloneAsset(containerClient, url, blobName, destinationBlobName)];
     }),
   );
