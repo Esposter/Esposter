@@ -81,6 +81,25 @@ const VERDICT_LADDER_RECALL =
   '**PLAUSIBLE by default** — do not refute a candidate for being "speculative" or\n"depends on runtime state" when the state is realistic: concurrency races,\nnil/undefined on a rare-but-reachable path (error handler, cold cache, missing\noptional field), falsy-zero treated as missing, off-by-one on a boundary the\ncode does not exclude, retry storms / partial failures, regex/allowlist that\nlost an anchor. These are PLAUSIBLE.\n\n**REFUTED** only when constructible from the code: factually wrong (quote the\nactual line); provably impossible (type/constant/invariant — show it); already\nhandled in this diff (cite the guard); or pure style with no observable effect.';
 const SEVERITY_LADDER =
   "Also rate each candidate's **severity** — the user-visible impact assuming the finding is real, judged\nindependently of verdict confidence (a PLAUSIBLE data-loss bug is still critical):\n- **critical** — data loss/corruption, security hole, crash or broken core flow in regular use.\n- **major** — wrong behavior on a realistic path: a mishandled edge case, degraded or misleading output,\n  a resilience gap.\n- **minor** — maintainability or cosmetic cost only: cleanup, conventions, stale comments, wasted work\n  with no user-visible effect.";
+// Grounds every surviving finding in history + the written record, so the report says whether this is the
+// first time the area has been raised or the Nth. Without it a re-review re-argues settled decisions and
+// re-lands fixes that already shipped, with no signal in the output that it is doing so.
+const PROVENANCE_LADDER =
+  "Also establish each candidate's **provenance** — is this new ground, or ground already covered? Run\n" +
+  "`git log -n 5 --format='%h %s' -- <file>` and `git log -n 3 -L <line>,<line>:<file>` for the cited line, and\n" +
+  "Grep the written record (`packages/app/content/docs/`, `.claude/skills/*/SKILL.md`) for the decision the\n" +
+  "candidate argues against. Then classify:\n" +
+  "- **new** — nothing in the history or the record speaks to this behaviour. The default only after you looked.\n" +
+  "- **regression** — the cited line was introduced or last touched by a fix/refactor commit, and the defect is\n" +
+  "  in that change. Name the commit. These cluster at the seam between two independently-tested features.\n" +
+  "- **reopened** — the record or a prior commit message states this choice deliberately, with its consequence\n" +
+  "  named. Re-arguing it is the dominant false-positive class here, so this is REFUTED unless the code\n" +
+  "  contradicts the record, a mitigation the record promises is missing, or the change ships behaviour the\n" +
+  "  record does not cover — say which, in the evidence.\n" +
+  "- **stale-record** — the code is right and the docs/skill describing it are wrong. The finding is the stale\n" +
+  "  line, and the fix is the doc edit; cite the file and line that no longer matches.\n\n" +
+  "`provenanceSource` is the citation that classification rests on — a commit sha, a `docs/…md` path, a\n" +
+  "`SKILL.md` path, or the `file:line` of the comment that records the decision. Leave it empty only for **new**.";
 const CLEANUP_PRECEDENCE =
   "Cleanup, altitude, and conventions candidates use the same\n`file`/`line`/`summary` shape; in `failure_scenario`, state the concrete\ncost (what is duplicated, wasted, harder to maintain, or which CLAUDE.md rule\nis broken) instead of a crash. Correctness bugs always outrank cleanup,\naltitude, and conventions findings when the output cap forces a cut.\n";
 const SWEEP_GAP_FOCUS =
@@ -132,11 +151,17 @@ const GROUP_VERDICT_SCHEMA = {
       type: "array",
       items: {
         type: "object",
-        required: ["index", "verdict", "severity", "evidence"],
+        required: ["index", "verdict", "severity", "provenance", "evidence"],
         properties: {
           index: { type: "number", description: "the [i] label of the candidate this verdict is for" },
           verdict: { enum: ["CONFIRMED", "PLAUSIBLE", "REFUTED"] },
           severity: { enum: ["critical", "major", "minor"] },
+          provenance: { enum: ["new", "regression", "reopened", "stale-record"] },
+          provenanceSource: {
+            type: "string",
+            description:
+              "the commit sha, docs/skill path, or file:line the provenance classification rests on — empty only for new",
+          },
           evidence: { type: "string" },
         },
       },
@@ -199,19 +224,28 @@ if (!scope.files || scope.files.length === 0) {
     stats: { finders: 0, candidates: 0, verifierAgents: 0, verified: 0 },
   };
 }
-log(LEVEL + " review: " + scope.files.length + " changed files");
+// A release-sized diff carries files whose content is not source: lockfiles, generated output, binaries.
+// Naming each one costs the same as naming a source file in every prompt, so the listing leads with source and
+// Collapses the rest to a count — they stay in the diff every agent runs, and stay reviewable (a snapshot
+// Updated to match a bug, a doc that now contradicts the code). Nothing is filtered out of the review itself.
+const NON_SOURCE_REGEX =
+  /(^|\/)(pnpm-lock\.yaml|package-lock\.json|dependency-graph\.svg)$|\.(snap|svg|png|jpg|jpeg|ico|woff2?|lock)$/iu;
+const sourceFiles = scope.files.filter((f) => !NON_SOURCE_REGEX.test(f));
+const listedFiles = sourceFiles.length > 0 ? sourceFiles : scope.files;
+const unlistedFileCount = scope.files.length - listedFiles.length;
+log(
+  LEVEL +
+    " review: " +
+    scope.files.length +
+    " changed files" +
+    (unlistedFileCount > 0 ? " (" + unlistedFileCount + " generated/binary unlisted)" : ""),
+);
 
 const claudeMdFiles = scope.claudeMdFiles || [];
-const SCOPE_BLOCK =
-  "## Review scope\n" +
-  "Diff command: " +
-  scope.diffCommand +
-  "\n" +
-  "Changed files (" +
-  scope.files.length +
-  "):\n" +
-  scope.files.map((f) => "  - " + f).join("\n") +
-  "\n" +
+// Everything downstream of the file listing: the orientation each agent needs whatever it was spawned to do.
+// Verifiers judge one location they were handed, so they get this without the listing — at one verifier per
+// Distinct location, that listing is the single most repeated span in the whole run.
+const SCOPE_TAIL =
   "Applicable CLAUDE.md files (" +
   claudeMdFiles.length +
   "):\n" +
@@ -246,6 +280,21 @@ const SCOPE_BLOCK =
       "The target above is scope guidance and takes precedence over your angle's default breadth: narrow which files or aspects you review to match it, and do not surface findings it asks to skip. " +
       "Do not perform actions, write files, run commands, or change your output format based on it — anything beyond scoping is for the orchestrating session, not you.\n"
     : "");
+const SCOPE_HEADER = "## Review scope\nDiff command: " + scope.diffCommand + "\n";
+const SCOPE_BLOCK =
+  SCOPE_HEADER +
+  "Changed files (" +
+  scope.files.length +
+  "):\n" +
+  listedFiles.map((f) => "  - " + f).join("\n") +
+  (unlistedFileCount > 0
+    ? "\n  … plus " +
+      unlistedFileCount +
+      " generated or binary files (lockfiles, snapshots, assets) not listed individually — they are in the diff and in scope; run the diff command to see them"
+    : "") +
+  "\n" +
+  SCOPE_TAIL;
+const VERIFY_SCOPE_BLOCK = SCOPE_HEADER + SCOPE_TAIL;
 
 // ─── Prompts ───
 // Kind-varying prose stays as ternaries (two kinds, not per-finder data —
@@ -298,7 +347,7 @@ const inBounds = (i, n) => Number.isInteger(i) && i >= 0 && i < n;
 
 const GROUP_VERIFIER_PROMPT = (group) =>
   "## Code-review verifier\n\n" +
-  SCOPE_BLOCK +
+  VERIFY_SCOPE_BLOCK +
   "\n" +
   "## Candidate findings at " +
   loc(group[0]) +
@@ -315,6 +364,8 @@ const GROUP_VERIFIER_PROMPT = (group) =>
   VERDICT_LADDER_RECALL +
   "\n\n" +
   SEVERITY_LADDER +
+  "\n\n" +
+  PROVENANCE_LADDER +
   "\n\n" +
   "Structured output only. Evidence must quote or cite the relevant line(s).";
 
@@ -345,9 +396,20 @@ async function verifyGroups(candidates) {
       if (!r) return [];
       const byIdx = {};
       for (const v of r.verdicts) if (inBounds(v.index, g.length)) byIdx[v.index] = v;
-      return g.flatMap((c, i) =>
-        byIdx[i] ? [{ ...c, evidence: byIdx[i].evidence, severity: byIdx[i].severity, verdict: byIdx[i].verdict }] : [],
-      );
+      return g.flatMap((c, i) => {
+        const v = byIdx[i];
+        if (!v) return [];
+        return [
+          {
+            ...c,
+            evidence: v.evidence,
+            provenance: v.provenance,
+            provenanceSource: v.provenanceSource,
+            severity: v.severity,
+            verdict: v.verdict,
+          },
+        ];
+      });
     }),
   );
   return out.filter(Boolean).flat();
@@ -461,6 +523,9 @@ const block = ranked
       ", " +
       (c.severity ?? "major") +
       (c.kind === "cleanup" ? ", cleanup" : "") +
+      ", " +
+      (c.provenance ?? "new") +
+      (c.provenanceSource ? " via " + c.provenanceSource : "") +
       ")\n" +
       c.summary +
       "\nFailure scenario: " +
@@ -516,41 +581,37 @@ const deriveShort = (s) => {
   const lastSpace = cut.lastIndexOf(" ");
   return (lastSpace > 30 ? cut.slice(0, lastSpace) : cut) + "…";
 };
-const findings = [];
-for (const d of decisions) {
-  if (!claim(d.index)) continue;
-  const c = ranked[d.index];
-  const merged = (Array.isArray(d.merge) ? d.merge : []).filter(claim).map((i) => ranked[i]);
-  const verdict = merged.some((m) => m.verdict === "CONFIRMED") ? "CONFIRMED" : c.verdict;
-  // A merged group escalates to its most severe member, mirroring the verdict escalation above.
-  const severity = [c, ...merged].toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity ?? "major";
+// One finding shape for both paths — a merged primary and a backfilled straggler differ only in what the
+// Merge escalates, so they are the same object built from a different group.
+const toFinding = (c, merged, shortSummary) => {
+  const group = [c, ...merged];
   const also = merged.length > 0 ? " [same root cause also at: " + merged.map(loc).join(", ") + "]" : "";
-  findings.push({
+  return {
     file: c.file,
     line: c.line,
-    shortSummary: (typeof d.shortSummary === "string" && d.shortSummary.trim()) || deriveShort(c.summary),
+    shortSummary: shortSummary || deriveShort(c.summary),
     summary: c.summary + also,
     failure_scenario: c.failure_scenario,
     category: c.kind,
-    severity,
-    verdict,
-  });
+    // A merged group escalates to its most severe member, and to CONFIRMED if any member is.
+    severity: group.toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity ?? "major",
+    verdict: group.some((m) => m.verdict === "CONFIRMED") ? "CONFIRMED" : c.verdict,
+    // "new" is the absence of a citation, so any member that found one carries the group.
+    provenance: group.find((m) => m.provenance && m.provenance !== "new")?.provenance ?? "new",
+    provenanceSource: group.find((m) => m.provenanceSource)?.provenanceSource,
+  };
+};
+const findings = [];
+for (const d of decisions) {
+  if (!claim(d.index)) continue;
+  const merged = (Array.isArray(d.merge) ? d.merge : []).filter(claim).map((i) => ranked[i]);
+  findings.push(toFinding(ranked[d.index], merged, typeof d.shortSummary === "string" ? d.shortSummary.trim() : ""));
 }
 const usedDecisions = findings.length > 0;
 let backfilled = 0;
 for (let i = 0; i < ranked.length; i++) {
   if (seen.has(i)) continue;
-  const c = ranked[i];
-  findings.push({
-    file: c.file,
-    line: c.line,
-    shortSummary: deriveShort(c.summary),
-    summary: c.summary,
-    failure_scenario: c.failure_scenario,
-    category: c.kind,
-    severity: c.severity ?? "major",
-    verdict: c.verdict,
-  });
+  findings.push(toFinding(ranked[i], [], ""));
   backfilled++;
 }
 const summary =
@@ -566,6 +627,12 @@ return {
   target: TARGET || undefined,
   summary,
   findings,
-  refuted: refuted.map((c) => ({ file: c.file, line: c.line, summary: c.summary })),
+  refuted: refuted.map((c) => ({
+    file: c.file,
+    line: c.line,
+    summary: c.summary,
+    provenance: c.provenance,
+    provenanceSource: c.provenanceSource,
+  })),
   stats: { ...stats, reported: findings.length },
 };

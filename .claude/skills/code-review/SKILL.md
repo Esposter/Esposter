@@ -34,7 +34,7 @@ The finder/verifier agents carry this rule in their scope block, so grep both tr
 
 ## Closing a finding so the next review cannot reopen it
 
-A re-run over an already-fixed branch should surface only genuinely new defects. When it instead surfaces the same area again, it is almost always one of three failures — each with a fixed remedy:
+A re-run over an already-fixed branch should surface only genuinely new defects. The workflow labels each finding's `provenance` for exactly this: anything other than `new` means the review has been here before, and the label names which of the three failures below it is. When it surfaces the same area again, it is almost always one of them — each with a fixed remedy:
 
 - **The fix's claim was never pinned by a test.** A commit message that says "re-mint cached urls once the SAS expires" while the code only added an expiry check to a filter that nothing re-runs is a claim, not a behaviour. Every fix lands with a test that fails against the pre-fix code, or it is not done.
 - **The record still describes the old behaviour.** Docs and skills are the tiebreaker a verifier grep, so a stale line is worse than no line: it argues _for_ reopening. When a fix changes behaviour the docs describe, the doc edit is part of that fix, not follow-up.
@@ -46,15 +46,17 @@ The dominant defect class on a re-review is not a missed bug — it is a **regre
 
 0. **Always show the user every finding the workflow reports, and keep it short.** The workflow reports every finding that survives verification — there is no cap, and duplicates are merged onto one row rather than dropped. The final message is the compact table below — one row per reported finding and nothing per-finding beyond it. The Finding column is the workflow's `shortSummary` field rendered **verbatim** (it is already the ≤60-char claim — never substitute the longer `summary`, and never re-expand it into a sentence). No failure-scenario prose, no category column. Render `severity` as a color dot: 🔴 critical, 🟡 major, 🟢 minor (default 🟡 if absent). Sort by severity. Disposition is a few words; the commit hash is stated once in a single line under the table, never per-row. Do **not** write a paragraph per finding — add at most one line below the table, and only when a disposition needs the user to decide something (e.g. a deferred fix). Workflow-refuted candidates get one footnote line naming them, nothing more. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
 
+   The Origin column is the workflow's `provenance`, with `provenanceSource` as its citation — it is what stops a review from silently re-arguing itself. `new` is first contact. `regression` means the cited line came from an earlier fix, so the fix commit is where to look for the next one. `reopened` means the record already settled this and the finding survived anyway — say what the code does that the record does not cover, or the row is a false positive. `stale-record` means the code is right and the doc is wrong, so the fix is the doc edit. Render it as the label plus its source (`regression 57dcbd3`, `stale-record docs/architecture/publishing.md`); a bare `new` needs no source.
+
    **The table must actually render as a table.** Emit it flush-left at the top level of the final message — never indented, never nested inside a numbered/bulleted list item, blockquote, or code fence — with a blank line before the header row and after the last row. An indented or list-nested table is not parsed as a table by the terminal renderer and degrades into per-finding dot points, which is exactly the failure this format exists to prevent. Every row must have the same column count with `|` at both ends.
 
    ```markdown
-   | #   | Finding                                     | Where              | Severity    | Verdict   | Disposition                          |
-   | --- | ------------------------------------------- | ------------------ | ----------- | --------- | ------------------------------------ |
-   | 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED | Fixed                                |
-   | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | PLAUSIBLE | Fixed                                |
-   | 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | PLAUSIBLE | By-design (architecture/standard.md) |
-   | 4   | Comment names a deleted symbol              | helper.ts:6        | 🟢 minor    | CONFIRMED | Fixed                                |
+   | #   | Finding                                     | Where              | Severity    | Verdict   | Origin                             | Disposition                          |
+   | --- | ------------------------------------------- | ------------------ | ----------- | --------- | ---------------------------------- | ------------------------------------ |
+   | 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED | regression 57dcbd3                 | Fixed                                |
+   | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | PLAUSIBLE | new                                | Fixed                                |
+   | 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | PLAUSIBLE | reopened architecture/standard.md  | By-design (architecture/standard.md) |
+   | 4   | Comment names a deleted symbol              | helper.ts:6        | 🟢 minor    | CONFIRMED | stale-record readPublishHistory.ts | Fixed                                |
 
    Fixes committed as abc1234. Refuted by verifiers: removeThing timeout bound ×2, batch submission ordering.
    ```
