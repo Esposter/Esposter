@@ -2,6 +2,7 @@ import type { EventGridHandler } from "@azure/functions";
 
 import { getContainerClient } from "@/services/getContainerClient";
 import { logAndRethrow } from "@/services/logAndRethrow";
+import { listBlobNames } from "@esposter/db";
 import { AzureFunction, blobDeletionEventGridDataSchema } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 // A read SAS url outlives the delete request that should have invalidated it, so a blob whose delete was dropped stays
@@ -12,11 +13,14 @@ export const processBlobDeletionHandler: EventGridHandler = (event, context) => 
   // Written out verbatim on every delivery.
   context.log(`${AzureFunction.ProcessBlobDeletion} processed subject: `, event.subject);
   return getResultAsync(async () => {
-    const { blobNames, containerName } = blobDeletionEventGridDataSchema.parse(event.data);
-    const containerClient = await getContainerClient(containerName);
+    const data = blobDeletionEventGridDataSchema.parse(event.data);
+    const containerClient = await getContainerClient(data.containerName);
+    // A prefix event carries an unbounded set the publisher could not afford to enumerate on its request path,
+    // So the walk happens here — where a retry costs nothing and the time budget is the worker's, not a user's.
+    const blobNames = data.blobNames ?? (await listBlobNames(containerClient, data.prefix, { isDeep: true }));
     // Deleting only if the blob exists: a redelivery or a dead-letter replay re-runs the whole batch, and the blobs
     // An earlier attempt already removed must not fail the ones it did not reach.
     await Promise.all(blobNames.map((blobName) => containerClient.getBlockBlobClient(blobName).deleteIfExists()));
-    context.log(`${AzureFunction.ProcessBlobDeletion} deleted ${blobNames.length} blobs from ${containerName}.`);
+    context.log(`${AzureFunction.ProcessBlobDeletion} deleted ${blobNames.length} blobs from ${data.containerName}.`);
   }).match(noop, logAndRethrow(context, AzureFunction.ProcessBlobDeletion));
 };

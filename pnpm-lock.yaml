@@ -1497,6 +1497,9 @@ importers:
       '@azure/core-client':
         specifier: 'catalog:'
         version: 1.11.0(supports-color@10.2.2)
+      '@azure/core-rest-pipeline':
+        specifier: 'catalog:'
+        version: 1.25.0(supports-color@10.2.2)
       '@azure/data-tables':
         specifier: 'catalog:'
         version: 13.3.2(supports-color@10.2.2)

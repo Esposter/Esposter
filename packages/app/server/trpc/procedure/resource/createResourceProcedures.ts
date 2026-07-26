@@ -15,6 +15,7 @@ import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
+import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
 import { on } from "@@/server/services/events/on";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -31,7 +32,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { generateUploadFileSasEntities, listBlobNames } from "@esposter/db";
+import { generateUploadFileSasEntities } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -392,10 +393,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
       // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
       // Still holding a cached short-lived SAS, and unpublished snapshots must not linger regardless — cleanup
       // Goes through the one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)
-      await publishBlobDeletion(id, AzureContainer.ResourceAssets, async () => {
-        const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-        return listBlobNames(containerClient, `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`, { isDeep: true });
-      });
+      // The snapshot directory grows with every retained publication, so the handler enumerates it — walking
+      // It here would put an unbounded listing on the unpublish request itself
+      await publishBlobPrefixDeletion(id, AzureContainer.ResourceAssets, `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`);
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,

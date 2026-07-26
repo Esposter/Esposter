@@ -1,27 +1,12 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
+import { mockTrpcProcedure } from "#shared/test/mockTrpcClient";
 import { useDataStore } from "@/store/message/data";
 import { useDownloadFileStore } from "@/store/message/file";
 import { createMessageEntity, MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-
-const { generateDownloadFileSasUrlsQueryMock, generateDownloadThumbnailSasUrlsQueryMock } = vi.hoisted(() => ({
-  generateDownloadFileSasUrlsQueryMock: vi.fn(),
-  generateDownloadThumbnailSasUrlsQueryMock: vi.fn(),
-}));
-
-// The tRPC client the plugin builds is a real HTTP client the test env cannot serve.
-vi.mock(import("trpc-nuxt/client"), async (importOriginal) => ({
-  ...(await importOriginal()),
-  createTRPCNuxtClient: () => ({
-    message: {
-      generateDownloadFileSasUrls: { query: generateDownloadFileSasUrlsQueryMock },
-      generateDownloadThumbnailSasUrls: { query: generateDownloadThumbnailSasUrlsQueryMock },
-    },
-  }),
-}));
 
 describe(useDownloadFileStore, () => {
   let router: Router;
@@ -39,9 +24,8 @@ describe(useDownloadFileStore, () => {
     vi.useFakeTimers();
     setActivePinia(createPinia());
     router.currentRoute.value.params.id = roomId;
-    // Hoisted mocks outlive restoreAllMocks, so reset their call history alongside their implementation.
-    generateDownloadFileSasUrlsQueryMock.mockReset().mockResolvedValue([freshUrl]);
-    generateDownloadThumbnailSasUrlsQueryMock.mockReset().mockResolvedValue([]);
+    mockTrpcProcedure("message.generateDownloadFileSasUrls.query").mockResolvedValue([freshUrl]);
+    mockTrpcProcedure("message.generateDownloadThumbnailSasUrls.query").mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -83,6 +67,6 @@ describe(useDownloadFileStore, () => {
     fileUrlMap.value.set(fileId, { expiresAt: Date.now() + READ_SAS_REFRESH_INTERVAL_MS * 10, url: staleUrl });
     await vi.advanceTimersByTimeAsync(READ_SAS_REFRESH_INTERVAL_MS);
 
-    expect(generateDownloadFileSasUrlsQueryMock).not.toHaveBeenCalled();
+    expect(mockTrpcProcedure("message.generateDownloadFileSasUrls.query")).not.toHaveBeenCalled();
   });
 });

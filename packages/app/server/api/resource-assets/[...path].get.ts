@@ -44,25 +44,31 @@ export default defineEventHandler(async (event) => {
       );
   }
 
+  // What "the caller owns this resource" means must have exactly one definition — both branches fall back to
+  // It, and a change made to only one of them would silently open or close access for a single asset kind
+  const assertOwnsResource = async () => {
+    const resource = await db.query.resources.findFirst({
+      where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: getSessionPayload?.user.id } },
+    });
+    if (!resource) throw createError({ statusCode: 404 });
+  };
+
   if (isPublished) {
     // Published assets must stay anonymous-capable while a publication row exists: published views render in
     // A sandboxed srcdoc iframe whose opaque origin sends no cookies with asset requests. Without the row the
-    // Owner can still preview retained snapshots (the view route's version query param)
+    // Owner can still preview retained snapshots (the view route's version query param).
+    //
+    // Read per request, never cached: unpublish revokes anonymous access, and a cache would keep serving the
+    // Assets of an unpublished resource for its whole lifetime. Revocation has to be immediate to be a control
     const publication = await db.query.resourcePublications.findFirst({ where: { resourceId: { eq: resourceId } } });
     if (!publication) {
       if (!getSessionPayload) throw createError({ statusCode: 404 });
-      const resource = await db.query.resources.findFirst({
-        where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: getSessionPayload.user.id } },
-      });
-      if (!resource) throw createError({ statusCode: 404 });
+      await assertOwnsResource();
     }
   } else {
     // Working-copy assets are only ever rendered inside the owner's editor (same-origin, cookies present)
     if (!getSessionPayload) throw createError({ statusCode: 401 });
-    const resource = await db.query.resources.findFirst({
-      where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: getSessionPayload.user.id } },
-    });
-    if (!resource) throw createError({ statusCode: 404 });
+    await assertOwnsResource();
   }
 
   // No existence probe — Azure itself 404s a missing blob when the redirect is followed

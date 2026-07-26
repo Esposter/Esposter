@@ -120,6 +120,14 @@ Every row inserted in setup must be removed in the teardown hook of the **same s
 - **Delete only root tables; let cascades handle the rest** — when a child FK is `onDelete: "cascade"`, deleting the parent removes children, so don't add explicit `delete(childTable)`. E.g. deleting `users` and `roomsInMessage` already removes `usersToRoomsInMessage` (and `scheduledMessageJobsInMessage`) rows.
 - **UUID identifiers as `const` at `describe` scope, never `let` in `beforeAll`** — `crypto.randomUUID()` doesn't depend on async setup: `const userId = crypto.randomUUID()`. Only genuinely async-initialized values (e.g. `mockDb = await createMockDb()`) stay as `let` inside `beforeAll`.
 
+## What to mock
+
+Mock the **smallest seam that makes the behaviour under test reachable**, and never re-declare a mock another file already owns.
+
+- **tRPC calls — never mock the client per file.** `shared/test/setup.ts` already substitutes the plugin's HTTP client for an auto-vivifying stand-in, so a test names only the one call it drives: `mockTrpcProcedure("message.createMessage.mutate").mockResolvedValueOnce({})`. Procedure identity is stable per path, so the same expression is both the stub and the assertion target, and `setup.ts` resets every procedure between tests. A colocated `vi.mock(import("trpc-nuxt/client"), …)` is always a duplicate of that.
+- **Prefer driving state over mocking a getter** — a store's derived state usually has a real input to set (`router.currentRoute.value.params.id = roomId` gives the room stores a current room). `vi.spyOn(store, "prop", "get")` breaks `storeToRefs`, which reads the underlying ref rather than the spied accessor.
+- **Mock a module only for what the environment genuinely cannot do** — a canvas downscale, a network PUT, a clock. If a fake is only saving setup lines, build the real input instead.
+
 ## Mock Cleanup
 
 Pick cleanup based on **how the mock was created**:

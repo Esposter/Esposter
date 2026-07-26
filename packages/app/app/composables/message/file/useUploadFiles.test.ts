@@ -1,27 +1,13 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
+import { mockTrpcProcedure } from "#shared/test/mockTrpcClient";
 import { useUploadFiles } from "@/composables/message/file/useUploadFiles";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { deleteUploadFilesMutationMock, generateUploadFileSasEntitiesQueryMock, uploadBlocksMock } = vi.hoisted(() => ({
-  deleteUploadFilesMutationMock: vi.fn(),
-  generateUploadFileSasEntitiesQueryMock: vi.fn(),
-  uploadBlocksMock: vi.fn(),
-}));
-
-// The tRPC client the plugin builds is a real HTTP client the test env cannot serve.
-vi.mock(import("trpc-nuxt/client"), async (importOriginal) => ({
-  ...(await importOriginal()),
-  createTRPCNuxtClient: () => ({
-    message: {
-      deleteUploadFiles: { mutate: deleteUploadFilesMutationMock },
-      generateUploadFileSasEntities: { query: generateUploadFileSasEntitiesQueryMock },
-    },
-  }),
-}));
+const { uploadBlocksMock } = vi.hoisted(() => ({ uploadBlocksMock: vi.fn() }));
 
 vi.mock(import("@/services/azure/container/uploadBlocks"), () => ({ uploadBlocks: uploadBlocksMock }));
 // Thumbnail generation runs off a canvas the test env has no renderer for, and every case here drives the
@@ -45,7 +31,7 @@ describe(useUploadFiles, () => {
     // The room store reads the current room off the route; an unlisted room falls back to the platform cap,
     // Which is all this composable needs from it.
     router.currentRoute.value.params.id = roomId;
-    generateUploadFileSasEntitiesQueryMock.mockResolvedValue([
+    mockTrpcProcedure("message.generateUploadFileSasEntities.query").mockResolvedValue([
       { id: fileId, sasUrl: "https://sas.url/original", thumbnailSasUrl: "https://sas.url/thumbnail" },
     ]);
     globalThis.URL.createObjectURL = vi.fn(() => "blob:url");
@@ -73,7 +59,7 @@ describe(useUploadFiles, () => {
     await useUploadFiles()([createFile()]);
 
     expect(files.value).toHaveLength(1);
-    expect(deleteUploadFilesMutationMock).not.toHaveBeenCalled();
+    expect(mockTrpcProcedure("message.deleteUploadFiles.mutate")).not.toHaveBeenCalled();
   });
 
   // A revert drops the only reference to blobs that already reached storage — the composer is the sole holder
@@ -87,6 +73,9 @@ describe(useUploadFiles, () => {
     await useUploadFiles()([createFile()]);
 
     expect(files.value).toHaveLength(0);
-    expect(deleteUploadFilesMutationMock).toHaveBeenCalledWith({ files: [{ filename, id: fileId }], roomId });
+    expect(mockTrpcProcedure("message.deleteUploadFiles.mutate")).toHaveBeenCalledWith({
+      files: [{ filename, id: fileId }],
+      roomId,
+    });
   });
 });

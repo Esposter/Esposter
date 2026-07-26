@@ -15,6 +15,8 @@ export const publishBlobDeletion = async (
 ): Promise<void> => {
   await getResultAsync(async () => {
     const blobNamesValue = typeof blobNames === "function" ? await blobNames() : blobNames;
+    if (blobNamesValue.length === 0) return;
+
     const eventGridPublisherClient = useEventGridPublisherClient();
     for (let index = 0; index < blobNamesValue.length; index += MAX_BLOB_DELETION_EVENT_BLOB_NAMES) {
       const data: BlobDeletionEventGridData = {

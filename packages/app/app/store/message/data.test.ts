@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
+import { mockTrpcProcedure } from "#shared/test/mockTrpcClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
@@ -16,14 +17,6 @@ interface MockSessionValue {
   data?: { user: { id: string } };
 }
 const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => Ref<MockSessionValue>>() }));
-// The tRPC client is the plugin's real HTTP client, so any test that lets a mutation through would issue a
-// Fetch the test env cannot serve. Stub the client the plugin builds, leaving the rest of the module intact.
-const { createMessageMutationMock } = vi.hoisted(() => ({ createMessageMutationMock: vi.fn() }));
-
-vi.mock(import("trpc-nuxt/client"), async (importOriginal) => ({
-  ...(await importOriginal()),
-  createTRPCNuxtClient: () => ({ message: { createMessage: { mutate: createMessageMutationMock } } }),
-}));
 
 vi.mock(import("@/services/auth/authClient"), () => ({
   authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
@@ -99,7 +92,7 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { createMessage } = dataStore;
-    createMessageMutationMock.mockResolvedValueOnce({});
+    mockTrpcProcedure("message.createMessage.mutate").mockResolvedValueOnce({});
     vi.spyOn(useThreadFollowStore(), "storeFollowThread").mockImplementationOnce(() => {
       throw new Error(message);
     });
