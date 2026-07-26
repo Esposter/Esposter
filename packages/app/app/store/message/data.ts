@@ -19,7 +19,7 @@ import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
-import { getResult, getResultAsync, noop, Operation } from "@esposter/shared";
+import { getResultAsync, Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
@@ -59,16 +59,10 @@ export const useDataStore = defineStore("message/data", () => {
         delete newMessage.isLoading;
         // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
-        // Best-effort: the message is already sent, so a failure here costs a stale Follow label, and neither
-        // Rolling the bubble back nor rejecting the send would be a truthful way to report it. The wrapper is
-        // Load-bearing rather than defensive about today's implementation — it is what the "keeps the message
-        // When a step after the mutation rejects" test drives, and it is the boundary that keeps a future throw
-        // Inside the follow store from un-sending a message that exists on the server
+        // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
+        // Added here is best-effort, never a rollback — the message already exists on the server
         const { replyRowKey } = input;
-        if (replyRowKey)
-          getResult(() => {
-            threadFollowStore.storeFollowThread(input.roomId, replyRowKey);
-          }).match(noop, console.error);
+        if (replyRowKey) threadFollowStore.storeFollowThread(input.roomId, replyRowKey);
         return true;
       },
       (error) => {

@@ -42,13 +42,12 @@ export const useVotePoll = async (
             rowKey: messageValue.rowKey,
           });
         }).match(noop, async (error) => {
-          await getResultAsync(() =>
-            storeUpdateMessage({
-              message: previousMessage,
-              partitionKey: messageValue.partitionKey,
-              rowKey: messageValue.rowKey,
-            }),
-          ).match(noop, console.error);
+          // A local store write with no I/O behind it, so it needs no error boundary of its own
+          await storeUpdateMessage({
+            message: previousMessage,
+            partitionKey: messageValue.partitionKey,
+            rowKey: messageValue.rowKey,
+          });
           // The radio group binds vote directly, so a rethrow here is an unhandled rejection the user never sees
           createAlert(error.message, "error");
         }),

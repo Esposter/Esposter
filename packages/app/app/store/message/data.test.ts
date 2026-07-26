@@ -81,17 +81,15 @@ describe(useDataStore, () => {
     expect(items.value).toHaveLength(0);
   });
 
-  // The crossing of two features: the optimistic bubble rolls back on failure, and a successful create also
-  // Runs local bookkeeping (thread auto-follow). Once the mutation resolves the message exists on the server,
-  // And the sender's own subscription echo is filtered out — so a rollback past that point hides a sent
-  // Message from the only person who cannot get it back, and invites them to send a duplicate.
-  test("createMessage keeps the message when a step after the mutation rejects", async () => {
+  // A successful create also mirrors the server's thread auto-follow, so the reply's root is followed locally
+  // Without the round trip the drawer would otherwise need
+  test("createMessage mirrors the thread auto-follow of a reply", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
     useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
     const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
+    const threadFollowStore = useThreadFollowStore();
     const { createMessage } = dataStore;
     const replyRowKey = crypto.randomUUID();
     server.use(
@@ -99,13 +97,10 @@ describe(useDataStore, () => {
         createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
       ),
     );
-    vi.spyOn(useThreadFollowStore(), "storeFollowThread").mockImplementationOnce(() => {
-      throw new Error(message);
-    });
     const isCreated = await createMessage({ files: [], message, replyRowKey, roomId, type: MessageType.Message });
 
     expect(isCreated).toBe(true);
-    expect(items.value).toHaveLength(1);
+    expect(threadFollowStore.checkIsFollowing(roomId, replyRowKey)).toBe(true);
   });
 
   // Only the sender's own message renders ahead of its hooks — it has a loading bubble to keep responsive and a
