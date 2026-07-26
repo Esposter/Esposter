@@ -3,13 +3,20 @@ import type { TRPCLink } from "@trpc/client";
 
 import { TRPC_WS_PATH } from "#shared/services/trpc/constants";
 import { transformer } from "#shared/services/trpc/transformer";
-import { IS_PRODUCTION } from "#shared/util/environment/constants";
+import { IS_PRODUCTION, IS_TEST } from "#shared/util/environment/constants";
 import { TRPCOfflineClientError } from "@/models/trpc/TRPCOfflineClientError";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
 import { createOfflineLink } from "@/services/trpc/offlineLink";
 import { getIsServer } from "@esposter/shared";
-import { createWSClient, isNonJsonSerializable, loggerLink, splitLink, wsLink } from "@trpc/client";
+import {
+  createWSClient,
+  isNonJsonSerializable,
+  loggerLink,
+  splitLink,
+  httpLink as trpcHttpLink,
+  wsLink,
+} from "@trpc/client";
 import { createTRPCNuxtClient, httpBatchLink, httpLink } from "trpc-nuxt/client";
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -31,11 +38,18 @@ export default defineNuxtPlugin((nuxtApp) => {
     ...(getIsServer() ? [] : [createOfflineLink(online)]),
     errorLink,
   ];
-  const httpSplitLink = splitLink({
-    condition: ({ input }) => isNonJsonSerializable(input),
-    false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
-    true: httpLink({ transformer, url: TRPC_CLIENT_PATH }),
-  });
+  // Under test the client talks to the network so a test can answer it there, exercising the real links and
+  // Transformer rather than a stand-in client. Two things have to give way for that: trpc-nuxt's links wrap
+  // Nuxt's `$fetch`, which resolves internally and never reaches an interceptor, and batching puts several
+  // Procedures behind one url that no per-procedure handler can match. Both are transport concerns, so
+  // Nothing a test asserts on changes — but the url must be absolute, since node's fetch cannot take a path
+  const httpSplitLink = IS_TEST
+    ? trpcHttpLink({ transformer, url: `${window.location.origin}${TRPC_CLIENT_PATH}` })
+    : splitLink({
+        condition: ({ input }) => isNonJsonSerializable(input),
+        false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
+        true: httpLink({ transformer, url: TRPC_CLIENT_PATH }),
+      });
 
   if (getIsServer()) links.push(httpSplitLink);
   else {

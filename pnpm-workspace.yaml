@@ -6,6 +6,8 @@ allowBuilds:
   better-sqlite3: true
   core-js: true
   esbuild: true
+  # Its postinstall only writes the browser service worker (`msw init public/`); tests intercept in node
+  msw: false
   protobufjs: true
   sharp: true
   unrs-resolver: true
@@ -175,6 +177,8 @@ catalog:
   mime-types: ^3.0.2
   minisearch: ^7.2.0
   mjml-browser: ^5.4.0
+  msw: ^2.15.0
+  msw-trpc: ^2.0.1
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
   node-html-parser: ^9.0.0

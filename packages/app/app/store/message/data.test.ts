@@ -2,7 +2,9 @@
 import type { Router } from "vue-router";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";
+import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
+import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
@@ -21,6 +23,7 @@ vi.mock(import("@/services/auth/authClient"), () => ({
 }));
 
 describe(useDataStore, () => {
+  const server = setupMswTrpc();
   let router: Router;
   const roomId = crypto.randomUUID();
   const message = "message";
@@ -72,10 +75,37 @@ describe(useDataStore, () => {
     // A Create hook fetches attachment download URLs over the network; a rejection there must roll the
     // Optimistically-rendered bubble back out instead of leaving a permanent loading entity in the list.
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockRejectedValueOnce(new Error(message));
-    const created = await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    const isCreated = await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
-    expect(created).toBe(false);
+    expect(isCreated).toBe(false);
     expect(items.value).toHaveLength(0);
+  });
+
+  // The crossing of two features: the optimistic bubble rolls back on failure, and a successful create also
+  // Runs local bookkeeping (thread auto-follow). Once the mutation resolves the message exists on the server,
+  // And the sender's own subscription echo is filtered out — so a rollback past that point hides a sent
+  // Message from the only person who cannot get it back, and invites them to send a duplicate.
+  test("createMessage keeps the message when a step after the mutation rejects", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { createMessage } = dataStore;
+    const replyRowKey = crypto.randomUUID();
+    server.use(
+      trpcMsw.message.createMessage.mutation(() =>
+        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      ),
+    );
+    vi.spyOn(useThreadFollowStore(), "storeFollowThread").mockImplementationOnce(() => {
+      throw new Error(message);
+    });
+    const isCreated = await createMessage({ files: [], message, replyRowKey, roomId, type: MessageType.Message });
+
+    expect(isCreated).toBe(true);
+    expect(items.value).toHaveLength(1);
   });
 
   test("storeUpdateMessage is idempotent", async () => {
