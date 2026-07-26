@@ -6,7 +6,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 // The unbounded counterpart to `publishBlobDeletion`: publishes the prefix itself so the handler enumerates
 // It. A caller whose blob set has no ceiling — a room's entire attachment directory — must never walk it
-// inline, because the listing and every event it chunks into land on the request path with the caller's
+// Inline, because the listing and every event it chunks into land on the request path with the caller's
 // Response waiting on them. Same best-effort, post-persist contract
 // (/docs/architecture/persist-then-notify): a dropped publish orphans blobs, never the mutation that landed.
 export const publishBlobPrefixDeletion = async (

@@ -8,10 +8,12 @@ import { z } from "zod";
 // Directory can hold more blobs than a request has time to enumerate, let alone chunk into events, so the
 // Prefix is published instead and the handler does the listing. That puts the walk where the retries and the
 // Time budget are, rather than blocking a mutation's response on it.
-export type BlobDeletionEventGridData = { containerName: AzureContainer } & (
+export type BlobDeletionEventGridData = (
   | { blobNames: string[]; prefix?: never }
   | { blobNames?: never; prefix: string }
-);
+) & {
+  containerName: AzureContainer;
+};
 
 export const blobDeletionEventGridDataSchema = z.union([
   z.object({

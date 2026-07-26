@@ -22,7 +22,7 @@ const provisionContainerClient = async (connectionString: string, azureContainer
 // Concurrent callers share one round trip instead of racing their own
 const containerClientMap = new Map<string, Promise<ContainerClient>>();
 
-export const getContainerClient = async (
+export const getContainerClient = (
   connectionString: string,
   azureContainer: AzureContainer,
 ): Promise<ContainerClient> => {

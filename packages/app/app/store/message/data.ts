@@ -61,11 +61,11 @@ export const useDataStore = defineStore("message/data", () => {
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
         // Best-effort: the message is already sent, so a failure here costs a stale Follow label, and neither
         // Rolling the bubble back nor rejecting the send would be a truthful way to report it
-        if (input.replyRowKey)
-          getResult(() => threadFollowStore.storeFollowThread(input.roomId, input.replyRowKey)).match(
-            noop,
-            console.error,
-          );
+        const { replyRowKey } = input;
+        if (replyRowKey)
+          getResult(() => {
+            threadFollowStore.storeFollowThread(input.roomId, replyRowKey);
+          }).match(noop, console.error);
         return true;
       },
       (error) => {

@@ -334,7 +334,10 @@ describe("room", () => {
     expect(deletedRoom.id).toBe(newRoom.id);
   });
 
-  test("publishes one deletion event per blob name chunk on delete", async () => {
+  // However many attachments a room holds, its delete publishes one prefix event and never enumerates them.
+  // Walking the directory here would put an unbounded listing — and the events it chunks into — on the
+  // Owner's request; the handler does it instead, where a retry is free and the time budget is not a user's.
+  test("publishes a single prefix deletion event for the room's attachments on delete", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -350,13 +353,10 @@ describe("room", () => {
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert(blobDeletionEvents);
 
-    expect(blobDeletionEvents).toHaveLength(2);
-    expect((takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).blobNames).toHaveLength(
-      MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
-    );
-    expect(takeOne(blobDeletionEvents, 1).data as BlobDeletionEventGridData).toStrictEqual({
-      blobNames: [takeOne(blobNames, MAX_BLOB_DELETION_EVENT_BLOB_NAMES)],
+    expect(blobDeletionEvents).toHaveLength(1);
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       containerName: AzureContainer.MessageAssets,
+      prefix: newRoom.id,
     });
   });
 
@@ -378,8 +378,15 @@ describe("room", () => {
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert(blobDeletionEvents);
 
-    expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+    // Profile images stay a resolved list — they are a handful, and their sweep reaches a pre-cutover flat
+    // Name that sits outside the room's prefix, so a prefix walk would miss it. The room's attachments go
+    // Out as the prefix event alongside it.
+    const profileImageDeletionEvents = blobDeletionEvents.filter(
+      ({ data }) => (data as BlobDeletionEventGridData).containerName === AzureContainer.PublicUserAssets,
+    );
+
+    expect(profileImageDeletionEvents).toHaveLength(1);
+    expect(takeOne(profileImageDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [blobName, legacyBlobName],
       containerName: AzureContainer.PublicUserAssets,
     });

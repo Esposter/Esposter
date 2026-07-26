@@ -71,6 +71,6 @@ describe(cloneContentAssets, () => {
     await cloneContentAssets(content, destinationDirectoryName, true);
 
     // Never under the copy's own published prefix — unpublishing wipes that directory.
-    expect(await getClonedBlobNames()).toStrictEqual([`${destinationDirectoryName}/${filesRelativeName}`]);
+    await expect(getClonedBlobNames()).resolves.toStrictEqual([`${destinationDirectoryName}/${filesRelativeName}`]);
   });
 });

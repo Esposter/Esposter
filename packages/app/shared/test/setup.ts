@@ -1,18 +1,7 @@
 import { Environment } from "#shared/models/environment/Environment";
-import { mockTrpcClient, resetMockTrpcProcedures } from "#shared/test/mockTrpcClient";
 import { getIsServer } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
-
-// Stand in for the tRPC plugin's real HTTP client everywhere, so no test can accidentally issue a request.
-// The stand-in answers any procedure path, which no router type can describe — the cast is the mock seam.
-vi.mock(import("trpc-nuxt/client"), async (importOriginal) => {
-  const trpcNuxtClient = await importOriginal();
-  return {
-    ...trpcNuxtClient,
-    createTRPCNuxtClient: (() => mockTrpcClient) as typeof trpcNuxtClient.createTRPCNuxtClient,
-  };
-});
 
 // The nuxt test env provides `window`/`document`/`DOMParser` but not `localStorage`/`sessionStorage`,
 // So install a minimal in-memory `Storage` — cheaper than registering a full DOM, harmless in node.
@@ -97,8 +86,6 @@ if (!getIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUXT_
 afterEach(() => {
   globalThis.localStorage.clear();
   globalThis.sessionStorage.clear();
-  // The client outlives restoreAllMocks, so its procedures need their own reset between tests.
-  resetMockTrpcProcedures();
 });
 
 afterAll(() => {
