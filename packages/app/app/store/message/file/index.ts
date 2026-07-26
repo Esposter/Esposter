@@ -1,4 +1,4 @@
-import type { DownloadFileUrl } from "@/models/message/file/DownloadFileUrl";
+import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
 
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -11,7 +11,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();
   const dataStore = useDataStore();
   const readFileUrls = useReadFileUrls();
-  const { data: fileUrlMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, DownloadFileUrl>());
+  const { data: fileUrlMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, ReadFileUrl>());
   MessageHookMap[Operation.Create].register(async (message) => {
     if (!roomStore.currentRoomId || message.files.length === 0) return;
 

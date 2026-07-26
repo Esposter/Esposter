@@ -2,11 +2,12 @@ import type { BlobGenerateSasUrlOptions, BlockBlobClient } from "@azure/storage-
 
 import { dayjs } from "@/services/dayjs";
 import { BlobSASPermissions } from "@azure/storage-blob";
+import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { encodeUrlSubDelimiters } from "@esposter/shared";
 
-// Every read SAS shares one signer. The day-long default bounds how long a handed-out message-attachment
-// Url stays live (clients re-fetch per read, so it only has to outlast a long-open session), and callers
-// Serving per-request redirects override expiresOn down to a minutes-scale window. Encoding the
+// Every read SAS shares one signer. READ_SAS_DURATION_MS bounds how long a handed-out message-attachment
+// Url stays live (clients re-mint a cached url once it nears that expiry), and callers serving per-request
+// Redirects override expiresOn down to a minutes-scale window. Encoding the
 // Sub-delimiters is transparent to Azure, which decodes the request before validating the signature, so
 // Every url we hand out is canonical and matchable inside serialized content
 export const generateReadSasUrl = async (
@@ -15,7 +16,7 @@ export const generateReadSasUrl = async (
 ) =>
   encodeUrlSubDelimiters(
     await blockBlobClient.generateSasUrl({
-      expiresOn: dayjs().add(1, "day").toDate(),
+      expiresOn: dayjs().add(READ_SAS_DURATION_MS, "ms").toDate(),
       ...options,
       permissions: BlobSASPermissions.from({ read: true }),
     }),

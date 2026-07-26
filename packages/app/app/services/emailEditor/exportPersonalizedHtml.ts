@@ -15,8 +15,9 @@ export const exportPersonalizedHtml = (
   resource: Resource,
   rows: Record<string, ColumnValue>[],
 ): number => {
-  // Asset urls are absolutized so the downloaded artifact resolves them outside the app origin — they render
-  // For owner sessions; durable public asset urls are the email-sending follow-on
+  // Asset urls are absolutized so the downloaded artifact points back at the app instead of resolving relative
+  // To wherever the file was opened. They only load where the request carries the owner's session cookie, so a
+  // File opened straight off disk shows broken images — durable public asset urls are the email-sending follow-on
   const html = getEmailHtml(editor).replaceAll(RESOURCE_ASSET_URL_REGEX, (url) => `${window.location.origin}${url}`);
   const filename = sanitizeFilename(resource.name);
   const zip = zipSync(

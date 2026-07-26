@@ -239,6 +239,26 @@ describe("room", () => {
     expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
   });
 
+  test("publishes the replaced profile image younger than the write sas", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    // Uploaded through the client, so the mock dates it now — the age filter alone would never collect it
+    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+    await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
+    const { publicUrl: replacementPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    await roomCaller.updateRoom({ id: newRoom.id, image: replacementPublicUrl });
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [blobName],
+      containerName: AzureContainer.PublicUserAssets,
+    });
+  });
+
   test("keeps a profile image blob younger than the write sas out of the deletion sweep", async () => {
     expect.hasAssertions();
 
@@ -345,14 +365,22 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
-    MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    // Images uploaded before the per-upload prefix existed sit at the flat name and are swept alongside it
+    const legacyBlobName = `${newRoom.id}/ProfileImage`;
+    MockContainerDatabase.set(
+      AzureContainer.PublicUserAssets,
+      new Map([
+        [blobName, Buffer.alloc(0)],
+        [legacyBlobName, Buffer.alloc(0)],
+      ]),
+    );
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      blobNames: [blobName],
+      blobNames: [blobName, legacyBlobName],
       containerName: AzureContainer.PublicUserAssets,
     });
   });

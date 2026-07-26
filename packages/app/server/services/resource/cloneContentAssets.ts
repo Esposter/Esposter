@@ -1,6 +1,10 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { RESOURCE_ASSET_URL_REGEX, RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
+import {
+  FILES_DIRECTORY_SEGMENT,
+  RESOURCE_ASSET_URL_REGEX,
+  RESOURCE_ASSETS_URL_PREFIX,
+} from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
@@ -27,10 +31,11 @@ const cloneAsset = async (
 };
 
 // Publish and duplicate both snapshot content whose assets must survive the source's working copies
-// Changing: every referenced asset blob is cloned under the destination directory and the content rewritten
-// To the clone's url. The destination path drops the *source* resource id, so a foreign-id url (duplicated
-// Or blueprint-deployed content) clones correctly by construction — which is also why the rewrite is a
-// Per-url map, never a prefix replace
+// Changing: every referenced asset blob is cloned into the destination directory's files directory and the
+// Content rewritten to the clone's url. The destination path keeps only the files-relative tail, so a
+// Foreign-id url (duplicated or blueprint-deployed content) clones correctly by construction and a clone of a
+// Published asset never lands under the destination's own published prefix, which unpublishing wipes — which
+// Is also why the rewrite is a per-url map, never a prefix replace
 export const cloneContentAssets = async <TContent>(
   content: TContent,
   destinationDirectoryName: string,
@@ -52,7 +57,7 @@ export const cloneContentAssets = async <TContent>(
       // Would nest an unparseable published/{n}/published/{m} path
       if (!resourceAssetPath || (resourceAssetPath.isPublished && !isPublishedAssetCloned)) return [];
       const { blobName } = resourceAssetPath;
-      const destinationBlobName = `${destinationDirectoryName}/${blobName.slice(blobName.indexOf("/") + 1)}`;
+      const destinationBlobName = `${destinationDirectoryName}/${blobName.slice(blobName.indexOf(`/${FILES_DIRECTORY_SEGMENT}/`) + 1)}`;
       return [cloneAsset(containerClient, url, blobName, destinationBlobName)];
     }),
   );

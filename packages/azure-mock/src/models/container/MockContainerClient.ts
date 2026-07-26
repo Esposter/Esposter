@@ -214,8 +214,10 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     };
   }
 
-  listBlobsFlat(): PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse> {
-    const blobItemIterator = this.#getBlobItemIterator();
+  listBlobsFlat(
+    options?: ContainerListBlobsOptions,
+  ): PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse> {
+    const blobItemIterator = this.#getBlobItemIterator(options);
     return {
       byPage: () =>
         async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobFlatSegmentResponse> {
@@ -236,7 +238,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
                 parsedBody: {
                   containerName: this.containerName,
                   marker: "",
-                  prefix: "",
+                  prefix: options?.prefix ?? "",
                   segment: {
                     blobItems: allBlobItems,
                   },
@@ -245,7 +247,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
               },
               containerName: this.containerName,
               marker: "",
-              prefix: "",
+              prefix: options?.prefix ?? "",
               segment: {
                 blobItems: allBlobItems,
               },
@@ -329,8 +331,10 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
-  async *#getBlobItemIterator(): AsyncGenerator<BlobItem> {
-    for (const [name, buffer] of this.container.entries())
+  async *#getBlobItemIterator(options?: ContainerListBlobsOptions): AsyncGenerator<BlobItem> {
+    const prefix = options?.prefix ?? "";
+    for (const [name, buffer] of this.container.entries()) {
+      if (!name.startsWith(prefix)) continue;
       yield await Promise.resolve({
         deleted: false,
         name,
@@ -348,5 +352,6 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
         },
         snapshot: "",
       });
+    }
   }
 }

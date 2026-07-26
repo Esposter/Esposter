@@ -61,7 +61,7 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 | `packages/app/app/services/file/validateFile.ts`                                     | Single file validator returning a discriminated result      |
 | `packages/app/app/services/file/generateImageThumbnail.ts`                           | Canvas downscale to a WebP thumbnail blob                   |
 | `packages/app/app/composables/message/file/useUploadFiles.ts`                        | Composer path — validate, upload original, upload thumbnail |
-| `packages/app/app/composables/message/file/useReadThumbnailUrl.ts`                   | Lazily resolves a rendered image's thumbnail read url       |
+| `packages/app/app/composables/message/file/useReadFileUrls.ts`                       | Batch-resolves originals and thumbnails into read urls      |
 | `packages/app/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the lightbox      |
 | `packages/db-schema/src/schema/roomsInMessage.ts`                                    | `maxFileSizeBytes` + `allowedMimeCategories` columns        |
 | `packages/db-schema/src/services/file/getMimeCategory.ts`                            | Mimetype to coarse category mapping                         |

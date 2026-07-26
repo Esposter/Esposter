@@ -270,11 +270,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
   // DeleteResource already removes the whole {id}/ directory, so the assets need no separate teardown
   const fileAssetsProcedures = {
     deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation(async ({ input: { blobPath, id } }) => {
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
       // The path is a single separator-free segment (BLOB_PATH_REGEX) anchored under {id}/files/, so this can
       // Only ever delete uploaded assets, never the content or published-content blobs beside the files directory
-      const blockBlobClient = containerClient.getBlockBlobClient(`${getFilesDirectoryName(id)}/${blobPath}`);
-      await blockBlobClient.deleteIfExists();
+      await publishBlobDeletion(id, AzureContainer.ResourceAssets, [`${getFilesDirectoryName(id)}/${blobPath}`]);
     }),
     generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
       FileSasEntity[]

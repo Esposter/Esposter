@@ -1,6 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { Clause } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, Clause } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
@@ -27,9 +27,9 @@ import {
   ResourceType,
   ResourceViewEntity,
 } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
-import { MockContainerDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { InvalidOperationError, jsonDateParse, noop, Operation, takeOne } from "@esposter/shared";
+import { MockContainerDatabase, MockEventGridDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The view-count assertions read the counter table directly, so the mock must be registered in this
 // Module graph — createMockContext's registration does not reach a direct import
@@ -433,7 +433,7 @@ describe("createResourceProcedures", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("deletes file", async () => {
+  test("publishes file deletion", async () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
@@ -443,8 +443,16 @@ describe("createResourceProcedures", () => {
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 
     await webpageCaller.deleteFile({ blobPath, id: newResource.id });
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
 
-    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).toBe(false);
+    // The delete rides the one durable deletion publish, so the blob outlives the mutation and the handler
+    // Removes it (/docs/architecture/blob-lifecycle)
+    expect(takeOne(blobDeletionEvents, blobDeletionEvents.length - 1).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [blobName],
+      containerName: AzureContainer.ResourceAssets,
+    });
+    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).toBe(true);
   });
 
   test("rejects a file path that climbs out of the files directory", async () => {
@@ -468,17 +476,6 @@ describe("createResourceProcedures", () => {
         }
       ]]
     `);
-  });
-
-  test("deleteFile is idempotent", async () => {
-    expect.hasAssertions();
-
-    const newResource = await webpageCaller.createResource({ name });
-    const blobPath = getBlobName(crypto.randomUUID(), filename);
-
-    await webpageCaller.deleteFile({ blobPath, id: newResource.id });
-
-    await expect(webpageCaller.deleteFile({ blobPath, id: newResource.id })).resolves.toBeUndefined();
   });
 
   test("omits file asset procedures for types without the capability", () => {

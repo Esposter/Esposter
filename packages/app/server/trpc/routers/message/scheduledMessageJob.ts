@@ -232,7 +232,9 @@ export const scheduledMessageJobRouter = router({
         "NOT_FOUND",
       );
       // A send that fails past the guards — a transient Table write, a serialization error — must not burn the
-      // Job: lifting the claim leaves the message scheduled, so the caller's error means "not sent", never "lost"
+      // Job: lifting the claim leaves the message scheduled, so the caller's error means "not sent", never "lost".
+      // The delivery may have already been consumed and skipped on the tombstone, so the job is re-enqueued with
+      // It; a delivery that is still pending just makes two, and the handler's single-shot claim sends once
       return getResultAsync(() =>
         createUserMessage(ctx.db, ctx.getSessionPayload, {
           files: [],
@@ -247,6 +249,11 @@ export const scheduledMessageJobRouter = router({
             .update(scheduledMessageJobsInMessage)
             .set({ cancelledAt: null })
             .where(ownedBy(scheduledMessageJobsInMessage, input.id, ctx.getSessionPayload.user.id));
+          await enqueueScheduledMessageJob(
+            useServiceBusSender(AzureQueue.ScheduledMessageJobs),
+            scheduledMessageJob.id,
+            scheduledMessageJob.runAt,
+          );
           throw error;
         },
       );

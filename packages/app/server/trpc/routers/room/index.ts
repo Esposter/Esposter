@@ -29,6 +29,7 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
+import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -42,7 +43,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { generateWriteSasUrl, listBlobNames } from "@esposter/db";
+import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -578,6 +579,14 @@ export const baseRoomRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
+    const { image } = rest;
+    // Read before the update so the sweep below knows which version the room is dropping
+    const previousImage =
+      image === undefined
+        ? ""
+        : ((
+            await ctx.db.select({ image: roomsInMessage.image }).from(roomsInMessage).where(eq(roomsInMessage.id, id))
+          )[0]?.image ?? "");
     const updatedRoom = requireMutation(
       (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
       Operation.Update,
@@ -585,20 +594,20 @@ export const baseRoomRouter = router({
       id,
     );
     roomEventEmitter.emit("updateRoom", updatedRoom);
-    // The image was cleared or replaced: drop every prior upload under the room's profile-image prefix except the
-    // Version the room now points at. Upload names are per-upload unique, so "not the url I was handed" would also
-    // Match a blob a second admin uploaded moments ago but has not saved yet — the age filter is what keeps this
-    // Sweep to genuine orphans, since no upload can outlive the write SAS that authorized it. A dropped publish
+    // The image was cleared or replaced: drop every prior upload the room no longer points at. A dropped publish
     // Only orphans a public blob, never the room update; every blob delete goes through the one durable mechanism
     // So no call site keeps a weaker one (/docs/architecture/persist-then-notify)
-    if (rest.image !== undefined)
+    if (image !== undefined)
       await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
         const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-        const blobNames = await listBlobNames(containerClient, getRoomProfileImageBlobPrefix(id), {
-          createdBefore: dayjs().subtract(WRITE_SAS_DURATION_MS, "ms").toDate(),
-          isDeep: true,
-        });
-        return blobNames.filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== rest.image);
+        const blobNames = new Set(
+          await listRoomProfileImageBlobNames(containerClient, id, {
+            createdBefore: dayjs().subtract(WRITE_SAS_DURATION_MS, "ms").toDate(),
+          }),
+        );
+        // The version just dropped is a known orphan however young it is, unlike any other blob the age filter holds back
+        if (previousImage) blobNames.add(previousImage.replace(`${containerClient.url}/`, ""));
+        return [...blobNames].filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== image);
       });
 
     return updatedRoom;

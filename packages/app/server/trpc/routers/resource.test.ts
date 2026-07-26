@@ -321,13 +321,13 @@ describe("resource", () => {
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     assert.exists(content);
 
-    const duplicatedBlobName = `${duplicatedResource.id}/${publishedBlobName.slice(`${webpageResource.id}/`.length)}`;
+    const duplicatedBlobName = `${getFilesDirectoryName(duplicatedResource.id)}/${publishedBlobName.slice(publishedBlobName.lastIndexOf("/") + 1)}`;
     const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
     assert(container);
 
-    // The copy is fully self-contained: the published snapshot asset is cloned under the copy's own
-    // Directory with the source-relative path preserved, so unpublishing or deleting the original never
-    // Strands the copy
+    // The copy is fully self-contained: the published snapshot asset is cloned into the copy's own files
+    // Directory — never under its published prefix, which unpublishing wipes — so unpublishing or deleting
+    // Either resource never strands the copy
     expect(content.html).toBe(`<img src="${getResourceAssetUrl(duplicatedBlobName)}">`);
     expect(container.has(duplicatedBlobName)).toBe(true);
   });

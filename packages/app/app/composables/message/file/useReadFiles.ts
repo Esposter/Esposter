@@ -12,7 +12,11 @@ export const useReadFiles = () => {
   return async (files: FileEntity[]) => {
     if (!currentRoomId.value) return;
 
-    const newFiles = files.filter(({ id }) => !fileUrlMap.value.has(id));
+    const now = Date.now();
+    const newFiles = files.filter(({ id }) => {
+      const fileUrl = fileUrlMap.value.get(id);
+      return !fileUrl || fileUrl.expiresAt <= now;
+    });
     if (newFiles.length === 0) return;
 
     const newFileUrlMap = await readFileUrls(newFiles, currentRoomId.value);
