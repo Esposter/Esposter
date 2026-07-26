@@ -25,15 +25,10 @@ describe(getDataSourceTypeByFileName, () => {
     expect(getDataSourceTypeByFileName(`${name}.csv.json`)).toBe(DataSourceType.Json);
   });
 
-  test("resolves nothing for an unsupported extension", () => {
+  test("resolves nothing for an unsupported or absent extension", () => {
     expect.hasAssertions();
 
     expect(getDataSourceTypeByFileName(`${name}.txt`)).toBeUndefined();
-  });
-
-  test("resolves nothing for an extensionless name", () => {
-    expect.hasAssertions();
-
     expect(getDataSourceTypeByFileName(name)).toBeUndefined();
   });
 });

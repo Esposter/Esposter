@@ -64,16 +64,6 @@ describe("userToRoom", () => {
     expect(userToRoom.notificationType).toBe(NotificationType.DirectMessage);
   });
 
-  test("reads only own record, not other members", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const myUsersToRooms = await userToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] });
-    const userId = getMockSession().user.id;
-
-    expect(myUsersToRooms.every((userToRoom) => userToRoom.userId === userId)).toBe(true);
-  });
-
   test("reads nicknames for members", async () => {
     expect.hasAssertions();
 

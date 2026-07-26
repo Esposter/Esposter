@@ -27,13 +27,13 @@ describe(serializeToTsv, () => {
     expect(takeOne(lines)).toBe("a");
   });
 
-  test("replaces tab characters in cell values with spaces", () => {
+  test("replaces tab, newline and carriage return characters in cell values with spaces", () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "x\ty" })]);
+    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "w\tx\ny\rz" })]);
     const lines = serializeToTsv(dataSource).split("\n");
 
-    expect(takeOne(lines, 1)).toBe("x y");
+    expect(takeOne(lines, 1)).toBe("w x y z");
   });
 
   test("replaces tab characters in column names with spaces", () => {
@@ -43,23 +43,5 @@ describe(serializeToTsv, () => {
     const lines = serializeToTsv(dataSource).split("\n");
 
     expect(takeOne(lines)).toBe("a b");
-  });
-
-  test("replaces newline characters in cell values with spaces", () => {
-    expect.hasAssertions();
-
-    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "x\ny" })]);
-    const lines = serializeToTsv(dataSource).split("\n");
-
-    expect(takeOne(lines, 1)).toBe("x y");
-  });
-
-  test("replaces carriage return characters in cell values with spaces", () => {
-    expect.hasAssertions();
-
-    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "x\ry" })]);
-    const lines = serializeToTsv(dataSource).split("\n");
-
-    expect(takeOne(lines, 1)).toBe("x y");
   });
 });

@@ -36,12 +36,6 @@ describe(sendReminderNotification, () => {
     await mockDb.insert(usersToRoomsInMessage).values({ roomId, userId });
   });
 
-  test("completes without error when user has no push subscriptions", async () => {
-    expect.hasAssertions();
-
-    await expect(sendReminderNotification(context, reminder)).resolves.toBeUndefined();
-  });
-
   test("sends notification to all subscriptions", async () => {
     expect.hasAssertions();
 

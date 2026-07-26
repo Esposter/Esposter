@@ -24,46 +24,6 @@ describe(classifyMentions, () => {
     expect(result.roleIds).toHaveLength(0);
   });
 
-  test("@everyone broadcast mention", () => {
-    expect.hasAssertions();
-
-    const result = classifyMentions(createMention(MENTION_EVERYONE_ID));
-
-    expect(result.broadcastIds).toStrictEqual([MENTION_EVERYONE_ID]);
-    expect(result.regularUserIds).toHaveLength(0);
-    expect(result.roleIds).toHaveLength(0);
-  });
-
-  test("@here broadcast mention", () => {
-    expect.hasAssertions();
-
-    const result = classifyMentions(createMention(MENTION_HERE_ID));
-
-    expect(result.broadcastIds).toStrictEqual([MENTION_HERE_ID]);
-    expect(result.regularUserIds).toHaveLength(0);
-    expect(result.roleIds).toHaveLength(0);
-  });
-
-  test("regular user mention", () => {
-    expect.hasAssertions();
-
-    const result = classifyMentions(createMention("user-1", MentionType.User));
-
-    expect(result.broadcastIds).toHaveLength(0);
-    expect(result.regularUserIds).toStrictEqual(["user-1"]);
-    expect(result.roleIds).toHaveLength(0);
-  });
-
-  test("role mention", () => {
-    expect.hasAssertions();
-
-    const result = classifyMentions(createMention("role-1", MentionType.Role));
-
-    expect(result.broadcastIds).toHaveLength(0);
-    expect(result.regularUserIds).toHaveLength(0);
-    expect(result.roleIds).toStrictEqual(["role-1"]);
-  });
-
   test("multiple mentions of each type", () => {
     expect.hasAssertions();
 

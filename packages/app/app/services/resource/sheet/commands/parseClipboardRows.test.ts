@@ -55,16 +55,6 @@ describe(parseClipboardRows, () => {
   });
 
   describe("roundtrip with serializeToTsv", () => {
-    test("preserves basic string values", () => {
-      expect.hasAssertions();
-
-      const dataSource = createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "0", b: "1" })]);
-      const rows = parseClipboardRows(serializeToTsv(dataSource), dataSource);
-
-      expect(takeOne(rows).data.a).toBe("0");
-      expect(takeOne(rows).data.b).toBe("1");
-    });
-
     test("preserves column names with leading and trailing whitespace", () => {
       expect.hasAssertions();
 

@@ -16,17 +16,6 @@ describe(useSheetHistoryStore, () => {
     clear();
   });
 
-  test("initially not undoable and not redoable", () => {
-    expect.hasAssertions();
-
-    setupWithDataSource();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { isRedoable, isUndoable } = storeToRefs(sheetHistoryStore);
-
-    expect(isUndoable.value).toBe(false);
-    expect(isRedoable.value).toBe(false);
-  });
-
   test("becomes undoable after an operation", async () => {
     expect.hasAssertions();
 

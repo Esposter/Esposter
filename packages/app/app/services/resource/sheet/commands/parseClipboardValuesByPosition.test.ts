@@ -3,13 +3,9 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(parseClipboardValuesByPosition, () => {
-  test("parses single row with single value", () => {
-    expect.hasAssertions();
-    expect(parseClipboardValuesByPosition("a")).toStrictEqual([["a"]]);
-  });
-
   test("splits tab-separated values into columns", () => {
     expect.hasAssertions();
+    expect(parseClipboardValuesByPosition("a")).toStrictEqual([["a"]]);
     expect(parseClipboardValuesByPosition("a\tb\tc")).toStrictEqual([["a", "b", "c"]]);
   });
 

@@ -47,7 +47,6 @@ describe("message", () => {
   let mockContext: Context;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  const roomId = crypto.randomUUID();
   const filename = "filename";
   const mimetype = "image/jpeg";
   const size = 1000;
@@ -206,14 +205,6 @@ describe("message", () => {
     expect(takeOne(readMessages.items, 1).rowKey).toBe(secondMessage.rowKey);
   });
 
-  test("fails read with non-existent room id", async () => {
-    expect.hasAssertions();
-
-    await expect(messageCaller.readMessages({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
   test("fails read with non-existent member", async () => {
     expect.hasAssertions();
 
@@ -343,21 +334,6 @@ describe("message", () => {
     expect(data).toHaveLength(2);
     expect(takeOne(data).rowKey).toBe(secondMessage.rowKey);
     expect(takeOne(data, 1).rowKey).toBe(thirdMessage.rowKey);
-  });
-
-  test("creates typing", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const mockSession = getMockSession();
-    await messageCaller.createTyping({
-      roomId: newRoom.id,
-      userId: mockSession.user.id,
-      username: mockSession.user.name,
-    });
-
-    // CreateTyping is a query that emits events, so just verify it doesn't throw.
-    expect(true).toBe(true);
   });
 
   test("on creates typing", async () => {

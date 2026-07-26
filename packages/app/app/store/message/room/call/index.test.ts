@@ -77,49 +77,7 @@ describe(useParticipantStore, () => {
       setHandRaised(callSessionId, session.id, true);
 
       expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isHandRaised).toBe(true);
-    });
 
-    test("setHandRaised is idempotent", () => {
-      expect.hasAssertions();
-
-      const { session, user } = getMockSession();
-      const participant: CallParticipant = {
-        id: session.id,
-        image: user.image,
-        isCameraEnabled: false,
-        isHandRaised: false,
-        isMuted: false,
-        name: user.name,
-        userId: user.id,
-      };
-      const participantStore = useParticipantStore();
-      const { createCallParticipant, setHandRaised } = participantStore;
-      const { callSessionParticipantsMap } = storeToRefs(participantStore);
-      createCallParticipant(callSessionId, participant);
-      setHandRaised(callSessionId, session.id, true);
-      setHandRaised(callSessionId, session.id, true);
-
-      expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isHandRaised).toBe(true);
-    });
-
-    test("clears raised hand state", () => {
-      expect.hasAssertions();
-
-      const { session, user } = getMockSession();
-      const participant: CallParticipant = {
-        id: session.id,
-        image: user.image,
-        isCameraEnabled: false,
-        isHandRaised: false,
-        isMuted: false,
-        name: user.name,
-        userId: user.id,
-      };
-      const participantStore = useParticipantStore();
-      const { createCallParticipant, setHandRaised } = participantStore;
-      const { callSessionParticipantsMap } = storeToRefs(participantStore);
-      createCallParticipant(callSessionId, participant);
-      setHandRaised(callSessionId, session.id, true);
       setHandRaised(callSessionId, session.id, false);
 
       expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isHandRaised).toBe(false);

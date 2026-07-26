@@ -3,6 +3,7 @@ import { serializeClause } from "@/services/azure/transformer/serializeClause";
 import { BinaryOperator, CompositeKeyPropertyNames, escapeValue, SearchOperator } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
+// The isTableFilter value matrix lives in serializeValue.test.ts; here only the clause assembly.
 describe(serializeClause, () => {
   test("serializes", () => {
     expect.hasAssertions();
@@ -10,18 +11,6 @@ describe(serializeClause, () => {
     expect(
       serializeClause({ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" }),
     ).toBe(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("")}`);
-  });
-
-  test("serializes Date as table filter datetime literal", () => {
-    expect.hasAssertions();
-
-    const date = new Date(0);
-
-    expect(
-      serializeClause({ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: date }, true),
-    ).toBe(
-      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} datetime'${date.toISOString()}'`,
-    );
   });
 
   test(`serializes ${SearchOperator.arrayContains} with simple collection key`, () => {

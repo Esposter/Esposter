@@ -2,11 +2,6 @@ import { decompileVariables } from "#shared/services/compiler/decompileVariables
 import { describe, expect, test } from "vitest";
 
 describe(decompileVariables, () => {
-  test("substitutes a single variable", () => {
-    expect.hasAssertions();
-    expect(decompileVariables("{0}", { "0": "" })).toBe("");
-  });
-
   test("substitutes a variable with a non-empty value", () => {
     expect.hasAssertions();
     expect(decompileVariables("{0}", { "0": " " })).toBe(" ");

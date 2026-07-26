@@ -32,16 +32,6 @@ describe(useDeleteColumns, () => {
 
     expect(dataSource.columns).toHaveLength(1);
     expect(takeOne(dataSource.columns).name).toBe(" ");
-  });
-
-  test("also removes the column data from all rows", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const deleteColumns = useDeleteColumns();
-    const columns = dataSource?.columns ?? [];
-    await deleteColumns([takeOne(columns).id]);
-
     expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
     expect(takeOne(dataSource.rows, 1).data[""]).toBeUndefined();
   });
