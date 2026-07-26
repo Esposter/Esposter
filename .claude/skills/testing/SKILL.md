@@ -209,7 +209,7 @@ vi.mock(import("@/services/db"), () => ({
 
 ### InvocationContext logHandler
 
-Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. Never `vi.fn()` — its `unknown` return does not satisfy the `void`-returning `logHandler` contract.
+Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. A bare `vi.fn()` does typecheck here — it is `any`-shaped, so it satisfies the `LogHandler` contract without ever being checked against it — but nothing asserts on the logs, so the spy buys nothing. Reach for `vi.fn<LogHandler>()` only when a test actually asserts what was logged.
 
 ## Error Assertions
 
@@ -297,7 +297,7 @@ describe(useMyComposable, () => {
 
 ## What to Test
 
-**Every test earns its line or it is deleted.** A test earns it by failing when behaviour a caller or user depends on breaks — nothing else counts. Delete on sight, including tests already in the tree: one that asserts a constant's literal value or restates a map/schema (it fails only when someone edits the value on purpose, and the diff is the review), one whose subject is now the mock's behaviour rather than ours (idempotency that moved into a handler, a no-op path), and one that re-covers a branch another test in the suite already covers. Fewer, wider tests beat many narrow ones: fold a near-duplicate into the test it shadows by widening that test's fixture instead of keeping both. When a change makes a test redundant, removing it is part of the change.
+**Every test earns its line or it is deleted.** A test earns it by failing when behaviour a caller or user depends on breaks — nothing else counts. Delete on sight, including tests already in the tree: one that asserts a constant's literal value or restates a map/schema (it fails only when someone edits the value on purpose, and the diff is the review — unless the literal is fixed by something outside this repo, e.g. a wire/protocol value, a security limit or a retention window, where catching that deliberate edit is exactly the point), one whose subject is now the mock's behaviour rather than ours (idempotency that moved into a handler, a no-op path), and one that re-covers a branch another test in the suite already covers. Fewer, wider tests beat many narrow ones: fold a near-duplicate into the test it shadows by widening that test's fixture instead of keeping both. When a change makes a test redundant, removing it is part of the change.
 
 - **Audit for transitive-only coverage** — after writing the suite, ask honestly whether any branch is covered _only_ through a caller. Cover every branch of the contract including the guard clauses (the "skips non-directories" case, the no-op-when-absent case). Test a shared primitive **directly**; let its wrappers test only their unique value-add, so no branch is duplicated across primitive and wrapper.
 - **Test composables, not underlying service functions** — composable tests cover the full call chain. Only test a service directly when it has no composable wrapper.
