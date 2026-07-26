@@ -20,7 +20,7 @@ flowchart LR
   RESTORE -->|"copies snapshot into working copy (contentVersion++)"| DRAFT["draft content"]
 ```
 
-- **List** — `resource.readPublishHistory` enumerates the `{id}/published/{n}.json` blobs under the `{id}/published/` prefix as a hierarchy listing, so Survey's per-version asset subdirectories are skipped. Each row carries the version number, the snapshot timestamp from the blob `lastModified`, and a "current" badge on the highest version, which is always the live publication.
+- **List** — `resource.readPublishHistory` enumerates the `{id}/published/{n}.json` blobs under the `{id}/published/` prefix as a hierarchy listing, so the per-publish asset subdirectories beside them are skipped. Each row carries the version number, the snapshot timestamp from the blob `lastModified`, and a "current" badge on the highest version, which is always the live publication.
 - **View a version** — the public view route gains an optional `version` query param. When it is present the renderer loads `{id}/published/{k}` through an owner-only read; the snapshot's stable asset urls resolve through the `/api/resource-assets` endpoint's owner fallback, so a retained snapshot renders without any content rewriting. Anonymous visitors never pass the param and always get the latest publish, so public behaviour is unchanged, and a non-owner passing one is rejected server-side.
 - **Restore** — `resource.restorePublishedVersion` copies the snapshot's content into the working copy and bumps `contentVersion` in one transaction, then lands the owner in the Editor blade. It never re-points the publication — a restore produces a draft to review and re-publish, mirroring the [recycle bin](/docs/platform/recycle-bin) restore-returns-a-Draft rule.
 
