@@ -238,7 +238,7 @@ const scope = await agent(
     "2. List the changed files.\n" +
     "3. Summarize what changed in one paragraph.\n" +
     "4. List the CLAUDE.md files that apply to the changed files (the user-level ~/.claude/CLAUDE.md, the repo-root CLAUDE.md, plus any CLAUDE.md or CLAUDE.local.md in a directory that is an ancestor of a changed file). Read each one that exists and note conventions a reviewer should know.\n" +
-    "5. If — and only if — the diff spans more than " +
+    "5. If — and only if — the diff spans at least " +
     SEAM_MODE_MIN_FILES +
     " files, partition it into 3-" +
     P.maxSeams +
@@ -488,7 +488,19 @@ async function verifyGroups(candidates) {
 // Trades territory for lens-diversity-per-file, so the lenses have to travel with the finder or the trade is a
 // Straight loss.
 const ALL_LENSES_TEXT = CORRECTNESS_ANGLES.map((a) => a.text).join("\n");
-const pathspec = (prefixes) => prefixes.map((p) => "'" + p + "'").join(" ");
+// `diffCommand` is whatever the Scope agent decided a reviewer should run, and two shapes it is allowed to
+// Return cannot take an appended pathspec: a compound command (the uncommitted-changes case joins two `git diff`
+// Runs) would scope only its last clause, and one that already carries `-- <paths>` (a path-narrowed target)
+// Becomes a second `--` git rejects outright. Both fail silently or weirdly in an agent's hands, so when either
+// Shape appears the seam is expressed as a path list to restrict attention to instead of a command to run.
+const IS_DIFF_COMMAND_SCOPEABLE = !/(\s--\s)|&&|\|\||[;|]/u.test(scope.diffCommand);
+const seamScope = (prefixes) =>
+  IS_DIFF_COMMAND_SCOPEABLE
+    ? "  " + scope.diffCommand + " -- " + prefixes.map((p) => "'" + p + "'").join(" ")
+    : "  " +
+      scope.diffCommand +
+      "\n  …then restrict yourself to these paths (the command above could not be narrowed safely):\n  " +
+      prefixes.join("\n  ");
 const SEAM_FINDER = (s) => ({
   label: "seam:" + s.name.replace(/\s+/g, "-").slice(0, 24),
   kind: "correctness",
@@ -498,19 +510,15 @@ const SEAM_FINDER = (s) => ({
     s.name +
     "\n" +
     (s.summary || "") +
-    "\n\nScope the diff to your seam and read all of it:\n  " +
-    scope.diffCommand +
-    " -- " +
-    pathspec(s.pathPrefixes) +
+    "\n\nScope the diff to your seam and read all of it:\n" +
+    seamScope(s.pathPrefixes) +
     "\n\nRead the enclosing code for every hunk, not just the changed lines, and follow the seam THROUGH the files " +
     "it crosses — this partition exists so somebody traces a path end to end instead of skimming everything.\n" +
     (Array.isArray(s.adjacentPathPrefixes) && s.adjacentPathPrefixes.length > 0
       ? "\n### Your boundary\n" +
-        "This seam exchanges data with:\n  " +
-        scope.diffCommand +
-        " -- " +
-        pathspec(s.adjacentPathPrefixes) +
-        "\nRun it and check the handoff in both directions: what your seam writes, mints, or emits, does the other " +
+        "This seam exchanges data with:\n" +
+        seamScope(s.adjacentPathPrefixes) +
+        "\nRead it and check the handoff in both directions: what your seam writes, mints, or emits, does the other " +
         "side read, parse, or consume in the same shape, order, units and lifetime — and vice versa? A producer and " +
         "a consumer that disagree is the defect class this partition is for, and it is invisible to a reader of " +
         "either side alone. Report it against whichever side is wrong.\n"
