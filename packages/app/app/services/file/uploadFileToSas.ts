@@ -1,17 +1,17 @@
 import type { UploadFileToSasOptions } from "@/models/file/UploadFileToSasOptions";
-import type { FileEntity, FileSasEntity } from "@esposter/db-schema";
+import type { FileSasEntity } from "@esposter/db-schema";
 
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { takeOne } from "@esposter/shared";
 
 // The one SAS upload round-trip: generate write targets -> PUT the blocks -> (optionally) return read urls.
 // Every upload site funnels through here so limit enforcement and progress reporting live in one place.
-export async function uploadFileToSas<TFileSasEntity extends FileSasEntity>({
+export const uploadFileToSas = async <TFileSasEntity extends FileSasEntity>({
   files,
   generateUploadFileSasEntities,
   onUploadProgress,
   onUploadStart,
-}: UploadFileToSasOptions<TFileSasEntity>): Promise<TFileSasEntity[]> {
+}: UploadFileToSasOptions<TFileSasEntity>): Promise<TFileSasEntity[]> => {
   const fileSasEntities = await generateUploadFileSasEntities(
     files.map(({ name, size, type }) => ({ filename: name, mimetype: type, size })),
   );
@@ -31,4 +31,4 @@ export async function uploadFileToSas<TFileSasEntity extends FileSasEntity>({
     }),
   );
   return fileSasEntities;
-}
+};

@@ -17,6 +17,11 @@ export const FILE_MAX_LENGTH = 10;
 // The account throttles, and one rejection fails the whole publish. So the copies go out in bounded waves, the
 // Same discipline the deletion handler applies to its own listing (MAX_CONCURRENT_BLOB_DELETIONS).
 export const MAX_CONCURRENT_BLOB_COPIES = 100;
+// The storage sdk rejects a blob batch holding more than this many sub-requests outright, before issuing a
+// Single delete — so a directory teardown must wave through it rather than hand it one batch. A resource's
+// Directory has no ceiling (a files directory plus every retained published snapshot), and the throw lands on
+// The purge that was tearing it down: the resource stays in the recycle bin and its blobs are billed forever.
+export const MAX_BLOB_BATCH_DELETIONS = 256;
 // How long a read SAS stays valid. Clients cache the urls they were handed, so they also re-mint on this.
 export const READ_SAS_DURATION_MS = dayjs.duration(1, "day").asMilliseconds();
 // The cadence a client re-mints its cached read urls on, and the margin that counts one as already expired.

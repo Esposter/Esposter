@@ -652,8 +652,7 @@ describe("message", () => {
       roomId: newRoom.id,
     });
     assert(sasEntity);
-    vi.useFakeTimers();
-    vi.setSystemTime(dayjs().add(WRITE_SAS_DURATION_MS, "ms").add(1, "ms").toDate());
+    vi.useFakeTimers({ now: dayjs().add(WRITE_SAS_DURATION_MS, "ms").add(1, "ms").toDate() });
 
     await expect(
       messageCaller.deleteUploadFiles({
@@ -955,8 +954,7 @@ describe("message", () => {
 
   describe("slowmode guard", () => {
     beforeEach(() => {
-      vi.useFakeTimers();
-      vi.setSystemTime(0);
+      vi.useFakeTimers({ now: 0 });
     });
 
     afterEach(() => {
@@ -1088,8 +1086,7 @@ describe("message", () => {
   describe("createMessage timeout guard", () => {
     // The clock is pinned so "timed out until 1ms from now" is still true by the time the message lands
     beforeEach(() => {
-      vi.useFakeTimers();
-      vi.setSystemTime(0);
+      vi.useFakeTimers({ now: 0 });
     });
 
     afterEach(() => {

@@ -397,7 +397,12 @@ export const createResourceProcedures = <TType extends ResourceType>(
       // Goes through the one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)
       // The snapshot directory grows with every retained publication, so the handler enumerates it — walking
       // It here would put an unbounded listing on the unpublish request itself
-      await publishBlobPrefixDeletion(id, AzureContainer.ResourceAssets, `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`);
+      await publishBlobPrefixDeletion(
+        id,
+        AzureContainer.ResourceAssets,
+        `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`,
+        new Date(),
+      );
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,

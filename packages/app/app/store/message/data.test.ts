@@ -8,6 +8,7 @@ import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 // AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and
@@ -79,6 +80,44 @@ describe(useDataStore, () => {
 
     expect(isCreated).toBe(false);
     expect(items.value).toHaveLength(0);
+  });
+
+  // The mutation spans the server commit, so a rejection can equally be a lost response for a message that
+  // Landed. Deleting the bubble then hides a sent message from its own sender — the subscription echo is
+  // Filtered for the sending session — and invites the duplicate resend persist-then-notify exists to prevent
+  test("createMessage keeps the optimistic message when the mutation rejects", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { createMessage } = dataStore;
+    server.use(
+      trpcMsw.message.createMessage.mutation(() => {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
+      }),
+    );
+    const isCreated = await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+
+    expect(isCreated).toBe(false);
+    expect(items.value).toHaveLength(1);
+  });
+
+  // The reset clears the editor, the reply target and the composer's attachments, so the bubble is the sender's
+  // Only copy of what they typed — a send that fails before the bubble exists must leave the composer alone
+  test("storeSendMessage resets the composer only once the optimistic message is in the list", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const { storeSendMessage } = dataStore;
+    vi.spyOn(MessageHookMap[Operation.Create], "run").mockRejectedValueOnce(new Error(message));
+    const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
+    await storeSendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+
+    expect(resetSendSpy).not.toHaveBeenCalled();
   });
 
   // A successful create also mirrors the server's thread auto-follow, so the reply's root is followed locally

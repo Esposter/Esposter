@@ -11,7 +11,8 @@ export const useReadFiles = () => {
   const { fileUrlMap } = storeToRefs(downloadFileStore);
   const readFileUrls = useReadFileUrls();
   return async (files: FileEntity[]) => {
-    if (!currentRoomId.value) return;
+    const roomId = currentRoomId.value;
+    if (!roomId) return;
 
     // A url inside the refresh margin is treated as already gone, so nothing is handed to the renderer that
     // Could expire while it is on screen — the store's sweep uses the same margin.
@@ -22,7 +23,10 @@ export const useReadFiles = () => {
     });
     if (newFiles.length === 0) return;
 
-    const newFileUrlMap = await readFileUrls(newFiles, currentRoomId.value);
-    for (const [id, fileUrl] of newFileUrlMap) fileUrlMap.value.set(id, fileUrl);
+    // Written through the room-keyed helper, never `fileUrlMap.value`: that resolves to whichever room is
+    // Current when it is read, and the read above is a network round trip. A user who switches rooms during it
+    // Would otherwise get this room's urls written into the one they landed on, and this room — whose messages
+    // Are now cached, so nothing re-issues the read — renders every attachment broken until a reload
+    downloadFileStore.storeFileUrls(roomId, await readFileUrls(newFiles, roomId));
   };
 };

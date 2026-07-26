@@ -27,8 +27,11 @@ export const deleteRoom = async (db: Context["db"], { session, user }: GetSessio
   // A dropped listing or publish leaves orphaned room assets, never the deletion that already landed
   await Promise.all([
     // A room's attachments have no ceiling, so the prefix goes to the handler rather than being walked here —
-    // Enumerating a long-lived room's blobs inline would hold the owner's delete open until it timed out
-    publishBlobPrefixDeletion(id, AzureContainer.MessageAssets, id),
+    // Enumerating a long-lived room's blobs inline would hold the owner's delete open until it timed out.
+    // Unbounded in time, unlike every other prefix sweep: the room row is gone, so nothing can re-own this
+    // Prefix and this is its only teardown — a `createdBefore` cutoff would permanently strand the attachment
+    // Of any member still holding a write SAS when the owner deleted, billed and downloadable forever
+    publishBlobPrefixDeletion(id, AzureContainer.MessageAssets, id, undefined),
     // Profile images are a handful, and their listing has to reach a pre-cutover flat name the prefix walk
     // Would not cover, so this one stays a resolved list
     publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {

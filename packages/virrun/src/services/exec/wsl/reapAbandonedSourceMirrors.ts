@@ -12,9 +12,11 @@ import { join } from "node:path";
 // Mid-writing) is left alone — reap only what we can prove abandoned, never a concurrent live run's mirror.
 //
 // An entry with NO marker is the one case the marker can't settle, and treating it as untouchable leaked forever:
-// CreateWslSourceMirrorSync publishes the marker the instant it creates the entry dir, so its absence means the sync
-// Died inside that same instant, and the corpse is then unattributable for the life of the machine. Age settles it —
-// Past SOURCE_MIRROR_UNMARKED_MAX_AGE_MS no live planner can still be in that gap. Best-effort and off the critical
+// CreateWslSourceMirrorSync publishes the marker the instant it creates the entry dir AND republishes it from any
+// Later planning pass that finds it missing — including the no-delta early return a live repo takes on nearly every
+// Run — so an absent marker means no planning pass has completed for this entry since it died. Age settles it: past
+// SOURCE_MIRROR_UNMARKED_MAX_AGE_MS no live planner can still be in that gap. That republish is what this arm rests
+// On; without it a single swallowed marker rename would age a live repo's mirror into this sweep. Best-effort and off the critical
 // Path (via sweepStaleEntries → removeSnapshotDirectoriesDetached), so a WSL/probe failure resolving the cache root
 // Aborts the sweep, not the run. Win32-only — mirrors exist only there.
 export const reapAbandonedSourceMirrors = (): void => {

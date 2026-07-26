@@ -12,7 +12,7 @@ const defaultSettings: JsonFileSettings = { configuration: {}, type: DataSourceT
 describe(deserializeJson, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Json].mimeType;
 
-  const createFile = (content: string, name = "test.json") => new File([content], name, { type: MIME_TYPE });
+  const createFile = (content: string, name = "a.json") => new File([content], name, { type: MIME_TYPE });
 
   test("parses columns and rows from JSON array", async () => {
     expect.hasAssertions();
@@ -51,7 +51,7 @@ describe(deserializeJson, () => {
     const file = createFile(JSON.stringify({ a: 0 }));
 
     await expect(deserializeJson(file, defaultSettings)).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [InvalidOperationError: Invalid operation: Read, name: test.json, [
+      [InvalidOperationError: Invalid operation: Read, name: a.json, [
         {
           "expected": "array",
           "code": "invalid_type",

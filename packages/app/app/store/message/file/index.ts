@@ -78,5 +78,5 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     viewerApi({ images: viewableFiles.value, options: { initialViewIndex } });
   };
 
-  return { fileUrlMap, viewableFiles, viewFiles };
+  return { fileUrlMap, storeFileUrls, viewableFiles, viewFiles };
 });

@@ -5,8 +5,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getResourceUpdatedRange, () => {
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(() => {

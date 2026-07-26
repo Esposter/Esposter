@@ -20,8 +20,7 @@ describe(executeAutomodAction, () => {
 
   // Pin the clock so a 2ms existing timeout stays strictly longer than the 1ms automod timeout.
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(async () => {

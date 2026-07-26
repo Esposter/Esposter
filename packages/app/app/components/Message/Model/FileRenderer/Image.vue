@@ -15,14 +15,19 @@ const thumbnailUrl = computed(() => (isPreview ? "" : (fileUrlMap.value.get(file
 // Url-keyed memory stops matching the moment it does, and each re-mint sends the image back to a blob already
 // Known to be missing — blanking to the placeholder, 404ing, and falling back again on every refresh
 const isThumbnailFailed = ref(false);
+// Which url is actually on screen, so a load error is only blamed on the thumbnail when the thumbnail is what
+// Failed: the original renders whenever no thumbnail url is held yet (before the batched read lands) or after
+// A read SAS expired, and latching on that error would suppress the thumbnail for the component's whole life —
+// Every image in the message then re-downloading the full-resolution original on each hourly re-mint
+const isThumbnailRendered = computed(() => Boolean(thumbnailUrl.value) && !isThumbnailFailed.value);
 </script>
 
 <template>
   <v-img
-    :src="thumbnailUrl && !isThumbnailFailed ? thumbnailUrl : url"
+    :src="isThumbnailRendered ? thumbnailUrl : url"
     :alt="file.filename"
     :cover="isPreview"
     :class="isPreview ? 'size-full' : undefined"
-    @error="isThumbnailFailed = true"
+    @error="isThumbnailFailed ||= isThumbnailRendered"
   />
 </template>

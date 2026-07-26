@@ -40,20 +40,29 @@ export const useDataStore = defineStore("message/data", () => {
   const nextCursorNewer = ref("");
   const typings = ref<CreateTypingInput[]>([]);
 
-  const createMessage = (input: StandardCreateMessageInput) => {
+  // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
+  // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
+  // They typed once the editor and its attachments are cleared
+  const createMessage = async (input: StandardCreateMessageInput, onOptimisticCreate?: () => Promise<void>) => {
     if (!session.value.data) return false;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
-    // Only the two steps that run before the server commits may roll the bubble back out. A rejection after
-    // The mutation resolves means the message exists — deleting it then would hide a sent message from its own
-    // Sender (the subscription echo is filtered for the sending session, so nothing restores it) and invite a
-    // Duplicate resend. Those steps are local bookkeeping, so a failure leaves the bubble and surfaces the alert
-    return getResultAsync(async () => {
-      // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the
-      // List, so roll the entity back out before surfacing the failure — nothing has reached the server yet
-      await storeCreateMessage(newMessage, true);
-      return $trpc.message.createMessage.mutate(input);
-    }).match(
+    // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the list,
+    // So roll the entity back out before surfacing the failure — nothing has reached the server yet. Through the
+    // Delete hooks, not a bare list removal: the Create hooks that just ran wrote a download-url entry per
+    // Attached file, and the hourly re-mint sweep would keep re-signing urls for a message that never existed
+    const isOptimisticCreated = await getResultAsync(() => storeCreateMessage(newMessage, true)).match(
+      () => true,
+      async (error) => {
+        await storeDeleteMessage(newMessage);
+        createAlert(error.message, "error");
+        return false;
+      },
+    );
+    if (!isOptimisticCreated) return false;
+    await onOptimisticCreate?.();
+
+    return getResultAsync(() => $trpc.message.createMessage.mutate(input)).match(
       (createdMessage) => {
         Object.assign(newMessage, createdMessage);
         delete newMessage.isLoading;
@@ -65,11 +74,13 @@ export const useDataStore = defineStore("message/data", () => {
         if (replyRowKey) threadFollowStore.storeFollowThread(input.roomId, replyRowKey);
         return true;
       },
-      async (error) => {
-        // Through the Delete hooks, not a bare list removal: the Create hooks that just ran wrote a download-url
-        // Entry per attached file, and the hourly re-mint sweep would keep re-signing urls for a message that
-        // Never existed. Rolling back the entity has to roll back everything its creation registered
-        await storeDeleteMessage(newMessage);
+      (error) => {
+        // The mutation spans the server commit, so nothing here may roll the bubble back out: a rejection can
+        // Just as well be a lost response for a message that landed, and deleting it then hides a sent message
+        // From its own sender (the subscription echo is filtered for the sending session, so nothing restores
+        // It) and invites the duplicate resend /docs/architecture/persist-then-notify exists to prevent. The
+        // Bubble also stays the sender's copy of a genuinely rejected message — the composer is already reset —
+        // So it holds its loading state and the alert says what happened
         createAlert(error.message, "error");
         return false;
       },
@@ -149,8 +160,10 @@ export const useDataStore = defineStore("message/data", () => {
     await storeSendMessage(input, editor);
   };
   const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
-    await MessageHookMap.ResetSend.run(editor);
-    if (await createMessage(input)) clearDraft(input.roomId);
+    // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor, the reply
+    // Target and the composer's attachments (revoking their object urls), so a send that fails before the
+    // Bubble exists would take the text and files the user just typed with it
+    if (await createMessage(input, () => MessageHookMap.ResetSend.run(editor))) clearDraft(input.roomId);
   };
   MessageHookMap.ResetSend.register((editor) => {
     editor?.commands.clearContent(true);

@@ -42,14 +42,18 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Transformer rather than a stand-in client. Two things have to give way for that: trpc-nuxt's links wrap
   // Nuxt's `$fetch`, which resolves internally and never reaches an interceptor, and batching puts several
   // Procedures behind one url that no per-procedure handler can match. Both are transport concerns, so
-  // Nothing a test asserts on changes — but the url must be absolute, since node's fetch cannot take a path
-  const httpSplitLink = IS_TEST
-    ? trpcHttpLink({ transformer, url: `${window.location.origin}${TRPC_CLIENT_PATH}` })
-    : splitLink({
-        condition: ({ input }) => isNonJsonSerializable(input),
-        false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
-        true: httpLink({ transformer, url: TRPC_CLIENT_PATH }),
-      });
+  // Nothing a test asserts on changes — but the url must be absolute, since node's fetch cannot take a path.
+  // Client-side only for that reason: the origin is read while the link is built, which is ahead of the server
+  // Branch below deciding whether this link is used at all, so a test loading this plugin without a dom would
+  // Fail on `window is not defined` — an error naming nothing about tRPC
+  const httpSplitLink =
+    IS_TEST && !getIsServer()
+      ? trpcHttpLink({ transformer, url: `${window.location.origin}${TRPC_CLIENT_PATH}` })
+      : splitLink({
+          condition: ({ input }) => isNonJsonSerializable(input),
+          false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
+          true: httpLink({ transformer, url: TRPC_CLIENT_PATH }),
+        });
 
   if (getIsServer()) links.push(httpSplitLink);
   else {

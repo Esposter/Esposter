@@ -27,10 +27,9 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
   getResultAsync(async () => {
     const { id } = scheduledMessageJobQueueMessageSchema.parse(message);
     context.log(`${AzureFunction.ProcessScheduledMessageJob} dequeued job`, { id });
-    // Every column the claim below requires to be unset must be unset here too. This read gates the guards that
-    // Follow, and those guards have side effects — the word filter times the user out and writes an audit row —
-    // So a redelivery of an already-claimed job would apply them a second time before the claim rejected it,
-    // Punishing a user twice for one message. The claim stays authoritative; this only stops paying for it.
+    // Every column the claim below requires to be unset must be unset here too: this read settles an
+    // Already-cancelled/completed/claimed job without paying for the claim's write. The claim stays
+    // Authoritative — it is what actually stops a redelivery re-running the guards and the send.
     const job = await db.query.scheduledMessageJobsInMessage.findFirst({
       where: {
         cancelledAt: { isNull: true },
@@ -53,33 +52,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
     }
 
     const payload = scheduledMessageJobPayloadSchema.parse(job.payload);
-    // Every delivery-time guard runs before the claim, mirroring `sendScheduledMessageNow`: the claim below is
-    // Single-shot, so a rejection — non-member, read-only, slowmode, timeout, word filter — after it would burn
-    // The job (the redelivery a rethrow asks for is skipped). Thrown here the job is still unclaimed, so Service
-    // Bus redelivers and retries, and a job whose retries exhaust stays visible to cancel/reschedule/send-now
-    if (payload.type === ScheduledMessageJobType.ScheduledMessage) {
-      // A word-filter block is the one guard a redelivery can never clear, and it has already applied the
-      // Room's automod action — so the job is tombstoned below rather than retried, which would re-apply that
-      // Action once per delivery. Every other rejection rethrows and retries with the job still unclaimed.
-      const isWordFiltered = await getResultAsync(() =>
-        assertCanCreateMessage(job.userId, job.roomId, payload.message),
-      ).match(
-        () => false,
-        (error) => {
-          if (!(error instanceof WordFilteredError)) throw error;
-          return true;
-        },
-      );
-      if (isWordFiltered) {
-        await db
-          .update(scheduledMessageJobsInMessage)
-          .set({ cancelledAt: new Date() })
-          .where(eq(scheduledMessageJobsInMessage.id, id));
-        context.log(`${AzureFunction.ProcessScheduledMessageJob} cancelled: message is word filtered`, { id });
-        return;
-      }
-    }
-
     // Claiming on `processingStartedAt IS NULL` is what makes this handler idempotent
     // (IsIdempotentAzureFunctionMap): delivery is at-least-once, and a message carries a fresh reverse-ticked
     // RowKey, so a redelivery that could re-pass this guard would post a second copy rather than repair the first
@@ -100,6 +72,41 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       return;
     }
 
+    if (payload.type === ScheduledMessageJobType.ScheduledMessage) {
+      // The delivery-time guards run INSIDE the claim, unlike `sendScheduledMessageNow`'s request path, because
+      // One of them has side effects: a word-filter block times the user out and writes an AutoMod audit row,
+      // And the tombstone that records it is a second write. Guarded outside the claim, a failure between those
+      // Two writes leaves the job unclaimed and uncancelled, so the redelivery re-runs the filter and punishes
+      // The user a second time for one message — two timeouts and two audit rows.
+      // Every other rejection (non-member, read-only, slowmode, timeout) has no side effect and can clear on its
+      // Own, so the claim is released before the rethrow asks Service Bus to redeliver — the claim is
+      // Single-shot, and a job left holding it would be neither delivered nor cancellable/reschedulable
+      const isWordFiltered = await getResultAsync(() =>
+        assertCanCreateMessage(job.userId, job.roomId, payload.message),
+      ).match(
+        () => false,
+        async (error) => {
+          if (error instanceof WordFilteredError) return true;
+
+          await db
+            .update(scheduledMessageJobsInMessage)
+            .set({ processingStartedAt: null })
+            .where(eq(scheduledMessageJobsInMessage.id, id));
+          throw error;
+        },
+      );
+      // A word-filter block is the one guard a redelivery can never clear, and it has already applied the room's
+      // Automod action — so the job is tombstoned rather than retried, which would re-apply that action per delivery
+      if (isWordFiltered) {
+        await db
+          .update(scheduledMessageJobsInMessage)
+          .set({ cancelledAt: new Date() })
+          .where(eq(scheduledMessageJobsInMessage.id, id));
+        context.log(`${AzureFunction.ProcessScheduledMessageJob} cancelled: message is word filtered`, { id });
+        return;
+      }
+    }
+
     if (payload.type === ScheduledMessageJobType.Reminder)
       await sendReminderNotification(context, {
         roomId: processingJob.roomId,
@@ -107,6 +114,19 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         userId: processingJob.userId,
       });
     else {
+      // The slowmode clock is what the NEXT send is checked against, so it advances with the guards rather than
+      // After the write, exactly as `createUserMessage` does: behind the write it would sit in the best-effort
+      // Block below, where a failed push swallows it and leaves a stale `lastMessageAt` that keeps passing —
+      // Slowmode silently stops applying. Advancing first can only cost one window on a write that throws
+      await db
+        .update(usersToRoomsInMessage)
+        .set({ lastMessageAt: new Date() })
+        .where(
+          and(
+            eq(usersToRoomsInMessage.roomId, processingJob.roomId),
+            eq(usersToRoomsInMessage.userId, processingJob.userId),
+          ),
+        );
       const newMessage = await createAndBroadcastMessage(context, {
         message: payload.message,
         roomId: processingJob.roomId,
@@ -136,18 +156,12 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
             }),
           );
 
-        await Promise.all([
-          db
-            .update(usersToRoomsInMessage)
-            .set({ lastMessageAt: new Date() })
-            .where(
-              and(
-                eq(usersToRoomsInMessage.roomId, processingJob.roomId),
-                eq(usersToRoomsInMessage.userId, processingJob.userId),
-              ),
-            ),
-          db.update(roomsInMessage).set({ updatedAt: new Date() }).where(eq(roomsInMessage.id, processingJob.roomId)),
-        ]);
+        // A room-list sort order, not a guard input — so unlike the slowmode clock above this one stays here,
+        // Where a failure leaves the room list one send behind until the next one lands
+        await db
+          .update(roomsInMessage)
+          .set({ updatedAt: new Date() })
+          .where(eq(roomsInMessage.id, processingJob.roomId));
       }).match(noop, (error) => {
         context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to notify`, { error, id });
       });

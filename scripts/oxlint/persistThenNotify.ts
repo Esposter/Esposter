@@ -81,7 +81,7 @@ const getHasRethrowingTerminal = (expression: ESTree.Expression): boolean => {
     const [, errorHandler] = expression.arguments;
     if (callee.property.name === "match" && getIsRethrowingHandler(errorHandler)) return true;
   }
-  return getHasRethrowingTerminal(callee.object as ESTree.Expression);
+  return getHasRethrowingTerminal(callee.object);
 };
 // Never rejects: an allowed wrapper whose terminal absorbs the error, `Promise.allSettled` over anything, or a
 // Rejecting Promise combinator over a fan-out (array literal or `.map` callback) of such calls — e.g.

@@ -13,7 +13,7 @@ const defaultSettings: CsvFileSettings = { configuration: { delimiter: CsvDelimi
 describe(deserializeCsv, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Csv].mimeType;
 
-  const createFile = (content: string, name = "test.csv") => new File([content], name, { type: MIME_TYPE });
+  const createFile = (content: string, name = "a.csv") => new File([content], name, { type: MIME_TYPE });
 
   test("parses columns and rows from CSV", async () => {
     expect.hasAssertions();

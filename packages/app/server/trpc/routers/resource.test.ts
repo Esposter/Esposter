@@ -42,8 +42,7 @@ describe("resource", () => {
 
   // UpdatedAt is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency deterministic
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(async () => {
@@ -361,6 +360,33 @@ describe("resource", () => {
       `<img src="${getResourceAssetUrl(duplicatedBlobName)}"><img src="${getResourceAssetUrl(missingBlobName)}">`,
     );
     expect(container.has(duplicatedBlobName)).toBe(true);
+  });
+
+  // A snapshot embeds `{id}/published/{publishId}/…` urls and unpublish wipes that whole prefix, so a restore
+  // That copied the snapshot blob verbatim would hand the draft urls a later unpublish deletes — every image
+  // 404ing permanently, with re-uploading each asset the only recovery
+  test("restores a published version by cloning its assets back into the working copy", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await webpageCaller.saveResourceContent({
+      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
+    const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
+    assert.exists(content);
+
+    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    assert(container);
+
+    // The restored draft references its own files directory, never the published snapshot it came from
+    expect(content.html).toBe(`<img src="${getResourceAssetUrl(blobName)}">`);
+    expect(container.has(blobName)).toBe(true);
   });
 
   test("cleans up the copy when duplicating its content fails", async () => {

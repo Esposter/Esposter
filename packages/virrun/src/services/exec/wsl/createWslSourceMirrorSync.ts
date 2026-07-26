@@ -7,7 +7,6 @@ import {
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
-  VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
 } from "@/services/exec/wsl/constants";
 import { createSourceMirrorArchive } from "@/services/exec/wsl/createSourceMirrorArchive";
@@ -16,12 +15,13 @@ import { getWslSourceMirrorEntryPath } from "@/services/exec/wsl/getWslSourceMir
 import { getWslSourceMirrorEntryUnc } from "@/services/exec/wsl/getWslSourceMirrorEntryUnc";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
+import { publishSourceMirrorOrigin } from "@/services/exec/wsl/publishSourceMirrorOrigin";
 import { readSourceMirrorManifest } from "@/services/exec/wsl/readSourceMirrorManifest";
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
 import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
-import { getResult, InvalidOperationError, noop, Operation, toAppError } from "@esposter/shared";
-import { existsSync, mkdirSync, renameSync, writeFileSync } from "node:fs";
+import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
@@ -75,7 +75,14 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     ? readSourceMirrorManifest(cwd)
     : undefined;
   const delta = previousManifest === undefined ? undefined : diffSourceMirrorManifests(previousManifest, manifest);
-  if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) return { lockPath, mirrorPath, script: "" };
+  if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) {
+    // A live repo returns here on nearly every run, so this is where a marker that failed to publish gets a second
+    // Chance. Without it the reaper's "no marker and old enough" arm has no invariant to stand on: one swallowed
+    // Rename would leave a mirror this repo keeps using unattributable, and a day later the sweep would rm -rf it
+    // Out from under a run. Republished only when absent, so the common path still costs no write
+    if (!existsSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME))) publishSourceMirrorOrigin(entryUnc, cwd);
+    return { lockPath, mirrorPath, script: "" };
+  }
   return getResult(() => {
     const tag = `${process.pid}.${crypto.randomUUID()}`;
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
@@ -84,20 +91,9 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     // The entry dir exists rather than at the end of a successful sync: a materialize that dies midway (a killed run,
     // A failed archive) would otherwise leave an unattributable dir no sweep may ever touch, and those corpses
     // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp dirs.
-    // Staged-then-renamed because a torn marker is worse than none: a reaper reading a truncated path would judge the
-    // Repo deleted and reap a LIVE mirror, while rename is atomic on the ext4 the entry sits on.
-    // Publishing it is best-effort: the marker is bookkeeping for a GC sweep, and this rename crosses the 9p
-    // Redirector where a concurrent reaper's `readFileSync` holds the destination open — on win32 a rename over
-    // An open handle fails outright. Two same-repo runs under one `pnpm -r --parallel` are enough to hit it, and
-    // Aborting there would fail the user's command for a marker nothing in this run reads. The accepted cost is
-    // The corpse case above: an entry whose marker never lands is unattributable and no sweep reclaims it, which
-    // Is disk this machine keeps until someone clears the mirror root — bounded, and strictly better than a
-    // Command that dies because a GC file could not be renamed. The temp file is swept by the same staleness rule.
-    const originTempPath = join(entryUnc, `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${tag}`);
-    getResult(() => {
-      writeFileSync(originTempPath, cwd);
-      renameSync(originTempPath, join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME));
-    }).match(noop, noop);
+    // The publish is best-effort (publishSourceMirrorOrigin), which every planning pass makes safe by republishing
+    // A missing marker — including the no-delta early return above, the path a live repo takes on nearly every run
+    publishSourceMirrorOrigin(entryUnc, cwd);
     const copyPaths = delta === undefined ? Object.keys(manifest).toSorted() : delta.copyPaths;
     const consumedPaths: string[] = [];
     let archivePath = "";

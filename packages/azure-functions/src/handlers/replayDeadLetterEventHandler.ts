@@ -47,11 +47,23 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     if (!(await blockBlobClient.exists())) return;
     const content = await blockBlobClient.downloadToBuffer();
     let parseError: Error | undefined;
-    const events = getResult(() => deadLetteredEventsSchema.parse(JSON.parse(content.toString("utf8"))))
+    // Decoded and JSON-parsed once and reused: a dead-letter blob carries up to a megabyte of events, and the
+    // Raw objects are needed again below to write a quarantine copy that keeps Event Grid's diagnostics
+    const rawEvents = getResult(() => JSON.parse(content.toString("utf8")) as unknown)
       .orTee((error) => {
         parseError = error;
       })
       .unwrapOr(undefined);
+    // A blob that is not JSON at all reports its own syntax error rather than the schema's "expected array",
+    // Which is what an operator opening the quarantine copy needs to see
+    const events =
+      parseError === undefined
+        ? getResult(() => deadLetteredEventsSchema.parse(rawEvents))
+            .orTee((error) => {
+              parseError = error;
+            })
+            .unwrapOr(undefined)
+        : undefined;
     // A blob that is not a dead-letter event array can never become publishable, so it is quarantined
     // Rather than republished — republishing a broken payload would just dead-letter it again.
     if (!events) {
@@ -75,11 +87,11 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Judged per event, not per blob: Event Grid batches whatever expired together, so one poison payload must not
     // Strand the transient failures sharing its blob, and a blob-level count would be meaningless anyway once the
     // Batch splits across cycles. GetIsReplayable owns both bars — the replay cap and handler idempotency.
-    // Kept alongside the parsed events and index-aligned with them: the schema narrows each event to the five
+    // The raw objects parsed above stay index-aligned with the narrowed events: the schema keeps only the five
     // Fields a republish needs, dropping Event Grid's dead-letter diagnostics (deadLetterReason,
     // DeliveryAttempts, lastDeliveryOutcome). Those are the only record of WHY a payload is here, which is the
-    // Entire point of the copy an operator opens, so the quarantine copy is written from these raw objects
-    const rawEvents = getResult(() => JSON.parse(content.toString("utf8")) as unknown[]).unwrapOr([]);
+    // Entire point of the copy an operator opens, so the quarantine copy is written from the raw objects
+    const rawEventArray: unknown[] = Array.isArray(rawEvents) ? rawEvents : [];
     const replays = events.map((deadLetteredEvent, index) => {
       const { eventId, replayAttempts } = parseReplayId(deadLetteredEvent.id);
       return {
@@ -104,7 +116,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
         Buffer.from(
           JSON.stringify(
             quarantinedReplays.map(({ deadLetteredEvent, eventId, index }) => {
-              const rawEvent = rawEvents[index];
+              const rawEvent = rawEventArray[index];
               return rawEvent !== null && typeof rawEvent === "object"
                 ? { ...rawEvent, id: eventId }
                 : { ...deadLetteredEvent, id: eventId };

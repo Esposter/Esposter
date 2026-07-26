@@ -19,7 +19,7 @@ describe(cloneContentAssets, () => {
   const sourceResourceId = crypto.randomUUID();
   const destinationResourceId = crypto.randomUUID();
   const fileId = crypto.randomUUID();
-  const filename = "logo.png";
+  const filename = "a";
   // Duplicate passes the new resource id; publish passes that id's publish directory.
   const destinationDirectoryName = destinationResourceId;
   const filesRelativeName = `${FILES_DIRECTORY_SEGMENT}/${fileId}${ID_SEPARATOR}${filename}`;

@@ -35,9 +35,9 @@ describe("moderation", () => {
 
   beforeEach(() => {
     vi.useFakeTimers({
+      now: 0,
       toFake: ["Date", "setTimeout", "clearTimeout", "setInterval", "clearInterval", "setImmediate", "clearImmediate"],
     });
-    vi.setSystemTime(0);
     roomId = getRoomId();
   });
 

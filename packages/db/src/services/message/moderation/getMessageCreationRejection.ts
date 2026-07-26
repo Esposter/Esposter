@@ -39,10 +39,14 @@ export const getMessageCreationRejection = async (
       columns: { lastMessageAt: true, timeoutUntil: true },
       where: { roomId: { eq: roomId }, userId: { eq: userId } },
     }),
-    db.query.roomFiltersInMessage.findFirst({
-      columns: { action: true, timeoutDurationMs: true, words: true },
-      where: { roomId: { eq: roomId } },
-    }),
+    // Only read when there is text to filter: an attachment-only send has nothing for the word list to match,
+    // And a forward multiplies every read here by the room count
+    message
+      ? db.query.roomFiltersInMessage.findFirst({
+          columns: { action: true, timeoutDurationMs: true, words: true },
+          where: { roomId: { eq: roomId } },
+        })
+      : undefined,
   ]);
   if (!room || !member) return { type: MessageCreationRejectionType.NotAMember };
   // Only a rule that actually engages asks whether the sender can moderate, and however many of them ask,

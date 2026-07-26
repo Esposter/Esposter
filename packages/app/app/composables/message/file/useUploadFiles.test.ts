@@ -28,7 +28,7 @@ describe(useUploadFiles, () => {
   const server = setupMswTrpc();
   let router: Router;
   const roomId = crypto.randomUUID();
-  const filename = "filename.png";
+  const filename = "a";
   const fileId = crypto.randomUUID();
   // The grant the server mints beside each write target — the composer hands it back to reclaim the upload
   const token = "token";
@@ -55,7 +55,7 @@ describe(useUploadFiles, () => {
     vi.restoreAllMocks();
   });
 
-  const createFile = () => new File(["file"], filename, { type: "image/png" });
+  const createFile = () => new File(["a"], filename, { type: "image/png" });
 
   // The two features that meet here shipped separately: a failed upload reverts its seeded composer rows, and
   // Images upload a thumbnail beside the original. The thumbnail is decorative — the renderer falls back to the

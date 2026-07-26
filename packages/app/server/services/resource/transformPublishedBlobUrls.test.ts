@@ -26,7 +26,7 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
 describe(transformPublishedBlobUrls, () => {
   const resourceId = crypto.randomUUID();
   const fileId = crypto.randomUUID();
-  const filename = "logo.png";
+  const filename = "a";
   const workingBlobName = `${resourceId}/${FILES_DIRECTORY_SEGMENT}/${fileId}${ID_SEPARATOR}${filename}`;
   const content = { html: `<img src="${getResourceAssetUrl(workingBlobName)}">` };
   let containerClient: MockContainerClient;

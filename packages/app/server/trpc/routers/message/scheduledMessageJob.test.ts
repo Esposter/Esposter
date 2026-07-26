@@ -54,11 +54,14 @@ describe("scheduledMessageJob", () => {
     scheduledMessageJobCaller = createCallerFactory(scheduledMessageJobRouter)(mockContext);
   });
 
+  // Every tombstone here is stamped from `new Date()`, so a frozen clock makes them exactly assertable
   beforeEach(() => {
+    vi.useFakeTimers({ now: 0 });
     roomId = getRoomId();
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     onAssertCanCreateMessage.current = undefined;
     MockTableDatabase.clear();
     await mockContext.db.delete(roomFiltersInMessage);
@@ -138,7 +141,7 @@ describe("scheduledMessageJob", () => {
     const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId });
 
     expect(cancelledScheduledMessageJob.id).toBe(scheduledMessageJob.id);
-    expect(cancelledScheduledMessageJob.cancelledAt).toBeInstanceOf(Date);
+    expect(cancelledScheduledMessageJob.cancelledAt).toStrictEqual(new Date(0));
     expect(scheduledMessageJobs).toStrictEqual([]);
   });
 

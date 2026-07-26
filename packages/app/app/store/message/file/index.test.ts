@@ -15,7 +15,7 @@ describe(useDownloadFileStore, () => {
   let router: Router;
   const roomId = crypto.randomUUID();
   const fileId = crypto.randomUUID();
-  const filename = "filename.txt";
+  const filename = "a";
   const staleUrl = "https://sas.url/stale";
   const freshUrl = "https://sas.url/fresh";
 

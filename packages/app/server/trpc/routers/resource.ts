@@ -21,6 +21,7 @@ import { cloneContentAssets } from "@@/server/services/resource/cloneContentAsse
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
+import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
@@ -29,7 +30,7 @@ import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { copyBlob, deleteDirectory, getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
+import { deleteDirectory, getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,
@@ -47,7 +48,16 @@ import {
   resourceTypeSchema,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, getResultAsync, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
+import {
+  createUniqueArraySchema,
+  getResultAsync,
+  MAX_READ_LIMIT,
+  noop,
+  NotFoundError,
+  Operation,
+  takeOne,
+} from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, exists, gte, ilike, inArray, isNull, lte, notExists, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -310,11 +320,24 @@ export const resourceRouter = router({
     }),
   // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
   // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
-  // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule
+  // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule.
+  // The snapshot's assets are cloned back into the working copy's own files directory rather than referenced
+  // Where they sit, exactly as the duplicate path does: a published url lives under {id}/published, which
+  // Unpublish wipes wholesale, so a verbatim copy would hand the draft urls a later unpublish deletes — and
+  // Re-publishing that draft would ship the same dead urls, with re-uploading every asset the only recovery
   restorePublishedVersion: getOwnerProcedure(undefined, restorePublishedVersionInputSchema, "id").mutation<Resource>(
     async ({ ctx, input: { id, version } }) => {
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      // One transaction so a failed copy rolls the contentVersion bump back, keeping Postgres and blob storage consistent
+      const publishedContent = await readContentBlob(
+        ResourceDefinitionMap[ctx.resource.type].contentSchema,
+        getPublishedContentBlobName(id, version),
+      );
+      if (publishedContent === undefined)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Resource, `${id}/${version}`).message,
+        });
+      // One transaction so a failed clone or write rolls the contentVersion bump back, keeping Postgres and
+      // Blob storage consistent
       return ctx.db.transaction(async (tx) => {
         const restoredResource = requireMutation(
           (
@@ -328,11 +351,8 @@ export const resourceRouter = router({
           DatabaseEntityType.Resource,
           id,
         );
-        await copyBlob(
-          containerClient,
-          `${containerClient.url}/${getPublishedContentBlobName(id, version)}`,
-          getContentBlobName(id),
-        );
+        const restoredContent = await cloneContentAssets(publishedContent, id, true);
+        await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(restoredContent));
         return restoredResource;
       });
     },

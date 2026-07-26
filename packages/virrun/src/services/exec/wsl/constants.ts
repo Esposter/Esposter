@@ -55,3 +55,9 @@ export const WSL_UNC_REGEX: RegExp = /^\\\\wsl(?:\.localhost|\$)\\[^\\]+(?<linux
 // The per-entry fan-out this replaced (one launch per entry, >100 at once once a test suite had stranded that many
 // Mirrors) saturated the WSL service until it answered every later call with Wsl/Service/E_UNEXPECTED.
 export const WSL_REMOVE_SCRIPT = 'for dir; do chmod -R u+rwx -- "$dir" 2>/dev/null; rm -rf -- "$dir"; done';
+// How much of the win32 32767-char command-line limit one `wsl.exe` remove launch may spend on its path args, with
+// The remainder covering the fixed argv (the script above, `--exec sh -c`, the `sh` $0). A sweep of hundreds of
+// Stranded entries is exactly what removeSnapshotDirectoriesDetached exists for, and an argv past the limit fails
+// The spawn asynchronously — where the detached spawn's error handler discards it — so the whole teardown becomes a
+// Permanent silent no-op that every later run rebuilds identically.
+export const WSL_REMOVE_ARGV_MAX_LENGTH = 30000;

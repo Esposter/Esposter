@@ -50,8 +50,7 @@ describe("room", () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(async () => {
@@ -396,11 +395,11 @@ describe("room", () => {
     assert(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    // The publisher's own instant rides along, so a redelivery deletes the set that existed when the room was
-    // Deleted rather than whatever the prefix holds by then (system time is frozen at the epoch here)
+    // Unbounded in time, unlike every other prefix sweep: the room row is gone, so nothing can re-own this
+    // Prefix and this is its only teardown — a `createdBefore` cutoff would permanently strand the attachment
+    // Of any member still holding a write SAS when the owner deleted
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       containerName: AzureContainer.MessageAssets,
-      createdBefore: new Date(0),
       prefix: newRoom.id,
     });
   });
