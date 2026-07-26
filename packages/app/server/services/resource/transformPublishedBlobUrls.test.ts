@@ -2,10 +2,16 @@ import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { Resource } from "@esposter/db-schema";
 
-import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import {
+  FILES_DIRECTORY_SEGMENT,
+  PUBLISHED_DIRECTORY_SEGMENT,
+  RESOURCE_ASSET_URL_REGEX,
+  RESOURCE_ASSETS_URL_PREFIX,
+} from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
-import { ID_SEPARATOR } from "@esposter/shared";
+import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -41,6 +47,21 @@ describe(transformPublishedBlobUrls, () => {
     transformPublishedBlobUrls({} as AuthedContext, { id: resourceId } as Resource, content).then(
       ({ html }) => PUBLISHED_DIRECTORY_REGEX.exec(html)?.[0],
     );
+
+  // The rewrite's own output is what the serving endpoint has to decode, so the directory this mints and the
+  // Shape parseResourceAssetPath accepts are one decision — split them and every published asset 400s
+  test("rewrites to urls the serving endpoint can parse", async () => {
+    expect.hasAssertions();
+
+    const { html } = await transformPublishedBlobUrls({} as AuthedContext, { id: resourceId } as Resource, content);
+    const publishedUrl = takeOne([...html.matchAll(RESOURCE_ASSET_URL_REGEX)])[0];
+
+    expect(parseResourceAssetPath(publishedUrl.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length))).toStrictEqual({
+      blobName: expect.stringContaining(`${resourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/`),
+      isPublished: true,
+      resourceId,
+    });
+  });
 
   // The clone runs before the publish transaction claims a version, so a version-keyed destination could only be
   // Predicted — and two concurrent publishes predict the same one, then race a copy Azure rejects

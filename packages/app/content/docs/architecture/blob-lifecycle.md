@@ -31,7 +31,15 @@ A sweep that walks a persisted entity is authorized by that entity — `deleteMe
 
 So a client-named delete carries proof of the grant that created the blob. `message.generateUploadFileSasEntities` mints `createUploadFileToken(userId, roomId, id)` — an HMAC over the grant, keyed by the app secret — beside each write SAS, and `message.deleteUploadFiles` rejects the whole request unless every file's token verifies for the calling user (`getIsUploadFileTokenValid`, compared with `timingSafeEqual`). Only the member the write target was minted for holds it, so knowing an id buys nothing. The consequence is accepted deliberately: **a composer that loses its tokens (a reload mid-upload) can no longer reclaim those blobs**, and they stay until the room is deleted — the alternative is a delete anyone in the room can aim at anyone else.
 
+The grant **expires with the write SAS it was minted beside** (`WRITE_SAS_DURATION_MS`), and the expiry is signed with the rest of the token so it cannot be edited. An unexpiring grant stays valid after the upload has been attached to a message, where the blob is no longer a loose upload at all — reclaiming it then deletes a posted attachment out from under the message still listing it, leaving every member a permanently broken download and nothing recording why.
+
 Nothing is added to the namespace to make this checkable — the token is the check. A new client-named delete path either carries a grant token or does not ship.
+
+## A name from the request body is one segment, never a path
+
+The grant authorizes _which_ blob, not _what it is called_. Blob names are assembled by interpolation, and the storage sdk resolves the result through `URL.pathname`, which normalizes `..` away — so a caller-supplied `filename` or `blobPath` carrying a separator or a dot segment walks the delete straight out of the prefix the grant covered, and out of the container. Every client-supplied piece of a blob name is therefore constrained to a single separator-free, non-dot segment at its schema (`BLOB_SEGMENT_REGEX` on `fileEntitySchema.filename` and on resource `deleteFile`'s `blobPath`), which covers the upload SAS target and every delete that names the file in one place.
+
+The same applies to a name reconstructed from a **stored** column: `roomsInMessage.image` is free text, so `updateRoom`'s sweep only trusts the name it derives when that name is one an upload could actually have written — a prefix from `getRoomProfileImageBlobPrefixes` plus a single segment. Round-tripping a value through the database does not make it ours.
 
 ## Prefix deletions are bounded twice
 

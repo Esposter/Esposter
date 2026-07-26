@@ -17,7 +17,26 @@ import {
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+// Send-now checks the guards, claims the job, then `createUserMessage` checks them again — a filter arriving in
+// That gap is the only way the second check can reject where the first passed, and no caller can land one there.
+// So the seam itself is the hook: a one-shot callback runs after a guard pass, and the real guard runs again
+const { onAssertCanCreateMessage } = vi.hoisted(() => ({
+  onAssertCanCreateMessage: {} as { current?: () => Promise<void> },
+}));
+
+vi.mock(import("@@/server/services/message/moderation/assertCanCreateMessage"), async (importOriginal) => {
+  const { assertCanCreateMessage } = await importOriginal();
+  return {
+    assertCanCreateMessage: async (...args: Parameters<typeof assertCanCreateMessage>) => {
+      await assertCanCreateMessage(...args);
+      const callback = onAssertCanCreateMessage.current;
+      onAssertCanCreateMessage.current = undefined;
+      if (callback) await callback();
+    },
+  };
+});
 
 describe("scheduledMessageJob", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId } = setupRoomSuite();
@@ -40,6 +59,7 @@ describe("scheduledMessageJob", () => {
   });
 
   afterEach(async () => {
+    onAssertCanCreateMessage.current = undefined;
     MockTableDatabase.clear();
     await mockContext.db.delete(roomFiltersInMessage);
     await mockContext.db.delete(scheduledMessageJobsInMessage);
@@ -216,6 +236,35 @@ describe("scheduledMessageJob", () => {
     });
 
     expect(timedOutMembership?.timeoutUntil).not.toBeNull();
+
+    await mockSessionOnce(mockContext.db, member);
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+
+    expect(scheduledMessageJobCount).toBe(0);
+  });
+
+  // The same non-idempotence, one guard deeper: `createUserMessage` re-checks, so a filter that arrives after the
+  // Pre-check passed is applied there instead. Rescheduling that rejection is the same double punishment the
+  // Pre-check burns the job to avoid — the worker would trip the filter again at runAt
+  test("burns the job when send scheduled message now is word filtered after the claim", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    await mockSessionOnce(mockContext.db, member);
+    onAssertCanCreateMessage.current = async () => {
+      await mockContext.db.insert(roomFiltersInMessage).values({
+        action: WordFilterAction.Timeout,
+        roomId,
+        timeoutDurationMs: 1,
+        words: [message],
+      });
+    };
+
+    await expect(
+      scheduledMessageJobCaller.sendScheduledMessageNow({ id: scheduledMessageJob.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
     await mockSessionOnce(mockContext.db, member);
     const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();

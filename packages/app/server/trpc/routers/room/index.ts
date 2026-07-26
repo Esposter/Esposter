@@ -29,6 +29,7 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
+import { getRoomProfileImageBlobPrefixes } from "@@/server/services/room/getRoomProfileImageBlobPrefixes";
 import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -46,6 +47,7 @@ import { filterRouter } from "@@/server/trpc/routers/room/filter";
 import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
+  BLOB_SEGMENT_REGEX,
   DatabaseEntityType,
   INVITE_ID_LENGTH,
   InviteInMessageRelations,
@@ -608,8 +610,23 @@ export const baseRoomRouter = router({
             createdBefore: dayjs().subtract(WRITE_SAS_DURATION_MS, "ms").toDate(),
           }),
         );
-        // The version just dropped is a known orphan however young it is, unlike any other blob the age filter holds back
-        if (previousImage) blobNames.add(previousImage.replace(`${containerClient.url}/`, ""));
+        // The version just dropped is a known orphan however young it is, unlike any other blob the age filter
+        // holds back. `image` is free text on the row, so the only name trusted from it is one an upload could
+        // actually have written — a prefix of this room's plus a single segment, or the flat legacy name itself.
+        // A crafted value would otherwise delete a blob the caller was never granted: the storage sdk resolves
+        // The name through `URL.pathname`, which normalizes `..` segments away and climbs out of the container
+        const previousBlobName = previousImage.startsWith(`${containerClient.url}/`)
+          ? previousImage.slice(`${containerClient.url}/`.length)
+          : "";
+        if (
+          getRoomProfileImageBlobPrefixes(id).some(
+            (prefix) =>
+              previousBlobName === prefix ||
+              (previousBlobName.startsWith(`${prefix}/`) &&
+                BLOB_SEGMENT_REGEX.test(previousBlobName.slice(`${prefix}/`.length))),
+          )
+        )
+          blobNames.add(previousBlobName);
         return [...blobNames].filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== image);
       });
 

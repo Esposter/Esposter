@@ -255,6 +255,10 @@ export const scheduledMessageJobRouter = router({
       ).match(
         (message) => message,
         async (error) => {
+          // `createUserMessage` re-runs the guards, so the word filter can still block here — a moderator editing
+          // The filter in the gap is enough. Rescheduling that would hand the worker the same block at `runAt`,
+          // Which is the second timeout and second audit row the pre-check above burns the job to avoid
+          if (error instanceof TRPCError && error.cause instanceof WordFilteredError) throw error;
           await ctx.db
             .update(scheduledMessageJobsInMessage)
             .set({ cancelledAt: null })

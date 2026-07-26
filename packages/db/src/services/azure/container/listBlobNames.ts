@@ -21,7 +21,10 @@ export const listBlobNames = async (
   for await (const { segment } of pages)
     blobNames.push(
       ...segment.blobItems
-        .filter(({ properties }) => !createdBefore || (properties.createdOn && properties.createdOn < createdBefore))
+        // `createdOn` is optional on the listing, and dropping the blobs missing it would turn a sweep into a
+        // Silent no-op that still reports success. `lastModified` is always present and never earlier, so it
+        // Only ever holds a blob back longer — never deletes one the cutoff meant to spare
+        .filter(({ properties }) => !createdBefore || (properties.createdOn ?? properties.lastModified) < createdBefore)
         .map(({ name }) => name),
     );
   return blobNames;

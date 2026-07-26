@@ -5,6 +5,7 @@ import type { BlobDeletionEventGridData, MessageEntity } from "@esposter/db-sche
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { dayjs } from "#shared/services/dayjs";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -26,6 +27,7 @@ import {
   StandardMessageEntity,
   usersToRoomsInMessage,
   WordFilterAction,
+  WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import {
   InvalidOperationError,
@@ -600,6 +602,68 @@ describe("message", () => {
       ],
       containerName: AzureContainer.MessageAssets,
     });
+  });
+
+  // The grant says which blob, never what it is called: the name is interpolated into a blob path that the
+  // Storage sdk resolves through `URL.pathname`, so dot segments in a filename walk the delete out of the room
+  test("fails to reclaim an upload whose filename escapes the room prefix", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
+      files: [{ filename, mimetype, size }],
+      roomId: newRoom.id,
+    });
+    assert(sasEntity);
+
+    await expect(
+      messageCaller.deleteUploadFiles({
+        files: [{ filename: `../../${crypto.randomUUID()}/${filename}`, id: sasEntity.id, token: sasEntity.token }],
+        roomId: newRoom.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "origin": "string",
+          "code": "invalid_format",
+          "format": "regex",
+          "pattern": "/^(?!\\\\.{1,2}$)[^/\\\\\\\\]+$/u",
+          "path": [
+            "files",
+            0,
+            "filename"
+          ],
+          "message": "Invalid string: must match pattern /^(?!\\\\.{1,2}$)[^/\\\\\\\\]+$/u"
+        }
+      ]]
+    `);
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+  });
+
+  // Past the write sas the upload has either landed on a message — where the blob belongs to that message, not
+  // To a loose upload — or been abandoned; a grant valid past both deletes a posted attachment out from under it
+  test("fails to reclaim an upload after the grant expires", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
+      files: [{ filename, mimetype, size }],
+      roomId: newRoom.id,
+    });
+    assert(sasEntity);
+    vi.useFakeTimers();
+    vi.setSystemTime(dayjs().add(WRITE_SAS_DURATION_MS, "ms").add(1, "ms").toDate());
+
+    await expect(
+      messageCaller.deleteUploadFiles({
+        files: [{ filename, id: sasEntity.id, token: sasEntity.token }],
+        roomId: newRoom.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+
+    vi.useRealTimers();
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
   });
 
   // The blob names an unreferenced upload and a posted attachment live under are the same room-scoped namespace,

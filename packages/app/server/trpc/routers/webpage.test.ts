@@ -6,7 +6,7 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getPublishedDirectoryName } from "@@/server/services/resource/getPublishedDirectoryName";
+import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
@@ -56,7 +56,7 @@ describe("webpage", () => {
 
     const newResource = await caller.createResource({ name });
     const blobName = `${getFilesDirectoryName(newResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
-    const publishedBlobName = `${getPublishedDirectoryName(crypto.randomUUID(), 1)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
+    const publishedBlobName = `${createPublishedAssetsDirectoryName(crypto.randomUUID())}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
     MockContainerDatabase.set(
       AzureContainer.ResourceAssets,
       new Map([

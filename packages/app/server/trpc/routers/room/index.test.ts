@@ -10,6 +10,7 @@ import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants"
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { createId } from "#shared/util/math/random/createId";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
@@ -282,6 +283,20 @@ describe("room", () => {
       containerName: AzureContainer.PublicUserAssets,
     });
     expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(inFlightBlobName)).toBe(true);
+  });
+
+  // The column is free text, so the dropped value is only a blob name if an upload could have written it — the
+  // Deletion url normalizes the dot segments away and would otherwise resolve into another container entirely
+  test("sweeps nothing when the dropped image names a blob outside the room's prefixes", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const victimBlobName = `${crypto.randomUUID()}/${crypto.randomUUID()}`;
+    const craftedImage = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${getRoomProfileImageBlobPrefix(newRoom.id)}/../../../${victimBlobName}`;
+    await roomCaller.updateRoom({ id: newRoom.id, image: craftedImage });
+    await roomCaller.updateRoom({ id: newRoom.id, image: "" });
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
   });
 
   // A save that carries back the url it loaded with replaced nothing, so it must sweep nothing — otherwise a

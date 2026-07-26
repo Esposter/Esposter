@@ -38,16 +38,18 @@ flowchart LR
 
 ## Authorization matrix
 
-| Path shape                        | Who                                                 | Why                                                                                                                                   |
-| --------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `{id}/files/{file}`               | session owner of the resource                       | working-copy assets render only inside the owner's editor (same-origin, cookies present)                                              |
-| `{id}/published/{v}/files/{file}` | anyone while a publication row exists; owner always | published views render in a sandboxed `srcdoc` iframe whose opaque origin sends no cookies; the owner fallback backs version previews |
+| Path shape                                | Who                                                 | Why                                                                                                                                   |
+| ----------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `{id}/files/{file}`                       | session owner of the resource                       | working-copy assets render only inside the owner's editor (same-origin, cookies present)                                              |
+| `{id}/published/{publishId}/files/{file}` | anyone while a publication row exists; owner always | published views render in a sandboxed `srcdoc` iframe whose opaque origin sends no cookies; the owner fallback backs version previews |
 
 CSP needs no special-casing: `ImageSourceWhitelist` carries `'self'` (the relative url) and the Azure base url (the redirect target — CSP checks redirect targets).
 
 ## Matching a stable url
 
 The url is emitted only by `getResourceAssetUrl`, whose per-segment encoding (`encodeURIComponent` plus percent-encoding `!'()*`) closes the charset to `[\w.~%-]` by construction — the **token we control** case of [content token rewriting](/docs/architecture/content-token-rewriting). `RESOURCE_ASSET_URL_REGEX` is therefore a prefix-anchored positive-charset match with no opener analysis, and `parseResourceAssetPath` is the single decoder/validator: url segments map one-to-one onto blob-name segments, so rejecting any decoded segment that could re-introduce a separator makes traversal impossible by construction. A url that fails to parse is data, not an error — the clone carries it verbatim and the endpoint 400s it.
+
+The parser accepts exactly the two shapes the writers emit, so a change to either one is a change to both: the publish clone directory is a **uuid**, and a parser still demanding a numeric `publishVersion` rejects every url publish rewrites — every asset on every published page 400s, while the clone and the publish itself both report success. `transformPublishedBlobUrls.test.ts` pins the round trip end to end rather than trusting a hand-built path.
 
 ## Procedures
 

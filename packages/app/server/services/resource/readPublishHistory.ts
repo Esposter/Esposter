@@ -7,8 +7,8 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { AzureContainer } from "@esposter/db-schema";
 
 // The retained snapshots are the source of truth, so the history is enumerated straight from blob storage
-// With no history table. Each {version}.json blob directly under {id}/published/ is one snapshot — Survey's
-// Per-version asset clones live in {version}/ subdirectories, which the hierarchy delimiter keeps out
+// With no history table. Each {version}.json blob directly under {id}/published/ is one snapshot — the asset
+// Clones live in per-attempt {publishId}/ subdirectories, which the hierarchy delimiter keeps out
 export const readPublishHistory = async (id: Resource["id"]): Promise<PublishHistoryVersion[]> => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const prefix = `${id}/${PUBLISHED_DIRECTORY_SEGMENT}/`;

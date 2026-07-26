@@ -9,8 +9,8 @@ import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirecto
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
+import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
-import { getPublishedDirectoryName } from "@@/server/services/resource/getPublishedDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
@@ -310,7 +310,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const publishedBlobName = `${getPublishedDirectoryName(webpageResource.id, 1)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    const publishedBlobName = `${createPublishedAssetsDirectoryName(webpageResource.id)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[publishedBlobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` }),

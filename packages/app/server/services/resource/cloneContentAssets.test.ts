@@ -24,7 +24,7 @@ describe(cloneContentAssets, () => {
   const destinationDirectoryName = destinationResourceId;
   const filesRelativeName = `${FILES_DIRECTORY_SEGMENT}/${fileId}${ID_SEPARATOR}${filename}`;
   const workingBlobName = `${sourceResourceId}/${filesRelativeName}`;
-  const publishedBlobName = `${sourceResourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/1/${filesRelativeName}`;
+  const publishedBlobName = `${sourceResourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/${crypto.randomUUID()}/${filesRelativeName}`;
   let containerClient: MockContainerClient;
 
   beforeEach(async () => {

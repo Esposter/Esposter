@@ -4,9 +4,6 @@ import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/se
 import { getResult } from "@esposter/shared";
 import { z } from "zod";
 
-const resourceIdSchema = z.uuid();
-const PUBLISH_VERSION_REGEX = /^[1-9]\d*$/u;
-
 // The single decoder + validator for `/api/resource-assets/{encodedPath}` — shared by the serving endpoint
 // And the publish/duplicate clone service. Url segments map one-to-one onto blob-name segments, so rejecting
 // Any decoded segment that could re-introduce a separator makes traversal impossible by construction: a
@@ -27,8 +24,8 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
     decodedSegments.push(decodedSegment);
   }
 
-  const [resourceId, directoryName, publishVersion, publishedFilesDirectoryName] = decodedSegments;
-  if (resourceId === undefined || !resourceIdSchema.safeParse(resourceId).success) return undefined;
+  const [resourceId, directoryName, publishId, publishedFilesDirectoryName] = decodedSegments;
+  if (resourceId === undefined || !z.uuid().safeParse(resourceId).success) return undefined;
 
   const blobName = decodedSegments.join("/");
   if (decodedSegments.length === 3 && directoryName === FILES_DIRECTORY_SEGMENT)
@@ -36,8 +33,10 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
   if (
     decodedSegments.length === 5 &&
     directoryName === PUBLISHED_DIRECTORY_SEGMENT &&
-    publishVersion !== undefined &&
-    PUBLISH_VERSION_REGEX.test(publishVersion) &&
+    // The publish clone directory is a per-attempt uuid, never the publishVersion — the clone runs before the
+    // Transaction claims one (see createPublishedAssetsDirectoryName)
+    publishId !== undefined &&
+    z.uuid().safeParse(publishId).success &&
     publishedFilesDirectoryName === FILES_DIRECTORY_SEGMENT
   )
     return { blobName, isPublished: true, resourceId };
