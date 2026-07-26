@@ -611,8 +611,8 @@ export const baseRoomRouter = router({
           }),
         );
         // The version just dropped is a known orphan however young it is, unlike any other blob the age filter
-        // holds back. `image` is free text on the row, so the only name trusted from it is one an upload could
-        // actually have written — a prefix of this room's plus a single segment, or the flat legacy name itself.
+        // Holds back. `image` is free text on the row, so the only name trusted from it is one an upload could
+        // Actually have written — a prefix of this room's plus a single segment, or the flat legacy name itself.
         // A crafted value would otherwise delete a blob the caller was never granted: the storage sdk resolves
         // The name through `URL.pathname`, which normalizes `..` segments away and climbs out of the container
         const previousBlobName = previousImage.startsWith(`${containerClient.url}/`)
