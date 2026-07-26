@@ -13,12 +13,25 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   const roomStore = useRoomStore();
   const dataStore = useDataStore();
   const readFileUrls = useReadFileUrls();
-  const { data: fileUrlMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, ReadFileUrl>());
+  const {
+    data: fileUrlMap,
+    getData,
+    setData,
+  } = useDataMap(() => roomStore.currentRoomId, new Map<string, ReadFileUrl>());
+  // Keyed by the room the urls were read FOR, never `fileUrlMap.value` — that resolves to whichever room is
+  // Current at the moment it is read, and every caller here awaits a network round trip first. A user who
+  // Switches rooms during that await would have one room's urls written into another room's map: the room they
+  // Landed on renders attachments it has no urls for, and the room they left never receives the ones it asked for
+  const storeFileUrls = (roomId: string, newFileUrlMap: Map<string, ReadFileUrl>) => {
+    const roomFileUrlMap = getData(roomId) ?? new Map<string, ReadFileUrl>();
+    for (const [id, fileUrl] of newFileUrlMap) roomFileUrlMap.set(id, fileUrl);
+    setData(roomId, roomFileUrlMap);
+  };
   MessageHookMap[Operation.Create].register(async (message) => {
-    if (!roomStore.currentRoomId || message.files.length === 0) return;
+    const roomId = roomStore.currentRoomId;
+    if (!roomId || message.files.length === 0) return;
 
-    const newFileUrlMap = await readFileUrls(message.files, roomStore.currentRoomId);
-    for (const [id, fileUrl] of newFileUrlMap) fileUrlMap.value.set(id, fileUrl);
+    storeFileUrls(roomId, await readFileUrls(message.files, roomId));
   });
   MessageHookMap[Operation.Delete].register((input) => {
     const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);
@@ -44,10 +57,8 @@ export const useDownloadFileStore = defineStore("message/file", () => {
       });
       // A room scrolled back far enough holds more attachments than the query accepts in one input, and it is
       // The long-open room — the only one this sweep exists for — that gets there first
-      for (let index = 0; index < expiringFiles.length; index += MAX_READ_LIMIT) {
-        const newFileUrlMap = await readFileUrls(expiringFiles.slice(index, index + MAX_READ_LIMIT), roomId);
-        for (const [id, fileUrl] of newFileUrlMap) fileUrlMap.value.set(id, fileUrl);
-      }
+      for (let index = 0; index < expiringFiles.length; index += MAX_READ_LIMIT)
+        storeFileUrls(roomId, await readFileUrls(expiringFiles.slice(index, index + MAX_READ_LIMIT), roomId));
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
   if (!getIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);

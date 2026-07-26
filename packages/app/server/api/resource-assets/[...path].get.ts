@@ -21,6 +21,10 @@ import { RateLimiterRes } from "rate-limiter-flexible";
 // And 302-redirecting to a freshly signed minutes-scale SAS — content never carries a signature, so nothing
 // In it can expire or leak a long-lived grant
 export default defineEventHandler(async (event) => {
+  // Still percent-encoded, and must stay that way: `parseResourceAssetPath` decodes per segment so that a `%2F`
+  // Can never widen the directory the caller was authorized for. h3 only decodes when passed `{ decode: true }`
+  // (h3 1.15.x `getRouterParams`), so the default is the encoded form this needs — adding that option, or moving
+  // To a router that decodes for you, silently turns the traversal guard into a no-op
   const encodedPath = getRouterParam(event, "path");
   const resourceAssetPath = encodedPath === undefined ? undefined : parseResourceAssetPath(encodedPath);
   if (!resourceAssetPath) throw createError({ statusCode: 400 });
@@ -30,9 +34,13 @@ export default defineEventHandler(async (event) => {
   if (IS_PRODUCTION) {
     const ipAddress = getIpAddress(event.node.req);
     if (ipAddress)
+      // Namespaced for both callers, not just the anonymous one: a signed-in viewer's key was the bare user id,
+      // The same key every tRPC call consumes, so opening one published page full of images spent that page's
+      // Asset requests out of the budget for the user's actual API calls and 429'd the app around them. One
+      // Rendered page is many asset requests by construction — it cannot share a bucket with procedure calls
       await getResultAsync(() =>
         standardRateLimiter.consume(
-          getSessionPayload ? getSessionPayload.user.id : `${AzureContainer.ResourceAssets}${ID_SEPARATOR}${ipAddress}`,
+          `${AzureContainer.ResourceAssets}${ID_SEPARATOR}${getSessionPayload ? getSessionPayload.user.id : ipAddress}`,
         ),
       ).match(noop, (error) => {
         if (error instanceof RateLimiterRes) throw createError({ statusCode: 429 });
