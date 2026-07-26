@@ -17,7 +17,8 @@ export const processBlobDeletionHandler: EventGridHandler = (event, context) => 
     const containerClient = await getContainerClient(data.containerName);
     // A prefix event carries an unbounded set the publisher could not afford to enumerate on its request path,
     // So the walk happens here — where a retry costs nothing and the time budget is the worker's, not a user's.
-    const blobNames = data.blobNames ?? (await listBlobNames(containerClient, data.prefix, { isDeep: true }));
+    const blobNames =
+      "blobNames" in data ? data.blobNames : await listBlobNames(containerClient, data.prefix, { isDeep: true });
     // Deleting only if the blob exists: a redelivery or a dead-letter replay re-runs the whole batch, and the blobs
     // An earlier attempt already removed must not fail the ones it did not reach.
     await Promise.all(blobNames.map((blobName) => containerClient.getBlockBlobClient(blobName).deleteIfExists()));
