@@ -140,8 +140,11 @@ export const moderationRouter = router({
               .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
               .onConflictDoNothing();
           });
-          // Best-effort after the ban commits — a failed purge leaves the ban standing with some of the banned
-          // User's messages still visible until it is run again, never undoes the ban itself
+          // Best-effort after the ban commits: the ban is the effect that must not be lost, and rethrowing here
+          // Would fail a mutation whose row already landed. Nothing re-runs the purge — re-issuing the ban hits
+          // `onConflictDoNothing`, and there is no sweeper or retry queue — so a partial failure leaves some of
+          // The banned user's messages visible until a moderator deletes them by hand. Accepted while the purge
+          // Is a table scan the request path already owns; a durable version belongs on the event pipeline
           await getResultAsync(() => softDeleteRoomMessagesByUser(roomId, targetUserId)).match(noop, console.error);
           break;
         }

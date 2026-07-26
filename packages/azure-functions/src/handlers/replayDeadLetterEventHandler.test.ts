@@ -134,11 +134,34 @@ describe(replayDeadLetterEventHandler, () => {
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
     expect(readContainer()).toStrictEqual({
-      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify(cappedEvents),
+      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([
+        createDeadLetteredEvent(eventId),
+        createDeadLetteredEvent(secondEventId),
+      ]),
     });
     expect(errorSpy).toHaveBeenCalledExactlyOnceWith(
       `${AzureFunction.ReplayDeadLetterEvent} quarantined 2 of 2 events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
     );
+  });
+
+  // The quarantine copy is the only record an operator ever opens, and the only way they resume one. It has to
+  // Carry Event Grid's dead-letter diagnostics — which the parse narrows away — and an id without the replay
+  // Count, or restoring the blob to the container root is re-quarantined on sight and deleted under them.
+  test("quarantines with the dead-letter diagnostics kept and the replay count stripped", async () => {
+    expect.hasAssertions();
+
+    const deadLetterReason = "MaxDeliveryAttemptsExceeded";
+    const cappedEvent = {
+      ...createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS}`),
+      deadLetterReason,
+      deliveryAttempts: 7,
+    };
+    await seedBlob(JSON.stringify([cappedEvent]));
+    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+
+    expect(readContainer()).toStrictEqual({
+      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([{ ...cappedEvent, id: eventId }]),
+    });
   });
 
   test("caps per event: quarantines the capped event and republishes the rest of the batch", async () => {
@@ -158,7 +181,7 @@ describe(replayDeadLetterEventHandler, () => {
     ]);
     expect(readContainer()).toStrictEqual({
       [`${DEAD_LETTER_ARCHIVED_PREFIX}${blobName}`]: content,
-      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([cappedEvent]),
+      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([createDeadLetteredEvent(eventId)]),
     });
     expect(errorSpy).toHaveBeenCalledExactlyOnceWith(
       `${AzureFunction.ReplayDeadLetterEvent} quarantined 1 of 2 events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
@@ -297,7 +320,7 @@ describe(replayDeadLetterEventHandler, () => {
     ]);
     expect(readContainer()).toStrictEqual({
       [`${DEAD_LETTER_ARCHIVED_PREFIX}${blobName}`]: content,
-      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([cappedEvent]),
+      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([createDeadLetteredEvent(eventId)]),
     });
     // The redelivery rewrites the same quarantine copy, so only the whole call list proves the alert fired once: the
     // Rethrow of the first delivery contributes the second line, which is the retry request, not a second incident.

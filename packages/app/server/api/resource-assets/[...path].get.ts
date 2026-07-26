@@ -63,8 +63,10 @@ export default defineEventHandler(async (event) => {
 
   if (isPublished) {
     // Published assets must stay anonymous-capable while a publication row exists: published views render in
-    // A sandboxed srcdoc iframe whose opaque origin sends no cookies with asset requests. Without the row the
-    // Owner can still preview retained snapshots (the view route's version query param).
+    // A sandboxed srcdoc iframe whose opaque origin sends no cookies with asset requests — which is also why
+    // The owner fallback below cannot rescue a render inside that iframe, only a direct request for the asset
+    // Url (opening the image in its own tab). Inside the iframe, no row means the images are broken for the
+    // Owner too; that is what unpublish revoking anonymous access costs, and it is the point of the control.
     //
     // Read per request, never cached: unpublish revokes anonymous access, and a cache would keep serving the
     // Assets of an unpublished resource for its whole lifetime. Revocation has to be immediate to be a control

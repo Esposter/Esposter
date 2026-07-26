@@ -272,10 +272,17 @@ export const resourceRouter = router({
         .limit(MAX_READ_LIMIT)
     ).map(({ resource }) => resource),
   ),
-  // Snapshot versions come from a blob prefix listing — no history table, since the {id}/published/{n}
-  // Blobs are already the source of truth
+  // Which snapshots exist comes from a blob prefix listing — no history table, since the {id}/published/{n}
+  // Blobs are already the source of truth for that. Which one is LIVE comes from the publication row instead,
+  // Because the two can disagree: the unpublish sweep is a best-effort event, so a republish can land while
+  // Retired snapshots are still present, with publishVersion restarted at 1
   readPublishHistory: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<PublishHistoryVersion[]>(
-    ({ ctx }) => readPublishHistory(ctx.resource.id),
+    async ({ ctx }) => {
+      const publication = await ctx.db.query.resourcePublications.findFirst({
+        where: { resourceId: { eq: ctx.resource.id } },
+      });
+      return readPublishHistory(ctx.resource.id, publication?.publishVersion);
+    },
   ),
   readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query(({ ctx }) => ctx.resource),
   readResources: standardAuthedProcedure

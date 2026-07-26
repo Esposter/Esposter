@@ -69,6 +69,42 @@ const FIXTURES = [
   { name: "nestedFunction", source: `aEventEmitter.emit(); return async () => { await g(); };`, violations: 0 },
   // Only a `*EventEmitter` receiver carries the persist-then-notify meaning.
   { name: "nonEmitterEmit", source: `analytics.emit(); await g();`, violations: 0 },
+  // The root only says the chain STARTED in a wrapper. A terminal that rethrows hands the rejection straight
+  // Back to the caller, and rethrowing from the err branch is a documented repo idiom — so these are the exact
+  // Shape the rule exists to catch, written the way the codebase actually writes it.
+  {
+    name: "rethrowingMatchAfterEmit",
+    source: `aEventEmitter.emit(); await getResultAsync(g).match(noop, (error) => { throw error; });`,
+    violations: 1,
+  },
+  {
+    name: "rethrowingHelperMatchAfterEmit",
+    source: `aEventEmitter.emit(); await getResultAsync(g).match(noop, logAndRethrow(context, name));`,
+    violations: 1,
+  },
+  {
+    name: "absorbingMatchAfterEmit",
+    source: `aEventEmitter.emit(); await getResultAsync(g).match(noop, console.error);`,
+    violations: 0,
+  },
+  // A throw inside a deeper callback belongs to that callback, not to the err handler.
+  {
+    name: "nestedThrowInMatchAfterEmit",
+    source: `aEventEmitter.emit(); await getResultAsync(g).match(noop, () => { xs.forEach(() => { throw e; }); });`,
+    violations: 0,
+  },
+  {
+    name: "unsafeUnwrapAfterEmit",
+    source: `aEventEmitter.emit(); await getResultAsync(g)._unsafeUnwrap();`,
+    violations: 1,
+  },
+  // Both finalizers unwrap the original result and rethrow on Err, so awaiting one after an emit rejects the
+  // Caller for an entity that already exists and was already broadcast.
+  {
+    name: "withFinalizerAsyncAfterEmit",
+    source: `aEventEmitter.emit(); await withFinalizerAsync(() => g(), () => h());`,
+    violations: 1,
+  },
 ];
 
 describe(RULE, () => {

@@ -14,6 +14,10 @@ const vitestConfig = await defineVitestProject({
     benchmark: {
       reporters: ["@esposter/shared-node/reporter"],
     },
+    // Anything that signs with the app secret refuses to run without one, rather than quietly signing with an
+    // Empty key — Nuxt coerces an unset runtimeConfig value to "", which `createHmac` accepts, so the failure
+    // Would otherwise be a forgeable token in production and nothing at all in a test.
+    env: { BETTER_AUTH_SECRET: "mock-auth-secret" },
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
     // App don't resolve) — required now that the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },

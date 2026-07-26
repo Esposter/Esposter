@@ -72,7 +72,7 @@ describe(createOsExecOptions, () => {
       loginEnvironmentPath.value = "";
 
       expect(() => createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe")).toThrowErrorMatchingInlineSnapshot(
-        `[InvalidOperationError: Invalid operation: Read, name: createOsExecOptions, WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); rerun once WSL is warm, or raise WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS]`,
+        `[InvalidOperationError: Invalid operation: Read, name: createOsExecOptions, WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); start WSL with \`wsl.exe -- true\` and rerun — a warm distro captures immediately]`,
       );
     });
   });

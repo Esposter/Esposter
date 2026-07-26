@@ -75,11 +75,17 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Judged per event, not per blob: Event Grid batches whatever expired together, so one poison payload must not
     // Strand the transient failures sharing its blob, and a blob-level count would be meaningless anyway once the
     // Batch splits across cycles. GetIsReplayable owns both bars — the replay cap and handler idempotency.
-    const replays = events.map((deadLetteredEvent) => {
+    // Kept alongside the parsed events and index-aligned with them: the schema narrows each event to the five
+    // Fields a republish needs, dropping Event Grid's dead-letter diagnostics (deadLetterReason,
+    // DeliveryAttempts, lastDeliveryOutcome). Those are the only record of WHY a payload is here, which is the
+    // Entire point of the copy an operator opens, so the quarantine copy is written from these raw objects
+    const rawEvents = getResult(() => JSON.parse(content.toString("utf8")) as unknown[]).unwrapOr([]);
+    const replays = events.map((deadLetteredEvent, index) => {
       const { eventId, replayAttempts } = parseReplayId(deadLetteredEvent.id);
       return {
         deadLetteredEvent,
         eventId,
+        index,
         isReplayable: getIsReplayable(deadLetteredEvent.eventType, replayAttempts),
         replayAttempts,
       };
@@ -91,7 +97,20 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
         containerClient,
         blobName,
         DEAD_LETTER_QUARANTINE_PREFIX,
-        Buffer.from(JSON.stringify(quarantinedReplays.map(({ deadLetteredEvent }) => deadLetteredEvent))),
+        // Written from the raw objects so the diagnostics survive, and with the replay count stripped back off
+        // The id: the documented recovery is an operator moving this blob to the container root once the
+        // Downstream handler is fixed, and an id still carrying the cap is re-quarantined on sight — deleting
+        // The copy the operator just restored and silently no-opping their remediation
+        Buffer.from(
+          JSON.stringify(
+            quarantinedReplays.map(({ deadLetteredEvent, eventId, index }) => {
+              const rawEvent = rawEvents[index];
+              return rawEvent !== null && typeof rawEvent === "object"
+                ? { ...rawEvent, id: eventId }
+                : { ...deadLetteredEvent, id: eventId };
+            }),
+          ),
+        ),
       );
       // Quarantining stays ahead of the republish so a poison payload never rides along in the resend batch, which
       // Means a send that throws below reruns this whole step on the redelivered blob. Rewriting the quarantine copy

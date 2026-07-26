@@ -65,8 +65,11 @@ export const useDataStore = defineStore("message/data", () => {
         if (replyRowKey) threadFollowStore.storeFollowThread(input.roomId, replyRowKey);
         return true;
       },
-      (error) => {
-        baseStoreDeleteMessage(newMessage);
+      async (error) => {
+        // Through the Delete hooks, not a bare list removal: the Create hooks that just ran wrote a download-url
+        // Entry per attached file, and the hourly re-mint sweep would keep re-signing urls for a message that
+        // Never existed. Rolling back the entity has to roll back everything its creation registered
+        await storeDeleteMessage(newMessage);
         createAlert(error.message, "error");
         return false;
       },

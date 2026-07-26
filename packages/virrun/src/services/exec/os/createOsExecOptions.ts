@@ -46,7 +46,7 @@ export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions 
     throw new InvalidOperationError(
       Operation.Read,
       createOsExecOptions.name,
-      "WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); rerun once WSL is warm, or raise WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS",
+      "WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); start WSL with `wsl.exe -- true` and rerun — a warm distro captures immediately",
     );
   const path = wslLoginPath
     ? `${getWslSourceMirrorPath(resolveCwd(cwd))}/${NODE_MODULES_BIN_DIRECTORY}:${wslLoginPath}`

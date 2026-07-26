@@ -20,5 +20,11 @@ jobs:
       - name: 🚀 Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # A re-run of a workflow whose release already landed must be a no-op, not a failure: `gh release create`
+        # Errors on an existing tag, so a retry after any later step failed reports the release step as broken
         run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists, nothing to create."
+            exit 0
+          fi
           gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "For releases, please refer to [CHANGELOG.md](https://github.com/esposter/esposter/blob/main/CHANGELOG.md) for details."
