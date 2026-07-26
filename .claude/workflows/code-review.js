@@ -697,6 +697,10 @@ const deriveShort = (s) => {
 const toFinding = (c, merged, shortSummary) => {
   const group = [c, ...merged];
   const also = merged.length > 0 ? " [same root cause also at: " + merged.map(loc).join(", ") + "]" : "";
+  // "new" is the absence of a citation, so any member that found one carries the group — but the label and the
+  // Citation must come off the SAME member. Resolved separately, a group could show one member's "reopened"
+  // Beside another's regression commit: a citation that does not back the label, which is worse than none.
+  const provenanceMember = group.find((m) => m.provenance && m.provenance !== "new");
   return {
     file: c.file,
     line: c.line,
@@ -707,9 +711,8 @@ const toFinding = (c, merged, shortSummary) => {
     // A merged group escalates to its most severe member, and to CONFIRMED if any member is.
     severity: group.toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity ?? "major",
     verdict: group.some((m) => m.verdict === "CONFIRMED") ? "CONFIRMED" : c.verdict,
-    // "new" is the absence of a citation, so any member that found one carries the group.
-    provenance: group.find((m) => m.provenance && m.provenance !== "new")?.provenance ?? "new",
-    provenanceSource: group.find((m) => m.provenanceSource)?.provenanceSource,
+    provenance: provenanceMember?.provenance ?? "new",
+    provenanceSource: provenanceMember?.provenanceSource,
   };
 };
 const findings = [];

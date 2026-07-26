@@ -62,6 +62,7 @@ describe("message", () => {
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
     MockSearchDatabase.clear();
@@ -660,8 +661,6 @@ describe("message", () => {
         roomId: newRoom.id,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-
-    vi.useRealTimers();
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();
   });
