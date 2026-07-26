@@ -11,10 +11,16 @@ export const createMessage = async <T extends CreateMessageInput>(
 ): Promise<InstanceType<MessageEntityMap[T["type"]]>> => {
   const messageEntity = createMessageEntity(input);
   await addMessageMetadata(messageEntity);
-  await createEntity(messageClient, messageEntity);
+  // The index row goes first, and the order is load-bearing: two tables cannot be written atomically, so
+  // Whichever lands second decides what a rejection MEANS to the caller. `Messages` is what every read serves,
+  // And `MessagesAscending` is only an index into it — one whose orphans `readMessages` already drops when the
+  // Join finds no entity. Writing `Messages` first made a rejection ambiguous: the message could already be live
+  // In the room, which is what let `sendScheduledMessageNow` re-enqueue an already-delivered job and post it
+  // Twice. This way a rejection always means nothing is readable, which is what every caller's rollback assumes.
   await createEntity(messageAscendingClient, {
     partitionKey: messageEntity.partitionKey,
     rowKey: getReverseTickedTimestamp(messageEntity.rowKey),
   });
+  await createEntity(messageClient, messageEntity);
   return messageEntity;
 };

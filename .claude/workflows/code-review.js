@@ -16,6 +16,10 @@ export const meta = {
       detail: "One independent verifier per file carrying candidates — CONFIRMED / PLAUSIBLE / REFUTED per candidate",
     },
     { title: "Sweep", detail: "Fresh finder hunting only for gaps (xhigh/max)" },
+    {
+      title: "Resolve",
+      detail: "Settle every PLAUSIBLE finding to CONFIRMED or REFUTED — one resolver per undecided finding",
+    },
     { title: "Synthesize", detail: "Merge duplicates and rank — every verified finding is reported" },
   ],
 };
@@ -439,6 +443,42 @@ const GROUP_VERIFIER_PROMPT = (group) =>
   "\n\n" +
   "Structured output only. Evidence must quote or cite the relevant line(s).";
 
+const RESOLUTION_SCHEMA = {
+  type: "object",
+  required: ["verdict", "evidence"],
+  properties: {
+    verdict: { enum: ["CONFIRMED", "REFUTED", "UNRESOLVABLE"] },
+    evidence: { type: "string", description: "the specific thing you read or ran that settled it" },
+    blocker: {
+      type: "string",
+      description: "UNRESOLVABLE only: what is missing from the repo that would settle it",
+    },
+  },
+};
+const RESOLVER_PROMPT = (candidate) =>
+  "## Code-review resolver\n\n" +
+  VERIFY_SCOPE_BLOCK +
+  "\n" +
+  "## The one finding you are settling — " +
+  loc(candidate) +
+  "\n" +
+  candidate.summary +
+  "\nFailure scenario: " +
+  candidate.failure_scenario +
+  "\nWhat the verifier had: " +
+  (candidate.evidence || "(none recorded)") +
+  "\n\n" +
+  "A first-pass verifier called this PLAUSIBLE — the mechanism reads as real but it could not reach the trigger. " +
+  "That pass judged one file under a budget. You have one finding and no other job, so go the distance it could not:\n" +
+  "- Read the callees and callers end to end, not just the cited file — most PLAUSIBLE verdicts die or harden one hop out.\n" +
+  "- Read the actual source of any dependency whose behaviour the claim rests on, in node_modules, rather than reasoning from its name or reputation.\n" +
+  "- Use git history (`git log -S`, `git log -L`) to find whether the guard was ever there and what removed it.\n" +
+  "- Check the written record (`packages/app/content/docs/`, `.claude/skills/*/SKILL.md`) — a decision stated deliberately with its consequence named REFUTES the finding, and a record the code contradicts CONFIRMS it.\n" +
+  "- Run something if that settles it: a node one-liner against the real dependency, a grep that proves a call site exists or does not.\n\n" +
+  "Return CONFIRMED (name the inputs/state that trigger it and the wrong output) or REFUTED (quote the line or the record that makes it impossible). " +
+  "UNRESOLVABLE is only for a trigger that cannot be settled from this repository at all — a production-only config value, a cloud service's runtime behaviour — and you must name that blocker. " +
+  "Do not return UNRESOLVABLE because the work was large.\n\nStructured output only.";
+
 // ─── Same-location verifier merge — group ingested candidates by loc(c),
 // one verifier agent per location returning N verdicts. Grouping is not
 // dedup: every candidate keeps its own verdict; the synthesis step merges
@@ -608,6 +648,39 @@ if (P.sweep) {
     const sweepVerified = await verifyGroups(sliced);
     verified = verified.concat(sweepVerified);
   }
+}
+
+// ─── Resolve: PLAUSIBLE is not an outcome ───
+// A PLAUSIBLE finding hands the decision back to a human who has less context than the agent that raised it, and
+// The reader either fixes it without evidence or dismisses it without evidence. Both are worse than an answer.
+// Verification is a fast pass over one file, so "the mechanism is real but I cannot reach the trigger" is usually
+// A budget limit, not a fact about the code — a resolver given one finding and no other job can read the callee,
+// The dependency's source, and the git history that a per-file verifier had no reason to open. It must come back
+// CONFIRMED or REFUTED; UNRESOLVABLE exists only for a trigger that genuinely cannot be settled from the repo
+// (a production config, a vendor's runtime behaviour), and it has to name the blocker.
+const undecided = verified.filter((c) => c.verdict === "PLAUSIBLE");
+if (undecided.length > 0) {
+  phase("Resolve");
+  log("resolve: " + undecided.length + " plausible findings to settle");
+  const resolutions = await parallel(
+    undecided.map((c) => async () => {
+      const r = await agent(RESOLVER_PROMPT(c), {
+        label: "resolve:" + c.file.split("/").pop(),
+        model: AGENT_MODEL,
+        phase: "Resolve",
+        schema: RESOLUTION_SCHEMA,
+      });
+      // A resolver that dies leaves the finding exactly as the verifier left it — reported, still PLAUSIBLE.
+      if (r) {
+        c.verdict = r.verdict === "UNRESOLVABLE" ? "PLAUSIBLE" : r.verdict;
+        c.evidence = r.evidence;
+        if (r.verdict === "UNRESOLVABLE") c.unresolvedBlocker = r.blocker;
+      }
+      return r;
+    }),
+  );
+  const settled = resolutions.filter(Boolean).filter((r) => r.verdict !== "UNRESOLVABLE").length;
+  log("resolve: " + settled + " settled, " + (undecided.length - settled) + " left undecided");
 }
 
 const surviving = verified.filter((c) => c.verdict !== "REFUTED");

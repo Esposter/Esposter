@@ -20,7 +20,7 @@ import { readSourceMirrorManifest } from "@/services/exec/wsl/readSourceMirrorMa
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
 import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
-import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
+import { getResult, InvalidOperationError, noop, Operation, toAppError } from "@esposter/shared";
 import { existsSync, mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
@@ -86,9 +86,18 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp dirs.
     // Staged-then-renamed because a torn marker is worse than none: a reaper reading a truncated path would judge the
     // Repo deleted and reap a LIVE mirror, while rename is atomic on the ext4 the entry sits on.
+    // Publishing it is best-effort: the marker is bookkeeping for a GC sweep, and this rename crosses the 9p
+    // Redirector where a concurrent reaper's `readFileSync` holds the destination open — on win32 a rename over
+    // An open handle fails outright. Two same-repo runs under one `pnpm -r --parallel` are enough to hit it, and
+    // Aborting there would fail the user's command for a marker nothing in this run reads. The accepted cost is
+    // The corpse case above: an entry whose marker never lands is unattributable and no sweep reclaims it, which
+    // Is disk this machine keeps until someone clears the mirror root — bounded, and strictly better than a
+    // Command that dies because a GC file could not be renamed. The temp file is swept by the same staleness rule.
     const originTempPath = join(entryUnc, `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${tag}`);
-    writeFileSync(originTempPath, cwd);
-    renameSync(originTempPath, join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME));
+    getResult(() => {
+      writeFileSync(originTempPath, cwd);
+      renameSync(originTempPath, join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME));
+    }).match(noop, noop);
     const copyPaths = delta === undefined ? Object.keys(manifest).toSorted() : delta.copyPaths;
     const consumedPaths: string[] = [];
     let archivePath = "";

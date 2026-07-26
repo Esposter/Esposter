@@ -33,6 +33,21 @@ The dominant false-positive class here is a finding that argues against a decisi
 
 The finder/verifier agents carry this rule in their scope block, so grep both trees before accepting a finding they still surface. When a decision is genuinely undocumented and keeps drawing fire, the fix is to write the page (docs skill), not to argue it again next review. The same goes for a record invalidated by materially new evidence (a security advisory, a changed dependency contract, an assumption the code has since outgrown): that reopens the decision — but the move is to update the page first and then fix the code against the new record, never to re-argue the old one inside a review thread.
 
+## PLAUSIBLE is a to-do, never an answer
+
+The workflow's Resolve phase settles every PLAUSIBLE finding to CONFIRMED or REFUTED before the report is written, so a run should hand you none. **If one still arrives PLAUSIBLE — a resolver died, or you are working findings from an older run — settling it is your job and does not need asking for.** Never report one, never fix one on the strength of the claim alone, and never dismiss one as "by-design" without the evidence a REFUTED verdict would have required.
+
+A PLAUSIBLE verdict means a verifier reading one file under a budget could not reach the trigger. That is a statement about the budget, not about the code. Settling it is a different activity from verifying, and it is usually cheap:
+
+- **Go one hop out.** Most of these die or harden at the callee or the caller — a claim about `createMessage` rejecting after a partial write is settled by reading which table `readMessages` serves, not by re-reading `createMessage`.
+- **Read the dependency's real source in `node_modules`**, never its reputation. `h3` "decodes router params" was refuted in one grep of `getRouterParams`; acting on the claim would have reintroduced a traversal hole.
+- **Use history.** `git log -S` / `git log -L` answers "was this guard ever here, and what removed it" directly.
+- **Check the record.** A decision stated deliberately with its consequence named REFUTES the finding; a record the code contradicts CONFIRMS it.
+
+Only a trigger that genuinely cannot be settled from the repository — a production-only config value, a cloud service's runtime behaviour — may stay unsettled, and it must name that blocker. "The investigation looked large" is not a blocker.
+
+Two things make this rule earn its cost. A PLAUSIBLE finding shipped to a human is decided by whoever has _less_ context than the agent that raised it, so it gets fixed without evidence or dropped without evidence — and a fix applied on an unconfirmed premise is the single most common way this repo introduces regressions. And a finding you dismiss without settling comes back on the next run, worded differently, forever.
+
 ## Closing a finding so the next review cannot reopen it
 
 A re-run over an already-fixed branch should surface only genuinely new defects. The workflow labels each finding's `provenance` for exactly this: anything other than `new` means the review has been here before, and the label names which of the three failures below it is. When it surfaces the same area again, it is almost always one of them — each with a fixed remedy:
@@ -63,5 +78,5 @@ The dominant defect class on a re-review is not a missed bug — it is a **regre
    ```
 
 1. Verify each finding against current HEAD before fixing — post-merge findings can be stale (fixed by a later commit, file renamed), and check it against the written record above before treating it as real.
-2. Fix confirmed findings; disposition PLAUSIBLE ones explicitly (fix or by-design rationale) in the report.
+2. Fix confirmed findings. **PLAUSIBLE is not a disposition** — see below.
 3. Verify per the package-scripts skill (typecheck → tests), then commit per the git skill. Before pushing to a branch with an open PR, check CodeRabbit state (coderabbit skill).
