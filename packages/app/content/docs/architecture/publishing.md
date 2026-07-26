@@ -25,8 +25,8 @@ sequenceDiagram
   participant BLOB as resource-assets
 
   Owner->>R: publishResource(id)
-  R->>PG: upsert row, bump publishVersion
   R->>R: transformPublishedContent(ctx, resource, content)
+  R->>PG: upsert row, bump publishVersion
   R->>BLOB: write {id}/published/{publishVersion}
   Note over BLOB: immutable snapshot — later edits invisible until re-publish
 
@@ -47,7 +47,7 @@ sequenceDiagram
 
 Two hooks on `createResourceProcedures` support publishing needs:
 
-- `transformPublishedContent(ctx, resource, content)` — rewrite content at publish time with the **owner's** authority. Dashboard resolves every bound visual and bakes the result into `VisualDatasetBinding.snapshot` (public viewers render the static snapshot, never resolve references — live viewer data stays [deferred](/docs/platform/deferred/realtime-dataset-refresh)). Survey and Webpage use the generic `transformPublishedBlobUrls`, which clones referenced asset blobs into the publish directory and rewrites their stable urls to the clones ([resource file assets](/docs/platform/resource-file-assets)); Email composes it with a guard that rejects publishing without compiled MJML html and strips the owner-only `datasetReference` so the snapshot can never leak it.
+- `transformPublishedContent(ctx, resource, content)` — rewrite content at publish time with the **owner's** authority. It runs **before** the transaction that claims `publishVersion`, and must stay there: a hook may read through `ctx.db` (Dashboard resolves every bound dataset), and issuing that read while the connection holds an open transaction deadlocks. **So nothing the hook writes may be keyed by the version** — it would have to predict it, two concurrent publishes predict the same one, and they race a copy destination Azure rejects, unwinding a publish that did nothing wrong. Asset clones therefore go into a per-attempt directory (`createPublishedAssetsDirectoryName`), which nothing reads a version back out of; the snapshot's own content is what points at them. Dashboard resolves every bound visual and bakes the result into `VisualDatasetBinding.snapshot` (public viewers render the static snapshot, never resolve references — live viewer data stays [deferred](/docs/platform/deferred/realtime-dataset-refresh)). Survey and Webpage use the generic `transformPublishedBlobUrls`, which clones referenced asset blobs into the publish directory and rewrites their stable urls to the clones ([resource file assets](/docs/platform/resource-file-assets)); Email composes it with a guard that rejects publishing without compiled MJML html and strips the owner-only `datasetReference` so the snapshot can never leak it.
 - `transformPublicReadContent(ctx, resource, content)` — rewrite on the anonymous public read. Only Survey uses it, merging live collection settings over the immutable snapshot. Asset urls need no read-time rewriting — content embeds stable app urls that never expire, served through `/api/resource-assets`.
 
 ## Route

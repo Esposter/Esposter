@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getPublishedDirectoryName } from "@@/server/services/resource/getPublishedDirectoryName";
@@ -13,7 +13,7 @@ import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AzureContainer, resources, ResourceType } from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
 // Here only the router wiring: resource type + content schema round-trip.
@@ -77,9 +77,14 @@ describe("webpage", () => {
     expect(content?.html).toBe(`<img src="${url}"><img src="${publishedUrl}">`);
 
     await caller.publishResource({ id: newResource.id });
-    const clonedBlobName = `${getPublishedDirectoryName(newResource.id, 1)}/${blobName.slice(`${newResource.id}/`.length)}`;
-
-    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(clonedBlobName)).toBe(true);
+    // The clone directory is minted per publish attempt rather than keyed by the version the transaction is
+    // About to claim, so the container is what names it
+    const clonedBlobName = [...(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.keys() ?? [])].find(
+      (publishedBlobPath) =>
+        publishedBlobPath.startsWith(`${newResource.id}/${PUBLISHED_DIRECTORY_SEGMENT}/`) &&
+        publishedBlobPath.endsWith(blobName.slice(`${newResource.id}/`.length)),
+    );
+    assert(clonedBlobName);
 
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 

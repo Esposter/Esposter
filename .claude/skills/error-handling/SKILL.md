@@ -196,6 +196,17 @@ When retries are exhausted the delivery dead-letters, and recovery from there is
 - **Carries the attempt count on the event id** (`<eventId>|<attempt>`), the only field republished verbatim into the next dead-letter payload. Anything attached to the stored artifact instead — blob metadata, name, prefix — is lost the moment a failed replay is dead-lettered into a brand-new blob, so that counter restarts at zero every cycle and loops forever (`\docs\infra\eventgrid-dead-letter`).
 - **Quarantines past the cap** — move the payload under a prefix the trigger's filter excludes, then `context.error(...)`. Never leave a poison payload where the trigger can pick it up again.
 
+### A callback nothing awaits terminates its own Result
+
+An interval tick, a timer, a fire-and-forget hook — nothing holds its promise, so a rejection escapes as an unhandled one and nothing retries. Wrap the whole body and terminate it inside (`getResultAsync(async () => …).match(noop, console.error)`), rather than leaving the terminal handler to a caller that does not exist.
+
+### A handler that enumerates its own work bounds it in time and in width
+
+Delivery is at-least-once and a dead-lettered payload can be replayed hours later, so an event carrying a _query_ (a prefix, a filter) rather than a fixed list re-runs that query against a world that moved on. Two bounds, both on the handler:
+
+- **In time** — the publisher stamps its own instant into the payload and the handler filters on it (`createdBefore`). Otherwise a replay acts on rows/blobs written _after_ the effect was decided, which is how an idempotent-looking delete wipes something that was recreated in between. Marking the function idempotent is what authorizes that replay, so the bound is what makes the marking true.
+- **In width** — fan out in waves of a named cap, never one combinator over the whole enumeration. An unbounded fan-out throttles the account, one rejection fails the batch, and the retry repeats it identically — the work never completes and eventually dead-letters.
+
 ## Finalizers
 
 Both live in `@esposter/shared`. Both run the finalizer regardless of success/failure, then unwrap the original result (throwing on Err). No terminal consumer needed.

@@ -108,6 +108,32 @@ describe(useDataStore, () => {
     expect(items.value).toHaveLength(1);
   });
 
+  // Only the sender's own message renders ahead of its hooks — it has a loading bubble to keep responsive and a
+  // Rollback if they reject. A message from anyone else waits, or every incoming attachment renders broken until
+  // Its url fetch lands
+  test("withholds a message from another member until its Create hooks resolve", async () => {
+    expect.hasAssertions();
+
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { storeCreateMessage } = dataStore;
+    const newMessage = createMessageEntity({
+      message,
+      roomId,
+      type: MessageType.Message,
+      userId: crypto.randomUUID(),
+    });
+    vi.spyOn(MessageHookMap[Operation.Create], "run").mockResolvedValue();
+    const storePromise = storeCreateMessage(newMessage);
+
+    // Synchronously after the call the hooks are still pending, so nothing may have been pushed yet
+    expect(items.value).toHaveLength(0);
+
+    await storePromise;
+
+    expect(items.value).toHaveLength(1);
+  });
+
   test("storeUpdateMessage is idempotent", async () => {
     expect.hasAssertions();
 

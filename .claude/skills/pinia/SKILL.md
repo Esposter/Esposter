@@ -321,6 +321,8 @@ State the server keeps singular (one live invite per member per room, one member
 
    Every registry is created with `createHookRegistry<THook>()` (`services/shared/createHookRegistry.ts`), which returns `{ hooks, register, run }` — **never export a raw module-level hook array**. Store factories re-run per SSR request while the registry is module-scoped, so raw `.push()` leaks server memory; `register` centralizes the `getIsServer()` no-op (hooks only fire from client-side interactions). Stores call `.register(hook)` at setup; orchestrators fan out with `await registry.run(...args)`, or iterate `registry.hooks` directly from a sync context (`mutateMemberRoles`). Keyed variants are plain objects/Records of registries (`MessageHookMap[Operation.Create].register(...)`).
 
+   When the same store function is both the optimistic path and the subscription handler, **whether the entity is applied before or after the hooks run is a parameter, not a constant** (`storeCreateMessage(entity, isOptimistic)`). An optimistic caller applies first — it has a placeholder to keep responsive and a rollback if the hooks reject; a remote entity waits for them, or it renders with whatever state the hooks were supposed to resolve (empty urls, missing author) until they land, and forever if they fail.
+
 ## Reactive Map Mutations
 
 Vue 3 tracks `Map` mutations (`set`, `delete`, `clear`) on a `ref(new Map(...))` — no need to clone and reassign.

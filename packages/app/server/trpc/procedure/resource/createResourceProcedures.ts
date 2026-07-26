@@ -295,6 +295,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
               "cannot publish resource without content",
             ).message,
           });
+        // Transformed before the transaction opens: a hook may read through `ctx.db` (Dashboard resolves every
+        // Bound dataset), and issuing that read while this connection holds a transaction deadlocks. Nothing it
+        // Writes is keyed by the version claimed below — see createPublishedAssetsDirectoryName
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;

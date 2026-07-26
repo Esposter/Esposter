@@ -577,6 +577,58 @@ describe("message", () => {
     expect(sasEntities).toHaveLength(1);
   });
 
+  test("reclaims an upload the caller was granted", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
+      files: [{ filename, mimetype, size }],
+      roomId: newRoom.id,
+    });
+    assert(sasEntity);
+    await messageCaller.deleteUploadFiles({
+      files: [{ filename, id: sasEntity.id, token: sasEntity.token }],
+      roomId: newRoom.id,
+    });
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [
+        getBlobName(`${newRoom.id}/${sasEntity.id}`, filename),
+        getThumbnailBlobName(newRoom.id, sasEntity.id),
+      ],
+      containerName: AzureContainer.MessageAssets,
+    });
+  });
+
+  // The blob names an unreferenced upload and a posted attachment live under are the same room-scoped namespace,
+  // And every member reads every attachment's id off the wire — so membership alone would let any of them
+  // Permanently destroy anyone else's posted files, with no entity left saying it happened
+  test("fails to reclaim an upload granted to another member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
+      files: [{ filename, mimetype, size }],
+      roomId: newRoom.id,
+    });
+    assert(sasEntity);
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      messageCaller.deleteUploadFiles({
+        files: [{ filename, id: sasEntity.id, token: sasEntity.token }],
+        roomId: newRoom.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+  });
+
   test("generates download file SAS URLs", async () => {
     expect.hasAssertions();
 

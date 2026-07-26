@@ -594,10 +594,13 @@ export const baseRoomRouter = router({
       id,
     );
     roomEventEmitter.emit("updateRoom", updatedRoom);
-    // The image was cleared or replaced: drop every prior upload the room no longer points at. A dropped publish
-    // Only orphans a public blob, never the room update; every blob delete goes through the one durable mechanism
-    // So no call site keeps a weaker one (/docs/architecture/persist-then-notify)
-    if (image !== undefined)
+    // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
+    // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
+    // Only renamed the room would delete a concurrent editor's freshly uploaded avatar and pay two blob listings
+    // On the request path to do it. A dropped publish only orphans a public blob, never the room update; every
+    // Blob delete goes through the one durable mechanism so no call site keeps a weaker one
+    // (/docs/architecture/persist-then-notify)
+    if (image !== undefined && image !== previousImage)
       await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
         const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
         const blobNames = new Set(

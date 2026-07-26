@@ -17,6 +17,7 @@ const ALLOWED_ROOTS = new Set([
   "getResult",
   "getResultAsync",
   "publishBlobDeletion",
+  "publishBlobPrefixDeletion",
   "withFinalizer",
   "withFinalizerAsync",
 ]);

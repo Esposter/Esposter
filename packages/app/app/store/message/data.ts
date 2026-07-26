@@ -51,7 +51,7 @@ export const useDataStore = defineStore("message/data", () => {
     return getResultAsync(async () => {
       // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the
       // List, so roll the entity back out before surfacing the failure — nothing has reached the server yet
-      await storeCreateMessage(newMessage);
+      await storeCreateMessage(newMessage, true);
       return $trpc.message.createMessage.mutate(input);
     }).match(
       (createdMessage) => {
@@ -60,7 +60,10 @@ export const useDataStore = defineStore("message/data", () => {
         // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
         // Best-effort: the message is already sent, so a failure here costs a stale Follow label, and neither
-        // Rolling the bubble back nor rejecting the send would be a truthful way to report it
+        // Rolling the bubble back nor rejecting the send would be a truthful way to report it. The wrapper is
+        // Load-bearing rather than defensive about today's implementation — it is what the "keeps the message
+        // When a step after the mutation rejects" test drives, and it is the boundary that keeps a future throw
+        // Inside the follow store from un-sending a message that exists on the server
         const { replyRowKey } = input;
         if (replyRowKey)
           getResult(() => {
@@ -108,12 +111,19 @@ export const useDataStore = defineStore("message/data", () => {
       key: id,
     });
   };
-  const storeCreateMessage = async (message: MessageEntity) => {
-    // Push first (our list is reversed — most recent at the front) so the bubble renders immediately in its loading
-    // State, THEN run the Create hooks. One of those hooks fetches attachment download URLs over the network, so
-    // Running it before the push would gate the "optimistic" render behind a round-trip for any message with files.
-    baseStoreCreateMessage(message, true);
-    await MessageHookMap[Operation.Create].run(message);
+  // The sender's own message is pushed first (our list is reversed — most recent at the front) so the bubble
+  // Renders immediately in its loading state, THEN the Create hooks run: one of them fetches attachment download
+  // Urls over the network, and running it before the push would gate the "optimistic" render behind a round trip.
+  // A message arriving from anyone else has no bubble to keep responsive and nothing to roll back, so it waits for
+  // Its urls — pushing it first renders every incoming attachment as a broken image until the fetch lands
+  const storeCreateMessage = async (message: MessageEntity, isOptimistic = false) => {
+    if (isOptimistic) {
+      baseStoreCreateMessage(message, true);
+      await MessageHookMap[Operation.Create].run(message);
+    } else {
+      await MessageHookMap[Operation.Create].run(message);
+      baseStoreCreateMessage(message, true);
+    }
   };
   const storeUpdateMessage = async (input: MessageEvents["updateMessage"][number]) => {
     await MessageHookMap[Operation.Update].run(input);

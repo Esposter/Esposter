@@ -6,6 +6,7 @@ import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useDownloadFileStore } from "@/store/message/file";
 import { createMessageEntity, MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
+import { MAX_READ_LIMIT, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -60,6 +61,39 @@ describe(useDownloadFileStore, () => {
     await waitForSynchronizedFunctions();
 
     expect(fileUrlMap.value.get(fileId)?.url).toBe(freshUrl);
+  });
+
+  // The query caps `files` at MAX_READ_LIMIT, and the long-open room this sweep exists for is exactly the one
+  // That scrolls past that cap — sending them all in one input would reject every tick from then on
+  test("re-mints in batches when more urls expire than one query accepts", async () => {
+    expect.hasAssertions();
+
+    const generateDownloadFileSasUrls = vi.fn<(options: { input: { files: unknown[] } }) => string[]>(({ input }) =>
+      input.files.map(() => freshUrl),
+    );
+    server.use(trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls));
+    vi.useFakeTimers();
+    const dataStore = useDataStore();
+    const downloadFileStore = useDownloadFileStore();
+    const { fileUrlMap } = storeToRefs(downloadFileStore);
+    const { items } = storeToRefs(dataStore);
+    const files = Array.from({ length: MAX_READ_LIMIT + 1 }, () => ({
+      filename,
+      id: crypto.randomUUID(),
+      mimetype: "text/plain",
+      size: 1,
+    }));
+    items.value.push(
+      createMessageEntity({ files, message: filename, roomId, type: MessageType.Message, userId: crypto.randomUUID() }),
+    );
+    for (const { id } of files)
+      fileUrlMap.value.set(id, { expiresAt: Date.now() + READ_SAS_REFRESH_INTERVAL_MS / 2, url: staleUrl });
+    await vi.advanceTimersByTimeAsync(READ_SAS_REFRESH_INTERVAL_MS);
+    await waitForSynchronizedFunctions();
+
+    expect(generateDownloadFileSasUrls).toHaveBeenCalledTimes(2);
+
+    expect(fileUrlMap.value.get(takeOne(files, MAX_READ_LIMIT).id)?.url).toBe(freshUrl);
   });
 
   test("issues no query while every cached url is comfortably valid", async () => {

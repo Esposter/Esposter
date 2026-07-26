@@ -1,5 +1,5 @@
+import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
-import type { FileSasEntity } from "@esposter/db-schema";
 
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
@@ -47,7 +47,7 @@ export const useUploadFiles = () => {
     // Downscale image thumbnails while the originals upload so both land in one pass.
     const thumbnailsPromise = Promise.all(newFiles.map((file) => generateImageThumbnail(file)));
     // Seed each file's metadata + object url once the write targets exist so Vue renders progress during upload.
-    const seedUploadFiles = (fileSasEntities: FileSasEntity[]) => {
+    const seedUploadFiles = (fileSasEntities: MessageFileSasEntity[]) => {
       for (const [index, { id }] of fileSasEntities.entries()) {
         const file = takeOne(newFiles, index);
         files.value.push({ filename: file.name, id, mimetype: file.type, size: file.size });
@@ -58,27 +58,31 @@ export const useUploadFiles = () => {
     // And the send button gates on isFileLoading, so leaving either behind strands the room's whole composer.
     // Whatever already reached blob storage is dropped with it: the composer is the only thing that knows
     // These ids, so a blob the user can no longer attach is unreferenced the moment its row leaves the list.
-    const revertUploadFiles = async (fileSasEntities: FileSasEntity[]) => {
+    const revertUploadFiles = async (fileSasEntities: MessageFileSasEntity[]) => {
       for (const { id } of fileSasEntities) {
         const uploadFileUrl = fileUrlMap.value.get(id);
         if (uploadFileUrl) URL.revokeObjectURL(uploadFileUrl.url);
         fileUrlMap.value.delete(id);
       }
 
-      const ids = new Set(fileSasEntities.map(({ id }) => id));
-      const revertedFiles = files.value.filter(({ id }) => ids.has(id));
-      files.value = files.value.filter(({ id }) => !ids.has(id));
-      if (revertedFiles.length === 0) return;
+      // The grant minted with each write target is what authorizes the delete — the server has no entity to
+      // Check an unreferenced upload's ownership against, so a file whose token was lost stays orphaned
+      const tokenMap = new Map(fileSasEntities.map(({ id, token }) => [id, token]));
+      const revertedFiles = files.value.filter(({ id }) => tokenMap.has(id));
+      files.value = files.value.filter(({ id }) => !tokenMap.has(id));
+      const deletedFiles = revertedFiles.flatMap(({ filename, id }) => {
+        const token = tokenMap.get(id);
+        return token ? [{ filename, id, token }] : [];
+      });
+      if (deletedFiles.length === 0) return;
       // Best-effort: the composer is already consistent without it, and a failure here costs storage, not
       // Correctness — surfacing a second alert over the one the user is reading would only obscure it
-      await getResultAsync(() =>
-        $trpc.message.deleteUploadFiles.mutate({
-          files: revertedFiles.map(({ filename, id }) => ({ filename, id })),
-          roomId,
-        }),
-      ).match(noop, console.error);
+      await getResultAsync(() => $trpc.message.deleteUploadFiles.mutate({ files: deletedFiles, roomId })).match(
+        noop,
+        console.error,
+      );
     };
-    let seededFileSasEntities: FileSasEntity[] = [];
+    let seededFileSasEntities: MessageFileSasEntity[] = [];
     await withFinalizerAsync(
       () =>
         getResultAsync(async () => {

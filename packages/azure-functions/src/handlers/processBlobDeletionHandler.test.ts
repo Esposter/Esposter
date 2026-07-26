@@ -4,6 +4,7 @@ import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import { processBlobDeletionHandler } from "@/handlers/processBlobDeletionHandler";
 import { getContainerClient } from "@/services/getContainerClient";
 import { InvocationContext } from "@azure/functions";
+import { dayjs } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
@@ -16,8 +17,8 @@ const readContainer = () => {
   return [...container.keys()];
 };
 
-const createEvent = (blobNames: string[]): EventGridEvent => ({
-  data: { blobNames, containerName: AzureContainer.MessageAssets } satisfies BlobDeletionEventGridData,
+const createEventGridEvent = (data: BlobDeletionEventGridData): EventGridEvent => ({
+  data,
   dataVersion: "1.0",
   eventTime: "1970-01-01T00:00:00.000Z",
   eventType: "",
@@ -27,10 +28,18 @@ const createEvent = (blobNames: string[]): EventGridEvent => ({
   topic: "",
 });
 
+const createEvent = (blobNames: string[]) =>
+  createEventGridEvent({ blobNames, containerName: AzureContainer.MessageAssets });
+
+const createPrefixEvent = (prefix: string, createdBefore: Date) =>
+  createEventGridEvent({ containerName: AzureContainer.MessageAssets, createdBefore, prefix });
+
 describe(processBlobDeletionHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const blobName = "";
   const secondBlobName = " ";
+  const prefix = "a";
+  const prefixedBlobName = `${prefix}/${blobName}`;
   const content = "";
   const seedBlob = async (name: string) => {
     const containerClient = await getContainerClient(AzureContainer.MessageAssets);
@@ -62,6 +71,26 @@ describe(processBlobDeletionHandler, () => {
     await expect(processBlobDeletionHandler(event, context)).resolves.toBeUndefined();
 
     expect(readContainer()).toStrictEqual([]);
+  });
+
+  test("deletes every blob under the prefix", async () => {
+    expect.hasAssertions();
+
+    await seedBlob(prefixedBlobName);
+    await processBlobDeletionHandler(createPrefixEvent(prefix, dayjs().add(1, "minute").toDate()), context);
+
+    expect(readContainer()).toStrictEqual([]);
+  });
+
+  // Delivery is at-least-once and a dead-lettered event can be replayed hours later, so the set the handler
+  // Enumerates is the one that existed when the deletion was published — a republish in between must survive
+  test("keeps a blob written after the prefix deletion was published", async () => {
+    expect.hasAssertions();
+
+    await seedBlob(prefixedBlobName);
+    await processBlobDeletionHandler(createPrefixEvent(prefix, new Date(0)), context);
+
+    expect(readContainer()).toStrictEqual([prefixedBlobName]);
   });
 
   test("rethrows a failing delete so Event Grid redelivers the batch", async () => {

@@ -30,11 +30,13 @@ export const getContainerClient = (
   const containerClientPromise =
     containerClientMap.get(key) ?? provisionContainerClient(connectionString, azureContainer);
   containerClientMap.set(key, containerClientPromise);
-  // A failed provision must not be remembered — the next caller has to be able to retry it.
+  // A failed provision must not be remembered — the next caller has to be able to retry it. Only evict the
+  // Entry this call installed: a caller that already retried past the rejection has stored a good promise
+  // Under the same key, and dropping that one would re-pay the provisioning round trips the memo exists for
   return getResultAsync(() => containerClientPromise).match(
     (containerClient) => containerClient,
     (error) => {
-      containerClientMap.delete(key);
+      if (containerClientMap.get(key) === containerClientPromise) containerClientMap.delete(key);
       throw error;
     },
   );

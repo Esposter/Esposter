@@ -265,12 +265,39 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
-    // Uploaded through the client, so the mock dates it now — the state a second admin's in-flight save is in
     await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+    await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
+    const { publicUrl: inFlightPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const inFlightBlobName = inFlightPublicUrl.slice(
+      `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length,
+    );
+    // Uploaded through the client, so the mock dates it now — the state a second admin's in-flight save is in
+    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, inFlightBlobName).upload(Buffer.alloc(0), 0);
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [blobName],
+      containerName: AzureContainer.PublicUserAssets,
+    });
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(inFlightBlobName)).toBe(true);
+  });
+
+  // A save that carries back the url it loaded with replaced nothing, so it must sweep nothing — otherwise a
+  // Rename submitted from a form opened before another admin's upload deletes that admin's new avatar
+  test("sweeps nothing when the update resubmits the image unchanged", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+    await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
+    MockEventGridDatabase.clear();
+    await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl, name });
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();
-    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
   });
 
   test("updates", async () => {
@@ -354,8 +381,11 @@ describe("room", () => {
     assert(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
+    // The publisher's own instant rides along, so a redelivery deletes the set that existed when the room was
+    // Deleted rather than whatever the prefix holds by then (system time is frozen at the epoch here)
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       containerName: AzureContainer.MessageAssets,
+      createdBefore: new Date(0),
       prefix: newRoom.id,
     });
   });

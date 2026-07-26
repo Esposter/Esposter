@@ -30,6 +30,8 @@ describe(useUploadFiles, () => {
   const roomId = crypto.randomUUID();
   const filename = "filename.png";
   const fileId = crypto.randomUUID();
+  // The grant the server mints beside each write target — the composer hands it back to reclaim the upload
+  const token = "token";
 
   beforeAll(() => {
     router = useRouter();
@@ -42,7 +44,7 @@ describe(useUploadFiles, () => {
     router.currentRoute.value.params.id = roomId;
     server.use(
       trpcMsw.message.generateUploadFileSasEntities.query(() => [
-        { id: fileId, sasUrl: "https://sas.url/original", thumbnailSasUrl: "https://sas.url/thumbnail" },
+        { id: fileId, sasUrl: "https://sas.url/original", thumbnailSasUrl: "https://sas.url/thumbnail", token },
       ]),
     );
     vi.spyOn(globalThis.URL, "createObjectURL").mockReturnValue("blob:url");
@@ -88,6 +90,6 @@ describe(useUploadFiles, () => {
     await useUploadFiles()([createFile()]);
 
     expect(files.value).toHaveLength(0);
-    expect(deleteUploadFiles).toHaveBeenCalledWith({ input: { files: [{ filename, id: fileId }], roomId } });
+    expect(deleteUploadFiles).toHaveBeenCalledWith({ input: { files: [{ filename, id: fileId, token }], roomId } });
   });
 });

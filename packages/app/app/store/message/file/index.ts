@@ -6,7 +6,7 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
-import { getIsServer, Operation } from "@esposter/shared";
+import { getIsServer, getResultAsync, MAX_READ_LIMIT, noop, Operation } from "@esposter/shared";
 import { api as viewerApi } from "v-viewer";
 
 export const useDownloadFileStore = defineStore("message/file", () => {
@@ -30,20 +30,25 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   // Already holds a url for. A room left open past the SAS duration would therefore render every attachment
   // Broken and fail every download until reload. Sweeping re-mints only the entries inside the refresh margin;
   // A tick that finds none issues no query at all, which is the overwhelmingly common case.
-  const refreshExpiringFileUrls = async () => {
-    const roomId = roomStore.currentRoomId;
-    if (!roomId) return;
+  // A sweep that rejects is never retried by anything, so it swallows: the next tick re-reads the same expiring
+  // Entries, and surfacing an alert for a background re-mint would interrupt a user who lost nothing yet
+  const refreshExpiringFileUrls = () =>
+    getResultAsync(async () => {
+      const roomId = roomStore.currentRoomId;
+      if (!roomId) return;
 
-    const expiredAt = Date.now() + READ_SAS_REFRESH_INTERVAL_MS;
-    const expiringFiles = dataStore.files.filter(({ id }) => {
-      const fileUrl = fileUrlMap.value.get(id);
-      return fileUrl && fileUrl.expiresAt <= expiredAt;
-    });
-    if (expiringFiles.length === 0) return;
-
-    const newFileUrlMap = await readFileUrls(expiringFiles, roomId);
-    for (const [id, fileUrl] of newFileUrlMap) fileUrlMap.value.set(id, fileUrl);
-  };
+      const expiredAt = Date.now() + READ_SAS_REFRESH_INTERVAL_MS;
+      const expiringFiles = dataStore.files.filter(({ id }) => {
+        const fileUrl = fileUrlMap.value.get(id);
+        return fileUrl && fileUrl.expiresAt <= expiredAt;
+      });
+      // A room scrolled back far enough holds more attachments than the query accepts in one input, and it is
+      // The long-open room — the only one this sweep exists for — that gets there first
+      for (let index = 0; index < expiringFiles.length; index += MAX_READ_LIMIT) {
+        const newFileUrlMap = await readFileUrls(expiringFiles.slice(index, index + MAX_READ_LIMIT), roomId);
+        for (const [id, fileUrl] of newFileUrlMap) fileUrlMap.value.set(id, fileUrl);
+      }
+    }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
   if (!getIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
 

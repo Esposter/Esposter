@@ -1,5 +1,6 @@
+import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
 import type { ReadFollowedThreadsOutput } from "#shared/models/message/thread/ReadFollowedThreadsOutput";
-import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
+import type { AzureUpdateEntity, Clause, MessageEntity } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteFileInputSchema } from "#shared/models/db/message/DeleteFileInput";
@@ -26,6 +27,8 @@ import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishB
 import { on } from "@@/server/services/events/on";
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
+import { createUploadFileToken } from "@@/server/services/message/file/createUploadFileToken";
+import { getIsUploadFileTokenValid } from "@@/server/services/message/file/getIsUploadFileTokenValid";
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { readMessages } from "@@/server/services/message/readMessages";
@@ -123,7 +126,14 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
 });
 
 const deleteUploadFilesInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true }), "id")
+  files: createUniqueArraySchema(
+    z.object({
+      ...fileEntitySchema.pick({ filename: true, id: true }).shape,
+      // The grant this member was handed when the write SAS was minted — see createUploadFileToken
+      token: z.string().min(1),
+    }),
+    "id",
+  )
     .min(1)
     .max(MAX_READ_LIMIT),
   ...roomIdSchema.shape,
@@ -249,10 +259,15 @@ export const baseMessageRouter = router({
   // Reclaims blobs that were uploaded against a write SAS but never reached a message — the composer's revert
   // Path. Nothing else can: every other deletion walks a persisted message entity's `files`, and an upload the
   // Composer threw away is referenced by no entity at all, so the bytes would sit in the container until the
-  // Whole room is deleted. Membership is the only check available for the same reason, and it is enough: the
-  // Blob names are derived from the caller's room, so a member can only ever name blobs inside their own room
+  // Whole room is deleted. Membership cannot be the check: an unreferenced upload and a posted attachment share
+  // One room-scoped namespace, and every member reads every attachment's id off the wire, so a name-only delete
+  // Destroys anyone's posted attachment. The caller presents the grant it was handed when the SAS was minted
   deleteUploadFiles: getMemberProcedure(deleteUploadFilesInputSchema, "roomId").mutation(
-    async ({ input: { files, roomId } }) => {
+    async ({ ctx, input: { files, roomId } }) => {
+      for (const { id, token } of files)
+        if (!getIsUploadFileTokenValid(ctx.getSessionPayload.user.id, roomId, id, token))
+          throw new TRPCError({ code: "UNAUTHORIZED" });
+
       await publishBlobDeletion(
         roomId,
         AzureContainer.MessageAssets,
@@ -337,7 +352,7 @@ export const baseMessageRouter = router({
     return generateDownloadThumbnailSasUrls(containerClient, files, roomId);
   }),
   generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").query<
-    FileSasEntity[]
+    MessageFileSasEntity[]
   >(async ({ ctx, input: { files, roomId } }) => {
     const room = await requireEntity(
       ctx.db.query.roomsInMessage.findFirst({
@@ -358,7 +373,15 @@ export const baseMessageRouter = router({
         });
 
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-    return generateUploadFileSasEntities(containerClient, files, roomId, { withThumbnail: true });
+    const fileSasEntities = await generateUploadFileSasEntities(containerClient, files, roomId, {
+      withThumbnail: true,
+    });
+    // The grant travels with the write target: whoever can upload the blob is the only one who can reclaim it
+    return fileSasEntities.map((fileSasEntity) =>
+      Object.assign(fileSasEntity, {
+        token: createUploadFileToken(ctx.getSessionPayload.user.id, roomId, fileSasEntity.id),
+      }),
+    );
   }),
   getWebPubSubClientAccessUrl: getMemberProcedure(getWebPubSubClientAccessUrlInputSchema, "roomId").query(
     async ({ ctx, input: { roomId }, signal }) => {

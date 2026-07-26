@@ -15,7 +15,8 @@ export const publishBlobPrefixDeletion = async (
   prefix: string,
 ): Promise<void> => {
   await getResultAsync(async () => {
-    const data: BlobDeletionEventGridData = { containerName, prefix };
+    // Stamped at publish time, not at delivery: the handler must only ever delete what the caller was looking at
+    const data: BlobDeletionEventGridData = { containerName, createdBefore: new Date(), prefix };
     await useEventGridPublisherClient().send([createEventGridEvent(AzureFunction.ProcessBlobDeletion, subject, data)]);
   }).match(noop, console.error);
 };

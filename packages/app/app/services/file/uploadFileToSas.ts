@@ -11,8 +11,10 @@ export async function uploadFileToSas(
     generateDownloadFileSasUrls: (files: Pick<FileEntity, "filename" | "id" | "mimetype">[]) => Promise<string[]>;
   } & UploadFileToSasOptions,
 ): Promise<string[]>;
-export async function uploadFileToSas(options: UploadFileToSasOptions): Promise<FileSasEntity[]>;
-export async function uploadFileToSas({
+export async function uploadFileToSas<TFileSasEntity extends FileSasEntity>(
+  options: UploadFileToSasOptions<TFileSasEntity>,
+): Promise<TFileSasEntity[]>;
+export async function uploadFileToSas<TFileSasEntity extends FileSasEntity>({
   files,
   generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
@@ -20,7 +22,7 @@ export async function uploadFileToSas({
   onUploadStart,
 }: {
   generateDownloadFileSasUrls?: (files: Pick<FileEntity, "filename" | "id" | "mimetype">[]) => Promise<string[]>;
-} & UploadFileToSasOptions): Promise<FileSasEntity[] | string[]> {
+} & UploadFileToSasOptions<TFileSasEntity>): Promise<string[] | TFileSasEntity[]> {
   const fileSasEntities = await generateUploadFileSasEntities(
     files.map(({ name, size, type }) => ({ filename: name, mimetype: type, size })),
   );
