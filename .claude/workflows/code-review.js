@@ -1,7 +1,7 @@
 export const meta = {
   name: "code-review",
   description:
-    "Workflow-backed code review — finders partitioned by lens on a small diff and by subsystem seam on a large one, an independent verifier for every distinct (file, line) location across the pooled candidates, then a ranked report of every verified finding.",
+    "Workflow-backed code review — finders partitioned by lens on a small diff and by subsystem seam on a large one, an independent verifier for every file carrying pooled candidates, then a ranked report of every verified finding.",
   whenToUse:
     'Launched by the /code-review skill at high, xhigh, or max effort when workflows are enabled. Pass args as "<level> [target]" — level is high, xhigh, or max; target is an optional PR number, branch, ref range, path, or free-form review instructions (e.g. "only review src/foo.ts", "focus on error handling").',
   phases: [
@@ -13,15 +13,14 @@ export const meta = {
     },
     {
       title: "Verify",
-      detail:
-        "One independent verifier per distinct (file, line) location — CONFIRMED / PLAUSIBLE / REFUTED per candidate",
+      detail: "One independent verifier per file carrying candidates — CONFIRMED / PLAUSIBLE / REFUTED per candidate",
     },
     { title: "Sweep", detail: "Fresh finder hunting only for gaps (xhigh/max)" },
     { title: "Synthesize", detail: "Merge duplicates and rank — every verified finding is reported" },
   ],
 };
 
-// code-review: Scope → Find (barrier) → group-by-location → Verify → Sweep (xhigh/max) → Synthesize
+// code-review: Scope → Find (barrier) → group-by-file → Verify → Sweep (xhigh/max) → Synthesize
 // Effort parameterization mirrors the inline /code-review cells. Correctness
 // keeps one finder per angle; cleanup is one finder covering all cleanup
 // angles, capped at (cleanup-angle count × perAngle) so the merged finder
@@ -410,15 +409,25 @@ const GROUP_VERIFIER_PROMPT = (group) =>
   "## Code-review verifier\n\n" +
   VERIFY_SCOPE_BLOCK +
   "\n" +
-  "## Candidate findings at " +
-  loc(group[0]) +
+  "## Candidate findings in " +
+  group[0].file +
   "\n" +
   group
-    .map((c, i) => "[" + i + "] Summary: " + c.summary + "\n" + "    Failure scenario: " + c.failure_scenario)
+    .map(
+      (c, i) =>
+        "[" +
+        i +
+        "] " +
+        (c.line != null ? "line " + c.line : "no line given") +
+        " — " +
+        c.summary +
+        "\n    Failure scenario: " +
+        c.failure_scenario,
+    )
     .join("\n") +
   "\n\n" +
   "Run the diff command above, read the relevant file(s), and return one verdict per candidate. " +
-  "Judge EACH candidate independently on its own claim — candidates at the same location may describe distinct issues, the same issue, or a mix. " +
+  "Judge EACH candidate independently on its own claim — candidates in the same file may describe distinct issues, the same issue, or a mix, and sharing a file is NOT evidence that they share a cause. " +
   "Reference each by its [i] index.\n\n" +
   VERDICT_LADDER +
   "\n\n" +
@@ -441,9 +450,14 @@ const GROUP_VERIFIER_PROMPT = (group) =>
 let verifierAgents = 0;
 
 async function verifyGroups(candidates) {
-  const byLoc = Object.create(null);
-  for (const c of candidates) (byLoc[loc(c)] ||= []).push(c);
-  const groups = Object.values(byLoc);
+  // Grouped by FILE, not by (file, line): a verifier reads the whole file to judge any claim in it, so two
+  // Candidates twenty lines apart cost two full reads of the same file for no added independence — the agent
+  // Still judges each claim on its own evidence and by its own index. Seam-partitioned finding removed the
+  // Cross-finder convergence that used to collapse this fan-out, which made per-line grouping the dominant
+  // Cost of the run. File is the widest key that keeps a verifier inside one file's worth of context.
+  const byFile = Object.create(null);
+  for (const c of candidates) (byFile[c.file] ||= []).push(c);
+  const groups = Object.values(byFile);
   verifierAgents += groups.length;
   const out = await parallel(
     groups.map((g) => async () => {
