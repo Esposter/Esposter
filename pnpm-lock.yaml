@@ -97,8 +97,8 @@ catalogs:
       specifier: ^2.13.1
       version: 2.13.1
     '@koumoul/vjsf':
-      specifier: ^4.5.3
-      version: 4.5.3
+      specifier: ^4.5.4
+      version: 4.5.4
     '@lerna-lite/cli':
       specifier: ^5.4.1
       version: 5.4.1
@@ -818,7 +818,7 @@ importers:
         version: 7.0.2(temporal-polyfill@1.0.1)(vue@3.5.40(typescript@6.0.3))
       '@koumoul/vjsf':
         specifier: 'catalog:'
-        version: 4.5.3(supports-color@10.2.2)(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3))(vuetify@4.1.5(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))
+        version: 4.5.4(supports-color@10.2.2)(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3))(vuetify@4.1.5(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))
       '@livekit/track-processors':
         specifier: 'catalog:'
         version: 0.7.2(@types/dom-mediacapture-transform@0.1.12)(livekit-client@2.20.1(@types/dom-mediacapture-record@1.0.22))
@@ -3842,8 +3842,8 @@ packages:
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
 
-  '@koumoul/vjsf@4.5.3':
-    resolution: {integrity: sha512-PBXBjJ6SUVC6Kep7fYhT0gYVst6Zy+KjRJF3DKG8EGYZ5UterKPDyk4iTVFv79PcEOQ+DhocPCRivMsg5WOH3w==}
+  '@koumoul/vjsf@4.5.4':
+    resolution: {integrity: sha512-gj9VtPC6KBoXnaToENL1+8nCQe0RQOG52L1WiHQco/puuoIyDCEpHq2IyLVq8TA/sOHB6EhmOTADjPF6L8qyCQ==}
     peerDependencies:
       vue: ^3.4.3
       vuetify: ^4.1.0
@@ -17055,7 +17055,7 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@koumoul/vjsf@4.5.3(supports-color@10.2.2)(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3))(vuetify@4.1.5(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))':
+  '@koumoul/vjsf@4.5.4(supports-color@10.2.2)(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3))(vuetify@4.1.5(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))':
     dependencies:
       '@json-layout/core': 2.8.1(@json-layout/vocabulary@2.13.1(supports-color@10.2.2))(supports-color@10.2.2)
       '@json-layout/vocabulary': 2.13.1(supports-color@10.2.2)
