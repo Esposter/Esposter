@@ -51,6 +51,11 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       return;
     }
 
+    // Parsed BEFORE the claim, and it is the last thing that may fail before it: a payload the current schema
+    // Rejects (a shape an older deploy wrote, column drift) throws here while the row is still untouched, so the
+    // Redelivery finds it claimable. Parsed after the claim, that same throw strands the job — the claim is
+    // Single-shot, so every redelivery loses the race, and the row is left neither deliverable nor cancellable
+    const payload = scheduledMessageJobPayloadSchema.parse(job.payload);
     // Claiming on `processingStartedAt IS NULL` is what makes this handler idempotent
     // (IsIdempotentAzureFunctionMap): delivery is at-least-once, and a message carries a fresh reverse-ticked
     // RowKey, so a redelivery that could re-pass this guard would post a second copy rather than repair the first
@@ -71,9 +76,8 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       return;
     }
     // Everything past the claim reads the claimed row, never the pre-claim read above: the two are the same row, and
-    // Mixing them reads as though the distinction were load-bearing
-    const payload = scheduledMessageJobPayloadSchema.parse(processingJob.payload);
-
+    // Mixing them reads as though the distinction were load-bearing. `payload` is the exception, and deliberately —
+    // It has to be parsed before the claim exists to strand
     if (payload.type === ScheduledMessageJobType.ScheduledMessage) {
       // The delivery-time guards run INSIDE the claim, unlike `sendScheduledMessageNow`'s request path, because
       // One of them has side effects: a word-filter block times the user out and writes an AutoMod audit row,

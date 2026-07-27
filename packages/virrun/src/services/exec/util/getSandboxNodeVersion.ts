@@ -11,8 +11,8 @@ import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnviron
 // Exactly when the capture fails, where the run gets no injected PATH but a stale persisted capture would still name
 // Fnm's node. That call is memoised in-process (createVirrun warms it before any location is resolved), so reading it
 // Here costs nothing the run was not already paying. Without an injected PATH the guest resolves node off its default
-// PATH, which is what readWslExecNodeVersion reports; "" only when WSL itself is unreachable, which
-// ComputeEnvironmentKey buckets as unprobed.
+// PATH, which is what readWslExecNodeVersion reports; "" only when WSL itself is unreachable, on which
+// ComputeEnvironmentKey throws rather than keying a cache entry it would then evict the real one for.
 export const getSandboxNodeVersion = (): string => {
   if (process.platform !== "win32") return process.version;
   const { nodeVersion, path } = readWslLoginEnvironment();

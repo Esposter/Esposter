@@ -29,7 +29,6 @@ import { createUserMessage } from "@@/server/services/message/createUserMessage"
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { createUploadFileToken } from "@@/server/services/message/file/createUploadFileToken";
 import { getIsUploadFileTokenValid } from "@@/server/services/message/file/getIsUploadFileTokenValid";
-import { getMessageFileBlobNames } from "@@/server/services/message/getMessageFileBlobNames";
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { readMessages } from "@@/server/services/message/readMessages";
@@ -55,6 +54,7 @@ import {
   generateDownloadThumbnailSasUrls,
   generateUploadFileSasEntities,
   getEntity,
+  getFileBlobNames,
   getTableNullClause,
   getTopNEntitiesByType,
   serializeClauses,
@@ -200,9 +200,8 @@ export const baseMessageRouter = router({
           message: new NotFoundError(AzureEntityType.File, id).message,
         });
 
-      const blobNames = getMessageFileBlobNames(
-        messageEntity.partitionKey,
-        takeOne(messageEntity.files.splice(index, 1)),
+      const blobNames = Object.values(
+        getFileBlobNames(messageEntity.partitionKey, id, takeOne(messageEntity.files.splice(index, 1)).filename),
       );
       const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         files: messageEntity.files,
@@ -244,7 +243,9 @@ export const baseMessageRouter = router({
       await publishBlobDeletion(
         `${messageEntity.partitionKey}/${messageEntity.rowKey}`,
         AzureContainer.MessageAssets,
-        messageEntity.files.flatMap((file) => getMessageFileBlobNames(messageEntity.partitionKey, file)),
+        messageEntity.files.flatMap(({ filename, id }) =>
+          Object.values(getFileBlobNames(messageEntity.partitionKey, id, filename)),
+        ),
       );
     },
   ),
@@ -263,7 +264,7 @@ export const baseMessageRouter = router({
       await publishBlobDeletion(
         roomId,
         AzureContainer.MessageAssets,
-        files.flatMap((file) => getMessageFileBlobNames(roomId, file)),
+        files.flatMap(({ filename, id }) => Object.values(getFileBlobNames(roomId, id, filename))),
       );
     },
   ),

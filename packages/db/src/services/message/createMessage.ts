@@ -3,6 +3,7 @@ import type { AzureTableEntityMap, CreateMessageInput, CustomTableClient, Messag
 import { createEntity } from "@/services/azure/table/createEntity";
 import { addMessageMetadata } from "@/services/message/addMessageMetadata";
 import { AzureTable, createMessageEntity, getReverseTickedTimestamp } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const createMessage = async <T extends CreateMessageInput>(
   messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
@@ -17,12 +18,23 @@ export const createMessage = async <T extends CreateMessageInput>(
   // Join finds no entity. Writing `Messages` first made a rejection ambiguous: the message could already be live
   // In the room, which is what let `sendScheduledMessageNow` re-enqueue an already-delivered job and post it
   // Twice. This way a rejection always means nothing is readable, which is what every caller's rollback assumes.
-  // The cost lands on the ascending read, which must not advance its cursor past an index row whose entity has
-  // Not arrived yet — `readMessages` holds the page there rather than skipping the message for good.
+  // The residual cost is a window in which the index names a message the join cannot yet serve: an ascending page
+  // Landing inside it skips that message, and the client is told about it by the subscription instead.
+  const ascendingRowKey = getReverseTickedTimestamp(messageEntity.rowKey);
   await createEntity(messageAscendingClient, {
     partitionKey: messageEntity.partitionKey,
-    rowKey: getReverseTickedTimestamp(messageEntity.rowKey),
+    rowKey: ascendingRowKey,
   });
-  await createEntity(messageClient, messageEntity);
+  // Drop the index row again if the entity never lands. Ascending reads join through this index and skip a row the
+  // Join cannot match — they must, since a soft delete leaves exactly the same shape — so an index row that never
+  // Gets an entity is not a message anyone recovers, just a row every ascending page pays to read and discard
+  // Forever. This is what keeps the unmatched window to one in-flight write.
+  await getResultAsync(() => createEntity(messageClient, messageEntity)).match(noop, async (error) => {
+    await getResultAsync(() => messageAscendingClient.deleteEntity(messageEntity.partitionKey, ascendingRowKey)).match(
+      noop,
+      noop,
+    );
+    throw error;
+  });
   return messageEntity;
 };

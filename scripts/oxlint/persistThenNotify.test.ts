@@ -75,6 +75,18 @@ const FIXTURES = [
     source: `const notify = () => { aEventEmitter.emit(); }; await g(); notify();`,
     violations: 0,
   },
+  // …but once that closure is CALLED the notify has happened, so everything after it is a tail effect again.
+  // Exempting the await before the call must not exempt the awaits after it.
+  {
+    name: "declaredNotifyCalledBeforeAwait",
+    source: `const notify = () => { aEventEmitter.emit(); }; await g(); notify(); await h();`,
+    violations: 1,
+  },
+  {
+    name: "declaredNotifySafeAwaitAfterCall",
+    source: `const notify = () => { aEventEmitter.emit(); }; notify(); await getResultAsync(h);`,
+    violations: 0,
+  },
   // `for await` rejects the caller exactly as an `await` does — the batched-purge loop that keeps pulling pages
   // After emitting for the first one is the shape this catches.
   {
@@ -83,17 +95,30 @@ const FIXTURES = [
     violations: 1,
   },
   { name: "forAwaitBeforeEmit", source: `for await (const x of xs) { h(x); } aEventEmitter.emit();`, violations: 0 },
-  // A returned promise rejects the awaiting caller identically to an awaited one.
-  { name: "returnCallAfterEmit", source: `aEventEmitter.emit(); return g();`, violations: 1 },
-  { name: "safeReturnCallAfterEmit", source: `aEventEmitter.emit(); return getResultAsync(g);`, violations: 0 },
+  // A returned promise rejects the awaiting caller identically to an awaited one — but only where syntax proves it
+  // Is one. A plugin sees no types, so a returned bare call is left alone: reporting `return mapRow(row)` would
+  // Make wrapping a pure transform in a best-effort handler the only way to silence the rule.
+  { name: "returnThenChainAfterEmit", source: `aEventEmitter.emit(); return g().then(noop);`, violations: 1 },
+  {
+    name: "returnPromiseAllAfterEmit",
+    source: `aEventEmitter.emit(); return Promise.all(xs.map((x) => g(x)));`,
+    violations: 1,
+  },
+  { name: "returnBareCallAfterEmit", source: `aEventEmitter.emit(); return mapRow(row);`, violations: 0 },
   // A returned value is not an effect: it cannot reject, and every mutation returns its entity after notifying.
   { name: "returnValueAfterEmit", source: `aEventEmitter.emit(); return entity;`, violations: 0 },
-  // `Promise.resolve` settles on what it is handed — nothing, here, so there is nothing to reject.
+  // `Promise.resolve` adopts what it is handed — nothing, here, so there is nothing to reject.
   { name: "returnResolvedPromiseAfterEmit", source: `aEventEmitter.emit(); return Promise.resolve();`, violations: 0 },
+  // An identifier is the ordinary way to hold an already-started promise, so it cannot be blessed on sight.
   {
-    name: "returnResolvedCallAfterEmit",
-    source: `aEventEmitter.emit(); return Promise.resolve(g());`,
+    name: "awaitResolvedIdentifierAfterEmit",
+    source: `const deletion = client.deleteBlob(name); aEventEmitter.emit(); await Promise.resolve(deletion);`,
     violations: 1,
+  },
+  {
+    name: "awaitResolvedLiteralAfterEmit",
+    source: `aEventEmitter.emit(); await Promise.resolve("");`,
+    violations: 0,
   },
   // Only a `*EventEmitter` receiver carries the persist-then-notify meaning.
   { name: "nonEmitterEmit", source: `analytics.emit(); await g();`, violations: 0 },

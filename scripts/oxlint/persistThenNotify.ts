@@ -24,6 +24,25 @@ const ALLOWED_ROOTS = new Set([
 // Terminal helpers whose whole job is to log and put the rejection back.
 const RETHROWING_CALLEES = new Set(["logAndRethrow"]);
 const PROMISE_COMBINATORS = new Set(["all", "any", "race"]);
+// Expressions whose value is written out in place, so nothing already-started can be hiding behind them.
+const LITERAL_NODE_TYPES = new Set([
+  "ArrayExpression",
+  "ArrowFunctionExpression",
+  "Literal",
+  "ObjectExpression",
+  "TemplateLiteral",
+]);
+// A returned expression is only read as an effect when its promise-ness is certain from syntax alone: a `.then`
+// Chain, or a `Promise.*` call. A plugin sees no types, so `return mapRoom(row)` and `return persist(row)` are the
+// Same shape — and reporting the first would leave wrapping a pure transform in a best-effort handler as the only
+// Way to silence the rule, which is the harm this standard exists to prevent. The cost is a returned bare promise
+// Call going unflagged; a reviewer catches that, whereas noise trains everyone to silence the rule.
+const getIsCertainPromiseExpression = (expression: ESTree.Expression): boolean =>
+  expression.type === "CallExpression" &&
+  expression.callee.type === "MemberExpression" &&
+  expression.callee.property.type === "Identifier" &&
+  (["catch", "finally", "then"].includes(expression.callee.property.name) ||
+    (expression.callee.object.type === "Identifier" && expression.callee.object.name === "Promise"));
 const FUNCTION_NODE_TYPES = new Set(["ArrowFunctionExpression", "FunctionDeclaration", "FunctionExpression"]);
 // Every value a block's promise can settle OR reject on without crossing into a nested function: the
 // Arguments of its `return`s (what it resolves to, which chains if a promise) and of its `await`s (what a
@@ -98,11 +117,13 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
   ) {
     // `Promise.allSettled` resolves an array of outcomes and never rejects regardless of its elements
     if (argument.callee.property.name === "allSettled") return true;
-    // `Promise.resolve` settles on what it is handed, so it rejects only when that value is itself a rejecting
-    // Promise — which only a call can produce here. A bare `Promise.resolve()` cannot reject at all
+    // `Promise.resolve` adopts what it is handed, so it rejects whenever that value is a rejecting promise. Only a
+    // Literal is safe on sight: an identifier or member expression is the ordinary way to hold an already-started
+    // Promise (`const deletion = client.deleteBlob(name); … await Promise.resolve(deletion)`), so blessing those
+    // Would hand the rule's own defect a syntax that walks straight past it
     if (argument.callee.property.name === "resolve") {
       const [value] = argument.arguments;
-      return value === undefined || (value.type !== "SpreadElement" && value.type !== "CallExpression");
+      return value === undefined || LITERAL_NODE_TYPES.has(value.type);
     }
     if (!PROMISE_COMBINATORS.has(argument.callee.property.name)) return false;
     const [collection] = argument.arguments;
@@ -126,6 +147,18 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
   return false;
 };
 
+// The name a function is bound to, when it is bound to one rather than passed straight to a call: a closure holding
+// An emit notifies nothing until that name is invoked, so the name is what carries the notify forward.
+const getBoundFunctionName = (node: ESTree.Node): string | undefined => {
+  if (node.type === "FunctionDeclaration") return node.id?.name;
+  const { parent } = node;
+  if (parent.type === "VariableDeclarator" && parent.init === node && parent.id.type === "Identifier")
+    return parent.id.name;
+  if (parent.type === "AssignmentExpression" && parent.right === node && parent.left.type === "Identifier")
+    return parent.left.name;
+  return undefined;
+};
+
 const isEmitCall = (node: ESTree.CallExpression): boolean =>
   node.callee.type === "MemberExpression" &&
   node.callee.property.type === "Identifier" &&
@@ -147,9 +180,34 @@ const rule = defineRule({
     const exitFunction = () => {
       functionStack.pop();
     };
+    // Names bound to a closure that notifies, so a later `notify()` can arm the frame making that call.
+    const notifyClosureNames = new Set<string>();
+    // An emit inside a nested callback still notifies every function that RUNS that callback, so it arms the whole
+    // Enclosing chain — otherwise wrapping the write+emit in `getResultAsync(async () => …)` hides the notify from
+    // Every await that follows it. Each outer frame is armed at the position of the construct that runs the callback,
+    // Never at the emit's own: the emit sits lexically before everything after that construct, so comparing raw
+    // Positions would report a fatal await that runs BEFORE the notify — a false error whose only cure is wrapping a
+    // Fatal write in a best-effort handler, the opposite of this standard. That position is the enclosing call when
+    // The callback is passed straight to one, and otherwise the later call to the name it was bound to, which is why
+    // The walk records the name and hands the rest to the CallExpression visitor rather than stopping outright.
+    // Emits propagate outward only: a frame opened after the emit is a separate deferred body and stays unarmed
+    const armFramesFrom = (start: number) => {
+      let armStart = start;
+      for (const frame of functionStack.toReversed()) {
+        frame.emitStart ??= armStart;
+        const { parent } = frame.node;
+        if (parent.type === "CallExpression" && parent.arguments.some((argument) => argument === frame.node)) {
+          armStart = parent.start;
+          continue;
+        }
+
+        const boundFunctionName = getBoundFunctionName(frame.node);
+        if (boundFunctionName !== undefined) notifyClosureNames.add(boundFunctionName);
+        break;
+      }
+    };
     // Every effect the enclosing function can still reject on once it has notified: an `await`, the iterable of a
-    // `for await`, and a returned promise, which rejects the awaiting caller exactly as an `await` would. A return
-    // Is only read when it hands back a call — a returned identifier or literal cannot reject.
+    // `for await`, and a returned promise, which rejects the awaiting caller exactly as an `await` would.
     const reportUnhandledEffect = (node: ESTree.Node, effect: ESTree.Expression) => {
       const frame = functionStack.at(-1);
       if (frame?.emitStart === undefined) return;
@@ -166,23 +224,10 @@ const rule = defineRule({
         reportUnhandledEffect(node, node.argument);
       },
       CallExpression(node) {
-        if (!isEmitCall(node)) return;
-        // An emit inside a nested callback still notifies every function that RUNS that callback, so it arms the
-        // Enclosing chain — otherwise wrapping the write+emit in `getResultAsync(async () => …)` hides the notify
-        // From every await that follows it. Each outer frame is armed at the position of the call that runs the
-        // Callback, never at the emit's own: the emit sits lexically before everything after that call, so
-        // Comparing raw positions would report a fatal await that runs BEFORE the notify — a false error whose
-        // Only cure is wrapping a fatal write in a best-effort handler, which is the opposite of this standard.
-        // A callback that is not an argument of a call — a closure bound to a name and invoked later — has no such
-        // Position, so propagation stops rather than guessing at one. Emits propagate outward only: a frame opened
-        // After the emit (the `nestedFunction` case) is a separate deferred body and stays unarmed
-        let start = node.start;
-        for (const frame of functionStack.toReversed()) {
-          frame.emitStart ??= start;
-          const { parent } = frame.node;
-          if (parent.type !== "CallExpression" || !parent.arguments.some((argument) => argument === frame.node)) break;
-          start = parent.start;
-        }
+        // An emit arms the function holding it, and a call to a closure that holds one arms the function making
+        // That call — the two entry points are the same walk from a different starting position
+        if (isEmitCall(node) || (node.callee.type === "Identifier" && notifyClosureNames.has(node.callee.name)))
+          armFramesFrom(node.start);
       },
       ForOfStatement(node) {
         // Only `for await`: a plain for-of settles on nothing
@@ -193,7 +238,7 @@ const rule = defineRule({
       FunctionExpression: enterFunction,
       "FunctionExpression:exit": exitFunction,
       ReturnStatement(node) {
-        if (node.argument?.type === "CallExpression") reportUnhandledEffect(node, node.argument);
+        if (node.argument && getIsCertainPromiseExpression(node.argument)) reportUnhandledEffect(node, node.argument);
       },
     };
   },

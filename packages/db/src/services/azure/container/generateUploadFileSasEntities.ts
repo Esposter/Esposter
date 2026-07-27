@@ -2,8 +2,7 @@ import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity, FileSasEntity } from "@esposter/db-schema";
 
 import { generateWriteSasUrl } from "@/services/azure/container/generateWriteSasUrl";
-import { getBlobName } from "@/services/azure/container/getBlobName";
-import { getThumbnailBlobName } from "@/services/azure/container/getThumbnailBlobName";
+import { getFileBlobNames } from "@/services/azure/container/getFileBlobNames";
 import { getMimeCategory, MimeCategory, THUMBNAIL_CONTENT_TYPE } from "@esposter/db-schema";
 
 export const generateUploadFileSasEntities = (
@@ -17,7 +16,7 @@ export const generateUploadFileSasEntities = (
     return Promise.all(
       files.map(async ({ filename, mimetype }) => {
         const id: string = crypto.randomUUID();
-        const blobName = getBlobName(`${prefix}/${id}`, filename);
+        const { blobName, thumbnailBlobName } = getFileBlobNames(prefix, id, filename);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
         const entity: FileSasEntity = {
           id,
@@ -25,7 +24,7 @@ export const generateUploadFileSasEntities = (
         };
         // Images get a sibling thumbnail write target so the client can upload a downscaled preview alongside.
         if (options.withThumbnail && getMimeCategory(mimetype) === MimeCategory.Image) {
-          const thumbnailBlobClient = containerClient.getBlockBlobClient(getThumbnailBlobName(prefix, id));
+          const thumbnailBlobClient = containerClient.getBlockBlobClient(thumbnailBlobName);
           entity.thumbnailSasUrl = await generateWriteSasUrl(thumbnailBlobClient, {
             contentType: THUMBNAIL_CONTENT_TYPE,
           });
