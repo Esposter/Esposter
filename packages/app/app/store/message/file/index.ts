@@ -1,4 +1,5 @@
 import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
+import type { FileEntity } from "@esposter/db-schema";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
@@ -18,20 +19,29 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     getData,
     setData,
   } = useDataMap(() => roomStore.currentRoomId, new Map<string, ReadFileUrl>());
-  // Keyed by the room the urls were read FOR, never `fileUrlMap.value` — that resolves to whichever room is
-  // Current at the moment it is read, and every caller here awaits a network round trip first. A user who
-  // Switches rooms during that await would have one room's urls written into another room's map: the room they
-  // Landed on renders attachments it has no urls for, and the room they left never receives the ones it asked for
-  const storeFileUrls = (roomId: string, newFileUrlMap: Map<string, ReadFileUrl>) => {
-    const roomFileUrlMap = getData(roomId) ?? new Map<string, ReadFileUrl>();
-    for (const [id, fileUrl] of newFileUrlMap) roomFileUrlMap.set(id, fileUrl);
-    setData(roomId, roomFileUrlMap);
+  // The only place read urls are minted and written, so the two rules that make a write correct hold by
+  // Construction for every caller instead of once per call site — the invariant was previously restated at
+  // Three of them and half-applied at the third.
+  // Keyed by the room the files were read FOR, never `fileUrlMap.value`: that resolves to whichever room is
+  // Current at the moment it is read, and every caller awaits a network round trip first. A user who switches
+  // Rooms during that await would have one room's urls written into another room's map — the room they landed
+  // On renders attachments it has no urls for, and the room they left never receives the ones it asked for.
+  // Chunked, because a room scrolled back far enough holds more attachments than the query accepts in one input.
+  // Which files need urls is the caller's question (a page read wants the ones it lacks, the sweep only the
+  // Ones it already holds and are aging out); how they are read and stored is this function's.
+  const storeReadFileUrls = async (roomId: string, files: FileEntity[]) => {
+    for (let index = 0; index < files.length; index += MAX_READ_LIMIT) {
+      const newFileUrlMap = await readFileUrls(files.slice(index, index + MAX_READ_LIMIT), roomId);
+      const roomFileUrlMap = getData(roomId) ?? new Map<string, ReadFileUrl>();
+      for (const [id, fileUrl] of newFileUrlMap) roomFileUrlMap.set(id, fileUrl);
+      setData(roomId, roomFileUrlMap);
+    }
   };
   MessageHookMap[Operation.Create].register(async (message) => {
     const roomId = roomStore.currentRoomId;
     if (!roomId || message.files.length === 0) return;
 
-    storeFileUrls(roomId, await readFileUrls(message.files, roomId));
+    await storeReadFileUrls(roomId, message.files);
   });
   MessageHookMap[Operation.Delete].register((input) => {
     const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);
@@ -55,10 +65,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
         const fileUrl = fileUrlMap.value.get(id);
         return fileUrl && fileUrl.expiresAt <= expiredAt;
       });
-      // A room scrolled back far enough holds more attachments than the query accepts in one input, and it is
-      // The long-open room — the only one this sweep exists for — that gets there first
-      for (let index = 0; index < expiringFiles.length; index += MAX_READ_LIMIT)
-        storeFileUrls(roomId, await readFileUrls(expiringFiles.slice(index, index + MAX_READ_LIMIT), roomId));
+      await storeReadFileUrls(roomId, expiringFiles);
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
   if (!getIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
@@ -78,5 +85,5 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     viewerApi({ images: viewableFiles.value, options: { initialViewIndex } });
   };
 
-  return { fileUrlMap, storeFileUrls, viewableFiles, viewFiles };
+  return { fileUrlMap, storeReadFileUrls, viewableFiles, viewFiles };
 });

@@ -10,21 +10,19 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
-import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
+import { storeSelfContainedContent } from "@@/server/services/resource/storeSelfContainedContent";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -214,8 +212,7 @@ export const resourceRouter = router({
       const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
       // The blob is written on first save, so missing content just means there is nothing to copy yet
       if (content === undefined) return;
-      const clonedContent = await cloneContentAssets(content, newResource.id, true);
-      await useUpload(AzureContainer.ResourceAssets, getContentBlobName(newResource.id), JSON.stringify(clonedContent));
+      await storeSelfContainedContent(newResource.id, content);
     }).match(noop, async (error) => {
       // Never leave a content-less orphan copy behind when the content clone fails. Ordered like purgeResource:
       // Partially cloned blobs first (already-gone is success), the row last as the durable marker — a failed
@@ -351,8 +348,7 @@ export const resourceRouter = router({
           DatabaseEntityType.Resource,
           id,
         );
-        const restoredContent = await cloneContentAssets(publishedContent, id, true);
-        await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(restoredContent));
+        await storeSelfContainedContent(id, publishedContent);
         return restoredResource;
       });
     },
