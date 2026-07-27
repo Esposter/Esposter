@@ -145,8 +145,8 @@ catalogs:
       specifier: ^3.23.0
       version: 3.23.0
     '@pulumi/github':
-      specifier: ^6.14.0
-      version: 6.14.0
+      specifier: ^6.14.1
+      version: 6.14.1
     '@pulumi/pulumi':
       specifier: ^3.253.0
       version: 3.253.0
@@ -1668,7 +1668,7 @@ importers:
         version: 3.23.0(supports-color@10.2.2)(typescript@6.0.3)
       '@pulumi/github':
         specifier: 'catalog:'
-        version: 6.14.0(supports-color@10.2.2)(typescript@6.0.3)
+        version: 6.14.1(supports-color@10.2.2)(typescript@6.0.3)
       '@pulumi/pulumi':
         specifier: 'catalog:'
         version: 3.253.0(supports-color@10.2.2)(typescript@6.0.3)
@@ -5598,8 +5598,8 @@ packages:
   '@pulumi/azure-native@3.23.0':
     resolution: {integrity: sha512-mcqrtmh/GcKs4Z6VS5310eDG1vXX4hYzXxIHhuPfaueA1Wz+n2l5jvZvZhnp/AX4f6BE/MrUtbR+Ep0bXyoAzw==}
 
-  '@pulumi/github@6.14.0':
-    resolution: {integrity: sha512-qrgH5ot2Wh9xLMPnBq9hpBjEYTIfgDpJRS/rmROgt5NIEAhwDfaTJ8dgpdjV8CQwfpuaRY7mrs8mKWlSANEeYQ==}
+  '@pulumi/github@6.14.1':
+    resolution: {integrity: sha512-1murHMQUyCattdVr/bI0A/QhUitWX0NO31PUvNfc53khqvWwIg3T9sCowrwkf4ui4Q2bWPoHi89wuTzVOHWp4g==}
 
   '@pulumi/pulumi@3.253.0':
     resolution: {integrity: sha512-riKRPh6hNCA/NRxVSOLx08c0rqgWYnKGOTgPZzCXi5TglVEERiXHW4U2DaTpP978FI1Xo1iqCa41vmd5i/PNHw==}
@@ -19515,7 +19515,7 @@ snapshots:
       - ts-node
       - typescript
 
-  '@pulumi/github@6.14.0(supports-color@10.2.2)(typescript@6.0.3)':
+  '@pulumi/github@6.14.1(supports-color@10.2.2)(typescript@6.0.3)':
     dependencies:
       '@pulumi/pulumi': 3.253.0(supports-color@10.2.2)(typescript@6.0.3)
     transitivePeerDependencies:
