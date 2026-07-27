@@ -34,7 +34,7 @@ catalog:
   "@codemirror/language-data": ^6.5.2
   "@codemirror/state": ^6.7.1
   "@codemirror/theme-one-dark": ^6.1.3
-  "@codemirror/view": ^6.43.6
+  "@codemirror/view": ^6.43.7
   "@codspeed/vitest-plugin": ^5.7.1
   "@dxup/nuxt": ^0.5.4
   "@dxup/unimport": ^0.1.2
@@ -53,9 +53,9 @@ catalog:
   "@nuxt/eslint": ^1.16.0
   "@nuxt/fonts": ^0.14.0
   "@nuxt/scripts": ^1.3.2
-  "@nuxt/test-utils": ^4.0.3
+  "@nuxt/test-utils": ^4.1.0
   "@nuxtjs/seo": ^5.3.6
-  "@oxlint/plugins": ^1.75.0
+  "@oxlint/plugins": ^1.76.0
   "@panzoom/panzoom": ^4.6.2
   "@pinia/nuxt": ^1.0.1
   "@platformatic/vfs": ^0.4.0
@@ -63,17 +63,17 @@ catalog:
   "@pulumi/github": ^6.14.1
   "@pulumi/pulumi": ^3.254.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^2.4.2
-  "@tiptap/core": ^3.29.0
-  "@tiptap/extension-code-block-lowlight": ^3.29.0
-  "@tiptap/extension-file-handler": ^3.29.0
-  "@tiptap/extension-mention": ^3.29.0
-  "@tiptap/extensions": ^3.29.0
-  "@tiptap/html": ^3.29.0
-  "@tiptap/pm": ^3.29.0
-  "@tiptap/starter-kit": ^3.29.0
-  "@tiptap/suggestion": ^3.29.0
-  "@tiptap/vue-3": ^3.29.0
+  "@takumi-rs/core": ^2.5.2
+  "@tiptap/core": ^3.29.1
+  "@tiptap/extension-code-block-lowlight": ^3.29.1
+  "@tiptap/extension-file-handler": ^3.29.1
+  "@tiptap/extension-mention": ^3.29.1
+  "@tiptap/extensions": ^3.29.1
+  "@tiptap/html": ^3.29.1
+  "@tiptap/pm": ^3.29.1
+  "@tiptap/starter-kit": ^3.29.1
+  "@tiptap/suggestion": ^3.29.1
+  "@tiptap/vue-3": ^3.29.1
   "@tresjs/cientos": ^5.8.1
   "@tresjs/core": ^5.8.3
   "@tresjs/nuxt": ^5.6.3
@@ -86,7 +86,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
-  "@types/node": ^26.1.1
+  "@types/node": ^26.1.2
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
   "@types/three": ^0.185.1
@@ -115,7 +115,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^6.5.0
+  apexcharts: ^6.6.1
   better-auth: ^1.6.25
   citty: ^0.2.2
   codemirror: ^6.0.2
@@ -133,7 +133,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.8.0
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.75.0
+  eslint-plugin-oxlint: ^1.76.0
   eslint-plugin-perfectionist: ^5.10.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -183,10 +183,10 @@ catalog:
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
   node-html-parser: ^9.0.0
-  nuxt: ^4.5.0
+  nuxt: ^4.5.1
   nuxt-security: ^2.6.0
-  oxfmt: ^0.60.0
-  oxlint: ^1.75.0
+  oxfmt: ^0.61.0
+  oxlint: ^1.76.0
   oxlint-tsgolint: ^7.0.2001
   p-progress: ^1.0.0
   pathe: ^2.0.3
@@ -211,7 +211,7 @@ catalog:
   survey-creator-core: ^3.0.0-beta.8
   survey-creator-vue: ^3.0.0-beta.8
   survey-vue3-ui: ^3.0.0-beta.8
-  temporal-polyfill: ^1.0.1
+  temporal-polyfill: ^1.0.2
   three: ^0.185.1
   three-globe: ^2.45.2
   trpc-nuxt: ^2.1.1
