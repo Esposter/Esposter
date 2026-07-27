@@ -59,7 +59,15 @@ export const WSL_REMOVE_SCRIPT = 'for dir; do chmod -R u+rwx -- "$dir" 2>/dev/nu
 // Fan-out this replaced (>100 at once, once a test suite had stranded that many mirrors) saturated the WSL service
 // Until it answered every later call with Wsl/Service/E_UNEXPECTED — while an argv-sized batch would trade that for
 // One launch per batch, which is the fan-out again. `xargs -0` keeps any path intact (spaces, newlines) and runs its
-// `sh` invocations sequentially when it splits. The list is unlinked last, so a completed sweep leaves nothing behind.
+// `sh` invocations sequentially when it splits. The list is unlinked last, so a sweep leaves nothing behind.
+//
+// Unlinked with `;` rather than `&&`, deliberately. Keeping the list when the removal fails would keep a file no
+// Reaper owns: nothing consumes this script's exit status (spawnBackground gives the child `stdio: "ignore"` and no
+// Exit handler — fire-and-forget is the point), nothing reads a leftover list, and reapStaleSourceMirrorTemps sweeps
+// The mirror entry dirs rather than the cache root, so it would sit there until `cache clean`. What a failed removal
+// Actually gets is re-derivation: the dirs are still stale, so the next run's sweep enumerates them again and stages
+// A fresh list. Retaining the failed one buys diagnostics nothing reads and leaks a file per failure. A removal
+// Failure that must be surfaced goes through the blocking path instead (removeSnapshotDirectory → execWsl throws).
 export const WSL_REMOVE_LIST_SCRIPT: string = `xargs -0r sh -c '${WSL_REMOVE_SCRIPT}' sh < "$1"; rm -f -- "$1"`;
 // The staged list `removeSnapshotDirectoriesDetached` writes into the cache root for the script above to consume,
 // Tagged with the host pid like every other virrun temp so a stray one is attributable.
