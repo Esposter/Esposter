@@ -1,21 +1,24 @@
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
-import type { rmSync as baseRmSync } from "node:fs";
+import type { rmSync as baseRmSync, writeFileSync as baseWriteFileSync } from "node:fs";
 
 import { VIRRUN_PREPARE_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectoriesDetached } from "@/services/exec/snapshot/removeSnapshotDirectoriesDetached";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { WSL_REMOVE_SCRIPT } from "@/services/exec/wsl/constants";
+import { VIRRUN_REMOVE_LIST_TEMP_PREFIX, WSL_REMOVE_LIST_SCRIPT } from "@/services/exec/wsl/constants";
 import { TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_LEGACY_UNC_PREFIX } from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
-import { noop } from "@esposter/shared";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
+import { noop, takeOne } from "@esposter/shared";
+import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { rmSync, spawn } = vi.hoisted(() => ({
+const { cacheRootHolder, rmSync, spawn, writeFileSync } = vi.hoisted(() => ({
+  cacheRootHolder: { value: "" },
   rmSync: vi.fn<typeof baseRmSync>(),
   spawn: vi.fn<typeof baseSpawn>(),
+  writeFileSync: vi.fn<typeof baseWriteFileSync>(),
 }));
 
 // Only spawn (the background teardown) is mocked; readWslPath maps a UNC via its regex without a subprocess, and the
@@ -27,17 +30,30 @@ vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof
 vi.mock(import("node:fs"), async (importOriginal) => {
   const actual = await importOriginal();
   rmSync.mockImplementation(actual.rmSync);
-  return { ...actual, rmSync };
+  return { ...actual, rmSync, writeFileSync };
 });
+// The cache root is a `\\wsl.localhost` UNC in production and nothing else maps back to a Linux path, so the mock
+// Returns one too — the staged list's own path goes through readWslPath exactly like the dirs it holds. Writes to a
+// UNC cannot land on a test machine, so the sweep cases capture the staged bytes through the writeFileSync mock
+// Instead of reading them back off disk.
+vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
+  getWslNativeCacheRoot: () => cacheRootHolder.value,
+}));
 
 describe(removeSnapshotDirectoriesDetached, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   // A background child never blocks — assert its lifecycle hooks are wired (error swallowed, unref'd so it outlives us).
   const child = { on: vi.fn<() => void>(), unref: vi.fn<() => void>() };
 
+  // What the launched script will read: the staged list is the sweep's only channel for the paths
+  const readStagedList = () => takeOne(writeFileSync.mock.calls)[1];
+
   beforeEach(() => {
     vi.clearAllMocks();
     spawn.mockReturnValue(child as unknown as ChildProcess);
+    // The staged list is written to a UNC no test machine can reach, so the write is captured rather than performed
+    writeFileSync.mockImplementation(noop);
+    cacheRootHolder.value = createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX);
   });
 
   afterEach(() => {
@@ -48,8 +64,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
     expect.hasAssertions();
 
     const dir = create();
-    mkdirSync(join(dir, TEST_FILENAME), { recursive: true });
-    writeFileSync(join(dir, TEST_FILENAME, TEST_FILENAME), "");
+    mkdirSync(join(dir, TEST_FILENAME, TEST_FILENAME), { recursive: true });
 
     removeSnapshotDirectoriesDetached([dir]);
 
@@ -66,15 +81,16 @@ describe(removeSnapshotDirectoriesDetached, () => {
 
     removeSnapshotDirectoriesDetached(linuxDirs.map((dir) => createTestWslUnc(dir, TEST_WSL_LEGACY_UNC_PREFIX)));
 
-    // One launch for the whole sweep, never one per dir: each wsl.exe launch is a service RPC plus a relay process,
-    // And a per-entry fan-out wedges the WSL service outright (WSL_REMOVE_SCRIPT loops over these args for that
-    // Reason). Never `detached` either: on win32 that flag makes Windows ignore windowsHide and flash an empty
-    // Console (see spawnBackground / nodejs#21825).
+    // One launch for the whole sweep however many dirs it holds, because the paths ride in a list file rather than
+    // The argv: each wsl.exe launch is a service RPC plus a relay process, and a fan-out wedges the WSL service
+    // Outright, while an argv-sized batch would reintroduce that fan-out one launch at a time. Never `detached`
+    // Either: on win32 that flag makes Windows ignore windowsHide and flash an empty console (nodejs#21825).
     expect(spawn).toHaveBeenCalledExactlyOnceWith(
       "wsl.exe",
-      ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", ...linuxDirs],
+      ["--exec", "sh", "-c", WSL_REMOVE_LIST_SCRIPT, "sh", expect.stringContaining(VIRRUN_REMOVE_LIST_TEMP_PREFIX)],
       { stdio: "ignore", windowsHide: true },
     );
+    expect(readStagedList()).toBe(joinNullDelimited(linuxDirs));
     expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop);
     expect(child.unref).toHaveBeenCalledExactlyOnceWith();
   });
@@ -90,9 +106,8 @@ describe(removeSnapshotDirectoriesDetached, () => {
   test("swallows a failing background spawn so the detached sweep never blocks the command", () => {
     expect.hasAssertions();
 
-    // SpawnBackground deliberately lets a synchronous spawn throw reach its caller (EAGAIN/EMFILE, an argv past the
-    // Win32 command-line limit once a sweep batches hundreds of entries) — here that caller is cache hygiene for dirs
-    // This run never touches, so it must not fail the user's command.
+    // SpawnBackground deliberately lets a synchronous spawn throw reach its caller (EAGAIN/EMFILE) — here that
+    // Caller is cache hygiene for dirs this run never touches, so it must not fail the user's command.
     spawn.mockImplementation(() => {
       throw new Error(" ");
     });
@@ -103,7 +118,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
     expect(spawn).toHaveBeenCalledTimes(1);
   });
 
-  test("swallows a failing local removal and still batches the WSL dirs", () => {
+  test("swallows a failing local removal and still tears down the WSL dirs", () => {
     expect.hasAssertions();
 
     rmSync.mockImplementationOnce(() => {
@@ -117,10 +132,8 @@ describe(removeSnapshotDirectoriesDetached, () => {
     ]);
 
     expect(rmSync).toHaveBeenCalledTimes(1);
-    expect(spawn).toHaveBeenCalledExactlyOnceWith(
-      "wsl.exe",
-      ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir],
-      { stdio: "ignore", windowsHide: true },
-    );
+    expect(spawn).toHaveBeenCalledTimes(1);
+    expect(takeOne(spawn.mock.calls)[0]).toBe("wsl.exe");
+    expect(readStagedList()).toBe(joinNullDelimited([linuxDir]));
   });
 });

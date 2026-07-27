@@ -1,15 +1,19 @@
-import type { ContainerClient } from "@azure/storage-blob";
+import type { BatchSubResponse, ContainerClient } from "@azure/storage-blob";
 
 import { deleteDirectory } from "@/services/azure/container/deleteDirectory";
 import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 describe(deleteDirectory, () => {
   const containerUrl = "https://account.blob.core.windows.net/resource-assets";
   const prefix = crypto.randomUUID();
 
-  const setupContainerClient = (blobNames: string[]) => {
-    const deleteBlobs = vi.fn<ContainerClient["getBlobBatchClient"]>();
+  // The batch resolves whatever its blobs did, so a status per url is what a test varies
+  const setupContainerClient = (blobNames: string[], status = 202) => {
+    const deleteBlobs = vi.fn<(blobUrls: string[]) => Promise<{ subResponses: Pick<BatchSubResponse, "status">[] }>>(
+      (blobUrls) => Promise.resolve({ subResponses: blobUrls.map(() => ({ status })) }),
+    );
     const containerClient = {
       credential: {},
       getBlobBatchClient: () => ({ deleteBlobs }),
@@ -46,7 +50,7 @@ describe(deleteDirectory, () => {
     await deleteDirectory(containerClient, prefix, true);
 
     // Every `#`/`?` is percent-encoded, so each url addresses the blob that actually exists
-    expect(deleteBlobs.mock.calls[0]?.[0]).toStrictEqual([
+    expect(takeOne(deleteBlobs.mock.calls)[0]).toStrictEqual([
       `${containerUrl}/${prefix}/a`,
       `${containerUrl}/${prefix}/%23`,
       `${containerUrl}/${prefix}/%3F`,
@@ -65,7 +69,29 @@ describe(deleteDirectory, () => {
     await deleteDirectory(containerClient, prefix, true);
 
     expect(deleteBlobs).toHaveBeenCalledTimes(2);
-    expect(deleteBlobs.mock.calls[0]?.[0]).toHaveLength(MAX_BLOB_BATCH_DELETIONS);
-    expect(deleteBlobs.mock.calls[1]?.[0]).toHaveLength(1);
+    expect(takeOne(deleteBlobs.mock.calls)[0]).toHaveLength(MAX_BLOB_BATCH_DELETIONS);
+    expect(takeOne(deleteBlobs.mock.calls, 1)[0]).toHaveLength(1);
+  });
+
+  // The batch resolves 202 whatever its blobs did, so an unread sub-response is a teardown that reports success
+  // While the blob survives — outside every later sweep and billed forever
+  test("throws when a blob's own delete fails", async () => {
+    expect.hasAssertions();
+
+    const { containerClient } = setupContainerClient([`${prefix}/a`], 403);
+
+    await expect(deleteDirectory(containerClient, prefix, true)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Delete, name: deleteDirectory, 403]`,
+    );
+  });
+
+  // Every caller is a teardown that must converge when it re-runs, so a blob an earlier attempt already removed
+  // Is the state being asked for
+  test("treats an already-deleted blob as success", async () => {
+    expect.hasAssertions();
+
+    const { containerClient } = setupContainerClient([`${prefix}/a`], 404);
+
+    await expect(deleteDirectory(containerClient, prefix, true)).resolves.toBeUndefined();
   });
 });

@@ -50,14 +50,17 @@ export const VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX = "delete.";
 export const WSL_UNC_REGEX: RegExp = /^\\\\wsl(?:\.localhost|\$)\\[^\\]+(?<linuxPath>\\.*)?$/iu;
 // Teardown run inside WSL where the distro user owns the trees: chmod each traversable, then rm -rf (idempotent, so a
 // Missing dir is a no-op). Paths are passed as positional args and iterated, never interpolated into the body — a
-// Cache path containing a single quote would otherwise break the quoting and inject extra shell syntax. The loop is
-// What lets a sweep of N stale entries cost ONE wsl.exe launch: a launch is a service RPC plus a relay process, so
-// The per-entry fan-out this replaced (one launch per entry, >100 at once once a test suite had stranded that many
-// Mirrors) saturated the WSL service until it answered every later call with Wsl/Service/E_UNEXPECTED.
+// Cache path containing a single quote would otherwise break the quoting and inject extra shell syntax. Used by the
+// Blocking single-dir teardown (removeSnapshotDirectory); a sweep of many dirs uses WSL_REMOVE_LIST_SCRIPT instead,
+// Because an argv has a ceiling and a sweep's size has none.
 export const WSL_REMOVE_SCRIPT = 'for dir; do chmod -R u+rwx -- "$dir" 2>/dev/null; rm -rf -- "$dir"; done';
-// How much of the win32 32767-char command-line limit one `wsl.exe` remove launch may spend on its path args, with
-// The remainder covering the fixed argv (the script above, `--exec sh -c`, the `sh` $0). A sweep of hundreds of
-// Stranded entries is exactly what removeSnapshotDirectoriesDetached exists for, and an argv past the limit fails
-// The spawn asynchronously — where the detached spawn's error handler discards it — so the whole teardown becomes a
-// Permanent silent no-op that every later run rebuilds identically.
-export const WSL_REMOVE_ARGV_MAX_LENGTH = 30000;
+// The same teardown driven from the null-delimited list file named by `$1` rather than from the argv, so a sweep is
+// ONE wsl.exe launch however many dirs it holds: a launch is a service RPC plus a relay process, and the per-entry
+// Fan-out this replaced (>100 at once, once a test suite had stranded that many mirrors) saturated the WSL service
+// Until it answered every later call with Wsl/Service/E_UNEXPECTED — while an argv-sized batch would trade that for
+// One launch per batch, which is the fan-out again. `xargs -0` keeps any path intact (spaces, newlines) and runs its
+// `sh` invocations sequentially when it splits. The list is unlinked last, so a completed sweep leaves nothing behind.
+export const WSL_REMOVE_LIST_SCRIPT: string = `xargs -0r sh -c '${WSL_REMOVE_SCRIPT}' sh < "$1"; rm -f -- "$1"`;
+// The staged list `removeSnapshotDirectoriesDetached` writes into the cache root for the script above to consume,
+// Tagged with the host pid like every other virrun temp so a stray one is attributable.
+export const VIRRUN_REMOVE_LIST_TEMP_PREFIX = "remove.";
