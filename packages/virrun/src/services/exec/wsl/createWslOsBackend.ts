@@ -42,8 +42,11 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
       const cwd = resolveCwd(options.cwd);
       const { lockPath, script } = createWslSourceMirrorSync(cwd);
       // Reap ext4 source mirrors whose host repo/worktree was deleted — the one cache entry with no lockfile/source
-      // Key to supersede it, so it needs its own origin-marker sweep. Strictly after the sync above: that is what
-      // (Re)publishes this repo's origin marker, and the reaper's unmarked-and-aged arm is only sound once it has.
+      // Key to supersede it, so it needs its own origin-marker sweep. Strictly after the planning call above, not
+      // After the script it returns: the marker publish is host-side and synchronous inside createWslSourceMirrorSync
+      // (the no-delta republish and the publish-at-entry-creation both), so this repo's marker is already on disk
+      // Here — which is the invariant the reaper's unmarked-and-aged arm rests on. The deferred script only applies
+      // The tree delta and the manifest, neither of which the reaper reads.
       // This run's own entry is excluded by key — the tree bwrap is about to mount cannot be a reap candidate.
       reapAbandonedSourceMirrors(getSourceMirrorKey(cwd));
       return {
