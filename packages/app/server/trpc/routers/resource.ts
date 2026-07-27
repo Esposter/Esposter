@@ -333,8 +333,15 @@ export const resourceRouter = router({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.Resource, `${id}/${version}`).message,
         });
-      // One transaction so a failed clone or write rolls the contentVersion bump back, keeping Postgres and
-      // Blob storage consistent
+      // One transaction so a failed clone or write rolls the contentVersion bump back — a restore that did not
+      // Land must never advance the version every client caches against. The rollback is Postgres-only, and
+      // Nothing here pretends otherwise: blobs a partial clone already wrote stay under this resource's own
+      // `{id}/files`, unreferenced by any content until the next restore overwrites them or `purgeResource`
+      // Takes the directory wholesale. That is the deliberate trade — unlike `duplicateResource`, whose
+      // Compensating `deleteDirectory` is only safe because the resource it clears was created moments earlier,
+      // The target here is a live working copy whose existing files a directory-wide cleanup would destroy.
+      // The lock on the `resources` row is held across those blob calls; the only contender is the owner's own
+      // Concurrent mutation of the same resource, which the restore would serialize against regardless.
       return ctx.db.transaction(async (tx) => {
         const restoredResource = requireMutation(
           (

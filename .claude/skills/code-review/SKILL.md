@@ -20,7 +20,7 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "<level>
 ```
 
 - `level` — `high` (default), `xhigh`, or `max`. Post-merge PR audits in this project run `high` unless asked otherwise.
-- **The Find phase partitions itself by diff size** — nothing to pass. Below 50 changed files the finders split by _lens_ (one angle each over the whole diff), which is right while the territory is small enough that every finder reads every hunk. Above it they split by _seam_ — one finder per subsystem, tracing it end to end plus the boundary it hands data across, since lens-splitting a release-sized diff degenerates into parallel skims that all converge on whatever is loudest. Seam mode adds a whole-diff finder so a bad seam split cannot leave territory unread. The chosen mode is logged and lands in `stats.findMode`; a run is not comparable to another without it.
+- **The Find phase partitions itself by diff size** — nothing to pass. Under 50 changed files the finders split by _lens_ (one angle each over the whole diff), which is right while the territory is small enough that every finder reads every hunk. At 50 or more they split by _seam_ — one finder per subsystem, tracing it end to end plus the boundary it hands data across, since lens-splitting a release-sized diff degenerates into parallel skims that all converge on whatever is loudest. Seam mode adds a whole-diff finder so a bad seam split cannot leave territory unread. The chosen mode is logged and lands in `stats.findMode`; a run is not comparable to another without it.
 - `target` — optional: PR number, branch, ref range, path, or free-form instructions (`"only review src/foo.ts"`). Omit for the working diff.
 - **Never `Workflow({ name: "code-review" })`** — name resolution always loads the built-in, which inherits the premium session model onto ~20 finder/verifier agents (verified 2026-07-17, ~1.46M tokens). The project script pins `model: "opus"` on every agent (execution role per the model-delegation skill).
 - `args: "probe"` exits instantly with `{ probe: true }` — free parse check after editing the script.
@@ -77,8 +77,8 @@ So the crossing test is a **requirement of any fix that edits a line an earlier 
    | #   | Finding                                     | Where              | Severity    | Verdict   | Origin                             | Disposition                          |
    | --- | ------------------------------------------- | ------------------ | ----------- | --------- | ---------------------------------- | ------------------------------------ |
    | 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED | regression 57dcbd3                 | Fixed                                |
-   | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | PLAUSIBLE | new                                | Fixed                                |
-   | 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | PLAUSIBLE | reopened architecture/standard.md  | By-design (architecture/standard.md) |
+   | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | CONFIRMED | new                                | Fixed                                |
+   | 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | REFUTED   | reopened architecture/standard.md  | By-design (architecture/standard.md) |
    | 4   | Comment names a deleted symbol              | helper.ts:6        | 🟢 minor    | CONFIRMED | stale-record readPublishHistory.ts | Fixed                                |
 
    Fixes committed as abc1234. Refuted by verifiers: removeThing timeout bound ×2, batch submission ordering.

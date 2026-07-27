@@ -21,7 +21,7 @@ The mirror is a self-contained entry `<wslCacheRoot>/sources/<sha256(hostCwd)>/`
 flowchart TB
     plan["createWslSourceMirrorSync (host side)"] --> walk["buildSourceMirrorManifest\nwalk working tree on NTFS (sub-second)\napplying resolveMirrorExcludes"]
     walk --> diff["diffSourceMirrorManifests\nvs published manifest.json"]
-    diff -->|"no delta"| skipped["empty script — run pays no sync"]
+    diff -->|"no delta"| refresh["republish the origin marker if it is missing\n(host-side, best-effort) — the invariant\nthe aged-unmarked reaper stands on"] --> skipped["empty script — run pays no sync"]
     diff -->|"delta or no readable manifest"| mark["create the entry and publish its origin marker\nhost-side (staged temp → atomic rename)\nso it is reapable from birth"]
     mark -->|"delta"| delta["stage pid-tagged temps over UNC:\nhost tar archive of copied paths + delete list\n→ xargs -0 rm -rf + local tar -x into tree/"]
     mark -->|"no readable manifest / missing tree"| full["full materialize: archive of the whole\nmanifest set, extracted into a cleared tree/\n(first run, cache clean, drift self-heal)"]

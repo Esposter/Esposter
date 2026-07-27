@@ -63,14 +63,18 @@ describe(deleteDirectory, () => {
   test("splits a directory larger than one batch into waves", async () => {
     expect.hasAssertions();
 
-    const { containerClient, deleteBlobs } = setupContainerClient(
-      Array.from({ length: MAX_BLOB_BATCH_DELETIONS + 1 }, (_value, index) => `${prefix}/${index}`),
-    );
+    const blobNames = Array.from({ length: MAX_BLOB_BATCH_DELETIONS + 1 }, (_value, index) => `${prefix}/${index}`);
+    const { containerClient, deleteBlobs } = setupContainerClient(blobNames);
     await deleteDirectory(containerClient, prefix, true);
 
     expect(deleteBlobs).toHaveBeenCalledTimes(2);
     expect(takeOne(deleteBlobs.mock.calls)[0]).toHaveLength(MAX_BLOB_BATCH_DELETIONS);
     expect(takeOne(deleteBlobs.mock.calls, 1)[0]).toHaveLength(1);
+    // Counting the waves says nothing about what is in them — a split that dropped one blob and repeated another
+    // Would still be two waves of the right size, and the dropped blob outlives the teardown, billed forever
+    expect(deleteBlobs.mock.calls.flatMap(([blobUrls]) => blobUrls)).toStrictEqual(
+      blobNames.map((blobName) => `${containerUrl}/${blobName}`),
+    );
   });
 
   // The batch resolves 202 whatever its blobs did, so an unread sub-response is a teardown that reports success

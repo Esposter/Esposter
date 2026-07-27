@@ -152,9 +152,9 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
 const getBoundFunctionName = (node: ESTree.Node): string | undefined => {
   if (node.type === "FunctionDeclaration") return node.id?.name;
   const { parent } = node;
-  if (parent.type === "VariableDeclarator" && parent.init === node && parent.id.type === "Identifier")
+  if (parent?.type === "VariableDeclarator" && parent.init === node && parent.id.type === "Identifier")
     return parent.id.name;
-  if (parent.type === "AssignmentExpression" && parent.right === node && parent.left.type === "Identifier")
+  else if (parent?.type === "AssignmentExpression" && parent.right === node && parent.left.type === "Identifier")
     return parent.left.name;
   return undefined;
 };
@@ -196,7 +196,7 @@ const rule = defineRule({
       for (const frame of functionStack.toReversed()) {
         frame.emitStart ??= armStart;
         const { parent } = frame.node;
-        if (parent.type === "CallExpression" && parent.arguments.some((argument) => argument === frame.node)) {
+        if (parent?.type === "CallExpression" && parent.arguments.some((argument) => argument === frame.node)) {
           armStart = parent.start;
           continue;
         }

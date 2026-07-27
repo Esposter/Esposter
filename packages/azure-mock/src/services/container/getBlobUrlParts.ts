@@ -12,7 +12,12 @@ import { getResult, takeOne } from "@esposter/shared";
 const decodeSegment = (segment: string) => getResult(() => decodeURIComponent(segment)).unwrapOr(segment);
 
 export const getBlobUrlParts = (url: string): undefined | { blobName: string; containerName: string } => {
-  const pathSegments = new URL(url).pathname.split("/").filter(Boolean);
+  // A string `URL` cannot parse is exactly what the `undefined` result means, so it is returned rather than thrown:
+  // `deleteBlobs` maps `undefined` to an `InvalidUri` sub-response for the one url that names it, and a throw here
+  // Would instead reject the caller's whole batch — the same failure the decode guard above exists to prevent.
+  const parsedUrl = getResult(() => new URL(url)).unwrapOr(undefined);
+  if (!parsedUrl) return undefined;
+  const pathSegments = parsedUrl.pathname.split("/").filter(Boolean);
   if (pathSegments.length < 2) return undefined;
   return {
     blobName: decodeSegment(pathSegments.slice(1).join("/")),

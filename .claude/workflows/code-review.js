@@ -9,7 +9,7 @@ export const meta = {
     {
       title: "Find",
       detail:
-        "Lens-partitioned below 50 changed files, seam-partitioned above it (one finder per subsystem, plus a whole-diff pass); cleanup finder either way",
+        "Lens-partitioned under 50 changed files, seam-partitioned at 50 or more (one finder per subsystem, plus a whole-diff pass); cleanup finder either way",
     },
     {
       title: "Verify",
@@ -547,7 +547,9 @@ const ALL_LENSES_TEXT = CORRECTNESS_ANGLES.map((a) => a.text).join("\n");
 // Runs) would scope only its last clause, and one that already carries `-- <paths>` (a path-narrowed target)
 // Becomes a second `--` git rejects outright. Both fail silently or weirdly in an agent's hands, so when either
 // Shape appears the seam is expressed as a path list to restrict attention to instead of a command to run.
-const IS_DIFF_COMMAND_SCOPEABLE = !/(\s--\s)|&&|\|\||[;|]/u.test(scope.diffCommand);
+// `--` at end of string counts too: `git diff main --` takes the appended pathspec just as badly as `-- <paths>`,
+// And `[;|]` already covers `||`, so spelling that alternative out again only hides which shapes are really matched
+const IS_DIFF_COMMAND_SCOPEABLE = !/\s--(\s|$)|&&|[;|]/u.test(scope.diffCommand);
 const seamScope = (prefixes) =>
   IS_DIFF_COMMAND_SCOPEABLE
     ? "  " + scope.diffCommand + " -- " + prefixes.map((p) => "'" + p + "'").join(" ")
