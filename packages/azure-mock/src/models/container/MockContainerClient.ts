@@ -37,6 +37,7 @@ import { MockBlockBlobClient } from "@/models/container/MockBlockBlobClient";
 import { MockRestError } from "@/models/MockRestError";
 import { getBlobItemXml } from "@/services/container/getBlobItemXml";
 import { getBlobPrefixXml } from "@/services/container/getBlobPrefixXml";
+import { getBlobUrl } from "@/services/container/getBlobUrl";
 import { getListBlobsXml } from "@/services/container/getListBlobsXml";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
@@ -90,7 +91,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     if (!this.container.has(blobName)) throw new MockRestError("The specified blob does not exist.", 404);
     this.container.delete(blobName);
     MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, blobName));
-    return Promise.resolve({ _response: createMockResponse(200, `${this.url}/${blobName}`) });
+    return Promise.resolve({ _response: createMockResponse(200, getBlobUrl(this.containerName, blobName)) });
   }
 
   deleteIfExists(): Promise<ContainerDeleteIfExistsResponse> {

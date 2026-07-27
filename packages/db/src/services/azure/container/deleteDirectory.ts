@@ -2,7 +2,7 @@ import type { ContainerClient } from "@azure/storage-blob";
 
 import { listBlobNames } from "@/services/azure/container/listBlobNames";
 import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { chunk, InvalidOperationError, Operation } from "@esposter/shared";
 
 export const deleteDirectory = async (containerClient: ContainerClient, prefix = "", isDeep?: true) => {
   // Built through the sdk client rather than interpolated: a blob name is arbitrary user text, and `#` or `?`
@@ -17,11 +17,8 @@ export const deleteDirectory = async (containerClient: ContainerClient, prefix =
   // A directory's blob count has no ceiling, and a batch past MAX_BLOB_BATCH_DELETIONS throws before issuing a
   // Single delete — the whole teardown then fails rather than deleting most of it, so the batches go out in waves
   const blobBatchClient = containerClient.getBlobBatchClient();
-  for (let index = 0; index < blobUrls.length; index += MAX_BLOB_BATCH_DELETIONS) {
-    const { subResponses } = await blobBatchClient.deleteBlobs(
-      blobUrls.slice(index, index + MAX_BLOB_BATCH_DELETIONS),
-      containerClient.credential,
-    );
+  for (const blobUrlBatch of chunk(blobUrls, MAX_BLOB_BATCH_DELETIONS)) {
+    const { subResponses } = await blobBatchClient.deleteBlobs(blobUrlBatch, containerClient.credential);
     // The batch itself resolves 202 whatever its blobs did — every per-blob outcome is reported in the
     // Sub-responses instead. Unread, they are the same silent hole an unescaped name opens above: the caller
     // Sees a successful teardown while the blob survives, billed forever and outside every later sweep.

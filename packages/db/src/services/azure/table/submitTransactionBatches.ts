@@ -1,6 +1,8 @@
 import type { TableClient, TransactionAction } from "@azure/data-tables";
+import type { Promisable } from "type-fest";
 
 import { AZURE_MAX_BATCH_SIZE } from "@esposter/db-schema";
+import { chunk } from "@esposter/shared";
 
 // A transaction is capped at 100 actions and may not span partitions, so a page of entities is split into
 // Batches. Every batch of a page targets the same partition, so they submit sequentially to pace the writes
@@ -11,11 +13,10 @@ export const submitTransactionBatches = async <TEntity>(
   tableClient: Pick<TableClient, "submitTransaction">,
   entities: TEntity[],
   getAction: (entity: TEntity) => TransactionAction,
-  onSubmit?: (batch: TEntity[]) => void,
+  onSubmit?: (batch: TEntity[]) => Promisable<void>,
 ): Promise<void> => {
-  for (let i = 0; i < entities.length; i += AZURE_MAX_BATCH_SIZE) {
-    const batch = entities.slice(i, i + AZURE_MAX_BATCH_SIZE);
+  for (const batch of chunk(entities, AZURE_MAX_BATCH_SIZE)) {
     await tableClient.submitTransaction(batch.map((entity) => getAction(entity)));
-    onSubmit?.(batch);
+    await onSubmit?.(batch);
   }
 };

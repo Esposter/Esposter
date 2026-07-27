@@ -4,7 +4,7 @@ import { getContainerClient } from "@/services/getContainerClient";
 import { logAndRethrow } from "@/services/logAndRethrow";
 import { listBlobNames } from "@esposter/db";
 import { AzureFunction, blobDeletionEventGridDataSchema, MAX_CONCURRENT_BLOB_DELETIONS } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { chunk, getResultAsync, noop } from "@esposter/shared";
 // A read SAS url outlives the delete request that should have invalidated it, so a blob whose delete was dropped stays
 // Downloadable to anyone still holding one. That makes the delete an effect whose loss is unacceptable: it is published
 // As an event and retried here until it lands, rather than logged away at the call site.
@@ -26,11 +26,9 @@ export const processBlobDeletionHandler: EventGridHandler = (event, context) => 
     // Deleting only if the blob exists: a redelivery or a dead-letter replay re-runs the whole batch, and the blobs
     // An earlier attempt already removed must not fail the ones it did not reach. A prefix set has no ceiling, so
     // The deletes go out in bounded waves — one request per blob all at once exhausts sockets and throttles
-    for (let index = 0; index < blobNames.length; index += MAX_CONCURRENT_BLOB_DELETIONS)
+    for (const blobNamesChunk of chunk(blobNames, MAX_CONCURRENT_BLOB_DELETIONS))
       await Promise.all(
-        blobNames
-          .slice(index, index + MAX_CONCURRENT_BLOB_DELETIONS)
-          .map((blobName) => containerClient.getBlockBlobClient(blobName).deleteIfExists()),
+        blobNamesChunk.map((blobName) => containerClient.getBlockBlobClient(blobName).deleteIfExists()),
       );
     context.log(`${AzureFunction.ProcessBlobDeletion} deleted ${blobNames.length} blobs from ${data.containerName}.`);
   }).match(noop, logAndRethrow(context, AzureFunction.ProcessBlobDeletion));

@@ -2,7 +2,7 @@ import type { AzureContainer, BlobDeletionEventGridData } from "@esposter/db-sch
 
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { AzureFunction, createEventGridEvent, MAX_BLOB_DELETION_EVENT_BLOB_NAMES } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { chunk, getResultAsync, noop } from "@esposter/shared";
 // The one durable blob-cleanup publish every delete funnels through — best-effort and post-persist
 // (/docs/architecture/persist-then-notify): a failed listing or publish only orphans blobs, never the mutation
 // That already landed, while a publish that lands is retried to completion by the idempotent handler. Accepts a
@@ -18,11 +18,8 @@ export const publishBlobDeletion = async (
     if (blobNamesValue.length === 0) return;
 
     const eventGridPublisherClient = useEventGridPublisherClient();
-    for (let index = 0; index < blobNamesValue.length; index += MAX_BLOB_DELETION_EVENT_BLOB_NAMES) {
-      const data: BlobDeletionEventGridData = {
-        blobNames: blobNamesValue.slice(index, index + MAX_BLOB_DELETION_EVENT_BLOB_NAMES),
-        containerName,
-      };
+    for (const blobNamesChunk of chunk(blobNamesValue, MAX_BLOB_DELETION_EVENT_BLOB_NAMES)) {
+      const data: BlobDeletionEventGridData = { blobNames: blobNamesChunk, containerName };
       await eventGridPublisherClient.send([createEventGridEvent(AzureFunction.ProcessBlobDeletion, subject, data)]);
     }
   }).match(noop, console.error);

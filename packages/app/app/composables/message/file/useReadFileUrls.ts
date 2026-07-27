@@ -2,7 +2,8 @@ import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
-import { getMimeCategory, MimeCategory, READ_SAS_DURATION_MS } from "@esposter/db-schema";
+import { getHasThumbnail } from "#shared/services/message/file/getHasThumbnail";
+import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
 // Resolves the read urls a batch of attachments needs — the original for every file and, for images, the
@@ -15,9 +16,7 @@ export const useReadFileUrls = () => {
 
     // A file whose upload recorded no thumbnail gets no thumbnail url minted for it — nothing downstream has
     // To discover that from a failed image load
-    const imageFiles = files.filter(
-      ({ hasThumbnail, mimetype }) => hasThumbnail && getMimeCategory(mimetype) === MimeCategory.Image,
-    );
+    const imageFiles = files.filter((file) => getHasThumbnail(file));
     const [downloadFileSasUrls, downloadThumbnailSasUrls] = await Promise.all([
       $trpc.message.generateDownloadFileSasUrls.query({
         files: files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),

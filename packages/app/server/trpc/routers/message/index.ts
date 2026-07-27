@@ -295,10 +295,17 @@ export const baseMessageRouter = router({
           // A forward is a send like any other, so it advances the slowmode clock it was just checked against —
           // With the guards, before the write, so it can never fail open behind an already-persisted forward
           await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, { lastMessageAt: new Date(), roomId });
-          const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
+          const clonedFiles = await cloneFiles(
+            containerClient,
+            messageEntity.files,
+            messageEntity.partitionKey,
+            roomId,
+          );
           const forward = await createMessage(messageClient, messageAscendingClient, {
-            // oxlint-disable-next-line typescript/no-misused-spread
-            files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
+            files: messageEntity.files.map(
+              // oxlint-disable-next-line typescript/no-misused-spread
+              (file, index) => new FileEntity({ ...file, ...takeOne(clonedFiles, index) }),
+            ),
             isForward: true,
             message: messageEntity.message,
             // We don't forward reply information for privacy

@@ -12,7 +12,7 @@ import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { copyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
-import { ID_SEPARATOR } from "@esposter/shared";
+import { chunk, ID_SEPARATOR } from "@esposter/shared";
 
 // The rewrite entry for one working-copy asset url, or nothing when the referenced blob is missing — a
 // Dangling reference (the asset was deleted but the content still embeds its url) is data like an
@@ -23,11 +23,8 @@ const cloneAsset = async (
   blobName: string,
   destinationBlobName: string,
 ): Promise<(readonly [string, string])[]> => {
-  const sourceBlockBlobClient = containerClient.getBlockBlobClient(blobName);
-  if (!(await sourceBlockBlobClient.exists())) return [];
-  // The copy source is the SDK client's own url so the service receives the percent-encoded form of the
-  // Decoded blob name — same-account copies need no SAS (the duplicate flow's copyBlob precedent)
-  await copyBlob(containerClient, sourceBlockBlobClient.url, destinationBlobName);
+  if (!(await containerClient.getBlockBlobClient(blobName).exists())) return [];
+  await copyBlob(containerClient, blobName, destinationBlobName);
   return [[url, getResourceAssetUrl(destinationBlobName)] as const];
 };
 
@@ -75,13 +72,11 @@ export const cloneContentAssets = async <TContent>(
   // Two storage round trips per asset, so content referencing hundreds of them would open that many connections
   // At once and be throttled into failing the whole publish — they go out in bounded waves instead
   const updatedUrlEntries: (readonly [string, string])[] = [];
-  for (let index = 0; index < clones.length; index += MAX_CONCURRENT_BLOB_COPIES) {
+  for (const clonesChunk of chunk(clones, MAX_CONCURRENT_BLOB_COPIES)) {
     const clonedUrlEntries = await Promise.all(
-      clones
-        .slice(index, index + MAX_CONCURRENT_BLOB_COPIES)
-        .map(({ blobName, destinationBlobName, url }) =>
-          cloneAsset(containerClient, url, blobName, destinationBlobName),
-        ),
+      clonesChunk.map(({ blobName, destinationBlobName, url }) =>
+        cloneAsset(containerClient, url, blobName, destinationBlobName),
+      ),
     );
     updatedUrlEntries.push(...clonedUrlEntries.flat());
   }

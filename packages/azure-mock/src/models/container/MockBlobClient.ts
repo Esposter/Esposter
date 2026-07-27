@@ -29,8 +29,8 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { MOCK_BLOB_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
+import { getBlobUrl } from "@/services/container/getBlobUrl";
 import { getBlobUrlParts } from "@/services/container/getBlobUrlParts";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
@@ -55,7 +55,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     this.connectionString = connectionString;
     this.containerName = containerName;
     this.name = blobName;
-    this.url = `${MOCK_BLOB_BASE_URL}/${this.containerName}/${this.name}`;
+    this.url = getBlobUrl(this.containerName, this.name);
   }
 
   abortCopyFromURL(): Promise<BlobAbortCopyFromURLResponse> {

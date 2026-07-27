@@ -1,4 +1,5 @@
 import { dayjs } from "#shared/services/dayjs";
+import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
@@ -21,12 +22,17 @@ import { RateLimiterRes } from "rate-limiter-flexible";
 // And 302-redirecting to a freshly signed minutes-scale SAS — content never carries a signature, so nothing
 // In it can expire or leak a long-lived grant
 export default defineEventHandler(async (event) => {
-  // Still percent-encoded, and must stay that way: `parseResourceAssetPath` decodes per segment so that a `%2F`
-  // Can never widen the directory the caller was authorized for. h3 only decodes when passed `{ decode: true }`
-  // (h3 1.15.x `getRouterParams`), so the default is the encoded form this needs — adding that option, or moving
-  // To a router that decodes for you, silently turns the traversal guard into a no-op
-  const encodedPath = getRouterParam(event, "path");
-  const resourceAssetPath = encodedPath === undefined ? undefined : parseResourceAssetPath(encodedPath);
+  // Read off the raw request target, never `getRouterParam`: Nitro decodes the path before routing (h3's
+  // `_decodePath`) and its router then cuts everything from the first `?` it finds in that decoded form — so a
+  // Filename legally holding one arrives as a truncated blob name that resolves to a 404 nothing reports.
+  // The target keeps the percent-encoded form `parseResourceAssetPath` needs, which decodes per segment so a
+  // `%2F` can never widen the directory the caller was authorized for
+  const requestTarget = event.node.req.url ?? "";
+  const queryIndex = requestTarget.indexOf("?");
+  const encodedPath = (queryIndex === -1 ? requestTarget : requestTarget.slice(0, queryIndex)).slice(
+    `${RESOURCE_ASSETS_URL_PREFIX}/`.length,
+  );
+  const resourceAssetPath = encodedPath ? parseResourceAssetPath(encodedPath) : undefined;
   if (!resourceAssetPath) throw createError({ statusCode: 400 });
   const { blobName, isPublished, resourceId } = resourceAssetPath;
 
