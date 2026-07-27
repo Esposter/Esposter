@@ -24,6 +24,7 @@ const createTableClients = (createEntityError?: Error) => {
     >,
     messageAscendingMock: messageAscendingClient,
     messageClient: messageClient as unknown as CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
+    messageMock: messageClient,
   };
 };
 
@@ -36,12 +37,17 @@ describe(createMessage, () => {
     userId: crypto.randomUUID(),
   } as const;
 
-  test("writes the index row before the entity, so a rejection means nothing is readable", async () => {
+  test("writes the index row before the entity", async () => {
     expect.hasAssertions();
 
-    const { messageAscendingClient, messageAscendingMock, messageClient } = createTableClients();
+    const { messageAscendingClient, messageAscendingMock, messageClient, messageMock } = createTableClients();
     const messageEntity = await createMessage(messageClient, messageAscendingClient, input);
 
+    // The order is the behaviour, not an implementation detail: it is what makes a rejection mean nothing is
+    // Readable, so asserting only the index arguments would pass against the reverse order this replaced
+    expect(takeOne(messageAscendingMock.createEntity.mock.invocationCallOrder)).toBeLessThan(
+      takeOne(messageMock.createEntity.mock.invocationCallOrder),
+    );
     // The index is keyed by the real timestamp, the entity by its reverse tick — the two must address one message
     expect(messageAscendingMock.createEntity).toHaveBeenCalledExactlyOnceWith(
       { partitionKey: ROOM_ID, rowKey: getReverseTickedTimestamp(messageEntity.rowKey) },

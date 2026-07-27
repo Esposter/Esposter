@@ -40,7 +40,9 @@ describe(removeSnapshotDirectoryBestEffort, () => {
   test("swallows a teardown failure so it can never displace the run's own error", () => {
     expect.hasAssertions();
 
-    execFileSync.mockImplementation(() => {
+    // Once, not permanently: `clearAllMocks` resets calls but keeps implementations, so a plain
+    // `mockImplementation` here would hand every test added after this one a throwing `execFileSync`
+    execFileSync.mockImplementationOnce(() => {
       throw new Error(" ");
     });
 

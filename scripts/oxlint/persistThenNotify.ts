@@ -105,6 +105,11 @@ const getHasRethrowingTerminal = (expression: ESTree.Expression): boolean => {
 // Never rejects: an allowed wrapper whose terminal absorbs the error, `Promise.allSettled` over anything, or a
 // Rejecting Promise combinator over a fan-out (array literal or `.map` callback) of such calls — e.g.
 // `Promise.all(users.map((u) => createSystemRoomMessage(u)))`.
+// Unrecognised syntax falls through to `false`, which reports rather than exempts, so the shapes deliberately left
+// Out (a ternary or `&&` chain in the await position, a `function` expression as the `.map` callback) cost a false
+// Positive and never a miss — and none of them appear anywhere in `packages/app/server`, the only tree this rule
+// Runs over. A false positive here is loud and immediate: it fails the lint on the line that wrote it. Widen this
+// When one of those shapes actually lands, not before — every branch added is one the fixture suite has to pin.
 const isSafeAwait = (argument: ESTree.Expression): boolean => {
   const rootName = rootCalleeName(argument);
   if (rootName !== undefined && ALLOWED_ROOTS.has(rootName)) return !getHasRethrowingTerminal(argument);
