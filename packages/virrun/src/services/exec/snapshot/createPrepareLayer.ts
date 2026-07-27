@@ -7,6 +7,7 @@ import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
+import { getProvisionFailureMessage } from "@/services/exec/snapshot/getProvisionFailureMessage";
 import { pruneToOutputs } from "@/services/exec/snapshot/pruneToOutputs";
 import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
@@ -50,7 +51,7 @@ export const createPrepareLayer = (
       throw new InvalidOperationError(
         Operation.Create,
         createPrepareLayer.name,
-        `prepare command exited with ${result.exitCode}: ${result.stderr}`,
+        getProvisionFailureMessage("prepare command", result, options),
       );
     // This layer owns only the declared outputs; the deps snapshot below supplies the dep tree the prepare churned.
     pruneToOutputs(captureUpperDir, prepareStep.outputs);

@@ -29,6 +29,7 @@ import { createUserMessage } from "@@/server/services/message/createUserMessage"
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { createUploadFileToken } from "@@/server/services/message/file/createUploadFileToken";
 import { getIsUploadFileTokenValid } from "@@/server/services/message/file/getIsUploadFileTokenValid";
+import { getMessageFileBlobNames } from "@@/server/services/message/getMessageFileBlobNames";
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { readMessages } from "@@/server/services/message/readMessages";
@@ -53,10 +54,8 @@ import {
   generateDownloadFileSasUrls,
   generateDownloadThumbnailSasUrls,
   generateUploadFileSasEntities,
-  getBlobName,
   getEntity,
   getTableNullClause,
-  getThumbnailBlobName,
   getTopNEntitiesByType,
   serializeClauses,
   updateEntity,
@@ -201,12 +200,10 @@ export const baseMessageRouter = router({
           message: new NotFoundError(AzureEntityType.File, id).message,
         });
 
-      const blobNames = [
-        getBlobName(`${messageEntity.partitionKey}/${id}`, takeOne(messageEntity.files.splice(index, 1)).filename),
-        // Only images carry a thumbnail, but the handler deletes if the blob exists, so naming it unconditionally
-        // Costs a no-op for every other file type and needs no mime check here
-        getThumbnailBlobName(messageEntity.partitionKey, id),
-      ];
+      const blobNames = getMessageFileBlobNames(
+        messageEntity.partitionKey,
+        takeOne(messageEntity.files.splice(index, 1)),
+      );
       const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         files: messageEntity.files,
         partitionKey,
@@ -243,16 +240,11 @@ export const baseMessageRouter = router({
         });
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
       messageEventEmitter.emit("deleteMessage", input);
-      // A dropped publish leaves orphaned attachment blobs, never the delete the user asked for. Only images carry
-      // A thumbnail, but the handler deletes if the blob exists, so naming it unconditionally costs a no-op for
-      // Every other file type and needs no mime check here
+      // A dropped publish leaves orphaned attachment blobs, never the delete the user asked for
       await publishBlobDeletion(
         `${messageEntity.partitionKey}/${messageEntity.rowKey}`,
         AzureContainer.MessageAssets,
-        messageEntity.files.flatMap(({ filename, id }) => [
-          getBlobName(`${messageEntity.partitionKey}/${id}`, filename),
-          getThumbnailBlobName(messageEntity.partitionKey, id),
-        ]),
+        messageEntity.files.flatMap((file) => getMessageFileBlobNames(messageEntity.partitionKey, file)),
       );
     },
   ),
@@ -271,10 +263,7 @@ export const baseMessageRouter = router({
       await publishBlobDeletion(
         roomId,
         AzureContainer.MessageAssets,
-        files.flatMap(({ filename, id }) => [
-          getBlobName(`${roomId}/${id}`, filename),
-          getThumbnailBlobName(roomId, id),
-        ]),
+        files.flatMap((file) => getMessageFileBlobNames(roomId, file)),
       );
     },
   ),

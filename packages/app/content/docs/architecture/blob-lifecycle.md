@@ -39,7 +39,7 @@ Nothing is added to the namespace to make this checkable — the token is the ch
 
 The grant authorizes _which_ blob, not _what it is called_. Blob names are assembled by interpolation, and the storage sdk resolves the result through `URL.pathname`, which normalizes `..` away — so a caller-supplied `filename` or `blobPath` carrying a separator or a dot segment walks the delete straight out of the prefix the grant covered, and out of the container. Every client-supplied piece of a blob name is therefore constrained to a single separator-free, non-dot segment at its schema (`BLOB_SEGMENT_REGEX` on `fileEntitySchema.filename` and on resource `deleteFile`'s `blobPath`), which covers the upload SAS target and every delete that names the file in one place.
 
-The same applies to a name reconstructed from a **stored** column: `roomsInMessage.image` is free text, so `updateRoom`'s sweep only trusts the name it derives when that name is one an upload could actually have written — a prefix from `getRoomProfileImageBlobPrefixes` plus a single segment. Round-tripping a value through the database does not make it ours.
+The same applies to a name reconstructed from a **stored** column: `roomsInMessage.image` is free text, so `updateRoom`'s sweep never derives a delete target from it at all. It deletes only names its own listing produced (`listRoomProfileImageBlobNames`, over the prefixes from `getRoomProfileImageBlobPrefixes`), and reads the column solely to _exclude_ the current image from that set. Round-tripping a value through the database does not make it ours.
 
 ## Prefix deletions are bounded twice
 
@@ -50,7 +50,9 @@ The same applies to a name reconstructed from a **stored** column: `roomsInMessa
 
 ## A sweep runs only on a real replacement
 
-The replace-path sweep is keyed on the value **changing**, not on the field being present in the input. `updateRoom` compares the submitted `image` against the row it read moments earlier and does nothing when they match. A settings form that was opened before another admin's upload resubmits the url it loaded with; treating that as a replacement deletes the other admin's freshly uploaded avatar, and it puts two blob listings on the request path of a save that dropped nothing.
+The replace-path sweep is keyed on the value **changing**, not on the field being present in the input. `updateRoom` compares the submitted `image` against the row it read moments earlier and does nothing when they match — otherwise a save that only renamed the room puts two blob listings on the request path to drop nothing.
+
+That comparison alone does not decide which blobs are safe, because the submitted url is whatever the form loaded with: when another admin uploaded in between, it is a **stale** url and the sweep runs against a row the caller never saw. So **the age filter is the whole rule, and nothing bypasses it** — the sweep deletes only versions older than `WRITE_SAS_DURATION_MS`, never the version the row is dropping just because it is being dropped. That value is exactly the one that can name the other admin's seconds-old avatar, and deleting it leaves the room pointing at a blob nobody can restore. The accepted cost: an avatar replaced twice inside that window leaves the intermediate blob until the next image change (or `deleteRoom`) collects it — the same deferral every other in-flight upload gets.
 
 ## The ownership table
 

@@ -6,8 +6,10 @@ import type { SetOptional } from "type-fest";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { MESSAGE_INDEX_WRITE_GRACE_NANOSECONDS } from "@@/server/services/message/constants";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
+import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
 import { getTableNullClause, getTopNEntities, getTopNEntitiesByType, serializeClauses } from "@esposter/db";
 import {
   AzureTable,
@@ -18,7 +20,7 @@ import {
   MessageEntityMap,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
+import { ItemMetadataPropertyNames, now } from "@esposter/shared";
 
 export const readMessages = async ({
   cursor,
@@ -62,12 +64,35 @@ export const readMessages = async ({
     });
     // The Messages table scans newest-first (reverse-ticked rowKey), so re-project onto the ascending
     // Sequence the MessagesAscending index established rather than trusting the join's scan order.
+    //
+    // An index row exists before the entity it points at — `createMessage` writes this table first, and the two
+    // Cannot be written atomically — so a row with no entity is either a write still in flight or the orphan a
+    // Failed one left behind. The page stops at an in-flight hole instead of stepping over it: the cursor is
+    // Derived from the index, so advancing past a message whose entity lands a moment later drops it from the
+    // Rest of that client's ascending scroll entirely. Past the grace window the hole can only be an orphan, and
+    // Holding the cursor there would stall the scroll forever, so those are skipped as before.
     const messageMap = new Map(messages.map((message) => [message.rowKey, message]));
-    const ascendingMessages = items.flatMap((index) => {
+    const inFlightCutoff = BigInt(now()) - MESSAGE_INDEX_WRITE_GRACE_NANOSECONDS;
+    const ascendingIndices: CompositeKey[] = [];
+    const ascendingMessages: MessageEntity[] = [];
+    let isTruncated = false;
+    for (const index of items) {
       const message = messageMap.get(getReverseTickedTimestamp(index.rowKey));
-      return message ? [message] : [];
-    });
-    return { hasMore, items: ascendingMessages, nextCursor };
+      if (message) {
+        ascendingIndices.push(index);
+        ascendingMessages.push(message);
+      } else if (BigInt(index.rowKey) > inFlightCutoff) {
+        isTruncated = true;
+        break;
+      }
+    }
+    if (!isTruncated) return { hasMore, items: ascendingMessages, nextCursor };
+    // Resume from the last message actually served, or from where this page started when the hole is the first row
+    return {
+      hasMore: true,
+      items: ascendingMessages,
+      nextCursor: ascendingIndices.length > 0 ? getNextCursor(ascendingIndices, sortBy) : (cursor ?? ""),
+    };
   }
   // Default: Desc via reverse-ticked RowKey (efficient)
   if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));

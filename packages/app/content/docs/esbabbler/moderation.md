@@ -42,7 +42,7 @@ sequenceDiagram
 
 ### Word filter
 
-Rooms can define filtered words (`room.filter` router, `roomFiltersInMessage`). `assertNotWordFiltered` runs inside `assertCanCreateMessage` on every message-producing path, rejecting messages that match — alongside the timeout, read-only, and slowmode checks.
+Rooms can define filtered words (`room.filter` router, `roomFiltersInMessage`). The word filter is the last rule in `getMessageCreationRejection`, the shared gate every message-producing path decides with — alongside the timeout, read-only, and slowmode checks. It reports the match; the caller (`assertCanCreateMessage`) applies the configured action and rejects.
 
 ## Data model
 
@@ -69,7 +69,8 @@ The moderation log is an append-only Azure Table (`AzureTable.ModerationLog`): `
 | `packages/app/server/services/message/moderation/AdminActionPermissionMap.ts` | action → required permission    |
 | `packages/app/shared/models/db/moderation/ExecuteAdminActionInput.ts`         | discriminated union input       |
 | `packages/app/app/composables/message/moderation/useAdminActionMap.ts`        | client-side per-action handlers |
-| `packages/app/server/services/message/moderation/assertNotWordFiltered.ts`    | word filter enforcement         |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`  | shared message-creation gate    |
+| `packages/app/server/services/message/moderation/assertCanCreateMessage.ts`   | tRPC face — applies + rejects   |
 | `packages/app/server/trpc/routers/room/filter.ts`                             | word filter CRUD                |
 
 ## Notes

@@ -6,6 +6,7 @@ import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
+import { getProvisionFailureMessage } from "@/services/exec/snapshot/getProvisionFailureMessage";
 import { pruneSnapshotUpper } from "@/services/exec/snapshot/pruneSnapshotUpper";
 import { removeSnapshotDirectoryBestEffort } from "@/services/exec/snapshot/removeSnapshotDirectoryBestEffort";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
@@ -41,7 +42,7 @@ export const createSnapshot = (
       throw new InvalidOperationError(
         Operation.Create,
         createSnapshot.name,
-        `snapshot setup command exited with ${result.exitCode}: ${result.stderr}`,
+        getProvisionFailureMessage("snapshot setup command", result, options),
       );
     // The snapshot is keyed only on the lockfile, so it must freeze only what the lockfile determines: the
     // Dependency closure. Strip the source-derived artifacts the install's postinstall hooks wrote (e.g. .nuxt)

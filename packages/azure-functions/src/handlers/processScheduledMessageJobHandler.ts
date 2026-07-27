@@ -51,7 +51,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       return;
     }
 
-    const payload = scheduledMessageJobPayloadSchema.parse(job.payload);
     // Claiming on `processingStartedAt IS NULL` is what makes this handler idempotent
     // (IsIdempotentAzureFunctionMap): delivery is at-least-once, and a message carries a fresh reverse-ticked
     // RowKey, so a redelivery that could re-pass this guard would post a second copy rather than repair the first
@@ -71,6 +70,9 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       context.log(`${AzureFunction.ProcessScheduledMessageJob} skipped: lost processing race`, { id });
       return;
     }
+    // Everything past the claim reads the claimed row, never the pre-claim read above: the two are the same row, and
+    // Mixing them reads as though the distinction were load-bearing
+    const payload = scheduledMessageJobPayloadSchema.parse(processingJob.payload);
 
     if (payload.type === ScheduledMessageJobType.ScheduledMessage) {
       // The delivery-time guards run INSIDE the claim, unlike `sendScheduledMessageNow`'s request path, because
@@ -82,7 +84,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       // Own, so the claim is released before the rethrow asks Service Bus to redeliver — the claim is
       // Single-shot, and a job left holding it would be neither delivered nor cancellable/reschedulable
       const isWordFiltered = await getResultAsync(() =>
-        assertCanCreateMessage(job.userId, job.roomId, payload.message),
+        assertCanCreateMessage(processingJob.userId, processingJob.roomId, payload.message),
       ).match(
         () => false,
         async (error) => {

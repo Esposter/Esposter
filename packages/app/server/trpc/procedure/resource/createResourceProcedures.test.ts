@@ -31,13 +31,6 @@ import { InvalidOperationError, jsonDateParse, noop, Operation, takeOne } from "
 import { MockContainerDatabase, MockEventGridDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
-// The view-count assertions read the counter table directly, so the mock must be registered in this
-// Module graph — createMockContext's registration does not reach a direct import
-vi.mock(
-  import("@@/server/composables/azure/table/useTableClient"),
-  () => import("@@/server/composables/azure/table/useTableClient.test"),
-);
-
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
 // Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
 describe("createResourceProcedures", () => {

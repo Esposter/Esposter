@@ -29,7 +29,6 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
-import { getRoomProfileImageBlobPrefixes } from "@@/server/services/room/getRoomProfileImageBlobPrefixes";
 import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -47,7 +46,6 @@ import { filterRouter } from "@@/server/trpc/routers/room/filter";
 import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
-  BLOB_SEGMENT_REGEX,
   DatabaseEntityType,
   INVITE_ID_LENGTH,
   InviteInMessageRelations,
@@ -598,36 +596,22 @@ export const baseRoomRouter = router({
     roomEventEmitter.emit("updateRoom", updatedRoom);
     // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
     // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
-    // Only renamed the room would delete a concurrent editor's freshly uploaded avatar and pay two blob listings
-    // On the request path to do it. A dropped publish only orphans a public blob, never the room update; every
-    // Blob delete goes through the one durable mechanism so no call site keeps a weaker one
-    // (/docs/architecture/persist-then-notify)
+    // Only renamed the room would pay two blob listings on the request path to delete nothing. A dropped publish
+    // Only orphans a public blob, never the room update; every blob delete goes through the one durable mechanism
+    // So no call site keeps a weaker one (/docs/architecture/persist-then-notify)
     if (image !== undefined && image !== previousImage)
       await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
         const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-        const blobNames = new Set(
-          await listRoomProfileImageBlobNames(containerClient, id, {
-            createdBefore: dayjs().subtract(WRITE_SAS_DURATION_MS, "ms").toDate(),
-          }),
-        );
-        // The version just dropped is a known orphan however young it is, unlike any other blob the age filter
-        // Holds back. `image` is free text on the row, so the only name trusted from it is one an upload could
-        // Actually have written — a prefix of this room's plus a single segment, or the flat legacy name itself.
-        // A crafted value would otherwise delete a blob the caller was never granted: the storage sdk resolves
-        // The name through `URL.pathname`, which normalizes `..` segments away and climbs out of the container
-        const previousBlobName = previousImage.startsWith(`${containerClient.url}/`)
-          ? previousImage.slice(`${containerClient.url}/`.length)
-          : "";
-        if (
-          getRoomProfileImageBlobPrefixes(id).some(
-            (prefix) =>
-              previousBlobName === prefix ||
-              (previousBlobName.startsWith(`${prefix}/`) &&
-                BLOB_SEGMENT_REGEX.test(previousBlobName.slice(`${prefix}/`.length))),
-          )
-        )
-          blobNames.add(previousBlobName);
-        return [...blobNames].filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== image);
+        // The age filter decides the whole set, including the version this update drops. Nothing may bypass it:
+        // A save carries the image url its form loaded with, which is a *stale* url whenever another admin
+        // Uploaded in between — so the row value being replaced is exactly the value that can name the other
+        // Admin's seconds-old avatar, and naming it explicitly would delete the live one with no later sweep able
+        // To repair it. A version replaced within the window is therefore left for the next image change (or the
+        // Room's deletion) to collect, which is the same deferral every other in-flight upload gets
+        const blobNames = await listRoomProfileImageBlobNames(containerClient, id, {
+          createdBefore: dayjs().subtract(WRITE_SAS_DURATION_MS, "ms").toDate(),
+        });
+        return blobNames.filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== image);
       });
 
     return updatedRoom;

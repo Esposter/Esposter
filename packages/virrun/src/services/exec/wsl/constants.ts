@@ -63,10 +63,10 @@ export const WSL_REMOVE_SCRIPT = 'for dir; do chmod -R u+rwx -- "$dir" 2>/dev/nu
 //
 // Unlinked with `;` rather than `&&`, deliberately. Keeping the list when the removal fails would keep a file no
 // Reaper owns: nothing consumes this script's exit status (spawnBackground gives the child `stdio: "ignore"` and no
-// Exit handler — fire-and-forget is the point), nothing reads a leftover list, and reapStaleSourceMirrorTemps sweeps
-// The mirror entry dirs rather than the cache root, so it would sit there until `cache clean`. What a failed removal
-// Actually gets is re-derivation: the dirs are still stale, so the next run's sweep enumerates them again and stages
-// A fresh list. Retaining the failed one buys diagnostics nothing reads and leaks a file per failure. A removal
+// Exit handler — fire-and-forget is the point) and nothing reads a leftover list, so it would sit there until a later
+// Sweep's reapStaleRemoveLists reclaimed it on owner death. What a failed removal actually gets is re-derivation: the
+// Dirs are still stale, so the next run's sweep enumerates them again and stages a fresh list. Retaining the failed
+// One buys diagnostics nothing reads and leaks a file per failure. A removal
 // Failure that must be surfaced goes through the blocking path instead (removeSnapshotDirectory → execWsl throws).
 export const WSL_REMOVE_LIST_SCRIPT: string = `xargs -0r sh -c '${WSL_REMOVE_SCRIPT}' sh < "$1"; rm -f -- "$1"`;
 // The staged list `removeSnapshotDirectoriesDetached` writes into the cache root for the script above to consume,

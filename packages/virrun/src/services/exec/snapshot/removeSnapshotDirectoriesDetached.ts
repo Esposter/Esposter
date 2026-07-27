@@ -4,6 +4,7 @@ import { VIRRUN_REMOVE_LIST_TEMP_PREFIX, WSL_REMOVE_LIST_SCRIPT, WSL_UNC_REGEX }
 import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
 import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
+import { reapStaleRemoveLists } from "@/services/exec/wsl/reapStaleRemoveLists";
 import { getResult, noop } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -25,7 +26,7 @@ import { join } from "node:path";
 // Error handler — and the whole teardown silently does nothing on every run thereafter; batching the argv instead
 // Trades that for one launch per batch, which is the fan-out again. The list file has neither, and xargs's own
 // ARG_MAX splitting runs its `sh` invocations sequentially. The script unlinks the list as its last act; a list
-// Left behind by a launch that never ran is swept with the rest of the cache root by `cache clean`.
+// Left behind by a launch that never ran is reclaimed by the next sweep's reapStaleRemoveLists.
 //
 // Best-effort throughout: a local removal that throws (a file the host still has open) must not cost the remaining
 // Dirs their teardown, so each is guarded rather than the batch, and the staging + launch is guarded as a whole —
@@ -42,8 +43,12 @@ export const removeSnapshotDirectoriesDetached = (dirs: readonly string[]): void
   if (linuxDirs.length === 0) return;
 
   getResult(() => {
+    const cacheRoot = getWslNativeCacheRoot();
+    // Reclaim the lists of runs whose launch never happened before staging this one — this is the only path that
+    // Enumerates the cache root, so a list left there has no other owner (reapStaleRemoveLists)
+    reapStaleRemoveLists(cacheRoot);
     const listFilename = `${VIRRUN_REMOVE_LIST_TEMP_PREFIX}${process.pid}.${crypto.randomUUID()}`;
-    const listUnc = join(getWslNativeCacheRoot(), listFilename);
+    const listUnc = join(cacheRoot, listFilename);
     writeFileSync(listUnc, joinNullDelimited(linuxDirs));
     spawnBackground("wsl.exe", ["--exec", "sh", "-c", WSL_REMOVE_LIST_SCRIPT, "sh", readWslPath(listUnc)]);
   }).match(noop, noop);

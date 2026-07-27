@@ -31,12 +31,13 @@ import type { Except } from "type-fest";
 
 import { MOCK_BLOB_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
+import { getBlobUrlParts } from "@/services/container/getBlobUrlParts";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
 import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
-import { getOrCreate, noop, takeOne } from "@esposter/shared";
+import { getOrCreate, noop } from "@esposter/shared";
 import { Readable } from "node:stream";
 
 export class MockBlobClient implements Except<BlobClient, "accountName"> {
@@ -66,16 +67,10 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   ): Promise<
     PollerLikeWithCancellation<PollOperationState<BlobBeginCopyFromURLResponse>, BlobBeginCopyFromURLResponse>
   > {
-    // Extract container and blob name from the copy source URL
-    // Expected format: https://account.blob.core.windows.net/container/blob-name
-    const url = new URL(copySource);
-    const pathSegments = url.pathname.split("/").filter(Boolean);
-    if (pathSegments.length < 2) throw new MockRestError("Invalid copy source URL format", 400);
+    const sourceParts = getBlobUrlParts(copySource);
+    if (!sourceParts) throw new MockRestError("Invalid copy source URL format", 400);
 
-    // The URL constructor percent-encodes the pathname while the store is keyed by decoded blob names
-    // (real Azure decodes the copy source the same way), so the segments are decoded before lookup
-    const sourceContainerName = decodeURIComponent(takeOne(pathSegments));
-    const sourceBlobName = decodeURIComponent(pathSegments.slice(1).join("/"));
+    const { blobName: sourceBlobName, containerName: sourceContainerName } = sourceParts;
     const sourceContainer = MockContainerDatabase.get(sourceContainerName);
     if (!sourceContainer) throw new MockRestError("Source container not found", 404);
 

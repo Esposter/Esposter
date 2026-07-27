@@ -38,4 +38,20 @@ describe(MockBlobBatchClient, () => {
     expect(response.subResponsesSucceededCount).toBe(1);
     expect(MockContainerDatabase.get(containerName)?.has(blobName)).toBe(false);
   });
+
+  test("deletes a blob whose name the url percent-encodes", async () => {
+    expect.hasAssertions();
+
+    const unencodedBlobName = "my photo.png";
+    MockContainerDatabase.set(containerName, new Map([[unencodedBlobName, Buffer.from("")]]));
+    const client = new MockBlobBatchClient(MOCK_BLOB_BASE_URL);
+    const response = await client.deleteBlobs(
+      [`${MOCK_BLOB_BASE_URL}/${containerName}/${unencodedBlobName}`],
+      new AnonymousCredential(),
+    );
+
+    expect(response.subResponsesFailedCount).toBe(0);
+    expect(response.subResponsesSucceededCount).toBe(1);
+    expect(MockContainerDatabase.get(containerName)?.has(unencodedBlobName)).toBe(false);
+  });
 });

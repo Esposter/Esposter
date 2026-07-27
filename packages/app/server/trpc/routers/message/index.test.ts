@@ -8,6 +8,8 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { MESSAGE_INDEX_WRITE_GRACE_NANOSECONDS } from "@@/server/services/message/constants";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
@@ -19,6 +21,7 @@ import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import {
   AzureContainer,
   AzureEntityType,
+  AzureTable,
   getReverseTickedTimestamp,
   MessageType,
   roomFiltersInMessage,
@@ -35,6 +38,7 @@ import {
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
   NotFoundError,
+  now,
   Operation,
   takeOne,
 } from "@esposter/shared";
@@ -206,6 +210,44 @@ describe("message", () => {
     expect(readMessages.items).toHaveLength(2);
     expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
     expect(takeOne(readMessages.items, 1).rowKey).toBe(secondMessage.rowKey);
+  });
+
+  // The index row lands before the entity, so an ascending page can see a message the join cannot find yet. Its
+  // Cursor comes from the index, so stepping over that hole would drop the message from the scroll for good
+  test("stops an ascending page at an index row whose message entity has not landed", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
+    const firstMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    await messageCaller.createMessage({ message, roomId: newRoom.id });
+    // The state between createMessage's two table writes
+    const messageClient = await useTableClient(AzureTable.Messages);
+    await messageClient.deleteEntity(newRoom.id, firstMessage.rowKey);
+    const readMessages = await messageCaller.readMessages({ order: SortOrder.Asc, roomId: newRoom.id });
+
+    expect(readMessages.items).toStrictEqual([]);
+    expect(readMessages.hasMore).toBe(true);
+    expect(readMessages.nextCursor).toBe("");
+  });
+
+  // Past the grace window the entity is never arriving — that write failed — so holding the cursor on it would
+  // Stall the scroll forever
+  test("skips an index row whose message entity is too old to still be in flight", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
+    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+    await messageAscendingClient.createEntity({
+      partitionKey: newRoom.id,
+      rowKey: (BigInt(now()) - MESSAGE_INDEX_WRITE_GRACE_NANOSECONDS * 2n).toString(),
+    });
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const readMessages = await messageCaller.readMessages({ order: SortOrder.Asc, roomId: newRoom.id });
+
+    expect(readMessages.items).toHaveLength(1);
+    expect(takeOne(readMessages.items).rowKey).toBe(newMessage.rowKey);
   });
 
   test("fails read with non-existent member", async () => {

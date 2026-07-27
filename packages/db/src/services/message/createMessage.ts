@@ -17,6 +17,8 @@ export const createMessage = async <T extends CreateMessageInput>(
   // Join finds no entity. Writing `Messages` first made a rejection ambiguous: the message could already be live
   // In the room, which is what let `sendScheduledMessageNow` re-enqueue an already-delivered job and post it
   // Twice. This way a rejection always means nothing is readable, which is what every caller's rollback assumes.
+  // The cost lands on the ascending read, which must not advance its cursor past an index row whose entity has
+  // Not arrived yet — `readMessages` holds the page there rather than skipping the message for good.
   await createEntity(messageAscendingClient, {
     partitionKey: messageEntity.partitionKey,
     rowKey: getReverseTickedTimestamp(messageEntity.rowKey),

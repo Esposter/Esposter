@@ -3,12 +3,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { scheduleTodoReminders } from "@@/server/services/resource/todoList/scheduleTodoReminders";
 import { AzureQueue } from "@esposter/db-schema";
 import { MockServiceBusDatabase } from "azure-mock";
-import { afterEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(
-  import("@@/server/composables/azure/serviceBus/useServiceBusSender"),
-  () => import("@@/server/composables/azure/serviceBus/useServiceBusSender.test"),
-);
+import { afterEach, describe, expect, test } from "vitest";
 
 describe(scheduleTodoReminders, () => {
   const resourceId = crypto.randomUUID();

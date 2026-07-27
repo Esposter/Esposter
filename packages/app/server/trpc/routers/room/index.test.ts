@@ -239,33 +239,52 @@ describe("room", () => {
     expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
   });
 
-  test("publishes the replaced profile image younger than the write sas", async () => {
+  // The version being replaced gets no exemption from the age filter: the submitted url is whatever the caller's
+  // Form loaded with, so the row value it replaces is the one that can name another admin's seconds-old upload.
+  // A version replaced this soon waits for the next image change to collect it
+  test("leaves the replaced profile image younger than the write sas for a later sweep", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
-    // Uploaded through the client, so the mock dates it now — the age filter alone would never collect it
+    // Uploaded through the client, so the mock dates it now
     await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     const { publicUrl: replacementPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     await roomCaller.updateRoom({ id: newRoom.id, image: replacementPublicUrl });
-    const blobDeletionEvents = MockEventGridDatabase.get("");
-    assert(blobDeletionEvents);
 
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      blobNames: [blobName],
-      containerName: AzureContainer.PublicUserAssets,
-    });
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
+  });
+
+  // The lost-update race the age filter exists for: a save whose form opened before the other admin's upload
+  // Carries a stale url, so the row value it replaces is that admin's live avatar
+  test("names nothing for deletion when the save carries an image url the room has already moved past", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { publicUrl: staleUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const { publicUrl: freshUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const freshBlobName = freshUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, freshBlobName).upload(Buffer.alloc(0), 0);
+    // The other admin's save landed first, so the row already points at the fresh avatar
+    await roomCaller.updateRoom({ id: newRoom.id, image: freshUrl });
+    MockEventGridDatabase.clear();
+    await roomCaller.updateRoom({ id: newRoom.id, image: staleUrl, name: updatedName });
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(freshBlobName)).toBe(true);
   });
 
   test("keeps a profile image blob younger than the write sas out of the deletion sweep", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
-    const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
-    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
+    const publicUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${blobName}`;
+    // Seeded rather than uploaded, so the mock dates it before the write sas window and the sweep collects it
+    MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     const { publicUrl: inFlightPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const inFlightBlobName = inFlightPublicUrl.slice(

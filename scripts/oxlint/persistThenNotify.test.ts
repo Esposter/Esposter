@@ -67,6 +67,34 @@ const FIXTURES = [
   },
   // A nested function opens its own frame, so the outer emit does not reach into it.
   { name: "nestedFunction", source: `aEventEmitter.emit(); return async () => { await g(); };`, violations: 0 },
+  // A closure that only holds an emit has notified nothing until it is CALLED, so the await between its
+  // Declaration and that call is a fatal guard. Attributing the emit to the closure's own source position would
+  // Report it, and the only way to satisfy that report is to make a fatal write best-effort.
+  {
+    name: "declaredNotifyCalledAfterAwait",
+    source: `const notify = () => { aEventEmitter.emit(); }; await g(); notify();`,
+    violations: 0,
+  },
+  // `for await` rejects the caller exactly as an `await` does — the batched-purge loop that keeps pulling pages
+  // After emitting for the first one is the shape this catches.
+  {
+    name: "forAwaitAfterEmit",
+    source: `aEventEmitter.emit(); for await (const x of xs) { h(x); }`,
+    violations: 1,
+  },
+  { name: "forAwaitBeforeEmit", source: `for await (const x of xs) { h(x); } aEventEmitter.emit();`, violations: 0 },
+  // A returned promise rejects the awaiting caller identically to an awaited one.
+  { name: "returnCallAfterEmit", source: `aEventEmitter.emit(); return g();`, violations: 1 },
+  { name: "safeReturnCallAfterEmit", source: `aEventEmitter.emit(); return getResultAsync(g);`, violations: 0 },
+  // A returned value is not an effect: it cannot reject, and every mutation returns its entity after notifying.
+  { name: "returnValueAfterEmit", source: `aEventEmitter.emit(); return entity;`, violations: 0 },
+  // `Promise.resolve` settles on what it is handed — nothing, here, so there is nothing to reject.
+  { name: "returnResolvedPromiseAfterEmit", source: `aEventEmitter.emit(); return Promise.resolve();`, violations: 0 },
+  {
+    name: "returnResolvedCallAfterEmit",
+    source: `aEventEmitter.emit(); return Promise.resolve(g());`,
+    violations: 1,
+  },
   // Only a `*EventEmitter` receiver carries the persist-then-notify meaning.
   { name: "nonEmitterEmit", source: `analytics.emit(); await g();`, violations: 0 },
   // The root only says the chain STARTED in a wrapper. A terminal that rethrows hands the rejection straight

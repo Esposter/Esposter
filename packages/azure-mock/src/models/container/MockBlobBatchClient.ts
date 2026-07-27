@@ -9,12 +9,13 @@ import type {
 import type { MapValue } from "@esposter/shared";
 
 import { getAzureErrorXml } from "@/services/container/getAzureErrorXml";
+import { getBlobUrlParts } from "@/services/container/getBlobUrlParts";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders } from "@azure/core-rest-pipeline";
-import { getOrCreate, takeOne } from "@esposter/shared";
+import { getOrCreate } from "@esposter/shared";
 
 export class MockBlobBatchClient implements BlobBatchClient {
   url: string;
@@ -39,10 +40,8 @@ export class MockBlobBatchClient implements BlobBatchClient {
     let subResponsesFailedCount = 0;
 
     for (const url of urls) {
-      const urlParts = new URL(url);
-      // Pathname is like "/container/blob/name.txt"
-      const pathSegments = urlParts.pathname.split("/").filter(Boolean);
-      if (pathSegments.length < 2) {
+      const urlParts = getBlobUrlParts(url);
+      if (!urlParts) {
         const errorCode = "InvalidUri";
         const statusMessage = "Invalid blob URL format.";
         subResponses.push({
@@ -57,8 +56,7 @@ export class MockBlobBatchClient implements BlobBatchClient {
         continue;
       }
 
-      const containerName = takeOne(pathSegments);
-      const blobName = pathSegments.slice(1).join("/");
+      const { blobName, containerName } = urlParts;
       const container = this.getContainer(containerName);
 
       if (container.has(blobName)) {

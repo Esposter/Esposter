@@ -98,6 +98,12 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
   ) {
     // `Promise.allSettled` resolves an array of outcomes and never rejects regardless of its elements
     if (argument.callee.property.name === "allSettled") return true;
+    // `Promise.resolve` settles on what it is handed, so it rejects only when that value is itself a rejecting
+    // Promise — which only a call can produce here. A bare `Promise.resolve()` cannot reject at all
+    if (argument.callee.property.name === "resolve") {
+      const [value] = argument.arguments;
+      return value === undefined || (value.type !== "SpreadElement" && value.type !== "CallExpression");
+    }
     if (!PROMISE_COMBINATORS.has(argument.callee.property.name)) return false;
     const [collection] = argument.arguments;
     if (collection?.type === "ArrayExpression")
@@ -127,44 +133,68 @@ const isEmitCall = (node: ESTree.CallExpression): boolean =>
   node.callee.object.type === "Identifier" &&
   node.callee.object.name.endsWith("EventEmitter");
 
+const MESSAGE =
+  "Unhandled effect after a notify (`emit`). Post-persist effects must be best-effort — wrap in getResultAsync(...).match(noop, console.error) — or move fatal work before the emit. See /docs/architecture/persist-then-notify.";
+
 const rule = defineRule({
   create(context: Context) {
-    // Per-function frame: the first emit seen. Every later await must be best-effort.
-    const functionStack: { emit?: ESTree.CallExpression }[] = [];
-    const enterFunction = () => {
-      functionStack.push({});
+    // Per-function frame: the source position at which this function notifies, and the function node itself so a
+    // Nested emit can be attributed to the call that runs the callback holding it.
+    const functionStack: { emitStart?: number; node: ESTree.Node }[] = [];
+    const enterFunction = (node: ESTree.Node) => {
+      functionStack.push({ node });
     };
     const exitFunction = () => {
       functionStack.pop();
+    };
+    // Every effect the enclosing function can still reject on once it has notified: an `await`, the iterable of a
+    // `for await`, and a returned promise, which rejects the awaiting caller exactly as an `await` would. A return
+    // Is only read when it hands back a call — a returned identifier or literal cannot reject.
+    const reportUnhandledEffect = (node: ESTree.Node, effect: ESTree.Expression) => {
+      const frame = functionStack.at(-1);
+      if (frame?.emitStart === undefined) return;
+      // Before the notify — a fatal guard, not a tail effect
+      else if (node.start < frame.emitStart) return;
+      // Never rejects
+      else if (isSafeAwait(effect)) return;
+      context.report({ message: MESSAGE, node });
     };
     return {
       ArrowFunctionExpression: enterFunction,
       "ArrowFunctionExpression:exit": exitFunction,
       AwaitExpression(node) {
-        const frame = functionStack.at(-1);
-        if (!frame?.emit) return;
-        // Before the emit — a fatal guard, not a tail effect
-        if (node.start < frame.emit.start) return;
-        // Never rejects
-        if (isSafeAwait(node.argument)) return;
-        context.report({
-          message:
-            "Unhandled `await` after a notify (`emit`). Post-persist effects must be best-effort — wrap in getResultAsync(...).match(noop, console.error) — or move fatal work before the emit. See /docs/architecture/persist-then-notify.",
-          node,
-        });
+        reportUnhandledEffect(node, node.argument);
       },
       CallExpression(node) {
         if (!isEmitCall(node)) return;
-        // An emit inside a nested callback still notifies every function that runs it, so it arms the whole
-        // Enclosing chain — otherwise wrapping the write+emit in `getResultAsync(async () => …)` hides the
-        // Notify from every await that follows it. Emits propagate outward only: a frame opened after the
-        // Emit (the `nestedFunction` case) is a separate deferred body and stays unarmed
-        for (const frame of functionStack) if (!frame.emit) frame.emit = node;
+        // An emit inside a nested callback still notifies every function that RUNS that callback, so it arms the
+        // Enclosing chain — otherwise wrapping the write+emit in `getResultAsync(async () => …)` hides the notify
+        // From every await that follows it. Each outer frame is armed at the position of the call that runs the
+        // Callback, never at the emit's own: the emit sits lexically before everything after that call, so
+        // Comparing raw positions would report a fatal await that runs BEFORE the notify — a false error whose
+        // Only cure is wrapping a fatal write in a best-effort handler, which is the opposite of this standard.
+        // A callback that is not an argument of a call — a closure bound to a name and invoked later — has no such
+        // Position, so propagation stops rather than guessing at one. Emits propagate outward only: a frame opened
+        // After the emit (the `nestedFunction` case) is a separate deferred body and stays unarmed
+        let start = node.start;
+        for (const frame of functionStack.toReversed()) {
+          frame.emitStart ??= start;
+          const { parent } = frame.node;
+          if (parent.type !== "CallExpression" || !parent.arguments.some((argument) => argument === frame.node)) break;
+          start = parent.start;
+        }
+      },
+      ForOfStatement(node) {
+        // Only `for await`: a plain for-of settles on nothing
+        if (node.await) reportUnhandledEffect(node, node.right);
       },
       FunctionDeclaration: enterFunction,
       "FunctionDeclaration:exit": exitFunction,
       FunctionExpression: enterFunction,
       "FunctionExpression:exit": exitFunction,
+      ReturnStatement(node) {
+        if (node.argument?.type === "CallExpression") reportUnhandledEffect(node, node.argument);
+      },
     };
   },
   meta: { type: "problem" },
