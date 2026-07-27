@@ -1,5 +1,6 @@
 import type { FileEntity } from "@/models/azure/table/FileEntity";
 
+import { fileEntitySchema } from "@/models/azure/table/FileEntity";
 import { refineMessageSchema } from "@/services/message/refineMessageSchema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -13,15 +14,7 @@ describe(refineMessageSchema, () => {
 
     const schema = refineMessageSchema(
       z.object({
-        files: z
-          .object({
-            filename: z.string(),
-            id: z.string(),
-            mimetype: z.string(),
-            size: z.number(),
-          })
-          .array()
-          .optional(),
+        files: fileEntitySchema.array().optional(),
         message: z.string().optional(),
       }),
     );
