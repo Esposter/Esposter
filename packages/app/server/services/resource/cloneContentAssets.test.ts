@@ -71,14 +71,16 @@ describe(cloneContentAssets, () => {
     await cloneContentAssets(content, destinationDirectoryName, true);
     const clonedBlobNames = await getClonedBlobNames();
 
+    const prefix = `${destinationDirectoryName}/${FILES_DIRECTORY_SEGMENT}/`;
+    const suffix = `${ID_SEPARATOR}${filename}`;
+    const clonedBlobName = takeOne(clonedBlobNames);
+
     // Never under the copy's own published prefix — unpublishing wipes that directory.
     expect(clonedBlobNames).toHaveLength(1);
-    expect(takeOne(clonedBlobNames)).toMatch(
-      new RegExp(
-        `^${destinationDirectoryName}/${FILES_DIRECTORY_SEGMENT}/[\\da-f-]+\\${ID_SEPARATOR}${filename}$`,
-        "u",
-      ),
-    );
+    expect(clonedBlobName.startsWith(prefix)).toBe(true);
+    expect(clonedBlobName.endsWith(suffix)).toBe(true);
+    // The id segment is freshly minted, so only its shape can be asserted.
+    expect(clonedBlobName.slice(prefix.length, -suffix.length)).toMatch(/^[\da-f-]+$/u);
   });
 
   // Restore clones a snapshot back into the resource's OWN files directory. Reusing the source's id there

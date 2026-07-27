@@ -44,13 +44,13 @@ A PLAUSIBLE verdict means a verifier reading one file under a budget could not r
 - **Use history.** `git log -S` / `git log -L` answers "was this guard ever here, and what removed it" directly.
 - **Check the record.** A decision stated deliberately with its consequence named REFUTES the finding; a record the code contradicts CONFIRMS it.
 
-Only a trigger that genuinely cannot be settled from the repository — a production-only config value, a cloud service's runtime behaviour — may stay unsettled, and it must name that blocker. "The investigation looked large" is not a blocker.
+Only a trigger that genuinely cannot be settled from the repository — a production-only config value, a cloud service's runtime behaviour — may stay unsettled, and it must name that blocker. "The investigation looked large" is not a blocker. **An unsettleable finding is still never a table row**: keep it out of the verdict table entirely and write it as the one line below the table (see Handling findings), phrased as the blocker and the fact that would settle it — "unsettleable without the deployed `MAX_UPLOAD_BYTES`; confirm that value and it decides" — so the user is asked for evidence rather than handed a verdict nobody reached.
 
 Two things make this rule earn its cost. A PLAUSIBLE finding shipped to a human is decided by whoever has _less_ context than the agent that raised it, so it gets fixed without evidence or dropped without evidence — and a fix applied on an unconfirmed premise is the single most common way this repo introduces regressions. And a finding you dismiss without settling comes back on the next run, worded differently, forever.
 
 ## Closing a finding so the next review cannot reopen it
 
-A re-run over an already-fixed branch should surface only genuinely new defects. The workflow labels each finding's `provenance` for exactly this: anything other than `new` means the review has been here before, and the label names which of the six failures below it is. When it surfaces the same area again, it is almost always one of them — each with a fixed remedy.
+A re-run over an already-fixed branch should surface only genuinely new defects. The workflow labels each finding's `provenance` for exactly this: anything other than `new` means the review has been here before, and the label names which of the failures below it is. When it surfaces the same area again, it is almost always one of them — each with a fixed remedy.
 
 **This list is a pre-commit checklist for whoever applies a fix, not only a diagnosis for whoever triages the next review.** Run it against your own change before committing; every entry below describes a fix that shipped, passed its own new test, and was found again one round later. Carry it into the prompt whenever a fix round is delegated (`model-delegation` skill).
 
