@@ -22,6 +22,14 @@ import { ID_SEPARATOR, jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+// A clone mints a fresh asset id rather than carrying the source's over, so its blob is found by where it
+// Landed, never by rebuilding its name — which is the property these tests exist to hold.
+const readFilesBlobNames = (id: string): string[] => {
+  const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+  assert(container);
+  return [...container.keys()].filter((blobName) => blobName.startsWith(`${getFilesDirectoryName(id)}/`));
+};
+
 describe("resource", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
@@ -284,10 +292,11 @@ describe("resource", () => {
     assert.exists(content);
 
     const publication = await webpageCaller.readResourcePublication({ id: duplicatedResource.id });
-    // The copy owns its assets: the same file segment is cloned under the new id and the url rewritten to it
-    const duplicatedBlobName = `${duplicatedResource.id}/${blobName.slice(`${webpageResource.id}/`.length)}`;
+    // The copy owns its assets: the file is cloned into the copy's files directory and the url rewritten to it
+    const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
 
     expect(duplicatedResource.id).not.toBe(webpageResource.id);
+    expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
     expect(duplicatedResource.name).toBe(`${name} (copy)`);
     expect(duplicatedResource.type).toBe(ResourceType.Webpage);
     expect(content).toStrictEqual(
@@ -320,15 +329,13 @@ describe("resource", () => {
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     assert.exists(content);
 
-    const duplicatedBlobName = `${getFilesDirectoryName(duplicatedResource.id)}/${publishedBlobName.slice(publishedBlobName.lastIndexOf("/") + 1)}`;
-    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-    assert(container);
+    const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
 
     // The copy is fully self-contained: the published snapshot asset is cloned into the copy's own files
     // Directory — never under its published prefix, which unpublishing wipes — so unpublishing or deleting
     // Either resource never strands the copy
     expect(content.html).toBe(`<img src="${getResourceAssetUrl(duplicatedBlobName)}">`);
-    expect(container.has(duplicatedBlobName)).toBe(true);
+    expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
   });
 
   test("duplicates a resource with a dangling asset reference by carrying the url verbatim", async () => {
@@ -350,16 +357,14 @@ describe("resource", () => {
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     assert.exists(content);
 
-    const duplicatedBlobName = `${duplicatedResource.id}/${blobName.slice(`${webpageResource.id}/`.length)}`;
-    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-    assert(container);
+    const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
 
     // The existing asset is cloned and rewritten; the dangling url is data, carried verbatim instead of
     // Failing the whole clone
     expect(content.html).toBe(
       `<img src="${getResourceAssetUrl(duplicatedBlobName)}"><img src="${getResourceAssetUrl(missingBlobName)}">`,
     );
-    expect(container.has(duplicatedBlobName)).toBe(true);
+    expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
   });
 
   // A snapshot embeds `{id}/published/{publishId}/…` urls and unpublish wipes that whole prefix, so a restore
@@ -381,12 +386,15 @@ describe("resource", () => {
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     assert.exists(content);
 
-    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-    assert(container);
+    const filesBlobNames = readFilesBlobNames(webpageResource.id);
+    const restoredBlobName = takeOne(filesBlobNames.filter((filesBlobName) => filesBlobName !== blobName));
 
-    // The restored draft references its own files directory, never the published snapshot it came from
-    expect(content.html).toBe(`<img src="${getResourceAssetUrl(blobName)}">`);
-    expect(container.has(blobName)).toBe(true);
+    // The restored draft references its own files directory, never the published snapshot it came from — and
+    // Never the name it started under: `deleteFile` may already have published that exact name for deletion,
+    // And a named-blob deletion event carries no time bound to disqualify a replay of it
+    expect(content.html).toBe(`<img src="${getResourceAssetUrl(restoredBlobName)}">`);
+    expect(filesBlobNames).toContain(blobName);
+    expect(restoredBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
   });
 
   test("cleans up the copy when duplicating its content fails", async () => {

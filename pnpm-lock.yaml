@@ -39,6 +39,9 @@ catalogs:
     '@azure/storage-blob':
       specifier: ^12.33.0
       version: 12.33.0
+    '@azure/storage-queue':
+      specifier: ^12.31.0
+      version: 12.31.0
     '@azure/web-pubsub':
       specifier: ^1.2.0
       version: 1.2.0
@@ -1399,6 +1402,9 @@ importers:
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.33.0(supports-color@10.2.2)
+      '@azure/storage-queue':
+        specifier: 'catalog:'
+        version: 12.31.0(supports-color@10.2.2)
       '@esposter/db':
         specifier: workspace:*
         version: link:../db
@@ -1524,6 +1530,9 @@ importers:
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.33.0(supports-color@10.2.2)
+      '@azure/storage-queue':
+        specifier: 'catalog:'
+        version: 12.31.0(supports-color@10.2.2)
       '@azure/web-pubsub':
         specifier: 'catalog:'
         version: 1.2.0(supports-color@10.2.2)
@@ -2056,6 +2065,10 @@ packages:
   '@azure/storage-common@12.4.1':
     resolution: {integrity: sha512-t14unw/WofGDUi7TKJrsyXyPsN+NLgRm7hMaq0llxNmTIzt7f257+6LE6FKIJPh88zLj6M7LPvzve0fEYg/L3A==}
     engines: {node: '>=20.0.0'}
+
+  '@azure/storage-queue@12.31.0':
+    resolution: {integrity: sha512-OzhvKO7G8+EXkUQPbKFkO7JNIAMkQZ9gMyZ85dsTCOk8jRRCbGbn3wsk3qrCAf6XWm+E2/fUsdLbX4YCOAWEKw==}
+    engines: {node: '>=22.0.0'}
 
   '@azure/web-pubsub-client@1.1.0':
     resolution: {integrity: sha512-qMGXwq+bf94tTTCItD57+J2gt21/cRUuCz8nPmoVeFFt6ibLa17lg4s0GU40zt7DS5S1F0PB0V7590tByvY5dw==}
@@ -15339,6 +15352,23 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@azure/core-client'
+      - supports-color
+
+  '@azure/storage-queue@12.31.0(supports-color@10.2.2)':
+    dependencies:
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-auth': 1.11.0(supports-color@10.2.2)
+      '@azure/core-client': 1.11.0(supports-color@10.2.2)
+      '@azure/core-http-compat': 2.5.0(@azure/core-client@1.11.0(supports-color@10.2.2))(@azure/core-rest-pipeline@1.25.0(supports-color@10.2.2))
+      '@azure/core-paging': 1.7.0
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@10.2.2)
+      '@azure/core-tracing': 1.4.0
+      '@azure/core-util': 1.14.0(supports-color@10.2.2)
+      '@azure/core-xml': 1.6.0
+      '@azure/logger': 1.4.0(supports-color@10.2.2)
+      '@azure/storage-common': 12.4.1(@azure/core-client@1.11.0(supports-color@10.2.2))(supports-color@10.2.2)
+      tslib: 2.8.1
+    transitivePeerDependencies:
       - supports-color
 
   '@azure/web-pubsub-client@1.1.0(supports-color@10.2.2)':

@@ -14,6 +14,7 @@ import { createWslBwrapArgs } from "@/services/exec/wsl/createWslBwrapArgs";
 import { createWslEnvArgs } from "@/services/exec/wsl/createWslEnvArgs";
 import { createWslProcessMarker } from "@/services/exec/wsl/createWslProcessMarker";
 import { createWslSourceMirrorSync } from "@/services/exec/wsl/createWslSourceMirrorSync";
+import { getSourceMirrorKey } from "@/services/exec/wsl/getSourceMirrorKey";
 import { reapAbandonedSourceMirrors } from "@/services/exec/wsl/reapAbandonedSourceMirrors";
 import { reapOrphanedWslRuns } from "@/services/exec/wsl/reapOrphanedWslRuns";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
@@ -22,9 +23,6 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
   // Reap any bwrap tree a previous hard-killed run left orphaned (its onTerminate reaper never fired) before this
   // Backend spawns its own — off the critical path, and scoped to true orphans so a concurrent live run is untouched.
   reapOrphanedWslRuns();
-  // Reap ext4 source mirrors whose host repo/worktree was deleted — the one cache entry with no lockfile/source key to
-  // Supersede it, so it needs its own origin-marker sweep. Also best-effort, off the critical path, spares live repos.
-  reapAbandonedSourceMirrors();
   return createBwrapBackend(
     createWslBwrapArgs,
     (bwrapArgs, options) => {
@@ -41,7 +39,13 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
       // Lock — so its deletes/renames wait for readers to drain instead of tearing a live run's source tree. Shared
       // Holders don't block each other, and the sync prelude's own exclusive flock uses a nested fd-9 redirect (a
       // Separate open file description), released before this shared acquire — `flock -s -w` bounds a stuck writer.
-      const { lockPath, script } = createWslSourceMirrorSync(resolveCwd(options.cwd));
+      const cwd = resolveCwd(options.cwd);
+      const { lockPath, script } = createWslSourceMirrorSync(cwd);
+      // Reap ext4 source mirrors whose host repo/worktree was deleted — the one cache entry with no lockfile/source
+      // Key to supersede it, so it needs its own origin-marker sweep. Strictly after the sync above: that is what
+      // (Re)publishes this repo's origin marker, and the reaper's unmarked-and-aged arm is only sound once it has.
+      // This run's own entry is excluded by key — the tree bwrap is about to mount cannot be a reap candidate.
+      reapAbandonedSourceMirrors(getSourceMirrorKey(cwd));
       return {
         command: [
           "wsl.exe",

@@ -47,7 +47,7 @@ describe(useDownloadFileStore, () => {
     const { items } = storeToRefs(dataStore);
     items.value.push(
       createMessageEntity({
-        files: [{ filename, id: fileId, mimetype: "text/plain", size: 1 }],
+        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: "text/plain", size: 1 }],
         message: filename,
         roomId,
         type: MessageType.Message,
@@ -79,6 +79,7 @@ describe(useDownloadFileStore, () => {
     const { items } = storeToRefs(dataStore);
     const files = Array.from({ length: MAX_READ_LIMIT + 1 }, () => ({
       filename,
+      hasThumbnail: false,
       id: crypto.randomUUID(),
       mimetype: "text/plain",
       size: 1,

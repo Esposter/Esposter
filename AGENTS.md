@@ -39,7 +39,7 @@ This file is the canonical guidance for AI coding agents working in this reposit
 | `packages/infra`           | `@esposter/infra`           | Pulumi infrastructure code and migration tools for Azure                   |
 | `packages/parse-tmx`       | `parse-tmx`                 | Parser for Tiled Map Editor `.tmx` files                                   |
 | `packages/shared`          | `@esposter/shared`          | Shared TypeScript types, utilities, and error classes                      |
-| `packages/shared-node`     | `@esposter/shared-node`     | Node-only shared tooling (benchmark reporting, dev scripts)                |
+| `packages/shared-node`     | `@esposter/shared-node`     | Benchmark reporting/running for vitest bench (no barrel entrypoint)        |
 | `packages/virrun`          | `virrun`                    | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated |
 | `packages/vue-phaserjs`    | `vue-phaserjs`              | Phaser 4 game engine integration for Vue 3                                 |
 | `packages/xml2js`          | `@esposter/xml2js`          | TypeScript rewrite of xml2js — XML ↔ JSON conversion                       |

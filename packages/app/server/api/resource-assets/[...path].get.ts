@@ -4,7 +4,7 @@ import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { db } from "@@/server/db";
-import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
+import { assetRateLimiter } from "@@/server/services/rateLimiter/assetRateLimiter";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import {
   RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS,
@@ -34,12 +34,13 @@ export default defineEventHandler(async (event) => {
   if (IS_PRODUCTION) {
     const ipAddress = getIpAddress(event.node.req);
     if (ipAddress)
-      // Namespaced for both callers, not just the anonymous one: a signed-in viewer's key was the bare user id,
-      // The same key every tRPC call consumes, so opening one published page full of images spent that page's
+      // Its own limiter, and its own namespace within it: a signed-in viewer's key was the bare user id, the
+      // Same key every tRPC call consumes, so opening one published page full of images spent that page's
       // Asset requests out of the budget for the user's actual API calls and 429'd the app around them. One
-      // Rendered page is many asset requests by construction — it cannot share a bucket with procedure calls
+      // Rendered page is many asset requests by construction, and anonymous viewers of it share an egress
+      // Address — so neither the key nor the procedure budget describes this traffic (see assetRateLimiter)
       await getResultAsync(() =>
-        standardRateLimiter.consume(
+        assetRateLimiter.consume(
           `${AzureContainer.ResourceAssets}${ID_SEPARATOR}${getSessionPayload ? getSessionPayload.user.id : ipAddress}`,
         ),
       ).match(noop, (error) => {

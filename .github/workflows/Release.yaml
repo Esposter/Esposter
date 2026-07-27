@@ -21,10 +21,17 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # A re-run of a workflow whose release already landed must be a no-op, not a failure: `gh release create`
-        # Errors on an existing tag, so a retry after any later step failed reports the release step as broken
+        # Errors on an existing tag, so a retry after any later step failed reports the release step as broken.
+        # Only a genuine "not found" is evidence the release is absent — a 401, a secondary rate limit or a network
+        # Blip exits non-zero too, and reading that as absence sends the retry into `create` against a tag that is
+        # Already released, which fails the job for exactly the reason this guard exists to prevent. So the error
+        # Text decides, and anything else fails here where the cause is still readable
         run: |
-          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+          if releaseError="$(gh release view "$GITHUB_REF_NAME" 2>&1 > /dev/null)"; then
             echo "Release $GITHUB_REF_NAME already exists, nothing to create."
             exit 0
+          elif ! printf '%s' "$releaseError" | grep -qi 'release not found'; then
+            printf 'Could not determine whether release %s exists: %s\n' "$GITHUB_REF_NAME" "$releaseError" >&2
+            exit 1
           fi
           gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "For releases, please refer to [CHANGELOG.md](https://github.com/esposter/esposter/blob/main/CHANGELOG.md) for details."

@@ -216,9 +216,15 @@ export const resourceRouter = router({
     }).match(noop, async (error) => {
       // Never leave a content-less orphan copy behind when the content clone fails. Ordered like purgeResource:
       // Partially cloned blobs first (already-gone is success), the row last as the durable marker — a failed
-      // Blob cleanup keeps the copy reachable through the resource API instead of stranding its blobs
+      // Blob cleanup keeps the copy reachable through the resource API instead of stranding its blobs.
+      // The cleanup can itself fail (deleteDirectory throws on any failed sub-response), and it must never
+      // Take the row delete or the original error down with it: the caller would then be told a blob delete
+      // Failed instead of why the duplicate did, and be left with the orphan row this whole path exists to
+      // Prevent — the strictly worse outcome of the two the cleanup is choosing between
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      await deleteDirectory(containerClient, newResource.id, true);
+      await getResultAsync(async () => {
+        await deleteDirectory(containerClient, newResource.id, true);
+      }).match(noop, console.error);
       await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
       throw error;
     });

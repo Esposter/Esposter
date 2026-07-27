@@ -82,7 +82,8 @@ describe("webpage", () => {
     const clonedBlobName = [...(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.keys() ?? [])].find(
       (publishedBlobPath) =>
         publishedBlobPath.startsWith(`${newResource.id}/${PUBLISHED_DIRECTORY_SEGMENT}/`) &&
-        publishedBlobPath.endsWith(blobName.slice(`${newResource.id}/`.length)),
+        // Only the filename carries over — the clone is written under a freshly minted asset id
+        publishedBlobPath.endsWith(`${ID_SEPARATOR}a`),
     );
     assert(clonedBlobName);
 

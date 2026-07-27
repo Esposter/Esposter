@@ -16,7 +16,11 @@ export const uploadFileToSas = async <TFileSasEntity extends FileSasEntity>({
     files.map(({ name, size, type }) => ({ filename: name, mimetype: type, size })),
   );
   onUploadStart?.(fileSasEntities);
-  await Promise.all(
+  // Settled, not raced: a caller that reverts on failure deletes the batch's blobs, and `Promise.all` hands it
+  // That failure while the siblings are still writing — a PUT landing after the deletion runs leaves a blob
+  // Nothing references and no later sweep reaches. Failing only once every upload has stopped writing means
+  // The revert always names a set that is complete and final.
+  const uploadResults = await Promise.allSettled(
     files.map((file, index) => {
       const fileSasEntity = takeOne(fileSasEntities, index);
       return uploadBlocks(
@@ -30,5 +34,7 @@ export const uploadFileToSas = async <TFileSasEntity extends FileSasEntity>({
       );
     }),
   );
+  const rejectedResults = uploadResults.filter((uploadResult) => uploadResult.status === "rejected");
+  if (rejectedResults.length > 0) throw takeOne(rejectedResults).reason;
   return fileSasEntities;
 };

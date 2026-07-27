@@ -45,7 +45,7 @@ No new procedure — `room.filter.upsertRoomFilter` (gated `ManageRoom`) accepts
 | `packages/db/src/services/message/moderation/executeAutomodAction.ts`               | timeout + moderation-log core                                 |
 | `packages/app/server/services/message/moderation/executeAutomodAction.ts`           | app wrapper — adds the `onAdminAction` emit                   |
 | `packages/db/src/services/message/moderation/writeModerationLogEntry.ts`            | shared audit-log writer                                       |
-| `packages/app/shared/services/message/moderation/AUTOMOD_USER_ID.ts`                | reserved AutoMod actor id                                     |
+| `packages/db-schema/src/services/message/constants.ts`                              | reserved AutoMod actor id (`AUTOMOD_USER_ID`)                 |
 | `packages/app/app/components/Message/Model/Room/Settings/Type/WordFilter/Index.vue` | action + duration settings                                    |
 
 ## Notes

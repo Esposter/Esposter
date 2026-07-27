@@ -27,6 +27,8 @@ const ageOut = (entry: string): void => {
 
 describe(reapAbandonedSourceMirrors, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
+  // The entry key of the run doing the sweeping; every case here seeds some other repo's entry under "0".
+  const liveEntryName = "1";
   const sourcesDir = (): string => join(cacheRootHolder.value, VIRRUN_SOURCES_DIRECTORY_NAME);
   // Seed a mirror entry (`sources/<hash>/tree` + an optional `origin` marker) and return its entry dir.
   const seedMirror = (hash: string, origin?: string): string => {
@@ -50,7 +52,7 @@ describe(reapAbandonedSourceMirrors, () => {
 
     const abandoned = seedMirror("0", join(cacheRootHolder.value, TEST_FILENAME));
 
-    reapAbandonedSourceMirrors();
+    reapAbandonedSourceMirrors(liveEntryName);
 
     expect(existsSync(abandoned)).toBe(false);
   });
@@ -60,7 +62,7 @@ describe(reapAbandonedSourceMirrors, () => {
 
     const live = seedMirror("0", create());
 
-    reapAbandonedSourceMirrors();
+    reapAbandonedSourceMirrors(liveEntryName);
 
     expect(existsSync(live)).toBe(true);
   });
@@ -70,7 +72,7 @@ describe(reapAbandonedSourceMirrors, () => {
 
     const unmarked = seedMirror("0");
 
-    reapAbandonedSourceMirrors();
+    reapAbandonedSourceMirrors(liveEntryName);
 
     expect(existsSync(unmarked)).toBe(true);
   });
@@ -83,7 +85,7 @@ describe(reapAbandonedSourceMirrors, () => {
     const abandoned = seedMirror("0");
     ageOut(abandoned);
 
-    reapAbandonedSourceMirrors();
+    reapAbandonedSourceMirrors(liveEntryName);
 
     expect(existsSync(abandoned)).toBe(false);
   });
@@ -96,15 +98,29 @@ describe(reapAbandonedSourceMirrors, () => {
     const midWrite = seedMirror("0", "  ");
     ageOut(midWrite);
 
-    reapAbandonedSourceMirrors();
+    reapAbandonedSourceMirrors(liveEntryName);
 
     expect(existsSync(midWrite)).toBe(true);
+  });
+
+  // Crossing the sweep with the run that triggers it: the marker is best-effort (its rename is swallowed when a
+  // Concurrent reader holds the destination open), so an aged unmarked entry can belong to the live run itself —
+  // Whose tree bwrap is about to mount as its overlay lower. No evidence may condemn this run's own entry.
+  test("keeps this run's own mirror even when it is unmarked and aged out", () => {
+    expect.hasAssertions();
+
+    const live = seedMirror(liveEntryName);
+    ageOut(live);
+
+    reapAbandonedSourceMirrors(liveEntryName);
+
+    expect(existsSync(live)).toBe(true);
   });
 
   test("is a no-op when the sources directory does not exist yet", () => {
     expect.hasAssertions();
 
-    reapAbandonedSourceMirrors();
+    reapAbandonedSourceMirrors(liveEntryName);
 
     expect(existsSync(sourcesDir())).toBe(false);
   });

@@ -16,13 +16,20 @@ import { join } from "node:path";
 // Later planning pass that finds it missing — including the no-delta early return a live repo takes on nearly every
 // Run — so an absent marker means no planning pass has completed for this entry since it died. Age settles it: past
 // SOURCE_MIRROR_UNMARKED_MAX_AGE_MS no live planner can still be in that gap. That republish is what this arm rests
-// On; without it a single swallowed marker rename would age a live repo's mirror into this sweep. Best-effort and off the critical
-// Path (via sweepStaleEntries → removeSnapshotDirectoriesDetached), so a WSL/probe failure resolving the cache root
-// Aborts the sweep, not the run. Win32-only — mirrors exist only there.
-export const reapAbandonedSourceMirrors = (): void => {
+// On; without it a single swallowed marker rename would age a live repo's mirror into this sweep.
+//
+// Which is why the caller runs this AFTER planning its own sync, and hands in that run's entry key: the republish the
+// Age arm rests on has then already happened for this repo, and the one entry no evidence can be allowed to condemn
+// — the one whose tree bwrap is about to mount as its `--overlay-src` lower — is excluded outright rather than
+// Argued about. A detached `rm -rf` takes no lock, so nothing downstream can serialize it against a live reader.
+// Best-effort and off the critical path (via sweepStaleEntries → removeSnapshotDirectoriesDetached), so a WSL/probe
+// Failure resolving the cache root aborts the sweep, not the run. Win32-only — mirrors exist only there.
+export const reapAbandonedSourceMirrors = (liveEntryName: string): void => {
   getResult(() => {
     const sourcesDir = join(getWslNativeCacheRoot(), VIRRUN_SOURCES_DIRECTORY_NAME);
     sweepStaleEntries(sourcesDir, (name) => {
+      if (name === liveEntryName) return false;
+
       const entryPath = join(sourcesDir, name);
       const originPath = join(entryPath, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME);
       // A marker that exists settles the entry on its own, whatever it says: a path that is gone means abandoned, a

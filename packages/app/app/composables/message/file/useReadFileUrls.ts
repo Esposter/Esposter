@@ -13,7 +13,11 @@ export const useReadFileUrls = () => {
     const fileUrlMap = new Map<FileEntity["id"], ReadFileUrl>();
     if (files.length === 0) return fileUrlMap;
 
-    const imageFiles = files.filter(({ mimetype }) => getMimeCategory(mimetype) === MimeCategory.Image);
+    // A file whose upload recorded no thumbnail gets no thumbnail url minted for it — nothing downstream has
+    // To discover that from a failed image load
+    const imageFiles = files.filter(
+      ({ hasThumbnail, mimetype }) => hasThumbnail && getMimeCategory(mimetype) === MimeCategory.Image,
+    );
     const [downloadFileSasUrls, downloadThumbnailSasUrls] = await Promise.all([
       $trpc.message.generateDownloadFileSasUrls.query({
         files: files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
