@@ -38,7 +38,7 @@ export const cloneFiles = async (
       }),
     ),
   ).match(
-    (clonedFiles) => clonedFiles,
+    (successfulClones) => successfulClones,
     // A clone is all-or-nothing to its caller — a rejection here posts no message and rewrites no content — so
     // Whatever landed before the failure is referenced by nothing and reclaimed by nothing until the whole room
     // Or resource is torn down, and each retry mints a fresh id rather than overwriting it. Clearing is safe
