@@ -208,7 +208,7 @@ catalog:
   survey-creator-core: ^3.0.0-beta.8
   survey-creator-vue: ^3.0.0-beta.8
   survey-vue3-ui: ^3.0.0-beta.8
-  temporal-polyfill: ^1.0.1
+  temporal-polyfill: ^1.0.2
   three: ^0.185.1
   three-globe: ^2.45.2
   trpc-nuxt: ^2.1.1

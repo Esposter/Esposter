@@ -586,8 +586,8 @@ catalogs:
       specifier: ^3.0.0-beta.8
       version: 3.0.0-beta.8
     temporal-polyfill:
-      specifier: ^1.0.1
-      version: 1.0.1
+      specifier: ^1.0.2
+      version: 1.0.2
     three:
       specifier: ^0.185.1
       version: 0.185.1
@@ -815,7 +815,7 @@ importers:
         version: 1.8.0
       '@fullcalendar/vue3':
         specifier: 'catalog:'
-        version: 7.0.2(temporal-polyfill@1.0.1)(vue@3.5.40(typescript@6.0.3))
+        version: 7.0.2(temporal-polyfill@1.0.2)(vue@3.5.40(typescript@6.0.3))
       '@koumoul/vjsf':
         specifier: 'catalog:'
         version: 4.5.4(supports-color@10.2.2)(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3))(vuetify@4.1.5(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))
@@ -1106,7 +1106,7 @@ importers:
         version: 3.0.0-beta.8(survey-core@3.0.0-beta.8)(vue@3.5.40(typescript@6.0.3))
       temporal-polyfill:
         specifier: 'catalog:'
-        version: 1.0.1
+        version: 1.0.2
       three:
         specifier: 'catalog:'
         version: 0.185.1
@@ -13600,11 +13600,11 @@ packages:
     resolution: {integrity: sha512-aoBAniQmmwtcKp/7BzsH8Cxzv8OL736p7v1ihGb5e9DJ9kTwGWHrQrVB5+lfVDzfGrdRzXch+ig7LHaY1JTOrg==}
     engines: {node: '>=8'}
 
-  temporal-polyfill@1.0.1:
-    resolution: {integrity: sha512-N2SoI9olnW7BUsU8RosDphZQl9s+WJ8O7PoJMFCr/e5/1rFkVI4GNOWaSeySG+UoP04foPYsnLWbJmbXOiShZg==}
+  temporal-polyfill@1.0.2:
+    resolution: {integrity: sha512-pTyp/7kfStJQbJ8YOHmcJItkxvOGCZHu3PaVgLvLnxFS7O12EPiWLElnRre/rw77z4TGZX/gvdqMXWn6ispQvA==}
 
-  temporal-spec@1.0.0:
-    resolution: {integrity: sha512-00Ahj1e1ifaERTMOIIGpOCdOo9IEk2m6GGSMedsn9a2SIsGLdOTbmME1Htv6IM82b6VHrzSUTIVc7YHy6hdhFQ==}
+  temporal-spec@1.0.1:
+    resolution: {integrity: sha512-wxVoanmDeavXie1vu2JaQ3WIc3JZnWAOYFBsJyATaVsXsycKYUflGsyBmrRSnoCpZJpwPyr38VpgSUlQ8CbFxg==}
 
   temporal-utils@1.0.1:
     resolution: {integrity: sha512-HAixuesxFQIUaQk3ptX2jhfO/FsOkgVkDDMawvp6n/fkB1q6BKfs3lURw9I+pK/2e2e/q/vrLrxmeqauBoyGMQ==}
@@ -16882,21 +16882,21 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@full-ui/headless-calendar@7.0.2(temporal-polyfill@1.0.1)':
+  '@full-ui/headless-calendar@7.0.2(temporal-polyfill@1.0.2)':
     dependencies:
-      temporal-polyfill: 1.0.1
+      temporal-polyfill: 1.0.2
 
-  '@fullcalendar/core@7.0.2(@full-ui/headless-calendar@7.0.2(temporal-polyfill@1.0.1))(temporal-polyfill@1.0.1)':
+  '@fullcalendar/core@7.0.2(@full-ui/headless-calendar@7.0.2(temporal-polyfill@1.0.2))(temporal-polyfill@1.0.2)':
     dependencies:
-      '@full-ui/headless-calendar': 7.0.2(temporal-polyfill@1.0.1)
-      temporal-polyfill: 1.0.1
+      '@full-ui/headless-calendar': 7.0.2(temporal-polyfill@1.0.2)
+      temporal-polyfill: 1.0.2
 
-  '@fullcalendar/vue3@7.0.2(temporal-polyfill@1.0.1)(vue@3.5.40(typescript@6.0.3))':
+  '@fullcalendar/vue3@7.0.2(temporal-polyfill@1.0.2)(vue@3.5.40(typescript@6.0.3))':
     dependencies:
-      '@full-ui/headless-calendar': 7.0.2(temporal-polyfill@1.0.1)
-      '@fullcalendar/core': 7.0.2(@full-ui/headless-calendar@7.0.2(temporal-polyfill@1.0.1))(temporal-polyfill@1.0.1)
+      '@full-ui/headless-calendar': 7.0.2(temporal-polyfill@1.0.2)
+      '@fullcalendar/core': 7.0.2(@full-ui/headless-calendar@7.0.2(temporal-polyfill@1.0.2))(temporal-polyfill@1.0.2)
       preact: 10.29.7
-      temporal-polyfill: 1.0.1
+      temporal-polyfill: 1.0.2
       vue: 3.5.40(typescript@6.0.3)
     transitivePeerDependencies:
       - preact-render-to-string
@@ -29243,12 +29243,12 @@ snapshots:
 
   temp-dir@2.0.0: {}
 
-  temporal-polyfill@1.0.1:
+  temporal-polyfill@1.0.2:
     dependencies:
-      temporal-spec: 1.0.0
+      temporal-spec: 1.0.1
       temporal-utils: 1.0.1
 
-  temporal-spec@1.0.0: {}
+  temporal-spec@1.0.1: {}
 
   temporal-utils@1.0.1: {}
 
