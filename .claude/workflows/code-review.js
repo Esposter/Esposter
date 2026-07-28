@@ -405,7 +405,13 @@ const canonFile = (raw) => {
   }
   return best || p;
 };
-const ingest = (cs, cap, kind) => cs.slice(0, cap).map((c) => ({ ...c, file: canonFile(c.file), kind }));
+// The cap is a budget, not a statement about the code, so a finder that hits it is reported: "found nothing more"
+// and "was not allowed to report more" are otherwise indistinguishable in the output, and a run that truncated
+// reads as complete coverage. A logged drop is the signal to re-run at a level with a wider per-finder cap.
+const ingest = (cs, cap, kind, label) => {
+  if (cs.length > cap) log(label + ": dropped " + (cs.length - cap) + " at cap " + cap + " — coverage truncated");
+  return cs.slice(0, cap).map((c) => ({ ...c, file: canonFile(c.file), kind }));
+};
 const loc = (c) => c.file + (c.line != null ? ":" + c.line : "");
 const inBounds = (i, n) => Number.isInteger(i) && i >= 0 && i < n;
 
@@ -613,7 +619,7 @@ const finderOuts = await parallel(
         (r) => {
           if (!r) return [];
           log(f.label + ": " + r.candidates.length + " candidates");
-          return ingest(r.candidates, f.cap, f.kind);
+          return ingest(r.candidates, f.cap, f.kind, f.label);
         },
       ),
   ),
@@ -644,7 +650,7 @@ if (P.sweep) {
     { label: "sweep", model: AGENT_MODEL, phase: "Sweep", schema: CANDIDATES_SCHEMA },
   );
   if (sweep && sweep.candidates.length > 0) {
-    const sliced = ingest(sweep.candidates, SWEEP_MAX, "correctness");
+    const sliced = ingest(sweep.candidates, SWEEP_MAX, "correctness", "sweep");
     candidatesSeen += sliced.length;
     log("sweep: " + sliced.length + " candidates");
     const sweepVerified = await verifyGroups(sliced);

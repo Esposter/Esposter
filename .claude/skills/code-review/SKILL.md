@@ -22,6 +22,17 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "<level>
 - `level` — `high` (default), `xhigh`, or `max`. Post-merge PR audits in this project run `high` unless asked otherwise.
 - **The Find phase partitions itself by diff size** — nothing to pass. Under 50 changed files the finders split by _lens_ (one angle each over the whole diff), which is right while the territory is small enough that every finder reads every hunk. At 50 or more they split by _seam_ — one finder per subsystem, tracing it end to end plus the boundary it hands data across, since lens-splitting a release-sized diff degenerates into parallel skims that all converge on whatever is loudest. Seam mode adds a whole-diff finder so a bad seam split cannot leave territory unread. The chosen mode is logged and lands in `stats.findMode`; a run is not comparable to another without it.
 - `target` — optional: PR number, branch, ref range, path, or free-form instructions (`"only review src/foo.ts"`). Omit for the working diff.
+
+### A run reports the top findings per finder, never all of them
+
+**The per-finder cap is the ceiling on what a run can report, and it is a budget — not a measurement of the code.** Each finder returns at most `perAngle` candidates and `ingest` truncates the rest; the reportable total is roughly `(finders × perAngle) + (cleanup finder × 5 × perAngle)`. So a level does not "find everything and stop" — it finds the most salient handful per seam or lens, and the next-ranked defects surface only on a later run, after the ones above them are fixed.
+
+This is why a large diff yields a steady tens-per-round trickle rather than one exhaustive list, and why "the last round found N, this round found N again" is not evidence the code is or isn't converging. Read it as sampling depth, not as a defect count.
+
+A finder that hits its cap now logs `dropped N at cap` — that line is the difference between "ran dry" and "was not allowed to report more", and it is the signal to re-run at a wider level. Absent it, the level's ceiling is what you got.
+
+Raise coverage by **raising the level** (`xhigh`/`max` widen `perAngle`, `maxSeams`, and add a sweep pass), never by re-running the same level hoping for different candidates: repeat rounds at one level re-pay the verification cost — the dominant one, since a verifier is spawned per candidate — to resample the same ranking.
+
 - **Never `Workflow({ name: "code-review" })`** — name resolution always loads the built-in, which inherits the premium session model onto ~20 finder/verifier agents (verified 2026-07-17, ~1.46M tokens). The project script pins `model: "opus"` on every agent (execution role per the model-delegation skill).
 - `args: "probe"` exits instantly with `{ probe: true }` — free parse check after editing the script.
 
