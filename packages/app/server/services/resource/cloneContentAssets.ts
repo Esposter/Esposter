@@ -37,7 +37,6 @@ const cloneAsset = async (
 export const cloneContentAssets = async <TContent>(
   content: TContent,
   destinationDirectoryName: string,
-  isPublishedAssetCloned: boolean,
 ): Promise<TContent> => {
   const urls = new Set<string>();
   deepVisitStrings(content, (value) => {
@@ -57,11 +56,12 @@ export const cloneContentAssets = async <TContent>(
   // Out of a blob name — the rewrite map below is what points content at it
   const clones = [...urls].flatMap((url) => {
     const resourceAssetPath = parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length));
-    // An unparseable url is data, not an error — carried exactly as the content wrote it. A published url
-    // Is an immutable snapshot reference: a duplicate clones it too (the copy must be fully self-contained
-    // Under its own directory), while a publish carries it as-is — re-cloning under a publish directory
-    // Would nest an unparseable published/{n}/published/{m} path
-    if (!resourceAssetPath || (resourceAssetPath.isPublished && !isPublishedAssetCloned)) return [];
+    // An unparseable url is data, not an error — carried exactly as the content wrote it. A published url is
+    // Cloned like any other: it names another publication's directory, which that resource's next unpublish
+    // Wipes wholesale, so carrying it verbatim would leave this snapshot's images 404ing on an operation its
+    // Owner never performed. The destination is always `{directory}/files/{uuid}|{name}`, so a clone under a
+    // Publish directory is exactly the five-segment shape parseResourceAssetPath accepts
+    if (!resourceAssetPath) return [];
     const { blobName } = resourceAssetPath;
     const fileSegment = blobName.slice(blobName.lastIndexOf("/") + 1);
     const separatorIndex = fileSegment.indexOf(ID_SEPARATOR);

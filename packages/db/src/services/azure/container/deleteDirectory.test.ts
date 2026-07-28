@@ -1,12 +1,12 @@
 import type { BatchSubResponse, ContainerClient } from "@azure/storage-blob";
 
 import { deleteDirectory } from "@/services/azure/container/deleteDirectory";
-import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/db-schema";
+import { AzureContainer, MAX_BLOB_BATCH_DELETIONS } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 describe(deleteDirectory, () => {
-  const containerUrl = "https://account.blob.core.windows.net/resource-assets";
+  const containerUrl = `https://account.blob.core.windows.net/${AzureContainer.ResourceAssets}`;
   const prefix = crypto.randomUUID();
 
   // The batch resolves whatever its blobs did, so a status per url is what a test varies

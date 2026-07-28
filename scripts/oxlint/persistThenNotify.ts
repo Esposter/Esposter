@@ -44,20 +44,28 @@ const getIsCertainPromiseExpression = (expression: ESTree.Expression): boolean =
   (["catch", "finally", "then"].includes(expression.callee.property.name) ||
     (expression.callee.object.type === "Identifier" && expression.callee.object.name === "Promise"));
 const FUNCTION_NODE_TYPES = new Set(["ArrowFunctionExpression", "FunctionDeclaration", "FunctionExpression"]);
-// Every value a block's promise can settle OR reject on without crossing into a nested function: the
-// Arguments of its `return`s (what it resolves to, which chains if a promise) and of its `await`s (what a
-// Rejection propagates from). A block with neither settles on `undefined`, which never rejects — reading
-// Only the returns would miss a bare `await g(x)` in a block body, deeming the whole fan-out safe
-const getBlockEffects = (value: unknown): ESTree.Expression[] => {
-  if (Array.isArray(value)) return value.flatMap((item) => getBlockEffects(item));
+// Everything a function reaches without crossing into a nested one; `select` decides what a node contributes,
+// And returning a value stops the descent there. The two stop rules are what every caller needs held: a nested
+// Function's body belongs to that function, not this one, and nodes carry a `parent` backreference that cycles.
+const collectOwnNodes = <T>(value: unknown, select: (node: ESTree.Node) => T[] | undefined): T[] => {
+  if (Array.isArray(value)) return value.flatMap((item) => collectOwnNodes(item, select));
   if (value === null || typeof value !== "object") return [];
   const node = value as ESTree.Node;
   if (typeof node.type !== "string" || FUNCTION_NODE_TYPES.has(node.type)) return [];
-  if (node.type === "ReturnStatement") return node.argument ? [node.argument] : [];
-  if (node.type === "AwaitExpression") return [node.argument];
-  // Nodes carry a `parent` backreference, so walking every value would cycle
-  return Object.entries(node).flatMap(([key, child]) => (key === "parent" ? [] : getBlockEffects(child)));
+  const selected = select(node);
+  if (selected) return selected;
+  return Object.entries(node).flatMap(([key, child]) => (key === "parent" ? [] : collectOwnNodes(child, select)));
 };
+// Every value a block's promise can settle OR reject on: the arguments of its `return`s (what it resolves to,
+// Which chains if a promise) and of its `await`s (what a rejection propagates from). A block with neither
+// Settles on `undefined`, which never rejects — reading only the returns would miss a bare `await g(x)` in a
+// Block body, deeming the whole fan-out safe
+const getBlockEffects = (value: unknown): ESTree.Expression[] =>
+  collectOwnNodes(value, (node) => {
+    if (node.type === "ReturnStatement") return node.argument ? [node.argument] : [];
+    else if (node.type === "AwaitExpression") return [node.argument];
+    else return undefined;
+  });
 // The identifier a call chain ultimately dispatches on: `getResultAsync(...).orTee(...).unwrapOr(...)`
 // Roots at `getResultAsync`; `containerClient.deleteBlob(...)` roots at nothing nameable (undefined).
 const rootCalleeName = (expression: ESTree.Expression): string | undefined => {
@@ -69,16 +77,10 @@ const rootCalleeName = (expression: ESTree.Expression): string | undefined => {
   if (expression.type === "MemberExpression") return rootCalleeName(expression.object);
   return undefined;
 };
-// A `throw` this function reaches without entering a nested one — the same walk shape as getBlockEffects, and
-// Nested for the same reason: a throw inside a deeper callback belongs to that callback, not to this handler.
-const getHasOwnThrow = (value: unknown): boolean => {
-  if (Array.isArray(value)) return value.some((item) => getHasOwnThrow(item));
-  if (value === null || typeof value !== "object") return false;
-  const node = value as ESTree.Node;
-  if (typeof node.type !== "string" || FUNCTION_NODE_TYPES.has(node.type)) return false;
-  if (node.type === "ThrowStatement") return true;
-  return Object.entries(node).some(([key, child]) => key !== "parent" && getHasOwnThrow(child));
-};
+// A `throw` this function reaches without entering a nested one: one inside a deeper callback belongs to that
+// Callback, not to this handler.
+const getHasOwnThrow = (value: unknown): boolean =>
+  collectOwnNodes(value, (node) => (node.type === "ThrowStatement" ? [true] : undefined)).length > 0;
 // An err handler that puts the rejection back rather than absorbing it.
 const getIsRethrowingHandler = (node: unknown): boolean => {
   if (node === null || typeof node !== "object") return false;

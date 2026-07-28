@@ -21,6 +21,10 @@ export const computeEnvironmentKey = (cwd: string): string => {
   const nodeVersion = getSandboxNodeVersion();
   const major = NODE_MAJOR_REGEX.exec(nodeVersion)?.groups?.major;
   if (!major)
-    throw new InvalidOperationError(Operation.Read, cwd, `sandbox node version is unreadable: "${nodeVersion}"`);
+    throw new InvalidOperationError(
+      Operation.Read,
+      computeEnvironmentKey.name,
+      `sandbox node version is unreadable: "${nodeVersion}" for ${cwd}. On win32 this is the node a WSL login shell puts on PATH — check that one does.`,
+    );
   return createHash("sha256").update(computeLockfileHash(cwd)).update("\0").update(major).digest("hex");
 };

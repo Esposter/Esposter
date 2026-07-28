@@ -23,5 +23,6 @@ export const prodEgstEsposterAe001: azure_native.eventgrid.SystemTopic = new azu
   },
   {
     parent: prodstesposter001,
+    protect: true,
   },
 );

@@ -35,6 +35,7 @@ import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardR
 import { generateUploadFileSasEntities } from "@esposter/db";
 import {
   AzureContainer,
+  BLOB_SEGMENT_MAX_LENGTH,
   BLOB_SEGMENT_REGEX,
   DatabaseEntityType,
   fileEntitySchema,
@@ -76,7 +77,7 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
 const deleteFileInputSchema = z.object({
   // The client recovers this from the stable asset url, so it is always the single `{id}|{filename}` segment
   // GetBlobName emits — a separator or a `..` could only ever be an attempt to climb out of {id}/files/
-  blobPath: z.string().min(1).max(MAX_READ_LIMIT).regex(BLOB_SEGMENT_REGEX),
+  blobPath: z.string().min(1).max(BLOB_SEGMENT_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
   id: selectResourceSchema.shape.id,
 });
 

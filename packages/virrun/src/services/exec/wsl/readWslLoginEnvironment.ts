@@ -51,8 +51,11 @@ const CAPTURE_SCRIPT = buildWslLoginShellCommand(
 // Key its caches on the node the sandbox will really use. GetResult turns a missing WSL/shell (or a non-zero exit)
 // Into the empty environment rather than a throw: the caller then injects nothing and the command runs under the
 // Default PATH, so a broken capture degrades to today's behaviour. The persisted tier is the real win — the capture
-// Is otherwise a login-shell spawn whose rc startup is not free. Only a successful (non-empty PATH) capture is
-// Persisted, so a transient WSL/shell failure re-probes next process rather than caching the default.
+// Is otherwise a login-shell spawn whose rc startup is not free. Only a capture that answered both questions is
+// Persisted, so a transient WSL/shell failure re-probes next process rather than caching the default. Both, because
+// A capture that resolved a PATH but found no node on it still fails every run through it — getSandboxNodeVersion
+// Reports "" and computeEnvironmentKey refuses to key on it — and persisting that pins the failure for the cache's
+// Whole age bound, across processes, with no run able to recover on its own.
 export const readWslLoginEnvironment: () => WslLoginEnvironment = createProbeCache({
   probe: () =>
     getResult(() => execWsl(["--exec", "sh", "-c", CAPTURE_SCRIPT], { timeout: WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS }))
@@ -62,7 +65,7 @@ export const readWslLoginEnvironment: () => WslLoginEnvironment = createProbeCac
       }))
       .unwrapOr(EMPTY_LOGIN_ENVIRONMENT),
   readPersistedCache: readWslLoginEnvironmentCache,
-  shouldPersist: ({ path }) => Boolean(path),
+  shouldPersist: ({ nodeVersion, path }) => Boolean(nodeVersion && path),
   writePersistedCache: (cache) => {
     writeWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, cache);
   },

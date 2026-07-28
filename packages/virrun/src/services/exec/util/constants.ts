@@ -40,7 +40,6 @@ export const CAPABILITY_CACHE_FILENAME = "capability.json";
 // GetLocalCacheDirectory (the Windows `~`), not the WSL-ext4 cache root. See readWslEnvironmentCache.
 export const WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME = "wsl-login-environment.json";
 export const WSL_CACHE_ROOT_CACHE_FILENAME = "wsl-cache-root.json";
-export const WSL_EXEC_NODE_VERSION_CACHE_FILENAME = "wsl-exec-node-version.json";
 // How long a captured WSL environment stays reusable. The host fingerprint (platform + kernel release) can't see
 // A toolchain change — switching the node manager's active version rewrites neither — so without an expiry a capture
 // Taken before a node upgrade pins the sandbox to the old node forever, silently, until a manual `cache clean`. The

@@ -50,7 +50,13 @@ describe(computeEnvironmentKey, () => {
     const workspace = createWorkspace(lockfileContent);
 
     expect(() => computeEnvironmentKey(workspace)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, workspace, `sandbox node version is unreadable: ""`).message}]`,
+      `[InvalidOperationError: ${
+        new InvalidOperationError(
+          Operation.Read,
+          computeEnvironmentKey.name,
+          `sandbox node version is unreadable: "" for ${workspace}. On win32 this is the node a WSL login shell puts on PATH — check that one does.`,
+        ).message
+      }]`,
     );
   });
 

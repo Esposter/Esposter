@@ -10,4 +10,4 @@ export const transformPublishedBlobUrls = <TContent>(
   _ctx: AuthedContext,
   resource: Resource,
   content: TContent,
-): Promise<TContent> => cloneContentAssets(content, createPublishedAssetsDirectoryName(resource.id), false);
+): Promise<TContent> => cloneContentAssets(content, createPublishedAssetsDirectoryName(resource.id));

@@ -15,6 +15,6 @@ import { AzureContainer } from "@esposter/db-schema";
 // The content is written back as json and never read here, so it stays `unknown` rather than generic —
 // The caller's schema already narrowed it on the way in
 export const storeSelfContainedContent = async (id: Resource["id"], content: unknown): Promise<void> => {
-  const clonedContent = await cloneContentAssets(content, id, true);
+  const clonedContent = await cloneContentAssets(content, id);
   await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(clonedContent));
 };

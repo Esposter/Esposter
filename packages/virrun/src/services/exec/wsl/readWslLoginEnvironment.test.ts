@@ -120,4 +120,18 @@ describe("readWslLoginEnvironment", () => {
 
     expect(existsSync(join(getCacheHome(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME))).toBe(false);
   });
+
+  test("does not persist a capture that resolved a PATH but found no node on it", async () => {
+    expect.hasAssertions();
+
+    execFileSync.mockReturnValue(
+      `${VIRRUN_LOGIN_PATH_BEGIN_MARKER}${path}${VIRRUN_LOGIN_PATH_END_MARKER}${VIRRUN_LOGIN_NODE_BEGIN_MARKER}${VIRRUN_LOGIN_NODE_END_MARKER}`,
+    );
+    const { readWslLoginEnvironment } = await import("@/services/exec/wsl/readWslLoginEnvironment");
+
+    expect(readWslLoginEnvironment()).toStrictEqual({ nodeVersion: "", path });
+    // Persisting it would pin every later process to a version computeEnvironmentKey refuses to key on, for the
+    // Cache's whole age bound, with no run able to recover on its own.
+    expect(existsSync(join(getCacheHome(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME))).toBe(false);
+  });
 });

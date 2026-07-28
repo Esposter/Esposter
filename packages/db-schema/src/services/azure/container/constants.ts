@@ -1,5 +1,6 @@
 import { AzureContainer } from "@/models/azure/container/AzureContainer";
 import { dayjs } from "@/services/dayjs";
+import { ID_SEPARATOR, UUID_LENGTH } from "@esposter/shared";
 
 export const DEAD_LETTER_ARCHIVED_PREFIX = "archived/";
 // Storage's BlobCreated subject shape; the replay subscription filters on it and the replay handler
@@ -11,6 +12,9 @@ export const DEAD_LETTER_QUARANTINE_PREFIX = "quarantine/";
 // Carrying a separator or a dot segment steers the write or the delete out of the prefix the caller was authorized for.
 export const BLOB_SEGMENT_REGEX = /^(?!\.{1,2}$)[^/\\]+$/u;
 export const FILENAME_MAX_LENGTH = 1000;
+// A `{uuid}|{filename}` blob segment at its longest, for the inputs that carry one whole. Derived rather than
+// Restated, so a filename the upload accepts can never be one the delete rejects.
+export const BLOB_SEGMENT_MAX_LENGTH = UUID_LENGTH + ID_SEPARATOR.length + FILENAME_MAX_LENGTH;
 export const FILE_MAX_LENGTH = 10;
 // The publish/duplicate asset clone runs on the request path over however many assets the content references —
 // A page embedding hundreds of images would otherwise open that many concurrent probes and copies at once, which

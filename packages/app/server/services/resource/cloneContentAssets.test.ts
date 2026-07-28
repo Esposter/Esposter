@@ -54,7 +54,7 @@ describe(cloneContentAssets, () => {
     const content = {
       html: `<img src="${getResourceAssetUrl(workingBlobName)}"><img src="${getResourceAssetUrl(publishedBlobName)}">`,
     };
-    const clonedContent = await cloneContentAssets(content, destinationDirectoryName, true);
+    const clonedContent = await cloneContentAssets(content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
     expect(clonedBlobNames).toHaveLength(2);
@@ -68,7 +68,7 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
-    await cloneContentAssets(content, destinationDirectoryName, true);
+    await cloneContentAssets(content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
     const prefix = `${destinationDirectoryName}/${FILES_DIRECTORY_SEGMENT}/`;
@@ -90,7 +90,7 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
-    const clonedContent = await cloneContentAssets(content, sourceResourceId, true);
+    const clonedContent = await cloneContentAssets(content, sourceResourceId);
     const clonedBlobNames: string[] = [];
     for await (const { name } of containerClient.listBlobsFlat({
       prefix: `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/`,

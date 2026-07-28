@@ -13,7 +13,7 @@ import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AzureContainer, resources, ResourceType } from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
 // Here only the router wiring: resource type + content schema round-trip.
@@ -79,20 +79,22 @@ describe("webpage", () => {
     await caller.publishResource({ id: newResource.id });
     // The clone directory is minted per publish attempt rather than keyed by the version the transaction is
     // About to claim, so the container is what names it
-    const clonedBlobName = [...(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.keys() ?? [])].find(
+    const clonedBlobNames = [...(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.keys() ?? [])].filter(
       (publishedBlobPath) =>
         publishedBlobPath.startsWith(`${newResource.id}/${PUBLISHED_DIRECTORY_SEGMENT}/`) &&
         // Only the filename carries over — the clone is written under a freshly minted asset id
         publishedBlobPath.endsWith(`${ID_SEPARATOR}a`),
     );
-    assert(clonedBlobName);
 
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
-    // The working-copy asset is cloned and rewritten, an already-published reference is immutable and
-    // Carried as-is
-    expect(publishedContent.content.html).toBe(
-      `<img src="${getResourceAssetUrl(clonedBlobName)}"><img src="${publishedUrl}">`,
-    );
+    // Both references are cloned. A foreign published url names another resource's publication directory, which
+    // That resource's next unpublish wipes wholesale — carried verbatim it would leave this snapshot's images
+    // 404ing on an operation this owner never performed
+    expect(clonedBlobNames).toHaveLength(2);
+    for (const clonedBlobName of clonedBlobNames)
+      expect(publishedContent.content.html).toContain(getResourceAssetUrl(clonedBlobName));
+    expect(publishedContent.content.html).not.toContain(url);
+    expect(publishedContent.content.html).not.toContain(publishedUrl);
   });
 });

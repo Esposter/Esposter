@@ -12,7 +12,6 @@ import {
   CACHE_CLEAN_TIMEOUT_MS,
   CAPABILITY_CACHE_FILENAME,
   WSL_CACHE_ROOT_CACHE_FILENAME,
-  WSL_EXEC_NODE_VERSION_CACHE_FILENAME,
   WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME,
 } from "@/services/exec/util/constants";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
@@ -63,7 +62,6 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
           join(getGlobalCacheDirectory(), CAPABILITY_CACHE_FILENAME),
           join(getLocalCacheDirectory(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME),
           join(getLocalCacheDirectory(), WSL_CACHE_ROOT_CACHE_FILENAME),
-          join(getLocalCacheDirectory(), WSL_EXEC_NODE_VERSION_CACHE_FILENAME),
         ]) {
           rmSync(probeCachePath, { force: true });
           process.stderr.write(`${formatVirrunLine(`removed ${colorize(probeCachePath, Color.Red)}`)}\n`);
