@@ -1,5 +1,6 @@
 import type { Promisable } from "type-fest";
 
+import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
 import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 
@@ -46,7 +47,9 @@ export const useMutation = () => {
             if (checkIsStale()) return;
             rollback?.();
             if (onError) await onError(error);
-            else createAlert(error.message, "error");
+            // errorLink already put the codes it owns in front of the user, so alerting the same message here
+            // Would stack two identical toasts on every mutation this primitive runs
+            else if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
           },
         );
       },

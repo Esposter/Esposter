@@ -34,9 +34,9 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   // Out together and are merged once every response is in — serialised, the last chunk's images stay broken
   // For as many round-trip latencies as there are chunks. Merging after they all resolve is what keeps the
   // Single read-modify-write of the room map from losing a concurrent chunk's entries.
-  const storeReadFileUrls = async (roomId: string, files: FileEntity[]) => {
+  const storeReadFileUrls = async (roomId: string, files: FileEntity[], isBackground?: true) => {
     const newFileUrlMaps = await Promise.all(
-      chunk(files, MAX_READ_LIMIT).map((fileChunk) => readFileUrls(fileChunk, roomId)),
+      chunk(files, MAX_READ_LIMIT).map((fileChunk) => readFileUrls(fileChunk, roomId, isBackground)),
     );
     const roomFileUrlMap = getData(roomId) ?? new Map<string, ReadFileUrl>();
     for (const newFileUrlMap of newFileUrlMaps)
@@ -60,7 +60,10 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   // Broken and fail every download until reload. Sweeping re-mints only the entries inside the refresh margin;
   // A tick that finds none issues no query at all, which is the overwhelmingly common case.
   // A sweep that rejects is never retried by anything, so it swallows: the next tick re-reads the same expiring
-  // Entries, and surfacing an alert for a background re-mint would interrupt a user who lost nothing yet
+  // Entries, and surfacing an alert for a background re-mint would interrupt a user who lost nothing yet.
+  // Swallowing here is not enough on its own, which is why the read is marked background: the room may be one
+  // The user was just banned from or removed from, and errorLink navigates to the login page on the FORBIDDEN
+  // That comes back — inside the link chain, before the rejection ever reaches this handler to be swallowed
   const refreshExpiringFileUrls = () =>
     getResultAsync(async () => {
       const roomId = roomStore.currentRoomId;
@@ -77,7 +80,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
         // Duration and the room serves multi-megabyte originals until reload. Eligible, it retries next tick.
         else return getHasThumbnail(file) && !fileUrl.thumbnailUrl;
       });
-      await storeReadFileUrls(roomId, expiringFiles);
+      await storeReadFileUrls(roomId, expiringFiles, true);
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
   if (!getIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);

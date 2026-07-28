@@ -397,6 +397,13 @@ export const baseMessageRouter = router({
     input: { lastEventId, roomId },
     signal,
   }) {
+    // Listening starts BEFORE the catch-up, and the two overlap by design. `on` attaches its listener when it is
+    // Called and queues what it receives until this loop consumes it, so a message committed while the catch-up
+    // Is still paging is held rather than missed — the catch-up reads MessagesAscending, whose index row lands
+    // Ahead of the entity every read serves (see createMessage), so a page can step past a message whose entity
+    // Has not landed yet and never come back for it. Overlapping instead delivers such a message twice, which
+    // The client's create handler already absorbs by id — the same guard reconnect catch-up needs anyway
+    const createdMessages = on(messageEventEmitter, "createMessage", { signal });
     if (lastEventId) {
       let cursor: string = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROWKEY_SORT_ITEM]);
       let hasMore = true;
@@ -415,7 +422,7 @@ export const baseMessageRouter = router({
       }
     }
 
-    for await (const [[data, { isSendToSelf, sessionId }]] of on(messageEventEmitter, "createMessage", { signal })) {
+    for await (const [[data, { isSendToSelf, sessionId }]] of createdMessages) {
       const dataToYield: StandardMessageEntity[] = [];
 
       for (const newMessage of data)

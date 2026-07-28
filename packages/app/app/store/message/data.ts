@@ -12,6 +12,7 @@ import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/Composi
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
@@ -55,7 +56,7 @@ export const useDataStore = defineStore("message/data", () => {
       () => true,
       async (error) => {
         await storeDeleteMessage(newMessage);
-        createAlert(error.message, "error");
+        if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         return false;
       },
     );
@@ -80,8 +81,10 @@ export const useDataStore = defineStore("message/data", () => {
         // From its own sender (the subscription echo is filtered for the sending session, so nothing restores
         // It) and invites the duplicate resend /docs/architecture/persist-then-notify exists to prevent. The
         // Bubble also stays the sender's copy of a genuinely rejected message — the composer is already reset —
-        // So it holds its loading state and the alert says what happened
-        createAlert(error.message, "error");
+        // So it holds its loading state and the alert says what happened. Only when errorLink has not already
+        // Said it: a rejected send is characteristically one of the codes it owns (slowmode, a Zod rejection),
+        // And alerting again puts two identical toasts on screen for one send
+        if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         return false;
       },
     );
@@ -163,9 +166,9 @@ export const useDataStore = defineStore("message/data", () => {
     // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor, the reply
     // Target and the composer's attachments (revoking their object urls), so a send that fails before the
     // Bubble exists would take the text and files the user just typed with it
-    if (await createMessage(input, () => MessageHookMap.ResetSend.run(editor))) clearDraft(input.roomId);
+    if (await createMessage(input, () => MessageHookMap.ResetSend.run(input.roomId, editor))) clearDraft(input.roomId);
   };
-  MessageHookMap.ResetSend.register((editor) => {
+  MessageHookMap.ResetSend.register((_roomId, editor) => {
     editor?.commands.clearContent(true);
   });
   // Only expose the internal store CRUD functions for subscriptions; everything else directly calls

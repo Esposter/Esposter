@@ -120,6 +120,26 @@ describe(useDataStore, () => {
     expect(resetSendSpy).not.toHaveBeenCalled();
   });
 
+  // The reset runs behind the optimistic bubble, so a room switch can land in between — every registration is
+  // Handed the room the send was for rather than resolving the current one after the await
+  test("storeSendMessage resets the composer of the room the send was for", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const { storeSendMessage } = dataStore;
+    server.use(
+      trpcMsw.message.createMessage.mutation(() =>
+        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      ),
+    );
+    const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
+    await storeSendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+
+    expect(resetSendSpy).toHaveBeenCalledWith(roomId, undefined);
+  });
+
   // A successful create also mirrors the server's thread auto-follow, so the reply's root is followed locally
   // Without the round trip the drawer would otherwise need
   test("createMessage mirrors the thread auto-follow of a reply", async () => {

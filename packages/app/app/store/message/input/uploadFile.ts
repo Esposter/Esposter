@@ -70,16 +70,19 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     );
     return removedFiles;
   };
-  // The one place the current room may stand in for a captured room id: nothing awaits between a click (or the
-  // Send that just resolved for this room) and the write, so the two cannot disagree.
+  // The one place the current room may stand in for a captured room id, and only for the composer's own delete
+  // Affordance: nothing awaits between that click and the write, so the two cannot disagree. Anything reached
+  // Through a hook or a resolved send captures its room instead — the await is where they come apart.
   const removeCurrentUploadFiles = (ids: string[]) => {
     const roomId = roomStore.currentRoomId;
     if (!roomId) return;
 
     removeUploadFiles(roomId, ids);
   };
-  MessageHookMap.ResetSend.register(() => {
-    removeCurrentUploadFiles(files.value.map(({ id }) => id));
+  // Keyed by the room the send was for, like every other composer write here: the reset runs behind the optimistic
+  // Bubble, so the current room can already be a different one by the time it fires
+  MessageHookMap.ResetSend.register((roomId) => {
+    removeUploadFiles(roomId, getFiles(roomId)?.map(({ id }) => id) ?? []);
   });
   return {
     files,

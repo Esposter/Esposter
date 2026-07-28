@@ -9,6 +9,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { readMessages } from "@@/server/services/message/readMessages";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
@@ -43,6 +44,14 @@ import {
 import { MockContainerDatabase, MockEventGridDatabase, MockSearchDatabase, MockTableDatabase } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+const { readMessagesMock } = vi.hoisted(() => ({ readMessagesMock: vi.fn<typeof readMessages>() }));
+
+vi.mock(import("@@/server/services/message/readMessages"), async (importOriginal) => {
+  const original = await importOriginal();
+  readMessagesMock.mockImplementation(original.readMessages);
+  return { readMessages: readMessagesMock };
+});
 
 const getMessage = (userId: string) =>
   `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}"></span>`;
@@ -383,6 +392,48 @@ describe("message", () => {
     expect(data).toHaveLength(2);
     expect(takeOne(data).rowKey).toBe(secondMessage.rowKey);
     expect(takeOne(data, 1).rowKey).toBe(thirdMessage.rowKey);
+  });
+
+  // The catch-up pages MessagesAscending, whose index row lands ahead of the entity every read serves, so a page
+  // Can step past a message whose entity has not landed yet and never come back for it. The emitter listener is
+  // What covers that window, which it can only do if it is already attached while the catch-up is still paging
+  test("delivers a message created while the catch-up is still paging", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    const ownerMessage = await messageCaller.createMessage({
+      message: getMessage(getMockSession().user.id),
+      roomId: newRoom.id,
+    });
+    const onCreateMessage = await messageCaller.onCreateMessage({
+      lastEventId: ownerMessage.rowKey,
+      roomId: newRoom.id,
+    });
+    // Holds the catch-up open across the racing send, which is the window the listener used to be attached after
+    const { promise, resolve } = Promise.withResolvers<void>();
+    readMessagesMock.mockImplementationOnce(async () => {
+      await promise;
+      return { hasMore: false, items: [], nextCursor: "" };
+    });
+    await mockSessionOnce(mockContext.db, user);
+    const trackedData = await withAsyncIterator(
+      () => onCreateMessage,
+      async (iterator) => {
+        const emit = iterator.next();
+        await messageCaller.createMessage({ message: getMessage(user.id), roomId: newRoom.id });
+        resolve();
+        return emit;
+      },
+    );
+
+    assert(!trackedData.done);
+
+    const [, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
+
+    expect(data).toHaveLength(1);
   });
 
   test("on creates typing", async () => {

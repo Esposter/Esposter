@@ -10,7 +10,13 @@ import { getResultAsync, takeOne } from "@esposter/shared";
 // Thumbnail the message list renders inline — in one round trip per kind, however many files are on screen.
 export const useReadFileUrls = () => {
   const { $trpc } = useNuxtApp();
-  return async (files: FileEntity[], roomId: string): Promise<Map<FileEntity["id"], ReadFileUrl>> => {
+  // `isBackground` marks a read nobody asked for (the hourly re-mint sweep), so its rejection cannot move or
+  // Interrupt the user — see errorLink, which is where a FORBIDDEN would otherwise redirect to the login page
+  return async (
+    files: FileEntity[],
+    roomId: string,
+    isBackground?: true,
+  ): Promise<Map<FileEntity["id"], ReadFileUrl>> => {
     const fileUrlMap = new Map<FileEntity["id"], ReadFileUrl>();
     if (files.length === 0) return fileUrlMap;
 
@@ -18,18 +24,24 @@ export const useReadFileUrls = () => {
     // To discover that from a failed image load
     const imageFiles = files.filter((file) => getHasThumbnail(file));
     const [downloadFileSasUrls, downloadThumbnailSasUrls] = await Promise.all([
-      $trpc.message.generateDownloadFileSasUrls.query({
-        files: files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
-        roomId,
-      }),
+      $trpc.message.generateDownloadFileSasUrls.query(
+        {
+          files: files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
+          roomId,
+        },
+        { context: { isBackground } },
+      ),
       // The thumbnail is decoration on top of the original, so its query resolves to nothing on failure
       // Instead of failing the batch the message bubble actually needs.
       imageFiles.length > 0
         ? getResultAsync(() =>
-            $trpc.message.generateDownloadThumbnailSasUrls.query({
-              files: imageFiles.map(({ id }) => ({ id })),
-              roomId,
-            }),
+            $trpc.message.generateDownloadThumbnailSasUrls.query(
+              {
+                files: imageFiles.map(({ id }) => ({ id })),
+                roomId,
+              },
+              { context: { isBackground } },
+            ),
           ).unwrapOr([])
         : [],
     ]);
