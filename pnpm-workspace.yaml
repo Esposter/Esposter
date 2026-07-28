@@ -180,7 +180,7 @@ catalog:
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
   node-html-parser: ^9.0.0
-  nuxt: ^4.5.0
+  nuxt: ^4.5.1
   nuxt-security: ^2.6.0
   oxfmt: ^0.59.0
   oxlint: ^1.74.0
