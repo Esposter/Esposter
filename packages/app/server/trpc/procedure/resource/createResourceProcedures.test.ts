@@ -293,6 +293,20 @@ describe("createResourceProcedures", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
+  // A sweep is bounded at the instant it is decided, so one published for a resource that has nothing published
+  // Takes whatever a concurrent first publish has just cloned — and a delete that removed no row leaves the
+  // Version sequence untouched, so nothing downstream can tell it happened
+  test("publishes no snapshot sweep when nothing was published", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const publishedEventCount = MockEventGridDatabase.get("")?.length ?? 0;
+
+    await dashboardCaller.unpublishResource({ id: newResource.id });
+
+    expect(MockEventGridDatabase.get("")?.length ?? 0).toBe(publishedEventCount);
+  });
+
   test("fails read published content for unpublished resource", async () => {
     expect.hasAssertions();
 

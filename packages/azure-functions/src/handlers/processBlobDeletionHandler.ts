@@ -22,7 +22,7 @@ export const processBlobDeletionHandler: EventGridHandler = (event, context) => 
     const blobNames =
       "blobNames" in data
         ? data.blobNames
-        : await listBlobNames(containerClient, data.prefix, { createdBefore: data.createdBefore, isDeep: true });
+        : await listBlobNames(containerClient, data.prefix, { createdBefore: data.createdBefore });
     // Deleting only if the blob exists: a redelivery or a dead-letter replay re-runs the whole batch, and the blobs
     // An earlier attempt already removed must not fail the ones it did not reach. A prefix set has no ceiling, so
     // The deletes go out in bounded waves — one request per blob all at once exhausts sockets and throttles

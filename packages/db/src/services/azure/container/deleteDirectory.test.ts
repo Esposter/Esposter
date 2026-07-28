@@ -47,7 +47,7 @@ describe(deleteDirectory, () => {
     expect.hasAssertions();
 
     const { containerClient, deleteBlobs } = setupContainerClient([`${prefix}/a`, `${prefix}/#`, `${prefix}/?`]);
-    await deleteDirectory(containerClient, prefix, true);
+    await deleteDirectory(containerClient, prefix);
 
     // Every `#`/`?` is percent-encoded, so each url addresses the blob that actually exists
     expect(takeOne(deleteBlobs.mock.calls)[0]).toStrictEqual([
@@ -65,7 +65,7 @@ describe(deleteDirectory, () => {
 
     const blobNames = Array.from({ length: MAX_BLOB_BATCH_DELETIONS + 1 }, (_value, index) => `${prefix}/${index}`);
     const { containerClient, deleteBlobs } = setupContainerClient(blobNames);
-    await deleteDirectory(containerClient, prefix, true);
+    await deleteDirectory(containerClient, prefix);
 
     expect(deleteBlobs).toHaveBeenCalledTimes(2);
     expect(takeOne(deleteBlobs.mock.calls)[0]).toHaveLength(MAX_BLOB_BATCH_DELETIONS);
@@ -84,7 +84,7 @@ describe(deleteDirectory, () => {
 
     const { containerClient } = setupContainerClient([`${prefix}/a`], 403);
 
-    await expect(deleteDirectory(containerClient, prefix, true)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(deleteDirectory(containerClient, prefix)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Delete, name: deleteDirectory, 403]`,
     );
   });
@@ -96,6 +96,6 @@ describe(deleteDirectory, () => {
 
     const { containerClient } = setupContainerClient([`${prefix}/a`], 404);
 
-    await expect(deleteDirectory(containerClient, prefix, true)).resolves.toBeUndefined();
+    await expect(deleteDirectory(containerClient, prefix)).resolves.toBeUndefined();
   });
 });

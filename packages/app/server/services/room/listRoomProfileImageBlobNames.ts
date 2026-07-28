@@ -14,9 +14,7 @@ export const listRoomProfileImageBlobNames = async (
   { createdBefore }: ListRoomProfileImageBlobNamesOptions = {},
 ): Promise<string[]> => {
   const blobNamesList = await Promise.all(
-    getRoomProfileImageBlobPrefixes(roomId).map((prefix) =>
-      listBlobNames(containerClient, prefix, { createdBefore, isDeep: true }),
-    ),
+    getRoomProfileImageBlobPrefixes(roomId).map((prefix) => listBlobNames(containerClient, prefix, { createdBefore })),
   );
   return blobNamesList.flat();
 };

@@ -340,8 +340,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Them. Re-cloning now writes past the bound, and the version is already claimed, so the repair is the
         // Transform and the upload again rather than another publish. A concurrent publish trips this too and
         // Pays one redundant clone; a swept snapshot cannot slip through, because a delete restarts the
-        // Sequence at 1 and any successor this attempt could expect is at least 2
-        if (previousPublication && publication.publishVersion !== previousPublication.publishVersion + 1)
+        // Sequence at 1 and any successor this attempt could expect is at least 2.
+        // An attempt that read no row expects to claim 1 — reading the successor off the row alone exempted
+        // Every first publish (and every publish after an unpublish) from the check entirely
+        if (publication.publishVersion !== (previousPublication?.publishVersion ?? 0) + 1)
           await useUpload(
             AzureContainer.ResourceAssets,
             getPublishedContentBlobName(id, publication.publishVersion),
@@ -412,19 +414,27 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
       const { id } = ctx.resource;
-      await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
+      const [deletedPublication] = await ctx.db
+        .delete(resourcePublications)
+        .where(eq(resourcePublications.resourceId, id))
+        .returning();
 
       // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
       // Still holding a cached short-lived SAS, and unpublished snapshots must not linger regardless — cleanup
       // Goes through the one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)
       // The snapshot directory grows with every retained publication, so the handler enumerates it — walking
-      // It here would put an unbounded listing on the unpublish request itself
-      await publishBlobPrefixDeletion(
-        id,
-        AzureContainer.ResourceAssets,
-        `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`,
-        new Date(),
-      );
+      // It here would put an unbounded listing on the unpublish request itself.
+      // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything,
+      // And sweeping regardless is what let a stale tab wipe the assets a concurrent FIRST publish had just
+      // Cloned — the sweep's bound is stamped after those clones, and a delete that removed no row leaves the
+      // Version sequence untouched, so the publish's own successor check below cannot see it either
+      if (deletedPublication)
+        await publishBlobPrefixDeletion(
+          id,
+          AzureContainer.ResourceAssets,
+          `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`,
+          new Date(),
+        );
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,

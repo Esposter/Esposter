@@ -2,7 +2,7 @@ import type { UploadFileToSasOptions } from "@/models/file/UploadFileToSasOption
 import type { FileSasEntity } from "@esposter/db-schema";
 
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
-import { takeOne } from "@esposter/shared";
+import { settleAll, takeOne } from "@esposter/shared";
 
 // The one SAS upload round-trip: generate write targets -> PUT the blocks -> (optionally) return read urls.
 // Every upload site funnels through here so limit enforcement and progress reporting live in one place.
@@ -20,8 +20,8 @@ export const uploadFileToSas = async <TFileSasEntity extends FileSasEntity>({
   // That failure while the siblings are still writing — a PUT landing after the deletion runs leaves a blob
   // Nothing references and no later sweep reaches. Failing only once every upload has stopped writing means
   // The revert always names a set that is complete and final.
-  const uploadResults = await Promise.allSettled(
-    files.map((file, index) => {
+  await settleAll(
+    files.map((file, index) => () => {
       const fileSasEntity = takeOne(fileSasEntities, index);
       return uploadBlocks(
         file,
@@ -34,7 +34,5 @@ export const uploadFileToSas = async <TFileSasEntity extends FileSasEntity>({
       );
     }),
   );
-  const rejectedResults = uploadResults.filter((uploadResult) => uploadResult.status === "rejected");
-  if (rejectedResults.length > 0) throw takeOne(rejectedResults).reason;
   return fileSasEntities;
 };

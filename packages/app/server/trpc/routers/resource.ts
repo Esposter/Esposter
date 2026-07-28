@@ -226,7 +226,7 @@ export const resourceRouter = router({
       // Prevent — the strictly worse outcome of the two the cleanup is choosing between
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
       await getResultAsync(async () => {
-        await deleteDirectory(containerClient, newResource.id, true);
+        await deleteDirectory(containerClient, newResource.id);
       }).match(noop, console.error);
       await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
       throw error;

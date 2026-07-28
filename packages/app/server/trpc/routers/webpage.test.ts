@@ -77,6 +77,28 @@ describe("webpage", () => {
     expect(transformPublishedBlobUrlsMock).toHaveBeenCalledTimes(2);
   });
 
+  // The same race against a FIRST publish, which reads no publication row at all: the successor is what is
+  // Checked, so reading no row means expecting to claim 1 — anything else proves a publish landed in between
+  test("rebuilds the snapshot when a publish races a first publish", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor({ html: "a" }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    transformPublishedBlobUrlsMock.mockImplementationOnce(async (_context, _resource, content) => {
+      await caller.publishResource({ id: newResource.id });
+      return content;
+    });
+
+    await caller.publishResource({ id: newResource.id });
+
+    // The racing publish transforms once of its own, and the outer attempt transforms again to rebuild
+    expect(transformPublishedBlobUrlsMock).toHaveBeenCalledTimes(3);
+  });
+
   test("transforms once when nothing races the publish", async () => {
     expect.hasAssertions();
 

@@ -12,7 +12,7 @@ import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { copyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
-import { chunk, ID_SEPARATOR } from "@esposter/shared";
+import { ID_SEPARATOR, settleAll } from "@esposter/shared";
 
 // The rewrite entry for one working-copy asset url, or nothing when the referenced blob is missing — a
 // Dangling reference (the asset was deleted but the content still embeds its url) is data like an
@@ -70,18 +70,20 @@ export const cloneContentAssets = async <TContent>(
     return [{ blobName, destinationBlobName, url }];
   });
   // Two storage round trips per asset, so content referencing hundreds of them would open that many connections
-  // At once and be throttled into failing the whole publish — they go out in bounded waves instead
-  const updatedUrlEntries: (readonly [string, string])[] = [];
-  for (const clonesChunk of chunk(clones, MAX_CONCURRENT_BLOB_COPIES)) {
-    const clonedUrlEntries = await Promise.all(
-      clonesChunk.map(({ blobName, destinationBlobName, url }) =>
-        cloneAsset(containerClient, url, blobName, destinationBlobName),
-      ),
-    );
-    updatedUrlEntries.push(...clonedUrlEntries.flat());
-  }
+  // At once and be throttled into failing the whole publish — they go out in bounded waves instead. `settleAll`
+  // Rather than `Promise.all` per wave because every caller rolls back on failure by deleting the destination
+  // Directory: a copy still in flight when that delete runs lands after it, under a directory whose resource row
+  // Is already gone in duplicateResource's case, so nothing reaches the blob again
+  const clonedUrlEntries = await settleAll(
+    clones.map(
+      ({ blobName, destinationBlobName, url }) =>
+        () =>
+          cloneAsset(containerClient, url, blobName, destinationBlobName),
+    ),
+    MAX_CONCURRENT_BLOB_COPIES,
+  );
 
-  const updatedUrlMap = new Map(updatedUrlEntries);
+  const updatedUrlMap = new Map(clonedUrlEntries.flat());
   if (updatedUrlMap.size === 0) return content;
   return deepReplaceStrings(content, (value) =>
     value.replaceAll(RESOURCE_ASSET_URL_REGEX, (url) => updatedUrlMap.get(url) ?? url),
