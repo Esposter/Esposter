@@ -544,8 +544,8 @@ catalogs:
       specifier: ^11.2.0
       version: 11.2.0
     read-excel-file:
-      specifier: ^9.3.2
-      version: 9.3.2
+      specifier: ^9.3.5
+      version: 9.3.5
     rolldown:
       specifier: ^1.2.0
       version: 1.2.0
@@ -1079,7 +1079,7 @@ importers:
         version: 11.2.0
       read-excel-file:
         specifier: 'catalog:'
-        version: 9.3.2
+        version: 9.3.5
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12682,8 +12682,8 @@ packages:
     resolution: {integrity: sha512-1zM5HuOfagXCBWMN83fuFI/x+T/UhZ7k+KIzhrHXcQoeX5+7gmaDYjELQHmmzIodumBHeByBJT4QYS7ufAgs7A==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  read-excel-file@9.3.2:
-    resolution: {integrity: sha512-+zgqv/f6sll72omYA5kmlKf9W8ws7L+E/ZfhYpr8jJCFvOY5urGf4AnbwCIrtIUOFsT4LrpqYeMSleHQRJNnBg==}
+  read-excel-file@9.3.5:
+    resolution: {integrity: sha512-A4EbaJxFrqzBNdU4Lw0g6wzme3m7ywW3MsPLLuBiGPUWJbxETyVDT5vyqsOnl/AW48OGM4MGoOgKFsEZNMMVVw==}
     engines: {node: '>=18'}
 
   readable-stream@2.3.8:
@@ -14257,8 +14257,8 @@ packages:
   unwasm@0.5.3:
     resolution: {integrity: sha512-keBgTSfp3r6+s9ZcSma+0chwxQdmLbB5+dAD9vjtB21UTMYuKAxHXCU1K2CbCtnP09EaWeRvACnXk0EJtUx+hw==}
 
-  unzipper-esm@0.13.2:
-    resolution: {integrity: sha512-lt8GtgDYV8YcAFZNQuLyR2QvHI8C/TstpgsdjUn9ZxiWLJgn+e5uW6DsO3e/HUJVuWD57ZLLFMZ9xk26tePuHQ==}
+  unzipper-esm@0.13.3:
+    resolution: {integrity: sha512-LUO6VZ6fCzkDbdMev0/fOhoIeVGKaOkTIOoYxVLE0SQjfvmAHK+oywl7lfhloSZIsdGJ25mJ18Mtd9CyTASjrA==}
     engines: {node: '>=8.0.0'}
 
   upath@1.2.0:
@@ -14812,6 +14812,10 @@ packages:
 
   workbox-window@7.4.1:
     resolution: {integrity: sha512-notZDH2u8VXaqyuD7xaqIfEFi6SRM4SUSd7ewe9PDsVqADuepxX2ZMY3uvuZGxzY5ZOsGC/vD3A/3smFtJt4/A==}
+
+  worker-f@0.1.12:
+    resolution: {integrity: sha512-yl6HhVOmONDL8ancm/KHX2gP9ggRPOPPN+2zuMDFsl+hMS5ODgnFpA0EtUCdM1eQ096tjVq9qe8ZJxN340vr8Q==}
+    engines: {node: '>=12'}
 
   worker-factory@7.0.50:
     resolution: {integrity: sha512-hhwc0G+sFwM4qBuhJIUBn2p1Jf8v/FwmLUANBf/Q+Lt2uI8mfIZQhXaZQACodQD4R7Zp6cn/6702bIvNn2puJQ==}
@@ -28099,11 +28103,12 @@ snapshots:
 
   read-cmd-shim@6.0.0: {}
 
-  read-excel-file@9.3.2:
+  read-excel-file@9.3.5:
     dependencies:
       fflate: 0.8.3
       saxen: 11.1.0
-      unzipper-esm: 0.13.2
+      unzipper-esm: 0.13.3
+      worker-f: 0.1.12
 
   readable-stream@2.3.8:
     dependencies:
@@ -30008,7 +30013,7 @@ snapshots:
       pathe: 2.0.3
       pkg-types: 2.3.1
 
-  unzipper-esm@0.13.2:
+  unzipper-esm@0.13.3:
     dependencies:
       graceful-fs: 4.2.11
       node-int64: 0.4.0
@@ -30695,6 +30700,8 @@ snapshots:
     dependencies:
       '@types/trusted-types': 2.0.7
       workbox-core: 7.4.1
+
+  worker-f@0.1.12: {}
 
   worker-factory@7.0.50:
     dependencies:
