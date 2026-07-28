@@ -87,6 +87,20 @@ const FIXTURES = [
     source: `const notify = () => { aEventEmitter.emit(); }; notify(); await getResultAsync(h);`,
     violations: 0,
   },
+  // A name is not the function. A sibling function's own `notify` is a different binding, and arming the caller
+  // Of that one reports every await after it — a false error whose only cure is making a fatal write best-effort.
+  {
+    name: "siblingSameNameNotifyDoesNotArm",
+    source: `const a = async () => { const notify = () => { aEventEmitter.emit(); }; notify(); }; const b = async () => { const notify = () => { h(); }; notify(); await g(); }; await b(); await a();`,
+    violations: 0,
+  },
+  // Shadowing resolves the same way: the inner binding is the one the call reaches, so the outer notifying one
+  // Says nothing about it.
+  {
+    name: "shadowingSameNameNotifyDoesNotArm",
+    source: `const notify = () => { aEventEmitter.emit(); }; const b = async () => { const notify = () => { h(); }; notify(); await g(); }; await b(); notify();`,
+    violations: 0,
+  },
   // `for await` rejects the caller exactly as an `await` does — the batched-purge loop that keeps pulling pages
   // After emitting for the first one is the shape this catches.
   {

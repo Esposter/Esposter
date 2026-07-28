@@ -6,7 +6,7 @@ import { getHasThumbnail } from "#shared/services/message/file/getHasThumbnail";
 import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
-interface ReadFileUrlsOptions {
+export interface ReadFileUrlsOptions {
   isBackground?: true;
 }
 

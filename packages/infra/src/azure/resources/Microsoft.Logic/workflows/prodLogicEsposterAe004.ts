@@ -1,9 +1,12 @@
 import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
+import AzureEventSubscriptionRetryPolicy from "@/azure/constants/AzureEventSubscriptionRetryPolicy";
 import AzureResourceManagerManagedApiId from "@/azure/constants/AzureResourceManagerManagedApiId";
 import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
 import { prodEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
 import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { prodstesposter001Deadletter } from "@/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/prodstesposter001Deadletter";
+import { prodstesposter001 } from "@/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
 import { prodApicEsposterAe004 } from "@/azure/resources/Microsoft.Web/connections/prodApicEsposterAe004";
 import { prodFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/prodFuncEsposter001";
 import { AzureFunction } from "@esposter/db-schema";
@@ -23,6 +26,15 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
           inputs: {
             body: {
               properties: {
+                // Mirrors the Pulumi subscription: a subscription recreated without this simply drops every event
+                // Whose delivery runs out of attempts, and the replay pipeline is inert for it
+                deadLetterDestination: {
+                  endpointType: "StorageBlob",
+                  properties: {
+                    blobContainerName: prodstesposter001Deadletter.name,
+                    resourceId: prodstesposter001.id,
+                  },
+                },
                 destination: {
                   endpointType: "AzureFunction",
                   properties: {
@@ -41,10 +53,7 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
                 id: pulumi.interpolate`/subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${prodEvgtEsposterAe001.name}/providers/Microsoft.EventGrid/eventSubscriptions/prod-evgs-esposter-ae-002`,
                 name: "prod-evgs-esposter-ae-002",
                 resourceGroup: prodRgEsposterAe001.name,
-                retryPolicy: {
-                  eventTimeToLiveInMinutes: 1440,
-                  maxDeliveryAttempts: 30,
-                },
+                retryPolicy: AzureEventSubscriptionRetryPolicy,
                 topic: prodEvgtEsposterAe001.id,
                 type: "Microsoft.EventGrid/eventSubscriptions",
               },
@@ -69,6 +78,15 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
           inputs: {
             body: {
               properties: {
+                // Mirrors the Pulumi subscription: a subscription recreated without this simply drops every event
+                // Whose delivery runs out of attempts, and the replay pipeline is inert for it
+                deadLetterDestination: {
+                  endpointType: "StorageBlob",
+                  properties: {
+                    blobContainerName: prodstesposter001Deadletter.name,
+                    resourceId: prodstesposter001.id,
+                  },
+                },
                 destination: {
                   endpointType: "AzureFunction",
                   properties: {
@@ -87,10 +105,7 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
                 id: pulumi.interpolate`/subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${prodEvgtEsposterAe001.name}/providers/Microsoft.EventGrid/eventSubscriptions/prod-evgs-esposter-ae-001`,
                 name: "prod-evgs-esposter-ae-001",
                 resourceGroup: prodRgEsposterAe001.name,
-                retryPolicy: {
-                  eventTimeToLiveInMinutes: 1440,
-                  maxDeliveryAttempts: 30,
-                },
+                retryPolicy: AzureEventSubscriptionRetryPolicy,
                 topic: prodEvgtEsposterAe001.id,
                 type: "Microsoft.EventGrid/eventSubscriptions",
               },

@@ -413,7 +413,7 @@ describe("message", () => {
       roomId: newRoom.id,
     });
     // Holds the catch-up open across the racing send, which is the window the listener used to be attached after
-    const { promise, resolve } = Promise.withResolvers<void>();
+    const { promise, resolve } = Promise.withResolvers<string>();
     readMessagesMock.mockImplementationOnce(async () => {
       await promise;
       return { hasMore: false, items: [], nextCursor: "" };
@@ -424,7 +424,7 @@ describe("message", () => {
       async (iterator) => {
         const emit = iterator.next();
         await messageCaller.createMessage({ message: getMessage(user.id), roomId: newRoom.id });
-        resolve();
+        resolve("");
         return emit;
       },
     );

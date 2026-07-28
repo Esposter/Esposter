@@ -1,3 +1,4 @@
+import AzureEventSubscriptionRetryPolicy from "@/azure/constants/AzureEventSubscriptionRetryPolicy";
 import { prodEgstEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/systemTopics/prodEgstEsposterAe001";
 import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/prodFuncEsposter001";
@@ -45,10 +46,7 @@ export const prodEvgsEsposterAe004: azure_native.eventgrid.SystemTopicEventSubsc
         subjectEndsWith: "",
       },
       resourceGroupName: prodRgEsposterAe001.name,
-      retryPolicy: {
-        eventTimeToLiveInMinutes: 60,
-        maxDeliveryAttempts: 10,
-      },
+      retryPolicy: AzureEventSubscriptionRetryPolicy,
       systemTopicName: prodEgstEsposterAe001.name,
     },
     {

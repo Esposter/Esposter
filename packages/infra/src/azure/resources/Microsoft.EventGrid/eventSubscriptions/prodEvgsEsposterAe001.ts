@@ -1,3 +1,4 @@
+import AzureEventSubscriptionRetryPolicy from "@/azure/constants/AzureEventSubscriptionRetryPolicy";
 import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
 import { prodEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
 import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
@@ -33,10 +34,7 @@ export const prodEvgsEsposterAe001: azure_native.eventgrid.EventSubscription =
         subjectBeginsWith: "",
         subjectEndsWith: "",
       },
-      retryPolicy: {
-        eventTimeToLiveInMinutes: 60,
-        maxDeliveryAttempts: 10,
-      },
+      retryPolicy: AzureEventSubscriptionRetryPolicy,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${prodEvgtEsposterAe001.name}`,
     },
     {

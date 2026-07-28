@@ -47,7 +47,7 @@ export const useMutation = () => {
             if (checkIsStale()) return;
             rollback?.();
             if (onError) await onError(error);
-            // errorLink already put the codes it owns in front of the user, so alerting the same message here
+            // The error link already put the codes it owns in front of the user, so alerting the same message here
             // Would stack two identical toasts on every mutation this primitive runs
             else if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
           },

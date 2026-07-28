@@ -181,14 +181,47 @@ const rule = defineRule({
     // Per-function frame: the source position at which this function notifies, and the function node itself so a
     // Nested emit can be attributed to the call that runs the callback holding it.
     const functionStack: { emitStart?: number; node: ESTree.Node }[] = [];
+    // Every function bound to a name, with the scope that binding lives in — the table `notify()` is resolved
+    // Against. A name on its own is not a function: a sibling function's own `notify`, or one shadowing an outer
+    // Notifying `notify`, is a different binding, and arming its caller reports every await that follows it — a
+    // False error whose only cure is making a fatal write best-effort, the inversion this rule exists to prevent.
+    const functionBindings: { isNotifying: boolean; name: string; node: ESTree.Node; scopeNode?: ESTree.Node }[] = [];
     const enterFunction = (node: ESTree.Node) => {
+      const boundFunctionName = getBoundFunctionName(node);
+      if (boundFunctionName !== undefined)
+        functionBindings.push({
+          isNotifying: false,
+          name: boundFunctionName,
+          node,
+          scopeNode: functionStack.at(-1)?.node,
+        });
       functionStack.push({ node });
     };
     const exitFunction = () => {
       functionStack.pop();
     };
-    // Names bound to a closure that notifies, so a later `notify()` can arm the frame making that call.
-    const notifyClosureNames = new Set<string>();
+    // The binding a name resolves to here: the innermost one whose scope is still open, exactly as the reader of
+    // The call site resolves it. A scope not on the stack is closed — that binding is not this name.
+    const getVisibleBinding = (name: string) => {
+      let visibleBinding: (typeof functionBindings)[number] | undefined = undefined;
+      let visibleDepth = -1;
+      for (const binding of functionBindings) {
+        if (binding.name !== name) continue;
+        // Module scope (no enclosing function) is depth 0 and always visible; a frame's depth is its stack position
+        const depth =
+          binding.scopeNode === undefined
+            ? 0
+            : functionStack.findIndex((frame) => frame.node === binding.scopeNode) + 1;
+        if (depth === 0 && binding.scopeNode !== undefined) continue;
+        else if (depth >= visibleDepth) {
+          visibleBinding = binding;
+          visibleDepth = depth;
+        }
+      }
+      return visibleBinding;
+    };
+    const getIsNotifyClosureCall = (callee: ESTree.Expression): boolean =>
+      callee.type === "Identifier" && (getVisibleBinding(callee.name)?.isNotifying ?? false);
     // An emit inside a nested callback still notifies every function that RUNS that callback, so it arms the whole
     // Enclosing chain — otherwise wrapping the write+emit in `getResultAsync(async () => …)` hides the notify from
     // Every await that follows it. Each outer frame is armed at the position of the construct that runs the callback,
@@ -208,8 +241,9 @@ const rule = defineRule({
           continue;
         }
 
-        const boundFunctionName = getBoundFunctionName(frame.node);
-        if (boundFunctionName !== undefined) notifyClosureNames.add(boundFunctionName);
+        // Marked on the binding itself, by identity — the name is only how a later call finds its way back here
+        const notifyingBinding = functionBindings.find(({ node }) => node === frame.node);
+        if (notifyingBinding) notifyingBinding.isNotifying = true;
         break;
       }
     };
@@ -233,8 +267,7 @@ const rule = defineRule({
       CallExpression(node) {
         // An emit arms the function holding it, and a call to a closure that holds one arms the function making
         // That call — the two entry points are the same walk from a different starting position
-        if (isEmitCall(node) || (node.callee.type === "Identifier" && notifyClosureNames.has(node.callee.name)))
-          armFramesFrom(node.start);
+        if (isEmitCall(node) || getIsNotifyClosureCall(node.callee)) armFramesFrom(node.start);
       },
       ForOfStatement(node) {
         // Only `for await`: a plain for-of settles on nothing

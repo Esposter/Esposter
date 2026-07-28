@@ -18,7 +18,7 @@ describe(settleAll, () => {
 
   test("waits for its in-flight tasks before rejecting", async () => {
     expect.hasAssertions();
-    const { promise, resolve } = Promise.withResolvers<void>();
+    const { promise, resolve } = Promise.withResolvers<string>();
     const events: string[] = [];
     const settling = settleAll([
       async () => {
@@ -34,7 +34,7 @@ describe(settleAll, () => {
     });
 
     expect(events).toStrictEqual([]);
-    resolve();
+    resolve("");
     await settling;
 
     expect(events).toStrictEqual(["settled", "threw"]);
@@ -43,15 +43,14 @@ describe(settleAll, () => {
   test("rethrows a lone rejection as it was thrown", async () => {
     expect.hasAssertions();
     const error = new Error("a");
-    const caught = await settleAll([() => Promise.reject(error)]).catch((reason: unknown) => reason);
 
-    expect(caught).toBe(error);
+    await expect(settleAll([() => Promise.reject(error)])).rejects.toBe(error);
   });
 
   test("carries every rejection of a wave under the first one's message", async () => {
     expect.hasAssertions();
     const caught = await settleAll([() => Promise.reject(new Error("a")), () => Promise.reject(new Error("b"))]).catch(
-      (reason: unknown) => reason,
+      (error: unknown) => error,
     );
 
     expect(caught).toMatchInlineSnapshot(`[AggregateError: a]`);

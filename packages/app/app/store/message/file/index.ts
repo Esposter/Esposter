@@ -1,3 +1,4 @@
+import type { ReadFileUrlsOptions } from "@/composables/message/file/useReadFileUrls";
 import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
