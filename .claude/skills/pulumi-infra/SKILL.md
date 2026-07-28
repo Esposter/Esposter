@@ -119,6 +119,19 @@ This is a deliberate **exception** to the repo-wide "prefer named imports from l
 - `packages/infra` is `"type": "module"` (rolldown emits ESM; the `@pulumi/*` packages stay external). Named ESM imports from these CJS modules force Node's CJS↔ESM interop to evaluate bindings eagerly — `require()`-ing every referenced submodule at import time and defeating the lazy-load (slower startup, higher memory). They are not tree-shakable; the namespace + lazy-load is the only thing that keeps provider load cheap.
 - Pulumi's own codegen always emits `import * as`. Match it. Do not "fix" provider imports to named form for lint/style consistency.
 
+## The First `up` After A Provider Bump Cannot Be Targeted
+
+State pins the default provider each resource was last written with (`pulumi:providers:github::default_6_14_1`), so a catalog bump to a provider package makes the program register a version state has never seen. Under `--target`, Pulumi registers providers only for the targeted resources, so the untargeted ones' provider is missing and it refuses:
+
+```
+error: provider …:pulumi:providers:github::default_6_14_0::… for resource …
+has not been registered yet, this is due to a change of providers mixed with --target
+```
+
+This is not drift to repair and no CLI upgrade fixes it. Run the update **untargeted** — plain `pnpm infra:up`, or `pulumi up --exclude <urn>` when specific resources must be held back, since `--exclude` still registers every provider. That run re-associates the resources onto the new provider, and `--target` works again until the next bump. `--exclude` accepts wildcards, so `--exclude "**::prod-evgs-esposter-ae-004"` is enough to hold back one resource by name.
+
+Hold a resource back when its Azure-side create depends on something not yet deployed — an Event Grid subscription is validated against its function endpoint at create time, so a subscription for a function that only exists in an unreleased build fails until that release lands ([dead-letter](/docs/infra/eventgrid-dead-letter)).
+
 ## GitHub Branch Auto-Delete
 
 GitHub's repository `deleteBranchOnMerge` is a system action that **bypasses ruleset deletion rules** — it deleted `develop` on a `develop → main` merge despite the ruleset's `deletion: true` on those refs. Keep `deleteBranchOnMerge: false` on the `Repository` resource and clean up merged head branches via the `Delete Merged Branch` GH Actions workflow (`.github/workflows/DeleteMergedBranch.yaml`), which excludes `main`/`develop` explicitly. Don't rely on rulesets to protect long-lived branches from native auto-delete.
