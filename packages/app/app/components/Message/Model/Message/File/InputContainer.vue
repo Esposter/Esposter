@@ -3,7 +3,7 @@ import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { takeOne } from "@esposter/shared";
 
 const uploadFileStore = useUploadFileStore();
-const { removeCurrentUploadFiles } = uploadFileStore;
+const { discardCurrentUploadFiles } = uploadFileStore;
 const { files, fileUrlMap } = storeToRefs(uploadFileStore);
 </script>
 
@@ -16,7 +16,7 @@ const { files, fileUrlMap } = storeToRefs(uploadFileStore);
         :file
         :index
         :upload-file-url="fileUrlMap.get(file.id)"
-        @delete="(index) => removeCurrentUploadFiles([takeOne(files, index).id])"
+        @delete="(index) => discardCurrentUploadFiles([takeOne(files, index).id])"
       />
     </v-row>
   </v-container>

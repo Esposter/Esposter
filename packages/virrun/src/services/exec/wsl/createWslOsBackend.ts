@@ -23,6 +23,12 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
   // Reap any bwrap tree a previous hard-killed run left orphaned (its onTerminate reaper never fired) before this
   // Backend spawns its own — off the critical path, and scoped to true orphans so a concurrent live run is untouched.
   reapOrphanedWslRuns();
+  // Swept once per cwd for this backend's whole life, not once per exec. The sweep has to run from the command
+  // Builder below — it rests on the marker republish that only happens inside the planning call beside it — but one
+  // Virrun run builds a command several times over (deps install, prepare layer, the run itself), and each repeat
+  // Costs a readdir of `sources/` plus a stat per entry across the 9p bridge, which is the per-run walk the source
+  // Mirror exists to eliminate. Nothing this sweep reads changes between those builds.
+  const reapedSourceMirrorKeys = new Set<string>();
   return createBwrapBackend(
     createWslBwrapArgs,
     (bwrapArgs, options) => {
@@ -48,7 +54,11 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
       // Here — which is the invariant the reaper's unmarked-and-aged arm rests on. The deferred script only applies
       // The tree delta and the manifest, neither of which the reaper reads.
       // This run's own entry is excluded by key — the tree bwrap is about to mount cannot be a reap candidate.
-      reapAbandonedSourceMirrors(getSourceMirrorKey(cwd));
+      const sourceMirrorKey = getSourceMirrorKey(cwd);
+      if (!reapedSourceMirrorKeys.has(sourceMirrorKey)) {
+        reapedSourceMirrorKeys.add(sourceMirrorKey);
+        reapAbandonedSourceMirrors(sourceMirrorKey);
+      }
       return {
         command: [
           "wsl.exe",

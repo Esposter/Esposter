@@ -291,7 +291,12 @@ export const baseMessageRouter = router({
       // First per-room block is surfaced — never an all-rooms pre-flight that times out and then posts nothing.
       const results = await Promise.allSettled(
         roomIds.map(async (roomId) => {
-          await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, message);
+          // The filter has to see the text this forward WRITES. The forwarded body is what lands in the
+          // Destination room, so checking only the accompanying note lets any filtered word through by
+          // Forwarding it in from a room that does not filter it. Both texts go in one call because a single
+          // Send attempt may spend at most one automod consequence.
+          const forwardedMessage = message ? `${messageEntity.message}\n${message}` : messageEntity.message;
+          await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, forwardedMessage);
           // A forward is a send like any other, so it advances the slowmode clock it was just checked against —
           // With the guards, before the write, so it can never fail open behind an already-persisted forward
           await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, { lastMessageAt: new Date(), roomId });

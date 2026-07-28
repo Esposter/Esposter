@@ -4,8 +4,9 @@ import { readCapabilityCache } from "@/services/exec/os/readCapabilityCache";
 import { writeCapabilityCache } from "@/services/exec/os/writeCapabilityCache";
 import { createProbeCache } from "@/services/exec/util/createProbeCache";
 // A false verdict is persisted too — a host without bubblewrap is a stable fact of the fingerprint, and re-probing
-// It every process is exactly the cost the cache exists to skip. A missing/corrupt/mismatched cache reads as
-// Undefined and falls through to the probe, so the cache is self-healing.
+// It every process is exactly the cost the cache exists to skip. It is not stable on win32, where the verdict comes
+// From a WSL command under a timeout, so the entry is age-bounded (readCapabilityCache) rather than kept forever.
+// A missing/corrupt/mismatched/expired cache reads as undefined and falls through to the probe, so it self-heals.
 const readIsOsBackendSupported = createProbeCache({
   probe: probeOsBackendSupported,
   readPersistedCache: readCapabilityCache,

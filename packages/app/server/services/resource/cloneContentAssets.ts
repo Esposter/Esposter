@@ -38,11 +38,29 @@ export const cloneContentAssets = async <TContent>(
   content: TContent,
   destinationDirectoryName: string,
 ): Promise<TContent> => {
+  // A url of ours that content carries in absolute form is still a url of ours, but the asset regex refuses it
+  // On purpose — the lookbehind is the only thing keeping a FOREIGN absolute url whose path happens to carry
+  // Our prefix from being rewritten into a local one. The origin is what tells the two apart, so same-origin
+  // Urls are relativized into the form every other path writes rather than the anchor being loosened for both.
+  // The app produces this form itself (`exportPersonalizedHtml` absolutizes for email), so it re-enters content
+  // Whenever exported html is pasted back into an editor; left absolute, publish clones none of those assets and
+  // The snapshot points anonymous viewers at the owner-only working copy.
+  // Read straight off the environment the runtime config binds `public.baseUrl` to, rather than through
+  // `useRuntimeConfig`: this is a plain service, called from procedures and from tests that hold no Nuxt app
+  const baseUrl = process.env.BASE_URL;
+  const relativizedContent = baseUrl
+    ? deepReplaceStrings(content, (value) =>
+        value.replaceAll(
+          `${baseUrl.replace(/\/$/u, "")}${RESOURCE_ASSETS_URL_PREFIX}/`,
+          `${RESOURCE_ASSETS_URL_PREFIX}/`,
+        ),
+      )
+    : content;
   const urls = new Set<string>();
-  deepVisitStrings(content, (value) => {
+  deepVisitStrings(relativizedContent, (value) => {
     for (const [url] of value.matchAll(RESOURCE_ASSET_URL_REGEX)) urls.add(url);
   });
-  if (urls.size === 0) return content;
+  if (urls.size === 0) return relativizedContent;
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   // Every clone is written under a freshly minted asset id, never the source's. A destination name carried
@@ -84,8 +102,8 @@ export const cloneContentAssets = async <TContent>(
   );
 
   const updatedUrlMap = new Map(clonedUrlEntries.flat());
-  if (updatedUrlMap.size === 0) return content;
-  return deepReplaceStrings(content, (value) =>
+  if (updatedUrlMap.size === 0) return relativizedContent;
+  return deepReplaceStrings(relativizedContent, (value) =>
     value.replaceAll(RESOURCE_ASSET_URL_REGEX, (url) => updatedUrlMap.get(url) ?? url),
   );
 };

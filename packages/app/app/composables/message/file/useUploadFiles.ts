@@ -18,8 +18,15 @@ export const useUploadFiles = () => {
   const roomStore = useRoomStore();
   const { currentRoom, currentRoomId } = storeToRefs(roomStore);
   const uploadFileStore = useUploadFileStore();
-  const { removeUploadFiles, storeUploadFileProgress, storeUploadFiles, storeUploadFileThumbnails } = uploadFileStore;
-  const { files, isFileLoading } = storeToRefs(uploadFileStore);
+  const {
+    discardUploadFiles,
+    storeUploadEnd,
+    storeUploadFileProgress,
+    storeUploadFiles,
+    storeUploadFileThumbnails,
+    storeUploadStart,
+  } = uploadFileStore;
+  const { files } = storeToRefs(uploadFileStore);
   const validateFile = useValidateFile();
   return async (newFiles: File[] | null) => {
     if (!currentRoomId.value || !newFiles) return;
@@ -44,30 +51,13 @@ export const useUploadFiles = () => {
       }
 
     const roomId = currentRoomId.value;
-    isFileLoading.value = true;
+    storeUploadStart(roomId);
     // Downscale image thumbnails while the originals upload so both land in one pass.
     const thumbnailsPromise = Promise.all(newFiles.map((file) => generateImageThumbnail(file)));
-    // A failed upload takes its seeded metadata and object urls back out — the composer renders from those,
-    // And the send button gates on isFileLoading, so leaving either behind strands the room's whole composer.
-    // Whatever already reached blob storage is dropped with it: the composer is the only thing that knows
-    // These ids, so a blob the user can no longer attach is unreferenced the moment its row leaves the list.
-    const revertUploadFiles = async (fileSasEntities: MessageFileSasEntity[]) => {
-      // The grant minted with each write target is what authorizes the delete — the server has no entity to
-      // Check an unreferenced upload's ownership against, so a file whose token was lost stays orphaned
-      const tokenMap = new Map(fileSasEntities.map(({ id, token }) => [id, token]));
-      const revertedFiles = removeUploadFiles(roomId, [...tokenMap.keys()]);
-      const deletedFiles = revertedFiles.flatMap(({ filename, id }) => {
-        const token = tokenMap.get(id);
-        return token ? [{ filename, id, token }] : [];
-      });
-      if (deletedFiles.length === 0) return;
-      // Best-effort: the composer is already consistent without it, and a failure here costs storage, not
-      // Correctness — surfacing a second alert over the one the user is reading would only obscure it
-      await getResultAsync(() => $trpc.message.deleteUploadFiles.mutate({ files: deletedFiles, roomId })).match(
-        noop,
-        console.error,
-      );
-    };
+    // A failed upload takes its seeded metadata and object urls back out — the composer renders from those, and
+    // The send button gates on the room's upload count, so leaving either behind strands the room's composer.
+    // Whatever already reached blob storage goes with it, through the same discard the composer's own delete
+    // Affordance uses: a row that leaves the list without being sent is a blob nothing can ever name again.
     let seededFileSasEntities: MessageFileSasEntity[] = [];
     await withFinalizerAsync(
       () =>
@@ -84,7 +74,7 @@ export const useUploadFiles = () => {
               // Seed each file's metadata + object url once the write targets exist so Vue renders progress
               storeUploadFiles(
                 roomId,
-                newFileSasEntities.map(({ id }, index) => ({ file: takeOne(newFiles, index), id })),
+                newFileSasEntities.map(({ id, token }, index) => ({ file: takeOne(newFiles, index), id, token })),
               );
             },
           });
@@ -113,13 +103,16 @@ export const useUploadFiles = () => {
           ).flat();
           storeUploadFileThumbnails(roomId, thumbnailIds);
         }).match(noop, async (error) => {
-          await revertUploadFiles(seededFileSasEntities);
+          await discardUploadFiles(
+            roomId,
+            seededFileSasEntities.map(({ id }) => id),
+          );
           // A rejected SAS request is one of the codes errorLink owns, so it has already told the user; a failed
           // Blob PUT is not a tRPC call at all and this is the only thing that can
           if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         }),
       () => {
-        isFileLoading.value = false;
+        storeUploadEnd(roomId);
       },
     );
   };

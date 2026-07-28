@@ -2,6 +2,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { authClient } from "@/services/auth/authClient";
 import { useAlertStore } from "@/store/alert";
 import { RoutePath } from "@esposter/shared";
 import { TRPCClientError } from "@trpc/client";
@@ -39,10 +40,17 @@ export const errorLink: TRPCLink<TRPCRouter> =
               createAlert(err.message, "error");
               break;
             }
+            // Neither code names the user's session: `UNAUTHORIZED` is thrown by every authorization guard in the
+            // Server (not a member, not the owner, lacking a permission) and `FORBIDDEN` by every message-creation
+            // Rejection, so inferring "logged out" from either throws a still-authenticated user out to the login
+            // Screen for typing a filtered word or opening a room they were just removed from. The session is a
+            // Fact the client already holds, so the decision reads it instead of guessing from the code.
             case "FORBIDDEN":
-            case "UNAUTHORIZED":
-              await navigateTo(RoutePath.Login);
+            case "UNAUTHORIZED": {
+              const session = authClient.useSession();
+              if (!session.value.data) await navigateTo(RoutePath.Login);
               break;
+            }
             default:
               break;
           }

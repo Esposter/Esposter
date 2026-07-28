@@ -140,7 +140,7 @@ myError.issues.push({ code: "custom", message: "..." }); // not myError.addIssue
 
 ## Persisted Data — Latest Shape Only
 
-Schemas for persisted client-authoritative data (save blobs, localStorage state) model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no constructor migration code, no per-element tolerance filters for stale ids. Data that fails to parse resets to a fresh default; the reset is the migration. When a shape changes, change the schema and delete the old shape in the same commit. (Postgres evolves through real Drizzle migrations — unaffected.) See `docs/architecture/persisted-data-latest-shape-only.md`.
+Schemas for persisted client-authoritative data (save blobs, localStorage state) model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no constructor migration code, no per-element tolerance filters for stale ids. Data that fails to parse resets to a fresh default; the reset is the migration. When a shape changes, change the schema and delete the old shape in the same commit. (Postgres evolves through real Drizzle migrations — unaffected.) Azure Table entities are latest-shape-only as well: a field added to an entity class reads back as its default for every pre-change row, and that is the accepted outcome — never add a read-side inference to guess it back. See `docs/architecture/persisted-data-latest-shape-only.md`.
 
 ## Tightest Possible Constraints
 

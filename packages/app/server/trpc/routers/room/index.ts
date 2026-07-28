@@ -584,9 +584,8 @@ export const baseRoomRouter = router({
     const previousImage =
       image === undefined
         ? ""
-        : ((
-            await ctx.db.select({ image: roomsInMessage.image }).from(roomsInMessage).where(eq(roomsInMessage.id, id))
-          )[0]?.image ?? "");
+        : ((await ctx.db.query.roomsInMessage.findFirst({ columns: { image: true }, where: { id: { eq: id } } }))
+            ?.image ?? "");
     const updatedRoom = requireMutation(
       (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
       Operation.Update,

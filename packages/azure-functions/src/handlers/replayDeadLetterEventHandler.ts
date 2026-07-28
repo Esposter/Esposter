@@ -18,7 +18,7 @@ import {
   DEAD_LETTER_QUARANTINE_PREFIX,
   DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX,
 } from "@esposter/db-schema";
-import { getResult, getResultAsync, noop } from "@esposter/shared";
+import { getResult, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { z } from "zod";
 
 // The replay is payload-agnostic — it resends whatever it finds, and only each event's handler knows how to read its
@@ -92,7 +92,10 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Fields a republish needs, dropping Event Grid's dead-letter diagnostics (deadLetterReason,
     // DeliveryAttempts, lastDeliveryOutcome). Those are the only record of WHY a payload is here, which is the
     // Entire point of the copy an operator opens, so the quarantine copy is written from the raw objects
-    const rawEventArray: unknown[] = Array.isArray(rawEvents) ? rawEvents : [];
+    // Typed, not re-validated: reaching here means the array schema above already parsed `rawEvents`, so this
+    // Cannot reject. Expressing it as a fallback (`Array.isArray(...) ? ... : []`, an element-shape check) would
+    // Read as though the two arrays might diverge in length or shape — the one thing the comment above rules out
+    const rawEventArray = z.looseObject({}).array().parse(rawEvents);
     const replays = events.map((deadLetteredEvent, index) => {
       const { eventId, replayAttempts } = parseReplayId(deadLetteredEvent.id);
       return {
@@ -116,12 +119,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
         // The copy the operator just restored and silently no-opping their remediation
         Buffer.from(
           JSON.stringify(
-            quarantinedReplays.map(({ deadLetteredEvent, eventId, index }) => {
-              const rawEvent = rawEventArray[index];
-              return rawEvent !== null && typeof rawEvent === "object"
-                ? { ...rawEvent, id: eventId }
-                : { ...deadLetteredEvent, id: eventId };
-            }),
+            quarantinedReplays.map(({ eventId, index }) => ({ ...takeOne(rawEventArray, index), id: eventId })),
           ),
         ),
       );

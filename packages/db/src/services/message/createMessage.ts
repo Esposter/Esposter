@@ -30,9 +30,11 @@ export const createMessage = async <T extends CreateMessageInput>(
   // Gets an entity is not a message anyone recovers, just a row every ascending page pays to read and discard
   // Forever. This is what keeps the unmatched window to one in-flight write.
   await getResultAsync(() => createEntity(messageClient, messageEntity)).match(noop, async (error) => {
+    // Logged, never swallowed silently: this is the one failure that makes the unmatched window permanent
+    // Rather than one in-flight write, so it is exactly the case that must leave a trace to be found by.
     await getResultAsync(() => messageAscendingClient.deleteEntity(messageEntity.partitionKey, ascendingRowKey)).match(
       noop,
-      noop,
+      console.error,
     );
     throw error;
   });

@@ -65,6 +65,10 @@ describe("message", () => {
   const size = 1000;
   const name = "name";
   const updatedMessage = "updatedMessage";
+  // A word the message wrapper cannot contain on its own, so a room's filter only ever matches the text a test
+  // Deliberately put in front of it
+  const filteredWord = "spam";
+  const filteredMessage = `<p>${filteredWord}</p>`;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -619,9 +623,12 @@ describe("message", () => {
     const ownerUserId = getMockSession().user.id;
     const source = await messageCaller.createMessage({ message: getMessage(ownerUserId), roomId: sourceRoom.id });
     const filteredRoom = await roomCaller.createRoom({ name });
-    await mockContext.db
-      .insert(roomFiltersInMessage)
-      .values({ action: WordFilterAction.Timeout, roomId: filteredRoom.id, timeoutDurationMs: 1, words: ["spam"] });
+    await mockContext.db.insert(roomFiltersInMessage).values({
+      action: WordFilterAction.Timeout,
+      roomId: filteredRoom.id,
+      timeoutDurationMs: 1,
+      words: [filteredWord],
+    });
     const unfilteredRoom = await roomCaller.createRoom({ name });
     const sourceInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: sourceRoom.id });
     const filteredInvite = await roomCaller.createInvite({
@@ -644,7 +651,7 @@ describe("message", () => {
 
     await expect(
       messageCaller.forwardMessage({
-        message: `<p>this is spam</p>`,
+        message: filteredMessage,
         partitionKey: source.partitionKey,
         roomIds: [filteredRoom.id, unfilteredRoom.id],
         rowKey: source.rowKey,
@@ -663,6 +670,53 @@ describe("message", () => {
       .where(and(eq(usersToRoomsInMessage.roomId, unfilteredRoom.id), eq(usersToRoomsInMessage.userId, member.id)));
 
     expect(unfilteredMembership?.timeoutUntil).toBeNull();
+  });
+
+  test("forwarding is blocked by the forwarded body's own text, with or without an accompanying message", async () => {
+    expect.hasAssertions();
+
+    // The forwarded body is the text that lands in the destination room, so filtering only the note attached to
+    // The forward makes forwarding from an unfiltered room a way around the filter entirely. Both texts are
+    // Checked together, so a clean note alongside a filtered body does not buy the forward a pass either.
+    const sourceRoom = await roomCaller.createRoom({ name });
+    const source = await messageCaller.createMessage({ message: filteredMessage, roomId: sourceRoom.id });
+    const filteredRoom = await roomCaller.createRoom({ name });
+    await mockContext.db.insert(roomFiltersInMessage).values({ roomId: filteredRoom.id, words: [filteredWord] });
+    const sourceInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: sourceRoom.id });
+    const filteredInvite = await roomCaller.createInvite({
+      expireAfterMinutes: 0,
+      maxUses: 0,
+      roomId: filteredRoom.id,
+    });
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(sourceInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+    await roomCaller.joinRoom(filteredInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      messageCaller.forwardMessage({
+        partitionKey: source.partitionKey,
+        roomIds: [filteredRoom.id],
+        rowKey: source.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
+
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      messageCaller.forwardMessage({
+        message: getMessage(member.id),
+        partitionKey: source.partitionKey,
+        roomIds: [filteredRoom.id],
+        rowKey: source.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
+
+    await mockSessionOnce(mockContext.db, member);
+    const filteredMessages = await messageCaller.readMessages({ roomId: filteredRoom.id });
+
+    expect(filteredMessages.items.filter(({ isForward }) => isForward)).toHaveLength(0);
   });
 
   test("generates upload file SAS entities", async () => {
@@ -1232,10 +1286,10 @@ describe("message", () => {
 
       // The filter is a moderation tool, so it never fires on the moderator wielding it
       const newRoom = await roomCaller.createRoom({ name });
-      await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: ["spam"] });
+      await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: [filteredWord] });
 
       const createdMessage = await messageCaller.createMessage({
-        message: `<p>this is spam</p>`,
+        message: filteredMessage,
         roomId: newRoom.id,
       });
 
@@ -1246,14 +1300,14 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: ["spam"] });
+      await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: [filteredWord] });
       const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite.id);
       await mockSessionOnce(mockContext.db, user);
 
       await expect(
-        messageCaller.createMessage({ message: `<p>this is spam</p>`, roomId: newRoom.id }),
+        messageCaller.createMessage({ message: filteredMessage, roomId: newRoom.id }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
     });
 
@@ -1261,7 +1315,7 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: ["spam"] });
+      await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: [filteredWord] });
       const userId = getMockSession().user.id;
       const message = getMessage(userId);
 
@@ -1277,7 +1331,7 @@ describe("message", () => {
       const newRoom = await roomCaller.createRoom({ name });
       await mockContext.db
         .insert(roomFiltersInMessage)
-        .values({ action: WordFilterAction.Timeout, roomId: newRoom.id, timeoutDurationMs, words: ["spam"] });
+        .values({ action: WordFilterAction.Timeout, roomId: newRoom.id, timeoutDurationMs, words: [filteredWord] });
       const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite.id);
@@ -1285,7 +1339,7 @@ describe("message", () => {
       const beforeCreateMessageTime = Date.now();
 
       await expect(
-        messageCaller.createMessage({ message: `<p>this is spam</p>`, roomId: newRoom.id }),
+        messageCaller.createMessage({ message: filteredMessage, roomId: newRoom.id }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
       const [membership] = await mockContext.db

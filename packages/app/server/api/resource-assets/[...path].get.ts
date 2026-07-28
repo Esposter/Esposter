@@ -6,6 +6,7 @@ import { auth } from "@@/server/auth";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { db } from "@@/server/db";
 import { assetRateLimiter } from "@@/server/services/rateLimiter/assetRateLimiter";
+import { getIsRateLimitExceeded } from "@@/server/services/rateLimiter/getIsRateLimitExceeded";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import {
   RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS,
@@ -16,7 +17,6 @@ import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
 import { lookup } from "mime-types";
 import { extname } from "node:path";
-import { RateLimiterRes } from "rate-limiter-flexible";
 
 // Serves the stable asset urls content embeds (/api/resource-assets/{blobName}) by authorizing the caller
 // And 302-redirecting to a freshly signed minutes-scale SAS — content never carries a signature, so nothing
@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
           `${AzureContainer.ResourceAssets}${ID_SEPARATOR}${getSessionPayload ? getSessionPayload.user.id : ipAddress}`,
         ),
       ).match(noop, (error) => {
-        if (error instanceof RateLimiterRes) throw createError({ statusCode: 429 });
+        if (getIsRateLimitExceeded(error)) throw createError({ statusCode: 429 });
         throw error;
       });
     else

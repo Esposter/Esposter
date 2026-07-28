@@ -6,21 +6,15 @@ import { getHasThumbnail } from "#shared/services/message/file/getHasThumbnail";
 import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
-export interface ReadFileUrlsOptions {
-  isBackground?: true;
-}
-
 // Resolves the read urls a batch of attachments needs — the original for every file and, for images, the
 // Thumbnail the message list renders inline — in one round trip per kind, however many files are on screen.
+// Every read here is one nobody asked for — a page that scrolled, a message that arrived, a sweep on a timer —
+// So the background marker is set once, here, for all of them: a failure has no action the user could take and
+// No command of theirs to attribute it to. Marking it per call site is what left the subscription-driven read
+// Unmarked while the sweep beside it carried it.
 export const useReadFileUrls = () => {
   const { $trpc } = useNuxtApp();
-  return async (
-    files: FileEntity[],
-    roomId: string,
-    // Marks a read nobody asked for (the hourly re-mint sweep), so its rejection cannot move or interrupt the
-    // User — see errorLink, which is where a FORBIDDEN would otherwise redirect to the login page
-    { isBackground }: ReadFileUrlsOptions = {},
-  ): Promise<Map<FileEntity["id"], ReadFileUrl>> => {
+  return async (files: FileEntity[], roomId: string): Promise<Map<FileEntity["id"], ReadFileUrl>> => {
     const fileUrlMap = new Map<FileEntity["id"], ReadFileUrl>();
     if (files.length === 0) return fileUrlMap;
 
@@ -33,7 +27,7 @@ export const useReadFileUrls = () => {
           files: files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
           roomId,
         },
-        { context: { isBackground } },
+        { context: { isBackground: true } },
       ),
       // The thumbnail is decoration on top of the original, so its query resolves to nothing on failure
       // Instead of failing the batch the message bubble actually needs.
@@ -44,7 +38,7 @@ export const useReadFileUrls = () => {
                 files: imageFiles.map(({ id }) => ({ id })),
                 roomId,
               },
-              { context: { isBackground } },
+              { context: { isBackground: true } },
             ),
           ).unwrapOr([])
         : [],
