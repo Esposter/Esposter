@@ -11,8 +11,10 @@ export const chunkBlobNamesByEventSize = (blobNames: string[]): string[][] => {
   let currentChunk: string[] = [];
   let currentBytes = 0;
   for (const blobName of blobNames) {
-    // The serialised cost of one array element: the name's own bytes, its two quotes and the separating comma.
-    const blobNameBytes = Buffer.byteLength(blobName, "utf8") + 3;
+    // The serialised cost of one array element: the name as JSON — its two quotes and every escape included — plus
+    // The separating comma. Measuring the raw name undercounts, since a quote, a backslash or a control character
+    // Costs two to six bytes once serialised, and a name made of them outgrows the budget the check just cleared.
+    const blobNameBytes = Buffer.byteLength(JSON.stringify(blobName), "utf8") + 1;
     if (
       currentChunk.length > 0 &&
       (currentChunk.length === MAX_BLOB_DELETION_EVENT_BLOB_NAMES ||

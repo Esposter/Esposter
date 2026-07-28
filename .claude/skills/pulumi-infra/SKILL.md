@@ -123,7 +123,7 @@ This is a deliberate **exception** to the repo-wide "prefer named imports from l
 
 State pins the default provider each resource was last written with (`pulumi:providers:github::default_6_14_1`), so a catalog bump to a provider package makes the program register a version state has never seen. Under `--target`, Pulumi registers providers only for the targeted resources, so the untargeted ones' provider is missing and it refuses:
 
-```
+```text
 error: provider …:pulumi:providers:github::default_6_14_0::… for resource …
 has not been registered yet, this is due to a change of providers mixed with --target
 ```

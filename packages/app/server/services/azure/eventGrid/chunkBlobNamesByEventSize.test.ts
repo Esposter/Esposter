@@ -8,6 +8,9 @@ describe(chunkBlobNamesByEventSize, () => {
   // What a name count cannot see. Sized so one name alone fits and two do not, so the split can only be the
   // Byte budget's doing — a count bound would keep all of them in one chunk.
   const multiByteBlobName = "字".repeat(Math.ceil(MAX_BLOB_DELETION_EVENT_DATA_BYTES / 2 / 3));
+  // The other way a name outgrows its own bytes: a quote is two bytes once escaped. Sized the same way, so a
+  // Chunker measuring the raw name keeps both and blows the budget.
+  const escapedBlobName = '"'.repeat(Math.ceil(MAX_BLOB_DELETION_EVENT_DATA_BYTES / 2 / 2));
 
   test("keeps a set within both bounds in one chunk", () => {
     expect.hasAssertions();
@@ -35,6 +38,17 @@ describe(chunkBlobNamesByEventSize, () => {
     const chunks = chunkBlobNamesByEventSize(blobNames);
 
     expect(chunks).toStrictEqual([[multiByteBlobName], [multiByteBlobName]]);
+    for (const chunk of chunks)
+      expect(Buffer.byteLength(JSON.stringify(chunk), "utf8")).toBeLessThanOrEqual(MAX_BLOB_DELETION_EVENT_DATA_BYTES);
+  });
+
+  test("splits on the escaped byte budget", () => {
+    expect.hasAssertions();
+
+    const blobNames = [escapedBlobName, escapedBlobName];
+    const chunks = chunkBlobNamesByEventSize(blobNames);
+
+    expect(chunks).toStrictEqual([[escapedBlobName], [escapedBlobName]]);
     for (const chunk of chunks)
       expect(Buffer.byteLength(JSON.stringify(chunk), "utf8")).toBeLessThanOrEqual(MAX_BLOB_DELETION_EVENT_DATA_BYTES);
   });
