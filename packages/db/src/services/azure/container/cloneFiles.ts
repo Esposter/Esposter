@@ -8,16 +8,18 @@ import { getResultAsync } from "@esposter/shared";
 
 // Returns each clone's minted id alongside the thumbnail state its blobs actually carry, so the caller
 // Writes an entity that describes what was copied rather than what the source claimed.
-export const cloneFiles = (
+export const cloneFiles = async (
   containerClient: ContainerClient,
   files: FileEntity[],
   sourcePrefix = "",
   destinationPrefix = sourcePrefix,
 ): Promise<Pick<FileEntity, "hasThumbnail" | "id">[]> => {
-  if (files.length === 0) return Promise.resolve([]);
+  if (files.length === 0) return [];
 
   const writtenBlobNames: string[] = [];
-  return getResultAsync(() =>
+  // Awaited rather than returned: the error arm below resolves to `Promise<never>`, so the match's own type is
+  // The union of that and the clone list until an await collapses it
+  const clonedFiles = await getResultAsync(() =>
     Promise.all(
       files.map(async ({ filename, hasThumbnail, id }) => {
         const newId: string = crypto.randomUUID();
@@ -49,4 +51,5 @@ export const cloneFiles = (
       throw error;
     },
   );
+  return clonedFiles;
 };
