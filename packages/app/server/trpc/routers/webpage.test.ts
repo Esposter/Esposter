@@ -1,5 +1,7 @@
+import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Resource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -15,15 +17,20 @@ import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
+type TransformPublishedBlobUrls = (ctx: AuthedContext, resource: Resource, content: unknown) => Promise<unknown>;
+
 const { transformPublishedBlobUrlsMock } = vi.hoisted(() => ({
-  transformPublishedBlobUrlsMock:
-    vi.fn<typeof import("@@/server/services/resource/transformPublishedBlobUrls").transformPublishedBlobUrls>(),
+  transformPublishedBlobUrlsMock: vi.fn<TransformPublishedBlobUrls>(),
 }));
 
 vi.mock(import("@@/server/services/resource/transformPublishedBlobUrls"), async (importOriginal) => {
-  const { transformPublishedBlobUrls } = await importOriginal();
-  transformPublishedBlobUrlsMock.mockImplementation(transformPublishedBlobUrls);
-  return { transformPublishedBlobUrls: transformPublishedBlobUrlsMock };
+  const original = await importOriginal();
+  transformPublishedBlobUrlsMock.mockImplementation(original.transformPublishedBlobUrls);
+  // The real export is generic in its content and a `Mock` cannot carry a type parameter, so the module seam is
+  // Where the concrete signature is widened back to it
+  return {
+    transformPublishedBlobUrls: transformPublishedBlobUrlsMock as unknown as typeof original.transformPublishedBlobUrls,
+  };
 });
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
