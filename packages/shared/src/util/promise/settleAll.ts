@@ -16,7 +16,11 @@ export const settleAll = async <T>(
 
   const values: T[] = [];
   for (const tasksChunk of chunk(tasks, concurrencyLimit)) {
-    const results = await Promise.allSettled(tasksChunk.map((task) => task()));
+    // Called through `then`, so a task that throws SYNCHRONOUSLY becomes a rejected promise like any other.
+    // Called directly, that throw escapes `map` itself — `allSettled` is never reached, the tasks map already
+    // Started keep running unawaited, and the caller rolls back over the top of them: the one failure mode this
+    // Whole helper exists to remove
+    const results = await Promise.allSettled(tasksChunk.map((task) => Promise.resolve().then(task)));
     const reasons: unknown[] = [];
     for (const result of results)
       if (result.status === "rejected") reasons.push(result.reason);

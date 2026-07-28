@@ -40,6 +40,34 @@ describe(settleAll, () => {
     expect(events).toStrictEqual(["settled", "threw"]);
   });
 
+  // A synchronous throw escapes `map` unless every task is called through a promise, taking the rejection
+  // Straight to the caller while the tasks already started keep running
+  test("waits for its in-flight tasks when one throws synchronously", async () => {
+    expect.hasAssertions();
+    const { promise, resolve } = Promise.withResolvers<string>();
+    const events: string[] = [];
+    const settling = settleAll([
+      async () => {
+        await promise;
+        events.push("settled");
+      },
+      () => {
+        throw new Error("a");
+      },
+    ]).catch(() => {
+      events.push("threw");
+    });
+    await new Promise((resolveTick) => {
+      setTimeout(resolveTick, 0);
+    });
+
+    expect(events).toStrictEqual([]);
+    resolve("");
+    await settling;
+
+    expect(events).toStrictEqual(["settled", "threw"]);
+  });
+
   test("rethrows a lone rejection as it was thrown", async () => {
     expect.hasAssertions();
     const error = new Error("a");
