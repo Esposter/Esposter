@@ -2,6 +2,7 @@ import type { relations } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
+import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
@@ -25,6 +26,7 @@ vi.mock(import("@/services/db"), () => ({
 vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
 
 describe(assertCanCreateMessage, () => {
+  const context = new InvocationContext({ logHandler: () => {} });
   const memberUserId = crypto.randomUUID();
   const name = "name";
   const ownerUserId = crypto.randomUUID();
@@ -69,7 +71,9 @@ describe(assertCanCreateMessage, () => {
 
     const missingRoomId = crypto.randomUUID();
 
-    await expect(assertCanCreateMessage(memberUserId, missingRoomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      assertCanCreateMessage(context, memberUserId, missingRoomId, ""),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, missingRoomId).message}]`,
     );
   });
@@ -77,7 +81,9 @@ describe(assertCanCreateMessage, () => {
   test("throws when member not found", async () => {
     expect.hasAssertions();
 
-    await expect(assertCanCreateMessage(crypto.randomUUID(), roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      assertCanCreateMessage(context, crypto.randomUUID(), roomId, ""),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -90,7 +96,7 @@ describe(assertCanCreateMessage, () => {
       .set({ timeoutUntil: new Date(Date.now() + 1) })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, memberUserId)));
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -100,7 +106,7 @@ describe(assertCanCreateMessage, () => {
 
     await mockDb.update(roomsInMessage).set({ isReadOnly: true }).where(eq(roomsInMessage.id, roomId));
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -110,7 +116,7 @@ describe(assertCanCreateMessage, () => {
 
     await mockDb.update(roomsInMessage).set({ isReadOnly: true }).where(eq(roomsInMessage.id, roomId));
 
-    await expect(assertCanCreateMessage(ownerUserId, roomId, "")).resolves.toBeUndefined();
+    await expect(assertCanCreateMessage(context, ownerUserId, roomId, "")).resolves.toBeUndefined();
   });
 
   test("throws when slowmode is active and not enough time has elapsed", async () => {
@@ -122,7 +128,7 @@ describe(assertCanCreateMessage, () => {
       .set({ lastMessageAt: new Date() })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, memberUserId)));
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -132,7 +138,7 @@ describe(assertCanCreateMessage, () => {
 
     await mockDb.insert(roomFiltersInMessage).values({ roomId, words: ["a"] });
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "a")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "a")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[WordFilteredError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -145,7 +151,7 @@ describe(assertCanCreateMessage, () => {
       .insert(roomFiltersInMessage)
       .values({ action: WordFilterAction.Timeout, roomId, timeoutDurationMs, words: ["a"] });
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "a")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "a")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[WordFilteredError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
 
@@ -159,6 +165,6 @@ describe(assertCanCreateMessage, () => {
   test("passes when all conditions are met", async () => {
     expect.hasAssertions();
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "a")).resolves.toBeUndefined();
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "a")).resolves.toBeUndefined();
   });
 });

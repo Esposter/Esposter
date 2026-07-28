@@ -6,16 +6,20 @@ import { getHasThumbnail } from "#shared/services/message/file/getHasThumbnail";
 import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getResultAsync, takeOne } from "@esposter/shared";
 
+interface ReadFileUrlsOptions {
+  isBackground?: true;
+}
+
 // Resolves the read urls a batch of attachments needs — the original for every file and, for images, the
 // Thumbnail the message list renders inline — in one round trip per kind, however many files are on screen.
 export const useReadFileUrls = () => {
   const { $trpc } = useNuxtApp();
-  // `isBackground` marks a read nobody asked for (the hourly re-mint sweep), so its rejection cannot move or
-  // Interrupt the user — see errorLink, which is where a FORBIDDEN would otherwise redirect to the login page
   return async (
     files: FileEntity[],
     roomId: string,
-    isBackground?: true,
+    // Marks a read nobody asked for (the hourly re-mint sweep), so its rejection cannot move or interrupt the
+    // User — see errorLink, which is where a FORBIDDEN would otherwise redirect to the login page
+    { isBackground }: ReadFileUrlsOptions = {},
   ): Promise<Map<FileEntity["id"], ReadFileUrl>> => {
     const fileUrlMap = new Map<FileEntity["id"], ReadFileUrl>();
     if (files.length === 0) return fileUrlMap;

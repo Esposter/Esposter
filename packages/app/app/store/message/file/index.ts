@@ -34,9 +34,9 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   // Out together and are merged once every response is in — serialised, the last chunk's images stay broken
   // For as many round-trip latencies as there are chunks. Merging after they all resolve is what keeps the
   // Single read-modify-write of the room map from losing a concurrent chunk's entries.
-  const storeReadFileUrls = async (roomId: string, files: FileEntity[], isBackground?: true) => {
+  const storeReadFileUrls = async (roomId: string, files: FileEntity[], { isBackground }: ReadFileUrlsOptions = {}) => {
     const newFileUrlMaps = await Promise.all(
-      chunk(files, MAX_READ_LIMIT).map((fileChunk) => readFileUrls(fileChunk, roomId, isBackground)),
+      chunk(files, MAX_READ_LIMIT).map((fileChunk) => readFileUrls(fileChunk, roomId, { isBackground })),
     );
     const roomFileUrlMap = getData(roomId) ?? new Map<string, ReadFileUrl>();
     for (const newFileUrlMap of newFileUrlMaps)
@@ -80,7 +80,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
         // Duration and the room serves multi-megabyte originals until reload. Eligible, it retries next tick.
         else return getHasThumbnail(file) && !fileUrl.thumbnailUrl;
       });
-      await storeReadFileUrls(roomId, expiringFiles, true);
+      await storeReadFileUrls(roomId, expiringFiles, { isBackground: true });
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
   if (!getIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);

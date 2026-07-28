@@ -38,6 +38,16 @@ describe(getResourceAssetUrl, () => {
     expect(match[0]).toBe(url);
   });
 
+  // Authored content can embed a foreign absolute url whose own path carries this prefix; matching its tail
+  // Rewrites it to a local blob on publish and splices a second url into the middle of it on export
+  test("should not match the prefix inside another url", () => {
+    expect.hasAssertions();
+
+    const url = getResourceAssetUrl(`${getFilesDirectoryName(resourceId)}/a`);
+
+    expect([...`"https://a.com${url}"`.matchAll(RESOURCE_ASSET_URL_REGEX)]).toStrictEqual([]);
+  });
+
   test("should round-trip through the parser", () => {
     expect.hasAssertions();
 

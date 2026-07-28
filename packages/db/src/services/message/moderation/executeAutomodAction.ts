@@ -23,6 +23,10 @@ export const executeAutomodAction = async (
     roomId: string;
     userId: string;
   },
+  // The host's own sink, because this core runs in two of them: a swallowed failure written to bare `console`
+  // From the Function host is attributable to no invocation, so the moderator sees a member timed out with
+  // Nothing in the audit log and nothing anywhere saying why
+  onError: (error: unknown) => void,
 ): Promise<ExecutedAutomodAction | undefined> => {
   if (action === WordFilterAction.Reject) return undefined;
 
@@ -47,6 +51,6 @@ export const executeAutomodAction = async (
       targetUserId: userId,
       type,
     }),
-  ).match(noop, console.error);
+  ).match(noop, onError);
   return { durationMs, type };
 };

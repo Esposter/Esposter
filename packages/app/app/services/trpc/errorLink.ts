@@ -30,14 +30,15 @@ export const errorLink: TRPCLink<TRPCRouter> =
           // Rejection reaches it
           if (!err.data || op.context.isBackground) return;
 
-          if (ALERTED_ERROR_CODES.has(String(err.data.code))) {
-            const alertStore = useAlertStore();
-            const { createAlert } = alertStore;
-            createAlert(err.message, "error");
-            return;
-          }
-
           switch (err.data.code) {
+            case "BAD_REQUEST":
+            case "TOO_MANY_REQUESTS":
+            case "UNPROCESSABLE_CONTENT": {
+              const alertStore = useAlertStore();
+              const { createAlert } = alertStore;
+              createAlert(err.message, "error");
+              break;
+            }
             case "FORBIDDEN":
             case "UNAUTHORIZED":
               await navigateTo(RoutePath.Login);

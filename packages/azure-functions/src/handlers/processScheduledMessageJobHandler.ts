@@ -88,7 +88,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       // Own, so the claim is released before the rethrow asks Service Bus to redeliver — the claim is
       // Single-shot, and a job left holding it would be neither delivered nor cancellable/reschedulable
       const isWordFiltered = await getResultAsync(() =>
-        assertCanCreateMessage(processingJob.userId, processingJob.roomId, payload.message),
+        assertCanCreateMessage(context, processingJob.userId, processingJob.roomId, payload.message),
       ).match(
         () => false,
         async (error) => {

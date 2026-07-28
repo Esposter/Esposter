@@ -176,6 +176,8 @@ src/services/getTableClient.test.ts     # mock — imported by tests
 
 **Export with the real name — never a `Mock` suffix** (e.g. `useTableClient`, not `useTableClientMock`). This lets `vi.mock(import("real"), () => import("real.test"))` work and lets tests import from the real path to get the mock. Centralize all `as unknown as` casts in the mock file. Every mock-only `.test.ts` must end with `describe.todo("serviceName")` so Vitest accepts it without a real suite:
 
+**Import a mocked module at module scope, never with `await import(...)` inside a test body.** The factory is evaluated at the first import of the mocked module, so a first import from inside a test evaluates the mock file — and its `describe.todo` — while a test is running, which Vitest rejects with `There was an error when mocking a module` / `Calling the suite function inside test function is not allowed`. The error names the mock file, not the import that triggered it. Nothing else is wrong with the registration: a factory evaluated during collection (the normal case) registers no suite anywhere, so mocked modules cost their importers nothing.
+
 ```ts
 // src/services/getTableClient.test.ts — export the real name, cast here, end with describe.todo
 export const getTableClient = <T extends AzureTable>(

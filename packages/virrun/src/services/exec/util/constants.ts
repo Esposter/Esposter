@@ -96,6 +96,13 @@ export const CACHE_CLEAN_TIMEOUT_MS: number = 0;
 // The unmarked corpses are unattributable and accumulate forever: a test suite that runs virrun in temp dirs strands
 // One per aborted run, hundreds of them holding gigabytes of ext4.
 export const SOURCE_MIRROR_UNMARKED_MAX_AGE_MS: number = dayjs.duration(1, "day").asMilliseconds();
+// Minimum age before a dead owner's staged remove-list may be reclaimed. A dead owner does NOT mean the teardown is
+// Finished with the file: `spawnBackground` spawns asynchronously, and `wsl.exe` still has to start the WSL relay and
+// `sh` before the script's `< "$1"` redirect opens it — so a short win32 run can exit, and its pid read as dead, while
+// Its own teardown is still cold-starting. Unlinking then leaves that `sh` with a missing input, its `rm -rf` never
+// Runs, and the superseded snapshot dirs it named are never reclaimed — the unbounded ext4 growth the batched sweep
+// Exists to prevent, silently, since the spawn ignores its stdio and has no exit handler.
+export const REMOVE_LIST_REAP_MINIMUM_AGE_MS: number = dayjs.duration(1, "minute").asMilliseconds();
 // Minimum age (`ps -o etimes`) before the startup orphan sweep may judge a marker-matched process. Every transient
 // Misread window lasts milliseconds — a fork that hasn't exec'd yet (its cmdline still carries the parent's marker),
 // A spawning run whose Relay parent isn't established, a finishing run whose Relay died first — while a true corpse

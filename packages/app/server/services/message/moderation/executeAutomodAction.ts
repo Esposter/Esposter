@@ -19,6 +19,7 @@ export const executeAutomodAction = async (
     db,
     () => useTableClient(AzureTable.ModerationLog),
     input,
+    console.error,
   );
   if (!executedAutomodAction) return;
 

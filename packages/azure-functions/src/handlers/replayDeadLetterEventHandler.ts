@@ -73,9 +73,10 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
         DEAD_LETTER_QUARANTINE_PREFIX,
         content,
       );
-      // Rewriting the quarantine copy is harmless — same path, same bytes — but this line is the alert an operator is
-      // Paged on, so it is tied to the delivery that created the copy: a redelivery of an already-quarantined payload
-      // Is not a new incident, and delivery is at-least-once.
+      // Rewriting the quarantine copy is harmless — same path, same bytes — but this line is the only record that the
+      // Quarantine happened, so it is tied to the delivery that created the copy: a redelivery of an already
+      // Quarantined payload is not a new incident, and delivery is at-least-once. Nothing pages on it — the alert
+      // Rules went with App Insights, and the container is what an operator inspects (/docs/infra/eventgrid-dead-letter)
       if (isQuarantineCreated)
         context.error(
           `${AzureFunction.ReplayDeadLetterEvent}${DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX} ${blobName}, malformed dead-letter payload: `,
@@ -126,8 +127,9 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
       );
       // Quarantining stays ahead of the republish so a poison payload never rides along in the resend batch, which
       // Means a send that throws below reruns this whole step on the redelivered blob. Rewriting the quarantine copy
-      // Is harmless — same path, same bytes — but this line is the alert an operator is paged on, so it is tied to the
-      // Delivery that created the copy: a redelivery of an already-quarantined payload is not a new incident.
+      // Is harmless — same path, same bytes — but this line is the only record that the quarantine happened, so it is
+      // Tied to the delivery that created the copy: a redelivery of an already-quarantined payload is not a new
+      // Incident. Nothing pages on it; the container is what an operator inspects (/docs/infra/eventgrid-dead-letter)
       if (isQuarantineCreated)
         context.error(
           `${AzureFunction.ReplayDeadLetterEvent}${DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX} ${quarantinedReplays.length} of ${replays.length} events from ${blobName}, each already replayed ${MAX_DEAD_LETTER_REPLAY_ATTEMPTS} times or raised by a handler a replay cannot safely rerun`,
