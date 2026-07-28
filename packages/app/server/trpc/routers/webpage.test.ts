@@ -13,7 +13,18 @@ import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AzureContainer, resources, ResourceType } from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+
+const { transformPublishedBlobUrlsMock } = vi.hoisted(() => ({
+  transformPublishedBlobUrlsMock:
+    vi.fn<typeof import("@@/server/services/resource/transformPublishedBlobUrls").transformPublishedBlobUrls>(),
+}));
+
+vi.mock(import("@@/server/services/resource/transformPublishedBlobUrls"), async (importOriginal) => {
+  const { transformPublishedBlobUrls } = await importOriginal();
+  transformPublishedBlobUrlsMock.mockImplementation(transformPublishedBlobUrls);
+  return { transformPublishedBlobUrls: transformPublishedBlobUrlsMock };
+});
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
 // Here only the router wiring: resource type + content schema round-trip.
@@ -29,7 +40,49 @@ describe("webpage", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
+    transformPublishedBlobUrlsMock.mockClear();
     await mockContext.db.delete(resources);
+  });
+
+  // The assets are cloned before the transaction opens, so an unpublish landing in between sweeps them and this
+  // Publish's own upsert then re-creates the publication row — published, with every image 404ing. The version
+  // Says so exactly: the sweep only follows a row delete, and a delete restarts the sequence at 1, so a claim
+  // That is not the successor of what the attempt read is proof one landed and the snapshot must be rebuilt.
+  test("rebuilds the snapshot when an unpublish sweeps the assets it cloned", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor({ html: "a" }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    transformPublishedBlobUrlsMock.mockClear();
+    // Lands between this publish's clone and its transaction, which is the whole race
+    transformPublishedBlobUrlsMock.mockImplementationOnce(async (_context, _resource, content) => {
+      await caller.unpublishResource({ id: newResource.id });
+      return content;
+    });
+
+    await caller.publishResource({ id: newResource.id });
+
+    expect(transformPublishedBlobUrlsMock).toHaveBeenCalledTimes(2);
+  });
+
+  test("transforms once when nothing races the publish", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor({ html: "a" }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+
+    await caller.publishResource({ id: newResource.id });
+
+    expect(transformPublishedBlobUrlsMock).toHaveBeenCalledTimes(1);
   });
 
   test("saves and reads content", async () => {

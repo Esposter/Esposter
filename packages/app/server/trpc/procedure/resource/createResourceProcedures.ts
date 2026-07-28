@@ -295,6 +295,12 @@ export const createResourceProcedures = <TType extends ResourceType>(
               "cannot publish resource without content",
             ).message,
           });
+        // Read before the assets are cloned, so the claim below can be compared against it. A sweep of this
+        // Resource's published prefix only ever follows a publication row delete, and that delete resets the
+        // Version sequence — so a claim that is not the successor of what this attempt read is proof one landed
+        const previousPublication = await ctx.db.query.resourcePublications.findFirst({
+          where: { resourceId: { eq: id } },
+        });
         // Transformed before the transaction opens: a hook may read through `ctx.db` (Dashboard resolves every
         // Bound dataset), and issuing that read while this connection holds a transaction deadlocks. Nothing it
         // Writes is keyed by the version claimed below — see createPublishedAssetsDirectoryName
@@ -328,6 +334,21 @@ export const createResourceProcedures = <TType extends ResourceType>(
           );
           return newPublication;
         });
+        // An unpublish that landed between the clone and this claim swept the assets it had just written, while
+        // The content blob — written inside the transaction, after that sweep's bound — survived: the resource
+        // Would report itself published and render every image broken, with no operation left that rebuilds
+        // Them. Re-cloning now writes past the bound, and the version is already claimed, so the repair is the
+        // Transform and the upload again rather than another publish. A concurrent publish trips this too and
+        // Pays one redundant clone; a swept snapshot cannot slip through, because a delete restarts the
+        // Sequence at 1 and any successor this attempt could expect is at least 2
+        if (previousPublication && publication.publishVersion !== previousPublication.publishVersion + 1)
+          await useUpload(
+            AzureContainer.ResourceAssets,
+            getPublishedContentBlobName(id, publication.publishVersion),
+            JSON.stringify(
+              transformPublishedContent ? await transformPublishedContent(ctx, ctx.resource, content) : content,
+            ),
+          );
         // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
         getSynchronizedFunction(writeResourceActivity)({
           activityType: ResourceActivityType.Published,

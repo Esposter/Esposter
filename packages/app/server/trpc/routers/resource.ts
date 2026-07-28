@@ -10,13 +10,16 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
+import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
@@ -339,15 +342,18 @@ export const resourceRouter = router({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.Resource, `${id}/${version}`).message,
         });
-      // One transaction so a failed clone or write rolls the contentVersion bump back — a restore that did not
-      // Land must never advance the version every client caches against. The rollback is Postgres-only, and
-      // Nothing here pretends otherwise: blobs a partial clone already wrote stay under this resource's own
-      // `{id}/files`, unreferenced by any content until the next restore overwrites them or `purgeResource`
-      // Takes the directory wholesale. That is the deliberate trade — unlike `duplicateResource`, whose
-      // Compensating `deleteDirectory` is only safe because the resource it clears was created moments earlier,
-      // The target here is a live working copy whose existing files a directory-wide cleanup would destroy.
-      // The lock on the `resources` row is held across those blob calls; the only contender is the owner's own
-      // Concurrent mutation of the same resource, which the restore would serialize against regardless.
+      // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
+      // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
+      // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy
+      // Resources would starve the pool for requests that have nothing to do with them.
+      // Blobs a partial clone already wrote stay under this resource's own `{id}/files`, unreferenced by any
+      // Content until the next restore overwrites them or `purgeResource` takes the directory wholesale — the
+      // Deliberate trade, unlike `duplicateResource`, whose compensating `deleteDirectory` is only safe because
+      // The resource it clears was created moments earlier; the target here is a live working copy whose
+      // Existing files a directory-wide cleanup would destroy.
+      const clonedContent = await cloneContentAssets(publishedContent, id);
+      // The bump and the content write stay in one transaction so a failed write rolls the contentVersion back —
+      // A restore that did not land must never advance the version every client caches against.
       return ctx.db.transaction(async (tx) => {
         const restoredResource = requireMutation(
           (
@@ -361,7 +367,7 @@ export const resourceRouter = router({
           DatabaseEntityType.Resource,
           id,
         );
-        await storeSelfContainedContent(id, publishedContent);
+        await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(clonedContent));
         return restoredResource;
       });
     },
