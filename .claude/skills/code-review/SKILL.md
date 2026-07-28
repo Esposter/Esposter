@@ -51,7 +51,7 @@ The workflow's Resolve phase settles every PLAUSIBLE finding to CONFIRMED or REF
 A PLAUSIBLE verdict means a verifier reading one file under a budget could not reach the trigger. That is a statement about the budget, not about the code. Settling it is a different activity from verifying, and it is usually cheap:
 
 - **Go one hop out.** Most of these die or harden at the callee or the caller — a claim about `createMessage` rejecting after a partial write is settled by reading which table `readMessages` serves, not by re-reading `createMessage`.
-- **Read the dependency's real source in `node_modules`**, never its reputation. `h3` "decodes router params" was refuted in one grep of `getRouterParams`; acting on the claim would have reintroduced a traversal hole.
+- **Read the dependency's real source in `node_modules`**, never its reputation — and read the whole path, not the one function named in the claim. `getRouterParams` really does decode only under `{ decode: true }`, and stopping there produced a comment asserting the route param was still percent-encoded; `h3`'s `createAppEventHandler` had already run `_decodePath` on it before routing, and the router then cut the path at the first `?` in that decoded form. One grep refuted the claim as worded and confirmed the defect it was hiding.
 - **Use history.** `git log -S` / `git log -L` answers "was this guard ever here, and what removed it" directly.
 - **Check the record.** A decision stated deliberately with its consequence named REFUTES the finding; a record the code contradicts CONFIRMS it.
 
