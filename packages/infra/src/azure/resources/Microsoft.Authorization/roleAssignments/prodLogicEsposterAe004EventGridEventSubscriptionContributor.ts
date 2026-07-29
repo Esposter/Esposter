@@ -1,4 +1,4 @@
-import AzureEventGridEventSubscriptionContributorRoleDefinitionId from "@/azure/constants/AzureEventGridEventSubscriptionContributorRoleDefinitionId";
+import AzureEventGridContributorRoleDefinitionId from "@/azure/constants/AzureEventGridContributorRoleDefinitionId";
 import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
 import ProdLogicEsposterAe004PrincipalId from "@/azure/constants/ProdLogicEsposterAe004PrincipalId";
 import { prodEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
@@ -12,7 +12,7 @@ export const prodLogicEsposterAe004EventGridEventSubscriptionContributor: azure_
     {
       principalId: ProdLogicEsposterAe004PrincipalId,
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
-      roleDefinitionId: AzureEventGridEventSubscriptionContributorRoleDefinitionId,
+      roleDefinitionId: AzureEventGridContributorRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${prodEvgtEsposterAe001.name}`,
     },
     {
