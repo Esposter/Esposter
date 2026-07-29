@@ -562,8 +562,8 @@ catalogs:
       specifier: ^1.100.0
       version: 1.100.0
     sax:
-      specifier: ^1.6.0
-      version: 1.6.0
+      specifier: ^1.6.1
+      version: 1.6.1
     show-open-file-picker:
       specifier: ^0.4.0
       version: 0.4.0
@@ -1902,7 +1902,7 @@ importers:
         version: link:../shared
       sax:
         specifier: 'catalog:'
-        version: 1.6.0
+        version: 1.6.1
       xmlbuilder2:
         specifier: 'catalog:'
         version: 4.0.3
@@ -13105,6 +13105,10 @@ packages:
 
   sax@1.6.0:
     resolution: {integrity: sha512-6R3J5M4AcbtLUdZmRv2SygeVaM7IhrLXu9BmnOGmmACak8fiUtOsYNWUS4uK7upbmHIBbLBeFeI//477BKLBzA==}
+    engines: {node: '>=11.0.0'}
+
+  sax@1.6.1:
+    resolution: {integrity: sha512-42tBVwLWnaQvW5zc4HbZrTuWccECCZfBi92FDuwtqxasH+JbPB3/FOKb1m222K42R4WxuxzzMsTswfzgtSu64Q==}
     engines: {node: '>=11.0.0'}
 
   saxen@11.1.0:
@@ -28666,6 +28670,8 @@ snapshots:
     optional: true
 
   sax@1.6.0: {}
+
+  sax@1.6.1: {}
 
   saxen@11.1.0: {}
 
