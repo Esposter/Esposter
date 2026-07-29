@@ -1,4 +1,6 @@
 import type { ContainerClient } from "@azure/storage-blob";
+import type { relations } from "@esposter/db-schema";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
@@ -16,6 +18,7 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
 }));
 
 describe(cloneContentAssets, () => {
+  const userId = crypto.randomUUID();
   const sourceResourceId = crypto.randomUUID();
   const destinationResourceId = crypto.randomUUID();
   const fileId = crypto.randomUUID();
@@ -25,6 +28,15 @@ describe(cloneContentAssets, () => {
   const filesRelativeName = `${FILES_DIRECTORY_SEGMENT}/${fileId}${ID_SEPARATOR}${filename}`;
   const workingBlobName = `${sourceResourceId}/${filesRelativeName}`;
   const publishedBlobName = `${sourceResourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/${crypto.randomUUID()}/${filesRelativeName}`;
+  // The clone asks the same question the serving endpoint does, so the rows that answer it are what a case here
+  // Varies: an owned working copy is readable, an unowned one is not, and neither has a publication row
+  const createDatabase = (isOwned: boolean) =>
+    ({
+      query: {
+        resourcePublications: { findFirst: () => Promise.resolve(undefined) },
+        resources: { findFirst: () => Promise.resolve(isOwned ? { id: sourceResourceId } : undefined) },
+      },
+    }) as unknown as PostgresJsDatabase<typeof relations>;
   let containerClient: MockContainerClient;
 
   beforeEach(async () => {
@@ -54,7 +66,7 @@ describe(cloneContentAssets, () => {
     const content = {
       html: `<img src="${getResourceAssetUrl(workingBlobName)}"><img src="${getResourceAssetUrl(publishedBlobName)}">`,
     };
-    const clonedContent = await cloneContentAssets(content, destinationDirectoryName);
+    const clonedContent = await cloneContentAssets(createDatabase(true), userId, content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
     expect(clonedBlobNames).toHaveLength(2);
@@ -68,7 +80,7 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
-    await cloneContentAssets(content, destinationDirectoryName);
+    await cloneContentAssets(createDatabase(true), userId, content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
     const prefix = `${destinationDirectoryName}/${FILES_DIRECTORY_SEGMENT}/`;
@@ -90,7 +102,7 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
-    const clonedContent = await cloneContentAssets(content, sourceResourceId);
+    const clonedContent = await cloneContentAssets(createDatabase(true), userId, content, sourceResourceId);
     const clonedBlobNames: string[] = [];
     for await (const { name } of containerClient.listBlobsFlat({
       prefix: `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/`,
@@ -100,5 +112,19 @@ describe(cloneContentAssets, () => {
     expect(clonedBlobNames).toContain(workingBlobName);
     expect(clonedBlobNames).toHaveLength(2);
     expect(clonedContent.html).not.toContain(getResourceAssetUrl(workingBlobName));
+  });
+
+  // The copy path must repeat the authorization the read path enforces. A working-copy url the caller cannot open
+  // Reaches them easily — a personalized export mails absolute ones out — and copying it would republish someone
+  // Else's private blob under a directory that answers to anyone while the publication row exists
+  test("carries a url the caller may not read verbatim instead of copying its blob", async () => {
+    expect.hasAssertions();
+
+    const content = { html: `<img src="${getResourceAssetUrl(workingBlobName)}">` };
+    const clonedContent = await cloneContentAssets(createDatabase(false), userId, content, destinationDirectoryName);
+    const clonedBlobNames = await getClonedBlobNames();
+
+    expect(clonedBlobNames).toHaveLength(0);
+    expect(clonedContent.html).toContain(getResourceAssetUrl(workingBlobName));
   });
 });

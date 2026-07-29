@@ -17,8 +17,9 @@ import {
   DEAD_LETTER_BLOB_SUBJECT_PREFIX,
   DEAD_LETTER_QUARANTINE_PREFIX,
   DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX,
+  MAX_EVENT_GRID_PUBLISH_BYTES,
 } from "@esposter/db-schema";
-import { getResult, getResultAsync, noop, takeOne } from "@esposter/shared";
+import { chunkBySerializedSize, getResult, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { z } from "zod";
 
 // The replay is payload-agnostic — it resends whatever it finds, and only each event's handler knows how to read its
@@ -143,7 +144,14 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Delivery is at-least-once: a send that throws mid-batch is retried whole by the redelivered blob event, so a
     // Handler that already ran can run twice. Only the handlers IsIdempotentAzureFunctionMap marks idempotent get
     // Here for exactly that reason; the rest were quarantined above rather than duplicated.
-    await eventGridPublisherClient.send(
+    // Chunked against the publish request cap, never sent whole: Event Grid caps a publish REQUEST at 1 MB
+    // Independently of the per-event cap, and it batches whatever expired together into one blob up to that same
+    // 1 MB — so a full blob is by definition more than one request may carry. Sent whole, the request is rejected,
+    // `logAndRethrow` redelivers the identical oversized batch, and the replay subscription (which deliberately has
+    // No dead-letter destination of its own) burns every attempt on it before discarding the blob's events silently.
+    // Sequential, so a chunk that throws stops the ones behind it: the redelivered blob replays the batch from the
+    // Start, and every event that already landed is a duplicate the idempotency bar above admits
+    for (const replayChunk of chunkBySerializedSize(
       replayableReplays.map(
         ({ deadLetteredEvent: { data, dataVersion, eventType, subject }, eventId, replayAttempts }) => ({
           data,
@@ -153,7 +161,9 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
           subject,
         }),
       ),
-    );
+      MAX_EVENT_GRID_PUBLISH_BYTES,
+    ))
+      await eventGridPublisherClient.send(replayChunk);
     // Best-effort like every post-persist step: the events are already republished, so a failed archive must not
     // Rethrow and redeliver them. An un-deleted original merely lingers until the container's lifecycle rule sweeps
     // It — it cannot retrigger a replay, since only a BlobCreated event does that.

@@ -10,7 +10,9 @@ import { observable } from "@trpc/server/observable";
 
 // The codes this link puts in front of the user itself. A caller that catches the same rejection and alerts
 // `error.message` again shows the user two identical toasts for one failure, so it asks first — the link is the
-// Owner for these, and the caller stays the owner for everything it alone can see (a blob PUT, a local guard)
+// Owner for these, and the caller stays the owner for everything it alone can see (a blob PUT, a local guard).
+// Ownership is unconditional: a caller reads this predicate off the code alone, so any operation the link declines
+// To alert is an operation nobody alerts — the caller has already been told the link owns it
 const ALERTED_ERROR_CODES = new Set(["BAD_REQUEST", "TOO_MANY_REQUESTS", "UNPROCESSABLE_CONTENT"]);
 
 export const getIsAlertedByErrorLink = (error: unknown): boolean =>
@@ -24,12 +26,7 @@ export const errorLink: TRPCLink<TRPCRouter> =
         complete: observer.complete,
         error: getSynchronizedFunction(async (err) => {
           observer.error(err);
-          // A background operation neither speaks to the user nor moves them: the hourly read-SAS sweep runs for
-          // Whatever room is open, which may be one the user was just removed from, and treating its FORBIDDEN as
-          // The user's own throws a still-authenticated user out to the login screen over a timer they never
-          // Triggered. Its caller cannot prevent that by swallowing — this runs inside the link chain, before the
-          // Rejection reaches it
-          if (!err.data || op.context.isBackground) return;
+          if (!err.data) return;
 
           switch (err.data.code) {
             case "BAD_REQUEST":
@@ -47,8 +44,20 @@ export const errorLink: TRPCLink<TRPCRouter> =
             // Fact the client already holds, so the decision reads it instead of guessing from the code.
             case "FORBIDDEN":
             case "UNAUTHORIZED": {
+              // A background operation never moves the user: the hourly read-SAS sweep runs for whatever room is
+              // Open, which may be one the user was just removed from, and treating its FORBIDDEN as the user's own
+              // Throws a still-authenticated user out to the login screen over a timer they never triggered. Its
+              // Caller cannot prevent that by swallowing — this runs inside the link chain, before the rejection
+              // Reaches it. It still alerts above, because a failure the user's own action caused is theirs to see
+              if (op.context.isBackground) break;
+
               const session = authClient.useSession();
-              if (!session.value.data) await navigateTo(RoutePath.Login);
+              // A request still in flight is not an absent session. This runs outside any component or effect
+              // Scope, so the nanostore ref it reads is whatever the session fetch has resolved so far — null while
+              // Pending, which is every rejection that beats the first session read (a page's first call, or SSR
+              // Where the client holds no cookies). Redirecting on that logs an authenticated user out of their own
+              // First page load, the exact failure reading the session instead of the code exists to prevent
+              if (!session.value.isPending && !session.value.data) await navigateTo(RoutePath.Login);
               break;
             }
             default:

@@ -7,7 +7,8 @@ import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/
 // Published snapshots must survive the owner deleting/replacing working-copy assets, so the referenced
 // Asset blobs are cloned under the publish directory and the content is rewritten to serve the clones
 export const transformPublishedBlobUrls = <TContent>(
-  _ctx: AuthedContext,
+  ctx: AuthedContext,
   resource: Resource,
   content: TContent,
-): Promise<TContent> => cloneContentAssets(content, createPublishedAssetsDirectoryName(resource.id));
+): Promise<TContent> =>
+  cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, content, createPublishedAssetsDirectoryName(resource.id));

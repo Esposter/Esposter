@@ -140,6 +140,45 @@ describe(useDataStore, () => {
     expect(resetSendSpy).toHaveBeenCalledWith(roomId, undefined);
   });
 
+  // The composer's attachments carry the only grants that authorize reclaiming their blobs, so a send the server
+  // Rejects must leave them in place — released at the bubble, the blobs are referenced by no message and
+  // Reclaimable by nothing, and the user re-picks every attachment to try again
+  test("createMessage releases the composer's attachments only once the server accepts", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const { createMessage } = dataStore;
+    server.use(
+      trpcMsw.message.createMessage.mutation(() => {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
+      }),
+    );
+    const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
+    await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+
+    expect(commitSendSpy).not.toHaveBeenCalled();
+  });
+
+  test("createMessage releases the composer's attachments for the room the send was for", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const { createMessage } = dataStore;
+    server.use(
+      trpcMsw.message.createMessage.mutation(() =>
+        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      ),
+    );
+    const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
+    await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+
+    expect(commitSendSpy).toHaveBeenCalledWith(roomId);
+  });
+
   // A successful create also mirrors the server's thread auto-follow, so the reply's root is followed locally
   // Without the round trip the drawer would otherwise need
   test("createMessage mirrors the thread auto-follow of a reply", async () => {

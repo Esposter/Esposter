@@ -25,10 +25,12 @@ vi.mock(import("@/services/exec/snapshot/createSnapshot"));
 vi.mock(import("@/services/exec/snapshot/forkSnapshot"));
 vi.mock(import("@/services/exec/snapshot/resolveSnapshotLocation"));
 // Mock the WSL login-PATH capture: the real one spawns wsl.exe on win32, which this mocked-backend test mustn't
-// Depend on.
-vi.mock(import("@/services/exec/wsl/readWslLoginEnvironment"), () => ({
-  readWslLoginEnvironment: () => ({ nodeVersion: "", path: "" }),
-}));
+// Depend on. The shared capture, never an empty one — createOsExecOptions reads an empty path on win32 as a failed
+// Capture and throws, which every os-backend case here would then die on.
+vi.mock(import("@/services/exec/wsl/readWslLoginEnvironment"), async () => {
+  const { TEST_WSL_LOGIN_ENVIRONMENT: testWslLoginEnvironment } = await import("@/services/exec/wsl/constants.test");
+  return { readWslLoginEnvironment: () => testWslLoginEnvironment };
+});
 // Same for the WSL native cache root: the real one spawns wsl.exe and would create dirs in the live WSL home.
 // Point it at an in-temp dir.
 vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), async () => {

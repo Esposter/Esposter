@@ -49,6 +49,7 @@ import {
   getResultAsync,
   InvalidOperationError,
   MAX_READ_LIMIT,
+  noop,
   Operation,
   streamToText,
 } from "@esposter/shared";
@@ -342,15 +343,36 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Pays one redundant clone; a swept snapshot cannot slip through, because a delete restarts the
         // Sequence at 1 and any successor this attempt could expect is at least 2.
         // An attempt that read no row expects to claim 1 — reading the successor off the row alone exempted
-        // Every first publish (and every publish after an unpublish) from the check entirely
+        // Every first publish (and every publish after an unpublish) from the check entirely.
+        //
+        // Outside the transaction on purpose, and it cannot move in: the transform may read through `ctx.db`
+        // (Dashboard resolves every bound dataset), which deadlocks against a transaction this same connection
+        // Holds. So the publication has already landed by the time the repair runs, and the transaction's
+        // Guarantee is unaffected — the version it claimed does point at a blob that was written. What a failed
+        // Repair leaves behind is that blob still naming the swept assets, i.e. a live publication whose images
+        // 404. The rejection is therefore reported rather than swallowed, and says so: republishing re-clones and
+        // Overwrites, so the owner's own retry is what repairs it, and a silent success would leave the page
+        // Broken with nothing to signal it. See /docs/architecture/publishing
         if (publication.publishVersion !== (previousPublication?.publishVersion ?? 0) + 1)
-          await useUpload(
-            AzureContainer.ResourceAssets,
-            getPublishedContentBlobName(id, publication.publishVersion),
-            JSON.stringify(
-              transformPublishedContent ? await transformPublishedContent(ctx, ctx.resource, content) : content,
+          await getResultAsync(async () =>
+            useUpload(
+              AzureContainer.ResourceAssets,
+              getPublishedContentBlobName(id, publication.publishVersion),
+              JSON.stringify(
+                transformPublishedContent ? await transformPublishedContent(ctx, ctx.resource, content) : content,
+              ),
             ),
-          );
+          ).match(noop, (error) => {
+            console.error(error);
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: new InvalidOperationError(
+                Operation.Update,
+                DatabaseEntityType.ResourcePublication,
+                `published at version ${publication.publishVersion}, but its assets were swept by a concurrent unpublish and could not be re-cloned — publish again to rebuild them`,
+              ).message,
+            });
+          });
         // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
         getSynchronizedFunction(writeResourceActivity)({
           activityType: ResourceActivityType.Published,

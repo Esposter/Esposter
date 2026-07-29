@@ -8,6 +8,12 @@ import { createHookRegistry } from "@/services/shared/createHookRegistry";
 import { Operation } from "@esposter/shared";
 
 export const MessageHookMap = {
+  // Runs once the server has accepted the send, for the composer state a rejection must be able to hand back.
+  // Separate from `ResetSend` because the two answer different questions: the bubble is the sender's copy of the
+  // Text the moment it exists, so the editor clears then — but it is not a copy of an attachment. An attachment
+  // Leaves the composer with the only grant that authorizes reclaiming its blob, so releasing it before the
+  // Server accepts strands the blob for good on every rejected send, and takes the user's retry with it
+  CommitSend: createHookRegistry<(roomId: string) => Promisable<void>>(),
   [Operation.Create]: createHookRegistry<(message: MessageEntity) => Promisable<void>>(),
   [Operation.Delete]: createHookRegistry<(input: DeleteMessageInput) => Promisable<void>>(),
   [Operation.Update]: createHookRegistry<(input: MessageEvents["updateMessage"][number]) => Promisable<void>>(),

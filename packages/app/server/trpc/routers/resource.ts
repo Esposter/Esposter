@@ -215,7 +215,7 @@ export const resourceRouter = router({
       const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
       // The blob is written on first save, so missing content just means there is nothing to copy yet
       if (content === undefined) return;
-      await storeSelfContainedContent(newResource.id, content);
+      await storeSelfContainedContent(ctx.db, ctx.getSessionPayload.user.id, newResource.id, content);
     }).match(noop, async (error) => {
       // Never leave a content-less orphan copy behind when the content clone fails. Ordered like purgeResource:
       // Partially cloned blobs first (already-gone is success), the row last as the durable marker — a failed
@@ -351,7 +351,7 @@ export const resourceRouter = router({
       // Deliberate trade, unlike `duplicateResource`, whose compensating `deleteDirectory` is only safe because
       // The resource it clears was created moments earlier; the target here is a live working copy whose
       // Existing files a directory-wide cleanup would destroy.
-      const clonedContent = await cloneContentAssets(publishedContent, id);
+      const clonedContent = await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, publishedContent, id);
       // The bump and the content write stay in one transaction so a failed write rolls the contentVersion back —
       // A restore that did not land must never advance the version every client caches against.
       return ctx.db.transaction(async (tx) => {

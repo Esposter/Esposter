@@ -1,4 +1,6 @@
 // oxlint-disable typescript/no-inferrable-types
+import type { WslLoginEnvironment } from "@/models/exec/wsl/WslLoginEnvironment";
+
 import {
   VIRRUN_CACHE_DIRECTORY_NAME,
   VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
@@ -6,6 +8,15 @@ import {
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
 import { describe } from "vitest";
+
+// The one login capture every suite that mocks `readWslLoginEnvironment` hands back. Non-empty by construction:
+// CreateOsExecOptions treats an empty path on win32 as a *failed* capture and throws, so a suite mocking it empty
+// Asserts that guard instead of its own subject — on win32 hosts only, which is why CI never saw it. The guard's own
+// Test is the one place that sets the path empty, and it does so in place.
+export const TEST_WSL_LOGIN_ENVIRONMENT: WslLoginEnvironment = {
+  nodeVersion: "v26.5.0",
+  path: "/usr/local/bin:/usr/bin",
+};
 
 export const TEST_REPO_ROOT_WIN: string = String.raw`C:\a`;
 export const TEST_WSL_PREFIX = "/wsl/";

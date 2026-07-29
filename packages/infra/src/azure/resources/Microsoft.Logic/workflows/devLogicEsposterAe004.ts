@@ -3,19 +3,13 @@ import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLoca
 import AzureEventSubscriptionRetryPolicy from "@/azure/constants/AzureEventSubscriptionRetryPolicy";
 import AzureResourceManagerManagedApiId from "@/azure/constants/AzureResourceManagerManagedApiId";
 import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
-import { devEgstEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/systemTopics/devEgstEsposterAe001";
 import { devEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
 import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devstesposter001Deadletter } from "@/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/devstesposter001Deadletter";
 import { devstesposter001 } from "@/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
 import { devApicEsposterAe004 } from "@/azure/resources/Microsoft.Web/connections/devApicEsposterAe004";
 import { devFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
-import {
-  AzureFunction,
-  DEAD_LETTER_ARCHIVED_PREFIX,
-  DEAD_LETTER_BLOB_SUBJECT_PREFIX,
-  DEAD_LETTER_QUARANTINE_PREFIX,
-} from "@esposter/db-schema";
+import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -132,64 +126,6 @@ export const devLogicEsposterAe004: azure_native.logic.Workflow = new azure_nati
           },
           type: "ApiConnection",
         },
-        [`Create_${AzureFunction.ReplayDeadLetterEvent}_Event_Subscription`]: {
-          inputs: {
-            body: {
-              // Mirrors the Pulumi replay subscription, deadLetterDestination and all: it carries none on
-              // Purpose, since dead-lettering the replay would write a blob into the very container it watches
-              // And drive itself in a loop. A system topic also has no `topic` property — the `systemTopics`
-              // Segment of the path is what names its parent
-              properties: {
-                destination: {
-                  endpointType: "AzureFunction",
-                  properties: {
-                    maxEventsPerBatch: 1,
-                    preferredBatchSizeInKilobytes: 64,
-                    resourceId: pulumi.interpolate`${devFuncEsposter001.id}/functions/${AzureFunction.ReplayDeadLetterEvent}`,
-                  },
-                },
-                eventDeliverySchema: "EventGridSchema",
-                filter: {
-                  // Without these the archived and quarantined copies, which live in the same container,
-                  // Retrigger the replay that wrote them
-                  advancedFilters: [
-                    {
-                      key: "subject",
-                      operatorType: "StringNotBeginsWith",
-                      values: [
-                        `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${DEAD_LETTER_ARCHIVED_PREFIX}`,
-                        `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${DEAD_LETTER_QUARANTINE_PREFIX}`,
-                      ],
-                    },
-                  ],
-                  enableAdvancedFilteringOnArrays: true,
-                  includedEventTypes: ["Microsoft.Storage.BlobCreated"],
-                  subjectBeginsWith: DEAD_LETTER_BLOB_SUBJECT_PREFIX,
-                  subjectEndsWith: "",
-                },
-                id: pulumi.interpolate`/subscriptions/${AzureSubscriptionId}/resourceGroups/${devRgEsposterAe001.name}/providers/Microsoft.EventGrid/systemTopics/${devEgstEsposterAe001.name}/providers/Microsoft.EventGrid/eventSubscriptions/dev-evgs-esposter-ae-004`,
-                name: "dev-evgs-esposter-ae-004",
-                resourceGroup: devRgEsposterAe001.name,
-                retryPolicy: AzureEventSubscriptionRetryPolicy,
-                type: "Microsoft.EventGrid/eventSubscriptions",
-              },
-            },
-            host: {
-              connection: {
-                name: pulumi.interpolate`@parameters('$connections')['${devApicEsposterAe004.name}']['connectionId']`,
-              },
-            },
-            method: "put",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('systemTopics/${devEgstEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-004')}`,
-            queries: {
-              "x-ms-api-version": "2025-02-15",
-            },
-          },
-          runAfter: {
-            [`Read_${AzureFunction.ReplayDeadLetterEvent}_Event_Subscription`]: ["Failed"],
-          },
-          type: "ApiConnection",
-        },
         [`Read_${AzureFunction.ProcessPushNotification}_Event_Subscription`]: {
           inputs: {
             host: {
@@ -214,21 +150,6 @@ export const devLogicEsposterAe004: azure_native.logic.Workflow = new azure_nati
             },
             method: "get",
             path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${devEvgtEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-001')}`,
-            queries: {
-              "x-ms-api-version": "2025-02-15",
-            },
-          },
-          type: "ApiConnection",
-        },
-        [`Read_${AzureFunction.ReplayDeadLetterEvent}_Event_Subscription`]: {
-          inputs: {
-            host: {
-              connection: {
-                name: pulumi.interpolate`@parameters('$connections')['${devApicEsposterAe004.name}']['connectionId']`,
-              },
-            },
-            method: "get",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('systemTopics/${devEgstEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-004')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },

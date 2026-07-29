@@ -138,7 +138,17 @@ describe("webpage", () => {
 
     const newResource = await caller.createResource({ name });
     const blobName = `${getFilesDirectoryName(newResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
-    const publishedBlobName = `${createPublishedAssetsDirectoryName(crypto.randomUUID())}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
+    // A genuinely published foreign resource, because the clone only follows urls the caller could read: a
+    // Published directory is anonymous-capable exactly while its publication row stands, so a url minted for a
+    // Resource that was never published is one nobody may read and the clone leaves it alone
+    const foreignResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor({ html: "a" }),
+      contentVersion: foreignResource.contentVersion,
+      id: foreignResource.id,
+    });
+    await caller.publishResource({ id: foreignResource.id });
+    const publishedBlobName = `${createPublishedAssetsDirectoryName(foreignResource.id)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
     MockContainerDatabase.set(
       AzureContainer.ResourceAssets,
       new Map([

@@ -29,6 +29,18 @@ describe(transformPublishedBlobUrls, () => {
   const filename = "a";
   const workingBlobName = `${resourceId}/${FILES_DIRECTORY_SEGMENT}/${fileId}${ID_SEPARATOR}${filename}`;
   const content = { html: `<img src="${getResourceAssetUrl(workingBlobName)}">` };
+  // The clone authorizes every url it follows, so the context has to answer that question: this owner owns the
+  // Resource being published, and the foreign url below is a published one, which any caller may read while its
+  // Publication row stands
+  const ctx = {
+    db: {
+      query: {
+        resourcePublications: { findFirst: () => Promise.resolve({ resourceId }) },
+        resources: { findFirst: () => Promise.resolve({ id: resourceId }) },
+      },
+    },
+    getSessionPayload: { user: { id: crypto.randomUUID() } },
+  } as unknown as AuthedContext;
   let containerClient: MockContainerClient;
 
   beforeEach(async () => {
@@ -44,7 +56,7 @@ describe(transformPublishedBlobUrls, () => {
 
   const PUBLISHED_DIRECTORY_REGEX = new RegExp(`${resourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/[^/]+`, "u");
   const transform = () =>
-    transformPublishedBlobUrls({} as AuthedContext, { id: resourceId } as Resource, content).then(
+    transformPublishedBlobUrls(ctx, { id: resourceId } as Resource, content).then(
       ({ html }) => PUBLISHED_DIRECTORY_REGEX.exec(html)?.[0],
     );
 
@@ -53,7 +65,7 @@ describe(transformPublishedBlobUrls, () => {
   test("rewrites to urls the serving endpoint can parse", async () => {
     expect.hasAssertions();
 
-    const { html } = await transformPublishedBlobUrls({} as AuthedContext, { id: resourceId } as Resource, content);
+    const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as Resource, content);
     const publishedUrl = takeOne([...html.matchAll(RESOURCE_ASSET_URL_REGEX)])[0];
 
     expect(parseResourceAssetPath(publishedUrl.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length))).toStrictEqual({
@@ -74,7 +86,7 @@ describe(transformPublishedBlobUrls, () => {
     await containerClient.getBlockBlobClient(foreignBlobName).upload(foreignBlobName, foreignBlobName.length);
     const foreignUrl = getResourceAssetUrl(foreignBlobName);
 
-    const { html } = await transformPublishedBlobUrls({} as AuthedContext, { id: resourceId } as Resource, {
+    const { html } = await transformPublishedBlobUrls(ctx, { id: resourceId } as Resource, {
       html: `<img src="${foreignUrl}">`,
     });
 

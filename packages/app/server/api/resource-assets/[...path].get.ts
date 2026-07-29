@@ -12,6 +12,7 @@ import {
   RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS,
   RESOURCE_ASSET_SAS_DURATION,
 } from "@@/server/services/resource/constants";
+import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
 import { generateReadSasUrl } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
@@ -34,7 +35,7 @@ export default defineEventHandler(async (event) => {
   );
   const resourceAssetPath = encodedPath ? parseResourceAssetPath(encodedPath) : undefined;
   if (!resourceAssetPath) throw createError({ statusCode: 400 });
-  const { blobName, isPublished, resourceId } = resourceAssetPath;
+  const { blobName, isPublished } = resourceAssetPath;
 
   const getSessionPayload = await auth.api.getSession({ headers: event.headers });
   if (IS_PRODUCTION) {
@@ -59,34 +60,19 @@ export default defineEventHandler(async (event) => {
       );
   }
 
-  // What "the caller owns this resource" means must have exactly one definition — both branches fall back to
-  // It, and a change made to only one of them would silently open or close access for a single asset kind
-  const assertOwnsResource = async () => {
-    const resource = await db.query.resources.findFirst({
-      where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: getSessionPayload?.user.id } },
-    });
-    if (!resource) throw createError({ statusCode: 404 });
-  };
-
-  if (isPublished) {
-    // Published assets must stay anonymous-capable while a publication row exists: published views render in
-    // A sandboxed srcdoc iframe whose opaque origin sends no cookies with asset requests — which is also why
-    // The owner fallback below cannot rescue a render inside that iframe, only a direct request for the asset
-    // Url (opening the image in its own tab). Inside the iframe, no row means the images are broken for the
-    // Owner too; that is what unpublish revoking anonymous access costs, and it is the point of the control.
-    //
-    // Read per request, never cached: unpublish revokes anonymous access, and a cache would keep serving the
-    // Assets of an unpublished resource for its whole lifetime. Revocation has to be immediate to be a control
-    const publication = await db.query.resourcePublications.findFirst({ where: { resourceId: { eq: resourceId } } });
-    if (!publication) {
-      if (!getSessionPayload) throw createError({ statusCode: 404 });
-      await assertOwnsResource();
-    }
-  } else {
-    // Working-copy assets are only ever rendered inside the owner's editor (same-origin, cookies present)
-    if (!getSessionPayload) throw createError({ statusCode: 401 });
-    await assertOwnsResource();
-  }
+  // Working-copy assets are only ever rendered inside the owner's editor (same-origin, cookies present), so an
+  // Anonymous request for one is a missing credential rather than a missing asset. A published url has no such
+  // Distinction — it is anonymous-capable while a publication row exists, and a 401 would leak that the row is
+  // Gone — so everything else the predicate refuses is a 404.
+  //
+  // Published views render in a sandboxed srcdoc iframe whose opaque origin sends no cookies with asset
+  // Requests, which is why the owner fallback inside the predicate cannot rescue a render inside that iframe,
+  // Only a direct request for the asset url (opening the image in its own tab). Inside the iframe, no row means
+  // The images are broken for the owner too; that is what unpublish revoking anonymous access costs, and it is
+  // The point of the control
+  if (!isPublished && !getSessionPayload) throw createError({ statusCode: 401 });
+  if (!(await getIsResourceAssetReadable(db, resourceAssetPath, getSessionPayload?.user.id)))
+    throw createError({ statusCode: 404 });
 
   // No existence probe — Azure itself 404s a missing blob when the redirect is followed
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);

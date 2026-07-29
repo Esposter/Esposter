@@ -1,14 +1,19 @@
 import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { COREPACK_HOME_KEY, NODE_MODULES_BIN_DIRECTORY } from "@/services/exec/util/constants";
-import { TEST_REPO_ROOT_WIN, TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_PREFIX } from "@/services/exec/wsl/constants.test";
+import {
+  TEST_REPO_ROOT_WIN,
+  TEST_WSL_CACHE_ROOT_LINUX,
+  TEST_WSL_LOGIN_ENVIRONMENT,
+  TEST_WSL_PREFIX,
+} from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Inert store options (no fs writes) and the shared wsl mocks so getWslSourceMirrorPath resolves a canonical mirror
 // Path from TEST_REPO_ROOT_WIN — the same transform createWslSourceMirrorSync.test / sourceMirrorPaths.test use. The
 // Cache root is a real temp dir per test, since the corepack home under it is materialized, not merely named.
-const loginPath = "/usr/local/bin:/usr/bin";
+const loginPath = TEST_WSL_LOGIN_ENVIRONMENT.path;
 
 const { loginEnvironmentPath, osCacheRoot } = vi.hoisted(() => ({
   loginEnvironmentPath: { value: "" },
@@ -29,7 +34,10 @@ vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
 }));
 
 vi.mock(import("@/services/exec/wsl/readWslLoginEnvironment"), () => ({
-  readWslLoginEnvironment: () => ({ nodeVersion: "v26.5.0", path: loginEnvironmentPath.value }),
+  readWslLoginEnvironment: () => ({
+    nodeVersion: TEST_WSL_LOGIN_ENVIRONMENT.nodeVersion,
+    path: loginEnvironmentPath.value,
+  }),
 }));
 
 describe(createOsExecOptions, () => {

@@ -43,7 +43,7 @@ export const useDataStore = defineStore("message/data", () => {
 
   // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
   // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
-  // They typed once the editor and its attachments are cleared
+  // They typed once the editor is cleared. The attachments wait for `CommitSend`: the bubble is no copy of those
   const createMessage = async (input: StandardCreateMessageInput, onOptimisticCreate?: () => Promise<void>) => {
     if (!session.value.data) return false;
 
@@ -64,9 +64,13 @@ export const useDataStore = defineStore("message/data", () => {
     await onOptimisticCreate?.();
 
     return getResultAsync(() => $trpc.message.createMessage.mutate(input)).match(
-      (createdMessage) => {
+      async (createdMessage) => {
         Object.assign(newMessage, createdMessage);
         delete newMessage.isLoading;
+        // The server has the message, so the composer state that only a rejection could have needed back — the
+        // Attachments and the grants that authorize reclaiming their blobs — is released here rather than at the
+        // Bubble
+        await MessageHookMap.CommitSend.run(input.roomId);
         // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
         // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
@@ -83,7 +87,12 @@ export const useDataStore = defineStore("message/data", () => {
         // Bubble also stays the sender's copy of a genuinely rejected message — the composer is already reset —
         // So it holds its loading state and the alert says what happened. Only when errorLink has not already
         // Said it: a rejected send is characteristically one of the codes it owns (slowmode, a Zod rejection),
-        // And alerting again puts two identical toasts on screen for one send
+        // And alerting again puts two identical toasts on screen for one send.
+        // The composer's attachments stay too, because `CommitSend` never ran — so the user retries with the files
+        // Already uploaded instead of re-picking them, and their grants can still reclaim the blobs. The cost is
+        // The lost-response case: a message that did land keeps a composer copy whose delete affordance would
+        // Reclaim blobs it is still using. That trades a rare broken attachment the user chose against a certain
+        // Leak plus lost work on every deterministic rejection, which is what slowmode and the word filter are
         if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         return false;
       },
@@ -163,9 +172,9 @@ export const useDataStore = defineStore("message/data", () => {
     await storeSendMessage(input, editor);
   };
   const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
-    // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor, the reply
-    // Target and the composer's attachments (revoking their object urls), so a send that fails before the
-    // Bubble exists would take the text and files the user just typed with it
+    // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor and the reply
+    // Target, so a send that fails before the bubble exists would take the text the user just typed with it.
+    // The attachments outlive it and leave on `CommitSend`, once the server has accepted the message
     if (await createMessage(input, () => MessageHookMap.ResetSend.run(input.roomId, editor))) clearDraft(input.roomId);
   };
   MessageHookMap.ResetSend.register((_roomId, editor) => {

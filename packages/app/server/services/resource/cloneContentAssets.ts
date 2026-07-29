@@ -1,4 +1,6 @@
 import type { ContainerClient } from "@azure/storage-blob";
+import type { relations } from "@esposter/db-schema";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import {
   FILES_DIRECTORY_SEGMENT,
@@ -10,6 +12,7 @@ import { parseResourceAssetPath } from "#shared/services/resource/parseResourceA
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
 import { copyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { ID_SEPARATOR, settleAll } from "@esposter/shared";
@@ -35,6 +38,8 @@ const cloneAsset = async (
 // Asset never lands under the destination's own published prefix, which unpublishing wipes — which is also
 // Why the rewrite is a per-url map, never a prefix replace
 export const cloneContentAssets = async <TContent>(
+  db: PostgresJsDatabase<typeof relations>,
+  userId: string,
   content: TContent,
   destinationDirectoryName: string,
 ): Promise<TContent> => {
@@ -72,21 +77,30 @@ export const cloneContentAssets = async <TContent>(
   // Published snapshot of the same file share everything from `files/` onwards, and content can embed both),
   // Which would otherwise race two copies onto one name and unwind the whole clone. Nothing reads the id back
   // Out of a blob name — the rewrite map below is what points content at it
-  const clones = [...urls].flatMap((url) => {
-    const resourceAssetPath = parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length));
-    // An unparseable url is data, not an error — carried exactly as the content wrote it. A published url is
-    // Cloned like any other: it names another publication's directory, which that resource's next unpublish
-    // Wipes wholesale, so carrying it verbatim would leave this snapshot's images 404ing on an operation its
-    // Owner never performed. The destination is always `{directory}/files/{uuid}|{name}`, so a clone under a
-    // Publish directory is exactly the five-segment shape parseResourceAssetPath accepts
-    if (!resourceAssetPath) return [];
-    const { blobName } = resourceAssetPath;
-    const fileSegment = blobName.slice(blobName.lastIndexOf("/") + 1);
-    const separatorIndex = fileSegment.indexOf(ID_SEPARATOR);
-    const filename = separatorIndex === -1 ? fileSegment : fileSegment.slice(separatorIndex + 1);
-    const destinationBlobName = `${destinationDirectoryName}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-    return [{ blobName, destinationBlobName, url }];
-  });
+  const clones = (
+    await Promise.all(
+      [...urls].map(async (url) => {
+        const resourceAssetPath = parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length));
+        // An unparseable url is data, not an error — carried exactly as the content wrote it. A published url is
+        // Cloned like any other: it names another publication's directory, which that resource's next unpublish
+        // Wipes wholesale, so carrying it verbatim would leave this snapshot's images 404ing on an operation its
+        // Owner never performed. The destination is always `{directory}/files/{uuid}|{name}`, so a clone under a
+        // Publish directory is exactly the five-segment shape parseResourceAssetPath accepts
+        if (!resourceAssetPath) return [];
+        // Content may legitimately name a url this caller cannot read — a foreign working copy whose absolute url
+        // Reached them through a personalized export, say. Copying it would hand them the blob the serving
+        // Endpoint refuses them, published under a directory anyone can read, so an unreadable url is carried
+        // Verbatim like any other reference the clone cannot follow
+        if (!(await getIsResourceAssetReadable(db, resourceAssetPath, userId))) return [];
+        const { blobName } = resourceAssetPath;
+        const fileSegment = blobName.slice(blobName.lastIndexOf("/") + 1);
+        const separatorIndex = fileSegment.indexOf(ID_SEPARATOR);
+        const filename = separatorIndex === -1 ? fileSegment : fileSegment.slice(separatorIndex + 1);
+        const destinationBlobName = `${destinationDirectoryName}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+        return [{ blobName, destinationBlobName, url }];
+      }),
+    )
+  ).flat();
   // Two storage round trips per asset, so content referencing hundreds of them would open that many connections
   // At once and be throttled into failing the whole publish — they go out in bounded waves instead. `settleAll`
   // Rather than `Promise.all` per wave because every caller rolls back on failure by deleting the destination

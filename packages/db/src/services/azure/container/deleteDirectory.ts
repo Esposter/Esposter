@@ -2,7 +2,7 @@ import type { ContainerClient } from "@azure/storage-blob";
 
 import { listBlobNames } from "@/services/azure/container/listBlobNames";
 import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/db-schema";
-import { chunk, InvalidOperationError, Operation } from "@esposter/shared";
+import { chunk, InvalidOperationError, normalizeString, Operation } from "@esposter/shared";
 
 export const deleteDirectory = async (containerClient: ContainerClient, prefix = "") => {
   // Built through the sdk client rather than interpolated: a blob name is arbitrary user text, and `#` or `?`
@@ -30,7 +30,9 @@ export const deleteDirectory = async (containerClient: ContainerClient, prefix =
       throw new InvalidOperationError(
         Operation.Delete,
         deleteDirectory.name,
-        `${failedSubResponse.status} ${failedSubResponse.errorCode ?? failedSubResponse.statusMessage ?? ""}`.trim(),
+        normalizeString(
+          `${failedSubResponse.status} ${failedSubResponse.errorCode ?? failedSubResponse.statusMessage ?? ""}`,
+        ),
       );
   }
 };

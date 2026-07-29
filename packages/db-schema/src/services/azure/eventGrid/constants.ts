@@ -16,6 +16,15 @@ export const MAX_BLOB_DELETION_EVENT_BLOB_NAMES = 500;
 // Publish is best-effort and post-persist, the rejection is silent and the blobs it named are never reclaimed.
 export const MAX_BLOB_DELETION_EVENT_DATA_BYTES = 512 * 2 ** 10;
 
+// Event Grid caps a publish REQUEST at 1 MB, independently of the per-event cap — so a batch of individually legal
+// Events is still rejected whole once their sum crosses it. Half that, in bytes of the serialized events, because
+// The publisher measures only the events it hands over: the array's own punctuation and the fields the service
+// Stamps on each one (topic, eventTime, metadataVersion) are outside what it can see. The replay is what needs
+// This — Event Grid writes whatever expired together into one dead-letter blob, so a blob at the event cap
+// Republished as a single request exceeds the request cap, and the replay subscription has no dead letter of its
+// Own: the rejection burns every attempt on the same oversized batch and the events are discarded for good.
+export const MAX_EVENT_GRID_PUBLISH_BYTES = 512 * 2 ** 10;
+
 // A prefix deletion enumerates its own set, which has no ceiling — a room's whole attachment directory can hold
 // Tens of thousands of blobs. One DELETE per blob all at once would exhaust the worker's sockets and throttle the
 // Account, and a single rejection fails the whole run, so the deletes go out in bounded waves instead.

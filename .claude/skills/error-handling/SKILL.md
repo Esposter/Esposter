@@ -54,6 +54,18 @@ await getResultAsync(() => someAsyncOp())
   });
 ```
 
+### Who alerts a tRPC rejection
+
+`errorLink` owns `BAD_REQUEST`, `TOO_MANY_REQUESTS` and `UNPROCESSABLE_CONTENT` — it alerts them itself, so a caller catching the same rejection asks `getIsAlertedByErrorLink(error)` first and stays the owner only of what it alone can see (a blob PUT, a local guard). Alerting again puts two identical toasts on screen for one failure.
+
+```typescript
+if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+```
+
+**That ownership is unconditional, and must stay that way.** The predicate is read off the error code alone, so any operation the link quietly declines to alert is an operation _nobody_ alerts — silence on both sides. `op.context.isBackground` therefore suppresses only the **login redirect**, never the alert: a background read failing is still a failure the user's own action caused, while a background `FORBIDDEN` (the hourly read-SAS sweep hitting a room the user was just removed from) must never move them.
+
+The redirect itself reads the session rather than inferring one from the code, and only when the session request has **settled** — `authClient.useSession()` outside a component returns `data: null` while pending, and redirecting on that logs an authenticated user out of the first page load that happens to reject.
+
 ### Async operation → fallback value (services / routers)
 
 ```typescript
