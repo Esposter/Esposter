@@ -32,7 +32,9 @@ describe(cloneContentAssets, () => {
   // The clone asks the same question the serving endpoint does, so the rows that answer it are what a case here
   // Varies: an owned working copy is readable, an unowned one is not, and neither has a publication row
   const createDatabase = (isOwned: boolean) => {
-    const findFirstResource = vi.fn(() => Promise.resolve(isOwned ? { id: sourceResourceId } : undefined));
+    const findFirstResource = vi.fn<() => Promise<undefined | { id: string }>>(() =>
+      Promise.resolve(isOwned ? { id: sourceResourceId } : undefined),
+    );
     return {
       db: {
         query: {
@@ -136,7 +138,7 @@ describe(cloneContentAssets, () => {
 
   // Readability is a property of the resource, and content routinely names one resource's assets many times over
   // (a logo on every row, a gallery from one upload). Asked per url that is a pair of queries each, unbounded and
-  // in parallel, for an answer already computed
+  // In parallel, for an answer already computed
   test("asks the readability question once per source resource however many of its assets are referenced", async () => {
     expect.hasAssertions();
 
@@ -149,6 +151,6 @@ describe(cloneContentAssets, () => {
     const clonedBlobNames = await getClonedBlobNames();
 
     expect(clonedBlobNames).toHaveLength(2);
-    expect(findFirstResource).toHaveBeenCalledOnce();
+    expect(findFirstResource).toHaveBeenCalledTimes(1);
   });
 });

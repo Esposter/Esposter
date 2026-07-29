@@ -217,7 +217,7 @@ describe(useDataStore, () => {
     });
     uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: nextFileId, token: "" }]);
 
-    expect(await createPromise).toBe(true);
+    await expect(createPromise).resolves.toBe(true);
     expect(files.value.map(({ id }) => id)).toStrictEqual([nextFileId]);
   });
 

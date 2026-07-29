@@ -27,9 +27,9 @@ export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends Inde
     // Cloning deeply first duplicated that work and produced a copy nothing else ever read
     await Promise.all(
       itemsToCache.map((item) =>
-        objectStore.put(
-          Object.assign({ ...toRawDeep(item) }, { [CompositeKeyPropertyNames.partitionKey]: partitionKey }),
-        ),
+        // The stored record is data, not an entity — `put` structured-clones away the prototype regardless
+        // oxlint-disable-next-line typescript/no-misused-spread
+        objectStore.put({ ...toRawDeep(item), [CompositeKeyPropertyNames.partitionKey]: partitionKey }),
       ),
     );
     await tx.done;

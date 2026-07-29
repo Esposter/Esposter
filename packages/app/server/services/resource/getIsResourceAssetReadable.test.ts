@@ -10,7 +10,9 @@ describe(getIsResourceAssetReadable, () => {
   // The two rows that answer the question, each present or absent — a publication row makes a published asset
   // Anonymous-capable, and an owned, undeleted resource row is what a working copy falls back to
   const createDatabase = (isPublication: boolean, isOwnedResource: boolean) => {
-    const findFirstResource = vi.fn(() => Promise.resolve(isOwnedResource ? { id: resourceId } : undefined));
+    const findFirstResource = vi.fn<() => Promise<undefined | { id: string }>>(() =>
+      Promise.resolve(isOwnedResource ? { id: resourceId } : undefined),
+    );
     return {
       db: {
         query: {
@@ -27,7 +29,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db } = createDatabase(true, false);
 
-    expect(await getIsResourceAssetReadable(db, { isPublished: true, resourceId })).toBe(true);
+    await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId })).resolves.toBe(true);
   });
 
   // Unpublishing drops the row, so a url minted while the snapshot was live stops answering to anyone but its
@@ -37,7 +39,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db } = createDatabase(false, true);
 
-    expect(await getIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId)).toBe(true);
+    await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId)).resolves.toBe(true);
   });
 
   test("refuses a published asset whose publication row is gone to a non-owner", async () => {
@@ -45,7 +47,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db } = createDatabase(false, false);
 
-    expect(await getIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId)).toBe(false);
+    await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId)).resolves.toBe(false);
   });
 
   test("reads a working copy owned by the caller", async () => {
@@ -53,7 +55,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db } = createDatabase(false, true);
 
-    expect(await getIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId)).toBe(true);
+    await expect(getIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId)).resolves.toBe(true);
   });
 
   test("refuses a working copy the caller does not own", async () => {
@@ -61,7 +63,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db } = createDatabase(false, false);
 
-    expect(await getIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId)).toBe(false);
+    await expect(getIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId)).resolves.toBe(false);
   });
 
   // The serving endpoint is public, so an anonymous caller reaches here with no user id at all. Nothing can own
@@ -71,7 +73,7 @@ describe(getIsResourceAssetReadable, () => {
 
     const { db, findFirstResource } = createDatabase(false, false);
 
-    expect(await getIsResourceAssetReadable(db, { isPublished: false, resourceId })).toBe(false);
+    await expect(getIsResourceAssetReadable(db, { isPublished: false, resourceId })).resolves.toBe(false);
     expect(findFirstResource).not.toHaveBeenCalled();
   });
 
