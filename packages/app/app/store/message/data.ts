@@ -81,9 +81,8 @@ export const useDataStore = defineStore("message/data", () => {
       async (createdMessage) => {
         Object.assign(newMessage, createdMessage);
         delete newMessage.isLoading;
-        // The server has the message, so the composer state that only a rejection could have needed back — the
-        // Attachments and the grants that authorize reclaiming their blobs — is released here rather than at the
-        // Bubble
+        // The server has the message, so the attachments held since the bubble are dropped for good — with them
+        // Go the grants that authorize reclaiming their blobs, which only a rejection could have needed back
         await MessageHookMap.CommitSend.run(sentInput.roomId, sentFileIds);
         // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.

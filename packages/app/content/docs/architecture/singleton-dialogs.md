@@ -34,6 +34,12 @@ A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singlet
 <ResourceSheetRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" :index="..." />
 ```
 
+A dialog the user can hold open while the list re-reads underneath it — an edit dialog, not a confirm — also passes the resolved item to `useSingletonDialog`. The `v-if` unmounts it the moment its row leaves `items` (a search, a page turn, an optimistic removal) while the target ref stays set, so without that the dialog re-opens by itself over the same row as soon as a later read brings it back:
+
+```vue
+const isRenameOpen = useSingletonDialog(renamingId, () => renamingResource.value);
+```
+
 ## Scope and non-goals
 
 - **Hover toolbars and options menus** in list items follow the same principle with `v-if` (mount on hover/activation) rather than `v-show` — an always-mounted `v-show` toolbar per item is the same O(N) mount problem in menu form. See `/docs/esbabbler/message-list-rendering` for the message list's full treatment.

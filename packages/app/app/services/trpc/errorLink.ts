@@ -51,13 +51,21 @@ export const errorLink: TRPCLink<TRPCRouter> =
               // Reaches it. It still alerts above, because a failure the user's own action caused is theirs to see
               if (op.context.isBackground) break;
 
-              const session = authClient.useSession();
-              // A request still in flight is not an absent session. This runs outside any component or effect
-              // Scope, so the nanostore ref it reads is whatever the session fetch has resolved so far — null while
-              // Pending, which is every rejection that beats the first session read (a page's first call, or SSR
-              // Where the client holds no cookies). Redirecting on that logs an authenticated user out of their own
-              // First page load, the exact failure reading the session instead of the code exists to prevent
-              if (!session.value.isPending && !session.value.data) await navigateTo(RoutePath.Login);
+              // Subscribed inside a scope this link owns and then stops. `useStore` registers its unsubscribe
+              // Through `onScopeDispose`, which it only reaches when a scope is active — and this runs inside a
+              // Promise, where none is. Called bare, every rejection would leave another listener on the
+              // Module-singleton session atom: a client whose reads keep rejecting (a room it was removed from)
+              // Accumulates one per rejection for the life of the tab, and on the server for the life of the process
+              const scope = effectScope(true);
+              const session = scope.run(() => authClient.useSession());
+              // A request still in flight is not an absent session. The nanostore ref reads whatever the session
+              // Fetch has resolved so far — null while pending, which is every rejection that beats the first
+              // Session read (a page's first call, or SSR where the client holds no cookies). Redirecting on that
+              // Logs an authenticated user out of their own first page load, the exact failure reading the session
+              // Instead of the code exists to prevent
+              const isLoggedOut = Boolean(session && !session.value.isPending && !session.value.data);
+              scope.stop();
+              if (isLoggedOut) await navigateTo(RoutePath.Login);
               break;
             }
             default:
