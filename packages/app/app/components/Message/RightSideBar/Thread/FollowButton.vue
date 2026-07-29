@@ -11,6 +11,7 @@ interface ThreadFollowButtonProps {
 const { roomId, threadRootRowKey } = defineProps<ThreadFollowButtonProps>();
 const threadFollowStore = useThreadFollowStore();
 const { checkIsFollowing, ensureFollowedThreadsLoaded, followThread, unfollowThread } = threadFollowStore;
+const { executeMutation } = useMutation();
 const isFollowing = computed(() => checkIsFollowing(roomId, threadRootRowKey));
 useQuery(() => ensureFollowedThreadsLoaded(roomId));
 </script>
@@ -21,6 +22,11 @@ useQuery(() => ensureFollowedThreadsLoaded(roomId));
     :icon="isFollowing ? 'mdi-bell' : 'mdi-bell-outline'"
     :text="isFollowing ? 'Unfollow thread' : 'Follow thread'"
     :tooltip-props="{ location: 'bottom' }"
-    @click="isFollowing ? unfollowThread(roomId, threadRootRowKey) : followThread(roomId, threadRootRowKey)"
+    @click="
+      executeMutation(
+        () => (isFollowing ? unfollowThread(roomId, threadRootRowKey) : followThread(roomId, threadRootRowKey)),
+        { isExclusive: true, key: `${roomId}-${threadRootRowKey}` },
+      )
+    "
   />
 </template>

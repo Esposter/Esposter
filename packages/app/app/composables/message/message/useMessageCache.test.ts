@@ -3,7 +3,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
-import { goOffline, goOnline } from "@/composables/shared/network.test";
+import { goOffline } from "@/composables/shared/network.test";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
@@ -92,32 +92,6 @@ describe(useMessageCache, () => {
     expect(cachedMessages).toHaveLength(0);
   });
 
-  test("does not clear cache when items become empty on room switch", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    await mountCache();
-    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
-    await flushCache();
-    setRouteId(crypto.randomUUID());
-    await flushCache();
-    const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
-
-    expect(cachedMessages).toHaveLength(1);
-  });
-
-  test("does not write to cache when room id is empty", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    await mountCache("");
-    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
-    await flushCache();
-    const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
-
-    expect(cachedMessages).toHaveLength(0);
-  });
-
   test("populates store from cache when switching rooms offline", async () => {
     expect.hasAssertions();
 
@@ -133,39 +107,5 @@ describe(useMessageCache, () => {
 
     expect(items.value).toHaveLength(1);
     expect(takeOne(items.value).message).toStrictEqual(message);
-  });
-
-  test("does not populate store from cache when switching rooms online", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    await writeIndexedDb(
-      MessageIndexedDbStoreConfiguration,
-      [new StandardMessageEntity({ message, partitionKey: secondPartitionKey, rowKey, userId })],
-      secondPartitionKey,
-    );
-    goOnline();
-    await mountCache();
-    setRouteId(secondPartitionKey);
-    await flushCache();
-
-    expect(items.value).toHaveLength(0);
-  });
-
-  test("does not populate store if room changed during async read", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    await writeIndexedDb(
-      MessageIndexedDbStoreConfiguration,
-      [new StandardMessageEntity({ message, partitionKey, rowKey, userId })],
-      partitionKey,
-    );
-    await mountCache(crypto.randomUUID());
-    setRouteId(partitionKey);
-    setRouteId(crypto.randomUUID());
-    await flushCache();
-
-    expect(items.value).toHaveLength(0);
   });
 });

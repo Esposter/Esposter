@@ -3,12 +3,7 @@ import { countSurveyResponses } from "@@/server/services/survey/countSurveyRespo
 import { createEntity } from "@esposter/db";
 import { AZURE_MAX_PAGE_SIZE, AzureTable, SurveyResponseEntity } from "@esposter/db-schema";
 import { MockTableDatabase } from "azure-mock";
-import { afterEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(
-  import("@@/server/composables/azure/table/useTableClient"),
-  () => import("@@/server/composables/azure/table/useTableClient.test"),
-);
+import { afterEach, describe, expect, test } from "vitest";
 
 // Router-level counting is covered in survey.test.ts; the cap needs more rows than callers can
 // Affordably create, so the ceiling is proven directly against the table

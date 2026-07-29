@@ -6,6 +6,8 @@ allowBuilds:
   better-sqlite3: true
   core-js: true
   esbuild: true
+  # Its postinstall only writes the browser service worker (`msw init public/`); tests intercept in node
+  msw: false
   protobufjs: true
   sharp: true
   unrs-resolver: true
@@ -43,35 +45,35 @@ catalog:
   "@fullcalendar/vue3": ^7.0.2
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.4
-  "@lerna-lite/cli": ^5.4.1
-  "@lerna-lite/publish": ^5.4.1
+  "@lerna-lite/cli": ^5.4.2
+  "@lerna-lite/publish": ^5.4.2
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
-  "@ninoseki/eslint-plugin-neverthrow": ^0.2.0
   "@nuxt/content": ^3.15.2
   "@nuxt/eslint": ^1.16.0
   "@nuxt/fonts": ^0.14.0
   "@nuxt/scripts": ^1.3.2
-  "@nuxt/test-utils": ^4.0.3
+  "@nuxt/test-utils": ^4.1.0
   "@nuxtjs/seo": ^5.3.6
+  "@oxlint/plugins": ^1.76.0
   "@panzoom/panzoom": ^4.6.2
   "@pinia/nuxt": ^1.0.1
   "@platformatic/vfs": ^0.4.0
   "@pulumi/azure-native": ^3.23.0
   "@pulumi/github": ^6.14.1
-  "@pulumi/pulumi": ^3.253.0
+  "@pulumi/pulumi": ^3.255.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^2.3.2
-  "@tiptap/core": ^3.28.0
-  "@tiptap/extension-code-block-lowlight": ^3.28.0
-  "@tiptap/extension-file-handler": ^3.28.0
-  "@tiptap/extension-mention": ^3.28.0
-  "@tiptap/extensions": ^3.28.0
-  "@tiptap/html": ^3.28.0
-  "@tiptap/pm": ^3.28.0
-  "@tiptap/starter-kit": ^3.28.0
-  "@tiptap/suggestion": ^3.28.0
-  "@tiptap/vue-3": ^3.28.0
+  "@takumi-rs/core": ^2.5.3
+  "@tiptap/core": ^3.29.2
+  "@tiptap/extension-code-block-lowlight": ^3.29.2
+  "@tiptap/extension-file-handler": ^3.29.2
+  "@tiptap/extension-mention": ^3.29.2
+  "@tiptap/extensions": ^3.29.2
+  "@tiptap/html": ^3.29.2
+  "@tiptap/pm": ^3.29.2
+  "@tiptap/starter-kit": ^3.29.2
+  "@tiptap/suggestion": ^3.29.2
+  "@tiptap/vue-3": ^3.29.2
   "@tresjs/cientos": ^5.8.1
   "@tresjs/core": ^5.8.3
   "@tresjs/nuxt": ^5.6.3
@@ -84,7 +86,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
-  "@types/node": ^26.1.1
+  "@types/node": ^26.1.2
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
   "@types/three": ^0.185.1
@@ -97,24 +99,23 @@ catalog:
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.8
   "@vitest/coverage-v8": ^4.1.10
-  "@vitest/eslint-plugin": ^1.6.24
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.3
   "@vue-flow/core": ^1.48.2
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.3.0
-  "@vue/language-core": ^3.3.7
+  "@vue/language-core": ^3.3.8
   "@vue/test-utils": ^2.4.11
   "@vuepic/vue-datepicker": ^14.0.0
-  "@vueuse/core": ^14.3.0
-  "@vueuse/nuxt": ^14.3.0
-  "@vueuse/router": ^14.3.0
+  "@vueuse/core": ^14.4.0
+  "@vueuse/nuxt": ^14.4.0
+  "@vueuse/router": ^14.4.0
   ajv: ^8.20.0
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^6.3.0
+  apexcharts: ^6.6.1
   better-auth: ^1.6.25
   citty: ^0.2.2
   codemirror: ^6.0.2
@@ -127,12 +128,12 @@ catalog:
   defu: ^6.1.7
   dependency-cruiser: ^18.1.0
   dotenv: ^17.4.2
-  drizzle-kit: 1.0.0-rc.2
-  drizzle-orm: 1.0.0-rc.2
+  drizzle-kit: 1.0.0-rc.4
+  drizzle-orm: 1.0.0-rc.4
   emoji-mart-vue-fast: ^15.0.5
-  eslint: ^10.7.0
+  eslint: ^10.8.0
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.73.0
+  eslint-plugin-oxlint: ^1.76.0
   eslint-plugin-perfectionist: ^5.10.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -140,7 +141,7 @@ catalog:
   fast-check: ^4.9.0
   fast-deep-equal: ^3.1.3
   fflate: ^0.8.3
-  fs-extra: ^11.3.6
+  fs-extra: ^11.4.0
   grapesjs: ^0.23.3
   grapesjs-blocks-basic: ^1.0.2
   grapesjs-component-countdown: ^1.0.2
@@ -167,7 +168,7 @@ catalog:
   js-beautify: ^2.0.3
   link-preview-js: ^4.0.4
   linkifyjs: ^4.3.3
-  livekit-client: ^2.20.1
+  livekit-client: ^2.21.0
   livekit-server-sdk: ^2.17.0
   lodash-omitdeep: ^1.10.1
   lowlight: ^3.3.0
@@ -177,17 +178,19 @@ catalog:
   mime-types: ^3.0.2
   minisearch: ^7.2.0
   mjml-browser: ^5.4.0
+  msw: ^2.15.0
+  msw-trpc: ^2.0.1
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
   node-html-parser: ^9.0.0
   nuxt: ^4.5.1
   nuxt-security: ^2.6.0
-  oxfmt: ^0.59.0
-  oxlint: ^1.74.0
-  oxlint-tsgolint: ^0.25.0
+  oxfmt: ^0.61.0
+  oxlint: ^1.76.0
+  oxlint-tsgolint: ^7.0.2001
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^6.1.200
+  pdfjs-dist: ^6.2.108
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
   pinia: ^4.0.2
@@ -216,7 +219,6 @@ catalog:
   type-fest: ^5.8.0
   typedoc: ^0.28.20
   typescript: ^6.0.3
-  typescript-eslint: ^8.64.0
   unconfig: ^7.5.0
   unocss: ^66.7.5
   unocss-preset-vuetify: ^0.3.0
@@ -232,12 +234,12 @@ catalog:
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.5
   vue-router: ^5.2.0
-  vue-tsc: ^3.3.7
+  vue-tsc: ^3.3.8
   vue3-apexcharts: ^1.11.1
-  vuetify: ^4.1.5
-  vuetify-nuxt-module: ^1.0.0-rc.2
+  vuetify: ^4.1.6
+  vuetify-nuxt-module: ^1.0.0-rc.3
   web-push: ^3.6.7
-  worker-timers: ^8.0.33
+  worker-timers: ^8.0.34
   write-excel-file: ^4.1.1
   ws: ^8.21.1
   xmlbuilder2: ^4.0.3
@@ -254,8 +256,7 @@ nodeOptions: --max-old-space-size=8192
 overrides:
   crossws: ^0.4.10
   h3: ^1.15.11
-  pdfjs-dist: ^6.1.200
+  pdfjs-dist: ^6.2.108
   vite: ^8.1.5
-  vue-router: ^5.2.0
 
 shellEmulator: true

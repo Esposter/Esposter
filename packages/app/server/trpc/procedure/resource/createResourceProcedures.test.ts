@@ -1,6 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { Clause } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, Clause } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
@@ -27,16 +27,9 @@ import {
   ResourceType,
   ResourceViewEntity,
 } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
-import { MockContainerDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
-
-// The view-count assertions read the counter table directly, so the mock must be registered in this
-// Module graph — createMockContext's registration does not reach a direct import
-vi.mock(
-  import("@@/server/composables/azure/table/useTableClient"),
-  () => import("@@/server/composables/azure/table/useTableClient.test"),
-);
+import { InvalidOperationError, jsonDateParse, noop, Operation, takeOne } from "@esposter/shared";
+import { MockContainerDatabase, MockEventGridDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
 // Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
@@ -300,6 +293,20 @@ describe("createResourceProcedures", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
+  // A sweep is bounded at the instant it is decided, so one published for a resource that has nothing published
+  // Takes whatever a concurrent first publish has just cloned — and a delete that removed no row leaves the
+  // Version sequence untouched, so nothing downstream can tell it happened
+  test("publishes no snapshot sweep when nothing was published", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const publishedEventCount = MockEventGridDatabase.get("")?.length ?? 0;
+
+    await dashboardCaller.unpublishResource({ id: newResource.id });
+
+    expect(MockEventGridDatabase.get("")?.length ?? 0).toBe(publishedEventCount);
+  });
+
   test("fails read published content for unpublished resource", async () => {
     expect.hasAssertions();
 
@@ -422,18 +429,6 @@ describe("createResourceProcedures", () => {
     expect(sasEntities).toHaveLength(1);
   });
 
-  test("generates download file sas urls", async () => {
-    expect.hasAssertions();
-
-    const newResource = await webpageCaller.createResource({ name });
-    const sasUrls = await webpageCaller.generateDownloadFileSasUrls({
-      files: [{ filename, id: crypto.randomUUID(), mimetype }],
-      id: newResource.id,
-    });
-
-    expect(sasUrls).toHaveLength(1);
-  });
-
   test("fails generate upload file sas entities with wrong user", async () => {
     expect.hasAssertions();
 
@@ -445,7 +440,7 @@ describe("createResourceProcedures", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("deletes file", async () => {
+  test("publishes file deletion", async () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
@@ -455,19 +450,39 @@ describe("createResourceProcedures", () => {
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 
     await webpageCaller.deleteFile({ blobPath, id: newResource.id });
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
 
-    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).toBe(false);
+    // The delete rides the one durable deletion publish, so the blob outlives the mutation and the handler
+    // Removes it (/docs/architecture/blob-lifecycle)
+    expect(takeOne(blobDeletionEvents, blobDeletionEvents.length - 1).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [blobName],
+      containerName: AzureContainer.ResourceAssets,
+    });
+    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).toBe(true);
   });
 
-  test("deleteFile is idempotent", async () => {
+  test("rejects a file path that climbs out of the files directory", async () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
-    const blobPath = getBlobName(crypto.randomUUID(), filename);
 
-    await webpageCaller.deleteFile({ blobPath, id: newResource.id });
-
-    await expect(webpageCaller.deleteFile({ blobPath, id: newResource.id })).resolves.toBeUndefined();
+    await expect(
+      webpageCaller.deleteFile({ blobPath: `../../${crypto.randomUUID()}/content.json`, id: newResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "origin": "string",
+          "code": "invalid_format",
+          "format": "regex",
+          "pattern": "/^(?!\\\\.{1,2}$)[^/\\\\\\\\]+$/u",
+          "path": [
+            "blobPath"
+          ],
+          "message": "Invalid string: must match pattern /^(?!\\\\.{1,2}$)[^/\\\\\\\\]+$/u"
+        }
+      ]]
+    `);
   });
 
   test("omits file asset procedures for types without the capability", () => {
@@ -478,7 +493,6 @@ describe("createResourceProcedures", () => {
 
     expect(fileAssetsProcedures).toContain("generateUploadFileSasEntities");
     expect(nonFileAssetsProcedures).not.toContain("generateUploadFileSasEntities");
-    expect(nonFileAssetsProcedures).not.toContain("generateDownloadFileSasUrls");
     expect(nonFileAssetsProcedures).not.toContain("deleteFile");
   });
 });

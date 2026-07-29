@@ -7,26 +7,31 @@ import type { Clause, Resource } from "@esposter/db-schema";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
+import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
+import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
+import { storeSelfContainedContent } from "@@/server/services/resource/storeSelfContainedContent";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { RestError } from "@azure/storage-blob";
-import { copyBlob, getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
+import { deleteDirectory, getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,
@@ -44,7 +49,16 @@ import {
   resourceTypeSchema,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, getResultAsync, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
+import {
+  createUniqueArraySchema,
+  getResultAsync,
+  MAX_READ_LIMIT,
+  noop,
+  NotFoundError,
+  Operation,
+  takeOne,
+} from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, exists, gte, ilike, inArray, isNull, lte, notExists, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -193,19 +207,27 @@ export const resourceRouter = router({
       DatabaseEntityType.Resource,
       ctx.resource.id,
     );
-    // A copy starts as Draft, so only the draft content blob is copied — never the publication.
-    // Copying server-side within the same container avoids round-tripping the content through this process.
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-    await getResultAsync(() =>
-      copyBlob(
-        containerClient,
-        `${containerClient.url}/${getContentBlobName(ctx.resource.id)}`,
-        getContentBlobName(newResource.id),
-      ),
-    ).match(noop, async (error) => {
-      // The blob is written on first save, so a missing source just means there is no content to copy yet
-      if (error instanceof RestError && error.statusCode === 404) return;
-      // Never leave a content-less orphan copy behind when the blob copy fails
+    // A copy starts as Draft, so only the draft content is copied — never the publication. The clone gives
+    // The copy its own blobs for every referenced asset — working-copy and published — under {newId}/ with
+    // The source-relative path preserved, and rewrites the embedded urls, so the copy is fully self-contained:
+    // Its editor can delete its files, and deleting or unpublishing the original never strands it
+    await getResultAsync(async () => {
+      const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
+      // The blob is written on first save, so missing content just means there is nothing to copy yet
+      if (content === undefined) return;
+      await storeSelfContainedContent(newResource.id, content);
+    }).match(noop, async (error) => {
+      // Never leave a content-less orphan copy behind when the content clone fails. Ordered like purgeResource:
+      // Partially cloned blobs first (already-gone is success), the row last as the durable marker — a failed
+      // Blob cleanup keeps the copy reachable through the resource API instead of stranding its blobs.
+      // The cleanup can itself fail (deleteDirectory throws on any failed sub-response), and it must never
+      // Take the row delete or the original error down with it: the caller would then be told a blob delete
+      // Failed instead of why the duplicate did, and be left with the orphan row this whole path exists to
+      // Prevent — the strictly worse outcome of the two the cleanup is choosing between
+      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+      await getResultAsync(async () => {
+        await deleteDirectory(containerClient, newResource.id);
+      }).match(noop, console.error);
       await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
       throw error;
     });
@@ -266,10 +288,17 @@ export const resourceRouter = router({
         .limit(MAX_READ_LIMIT)
     ).map(({ resource }) => resource),
   ),
-  // Snapshot versions come from a blob prefix listing — no history table, since the {id}/published/{n}
-  // Blobs are already the source of truth
+  // Which snapshots exist comes from a blob prefix listing — no history table, since the {id}/published/{n}
+  // Blobs are already the source of truth for that. Which one is LIVE comes from the publication row instead,
+  // Because the two can disagree: the unpublish sweep is a best-effort event, so a republish can land while
+  // Retired snapshots are still present, with publishVersion restarted at 1
   readPublishHistory: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<PublishHistoryVersion[]>(
-    ({ ctx }) => readPublishHistory(ctx.resource.id),
+    async ({ ctx }) => {
+      const publication = await ctx.db.query.resourcePublications.findFirst({
+        where: { resourceId: { eq: ctx.resource.id } },
+      });
+      return readPublishHistory(ctx.resource.id, publication?.publishVersion);
+    },
   ),
   readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query(({ ctx }) => ctx.resource),
   readResources: standardAuthedProcedure
@@ -297,11 +326,34 @@ export const resourceRouter = router({
     }),
   // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
   // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
-  // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule
+  // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule.
+  // The snapshot's assets are cloned back into the working copy's own files directory rather than referenced
+  // Where they sit, exactly as the duplicate path does: a published url lives under {id}/published, which
+  // Unpublish wipes wholesale, so a verbatim copy would hand the draft urls a later unpublish deletes — and
+  // Re-publishing that draft would ship the same dead urls, with re-uploading every asset the only recovery
   restorePublishedVersion: getOwnerProcedure(undefined, restorePublishedVersionInputSchema, "id").mutation<Resource>(
     async ({ ctx, input: { id, version } }) => {
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      // One transaction so a failed copy rolls the contentVersion bump back, keeping Postgres and blob storage consistent
+      const publishedContent = await readContentBlob(
+        ResourceDefinitionMap[ctx.resource.type].contentSchema,
+        getPublishedContentBlobName(id, version),
+      );
+      if (publishedContent === undefined)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Resource, `${id}/${version}`).message,
+        });
+      // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
+      // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
+      // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy
+      // Resources would starve the pool for requests that have nothing to do with them.
+      // Blobs a partial clone already wrote stay under this resource's own `{id}/files`, unreferenced by any
+      // Content until the next restore overwrites them or `purgeResource` takes the directory wholesale — the
+      // Deliberate trade, unlike `duplicateResource`, whose compensating `deleteDirectory` is only safe because
+      // The resource it clears was created moments earlier; the target here is a live working copy whose
+      // Existing files a directory-wide cleanup would destroy.
+      const clonedContent = await cloneContentAssets(publishedContent, id);
+      // The bump and the content write stay in one transaction so a failed write rolls the contentVersion back —
+      // A restore that did not land must never advance the version every client caches against.
       return ctx.db.transaction(async (tx) => {
         const restoredResource = requireMutation(
           (
@@ -315,11 +367,7 @@ export const resourceRouter = router({
           DatabaseEntityType.Resource,
           id,
         );
-        await copyBlob(
-          containerClient,
-          `${containerClient.url}/${getPublishedContentBlobName(id, version)}`,
-          getContentBlobName(id),
-        );
+        await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(clonedContent));
         return restoredResource;
       });
     },

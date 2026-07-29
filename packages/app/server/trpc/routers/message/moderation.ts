@@ -1,5 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { BanInMessage, BanInMessageWithRelations, Clause, StandardMessageEntity } from "@esposter/db-schema";
+import type { BanInMessage, BanInMessageWithRelations, Clause } from "@esposter/db-schema";
 
 import { countModerationNotesInputSchema } from "#shared/models/db/moderation/CountModerationNotesInput";
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
@@ -16,10 +16,10 @@ import { on } from "@@/server/services/events/on";
 import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
-import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
 import { countModerationNotes } from "@@/server/services/message/moderation/countModerationNotes";
+import { softDeleteRoomMessagesByUser } from "@@/server/services/message/moderation/softDeleteRoomMessagesByUser";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
@@ -31,11 +31,9 @@ import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { createEntity, getTableNullClause, getTopNEntities, serializeClauses, serializeEntity } from "@esposter/db";
+import { createEntity, getTableNullClause, getTopNEntities, serializeClauses } from "@esposter/db";
 import {
   AdminActionType,
-  AZURE_MAX_BATCH_SIZE,
-  AZURE_MAX_PAGE_SIZE,
   AzureTable,
   bansInMessage,
   BinaryOperator,
@@ -48,11 +46,10 @@ import {
   ModerationNoteEntityPropertyNames,
   roomIdSchema,
   RoomPermission,
-  StandardMessageEntityPropertyNames,
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { exhaustiveGuard, ItemMetadataPropertyNames } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, ItemMetadataPropertyNames, noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -143,28 +140,12 @@ export const moderationRouter = router({
               .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
               .onConflictDoNothing();
           });
-          const messageClient = await useTableClient(AzureTable.Messages);
-          const filter = serializeClauses([
-            { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-            { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: targetUserId },
-            getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-          ] as Clause<StandardMessageEntity>[]);
-          const now = new Date();
-          for await (const page of messageClient
-            .listEntities<StandardMessageEntity>({ queryOptions: { filter } })
-            .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-            for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE) {
-              const batch = page.slice(i, i + AZURE_MAX_BATCH_SIZE);
-              await messageClient.submitTransaction(
-                batch.map(({ partitionKey, rowKey }) => [
-                  "update",
-                  serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now }),
-                ]),
-              );
-              for (const { partitionKey, rowKey } of batch)
-                messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
-            }
-
+          // Best-effort after the ban commits: the ban is the effect that must not be lost, and rethrowing here
+          // Would fail a mutation whose row already landed. Nothing re-runs the purge — re-issuing the ban hits
+          // `onConflictDoNothing`, and there is no sweeper or retry queue — so a partial failure leaves some of
+          // The banned user's messages visible until a moderator deletes them by hand. Accepted while the purge
+          // Is a table scan the request path already owns; a durable version belongs on the event pipeline
+          await getResultAsync(() => softDeleteRoomMessagesByUser(roomId, targetUserId)).match(noop, console.error);
           break;
         }
         case AdminActionType.StopScreenShare: {

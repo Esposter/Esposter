@@ -1,12 +1,21 @@
 import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
+import AzureEventSubscriptionRetryPolicy from "@/azure/constants/AzureEventSubscriptionRetryPolicy";
 import AzureResourceManagerManagedApiId from "@/azure/constants/AzureResourceManagerManagedApiId";
 import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
+import { prodEgstEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/systemTopics/prodEgstEsposterAe001";
 import { prodEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
 import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { prodstesposter001Deadletter } from "@/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/prodstesposter001Deadletter";
+import { prodstesposter001 } from "@/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
 import { prodApicEsposterAe004 } from "@/azure/resources/Microsoft.Web/connections/prodApicEsposterAe004";
 import { prodFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/prodFuncEsposter001";
-import { AzureFunction } from "@esposter/db-schema";
+import {
+  AzureFunction,
+  DEAD_LETTER_ARCHIVED_PREFIX,
+  DEAD_LETTER_BLOB_SUBJECT_PREFIX,
+  DEAD_LETTER_QUARANTINE_PREFIX,
+} from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -23,6 +32,15 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
           inputs: {
             body: {
               properties: {
+                // Mirrors the Pulumi subscription: a subscription recreated without this simply drops every event
+                // Whose delivery runs out of attempts, and the replay pipeline is inert for it
+                deadLetterDestination: {
+                  endpointType: "StorageBlob",
+                  properties: {
+                    blobContainerName: prodstesposter001Deadletter.name,
+                    resourceId: prodstesposter001.id,
+                  },
+                },
                 destination: {
                   endpointType: "AzureFunction",
                   properties: {
@@ -41,10 +59,7 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
                 id: pulumi.interpolate`/subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${prodEvgtEsposterAe001.name}/providers/Microsoft.EventGrid/eventSubscriptions/prod-evgs-esposter-ae-002`,
                 name: "prod-evgs-esposter-ae-002",
                 resourceGroup: prodRgEsposterAe001.name,
-                retryPolicy: {
-                  eventTimeToLiveInMinutes: 1440,
-                  maxDeliveryAttempts: 30,
-                },
+                retryPolicy: AzureEventSubscriptionRetryPolicy,
                 topic: prodEvgtEsposterAe001.id,
                 type: "Microsoft.EventGrid/eventSubscriptions",
               },
@@ -69,6 +84,15 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
           inputs: {
             body: {
               properties: {
+                // Mirrors the Pulumi subscription: a subscription recreated without this simply drops every event
+                // Whose delivery runs out of attempts, and the replay pipeline is inert for it
+                deadLetterDestination: {
+                  endpointType: "StorageBlob",
+                  properties: {
+                    blobContainerName: prodstesposter001Deadletter.name,
+                    resourceId: prodstesposter001.id,
+                  },
+                },
                 destination: {
                   endpointType: "AzureFunction",
                   properties: {
@@ -87,10 +111,7 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
                 id: pulumi.interpolate`/subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${prodEvgtEsposterAe001.name}/providers/Microsoft.EventGrid/eventSubscriptions/prod-evgs-esposter-ae-001`,
                 name: "prod-evgs-esposter-ae-001",
                 resourceGroup: prodRgEsposterAe001.name,
-                retryPolicy: {
-                  eventTimeToLiveInMinutes: 1440,
-                  maxDeliveryAttempts: 30,
-                },
+                retryPolicy: AzureEventSubscriptionRetryPolicy,
                 topic: prodEvgtEsposterAe001.id,
                 type: "Microsoft.EventGrid/eventSubscriptions",
               },
@@ -108,6 +129,64 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
           },
           runAfter: {
             [`Read_${AzureFunction.ProcessWebhook}_Event_Subscription`]: ["Failed"],
+          },
+          type: "ApiConnection",
+        },
+        [`Create_${AzureFunction.ReplayDeadLetterEvent}_Event_Subscription`]: {
+          inputs: {
+            body: {
+              // Mirrors the Pulumi replay subscription, deadLetterDestination and all: it carries none on
+              // Purpose, since dead-lettering the replay would write a blob into the very container it watches
+              // And drive itself in a loop. A system topic also has no `topic` property — the `systemTopics`
+              // Segment of the path is what names its parent
+              properties: {
+                destination: {
+                  endpointType: "AzureFunction",
+                  properties: {
+                    maxEventsPerBatch: 1,
+                    preferredBatchSizeInKilobytes: 64,
+                    resourceId: pulumi.interpolate`${prodFuncEsposter001.id}/functions/${AzureFunction.ReplayDeadLetterEvent}`,
+                  },
+                },
+                eventDeliverySchema: "EventGridSchema",
+                filter: {
+                  // Without these the archived and quarantined copies, which live in the same container,
+                  // Retrigger the replay that wrote them
+                  advancedFilters: [
+                    {
+                      key: "subject",
+                      operatorType: "StringNotBeginsWith",
+                      values: [
+                        `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${DEAD_LETTER_ARCHIVED_PREFIX}`,
+                        `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${DEAD_LETTER_QUARANTINE_PREFIX}`,
+                      ],
+                    },
+                  ],
+                  enableAdvancedFilteringOnArrays: true,
+                  includedEventTypes: ["Microsoft.Storage.BlobCreated"],
+                  subjectBeginsWith: DEAD_LETTER_BLOB_SUBJECT_PREFIX,
+                  subjectEndsWith: "",
+                },
+                id: pulumi.interpolate`/subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.EventGrid/systemTopics/${prodEgstEsposterAe001.name}/providers/Microsoft.EventGrid/eventSubscriptions/prod-evgs-esposter-ae-004`,
+                name: "prod-evgs-esposter-ae-004",
+                resourceGroup: prodRgEsposterAe001.name,
+                retryPolicy: AzureEventSubscriptionRetryPolicy,
+                type: "Microsoft.EventGrid/eventSubscriptions",
+              },
+            },
+            host: {
+              connection: {
+                name: pulumi.interpolate`@parameters('$connections')['${prodApicEsposterAe004.name}']['connectionId']`,
+              },
+            },
+            method: "put",
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${prodRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('systemTopics/${prodEgstEsposterAe001.name}/eventSubscriptions/prod-evgs-esposter-ae-004')}`,
+            queries: {
+              "x-ms-api-version": "2025-02-15",
+            },
+          },
+          runAfter: {
+            [`Read_${AzureFunction.ReplayDeadLetterEvent}_Event_Subscription`]: ["Failed"],
           },
           type: "ApiConnection",
         },
@@ -135,6 +214,21 @@ export const prodLogicEsposterAe004: azure_native.logic.Workflow = new azure_nat
             },
             method: "get",
             path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${prodRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${prodEvgtEsposterAe001.name}/eventSubscriptions/prod-evgs-esposter-ae-001')}`,
+            queries: {
+              "x-ms-api-version": "2025-02-15",
+            },
+          },
+          type: "ApiConnection",
+        },
+        [`Read_${AzureFunction.ReplayDeadLetterEvent}_Event_Subscription`]: {
+          inputs: {
+            host: {
+              connection: {
+                name: pulumi.interpolate`@parameters('$connections')['${prodApicEsposterAe004.name}']['connectionId']`,
+              },
+            },
+            method: "get",
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${prodRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('systemTopics/${prodEgstEsposterAe001.name}/eventSubscriptions/prod-evgs-esposter-ae-004')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },

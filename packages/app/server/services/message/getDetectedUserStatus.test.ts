@@ -8,8 +8,7 @@ describe(getDetectedUserStatus, () => {
   const userId = crypto.randomUUID();
 
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(() => {

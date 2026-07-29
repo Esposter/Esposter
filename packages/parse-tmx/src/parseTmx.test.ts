@@ -5,7 +5,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const ROOT_DIRECTORY = join(__dirname, "..");
+const ROOT_DIRECTORY = join(import.meta.dirname, "..");
 const MAP_DIRECTORY = `${ROOT_DIRECTORY}/maps`;
 
 describe(parseTmx, () => {

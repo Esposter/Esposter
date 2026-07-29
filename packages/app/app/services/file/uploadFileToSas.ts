@@ -1,32 +1,27 @@
 import type { UploadFileToSasOptions } from "@/models/file/UploadFileToSasOptions";
-import type { FileEntity, FileSasEntity } from "@esposter/db-schema";
+import type { FileSasEntity } from "@esposter/db-schema";
 
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
-import { takeOne } from "@esposter/shared";
+import { settleAll, takeOne } from "@esposter/shared";
 
 // The one SAS upload round-trip: generate write targets -> PUT the blocks -> (optionally) return read urls.
 // Every upload site funnels through here so limit enforcement and progress reporting live in one place.
-export async function uploadFileToSas(
-  options: {
-    generateDownloadFileSasUrls: (files: Pick<FileEntity, "filename" | "id" | "mimetype">[]) => Promise<string[]>;
-  } & UploadFileToSasOptions,
-): Promise<string[]>;
-export async function uploadFileToSas(options: UploadFileToSasOptions): Promise<FileSasEntity[]>;
-export async function uploadFileToSas({
+export const uploadFileToSas = async <TFileSasEntity extends FileSasEntity>({
   files,
-  generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
   onUploadProgress,
   onUploadStart,
-}: {
-  generateDownloadFileSasUrls?: (files: Pick<FileEntity, "filename" | "id" | "mimetype">[]) => Promise<string[]>;
-} & UploadFileToSasOptions): Promise<FileSasEntity[] | string[]> {
+}: UploadFileToSasOptions<TFileSasEntity>): Promise<TFileSasEntity[]> => {
   const fileSasEntities = await generateUploadFileSasEntities(
     files.map(({ name, size, type }) => ({ filename: name, mimetype: type, size })),
   );
   onUploadStart?.(fileSasEntities);
-  await Promise.all(
-    files.map((file, index) => {
+  // Settled, not raced: a caller that reverts on failure deletes the batch's blobs, and `Promise.all` hands it
+  // That failure while the siblings are still writing — a PUT landing after the deletion runs leaves a blob
+  // Nothing references and no later sweep reaches. Failing only once every upload has stopped writing means
+  // The revert always names a set that is complete and final.
+  await settleAll(
+    files.map((file, index) => () => {
       const fileSasEntity = takeOne(fileSasEntities, index);
       return uploadBlocks(
         file,
@@ -39,8 +34,5 @@ export async function uploadFileToSas({
       );
     }),
   );
-  if (!generateDownloadFileSasUrls) return fileSasEntities;
-  return generateDownloadFileSasUrls(
-    files.map((file, index) => ({ filename: file.name, id: takeOne(fileSasEntities, index).id, mimetype: file.type })),
-  );
-}
+  return fileSasEntities;
+};

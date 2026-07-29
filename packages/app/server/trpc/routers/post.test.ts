@@ -120,18 +120,10 @@ describe("post", () => {
     const newPost = await postCaller.createPost({ title });
     const newComment = await postCaller.createComment({ description, parentId: newPost.id });
     const readPost = await postCaller.readPost(newPost.id);
+    const readComment = await postCaller.readPost(newComment.id);
 
     expect(newComment.description).toBe(description);
     expect(readPost.noComments).toBe(1);
-  });
-
-  test("reads comment", async () => {
-    expect.hasAssertions();
-
-    const newPost = await postCaller.createPost({ title });
-    const newComment = await postCaller.createComment({ description, parentId: newPost.id });
-    const readComment = await postCaller.readPost(newComment.id);
-
     expect(readComment).toStrictEqual(newComment);
   });
 

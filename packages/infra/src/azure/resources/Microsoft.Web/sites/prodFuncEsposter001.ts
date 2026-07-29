@@ -1,8 +1,12 @@
 import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAustraliaEastDisplayLocation from "@/azure/constants/AzureAustraliaEastDisplayLocation";
+import { prodEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
 import { prodRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodAspEsposterAe001 } from "@/azure/resources/Microsoft.Web/serverFarms/prodAspEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
+import * as pulumi from "@pulumi/pulumi";
+
+const config = new pulumi.Config();
 
 export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web.WebApp(
   "prod-func-esposter-001",
@@ -54,6 +58,40 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
     scmSiteAlsoStopped: false,
     serverFarmId: prodAspEsposterAe001.id,
     siteConfig: {
+      appSettings: [
+        { name: "AZURE_EVENT_GRID_TOPIC_ENDPOINT", value: prodEvgtEsposterAe001.endpoint },
+        { name: "AZURE_EVENT_GRID_TOPIC_KEY", value: config.requireSecret("prodFuncEsposter001EventGridTopicKey") },
+        {
+          name: "AZURE_SERVICE_BUS_CONNECTION_STRING",
+          value: config.requireSecret("prodFuncEsposter001ServiceBusConnectionString"),
+        },
+        {
+          name: "AZURE_STORAGE_ACCOUNT_CONNECTION_STRING",
+          value: config.requireSecret("prodFuncEsposter001StorageAccountConnectionString"),
+        },
+        {
+          name: "AZURE_WEB_PUBSUB_CONNECTION_STRING",
+          value: config.requireSecret("prodFuncEsposter001WebPubSubConnectionString"),
+        },
+        { name: "AzureWebJobsStorage__blobServiceUri", value: "https://prodstesposter001.blob.core.windows.net" },
+        { name: "AzureWebJobsStorage__credential", value: "managedidentity" },
+        { name: "AzureWebJobsStorage__queueServiceUri", value: "https://prodstesposter001.queue.core.windows.net" },
+        { name: "AzureWebJobsStorage__tableServiceUri", value: "https://prodstesposter001.table.core.windows.net" },
+        { name: "BASE_URL", value: "https://esposter.com" },
+        { name: "DATABASE_URL", value: config.requireSecret("prodFuncEsposter001DatabaseUrl") },
+        { name: "FUNCTIONS_EXTENSION_VERSION", value: "~4" },
+        { name: "FUNCTIONS_WORKER_RUNTIME", value: "node" },
+        { name: "VAPID_PRIVATE_KEY", value: config.requireSecret("prodFuncEsposter001VapidPrivateKey") },
+        {
+          name: "VAPID_PUBLIC_KEY",
+          value: "BMNNrnbyB172jBomt7_Iv1br_r7WHn9fun4faYpZNZYScxFBVt5xhAdNy8zD4UaqbNXZHuzg19Q08zVBtBVXyas",
+        },
+        { name: "WEBSITE_NODE_DEFAULT_VERSION", value: "~24" },
+        {
+          name: "WEBSITE_RUN_FROM_PACKAGE",
+          value: "https://prodstesposter001.blob.core.windows.net/prod-func-esposter-001/release.zip",
+        },
+      ],
       use32BitWorkerProcess: false,
     },
     storageAccountRequired: false,

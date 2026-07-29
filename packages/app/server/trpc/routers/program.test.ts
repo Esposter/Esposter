@@ -32,15 +32,8 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
-
-// This suite reads the participant table directly to prove the delete cleanup, so it needs the mock
-// Registered in its own module graph — createMockContext's registration does not reach a direct import
-vi.mock(
-  import("@@/server/composables/azure/table/useTableClient"),
-  () => import("@@/server/composables/azure/table/useTableClient.test"),
-);
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
 // Here only the router wiring plus the program-specific participant issuance and status join.

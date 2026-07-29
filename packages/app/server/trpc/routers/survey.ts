@@ -3,7 +3,6 @@ import type { SurveyResponseRecords } from "#shared/models/resource/survey/Surve
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
-import { transformReadBlobUrls } from "@@/server/services/resource/transformReadBlobUrls";
 import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
 import { invalidParticipantTokenError } from "@@/server/services/survey/invalidParticipantTokenError";
 import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
@@ -63,7 +62,6 @@ export const surveyRouter = router({
   ...createResourceProcedures(ResourceType.Survey, {
     transformPublicReadContent: transformPublicReadSurvey,
     transformPublishedContent: transformPublishedBlobUrls,
-    transformReadContent: transformReadBlobUrls,
   }),
   countSurveyResponses: getOwnerProcedure(
     ResourceType.Survey,

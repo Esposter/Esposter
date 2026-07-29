@@ -3,8 +3,9 @@
 // -l: zsh/bash only source the interactive rc (~/.zshrc, ~/.bashrc) — where the activation lives — when interactive.
 // Resolve the user's own login shell ($SHELL, then the passwd entry, then /bin/sh) so the right rc is sourced, then
 // Exec it with the command. `command` must be safe to embed in single quotes (no single quotes of its own). Shared by
-// ReadWslLoginPath (captures the resulting PATH) and the sandbox-install gate (probes that node + corepack resolve),
-// So the gate matches exactly the toolchain the backend can reach rather than a bare non-interactive PATH.
+// ReadWslLoginEnvironment (captures the resulting PATH + node version) and the sandbox-install gate (probes that
+// Node + corepack resolve), so the gate matches exactly the toolchain the backend can reach rather than a bare
+// Non-interactive PATH.
 export const buildWslLoginShellCommand = (command: string): string =>
   [
     // oxlint-disable-next-line no-template-curly-in-string -- `${SHELL:-}` is shell parameter expansion, not a JS template placeholder

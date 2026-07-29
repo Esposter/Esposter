@@ -40,30 +40,8 @@ vi.mock(
   }),
 );
 
-vi.mock(
-  import("@@/server/composables/azure/container/useContainerClient"),
-  () => import("@@/server/composables/azure/container/useContainerClient.test"),
-);
-
-vi.mock(
-  import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient"),
-  () => import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test"),
-);
-
-vi.mock(
-  import("@@/server/composables/azure/search/useSearchClient"),
-  () => import("@@/server/composables/azure/search/useSearchClient.test"),
-);
-
-vi.mock(
-  import("@@/server/composables/azure/serviceBus/useServiceBusSender"),
-  () => import("@@/server/composables/azure/serviceBus/useServiceBusSender.test"),
-);
-
-vi.mock(
-  import("@@/server/composables/azure/table/useTableClient"),
-  () => import("@@/server/composables/azure/table/useTableClient.test"),
-);
+// The Azure client mocks are registered in `shared/test/setup.ts`, not here — only the session mock above needs
+// This module's state, and a registration written here never reaches a test file's own direct import.
 
 export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const createdAt = new Date();
@@ -84,17 +62,17 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
         .returning(),
     );
   const getSessionPayload = { session: createSession(user.id), user } as const satisfies GetSessionPayload;
-  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
+  mocks.getSession.mockReturnValueOnce(getSessionPayload);
   return getSessionPayload;
 };
 
 export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
-  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
+  mocks.getSession.mockReturnValueOnce(getSessionPayload);
 };
 
 // Simulates an unauthenticated request for the next call — better-auth returns null when no session exists
 export const mockNoSessionOnce = () => {
-  mocks.getSession.mockImplementationOnce(() => null as unknown as GetSessionPayload);
+  mocks.getSession.mockReturnValueOnce(null as unknown as GetSessionPayload);
 };
 
 export const getMockSession = () => mocks.getSession();

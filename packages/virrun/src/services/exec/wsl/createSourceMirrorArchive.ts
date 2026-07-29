@@ -1,7 +1,9 @@
 import type { SourceMirrorArchive } from "@/models/exec/wsl/SourceMirrorArchive";
 
+import { ExecFileError } from "@/models/exec/util/ExecFileError";
 import { SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
@@ -47,9 +49,13 @@ export const createSourceMirrorArchive = (
   const copyListUnc = join(entryUnc, copyListFilename);
   writeFileSync(copyListUnc, joinNullDelimited(copyPaths));
   const archiveResult = getResult(() =>
-    execFileHidden("tar", ["-c", "--no-recursion", "--null", "-f", archiveUnc, "-C", cwd, "-T", copyListUnc], {
-      timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS,
-    }),
+    execFileHidden(
+      getTarExecutable(),
+      ["-c", "--no-recursion", "--null", "-f", archiveUnc, "-C", cwd, "-T", copyListUnc],
+      {
+        timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS,
+      },
+    ),
   );
   // The list is tar's input and nothing else's, so it is spent the moment tar returns either way — unlinking
   // Before the verdict is read keeps the aborting path from leaving the reaper a corpse it never needed
@@ -57,16 +63,17 @@ export const createSourceMirrorArchive = (
   const unarchivedPaths = archiveResult.match(
     (): string[] => [],
     (error) => {
-      const stderr =
-        error instanceof Error && "stderr" in error && typeof error.stderr === "string" ? error.stderr : "";
-      if (!getIsTolerableArchiveFailure(stderr)) throw error;
+      // A killed tar (the archive timeout's SIGTERM) stopped mid-write, so whatever skips its partial stderr
+      // Happens to carry describe an archive that is truncated at an arbitrary point, not complete-but-for-those
+      if (!(error instanceof ExecFileError) || error.signal || !getIsTolerableArchiveFailure(error.stderr)) throw error;
       const members = getResult(() => readSourceMirrorArchiveMembers(archiveUnc)).match(
         (value) => new Set(value),
         () => {
           throw error;
         },
       );
-      return copyPaths.filter((path) => !members.has(path));
+      // Compared in the members' normalized shape, but reported as the manifest's own key
+      return copyPaths.filter((path) => !members.has(path.normalize()));
     },
   );
   return { archiveFilename, unarchivedPaths };

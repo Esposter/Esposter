@@ -65,6 +65,7 @@
   },
   "peerDependencies": {
     "@azure/data-tables": "catalog:",
+    "@azure/eventgrid": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",

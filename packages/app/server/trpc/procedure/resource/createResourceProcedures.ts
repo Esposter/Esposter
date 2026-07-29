@@ -5,7 +5,7 @@ import type { ResourceProcedureOptions } from "@@/server/models/resource/Resourc
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { PUBLISHED_DIRECTORY_SEGMENT, staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -14,6 +14,8 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
+import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
 import { on } from "@@/server/services/events/on";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -30,9 +32,11 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { deleteDirectory, generateDownloadFileSasUrls, generateUploadFileSasEntities } from "@esposter/db";
+import { generateUploadFileSasEntities } from "@esposter/db";
 import {
   AzureContainer,
+  BLOB_SEGMENT_MAX_LENGTH,
+  BLOB_SEGMENT_REGEX,
   DatabaseEntityType,
   fileEntitySchema,
   ResourceActivityType,
@@ -70,15 +74,10 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
   id: selectResourceSchema.shape.id,
 });
 
-const generateDownloadFileSasUrlsInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true, mimetype: true }), "id")
-    .min(1)
-    .max(MAX_READ_LIMIT),
-  id: selectResourceSchema.shape.id,
-});
-
 const deleteFileInputSchema = z.object({
-  blobPath: z.string().min(1).max(MAX_READ_LIMIT),
+  // The client recovers this from the stable asset url, so it is always the single `{id}|{filename}` segment
+  // GetBlobName emits — a separator or a `..` could only ever be an attempt to climb out of {id}/files/
+  blobPath: z.string().min(1).max(BLOB_SEGMENT_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
   id: selectResourceSchema.shape.id,
 });
 
@@ -101,9 +100,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const { contentSchema } = ResourceDefinitionMap[type];
   // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { afterSaveResourceContent, transformPublicReadContent, transformPublishedContent, transformReadContent } =
-    (args[0] ?? {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>> &
-      ResourceProcedureOptions<ResourceContent<TType>>;
+  const { afterSaveResourceContent, transformPublicReadContent, transformPublishedContent } = (args[0] ??
+    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>> &
+    ResourceProcedureOptions<ResourceContent<TType>>;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
   // Would erase the procedure's input type for consumers like achievement condition paths.
@@ -170,11 +169,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
         if (data.id === id && !getIsSameDevice(device, ctx.getSessionPayload))
           yield { ...data, content: data.content as ResourceContent<TType> };
     }),
-    readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query(async ({ ctx, input: { id } }) => {
-      const content = await readContent(id);
-      if (content === undefined || !transformReadContent) return content;
-      return transformReadContent(ctx, ctx.resource, content);
-    }),
+    readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query(({ input: { id } }) =>
+      readContent(id),
+    ),
     readResources: standardAuthedProcedure
       .input(readResourcesInputSchema)
       .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
@@ -269,22 +266,15 @@ export const createResourceProcedures = <TType extends ResourceType>(
       },
     ),
   };
-  // Binary assets live under {id}/files/… — the owner uploads and reads them through short-lived SAS urls,
-  // And deleteResource already removes the whole {id}/ directory, so the assets need no separate teardown
+  // Binary assets live under {id}/files/… — the owner uploads through short-lived SAS urls and reads resolve
+  // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature), and
+  // DeleteResource already removes the whole {id}/ directory, so the assets need no separate teardown
   const fileAssetsProcedures = {
     deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation(async ({ input: { blobPath, id } }) => {
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      // The path is anchored under {id}/files/ so this can only ever delete uploaded assets,
-      // Never the content or published-content blobs that live beside the files directory
-      const blockBlobClient = containerClient.getBlockBlobClient(`${getFilesDirectoryName(id)}/${blobPath}`);
-      await blockBlobClient.deleteIfExists();
+      // The path is a single separator-free segment (BLOB_SEGMENT_REGEX) anchored under {id}/files/, so this can
+      // Only ever delete uploaded assets, never the content or published-content blobs beside the files directory
+      await publishBlobDeletion(id, AzureContainer.ResourceAssets, [`${getFilesDirectoryName(id)}/${blobPath}`]);
     }),
-    generateDownloadFileSasUrls: getOwnerProcedure(type, generateDownloadFileSasUrlsInputSchema, "id").query<string[]>(
-      async ({ input: { files, id } }) => {
-        const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-        return generateDownloadFileSasUrls(containerClient, files, getFilesDirectoryName(id));
-      },
-    ),
     generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
       FileSasEntity[]
     >(async ({ input: { files, id } }) => {
@@ -305,6 +295,15 @@ export const createResourceProcedures = <TType extends ResourceType>(
               "cannot publish resource without content",
             ).message,
           });
+        // Read before the assets are cloned, so the claim below can be compared against it. A sweep of this
+        // Resource's published prefix only ever follows a publication row delete, and that delete resets the
+        // Version sequence — so a claim that is not the successor of what this attempt read is proof one landed
+        const previousPublication = await ctx.db.query.resourcePublications.findFirst({
+          where: { resourceId: { eq: id } },
+        });
+        // Transformed before the transaction opens: a hook may read through `ctx.db` (Dashboard resolves every
+        // Bound dataset), and issuing that read while this connection holds a transaction deadlocks. Nothing it
+        // Writes is keyed by the version claimed below — see createPublishedAssetsDirectoryName
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
@@ -335,6 +334,23 @@ export const createResourceProcedures = <TType extends ResourceType>(
           );
           return newPublication;
         });
+        // An unpublish that landed between the clone and this claim swept the assets it had just written, while
+        // The content blob — written inside the transaction, after that sweep's bound — survived: the resource
+        // Would report itself published and render every image broken, with no operation left that rebuilds
+        // Them. Re-cloning now writes past the bound, and the version is already claimed, so the repair is the
+        // Transform and the upload again rather than another publish. A concurrent publish trips this too and
+        // Pays one redundant clone; a swept snapshot cannot slip through, because a delete restarts the
+        // Sequence at 1 and any successor this attempt could expect is at least 2.
+        // An attempt that read no row expects to claim 1 — reading the successor off the row alone exempted
+        // Every first publish (and every publish after an unpublish) from the check entirely
+        if (publication.publishVersion !== (previousPublication?.publishVersion ?? 0) + 1)
+          await useUpload(
+            AzureContainer.ResourceAssets,
+            getPublishedContentBlobName(id, publication.publishVersion),
+            JSON.stringify(
+              transformPublishedContent ? await transformPublishedContent(ctx, ctx.resource, content) : content,
+            ),
+          );
         // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
         getSynchronizedFunction(writeResourceActivity)({
           activityType: ResourceActivityType.Published,
@@ -387,10 +403,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const content = contentSchema.parse(
           JSON.parse(await streamToText(readableStreamBody)),
         ) as ResourceContent<TType>;
-        // Re-sign any expired asset SAS urls through the same transform the working-copy read uses, so an
-        // Old snapshot still renders past a SAS expiry
-        if (!transformReadContent) return { content, name: ctx.resource.name };
-        return { content: await transformReadContent(ctx, ctx.resource, content), name: ctx.resource.name };
+        return { content, name: ctx.resource.name };
       },
     ),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
@@ -401,10 +414,27 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
       const { id } = ctx.resource;
-      await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
+      const [deletedPublication] = await ctx.db
+        .delete(resourcePublications)
+        .where(eq(resourcePublications.resourceId, id))
+        .returning();
 
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      await deleteDirectory(containerClient, `${id}/published`, true);
+      // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
+      // Still holding a cached short-lived SAS, and unpublished snapshots must not linger regardless — cleanup
+      // Goes through the one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)
+      // The snapshot directory grows with every retained publication, so the handler enumerates it — walking
+      // It here would put an unbounded listing on the unpublish request itself.
+      // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything,
+      // And sweeping regardless is what let a stale tab wipe the assets a concurrent FIRST publish had just
+      // Cloned — the sweep's bound is stamped after those clones, and a delete that removed no row leaves the
+      // Version sequence untouched, so the publish's own successor check below cannot see it either
+      if (deletedPublication)
+        await publishBlobPrefixDeletion(
+          id,
+          AzureContainer.ResourceAssets,
+          `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`,
+          new Date(),
+        );
       // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,

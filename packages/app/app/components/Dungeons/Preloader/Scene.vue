@@ -34,7 +34,7 @@ const preload = (scene: SceneWithPlugins) => {
   scene.load
     .on("progress", (value: number) => {
       progressBarWidth.value = PROGRESS_BAR_MAX_WIDTH * value;
-      percentageText.value = `${parseInt((value * 100).toString())}%`;
+      percentageText.value = `${Number.parseInt((value * 100).toString())}%`;
     })
     .on("fileprogress", (file: Loader.File) => {
       assetText.value = `Loading asset: ${prettify(file.key)}`;

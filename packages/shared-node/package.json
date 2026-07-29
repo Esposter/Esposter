@@ -2,11 +2,10 @@
   "name": "@esposter/shared-node",
   "version": "2.35.0",
   "private": true,
-  "description": "Node-only shared tooling (benchmark reporting, dev scripts) reused across packages.",
+  "description": "Node-only shared tooling (benchmark reporting) reused across packages.",
   "keywords": [
     "benchmark",
     "codspeed",
-    "dev-scripts",
     "monorepo",
     "node",
     "reporting",
@@ -29,13 +28,7 @@
     "dist"
   ],
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
     "./reporter": {
       "types": "./dist/reporter.d.ts",
       "default": "./dist/reporter.js"
@@ -46,8 +39,7 @@
     }
   },
   "scripts": {
-    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "build": "rolldown --config rolldown.config.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -61,11 +53,9 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
-    "ctix": "catalog:",
     "rolldown": "catalog:"
   },
   "peerDependencies": {
-    "vitest": "catalog:",
-    "zod": "catalog:"
+    "vitest": "catalog:"
   }
 }

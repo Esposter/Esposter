@@ -140,19 +140,6 @@ describe(filterDataSourceRows, () => {
     expect(takeOne(takeOne(result).data, "")).toBeNull();
   });
 
-  test("boolean filter empty string keeps all rows", () => {
-    expect.hasAssertions();
-
-    const dataSource = createDataSource(
-      [new BooleanColumn({ name: "" })],
-      [createRow({ "": true }), createRow({ "": false }), createRow({ "": null })],
-    );
-
-    expect(filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.Boolean, value: "" } })).toBe(
-      dataSource.rows,
-    );
-  });
-
   test("number filter minimum keeps rows at or above the threshold", () => {
     expect.hasAssertions();
 

@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch banned), chaining patterns, finalizers, tRPC backend guards, and Azure Functions logging/retry (context.error, logAndRethrow, fatal vs best-effort). Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
+description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch banned), chaining patterns, finalizers, tRPC backend guards, and Azure Functions logging/retry (context.error, logAndRethrow, fatal vs best-effort, capped dead-letter replay with quarantine). Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
 ---
 
 # Error Handling Conventions
@@ -25,9 +25,10 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 ```
 
 - Always use `getResult(() => expr)` / `getResultAsync(() => asyncExpr)`. Never call `fromThrowable` or `ResultAsync.fromPromise` directly.
-- Never leave a `Result`/`ResultAsync` unhandled — enforced by `neverthrow/must-use-result` (eslint, error). Finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
+- **Wrap only what can actually fail.** A `Result` around a local array/map write, a pure computation, or any body with no I/O and no throwing call in it reads as though that step has a failure mode, so the next reader hunts for one — and it downgrades a genuine programming error into a logged line. Call it bare. The tell that a wrapper is unjustified is its test: if the only way to exercise the err branch is a spy that forces a throw into a function that cannot throw, the wrapper is the thing under test, not the behaviour, and both should go.
+- Never leave a `Result`/`ResultAsync` unhandled — finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`. **Nothing enforces this**: `neverthrow/must-use-result` was dropped because it needs `parserOptions.projectService`, and type-aware parsing cost roughly a third of total rule time. An unterminated chain is silent — `getResultAsync` starts the work immediately (`Promise.resolve().then(fn)`), so the call **does** run; what vanishes is the outcome. A failure is captured into the `Result` nobody reads, and because it never becomes a rejected promise it is not an unhandled rejection either, so nothing logs it. The symptom is a step that appears to have succeeded, not a step that never happened — so it is on review to catch, not lint.
 - `.isOk()` / `.isErr()` are BANNED — branch with `.match(...)` instead so both branches are handled in one place. To rethrow/cleanup on failure, `throw` inside the err handler (works in sync and async handlers alike); to fall back, `.unwrapOr(fallback)`.
-- Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`.
+- Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`. An Azure Functions handler is the one place that sink changes: it logs through its `InvocationContext` (`context.error`) so the failure is attached to the invocation rather than the process, and `console.*` there is banned outright (see Azure Functions below).
 - Never `void` a ResultAsync — always `await` (ResultAsync never rejects, so awaiting is safe).
 - Never end a fire-and-forget chain with `.orTee(handler)` alone (lint flags it) — use `.match(noop, handler)`.
 - No-op ok handler: always `noop`. Never inline `() => undefined` or `() => {}`.
@@ -159,7 +160,7 @@ const updated = requireMutation(
 
 Handlers receive an `InvocationContext`. Log through it — `context.error(...)` / `context.log(...)`, never `console.*`. When a service needs to log, `context` is its **first** parameter (`sendPushNotification`, `sendWebPushNotifications`, `createAndBroadcastMessage`).
 
-EventGrid delivery is **at-least-once**: a handler that throws is redelivered. So in a handler a throw is a _retry request_, not just an error — split every handler into a fatal path (rethrow → retry) and a best-effort path (log only).
+Which steps may fail the caller is the repo-wide **persist then notify** standard (`/docs/architecture/persist-then-notify`) — guards and the primary write are fatal, everything after the notify is best-effort. In `packages/app/server` that tail is lint-enforced (the `persist-then-notify` oxlint plugin errors on an unwrapped `await` after an `emit`), so don't re-prescribe it here — this section covers only what the linter can't: a handler adds one mechanic on top — EventGrid delivery is at-least-once, so here a throw is a _retry request_, and the two phases get different loggers.
 
 ### Fatal path — rethrow to trigger retry
 
@@ -173,9 +174,9 @@ return getResultAsync(async () => {
 }).match(noop, logAndRethrow(context, AzureFunction.ProcessWebhook));
 ```
 
-### Best-effort path — log, never rethrow
+### Best-effort path — log through `context`, never rethrow
 
-Side effects **after** the entity is persisted (realtime broadcast, push dispatch) must not rethrow — the row already exists with a fresh time-based `rowKey`, so replaying the event would create a **duplicate** message. Log and swallow:
+Rethrowing here asks for a redelivery that reruns the handler from the top, and a message's fresh time-based `rowKey` makes that rerun a **duplicate** rather than an overwrite. Log and swallow — through `context.error`, not `console.error`, so the failure is attached to the invocation:
 
 ```typescript
 await getResultAsync(() => webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage)).match(
@@ -186,7 +187,26 @@ await getResultAsync(() => webPubSubServiceClient.group(newMessage.partitionKey)
 );
 ```
 
-Canonical: `createAndBroadcastMessage` (broadcast) and `processWebhookHandler` (push dispatch) — both best-effort so a transient post-persist failure can't duplicate the message. The rule of thumb: everything before the persist is fatal/retryable; everything after it is best-effort.
+Canonical: `createAndBroadcastMessage` (broadcast) and `processWebhookHandler` (push dispatch).
+
+### Past the retries — automatic replay, capped, then quarantined
+
+When retries are exhausted the delivery dead-letters, and recovery from there is automatic and event-triggered, never a script someone remembers to run (`/docs/architecture/no-manual-recovery`). A replay handler:
+
+- **Validates before republishing.** A payload that fails its schema can never succeed — quarantine it immediately instead of spending the attempt budget on it.
+- **Carries the attempt count on the event id** (`<eventId>|<attempt>`), the only field republished verbatim into the next dead-letter payload. Anything attached to the stored artifact instead — blob metadata, name, prefix — is lost the moment a failed replay is dead-lettered into a brand-new blob, so that counter restarts at zero every cycle and loops forever ([/docs/infra/eventgrid-dead-letter](/docs/infra/eventgrid-dead-letter)).
+- **Quarantines past the cap** — move the payload under a prefix the trigger's filter excludes, then `context.error(...)`. Never leave a poison payload where the trigger can pick it up again.
+
+### A callback nothing awaits terminates its own Result
+
+An interval tick, a timer, a fire-and-forget hook — nothing holds its promise, so a rejection escapes as an unhandled one and nothing retries. Wrap the whole body and terminate it inside (`getResultAsync(async () => …).match(noop, console.error)`), rather than leaving the terminal handler to a caller that does not exist.
+
+### A handler that enumerates its own work bounds it in time and in width
+
+Delivery is at-least-once and a dead-lettered payload can be replayed hours later, so an event carrying a _query_ (a prefix, a filter) rather than a fixed list re-runs that query against a world that moved on. Two bounds, both on the handler:
+
+- **In time** — the publisher stamps its own instant into the payload and the handler filters on it (`createdBefore`). Otherwise a replay acts on rows/blobs written _after_ the effect was decided, which is how an idempotent-looking delete wipes something that was recreated in between. Marking the function idempotent is what authorizes that replay, so the bound is what makes the marking true.
+- **In width** — fan out in waves of a named cap, never one combinator over the whole enumeration. An unbounded fan-out throttles the account, one rejection fails the batch, and the retry repeats it identically — the work never completes and eventually dead-letters.
 
 ## Finalizers
 
@@ -218,4 +238,4 @@ For simple loading flags around a `ResultAsync`, set the flag after `await` (Res
 
 ## Client Reads/Writes — Don't Hand-Roll the Chain
 
-Most user-facing client reads/writes already have the `getResultAsync` + error-alert chain built in: `useQuery` / `useMutation` (`app/composables/shared/`). Reach for those before writing your own chain around a `$trpc` call — canonical reference and the documented raw-call exceptions: `content/docs/architecture/client-data.md`.
+`useQuery` / `useMutation` already carry this chain for client reads/writes — see the `trpc` skill before writing your own around a `$trpc` call.

@@ -2,7 +2,7 @@ import type { BlueprintEntry } from "#shared/models/resource/blueprint/Blueprint
 
 import { BLUEPRINT_ENTRY_TOKEN_REGEX } from "#shared/services/resource/blueprint/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { deepReplaceStrings } from "@@/server/services/blueprint/deepReplaceStrings";
+import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 

@@ -25,7 +25,8 @@ describe(useInputStore, () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers();
+    // Frozen rather than merely faked, so a draft's `updatedAt` is an exact value instead of "some Date"
+    vi.useFakeTimers({ now: 0 });
     setActivePinia(createPinia());
     router.currentRoute.value.params.id = roomId1;
   });
@@ -137,7 +138,8 @@ describe(useInputStore, () => {
     await nextTick();
 
     expect(getDraft(roomId1)?.content).toBe(draftContent);
-    expect(getDraft(roomId1)?.updatedAt).toBeInstanceOf(Date);
+    // The debounce is what elapsed the frozen clock, so the stamp is that instant exactly
+    expect(getDraft(roomId1)?.updatedAt).toStrictEqual(new Date(debounceMs));
     expect(input.value).toBe(draftContent);
     expect(drafts.value.has(roomId1)).toBe(true);
   });
@@ -151,7 +153,7 @@ describe(useInputStore, () => {
     storeDraft(roomId1, draftContent);
 
     expect(getDraft(roomId1)?.content).toBe(draftContent);
-    expect(getDraft(roomId1)?.updatedAt).toBeInstanceOf(Date);
+    expect(getDraft(roomId1)?.updatedAt).toStrictEqual(new Date(0));
     expect(input.value).toBe(draftContent);
     expect(drafts.value.has(roomId1)).toBe(true);
   });

@@ -7,7 +7,6 @@ import {
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
-  VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
 } from "@/services/exec/wsl/constants";
 import { createSourceMirrorArchive } from "@/services/exec/wsl/createSourceMirrorArchive";
@@ -16,6 +15,7 @@ import { getWslSourceMirrorEntryPath } from "@/services/exec/wsl/getWslSourceMir
 import { getWslSourceMirrorEntryUnc } from "@/services/exec/wsl/getWslSourceMirrorEntryUnc";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
+import { publishSourceMirrorOrigin } from "@/services/exec/wsl/publishSourceMirrorOrigin";
 import { readSourceMirrorManifest } from "@/services/exec/wsl/readSourceMirrorManifest";
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
 import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
@@ -75,12 +75,25 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     ? readSourceMirrorManifest(cwd)
     : undefined;
   const delta = previousManifest === undefined ? undefined : diffSourceMirrorManifests(previousManifest, manifest);
-  if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) return { lockPath, mirrorPath, script: "" };
+  if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) {
+    // A live repo returns here on nearly every run, so this is where a marker that failed to publish gets a second
+    // Chance. Without it the reaper's "no marker and old enough" arm has no invariant to stand on: one swallowed
+    // Rename would leave a mirror this repo keeps using unattributable, and a day later the sweep would rm -rf it
+    // Out from under a run. Republished only when absent, so the common path still costs no write
+    if (!existsSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME))) publishSourceMirrorOrigin(entryUnc, cwd);
+    return { lockPath, mirrorPath, script: "" };
+  }
   return getResult(() => {
     const tag = `${process.pid}.${crypto.randomUUID()}`;
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
-    const originTempFilename = `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${tag}`;
     mkdirSync(entryUnc, { recursive: true });
+    // The abandonment reaper can only reclaim an entry it can attribute, so the origin marker is published the moment
+    // The entry dir exists rather than at the end of a successful sync: a materialize that dies midway (a killed run,
+    // A failed archive) would otherwise leave an unattributable dir no sweep may ever touch, and those corpses
+    // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp dirs.
+    // The publish is best-effort (publishSourceMirrorOrigin), which every planning pass makes safe by republishing
+    // A missing marker — including the no-delta early return above, the path a live repo takes on nearly every run
+    publishSourceMirrorOrigin(entryUnc, cwd);
     const copyPaths = delta === undefined ? Object.keys(manifest).toSorted() : delta.copyPaths;
     const consumedPaths: string[] = [];
     let archivePath = "";
@@ -93,13 +106,12 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
       // Skipped file hard-failing the run.
       for (const unarchivedPath of unarchivedPaths) delete manifest[unarchivedPath];
     }
+    // The manifest is staged host-side as a pid-tagged temp and published by the script via `mv` (atomic same-fs
+    // Rename) as the last step inside the lock, so it never claims a state the mirror doesn't hold and a concurrent
+    // Planner reads either the old or the new one, never a torn file. The temp carries the *host* pid
+    // ReapStaleSourceMirrorTemps can attribute (a Linux-side `$$` temp would sit in the wrong pid domain forever).
     writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(manifest));
-    // The origin marker is staged host-side like the manifest and published via `mv` (atomic same-fs rename), so a
-    // Concurrent reaper reads either the old or the complete new marker, never a half-written path it would misjudge
-    // As a dead source — and the temp carries the *host* pid reapStaleSourceMirrorTemps can actually attribute (a
-    // Linux-side `$$` temp would sit in the wrong pid domain forever).
-    writeFileSync(join(entryUnc, originTempFilename), cwd);
-    const publish = `mv ${shellQuote(`${entryPath}/${originTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`)} && mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
+    const publish = `mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
       `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(lockPath)}`;
     const extract = archivePath

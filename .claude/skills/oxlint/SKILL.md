@@ -1,6 +1,6 @@
 ---
 name: oxlint
-description: Esposter oxlint + ESLint linting conventions — the explicit correctness category rule in .oxlintrc.json (eslint-plugin-oxlint replaces default categories), method-signature-style exceptions (built-in augmentations, third-party .d.ts), prefer-named-capture-group naming patterns, and when to use disable directives. Apply when fixing lint errors, editing .oxlintrc.json, investigating slow ESLint rules, or adding regexes/interface declarations.
+description: Esposter oxlint + ESLint linting conventions — the explicit correctness category rule in .oxlintrc.json (eslint-plugin-oxlint replaces default categories), the vitest plugin's configured/paired/off rules, method-signature-style exceptions (built-in augmentations, third-party .d.ts), prefer-named-capture-group naming patterns, and when to use disable directives. Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, or adding regexes/interface declarations.
 ---
 
 # Oxlint + ESLint Conventions
@@ -12,14 +12,7 @@ Oxlint runs as **repo-wide passes**, never per-package — there are no per-pack
 - `pnpm lint` / `pnpm lint:fix` (root) — `oxlint` over the whole repo, then ESLint.
 - `pnpm lint:fix:packages` / `pnpm lint:packages` (root) — `oxlint packages` (all packages), then ESLint over non-app packages.
 
-**To verify `packages/*` (non-app) changes, run `pnpm lint:fix:packages` from the repo root** — it's fast and includes both oxlint and eslint. Skip it whenever the change touches `packages/app` (Nuxt makes the eslint pass slow); leave app lint to CI. `pnpm lint` is **CI-only** (check, no fix) — never run it locally. Never hand-fix lint errors either — let the fix script do it.
-
-```bash
-# verify packages/* changes (oxlint + eslint, non-app, fast):
-pnpm lint:fix:packages
-# CI-only, do not run locally:
-pnpm lint       # whole-repo check, no fix
-```
+**Local verification runs the fix variants**: `pnpm lint:fix:packages` (root) for `packages/*` (non-app) changes; `pnpm lint:fix` from `packages/app/` for app changes. Neither local path oxlints the app — `lint:fix:packages` ignores `packages/app/**` and the app-local script is ESLint-only; app oxlint coverage comes solely from the root `pnpm lint` in CI. Reserve the check-only `pnpm lint` for CI. Never hand-fix lint errors — let the fix script do it.
 
 ## `.oxlintrc.json` categories — always list `correctness` explicitly
 
@@ -27,12 +20,21 @@ Oxlint keeps the `correctness` category enabled by default even when the config 
 
 **Manual ESLint disables for oxlint-covered rules are dead weight** — `eslint-plugin-oxlint` is appended last in every flat config, so its `"off"` entries win; hand-written deletes/offs stay only for rules it leaves enabled. Notable exception: its `vue-svelte-astro-exceptions` config deliberately keeps `no-unused-vars`, `@typescript-eslint/no-unused-vars`, and `@typescript-eslint/consistent-type-imports` **enabled on `.vue` files**, so vue-side offs for those are load-bearing. Verify with `eslint --print-config <file>` on both a `.ts` and a `.vue` file before deleting a manual disable.
 
+## `vitest/` rules run under oxlint
+
+The vitest rules come from oxlint's `vitest` plugin (`@vitest/eslint-plugin` is removed). All categories are on, so every plugin rule is an error unless configured in `.oxlintrc.json`. Non-obvious entries there:
+
+- **Configured, not enabled** — `consistent-test-it` (`fn: "test"`; the default demands `it` inside `describe`) and `valid-title` (`ignoreTypeOfDescribeName`/`ignoreTypeOfTestName` allow the repo's `describe(functionRef)` convention). The rules are already on via categories; the entries exist only to pass options.
+- **Pair rules** — oxlint ships both sides of style pairs; exactly one must be off or they fight: `prefer-called-once` is off because `prefer-called-times` matches the repo's `toHaveBeenCalledTimes(1)`; `no-importing-vitest-globals` is off because the repo imports vitest APIs explicitly (its counterpart `prefer-importing-vitest-globals` stays on).
+- **`prefer-describe-function-title` is off** — its fixer only checks that an identifier matching the title is in scope, not that it's a function; for arrays, Zod schemas, routers, or plugin objects the fix produces a `[object Object]` suite title.
+- **`warn-todo`/`require-test-timeout`/`require-top-level-describe` are off** — `describe.todo` placeholders and hook-registering `setup*`/test-setup files are conventions here, and per-test timeouts are not used.
+
 ## Which directive to use
 
 Pick the directive by **which linter reports the rule**, and spell the rule the way that linter names it:
 
-- **Oxlint rule** → `oxlint-disable`, using oxlint's plugin prefix: `typescript/`, `unicorn/`, `import/`, `oxc/`, `vue/`. Never `@typescript-eslint/` — oxlint accepts it as an alias, so it silently works and drifts. Core rules take no prefix (`no-void`, `prefer-spread`). `no-inferrable-types` and `require-await` exist under both a core and a `typescript/` name — prefix them.
-- **ESLint-only rule** → `eslint-disable`, using the plugin's real name (`perfectionist/sort-objects`, `vitest/require-top-level-describe`, `@typescript-eslint/no-misused-spread`). Rules oxlint owns are switched off in ESLint by `eslint-plugin-oxlint`, so an `eslint-disable` for one is dead weight.
+- **Oxlint rule** → `oxlint-disable`, using oxlint's plugin prefix: `typescript/`, `unicorn/`, `import/`, `oxc/`, `vitest/`, `vue/`. Never `@typescript-eslint/` — oxlint accepts it as an alias, so it silently works and drifts. Core rules take no prefix (`no-void`, `prefer-spread`). `no-inferrable-types` and `require-await` exist under both a core and a `typescript/` name — prefix them.
+- **ESLint-only rule** → `eslint-disable`, using the plugin's real name (`perfectionist/sort-objects`, `@typescript-eslint/no-misused-spread`). Rules oxlint owns are switched off in ESLint by `eslint-plugin-oxlint`, so an `eslint-disable` for one is dead weight.
 
 Oxlint honours **both** prefixes; ESLint honours only its own. A rule needing both (e.g. `no-control-regex`) needs one directive each — see `stripAnsi.test.ts`.
 
@@ -40,11 +42,22 @@ To find stale directives, let each linter judge its own — never read one's ver
 
 ```bash
 # oxlint: only "Unused oxlint-disable" lines are real. It flags every
-# eslint-disable for a plugin it lacks (perfectionist/vitest) as unused — false.
+# eslint-disable for a plugin it lacks (perfectionist) as unused — false.
 pnpm dlx oxlint --disable-nested-config --report-unused-disable-directives
 # eslint: reports unused directives even for rules it has turned off
 eslint . --report-unused-disable-directives
 ```
+
+## Custom JS plugins
+
+The repo authors its own oxlint rules as **JS plugins** (`jsPlugins` in `.oxlintrc.json`) — for repo-specific conventions no off-the-shelf rule covers. Only viable for **purely syntactic** rules: oxlint JS plugins get no type information (type-aware linting goes through Rust/tsgolint, which can't run JS rules), so anything needing the type checker cannot be authored here. **Nothing type-aware runs in either linter.** ESLint could host such a rule, but only by turning on `parserOptions.projectService`, which multiplies lint time; `neverthrow/must-use-result` was dropped for exactly that reason rather than moved. A convention that needs types is enforced by review, not by a rule — do not re-add a type-aware plugin to buy one back.
+
+- Plugins are **TypeScript** files under `scripts/oxlint/` (one rule-set per file), so the root `tsgo` typecheck covers them and oxlint loads them directly via Node type-stripping. Author them with `@oxlint/plugins`: `definePlugin`/`defineRule` (their sole purpose is inference — visitor handler params like `AwaitExpression(node)` type themselves, so **never annotate them inline**), and the `ESTree` namespace / `Context`/`Plugin` types for standalone helpers. There is no node-type enum — `node.type === "CallExpression"` literals are the discriminants, checked against `ESTree` so a typo won't compile. `@oxlint/plugins` and `oxlint` are catalogued as a caret pair and bumped together by the dependency-updates sweep — the repo tracks latest rather than pinning, so keep the two entries in step there.
+- Reference the `.ts` by path in the root `jsPlugins` array; enable the rule under `rules` (or a scoped `overrides` entry) as `<meta.name>/<rule>`.
+- **Scope with `overrides`** when a rule only applies to part of the tree — e.g. `persistThenNotify.ts` (the [persist-then-notify](/docs/architecture/persist-then-notify) enforcer) is scoped to `packages/app/server/**/*.ts`, because an `EventEmitter.emit` only means "realtime notify" in server mutations; client emitters (the Phaser game bus) are unrelated. `overrides` objects reject unknown keys — no `"//"` comment field; document intent in the plugin file's header instead.
+- The plugin runs in oxlint's single root pass, so it's fast enough to stay always-on. **The JS plugin API is alpha and not subject to semver** — re-verify every plugin after an `oxlint` bump (plant a violation and confirm it still fires); a contract change silently drops the rule while CI stays green.
+- The plugin file is itself linted by the repo's own oxlint+eslint pass (it lives under `scripts/`), so it must satisfy every repo convention — no `void` operator, sorted `Set`s (`perfectionist/sort-sets`), capitalized comments, comments on their own line.
+- Verify a new plugin empirically before wiring it in: run it over the whole repo to measure false positives, and plant a violation in a matching path to confirm it actually fires under the real config (a mis-scoped `files` glob or wrong rule name fails silently to zero hits).
 
 ## `typescript/method-signature-style` (oxlint)
 
@@ -99,7 +112,7 @@ interface Foo {
 
 ## `no-restricted-syntax` — `expect.any` is banned (ESLint)
 
-`expect.any(...)` (and the other `expect.<asymmetric>` matchers) are banned in tests via `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`. They are loose (they assert only the type, not the value) and they trip a `vitest/valid-expect` false positive in the current `@vitest/eslint-plugin` (the static `expect.any` is misparsed as an `expect(x).any` modifier → `Expect has an unknown modifier`).
+`expect.any(...)` (and the other `expect.<asymmetric>` matchers) are banned in tests via `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`. They are loose — they assert only the type, not the value.
 
 Instead, capture the real argument from the mock's `mock.calls` and assert it exactly:
 

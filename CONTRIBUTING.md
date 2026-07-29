@@ -19,13 +19,6 @@ Thanks for taking the time to contribute!
    pnpm dev
    ```
 
-Alternatively, use Docker:
-
-```bash
-pnpm build:docker
-pnpm dev:docker
-```
-
 ## Monorepo Structure
 
 | Package                    | Description                                             |

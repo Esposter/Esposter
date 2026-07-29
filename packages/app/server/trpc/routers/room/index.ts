@@ -16,6 +16,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { checkIsInviteUsable } from "@@/server/services/message/checkIsInviteUsable";
@@ -27,7 +28,8 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
-import { getRoomProfileImageBlobName } from "@@/server/services/room/getRoomProfileImageBlobName";
+import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
+import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -41,7 +43,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { deleteDirectory, generateWriteSasUrl } from "@esposter/db";
+import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -64,12 +66,14 @@ import {
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
+  WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import {
   getResultAsync,
   InvalidOperationError,
   ItemMetadataPropertyNames,
   MAX_READ_LIMIT,
+  noop,
   NotFoundError,
   Operation,
   takeOne,
@@ -244,16 +248,15 @@ export const baseRoomRouter = router({
           ctx.getSessionPayload.session.id,
         );
     }),
-  deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
-    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-    await deleteDirectory(containerClient, input, true);
-    return deletedRoom;
-  }),
+  deleteRoom: standardAuthedProcedure
+    .input(deleteRoomInputSchema)
+    .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
     async ({ input: { roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      const blobName = getRoomProfileImageBlobName(roomId);
+      // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
+      // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
+      const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${crypto.randomUUID()}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const sasUrl = await generateWriteSasUrl(blockBlobClient);
       return { publicUrl: blockBlobClient.url, sasUrl };
@@ -349,17 +352,21 @@ export const baseRoomRouter = router({
 
       roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.getSessionPayload.session.id });
 
-      const leavingMember = await ctx.db.query.users.findFirst({
-        columns: { name: true },
-        where: { id: { eq: userId } },
-      });
-      if (leavingMember)
-        await createSystemRoomMessage(
-          userToRoom.roomId,
-          userId,
-          `${leavingMember.name} left the room.`,
-          ctx.getSessionPayload.session.id,
-        );
+      // Best-effort after the membership delete — the name lookup only exists to word the system message, so
+      // A failure costs the room one "X left" line, never the leave that already landed.
+      await getResultAsync(async () => {
+        const leavingMember = await ctx.db.query.users.findFirst({
+          columns: { name: true },
+          where: { id: { eq: userId } },
+        });
+        if (leavingMember)
+          await createSystemRoomMessage(
+            userToRoom.roomId,
+            userId,
+            `${leavingMember.name} left the room.`,
+            ctx.getSessionPayload.session.id,
+          );
+      }).match(noop, console.error);
 
       return userToRoom.roomId;
     }),
@@ -572,18 +579,40 @@ export const baseRoomRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
+    const { image } = rest;
+    // Read before the update so the sweep below knows which version the room is dropping
+    const previousImage =
+      image === undefined
+        ? ""
+        : ((await ctx.db.query.roomsInMessage.findFirst({ columns: { image: true }, where: { id: { eq: id } } }))
+            ?.image ?? "");
     const updatedRoom = requireMutation(
       (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
       Operation.Update,
       DatabaseEntityType.Room,
       id,
     );
-    if (rest.image === "") {
-      const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(id));
-      await blockBlobClient.deleteIfExists();
-    }
     roomEventEmitter.emit("updateRoom", updatedRoom);
+    // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
+    // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
+    // Only renamed the room would pay two blob listings on the request path to delete nothing. A dropped publish
+    // Only orphans a public blob, never the room update; every blob delete goes through the one durable mechanism
+    // So no call site keeps a weaker one (/docs/architecture/persist-then-notify)
+    if (image !== undefined && image !== previousImage)
+      await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
+        const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+        // The age filter decides the whole set, including the version this update drops. Nothing may bypass it:
+        // A save carries the image url its form loaded with, which is a *stale* url whenever another admin
+        // Uploaded in between — so the row value being replaced is exactly the value that can name the other
+        // Admin's seconds-old avatar, and naming it explicitly would delete the live one with no later sweep able
+        // To repair it. A version replaced within the window is therefore left for the next image change (or the
+        // Room's deletion) to collect, which is the same deferral every other in-flight upload gets
+        const blobNames = await listRoomProfileImageBlobNames(containerClient, id, {
+          createdBefore: dayjs().subtract(WRITE_SAS_DURATION_MS, "ms").toDate(),
+        });
+        return blobNames.filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== image);
+      });
+
     return updatedRoom;
   }),
 });

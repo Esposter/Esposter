@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
-import { RoutePath } from "@esposter/shared";
-
 interface ResourceExplorerProps {
   activeBlade: string;
   duplicate: () => Promise<void>;
@@ -37,7 +35,7 @@ const {
   updateTags,
 } = defineProps<ResourceExplorerProps>();
 // On mobile the list box is dropped entirely — the full-width All resources page is the mobile list, reached
-// Via the toolbar button — so the blade box gets the whole surface instead of a cramped drawer.
+// Via the blade's Close button — so the blade box gets the whole surface instead of a cramped drawer.
 const { smAndDown } = useVDisplay();
 </script>
 
@@ -61,11 +59,7 @@ const { smAndDown } = useVDisplay();
         :rename
         :resource
         :unpublish
-      >
-        <template v-if="smAndDown" #prepend>
-          <StyledTooltipIconButton :to="RoutePath.ResourcesAll" icon="mdi-format-list-bulleted" text="All resources" />
-        </template>
-      </ResourceBladeToolbar>
+      />
       <!-- The blade box owns the vertical divider (b-l) that meets the list toolbar's b-b at the corner -->
       <div b-b-0 b-l-1 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
         <ResourceBladeNav :active-blade :resource />

@@ -12,8 +12,12 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "serialization",
       "client-data",
       "persisted-data-latest-shape-only",
+      "content-token-rewriting",
       "destructive-confirmation",
+      "persist-then-notify",
+      "blob-lifecycle",
       "no-polling",
+      "no-manual-recovery",
       "null-vs-undefined",
       "singleton-dialogs",
       "navigation",
@@ -44,7 +48,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     ],
     Moderation: ["moderation", "automod-actions", "moderator-notes", "rbac"],
     Calls: ["voice-video", "push-to-talk", "calls"],
-    Infrastructure: ["push-notifications", "offline-cache", "search-index-tooling"],
+    Infrastructure: ["push-notifications", "offline-cache"],
   },
   platform: {
     "Explorer & shell": [
@@ -93,7 +97,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
   virrun: {
     Core: ["architecture", "orchestrator-api", "execution-backends", "configuration"],
     Performance: ["cache", "task-cache", "task-cache-eviction", "snapshot-and-fork", "write-back", "wsl-source-mirror"],
-    Guarantees: ["correctness", "benchmarking"],
+    Guarantees: ["correctness", "benchmarking", "subprocess-timeouts"],
     Background: ["adoption", "prior-art"],
   },
 };

@@ -5,6 +5,6 @@ export const parseXmlValue = (value: string): boolean | number | string => {
   else if (value === "false") return false;
   else if (NUMBER_REGEX.test(value)) {
     const parsedValue = Number(value);
-    return isNaN(parsedValue) ? value : parsedValue;
+    return Number.isNaN(parsedValue) ? value : parsedValue;
   } else return value;
 };

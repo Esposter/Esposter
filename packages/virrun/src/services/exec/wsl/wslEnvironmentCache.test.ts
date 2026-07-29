@@ -1,6 +1,6 @@
 import { createKeyedCacheSchema } from "@/models/exec/KeyedCache";
 import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
-import { WSL_LOGIN_PATH_CACHE_FILENAME } from "@/services/exec/util/constants";
+import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
 import { readFileSync } from "node:fs";
@@ -19,16 +19,19 @@ describe("wslEnvironmentCache", () => {
   test("returns undefined when no value has been persisted yet", () => {
     expect.hasAssertions();
 
-    expect(readWslEnvironmentCache(WSL_LOGIN_PATH_CACHE_FILENAME, key)).toBeUndefined();
+    expect(readWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, z.string(), key)).toBeUndefined();
   });
 
   test("round-trips the value through the local cache file as validatable JSON", () => {
     expect.hasAssertions();
 
-    writeWslEnvironmentCache(WSL_LOGIN_PATH_CACHE_FILENAME, { key, value });
-    const content = readFileSync(join(getCacheHome(), WSL_LOGIN_PATH_CACHE_FILENAME), "utf8");
+    writeWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, { key, value });
+    const content = readFileSync(join(getCacheHome(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME), "utf8");
 
-    expect(createKeyedCacheSchema(z.string()).parse(JSON.parse(content))).toStrictEqual({ key, value });
-    expect(readWslEnvironmentCache(WSL_LOGIN_PATH_CACHE_FILENAME, key)).toBe(value);
+    const { storedAtMs, ...cache } = createKeyedCacheSchema(z.string()).parse(JSON.parse(content));
+
+    expect(cache).toStrictEqual({ key, value });
+    expect(storedAtMs).toBeTypeOf("number");
+    expect(readWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, z.string(), key)).toBe(value);
   });
 });

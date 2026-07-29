@@ -26,26 +26,19 @@ describe(pushGameObject, () => {
     expect(container.addAt).not.toHaveBeenCalled();
   });
 
-  test("appends to end when container is empty", () => {
-    expect.hasAssertions();
-
-    const container = createMockContainer();
-    const gameObject = createMockGameObject();
-    pushGameObject(container, { depth: 1 }, gameObject);
-
-    expect(container.add).toHaveBeenCalledWith(gameObject);
-    expect(container.addAt).not.toHaveBeenCalled();
-  });
-
   test("appends to end when depth is greater than all existing depths", () => {
     expect.hasAssertions();
 
     const container = createMockContainer([1, 2, 3]);
+    const emptyContainer = createMockContainer();
     const gameObject = createMockGameObject();
     pushGameObject(container, { depth: 5 }, gameObject);
+    pushGameObject(emptyContainer, { depth: 1 }, gameObject);
 
     expect(container.add).toHaveBeenCalledWith(gameObject);
     expect(container.addAt).not.toHaveBeenCalled();
+    expect(emptyContainer.add).toHaveBeenCalledWith(gameObject);
+    expect(emptyContainer.addAt).not.toHaveBeenCalled();
   });
 
   test("inserts at correct position when depth is between existing depths", () => {

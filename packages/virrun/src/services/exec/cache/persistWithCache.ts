@@ -57,7 +57,7 @@ export const persistWithCache = async (
   const result = await persistRun(
     backend,
     command,
-    { ...options, isNetworkEnabled: false, stdio: "pipe", tee: options.stdio === "inherit" },
+    { ...options, isNetworkEnabled: false, stdio: "pipe", tee: options.stdio === "inherit" ? "stdout" : undefined },
     extraLowerDirs,
     outputDirs,
     (upperDir, plan, persistResult) => {

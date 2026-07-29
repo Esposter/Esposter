@@ -3,10 +3,6 @@ import type { FileEntity, FileSasEntity, Resource, ResourcePublication, Resource
 export interface ResourceMutations {
   deleteFile?: (input: { blobPath: string; id: string }) => Promise<void>;
   deleteResource: (input: { id: string }) => Promise<Resource>;
-  generateDownloadFileSasUrls?: (input: {
-    files: Pick<FileEntity, "filename" | "id" | "mimetype">[];
-    id: string;
-  }) => Promise<string[]>;
   generateUploadFileSasEntities?: (input: {
     files: Pick<FileEntity, "filename" | "mimetype">[];
     id: string;

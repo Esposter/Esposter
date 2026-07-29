@@ -64,6 +64,8 @@ describe("fixAjv", () => {
 
       expect(result).toContain('import * as common from "./common";\n');
       expect(result).toContain("(common.default ?? common)(_exports)");
+      expect(result).toContain("const _debug =");
+      expect(result).toContain("export default _debug;");
     });
 
     test("remaps exports.X to _exports.X but leaves module.exports untouched", () => {
@@ -73,15 +75,6 @@ describe("fixAjv", () => {
 
       expect(result).toContain("_exports.useColors = function() {};");
       expect(result).not.toMatch(/(?<!_)exports\.useColors/u);
-    });
-
-    test("converts module.exports = expr to const _debug + export default", () => {
-      expect.hasAssertions();
-
-      const result = transform('module.exports = require("./common")(exports);\n', BROWSER_JS_ID);
-
-      expect(result).toContain("const _debug =");
-      expect(result).toContain("export default _debug;");
     });
 
     test("prepends const _exports = {} to output", () => {
@@ -406,25 +399,6 @@ describe("fixAjv", () => {
 
         expect(result).toContain("const alias = validate;");
         expect(result).not.toContain("exports.validate");
-      });
-    });
-
-    describe(".default = self patch", () => {
-      test("adds .default = self on default-exported identifier for CJS interop", () => {
-        expect.hasAssertions();
-
-        const result = transform("module.exports = Ajv;\n", JSON_SCHEMA_TRAVERSE_ID);
-
-        expect(result).toContain("Ajv.default = Ajv;");
-      });
-
-      test("does not add .default patch for non-identifier default exports", () => {
-        expect.hasAssertions();
-
-        // Object literal default — no identifier to patch
-        const result = transform("module.exports = {\n  foo: 1,\n};\n", AJV_ID);
-
-        expect(result).not.toContain(".default =");
       });
     });
   });

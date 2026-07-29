@@ -7,7 +7,7 @@ Wrap any command in the sandbox, or drive it programmatically. The overview live
 The sandboxed `os` backend needs the following; if either is missing, `virrun` falls back to the native backend (so every command still runs — just un-isolated).
 
 - **Bubblewrap `>= 0.10.0`** (RAM overlay support: `--overlay-src` / `--tmp-overlay`), via your system package manager — e.g. `sudo apt install -y bubblewrap` (Debian/Ubuntu/WSL2), `sudo dnf install bubblewrap` (Fedora/RHEL), `sudo pacman -S bubblewrap` (Arch).
-- **A Linux `node` inside your default WSL2 distro** (Windows hosts only) — Windows `node.exe` can't run in the Linux sandbox, so without it the sandbox still mounts but node-based commands (`pnpm`, `vitest`, …) can't resolve `node` inside it. virrun reads it from your real WSL login shell, so a version manager (fnm/nvm) counts.
+- **A Linux `node` inside your default WSL2 distro** (Windows hosts only) — Windows `node.exe` can't run in the Linux sandbox, so without it the sandbox still mounts but node-based commands (`pnpm`, `vitest`, …) can't resolve `node` inside it. virrun reads it from your real WSL login shell, so a version manager (fnm/nvm) counts. If that login capture fails, the command stops rather than guessing: there is no fallback probe of the guest's default-`PATH` node, and never a fall back to your Windows node — the sandbox cannot run it, and a snapshot labelled with the wrong node major is a wrong cache hit, not a stale one, whose first act is to prune the warm snapshot the correct label still points at. The version it resolved is printed in the run banner — that, not your Windows `node -v`, is what the sandbox runs. The capture is cached for a few hours, so a fresh `fnm use` shows up on the next capture (or immediately after `virrun cache clean --all`).
 - **`python3`** (Linux/WSL) — used only by write-back (`run` persisting produced files) to reconcile the overlay upper onto the host; near-universal on Linux. Verification (`run --ephemeral`) and `exec` don't need it.
 
 Run **`virrun doctor`** to check all of the above at once — it reports each prerequisite as ok / missing with the fix, and exits non-zero when the `os` backend isn't fully available.
@@ -37,12 +37,14 @@ export default defineConfig({
 
 See [configuration](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/configuration.md) and [cache](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/cache.md).
 
-On an `os`-backend run the CLI prints a one-time provisioning line on stderr so a multi-minute first install is explained, not a silent stall:
+On an `os`-backend run the CLI prints a one-time provisioning line on stderr so a multi-minute first install is explained, not a silent stall. The provisioning build's own output streams to stderr too — never stdout — so piping virrun's stdout (`virrun -- <cmd> | other`) stays safe even on a cold build:
 
 ```text
-[virrun] snapshot cache miss (lockfile a1b2c3d4e5f6) — installing toolchain once (may take minutes); later runs reuse it
-[virrun] snapshot cache hit (lockfile a1b2c3d4e5f6)
+[virrun] snapshot cache miss (environment a1b2c3d4e5f6) — installing toolchain once (may take minutes); later runs reuse it
+[virrun] snapshot cache hit (environment a1b2c3d4e5f6)
 ```
+
+The `environment` value is the short prefix of the environment key — a hash of the lockfile digest paired with the node major the sandbox runs — so either a dependency change or a node-major bump mints a fresh snapshot.
 
 ### Subcommands
 

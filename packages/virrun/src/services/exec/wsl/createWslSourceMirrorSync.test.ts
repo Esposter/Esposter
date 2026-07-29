@@ -9,6 +9,7 @@ import {
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
+  VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
   VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
   VIRRUN_SOURCES_DIRECTORY_NAME,
@@ -97,12 +98,23 @@ describe(createWslSourceMirrorSync, () => {
     // Null-delimited copy-list input is consumed and unlinked during planning, before the script ever runs.
     expect(readStaged(`${VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX}${process.pid}.`)).toContain(TEST_FILENAME);
     expect(readStaged(VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX)).toBe("");
-    // The next manifest and the origin marker are staged host-side as pid-tagged temps the script publishes via
-    // Atomic mv — the origin content is the host cwd the abandonment reaper keys on.
+    // The next manifest is staged host-side as a pid-tagged temp the script publishes via atomic mv.
     expect(JSON.parse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toHaveProperty(
       TEST_FILENAME,
     );
-    expect(readStaged(`${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${process.pid}.`)).toBe(cwd);
+  });
+
+  // Publishing the marker up front is what makes an entry reapable at all: a sync that dies before the script runs
+  // Would otherwise leave a dir no reaper may ever attribute, and those corpses accumulate forever
+  test("publishes the origin marker as soon as the entry exists, before the script has run", () => {
+    expect.hasAssertions();
+
+    createWslSourceMirrorSync(cwd);
+
+    expect(readFileSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME), "utf8")).toBe(cwd);
+    // Staged then renamed, never written in place: a reaper reading a torn path would judge the repo deleted and
+    // Reap this live mirror.
+    expect(readStaged(VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX)).toBe("");
   });
 
   test("returns an empty script when the published manifest matches the working tree", () => {

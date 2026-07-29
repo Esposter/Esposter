@@ -1,18 +1,25 @@
 import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
-import { NODE_MODULES_BIN_DIRECTORY } from "@/services/exec/util/constants";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { COREPACK_HOME_KEY, NODE_MODULES_BIN_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_REPO_ROOT_WIN, TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_PREFIX } from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Inert store options (no fs writes) and the shared wsl mocks so getWslSourceMirrorPath resolves a canonical mirror
-// Path from TEST_REPO_ROOT_WIN — the same transform createWslSourceMirrorSync.test / sourceMirrorPaths.test use.
+// Path from TEST_REPO_ROOT_WIN — the same transform createWslSourceMirrorSync.test / sourceMirrorPaths.test use. The
+// Cache root is a real temp dir per test, since the corepack home under it is materialized, not merely named.
 const loginPath = "/usr/local/bin:/usr/bin";
+
+const { loginEnvironmentPath, osCacheRoot } = vi.hoisted(() => ({
+  loginEnvironmentPath: { value: "" },
+  osCacheRoot: { value: "" },
+}));
 
 vi.mock(import("@/services/exec/store/createSharedPackageStoreOptions"), () => ({
   createSharedPackageStoreOptions: () => ({ bindDirs: [], env: {} }),
 }));
 
-vi.mock(import("@/services/exec/os/getOsCacheRoot"), () => ({ getOsCacheRoot: () => "" }));
+vi.mock(import("@/services/exec/os/getOsCacheRoot"), () => ({ getOsCacheRoot: () => osCacheRoot.value }));
 vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX),
 }));
@@ -21,13 +28,22 @@ vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
 }));
 
-vi.mock(import("@/services/exec/wsl/readWslLoginPath"), () => ({ readWslLoginPath: () => loginPath }));
+vi.mock(import("@/services/exec/wsl/readWslLoginEnvironment"), () => ({
+  readWslLoginEnvironment: () => ({ nodeVersion: "v26.5.0", path: loginEnvironmentPath.value }),
+}));
 
 describe(createOsExecOptions, () => {
+  const { cleanup, create } = createTemporaryDirectoryTracker();
   const { platform } = process;
+
+  beforeEach(() => {
+    osCacheRoot.value = create();
+    loginEnvironmentPath.value = loginPath;
+  });
 
   afterEach(() => {
     Object.defineProperty(process, "platform", { configurable: true, value: platform });
+    cleanup();
   });
 
   describe("win32", () => {
@@ -46,6 +62,19 @@ describe(createOsExecOptions, () => {
         `${mirror}/${NODE_MODULES_BIN_DIRECTORY}:${loginPath}`,
       );
     });
+
+    test("fails loud on an empty login capture instead of running under the interop PATH's broken corepack shim", () => {
+      expect.hasAssertions();
+
+      // An empty capture on win32 is a *failed* capture (cold-WSL timeout / blocking rc), not "no WSL": the support
+      // Probe already proved WSL is present. Proceeding would resolve `corepack` to the /mnt/c fnm shim and die with a
+      // Cryptic `node: not found` (127), so surface the timeout cause here rather than deep in the sandbox.
+      loginEnvironmentPath.value = "";
+
+      expect(() => createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe")).toThrowErrorMatchingInlineSnapshot(
+        `[InvalidOperationError: Invalid operation: Read, name: createOsExecOptions, WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); start WSL with \`wsl.exe -- true\` and rerun — a warm distro captures immediately]`,
+      );
+    });
   });
 
   test("injects no PATH off win32 — native Linux overlays at cwd, so its inherited PATH already resolves right", () => {
@@ -54,5 +83,18 @@ describe(createOsExecOptions, () => {
     Object.defineProperty(process, "platform", { configurable: true, value: "linux" });
 
     expect(createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe").env?.PATH).toBeUndefined();
+  });
+
+  test("points every run's corepack home at a writable bound dir, not the read-only sandbox home", () => {
+    expect.hasAssertions();
+
+    // The regression this guards: the sandbox mounts `/` read-only, so a command that shells out to `pnpm` runs the
+    // Node manager's corepack shim, which downloads the repo's pinned packageManager under $HOME/.cache and dies
+    // EROFS. Only the capture install carried a corepack home, so every ordinary run hit it.
+    const { bindDirs, env } = createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe");
+    const corepackHome = env?.[COREPACK_HOME_KEY] ?? "";
+
+    expect(corepackHome.startsWith(osCacheRoot.value)).toBe(true);
+    expect(bindDirs).toContain(corepackHome);
   });
 });

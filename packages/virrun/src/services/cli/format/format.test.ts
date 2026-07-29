@@ -91,7 +91,7 @@ describe(formatVirrunProvisioning, () => {
     expect.hasAssertions();
 
     expect(stripAnsi(formatVirrunProvisioning({ exists: false, hash: key }))).toBe(
-      "[virrun] snapshot cache miss (lockfile 0123456789ab) — installing toolchain once (may take minutes); later runs reuse it",
+      "[virrun] snapshot cache miss (environment 0123456789ab) — installing toolchain once (may take minutes); later runs reuse it",
     );
   });
 
@@ -99,7 +99,7 @@ describe(formatVirrunProvisioning, () => {
     expect.hasAssertions();
 
     expect(stripAnsi(formatVirrunProvisioning({ exists: true, hash: key }))).toBe(
-      "[virrun] snapshot cache hit (lockfile 0123456789ab)",
+      "[virrun] snapshot cache hit (environment 0123456789ab)",
     );
   });
 });

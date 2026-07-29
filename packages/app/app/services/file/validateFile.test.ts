@@ -1,4 +1,5 @@
-import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
+import { KIBIBYTE, MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
+import { getFileSize } from "@/services/file/getFileSize";
 import { validateFile } from "@/services/file/validateFile";
 import { describe, expect, test } from "vitest";
 
@@ -14,7 +15,7 @@ describe(validateFile, () => {
 
     expect(validateFile(MAX_FILE_REQUEST_SIZE + 1)).toStrictEqual({
       isValid: false,
-      message: `You can only upload files up to ${MAX_FILE_REQUEST_SIZE / MEGABYTE} MB!`,
+      message: `You can only upload files up to ${getFileSize(MAX_FILE_REQUEST_SIZE)}!`,
     });
   });
 
@@ -30,6 +31,15 @@ describe(validateFile, () => {
     expect(validateFile(2 * MEGABYTE, MEGABYTE)).toStrictEqual({
       isValid: false,
       message: "You can only upload files up to 1 MB!",
+    });
+  });
+
+  test("describes a sub-megabyte max in its own magnitude", () => {
+    expect.hasAssertions();
+
+    expect(validateFile(MEGABYTE, 512 * KIBIBYTE)).toStrictEqual({
+      isValid: false,
+      message: "You can only upload files up to 512 KB!",
     });
   });
 });

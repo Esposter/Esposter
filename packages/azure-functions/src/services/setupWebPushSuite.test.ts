@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import type { relations } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 

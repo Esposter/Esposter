@@ -2,6 +2,7 @@ import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
 import AzureResourceManagerManagedApiId from "@/azure/constants/AzureResourceManagerManagedApiId";
 import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
+import { devEgstEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/systemTopics/devEgstEsposterAe001";
 import { devEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
 import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devApicEsposterAe003 } from "@/azure/resources/Microsoft.Web/connections/devApicEsposterAe003";
@@ -42,6 +43,26 @@ export const devLogicEsposterAe003: azure_native.logic.Workflow = new azure_nati
             },
             method: "delete",
             path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${devEvgtEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-001')}`,
+            queries: {
+              "x-ms-api-version": "2025-02-15",
+            },
+          },
+          type: "ApiConnection",
+        },
+        [`Delete_${AzureFunction.ReplayDeadLetterEvent}_Event_Subscription`]: {
+          inputs: {
+            host: {
+              connection: {
+                name: pulumi.interpolate`@parameters('$connections')['${devApicEsposterAe003.name}']['connectionId']`,
+              },
+            },
+            method: "delete",
+            // A system topic, so the parent segment is `systemTopics`, not `topics`. This is the account-wide
+            // BlobCreated source: every blob written anywhere in the storage account reaches it and the
+            // Container filter is applied only after ingress, which makes it the one subscription an upload
+            // Burst can run up on its own. The low-volume application subscriptions are deliberately left
+            // Alone (/docs/infra/optimization-review)
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('systemTopics/${devEgstEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-004')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },

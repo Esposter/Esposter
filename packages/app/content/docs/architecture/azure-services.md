@@ -9,32 +9,33 @@ Which Azure services are used, what each one owns, and which package accesses it
 
 ## Service map
 
-| Service                 | What it stores / does                                                                                      | Primary access point                                                                                             |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **Azure Blob Storage**  | Profile images, message file attachments, resource content + publish snapshots, game save state            | `server/composables/azure/container/useContainerClient.ts`                                                       |
-| **Azure Table Storage** | Messages (newest-first + ascending mirrors + metadata), moderation logs, survey responses                  | `server/composables/azure/table/useTableClient.ts`                                                               |
-| **Azure AI Search**     | Message full-text search index (`searchMessages`, `readMySentMessages`)                                    | `server/composables/azure/search/useSearchClient.ts`                                                             |
-| **Azure Functions**     | Async workers — push notifications, friend request notifications, webhook delivery, scheduled message jobs | `packages/azure-functions/src/functions/`                                                                        |
-| **Azure Event Grid**    | Decouples mutations from fire-and-forget async work; app publishes events, Functions consume them          | `server/composables/azure/eventGrid/useEventGridPublisherClient.ts`                                              |
-| **Azure Service Bus**   | Delayed/scheduled work — scheduled message jobs enqueued for delivery at a future `runAt`                  | `server/composables/azure/serviceBus/useServiceBusSender.ts`                                                     |
-| **Azure Web PubSub**    | Webhook message delivery and cross-process fan-out (separate from tRPC subscriptions)                      | `server/composables/azure/webPubSub/useWebPubSubServiceClient.ts`                                                |
-| **LiveKit**             | Audio/video SFU — signaling, media tracks, participant lifecycle                                           | `server/api/webhooks/livekit.post.ts` (webhook); `livekit-server-sdk` server-side; `livekit-client` browser-side |
+| Service                 | What it stores / does                                                                                                                                                                                     | Primary access point                                                                                             |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Azure Blob Storage**  | Profile images, message file attachments, resource content + publish snapshots, game save state                                                                                                           | `server/composables/azure/container/useContainerClient.ts`                                                       |
+| **Azure Table Storage** | Messages (newest-first + ascending mirrors + metadata), moderation logs, survey responses                                                                                                                 | `server/composables/azure/table/useTableClient.ts`                                                               |
+| **Azure AI Search**     | Message full-text search index (`searchMessages`, `readMySentMessages`)                                                                                                                                   | `server/composables/azure/search/useSearchClient.ts`                                                             |
+| **Azure Functions**     | Async workers — push notifications (message, friend request, thread reply), webhook delivery, scheduled message jobs, TodoList due reminders, durable blob deletion, dead-letter replay, resource purging | `packages/azure-functions/src/functions/`                                                                        |
+| **Azure Event Grid**    | Decouples mutations from fire-and-forget async work; app publishes events, Functions consume them                                                                                                         | `server/composables/azure/eventGrid/useEventGridPublisherClient.ts`                                              |
+| **Azure Service Bus**   | Delayed/scheduled work — the `scheduled-message-jobs` queue (delivery at a future `runAt`) and the `todo-reminders` queue (TodoList due reminders)                                                        | `server/composables/azure/serviceBus/useServiceBusSender.ts`                                                     |
+| **Azure Web PubSub**    | Webhook message delivery and cross-process fan-out (separate from tRPC subscriptions)                                                                                                                     | `server/composables/azure/webPubSub/useWebPubSubServiceClient.ts`                                                |
+| **LiveKit**             | Audio/video SFU — signaling, media tracks, participant lifecycle                                                                                                                                          | `server/api/webhooks/livekit.post.ts` (webhook); `livekit-server-sdk` server-side; `livekit-client` browser-side |
 
-EventGrid vs Service Bus: EventGrid is fire-and-forget **now** (push a notification the moment a message lands); Service Bus is fire **later** (a scheduled message job must run at its `runAt`). Both terminate in Azure Functions handlers.
+EventGrid vs Service Bus: EventGrid is fire-and-forget **now** (push a notification the moment a message lands); Service Bus is fire **later** (a scheduled message job or TodoList reminder must run at its `runAt`/`dueAt`). Both terminate in Azure Functions handlers.
 
 ## Blob Storage containers
 
 Container names live in the `AzureContainer` enum (`packages/db-schema/src/models/azure/container/AzureContainer.ts`):
 
-| Container (`AzureContainer`) | Contents                                                                                                                       |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `AppAssets`                  | App-owned static assets                                                                                                        |
-| `ClickerAssets`              | Clicker game save state (`{userId}/save`)                                                                                      |
-| `DungeonsAssets`             | Dungeons game save state (`{userId}/save`)                                                                                     |
-| `MessageAssets`              | Message file attachments (`{roomId}/{fileId}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost           |
-| `PrivateUserAssets`          | Per-user private blobs                                                                                                         |
-| `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage`)                             |
-| `ResourceAssets`             | Resource content blobs, publish snapshots, and type-owned files → [/docs/architecture/resources](/docs/architecture/resources) |
+| Container (`AzureContainer`) | Contents                                                                                                                                                 |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AppAssets`                  | App-owned static assets                                                                                                                                  |
+| `ClickerAssets`              | Clicker game save state (`{userId}/save`)                                                                                                                |
+| `DeadLetter`                 | Event Grid dead-letter payloads plus their `archived/` and `quarantine/` copies → [/docs/infra/eventgrid-dead-letter](/docs/infra/eventgrid-dead-letter) |
+| `DungeonsAssets`             | Dungeons game save state (`{userId}/save`)                                                                                                               |
+| `MessageAssets`              | Message file attachments (`{roomId}/{fileId}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost                                     |
+| `PrivateUserAssets`          | Per-user private blobs                                                                                                                                   |
+| `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage`)                                                       |
+| `ResourceAssets`             | Resource content blobs, publish snapshots, and type-owned files → [/docs/architecture/resources](/docs/architecture/resources)                           |
 
 ## Table Storage tables
 
@@ -52,7 +53,9 @@ Table names live in the `AzureTable` enum (`packages/db-schema/src/models/azure/
 
 Azure AI Search holds one index, `messages-index`, that powers filtered message search (`searchMessages`) and the Sent tab (`readMySentMessages`). Its full schema is a data-plane resource — not Pulumi-managed — recreated from `packages/infra/data/searchIndexes/messages-index.json`.
 
-The index is populated by a **scheduled Azure Table pull indexer** (`messages-indexer`), not by a push on write: the indexer reads the `Messages` table on an interval measured in minutes and upserts each row as a document. A newly sent message therefore becomes searchable shortly after it lands rather than synchronously, and a message the indexer never picked up simply never appears in search — the drift the status/rebuild tooling exists to catch (see [/docs/esbabbler/search-index-tooling](/docs/esbabbler/search-index-tooling)).
+The index is populated by a **scheduled Azure Table pull indexer** (`messages-indexer`), not by a push on write: the indexer reads the `Messages` table on an interval measured in minutes and upserts each row as a document. A newly sent message therefore becomes searchable shortly after it lands rather than synchronously.
+
+The indexer owns the index, so nothing in this repo writes documents to it. Its own control plane is the operational tooling: `GET /indexers/messages-indexer/status` reports the last runs, document counts, and per-document errors, and `POST /indexers/messages-indexer/reset` followed by `POST .../run` clears the high-water mark and re-reads the whole table. Both are one click each in the portal's indexer blade. Soft deletes need no special handling — `deletedAt` is a column the indexer already carries, and queries exclude it with a null clause.
 
 ```mermaid
 flowchart TD

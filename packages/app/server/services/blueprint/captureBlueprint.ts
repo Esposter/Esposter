@@ -12,7 +12,7 @@ import { getContentBlobName } from "@@/server/services/resource/getContentBlobNa
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { AzureContainer, DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
-import { Operation, takeOne } from "@esposter/shared";
+import { getResultAsync, noop, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 
@@ -54,6 +54,13 @@ export const captureBlueprint = async (ctx: AuthedContext, ids: Resource["id"][]
     DatabaseEntityType.Resource,
     userId,
   );
-  await useUpload(AzureContainer.ResourceAssets, getContentBlobName(newBlueprint.id), JSON.stringify(manifest));
+  await getResultAsync(() =>
+    useUpload(AzureContainer.ResourceAssets, getContentBlobName(newBlueprint.id), JSON.stringify(manifest)),
+  ).match(noop, async (error) => {
+    // The manifest is the blueprint's entire content, so never leave a row pointing at a manifest that
+    // Does not exist
+    await ctx.db.delete(resources).where(eq(resources.id, newBlueprint.id));
+    throw error;
+  });
   return newBlueprint;
 };

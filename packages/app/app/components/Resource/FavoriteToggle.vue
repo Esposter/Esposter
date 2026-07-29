@@ -17,7 +17,7 @@ const isFavorite = computed(() => favoriteIds.value.has(resource.id));
   <StyledTooltipIconButton
     :icon="isFavorite ? 'mdi-star' : 'mdi-star-outline'"
     :text="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
-    :button-props="{ color: isFavorite ? 'warning' : undefined }"
+    :button-props="{ color: isFavorite ? 'warning' : undefined, variant: 'text' }"
     @click="favoriteStore.toggleFavorite(resource)"
   />
 </template>

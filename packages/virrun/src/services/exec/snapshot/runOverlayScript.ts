@@ -1,3 +1,4 @@
+import { OVERLAY_WRITE_BACK_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
 // Cap above the default 1 MB so a large diff's JSON manifest never overflows the buffer.
@@ -9,5 +10,13 @@ export const runOverlayScript = (script: string, paths: readonly string[], input
   const scriptArgs = isWin32 ? paths.map((path) => readWslPath(path)) : [...paths];
   const file = isWin32 ? "wsl.exe" : "python3";
   const args = isWin32 ? ["--exec", "python3", "-c", script, ...scriptArgs] : ["-c", script, ...scriptArgs];
-  return execFileHidden(file, args, { input, maxBuffer: OVERLAY_SCRIPT_MAX_BUFFER });
+  // Bounded like every other WSL-side worker, but on its own data-proportional cap: the copy is the run's whole
+  // Diff, so the work cap sized for one cache entry would SIGTERM a large write-back partway and fail a command
+  // That succeeded. An unbounded execFileSync against a wedged WSL service never returns at all, hanging the
+  // Write-back with no verdict — see [subprocess timeouts](/docs/virrun/subprocess-timeouts).
+  return execFileHidden(file, args, {
+    input,
+    maxBuffer: OVERLAY_SCRIPT_MAX_BUFFER,
+    timeout: OVERLAY_WRITE_BACK_TIMEOUT_MS,
+  });
 };

@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Node-only shared tooling for Esposter — benchmark reporting and dev scripts reused across packages. Server/build environment only; never import in browser code.
+Node-only shared tooling for Esposter — benchmark reporting reused across packages. Server/build environment only; never import in browser code.
 
 ## Table of Contents
 

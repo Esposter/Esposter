@@ -24,7 +24,7 @@ const isCacheHomeWritable = (): boolean =>
 // Gate for the heavy install/snapshot tests. The win32 toolchain probe goes through the login + interactive shell
 // (buildWslLoginShellCommand) the backend captures its PATH from, not a bare `wsl.exe --exec sh -lc`: a profile-bound
 // Node manager (fnm, nvm…) is off the non-interactive PATH, so a plain probe skips the suite even though the backend
-// Can reach node. This keeps the gate in lockstep with what readWslLoginPath injects.
+// Can reach node. This keeps the gate in lockstep with what readWslLoginEnvironment injects.
 export const isSandboxInstallSupported: boolean =
   isOsBackendSupported() &&
   getResult(() =>

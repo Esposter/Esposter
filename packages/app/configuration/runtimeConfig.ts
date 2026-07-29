@@ -2,7 +2,7 @@ import type { NuxtConfig } from "nuxt/schema";
 
 export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
   auth: {
-    secret: process.env.AUTH_SECRET,
+    secret: process.env.BETTER_AUTH_SECRET,
   },
   azure: {
     eventGrid: {

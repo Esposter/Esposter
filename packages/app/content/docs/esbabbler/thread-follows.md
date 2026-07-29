@@ -22,7 +22,7 @@ flowchart TD
   B["thread header bell toggle"] --> FT["followThread / unfollowThread"]
 ```
 
-Auto-follow and the follower notification both run after the reply has persisted and are best-effort — a follow or push failure never fails the reply that already landed (the same rule as the [message push path](/docs/esbabbler/push-notifications)). The notification's recipient set is recomputed inside the Azure Function, so it always reflects the live follower list.
+Auto-follow and the follower notification both sit in the reply's best-effort tail ([persist then notify](/docs/architecture/persist-then-notify)), so a lost follow costs one subscription and a lost push costs one notification. The notification's recipient set is recomputed inside the Azure Function, so it always reflects the live follower list.
 
 ## Data model
 
@@ -32,11 +32,11 @@ Postgres table `threadFollowsInMessage`: `userId`, `roomId`, and `threadRootRowK
 
 All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 
-| Procedure                                      | Purpose                                          |
-| ---------------------------------------------- | ------------------------------------------------ |
-| `followThread({ roomId, threadRootRowKey })`   | explicit follow (idempotent)                     |
-| `unfollowThread({ roomId, threadRootRowKey })` | remove the follow                                |
-| `readFollowedThreads({ roomId })`              | the caller's followed thread roots, newest-first |
+| Procedure                                      | Purpose                                                                                                                                                                  |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `followThread({ roomId, threadRootRowKey })`   | explicit follow (idempotent)                                                                                                                                             |
+| `unfollowThread({ roomId, threadRootRowKey })` | remove the follow                                                                                                                                                        |
+| `readFollowedThreads({ roomId })`              | `{ threadRootRowKeys, threads }` — every followed root rowKey (including deleted roots, the follow-state source of truth) beside the newest-first roots the drawer lists |
 
 ## Key files
 

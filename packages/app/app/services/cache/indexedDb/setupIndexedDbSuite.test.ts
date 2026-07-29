@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { afterEach, describe } from "vitest";

@@ -37,9 +37,15 @@ import { MockBlockBlobClient } from "@/models/container/MockBlockBlobClient";
 import { MockRestError } from "@/models/MockRestError";
 import { getBlobItemXml } from "@/services/container/getBlobItemXml";
 import { getBlobPrefixXml } from "@/services/container/getBlobPrefixXml";
+import { getBlobUrl } from "@/services/container/getBlobUrl";
 import { getListBlobsXml } from "@/services/container/getListBlobsXml";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
+import {
+  getMockContainerCreatedOnKey,
+  MOCK_BLOB_SEEDED_CREATED_ON,
+  MockContainerCreatedOnDatabase,
+} from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 import { getOrCreate } from "@esposter/shared";
@@ -84,7 +90,8 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
     if (!this.container.has(blobName)) throw new MockRestError("The specified blob does not exist.", 404);
     this.container.delete(blobName);
-    return Promise.resolve({ _response: createMockResponse(200, `${this.url}/${blobName}`) });
+    MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, blobName));
+    return Promise.resolve({ _response: createMockResponse(200, getBlobUrl(this.containerName, blobName)) });
   }
 
   deleteIfExists(): Promise<ContainerDeleteIfExistsResponse> {
@@ -208,8 +215,10 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     };
   }
 
-  listBlobsFlat(): PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse> {
-    const blobItemIterator = this.#getBlobItemIterator();
+  listBlobsFlat(
+    options?: ContainerListBlobsOptions,
+  ): PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse> {
+    const blobItemIterator = this.#getBlobItemIterator(options);
     return {
       byPage: () =>
         async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobFlatSegmentResponse> {
@@ -230,7 +239,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
                 parsedBody: {
                   containerName: this.containerName,
                   marker: "",
-                  prefix: "",
+                  prefix: options?.prefix ?? "",
                   segment: {
                     blobItems: allBlobItems,
                   },
@@ -239,7 +248,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
               },
               containerName: this.containerName,
               marker: "",
-              prefix: "",
+              prefix: options?.prefix ?? "",
               segment: {
                 blobItems: allBlobItems,
               },
@@ -301,6 +310,9 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
             blobType: "BlockBlob",
             contentLength: buffer.length,
             contentType: "application/octet-stream",
+            createdOn:
+              MockContainerCreatedOnDatabase.get(getMockContainerCreatedOnKey(this.containerName, name)) ??
+              MOCK_BLOB_SEEDED_CREATED_ON,
             etag: `"${crypto.randomUUID()}"`,
             lastModified: new Date(),
             leaseState: "available",
@@ -320,8 +332,10 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
-  async *#getBlobItemIterator(): AsyncGenerator<BlobItem> {
-    for (const [name, buffer] of this.container.entries())
+  async *#getBlobItemIterator(options?: ContainerListBlobsOptions): AsyncGenerator<BlobItem> {
+    const prefix = options?.prefix ?? "";
+    for (const [name, buffer] of this.container.entries()) {
+      if (!name.startsWith(prefix)) continue;
       yield await Promise.resolve({
         deleted: false,
         name,
@@ -329,6 +343,9 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
           blobType: "BlockBlob",
           contentLength: buffer.length,
           contentType: "application/octet-stream",
+          createdOn:
+            MockContainerCreatedOnDatabase.get(getMockContainerCreatedOnKey(this.containerName, name)) ??
+            MOCK_BLOB_SEEDED_CREATED_ON,
           etag: `"${crypto.randomUUID()}"`,
           lastModified: new Date(),
           leaseState: "available",
@@ -336,5 +353,6 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
         },
         snapshot: "",
       });
+    }
   }
 }

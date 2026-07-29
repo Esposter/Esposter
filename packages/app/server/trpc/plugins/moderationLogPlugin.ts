@@ -1,8 +1,9 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
-import { writeModerationLogEntry } from "@@/server/services/message/moderation/writeModerationLogEntry";
-import { AdminActionType } from "@esposter/db-schema";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { writeModerationLogEntry } from "@esposter/db";
+import { AdminActionType, AzureTable } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
 
@@ -18,8 +19,14 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
 
   const { roomId, targetUserId, type } = parsedInput.data;
   const durationMs = parsedInput.data.type === AdminActionType.TimeoutUser ? parsedInput.data.durationMs : undefined;
-  await getResultAsync(() =>
-    writeModerationLogEntry({ actorUserId: ctx.getSessionPayload.user.id, durationMs, roomId, targetUserId, type }),
+  await getResultAsync(async () =>
+    writeModerationLogEntry(await useTableClient(AzureTable.ModerationLog), {
+      actorUserId: ctx.getSessionPayload.user.id,
+      durationMs,
+      roomId,
+      targetUserId,
+      type,
+    }),
   ).match(noop, console.error);
 
   return result;

@@ -7,6 +7,9 @@ import { join } from "node:path";
 // Best-effort and atomic, see writeKeyedCache. Stored Windows-side (getLocalCacheDirectory) to avoid a circular
 // "resolve the cache dir by spawning the very probe the cache exists to skip". Callers persist only a SUCCESSFUL
 // Probe, so a transient WSL failure re-probes next run rather than caching the degraded default.
-export const writeWslEnvironmentCache = (filename: string, cache: KeyedCache<string>): void => {
+export const writeWslEnvironmentCache = <TValue>(
+  filename: string,
+  cache: Pick<KeyedCache<TValue>, "key" | "value">,
+): void => {
   writeKeyedCache(join(getLocalCacheDirectory(), filename), cache);
 };

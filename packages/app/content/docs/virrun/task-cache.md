@@ -9,7 +9,7 @@ Skip a persist run whose inputs are unchanged. Each entry records one exit-0 per
 
 ## How it works
 
-The key is `sha256(lockfile-hash + working-tree-hash + command)` (`computeTaskCacheKey`); the working-tree hash is git-based (`git ls-files -s` + `git diff --binary` + untracked walk, `computeSourceTreeHash`). Two runs share a key iff all three match, so a hit is safe to replay verbatim. When the key can't be computed (not a git repo, no lockfile), the run falls back to a plain uncached persist rather than keying on partial state.
+The key is `sha256(environment-key + working-tree-hash + command)` (`computeTaskCacheKey`, where the environment key is the lockfile digest plus the sandbox node major — the same key the warm snapshot uses); the working-tree hash is git-based (`git ls-files -s` + `git diff --binary` + untracked walk, `computeSourceTreeHash`). Two runs share a key iff all three match, so a hit is safe to replay verbatim. When the key can't be computed (not a git repo, no lockfile), the run falls back to a plain uncached persist rather than keying on partial state.
 
 ```mermaid
 flowchart TB
@@ -40,18 +40,18 @@ One accepted caveat: a command that makes a _soft/optional_ network call and sti
 
 Paths relative to `packages/virrun/src/services/exec/cache/`.
 
-| File                              | Role                                                                        |
-| --------------------------------- | --------------------------------------------------------------------------- |
-| `computeTaskCacheKey.ts`          | sha256 over lockfile hash + source-tree hash + command; null → run uncached |
-| `computeSourceTreeHash.ts`        | git-based working-tree hash (also keys the prepare layer)                   |
-| `isTaskCacheEnabled.ts`           | default-on, off in CI / `--no-cache` / `VIRRUN_NO_CACHE`                    |
-| `persistWithCache.ts`             | the orchestration above — hit replay, hermetic miss, record on exit 0       |
-| `resolveTaskCacheLocation.ts`     | resolve `tasks/<key>` — pure addressing + existence                         |
-| `recordTaskCache.ts`              | materialize payload + meta in a pid-tagged temp, atomic rename publish      |
-| `replayTaskCache.ts`              | apply the recorded flush plan to the host, reproduce streams + exit code    |
-| `hasDependencyClosureMutation.ts` | the lockfile-rewrite guard                                                  |
-| `isNetworkFailure.ts`             | network-error signature match for the `--no-cache` hint                     |
-| `taskCache.equivalence.test.ts`   | replay must be observably identical to a real re-run                        |
+| File                              | Role                                                                          |
+| --------------------------------- | ----------------------------------------------------------------------------- |
+| `computeTaskCacheKey.ts`          | sha256 over environment key + source-tree hash + command; null → run uncached |
+| `computeSourceTreeHash.ts`        | git-based working-tree hash (also keys the prepare layer)                     |
+| `isTaskCacheEnabled.ts`           | default-on, off in CI / `--no-cache` / `VIRRUN_NO_CACHE`                      |
+| `persistWithCache.ts`             | the orchestration above — hit replay, hermetic miss, record on exit 0         |
+| `resolveTaskCacheLocation.ts`     | resolve `tasks/<key>` — pure addressing + existence                           |
+| `recordTaskCache.ts`              | materialize payload + meta in a pid-tagged temp, atomic rename publish        |
+| `replayTaskCache.ts`              | apply the recorded flush plan to the host, reproduce streams + exit code      |
+| `hasDependencyClosureMutation.ts` | the lockfile-rewrite guard                                                    |
+| `isNetworkFailure.ts`             | network-error signature match for the `--no-cache` hint                       |
+| `taskCache.equivalence.test.ts`   | replay must be observably identical to a real re-run                          |
 
 ## Notes
 

@@ -7,9 +7,11 @@ import { Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/input/reply", () => {
   const roomStore = useRoomStore();
-  const { data: rowKey } = useDataMap(() => roomStore.currentRoomId, "");
-  MessageHookMap.ResetSend.register(() => {
-    rowKey.value = "";
+  const { data: rowKey, setData: setRowKey } = useDataMap(() => roomStore.currentRoomId, "");
+  // Keyed by the room the send was for: the reset runs behind the optimistic bubble, so writing through
+  // `rowKey.value` would clear the reply target of whichever room the user switched to mid-send instead
+  MessageHookMap.ResetSend.register((roomId) => {
+    setRowKey(roomId, "");
   });
 
   const dataStore = useDataStore();

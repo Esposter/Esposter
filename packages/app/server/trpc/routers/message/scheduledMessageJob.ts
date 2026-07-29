@@ -27,13 +27,17 @@ import {
   ScheduledMessageJobType,
   scheduledMessageScheduledMessageJobPayloadSchema,
 } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getResultAsync, noop, Operation, WordFilteredError } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
 
-// Not yet cancelled or completed.
+// Not yet cancelled, completed, or claimed by the delivery handler. `processingStartedAt` is what makes the claim
+// Single-shot: once ProcessScheduledMessageJob has stamped it the job is being delivered, so the owner can no
+// Longer cancel, reschedule or send it — every one of those would race a message that is already on its way out
 const isActiveScheduledMessageJob = and(
   isNull(scheduledMessageJobsInMessage.cancelledAt),
   isNull(scheduledMessageJobsInMessage.completedAt),
+  isNull(scheduledMessageJobsInMessage.processingStartedAt),
 );
 // An active scheduled-message job owned by the user — the precondition for cancelling/rescheduling/sending it.
 const isCancellableScheduledMessage = (id: string, userId: string) =>
@@ -202,26 +206,70 @@ export const scheduledMessageJobRouter = router({
   sendScheduledMessageNow: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
+      const where = isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id);
       const scheduledMessageJob = requireMutation(
+        (await ctx.db.select().from(scheduledMessageJobsInMessage).where(where).limit(1))[0],
+        Operation.Update,
+        DatabaseEntityType.ScheduledMessageJob,
+        input.id,
+        "NOT_FOUND",
+      );
+      const payload = scheduledMessageScheduledMessageJobPayloadSchema.parse(scheduledMessageJob.payload);
+      // Every guard `createUserMessage` would reject on runs before the job is flipped to cancelled. Checked
+      // Afterwards, a rejection — non-member, slowmode, timeout, word filter — burns the job without ever
+      // Sending its message, and nothing reschedules it: the send fails and the scheduled message is gone
+      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
+      // The word filter is the exception: it already applied the room's automod action, and its inputs are
+      // Both stored, so leaving the job scheduled hands the worker the same block at `runAt` — a second
+      // Timeout and a second audit row for one message. Burn it here instead, exactly as the worker does
+      await getResultAsync(() =>
+        assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, scheduledMessageJob.roomId, payload.message),
+      ).match(noop, async (error) => {
+        if (error instanceof TRPCError && error.cause instanceof WordFilteredError)
+          await ctx.db.update(scheduledMessageJobsInMessage).set({ cancelledAt: new Date() }).where(where);
+        throw error;
+      });
+      // The claim is this update, not the select above: `isCancellableScheduledMessage` excludes a job the
+      // Delivery handler has already stamped, so a handler that wins the gap leaves nothing to cancel here and
+      // The caller is told NOT_FOUND rather than both paths posting the same message
+      requireMutation(
         (
-          await ctx.db
-            .update(scheduledMessageJobsInMessage)
-            .set({ cancelledAt: new Date() })
-            .where(isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id))
-            .returning()
+          await ctx.db.update(scheduledMessageJobsInMessage).set({ cancelledAt: new Date() }).where(where).returning()
         )[0],
         Operation.Update,
         DatabaseEntityType.ScheduledMessageJob,
         input.id,
         "NOT_FOUND",
       );
-      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
-      const payload = scheduledMessageScheduledMessageJobPayloadSchema.parse(scheduledMessageJob.payload);
-      return createUserMessage(ctx.db, ctx.getSessionPayload, {
-        files: [],
-        message: payload.message,
-        roomId: scheduledMessageJob.roomId,
-        type: MessageType.Message,
-      });
+      // A send that fails past the guards — a transient Table write, a serialization error — must not burn the
+      // Job: lifting the claim leaves the message scheduled, so the caller's error means "not sent", never "lost".
+      // The delivery may have already been consumed and skipped on the tombstone, so the job is re-enqueued with
+      // It; a delivery that is still pending just makes two, and the handler's single-shot claim sends once
+      return getResultAsync(() =>
+        createUserMessage(ctx.db, ctx.getSessionPayload, {
+          files: [],
+          message: payload.message,
+          roomId: scheduledMessageJob.roomId,
+          type: MessageType.Message,
+        }),
+      ).match(
+        (message) => message,
+        async (error) => {
+          // `createUserMessage` re-runs the guards, so the word filter can still block here — a moderator editing
+          // The filter in the gap is enough. Rescheduling that would hand the worker the same block at `runAt`,
+          // Which is the second timeout and second audit row the pre-check above burns the job to avoid
+          if (error instanceof TRPCError && error.cause instanceof WordFilteredError) throw error;
+          await ctx.db
+            .update(scheduledMessageJobsInMessage)
+            .set({ cancelledAt: null })
+            .where(ownedBy(scheduledMessageJobsInMessage, input.id, ctx.getSessionPayload.user.id));
+          await enqueueScheduledMessageJob(
+            useServiceBusSender(AzureQueue.ScheduledMessageJobs),
+            scheduledMessageJob.id,
+            scheduledMessageJob.runAt,
+          );
+          throw error;
+        },
+      );
     }),
 });

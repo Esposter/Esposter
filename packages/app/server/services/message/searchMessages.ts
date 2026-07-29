@@ -42,7 +42,9 @@ export const searchMessages = async ({
   const filter = hasFiles
     ? `${serializedClauses} ${UnaryOperator.and} ${StandardMessageEntityPropertyNames.files}/any()`
     : serializedClauses;
-  const { count, results } = await client.search(query, {
+  // The Files-in-room tab searches on the files/any() filter alone, so its text query is legitimately empty —
+  // Which Azure Search reads as "match nothing" rather than "match everything", hence the explicit match-all
+  const { count, results } = await client.search(query || "*", {
     filter,
     includeTotalCount: true,
     orderBy: sortBy.map(({ key, order }) => `${key} ${order}`),

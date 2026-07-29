@@ -1,6 +1,7 @@
 import type { DeleteMemberInput } from "#shared/models/db/room/DeleteMemberInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { User } from "better-auth";
 
@@ -9,6 +10,7 @@ import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants"
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { createId } from "#shared/util/math/random/createId";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
@@ -16,9 +18,16 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { AzureContainer, DatabaseEntityType, friends, INVITE_ID_LENGTH, roomsInMessage } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  DatabaseEntityType,
+  friends,
+  INVITE_ID_LENGTH,
+  MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
+  roomsInMessage,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MOCK_BLOB_BASE_URL, MockContainerDatabase } from "azure-mock";
+import { MOCK_BLOB_BASE_URL, MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("room", () => {
@@ -41,13 +50,13 @@ describe("room", () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(async () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
+    MockEventGridDatabase.clear();
     await mockContext.db.delete(friends);
     await mockContext.db.delete(roomsInMessage);
   });
@@ -183,10 +192,14 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl, sasUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    // The leaf is a per-upload uuid, so the knowable part is the versioned prefix; the sas url is the exact public
+    // Url plus the mock write-sas query, which is what actually needs asserting. The prefix is spelled out
+    // Rather than built from the helper so the documented rooms/ namespace is pinned by the test
+    const blobPrefix = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/rooms/${newRoom.id}/ProfileImage/`;
 
-    expect(publicUrl).toBe(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${newRoom.id}/ProfileImage`);
+    expect(publicUrl.startsWith(blobPrefix)).toBe(true);
     expect(sasUrl).toBe(
-      `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${newRoom.id}/ProfileImage?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=w`,
+      `${publicUrl}?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=w`,
     );
   });
 
@@ -201,11 +214,11 @@ describe("room", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("deletes profile image on clear", async () => {
+  test("publishes profile image deletion on clear", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const blobName = `${newRoom.id}/ProfileImage`;
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
     const publicUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${blobName}`;
     MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
@@ -214,9 +227,110 @@ describe("room", () => {
       () => onUpdateRoom,
       () => roomCaller.updateRoom({ id: newRoom.id, image: "" }),
     );
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
 
     expect(data.image).toBe("");
-    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(false);
+    expect(blobDeletionEvents).toHaveLength(1);
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [blobName],
+      containerName: AzureContainer.PublicUserAssets,
+    });
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
+  });
+
+  // The version being replaced gets no exemption from the age filter: the submitted url is whatever the caller's
+  // Form loaded with, so the row value it replaces is the one that can name another admin's seconds-old upload.
+  // A version replaced this soon waits for the next image change to collect it
+  test("leaves the replaced profile image younger than the write sas for a later sweep", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    // Uploaded through the client, so the mock dates it now
+    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+    await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
+    const { publicUrl: replacementPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    await roomCaller.updateRoom({ id: newRoom.id, image: replacementPublicUrl });
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
+  });
+
+  // The lost-update race the age filter exists for: a save whose form opened before the other admin's upload
+  // Carries a stale url, so the row value it replaces is that admin's live avatar
+  test("names nothing for deletion when the save carries an image url the room has already moved past", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { publicUrl: staleUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const { publicUrl: freshUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const freshBlobName = freshUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, freshBlobName).upload(Buffer.alloc(0), 0);
+    // The other admin's save landed first, so the row already points at the fresh avatar
+    await roomCaller.updateRoom({ id: newRoom.id, image: freshUrl });
+    MockEventGridDatabase.clear();
+    await roomCaller.updateRoom({ id: newRoom.id, image: staleUrl, name: updatedName });
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(freshBlobName)).toBe(true);
+  });
+
+  test("keeps a profile image blob younger than the write sas out of the deletion sweep", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
+    const publicUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${blobName}`;
+    // Seeded rather than uploaded, so the mock dates it before the write sas window and the sweep collects it
+    MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
+    const { publicUrl: inFlightPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const inFlightBlobName = inFlightPublicUrl.slice(
+      `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length,
+    );
+    // Uploaded through the client, so the mock dates it now — the state a second admin's in-flight save is in
+    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, inFlightBlobName).upload(Buffer.alloc(0), 0);
+    await roomCaller.updateRoom({ id: newRoom.id, image: "" });
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [blobName],
+      containerName: AzureContainer.PublicUserAssets,
+    });
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(inFlightBlobName)).toBe(true);
+  });
+
+  // The column is free text, so the dropped value is only a blob name if an upload could have written it — the
+  // Deletion url normalizes the dot segments away and would otherwise resolve into another container entirely
+  test("sweeps nothing when the dropped image names a blob outside the room's prefixes", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const victimBlobName = `${crypto.randomUUID()}/${crypto.randomUUID()}`;
+    const craftedImage = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${getRoomProfileImageBlobPrefix(newRoom.id)}/../../../${victimBlobName}`;
+    await roomCaller.updateRoom({ id: newRoom.id, image: craftedImage });
+    await roomCaller.updateRoom({ id: newRoom.id, image: "" });
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+  });
+
+  // A save that carries back the url it loaded with replaced nothing, so it must sweep nothing — otherwise a
+  // Rename submitted from a form opened before another admin's upload deletes that admin's new avatar
+  test("sweeps nothing when the update resubmits the image unchanged", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const blobName = publicUrl.slice(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`.length);
+    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+    await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
+    MockEventGridDatabase.clear();
+    await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl, name });
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
   });
 
   test("updates", async () => {
@@ -278,6 +392,67 @@ describe("room", () => {
     const deletedRoom = await roomCaller.deleteRoom(newRoom.id);
 
     expect(deletedRoom.id).toBe(newRoom.id);
+  });
+
+  // However many attachments a room holds, its delete publishes one prefix event and never enumerates them.
+  // Walking the directory here would put an unbounded listing — and the events it chunks into — on the
+  // Owner's request; the handler does it instead, where a retry is free and the time budget is not a user's.
+  test("publishes a single prefix deletion event for the room's attachments on delete", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const blobNames = Array.from(
+      { length: MAX_BLOB_DELETION_EVENT_BLOB_NAMES + 1 },
+      (_value, index) => `${newRoom.id}/${index}`,
+    );
+    MockContainerDatabase.set(
+      AzureContainer.MessageAssets,
+      new Map(blobNames.map((blobName) => [blobName, Buffer.alloc(0)])),
+    );
+    await roomCaller.deleteRoom(newRoom.id);
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    expect(blobDeletionEvents).toHaveLength(1);
+    // Unbounded in time, unlike every other prefix sweep: the room row is gone, so nothing can re-own this
+    // Prefix and this is its only teardown — a `createdBefore` cutoff would permanently strand the attachment
+    // Of any member still holding a write SAS when the owner deleted
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      containerName: AzureContainer.MessageAssets,
+      prefix: newRoom.id,
+    });
+  });
+
+  test("publishes profile image deletion on delete", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
+    // Images uploaded before the per-upload prefix existed sit at the flat name and are swept alongside it
+    const legacyBlobName = `${newRoom.id}/ProfileImage`;
+    MockContainerDatabase.set(
+      AzureContainer.PublicUserAssets,
+      new Map([
+        [blobName, Buffer.alloc(0)],
+        [legacyBlobName, Buffer.alloc(0)],
+      ]),
+    );
+    await roomCaller.deleteRoom(newRoom.id);
+    const blobDeletionEvents = MockEventGridDatabase.get("");
+    assert(blobDeletionEvents);
+
+    // Profile images stay a resolved list — they are a handful, and their sweep reaches a pre-cutover flat
+    // Name that sits outside the room's prefix, so a prefix walk would miss it. The room's attachments go
+    // Out as the prefix event alongside it.
+    const profileImageDeletionEvents = blobDeletionEvents.filter(
+      ({ data }) => (data as BlobDeletionEventGridData).containerName === AzureContainer.PublicUserAssets,
+    );
+
+    expect(profileImageDeletionEvents).toHaveLength(1);
+    expect(takeOne(profileImageDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+      blobNames: [blobName, legacyBlobName],
+      containerName: AzureContainer.PublicUserAssets,
+    });
   });
 
   test("fails delete with wrong user", async () => {

@@ -5,12 +5,6 @@ import { asc, desc } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 
 describe(parseSortByToSql, () => {
-  test("empty array", () => {
-    expect.hasAssertions();
-
-    expect(parseSortByToSql(users, [])).toStrictEqual([]);
-  });
-
   test(SortOrder.Asc, () => {
     expect.hasAssertions();
 

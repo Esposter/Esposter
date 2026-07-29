@@ -35,14 +35,6 @@ describe("dashboard", () => {
     await mockContext.db.delete(resources);
   });
 
-  test("wires the Dashboard resource type", async () => {
-    expect.hasAssertions();
-
-    const newResource = await caller.createResource({ name });
-
-    expect(newResource.type).toBe(ResourceType.Dashboard);
-  });
-
   test("bakes dataset snapshot into published dashboard", async () => {
     expect.hasAssertions();
 
@@ -61,6 +53,9 @@ describe("dashboard", () => {
     });
 
     const newResource = await caller.createResource({ name });
+
+    expect(newResource.type).toBe(ResourceType.Dashboard);
+
     const dashboard = new Dashboard({
       visuals: [
         new Visual({

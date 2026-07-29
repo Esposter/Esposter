@@ -12,17 +12,8 @@ describe(getCreateMessageNotificationPayload, () => {
   test("returns undefined when message has no text content", () => {
     expect.hasAssertions();
 
-    const result = getCreateMessageNotificationPayload(context, "<p></p>", { url });
-
-    expect(result).toBeUndefined();
-  });
-
-  test("returns undefined when message is empty", () => {
-    expect.hasAssertions();
-
-    const result = getCreateMessageNotificationPayload(context, "", { url });
-
-    expect(result).toBeUndefined();
+    expect(getCreateMessageNotificationPayload(context, "<p></p>", { url })).toBeUndefined();
+    expect(getCreateMessageNotificationPayload(context, "", { url })).toBeUndefined();
   });
 
   test("extracts text from paragraph and serializes payload", () => {

@@ -12,11 +12,12 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 - **No blank lines between consecutive `const` assignments** — group them tightly.
 - **No blank line before a `return`** that immediately follows a `const` in a small function (including composables that return a function directly — `return` follows the last setup line with no gap).
 - **Blank line after a closing `}`** of an `if`/`for`/block statement — unless it is the last statement in its scope or immediately followed by another opening block. (Exception: consecutive top-level `watch`/lifecycle-hook registrations in a Vue `<script setup>` each get a blank line between them — see the `vue` skill.)
-- **No blank lines within Vue templates.** A blank line inserted to visually separate template sections is a smell that the component owns more than one responsibility — extract each section into its own focused child component rather than spacing them apart. See the `vue-component-patterns` skill (maximal granularity / one concern per component).
+- **No blank lines within Vue templates.** A blank line inserted to visually separate template sections is a smell that the component owns more than one responsibility — extract each section into its own focused child component rather than spacing them apart. See the `vue-page-composition` skill (maximal granularity / one concern per component).
 - **Imports** — order and blank lines are autofixed by `perfectionist/sort-imports` (`packages/configuration/eslint/plugins/perfectionist.js`); `pnpm lint:fix` settles it. `internalPattern: []` is what collapses every source (`external-pkg`, `#shared`, `@vueuse/*`, `@/`) into one bucket per kind, so the fixer produces a contiguous `import type` group, one blank line, then a contiguous value group. Don't hand-place import blank lines.
 
 ## Comments
 
+- **A `//` comment goes on its own line _above_ the code it describes, never trailing on the same line.** `const x = f(); // why` becomes a comment line then the statement. Own-line comments read consistently, survive the capitalization hook, and don't push lines past the width limit. (Directive comments that must be inline — a rare `// eslint-disable-line` — are the only exception.)
 - **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only. This includes **functional/directive comments** (`// oxlint-disable-next-line ...`, `// @ts-expect-error ...`, etc.) — they attach directly to the line they govern with no surrounding blank line.
 
   ```ts
@@ -47,7 +48,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
     export const useThing = () => {};
     ```
 
-  - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. `vitest.configs.all` (enabled in the eslint vitest plugin config) turns on the `vitest/padding-around-*` rules, which _require_ a blank line around `describe`/`test` blocks, hooks (`beforeEach`/`afterEach`), and expect groups. A leading comment on such a block sits after that mandatory blank line, so keep it. Still tighten the comment text itself.
+  - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. Oxlint's `vitest` plugin enforces `vitest/padding-around-test-blocks`, which _requires_ a blank line around `describe`/`test` blocks. A leading comment on such a block sits after that mandatory blank line, so keep it. Blank lines around hooks and between expect groups are convention here rather than enforced — keep them for the same readability reason, but nothing fails if one is missing. Still tighten the comment text itself.
 
 - **CRITICAL — comment only _exceptional_ behaviour.** A comment earns its place only when it explains something a competent reader could not infer from the code, its names, or the project's own conventions. **Never restate an established pattern or anything already documented in a skill or feature doc.** The skill/doc is the single source of truth; duplicating it in a comment is noise that rots. Concretely, delete comments that:
   - restate a convention covered by a skill (e.g. "a `.test.ts` so the barrel generator keeps it out of the public barrel", "the result helper turns the throw into false, per the error-handling convention", "memoized because…" when memoization is the obvious idiom);

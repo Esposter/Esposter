@@ -59,22 +59,9 @@ Canonical reference (primitive semantics, "Optimistic by default", and the full 
 
 ## Router Structure
 
-Routers nested by domain. Root merger: `server/trpc/routers/index.ts`.
+Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The client path mirrors the file path segment for segment — `trpc.<feature>.*` is `routers/<feature>/index.ts` and `trpc.<feature>.<sub>.*` is `routers/<feature>/<sub>.ts` — so a nested key is never flattened, and the file for any path is derivable rather than looked up. The two diverge only where a key was renamed to dodge a `Function.prototype` collision (see Router Key Naming).
 
-| Client path                          | Router file                              |
-| ------------------------------------ | ---------------------------------------- |
-| `trpc.callSession.*`                 | `routers/call/index.ts`                  |
-| `trpc.callSession.knocker.*`         | `routers/call/knocker.ts`                |
-| `trpc.message.*`                     | `routers/message/index.ts`               |
-| `trpc.message.emoji.*`               | `routers/message/emoji.ts`               |
-| `trpc.message.moderation.*`          | `routers/message/moderation.ts`          |
-| `trpc.message.scheduledMessageJob.*` | `routers/message/scheduledMessageJob.ts` |
-| `trpc.room.*`                        | `routers/room/index.ts`                  |
-| `trpc.room.category.*`               | `routers/room/category.ts`               |
-| `trpc.room.directMessage.*`          | `routers/room/directMessage.ts`          |
-| `trpc.room.filter.*`                 | `routers/room/filter.ts`                 |
-
-Exception: `achievement` merged separately to avoid circular dep with the router that fires achievement events.
+Exception: `achievement` is merged separately (via `mergeRouters`) to avoid a circular dep with the router that fires achievement events.
 
 ## Router Key Naming
 
@@ -159,6 +146,10 @@ onAssignRole: getRoomEventSubscription(roleEventEmitter, "assignRole", ({ roomId
 
 Delete blobs idempotently — use Azure Blob `deleteIfExists()` for user-triggered cleanup (profile images, survey assets). Avoid `delete()` unless a missing blob must fail the whole mutation.
 
+**A delete whose blob names are built from the request body is not authorized by the procedure's scope guard.** Membership/ownership of the container's scope (a room, a resource) says the caller may act _there_, not that this blob is theirs — and any id another user can read off the wire becomes a name they can submit. Either walk a persisted entity the guard already checked (the message's own `files`), or require proof of the grant that created the blob: an HMAC token handed out alongside the write SAS — `[userId, roomId, id]` signed with the application secret, so it binds the upload's identity rather than the SAS value — and verified with `timingSafeEqual` (`createUploadFileToken` / `getIsUploadFileTokenValid`, `/docs/architecture/blob-lifecycle`). A comment reasoning that the name is scope-derived is not the check — scope-derived names are exactly the attack.
+
+**A replace-path sweep keys on the value changing, not on the field being present.** `image !== undefined` fires on a form that resubmits what it loaded; `image !== previousImage` is the replacement.
+
 ## Metadata Loading in useRead\* Composables
 
 When a `useRead*` composable fetches a list, load all per-item metadata in a single `readMetadata` helper firing concurrently via `Promise.all`. Both the `readItems` and `readMoreItems` callbacks call the same `readMetadata` so logic is never duplicated.
@@ -183,6 +174,15 @@ Two factory functions in `shared/models/pagination/`:
 - **`createOffsetPaginationParamsSchema(sortKeySchema, defaultSortBy?)`** — offset-based; `minimumSortBy` hard-coded to `0` (offset skips N rows without a stable sort key); `defaultSortBy` defaults to `[]`.
 
 Both use `.prefault(defaultSortBy)` (not `.default()`) on `sortBy` — `prefault` applies the default _before_ inner validation, so the default array is itself validated against `.min(minimumSortBy)`. The `defaultSortBy` must satisfy the minimum.
+
+**Never define `limit`/`cursor` manually.** The factories bake in `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT`, and `cursor: z.string().default("")` — never override them. A parsed input therefore always carries a string, so the first page is `!cursor`, never `cursor === undefined`; `.optional()` here would also break the repo's "undefined banned as default — use `''`" rule. Non-cursor endpoints use `createBasePaginationParamsSchema`. When sort order is fixed, still pass a non-empty `defaultSortBy` (the factory's `min(1)` rejects `[]`), then omit `sortBy`: `createCursorPaginationParamsSchema(z.string(), [{ key: "rowKey", order: SortOrder.Desc }]).omit({ sortBy: true })`. Server-side, wire the cursor into `getCursorWhereAzureTable` (Azure Table) or `getCursorWhere` (Postgres), fetch `limit + 1` rows, and return `getCursorPaginationData(items, limit, sortBy)`:
+
+```ts
+const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
+if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
+const items = await getTopNEntities(client, limit + 1, ModerationLogEntity, { filter: serializeClauses(clauses) });
+return getCursorPaginationData(items, limit, sortBy);
+```
 
 ```ts
 // CORRECT — cursor: non-empty defaultSortBy, .prefault({}) on outer object

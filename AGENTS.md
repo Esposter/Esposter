@@ -39,7 +39,7 @@ This file is the canonical guidance for AI coding agents working in this reposit
 | `packages/infra`           | `@esposter/infra`           | Pulumi infrastructure code and migration tools for Azure                   |
 | `packages/parse-tmx`       | `parse-tmx`                 | Parser for Tiled Map Editor `.tmx` files                                   |
 | `packages/shared`          | `@esposter/shared`          | Shared TypeScript types, utilities, and error classes                      |
-| `packages/shared-node`     | `@esposter/shared-node`     | Node-only shared tooling (benchmark reporting, dev scripts)                |
+| `packages/shared-node`     | `@esposter/shared-node`     | Benchmark reporting/running for vitest bench (no barrel entrypoint)        |
 | `packages/virrun`          | `virrun`                    | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated |
 | `packages/vue-phaserjs`    | `vue-phaserjs`              | Phaser 4 game engine integration for Vue 3                                 |
 | `packages/xml2js`          | `@esposter/xml2js`          | TypeScript rewrite of xml2js — XML ↔ JSON conversion                       |
@@ -51,7 +51,7 @@ All commands run from `packages/app/` unless noted.
 ```bash
 pnpm dev              # start dev server
 pnpm typecheck        # vue-tsc type check
-pnpm lint             # eslint (CI/check-only; avoid locally unless requested). Oxlint runs once from repo root, not per-package.
+pnpm lint             # eslint check-only for the app (CI parity). Oxlint is not part of this command — it runs only via the root-level pnpm lint.
 pnpm lint:fix         # eslint --fix (use this for local lint verification)
 pnpm test             # vitest watch mode
 pnpm test path/to/file.test.ts          # run single test file
@@ -180,4 +180,4 @@ To add a new slash command:
 
 ### Azure Functions
 
-Background handlers triggered by EventGrid events or Service Bus queues, not called directly from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid` for fire-and-forget async work (push notifications, friend request notifications, webhook delivery) and enqueues Service Bus messages for delayed/scheduled work (scheduled message jobs, which need `scheduleMessages` delivery at a future `runAt`). No HTTP triggers are exposed to clients.
+Background handlers, mostly triggered by EventGrid events or Service Bus queues rather than called from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid` for fire-and-forget async work (push notifications, friend request notifications, webhook delivery) and enqueues Service Bus messages for delayed/scheduled work (scheduled message jobs, which need `scheduleMessages` delivery at a future `runAt`). Two timer triggers run on their own schedules (`PurgeDeletedResources`, `SendTodoReminder`), and one HTTP trigger is routed publicly — `PushWebhook` (`POST webhooks/{id}/{token}`, `authLevel: "function"`), which validates its token from the url. No other HTTP surface exists here, and the app never calls these handlers directly.

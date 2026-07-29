@@ -2,6 +2,7 @@ import type { PollMessageContent } from "@/models/message/poll/PollMessageConten
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
+import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
@@ -11,6 +12,7 @@ export const useVotePoll = async (
   isPreview: boolean,
 ) => {
   const { data: session } = await authClient.useSession(useFetch);
+  const { createAlert } = useAlertStore();
   const dataStore = useDataStore();
   const { storeUpdateMessage, updateMessage } = dataStore;
   const isVoting = ref(false);
@@ -40,14 +42,14 @@ export const useVotePoll = async (
             rowKey: messageValue.rowKey,
           });
         }).match(noop, async (error) => {
-          await getResultAsync(() =>
-            storeUpdateMessage({
-              message: previousMessage,
-              partitionKey: messageValue.partitionKey,
-              rowKey: messageValue.rowKey,
-            }),
-          ).match(noop, console.error);
-          throw error;
+          // A local store write with no I/O behind it, so it needs no error boundary of its own
+          await storeUpdateMessage({
+            message: previousMessage,
+            partitionKey: messageValue.partitionKey,
+            rowKey: messageValue.rowKey,
+          });
+          // The radio group binds vote directly, so a rethrow here is an unhandled rejection the user never sees
+          createAlert(error.message, "error");
         }),
       () => {
         isVoting.value = false;

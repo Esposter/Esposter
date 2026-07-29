@@ -1,6 +1,6 @@
 ---
 name: zod
-description: Esposter Zod schema conventions — z namespace imports and the export-type z.infer form, string normalization via transform+pipe (and the nested-pipe JSON-schema trap), createUniqueArraySchema for arrays, validating external/boundary payloads (incl. isolatedDeclarations annotations), Zod 4 shorthand APIs, persisted-data latest-shape-only, tightest-possible constraints, generic create*Schema factories, and the vjsf form-schema rules (layout meta, ajv keywords, discriminated-union forms). Apply when writing Zod schemas.
+description: Esposter Zod schema conventions — z namespace imports and the export-type z.infer form, string normalization via transform+pipe (and the nested-pipe JSON-schema trap), createUniqueArraySchema for arrays, validating external/boundary payloads (incl. isolatedDeclarations annotations), Zod 4 shorthand APIs, persisted-data latest-shape-only, tightest-possible constraints, and generic create*Schema factories. Apply when writing Zod schemas. Schemas rendered by Vjsf have extra rules — see the `vjsf` skill.
 ---
 
 # Zod Conventions
@@ -32,7 +32,7 @@ const schema = base.transform(normalizeString).pipe(z.string().min(1).max(maxLen
 // → { minLength: 1, maxLength: N } ✓
 ```
 
-**Rule:** consolidate all string constraints (`min`, `max`, `regex`, etc.) on the **single final `.pipe()` output**, never spread across layers. (Root cause of `name` missing `maxLength` in `ColumnForm` — `createNameSchema` nested three pipe layers and lost `max`.)
+**Rule:** consolidate all string constraints (`min`, `max`, `regex`, etc.) on the **single final `.pipe()` output**, never spread across layers. A helper that nests pipe layers silently drops the constraints declared on the inner ones.
 
 ## Arrays — Always Use `createUniqueArraySchema`
 
@@ -81,29 +81,13 @@ Rules:
 - **`.nullish()` is allowed here** — the app-owned `.nullable()` ban doesn't apply at the external boundary. EventGrid `notificationOptions` fields are `null | string`, so `z.string().nullish()` is correct.
 - **Under `--isolatedDeclarations` (on for `packages/*` libraries; not the app, and `db-schema` opts out via `isolatedDeclarations: false`), annotate the concrete `z.ZodObject<{...}>` shape AND keep `satisfies`.** **Never shortcut with `: z.ZodType<T>`** — it erases the shape, so the built `dist/*.d.ts` exposes no `.shape` and consumers spreading `...someSchema.shape` break against the published package (this bit `itemMetadataSchema`, spread in `AItemEntity` and `AzureEntity`).
 
-  **The annotation is always required for an exported schema const** — `tsgo` cannot emit a `z.object({...})` expression's type without the checker, so even an all-primitive `z.object({ a: z.boolean(), b: z.string() })` fails with TS9010/9013 (verified). There is no "simple schema needs no annotation" exception; a primitive-field object still gets the full `z.ZodObject<{ a: z.ZodBoolean; b: z.ZodString }>` annotation (canonical: `virrun/src/models/exec/OverlayManifestEntry.ts`).
+  **The annotation is always required for an exported schema const** — `tsgo` cannot emit a `z.object({...})` expression's type without the checker, so even an all-primitive object fails with TS9010/9013 (verified). There is no "simple schema needs no annotation" exception.
 
   ```typescript
-  // Wrappers present (.nullable) → annotate. Canonical: ItemMetadata.ts, shared-node/src/models/Benchmark*.ts
   export const itemMetadataSchema: z.ZodObject<{
     createdAt: z.ZodDate;
     deletedAt: z.ZodNullable<z.ZodDate>;
-    updatedAt: z.ZodDate;
-  }> = z.object({
-    createdAt: z.date(),
-    deletedAt: z.date().nullable(),
-    updatedAt: z.date(),
-  }) satisfies z.ZodType<ItemMetadata>;
-
-  // strictObject + .optional() + .default(z.enum(...)) → annotate, incl. the `z.core.$strict` config param.
-  // Canonical: virrun/src/models/virrun/VirrunConfiguration.ts
-  export const virrunConfigurationSchema: z.ZodObject<
-    { $schema: z.ZodOptional<z.ZodString>; backend: z.ZodDefault<z.ZodEnum<typeof BackendType>> },
-    z.core.$strict
-  > = z.strictObject({
-    $schema: z.string().optional(),
-    backend: z.enum(BackendType).default(BackendType.Auto),
-  }) satisfies z.ZodType<VirrunConfiguration>;
+  }> = z.object({ createdAt: z.date(), deletedAt: z.date().nullable() }) satisfies z.ZodType<ItemMetadata>;
   ```
 
   Annotation pins a portable shape (`.shape` survives emit); `satisfies` still enforces interface conformance. Match each field's zod type exactly (`z.array(x)`→`z.ZodArray<typeof x>`; `z.enum(MyEnum)`→`z.ZodEnum<typeof MyEnum>`; `z.strictObject` carries a second `z.core.$strict` config param; reference an imported/`.pick()`-ed sub-schema via `typeof`, extracting an inline `.pick()` to a local `const` first). Annotate unions/enums with their concrete type too (`z.ZodDiscriminatedUnion<...>`, `z.ZodEnum<...>`), never `z.ZodType<T>`. **To discover the exact type to write**, temporarily assign the schema to `const _: null = mySchema;` and run the package's `typecheck` — the `TS2322` error prints the full inferred `ZodObject<...>` type verbatim; paste it into the annotation and delete the probe. In the **app** and **db-schema** (no `--isolatedDeclarations`), keep plain `satisfies z.ZodType<T>` — inference emits the full `ZodObject`.
@@ -156,7 +140,7 @@ myError.issues.push({ code: "custom", message: "..." }); // not myError.addIssue
 
 ## Persisted Data — Latest Shape Only
 
-Schemas for persisted client-authoritative data (save blobs, localStorage state) model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no constructor migration code, no per-element tolerance filters for stale ids. Data that fails to parse resets to a fresh default; the reset is the migration. When a shape changes, change the schema and delete the old shape in the same commit. (Postgres evolves through real Drizzle migrations — unaffected.) See `docs/architecture/persisted-data-latest-shape-only.md`.
+Schemas for persisted client-authoritative data (save blobs, localStorage state) model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no constructor migration code, no per-element tolerance filters for stale ids. Data that fails to parse resets to a fresh default; the reset is the migration. When a shape changes, change the schema and delete the old shape in the same commit. (Postgres evolves through real Drizzle migrations — unaffected.) Azure Table entities are latest-shape-only as well: a field added to an entity class reads back as its default for every pre-change row, and that is the accepted outcome — never add a read-side inference to guess it back. See `docs/architecture/persisted-data-latest-shape-only.md`.
 
 ## Tightest Possible Constraints
 
@@ -222,126 +206,17 @@ Rules:
   ]) satisfies z.ZodType<ColumnForm>;
   ```
 
-- **vjsf form schemas** — never pass a full entity schema containing `z.date()` fields to `zodToJsonSchema()` — vjsf throws. Model a separate `*Form` interface + `*FormSchema` (one per file, e.g. `DateColumnForm.ts`) covering only user-editable fields (no `id`/`createdAt`/`updatedAt`), built by spreading the base factory's `.shape` and re-`.meta()`-ing fields for titles. Pull individual field validators off the entity schema's `.shape` (`dateColumnSchema.shape.format`) rather than redeclaring them.
+- **vjsf form schemas** — a schema rendered by Vjsf gets a separate `*Form` interface + schema, `layout`/title meta, ajv keywords, and its own discriminated-union rules: the `vjsf` skill owns all of it.
+- **Envelope schemas are factories, not copies** — when many payloads share one wrapper and differ only in an inner field, declare the wrapper once as a `create*Schema` factory parameterised on that field, and pair it with the `Pick`-from-the-SDK type (typescript skill, "Configuration Interfaces"). Canonical: `createEventGridEventSchema(dataSchema)` in `packages/db-schema/src/models/azure/eventGrid/EventGridEventInput.ts` — every Event Grid consumer parses with it (`createEventGridEventSchema(z.unknown())` when the payload is opaque, `createEventGridEventSchema(pushNotificationEventGridDataSchema)` when it isn't) instead of restating `dataVersion` / `eventType` / `id` / `subject` per event model.
 - **Opt-in shared field schemas for union members** — when _some_ (not all) members of a discriminated union share a field, give it its own interface + `create*Schema` factory file that members opt into by spreading its `.shape` (`createSourceColumnIdSchema`); never force the field onto every member via the base schema. Members that don't need it use `z.object({...})` directly. Naming (`SourceColumnId`, not `WithSourceColumnId`) is the naming skill's rule.
 - **`ColumnTransformationType` enum values** — short descriptive names matching the domain (`Aggregation`, `ConvertTo`, `DatePart`, `Math`, `RegexMatch`, `String`), distinct from interface names (`AggregationTransformation` → `ColumnTransformationType.Aggregation`).
-- **`.meta({ title })` values** — use enum values directly, not string literals; `zodToJsonSchema` runs `toTitleCase(prettify(...))` automatically, so `ColumnTransformationType.ConvertTo` renders as `"Convert To"`. Always prefer `meta({ title: ColumnTransformationType.X })`.
-- **`GlobalMeta` carries only `layout` + ajv keywords** (`shared/types/zod.d.ts`: `interface GlobalMeta extends AjvKeywords { layout?: Partial<PartialCompObject> }`). There is no `applicableColumnTypes` meta key — column-type filtering is done by passing a pre-filtered vjsf context key into `createSourceColumnIdSchema` (below). `ApplicableColumnTypes` is a non-schema concept used only by `ColumnStatisticsDefinition`.
-- **Vjsf discriminated union variant titles** — every variant in a Vjsf-rendered `z.discriminatedUnion` needs `.meta({ title })` on the variant object (not just fields), else Vjsf shows "Option 1", etc. Prefer setting it on the schema at definition time:
-
-  ```typescript
-  export const datePartTransformationSchema = z.object({ ... }).meta({ title: ColumnTransformationType.DatePart });
-  ```
-
-- **Vjsf discriminated union type discriminant** — behaves differently by typing:
-  - `z.literal(ColumnType.Computed).readonly()` — Vjsf reads `const`, auto-sets `type` when switching variants AND auto-detects the active variant when pre-populating. ✓ **Always add `.readonly()` to literal discriminants in form schemas.**
-  - `z.literal(ColumnType.Computed)` (no `.readonly()`) — **BROKEN auto-detection**: can't pre-select the variant when editing. Never omit `.readonly()`.
-  - `z.enum([...])` (no `.readonly()`) — renders a select; uses the first enum value as default on switch. ✓
-  - `z.enum([...]).readonly()` — **BROKEN**: `readOnly: true` but no `const`, so Vjsf can't determine the value on switch; the old value persists. **Never use `.readonly()` on an enum discriminant.**
-- **Vjsf `getItems` filtering by column type** — to show only certain column types, pass the pre-filtered context key into the `createSourceColumnIdSchema(getItems)` factory (default `context.columnItems`). The factory bakes `getItems` into `layout`, so transformations just spread its `.shape`. The per-type lists are built once by the `useColumnFormOptions` composable, not inline in each component — `ColumnFormVjsfContext` has one field per column type (`booleanColumnItems`, `columnItems`, `computedColumnItems`, `dateColumnItems`, `numberColumnItems`, `stringColumnItems`), each `dataSource.columns.filter(...).map(({ id, name }) => ({ title: name, value: id }))`:
-
-  ```typescript
-  export const datePartTransformationSchema = z
-    .object({
-      ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
-      ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]).shape,
-      part: datePartTypeSchema,
-    })
-    .meta({ title: ColumnTransformationType.DatePart }) satisfies z.ZodType<DatePartTransformation>;
-  ```
-
-  `getItems` is a JS expression string, so spread works for multiple types: `"[...context.dateColumnItems, ...context.numberColumnItems]"`.
-
-- **vjsf `.meta()` layout properties** — put `comp`, `getItems`, `getProps` under the `layout` key of the field's `.meta()` in the schema, never injected dynamically from a composable. `GlobalMeta` (`shared/types/zod.d.ts`) types `layout?: Partial<PartialCompObject>` — its values are vjsf JS expression strings evaluated at runtime against the vjsf `context` (passed via `:options`):
-
-  ```typescript
-  description: z.string().meta({ layout: { comp: "textarea" } }),
-  sourceColumnId: z.string().meta({ layout: { comp: "select", getItems: "context.columnItems" }, title: "Source Column" }),
-  ```
-
-  **Cross-field validation is an ajv keyword, not a `getProps` rules expression** — a check needing values outside the field (e.g. name uniqueness against sibling columns) is declared as a `.meta()` ajv keyword flag and implemented as an ajv `validate` fn passed through `options.ajvOptions.keywords`, so the rule stays typed and testable:
-
-  ```typescript
-  name: aColumnSchema.shape.name.meta({ title: "Column", [uniqueColumnNameKeywordDefinition.keyword]: true }),
-  ```
-
-- **Pass the discriminated union straight to vjsf** — because every variant's discriminant is `z.literal(...).readonly()` (a single `const`), Vjsf auto-detects the active `oneOf` variant when pre-populating and renders its own variant selector. So there is no per-type `columnType` ref, no type-selector reset handler, and no precomputed JSON schema map file. `jsonSchema` is a plain `const` (the union schema never changes), not a computed:
-
-  ```typescript
-  // Resource/Sheet/Column/EditDialog.vue
-  const jsonSchema = zodToJsonSchema(columnFormSchema);
-  // <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
-  ```
-
-- **`*TypeFormSchemaMap` is for narrowing a value to one variant's fields, not for choosing the form schema.** It lives in the union's own file (`ColumnForm.ts`, alongside `columnFormSchema`), maps each enum key to **its own** variant schema, and is consumed by `extractSchemaFields(ColumnTypeFormSchemaMap[column.type], column)` to compare edited-vs-original for dirty state:
-
-  ```typescript
-  // shared/models/resource/sheet/column/ColumnForm.ts — one schema per key; columnFormSchema is the union above it
-  export const ColumnTypeFormSchemaMap = {
-    [ColumnType.Boolean]: booleanColumnFormSchema,
-    [ColumnType.Computed]: computedColumnFormSchema,
-    [ColumnType.Date]: dateColumnFormSchema,
-    [ColumnType.Number]: numberColumnFormSchema,
-    [ColumnType.String]: stringColumnFormSchema,
-  } as const satisfies Record<ColumnType, z.ZodType<ColumnForm>>;
-  ```
-
-- **Vjsf options typing** — type the `options` computed as `VjsfOptions<ContextType>` (`VjsfOptions` from `app/models/vjsf/VjsfOptions.ts`); the context interface lives in `app/models/<feature>/<Name>VjsfContext.ts` (one per file), and the computed that builds it is a composable shared by the create and edit dialogs (`useColumnFormOptions(() => dataSource, () => column.name)`). Alongside `context`, `ajvOptions.keywords` wires custom ajv keywords (e.g. the unique-column-name check):
-
-  ```typescript
-  export interface ColumnFormVjsfContext {
-    booleanColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
-    columnItems: SelectItemCategoryDefinition<Column["id"]>[];
-    // …one per ColumnType
-  }
-  export const ColumnFormVjsfContextPropertyNames =
-    getPropertyNames<Pick<VjsfOptions<ColumnFormVjsfContext>, "context">>();
-  ```
-
-  Factory defaults come from `*TypeCreateMap` (`app/services/.../ColumnTypeCreateMap.ts`), keyed by enum, each `create` accepting `Partial<Except<SpecificType, "type">>`, closed with a mapped `as const satisfies` so each entry keeps its specific subtype:
-
-  ```typescript
-  export const ColumnTypeCreateMap = {
-    [ColumnType.Date]: { create: (init?: Partial<Except<DateColumn, "type">>) => new DateColumn({ ...init }) },
-    // ...
-  } as const satisfies {
-    [K in ColumnType]: { create: (init?: Partial<Except<Extract<Column, { type: K }>, "type">>) => Column };
-  };
-  ```
-
-  Dialogs `structuredClone` the created instance — vjsf rejects class instances, and fast-deep-equal compares constructors.
-
-- **Snapshot tests for vjsf schemas** — for schemas passed to `zodToJsonSchema()` and rendered by Vjsf, add a `toMatchInlineSnapshot()` test co-located next to the schema file (same folder/base name). Fill via `pnpm vitest run --update`:
-
-  ```typescript
-  describe("DateColumn", () => {
-    test("produces correct json schema for vjsf", () => {
-      expect.hasAssertions();
-      expect(zodToJsonSchema(dateColumnFormSchema)).toMatchInlineSnapshot();
-    });
-  });
-  ```
-
 - **Shared ID field schemas** — always use named ID schemas for object fields matching their canonical name:
   - Whole schema is just an ID field → use the schema directly: `const onUpdateSchema = roomIdSchema`, not `z.object({ roomId: selectRoomInMessageSchema.shape.id })`.
   - Multi-field objects → spread the shape: `z.object({ ...roomIdSchema.shape, ...userIdSchema.shape, otherField: ... })`.
   - Constrained variants (e.g. adding `.min(1)` to `userIds`) → chain from the shape field: `userIds: userIdsSchema.shape.userIds.min(1)`, not `selectUserSchema.shape.id.array().min(1)...`.
   - Named schemas `roomIdSchema`, `userIdSchema`, `userIdsSchema` from `@esposter/db-schema`. For differently-named fields (`targetUserId`, `actorUserId`), use `selectUserSchema.shape.id` directly.
 - **Record maps over switch statements** — when a switch on an enum drives different async operations, prefer `const actionMap: Record<EnumType, (args) => Promise<void>> = {...}` and `await actionMap[type](args)`. Exhaustiveness is enforced by the Record key type; no `exhaustiveGuard` needed.
-- **Paginated endpoint schemas** — never define `limit`/`cursor` manually. Use `createCursorPaginationParamsSchema` (cursor-based) or `createBasePaginationParamsSchema` (non-cursor). When sort order is fixed, omit `sortBy`: `createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true })`. The factory bakes in `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT`, `cursor: z.string().optional()` — never override. Server-side, wire cursor into `getCursorWhereAzureTable` (Azure Table) or `getCursorWhere` (Postgres), fetch `limit + 1` rows, return `getCursorPaginationData(items, limit, sortBy)`:
-
-  ```typescript
-  // shared factory — never define limit/cursor manually
-  const readModerationLogsInputSchema = z.object({
-    ...createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true }).shape,
-  });
-  // Query impl:
-  const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
-  if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-  const items = await getTopNEntities(client, limit + 1, ModerationLogEntity, { filter: serializeClauses(clauses) });
-  return getCursorPaginationData(items, limit, sortBy);
-  ```
-
+- **Paginated endpoint schemas** — see the `trpc` skill (Pagination Params Schemas).
 - **`refineAtLeastOne`** — when an update/patch schema has all-optional fields and at least one must be provided, use `refineAtLeastOne(schema, ["field1", "field2"])` from `#shared/services/zod/refineAtLeastOne`. Never inline `.refine((data) => ...)`:
 
   ```typescript

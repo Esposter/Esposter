@@ -12,8 +12,8 @@ const VALUE_REGEX = [
   // Numbers
   String.raw`-?\d+(?:\.\d+)?`,
   String(Number.NaN),
-  // Quoted strings
-  "'[^']*'",
+  // Quoted strings, whose embedded quotes are escaped by being doubled
+  "'(?:[^']|'')*'",
 ].join(ID_SEPARATOR);
 // oxlint-disable-next-line typescript/no-inferrable-types
 export const CLAUSE_REGEX: RegExp = new RegExp(

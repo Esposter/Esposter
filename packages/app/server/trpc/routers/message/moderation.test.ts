@@ -2,7 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient.test";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createCallerFactory } from "@@/server/trpc";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
@@ -35,9 +35,9 @@ describe("moderation", () => {
 
   beforeEach(() => {
     vi.useFakeTimers({
+      now: 0,
       toFake: ["Date", "setTimeout", "clearTimeout", "setInterval", "clearInterval", "setImmediate", "clearImmediate"],
     });
-    vi.setSystemTime(0);
     roomId = getRoomId();
   });
 

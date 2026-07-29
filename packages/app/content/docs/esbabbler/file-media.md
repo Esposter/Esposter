@@ -15,6 +15,8 @@ Thumbnails are generated on the client with a canvas — each image is scaled so
 
 Per-room limits live as columns on the `rooms` table and are enforced at the only server chokepoint that sees every upload — the SAS-issuing procedure — because the block PUT goes straight to Azure and never passes back through Nitro. The composer mirrors the same limits so a rejected file is surfaced before any network call.
 
+One rejected file rejects the whole drop, and the alert names it — the repo-wide rule for batch input ([file uploads](/docs/architecture/file-uploads)).
+
 ```mermaid
 flowchart TD
   drop[User drops files into the composer] --> validate[useUploadFiles checks size and category]
@@ -45,6 +47,12 @@ Two columns on `rooms` (`packages/db-schema/src/schema/roomsInMessage.ts`):
 | `message.searchMessages`                   | Room member | query, filters, `hasFiles`          | Files-in-room listing filters to messages that have attachments |
 | `room.updateRoom`                          | ManageRoom  | room fields incl. attachment limits | Persist per-room limits from the settings Moderation group      |
 
+## Deletion is eventual, not guaranteed
+
+Removing an attachment (`deleteFile`), deleting a message with attachments, or deleting a whole room does not delete the blobs inline. Read SAS urls are signed for a day (`generateReadSasUrl`, long enough to outlast a session held open, short enough that a leaked url dies quickly), so a delete that silently failed would still leave the file downloadable for the rest of that window. Instead the mutation publishes a `ProcessBlobDeletion` Event Grid event carrying the blob names (every delete funnels through the shared `publishBlobDeletion` helper), and an idempotent Azure Function (`deleteIfExists` per blob) retries the delete to completion — through Event Grid's retries and, past those, the [dead-letter replay](/docs/infra/eventgrid-dead-letter). Once the event is published, delivery is durable. The **publish itself stays best-effort** after the primary write ([persist then notify](/docs/architecture/persist-then-notify)), and there is no outbox or reconciliation sweep behind it: if the publish call fails, no event is ever created to retry or dead-letter, so the orphaned blob stays downloadable through its day-long SAS url until that expires. The delete cannot fail for the _user_ (the row is already gone), but blob removal is best-effort/eventual, not a hard guarantee — a durable outbox would be required to close that gap. The helper splits blob names into one event per `MAX_BLOB_DELETION_EVENT_BLOB_NAMES` chunk, so a room deletion's listing can never outgrow Event Grid's per-event size cap.
+
+**Every delete names the thumbnail too**, unconditionally — `{roomId}/{fileId}.thumb` sits in the same container as its original, so it rides the same event. There is no is-this-an-image check because there is no need for one: `deleteIfExists` makes naming a thumbnail that was never generated a no-op, and the alternative — deriving image-ness at delete time — is exactly how the thumbnail outlived its attachment before.
+
 ## Key files
 
 | File                                                                                 | Role                                                        |
@@ -53,13 +61,16 @@ Two columns on `rooms` (`packages/db-schema/src/schema/roomsInMessage.ts`):
 | `packages/app/app/services/file/validateFile.ts`                                     | Single file validator returning a discriminated result      |
 | `packages/app/app/services/file/generateImageThumbnail.ts`                           | Canvas downscale to a WebP thumbnail blob                   |
 | `packages/app/app/composables/message/file/useUploadFiles.ts`                        | Composer path — validate, upload original, upload thumbnail |
-| `packages/app/app/composables/message/file/useReadThumbnailUrl.ts`                   | Lazily resolves a rendered image's thumbnail read url       |
+| `packages/app/app/composables/message/file/useReadFileUrls.ts`                       | Batch-resolves originals and thumbnails into read urls      |
 | `packages/app/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the lightbox      |
 | `packages/db-schema/src/schema/roomsInMessage.ts`                                    | `maxFileSizeBytes` + `allowedMimeCategories` columns        |
 | `packages/db-schema/src/services/file/getMimeCategory.ts`                            | Mimetype to coarse category mapping                         |
 | `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`          | Issues the original and sibling thumbnail write SAS         |
 | `packages/app/app/components/Message/Model/Room/Settings/Type/Attachments/Index.vue` | Room-settings Moderation page editing the limits            |
 | `packages/app/server/services/message/searchMessages.ts`                             | `hasFiles` clause backing the files-in-room tab             |
+| `packages/app/server/services/azure/eventGrid/publishBlobDeletion.ts`                | The one chunked best-effort deletion publish                |
+| `packages/azure-functions/src/handlers/processBlobDeletionHandler.ts`                | Durable blob deletion — idempotent `deleteIfExists` worker  |
+| `packages/db-schema/src/models/azure/eventGrid/BlobDeletionEventGridData.ts`         | The deletion event payload and its schema                   |
 
 ## Notes
 

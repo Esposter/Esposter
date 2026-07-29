@@ -1,16 +1,37 @@
+import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Resource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
+import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
-import { ContainerSASPermissions } from "@azure/storage-blob";
 import { AzureContainer, resources, ResourceType } from "@esposter/db-schema";
-import { jsonDateParse } from "@esposter/shared";
-import { getMockSasUrl, MOCK_BLOB_BASE_URL, MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
+import { MockContainerDatabase } from "azure-mock";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+
+type TransformPublishedBlobUrls = (ctx: AuthedContext, resource: Resource, content: unknown) => Promise<unknown>;
+
+const { transformPublishedBlobUrlsMock } = vi.hoisted(() => ({
+  transformPublishedBlobUrlsMock: vi.fn<TransformPublishedBlobUrls>(),
+}));
+
+vi.mock(import("@@/server/services/resource/transformPublishedBlobUrls"), async (importOriginal) => {
+  const original = await importOriginal();
+  transformPublishedBlobUrlsMock.mockImplementation(original.transformPublishedBlobUrls);
+  // The real export is generic in its content and a `Mock` cannot carry a type parameter, so the module seam is
+  // Where the concrete signature is widened back to it
+  return {
+    transformPublishedBlobUrls: transformPublishedBlobUrlsMock as unknown as typeof original.transformPublishedBlobUrls,
+  };
+});
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
 // Here only the router wiring: resource type + content schema round-trip.
@@ -26,7 +47,71 @@ describe("webpage", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
+    transformPublishedBlobUrlsMock.mockClear();
     await mockContext.db.delete(resources);
+  });
+
+  // The assets are cloned before the transaction opens, so an unpublish landing in between sweeps them and this
+  // Publish's own upsert then re-creates the publication row — published, with every image 404ing. The version
+  // Says so exactly: the sweep only follows a row delete, and a delete restarts the sequence at 1, so a claim
+  // That is not the successor of what the attempt read is proof one landed and the snapshot must be rebuilt.
+  test("rebuilds the snapshot when an unpublish sweeps the assets it cloned", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor({ html: "a" }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    transformPublishedBlobUrlsMock.mockClear();
+    // Lands between this publish's clone and its transaction, which is the whole race
+    transformPublishedBlobUrlsMock.mockImplementationOnce(async (_context, _resource, content) => {
+      await caller.unpublishResource({ id: newResource.id });
+      return content;
+    });
+
+    await caller.publishResource({ id: newResource.id });
+
+    expect(transformPublishedBlobUrlsMock).toHaveBeenCalledTimes(2);
+  });
+
+  // The same race against a FIRST publish, which reads no publication row at all: the successor is what is
+  // Checked, so reading no row means expecting to claim 1 — anything else proves a publish landed in between
+  test("rebuilds the snapshot when a publish races a first publish", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor({ html: "a" }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    transformPublishedBlobUrlsMock.mockImplementationOnce(async (_context, _resource, content) => {
+      await caller.publishResource({ id: newResource.id });
+      return content;
+    });
+
+    await caller.publishResource({ id: newResource.id });
+
+    // The racing publish transforms once of its own, and the outer attempt transforms again to rebuild
+    expect(transformPublishedBlobUrlsMock).toHaveBeenCalledTimes(3);
+  });
+
+  test("transforms once when nothing races the publish", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor({ html: "a" }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+
+    await caller.publishResource({ id: newResource.id });
+
+    expect(transformPublishedBlobUrlsMock).toHaveBeenCalledTimes(1);
   });
 
   test("saves and reads content", async () => {
@@ -48,31 +133,50 @@ describe("webpage", () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
   });
 
-  test("clones referenced assets into the publish directory and re-signs their urls on every read", async () => {
+  test("clones referenced assets into the publish directory and rewrites their stable urls", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const blobName = `${newResource.id}/files/${crypto.randomUUID()}/image.png`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    const blobUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.ResourceAssets}/${blobName}`;
+    const blobName = `${getFilesDirectoryName(newResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
+    const publishedBlobName = `${createPublishedAssetsDirectoryName(crypto.randomUUID())}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
+    MockContainerDatabase.set(
+      AzureContainer.ResourceAssets,
+      new Map([
+        [blobName, Buffer.alloc(1)],
+        [publishedBlobName, Buffer.alloc(1)],
+      ]),
+    );
+    const url = getResourceAssetUrl(blobName);
+    const publishedUrl = getResourceAssetUrl(publishedBlobName);
     await caller.saveResourceContent({
-      content: new WebpageEditor({ html: `<img src="${blobUrl}">` }),
+      content: new WebpageEditor({ html: `<img src="${url}"><img src="${publishedUrl}">` }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
-    const readPermissions = ContainerSASPermissions.from({ read: true });
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    expect(content?.html).toBe(`<img src="${getMockSasUrl(blobUrl, readPermissions, "b")}">`);
+    // The owner read returns content exactly as saved — a stable url never expires, so nothing rewrites it
+    expect(content?.html).toBe(`<img src="${url}"><img src="${publishedUrl}">`);
 
     await caller.publishResource({ id: newResource.id });
-    const clonedBlobName = `${newResource.id}/published/1/${blobName.slice(`${newResource.id}/`.length)}`;
-
-    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(clonedBlobName)).toBe(true);
+    // The clone directory is minted per publish attempt rather than keyed by the version the transaction is
+    // About to claim, so the container is what names it
+    const clonedBlobNames = [...(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.keys() ?? [])].filter(
+      (publishedBlobPath) =>
+        publishedBlobPath.startsWith(`${newResource.id}/${PUBLISHED_DIRECTORY_SEGMENT}/`) &&
+        // Only the filename carries over — the clone is written under a freshly minted asset id
+        publishedBlobPath.endsWith(`${ID_SEPARATOR}a`),
+    );
 
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
-    const clonedBlobUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.ResourceAssets}/${clonedBlobName}`;
 
-    expect(publishedContent.content.html).toBe(`<img src="${getMockSasUrl(clonedBlobUrl, readPermissions, "b")}">`);
+    // Both references are cloned. A foreign published url names another resource's publication directory, which
+    // That resource's next unpublish wipes wholesale — carried verbatim it would leave this snapshot's images
+    // 404ing on an operation this owner never performed
+    expect(clonedBlobNames).toHaveLength(2);
+    for (const clonedBlobName of clonedBlobNames)
+      expect(publishedContent.content.html).toContain(getResourceAssetUrl(clonedBlobName));
+    expect(publishedContent.content.html).not.toContain(url);
+    expect(publishedContent.content.html).not.toContain(publishedUrl);
   });
 });

@@ -11,5 +11,7 @@ export const MessageHookMap = {
   [Operation.Create]: createHookRegistry<(message: MessageEntity) => Promisable<void>>(),
   [Operation.Delete]: createHookRegistry<(input: DeleteMessageInput) => Promisable<void>>(),
   [Operation.Update]: createHookRegistry<(input: MessageEvents["updateMessage"][number]) => Promisable<void>>(),
-  ResetSend: createHookRegistry<(editor?: Editor) => Promisable<void>>(),
+  // Carries the room it is resetting: the reset runs behind the optimistic bubble, so an await separates it from
+  // The send and `currentRoomId` may already name the room the user switched to while it was in flight
+  ResetSend: createHookRegistry<(roomId: string, editor?: Editor) => Promisable<void>>(),
 };

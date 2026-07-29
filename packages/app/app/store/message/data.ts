@@ -12,18 +12,23 @@ import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/Composi
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
+import { useAlertStore } from "@/store/alert";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
+import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getResultAsync, Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
+  const { createAlert } = useAlertStore();
   const roomStore = useRoomStore();
+  const threadFollowStore = useThreadFollowStore();
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
@@ -36,14 +41,53 @@ export const useDataStore = defineStore("message/data", () => {
   const nextCursorNewer = ref("");
   const typings = ref<CreateTypingInput[]>([]);
 
-  const createMessage = async (input: StandardCreateMessageInput) => {
+  // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
+  // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
+  // They typed once the editor and its attachments are cleared
+  const createMessage = async (input: StandardCreateMessageInput, onOptimisticCreate?: () => Promise<void>) => {
     if (!session.value.data) return false;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
-    await storeCreateMessage(newMessage);
-    Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
-    delete newMessage.isLoading;
-    return true;
+    // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the list,
+    // So roll the entity back out before surfacing the failure — nothing has reached the server yet. Through the
+    // Delete hooks, not a bare list removal: the Create hooks that just ran wrote a download-url entry per
+    // Attached file, and the hourly re-mint sweep would keep re-signing urls for a message that never existed
+    const isOptimisticCreated = await getResultAsync(() => storeCreateMessage(newMessage, true)).match(
+      () => true,
+      async (error) => {
+        await storeDeleteMessage(newMessage);
+        if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        return false;
+      },
+    );
+    if (!isOptimisticCreated) return false;
+    await onOptimisticCreate?.();
+
+    return getResultAsync(() => $trpc.message.createMessage.mutate(input)).match(
+      (createdMessage) => {
+        Object.assign(newMessage, createdMessage);
+        delete newMessage.isLoading;
+        // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
+        // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
+        // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
+        // Added here is best-effort, never a rollback — the message already exists on the server
+        const { replyRowKey } = input;
+        if (replyRowKey) threadFollowStore.storeFollowThread(input.roomId, replyRowKey);
+        return true;
+      },
+      (error) => {
+        // The mutation spans the server commit, so nothing here may roll the bubble back out: a rejection can
+        // Just as well be a lost response for a message that landed, and deleting it then hides a sent message
+        // From its own sender (the subscription echo is filtered for the sending session, so nothing restores
+        // It) and invites the duplicate resend /docs/architecture/persist-then-notify exists to prevent. The
+        // Bubble also stays the sender's copy of a genuinely rejected message — the composer is already reset —
+        // So it holds its loading state and the alert says what happened. Only when errorLink has not already
+        // Said it: a rejected send is characteristically one of the codes it owns (slowmode, a Zod rejection),
+        // And alerting again puts two identical toasts on screen for one send
+        if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        return false;
+      },
+    );
   };
   const updateMessage = async (input: UpdateMessageInput) => {
     const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
@@ -78,10 +122,19 @@ export const useDataStore = defineStore("message/data", () => {
       key: id,
     });
   };
-  const storeCreateMessage = async (message: MessageEntity) => {
-    await MessageHookMap[Operation.Create].run(message);
-    // Our messages list is reversed i.e. most recent messages are at the front
-    baseStoreCreateMessage(message, true);
+  // The sender's own message is pushed first (our list is reversed — most recent at the front) so the bubble
+  // Renders immediately in its loading state, THEN the Create hooks run: one of them fetches attachment download
+  // Urls over the network, and running it before the push would gate the "optimistic" render behind a round trip.
+  // A message arriving from anyone else has no bubble to keep responsive and nothing to roll back, so it waits for
+  // Its urls — pushing it first renders every incoming attachment as a broken image until the fetch lands
+  const storeCreateMessage = async (message: MessageEntity, isOptimistic = false) => {
+    if (isOptimistic) {
+      baseStoreCreateMessage(message, true);
+      await MessageHookMap[Operation.Create].run(message);
+    } else {
+      await MessageHookMap[Operation.Create].run(message);
+      baseStoreCreateMessage(message, true);
+    }
   };
   const storeUpdateMessage = async (input: MessageEvents["updateMessage"][number]) => {
     await MessageHookMap[Operation.Update].run(input);
@@ -110,10 +163,12 @@ export const useDataStore = defineStore("message/data", () => {
     await storeSendMessage(input, editor);
   };
   const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
-    await MessageHookMap.ResetSend.run(editor);
-    if (await createMessage(input)) clearDraft(input.roomId);
+    // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor, the reply
+    // Target and the composer's attachments (revoking their object urls), so a send that fails before the
+    // Bubble exists would take the text and files the user just typed with it
+    if (await createMessage(input, () => MessageHookMap.ResetSend.run(input.roomId, editor))) clearDraft(input.roomId);
   };
-  MessageHookMap.ResetSend.register((editor) => {
+  MessageHookMap.ResetSend.register((_roomId, editor) => {
     editor?.commands.clearContent(true);
   });
   // Only expose the internal store CRUD functions for subscriptions; everything else directly calls

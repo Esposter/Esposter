@@ -9,11 +9,11 @@ The room word filter does more than block: each filter carries a configurable ac
 
 ## How it works
 
-`assertNotWordFiltered` runs on every message-producing path inside `assertCanCreateMessage`. On a match by a member who cannot manage messages, it dispatches on the filter's action before rejecting the message. Warn and Timeout call `executeAutomodAction`, which records a moderation-log row attributed to a reserved **AutoMod** actor id and emits the same `onAdminAction` event a manual warn or timeout would — so the targeted client reacts identically. Timeout additionally sets `timeoutUntil` on the member.
+`getMessageCreationRejection` (the shared gate in `@esposter/db`) runs on every message-producing path. It is free of side effects: on a match by a member who cannot manage messages it hands back the matched filter rather than applying it, and the caller that rejects the message is the one that spends the consequence — `assertCanCreateMessage` in the app, its namesake in the Function worker. Warn and Timeout call `executeAutomodAction`, which records a moderation-log row attributed to a reserved **AutoMod** actor id; the app's wrapper additionally emits the same `onAdminAction` event a manual warn or timeout would, so the targeted client reacts identically. Timeout additionally sets `timeoutUntil` on the member.
 
 ```mermaid
 flowchart TD
-  CM["createMessage"] --> WF["assertNotWordFiltered"]
+  CM["createMessage"] --> WF["getMessageCreationRejection"]
   WF -->|no match or moderator| OK["allow"]
   WF -->|match| A{"filter.action"}
   A -->|Reject| ERR["reject the message"]
@@ -38,14 +38,15 @@ No new procedure — `room.filter.upsertRoomFilter` (gated `ManageRoom`) accepts
 
 ## Key files
 
-| File                                                                                | Role                                  |
-| :---------------------------------------------------------------------------------- | :------------------------------------ |
-| `packages/db-schema/src/schema/roomFiltersInMessage.ts`                             | `action` + `timeoutDurationMs` + enum |
-| `packages/app/server/services/message/moderation/assertNotWordFiltered.ts`          | dispatch on the configured action     |
-| `packages/app/server/services/message/moderation/executeAutomodAction.ts`           | timeout + moderation-log + event emit |
-| `packages/app/server/services/message/moderation/writeModerationLogEntry.ts`        | shared audit-log writer               |
-| `packages/app/shared/services/message/moderation/AUTOMOD_USER_ID.ts`                | reserved AutoMod actor id             |
-| `packages/app/app/components/Message/Model/Room/Settings/Type/WordFilter/Index.vue` | action + duration settings            |
+| File                                                                                | Role                                                          |
+| :---------------------------------------------------------------------------------- | :------------------------------------------------------------ |
+| `packages/db-schema/src/schema/roomFiltersInMessage.ts`                             | `action` + `timeoutDurationMs` + enum                         |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`        | the shared gate — returns the matched filter, applies nothing |
+| `packages/db/src/services/message/moderation/executeAutomodAction.ts`               | timeout + moderation-log core                                 |
+| `packages/app/server/services/message/moderation/executeAutomodAction.ts`           | app wrapper — adds the `onAdminAction` emit                   |
+| `packages/db/src/services/message/moderation/writeModerationLogEntry.ts`            | shared audit-log writer                                       |
+| `packages/db-schema/src/services/message/constants.ts`                              | reserved AutoMod actor id (`AUTOMOD_USER_ID`)                 |
+| `packages/app/app/components/Message/Model/Room/Settings/Type/WordFilter/Index.vue` | action + duration settings                                    |
 
 ## Notes
 

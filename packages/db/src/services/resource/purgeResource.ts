@@ -19,7 +19,7 @@ export const purgeResource = async (
   tableClients: CustomTableClient<CompositeKey>[],
   resourceId: Resource["id"],
 ) => {
-  await deleteDirectory(containerClient, resourceId, true);
+  await deleteDirectory(containerClient, resourceId);
   // The partitions are independent, so only the blob-before-tables and tables-before-row ordering matters
   await Promise.all(tableClients.map((tableClient) => deleteTablePartitionEntities(tableClient, resourceId)));
   await db.delete(resources).where(eq(resources.id, resourceId));

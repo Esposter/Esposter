@@ -4,18 +4,31 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
+import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
+import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
+import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
+import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
-import { AzureTable, ResourceActivityType, resources, ResourceType } from "@esposter/db-schema";
-import { jsonDateParse, takeOne } from "@esposter/shared";
+import { AzureContainer, AzureTable, ResourceActivityType, resources, ResourceType } from "@esposter/db-schema";
+import { ID_SEPARATOR, jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+// A clone mints a fresh asset id rather than carrying the source's over, so its blob is found by where it
+// Landed, never by rebuilding its name — which is the property these tests exist to hold.
+const readFilesBlobNames = (id: string): string[] => {
+  const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+  assert(container);
+  return [...container.keys()].filter((blobName) => blobName.startsWith(`${getFilesDirectoryName(id)}/`));
+};
 
 describe("resource", () => {
   let mockContext: Context;
@@ -24,6 +37,7 @@ describe("resource", () => {
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
+  const filename = "filename";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
 
   beforeAll(async () => {
@@ -36,8 +50,7 @@ describe("resource", () => {
 
   // UpdatedAt is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency deterministic
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(async () => {
@@ -266,21 +279,147 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
-      content: webpageEditor,
+      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
       contentVersion: webpageResource.contentVersion,
       id: webpageResource.id,
     });
     await webpageCaller.publishResource({ id: webpageResource.id });
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
+    assert.exists(content);
+
     const publication = await webpageCaller.readResourcePublication({ id: duplicatedResource.id });
+    // The copy owns its assets: the file is cloned into the copy's files directory and the url rewritten to it
+    const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
 
     expect(duplicatedResource.id).not.toBe(webpageResource.id);
+    expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
     expect(duplicatedResource.name).toBe(`${name} (copy)`);
     expect(duplicatedResource.type).toBe(ResourceType.Webpage);
-    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
+    expect(content).toStrictEqual(
+      jsonDateParse(
+        JSON.stringify(
+          new WebpageEditor({
+            css: "a",
+            html: `<img src="${getResourceAssetUrl(duplicatedBlobName)}">`,
+            id: content.id,
+          }),
+        ),
+      ),
+    );
+    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
     expect(publication).toBeUndefined();
+  });
+
+  test("duplicates a resource with a published asset reference by cloning it under the copy", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const publishedBlobName = `${createPublishedAssetsDirectoryName(webpageResource.id)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[publishedBlobName, Buffer.alloc(1)]]));
+    await webpageCaller.saveResourceContent({
+      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` }),
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
+    const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
+    assert.exists(content);
+
+    const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
+
+    // The copy is fully self-contained: the published snapshot asset is cloned into the copy's own files
+    // Directory — never under its published prefix, which unpublishing wipes — so unpublishing or deleting
+    // Either resource never strands the copy
+    expect(content.html).toBe(`<img src="${getResourceAssetUrl(duplicatedBlobName)}">`);
+    expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
+  });
+
+  test("duplicates a resource with a dangling asset reference by carrying the url verbatim", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    const missingBlobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await webpageCaller.saveResourceContent({
+      content: new WebpageEditor({
+        css: "a",
+        html: `<img src="${getResourceAssetUrl(blobName)}"><img src="${getResourceAssetUrl(missingBlobName)}">`,
+      }),
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
+    const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
+    assert.exists(content);
+
+    const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
+
+    // The existing asset is cloned and rewritten; the dangling url is data, carried verbatim instead of
+    // Failing the whole clone
+    expect(content.html).toBe(
+      `<img src="${getResourceAssetUrl(duplicatedBlobName)}"><img src="${getResourceAssetUrl(missingBlobName)}">`,
+    );
+    expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
+  });
+
+  // A snapshot embeds `{id}/published/{publishId}/…` urls and unpublish wipes that whole prefix, so a restore
+  // That copied the snapshot blob verbatim would hand the draft urls a later unpublish deletes — every image
+  // 404ing permanently, with re-uploading each asset the only recovery
+  test("restores a published version by cloning its assets back into the working copy", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await webpageCaller.saveResourceContent({
+      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
+    const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
+    assert.exists(content);
+
+    const filesBlobNames = readFilesBlobNames(webpageResource.id);
+    const restoredBlobName = takeOne(filesBlobNames.filter((filesBlobName) => filesBlobName !== blobName));
+
+    // The restored draft references its own files directory, never the published snapshot it came from — and
+    // Never the name it started under: `deleteFile` may already have published that exact name for deletion,
+    // And a named-blob deletion event carries no time bound to disqualify a replay of it
+    expect(content.html).toBe(`<img src="${getResourceAssetUrl(restoredBlobName)}">`);
+    expect(filesBlobNames).toContain(blobName);
+    expect(restoredBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
+  });
+
+  test("cleans up the copy when duplicating its content fails", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await webpageCaller.saveResourceContent({
+      content: webpageEditor,
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
+    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    assert(container);
+    container.set(getContentBlobName(webpageResource.id), Buffer.from("a"));
+
+    await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Unexpected token 'a', "a" is not valid JSON]`,
+    );
+
+    const { items } = await caller.readResources();
+
+    // The copy is fully reverted: no row and no blobs outside the original's directory
+    expect(items.map(({ id }) => id)).toStrictEqual([webpageResource.id]);
+    expect([...container.keys()].every((key) => key.startsWith(`${webpageResource.id}/`))).toBe(true);
   });
 
   test("duplicates a resource without content", async () => {

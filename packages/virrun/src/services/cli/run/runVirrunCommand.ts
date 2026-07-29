@@ -13,6 +13,7 @@ import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep"
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { exhaustiveGuard, getResult, getResultAsync, noop, toAppError, withFinalizerAsync } from "@esposter/shared";
 import { performance } from "node:perf_hooks";
@@ -29,7 +30,17 @@ export const runVirrunCommand = async (
     const configuration = resolveVirrunConfiguration();
     const backend = resolveBackend(configuration);
     const virrun = await createVirrun({ backend, environment: configuration?.environment });
-    process.stderr.write(`${formatVirrunBanner({ backend: virrun.backend, command, nodeVersion: process.version })}\n`);
+    // The os backend runs the command inside a Linux guest whose node comes from the WSL login environment, not this
+    // Windows process — so report the guest's version there and the host's for the backends that run in place. A
+    // Banner that always printed process.version hid exactly the mismatch (host on one node, sandbox on another) that
+    // Makes a run fail its own engines check.
+    process.stderr.write(
+      `${formatVirrunBanner({
+        backend: virrun.backend,
+        command,
+        nodeVersion: virrun.backend === BackendType.Os ? getSandboxNodeVersion() : process.version,
+      })}\n`,
+    );
     // Announce whether this run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is
     // Explained, not a silent stall. Exec skips the snapshot, so it has nothing to announce.
     if (mode !== ExecutionMode.Exec && virrun.backend === BackendType.Os) {

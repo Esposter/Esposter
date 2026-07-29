@@ -19,7 +19,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("achievement", () => {
   let mockContext: Context;
@@ -32,7 +32,13 @@ describe("achievement", () => {
     caller = createCallerFactory(trpcRouter)(mockContext);
   });
 
+  // `unlockedAt` is stamped from `new Date()`, so a frozen clock makes it exactly assertable
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0 });
+  });
+
   afterEach(async () => {
+    vi.useRealTimers();
     MockContainerDatabase.clear();
     await mockContext.db.delete(resources);
     await mockContext.db.delete(roomsInMessage);
@@ -132,7 +138,7 @@ describe("achievement", () => {
     expect(unlockedAchievements).toHaveLength(1);
     expect(takeOne(unlockedAchievements).achievement.name).toBe(WebpageAchievementName.WebDeveloper);
     expect(takeOne(unlockedAchievements).amount).toBe(1);
-    expect(takeOne(unlockedAchievements).unlockedAt).toBeInstanceOf(Date);
+    expect(takeOne(unlockedAchievements).unlockedAt).toStrictEqual(new Date(0));
 
     const userId = getMockSession().user.id;
     const userAchievement = await mockContext.db.query.userAchievements.findFirst({

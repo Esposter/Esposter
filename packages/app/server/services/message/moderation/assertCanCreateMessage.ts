@@ -1,47 +1,37 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { assertNotInSlowmode } from "@@/server/services/message/moderation/assertNotInSlowmode";
-import { assertNotReadOnly } from "@@/server/services/message/moderation/assertNotReadOnly";
-import { assertNotTimedOut } from "@@/server/services/message/moderation/assertNotTimedOut";
-import { assertNotWordFiltered } from "@@/server/services/message/moderation/assertNotWordFiltered";
-import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
-import { RoomPermission } from "@esposter/db-schema";
+import { executeAutomodAction } from "@@/server/services/message/moderation/executeAutomodAction";
+import { getMessageCreationRejection } from "@esposter/db";
+import { MessageCreationRejectionType } from "@esposter/db-schema";
+import { WordFilteredError } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 
-// The gate every message-producing path runs through, in precedence order: a timeout outranks everything,
-// Then the room's read-only flag, its slowmode, and finally the word filter.
-//
-// The four rules read three rows between them, so this reads them once and together rather than each rule
-// Fetching its own row in turn — the rules themselves are pure decisions over what it hands them, which is
-// What keeps this the only place that touches storage on the hot path (every message send lands here, and
-// A forward multiplies it by the room count).
+// The tRPC face of the shared message-creation rules — the decision itself lives in `@esposter/db` so the
+// Function worker's delivery path cannot drift from what the composer enforces.
 export const assertCanCreateMessage = async (
   db: Context["db"],
   userId: string,
   roomId: string,
   message?: string,
 ): Promise<void> => {
-  const [room, member, filter] = await Promise.all([
-    db.query.roomsInMessage.findFirst({
-      columns: { isReadOnly: true, slowmodeMs: true },
-      where: { id: { eq: roomId } },
-    }),
-    db.query.usersToRoomsInMessage.findFirst({
-      columns: { lastMessageAt: true, timeoutUntil: true },
-      where: { roomId: { eq: roomId }, userId: { eq: userId } },
-    }),
-    db.query.roomFiltersInMessage.findFirst({
-      columns: { action: true, timeoutDurationMs: true, words: true },
-      where: { roomId: { eq: roomId } },
-    }),
-  ]);
-  // Only a rule that actually engages asks whether the sender can moderate, and however many of them ask,
-  // Storage answers once — the promise is what is memoized, so concurrent askers share the one lookup. An
-  // Unrestricted room is the common case and never asks at all
-  let canManageMessages: Promise<boolean> | undefined;
-  const getCanManageMessages = (): Promise<boolean> =>
-    (canManageMessages ??= hasPermission(db, userId, roomId, RoomPermission.ManageMessages));
-  assertNotTimedOut(member);
-  await assertNotReadOnly(room, getCanManageMessages);
-  await assertNotInSlowmode(room, member, getCanManageMessages);
-  if (message) await assertNotWordFiltered(db, roomId, userId, filter, message, getCanManageMessages);
+  const rejection = await getMessageCreationRejection(db, userId, roomId, message);
+  if (!rejection) return;
+  else if (rejection.type === MessageCreationRejectionType.Slowmode) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+  else if (rejection.type !== MessageCreationRejectionType.WordFilter) throw new TRPCError({ code: "FORBIDDEN" });
+
+  // The configured action (warn/timeout) runs before the message is rejected — Discord blocks and acts.
+  await executeAutomodAction(db, {
+    action: rejection.filter.action,
+    roomId,
+    timeoutDurationMs: rejection.filter.timeoutDurationMs,
+    userId,
+  });
+  // The `cause` marks the one rejection that has already spent a consequence, so a caller re-checking a
+  // Stored message (send-now on a scheduled job) can burn the job rather than leave it for the worker to
+  // Block — and punish — a second time. Every other rejection is safe to re-run.
+  throw new TRPCError({
+    cause: new WordFilteredError("Message contains blocked content."),
+    code: "FORBIDDEN",
+    message: "Message contains blocked content.",
+  });
 };

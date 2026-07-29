@@ -105,26 +105,7 @@ describe(useCreateColumn, () => {
 
     expect(dataSource.columns).toHaveLength(2);
     expect(takeOne(dataSource.columns, 1)).toBeInstanceOf(ComputedColumn);
-  });
-
-  test("does not write to row.data for computed column", async () => {
-    expect.hasAssertions();
-
-    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { dataSource } = setupWithDataSource(
-      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
-    );
-    const createColumn = useCreateColumn();
-    const newColumn = new ComputedColumn({
-      name: " ",
-      transformation: {
-        sourceColumnId: sourceColumn.id,
-        targetType: ColumnType.String,
-        type: ColumnTransformationType.ConvertTo,
-      },
-    });
-    await createColumn(newColumn);
-
+    // A computed column is derived at render time, so it must never materialise a key in row.data
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual([SOURCE_COLUMN_NAME]);
   });
 

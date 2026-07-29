@@ -54,16 +54,16 @@ export const useSurveyCreator = () => {
     newCreator.onUploadFile.add(async (_creator, { callback, element, files, propertyName }) => {
       await getResultAsync(async () => {
         const file = takeOne(files);
-        if (!validateFile(file.size)) {
+        if (!validateFile(file)) {
           callback("error");
           return;
         }
 
-        const downloadFileSasUrl = await uploadFile(file);
-        const oldDownloadFileSasUrl = (element as Base).getPropertyValue(propertyName.toString());
-        if (oldDownloadFileSasUrl) await deleteFile(oldDownloadFileSasUrl);
+        const url = await uploadFile(file);
+        const oldUrl = (element as Base).getPropertyValue(propertyName.toString());
+        if (oldUrl) await deleteFile(oldUrl);
 
-        callback("success", downloadFileSasUrl);
+        callback("success", url);
       }).match(noop, () => {
         callback("error");
       });

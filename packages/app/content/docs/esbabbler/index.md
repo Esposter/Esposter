@@ -49,7 +49,6 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages)             | `/remind` + `/schedule` jobs and the Service Bus worker           |
 | [/docs/esbabbler/drafts-and-sent](/docs/esbabbler/drafts-and-sent)                   | Cross-room Drafts / Scheduled / Sent view                         |
 | [/docs/esbabbler/offline-cache](/docs/esbabbler/offline-cache)                       | IndexedDB offline mirror of Pinia state                           |
-| [/docs/esbabbler/search-index-tooling](/docs/esbabbler/search-index-tooling)         | Message search index status + rebuild scripts                     |
 | [/docs/esbabbler/deferred](/docs/esbabbler/deferred)                                 | Ideas deferred, each with a revisit trigger                       |
 | [/docs/esbabbler/rejected](/docs/esbabbler/rejected)                                 | Ideas decided against                                             |
 | [/docs/esbabbler/roadmap](/docs/esbabbler/roadmap)                                   | Open work — every item links its proposal                         |
@@ -67,7 +66,7 @@ Chronological, one line per feature group.
 - **Rooms** — categories with drag-reorder, read-only/announcement channels, slowmode, per-room nicknames, welcome screen, join/leave system messages, invite expiry & max uses.
 - **Moderation** — RBAC roles/permissions, force-mute, kick, ban/unban, timeout, warn, softban, word filter, automod word-filter actions (reject/warn/timeout), private moderator notes, audit log with action/actor/target filters.
 - **Calls** — persistent per-room drop-in audio, LiveKit migration, video, screenshare, call lobby (knock & admit), deafen, raise-hand, call-health indicator, call-end duration system message, Document PiP pop-out, per-user volume, push-to-talk.
-- **Integrations & infra** — inbound webhooks, offline message cache, scheduled messages (Service Bus worker + listing/cancel UI), Sent tab via Search index, message search-index status + rebuild scripts.
+- **Integrations & infra** — inbound webhooks, offline message cache, scheduled messages (Service Bus worker + listing/cancel UI), Sent tab via Search index.
 - **Store hygiene** — subscription-vs-caller ownership audit: every remote-visible message-store transition is owned by its subscription handler, caller-side mutations kept only for optimistic-with-revert or actor-excluded emits, locked in with idempotence tests.
 - **File & media** — one shared SAS upload service, client-side image thumbnails rendered inline with the original in a lightbox, per-room attachment limits (max size + allowed MIME categories) in the Moderation settings, and a files-in-room search tab.
 - **Settings** — message-scoped user-settings dialog (Voice & Video / Notifications / Keybinds) backed by `userSettingsInMessage`, applied live to LiveKit calls; push-to-talk keybind + release delay; room settings Discord-parity IA (category groups, Roles rename, Members/Invites tabs, Integrations + Moderation groups).

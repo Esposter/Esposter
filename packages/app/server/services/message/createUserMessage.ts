@@ -16,10 +16,15 @@ import { assertCanCreateMessage } from "@@/server/services/message/moderation/as
 import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
 import { notifyThreadReplyFollowers } from "@@/server/services/message/thread/notifyThreadReplyFollowers";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { createMessage, getPushSubscriptionsForMessage, incrementMentionCounts } from "@esposter/db";
-import { AzureFunction, AzureTable, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
-import { getResultAsync, Operation } from "@esposter/shared";
+import {
+  AzureFunction,
+  AzureTable,
+  createEventGridEvent,
+  DatabaseEntityType,
+  roomsInMessage,
+} from "@esposter/db-schema";
+import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 export const createUserMessage = async (
@@ -28,16 +33,19 @@ export const createUserMessage = async (
   input: StandardCreateMessageInput,
 ): Promise<MessageEntity> => {
   await assertCanCreateMessage(db, user.id, input.roomId, input.message);
-  const messageClient = await useTableClient(AzureTable.Messages);
-  const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
   const now = new Date();
-  const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
-    ...input,
-    userId: user.id,
-  });
+  // The slowmode clock is what the NEXT send is checked against, so it advances with the guards rather than
+  // After the write: a failed update behind a successful write leaves a stale lastMessageAt that keeps passing
+  // And slowmode silently stops applying, while advancing first can only cost one window on a write that throws
   await updateUserToRoom(db, user.id, {
     lastMessageAt: now,
     roomId: input.roomId,
+  });
+  const messageClient = await useTableClient(AzureTable.Messages);
+  const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+  const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
+    ...input,
+    userId: user.id,
   });
   messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: session.id }]);
 
@@ -48,20 +56,30 @@ export const createUserMessage = async (
   for (const mentionedUserToRoom of mentionedUsersToRooms)
     userToRoomEventEmitter.emit("updateUserToRoom", mentionedUserToRoom);
 
-  const readPushSubscriptions = await getPushSubscriptionsForMessage(db, newMessageEntity);
+  // Best-effort after the Table write — a failed read skips this send's push notifications, never the message.
+  const readPushSubscriptions = await getResultAsync(() => getPushSubscriptionsForMessage(db, newMessageEntity))
+    .orTee(console.error)
+    .unwrapOr([]);
   // Resolve the sender's room title once — shared by the generic message push and the thread-reply push, so
   // A reply never runs the same nickname lookup twice. Skip it entirely when no push path needs it.
   let title = user.name;
   if (readPushSubscriptions.length > 0 || newMessageEntity.replyRowKey) {
-    const nickname = (
-      await db.query.usersToRoomsInMessage.findFirst({
-        columns: { nickname: true },
-        where: {
-          roomId: newMessageEntity.partitionKey,
-          userId: user.id,
-        },
-      })
-    )?.nickname;
+    // Best-effort after the Table write — a failed lookup shows the push under the account name instead of the
+    // Room nickname, never costs the message.
+    const nickname = await getResultAsync(
+      async () =>
+        (
+          await db.query.usersToRoomsInMessage.findFirst({
+            columns: { nickname: true },
+            where: {
+              roomId: newMessageEntity.partitionKey,
+              userId: user.id,
+            },
+          })
+        )?.nickname,
+    )
+      .orTee(console.error)
+      .unwrapOr(undefined);
     title = nickname || user.name;
   }
   const notificationOptions: NotificationOptions = { icon: user.image, title };
@@ -77,14 +95,16 @@ export const createUserMessage = async (
       },
       notificationOptions,
     };
-    await eventGridPublisherClient.send([
-      {
-        data,
-        dataVersion: "1.0",
-        eventType: AzureFunction.ProcessPushNotification,
-        subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
-      },
-    ]);
+    // Best-effort after the Table write — a failed publish loses one push, never the message that already landed.
+    await getResultAsync(() =>
+      eventGridPublisherClient.send([
+        createEventGridEvent(
+          AzureFunction.ProcessPushNotification,
+          `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
+          data,
+        ),
+      ]),
+    ).match(noop, console.error);
   }
 
   // A reply auto-follows its thread (Discord behaviour) and notifies existing followers. Both run post-persist
@@ -94,19 +114,27 @@ export const createUserMessage = async (
     const threadRootRowKey = newMessageEntity.replyRowKey;
     await getResultAsync(() =>
       createThreadFollow(db, { roomId: newMessageEntity.partitionKey, threadRootRowKey, userId: user.id }),
-    ).match(() => undefined, console.error);
+    ).match(noop, console.error);
     const excludedUserIds = [...new Set(readPushSubscriptions.map((pushSubscription) => pushSubscription.userId))];
     await getResultAsync(() =>
       notifyThreadReplyFollowers(db, newMessageEntity, notificationOptions, excludedUserIds),
-    ).match(() => undefined, console.error);
+    ).match(noop, console.error);
   }
 
-  const updatedRoom = requireMutation(
-    (await db.update(roomsInMessage).set({ updatedAt: now }).where(eq(roomsInMessage.id, input.roomId)).returning())[0],
-    Operation.Update,
-    DatabaseEntityType.Room,
-    input.roomId,
-  );
-  roomEventEmitter.emit("updateRoom", updatedRoom);
+  // Best-effort after the Table write — a failed touch leaves the room list sorted one send behind until the
+  // Next one lands, never costs the message that already landed
+  const updatedRoom = await getResultAsync(
+    async () =>
+      (
+        await db.update(roomsInMessage).set({ updatedAt: now }).where(eq(roomsInMessage.id, input.roomId)).returning()
+      )[0],
+  )
+    .orTee(console.error)
+    .unwrapOr(undefined);
+  // A zero-row update is not a rejection, so it arrives here as `undefined` rather than through `orTee`: the room
+  // The message was just written into is gone. Still best-effort — the message landed and the caller keeps it —
+  // But never silent, or the room list simply stops re-sorting with nothing anywhere saying why
+  if (updatedRoom) roomEventEmitter.emit("updateRoom", updatedRoom);
+  else console.error(new NotFoundError(DatabaseEntityType.Room, input.roomId));
   return newMessageEntity;
 };

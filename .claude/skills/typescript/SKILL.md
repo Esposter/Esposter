@@ -112,7 +112,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 ### Replacing `void asyncFn()`
 
-`no-void` is an error (`.oxlintrc.json`, covering `.ts` and `.vue`); the only `void` in the codebase lives inside `getSynchronizedFunction`. It's banned because it silences `no-floating-promises` by discarding the promise — rejections go unhandled and the caller can't await completion. When you reach for it, stop at the first step that applies:
+`no-void` is an error (`.oxlintrc.json`, covering `.ts` and `.vue`); `getSynchronizedFunction` is the one place permitted to use it, because it is the sanctioned fire-and-forget primitive (step 3 below). It's banned because it silences `no-floating-promises` by discarding the promise — rejections go unhandled and the caller can't await completion. When you reach for it, stop at the first step that applies:
 
 1. **Can the enclosing function be `async`?** Make it `async` and `await`. This covers nearly every case, including Vue template/emit handlers (`@click`, `@confirm`) and any callback typed `Promisable<void>` — Vue doesn't care that a handler returns a promise, so `onClick: async () => { await ... }` needs no wrapper.
 2. **Do you own the callback's type?** Widen it to `Promisable<void>` (`type-fest`) and `await` it at the call site. Never force callers to `void` their async work. Always the `Promisable<T>` alias — never a hand-written `Promise<T> | T` union; this applies to every maybe-async signature, not just this replacement flow.
@@ -285,6 +285,16 @@ const baseUrl = IS_PRODUCTION ? PRODUCTION_URL : DEVELOPMENT_URL;
 - **Applies to any parameter, not just options objects.** A positional optional arg that the body coalesces to a constant belongs in the signature default too — including reactive defaults: `(position = ref({ x: 0, y: 0 })) => …`, never `const p = position ?? ref({ x: 0, y: 0 })` in the body. A parameter default expression is re-evaluated per call, so a fresh `ref`/object/array default is safe (no shared-instance bug).
 - **`?? <default>` is only correct when the fallback can't live in the signature** — i.e. the coalesced value is _not_ a parameter: a slot prop the framework types `boolean | null` (`isHovering ?? false`), a nullable API/query result, or a default that depends on another already-bound parameter. When the left side of `??` traces back to an optional parameter, move the default into that parameter instead.
 
+## Boolean Flag Parameters
+
+Three questions before adding one, in order. Most proposed flags die at the first.
+
+- **Does any caller pass the other value?** If every call site passes the same one, it is not an option — delete it and keep the single behaviour. `listBlobNames(client, prefix, { isDeep: true })` was passed `true` by every caller in the repo, so the default was a path nothing exercised: a hierarchy listing over a prefix with no trailing delimiter resolves to **zero** blobs and reports a full directory as successfully empty. An unexercised default is a trap with a countdown on it, not flexibility.
+- **Does it change what the function does, or only describe who called it?** A flag the function itself acts on is ordinary. A flag that exists to tell a _distant_ layer something about the caller — this read is a background timer's, not the user's — is only justified when that layer genuinely cannot observe the fact for itself. `errorLink` cannot: it sees a rejection, not who asked for it, and it navigates to the login page on `FORBIDDEN`. Thread that kind through the channel the transport already has (tRPC's per-call `context`), and name the fact (`isBackground`), never the reaction (`isNoRedirect`).
+- **Is it readable at the call site?** `f(a, b, true)` says nothing at the point a reader meets it. One optional boolean whose meaning is obvious from the callee's name may stay positional (`storeCreateMessage(message, true)` — optimistic); anything less obvious, and anything that would be the second flag, goes in a named options object destructured in the signature (see above).
+
+Test helpers are held to the same bar: a `seed(name, isAged)` whose two modes are one call each is two helpers pretending to be one — seed the realistic case and let the outlier build its own.
+
 ## Enum Refs
 
 - **Never `ref<EnumType | null>(null)`** — default to a sensible first value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`.
@@ -318,7 +328,7 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 - Plain `string` fields already contain `""` — reuse the source schema untouched: `entitySchema.pick({ actorUserId: true })`, non-partial.
 - Enum fields union the sentinel: `type: entitySchema.shape.type.or(z.literal(""))`.
 - **Numbers use `0`** when `0` has no domain meaning — invite `expireAfterMinutes`/`maxUses`: `0` = never expires / unlimited (`z.literal([...OPTIONS, 0])`, never `.nullable()`).
-- **The DB schema itself carries the sentinel** — `maxUses: integer().notNull().default(0)`, never a nullable column plus manual `|| null` mapping in the router. The DB schema is the source of truth for types (that's why we use Drizzle); the sentinel flows ref → input → row → read untouched. Only types with no empty value (timestamps) stay nullable, mapped once at the insert site.
+- **The DB schema itself carries the sentinel** so it flows ref → input → row → read untouched — the column-level rules are the `drizzle` skill's.
 - Reserve `.default("")` for fields genuinely omitted by some callers (e.g. `cursor` on the first page request).
 
 ## `null` vs `undefined`
@@ -402,6 +412,8 @@ Use `Pick` for all properties derived directly from the source type. Keep explic
 - `Parameters<SourceType["method"]>` tuples — no readable property to pick
 - `Parameters<SourceType["method"]>[n]` — same
 - Plain primitives (`number`, `string`) representing constructor args with no matching readable property on the source type
+
+The same rule covers **third-party SDK envelopes**: when our code authors or reads a subset of an SDK's own shape, `Pick` from the SDK type instead of restating the fields, and make it generic over the part that actually varies. `EventGridEventInput<TData>` in `packages/db-schema/src/models/azure/eventGrid/` is `Pick<EventGridEvent<TData>, "data" | "dataVersion" | "eventType" | "id" | "subject">` — one definition for every publisher and consumer, and it follows the SDK when the SDK moves. Never define a per-feature alias (`DeadLetteredEvent`, `WebhookEvent`, …) that just re-declares the same envelope; instantiate the generic.
 
 ## Missing `NuxtConfig` Module Keys — Augment `nuxt.d.ts`, Never Touch tsconfig
 

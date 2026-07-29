@@ -26,9 +26,7 @@ export const useRotatingCursors = () => {
       if (!rotatingDiv) continue;
 
       // Nodes are reused now, so clear any prior infinite animation before adding the new one
-      rotatingDiv.getAnimations().forEach((animation) => {
-        animation.cancel();
-      });
+      for (const animation of rotatingDiv.getAnimations()) animation.cancel();
       rotatingDiv.animate(
         [{ transform: `rotate(${rotationOffset}deg)` }, { transform: `rotate(${rotationOffset + 360}deg)` }],
         { duration: dayjs.duration(60, "seconds").asMilliseconds(), iterations: Infinity },

@@ -41,5 +41,7 @@ export const useReadDeletedResources = () => {
   const refresh = async () => {
     if (lastOptions) await Promise.all([readCount(), readDeletedResources(lastOptions)]);
   };
-  return { count, error, isLoading, items, readCount, readDeletedResources, refresh };
+  // The count belongs to this read, so it loads here rather than in the consuming page's lifecycle hook
+  useQuery(readCount);
+  return { count, error, isLoading, items, readDeletedResources, refresh };
 };
