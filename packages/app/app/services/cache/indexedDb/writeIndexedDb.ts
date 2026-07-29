@@ -18,12 +18,20 @@ export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends Inde
     const tx = db.transaction(storeName, "readwrite");
     const objectStore = tx.objectStore(storeName);
     const existingKeys = await objectStore.index(indexName).getAllKeys(partitionKey);
-    for (const key of existingKeys) await objectStore.delete(key);
     const itemsToCache = limit ? items.slice(0, limit) : items;
-    for (const item of itemsToCache)
-      await objectStore.put(
-        Object.assign(structuredClone(toRawDeep(item)), { [CompositeKeyPropertyNames.partitionKey]: partitionKey }),
-      );
+    // Requests run in the order they are placed on the transaction, so issuing each phase together still
+    // Deletes before it puts — awaiting them one at a time only bought a round trip per row, and a full
+    // Rewrite runs on every store write the cached list absorbs
+    await Promise.all(existingKeys.map((key) => objectStore.delete(key)));
+    // A shallow copy is all the partitionKey stamp needs: `put` structured-clones the record itself, so
+    // Cloning deeply first duplicated that work and produced a copy nothing else ever read
+    await Promise.all(
+      itemsToCache.map((item) =>
+        objectStore.put(
+          Object.assign({ ...toRawDeep(item) }, { [CompositeKeyPropertyNames.partitionKey]: partitionKey }),
+        ),
+      ),
+    );
     await tx.done;
   }).match(noop, console.error);
 };
