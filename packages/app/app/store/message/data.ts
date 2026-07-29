@@ -43,15 +43,25 @@ export const useDataStore = defineStore("message/data", () => {
 
   // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
   // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
-  // They typed once the editor is cleared. The attachments wait for `CommitSend`: the bubble is no copy of those
-  const createMessage = async (input: StandardCreateMessageInput, onOptimisticCreate?: () => Promise<void>) => {
+  // They typed once the editor is cleared. It is handed the attachments this send took, so the composer stops
+  // Offering them to the next Enter while it waits for `CommitSend` to drop them for good
+  const createMessage = async (
+    input: StandardCreateMessageInput,
+    onOptimisticCreate?: (sentFileIds: string[]) => Promise<void>,
+  ) => {
     if (!session.value.data) return false;
 
-    // Read before anything awaits, and passed to the commit rather than re-read there: the composer keeps
-    // Accepting uploads for the whole round trip, so the files it holds once the server answers are not the
-    // Files this message persisted
-    const sentFileIds = input.files?.map(({ id }) => id) ?? [];
-    const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
+    // `input.files` is the composer's own live array, and the composer keeps accepting uploads for the whole
+    // round trip — so the attachments are snapshotted once, here, and that one snapshot is what the bubble
+    // Carries, what goes on the wire, and what the hooks are handed. Reading the live array in any of those
+    // Places lets them disagree: a file that lands mid-flight is serialized into the payload while the commit
+    // Never hears about it, so it stays in the composer and rides along with the next send too — one blob
+    // Referenced by two messages, and deleting either one reclaims a blob the other still renders
+    const sentInput = input.files ? { ...input, files: [...input.files] } : input;
+    const sentFileIds = sentInput.files?.map(({ id }) => id) ?? [];
+    const newMessage = reactive(
+      createMessageEntity({ ...sentInput, isLoading: true, userId: session.value.data.user.id }),
+    );
     // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the list,
     // So roll the entity back out before surfacing the failure — nothing has reached the server yet. Through the
     // Delete hooks, not a bare list removal: the Create hooks that just ran wrote a download-url entry per
@@ -65,16 +75,16 @@ export const useDataStore = defineStore("message/data", () => {
       },
     );
     if (!isOptimisticCreated) return false;
-    await onOptimisticCreate?.();
+    await onOptimisticCreate?.(sentFileIds);
 
-    return getResultAsync(() => $trpc.message.createMessage.mutate(input)).match(
+    return getResultAsync(() => $trpc.message.createMessage.mutate(sentInput)).match(
       async (createdMessage) => {
         Object.assign(newMessage, createdMessage);
         delete newMessage.isLoading;
         // The server has the message, so the composer state that only a rejection could have needed back — the
         // Attachments and the grants that authorize reclaiming their blobs — is released here rather than at the
         // Bubble
-        await MessageHookMap.CommitSend.run(input.roomId, sentFileIds);
+        await MessageHookMap.CommitSend.run(sentInput.roomId, sentFileIds);
         // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
         // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
@@ -83,7 +93,7 @@ export const useDataStore = defineStore("message/data", () => {
         if (replyRowKey) threadFollowStore.storeFollowThread(input.roomId, replyRowKey);
         return true;
       },
-      (error) => {
+      async (error) => {
         // The mutation spans the server commit, so nothing here may roll the bubble back out: a rejection can
         // Just as well be a lost response for a message that landed, and deleting it then hides a sent message
         // From its own sender (the subscription echo is filtered for the sending session, so nothing restores
@@ -92,11 +102,13 @@ export const useDataStore = defineStore("message/data", () => {
         // So it holds its loading state and the alert says what happened. Only when errorLink has not already
         // Said it: a rejected send is characteristically one of the codes it owns (slowmode, a Zod rejection),
         // And alerting again puts two identical toasts on screen for one send.
-        // The composer's attachments stay too, because `CommitSend` never ran — so the user retries with the files
-        // Already uploaded instead of re-picking them, and their grants can still reclaim the blobs. The cost is
-        // The lost-response case: a message that did land keeps a composer copy whose delete affordance would
-        // Reclaim blobs it is still using. That trades a rare broken attachment the user chose against a certain
-        // Leak plus lost work on every deterministic rejection, which is what slowmode and the word filter are
+        // The composer's attachments come back, held rather than discarded since the bubble — so the user retries
+        // With the files already uploaded instead of re-picking them, and their grants can still reclaim the
+        // Blobs. The cost is the lost-response case: a message that did land keeps a composer copy whose delete
+        // Affordance would reclaim blobs it is still using. That trades a rare broken attachment the user chose
+        // Against a certain leak plus lost work on every deterministic rejection, which is what slowmode and the
+        // Word filter are
+        await MessageHookMap.RollbackSend.run(sentInput.roomId, sentFileIds);
         if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
         return false;
       },
@@ -178,10 +190,12 @@ export const useDataStore = defineStore("message/data", () => {
   const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
     // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor and the reply
     // Target, so a send that fails before the bubble exists would take the text the user just typed with it.
-    // The attachments outlive it and leave on `CommitSend`, once the server has accepted the message
-    if (await createMessage(input, () => MessageHookMap.ResetSend.run(input.roomId, editor))) clearDraft(input.roomId);
+    // The attachments leave the composer here too, but only held — they are dropped on `CommitSend` once the
+    // Server has accepted the message, and handed back on `RollbackSend` if it rejects
+    if (await createMessage(input, (sentFileIds) => MessageHookMap.ResetSend.run(input.roomId, sentFileIds, editor)))
+      clearDraft(input.roomId);
   };
-  MessageHookMap.ResetSend.register((_roomId, editor) => {
+  MessageHookMap.ResetSend.register((_roomId, _fileIds, editor) => {
     editor?.commands.clearContent(true);
   });
   // Only expose the internal store CRUD functions for subscriptions; everything else directly calls

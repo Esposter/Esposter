@@ -286,6 +286,15 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
+        // One expression for the publish write, since the repair below repeats it at the same version: a change
+        // To where or how the snapshot is written that landed in only one of the two would diverge silently,
+        // And the copy that only runs on the rare concurrency path is the one nobody would notice
+        const uploadPublishedContent = (publishVersion: ResourcePublication["publishVersion"], value: unknown) =>
+          useUpload(
+            AzureContainer.ResourceAssets,
+            getPublishedContentBlobName(id, publishVersion),
+            JSON.stringify(value),
+          );
         // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
         // The publication row can never point at a publishVersion whose blob was never written.
         const publication = await ctx.db.transaction(async (tx) => {
@@ -306,11 +315,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
             DatabaseEntityType.ResourcePublication,
             id,
           );
-          await useUpload(
-            AzureContainer.ResourceAssets,
-            getPublishedContentBlobName(id, newPublication.publishVersion),
-            JSON.stringify(publishedContent),
-          );
+          await uploadPublishedContent(newPublication.publishVersion, publishedContent);
           return newPublication;
         });
         // An unpublish that landed between the clone and this claim swept the assets it had just written, while
@@ -333,21 +338,25 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Broken with nothing to signal it. See /docs/architecture/publishing
         if (publication.publishVersion !== (previousPublication?.publishVersion ?? 0) + 1)
           await getResultAsync(async () =>
-            useUpload(
-              AzureContainer.ResourceAssets,
-              getPublishedContentBlobName(id, publication.publishVersion),
-              JSON.stringify(
-                transformPublishedContent ? await transformPublishedContent(ctx, ctx.resource, content) : content,
-              ),
+            uploadPublishedContent(
+              publication.publishVersion,
+              transformPublishedContent ? await transformPublishedContent(ctx, ctx.resource, content) : content,
             ),
           ).match(noop, (error) => {
             console.error(error);
+            // Which of them tripped the check is not knowable from here, so the cause is carried rather than
+            // Asserted: a sweep by a concurrent unpublish, the redundant re-clone a concurrent publish pays, and
+            // A transform that rejects outright (a dataset deleted since the first pass) all arrive identically.
+            // Naming one of them told an owner their assets were swept when nothing had been. A TRPCError already
+            // States what happened in the code the client branches on, so it is rethrown as it is
+            if (error instanceof TRPCError) throw error;
+
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
               message: new InvalidOperationError(
                 Operation.Update,
                 DatabaseEntityType.ResourcePublication,
-                `published at version ${publication.publishVersion}, but its assets were swept by a concurrent unpublish and could not be re-cloned — publish again to rebuild them`,
+                `published at version ${publication.publishVersion}, but its assets could not be re-cloned (${error.message}) — publish again to rebuild them`,
               ).message,
             });
           });
