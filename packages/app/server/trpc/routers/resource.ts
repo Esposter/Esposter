@@ -19,6 +19,7 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
+import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
@@ -190,22 +191,15 @@ export const resourceRouter = router({
       ),
     ),
   duplicateResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
-    const { name, tags, type, userId } = ctx.resource;
-    const newResource = requireMutation(
-      (
-        await ctx.db
-          .insert(resources)
-          .values({
-            name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - duplicateNameSuffix.length)}${duplicateNameSuffix}`,
-            tags,
-            type,
-            userId,
-          })
-          .returning()
-      )[0],
-      Operation.Create,
-      DatabaseEntityType.Resource,
-      ctx.resource.id,
+    const { name, tags, type } = ctx.resource;
+    const newResource = await createResourceRow(
+      ctx,
+      {
+        name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - duplicateNameSuffix.length)}${duplicateNameSuffix}`,
+        tags,
+        type,
+      },
+      ResourceActivityType.Duplicated,
     );
     // A copy starts as Draft, so only the draft content is copied — never the publication. The clone gives
     // The copy its own blobs for every referenced asset — working-copy and published — under {newId}/ with
@@ -230,12 +224,6 @@ export const resourceRouter = router({
       }).match(noop, console.error);
       await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
       throw error;
-    });
-    // Fire-and-forget: the activity trail is best-effort and the duplicate must not wait on telemetry
-    getSynchronizedFunction(writeResourceActivity)({
-      activityType: ResourceActivityType.Duplicated,
-      resourceId: newResource.id,
-      userId,
     });
     return newResource;
   }),

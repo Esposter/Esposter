@@ -26,7 +26,7 @@ flowchart LR
 
   ```ts
   interface BlueprintResource {
-    entries: { content: unknown; key: string; name: string; type: ResourceType }[];
+    entries: { content?: unknown; key: string; name: string; type: ResourceType }[];
     parameters: { defaultValue: string; description: string; key: string; title: string }[];
   }
   ```
@@ -37,9 +37,11 @@ flowchart LR
   - `{{parameter:<key>}}` — replaced with the deploy-time parameter value (in entry names and any content string). All parameters are strings in v1; typed parameters are a later extension of the parameter object, not a redesign.
   - `{{entry:<key>}}` — replaced with the **created resource id** of that entry. This is how a dashboard entry binds the sheet entry's dataset, or a program entry binds its email and survey — the same bare-id linking every cross-resource reference already uses ([resources](/docs/architecture/resources)), just late-bound.
 
-- **Deploy** (`deployBlueprint`, owner): substitute parameters → pre-validate all entries with placeholder UUIDs standing in for `{{entry:*}}` (so a bad manifest rejects before anything is created) → topologically sort entries by their `{{entry:*}}` references (cycles and unknown references reject) → create each entry in order via the standard primitives (`resources` insert + content blob upload, exactly what `createResource` + `saveResourceContent` do) with real ids substituted. A mid-deploy failure deletes the rows and blobs it already created — best-effort all-or-nothing. Returns the alias → created-resource pairs; the Deploy dialog shows links to everything it made.
+- **Deploy** (`deployBlueprint`, owner): substitute parameters → pre-validate every entry's substituted name and content, with placeholder UUIDs standing in for `{{entry:*}}` (so a bad manifest rejects before anything is created, rather than mid-loop against a database constraint) → topologically sort entries by the `{{entry:*}}` references that validation walk already collected (cycles and unknown references reject) → create each entry in order via the standard primitives (`resources` insert + content blob upload + the type's registered after-save hook, exactly what `createResource` + `saveResourceContent` do) with real ids substituted. A mid-deploy failure deletes the rows and blobs it already created — best-effort all-or-nothing. Returns the alias → created-resource pairs; the Deploy dialog shows links to everything it made.
 
-- **Blueprints of blueprints**: an entry may itself be `type: Blueprint` — deploying creates the child Blueprint resource with its manifest as content, like any other entry (it is **not** recursively deployed; recursive composition is a [deferred](/docs/platform/deferred) candidate, not v1).
+- **An entry with no content** deploys to a resource with no content blob. That is the state a resource is genuinely in until its first save, so [capture](/docs/platform/blueprint-capture) records the absence rather than standing an empty object in — most types' schemas reject `{}`, and one unparseable entry rejects every deploy of the whole manifest.
+
+- **Blueprints of blueprints**: an entry may itself be `type: Blueprint` — deploying creates the child Blueprint resource with its manifest as content, like any other entry (it is **not** recursively deployed; recursive composition is a [deferred](/docs/platform/deferred) candidate, not v1). A `Blueprint` entry's content is therefore **opaque to the outer deploy**: its `{{entry:*}}` and `{{parameter:*}}` tokens name the child's own entries and parameters, so nothing walks into it — no dependency edges, no substitution, no id rewriting on capture. One helper (`mapBlueprintEntryContentStrings`) owns that decision and every content pass goes through it, so a new pass cannot be written that forgets.
 
 - **Blades**: Overview and the **Editor** — the manifest edited as schema-validated JSON (the escape hatch, since [capture](/docs/platform/blueprint-capture) is the primary authoring path), with **Save** and a **Deploy** command opening the parameter form dialog (plain text fields generated from `parameters`, defaults prefilled).
 

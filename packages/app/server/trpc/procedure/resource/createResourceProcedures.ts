@@ -1,7 +1,7 @@
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
+import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
-import type { ResourceProcedureOptions } from "@@/server/models/resource/ResourceProcedureOptions";
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
@@ -19,12 +19,15 @@ import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/pu
 import { on } from "@@/server/services/events/on";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
+import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
+import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -87,23 +90,20 @@ const readPublishedVersionContentInputSchema = z.object({
   version: z.int().positive(),
 });
 
-type ResourceContent<TType extends ResourceType> = z.infer<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>;
-
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
   ...args: TType extends PublishableResourceType
-    ? [
-        options?: PublishableResourceProcedureOptions<ResourceContent<TType>> &
-          ResourceProcedureOptions<ResourceContent<TType>>,
-      ]
-    : [options?: ResourceProcedureOptions<ResourceContent<TType>>]
+    ? [options?: PublishableResourceProcedureOptions<ResourceContent<TType>>]
+    : []
 ) => {
   const { contentSchema } = ResourceDefinitionMap[type];
   // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { afterSaveResourceContent, transformPublicReadContent, transformPublishedContent } = (args[0] ??
-    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>> &
-    ResourceProcedureOptions<ResourceContent<TType>>;
+  const { transformPublicReadContent, transformPublishedContent } = (args[0] ??
+    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
+  // The after-save hook is registered per type in its own map rather than passed in here, so every path
+  // That writes this type's content fires it — this one and blueprint deploy alike
+  const afterSaveResourceContent = ResourceAfterSaveContentMap[type];
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
   // Would erase the procedure's input type for consumers like achievement condition paths.
@@ -124,26 +124,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const baseProcedures = {
     createResource: standardAuthedProcedure
       .input(createResourceInputSchema)
-      .mutation<Resource>(async ({ ctx, input }) => {
-        const newResource = requireMutation(
-          (
-            await ctx.db
-              .insert(resources)
-              .values({ ...input, type, userId: ctx.getSessionPayload.user.id })
-              .returning()
-          )[0],
-          Operation.Create,
-          DatabaseEntityType.Resource,
-          ctx.getSessionPayload.user.id,
-        );
-        // Fire-and-forget: the activity trail is best-effort and the create must not wait on telemetry
-        getSynchronizedFunction(writeResourceActivity)({
-          activityType: ResourceActivityType.Created,
-          resourceId: newResource.id,
-          userId: ctx.getSessionPayload.user.id,
-        });
-        return newResource;
-      }),
+      .mutation<Resource>(({ ctx, input }) => createResourceRow(ctx, { ...input, type })),
     // The blobs and the type's table partitions survive until purge — destroying them here would
     // Make restore hand back an empty resource
     deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
@@ -237,10 +218,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           { content, contentVersion: updatedResource.contentVersion, id },
           { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
         ]);
-        // Fire-and-forget: the hook (e.g. scheduling TodoList reminders) is best-effort and the save
-        // Must never wait on it or fail because of it
-        if (afterSaveResourceContent)
-          getSynchronizedFunction(afterSaveResourceContent)(ctx, updatedResource, content, previousContent);
+        runAfterSaveResourceContent(ctx, updatedResource, content, previousContent);
         return updatedResource;
       },
     ),
