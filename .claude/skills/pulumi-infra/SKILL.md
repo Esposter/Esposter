@@ -156,6 +156,7 @@ Run in order from `packages/infra/`, always before `infra:preview` or `infra:up`
 Additional rules:
 
 - Run Pulumi operations only when the user allows Azure/Pulumi access.
+- **`preview` and `up` diff the program against state, never against Azure**, so an `up` reporting `unchanged` is not evidence that the live estate matches — anything changed out of band is invisible to both. When something reads as deployed but demonstrably does not work, run `pnpm infra:refresh` before concluding the code is wrong, and check RBAC against Azure directly (`az role assignment list --assignee <principalId> --all`): a role assignment present in state and absent in Azure fails at runtime with `Forbidden` behind a clean preview.
 - Never use `pulumi up --skip-preview`.
 - Before applying, confirm the preview contains only the intended resources and properties for the active roadmap item.
 - If `pulumi up` partially succeeds or fails, stop and run `pnpm infra:preview` again before any follow-up apply.
