@@ -47,6 +47,10 @@ export const useDataStore = defineStore("message/data", () => {
   const createMessage = async (input: StandardCreateMessageInput, onOptimisticCreate?: () => Promise<void>) => {
     if (!session.value.data) return false;
 
+    // Read before anything awaits, and passed to the commit rather than re-read there: the composer keeps
+    // Accepting uploads for the whole round trip, so the files it holds once the server answers are not the
+    // Files this message persisted
+    const sentFileIds = input.files?.map(({ id }) => id) ?? [];
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
     // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the list,
     // So roll the entity back out before surfacing the failure — nothing has reached the server yet. Through the
@@ -70,7 +74,7 @@ export const useDataStore = defineStore("message/data", () => {
         // The server has the message, so the composer state that only a rejection could have needed back — the
         // Attachments and the grants that authorize reclaiming their blobs — is released here rather than at the
         // Bubble
-        await MessageHookMap.CommitSend.run(input.roomId);
+        await MessageHookMap.CommitSend.run(input.roomId, sentFileIds);
         // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
         // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible

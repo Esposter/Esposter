@@ -1,3 +1,4 @@
+import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { relations } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
@@ -76,7 +77,18 @@ export const cloneContentAssets = async <TContent>(
   // Minting also removes the collision between two sources reducing to one destination (a working copy and a
   // Published snapshot of the same file share everything from `files/` onwards, and content can embed both),
   // Which would otherwise race two copies onto one name and unwind the whole clone. Nothing reads the id back
-  // Out of a blob name — the rewrite map below is what points content at it
+  // Out of a blob name — the rewrite map below is what points content at it.
+  // Readability is a property of the RESOURCE, not of the url, and content routinely names one resource's assets
+  // Many times over (a logo repeated on every row, a gallery of a hundred images from one upload). Asked per url
+  // That is two Drizzle queries each, unbounded and in parallel, for an answer already computed — so the promise
+  // Itself is cached, which also collapses the concurrent asks that a Promise.all issues before any of them lands
+  const isReadableMap = new Map<string, Promise<boolean>>();
+  const getIsReadable = (resourceAssetPath: ResourceAssetPath) => {
+    const key = `${resourceAssetPath.isPublished}/${resourceAssetPath.resourceId}`;
+    const isReadable = isReadableMap.get(key) ?? getIsResourceAssetReadable(db, resourceAssetPath, userId);
+    isReadableMap.set(key, isReadable);
+    return isReadable;
+  };
   const clones = (
     await Promise.all(
       [...urls].map(async (url) => {
@@ -91,7 +103,7 @@ export const cloneContentAssets = async <TContent>(
         // Reached them through a personalized export, say. Copying it would hand them the blob the serving
         // Endpoint refuses them, published under a directory anyone can read, so an unreadable url is carried
         // Verbatim like any other reference the clone cannot follow
-        if (!(await getIsResourceAssetReadable(db, resourceAssetPath, userId))) return [];
+        if (!(await getIsReadable(resourceAssetPath))) return [];
         const { blobName } = resourceAssetPath;
         const fileSegment = blobName.slice(blobName.lastIndexOf("/") + 1);
         const separatorIndex = fileSegment.indexOf(ID_SEPARATOR);

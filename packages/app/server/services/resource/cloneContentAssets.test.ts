@@ -27,16 +27,22 @@ describe(cloneContentAssets, () => {
   const destinationDirectoryName = destinationResourceId;
   const filesRelativeName = `${FILES_DIRECTORY_SEGMENT}/${fileId}${ID_SEPARATOR}${filename}`;
   const workingBlobName = `${sourceResourceId}/${filesRelativeName}`;
+  const siblingWorkingBlobName = `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
   const publishedBlobName = `${sourceResourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/${crypto.randomUUID()}/${filesRelativeName}`;
   // The clone asks the same question the serving endpoint does, so the rows that answer it are what a case here
   // Varies: an owned working copy is readable, an unowned one is not, and neither has a publication row
-  const createDatabase = (isOwned: boolean) =>
-    ({
-      query: {
-        resourcePublications: { findFirst: () => Promise.resolve(undefined) },
-        resources: { findFirst: () => Promise.resolve(isOwned ? { id: sourceResourceId } : undefined) },
-      },
-    }) as unknown as PostgresJsDatabase<typeof relations>;
+  const createDatabase = (isOwned: boolean) => {
+    const findFirstResource = vi.fn(() => Promise.resolve(isOwned ? { id: sourceResourceId } : undefined));
+    return {
+      db: {
+        query: {
+          resourcePublications: { findFirst: () => Promise.resolve(undefined) },
+          resources: { findFirst: findFirstResource },
+        },
+      } as unknown as PostgresJsDatabase<typeof relations>,
+      findFirstResource,
+    };
+  };
   let containerClient: MockContainerClient;
 
   beforeEach(async () => {
@@ -66,7 +72,7 @@ describe(cloneContentAssets, () => {
     const content = {
       html: `<img src="${getResourceAssetUrl(workingBlobName)}"><img src="${getResourceAssetUrl(publishedBlobName)}">`,
     };
-    const clonedContent = await cloneContentAssets(createDatabase(true), userId, content, destinationDirectoryName);
+    const clonedContent = await cloneContentAssets(createDatabase(true).db, userId, content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
     expect(clonedBlobNames).toHaveLength(2);
@@ -80,7 +86,7 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
-    await cloneContentAssets(createDatabase(true), userId, content, destinationDirectoryName);
+    await cloneContentAssets(createDatabase(true).db, userId, content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
     const prefix = `${destinationDirectoryName}/${FILES_DIRECTORY_SEGMENT}/`;
@@ -102,7 +108,7 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
-    const clonedContent = await cloneContentAssets(createDatabase(true), userId, content, sourceResourceId);
+    const clonedContent = await cloneContentAssets(createDatabase(true).db, userId, content, sourceResourceId);
     const clonedBlobNames: string[] = [];
     for await (const { name } of containerClient.listBlobsFlat({
       prefix: `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/`,
@@ -121,10 +127,28 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(workingBlobName)}">` };
-    const clonedContent = await cloneContentAssets(createDatabase(false), userId, content, destinationDirectoryName);
+    const clonedContent = await cloneContentAssets(createDatabase(false).db, userId, content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
     expect(clonedBlobNames).toHaveLength(0);
     expect(clonedContent.html).toContain(getResourceAssetUrl(workingBlobName));
+  });
+
+  // Readability is a property of the resource, and content routinely names one resource's assets many times over
+  // (a logo on every row, a gallery from one upload). Asked per url that is a pair of queries each, unbounded and
+  // in parallel, for an answer already computed
+  test("asks the readability question once per source resource however many of its assets are referenced", async () => {
+    expect.hasAssertions();
+
+    await containerClient.getBlockBlobClient(siblingWorkingBlobName).upload(siblingWorkingBlobName, 1);
+    const content = {
+      html: `<img src="${getResourceAssetUrl(workingBlobName)}"><img src="${getResourceAssetUrl(siblingWorkingBlobName)}">`,
+    };
+    const { db, findFirstResource } = createDatabase(true);
+    await cloneContentAssets(db, userId, content, destinationDirectoryName);
+    const clonedBlobNames = await getClonedBlobNames();
+
+    expect(clonedBlobNames).toHaveLength(2);
+    expect(findFirstResource).toHaveBeenCalledOnce();
   });
 });

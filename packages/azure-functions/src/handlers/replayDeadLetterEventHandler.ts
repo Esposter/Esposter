@@ -18,6 +18,7 @@ import {
   DEAD_LETTER_QUARANTINE_PREFIX,
   DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX,
   MAX_EVENT_GRID_PUBLISH_BYTES,
+  MAX_EVENT_GRID_PUBLISH_EVENT_COUNT,
 } from "@esposter/db-schema";
 import { chunkBySerializedSize, getResult, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { z } from "zod";
@@ -149,6 +150,9 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // 1 MB — so a full blob is by definition more than one request may carry. Sent whole, the request is rejected,
     // `logAndRethrow` redelivers the identical oversized batch, and the replay subscription (which deliberately has
     // No dead-letter destination of its own) burns every attempt on it before discarding the blob's events silently.
+    // Both bounds at once, because the request has two: a blob of many tiny events (a bare subject and an empty
+    // `data` serialize to a couple of hundred bytes) stays under the byte budget the whole way and still crosses
+    // The 5,000-event count, which is rejected exactly as loudly and burns the attempts exactly the same way
     // Sequential, so a chunk that throws stops the ones behind it: the redelivered blob replays the batch from the
     // Start, and every event that already landed is a duplicate the idempotency bar above admits
     for (const replayChunk of chunkBySerializedSize(
@@ -162,6 +166,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
         }),
       ),
       MAX_EVENT_GRID_PUBLISH_BYTES,
+      MAX_EVENT_GRID_PUBLISH_EVENT_COUNT,
     ))
       await eventGridPublisherClient.send(replayChunk);
     // Best-effort like every post-persist step: the events are already republished, so a failed archive must not

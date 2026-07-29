@@ -134,16 +134,19 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
 
     await discardUploadFiles(roomId, ids);
   };
-  // Keyed by the room the send was for, like every other composer write here: the commit runs behind the send, so
-  // The current room can already be a different one by the time it fires.
+  // Keyed by the room the send was for AND by the ids that send persisted, like every other composer write here:
+  // The commit runs behind the send, so by the time it fires the current room can already be a different one and
+  // The composer can already hold an attachment the user picked for their NEXT message. Removing everything the
+  // Room holds now would take that one with it — silently, and without discarding, so its grant goes and its blob
+  // Is left billed and referenced by nothing.
   // Removes without discarding — the send is the one exit where the blobs stay: a persisted message now
   // References them, so reclaiming here would delete the attachments of a message that was just posted.
   // On `CommitSend` rather than `ResetSend`: this drops the upload grants, and those are the only thing that can
   // Ever name these blobs again. Dropped at the optimistic bubble, a send the server then rejects (slowmode, the
   // Word filter) leaves the blobs referenced by no message and reclaimable by nothing, and the user re-picking
   // Every attachment to try again. Held until the server accepts, a rejection leaves the composer intact to retry
-  MessageHookMap.CommitSend.register((roomId) => {
-    removeUploadFiles(roomId, getFiles(roomId)?.map(({ id }) => id) ?? []);
+  MessageHookMap.CommitSend.register((roomId, fileIds) => {
+    removeUploadFiles(roomId, fileIds);
   });
   return {
     discardCurrentUploadFiles,

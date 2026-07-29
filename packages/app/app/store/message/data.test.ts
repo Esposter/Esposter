@@ -4,6 +4,7 @@ import type { Router } from "vue-router";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
+import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
@@ -29,6 +30,10 @@ describe(useDataStore, () => {
   const roomId = crypto.randomUUID();
   const message = "message";
   const updatedMessage = "updatedMessage";
+  const filename = "filename";
+  const mimetype = "text/plain";
+  const size = 1;
+  const createFile = () => new File([message], filename, { type: mimetype });
 
   beforeAll(() => {
     router = useRouter();
@@ -176,7 +181,44 @@ describe(useDataStore, () => {
     const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
     await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
-    expect(commitSendSpy).toHaveBeenCalledWith(roomId);
+    expect(commitSendSpy).toHaveBeenCalledWith(roomId, []);
+  });
+
+  // The commit runs behind the send, so the composer keeps taking uploads for the whole round trip. Releasing
+  // Whatever it holds once the server answers takes the attachment the user picked for their NEXT message with
+  // It — and removal is not a discard, so that blob loses the only grant that could ever reclaim it
+  test("createMessage releases only the attachments the accepted message persisted", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const uploadFileStore = useUploadFileStore();
+    const { files } = storeToRefs(uploadFileStore);
+    const { createMessage } = dataStore;
+    server.use(
+      trpcMsw.message.createMessage.mutation(() =>
+        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      ),
+    );
+    // The preview url the composer mints per attachment is incidental here, and the environment's
+    // `createObjectURL` rejects the runtime's own `File` on an instanceof check
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
+    vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+    const sentFileId = crypto.randomUUID();
+    const nextFileId = crypto.randomUUID();
+    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: sentFileId, token: "" }]);
+    const createPromise = createMessage({
+      files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
+      message,
+      replyRowKey: "",
+      roomId,
+      type: MessageType.Message,
+    });
+    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: nextFileId, token: "" }]);
+
+    expect(await createPromise).toBe(true);
+    expect(files.value.map(({ id }) => id)).toStrictEqual([nextFileId]);
   });
 
   // A successful create also mirrors the server's thread auto-follow, so the reply's root is followed locally
