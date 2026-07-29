@@ -10,16 +10,20 @@ describe(getIsResourceAssetReadable, () => {
   // The two rows that answer the question, each present or absent — a publication row makes a published asset
   // Anonymous-capable, and an owned, undeleted resource row is what a working copy falls back to
   const createDatabase = (isPublication: boolean, isOwnedResource: boolean) => {
+    const findFirstPublication = vi.fn<() => Promise<undefined | { resourceId: string }>>(() =>
+      Promise.resolve(isPublication ? { resourceId } : undefined),
+    );
     const findFirstResource = vi.fn<() => Promise<undefined | { id: string }>>(() =>
       Promise.resolve(isOwnedResource ? { id: resourceId } : undefined),
     );
     return {
       db: {
         query: {
-          resourcePublications: { findFirst: () => Promise.resolve(isPublication ? { resourceId } : undefined) },
+          resourcePublications: { findFirst: findFirstPublication },
           resources: { findFirst: findFirstResource },
         },
       } as unknown as PostgresJsDatabase<typeof relations>,
+      findFirstPublication,
       findFirstResource,
     };
   };
@@ -27,9 +31,11 @@ describe(getIsResourceAssetReadable, () => {
   test("reads a published asset while its publication row exists", async () => {
     expect.hasAssertions();
 
-    const { db } = createDatabase(true, false);
+    const { db, findFirstPublication, findFirstResource } = createDatabase(true, false);
 
     await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId })).resolves.toBe(true);
+    expect(findFirstPublication).toHaveBeenCalledWith({ where: { resourceId: { eq: resourceId } } });
+    expect(findFirstResource).not.toHaveBeenCalled();
   });
 
   // Unpublishing drops the row, so a url minted while the snapshot was live stops answering to anyone but its
@@ -48,6 +54,15 @@ describe(getIsResourceAssetReadable, () => {
     const { db } = createDatabase(false, false);
 
     await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId)).resolves.toBe(false);
+  });
+
+  test("refuses a published asset whose publication row is gone to an anonymous caller", async () => {
+    expect.hasAssertions();
+
+    const { db, findFirstResource } = createDatabase(false, true);
+
+    await expect(getIsResourceAssetReadable(db, { isPublished: true, resourceId })).resolves.toBe(false);
+    expect(findFirstResource).not.toHaveBeenCalled();
   });
 
   test("reads a working copy owned by the caller", async () => {
