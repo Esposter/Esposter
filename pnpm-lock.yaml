@@ -505,8 +505,8 @@ catalogs:
       specifier: ^2.2.0
       version: 2.2.0
     node-html-parser:
-      specifier: ^9.0.0
-      version: 9.0.0
+      specifier: ^9.0.1
+      version: 9.0.1
     nuxt:
       specifier: ^4.5.1
       version: 4.5.1
@@ -1051,7 +1051,7 @@ importers:
         version: 2.2.0
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.0
+        version: 9.0.1
       p-progress:
         specifier: 'catalog:'
         version: 1.0.0
@@ -1340,7 +1340,7 @@ importers:
         version: 1.0.0-rc.4(@electric-sql/pglite@0.5.4)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.2(typescript@6.0.3))(zod@4.4.3)
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.0
+        version: 9.0.1
       postgres:
         specifier: 'catalog:'
         version: 3.4.9
@@ -1559,7 +1559,7 @@ importers:
         version: 3.0.2
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.0
+        version: 9.0.1
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -1741,7 +1741,7 @@ importers:
         version: 8.2.0
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.0
+        version: 9.0.1
       sanitize-html:
         specifier: 'catalog:'
         version: 2.17.6
@@ -11805,8 +11805,8 @@ packages:
     engines: {node: ^20.17.0 || >=22.9.0}
     hasBin: true
 
-  node-html-parser@9.0.0:
-    resolution: {integrity: sha512-MhdaHPyxnyYu/sf0TpiRvDnTrkum0UKHC7FdbDGIUQNlx3I7xzwXoyV0eMUMv/XU+lkJT1glOUzpDPq7b2p1Ew==}
+  node-html-parser@9.0.1:
+    resolution: {integrity: sha512-QrdiYYm1NnLRXsMXThUgVcF/syWfWIgHFmy8hylWMGFbHFtnRuXLBxxGQvIm3xaIJMUDJ0ayOmT/FGJYT3pZIw==}
 
   node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
@@ -26504,7 +26504,7 @@ snapshots:
       undici: 6.28.0
       which: 6.0.1
 
-  node-html-parser@9.0.0:
+  node-html-parser@9.0.1:
     dependencies:
       css-select: 5.2.2
       entities: 8.0.0
