@@ -59,11 +59,11 @@ catalog:
   "@panzoom/panzoom": ^4.6.2
   "@pinia/nuxt": ^1.0.1
   "@platformatic/vfs": ^0.4.0
-  "@pulumi/azure-native": ^3.23.0
+  "@pulumi/azure-native": ^3.24.0
   "@pulumi/github": ^6.14.1
   "@pulumi/pulumi": ^3.255.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^2.5.3
+  "@takumi-rs/core": ^2.5.4
   "@tiptap/core": ^3.29.2
   "@tiptap/extension-code-block-lowlight": ^3.29.2
   "@tiptap/extension-file-handler": ^3.29.2
@@ -198,7 +198,7 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.2.0
   read-excel-file: ^9.3.5
-  rolldown: ^1.2.0
+  rolldown: ^1.2.1
   rolldown-plugin-dts: ^0.27.14
   rxjs: ^7.8.2
   sanitize-html: ^2.17.6
