@@ -11,9 +11,12 @@ import { observable } from "@trpc/server/observable";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { navigateTo, session } = vi.hoisted(() => ({
+const { navigateTo, session, sessionScope } = vi.hoisted(() => ({
   navigateTo: vi.fn<(...args: Parameters<typeof import("#app/composables/router").navigateTo>) => void>(),
   session: { value: { data: null as null | { user: { id: string } }, isPending: false } },
+  // The scope that was active where the link read the session, which is what decides whether the subscription
+  // Better-auth opens is ever disposed
+  sessionScope: { current: undefined as unknown },
 }));
 
 // The auto-imported `navigateTo` would really navigate — mock the module the auto-import points at rather than
@@ -25,7 +28,15 @@ vi.mock(import("#app/composables/router"), async (importOriginal) => ({
 
 vi.mock(import("@/services/auth/authClient"), async (importOriginal) => {
   const original = await importOriginal();
-  return { authClient: { useSession: () => session } as unknown as typeof original.authClient };
+  const { getCurrentScope } = await import("vue");
+  return {
+    authClient: {
+      useSession: () => {
+        sessionScope.current = getCurrentScope();
+        return session;
+      },
+    } as unknown as typeof original.authClient,
+  };
 });
 
 describe(errorLink, () => {
@@ -70,6 +81,19 @@ describe(errorLink, () => {
     setActivePinia(createPinia());
     navigateTo.mockClear();
     session.value = { data: { user: { id: userId } }, isPending: false };
+    sessionScope.current = undefined;
+  });
+
+  // `useStore` registers its unsubscribe through `onScopeDispose`, which it only reaches when a scope is active,
+  // And the link's error callback runs inside a promise where none is. Read bare, every rejection would leave
+  // Another listener on the module-singleton session atom
+  test("reads the session inside an effect scope, so the subscription it opens can be disposed", async () => {
+    expect.hasAssertions();
+
+    session.value = { data: null, isPending: false };
+    await rejectThrough("UNAUTHORIZED");
+
+    expect(sessionScope.current).toBeDefined();
   });
 
   test("alerts a background rejection it owns, because no caller alerts a code the link claims", async () => {
