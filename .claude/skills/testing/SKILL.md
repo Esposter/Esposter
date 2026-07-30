@@ -168,6 +168,14 @@ When a service is mocked across multiple test files, create a colocated `*.test.
 
 **Reach for the colocated mock file before hand-rolling a factory.** A hand-rolled inline factory duplicates a double that usually already exists, and every file that rolls its own drifts from the others. Inline factories are fine where no colocated file exists — plenty of suites use them — but type the function itself (`vi.fn<() => Promise<Foo>>()`), never a bare `vi.fn()`: an untyped `vi.fn()` is `any`-shaped, so it silently stops matching the module's declared signature when that signature changes.
 
+**An inline factory reads its double through a `vi.hoisted` holder, never a plain `const`.** `vi.mock` is hoisted above file scope, so a factory closing over a file-scope binding throws a `ReferenceError` before the first test runs. Declare a mutable holder the factory reads and each test assigns, so the double stays per-test while the registration stays hoisted:
+
+```ts
+const { fooMock } = vi.hoisted(() => ({ fooMock: {} as { current: () => Promise<Bar> } }));
+
+vi.mock(import("@/services/getFoo"), () => ({ getFoo: () => fooMock.current() }));
+```
+
 ### Placement & export
 
 Place mock files directly next to the service, same directory, `.test.ts` suffix:
