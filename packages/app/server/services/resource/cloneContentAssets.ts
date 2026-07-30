@@ -16,7 +16,7 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
 import { copyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
-import { ID_SEPARATOR, settleAll } from "@esposter/shared";
+import { getOrCreate, ID_SEPARATOR, settleAll } from "@esposter/shared";
 
 // The rewrite entry for one working-copy asset url, or nothing when the referenced blob is missing — a
 // Dangling reference (the asset was deleted but the content still embeds its url) is data like an
@@ -81,13 +81,27 @@ export const cloneContentAssets = async <TContent>(
   // Readability is a property of the RESOURCE, not of the url, and content routinely names one resource's assets
   // Many times over (a logo repeated on every row, a gallery of a hundred images from one upload). Asked per url
   // That is two Drizzle queries each, unbounded and in parallel, for an answer already computed — so the promise
-  // Itself is cached, which also collapses the concurrent asks that a Promise.all issues before any of them lands
-  const isReadableMap = new Map<string, Promise<boolean>>();
-  const getIsReadable = (resourceAssetPath: ResourceAssetPath) => {
-    const key = `${resourceAssetPath.isPublished}/${resourceAssetPath.resourceId}`;
-    const isReadable = isReadableMap.get(key) ?? getIsResourceAssetReadable(db, resourceAssetPath, userId);
-    isReadableMap.set(key, isReadable);
-    return isReadable;
+  // Itself is cached, which also collapses the concurrent asks that a Promise.all issues before any of them lands.
+  // Cached as the two questions the answer is made of, each keyed by the resource alone, rather than as one answer
+  // Keyed by the url's kind: ownership answers a working-copy url and a published one alike, and it is exactly the
+  // Query the published branch falls through to when there is no publication row — so a single cache keyed by kind
+  // Issued that same ownership lookup twice for one resource, which is the duplication the cache exists to remove.
+  // Ownership is asked first for the same reason: it settles both kinds, and it costs nothing for an anonymous
+  // Caller, who has no ownership to check
+  const isOwnedMap = new Map<string, Promise<boolean>>();
+  const isPublishedReadableMap = new Map<string, Promise<boolean>>();
+  const getIsReadable = async ({ isPublished, resourceId }: ResourceAssetPath) => {
+    if (
+      await getOrCreate(isOwnedMap, resourceId, () =>
+        getIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId),
+      )
+    )
+      return true;
+    if (!isPublished) return false;
+
+    return getOrCreate(isPublishedReadableMap, resourceId, () =>
+      getIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId),
+    );
   };
   const clones = (
     await Promise.all(

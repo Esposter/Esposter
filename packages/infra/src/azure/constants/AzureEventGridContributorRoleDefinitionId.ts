@@ -1,6 +1,7 @@
 import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
 
-// `Microsoft.EventGrid/*`, where EventGrid EventSubscription Contributor stops at the standalone
+// EventGrid Contributor, whose actions cover `Microsoft.EventGrid/*`, where the narrower EventGrid
+// EventSubscription Contributor stops at the standalone
 // `Microsoft.EventGrid/eventSubscriptions/*` extension type. A subscription that lives under a topic is the
 // Separate `Microsoft.EventGrid/topics/eventSubscriptions` child type, which that role never grants — reading
 // One 403s under it. The assignments are scoped to a single topic, so this is full control of that topic alone

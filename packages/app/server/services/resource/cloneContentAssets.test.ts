@@ -153,4 +153,21 @@ describe(cloneContentAssets, () => {
     expect(clonedBlobNames).toHaveLength(2);
     expect(findFirstResource).toHaveBeenCalledTimes(1);
   });
+
+  // Content routinely names both kinds of one resource's urls at once — an exported published image pasted back
+  // Beside its own upload. Ownership answers both, so caching the answer per url kind asked it twice for one
+  // Resource, which is the duplication the cache exists to remove
+  test("asks the ownership question once for a resource named by both a working-copy and a published url", async () => {
+    expect.hasAssertions();
+
+    const content = {
+      html: `<img src="${getResourceAssetUrl(workingBlobName)}"><img src="${getResourceAssetUrl(publishedBlobName)}">`,
+    };
+    const { db, findFirstResource } = createDatabase(true);
+    await cloneContentAssets(db, userId, content, destinationDirectoryName);
+    const clonedBlobNames = await getClonedBlobNames();
+
+    expect(clonedBlobNames).toHaveLength(2);
+    expect(findFirstResource).toHaveBeenCalledTimes(1);
+  });
 });

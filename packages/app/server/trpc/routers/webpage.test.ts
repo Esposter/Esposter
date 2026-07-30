@@ -10,7 +10,7 @@ import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirecto
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
+import { createMockContext, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AzureContainer, resources, ResourceType } from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
@@ -138,24 +138,26 @@ describe("webpage", () => {
 
     const newResource = await caller.createResource({ name });
     const blobName = `${getFilesDirectoryName(newResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
-    // A genuinely published foreign resource, because the clone only follows urls the caller could read: a
-    // Published directory is anonymous-capable exactly while its publication row stands, so a url minted for a
-    // Resource that was never published is one nobody may read and the clone leaves it alone
+    // Owned by ANOTHER user and genuinely published, so the publication row is the only thing that makes its
+    // Published url readable here: the clone only follows urls the caller could read, and ownership — which
+    // Answers a url of their own either way — is what a same-caller fixture would have answered with instead
+    const foreignSession = await mockSessionOnce(mockContext.db);
     const foreignResource = await caller.createResource({ name });
+    replayMockSession(foreignSession);
     await caller.saveResourceContent({
       content: new WebpageEditor({ html: "a" }),
       contentVersion: foreignResource.contentVersion,
       id: foreignResource.id,
     });
+    replayMockSession(foreignSession);
     await caller.publishResource({ id: foreignResource.id });
     const publishedBlobName = `${createPublishedAssetsDirectoryName(foreignResource.id)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
-    MockContainerDatabase.set(
-      AzureContainer.ResourceAssets,
-      new Map([
-        [blobName, Buffer.alloc(1)],
-        [publishedBlobName, Buffer.alloc(1)],
-      ]),
-    );
+    // Added to the container rather than replacing it — the publish above wrote its own snapshot blob, and
+    // Discarding that leaves the fixture's publication with nothing behind it
+    const resourceAssets = MockContainerDatabase.get(AzureContainer.ResourceAssets) ?? new Map<string, Buffer>();
+    resourceAssets.set(blobName, Buffer.alloc(1));
+    resourceAssets.set(publishedBlobName, Buffer.alloc(1));
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, resourceAssets);
     const url = getResourceAssetUrl(blobName);
     const publishedUrl = getResourceAssetUrl(publishedBlobName);
     await caller.saveResourceContent({

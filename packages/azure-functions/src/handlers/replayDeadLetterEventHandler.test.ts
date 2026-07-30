@@ -13,6 +13,7 @@ import {
   DEAD_LETTER_ARCHIVED_PREFIX,
   DEAD_LETTER_BLOB_SUBJECT_PREFIX,
   DEAD_LETTER_QUARANTINE_PREFIX,
+  MAX_EVENT_GRID_PUBLISH_BYTES,
 } from "@esposter/db-schema";
 import { getResult, ID_SEPARATOR, noop } from "@esposter/shared";
 import { MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
@@ -280,6 +281,31 @@ describe(replayDeadLetterEventHandler, () => {
       `${AzureFunction.ReplayDeadLetterEvent} failed to archive ${blobName}: `,
       error,
     );
+  });
+
+  // A full dead-letter blob is by definition more than one publish request may carry, so the batch is chunked and
+  // Sent in sequence. Sent whole it would be rejected, redelivered identical, and burn every attempt on the same
+  // Oversized request until the blob's events were discarded — with nothing to dead-letter it in turn
+  test("publishes an oversized blob as several requests, covering every event", async () => {
+    expect.hasAssertions();
+
+    const oversizedData = "d".repeat(MAX_EVENT_GRID_PUBLISH_BYTES);
+    const deadLetteredEvents = [
+      { ...createDeadLetteredEvent(eventId), data: oversizedData },
+      { ...createDeadLetteredEvent(secondEventId), data: oversizedData },
+    ];
+    await seedBlob(JSON.stringify(deadLetteredEvents));
+    const sendSpy = vi.spyOn(eventGridPublisherClient, "send");
+
+    await expect(
+      replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context),
+    ).resolves.toBeUndefined();
+
+    expect(sendSpy).toHaveBeenCalledTimes(2);
+    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toStrictEqual([
+      { ...createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}1`), data: oversizedData },
+      { ...createDeadLetteredEvent(`${secondEventId}${ID_SEPARATOR}1`), data: oversizedData },
+    ]);
   });
 
   test("rethrows a failing send so Event Grid redelivers the blob", async () => {

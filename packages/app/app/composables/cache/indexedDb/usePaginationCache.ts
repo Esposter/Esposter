@@ -4,6 +4,7 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { IndexKey, IndexNames } from "idb";
 import type { Promisable } from "type-fest";
 
+import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -50,7 +51,7 @@ export const usePaginationCache = <
     () => {
       const currentItems = toValue(items);
       const writeItems = getWriteItems?.(currentItems) ?? currentItems;
-      return configuration.limit ? writeItems.slice(0, configuration.limit) : writeItems;
+      return getCachedItems(writeItems, configuration.limit);
     },
     (newItems) => {
       const partitionKeyValue = toValue(partitionKey);
