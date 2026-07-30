@@ -177,14 +177,14 @@ Best-effort means "its failure doesn't fail the caller" — it does not mean "no
 Await it in the function whose failure the rollback compensates, so the rollback cannot start before the write is durable:
 
 ```typescript
-// createResourceRow: the row and the activity entry opening its trail
-await writeResourceActivity({ activityType, resourceId: newResource.id, userId });
-return newResource;
+// The insert and the trail entry a rollback would delete cannot be allowed to drift apart
+await writeBar({ fooId: newFoo.id });
+return newFoo;
 ```
 
 The cost is one round trip, and nothing else — the effect already terminates its own `Result` (`getResultAsync(...).match(noop, console.error)`), so awaiting cannot fail the caller. Sibling emits on paths with no compensating cleanup stay fire-and-forget through `getSynchronizedFunction`; the exception is per-call-site, not per-helper, and the awaited call site says which cleanup it is racing.
 
-Ask it whenever a function has both a fire-and-forget tail and a failure path a caller rolls back through (`deleteCreatedResources` is the resource-side one): _does the rollback delete what the tail writes?_ `waitForSynchronizedFunctions()` is a test/shutdown drain, not the fix — it waits on every in-flight effect in the process, so it makes one race a global barrier.
+Ask it whenever a function has both a fire-and-forget tail and a failure path a caller rolls back through: _does the rollback delete what the tail writes?_ `waitForSynchronizedFunctions()` is a test/shutdown drain, not the fix — it waits on every in-flight effect in the process, so it makes one race a global barrier.
 
 ## Azure Functions (EventGrid handlers): logging & retry
 
