@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* address local code review findings on PR [#1027](https://github.com/Esposter/Esposter/issues/1027) ([e9d5c10](https://github.com/Esposter/Esposter/commit/e9d5c104290331de9b86a94c0886b1a71503389f))
+* docs and snapshots ([211fee5](https://github.com/Esposter/Esposter/commit/211fee5280c8f3697cf021800178ed5be0edee7c))
+* search the end marker after the begin marker, and scope typedoc entrypoints ([d5b0991](https://github.com/Esposter/Esposter/commit/d5b0991def5b4e32717805ac45369e60945b7740))
+* **shared-node:** validate dead-letter blobs and add a replay entry point ([a48d6ff](https://github.com/Esposter/Esposter/commit/a48d6ff0182eeeb3b79879b6b4b0af4d1acd5e97))
+* snapshots ([f5eadf4](https://github.com/Esposter/Esposter/commit/f5eadf4a15126ab6c3de9d088f1419bd6ea625db))
+* sort buildDriftReport test map entries (perfectionist/sort-maps) ([7ad3b38](https://github.com/Esposter/Esposter/commit/7ad3b38c5c41d2ed3c197159695d6715ebc71313))
+* tests and virrun ([eef931f](https://github.com/Esposter/Esposter/commit/eef931f4af59f56934391cf81d63bfa88b092044))
+* update snapshots ([ba935c5](https://github.com/Esposter/Esposter/commit/ba935c539d05bee6423cc71fa3fcab21a3278708))
+* wip ([efe6f55](https://github.com/Esposter/Esposter/commit/efe6f553039e9e05c48ed7600073748038a75f6d))
+
+### Features
+
+* **infra:** Event Grid dead-letter container, retry tightening, and replay script ([df83e24](https://github.com/Esposter/Esposter/commit/df83e246ced8a7be1d5ce415544ca7e5ac0d09e1))
+* message search index status + rebuild tooling ([65149f2](https://github.com/Esposter/Esposter/commit/65149f2715979273e132b5c0aeda4de7bbb1c448))
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Bug Fixes

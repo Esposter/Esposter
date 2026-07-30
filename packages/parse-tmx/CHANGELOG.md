@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* cleanup oxlint ([afcf55c](https://github.com/Esposter/Esposter/commit/afcf55c376dbfb2fc0e3ae0dab1a27d679546170))
+* lint ([88f6724](https://github.com/Esposter/Esposter/commit/88f67243af9536f409658d4a17aa481ba5b8657d))
+* lint ([35d371f](https://github.com/Esposter/Esposter/commit/35d371f0b3654eec75212f387a7e03bffd7f41fa))
+* lint develop and refresh package size snapshots ([bb0c40e](https://github.com/Esposter/Esposter/commit/bb0c40e872cdb23e03c9ed7c2931b1479310ed8c))
+* more lint ([9625e7b](https://github.com/Esposter/Esposter/commit/9625e7bba87ea2bccdf00fee6fc91ef5dfc9fbbf))
+* re-enable no-shadow and rename all shadowing variables ([0faab46](https://github.com/Esposter/Esposter/commit/0faab46e00078013464161144498ad94d1ac866e))
+* remove unnecessary lints ([0db3054](https://github.com/Esposter/Esposter/commit/0db3054ddc6808b7cb09912820f66b27d4858450))
+* restore lint suppressions as oxlint-disable directives ([4085893](https://github.com/Esposter/Esposter/commit/4085893e4972dd5deb290524a3b05930a45a8d78))
+* some bugs ([ce9954b](https://github.com/Esposter/Esposter/commit/ce9954b2d1317fee34cf51419e0846ef528168b7))
+* update parse-tmx size snapshots after #name field change ([798f43e](https://github.com/Esposter/Esposter/commit/798f43e2805d170ecd9f1061508bc85e635b1ee5)), closes [#name](https://github.com/Esposter/Esposter/issues/name)
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Bug Fixes

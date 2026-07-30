@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* add back project service for neverthrow ([a7a3715](https://github.com/Esposter/Esposter/commit/a7a37156f1cd8143a5fc264527e3f1a74453e175))
+* address CodeRabbit PR 1008 review findings and lint ([91a43f8](https://github.com/Esposter/Esposter/commit/91a43f8724a09b2b56a61564b91e7dfa4805d42b))
+* cleanup oxlint ([7dc6528](https://github.com/Esposter/Esposter/commit/7dc6528314e490df26fbe96dead2a37a75f9a5e2))
+* close cross-feature gaps in guard, rollback and revert paths ([eac8e17](https://github.com/Esposter/Esposter/commit/eac8e17afc5be3d37a54605e4a2fa1d1e4b6b7db))
+* code review comments ([420ea0c](https://github.com/Esposter/Esposter/commit/420ea0cd7fc89253d1ef2605a6f5cd358a28a6c2))
+* code review comments ([da0c931](https://github.com/Esposter/Esposter/commit/da0c93177206f8337a1873c0ab2e9a12037d882a))
+* consolidate app lint scripts + add storage-quotas proposal ([5ce7605](https://github.com/Esposter/Esposter/commit/5ce76057d85db12576fe46656ffa5fcd226b9afc))
+* docs ([f7ae114](https://github.com/Esposter/Esposter/commit/f7ae114e45ec268afb6e23f1219812ed6433c275))
+* imports ([2acb66c](https://github.com/Esposter/Esposter/commit/2acb66cac6ff5f1a95cc1b6d0668e0d41b220f17))
+* imports ([dd71067](https://github.com/Esposter/Esposter/commit/dd71067e598ca1698355b9d2d5b4f9b114401ea8))
+* lint ([88f6724](https://github.com/Esposter/Esposter/commit/88f67243af9536f409658d4a17aa481ba5b8657d))
+* lint ([a4868db](https://github.com/Esposter/Esposter/commit/a4868db6ed6a8557dd796e3cc03a87689409a1bc))
+* lint ([02e2c1f](https://github.com/Esposter/Esposter/commit/02e2c1f5ef10f225c6cd253ab7a1b30ea47f4829))
+* lint ([cf249c1](https://github.com/Esposter/Esposter/commit/cf249c18d6e7b77fc0be76fbbb6217a5bfeba06d))
+* lint ([a267140](https://github.com/Esposter/Esposter/commit/a267140ca8dc8d691db49ca89edd306ceae89faf))
+* record the facts these fixes kept guessing at ([376dbb0](https://github.com/Esposter/Esposter/commit/376dbb0c56b264b4128e3da56377e6d9be5928b1))
+* remove unused file ([e748545](https://github.com/Esposter/Esposter/commit/e748545fccf1f99a973084eade1559653b98f341))
+* snapshots ([1fb43ed](https://github.com/Esposter/Esposter/commit/1fb43ede8f60c88b112083c5f01f06c3d8091808))
+* snapshots ([d505054](https://github.com/Esposter/Esposter/commit/d505054f6b852fca4fb57131c682cc8a8e1d7466))
+* snapshots ([e55471d](https://github.com/Esposter/Esposter/commit/e55471d43085dd03cc7f0cc8ba7866e09486767c))
+* snapshots and options ([e274338](https://github.com/Esposter/Esposter/commit/e2743386cda848caad3377c1b199e7924c2cd0f0))
+* some bugs ([ce9954b](https://github.com/Esposter/Esposter/commit/ce9954b2d1317fee34cf51419e0846ef528168b7))
+
+### Features
+
+* **resource:** soft delete, favorites, tags, activity log, trigram search ([f741b0f](https://github.com/Esposter/Esposter/commit/f741b0ff4d11082a14be098ab95d3ca9497b06ad))
+
+### Performance Improvements
+
+* stop double-linting oxlint-covered rules in eslint ([e30e92a](https://github.com/Esposter/Esposter/commit/e30e92aeee573c1a8bfe042fc137d9f1185b248e))
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Bug Fixes

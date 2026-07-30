@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* address code review findings on blob lifecycle and attachment urls ([b6213bf](https://github.com/Esposter/Esposter/commit/b6213bfb0d8f9d8544051da920c0abe2718a5d2c))
+* address CodeRabbit review findings on PR [#1027](https://github.com/Esposter/Esposter/issues/1027) ([20edca9](https://github.com/Esposter/Esposter/commit/20edca938c715efb797e52eb80f52141224bb30e))
+* address PR 1001 and 1003 post-merge review findings ([ad04d84](https://github.com/Esposter/Esposter/commit/ad04d8494b14f86b567b1f0be766ee22a9d026ad))
+* CI virrun shim + stale bundle-size snapshots ([b64c9a6](https://github.com/Esposter/Esposter/commit/b64c9a67704629c00780afaaee26b7745d2529cc))
+* close the defects the previous fix round introduced ([d7676dc](https://github.com/Esposter/Esposter/commit/d7676dcd3604ee36b014f3daec203f28ba8e02d9))
+* close the develop -> main review findings ([5e0046b](https://github.com/Esposter/Esposter/commit/5e0046b1d0170a85ac8537ba9696666300c27e69))
+* close the third CodeRabbit round on the develop -> main PR ([cd144f0](https://github.com/Esposter/Esposter/commit/cd144f0ed9865c8885d21248a52031ffb4409cdd))
+* code review comments ([208fbbe](https://github.com/Esposter/Esposter/commit/208fbbe1545def1aa33c701f33124635d707858d))
+* comments and snapshots ([2bd05d9](https://github.com/Esposter/Esposter/commit/2bd05d9ac2e6be0304bf06fb569663578fced448))
+* lint and snapshot ([c3710a9](https://github.com/Esposter/Esposter/commit/c3710a9eed9e42b25f44d5741693143f939469c2))
+* lint and snapshots ([678a3e1](https://github.com/Esposter/Esposter/commit/678a3e12af21e1a73a6bcdae5d77fbb279ce0498))
+* post-merge integration fallout ([d7f882c](https://github.com/Esposter/Esposter/commit/d7f882cbef6cf79fc4aa781366b27a6bababdb47))
+* record the facts these fixes kept guessing at ([376dbb0](https://github.com/Esposter/Esposter/commit/376dbb0c56b264b4128e3da56377e6d9be5928b1))
+* snapshots ([1fb43ed](https://github.com/Esposter/Esposter/commit/1fb43ede8f60c88b112083c5f01f06c3d8091808))
+* snapshots ([d505054](https://github.com/Esposter/Esposter/commit/d505054f6b852fca4fb57131c682cc8a8e1d7466))
+* submit batches ([b922958](https://github.com/Esposter/Esposter/commit/b922958647d3c5d3085b50aab3b6a82cf728f5f4))
+* tests ([097d9e2](https://github.com/Esposter/Esposter/commit/097d9e2014015556c3da43009d71024ae22de2bd))
+* tests ([97bdc81](https://github.com/Esposter/Esposter/commit/97bdc81353183907175d54eb2e6f7cd2cd863a4f))
+* update program invites ([3e6f1fe](https://github.com/Esposter/Esposter/commit/3e6f1fe94d0d31eea90fcbbbbd16df84231d1e17))
+* wip ([60a99b8](https://github.com/Esposter/Esposter/commit/60a99b8dde872db6cbc0dd5ac1e006439f3e2881))
+
+### Features
+
+* stable asset urls wip ([53846a3](https://github.com/Esposter/Esposter/commit/53846a35e52d4980cdd5389f754fdae487fb8d54))
+
+### Performance Improvements
+
+* **message:** read the create-message gate once instead of rule by rule ([ffa0e59](https://github.com/Esposter/Esposter/commit/ffa0e594d0aa3c7609f51105a4cce7eeade30aab))
+* **program:** batch participant inserts into one transaction per 100 ([67f5c86](https://github.com/Esposter/Esposter/commit/67f5c865e40c3cc65590ddcffa9380338a9647a2))
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Bug Fixes
