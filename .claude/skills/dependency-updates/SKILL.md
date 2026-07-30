@@ -49,7 +49,8 @@ When `@electric-sql/pglite` changes between minor versions, regenerate the db-mo
 
 ## Exact-pinned packages (no caret)
 
-- **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (`1.0.0-rc.2`, no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
+- **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
+- **`typescript`** — pinned exact so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`). A TypeScript major ripples through `vue-tsc`, `typescript-eslint`, `oxlint-tsgolint`, and `@typescript/native-preview` at once, so it moves only as a deliberate, dedicated pass. Unpin (restore the `^`) only for the duration of that pass.
 
 ## Version-capped packages (keep the caret, cap the range)
 
@@ -57,9 +58,7 @@ When `@electric-sql/pglite` changes between minor versions, regenerate the db-mo
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 
-Temporary overrides that force a transitive dep to a safe version (currently `crossws`, `h3`, `pdfjs-dist`, `vite`, `vue-router`, `yuku-parser`). Remove when the upstream package catches up — most carry no comment explaining why, so check git blame before removing one.
-
-- **`yuku-parser`** — exact-pinned to `0.6.5`: 0.6.6+ removed the `walk` export that `rolldown-plugin-dts` imports unconditionally, which breaks every rolldown build and vitest run through the shared configs. Lift the pin only after `rolldown-plugin-dts` stops importing `walk` (verify with a clean install + any package's `pnpm build`).
+Temporary overrides that force a transitive dep to a safe version (currently `crossws`, `h3`, `pdfjs-dist`, `vite`). Remove when the upstream package catches up — most carry no comment explaining why, so check git blame before removing one.
 
 ## Tracked issues (update normally, but watch these)
 
@@ -76,6 +75,6 @@ Evidence: `db-schema`/`db`/`db-mock` declare `drizzle-orm` as a peer only (no de
 
 ## Caret rules
 
-Every catalog entry has `^` except the exact-pinned packages listed above (currently only `drizzle-kit` and `drizzle-orm`). Note `h3` **has** a caret — it is capped by policy, not by a missing `^`.
+Every catalog entry has `^` except the exact-pinned packages listed above (`drizzle-kit`, `drizzle-orm`, `typescript`). Note `h3` **has** a caret — it is capped by policy, not by a missing `^`.
 
 Before adding a `^` to a caret-less entry, check it against the exact-pinned list; if it's there, leave it alone. If it isn't, the missing caret is likely an oversight — add it.
