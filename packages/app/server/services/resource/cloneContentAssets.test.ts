@@ -170,4 +170,19 @@ describe(cloneContentAssets, () => {
     expect(clonedBlobNames).toHaveLength(2);
     expect(findFirstResource).toHaveBeenCalledTimes(1);
   });
+
+  // The published check falls through to ownership when the publication row is gone, so asking it with the caller
+  // Would re-issue the query whose answer already sent us down this branch
+  test("never re-asks ownership for a published url whose publication row is gone", async () => {
+    expect.hasAssertions();
+
+    const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
+    const { db, findFirstResource } = createDatabase(false);
+    const clonedContent = await cloneContentAssets(db, userId, content, destinationDirectoryName);
+    const clonedBlobNames = await getClonedBlobNames();
+
+    expect(clonedBlobNames).toHaveLength(0);
+    expect(clonedContent.html).toContain(getResourceAssetUrl(publishedBlobName));
+    expect(findFirstResource).toHaveBeenCalledTimes(1);
+  });
 });

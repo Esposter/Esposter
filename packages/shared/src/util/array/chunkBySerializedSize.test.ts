@@ -16,11 +16,24 @@ describe(chunkBySerializedSize, () => {
   test("splits on the byte budget", () => {
     expect.hasAssertions();
 
-    // `"a"` plus its separating comma is 4 bytes, so a 9-byte budget takes two per chunk
+    // `"a"` plus its separating comma is 4 bytes, and the enclosing brackets cost one more than the comma
+    // Charged to the first item, so a 9-byte budget takes two per chunk
     expect(chunkBySerializedSize(["a", "b", "c", "d"], 9, maxCount)).toStrictEqual([
       ["a", "b"],
       ["c", "d"],
     ]);
+  });
+
+  // The budget is the size of the request the service receives, which is the whole serialized array — a chunk
+  // Measured as its items alone is accepted at the cap and rejected one byte over it
+  test("counts the enclosing brackets against the byte budget", () => {
+    expect.hasAssertions();
+
+    const chunks = chunkBySerializedSize(["a", "b"], 8, maxCount);
+
+    expect(chunks).toStrictEqual([["a"], ["b"]]);
+
+    for (const chunk of chunks) expect(new TextEncoder().encode(JSON.stringify(chunk)).length).toBeLessThanOrEqual(8);
   });
 
   test("splits on the count bound before the byte budget is reached", () => {

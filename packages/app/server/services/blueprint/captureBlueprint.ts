@@ -7,10 +7,10 @@ import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/bu
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { createInvalidBlueprintError } from "@@/server/services/blueprint/createInvalidBlueprintError";
-import { deleteBlueprintResources } from "@@/server/services/blueprint/deleteBlueprintResources";
 import { getBlueprintEntryKeys } from "@@/server/services/blueprint/getBlueprintEntryKeys";
 import { rewriteIdsToAliases } from "@@/server/services/blueprint/rewriteIdsToAliases";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { AzureContainer, DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
@@ -68,7 +68,7 @@ export const captureBlueprint = async (ctx: AuthedContext, ids: Resource["id"][]
   ).match(noop, async (error) => {
     // The manifest is the blueprint's entire content, so never leave a row pointing at a manifest that
     // Does not exist — nor, when the upload failed after committing, a manifest blob no row can reach
-    await deleteBlueprintResources(ctx, [newBlueprint.id]);
+    await deleteCreatedResources(ctx, [newBlueprint.id]);
     throw error;
   });
   return newBlueprint;

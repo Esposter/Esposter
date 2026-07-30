@@ -20,6 +20,7 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
@@ -211,18 +212,8 @@ export const resourceRouter = router({
       if (content === undefined) return;
       await storeSelfContainedContent(ctx.db, ctx.getSessionPayload.user.id, newResource.id, content);
     }).match(noop, async (error) => {
-      // Never leave a content-less orphan copy behind when the content clone fails. Ordered like purgeResource:
-      // Partially cloned blobs first (already-gone is success), the row last as the durable marker — a failed
-      // Blob cleanup keeps the copy reachable through the resource API instead of stranding its blobs.
-      // The cleanup can itself fail (deleteDirectory throws on any failed sub-response), and it must never
-      // Take the row delete or the original error down with it: the caller would then be told a blob delete
-      // Failed instead of why the duplicate did, and be left with the orphan row this whole path exists to
-      // Prevent — the strictly worse outcome of the two the cleanup is choosing between
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      await getResultAsync(async () => {
-        await deleteDirectory(containerClient, newResource.id);
-      }).match(noop, console.error);
-      await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
+      // Never leave a content-less orphan copy behind when the content clone fails
+      await deleteCreatedResources(ctx, [newResource.id]);
       throw error;
     });
     return newResource;

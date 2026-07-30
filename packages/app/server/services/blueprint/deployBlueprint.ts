@@ -3,13 +3,13 @@ import type { BlueprintResource } from "#shared/models/resource/blueprint/Bluepr
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
-import { deleteBlueprintResources } from "@@/server/services/blueprint/deleteBlueprintResources";
 import { mapBlueprintEntryContentStrings } from "@@/server/services/blueprint/mapBlueprintEntryContentStrings";
 import { sortBlueprintEntriesTopologically } from "@@/server/services/blueprint/sortBlueprintEntriesTopologically";
 import { substituteBlueprintEntryAliasTokens } from "@@/server/services/blueprint/substituteBlueprintEntryAliasTokens";
 import { substituteBlueprintParameterTokens } from "@@/server/services/blueprint/substituteBlueprintParameterTokens";
 import { validateBlueprintEntries } from "@@/server/services/blueprint/validateBlueprintEntries";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
 import { AzureContainer } from "@esposter/db-schema";
@@ -60,7 +60,7 @@ export const deployBlueprint = async (
       runAfterSaveResourceContent(ctx, newResource, content);
     }
   }).match(noop, async (error) => {
-    await deleteBlueprintResources(ctx, createdIds);
+    await deleteCreatedResources(ctx, createdIds);
     throw error;
   });
   return deployments;

@@ -10,9 +10,10 @@ import { Operation } from "@esposter/shared";
 // Every path that brings a resource into existence — create, duplicate, blueprint capture and deploy —
 // Inserts the row through here, so the row and the activity entry opening its trail cannot drift apart.
 // A trail that starts at the first manual save cannot say when or how the resource came to exist.
-// The entry is written at insert time rather than once the caller's follow-up work is durable, so a create
-// Its caller rolls back (a failed content clone, a failed deploy) leaves its activity entry behind. Nothing
-// Reclaims it: the entry is unreachable once the row is gone, since reading a trail is gated on the row
+// The entry is written at insert time rather than once the caller's follow-up work is durable, so that no path
+// Can insert a row and forget it. A create its caller rolls back (a failed content clone, a failed deploy) would
+// Otherwise strand the entry — unreachable once the row is gone, since reading a trail is gated on the row — so
+// The compensating cleanup those callers roll back through drops the trail with the row (deleteCreatedResources)
 export const createResourceRow = async (
   ctx: AuthedContext,
   values: { name: Resource["name"]; tags?: ResourceTags; type: ResourceType },

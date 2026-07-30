@@ -99,8 +99,11 @@ export const cloneContentAssets = async <TContent>(
       return true;
     if (!isPublished) return false;
 
+    // Asked without the caller: ownership is the branch the published check falls through to when there is no
+    // Publication row, and it has already answered no for this resource — passing them here would issue that
+    // Same query a second time to learn it again
     return getOrCreate(isPublishedReadableMap, resourceId, () =>
-      getIsResourceAssetReadable(db, { isPublished: true, resourceId }, userId),
+      getIsResourceAssetReadable(db, { isPublished: true, resourceId }),
     );
   };
   const clones = (
