@@ -76,6 +76,18 @@ Only a `409` may fall back — any other failure is a real fault and must propag
 
 `MockTableClient.submitTransaction` applies its actions **synchronously** precisely so this is testable: awaiting between actions would let a concurrent caller interleave writes that the rollback then drops. Trust it to model atomicity faithfully under `Promise.all` in tests.
 
+## Intercepting a Write in a Test
+
+`useTableClient` builds a fresh client per call (`getTableClient` → `TableClient.fromConnectionString`, plus an idempotent `createTable`), so a `vi.spyOn` on a client the test obtained never sees the write the code under test performs. Read the written entities back through `listEntities` against `MockTableDatabase` — the default, since it exercises the real serialization — and mock the **composable** only when the test needs to control the write's timing rather than its result:
+
+```typescript
+// The composable is generic over the table, so the stub answers with the caller's entity type
+vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
+  useTableClient: <TAzureTable extends AzureTable>() =>
+    Promise.resolve(tableClientMock.current as unknown as CustomTableClient<AzureTableEntityMap[TAzureTable]>),
+}));
+```
+
 ## Testing Pagination Boundaries
 
 Use `AZURE_MAX_PAGE_SIZE + 1` records to cross a page boundary:
