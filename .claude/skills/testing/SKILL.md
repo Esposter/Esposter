@@ -168,6 +168,14 @@ When a service is mocked across multiple test files, create a colocated `*.test.
 
 **Reach for the colocated mock file before hand-rolling a factory.** A hand-rolled inline factory duplicates a double that usually already exists, and every file that rolls its own drifts from the others. Inline factories are fine where no colocated file exists — plenty of suites use them — but type the function itself (`vi.fn<() => Promise<Foo>>()`), never a bare `vi.fn()`: an untyped `vi.fn()` is `any`-shaped, so it silently stops matching the module's declared signature when that signature changes.
 
+**An inline factory reads its double through a `vi.hoisted` holder, never a plain `const`.** `vi.mock` is hoisted above file scope, so a factory closing over a file-scope binding throws a `ReferenceError` before the first test runs. Declare a mutable holder the factory reads and each test assigns, so the double stays per-test while the registration stays hoisted:
+
+```ts
+const { fooMock } = vi.hoisted(() => ({ fooMock: {} as { current: () => Promise<Bar> } }));
+
+vi.mock(import("@/services/getFoo"), () => ({ getFoo: () => fooMock.current() }));
+```
+
 ### Placement & export
 
 Place mock files directly next to the service, same directory, `.test.ts` suffix:
@@ -268,6 +276,7 @@ afterEach(() => vi.unstubAllGlobals());
 - **Fake timers** — `vi.useFakeTimers({ now: 0 })` in `beforeEach`, `vi.useRealTimers()` in `afterEach`; the restore belongs to the hook whichever way the fake was installed, and the next bullet is the one case the install itself moves into a test. The `now` pins the clock at install so `Date.now()`/`new Date()` are deterministic (epoch) — never `useFakeTimers()` followed by `setSystemTime(0)`. `vi.useFakeTimers()` already fakes `Date`, so no `toFake` option is needed unless a test asserts on specific non-Date timer behavior.
 - **When only one test in a suite needs to move the clock**, fake it in that test but still restore in the suite's `afterEach` — never beside the assertion. `vi.useRealTimers()` written after an `await expect(...)` is skipped the moment that assertion rejects, and every later test in the file then inherits a frozen clock and fails for a reason none of them contain. The restore is unconditional or it is not cleanup, which is the same reason DB rows and global stubs are torn down in `afterEach` rather than at the end of the test that made them.
 - **Never force past/future time with large arbitrary offsets** — `new Date(Date.now() + 999_999_999)` or `slowmodeMs: 999_999_999` are banned (unstable, unreadable). With a pinned clock, use the minimal offset: `new Date(Date.now() + 1)` for "1ms in the future", `slowmodeMs: 1` + `lastMessageAt: new Date()` for "no time elapsed", and `vi.advanceTimersByTime(1)` when a test needs time to pass.
+- **To prove something is awaited, gate it and drain once.** An ordering contract ("the caller does not return until its side effect is durable") is untestable by observing the side effect afterwards — every assertion that reads it `await`s something first, which hands the fire-and-forget chain the turns it needed, so the test passes against the bug. Instead make the dependency block: stub the client so the write returns a promise the test resolves by hand, start the call without awaiting it, drain past one timer boundary (`await new Promise((resolve) => { setTimeout(resolve); })`), and assert the caller has **not** settled. Then release and await it. A single one-shot boundary flushes every pending microtask and re-checks nothing, so it is not polling. Verify the test fails against the un-awaited version before keeping it — that is the whole value of an ordering test.
 - **Polling is banned — CRITICAL, repo-wide** (`expect.poll`, `vi.waitFor`, retry-until loops; the first two are lint-enforced via `no-restricted-syntax`). Await the real completion signal instead: promises, `flushPromises()`, emitted events, or `waitForSynchronizedFunctions()` for fire-and-forget work through `getSynchronizedFunction`. Full standard: `content/docs/architecture/no-polling.md`.
 
 ## Vitest Environment

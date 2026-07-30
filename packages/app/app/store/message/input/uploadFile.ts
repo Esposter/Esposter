@@ -9,10 +9,21 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const {
-    data: files,
+    data: allFiles,
     getData: getFiles,
     setData: setFiles,
   } = useDataMap<FileEntity[]>(() => roomStore.currentRoomId, []);
+  // The attachments a send has taken but the server has not answered for. Tracked as ids rather than moved out
+  // Of `allFiles`, because everything that makes a rejection recoverable — the upload grant, the preview url —
+  // Hangs off the row, and removing the row destroys both
+  const {
+    data: sendingFileIds,
+    getData: getSendingFileIds,
+    setData: setSendingFileIds,
+  } = useDataMap(() => roomStore.currentRoomId, new Set<string>());
+  // The composer's own view, which is also the send's payload source and the delete affordance's list: an
+  // Attachment in flight is in none of them, so the next Enter cannot post a second message naming its blob
+  const files = computed(() => allFiles.value.filter(({ id }) => !sendingFileIds.value.has(id)));
   const {
     data: fileUrlMap,
     getData: getFileUrlMap,
@@ -77,6 +88,21 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     for (const file of roomFiles) if (idSet.has(file.id)) file.hasThumbnail = true;
     setFiles(roomId, roomFiles);
   };
+  // Holds the attachments a send took: they stay in the store with their grants, out of the composer, until the
+  // Server answers one way or the other
+  const holdSendUploadFiles = (roomId: string, ids: string[]) => {
+    const roomSendingFileIds = getSendingFileIds(roomId) ?? new Set<string>();
+    for (const id of ids) roomSendingFileIds.add(id);
+    setSendingFileIds(roomId, roomSendingFileIds);
+  };
+  // Hands held attachments back to the composer, grants and previews intact
+  const releaseSendUploadFiles = (roomId: string, ids: string[]) => {
+    const roomSendingFileIds = getSendingFileIds(roomId);
+    if (!roomSendingFileIds) return;
+
+    for (const id of ids) roomSendingFileIds.delete(id);
+    setSendingFileIds(roomId, roomSendingFileIds);
+  };
   // Takes files out of the composer and nothing more — for the send, whose blobs are now referenced by a
   // Persisted message. Returns what it took out, because a discard has to name those files to reclaim them.
   const removeUploadFiles = (roomId: string, ids: string[]): FileEntity[] => {
@@ -99,6 +125,9 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
       roomId,
       roomFiles.filter(({ id }) => !idSet.has(id)),
     );
+    // Whatever brought the row here, it is gone — so the hold that was keeping it out of the composer goes with
+    // It, rather than accumulating an id for a row nothing can name again
+    releaseSendUploadFiles(roomId, ids);
     return removedFiles;
   };
   // The one way an attachment leaves the composer WITHOUT being sent, and therefore the one place its blobs are
@@ -134,12 +163,23 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
 
     await discardUploadFiles(roomId, ids);
   };
-  // Keyed by the room the send was for, like every other composer write here: the reset runs behind the optimistic
-  // Bubble, so the current room can already be a different one by the time it fires.
-  // Removes without discarding — the send is the one exit where the blobs stay: a persisted message now
-  // References them, so reclaiming here would delete the attachments of a message that was just posted.
-  MessageHookMap.ResetSend.register((roomId) => {
-    removeUploadFiles(roomId, getFiles(roomId)?.map(({ id }) => id) ?? []);
+  // Keyed by the room the send was for AND by the ids that send persisted, like every other composer write here:
+  // The hold and the commit both run behind the send, so by the time either fires the current room can already
+  // Be a different one and the composer can already hold an attachment the user picked for their NEXT message.
+  // Acting on everything the room holds now would take that one with it.
+  // The attachments leave the composer at the bubble and are dropped for good only once the server accepts —
+  // Removal is not a discard, since a persisted message now references those blobs, and the upload grants are
+  // The only thing that can ever name them again. Dropped at the bubble, a send the server then rejects
+  // (slowmode, the word filter) would leave the blobs referenced by no message and reclaimable by nothing, and
+  // The user re-picking every attachment to try again
+  MessageHookMap.ResetSend.register((roomId, fileIds) => {
+    holdSendUploadFiles(roomId, fileIds);
+  });
+  MessageHookMap.CommitSend.register((roomId, fileIds) => {
+    removeUploadFiles(roomId, fileIds);
+  });
+  MessageHookMap.RollbackSend.register((roomId, fileIds) => {
+    releaseSendUploadFiles(roomId, fileIds);
   });
   return {
     discardCurrentUploadFiles,

@@ -106,6 +106,49 @@ describe("blueprint", () => {
     expect(programs.items).toStrictEqual([]);
   });
 
+  test("deploys a nested blueprint entry without resolving its manifest's own tokens", async () => {
+    expect.hasAssertions();
+
+    const childManifest: BlueprintResource = {
+      entries: [
+        { content: {}, key: "leaf", name: "{{parameter:client}}", type: ResourceType.Program },
+        {
+          content: { audience: null, emailId: "{{entry:leaf}}", keyColumn: "", surveyId: "" },
+          key: "inner",
+          name: "inner",
+          type: ResourceType.Program,
+        },
+      ],
+      parameters: [],
+    };
+    const blueprint = await createBlueprint({
+      entries: [{ content: childManifest, key: "child", name: "child", type: ResourceType.Blueprint }],
+      parameters: [{ defaultValue: "", description: "", key: "client", title: "Client" }],
+    });
+    const deployments = await caller.deployBlueprint({ id: blueprint.id, parameterValues: { client: "Acme" } });
+    const child = deployments.find(({ key }) => key === "child");
+    assert.exists(child);
+    const deployedManifest = await caller.readResourceContent({ id: child.resource.id });
+
+    // The child's tokens name the child's own entries and parameters, so this deploy neither rejects
+    // {{entry:leaf}} as an unknown reference nor substitutes its own id or parameter value into them
+    expect(deployedManifest).toStrictEqual(childManifest);
+  });
+
+  test("captures a resource whose content was never written, and deploys it", async () => {
+    expect.hasAssertions();
+
+    const audience = await programCaller.createResource({ name: "a" });
+    const blueprint = await caller.captureBlueprint({ ids: [audience.id], name });
+    const deployments = await caller.deployBlueprint({ id: blueprint.id, parameterValues: {} });
+    const deployed = deployments.find(({ key }) => key === "a");
+    assert.exists(deployed);
+
+    // A content-less source deploys to a content-less resource — the state it is actually in. Standing an
+    // Empty object in instead would fail every deploy against the type's own schema
+    await expect(programCaller.readResourceContent({ id: deployed.resource.id })).resolves.toBeUndefined();
+  });
+
   test("fails deploy with non-existent id", async () => {
     expect.hasAssertions();
 

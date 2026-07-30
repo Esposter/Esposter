@@ -25,7 +25,12 @@ const rowStore = useRowStore();
 const { filteredRows, itemsPerPage, page, rowIndexIdMap, search, selectedRowIds, sortBy, tableHeaders } =
   storeToRefs(rowStore);
 const rowDialogStore = useRowDialogStore();
-const editingRow = computed(() => filteredRows.value.find(({ id }) => id === rowDialogStore.editingId));
+const { editingId } = storeToRefs(rowDialogStore);
+// Resolved through the target so a filter, a search or a delete that takes the row out of the table drops the
+// Target with it, instead of re-opening the edit dialog over that row the next time it is back in `filteredRows`
+const { item: editingRow } = useSingletonDialog(editingId, () =>
+  filteredRows.value.find(({ id }) => id === editingId.value),
+);
 const reorderRows = useReorderRows();
 const dragRows = computed({
   get: () => {

@@ -1,4 +1,6 @@
 import type { ContainerClient } from "@azure/storage-blob";
+import type { relations } from "@esposter/db-schema";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
@@ -16,6 +18,7 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
 }));
 
 describe(cloneContentAssets, () => {
+  const userId = crypto.randomUUID();
   const sourceResourceId = crypto.randomUUID();
   const destinationResourceId = crypto.randomUUID();
   const fileId = crypto.randomUUID();
@@ -24,7 +27,24 @@ describe(cloneContentAssets, () => {
   const destinationDirectoryName = destinationResourceId;
   const filesRelativeName = `${FILES_DIRECTORY_SEGMENT}/${fileId}${ID_SEPARATOR}${filename}`;
   const workingBlobName = `${sourceResourceId}/${filesRelativeName}`;
+  const siblingWorkingBlobName = `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
   const publishedBlobName = `${sourceResourceId}/${PUBLISHED_DIRECTORY_SEGMENT}/${crypto.randomUUID()}/${filesRelativeName}`;
+  // The clone asks the same question the serving endpoint does, so the rows that answer it are what a case here
+  // Varies: an owned working copy is readable, an unowned one is not, and neither has a publication row
+  const createDatabase = (isOwned: boolean) => {
+    const findFirstResource = vi.fn<() => Promise<undefined | { id: string }>>(() =>
+      Promise.resolve(isOwned ? { id: sourceResourceId } : undefined),
+    );
+    return {
+      db: {
+        query: {
+          resourcePublications: { findFirst: () => Promise.resolve(undefined) },
+          resources: { findFirst: findFirstResource },
+        },
+      } as unknown as PostgresJsDatabase<typeof relations>,
+      findFirstResource,
+    };
+  };
   let containerClient: MockContainerClient;
 
   beforeEach(async () => {
@@ -54,7 +74,7 @@ describe(cloneContentAssets, () => {
     const content = {
       html: `<img src="${getResourceAssetUrl(workingBlobName)}"><img src="${getResourceAssetUrl(publishedBlobName)}">`,
     };
-    const clonedContent = await cloneContentAssets(content, destinationDirectoryName);
+    const clonedContent = await cloneContentAssets(createDatabase(true).db, userId, content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
     expect(clonedBlobNames).toHaveLength(2);
@@ -68,7 +88,7 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
-    await cloneContentAssets(content, destinationDirectoryName);
+    await cloneContentAssets(createDatabase(true).db, userId, content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
     const prefix = `${destinationDirectoryName}/${FILES_DIRECTORY_SEGMENT}/`;
@@ -90,7 +110,7 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
-    const clonedContent = await cloneContentAssets(content, sourceResourceId);
+    const clonedContent = await cloneContentAssets(createDatabase(true).db, userId, content, sourceResourceId);
     const clonedBlobNames: string[] = [];
     for await (const { name } of containerClient.listBlobsFlat({
       prefix: `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/`,
@@ -100,5 +120,69 @@ describe(cloneContentAssets, () => {
     expect(clonedBlobNames).toContain(workingBlobName);
     expect(clonedBlobNames).toHaveLength(2);
     expect(clonedContent.html).not.toContain(getResourceAssetUrl(workingBlobName));
+  });
+
+  // The copy path must repeat the authorization the read path enforces. A working-copy url the caller cannot open
+  // Reaches them easily — a personalized export mails absolute ones out — and copying it would republish someone
+  // Else's private blob under a directory that answers to anyone while the publication row exists
+  test("carries a url the caller may not read verbatim instead of copying its blob", async () => {
+    expect.hasAssertions();
+
+    const content = { html: `<img src="${getResourceAssetUrl(workingBlobName)}">` };
+    const clonedContent = await cloneContentAssets(createDatabase(false).db, userId, content, destinationDirectoryName);
+    const clonedBlobNames = await getClonedBlobNames();
+
+    expect(clonedBlobNames).toHaveLength(0);
+    expect(clonedContent.html).toContain(getResourceAssetUrl(workingBlobName));
+  });
+
+  // Readability is a property of the resource, and content routinely names one resource's assets many times over
+  // (a logo on every row, a gallery from one upload). Asked per url that is a pair of queries each, unbounded and
+  // In parallel, for an answer already computed
+  test("asks the readability question once per source resource however many of its assets are referenced", async () => {
+    expect.hasAssertions();
+
+    await containerClient.getBlockBlobClient(siblingWorkingBlobName).upload(siblingWorkingBlobName, 1);
+    const content = {
+      html: `<img src="${getResourceAssetUrl(workingBlobName)}"><img src="${getResourceAssetUrl(siblingWorkingBlobName)}">`,
+    };
+    const { db, findFirstResource } = createDatabase(true);
+    await cloneContentAssets(db, userId, content, destinationDirectoryName);
+    const clonedBlobNames = await getClonedBlobNames();
+
+    expect(clonedBlobNames).toHaveLength(2);
+    expect(findFirstResource).toHaveBeenCalledTimes(1);
+  });
+
+  // Content routinely names both kinds of one resource's urls at once — an exported published image pasted back
+  // Beside its own upload. Ownership answers both, so caching the answer per url kind asked it twice for one
+  // Resource, which is the duplication the cache exists to remove
+  test("asks the ownership question once for a resource named by both a working-copy and a published url", async () => {
+    expect.hasAssertions();
+
+    const content = {
+      html: `<img src="${getResourceAssetUrl(workingBlobName)}"><img src="${getResourceAssetUrl(publishedBlobName)}">`,
+    };
+    const { db, findFirstResource } = createDatabase(true);
+    await cloneContentAssets(db, userId, content, destinationDirectoryName);
+    const clonedBlobNames = await getClonedBlobNames();
+
+    expect(clonedBlobNames).toHaveLength(2);
+    expect(findFirstResource).toHaveBeenCalledTimes(1);
+  });
+
+  // The published check falls through to ownership when the publication row is gone, so asking it with the caller
+  // Would re-issue the query whose answer already sent us down this branch
+  test("never re-asks ownership for a published url whose publication row is gone", async () => {
+    expect.hasAssertions();
+
+    const content = { html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` };
+    const { db, findFirstResource } = createDatabase(false);
+    const clonedContent = await cloneContentAssets(db, userId, content, destinationDirectoryName);
+    const clonedBlobNames = await getClonedBlobNames();
+
+    expect(clonedBlobNames).toHaveLength(0);
+    expect(clonedContent.html).toContain(getResourceAssetUrl(publishedBlobName));
+    expect(findFirstResource).toHaveBeenCalledTimes(1);
   });
 });

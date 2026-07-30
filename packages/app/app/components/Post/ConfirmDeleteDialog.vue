@@ -17,7 +17,7 @@ const post = computed(
     items.value.find(({ id }) => id === deletingId.value) ??
     (currentPost.value?.id === deletingId.value ? currentPost.value : undefined),
 );
-const isOpen = useSingletonDialog(deletingId);
+const { isOpen } = useSingletonDialog(deletingId);
 </script>
 
 <template>

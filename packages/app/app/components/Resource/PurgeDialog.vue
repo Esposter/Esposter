@@ -11,7 +11,7 @@ const { resource } = defineProps<ResourcePurgeDialogProps>();
 const emit = defineEmits<{ purge: [resource: Resource] }>();
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
-const isOpen = useSingletonDialog(purgingId);
+const { isOpen } = useSingletonDialog(purgingId);
 </script>
 
 <template>

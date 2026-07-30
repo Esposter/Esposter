@@ -19,6 +19,8 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
+import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
@@ -31,7 +33,7 @@ import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { deleteDirectory, getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
+import { getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,
@@ -190,22 +192,15 @@ export const resourceRouter = router({
       ),
     ),
   duplicateResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
-    const { name, tags, type, userId } = ctx.resource;
-    const newResource = requireMutation(
-      (
-        await ctx.db
-          .insert(resources)
-          .values({
-            name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - duplicateNameSuffix.length)}${duplicateNameSuffix}`,
-            tags,
-            type,
-            userId,
-          })
-          .returning()
-      )[0],
-      Operation.Create,
-      DatabaseEntityType.Resource,
-      ctx.resource.id,
+    const { name, tags, type } = ctx.resource;
+    const newResource = await createResourceRow(
+      ctx,
+      {
+        name: `${name.slice(0, RESOURCE_NAME_MAX_LENGTH - duplicateNameSuffix.length)}${duplicateNameSuffix}`,
+        tags,
+        type,
+      },
+      ResourceActivityType.Duplicated,
     );
     // A copy starts as Draft, so only the draft content is copied — never the publication. The clone gives
     // The copy its own blobs for every referenced asset — working-copy and published — under {newId}/ with
@@ -215,27 +210,11 @@ export const resourceRouter = router({
       const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
       // The blob is written on first save, so missing content just means there is nothing to copy yet
       if (content === undefined) return;
-      await storeSelfContainedContent(newResource.id, content);
+      await storeSelfContainedContent(ctx.db, ctx.getSessionPayload.user.id, newResource.id, content);
     }).match(noop, async (error) => {
-      // Never leave a content-less orphan copy behind when the content clone fails. Ordered like purgeResource:
-      // Partially cloned blobs first (already-gone is success), the row last as the durable marker — a failed
-      // Blob cleanup keeps the copy reachable through the resource API instead of stranding its blobs.
-      // The cleanup can itself fail (deleteDirectory throws on any failed sub-response), and it must never
-      // Take the row delete or the original error down with it: the caller would then be told a blob delete
-      // Failed instead of why the duplicate did, and be left with the orphan row this whole path exists to
-      // Prevent — the strictly worse outcome of the two the cleanup is choosing between
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      await getResultAsync(async () => {
-        await deleteDirectory(containerClient, newResource.id);
-      }).match(noop, console.error);
-      await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
+      // Never leave a content-less orphan copy behind when the content clone fails
+      await deleteCreatedResources(ctx, [newResource.id]);
       throw error;
-    });
-    // Fire-and-forget: the activity trail is best-effort and the duplicate must not wait on telemetry
-    getSynchronizedFunction(writeResourceActivity)({
-      activityType: ResourceActivityType.Duplicated,
-      resourceId: newResource.id,
-      userId,
     });
     return newResource;
   }),
@@ -351,7 +330,7 @@ export const resourceRouter = router({
       // Deliberate trade, unlike `duplicateResource`, whose compensating `deleteDirectory` is only safe because
       // The resource it clears was created moments earlier; the target here is a live working copy whose
       // Existing files a directory-wide cleanup would destroy.
-      const clonedContent = await cloneContentAssets(publishedContent, id);
+      const clonedContent = await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, publishedContent, id);
       // The bump and the content write stay in one transaction so a failed write rolls the contentVersion back —
       // A restore that did not land must never advance the version every client caches against.
       return ctx.db.transaction(async (tx) => {

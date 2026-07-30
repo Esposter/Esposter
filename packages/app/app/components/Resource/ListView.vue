@@ -107,9 +107,14 @@ const visibleHeaders = computed(() => ResourceHeaders.filter(({ key }) => !hidde
 const { clearSelection, selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
 const contextMenuId = ref("");
 const contextMenuPosition = ref<[number, number]>([0, 0]);
-const isContextMenuOpen = useSingletonDialog(contextMenuId);
+const { isOpen: isContextMenuOpen } = useSingletonDialog(contextMenuId);
 const contextMenuResource = computed(() => items.value.find(({ id }) => id === contextMenuId.value));
-const renamingResource = computed(() => items.value.find(({ id }) => id === renamingId.value));
+// Held open across a list read — typing into the search box replaces `items` — so the target is dropped with
+// The row rather than re-opening the dialog when a later read brings it back
+const { isOpen: isRenameOpen, item: renamingResource } = useSingletonDialog(renamingId, () =>
+  items.value.find(({ id }) => id === renamingId.value),
+);
+const renameResource = useRenameResource(renamingResource, refresh);
 const deletingResource = computed(() => items.value.find(({ id }) => id === deletingId.value));
 const deleteResources = useDeleteResources(items, count, refresh);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigateTo(RoutePath.Resource(item.id));
@@ -235,11 +240,12 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       :resource="contextMenuResource"
     />
     <!-- Outside the isSearchable gate: the blade list's row ⋮ menu opens these too -->
-    <ResourceListRenameDialog
+    <ResourceRenameDialog
       v-if="renamingResource"
       :key="renamingResource.id"
+      v-model="isRenameOpen"
+      :rename="renameResource"
       :resource="renamingResource"
-      @update="refresh()"
     />
     <ResourceListDeleteDialog v-if="deletingResource" :resource="deletingResource" @delete="deleteResources($event)" />
     <!-- One capture dialog for the whole list — the bulk toolbar and the row ⋮ menu both drive it -->

@@ -9,7 +9,7 @@ const { deleteRoomCategory } = roomCategoryStore;
 const roomCategoryDialogStore = useRoomCategoryDialogStore();
 const { deletingId } = storeToRefs(roomCategoryDialogStore);
 const category = computed(() => categories.value.find(({ id }) => id === deletingId.value));
-const isOpen = useSingletonDialog(deletingId);
+const { isOpen } = useSingletonDialog(deletingId);
 </script>
 
 <template>

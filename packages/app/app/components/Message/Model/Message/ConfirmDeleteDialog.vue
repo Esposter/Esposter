@@ -11,7 +11,7 @@ const messageDialogStore = useMessageDialogStore();
 const { deletingRowKey } = storeToRefs(messageDialogStore);
 const message = computed(() => items.value.find(({ rowKey }) => rowKey === deletingRowKey.value));
 const creator = useCreator(message);
-const isOpen = useSingletonDialog(deletingRowKey);
+const { isOpen } = useSingletonDialog(deletingRowKey);
 const { executeMutation } = useMutation();
 const deleteMessage = async (onComplete: () => void) => {
   if (!message.value) return;

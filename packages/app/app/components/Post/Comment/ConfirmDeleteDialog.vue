@@ -9,7 +9,7 @@ const { deleteComment } = commentStore;
 const commentDialogStore = useCommentDialogStore();
 const { deletingId } = storeToRefs(commentDialogStore);
 const comment = computed(() => items.value.find(({ id }) => id === deletingId.value));
-const isOpen = useSingletonDialog(deletingId);
+const { isOpen } = useSingletonDialog(deletingId);
 </script>
 
 <template>

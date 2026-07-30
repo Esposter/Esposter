@@ -54,6 +54,20 @@ await getResultAsync(() => someAsyncOp())
   });
 ```
 
+### Who alerts a tRPC rejection
+
+`errorLink` owns `BAD_REQUEST`, `TOO_MANY_REQUESTS` and `UNPROCESSABLE_CONTENT` — it alerts them itself, so a caller catching the same rejection asks `getIsAlertedByErrorLink(error)` first and stays the owner only of what it alone can see (a blob PUT, a local guard). Alerting again puts two identical toasts on screen for one failure.
+
+```typescript
+if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+```
+
+**That ownership is unconditional, and must stay that way.** The predicate is read off the error code alone, so any operation the link quietly declines to alert is an operation _nobody_ alerts — silence on both sides. `op.context.isBackground` therefore suppresses only the **login redirect**, never the alert: a background read failing is still a failure the user's own action caused, while a background `FORBIDDEN` (the hourly read-SAS sweep hitting a room the user was just removed from) must never move them.
+
+The redirect itself reads the session rather than inferring one from the code, and only when the session request has **settled** — `authClient.useSession()` outside a component returns `data: null` while pending, and redirecting on that logs an authenticated user out of the first page load that happens to reject. It reads it inside an `effectScope` the link stops: better-auth's `useStore` registers its unsubscribe through `onScopeDispose`, so a bare call in the link's promise leaves a listener on the module-singleton session atom per rejection.
+
+**One cause, one toast — the alert store coalesces, so nothing upstream has to.** A single rejection cause routinely rejects several operations at once (an attachment batch's file and thumbnail reads, every chunk of a paged sweep), and each arrives at `createAlert` separately. An identical alert (same text, same severity) still on screen has its dismissal refreshed instead of a second copy stacked behind it. So the fix for duplicate toasts is never to silence one of the operations — that trades a duplicate for the silence-on-both-sides failure above.
+
 ### Async operation → fallback value (services / routers)
 
 ```typescript
@@ -155,6 +169,22 @@ const updated = requireMutation(
   ctx.getSessionPayload.user.id,
 );
 ```
+
+## A best-effort effect a rollback compensates is awaited
+
+Best-effort means "its failure doesn't fail the caller" — it does not mean "nothing needs to know when it finished". The moment a **compensating cleanup deletes the artifact that effect writes**, the effect stops being fire-and-forget: a write still in flight lands after the cleanup and re-creates what the cleanup existed to remove, and the resurrected artifact is usually unreachable (its parent row is gone), so nothing ever reclaims it.
+
+Await it in the function whose failure the rollback compensates, so the rollback cannot start before the write is durable:
+
+```typescript
+// The insert and the trail entry a rollback would delete cannot be allowed to drift apart
+await writeBar({ fooId: newFoo.id });
+return newFoo;
+```
+
+The cost is one round trip, and nothing else — the effect already terminates its own `Result` (`getResultAsync(...).match(noop, console.error)`), so awaiting cannot fail the caller. Sibling emits on paths with no compensating cleanup stay fire-and-forget through `getSynchronizedFunction`; the exception is per-call-site, not per-helper, and the awaited call site says which cleanup it is racing.
+
+Ask it whenever a function has both a fire-and-forget tail and a failure path a caller rolls back through: _does the rollback delete what the tail writes?_ `waitForSynchronizedFunctions()` is a test/shutdown drain, not the fix — it waits on every in-flight effect in the process, so it makes one race a global barrier.
 
 ## Azure Functions (EventGrid handlers): logging & retry
 

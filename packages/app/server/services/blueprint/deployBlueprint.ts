@@ -3,15 +3,18 @@ import type { BlueprintResource } from "#shared/models/resource/blueprint/Bluepr
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
-import { deleteBlueprintDeployedResources } from "@@/server/services/blueprint/deleteBlueprintDeployedResources";
-import { substituteBlueprintEntryAliases } from "@@/server/services/blueprint/substituteBlueprintEntryAliases";
-import { substituteBlueprintParameters } from "@@/server/services/blueprint/substituteBlueprintParameters";
-import { topoSortBlueprintEntries } from "@@/server/services/blueprint/topoSortBlueprintEntries";
+import { mapBlueprintEntryContentStrings } from "@@/server/services/blueprint/mapBlueprintEntryContentStrings";
+import { sortBlueprintEntriesTopologically } from "@@/server/services/blueprint/sortBlueprintEntriesTopologically";
+import { substituteBlueprintEntryAliasTokens } from "@@/server/services/blueprint/substituteBlueprintEntryAliasTokens";
+import { substituteBlueprintParameterTokens } from "@@/server/services/blueprint/substituteBlueprintParameterTokens";
 import { validateBlueprintEntries } from "@@/server/services/blueprint/validateBlueprintEntries";
+import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { AzureContainer, DatabaseEntityType, resources } from "@esposter/db-schema";
-import { getResultAsync, Operation } from "@esposter/shared";
+import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
+import { AzureContainer } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
+
 // Substitute parameters → pre-validate every entry against its type's contentSchema → topologically create
 // Each entry (resources row + content blob) with real ids substituted for its `{{entry:key}}` references.
 // A mid-deploy failure deletes the rows and blobs it already created — best-effort all-or-nothing
@@ -20,44 +23,45 @@ export const deployBlueprint = async (
   blueprint: BlueprintResource,
   parameterValues: Record<string, string>,
 ): Promise<BlueprintDeployment[]> => {
-  const userId = ctx.getSessionPayload.user.id;
   // Deploy-time values override the manifest defaults, so an omitted parameter still resolves to its default
-  const resolvedParameters: Record<string, string> = {
-    ...Object.fromEntries(blueprint.parameters.map(({ defaultValue, key }) => [key, defaultValue])),
-    ...parameterValues,
-  };
+  const resolvedParameters = new Map([
+    ...blueprint.parameters.map(({ defaultValue, key }) => [key, defaultValue] as const),
+    ...Object.entries(parameterValues),
+  ]);
   const substitutedEntries = blueprint.entries.map((entry) => ({
     ...entry,
-    content: substituteBlueprintParameters(entry.content, resolvedParameters),
-    name: substituteBlueprintParameters(entry.name, resolvedParameters) as string,
+    content: mapBlueprintEntryContentStrings(entry, (value) =>
+      substituteBlueprintParameterTokens(value, resolvedParameters),
+    ),
+    name: substituteBlueprintParameterTokens(entry.name, resolvedParameters),
   }));
-  validateBlueprintEntries(substitutedEntries);
-  const sortedEntries = topoSortBlueprintEntries(substitutedEntries);
-  const aliasToId: Record<string, string> = {};
+  const referencesByKey = validateBlueprintEntries(substitutedEntries);
+  const sortedEntries = sortBlueprintEntriesTopologically(substitutedEntries, referencesByKey);
+  const aliasToId = new Map<string, string>();
   const createdIds: string[] = [];
   const deployments: BlueprintDeployment[] = [];
   await getResultAsync(async () => {
     for (const entry of sortedEntries) {
-      const newResource = requireMutation(
-        (await ctx.db.insert(resources).values({ name: entry.name, type: entry.type, userId }).returning())[0],
-        Operation.Create,
-        DatabaseEntityType.Resource,
-        userId,
-      );
+      const newResource = await createResourceRow(ctx, { name: entry.name, type: entry.type });
       createdIds.push(newResource.id);
-      aliasToId[entry.key] = newResource.id;
-      // Real ids are known only after every dependency is created, so the content is bound here rather than up front
-      const content = substituteBlueprintEntryAliases(entry.content, aliasToId);
-      await useUpload(AzureContainer.ResourceAssets, getContentBlobName(newResource.id), JSON.stringify(content));
+      aliasToId.set(entry.key, newResource.id);
       deployments.push({ key: entry.key, resource: newResource });
+      // An entry captured from a resource whose content was never written deploys to that same state — the
+      // Content blob is written on first save, so a freshly created resource simply has none
+      if (entry.content === undefined) continue;
+
+      // Real ids are known only after every dependency is created, so the content is bound here rather than up front
+      const content = mapBlueprintEntryContentStrings(entry, (value) =>
+        substituteBlueprintEntryAliasTokens(value, aliasToId),
+      );
+      await useUpload(AzureContainer.ResourceAssets, getContentBlobName(newResource.id), JSON.stringify(content));
+      // The same hook the editor's save fires (scheduling a TodoList's reminders, and whatever a type
+      // Registers later), so a deployed resource is never missing the side effects its content declares
+      runAfterSaveResourceContent(ctx, newResource, content);
     }
-    return deployments;
-  }).match(
-    (result) => result,
-    async (error) => {
-      await deleteBlueprintDeployedResources(ctx, createdIds);
-      throw error;
-    },
-  );
+  }).match(noop, async (error) => {
+    await deleteCreatedResources(ctx, createdIds);
+    throw error;
+  });
   return deployments;
 };

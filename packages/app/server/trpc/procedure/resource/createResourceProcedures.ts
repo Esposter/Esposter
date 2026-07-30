@@ -1,7 +1,7 @@
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
+import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
-import type { ResourceProcedureOptions } from "@@/server/models/resource/ResourceProcedureOptions";
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
@@ -19,12 +19,15 @@ import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/pu
 import { on } from "@@/server/services/events/on";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
+import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
+import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -49,6 +52,7 @@ import {
   getResultAsync,
   InvalidOperationError,
   MAX_READ_LIMIT,
+  noop,
   Operation,
   streamToText,
 } from "@esposter/shared";
@@ -86,23 +90,20 @@ const readPublishedVersionContentInputSchema = z.object({
   version: z.int().positive(),
 });
 
-type ResourceContent<TType extends ResourceType> = z.infer<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>;
-
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
   ...args: TType extends PublishableResourceType
-    ? [
-        options?: PublishableResourceProcedureOptions<ResourceContent<TType>> &
-          ResourceProcedureOptions<ResourceContent<TType>>,
-      ]
-    : [options?: ResourceProcedureOptions<ResourceContent<TType>>]
+    ? [options?: PublishableResourceProcedureOptions<ResourceContent<TType>>]
+    : []
 ) => {
   const { contentSchema } = ResourceDefinitionMap[type];
   // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { afterSaveResourceContent, transformPublicReadContent, transformPublishedContent } = (args[0] ??
-    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>> &
-    ResourceProcedureOptions<ResourceContent<TType>>;
+  const { transformPublicReadContent, transformPublishedContent } = (args[0] ??
+    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
+  // The after-save hook is registered per type in its own map rather than passed in here, so every path
+  // That writes this type's content fires it — this one and blueprint deploy alike
+  const afterSaveResourceContent = ResourceAfterSaveContentMap[type];
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
   // Would erase the procedure's input type for consumers like achievement condition paths.
@@ -123,26 +124,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const baseProcedures = {
     createResource: standardAuthedProcedure
       .input(createResourceInputSchema)
-      .mutation<Resource>(async ({ ctx, input }) => {
-        const newResource = requireMutation(
-          (
-            await ctx.db
-              .insert(resources)
-              .values({ ...input, type, userId: ctx.getSessionPayload.user.id })
-              .returning()
-          )[0],
-          Operation.Create,
-          DatabaseEntityType.Resource,
-          ctx.getSessionPayload.user.id,
-        );
-        // Fire-and-forget: the activity trail is best-effort and the create must not wait on telemetry
-        getSynchronizedFunction(writeResourceActivity)({
-          activityType: ResourceActivityType.Created,
-          resourceId: newResource.id,
-          userId: ctx.getSessionPayload.user.id,
-        });
-        return newResource;
-      }),
+      .mutation<Resource>(({ ctx, input }) => createResourceRow(ctx, { ...input, type })),
     // The blobs and the type's table partitions survive until purge — destroying them here would
     // Make restore hand back an empty resource
     deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
@@ -236,10 +218,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           { content, contentVersion: updatedResource.contentVersion, id },
           { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
         ]);
-        // Fire-and-forget: the hook (e.g. scheduling TodoList reminders) is best-effort and the save
-        // Must never wait on it or fail because of it
-        if (afterSaveResourceContent)
-          getSynchronizedFunction(afterSaveResourceContent)(ctx, updatedResource, content, previousContent);
+        runAfterSaveResourceContent(ctx, updatedResource, content, previousContent);
         return updatedResource;
       },
     ),
@@ -307,6 +286,15 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
+        // One expression for the publish write, since the repair below repeats it at the same version: a change
+        // To where or how the snapshot is written that landed in only one of the two would diverge silently,
+        // And the copy that only runs on the rare concurrency path is the one nobody would notice
+        const uploadPublishedContent = (publishVersion: ResourcePublication["publishVersion"], value: unknown) =>
+          useUpload(
+            AzureContainer.ResourceAssets,
+            getPublishedContentBlobName(id, publishVersion),
+            JSON.stringify(value),
+          );
         // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
         // The publication row can never point at a publishVersion whose blob was never written.
         const publication = await ctx.db.transaction(async (tx) => {
@@ -327,11 +315,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
             DatabaseEntityType.ResourcePublication,
             id,
           );
-          await useUpload(
-            AzureContainer.ResourceAssets,
-            getPublishedContentBlobName(id, newPublication.publishVersion),
-            JSON.stringify(publishedContent),
-          );
+          await uploadPublishedContent(newPublication.publishVersion, publishedContent);
           return newPublication;
         });
         // An unpublish that landed between the clone and this claim swept the assets it had just written, while
@@ -342,15 +326,40 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Pays one redundant clone; a swept snapshot cannot slip through, because a delete restarts the
         // Sequence at 1 and any successor this attempt could expect is at least 2.
         // An attempt that read no row expects to claim 1 — reading the successor off the row alone exempted
-        // Every first publish (and every publish after an unpublish) from the check entirely
+        // Every first publish (and every publish after an unpublish) from the check entirely.
+        //
+        // Outside the transaction on purpose, and it cannot move in: the transform may read through `ctx.db`
+        // (Dashboard resolves every bound dataset), which deadlocks against a transaction this same connection
+        // Holds. So the publication has already landed by the time the repair runs, and the transaction's
+        // Guarantee is unaffected — the version it claimed does point at a blob that was written. What a failed
+        // Repair leaves behind is that blob still naming the swept assets, i.e. a live publication whose images
+        // 404. The rejection is therefore reported rather than swallowed, and says so: republishing re-clones and
+        // Overwrites, so the owner's own retry is what repairs it, and a silent success would leave the page
+        // Broken with nothing to signal it. See /docs/architecture/publishing
         if (publication.publishVersion !== (previousPublication?.publishVersion ?? 0) + 1)
-          await useUpload(
-            AzureContainer.ResourceAssets,
-            getPublishedContentBlobName(id, publication.publishVersion),
-            JSON.stringify(
+          await getResultAsync(async () =>
+            uploadPublishedContent(
+              publication.publishVersion,
               transformPublishedContent ? await transformPublishedContent(ctx, ctx.resource, content) : content,
             ),
-          );
+          ).match(noop, (error) => {
+            console.error(error);
+            // Which of them tripped the check is not knowable from here, so the cause is carried rather than
+            // Asserted: a sweep by a concurrent unpublish, the redundant re-clone a concurrent publish pays, and
+            // A transform that rejects outright (a dataset deleted since the first pass) all arrive identically.
+            // Naming one of them told an owner their assets were swept when nothing had been. A TRPCError already
+            // States what happened in the code the client branches on, so it is rethrown as it is
+            if (error instanceof TRPCError) throw error;
+
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: new InvalidOperationError(
+                Operation.Update,
+                DatabaseEntityType.ResourcePublication,
+                `published at version ${publication.publishVersion}, but its assets could not be re-cloned (${error.message}) — publish again to rebuild them`,
+              ).message,
+            });
+          });
         // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
         getSynchronizedFunction(writeResourceActivity)({
           activityType: ResourceActivityType.Published,

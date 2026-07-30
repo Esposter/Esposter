@@ -4,6 +4,7 @@ import type { Router } from "vue-router";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
+import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
@@ -29,6 +30,10 @@ describe(useDataStore, () => {
   const roomId = crypto.randomUUID();
   const message = "message";
   const updatedMessage = "updatedMessage";
+  const filename = "filename";
+  const mimetype = "text/plain";
+  const size = 1;
+  const createFile = () => new File([message], filename, { type: mimetype });
 
   beforeAll(() => {
     router = useRouter();
@@ -137,7 +142,184 @@ describe(useDataStore, () => {
     const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
     await storeSendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
-    expect(resetSendSpy).toHaveBeenCalledWith(roomId, undefined);
+    expect(resetSendSpy).toHaveBeenCalledWith(roomId, [], undefined);
+  });
+
+  // The composer keeps accepting Enter for the whole round trip, so the attachments a send took leave it at the
+  // Bubble — a composer that still offers them posts a second message naming the same blobs, and deleting
+  // Either message then reclaims blobs the other still renders
+  test("holds the attachments a send took out of the composer until the server answers", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const uploadFileStore = useUploadFileStore();
+    const { files } = storeToRefs(uploadFileStore);
+    const { storeSendMessage } = dataStore;
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
+    vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+    const sentFileId = crypto.randomUUID();
+    let heldFileIds: string[] = [];
+    server.use(
+      trpcMsw.message.createMessage.mutation(() => {
+        heldFileIds = files.value.map(({ id }) => id);
+        return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+      }),
+    );
+    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: sentFileId, token: "" }]);
+    await storeSendMessage({
+      files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
+      message,
+      replyRowKey: "",
+      roomId,
+      type: MessageType.Message,
+    });
+
+    expect(heldFileIds).toStrictEqual([]);
+  });
+
+  // Held rather than discarded, because the upload grant that came off with the row is the only thing that can
+  // Reclaim its blob — so a rejection hands the attachment back for the retry instead of stranding it
+  test("hands the composer's attachments back when the server rejects the send", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const uploadFileStore = useUploadFileStore();
+    const { files } = storeToRefs(uploadFileStore);
+    const { storeSendMessage } = dataStore;
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
+    vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+    const sentFileId = crypto.randomUUID();
+    server.use(
+      trpcMsw.message.createMessage.mutation(() => {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
+      }),
+    );
+    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: sentFileId, token: "" }]);
+    await storeSendMessage({
+      files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
+      message,
+      replyRowKey: "",
+      roomId,
+      type: MessageType.Message,
+    });
+
+    expect(files.value.map(({ id }) => id)).toStrictEqual([sentFileId]);
+  });
+
+  // The composer's attachments carry the only grants that authorize reclaiming their blobs, so a send the server
+  // Rejects must leave them in place — released at the bubble, the blobs are referenced by no message and
+  // Reclaimable by nothing, and the user re-picks every attachment to try again
+  test("createMessage releases the composer's attachments only once the server accepts", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const { createMessage } = dataStore;
+    server.use(
+      trpcMsw.message.createMessage.mutation(() => {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
+      }),
+    );
+    const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
+    await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+
+    expect(commitSendSpy).not.toHaveBeenCalled();
+  });
+
+  test("createMessage releases the composer's attachments for the room the send was for", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const { createMessage } = dataStore;
+    server.use(
+      trpcMsw.message.createMessage.mutation(() =>
+        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      ),
+    );
+    const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
+    await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+
+    expect(commitSendSpy).toHaveBeenCalledWith(roomId, []);
+  });
+
+  // The commit runs behind the send, so the composer keeps taking uploads for the whole round trip. Releasing
+  // Whatever it holds once the server answers takes the attachment the user picked for their NEXT message with
+  // It — and removal is not a discard, so that blob loses the only grant that could ever reclaim it
+  test("createMessage releases only the attachments the accepted message persisted", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const uploadFileStore = useUploadFileStore();
+    const { files } = storeToRefs(uploadFileStore);
+    const { createMessage } = dataStore;
+    server.use(
+      trpcMsw.message.createMessage.mutation(() =>
+        createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      ),
+    );
+    // The preview url the composer mints per attachment is incidental here, and the environment's
+    // `createObjectURL` rejects the runtime's own `File` on an instanceof check
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
+    vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+    const sentFileId = crypto.randomUUID();
+    const nextFileId = crypto.randomUUID();
+    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: sentFileId, token: "" }]);
+    const createPromise = createMessage({
+      files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
+      message,
+      replyRowKey: "",
+      roomId,
+      type: MessageType.Message,
+    });
+    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: nextFileId, token: "" }]);
+
+    await expect(createPromise).resolves.toBe(true);
+    expect(files.value.map(({ id }) => id)).toStrictEqual([nextFileId]);
+  });
+
+  // The wire payload and the ids handed to the commit come from one snapshot, so an upload that lands mid-flight
+  // Is in neither. Serialized into the payload but absent from the commit, it would stay in the composer and
+  // Ride along with the next send too — one blob referenced by two messages
+  test("sends only the attachments the composer held when the send started", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    const dataStore = useDataStore();
+    const uploadFileStore = useUploadFileStore();
+    const { createMessage } = dataStore;
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("");
+    vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
+    const sentFileId = crypto.randomUUID();
+    const nextFileId = crypto.randomUUID();
+    let payloadFileIds: string[] = [];
+    server.use(
+      trpcMsw.message.createMessage.mutation(({ input }) => {
+        payloadFileIds = input.files?.map(({ id }) => id) ?? [];
+        return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+      }),
+    );
+    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: sentFileId, token: "" }]);
+    const createPromise = createMessage({
+      files: uploadFileStore.files,
+      message,
+      replyRowKey: "",
+      roomId,
+      type: MessageType.Message,
+    });
+    uploadFileStore.storeUploadFiles(roomId, [{ file: createFile(), id: nextFileId, token: "" }]);
+    await createPromise;
+
+    expect(payloadFileIds).toStrictEqual([sentFileId]);
   });
 
   // A successful create also mirrors the server's thread auto-follow, so the reply's root is followed locally

@@ -12,7 +12,7 @@ const { resource } = defineProps<ResourceListDeleteDialogProps>();
 const emit = defineEmits<{ delete: [resources: Resource[]] }>();
 const listDialogStore = useListDialogStore();
 const { deletingId } = storeToRefs(listDialogStore);
-const isOpen = useSingletonDialog(deletingId);
+const { isOpen } = useSingletonDialog(deletingId);
 </script>
 
 <template>

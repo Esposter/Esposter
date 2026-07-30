@@ -4,6 +4,7 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { IndexKey, IndexNames } from "idb";
 import type { Promisable } from "type-fest";
 
+import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -42,8 +43,16 @@ export const usePaginationCache = <
   // Ready/loaded signal instead.
   let loadedPartitionKey: "" | IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | undefined;
 
+  // The capped write set is both what gets persisted and what the deep watch tracks. Watching the whole
+  // Loaded list instead traversed it on every store write to discover changes that can never reach the cache —
+  // A room scrolled back far enough holds many times the rows the cache keeps. Post-flush because a write the
+  // User is waiting to see rendered comes first; the cache only has to be consistent by the end of the tick
   watchDeep(
-    () => toValue(items),
+    () => {
+      const currentItems = toValue(items);
+      const writeItems = getWriteItems?.(currentItems) ?? currentItems;
+      return getCachedItems(writeItems, configuration.limit);
+    },
     (newItems) => {
       const partitionKeyValue = toValue(partitionKey);
       if (!partitionKeyValue) return;
@@ -55,9 +64,10 @@ export const usePaginationCache = <
       const previousOperation = pendingOperation;
       pendingOperation = getResultAsync(async () => {
         await previousOperation;
-        await writeIndexedDb(configuration, getWriteItems?.(newItems) ?? newItems, partitionKeyValue);
+        await writeIndexedDb(configuration, newItems, partitionKeyValue);
       }).match(noop, console.error);
     },
+    { flush: "post" },
   );
 
   watch(

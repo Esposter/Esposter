@@ -60,10 +60,10 @@ export const useDownloadFileStore = defineStore("message/file", () => {
   // Broken and fail every download until reload. Sweeping re-mints only the entries inside the refresh margin;
   // A tick that finds none issues no query at all, which is the overwhelmingly common case.
   // A sweep that rejects is never retried by anything, so it swallows: the next tick re-reads the same expiring
-  // Entries, and surfacing an alert for a background re-mint would interrupt a user who lost nothing yet. The
-  // Read itself is marked background inside `useReadFileUrls`, which is what keeps a rejection for a room the
-  // User was just removed from from reaching them at all — that happens inside the link chain, before the
-  // Rejection ever arrives here to be swallowed.
+  // Entries. What the user sees of it is the error link's to decide, not this store's — a code the link owns is
+  // Alerted there, once, however many of the batch's reads that one cause rejected. What being marked background
+  // Inside `useReadFileUrls` buys is that a rejection for a room the user was just removed from cannot MOVE
+  // Them — that happens inside the link chain, before the rejection ever arrives here to be swallowed.
   const refreshExpiringFileUrls = () =>
     getResultAsync(async () => {
       const roomId = roomStore.currentRoomId;

@@ -1,4 +1,5 @@
-import type { Resource } from "@esposter/db-schema";
+import type { relations, Resource } from "@esposter/db-schema";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
@@ -14,7 +15,12 @@ import { AzureContainer } from "@esposter/db-schema";
 // A page whose images 404, with re-uploading every asset as the only recovery.
 // The content is written back as json and never read here, so it stays `unknown` rather than generic —
 // The caller's schema already narrowed it on the way in
-export const storeSelfContainedContent = async (id: Resource["id"], content: unknown): Promise<void> => {
-  const clonedContent = await cloneContentAssets(content, id);
+export const storeSelfContainedContent = async (
+  db: PostgresJsDatabase<typeof relations>,
+  userId: string,
+  id: Resource["id"],
+  content: unknown,
+): Promise<void> => {
+  const clonedContent = await cloneContentAssets(db, userId, content, id);
   await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(clonedContent));
 };
