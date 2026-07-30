@@ -14,7 +14,9 @@ const surveyResponseDialogStore = useSurveyResponseDialogStore();
 const { detailRowKey } = storeToRefs(surveyResponseDialogStore);
 // One dialog for the whole table, driven by the target row key — never one dialog per row
 const isOpen = useSingletonDialog(detailRowKey);
-const item = computed(() => items.find(({ rowKey }) => rowKey === detailRowKey.value));
+// Resolved through the target so a response that leaves the page under the open dialog drops it, instead of
+// Re-opening over that response when a later read brings it back
+const item = useSingletonDialogTarget(detailRowKey, () => items.find(({ rowKey }) => rowKey === detailRowKey.value));
 </script>
 
 <template>

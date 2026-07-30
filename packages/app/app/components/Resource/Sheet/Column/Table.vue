@@ -23,7 +23,11 @@ const chartingColumnStatistics = computed(() => {
   const chartingColumn = dataSource.columns.find(({ name }) => name === chartingColumnName.value);
   return chartingColumn ? computeColumnStatisticsForColumn(dataSource, chartingColumn) : undefined;
 });
-const editingColumn = computed(() => dataSource.columns.find(({ name }) => name === editingColumnName.value));
+// Resolved through the target so a column deleted or renamed under the open dialog drops it, instead of
+// Re-opening the edit dialog if a column of that name appears again
+const editingColumn = useSingletonDialogTarget(editingColumnName, () =>
+  dataSource.columns.find(({ name }) => name === editingColumnName.value),
+);
 const reorderColumns = useReorderColumns();
 const isDraggable = computed(() => !search.value && sortBy.value.length === 0);
 const dragColumns = computed({

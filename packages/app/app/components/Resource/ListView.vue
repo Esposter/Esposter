@@ -109,10 +109,12 @@ const contextMenuId = ref("");
 const contextMenuPosition = ref<[number, number]>([0, 0]);
 const isContextMenuOpen = useSingletonDialog(contextMenuId);
 const contextMenuResource = computed(() => items.value.find(({ id }) => id === contextMenuId.value));
-const renamingResource = computed(() => items.value.find(({ id }) => id === renamingId.value));
-// The rename dialog is the one held open across a list read — typing into the search box while it is open
-// Replaces `items`, so its target is dropped with the row instead of re-opening when a later read brings it back
-const isRenameOpen = useSingletonDialog(renamingId, () => renamingResource.value);
+// Held open across a list read — typing into the search box replaces `items` — so the target is dropped with
+// The row rather than re-opening the dialog when a later read brings it back
+const renamingResource = useSingletonDialogTarget(renamingId, () =>
+  items.value.find(({ id }) => id === renamingId.value),
+);
+const isRenameOpen = useSingletonDialog(renamingId);
 const renameResource = useRenameResource(renamingResource, refresh);
 const deletingResource = computed(() => items.value.find(({ id }) => id === deletingId.value));
 const deleteResources = useDeleteResources(items, count, refresh);

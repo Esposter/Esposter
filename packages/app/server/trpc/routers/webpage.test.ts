@@ -14,6 +14,7 @@ import { createMockContext, mockSessionOnce, replayMockSession } from "@@/server
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { AzureContainer, resources, ResourceType } from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -75,6 +76,32 @@ describe("webpage", () => {
     await caller.publishResource({ id: newResource.id });
 
     expect(transformPublishedBlobUrlsMock).toHaveBeenCalledTimes(2);
+  });
+
+  // Which of them tripped the successor check is not knowable at the repair, so the cause it actually carries is
+  // What surfaces. Naming a concurrent unpublish told an owner their assets were swept when nothing had been, and
+  // Buried the actionable reason — a dataset deleted between the first transform and the repair, say
+  test("surfaces the repair's own cause rather than asserting a concurrent unpublish", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor({ html: "a" }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    transformPublishedBlobUrlsMock.mockImplementationOnce(async (_context, _resource, content) => {
+      await caller.publishResource({ id: newResource.id });
+      return content;
+    });
+    // The repair's own transform, which is the one that rejects
+    transformPublishedBlobUrlsMock.mockImplementationOnce(() =>
+      Promise.reject(new TRPCError({ code: "NOT_FOUND", message: "Dataset not found" })),
+    );
+
+    await expect(caller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Dataset not found]`,
+    );
   });
 
   // The same race against a FIRST publish, which reads no publication row at all: the successor is what is
