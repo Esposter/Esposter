@@ -146,7 +146,7 @@ describe("blueprint", () => {
 
     // A content-less source deploys to a content-less resource — the state it is actually in. Standing an
     // Empty object in instead would fail every deploy against the type's own schema
-    expect(await programCaller.readResourceContent({ id: deployed.resource.id })).toBeUndefined();
+    await expect(programCaller.readResourceContent({ id: deployed.resource.id })).resolves.toBeUndefined();
   });
 
   test("fails deploy with non-existent id", async () => {

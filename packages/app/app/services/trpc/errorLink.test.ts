@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Operation } from "@trpc/client";
+import type { EffectScope } from "vue";
 
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { errorLink } from "@/services/trpc/errorLink";
@@ -16,7 +17,7 @@ const { navigateTo, session, sessionScope } = vi.hoisted(() => ({
   session: { value: { data: null as null | { user: { id: string } }, isPending: false } },
   // The scope that was active where the link read the session, which is what decides whether the subscription
   // Better-auth opens is ever disposed
-  sessionScope: { current: undefined as unknown },
+  sessionScope: { current: undefined as EffectScope | undefined },
 }));
 
 // The auto-imported `navigateTo` would really navigate — mock the module the auto-import points at rather than

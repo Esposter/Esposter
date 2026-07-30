@@ -33,7 +33,7 @@ import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { deleteDirectory, getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
+import { getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,

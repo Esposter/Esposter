@@ -52,7 +52,7 @@ export const useDataStore = defineStore("message/data", () => {
     if (!session.value.data) return false;
 
     // `input.files` is the composer's own live array, and the composer keeps accepting uploads for the whole
-    // round trip — so the attachments are snapshotted once, here, and that one snapshot is what the bubble
+    // Round trip — so the attachments are snapshotted once, here, and that one snapshot is what the bubble
     // Carries, what goes on the wire, and what the hooks are handed. Reading the live array in any of those
     // Places lets them disagree: a file that lands mid-flight is serialized into the payload while the commit
     // Never hears about it, so it stays in the composer and rides along with the next send too — one blob

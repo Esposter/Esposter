@@ -23,7 +23,7 @@ describe(useRenameResource, () => {
     expect.hasAssertions();
 
     const resource = createResource();
-    const refresh = vi.fn(() => Promise.resolve());
+    const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
     server.use(trpcMsw.sheet.updateResource.mutation(() => ({ ...resource.value, name: newName })));
     await useRenameResource(resource, refresh)(newName);
 
@@ -38,7 +38,7 @@ describe(useRenameResource, () => {
     expect.hasAssertions();
 
     const resource = createResource();
-    const refresh = vi.fn(() => Promise.resolve());
+    const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
     server.use(
       trpcMsw.sheet.updateResource.mutation(() => {
         throw new TRPCError({ code: "BAD_REQUEST", message: name });

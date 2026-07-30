@@ -95,8 +95,8 @@ describe("webpage", () => {
       return content;
     });
     // The repair's own transform, which is the one that rejects
-    transformPublishedBlobUrlsMock.mockImplementationOnce(() =>
-      Promise.reject(new TRPCError({ code: "NOT_FOUND", message: "Dataset not found" })),
+    transformPublishedBlobUrlsMock.mockRejectedValueOnce(
+      new TRPCError({ code: "NOT_FOUND", message: "Dataset not found" }),
     );
 
     await expect(caller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
