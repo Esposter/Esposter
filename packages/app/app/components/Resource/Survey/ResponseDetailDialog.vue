@@ -12,11 +12,12 @@ interface ResourceSurveyResponseDetailDialogProps {
 const { columns, items } = defineProps<ResourceSurveyResponseDetailDialogProps>();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();
 const { detailRowKey } = storeToRefs(surveyResponseDialogStore);
-// One dialog for the whole table, driven by the target row key — never one dialog per row
-const isOpen = useSingletonDialog(detailRowKey);
-// Resolved through the target so a response that leaves the page under the open dialog drops it, instead of
-// Re-opening over that response when a later read brings it back
-const item = useSingletonDialogTarget(detailRowKey, () => items.find(({ rowKey }) => rowKey === detailRowKey.value));
+// One dialog for the whole table, driven by the target row key — never one dialog per row. The item is resolved
+// Through the target too, so a response that leaves the page under the open dialog drops it instead of re-opening
+// Over that response when a later read brings it back
+const { isOpen, item } = useSingletonDialog(detailRowKey, () =>
+  items.find(({ rowKey }) => rowKey === detailRowKey.value),
+);
 </script>
 
 <template>

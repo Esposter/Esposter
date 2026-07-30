@@ -10,7 +10,7 @@ const messageDialogStore = useMessageDialogStore();
 const { pinningRowKey } = storeToRefs(messageDialogStore);
 const message = computed(() => items.value.find(({ rowKey }) => rowKey === pinningRowKey.value));
 const creator = useCreator(message);
-const isOpen = useSingletonDialog(pinningRowKey);
+const { isOpen } = useSingletonDialog(pinningRowKey);
 const { executeMutation } = useMutation();
 const pinMessage = async (onComplete: () => void) => {
   if (!message.value) return;

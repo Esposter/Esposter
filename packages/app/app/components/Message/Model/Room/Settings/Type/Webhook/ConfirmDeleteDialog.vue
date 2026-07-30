@@ -16,7 +16,7 @@ const { deleteWebhook } = webhookStore;
 const webhookDialogStore = useWebhookDialogStore();
 const { deletingId } = storeToRefs(webhookDialogStore);
 const webhook = computed(() => items.value.find(({ id }) => id === deletingId.value));
-const isOpen = useSingletonDialog(deletingId);
+const { isOpen } = useSingletonDialog(deletingId);
 </script>
 
 <template>

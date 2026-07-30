@@ -18,14 +18,14 @@ const columnStore = useColumnStore();
 const { search, selectedColumnIds, sortBy } = storeToRefs(columnStore);
 const columnDialogStore = useColumnDialogStore();
 const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
-const isChartOpen = useSingletonDialog(chartingColumnName);
+const { isOpen: isChartOpen } = useSingletonDialog(chartingColumnName);
 const chartingColumnStatistics = computed(() => {
   const chartingColumn = dataSource.columns.find(({ name }) => name === chartingColumnName.value);
   return chartingColumn ? computeColumnStatisticsForColumn(dataSource, chartingColumn) : undefined;
 });
 // Resolved through the target so a column deleted or renamed under the open dialog drops it, instead of
 // Re-opening the edit dialog if a column of that name appears again
-const editingColumn = useSingletonDialogTarget(editingColumnName, () =>
+const { item: editingColumn } = useSingletonDialog(editingColumnName, () =>
   dataSource.columns.find(({ name }) => name === editingColumnName.value),
 );
 const reorderColumns = useReorderColumns();

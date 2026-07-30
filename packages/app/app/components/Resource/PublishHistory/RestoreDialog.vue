@@ -17,7 +17,7 @@ const { restoringVersion } = storeToRefs(publishHistoryDialogStore);
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const { executeMutation: executeRestoreMutation } = useMutation();
-const isOpen = useSingletonDialog(restoringVersion);
+const { isOpen } = useSingletonDialog(restoringVersion);
 const restore = async () => {
   const version = Number(restoringVersion.value);
   await executeRestoreMutation(() => $trpc.resource.restorePublishedVersion.mutate({ id: resource.id, version }), {

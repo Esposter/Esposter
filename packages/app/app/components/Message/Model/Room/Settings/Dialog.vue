@@ -7,7 +7,7 @@ import { useDialogStore } from "@/store/message/room/dialog";
 
 const dialogStore = useDialogStore();
 const { settingsRoomId } = storeToRefs(dialogStore);
-const isOpen = useSingletonDialog(settingsRoomId);
+const { isOpen } = useSingletonDialog(settingsRoomId);
 const settingsType = ref<keyof typeof SettingsContentMap>(SettingsType.Overview);
 const isDeleteOpen = ref(false);
 const isSettingsDrawerOpen = ref(false);

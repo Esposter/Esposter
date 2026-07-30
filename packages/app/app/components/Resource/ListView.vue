@@ -107,14 +107,13 @@ const visibleHeaders = computed(() => ResourceHeaders.filter(({ key }) => !hidde
 const { clearSelection, selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
 const contextMenuId = ref("");
 const contextMenuPosition = ref<[number, number]>([0, 0]);
-const isContextMenuOpen = useSingletonDialog(contextMenuId);
+const { isOpen: isContextMenuOpen } = useSingletonDialog(contextMenuId);
 const contextMenuResource = computed(() => items.value.find(({ id }) => id === contextMenuId.value));
 // Held open across a list read — typing into the search box replaces `items` — so the target is dropped with
 // The row rather than re-opening the dialog when a later read brings it back
-const renamingResource = useSingletonDialogTarget(renamingId, () =>
+const { isOpen: isRenameOpen, item: renamingResource } = useSingletonDialog(renamingId, () =>
   items.value.find(({ id }) => id === renamingId.value),
 );
-const isRenameOpen = useSingletonDialog(renamingId);
 const renameResource = useRenameResource(renamingResource, refresh);
 const deletingResource = computed(() => items.value.find(({ id }) => id === deletingId.value));
 const deleteResources = useDeleteResources(items, count, refresh);

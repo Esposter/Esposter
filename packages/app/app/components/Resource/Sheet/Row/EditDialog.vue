@@ -15,7 +15,7 @@ interface EditDialogProps {
 const { columns, index, row } = defineProps<EditDialogProps>();
 const rowDialogStore = useRowDialogStore();
 const { editingId } = storeToRefs(rowDialogStore);
-const isOpen = useSingletonDialog(editingId);
+const { isOpen } = useSingletonDialog(editingId);
 const editableColumns = computed(() => columns.filter((column) => checkIsEditableColumnValue(column)));
 const updateRow = useUpdateRow();
 const title = computed(() => `Edit Row ${index + 1}`);
