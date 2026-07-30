@@ -1,7 +1,6 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Resource, ResourceTags, ResourceType } from "@esposter/db-schema";
 
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { DatabaseEntityType, ResourceActivityType, resources } from "@esposter/db-schema";
@@ -31,7 +30,9 @@ export const createResourceRow = async (
     DatabaseEntityType.Resource,
     userId,
   );
-  // Fire-and-forget: the activity trail is best-effort and no create waits on telemetry
-  getSynchronizedFunction(writeResourceActivity)({ activityType, resourceId: newResource.id, userId });
+  // Awaited, unlike every other activity write: this is the one entry a caller can roll back over, and the
+  // Cleanup deletes the trail partition. An in-flight write would land after that delete and resurrect the entry
+  // As an orphan no read can reach. The write never rejects, so awaiting it costs latency and nothing else
+  await writeResourceActivity({ activityType, resourceId: newResource.id, userId });
   return newResource;
 };

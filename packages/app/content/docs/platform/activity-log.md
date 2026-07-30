@@ -13,6 +13,8 @@ A publish or a rename used to leave no trace. Activity events are message-shaped
 
 Events are emitted inside the `createResourceProcedures` mutations, in the best-effort tail after the primary write ([persist then notify](/docs/architecture/persist-then-notify)). Losing an audit line is bad; losing someone's save because an audit line failed is worse.
 
+The `Created`/`Duplicated` entry is the one exception to the fire-and-forget tail: `createResourceRow` awaits it. That entry is the only one a caller can roll back over — a failed content clone or a mid-deploy failure rolls back through `deleteCreatedResources`, which deletes the trail partition — and an in-flight write landing after that delete would resurrect the entry as an orphan no read can reach, since reading a trail is gated on the row. The write never rejects, so awaiting it costs latency and nothing else.
+
 `ContentSaved` is coalesced, or autosave would flood the partition with one entry per keystroke burst. The rule is "this user already has a `ContentSaved` inside the last hour" — an existence question, asked with a filter, rather than an inspection of the newest entry. Phrasing it that way makes the answer independent of the order entities come back in.
 
 ```mermaid
