@@ -51,7 +51,7 @@ describe(createResourceRow, () => {
     });
     // A timer boundary drains every pending microtask, so anything still unsettled is waiting on the gated write
     await new Promise((resolve) => {
-      setTimeout(resolve);
+      setTimeout(resolve, 0);
     });
 
     expect(takeOne(entities)).toMatchObject({
