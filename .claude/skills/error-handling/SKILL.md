@@ -64,7 +64,9 @@ if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
 
 **That ownership is unconditional, and must stay that way.** The predicate is read off the error code alone, so any operation the link quietly declines to alert is an operation _nobody_ alerts — silence on both sides. `op.context.isBackground` therefore suppresses only the **login redirect**, never the alert: a background read failing is still a failure the user's own action caused, while a background `FORBIDDEN` (the hourly read-SAS sweep hitting a room the user was just removed from) must never move them.
 
-The redirect itself reads the session rather than inferring one from the code, and only when the session request has **settled** — `authClient.useSession()` outside a component returns `data: null` while pending, and redirecting on that logs an authenticated user out of the first page load that happens to reject.
+The redirect itself reads the session rather than inferring one from the code, and only when the session request has **settled** — `authClient.useSession()` outside a component returns `data: null` while pending, and redirecting on that logs an authenticated user out of the first page load that happens to reject. It reads it inside an `effectScope` the link stops: better-auth's `useStore` registers its unsubscribe through `onScopeDispose`, so a bare call in the link's promise leaves a listener on the module-singleton session atom per rejection.
+
+**One cause, one toast — the alert store coalesces, so nothing upstream has to.** A single rejection cause routinely rejects several operations at once (an attachment batch's file and thumbnail reads, every chunk of a paged sweep), and each arrives at `createAlert` separately. An identical alert (same text, same severity) still on screen has its dismissal refreshed instead of a second copy stacked behind it. So the fix for duplicate toasts is never to silence one of the operations — that trades a duplicate for the silence-on-both-sides failure above.
 
 ### Async operation → fallback value (services / routers)
 
