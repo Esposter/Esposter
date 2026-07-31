@@ -19,7 +19,7 @@ Each is a **factory** — call it, don't spread the export: `getRolldownConfigur
 
 All extend `getRolldownConfigurationBrowser()`. Node adds `platform: "node"`; Isomorphic adds `@rolldown/plugin-node-polyfills`. Use `{ external }` shorthand when no extra entries needed; spread `[...external, "extra"]` only when the package needs additional externals.
 
-Base browser config enables `tsgo: true` in `dts()` (`@typescript/native-preview` for fast DTS gen; in catalog — do not remove).
+Base browser config passes only `tsconfig` to `dts()` — the DTS generator is left inferred. `rolldown-plugin-dts` picks `oxc` for packages with `isolatedDeclarations` and `tsc` otherwise (`tsgo` is auto-selected only on TypeScript 7, which this repo does not use). Don't pass a `generator`/`tsgo` option unless a package genuinely needs a specific one.
 
 ## Global External List
 

@@ -16,7 +16,7 @@ describe("@esposter/shared-node", () => {
 
   test("reporter types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distReporterDtsFile)).toMatchInlineSnapshot(`"reporter.d.ts: 0.34 KB (352 bytes)"`);
+    expect(getFileSize(distReporterDtsFile)).toMatchInlineSnapshot(`"reporter.d.ts: 0.35 KB (361 bytes)"`);
   });
 
   test("runner bundle size", () => {
@@ -26,6 +26,6 @@ describe("@esposter/shared-node", () => {
 
   test("runner types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distRunnerDtsFile)).toMatchInlineSnapshot(`"runner.d.ts: 0.21 KB (219 bytes)"`);
+    expect(getFileSize(distRunnerDtsFile)).toMatchInlineSnapshot(`"runner.d.ts: 0.22 KB (228 bytes)"`);
   });
 });

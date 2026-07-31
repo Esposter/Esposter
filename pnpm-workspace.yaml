@@ -105,7 +105,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.3.0
-  "@vue/language-core": ^3.3.8
+  "@vue/language-core": ^3.3.9
   "@vue/test-utils": ^2.4.11
   "@vuepic/vue-datepicker": ^14.0.0
   "@vueuse/core": ^14.4.0
@@ -199,7 +199,7 @@ catalog:
   rate-limiter-flexible: ^11.2.0
   read-excel-file: ^9.3.5
   rolldown: ^1.2.1
-  rolldown-plugin-dts: ^0.27.14
+  rolldown-plugin-dts: ^0.28.0
   rxjs: ^7.8.2
   sanitize-html: ^2.17.6
   sass-embedded: ^1.100.0
@@ -234,7 +234,7 @@ catalog:
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.5
   vue-router: ^5.2.0
-  vue-tsc: ^3.3.8
+  vue-tsc: ^3.3.9
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.1.7
   vuetify-nuxt-module: ^1.0.0-rc.3
