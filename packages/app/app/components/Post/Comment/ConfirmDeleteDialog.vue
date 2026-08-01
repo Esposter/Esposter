@@ -27,7 +27,7 @@ const { isOpen } = useSingletonDialog(deletingId);
   >
     Are you sure you want to delete this comment?
     <StyledPreviewCard>
-      <PostCommentPreview :comment />
+      <PostPreview :post="comment" />
     </StyledPreviewCard>
   </StyledDeleteFormDialog>
 </template>
