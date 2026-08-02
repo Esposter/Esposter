@@ -59,7 +59,8 @@ describe(useUserSettingsStore, () => {
     const { readUserSettings, updateUserSettings } = userSettingsStore;
     await readUserSettings();
 
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     await Promise.all([updateUserSettings({ isMuteOnJoin: true }), updateUserSettings({ isDeafenOnJoin: true })]);
 
     expect(alerts.value.map(({ text }) => text)).toStrictEqual(["1", "2"]);

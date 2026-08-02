@@ -9,7 +9,8 @@ import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 export const useReadPublishedSurveys = () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
-  const { createAlert } = useAlertStore();
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const publishedSurveys = ref<Resource[]>([]);
 
   watchImmediate(

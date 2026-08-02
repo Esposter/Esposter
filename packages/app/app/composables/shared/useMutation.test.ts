@@ -55,7 +55,8 @@ describe(useMutation, () => {
 
     const onError = vi.fn<(error: Error) => void>();
     const { executeMutation } = useMutation();
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const error = new Error("error");
     await executeMutation(() => Promise.reject(error), { key, onError });
 
@@ -121,7 +122,8 @@ describe(useMutation, () => {
 
     const rollback = vi.fn<() => void>();
     const { executeMutation } = useMutation();
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     let resolveFirst: () => void = noop;
     const first = executeMutation(
       () =>
@@ -199,7 +201,8 @@ describe(useMutation, () => {
 
     const rollback = vi.fn<() => void>();
     const { executeMutation } = useMutation();
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     let rejectSuperseded: (reason: unknown) => void = noop;
     const superseded = executeMutation(
       () =>
@@ -282,7 +285,8 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeQuery } = useMutation();
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     let rejectSuperseded: (reason: unknown) => void = noop;
     const superseded = executeQuery(
       () =>
@@ -302,7 +306,8 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeQuery } = useMutation();
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const outcome = await executeQuery(() => Promise.reject(new Error("error")), { key });
 
     expect(outcome.status).toBe(MutationStatus.Failed);

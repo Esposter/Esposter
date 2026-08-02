@@ -40,7 +40,8 @@ interface QueryOptions<TResult> {
 }
 
 export const useMutation = () => {
-  const { createAlert } = useAlertStore();
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   // Which call is the latest for a target. Only supersede-mode operations take a number here — every read,
   // And the writes that opt in; a queued write is the latest for its target by the time it runs
   const callIds = new Map<PropertyKey, number>();

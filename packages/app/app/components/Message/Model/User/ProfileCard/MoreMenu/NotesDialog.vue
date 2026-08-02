@@ -16,7 +16,8 @@ interface NotesDialogProps {
 const { roomId, user } = defineProps<NotesDialogProps>();
 const { $trpc } = useNuxtApp();
 const rules = useVRules();
-const { createAlert } = useAlertStore();
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const { readModerationNotes, readMoreModerationNotes } = useReadModerationNotes(roomId, () => user.id);
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId, hasMore, items } = storeToRefs(moderationNoteStore);

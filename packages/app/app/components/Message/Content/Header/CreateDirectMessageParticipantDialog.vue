@@ -13,8 +13,10 @@ const isOpen = defineModel<boolean>({ default: false });
 const { roomId } = defineProps<CreateDirectMessageParticipantDialogProps>();
 const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
-const { directMessageParticipantsMap } = storeToRefs(useDirectMessageStore());
-const { friends } = storeToRefs(useFriendStore());
+const directMessageStore = useDirectMessageStore();
+const { directMessageParticipantsMap } = storeToRefs(directMessageStore);
+const friendStore = useFriendStore();
+const { friends } = storeToRefs(friendStore);
 const friendPicker = useTemplateRef("friendPicker");
 const selectedUserIds = ref<string[]>([]);
 const excludedUserIds = computed(() => {

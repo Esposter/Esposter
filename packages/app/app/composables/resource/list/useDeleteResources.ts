@@ -9,7 +9,8 @@ import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const router = useRouter();
-  const { createErrorNotification, createNotification } = useNotificationStore();
+  const notificationStore = useNotificationStore();
+  const { createErrorNotification, createNotification } = notificationStore;
   const { executeMutation: executeDeleteResourcesMutation } = useMutation();
   const { restoreResource } = useRestoreResource(refresh);
   const favoriteStore = useFavoriteStore();

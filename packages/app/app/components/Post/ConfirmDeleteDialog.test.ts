@@ -48,8 +48,10 @@ describe("postConfirmDeleteDialog", () => {
     // Shallow because the reconciliation under test lives in setup, and happy-dom has no visualViewport for
     // The real Vuetify overlay to position itself against
     await mountSuspended(PostConfirmDeleteDialog, { shallow: true });
-    const { items } = storeToRefs(usePostStore());
-    const { deletingId } = storeToRefs(usePostDialogStore());
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    const postDialogStore = usePostDialogStore();
+    const { deletingId } = storeToRefs(postDialogStore);
     items.value = [createPost()];
     deletingId.value = id;
     await flushPromises();

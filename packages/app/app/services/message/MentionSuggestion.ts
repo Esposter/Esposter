@@ -17,7 +17,8 @@ export const MentionSuggestion: MentionOptions<
   MentionNodeAttributes
 >["suggestion"] = {
   items: async ({ query }) => {
-    const { currentRoomId } = storeToRefs(useRoomStore());
+    const roomStore = useRoomStore();
+    const { currentRoomId } = storeToRefs(roomStore);
     if (!currentRoomId.value) return [];
     const members = await readMemberMentionItems(query, currentRoomId.value);
     return [...getBroadcastMentionItems(query), ...getRoleMentionItems(query), ...members];

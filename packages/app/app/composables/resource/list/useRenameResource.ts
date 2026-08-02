@@ -6,7 +6,8 @@ import { noop } from "@esposter/shared";
 // Owned here rather than in the dialog because the dialog closes on submit — the row the rename applies to and
 // The rollback that undoes it both belong to the list, which outlives the round trip
 export const useRenameResource = (resource: Ref<Resource | undefined>, refresh: () => Promise<void>) => {
-  const { createErrorNotification } = useNotificationStore();
+  const notificationStore = useNotificationStore();
+  const { createErrorNotification } = notificationStore;
   const { executeMutation: executeRenameResourceMutation } = useMutation();
   const getResourceMutations = useResourceMutations();
   return async (name: string) => {

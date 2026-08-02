@@ -31,8 +31,10 @@ describe("messageModelRoomCategoryConfirmDeleteDialog", () => {
     // Shallow because the reconciliation under test lives in setup, and happy-dom has no visualViewport for
     // The real Vuetify overlay to position itself against
     await mountSuspended(MessageModelRoomCategoryConfirmDeleteDialog, { shallow: true });
-    const { categories } = storeToRefs(useRoomCategoryStore());
-    const { deletingId } = storeToRefs(useRoomCategoryDialogStore());
+    const roomCategoryStore = useRoomCategoryStore();
+    const { categories } = storeToRefs(roomCategoryStore);
+    const roomCategoryDialogStore = useRoomCategoryDialogStore();
+    const { deletingId } = storeToRefs(roomCategoryDialogStore);
     categories.value = [createCategory()];
     deletingId.value = id;
     await flushPromises();

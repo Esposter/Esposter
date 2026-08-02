@@ -5,7 +5,8 @@ import { useFavoriteStore } from "@/store/resource/favorite";
 
 export const usePurgeResource = (refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
-  const { createNotification } = useNotificationStore();
+  const notificationStore = useNotificationStore();
+  const { createNotification } = notificationStore;
   const favoriteStore = useFavoriteStore();
   const { invalidateFavorites } = favoriteStore;
   const { executeMutation: executePurgeMutation } = useMutation();

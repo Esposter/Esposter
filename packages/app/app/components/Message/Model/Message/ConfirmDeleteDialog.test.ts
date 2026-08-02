@@ -25,8 +25,10 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     const router = useRouter();
     router.currentRoute.value.params.id = roomId;
     triggerRef(router.currentRoute);
-    const { items } = storeToRefs(useDataStore());
-    const { deletingRowKey } = storeToRefs(useMessageDialogStore());
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const messageDialogStore = useMessageDialogStore();
+    const { deletingRowKey } = storeToRefs(messageDialogStore);
     const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
     items.value = [newMessage];
     deletingRowKey.value = newMessage.rowKey;

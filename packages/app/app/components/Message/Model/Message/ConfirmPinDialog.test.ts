@@ -25,8 +25,10 @@ describe("messageModelMessageConfirmPinDialog", () => {
     const router = useRouter();
     router.currentRoute.value.params.id = roomId;
     triggerRef(router.currentRoute);
-    const { items } = storeToRefs(useDataStore());
-    const { pinningRowKey } = storeToRefs(useMessageDialogStore());
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const messageDialogStore = useMessageDialogStore();
+    const { pinningRowKey } = storeToRefs(messageDialogStore);
     const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
     items.value = [newMessage];
     pinningRowKey.value = newMessage.rowKey;

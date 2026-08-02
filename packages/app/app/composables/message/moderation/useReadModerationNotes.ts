@@ -4,7 +4,8 @@ import { useModerationNoteStore } from "@/store/message/moderation/note";
 
 export const useReadModerationNotes = (roomId: RoomInMessage["id"], targetUserId: MaybeRefOrGetter<User["id"]>) => {
   const { $trpc } = useNuxtApp();
-  const { readItems, readMoreItems, setModerationNoteCount } = useModerationNoteStore();
+  const moderationNoteStore = useModerationNoteStore();
+  const { readItems, readMoreItems, setModerationNoteCount } = moderationNoteStore;
   const readModerationNoteCount = async () => {
     const targetUserIdValue = toValue(targetUserId);
     const count = await $trpc.message.moderation.countModerationNotes.query({

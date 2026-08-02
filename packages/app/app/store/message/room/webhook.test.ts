@@ -31,7 +31,8 @@ describe(useWebhookStore, () => {
     );
     const webhookStore = useWebhookStore();
     const { updateWebhook } = webhookStore;
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     await Promise.all([updateWebhook(roomId, { id, name: "name" }), updateWebhook(roomId, { id, isActive: false })]);
 
     expect(alerts.value.map(({ text }) => text)).toStrictEqual(["1", "2"]);

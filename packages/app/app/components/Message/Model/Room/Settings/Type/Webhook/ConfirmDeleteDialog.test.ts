@@ -45,8 +45,10 @@ describe("messageModelRoomSettingsTypeWebhookConfirmDeleteDialog", () => {
     const router = useRouter();
     router.currentRoute.value.params.id = roomId;
     triggerRef(router.currentRoute);
-    const { items } = storeToRefs(useWebhookStore());
-    const { deletingId } = storeToRefs(useWebhookDialogStore());
+    const webhookStore = useWebhookStore();
+    const { items } = storeToRefs(webhookStore);
+    const webhookDialogStore = useWebhookDialogStore();
+    const { deletingId } = storeToRefs(webhookDialogStore);
     items.value = [createWebhook()];
     deletingId.value = id;
     await flushPromises();

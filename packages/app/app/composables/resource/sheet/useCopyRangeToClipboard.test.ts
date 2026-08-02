@@ -12,7 +12,8 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectRange = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number) => {
-  const { extendCellSelection, startCellSelection } = useCellStore();
+  const cellStore = useCellStore();
+  const { extendCellSelection, startCellSelection } = cellStore;
   startCellSelection(rowStart, columnStart);
   extendCellSelection(rowEnd, columnEnd);
 };

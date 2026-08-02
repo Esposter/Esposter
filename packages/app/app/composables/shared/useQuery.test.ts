@@ -20,7 +20,8 @@ describe(useQuery, () => {
   test("alerts and leaves data undefined on failure", async () => {
     expect.hasAssertions();
 
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const { data, refresh } = useQuery(() => Promise.reject(new Error("error")));
     await refresh();
 

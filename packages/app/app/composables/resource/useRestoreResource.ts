@@ -7,7 +7,8 @@ import { RoutePath } from "@esposter/shared";
 // A restore returns a Draft, so the row reappears in the list but its publication does not come back
 export const useRestoreResource = (refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
-  const { createErrorNotification, createNotification } = useNotificationStore();
+  const notificationStore = useNotificationStore();
+  const { createErrorNotification, createNotification } = notificationStore;
   const favoriteStore = useFavoriteStore();
   const { invalidateFavorites } = favoriteStore;
   const { executeMutation: executeRestoreResourceMutation, getIsPending: getIsRestorePending } = useMutation();

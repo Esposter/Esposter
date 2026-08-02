@@ -5,11 +5,13 @@ description: Esposter Pinia store conventions — full store name, destructure w
 
 # Pinia Store Conventions
 
-## Usage in Vue Components
+## Consuming a Store
+
+Applies **everywhere a store is consumed** — components, composables, services and **tests alike**. Tests are not exempt: a test that reaches into a store differently from the code it covers stops being a description of how the store is used. Scoping this rule to components is exactly how it drifted.
 
 - **Full descriptive store variable name** — `const fileTableEditorStore = useFileTableEditorStore()`, never `const store = ...`. Exception: conditional assignment where the store type varies at runtime.
 - **`storeToRefs` and `defineStore` are auto-imported** — never `import { storeToRefs } from "pinia"`.
-- **In components**: assign the store to a named variable first (`const roleStore = useRoleStore()`), then destructure. Never destructure directly from the `useXxxStore()` call. Keep each store's lines grouped — fully extract one store before the next. Never batch all inits, then all refs, then all methods. Order per store:
+- Assign the store to a named variable first (`const roleStore = useRoleStore()`), then destructure. **Never destructure directly from the `useXxxStore()` call** — neither `storeToRefs(useRoleStore())` nor `const { method } = useRoleStore()`. Keep each store's lines grouped — fully extract one store before the next. Never batch all inits, then all refs, then all methods. Order per store:
   1. `const xyzStore = useXyzStore()`
   2. `const { ref1, ref2 } = storeToRefs(xyzStore)` _(omit if no refs/computeds)_
   3. `const { method1 } = xyzStore` _(omit if no methods)_

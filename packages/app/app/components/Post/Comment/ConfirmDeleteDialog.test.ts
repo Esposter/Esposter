@@ -51,8 +51,10 @@ describe("postCommentConfirmDeleteDialog", () => {
     await mountSuspended(PostCommentConfirmDeleteDialog, { shallow: true });
     // The comment store keys its list by the post in the route, so a list only exists once one is current
     await navigateTo(RoutePath.Post(postId));
-    const { items } = storeToRefs(useCommentStore());
-    const { deletingId } = storeToRefs(useCommentDialogStore());
+    const commentStore = useCommentStore();
+    const { items } = storeToRefs(commentStore);
+    const commentDialogStore = useCommentDialogStore();
+    const { deletingId } = storeToRefs(commentDialogStore);
     items.value = [createComment()];
     deletingId.value = id;
     await flushPromises();
