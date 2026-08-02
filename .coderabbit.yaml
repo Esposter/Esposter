@@ -5,11 +5,5 @@ reviews:
     - "!packages/app/server/db/migrations/**"
 
   auto_review:
-    # Auto review only fires on PRs targeting the default branch unless the base is listed here, and every PR
-    # In this repo targets develop — without this they are skipped with "Auto reviews are disabled on
-    # Base/target branches other than the default branch" and have to be triggered by hand. Regex, additive
-    # To the default branch, so main keeps auto-reviewing too
-    base_branches:
-      - develop
     ignore_usernames:
       - renovate[bot]
