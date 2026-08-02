@@ -9,7 +9,9 @@ description: Esposter CodeRabbit review conventions — retrieving review feedba
 
 `.coderabbit.yaml` sits at the repo root. CodeRabbit reads it from the **base branch** of a PR, not the head branch. **PRs target `develop`, so `develop` is the branch that matters** — an exclusion only takes effect once it is on the branch the PR is based against.
 
-CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**: develop-base PRs are skipped with "Auto reviews are disabled on base/target branches other than the default branch" unless `reviews.auto_review.base_branches` lists `develop` (regex list, additive to the default branch). Until that setting lands, trigger a review on a develop-base PR manually by commenting `@coderabbitai review` on it.
+CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**: develop-base PRs are skipped with "Auto reviews are disabled on base/target branches other than the default branch". Trigger a review on a develop-base PR manually by commenting `@coderabbitai review` on it.
+
+**Never add `reviews.auto_review.base_branches` to `.coderabbit.yaml`.** Manual triggering on develop-base PRs is deliberate, not a gap waiting to be closed: it keeps control of _when_ a review starts, which is what makes the never-push-into-a-running-review rule below workable, and it stops every intermediate push from spending a rate-limit slot. A skipped develop-base PR is the configured behaviour — if a PR was not reviewed, comment `@coderabbitai review`, do not change the config. This entry exists because the setting reads like an obvious fix and has been "helpfully" added before.
 
 Commit exclusions **directly to the base branch (`develop`)** as a standalone commit, separate from the work they cover. An exclusion committed on the feature branch does nothing.
 
