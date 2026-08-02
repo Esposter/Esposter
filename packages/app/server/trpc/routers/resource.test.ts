@@ -1,7 +1,9 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { Resource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
@@ -10,16 +12,25 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
 import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
+import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
+import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
-import { AzureContainer, AzureTable, ResourceActivityType, resources, ResourceType } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  AzureQueue,
+  AzureTable,
+  ResourceActivityType,
+  resources,
+  ResourceType,
+} from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse, takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // A clone mints a fresh asset id rather than carrying the source's over, so its blob is found by where it
@@ -35,16 +46,20 @@ describe("resource", () => {
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
+  let todoListCaller: DecorateRouterRecord<TRPCRouter["todoList"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
   const filename = "filename";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
+  // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
+  const dueAt = new Date(1);
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(resourceRouter)(mockContext);
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
+    todoListCaller = createCallerFactory(todoListRouter)(mockContext);
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
@@ -55,7 +70,9 @@ describe("resource", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
+    resourceEventEmitter.removeAllListeners("saveResourceContent");
     MockContainerDatabase.clear();
+    MockServiceBusDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(resources);
   });
@@ -422,6 +439,30 @@ describe("resource", () => {
     expect([...container.keys()].every((key) => key.startsWith(`${webpageResource.id}/`))).toBe(true);
   });
 
+  // The copy's content goes through the one content-write path, so it fires the same after-save hook the
+  // Editor's save does — a copy whose items carry future due dates is never left with no reminder at all,
+  // Silently and until the owner happens to re-save that item
+  test("runs the after-save hook for a duplicated resource", async () => {
+    expect.hasAssertions();
+
+    const todoListResource = await todoListCaller.createResource({ name });
+    const item = new TodoListItem({ dueAt, name });
+    await todoListCaller.saveResourceContent({
+      content: { items: [item] },
+      contentVersion: todoListResource.contentVersion,
+      id: todoListResource.id,
+    });
+    const duplicatedResource = await caller.duplicateResource({ id: todoListResource.id });
+    // The hook is fire-and-forget off each write, so drain both before asserting what they enqueued
+    await waitForSynchronizedFunctions();
+    const reminder = { dueAt, itemId: item.id };
+
+    expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([
+      { body: { ...reminder, resourceId: todoListResource.id }, scheduledEnqueueTimeUtc: dueAt },
+      { body: { ...reminder, resourceId: duplicatedResource.id }, scheduledEnqueueTimeUtc: dueAt },
+    ]);
+  });
+
   test("duplicates a resource without content", async () => {
     expect.hasAssertions();
 
@@ -644,6 +685,51 @@ describe("resource", () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
     expect(restoredResource.contentVersion).toBe(webpageResource.contentVersion + 3);
     expect(publication?.publishVersion).toBe(1);
+  });
+
+  // A restore is a content write like any other: an editor open in another tab adopts the restored content and
+  // Its new contentVersion, instead of holding the pre-restore draft and having every further save in that tab
+  // Rejected as stale forever — and the trail records the restore the way the recycle bin's own restore does
+  test("restores a published version through the one content-write path", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    // The rowKey is the write's own reverse-ticked timestamp, so the pinned clock has to move between the
+    // Mutations for their entries to land on distinct keys instead of colliding in the partition
+    vi.advanceTimersByTime(1);
+    await webpageCaller.saveResourceContent({
+      content: webpageEditor,
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    await waitForSynchronizedFunctions();
+    vi.advanceTimersByTime(1);
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    await waitForSynchronizedFunctions();
+    vi.advanceTimersByTime(1);
+    let saveEvent: { content: unknown; contentVersion: Resource["contentVersion"]; id: Resource["id"] } | undefined;
+    resourceEventEmitter.on("saveResourceContent", ([data]) => {
+      saveEvent = data;
+    });
+    const restoredResource = await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
+    // Every entry on the trail is fire-and-forget off its mutation, so drain them before reading it back
+    await waitForSynchronizedFunctions();
+    const { items } = await caller.readActivities({ id: webpageResource.id });
+    assert.exists(saveEvent);
+
+    expect(saveEvent.id).toBe(webpageResource.id);
+    expect(saveEvent.contentVersion).toBe(restoredResource.contentVersion);
+    expect(saveEvent.content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
+    expect(
+      items.map(({ activityType }) => activityType).toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+    ).toStrictEqual(
+      [
+        ResourceActivityType.ContentSaved,
+        ResourceActivityType.Created,
+        ResourceActivityType.Published,
+        ResourceActivityType.Restored,
+      ].toSorted((a, b) => EN_US_COMPARATOR.compare(a, b)),
+    );
   });
 
   test("does not read publish history for another user's resource", async () => {

@@ -1,6 +1,7 @@
 import type { SurveyResponseEntity } from "@esposter/db-schema";
 import type { Model } from "survey-core";
 
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -8,54 +9,52 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
   const { $trpc } = useNuxtApp();
   let surveyResponse: SurveyResponseEntity | undefined;
   const { executeMutation } = useMutation();
-  // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess
-  const saveSurveyResponse = async (survey: Model) => {
-    const responseModel = survey.data;
-    const currentSurveyResponse = surveyResponse;
-    if (!currentSurveyResponse) {
-      const newSurveyResponseId = crypto.randomUUID();
-      // Single-flight: until the first save's onSuccess records the created row, every save takes this
-      // Branch, and a second concurrent create would write a duplicate response with a fresh rowKey.
-      // The dropped save's answers are not lost — the next autosave carries the full model
-      await executeMutation(
-        () =>
-          $trpc.survey.createSurveyResponse.mutate({
-            model: responseModel,
-            pageNo: survey.currentPageNo,
+  // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess.
+  // Resolves to whether the answers are persisted, so a caller can never show a thank-you page for a
+  // Response the server never took
+  const saveSurveyResponse = async ({ currentPageNo, data }: Pick<Model, "currentPageNo" | "data">) => {
+    const { status } = await executeMutation(
+      () => {
+        // Which write to send is resolved when it is sent rather than when it was issued: a save that queued
+        // Behind the create must update the row that create produced, not write a second response
+        const currentSurveyResponse = surveyResponse;
+        if (!currentSurveyResponse)
+          return $trpc.survey.createSurveyResponse.mutate({
+            model: data,
+            pageNo: currentPageNo,
             participantToken,
             partitionKey: id,
-            rowKey: newSurveyResponseId,
-          }),
-        {
-          isExclusive: true,
-          key: id,
-          onSuccess: (newSurveyResponse) => {
-            surveyResponse = newSurveyResponse;
-            localStorage.setItem(LocalStorageKey.SurveyResponseId(id, participantToken), newSurveyResponse.rowKey);
-          },
-        },
-      );
-      return;
-    }
+            rowKey: crypto.randomUUID(),
+          });
+        // The stored row already holds these answers at this position, which is the write the server itself
+        // Rejects as a duplicate — so resolving with the stored row keeps an unchanged submit a success
+        // Rather than an error banner over answers that are already safe
+        else if (
+          JSON.stringify(data) === JSON.stringify(currentSurveyResponse.model) &&
+          currentPageNo <= currentSurveyResponse.pageNo
+        )
+          return Promise.resolve(currentSurveyResponse);
 
-    await executeMutation(
-      () =>
-        $trpc.survey.updateSurveyResponse.mutate({
-          model: responseModel,
+        return $trpc.survey.updateSurveyResponse.mutate({
+          model: data,
           modelVersion: currentSurveyResponse.modelVersion,
-          pageNo: survey.currentPageNo,
+          pageNo: currentPageNo,
           participantToken,
           partitionKey: currentSurveyResponse.partitionKey,
           rowKey: currentSurveyResponse.rowKey,
-        }),
+        });
+      },
       {
-        // Keyed per response row — repeated saves of the same response are genuine latest-wins
-        key: currentSurveyResponse.rowKey,
-        onSuccess: (updatedSurveyResponse) => {
-          surveyResponse = updatedSurveyResponse;
+        // One live response per participant per survey, so every save queues against that one target — a
+        // Submit issued while the create is still in flight is exactly such a save
+        key: id,
+        onSuccess: (newSurveyResponse) => {
+          surveyResponse = newSurveyResponse;
+          localStorage.setItem(LocalStorageKey.SurveyResponseId(id, participantToken), newSurveyResponse.rowKey);
         },
       },
     );
+    return status === MutationStatus.Succeeded;
   };
   // Respondent progress is tracked per browser, so an interrupted survey resumes where it left off.
   // A failed resume falls back to a blank survey rather than stranding the respondent on the skeleton

@@ -10,14 +10,22 @@ import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 export const useRecordResourceView = (resource: Ref<Resource | undefined>) => {
   const recentResourceViews = useLocalStorage<RecentResourceView[]>(LocalStorageKey.ResourceRecentViews, []);
 
-  watchImmediate(resource, (newResource) => {
-    if (!newResource) return;
-    const { id, name, type } = newResource;
-    recentResourceViews.value = pushRecent(
-      recentResourceViews.value,
-      { id, name, type, viewedAt: new Date().toISOString() },
-      (a, b) => a.id === b.id,
-      RECENT_RESOURCE_VIEWS_LIMIT,
-    );
-  });
+  // Watches the identity, not the object: every autosave, rename and tag edit replaces the ref with a new
+  // Object, and re-recording on those would order Recent by last autosave rather than last open — this
+  // Records what you opened, not what happened to it while it was open
+  watchImmediate(
+    () => resource.value?.id,
+    () => {
+      const newResource = resource.value;
+      if (!newResource) return;
+
+      const { id, name, type } = newResource;
+      recentResourceViews.value = pushRecent(
+        recentResourceViews.value,
+        { id, name, type, viewedAt: new Date().toISOString() },
+        (a, b) => a.id === b.id,
+        RECENT_RESOURCE_VIEWS_LIMIT,
+      );
+    },
+  );
 };

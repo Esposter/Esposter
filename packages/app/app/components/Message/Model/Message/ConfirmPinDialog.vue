@@ -8,9 +8,12 @@ const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
 const { pinningRowKey } = storeToRefs(messageDialogStore);
-const message = computed(() => items.value.find(({ rowKey }) => rowKey === pinningRowKey.value));
+// Resolved through the primitive rather than a computed of our own, so a target whose message has left the
+// Timeline is dropped with it instead of re-opening this dialog by itself when a later read brings it back
+const { isOpen, item: message } = useSingletonDialog(pinningRowKey, () =>
+  items.value.find(({ rowKey }) => rowKey === pinningRowKey.value),
+);
 const creator = useCreator(message);
-const { isOpen } = useSingletonDialog(pinningRowKey);
 const { executeMutation } = useMutation();
 const pinMessage = async (onComplete: () => void) => {
   if (!message.value) return;

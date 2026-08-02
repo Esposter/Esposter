@@ -8,8 +8,9 @@ import { ItemMetadataPropertyNames } from "@esposter/shared";
 // Rather than as a mixed-type list column; created/updated apply to every resource
 export const ResourceHeaders: DataTableHeader<Resource>[] = [
   // Always rendered rather than revealed on hover: hover does not exist on touch, and a star you
-  // Cannot find is a star you do not use
-  { key: "favorite", sortable: false, title: "" },
+  // Cannot find is a star you do not use. Titled like every other column because the column chooser lists
+  // Headers by title — a blank one is a checkbox with no way to tell what it toggles
+  { key: "favorite", sortable: false, title: "Favorite" },
   { key: "type", title: "Type" },
   { key: "name", title: "Name" },
   {

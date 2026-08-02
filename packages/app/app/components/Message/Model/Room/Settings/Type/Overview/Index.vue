@@ -2,7 +2,6 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { getSequentialFunction } from "#shared/util/function/getSequentialFunction";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
@@ -36,10 +35,7 @@ const isDirty = computed(
     slowmodeMs.value !== room.slowmodeMs ||
     selectRoomInMessageSchema.shape.topic.safeParse(topic.value).data !== room.topic,
 );
-// Every field saves the whole form through one mutation key, so overlapping saves would mark the earlier
-// Call stale — skipping its rollback and its alert, and snapshotting store state the earlier call already
-// Dirtied. Queueing the saves keeps each one the latest for its key when it settles.
-const save = getSequentialFunction(async () => {
+const save = async () => {
   if (!isDirty.value) return;
 
   const input = {
@@ -65,7 +61,7 @@ const save = getSequentialFunction(async () => {
     },
     key: room.id,
   });
-});
+};
 </script>
 
 <template>

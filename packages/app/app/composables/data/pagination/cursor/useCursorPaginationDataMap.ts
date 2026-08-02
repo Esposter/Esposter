@@ -3,6 +3,6 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 export const useCursorPaginationDataMap = <TItem>(
   currentId: MaybeRefOrGetter<string>,
 ): ReturnType<typeof useCursorPaginationOperationData<TItem>> => {
-  const { data: cursorPaginationData } = useDataMap(currentId, () => new CursorPaginationData<TItem>());
-  return useCursorPaginationOperationData(cursorPaginationData);
+  const { getBoundData } = useDataMap(currentId, () => new CursorPaginationData<TItem>());
+  return useCursorPaginationOperationData(getBoundData);
 };

@@ -60,18 +60,21 @@ flowchart LR
 
 ## Key files
 
-| File                                                 | Role                                                                     |
-| ---------------------------------------------------- | ------------------------------------------------------------------------ |
-| `app/components/Resource/ListView.vue`               | the workbench orchestrator: toolbar, pills, selection, table, singletons |
-| `app/components/Resource/List/FilterBar.vue`         | pill row + `+ Add filter` menu                                           |
-| `app/components/Resource/List/SelectionToolbar.vue`  | `n selected · Delete (n) · Export CSV · Clear`                           |
-| `app/composables/resource/useResourceListFilters.ts` | URL-synced filter state                                                  |
-| `app/composables/resource/useReadResources.ts`       | count + page fetch, refresh, chunked page reader for CSV export          |
-| `app/composables/resource/useExportResourcesCsv.ts`  | selected-rows + chunked full export with truncation warning              |
-| `server/trpc/routers/resource.ts`                    | filter schema, `createResourcesWhere`, bulk delete                       |
+| File                                                    | Role                                                                     |
+| ------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `app/components/Resource/ListView.vue`                  | the workbench orchestrator: toolbar, pills, selection, table, singletons |
+| `app/components/Resource/List/FilterBar.vue`            | pill row + `+ Add filter` menu                                           |
+| `app/components/Resource/List/SelectionToolbar.vue`     | `n selected · Delete (n) · Export CSV · Clear`                           |
+| `app/composables/resource/useResourceListFilters.ts`    | URL-synced filter state                                                  |
+| `app/composables/resource/useReadResources.ts`          | filter input, chunked page reader for CSV export                         |
+| `app/composables/resource/list/useReadResourcesPage.ts` | the shared paged reader: stale guard + filter-keyed count                |
+| `app/composables/resource/list/useDebouncedFilter.ts`   | field ↔ filter bridge that debounces typing                              |
+| `app/composables/resource/useExportResourcesCsv.ts`     | selected-rows + chunked full export with truncation warning              |
+| `server/trpc/routers/resource.ts`                       | filter schema, `createResourcesWhere`, bulk delete                       |
 
 ## Notes
 
 - Publish **status stays off the default columns** (the consolidation decision) — it appears only as an opt-in filter pill, not a column.
 - One filter source: every filter lands in `createResourcesWhere` so `count` and `readResources` can never disagree.
-- All filters funnel through the data table's `search` prop (a JSON key of the filter state) so Vuetify resets to page 1 and refires `update:options` on any change.
+- All filters funnel through the data table's `search` prop (a JSON key of the filter state) so Vuetify resets to page 1 and refires `update:options` on any change. That is also why every text filter — the search box and a tag pill's name and value — writes through `useDebouncedFilter` instead of per keystroke: a raw binding would reset to page 1 and re-run both queries on every character.
+- `update:options` also fires for a page turn, a page-size change and a sort change, none of which move the total, so the count is keyed to the serialized filter and reused until that changes (or a mutation refreshes). The list and the [recycle bin](/docs/platform/recycle-bin) share one `useReadResourcesPage`, which owns both that keying and the latest-wins stale guard that keeps a slower earlier read from overwriting a fresher one.

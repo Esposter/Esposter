@@ -4,10 +4,22 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
 import { createExponentialBackoff, withFinalizerAsync } from "@esposter/shared";
 
-export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
+export const useCursorPaginationOperationData = <TItem>(
+  // Resolves the slice to write to, at the moment it is called. An operation binds once up front, so its response
+  // Is filed under the key it was issued for rather than whichever key is current by the time it lands.
+  bindCursorPaginationData: () => Ref<CursorPaginationData<TItem>>,
+) => {
   const online = useOnline();
   // The waypoint re-arms via onComplete even when the query fails, so pace retries instead of spinning hot
   const executeWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
+  // Binding per read resolves the key every time, which is what makes this track the current slice. It is the
+  // Same binder an operation pins once, so the two views can never point at different maps.
+  const cursorPaginationData = computed({
+    get: () => bindCursorPaginationData().value,
+    set: (newData) => {
+      bindCursorPaginationData().value = newData;
+    },
+  });
   const items = computed({
     get: () => cursorPaginationData.value.items,
     set: (newItems) => {
@@ -37,12 +49,13 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>,
   ) => {
     const isPending = ref(true);
+    const boundCursorPaginationData = bindCursorPaginationData();
     const refresh = async () => {
       isPending.value = true;
       await withFinalizerAsync(
         async () => {
           const data = await query();
-          initializeCursorPaginationData(data);
+          boundCursorPaginationData.value = data;
           // Absorbs onComplete errors so data already set above is never lost
           await Promise.allSettled([onComplete?.(data)]);
         },
@@ -59,16 +72,17 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     query: (cursor: string) => Promise<CursorPaginationData<TItem>>,
     onComplete?: () => Promisable<void>,
   ) => {
+    const boundCursorPaginationData = bindCursorPaginationData();
     await withFinalizerAsync(async () => {
       if (!online.value) return;
       const {
         hasMore: newHasMore,
         items: newItems,
         nextCursor: newNextCursor,
-      } = await executeWithBackoff(() => query(nextCursor.value));
-      hasMore.value = newHasMore;
-      nextCursor.value = newNextCursor;
-      items.value.push(...newItems);
+      } = await executeWithBackoff(() => query(boundCursorPaginationData.value.nextCursor));
+      boundCursorPaginationData.value.hasMore = newHasMore;
+      boundCursorPaginationData.value.nextCursor = newNextCursor;
+      boundCursorPaginationData.value.items.push(...newItems);
     }, onComplete);
   };
 

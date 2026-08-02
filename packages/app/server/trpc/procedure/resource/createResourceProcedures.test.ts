@@ -28,7 +28,14 @@ import {
   ResourceViewEntity,
 } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, noop, Operation, takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
+import {
+  MockBlobClient,
+  MockContainerDatabase,
+  MockEventGridDatabase,
+  MockRestError,
+  MockTableClient,
+  MockTableDatabase,
+} from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
@@ -305,6 +312,28 @@ describe("createResourceProcedures", () => {
     await dashboardCaller.unpublishResource({ id: newResource.id });
 
     expect(MockEventGridDatabase.get("")?.length ?? 0).toBe(publishedEventCount);
+  });
+
+  // Both published reads go through readContentBlob, which maps a genuine 404 to "no content": the live
+  // BlobClient.download() rejects on a missing blob rather than answering with an empty body, so a snapshot
+  // The unpublish prefix sweep removed between the listing and the click has to reach the visitor as the 404
+  // Page instead of an internal error. The mock resolves with an empty body, so the rejection is injected here
+  test("fails read published content with a swept snapshot", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+    vi.spyOn(MockBlobClient.prototype, "download").mockRejectedValue(
+      new MockRestError("The specified blob does not exist.", 404),
+    );
+
+    await expect(
+      dashboardCaller.readPublishedResourceContent(newResource.id),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    await expect(
+      dashboardCaller.readPublishedVersionContent({ id: newResource.id, version: 1 }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
   test("fails read published content for unpublished resource", async () => {

@@ -8,7 +8,8 @@ const tab = computed({
   get: () => (hasFiles.value ? "files" : "search"),
   set: (value) => {
     hasFiles.value = value === "files";
-    // Selecting the Files tab immediately lists the room's attachments; leaving it hands back to text search.
+    // Selecting the Files tab immediately lists the room's attachments. Leaving it needs no read — each tab
+    // Owns its own result slice in the store, so the Search tab is already showing its own results.
     if (hasFiles.value) readSearchedMessages(0);
   },
 });

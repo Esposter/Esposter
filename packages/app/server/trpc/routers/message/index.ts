@@ -10,12 +10,10 @@ import { readMySentMessagesInputSchema } from "#shared/models/db/message/ReadMyS
 import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
+import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
-import { PinnableMessageTypes } from "#shared/services/message/PinnableMessageTypes";
-import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -85,9 +83,11 @@ import {
 } from "@esposter/db-schema";
 import {
   createUniqueArraySchema,
+  getResult,
   getResultAsync,
   InvalidOperationError,
   ItemMetadataPropertyNames,
+  jsonDateParse,
   MAX_READ_LIMIT,
   noop,
   NotFoundError,
@@ -118,9 +118,11 @@ const readMessagesByRowKeysInputSchema = z.object({
   rowKeys: createUniqueArraySchema(standardMessageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
 });
 const generateUploadFileSasEntitiesInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true, size: true }), "filename")
-    .min(1)
-    .max(MAX_READ_LIMIT),
+  // Deliberately not a unique array: every write target is minted under its own fresh id (see getFileBlobNames),
+  // So two files a user genuinely named the same collide nowhere, and rejecting the drop over the shared name
+  // Would fail the whole selection for something the storage layout already keeps apart. The sibling delete and
+  // Download schemas key on the id because by then the id exists; here the client has no id to send yet.
+  files: fileEntitySchema.pick({ filename: true, mimetype: true, size: true }).array().min(1).max(MAX_READ_LIMIT),
   ...roomIdSchema.shape,
 });
 
@@ -174,6 +176,20 @@ export const pinMessageInputSchema = standardMessageEntitySchema.pick({ partitio
 
 export const unpinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 
+const votePollInputSchema = z.object({
+  // "" withdraws the caller's vote — the radio group emits no selection rather than an option id
+  optionId: z.union([z.literal(""), z.uuid()]),
+  ...standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
+});
+
+// Only the two fields a vote reads and writes, kept loose so the poll's question and any other authored field
+// Survive the round trip untouched. A vote is not an edit of the poll, so the client never sends the body — it
+// Names the option, and the server applies it to the stored poll.
+const votablePollMessageContentSchema = z.looseObject({
+  options: z.object({ id: z.string() }).array().min(1),
+  votes: z.record(z.string(), z.string()),
+});
+
 const getWebPubSubClientAccessUrlInputSchema = roomIdSchema;
 
 export const baseMessageRouter = router({
@@ -185,7 +201,7 @@ export const baseMessageRouter = router({
     .query(({ ctx, input }) => {
       messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.getSessionPayload.session.id });
     }),
-  deleteFile: getMessageProcedure(deleteFileInputSchema).mutation(
+  deleteFile: getMessageProcedure(deleteFileInputSchema, MessageOperation.Update).mutation(
     async ({ ctx: { messageClient, messageEntity }, input: { id, partitionKey, rowKey } }) => {
       if (messageEntity.isForward || messageEntity.files.length === 0)
         throw new TRPCError({
@@ -214,29 +230,21 @@ export const baseMessageRouter = router({
       await publishBlobDeletion(`${partitionKey}/${rowKey}`, AzureContainer.MessageAssets, blobNames);
     },
   ),
-  deleteLinkPreviewResponse: getMessageProcedure(deleteLinkPreviewResponseInputSchema).mutation(
-    async ({ ctx: { messageClient, messageEntity } }) => {
-      const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
-        linkPreviewResponse: null,
-        partitionKey: messageEntity.partitionKey,
-        rowKey: messageEntity.rowKey,
-      };
-      Object.assign(messageEntity, updatedMessageEntity);
-      await updateMessage(messageClient, messageEntity, "Replace");
-      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
-    },
-  ),
-  deleteMessage: getMessageProcedure(deleteMessageInputSchema).mutation(
+  deleteLinkPreviewResponse: getMessageProcedure(
+    deleteLinkPreviewResponseInputSchema,
+    MessageOperation.Update,
+  ).mutation(async ({ ctx: { messageClient, messageEntity } }) => {
+    const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
+      linkPreviewResponse: null,
+      partitionKey: messageEntity.partitionKey,
+      rowKey: messageEntity.rowKey,
+    };
+    Object.assign(messageEntity, updatedMessageEntity);
+    await updateMessage(messageClient, messageEntity, "Replace");
+    messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+  }),
+  deleteMessage: getMessageProcedure(deleteMessageInputSchema, MessageOperation.Delete).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
-      if (!DeletableMessageTypes.has(messageEntity.type))
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Delete,
-            AzureEntityType.Message,
-            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
-          ).message,
-        });
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
       messageEventEmitter.emit("deleteMessage", input);
       // A dropped publish leaves orphaned attachment blobs, never the delete the user asked for
@@ -338,7 +346,17 @@ export const baseMessageRouter = router({
         }),
       );
       // Surface the first per-room block like a single blocked send does, after the unblocked rooms posted.
-      for (const result of results) if (result.status === "rejected") throw result.reason;
+      // Only one rejection can be surfaced, so every rejection is logged with the room it belongs to first —
+      // Otherwise a transient failure behind a blocked room leaves that room silently without the forward and
+      // The operator with nothing to find.
+      const rejections = results.flatMap((result, index) =>
+        result.status === "rejected" ? [{ reason: result.reason, roomId: takeOne(roomIds, index) }] : [],
+      );
+      if (rejections.length === 0) return;
+
+      for (const { reason, roomId } of rejections)
+        console.error(`Failed to forward message to room ${roomId}:`, reason);
+      throw takeOne(rejections).reason;
     },
   ),
   generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
@@ -364,7 +382,11 @@ export const baseMessageRouter = router({
       DatabaseEntityType.Room,
       roomId,
     );
-    // Enforce the room's attachment limits at the only server chokepoint — the direct-to-blob PUT bypasses Nitro.
+    // The mime category is enforced here: it is signed into the write SAS as the blob's content type, so the PUT
+    // Cannot store anything else. The size is NOT — `size` is whatever the client declared, an Azure write SAS
+    // Carries no length constraint, and the block PUT never passes back through Nitro, so a client that
+    // Under-declares can write past this cap until the SAS expires. Checking it here rejects the honest
+    // Oversized drop early; it is not a defence against a client that lies. See /docs/esbabbler/file-media.
     const maxFileSizeBytes = Math.min(room.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     for (const { mimetype, size } of files)
       if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
@@ -465,18 +487,8 @@ export const baseMessageRouter = router({
     for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
       if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
-  pinMessage: getMessageProcedure(pinMessageInputSchema).mutation(
-    async ({ ctx: { getSessionPayload, messageClient, messageEntity }, input }) => {
-      if (!PinnableMessageTypes.has(messageEntity.type))
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Update,
-            AzureEntityType.Message,
-            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
-          ).message,
-        });
-
+  pinMessage: getMessageProcedure(pinMessageInputSchema, MessageOperation.Pin).mutation(
+    async ({ ctx: { getSessionPayload, messageClient }, input }) => {
       const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
       await updateEntity(messageClient, updatedMessageEntity);
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
@@ -583,37 +595,52 @@ export const baseMessageRouter = router({
         );
     },
   ),
-  unpinMessage: getMessageProcedure(unpinMessageInputSchema).mutation(
+  unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
-      if (!PinnableMessageTypes.has(messageEntity.type))
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Update,
-            AzureEntityType.Message,
-            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
-          ).message,
-        });
-
       const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: undefined };
       Object.assign(messageEntity, updatedMessageEntity);
       await updateEntity(messageClient, messageEntity, "Replace");
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
     },
   ),
-  updateMessage: getMessageProcedure(updateMessageInputSchema).mutation(
-    async ({ ctx: { messageClient, messageEntity }, input }) => {
-      if (!UpdatableMessageTypes.has(messageEntity.type))
+  updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update).mutation(
+    async ({ ctx: { messageClient }, input }) => {
+      await updateMessage(messageClient, input);
+      messageEventEmitter.emit("updateMessage", input);
+    },
+  ),
+  // Casting a vote is not editing the poll: any member may vote, while editing or deleting the poll stays with
+  // Its author. The client names the option it picked and the server applies it to the stored poll, so a member
+  // Can never rewrite anyone else's vote by sending a whole poll body.
+  votePoll: getMessageProcedure(votePollInputSchema, MessageOperation.Vote).mutation(
+    async ({ ctx: { getSessionPayload, messageClient, messageEntity }, input: { optionId, partitionKey, rowKey } }) => {
+      const pollContentResult = getResult(() => jsonDateParse<unknown>(messageEntity.message))
+        .map((pollContent) => votablePollMessageContentSchema.safeParse(pollContent))
+        .unwrapOr(undefined);
+      if (
+        !pollContentResult?.success ||
+        (optionId && !pollContentResult.data.options.some(({ id }) => id === optionId))
+      )
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(
             Operation.Update,
             AzureEntityType.Message,
-            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
+            JSON.stringify({ optionId, partitionKey, rowKey }),
           ).message,
         });
-      await updateMessage(messageClient, input);
-      messageEventEmitter.emit("updateMessage", input);
+
+      const pollContent = pollContentResult.data;
+      if (optionId) pollContent.votes[getSessionPayload.user.id] = optionId;
+      else delete pollContent.votes[getSessionPayload.user.id];
+      // The updateMessage service stamps the entity as edited, and a vote is not an edit of the poll
+      const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
+        message: JSON.stringify(pollContent),
+        partitionKey,
+        rowKey,
+      };
+      await updateEntity(messageClient, updatedMessageEntity);
+      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
     },
   ),
 });

@@ -29,6 +29,7 @@ const isDirty = computed(
 );
 const save = async () => {
   if (!isDirty.value) return;
+
   const input = {
     allowedMimeCategories: allowedMimeCategories.value,
     id: room.id,

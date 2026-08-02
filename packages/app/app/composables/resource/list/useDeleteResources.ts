@@ -2,13 +2,18 @@ import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { useNotificationStore } from "@/store/notification";
+import { useFavoriteStore } from "@/store/resource/favorite";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 
 export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
+  const router = useRouter();
   const { createErrorNotification, createNotification } = useNotificationStore();
   const { executeMutation: executeDeleteResourcesMutation } = useMutation();
   const { restoreResource } = useRestoreResource(refresh);
+  const favoriteStore = useFavoriteStore();
+  const { invalidateFavorites } = favoriteStore;
   // Owned here because the row leaves `items` optimistically, which unmounts the v-if-gated delete dialog mid-flight
   const deleteResources = async (resources: Resource[]) => {
     const snapshot = [...items.value];
@@ -49,7 +54,9 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
           // Reconcile the list with what actually persisted rather than resurrecting deleted resources
           await refresh();
         },
-        onSuccess: () => {
+        onSuccess: async () => {
+          // A star only resolves while its resource is live, so the set the next surface mounts with is re-read
+          invalidateFavorites();
           createNotification({
             // The undo toast: a single delete is one click away from coming back, no bin trip needed
             action:
@@ -61,6 +68,12 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
             severity: "success",
             title: deletedNotificationTitle,
           });
+          // This list also drives the blade's Explorer, so deleting the resource the blade is open on has to
+          // Leave it — every later blade action hits requireOwnedResource with deletedAt isNull and throws,
+          // So the user sits in an editor that error-toasts on every autosave. The blade's own delete already
+          // Routes here, and a delete must not navigate from one entry point and not the other
+          if (ids.includes(getRouteParamString(router.currentRoute.value.params.id)))
+            await navigateTo(RoutePath.ResourcesAll);
         },
       },
     );

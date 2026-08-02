@@ -12,17 +12,37 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   // Every row on /all asks "am I starred?", so the lookup is a Set rather than a scan per row
   const favoriteIds = computed(() => new Set(favorites.value.map(({ id }) => id)));
   const isLoading = ref(false);
-  const readFavorites = async () => {
+  // A failed read leaves this false so the next mount retries instead of caching the failure
+  let isLoaded = false;
+  let loadingPromise: Promise<void> | undefined;
+  const queryFavorites = async () => {
     isLoading.value = true;
     await getResultAsync(() => $trpc.resource.readFavorites.query()).match(
       (newFavorites) => {
         favorites.value = newFavorites;
+        isLoaded = true;
       },
       (error) => {
         notificationStore.createNotification({ severity: "error", title: error.message });
       },
     );
     isLoading.value = false;
+  };
+  // The workbench list, the blade page and Home all want the same MAX_READ_LIMIT joined rows, and the list
+  // Mounts inside the blade — so the set is read once and two concurrent mounts share the in-flight query
+  // Rather than every navigation re-running it. Anything that changes which stars resolve invalidates it
+  const readFavorites = async () => {
+    if (isLoaded) return;
+
+    loadingPromise ??= queryFavorites().finally(() => {
+      loadingPromise = undefined;
+    });
+    await loadingPromise;
+  };
+  // A delete or a restore changes which stars still point at a live resource, and only the server knows the
+  // Resulting set, so the next surface to mount re-reads it
+  const invalidateFavorites = () => {
+    isLoaded = false;
   };
   const toggleFavorite = async (resource: Resource) => {
     const snapshot = [...favorites.value];
@@ -39,7 +59,18 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
       onError: (error) => {
         notificationStore.createNotification({ severity: "error", title: error.message });
       },
+      // The toggle is a delete-then-insert against the row the server actually finds, so its answer is the
+      // True post-toggle state. A list that went stale (another tab starred this first) flips the wrong way
+      // Optimistically and nothing else reconciles it — the star would read starred here while being
+      // Unstarred on every other device and after a reload
+      onSuccess: (isFavorite) => {
+        if (isFavorite === favoriteIds.value.has(resource.id)) return;
+
+        favorites.value = isFavorite
+          ? [resource, ...favorites.value.filter(({ id }) => id !== resource.id)]
+          : favorites.value.filter(({ id }) => id !== resource.id);
+      },
     });
   };
-  return { favoriteIds, favorites, isLoading, readFavorites, toggleFavorite };
+  return { favoriteIds, favorites, invalidateFavorites, isLoading, readFavorites, toggleFavorite };
 });

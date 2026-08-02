@@ -5,15 +5,14 @@ import type { Resource } from "@esposter/db-schema";
 
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { createInvalidBlueprintError } from "@@/server/services/blueprint/createInvalidBlueprintError";
 import { getBlueprintEntryKeys } from "@@/server/services/blueprint/getBlueprintEntryKeys";
 import { rewriteIdsToAliases } from "@@/server/services/blueprint/rewriteIdsToAliases";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { AzureContainer, DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
+import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
+import { DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop, NotFoundError, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, inArray } from "drizzle-orm";
@@ -63,13 +62,17 @@ export const captureBlueprint = async (ctx: AuthedContext, ids: Resource["id"][]
   );
   const manifest: BlueprintResource = { entries, parameters: [] };
   const newBlueprint = await createResourceRow(ctx, { name, type: ResourceType.Blueprint });
-  await getResultAsync(() =>
-    useUpload(AzureContainer.ResourceAssets, getContentBlobName(newBlueprint.id), JSON.stringify(manifest)),
-  ).match(noop, async (error) => {
-    // The manifest is the blueprint's entire content, so never leave a row pointing at a manifest that
-    // Does not exist — nor, when the upload failed after committing, a manifest blob no row can reach
-    await deleteCreatedResources(ctx, [newBlueprint.id]);
-    throw error;
-  });
+  // The capture is a content write like any other, so it goes through the one path that emits the save event,
+  // Records the activity and runs the type's after-save hook. Blueprint registers no hook today; routing it here
+  // Is what stops that from mattering the day it does. No activityType: createResourceRow already opened the trail
+  await getResultAsync(() => saveResourceContent(ctx, { content: manifest, resource: newBlueprint })).match(
+    noop,
+    async (error) => {
+      // The manifest is the blueprint's entire content, so never leave a row pointing at a manifest that
+      // Does not exist — nor, when the upload failed after committing, a manifest blob no row can reach
+      await deleteCreatedResources(ctx, [newBlueprint.id]);
+      throw error;
+    },
+  );
   return newBlueprint;
 };

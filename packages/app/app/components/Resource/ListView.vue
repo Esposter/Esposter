@@ -10,7 +10,6 @@ import {
   RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS,
 } from "@/services/resource/constants";
 import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
-import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
@@ -49,13 +48,7 @@ const {
 } = useResourceListFilters();
 const page = isSearchable ? routePage : ref(1);
 const sortBy = isSearchable ? routeSortBy : ref<SortItem<keyof Resource>[]>([...DEFAULT_RESOURCE_SORT_BY]);
-// Typing buffers in a local clone so router.replace isn't spammed per keystroke;
-// UseCloned keeps route → field flowing (back-nav, clear filters) while the debounced value follows field → route
-const { cloned: searchInput } = useCloned(searchQuery);
-const search = refDebounced(searchInput, RESOURCE_SEARCH_DEBOUNCE_MS);
-watch(search, (newSearch) => {
-  searchQuery.value = newSearch;
-});
+const { debounced: search, input: searchInput } = useDebouncedFilter(searchQuery);
 const { count, createResourcesPageReader, error, isLoading, items, readResources, refresh } = useReadResources({
   searchQuery: search,
   status,

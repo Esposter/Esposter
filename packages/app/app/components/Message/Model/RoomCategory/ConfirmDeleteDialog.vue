@@ -8,8 +8,11 @@ const { categories } = storeToRefs(roomCategoryStore);
 const { deleteRoomCategory } = roomCategoryStore;
 const roomCategoryDialogStore = useRoomCategoryDialogStore();
 const { deletingId } = storeToRefs(roomCategoryDialogStore);
-const category = computed(() => categories.value.find(({ id }) => id === deletingId.value));
-const { isOpen } = useSingletonDialog(deletingId);
+// Resolved through the primitive rather than a computed of our own, so a target whose category has left the
+// List is dropped with it instead of re-opening this dialog by itself when a later read brings it back
+const { isOpen, item: category } = useSingletonDialog(deletingId, () =>
+  categories.value.find(({ id }) => id === deletingId.value),
+);
 </script>
 
 <template>

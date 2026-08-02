@@ -3,7 +3,9 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData, MessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
+import type { MockInstance } from "vitest";
 
+import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -34,6 +36,7 @@ import {
 } from "@esposter/db-schema";
 import {
   InvalidOperationError,
+  jsonDateParse,
   MENTION_ID_ATTRIBUTE,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
@@ -69,6 +72,16 @@ describe("message", () => {
   // Deliberately put in front of it
   const filteredWord = "spam";
   const filteredMessage = `<p>${filteredWord}</p>`;
+  const pollOptionId = crypto.randomUUID();
+  const pollMessage = JSON.stringify({
+    options: [
+      { id: pollOptionId, label: "Option A" },
+      { id: crypto.randomUUID(), label: "Option B" },
+    ],
+    question: "Test question",
+    votes: {},
+  });
+  let consoleErrorSpy: MockInstance<typeof console.error>;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -76,7 +89,13 @@ describe("message", () => {
     roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
+  beforeEach(() => {
+    // Calls through, so a genuine failure still prints while a test can count what the router logged
+    consoleErrorSpy = vi.spyOn(console, "error");
+  });
+
   afterEach(async () => {
+    consoleErrorSpy.mockRestore();
     vi.useRealTimers();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
@@ -321,26 +340,126 @@ describe("message", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const userId = getMockSession().user.id;
-    const message = JSON.stringify({
-      options: [
-        { id: crypto.randomUUID(), label: "Option A" },
-        { id: crypto.randomUUID(), label: "Option B" },
-      ],
-      question: "Test question",
-      votes: {},
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
     });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id, type: MessageType.Poll });
 
     expect(newMessage).toStrictEqual(
       new StandardMessageEntity({
         createdAt: newMessage.createdAt,
-        message,
+        message: pollMessage,
         partitionKey: newRoom.id,
         rowKey: newMessage.rowKey,
         type: MessageType.Poll,
         updatedAt: newMessage.updatedAt,
         userId,
       }),
+    );
+  });
+
+  // Voting is an operation any member may perform, so it never routes through updateMessage — a poll supports no
+  // Update at all, and its own author is not the only one who may vote in it
+  test("votes on a poll", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
+    });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    // Joining posts a system message of its own, so the poll is read back by its own key rather than by position
+    const rowKeys = [newMessage.rowKey];
+    await mockSessionOnce(mockContext.db, member);
+    await messageCaller.votePoll({ ...compositeKey, optionId: pollOptionId });
+    const votedMessage = takeOne(await messageCaller.readMessagesByRowKeys({ roomId: newRoom.id, rowKeys }));
+
+    // A vote is not an edit of the poll, so it leaves no edited marker behind
+    expect(votedMessage.isEdited).toBeUndefined();
+    expect(jsonDateParse<{ votes: Record<string, string> }>(votedMessage.message).votes).toStrictEqual({
+      [member.id]: pollOptionId,
+    });
+
+    await mockSessionOnce(mockContext.db, member);
+    await messageCaller.votePoll({ ...compositeKey, optionId: "" });
+    const withdrawnMessage = takeOne(await messageCaller.readMessagesByRowKeys({ roomId: newRoom.id, rowKeys }));
+
+    expect(jsonDateParse<{ votes: Record<string, string> }>(withdrawnMessage.message).votes).toStrictEqual({});
+  });
+
+  test("fails vote with an option the poll does not offer", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
+    });
+    const input = { optionId: crypto.randomUUID(), partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+
+    await expect(messageCaller.votePoll(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.Message, JSON.stringify(input)).message}]`,
+    );
+  });
+
+  // A poll is a message its author posted, so the author deletes their own poll exactly like their own text
+  // Message — without holding ManageMessages
+  test("deletes a poll as its author", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
+    });
+    await mockSessionOnce(mockContext.db, member);
+    await messageCaller.deleteMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    // Joining posts a system message of its own, so the poll is looked for by its own key
+    const remainingMessages = await messageCaller.readMessagesByRowKeys({
+      roomId: newRoom.id,
+      rowKeys: [newMessage.rowKey],
+    });
+
+    expect(remainingMessages).toHaveLength(0);
+  });
+
+  // Whether a poll can be edited is a property of the type, not of the caller, so its own author is refused for
+  // The same reason a moderator is — the operation does not exist rather than being out of reach
+  test("fails update with a poll", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
+    });
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      messageCaller.updateMessage({
+        message: updatedMessage,
+        partitionKey: newMessage.partitionKey,
+        rowKey: newMessage.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.Message, JSON.stringify({ operation: MessageOperation.Update, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })).message}]`,
     );
   });
 
@@ -672,6 +791,42 @@ describe("message", () => {
     expect(unfilteredMembership?.timeoutUntil).toBeNull();
   });
 
+  // Only one rejection can be surfaced to the caller, so the rest have to be logged — otherwise a room that
+  // Failed for its own reason ends up with no forward and nothing anywhere saying so
+  test("logs every room a forward failed for", async () => {
+    expect.hasAssertions();
+
+    const sourceRoom = await roomCaller.createRoom({ name });
+    const source = await messageCaller.createMessage({ message: filteredMessage, roomId: sourceRoom.id });
+    const firstFilteredRoom = await roomCaller.createRoom({ name });
+    const secondFilteredRoom = await roomCaller.createRoom({ name });
+    await mockContext.db.insert(roomFiltersInMessage).values([
+      { roomId: firstFilteredRoom.id, words: [filteredWord] },
+      { roomId: secondFilteredRoom.id, words: [filteredWord] },
+    ]);
+    const invites = await Promise.all(
+      [sourceRoom.id, firstFilteredRoom.id, secondFilteredRoom.id].map((roomId) =>
+        roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId }),
+      ),
+    );
+    // The filter never applies to a member who can manage messages, so the forward is sent by a plain member
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    for (const invite of invites) {
+      await roomCaller.joinRoom(invite.id);
+      await mockSessionOnce(mockContext.db, member);
+    }
+
+    await expect(
+      messageCaller.forwardMessage({
+        partitionKey: source.partitionKey,
+        roomIds: [firstFilteredRoom.id, secondFilteredRoom.id],
+        rowKey: source.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
+
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
+  });
+
   test("forwarding is blocked by the forwarded body's own text, with or without an accompanying message", async () => {
     expect.hasAssertions();
 
@@ -719,16 +874,22 @@ describe("message", () => {
     expect(filteredMessages.items.filter(({ isForward }) => isForward)).toHaveLength(0);
   });
 
+  // Two files a user genuinely named the same are one ordinary drop: each write target is minted under its own
+  // Id, so the shared name collides nowhere and must not fail the selection
   test("generates upload file SAS entities", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const sasEntities = await messageCaller.generateUploadFileSasEntities({
-      files: [{ filename, mimetype, size }],
+      files: [
+        { filename, mimetype, size },
+        { filename, mimetype, size },
+      ],
       roomId: newRoom.id,
     });
 
-    expect(sasEntities).toHaveLength(1);
+    expect(sasEntities).toHaveLength(2);
+    expect(new Set(sasEntities.map(({ id }) => id)).size).toBe(2);
   });
 
   test("reclaims an upload the caller was granted", async () => {

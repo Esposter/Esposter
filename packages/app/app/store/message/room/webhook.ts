@@ -38,15 +38,17 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     });
   };
   const updateWebhook = async (roomId: RoomInMessage["id"], input: Except<UpdateWebhookInput, "roomId">) => {
-    const snapshot = items.value.map((webhook) => ({ ...webhook }));
     await executeUpdateWebhookMutation(() => $trpc.webhook.updateWebhook.mutate({ ...input, roomId }), {
+      // Snapshot when the write is sent rather than when it was issued: a row's name field and its active
+      // Switch write different fields of the same webhook, so the second must roll back to what the first stored
       applyOptimistic: () => {
+        const snapshot = items.value.map((webhook) => ({ ...webhook }));
         storeUpdateWebhook({ ...input, roomId });
         return () => {
           items.value = snapshot;
         };
       },
-      // Keyed per webhook so concurrent operations on different webhooks never stale-drop each other
+      // Keyed per webhook so writes to one row queue while different webhooks stay independent
       key: input.id,
       onSuccess: (updatedWebhook) => {
         storeUpdateWebhook(updatedWebhook);

@@ -4,8 +4,8 @@ import type { Resource } from "@esposter/db-schema";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
 
-// Fires the resource type's registered after-save hook. Every path that writes a resource's content calls
-// This, so none of them can ship without the hook the type declares
+// Fires the resource type's registered after-save hook. Reached only through `saveResourceContent`, so a path
+// Cannot take that write and skip the hook the type declares
 export const runAfterSaveResourceContent = (
   ctx: AuthedContext,
   resource: Resource,

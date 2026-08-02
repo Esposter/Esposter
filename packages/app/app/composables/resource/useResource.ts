@@ -1,7 +1,6 @@
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
-import { getSequentialFunction } from "#shared/util/function/getSequentialFunction";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useNotificationStore } from "@/store/notification";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
@@ -38,11 +37,17 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
       },
     );
   };
+  // The resource the caller's in-memory content belongs to. A store fills its content ref from readContent,
+  // So that read is the moment the content in hand becomes this resource's — and it stays the previous
+  // Resource's for the whole of `load()` plus the await that follows it
+  let contentResourceId: string | undefined;
   // The blob is written on first save, so a freshly created resource returns undefined content
-  const readContent = () => {
+  const readContent = async () => {
     const current = resource.value;
-    if (!current) return Promise.resolve(undefined);
-    return getResourceMutations(current.type).readResourceContent({ id: current.id });
+    if (!current) return undefined;
+    const content = await getResourceMutations(current.type).readResourceContent({ id: current.id });
+    contentResourceId = current.id;
+    return content;
   };
   // The last content shape known to be persisted — save() skips the write when nothing changed, so a
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
@@ -55,23 +60,31 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   // Retry is a guaranteed rejection — the flag turns save() into a no-op (and the warning into a
   // One-shot) until the next load() reads a fresh version
   let isContentStale = false;
-  // Serialized so each save picks up the contentVersion the previous one wrote back.
-  // The server's optimistic-concurrency rejection then only fires for genuine cross-session edits, not our own overlapping saves.
-  const save = getSequentialFunction(async (content: unknown) => {
+  const save = async (content: unknown) => {
     const current = resource.value;
-    if (!current || isContentStale) return false;
+    // A debounced autosave can fire after `load()` swapped in another resource but before the store has
+    // Re-seeded its content ref, and the content in hand is then still the previous resource's — writing it
+    // Would replace this resource's document with another one's, under this one's id and contentVersion
+    if (!current || isContentStale || (contentResourceId !== undefined && contentResourceId !== current.id))
+      return false;
     const contentJson = JSON.stringify(content);
     if (contentJson === persistedContentJson) return true;
     let isSuccessful = false;
     await executeSaveMutation(
-      () =>
-        getResourceMutations(current.type).saveResourceContent({
+      () => {
+        // Read when the write is sent rather than when it was issued: a save that queued behind another must
+        // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
+        // Cross-session edit. A load that swapped the resource in between leaves the issue-time row in place
+        const latest = resource.value;
+        const target = latest?.id === current.id ? latest : current;
+        return getResourceMutations(target.type).saveResourceContent({
           content,
-          contentVersion: current.contentVersion,
-          id: current.id,
-        }),
+          contentVersion: target.contentVersion,
+          id: target.id,
+        });
+      },
       {
-        // Content saves of the current resource supersede one another, so they share the resource id
+        // Content saves of one resource share its id, so they queue instead of overlapping
         key: current.id,
         onError: (error) => {
           if (error.message === staleContentVersionErrorMessage) {
@@ -101,7 +114,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
       },
     );
     return isSuccessful;
-  });
+  };
   const rename = async (name: string) => {
     const current = resource.value;
     if (!current) return;

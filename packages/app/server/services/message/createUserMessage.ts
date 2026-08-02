@@ -16,13 +16,14 @@ import { assertCanCreateMessage } from "@@/server/services/message/moderation/as
 import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
 import { notifyThreadReplyFollowers } from "@@/server/services/message/thread/notifyThreadReplyFollowers";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
-import { createMessage, getPushSubscriptionsForMessage, incrementMentionCounts } from "@esposter/db";
+import { createMessage, getEntity, getPushSubscriptionsForMessage, incrementMentionCounts } from "@esposter/db";
 import {
   AzureFunction,
   AzureTable,
   createEventGridEvent,
   DatabaseEntityType,
   roomsInMessage,
+  StandardMessageEntity,
 } from "@esposter/db-schema";
 import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
 import { eq } from "drizzle-orm";
@@ -112,8 +113,26 @@ export const createUserMessage = async (
   // Reached by the generic message push above is excluded so a single reply never double-notifies a recipient.
   if (newMessageEntity.replyRowKey) {
     const threadRootRowKey = newMessageEntity.replyRowKey;
+    // The root's author is followed alongside the replier: Discord tells you when someone replies to your
+    // Message, and following only repliers leaves the one member the thread belongs to as the only one the
+    // Pipeline never reaches — while anyone who merely replied once keeps being told
+    const threadRootMessage = await getResultAsync(() =>
+      getEntity(messageClient, StandardMessageEntity, newMessageEntity.partitionKey, threadRootRowKey),
+    )
+      .orTee(console.error)
+      .unwrapOr(null);
+    const followerUserIds = [user.id];
+    if (threadRootMessage && threadRootMessage.userId !== user.id) followerUserIds.push(threadRootMessage.userId);
     await getResultAsync(() =>
-      createThreadFollow(db, { roomId: newMessageEntity.partitionKey, threadRootRowKey, userId: user.id }),
+      Promise.all(
+        followerUserIds.map((followerUserId) =>
+          createThreadFollow(db, {
+            roomId: newMessageEntity.partitionKey,
+            threadRootRowKey,
+            userId: followerUserId,
+          }),
+        ),
+      ),
     ).match(noop, console.error);
     const excludedUserIds = [...new Set(readPushSubscriptions.map((pushSubscription) => pushSubscription.userId))];
     await getResultAsync(() =>

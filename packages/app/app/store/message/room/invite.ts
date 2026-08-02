@@ -20,8 +20,8 @@ export const useInviteStore = defineStore("message/room/invite", () => {
     storeInvite(roomId, invite);
   };
   const createInvite = async (input: CreateInviteInput) => {
-    // Keyed per room — one live invite per room, so latest-wins staleness per room is exactly right,
-    // While invite creations for different rooms never stale-drop each other
+    // Keyed per room — one live invite per room, so regenerating from either option select or the copy
+    // Button queues against that one target, while invites for different rooms stay independent
     await executeCreateInviteMutation(() => $trpc.room.createInvite.mutate(input), {
       key: input.roomId,
       onSuccess: (newInvite) => {

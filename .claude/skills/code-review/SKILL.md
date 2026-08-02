@@ -105,3 +105,14 @@ So the crossing test is a **requirement of any fix that edits a line an earlier 
 2. Fix confirmed findings. **PLAUSIBLE is not a disposition** — see below.
 3. Run the closing checklist above over your own fixes **before** verifying — it is cheapest while the change is still in the editor, and every entry on it describes a fix that passed its own test and came back one round later.
 4. Verify per the package-scripts skill (typecheck → tests), then commit per the git skill. Before pushing to a branch with an open PR, check CodeRabbit state (coderabbit skill).
+
+### Architecture first, then checks — never interleaved
+
+Land the substantive work in this order: **root-cause fix → converge the call sites onto the primitive → docs and skills → then the check pass.** Typecheck, lint and format run **once, at the end**, over the finished tree.
+
+Interleaving them is the expensive mistake. A check pass in the middle of a refactor reports errors in code that is about to be deleted, in generated artifacts, and in test fixtures whose types are still moving — so each round fixes something that the next architectural edit invalidates, and the session pays a full typecheck per trivial error. Worse, the trivial errors crowd out the architectural decision still to be made: a session that spends its remaining budget on a fixture's missing field ships the symptom fix and queues the root cause.
+
+Two corollaries:
+
+- **A failing check inside a generated artifact is not a finding.** `.nuxt/*.d.ts` and other generated output go stale across a branch switch or a dependency bump. Regenerate (`pnpm exec nuxt prepare`) before reading a single line of the error — see the context-efficiency skill on diffing against a clean tree first.
+- **Deleting the compensating code is part of the fix, not follow-up.** When a root-cause fix makes a wrapper, guard, or flag unnecessary, it comes out in the same change. A wrapper left behind is a wrapper someone must remember to apply, which is the defect class the fix just removed.
