@@ -5,14 +5,6 @@ import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
-// The four ways a call can end, so a caller can tell a persisted write from one that was dropped as a duplicate,
-// Superseded by a newer call, or rejected — neither entry point ever throws, so this is the only signal it did not land
-type MutationOutcome<TResult> =
-  | { error: Error; status: MutationStatus.Failed }
-  | { result: TResult; status: MutationStatus.Succeeded }
-  | { status: MutationStatus.Dropped }
-  | { status: MutationStatus.Stale };
-
 interface MutationOptions<TResult> extends QueryOptions<TResult> {
   applyOptimistic?: () => Promisable<() => void>;
   // Single-flight: drop the call outright while another call with the same key is still in flight
@@ -21,6 +13,14 @@ interface MutationOptions<TResult> extends QueryOptions<TResult> {
   // Earlier call's value is already replaced on screen by the later one, so losing it costs nothing
   isSupersede?: true;
 }
+
+// The four ways a call can end, so a caller can tell a persisted write from one that was dropped as a duplicate,
+// Superseded by a newer call, or rejected — neither entry point ever throws, so this is the only signal it did not land
+type MutationOutcome<TResult> =
+  | { error: Error; status: MutationStatus.Failed }
+  | { result: TResult; status: MutationStatus.Succeeded }
+  | { status: MutationStatus.Dropped }
+  | { status: MutationStatus.Stale };
 
 interface OperationContext<TResult> {
   applyOptimistic?: () => Promisable<() => void>;

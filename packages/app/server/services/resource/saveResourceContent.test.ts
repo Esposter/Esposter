@@ -66,7 +66,7 @@ describe(saveResourceContent, () => {
   test("writes the content, emits the save, records the activity and runs the after-save hook as one unit", async () => {
     expect.hasAssertions();
 
-    let saveEvent: { content: unknown; contentVersion: Resource["contentVersion"]; id: Resource["id"] } | undefined;
+    let saveEvent: undefined | { content: unknown; contentVersion: Resource["contentVersion"]; id: Resource["id"] };
     resourceEventEmitter.on("saveResourceContent", ([data]) => {
       saveEvent = data;
     });

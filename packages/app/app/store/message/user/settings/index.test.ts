@@ -21,6 +21,8 @@ describe(useUserSettingsStore, () => {
   const server = setupMswTrpc();
   const userSettings: UserSettingsInMessage = {
     autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
+    createdAt: new Date("1970-01-01"),
+    deletedAt: null,
     inputSensitivityDecibels: DEFAULT_INPUT_SENSITIVITY_DECIBELS,
     isDeafenOnJoin: false,
     isMuteOnJoin: false,
@@ -29,6 +31,7 @@ describe(useUserSettingsStore, () => {
     pushToTalkKeybind: "",
     pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
     speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+    updatedAt: new Date("1970-01-01"),
     userId: crypto.randomUUID(),
     voiceInputMode: VoiceInputMode.VoiceActivity,
   };

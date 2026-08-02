@@ -707,7 +707,7 @@ describe("resource", () => {
     await webpageCaller.publishResource({ id: webpageResource.id });
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
-    let saveEvent: { content: unknown; contentVersion: Resource["contentVersion"]; id: Resource["id"] } | undefined;
+    let saveEvent: undefined | { content: unknown; contentVersion: Resource["contentVersion"]; id: Resource["id"] };
     resourceEventEmitter.on("saveResourceContent", ([data]) => {
       saveEvent = data;
     });

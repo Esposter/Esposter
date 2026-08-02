@@ -28,7 +28,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const { executeMutation: executeRotateTokenMutation } = useMutation();
   const { executeMutation: executeDeleteWebhookMutation } = useMutation();
   // Server-generated webhook (id, token) — non-optimistic, applied in onSuccess. Creates have no natural
-  // Entity key, so each call gets a unique one — overlapping creates must run independently instead of queueing behind each other
+  // Entity key, so each call gets a unique one — overlapping creates must never queue behind each other
   const createWebhook = async (roomId: RoomInMessage["id"], input: Except<CreateWebhookInput, "roomId">) => {
     await executeCreateWebhookMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {
       key: Symbol("createWebhook"),

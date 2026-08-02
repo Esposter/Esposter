@@ -31,6 +31,8 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
     userId,
   };
   const userToRoom: UserToRoomInMessage = {
+    createdAt: new Date("1970-01-01"),
+    deletedAt: null,
     isHidden: false,
     lastMessageAt: null,
     mentionCount: 0,
@@ -38,6 +40,7 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
     notificationType: NotificationType.DirectMessage,
     roomId: room.id,
     timeoutUntil: null,
+    updatedAt: new Date("1970-01-01"),
     userId,
   };
 

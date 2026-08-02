@@ -1,8 +1,10 @@
 import type { ModerationNoteEntity, User } from "@esposter/db-schema";
 
 export const useModerationNoteStore = defineStore("message/moderation/note", () => {
-  // NotesDialog is instantiated per target user; tracking the current target keeps each user's paginated
-  // Notes in its own map slice so concurrent dialogs never overwrite each other's list (last-query-wins).
+  // NotesDialog is instantiated per target user, and only ever one at a time — it lives inside a v-menu, whose
+  // Content Vuetify unmounts once closed — so this names whichever dialog is currently open and each user's
+  // Notes keep their own map slice. A read files its result under the target it was issued for regardless,
+  // Because useCursorPaginationDataMap binds the slice at issue time
   const currentTargetUserId = ref("");
   const { hasMore, items, readItems, readMoreItems } = useCursorPaginationDataMap<ModerationNoteEntity>(
     () => currentTargetUserId.value,

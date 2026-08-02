@@ -2,6 +2,7 @@
 import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 
 import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicateMode";
+import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
 import { useSheetStore } from "@/store/resource/sheet";
 import { takeOne } from "@esposter/shared";
@@ -15,16 +16,14 @@ const duplicateRowEntries = computed<IndexedRow[]>(() => findDuplicateRows(dataS
 const duplicateCount = computed(() => duplicateRowEntries.value.length);
 const duplicateHeaders = computed(() => [
   { key: "index", title: "#", value: (entry: IndexedRow) => entry.index },
-  ...dataSource.value.columns
-    .filter((column) => !column.hidden)
-    .map((column) => ({
-      key: column.name,
-      title: column.name,
-      value: (entry: IndexedRow) => {
-        const value = takeOne(entry.row.data, column.name);
-        return value === null ? "" : String(value);
-      },
-    })),
+  ...getVisibleColumns(dataSource.value.columns).map((column) => ({
+    key: column.name,
+    title: column.name,
+    value: (entry: IndexedRow) => {
+      const value = takeOne(entry.row.data, column.name);
+      return value === null ? "" : String(value);
+    },
+  })),
 ]);
 </script>
 

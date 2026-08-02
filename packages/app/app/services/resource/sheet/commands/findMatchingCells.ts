@@ -1,6 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
 
+import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { takeOne } from "@esposter/shared";
 
 export const findMatchingCells = (
@@ -10,8 +11,8 @@ export const findMatchingCells = (
 ): AffectedCell[] => {
   const { rows } = dataSource;
   const visibleColumns = specificCell
-    ? dataSource.columns.filter((column) => !column.hidden && column.name === specificCell.columnName)
-    : dataSource.columns.filter((column) => !column.hidden);
+    ? getVisibleColumns(dataSource.columns).filter((column) => column.name === specificCell.columnName)
+    : getVisibleColumns(dataSource.columns);
   const result: AffectedCell[] = [];
   const rowStart = specificCell ? specificCell.rowIndex : 0;
   const rowEnd = specificCell ? specificCell.rowIndex + 1 : rows.length;

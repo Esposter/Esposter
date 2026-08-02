@@ -50,7 +50,7 @@ describe("postCommentConfirmDeleteDialog", () => {
     // The real Vuetify overlay to position itself against
     await mountSuspended(PostCommentConfirmDeleteDialog, { shallow: true });
     // The comment store keys its list by the post in the route, so a list only exists once one is current
-    await useRouter().push(RoutePath.Post(postId));
+    await navigateTo(RoutePath.Post(postId));
     const { items } = storeToRefs(useCommentStore());
     const { deletingId } = storeToRefs(useCommentDialogStore());
     items.value = [createComment()];
