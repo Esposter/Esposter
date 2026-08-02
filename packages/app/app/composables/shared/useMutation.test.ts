@@ -349,6 +349,30 @@ describe(useMutation, () => {
     expect(await inFlight).toStrictEqual({ error, status: MutationStatus.Failed });
   });
 
+  // The superseded read applies no state and runs no callback, so a caller that joined it would resolve holding
+  // Nothing — an empty list beside a populated one, which is the outcome isExclusive exists to prevent
+  test("issues its own exclusive read rather than joining one a later read superseded", async () => {
+    expect.hasAssertions();
+
+    const onSuccess = vi.fn<(result: string) => void>();
+    const { executeQuery } = useMutation();
+    let resolveExclusive: (result: string) => void = noop;
+    const exclusive = executeQuery(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveExclusive = resolve;
+        }),
+      { isExclusive: true, key, onSuccess },
+    );
+    await executeQuery(() => Promise.resolve("replacement"), { key, onSuccess });
+    const joined = executeQuery(() => Promise.resolve("joined"), { isExclusive: true, key, onSuccess });
+    resolveExclusive("exclusive");
+
+    expect(await joined).toStrictEqual({ result: "joined", status: MutationStatus.Succeeded });
+    expect(await exclusive).toStrictEqual({ status: MutationStatus.Stale });
+    expect(onSuccess.mock.calls).toStrictEqual([["replacement"], ["joined"]]);
+  });
+
   test("issues a fresh exclusive read once the one it would have joined has settled", async () => {
     expect.hasAssertions();
 

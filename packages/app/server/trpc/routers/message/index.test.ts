@@ -1100,6 +1100,46 @@ describe("message", () => {
     expect(takeOne(updatedMessages).files).toHaveLength(0);
   });
 
+  // Removing one file rewrites the whole files array, so the write is conditional: an unconditional second write
+  // Computes its survivors from the version before the first deletion and reinstates that file, leaving the
+  // Message pointing at a blob whose deletion has already been published
+  test("deletes two files at once without reinstating either", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const firstId = crypto.randomUUID();
+    const secondId = crypto.randomUUID();
+    const newMessage = await messageCaller.createMessage({
+      files: [
+        { filename, id: firstId, mimetype, size },
+        { filename, id: secondId, mimetype, size },
+      ],
+      roomId: newRoom.id,
+    });
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const { promise: isSecondDeleteWritten, resolve: resolveSecondDeleteWritten } = Promise.withResolvers<string>();
+    const { promise: isFirstDeleteWriting, resolve: resolveFirstDeleteWriting } = Promise.withResolvers<string>();
+    let isFirstWrite = true;
+    beforeUpdateEntity = async () => {
+      if (!isFirstWrite) return;
+      isFirstWrite = false;
+      resolveFirstDeleteWriting("");
+      await isSecondDeleteWritten;
+    };
+    const firstDelete = messageCaller.deleteFile({ ...compositeKey, id: firstId });
+    await isFirstDeleteWriting;
+    await messageCaller.deleteFile({ ...compositeKey, id: secondId });
+    resolveSecondDeleteWritten("");
+    await firstDelete;
+
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
+      roomId: newRoom.id,
+      rowKeys: [newMessage.rowKey],
+    });
+
+    expect(takeOne(updatedMessages).files).toHaveLength(0);
+  });
+
   test("publishes thumbnail deletion on delete file", async () => {
     expect.hasAssertions();
 
@@ -1250,6 +1290,39 @@ describe("message", () => {
     expect(takeOne(updatedMessages).linkPreviewResponse).toBeNull();
   });
 
+  // Clearing the preview needs a Replace, so the write carries the whole body: replayed from the version this
+  // Procedure first read, it reverts every concurrent change rather than only clearing the preview
+  test("deletes link preview response without reverting a concurrent edit", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const { promise: isEditWritten, resolve: resolveEditWritten } = Promise.withResolvers<string>();
+    const { promise: isClearWriting, resolve: resolveClearWriting } = Promise.withResolvers<string>();
+    let isFirstWrite = true;
+    beforeUpdateEntity = async () => {
+      if (!isFirstWrite) return;
+      isFirstWrite = false;
+      resolveClearWriting("");
+      await isEditWritten;
+    };
+    const clearLinkPreviewResponse = messageCaller.deleteLinkPreviewResponse(compositeKey);
+    await isClearWriting;
+    await messageCaller.updateMessage({ ...compositeKey, message: updatedMessage });
+    resolveEditWritten("");
+    await clearLinkPreviewResponse;
+
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
+      roomId: newRoom.id,
+      rowKeys: [newMessage.rowKey],
+    });
+
+    expect(takeOne(updatedMessages).linkPreviewResponse).toBeNull();
+    expect(takeOne(updatedMessages).message).toBe(updatedMessage);
+  });
+
   test("pins message and creates system message", async () => {
     expect.hasAssertions();
 
@@ -1284,8 +1357,44 @@ describe("message", () => {
 
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
+    // Unpinning posts no system message of its own, so the pin's is still the only one and the unpinned message
+    // Sits behind it — asserting the lead item would only prove a system message never carried a pin
     expect(readMessages.items).toHaveLength(2);
-    expect(takeOne(readMessages.items).isPinned).toBeUndefined();
+    expect(takeOne(readMessages.items, 1).isPinned).toBeUndefined();
+  });
+
+  // Unpinning needs the same Replace as clearing the preview, and inherits the same hazard: the body it writes
+  // Must be the one it re-read, not the one it started from
+  test("unpins message without reverting a concurrent edit", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    await messageCaller.pinMessage(compositeKey);
+    const { promise: isEditWritten, resolve: resolveEditWritten } = Promise.withResolvers<string>();
+    const { promise: isUnpinWriting, resolve: resolveUnpinWriting } = Promise.withResolvers<string>();
+    let isFirstWrite = true;
+    beforeUpdateEntity = async () => {
+      if (!isFirstWrite) return;
+      isFirstWrite = false;
+      resolveUnpinWriting("");
+      await isEditWritten;
+    };
+    const unpin = messageCaller.unpinMessage(compositeKey);
+    await isUnpinWriting;
+    await messageCaller.updateMessage({ ...compositeKey, message: updatedMessage });
+    resolveEditWritten("");
+    await unpin;
+
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
+      roomId: newRoom.id,
+      rowKeys: [newMessage.rowKey],
+    });
+
+    expect(takeOne(updatedMessages).isPinned).toBeUndefined();
+    expect(takeOne(updatedMessages).message).toBe(updatedMessage);
   });
 
   describe("slowmode guard", () => {

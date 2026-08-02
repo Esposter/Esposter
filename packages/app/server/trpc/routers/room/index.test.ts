@@ -24,6 +24,7 @@ import {
   friends,
   INVITE_ID_LENGTH,
   MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
+  RoomPermission,
   roomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
@@ -203,11 +204,14 @@ describe("room", () => {
     );
   });
 
-  test("fails generate profile image upload url without permission", async () => {
+  test(`fails generate profile image upload url for a member without ${RoomPermission.ManageRoom} permission`, async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(invite.id);
+    await mockSessionOnce(mockContext.db, user);
 
     await expect(
       roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id }),
@@ -361,11 +365,14 @@ describe("room", () => {
     );
   });
 
-  test("fails update with wrong user", async () => {
+  test(`fails update for a member without ${RoomPermission.ManageRoom} permission`, async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(invite.id);
+    await mockSessionOnce(mockContext.db, user);
 
     await expect(roomCaller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,

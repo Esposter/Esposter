@@ -5,7 +5,7 @@ description: One primitive decides concurrency from what an operation targets an
 
 # Async Operations
 
-Every user-facing async operation on the client declares exactly two things: **what it targets** and **whether it reads or writes**. `useMutation` (`packages/app/app/composables/shared/useMutation.ts`) derives the concurrency behaviour from those two facts.
+Every user-facing async operation on the client declares exactly two things: **what it targets** and **whether it reads or writes**. `useMutation` (`packages/app/app/composables/shared/useMutation.ts`) derives the **default** concurrency behaviour from those two facts, and the two opt-ins below — `isExclusive` and `isSupersede` — are the only things that change it.
 
 ## No call site orders its own async work
 
@@ -29,7 +29,7 @@ The `key` is the identity of the thing being operated on, and it is always expli
 - **Operation on an existing entity** → its id or natural composite (`input.id`, `` `${userId}-${roleId}` ``).
 - **Singleton target** — the current user's settings, the one dataset a composable shows — → the scope's id when one exists, else a stable name (`key: "userSettings"`). Keys are scoped per `useMutation()` instance, so names cannot collide across instances.
 - **Create with no id yet** → a per-call `Symbol("createRoom")`, so independent creates never queue behind or supersede each other.
-- **Anything the primitive cannot take verbatim** — an IndexedDB partition key is any valid index key, not a `PropertyKey` — → its string form, so the target keeps the identity it already had.
+- **Anything the primitive cannot take verbatim** — a key is a `PropertyKey`, and nothing else is accepted — → narrow the source type until it is one, never `String()` it. Stringifying collapses distinct keys onto a single target (`"1,2"` and `[1, 2]` both become `1,2`), which is why `IndexedDbDatabaseSchema` types every index key as a string: an IndexedDB partition is then its own target, unconverted.
 
 Two writes that share a key are two writes to the same thing, and they run one at a time. Two writes with different keys are independent and run concurrently. Note that "same entity" is not the same question as "same value": the Attachments settings panel writes a maximum file size and a list of allowed types through one `key: room.id`, because both are writes to that room — but neither replaces the other, so both must land.
 
@@ -50,7 +50,7 @@ Two things `isExclusive` deliberately does **not** do:
 - **It does not cache.** Only a read still in flight can be joined, so read-once-per-session or read-once-per-room stays a flag at the call site (`isLoaded`, a `loadedRoomIds` set) guarding whether to call at all. That is a caching concern, not a concurrency one.
 - **It does not apply to an invalidating re-read.** A read issued _because_ something changed must not join the answer that the change just invalidated, so `refreshFavorites` re-reads without it and wins on latest-wins instead.
 
-`isPending` doubles as the loading flag for a read composable, so no composable keeps its own `isLoading` ref.
+`isPending` doubles as the loading flag for a read composable — `useQuery` hands it back alongside `data` — so no composable keeps its own `isLoading` ref.
 
 ## Writes — `executeMutation`
 

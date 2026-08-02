@@ -139,6 +139,26 @@ describe.each<PaginationCacheVariant>([
     expect(cachedItems).toHaveLength(1);
   });
 
+  // Readiness cannot survive a switch away: the list a revisit starts from is empty until its rows arrive, and
+  // Treating that as a loaded empty partition wipes the rows the offline hydration is there to restore
+  test("does not clear cache when a revisited partition is empty again", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    goOnline();
+    await mountCache();
+    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
+    await flushCache();
+    partitionKeyRef.value = secondPartitionKey;
+    await flushCache();
+    partitionKeyRef.value = partitionKey;
+    items.value = [];
+    await flushCache();
+    const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
+
+    expect(cachedItems).toHaveLength(1);
+  });
+
   test("does not clear cache when items become empty on partition key switch", async () => {
     expect.hasAssertions();
 

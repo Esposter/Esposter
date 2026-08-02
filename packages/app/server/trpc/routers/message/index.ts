@@ -22,6 +22,7 @@ import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
+import { updateEntityConditionally } from "@@/server/services/azure/table/updateEntityConditionally";
 import { on } from "@@/server/services/events/on";
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
@@ -52,7 +53,6 @@ import {
   generateDownloadThumbnailSasUrls,
   generateUploadFileSasEntities,
   getEntity,
-  getEntityWithEtag,
   getFileBlobNames,
   getTableNullClause,
   getTopNEntitiesByType,
@@ -191,10 +191,6 @@ const votablePollMessageContentSchema = z.looseObject({
   votes: z.record(z.string(), z.string()),
 });
 
-// Bounded so a hot poll's concurrent votes cannot spin the mutation; on exhaustion the vote is refused rather
-// Than dropped, so the voter is told to try again instead of watching their vote disappear
-const MAX_VOTE_POLL_ETAG_RETRIES = 3;
-
 const getWebPubSubClientAccessUrlInputSchema = roomIdSchema;
 
 export const baseMessageRouter = router({
@@ -206,47 +202,63 @@ export const baseMessageRouter = router({
     .query(({ ctx, input }) => {
       messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.getSessionPayload.session.id });
     }),
+  // Removing one file rewrites the whole files array, so the write is conditional on the version the procedure
+  // Read: two files deleted at once otherwise both compute the survivors from the same version, and the later
+  // Write reinstates the file the earlier one removed — whose blob is already gone, leaving a message holding a
+  // Broken attachment. The loser re-reads and drops its file from the survivors the winner stored
   deleteFile: getMessageProcedure(deleteFileInputSchema, MessageOperation.Update).mutation(
-    async ({ ctx: { messageClient, messageEntity }, input: { id, partitionKey, rowKey } }) => {
+    async ({ ctx: { messageClient, messageEntity, messageEtag }, input: { id, partitionKey, rowKey } }) => {
       if (messageEntity.isForward || messageEntity.files.length === 0)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message,
         });
 
-      const index = messageEntity.files.findIndex((f) => f.id === id);
-      if (index === -1)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(AzureEntityType.File, id).message,
-        });
+      // The blob names come from the version actually written, so a retry deletes the blobs of the file it
+      // Removed from the survivors the winning write stored
+      let deletedFilename = "";
+      const updatedMessageEntity = await updateEntityConditionally(messageClient, StandardMessageEntity, {
+        entityType: AzureEntityType.Message,
+        entityWithEtag: { entity: messageEntity, etag: messageEtag },
+        getUpdateEntity: ({ files }) => {
+          const deletedFile = files.find((file) => file.id === id);
+          if (!deletedFile)
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: new NotFoundError(AzureEntityType.File, id).message,
+            });
 
-      const blobNames = Object.values(
-        getFileBlobNames(messageEntity.partitionKey, id, takeOne(messageEntity.files.splice(index, 1)).filename),
-      );
-      const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
-        files: messageEntity.files,
-        partitionKey,
-        rowKey,
-      };
-      await updateMessage(messageClient, updatedMessageEntity);
+          deletedFilename = deletedFile.filename;
+          return { files: files.filter((file) => file.id !== id), partitionKey, rowKey };
+        },
+        writeEntity: (entity, etag) => updateMessage(messageClient, entity, undefined, { etag }),
+      });
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
       // A dropped publish leaves an orphaned blob, never the file the user asked to remove
-      await publishBlobDeletion(`${partitionKey}/${rowKey}`, AzureContainer.MessageAssets, blobNames);
+      await publishBlobDeletion(
+        `${partitionKey}/${rowKey}`,
+        AzureContainer.MessageAssets,
+        Object.values(getFileBlobNames(partitionKey, id, deletedFilename)),
+      );
     },
   ),
+  // Clearing the preview needs a Replace — Merge cannot unset a property — so the write carries the whole message
+  // Body and is conditional on the version the procedure read. Replaying the body this procedure first read would
+  // Revert every concurrent change to the message, not only the preview it clears
   deleteLinkPreviewResponse: getMessageProcedure(
     deleteLinkPreviewResponseInputSchema,
     MessageOperation.Update,
-  ).mutation(async ({ ctx: { messageClient, messageEntity } }) => {
-    const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
-      linkPreviewResponse: null,
-      partitionKey: messageEntity.partitionKey,
-      rowKey: messageEntity.rowKey,
-    };
-    Object.assign(messageEntity, updatedMessageEntity);
-    await updateMessage(messageClient, messageEntity, "Replace");
-    messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+  ).mutation(async ({ ctx: { messageClient, messageEntity, messageEtag } }) => {
+    const { partitionKey, rowKey } = messageEntity;
+    await updateEntityConditionally(messageClient, StandardMessageEntity, {
+      entityType: AzureEntityType.Message,
+      entityWithEtag: { entity: messageEntity, etag: messageEtag },
+      getUpdateEntity: (entity) => ({ ...entity, linkPreviewResponse: null }),
+      writeEntity: (entity, etag) => updateMessage(messageClient, entity, "Replace", { etag }),
+    });
+    // The subscription carries the cleared field rather than the replaced body, so a client merges one property
+    // Instead of adopting a whole message it may hold newer state for
+    messageEventEmitter.emit("updateMessage", { linkPreviewResponse: null, partitionKey, rowKey });
   }),
   deleteMessage: getMessageProcedure(deleteMessageInputSchema, MessageOperation.Delete).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
@@ -600,12 +612,18 @@ export const baseMessageRouter = router({
         );
     },
   ),
+  // Unpinning needs a Replace — Merge cannot unset a property — so the same conditional write as
+  // DeleteLinkPreviewResponse applies: a full body replayed from a stale read reverts concurrent edits
   unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin).mutation(
-    async ({ ctx: { messageClient, messageEntity }, input }) => {
-      const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: undefined };
-      Object.assign(messageEntity, updatedMessageEntity);
-      await updateEntity(messageClient, messageEntity, "Replace");
-      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+    async ({ ctx: { messageClient, messageEntity, messageEtag }, input }) => {
+      await updateEntityConditionally(messageClient, StandardMessageEntity, {
+        entityType: AzureEntityType.Message,
+        entityWithEtag: { entity: messageEntity, etag: messageEtag },
+        getUpdateEntity: (entity) => ({ ...entity, isPinned: undefined }),
+        // A pin is not an edit of the message, so this writes through updateEntity rather than updateMessage
+        writeEntity: (entity, etag) => updateEntity(messageClient, entity, "Replace", { etag }),
+      });
+      messageEventEmitter.emit("updateMessage", { ...input, isPinned: undefined });
     },
   ),
   updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update).mutation(
@@ -621,74 +639,41 @@ export const baseMessageRouter = router({
   // A vote is a read-modify-write of the whole poll body, so the write is conditional on the version the
   // Procedure read: two members voting at once otherwise both compute their votes map from the same version and
   // The later write echoes back a body that never saw the earlier vote, erasing it with nothing surfaced to
-  // Either voter. The loser of the race re-reads and re-applies, because its vote is still valid — only the
-  // Version it was computed against is stale. Retries are bounded, and a vote that still cannot land is refused
-  // As a CONFLICT so the voter can send it again rather than believing a dropped vote counted.
+  // Either voter. The loser of the race re-applies its vote to the version it re-reads, because the vote is
+  // Still valid — only the body it was computed against is stale
   votePoll: getMessageProcedure(votePollInputSchema, MessageOperation.Vote).mutation(
     async ({
       ctx: { getSessionPayload, messageClient, messageEntity, messageEtag },
       input: { optionId, partitionKey, rowKey },
     }) => {
-      // The version under vote travels as one value so each attempt destructures it into its own consts — the
-      // Conditional write closes over them, and a closure over a variable the loop reassigns is exactly the bug
-      // Optimistic concurrency exists to avoid
-      let pollMessage = { entity: messageEntity, etag: messageEtag };
-      let votedMessageEntity: AzureUpdateEntity<StandardMessageEntity> | undefined;
+      const votedMessageEntity = await updateEntityConditionally(messageClient, StandardMessageEntity, {
+        entityType: AzureEntityType.Message,
+        entityWithEtag: { entity: messageEntity, etag: messageEtag },
+        getUpdateEntity: (pollMessageEntity) => {
+          const pollContentResult = getResult(() => jsonDateParse<unknown>(pollMessageEntity.message))
+            .map((pollContent) => votablePollMessageContentSchema.safeParse(pollContent))
+            .unwrapOr(undefined);
+          if (
+            !pollContentResult?.success ||
+            (optionId && !pollContentResult.data.options.some(({ id }) => id === optionId))
+          )
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: new InvalidOperationError(
+                Operation.Update,
+                AzureEntityType.Message,
+                JSON.stringify({ optionId, partitionKey, rowKey }),
+              ).message,
+            });
 
-      for (let attempt = 0; attempt < MAX_VOTE_POLL_ETAG_RETRIES; attempt++) {
-        const { entity: pollMessageEntity, etag } = pollMessage;
-        const pollContentResult = getResult(() => jsonDateParse<unknown>(pollMessageEntity.message))
-          .map((pollContent) => votablePollMessageContentSchema.safeParse(pollContent))
-          .unwrapOr(undefined);
-        if (
-          !pollContentResult?.success ||
-          (optionId && !pollContentResult.data.options.some(({ id }) => id === optionId))
-        )
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(
-              Operation.Update,
-              AzureEntityType.Message,
-              JSON.stringify({ optionId, partitionKey, rowKey }),
-            ).message,
-          });
-
-        const pollContent = pollContentResult.data;
-        if (optionId) pollContent.votes[getSessionPayload.user.id] = optionId;
-        else delete pollContent.votes[getSessionPayload.user.id];
+          const pollContent = pollContentResult.data;
+          if (optionId) pollContent.votes[getSessionPayload.user.id] = optionId;
+          else delete pollContent.votes[getSessionPayload.user.id];
+          return { message: JSON.stringify(pollContent), partitionKey, rowKey };
+        },
         // The updateMessage service stamps the entity as edited, and a vote is not an edit of the poll
-        const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
-          message: JSON.stringify(pollContent),
-          partitionKey,
-          rowKey,
-        };
-        const updateError = await getResultAsync(() =>
-          updateEntity(messageClient, updatedMessageEntity, "Merge", { etag }),
-        ).match(
-          () => undefined,
-          (error) => error,
-        );
-        if (!updateError) {
-          votedMessageEntity = updatedMessageEntity;
-          break;
-        }
-
-        const rereadMessageEntity = await getEntityWithEtag(messageClient, StandardMessageEntity, partitionKey, rowKey);
-        if (!rereadMessageEntity)
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
-          });
-        // Only a lost race is retried, and the re-read is what tells the two apart without a status code: a
-        // Version that moved is the concurrent vote this write was rejected for, while an unchanged version
-        // Means the write failed for a reason retrying cannot fix, so that error propagates as itself
-        else if (rereadMessageEntity.etag === etag) throw updateError;
-
-        pollMessage = rereadMessageEntity;
-      }
-
-      if (!votedMessageEntity) throw new TRPCError({ code: "CONFLICT" });
-
+        writeEntity: (entity, etag) => updateEntity(messageClient, entity, "Merge", { etag }),
+      });
       messageEventEmitter.emit("updateMessage", votedMessageEntity);
     },
   ),

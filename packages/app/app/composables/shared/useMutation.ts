@@ -132,6 +132,10 @@ export const useMutation = () => {
 
     const checkIsStale = getCheckIsStale(key);
     claimKey(key);
+    // This read is the latest for the target now, so whatever was joinable is the answer it just superseded —
+    // A stale response applies no state and runs no callback, and a later caller joining it would resolve
+    // Holding nothing. It issues its own read instead
+    sharedQueries.delete(key);
     // The finalizer guarantees pending bookkeeping unwinds even when a callback throws,
     // So a thrown callback can never strand the key as permanently pending
     const outcome = withFinalizerAsync(

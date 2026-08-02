@@ -9,6 +9,14 @@ import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 
+// The schema types every index key as a string, which is what lets a partition double as a `useMutation` target
+// Verbatim. The conditional cannot resolve while the store stays generic, so the intersection restates the
+// Guarantee the schema already makes
+type PartitionKey<
+  TStore extends IndexedDbStoreName,
+  TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
+> = IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> & string;
+
 export interface PaginationCacheOptions<
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
@@ -19,7 +27,7 @@ export interface PaginationCacheOptions<
   initializeItems: (cachedItems: IndexedDbDatabaseSchema[TStore]["value"][]) => void;
   items: MaybeRefOrGetter<TItem[]>;
   onHydrate?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => Promisable<void>;
-  partitionKey: MaybeRefOrGetter<"" | IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | undefined>;
+  partitionKey: MaybeRefOrGetter<PartitionKey<TStore, TIndex> | undefined>;
 }
 
 export const usePaginationCache = <
@@ -38,44 +46,33 @@ export const usePaginationCache = <
   // The partition is the target: its writes run one at a time so each rewrite lands on the set the one before
   // It stored, while another partition's cache is a different target and never waits behind it
   const { executeMutation, executeQuery, flush } = useMutation();
-  // @TODO: loadedPartitionKey only flips after a non-empty page,
-  // So an empty first load leaves stale IndexedDB rows behind,
-  // And a later revisit can treat a transient empty array as loaded
-  // And overwrite cached data before fresh items arrive. Use an explicit
-  // Ready/loaded signal instead.
-  let loadedPartitionKey: "" | IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | undefined;
+  // The partition whose rows on screen are its own, rather than the empty list a load starts from. Dropped on
+  // Every switch: carried across one, the list a revisit begins with would pass for a loaded empty partition
+  let readyPartitionKey: PartitionKey<TStore, TIndex> | undefined;
 
   // Both operations are fired from a watcher, so each is adapted to that sync slot rather than floated
   const writeCachedItems = getSynchronizedFunction(
-    async (
-      newItems: IndexedDbDatabaseSchema[TStore]["value"][],
-      partitionKeyValue: IndexKey<IndexedDbDatabaseSchema, TStore, TIndex>,
-    ) => {
-      // A target is a PropertyKey while an IndexedDB partition key is any valid index key, so the partition's
-      // Identity is its string form
+    async (newItems: IndexedDbDatabaseSchema[TStore]["value"][], partitionKeyValue: PartitionKey<TStore, TIndex>) => {
       await executeMutation(() => writeIndexedDb(configuration, newItems, partitionKeyValue), {
-        key: String(partitionKeyValue),
+        key: partitionKeyValue,
       });
     },
   );
-  const readCachedItems = getSynchronizedFunction(
-    async (newPartitionKey: IndexKey<IndexedDbDatabaseSchema, TStore, TIndex>) => {
-      await executeQuery(
-        async () => {
-          const cachedItems = await readIndexedDb(configuration, newPartitionKey);
-          // The partition can move on while IndexedDB answers, and the read for the partition that replaced it
-          // Is a different target — latest-wins covers a re-entry into the same partition, never the switch away
-          if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0 || toValue(items).length > 0)
-            return;
+  const readCachedItems = getSynchronizedFunction(async (newPartitionKey: PartitionKey<TStore, TIndex>) => {
+    await executeQuery(
+      async () => {
+        const cachedItems = await readIndexedDb(configuration, newPartitionKey);
+        // The partition can move on while IndexedDB answers, and the read for the partition that replaced it
+        // Is a different target — latest-wins covers a re-entry into the same partition, never the switch away
+        if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0 || toValue(items).length > 0) return;
 
-          initializeItems(cachedItems);
-          await onHydrate?.(cachedItems);
-        },
-        // Hydration is a background restore of what the user already had, so a failure is logged, not alerted
-        { key: String(newPartitionKey), onError: console.error },
-      );
-    },
-  );
+        initializeItems(cachedItems);
+        await onHydrate?.(cachedItems);
+      },
+      // Hydration is a background restore of what the user already had, so a failure is logged, not alerted
+      { key: newPartitionKey, onError: console.error },
+    );
+  });
 
   // The capped write set is both what gets persisted and what the deep watch tracks. Watching the whole
   // Loaded list instead traversed it on every store write to discover changes that can never reach the cache —
@@ -90,11 +87,11 @@ export const usePaginationCache = <
     (newItems) => {
       const partitionKeyValue = toValue(partitionKey);
       if (!partitionKeyValue) return;
-      // Only persist an empty array once this partition has actually produced data — clearing the cache on
-      // Emptied items lets deletions propagate offline, while a transient empty array during initial load or a
-      // Partition switch (before its data arrives) must not clobber a partition we have not loaded yet.
-      if (newItems.length > 0) loadedPartitionKey = partitionKeyValue;
-      else if (loadedPartitionKey !== partitionKeyValue) return;
+      // Only persist an empty array once this partition has produced data since the switch onto it — clearing
+      // The cache on emptied items lets deletions propagate offline, while the empty array an initial load, a
+      // Partition switch or a revisit starts from must not clobber rows the hydration is about to restore
+      if (newItems.length > 0) readyPartitionKey = partitionKeyValue;
+      else if (readyPartitionKey !== partitionKeyValue) return;
 
       writeCachedItems(newItems, partitionKeyValue);
     },
@@ -104,6 +101,8 @@ export const usePaginationCache = <
   watch(
     () => toValue(partitionKey),
     (newPartitionKey) => {
+      // Pre-flush, so the write watcher below sees the partition as unready for the list it arrives holding
+      readyPartitionKey = undefined;
       if (!newPartitionKey || online.value) return;
 
       readCachedItems(newPartitionKey);

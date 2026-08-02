@@ -16,6 +16,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "content-token-rewriting",
       "destructive-confirmation",
       "persist-then-notify",
+      "conditional-writes",
       "blob-lifecycle",
       "no-polling",
       "no-manual-recovery",
