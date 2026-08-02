@@ -25,7 +25,7 @@ flowchart TD
 - **Normalized change detection** — queries run through `normalizeString`, and a throttled value that normalizes to the same string as before does not re-query.
 - **Reset on empty** — when the query empties out, the in-flight request aborts and the consumer's `reset` callback drops stale results (skipped with `isIncludeEmptySearchQuery`, for pickers where an empty query should list everything).
 - **`isPending`** — the returned ref drives progress indicators; the consumer never tracks its own `isSearching` flag.
-- **Error surfacing** — failures raise the real `Error.message` as an alert via the same `getResultAsync` → `createAlert` stack as [client data access](/docs/architecture/client-data); a superseded (aborted) request stays silent. `AbortController` plays the role `getConcurrentFunction` plays for `useQuery` — with the bonus that the stale HTTP request is actually cancelled, not just ignored.
+- **Error surfacing** — failures raise the real `Error.message` as an alert via the same `getResultAsync` → `createAlert` stack as [client data access](/docs/architecture/client-data); a superseded (aborted) request stays silent. `AbortController` plays the role the latest-wins guard plays for [reads on the shared primitive](/docs/architecture/async-operations) — with the bonus that the stale HTTP request is actually cancelled, not just ignored.
 
 Consumers with plain array results call it directly:
 

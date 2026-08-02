@@ -59,4 +59,25 @@ describe(useResource, () => {
     expect(isSuccessful).toBe(true);
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
+
+  // Autosave fires again while the previous save is still in flight, and the row is read when the write is sent
+  // Rather than when it was issued — sending the version it was holding makes the server reject our own
+  // Overlapping save as a cross-session edit and strand the blade behind a refresh prompt
+  test("carries the contentVersion the save ahead of it wrote back", async () => {
+    expect.hasAssertions();
+
+    const contentVersions: number[] = [];
+    server.use(
+      trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
+        contentVersions.push(input.contentVersion);
+        return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
+      }),
+    );
+    const { load, readContent, save } = useResource(ref(resourceId));
+    await load();
+    await readContent();
+    await Promise.all([save(createDefaultSheetResource()), save(createDefaultSheetResource())]);
+
+    expect(contentVersions).toStrictEqual([0, 1]);
+  });
 });

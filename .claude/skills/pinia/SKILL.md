@@ -189,9 +189,9 @@ Add a store action only when it adds meaningful client logic:
 - Shared state updates not covered by subscriptions
 - Coordination of multiple stores, requests, or validation steps
 
-A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`) — declare `const { executeMutation } = useMutation()` at the store root and never hand-roll the alert/rollback wiring. It handles error surfacing (`createAlert` unless you pass `onError`) and discards stale responses per `key`, so only the latest call wins. Destructure `isPending` only where a control consumes it, and never hand-roll a pending flag — the in-flight guard decision tree (dialog / plain button / keyed single-flight / optimistic / unmount) is in `packages/app/content/docs/architecture/client-data.md` § In-flight guarding.
+A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`) — declare `const { executeMutation } = useMutation()` at the store root and never hand-roll the alert/rollback wiring. It handles error surfacing (`createAlert` unless you pass `onError`) and runs writes to one `key` one at a time, so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it, and never hand-roll a pending flag — the in-flight guard decision tree (dialog / plain button / keyed single-flight / optimistic / unmount) is in `packages/app/content/docs/architecture/client-data.md` § In-flight guarding.
 
-- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. Snapshot the previous value outside the callback and restore it in the returned closure.
+- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. It runs when the write is **sent**, so take the snapshot **inside** the callback — a queued write must roll back to what the write ahead of it stored, not to the state the user was looking at when they clicked. For the same reason, anything else the payload reads from live state (a version token, a create-or-update branch) is read inside the `mutate` callback, never before the call.
 - **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id) — apply those after the response instead of optimistically.
 
 ```typescript
@@ -200,26 +200,27 @@ $trpc.friend.deleteFriend.mutate(friendId);
 
 // store action justified — optimistic local state with automatic rollback
 const deleteBan = async (input: DeleteBanInput) => {
-  const snapshot = [...items.value];
   await executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
     applyOptimistic: () => {
+      const snapshot = [...items.value];
       storeDeleteBan(input);
       return () => {
         items.value = snapshot;
       };
     },
+    key: input.id,
   });
 };
 ```
 
-- **One `useMutation()` instance per mutation**, via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's staleness tracking can't cancel another's.
+- **One `useMutation()` instance per mutation**, via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's queue and pending state can't hold up another's.
 - **All instances are declared at the store root** — never call `useMutation()` inside an action (detached effect scope leak).
-- **`key` is required on every call** — like a Pinia store id, identity is always explicit. Same key = genuine latest-wins supersession (repeated saves of one target). Pick it by case:
+- **`key` is required on every call** — like a Pinia store id, identity is always explicit. Same key = same target, so those writes queue. Pick it by case:
   - Per-entity operations → the entity id or natural composite (`key: input.id`, `` key: `${userId}-${roleId}` ``).
-  - Creates with no natural key → a per-call `Symbol("createFoo")`, since every create is independent. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
+  - Creates with no natural key → a per-call `Symbol("createFoo")`, since every create is independent and must not wait behind its siblings. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
   - Singleton targets → the scope's id or a stable target name.
 
-Full rationale: `packages/app/content/docs/architecture/client-data.md`.
+Full rationale: `packages/app/content/docs/architecture/async-operations.md` (concurrency) and `client-data.md` (optimistic apply, in-flight guarding).
 
 ## createOperationData Usage
 

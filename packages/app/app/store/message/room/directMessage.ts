@@ -30,7 +30,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const { executeMutation: executeHideDirectMessageMutation } = useMutation();
   const createDirectMessage = async (userIds: string[]) => {
     // Server-generated room — non-optimistic, applied in onSuccess. Creates have no natural entity key,
-    // So each call gets a unique one — overlapping creates must never stale-drop each other's onSuccess
+    // So each call gets a unique one — overlapping creates must never queue behind each other
     await executeCreateDirectMessageMutation(() => $trpc.room.directMessage.createDirectMessage.mutate(userIds), {
       key: Symbol("createDirectMessage"),
       onSuccess: async (room) => {
@@ -51,7 +51,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
           items.value = snapshot;
         };
       },
-      // Keyed per room so hiding two conversations in quick succession never stale-drops a rollback
+      // Keyed per room so hiding two conversations in quick succession never queues behind the other
       key: input,
       onSuccess: async () => {
         if (!isCurrent) return;

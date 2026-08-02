@@ -49,7 +49,7 @@ export const useRoomStore = defineStore("message/room", () => {
   // Server-generated results (ids, navigation targets) — non-optimistic, applied in onSuccess
   const createRoom = async (input: CreateRoomInput) => {
     // Creates have no natural entity key, so each call gets a unique one — overlapping creates are
-    // Independent operations and must never stale-drop each other's onSuccess
+    // Independent operations and must never queue behind each other
     await executeCreateRoomMutation(() => $trpc.room.createRoom.mutate(input), {
       key: Symbol("createRoom"),
       onSuccess: (newRoom) => {
@@ -84,7 +84,7 @@ export const useRoomStore = defineStore("message/room", () => {
     return isSuccessful;
   };
   const joinRoom = async (input: JoinRoomInput) => {
-    // Keyed per invite so concurrent joins through different invites never stale-drop each other
+    // Keyed per invite so concurrent joins through different invites run independently instead of queueing behind each other
     await executeJoinRoomMutation(() => $trpc.room.joinRoom.mutate(input), {
       key: input,
       onSuccess: async (joinedRoom) => {
@@ -103,7 +103,7 @@ export const useRoomStore = defineStore("message/room", () => {
           items.value = snapshot;
         };
       },
-      // Keyed per room so leaving one room never stale-drops another in-flight leave
+      // Keyed per room so leaving one room never queues behind another in-flight leave
       key: input,
       onSuccess: async () => {
         isSuccessful = true;

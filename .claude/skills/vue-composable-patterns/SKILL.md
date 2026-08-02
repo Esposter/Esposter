@@ -1,6 +1,6 @@
 ---
 name: vue-composable-patterns
-description: Esposter Vue 3 composable and form patterns — MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting mutation blocks with builder args, permission-gated settings tabs, schema-controlling selectors in the prepend-form slot, type-driven state reset via create maps, toRawDeep, resource cleanup, useOnline, SSR-safe watches, dirty-check saves with useSave, async sequencing primitives (getConcurrentFunction for reads, getSequentialFunction for writes, getSynchronizedFunction/useQuery — hand-rolling stale guards banned), dialog data loading, capturing the instance before await, and use*Subscribables. Apply when writing or reviewing a composable, a form dialog, or browser-aware reactive code.
+description: Esposter Vue 3 composable and form patterns — MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting mutation blocks with builder args, permission-gated settings tabs, schema-controlling selectors in the prepend-form slot, type-driven state reset via create maps, toRawDeep, resource cleanup, useOnline, SSR-safe watches, dirty-check saves with useSave, async sequencing through the one useMutation primitive (executeQuery latest-wins for reads, executeMutation queued per target for writes, isSupersede/isExclusive opt-ins, getSynchronizedFunction/useQuery — hand-rolling queues and stale guards banned), dialog data loading, capturing the instance before await, and use*Subscribables. Apply when writing or reviewing a composable, a form dialog, or browser-aware reactive code.
 ---
 
 # Vue Composable & Form Patterns
@@ -230,15 +230,17 @@ Rules:
 - The snapshot updates only after a **successful** save so failures retry on the next trigger.
 - Snapshots are JSON strings (`Serializable.toJSON` handles reactive proxies/class instances) with `updatedAt` excluded — `saveItemMetadata` bumps it as part of saving, so it must not participate in the dirty check.
 
-## Async Sequencing — Shared Primitives (hand-rolling BANNED)
+## Async Sequencing — One Primitive (hand-rolling BANNED)
 
-`#shared/util/function/` and `composables/shared/` own the async plumbing — grep them before writing any stale-guard, latest-wins, or fire-from-sync logic:
+A composable never decides **how** concurrency is handled. It declares **what the operation targets** (`key`) and **whether it reads or writes** (which entry point it calls) — `useMutation` (`composables/shared/useMutation.ts`) derives the rest. Never write call-id bookkeeping, a promise chain, or an `isSaving` flag; if a surface seems to need one, it needs the right `key`.
 
-- **`getConcurrentFunction(fn)`** — latest-wins guard: wraps `fn(checkIsStale, ...args)` and bumps an internal call id per invocation. Any composable exposing a `refresh`/read that can re-fire while in flight wraps it in this, so a slower earlier response can never overwrite a newer one. Never hand-roll the call-id bookkeeping.
-- **`getSequentialFunction(fn)`** — serializing queue: each call starts only after the previous settles, and a rejection neither blocks the queue nor leaks to other callers. **Writes take this, not latest-wins** — a superseded write's completion (e.g. an optimistic-concurrency version write-back) must still apply, so dropping it as "stale" wedges the next write. Reads drop stale results; writes queue.
-- **`getSynchronizedFunction(fn)`** — fire an async fn from a sync context (e.g. kick off a fetch during setup without a Suspense boundary).
-- **`useQuery(query, { onSuccess })`** — `getConcurrentFunction` + `shallowRef` data + auto-fetch on setup + error alert. Reach for it before writing a bespoke read composable; write a custom one only when the state shape genuinely differs (manual-trigger read exposing `isLoading`/`error` refs), and build its refresh on `getConcurrentFunction` even then.
-- **`useMutation`** — the one sanctioned inline call-id copy: its per-call generic result type cannot thread through `getConcurrentFunction`'s creation-time signature. Don't cite it as precedent for new copies. Usage conventions live in the `pinia` skill.
+- **`executeQuery(query, { key, onError, onSuccess })`** — reads, latest-wins per key. A superseded read is silent: no callbacks, no alert, `Stale`. Discarding it loses nothing, which is exactly why it is the read default.
+- **`executeMutation(mutate, { applyOptimistic, key, onError, onSuccess })`** — writes, **queued** per key. Discarding a write loses its error and its rollback, so it is never dropped by default. `isSupersede: true` opts into latest-wins for a control that fires per keystroke or drag frame (a superseded write still rolls back and still reports its failure); `isExclusive: true` drops a duplicate outright.
+- **`isPending` / `getIsPending(key)`** — the pending flag comes from the same instance, so a read composable exposes `isPending` renamed (`isPending: isLoading`) instead of keeping its own ref.
+- **`getSynchronizedFunction(fn)`** (`#shared/util/function/`) — fire an async fn from a sync context (e.g. kick off a fetch during setup without a Suspense boundary).
+- **`useQuery(query, { onSuccess })`** — `executeQuery` + `shallowRef` data + auto-fetch on setup + error alert. Reach for it before writing a bespoke read composable; write a custom one only when the state shape genuinely differs (its own cursor, an inline error panel), and build it on `executeQuery` even then.
+
+An operation that must check mid-flight (a multi-step local media switch) receives `checkIsStale` as its callback's first argument — the guard is handed to it, never built by it. Full model: `packages/app/content/docs/architecture/async-operations.md`.
 
 ## Dialog Data Loading
 

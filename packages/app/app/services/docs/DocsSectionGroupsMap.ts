@@ -11,6 +11,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "publishing",
       "serialization",
       "client-data",
+      "async-operations",
       "persisted-data-latest-shape-only",
       "content-token-rewriting",
       "destructive-confirmation",

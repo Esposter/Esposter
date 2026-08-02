@@ -29,7 +29,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           storeDeleteEmoji(newEmoji);
         };
       },
-      // Keyed per emoji identity so reacting with two emojis in quick succession never stale-drops
+      // Keyed per emoji identity so reacting with two emojis in quick succession never queues behind the other
       // The first one's rollback or server-entity assignment
       key: `${input.messageRowKey}-${input.emojiTag}`,
       onSuccess: (result) => {
@@ -47,7 +47,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           storeUpdateEmoji(input);
         };
       },
-      // Keyed per emoji entity so concurrent operations on different emojis never stale-drop each other
+      // Keyed per emoji entity so concurrent operations on different emojis run independently instead of queueing behind each other
       key: input.rowKey,
     });
   };
@@ -61,7 +61,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
           if (deletedEmoji) storeCreateEmoji(deletedEmoji);
         };
       },
-      // Keyed per emoji entity so concurrent operations on different emojis never stale-drop each other
+      // Keyed per emoji entity so concurrent operations on different emojis run independently instead of queueing behind each other
       key: input.rowKey,
     });
   };

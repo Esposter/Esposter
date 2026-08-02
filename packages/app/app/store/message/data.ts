@@ -125,7 +125,7 @@ export const useDataStore = defineStore("message/data", () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
         };
       },
-      // Keyed per message so edits to different messages through this shared executor never stale-drop each other
+      // Keyed per message so edits to different messages through this shared executor run independently instead of queueing behind each other
       key: input.rowKey,
     });
   };

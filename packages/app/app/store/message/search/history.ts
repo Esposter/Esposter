@@ -23,7 +23,7 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   const { executeMutation: executeUpdateSearchHistoryMutation } = useMutation();
   const { executeMutation: executeDeleteSearchHistoryMutation } = useMutation();
   // Server-generated history row — non-optimistic, applied in onSuccess. Creates have no natural entity
-  // Key, so each call gets a unique one — rapid successive searches must all land, never stale-drop
+  // Key, so each call gets a unique one — rapid successive searches must all land, never queue behind each other
   const createSearchHistory = async (input: CreateSearchHistoryInput) => {
     await executeCreateSearchHistoryMutation(() => $trpc.searchHistory.createSearchHistory.mutate(input), {
       key: Symbol("createSearchHistory"),
@@ -41,7 +41,7 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
           items.value = snapshot;
         };
       },
-      // Keyed per history row so concurrent operations on different rows never stale-drop each other
+      // Keyed per history row so concurrent operations on different rows run independently instead of queueing behind each other
       key: input.id,
       onSuccess: (updated) => {
         baseUpdateSearchHistory(updated);
@@ -57,7 +57,7 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
           items.value = snapshot;
         };
       },
-      // Keyed per history row so concurrent operations on different rows never stale-drop each other
+      // Keyed per history row so concurrent operations on different rows run independently instead of queueing behind each other
       key: input,
     });
   };
