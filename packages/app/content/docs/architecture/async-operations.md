@@ -47,12 +47,12 @@ Everything else queues. If a write is worth issuing, it is worth landing.
 
 Neither entry point throws; both resolve to an outcome discriminated on `MutationStatus`, which is the only signal a call did not land.
 
-| Status      | Means                                                      | Produced by                                            |
-| ----------- | ---------------------------------------------------------- | ------------------------------------------------------ |
-| `Succeeded` | Persisted — carries the result                             | Any operation that resolved while still current        |
-| `Failed`    | Rejected — carries the error, after rollback and reporting | Any write, and a read that lost no race                |
-| `Stale`     | Superseded — the result is discarded, nothing was unwound  | A read, or a write that opted into `isSupersede`       |
-| `Dropped`   | Never sent                                                 | A write with `isExclusive` behind an in-flight sibling |
+| Status      | Means                                                                                                                                                                                                        | Produced by                                              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| `Succeeded` | Completed while still current — carries the result. For a write that means persisted; for a read, fetched                                                                                                    | Any read or write that resolved without being superseded |
+| `Failed`    | Rejected — carries the error. A write has rolled back and reported by this point; a read has nothing to unwind                                                                                               | Any write, and a read that was still current             |
+| `Stale`     | Superseded **after resolving successfully** — the result is discarded and nothing was unwound. A superseded write that _failed_ reports `Failed`, not this: a write always rolls back and surfaces its error | A read, or a write that opted into `isSupersede`         |
+| `Dropped`   | Never sent                                                                                                                                                                                                   | A write with `isExclusive` behind an in-flight sibling   |
 
 ## Write lifecycle
 

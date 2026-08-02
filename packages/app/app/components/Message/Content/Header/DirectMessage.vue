@@ -12,19 +12,29 @@ const { executeMutation } = useMutation();
 const deleteDirectMessageParticipant = async (userId: string) => {
   const roomId = currentDirectMessage.value?.id;
   if (!roomId) return;
-  const previousParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
   await executeMutation(() => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }), {
     applyOptimistic: () => {
+      // Read here rather than before the call, so this reflects whatever a concurrent removal already stored
+      const currentParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
+      const removedIndex = currentParticipants.findIndex(({ id }) => id === userId);
+      const removedParticipant = currentParticipants[removedIndex];
       directMessageParticipantsMap.value.set(
         roomId,
-        previousParticipants.filter(({ id }) => id !== userId),
+        currentParticipants.filter(({ id }) => id !== userId),
       );
       return () => {
-        directMessageParticipantsMap.value.set(roomId, previousParticipants);
+        if (!removedParticipant) return;
+
+        // Restore only this participant, at the position it held. Reinstating a whole-list snapshot would
+        // Re-add anyone a removal that overlapped this one had already taken out
+        const participantsNow = [...(directMessageParticipantsMap.value.get(roomId) ?? [])];
+        participantsNow.splice(removedIndex, 0, removedParticipant);
+        directMessageParticipantsMap.value.set(roomId, participantsNow);
       };
     },
-    // Keyed per participant so removing two people in quick succession never queues behind the other
-    key: userId,
+    // The target is the room-and-participant pair: the same person can be in more than one direct message,
+    // So keying on userId alone would make unrelated rooms' removals queue behind each other
+    key: `${roomId}-${userId}`,
   });
 };
 </script>

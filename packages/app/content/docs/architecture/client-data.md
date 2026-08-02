@@ -10,7 +10,7 @@ Every user-facing tRPC call on the client goes through one of two symmetric prim
 - **`useQuery`** — reads. Fetches without blocking setup, populates reactive data, surfaces errors.
 - **`useMutation`** — writes. Applies optimistically, rolls back on failure, surfaces errors.
 
-Both share the same error stack (`getResultAsync` → `createAlert`) and the same concurrency model — reads latest-wins, writes queued, described in [Async operations](/docs/architecture/async-operations) — so no call site re-implements loading, error handling, or race protection.
+Both share the same error stack (`getResultAsync` → `createAlert`) and the same concurrency model — reads latest-wins per target, writes queued per target **by default**, with a write opting into latest-wins via `isSupersede` where dropping the earlier call is the intent, described in [Async operations](/docs/architecture/async-operations) — so no call site re-implements loading, error handling, or race protection.
 
 ## useQuery
 
@@ -61,7 +61,7 @@ await executeMutation(mutate, {
 
 - `mutate` — the tRPC call.
 - `key` — **required**: the identity of the mutation's target. It scopes the write queue, the pending state, and exclusivity; calls with different keys are fully independent. How to choose one is in [Async operations](/docs/architecture/async-operations#targets). Never call `useMutation()` inside an action to fake isolation — that leaks a detached effect scope; key the shared store-root instance instead.
-- `applyOptimistic` — the normal path. Apply the local change and return its rollback closure. It runs when the write is sent, so a queued write snapshots the state its predecessor stored. On failure the rollback runs; the confirming server state still arrives via subscriptions, which idempotently re-apply the same value.
+- `applyOptimistic` — the normal path. Apply the local change and return its rollback closure. It runs when the write is sent, so a queued write snapshots the state its predecessor stored. On failure the rollback runs. Where the entity has a subscription, the confirming server state also arrives through it and idempotently re-applies the same value — but not every mutation has one, so the rollback is what the correctness rests on, never the echo.
 - `onSuccess` — the rare path, for mutations whose result the client can't predict (server-generated ids/tokens like `createInvite`). Omit `applyOptimistic` and take the server result here.
 - `onError` — replaces the default alert, only for surfaces that own a different error channel: the platform resource operations route failures into the [notifications bell](/docs/platform/notifications), including the stale-`contentVersion` warning with its Refresh action. Everything else omits it and gets the alert.
 

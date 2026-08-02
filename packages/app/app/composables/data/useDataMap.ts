@@ -11,8 +11,9 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
   const readDataByKey = (key: string) => {
     if (!key) return createDefaultValue();
 
-    const value = getData(key);
-    if (value) return value;
+    // Existence, not truthiness — a key holding `false`, `0` or `""` is stored data, and treating it as absent
+    // Would regenerate the default over a value a caller explicitly wrote
+    if (dataMap.value.has(key)) return getData(key) ?? createDefaultValue();
 
     const newDefaultValue = createDefaultValue();
     setData(key, newDefaultValue);

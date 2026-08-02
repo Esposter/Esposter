@@ -15,10 +15,16 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   // A failed read leaves this false so the next mount retries instead of caching the failure
   let isLoaded = false;
   let loadingPromise: Promise<void> | undefined;
+  // Bumped by every invalidation, so a read that was already in flight when the set changed cannot apply its
+  // Now-stale rows or mark them loaded — the delete that invalidated it is exactly what its rows predate
+  let readGeneration = 0;
   const queryFavorites = async () => {
+    const generation = readGeneration;
     isLoading.value = true;
     await getResultAsync(() => $trpc.resource.readFavorites.query()).match(
       (newFavorites) => {
+        if (generation !== readGeneration) return;
+
         favorites.value = newFavorites;
         isLoaded = true;
       },
@@ -43,6 +49,7 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   // Resulting set, so the next surface to mount re-reads it
   const invalidateFavorites = () => {
     isLoaded = false;
+    readGeneration++;
   };
   const toggleFavorite = async (resource: Resource) => {
     const snapshot = [...favorites.value];

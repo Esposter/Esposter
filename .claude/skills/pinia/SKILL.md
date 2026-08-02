@@ -210,7 +210,8 @@ const deleteBan = async (input: DeleteBanInput) => {
         items.value = snapshot;
       };
     },
-    key: input.id,
+    // A ban is identified by the room-and-user pair, so that composite is the target — there is no `id`
+    key: `${input.roomId}-${input.userId}`,
   });
 };
 ```
