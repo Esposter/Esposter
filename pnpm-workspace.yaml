@@ -237,7 +237,7 @@ catalog:
   vue-tsc: ^3.3.9
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.1.7
-  vuetify-nuxt-module: ^1.0.0-rc.3
+  vuetify-nuxt-module: ^1.0.0-rc.4
   web-push: ^3.6.7
   worker-timers: ^8.0.34
   write-excel-file: ^4.1.1
