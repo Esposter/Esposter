@@ -52,6 +52,7 @@ import {
   generateDownloadThumbnailSasUrls,
   generateUploadFileSasEntities,
   getEntity,
+  getEntityWithEtag,
   getFileBlobNames,
   getTableNullClause,
   getTopNEntitiesByType,
@@ -189,6 +190,10 @@ const votablePollMessageContentSchema = z.looseObject({
   options: z.object({ id: z.string() }).array().min(1),
   votes: z.record(z.string(), z.string()),
 });
+
+// Bounded so a hot poll's concurrent votes cannot spin the mutation; on exhaustion the vote is refused rather
+// Than dropped, so the voter is told to try again instead of watching their vote disappear
+const MAX_VOTE_POLL_ETAG_RETRIES = 3;
 
 const getWebPubSubClientAccessUrlInputSchema = roomIdSchema;
 
@@ -612,35 +617,79 @@ export const baseMessageRouter = router({
   // Casting a vote is not editing the poll: any member may vote, while editing or deleting the poll stays with
   // Its author. The client names the option it picked and the server applies it to the stored poll, so a member
   // Can never rewrite anyone else's vote by sending a whole poll body.
+  //
+  // A vote is a read-modify-write of the whole poll body, so the write is conditional on the version the
+  // Procedure read: two members voting at once otherwise both compute their votes map from the same version and
+  // The later write echoes back a body that never saw the earlier vote, erasing it with nothing surfaced to
+  // Either voter. The loser of the race re-reads and re-applies, because its vote is still valid — only the
+  // Version it was computed against is stale. Retries are bounded, and a vote that still cannot land is refused
+  // As a CONFLICT so the voter can send it again rather than believing a dropped vote counted.
   votePoll: getMessageProcedure(votePollInputSchema, MessageOperation.Vote).mutation(
-    async ({ ctx: { getSessionPayload, messageClient, messageEntity }, input: { optionId, partitionKey, rowKey } }) => {
-      const pollContentResult = getResult(() => jsonDateParse<unknown>(messageEntity.message))
-        .map((pollContent) => votablePollMessageContentSchema.safeParse(pollContent))
-        .unwrapOr(undefined);
-      if (
-        !pollContentResult?.success ||
-        (optionId && !pollContentResult.data.options.some(({ id }) => id === optionId))
-      )
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Update,
-            AzureEntityType.Message,
-            JSON.stringify({ optionId, partitionKey, rowKey }),
-          ).message,
-        });
+    async ({
+      ctx: { getSessionPayload, messageClient, messageEntity, messageEtag },
+      input: { optionId, partitionKey, rowKey },
+    }) => {
+      // The version under vote travels as one value so each attempt destructures it into its own consts — the
+      // Conditional write closes over them, and a closure over a variable the loop reassigns is exactly the bug
+      // Optimistic concurrency exists to avoid
+      let pollMessage = { entity: messageEntity, etag: messageEtag };
+      let votedMessageEntity: AzureUpdateEntity<StandardMessageEntity> | undefined;
 
-      const pollContent = pollContentResult.data;
-      if (optionId) pollContent.votes[getSessionPayload.user.id] = optionId;
-      else delete pollContent.votes[getSessionPayload.user.id];
-      // The updateMessage service stamps the entity as edited, and a vote is not an edit of the poll
-      const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
-        message: JSON.stringify(pollContent),
-        partitionKey,
-        rowKey,
-      };
-      await updateEntity(messageClient, updatedMessageEntity);
-      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+      for (let attempt = 0; attempt < MAX_VOTE_POLL_ETAG_RETRIES; attempt++) {
+        const { entity: pollMessageEntity, etag } = pollMessage;
+        const pollContentResult = getResult(() => jsonDateParse<unknown>(pollMessageEntity.message))
+          .map((pollContent) => votablePollMessageContentSchema.safeParse(pollContent))
+          .unwrapOr(undefined);
+        if (
+          !pollContentResult?.success ||
+          (optionId && !pollContentResult.data.options.some(({ id }) => id === optionId))
+        )
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(
+              Operation.Update,
+              AzureEntityType.Message,
+              JSON.stringify({ optionId, partitionKey, rowKey }),
+            ).message,
+          });
+
+        const pollContent = pollContentResult.data;
+        if (optionId) pollContent.votes[getSessionPayload.user.id] = optionId;
+        else delete pollContent.votes[getSessionPayload.user.id];
+        // The updateMessage service stamps the entity as edited, and a vote is not an edit of the poll
+        const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
+          message: JSON.stringify(pollContent),
+          partitionKey,
+          rowKey,
+        };
+        const updateError = await getResultAsync(() =>
+          updateEntity(messageClient, updatedMessageEntity, "Merge", { etag }),
+        ).match(
+          () => undefined,
+          (error) => error,
+        );
+        if (!updateError) {
+          votedMessageEntity = updatedMessageEntity;
+          break;
+        }
+
+        const rereadMessageEntity = await getEntityWithEtag(messageClient, StandardMessageEntity, partitionKey, rowKey);
+        if (!rereadMessageEntity)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
+          });
+        // Only a lost race is retried, and the re-read is what tells the two apart without a status code: a
+        // Version that moved is the concurrent vote this write was rejected for, while an unchanged version
+        // Means the write failed for a reason retrying cannot fix, so that error propagates as itself
+        else if (rereadMessageEntity.etag === etag) throw updateError;
+
+        pollMessage = rereadMessageEntity;
+      }
+
+      if (!votedMessageEntity) throw new TRPCError({ code: "CONFLICT" });
+
+      messageEventEmitter.emit("updateMessage", votedMessageEntity);
     },
   ),
 });

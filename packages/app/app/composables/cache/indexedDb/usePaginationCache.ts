@@ -4,10 +4,10 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { IndexKey, IndexNames } from "idb";
 import type { Promisable } from "type-fest";
 
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { getResultAsync, noop } from "@esposter/shared";
 
 export interface PaginationCacheOptions<
   TStore extends IndexedDbStoreName,
@@ -35,13 +35,47 @@ export const usePaginationCache = <
   partitionKey,
 }: PaginationCacheOptions<TStore, TIndex, TItem>) => {
   const online = useOnline();
-  let pendingOperation: Promise<void> = Promise.resolve();
+  // The partition is the target: its writes run one at a time so each rewrite lands on the set the one before
+  // It stored, while another partition's cache is a different target and never waits behind it
+  const { executeMutation, executeQuery, flush } = useMutation();
   // @TODO: loadedPartitionKey only flips after a non-empty page,
   // So an empty first load leaves stale IndexedDB rows behind,
   // And a later revisit can treat a transient empty array as loaded
   // And overwrite cached data before fresh items arrive. Use an explicit
   // Ready/loaded signal instead.
   let loadedPartitionKey: "" | IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | undefined;
+
+  // Both operations are fired from a watcher, so each is adapted to that sync slot rather than floated
+  const writeCachedItems = getSynchronizedFunction(
+    async (
+      newItems: IndexedDbDatabaseSchema[TStore]["value"][],
+      partitionKeyValue: IndexKey<IndexedDbDatabaseSchema, TStore, TIndex>,
+    ) => {
+      // A target is a PropertyKey while an IndexedDB partition key is any valid index key, so the partition's
+      // Identity is its string form
+      await executeMutation(() => writeIndexedDb(configuration, newItems, partitionKeyValue), {
+        key: String(partitionKeyValue),
+      });
+    },
+  );
+  const readCachedItems = getSynchronizedFunction(
+    async (newPartitionKey: IndexKey<IndexedDbDatabaseSchema, TStore, TIndex>) => {
+      await executeQuery(
+        async () => {
+          const cachedItems = await readIndexedDb(configuration, newPartitionKey);
+          // The partition can move on while IndexedDB answers, and the read for the partition that replaced it
+          // Is a different target — latest-wins covers a re-entry into the same partition, never the switch away
+          if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0 || toValue(items).length > 0)
+            return;
+
+          initializeItems(cachedItems);
+          await onHydrate?.(cachedItems);
+        },
+        // Hydration is a background restore of what the user already had, so a failure is logged, not alerted
+        { key: String(newPartitionKey), onError: console.error },
+      );
+    },
+  );
 
   // The capped write set is both what gets persisted and what the deep watch tracks. Watching the whole
   // Loaded list instead traversed it on every store write to discover changes that can never reach the cache —
@@ -61,11 +95,8 @@ export const usePaginationCache = <
       // Partition switch (before its data arrives) must not clobber a partition we have not loaded yet.
       if (newItems.length > 0) loadedPartitionKey = partitionKeyValue;
       else if (loadedPartitionKey !== partitionKeyValue) return;
-      const previousOperation = pendingOperation;
-      pendingOperation = getResultAsync(async () => {
-        await previousOperation;
-        await writeIndexedDb(configuration, newItems, partitionKeyValue);
-      }).match(noop, console.error);
+
+      writeCachedItems(newItems, partitionKeyValue);
     },
     { flush: "post" },
   );
@@ -74,18 +105,13 @@ export const usePaginationCache = <
     () => toValue(partitionKey),
     (newPartitionKey) => {
       if (!newPartitionKey || online.value) return;
-      const previousOperation = pendingOperation;
-      pendingOperation = getResultAsync(async () => {
-        await previousOperation;
-        const cachedItems = await readIndexedDb(configuration, newPartitionKey);
-        if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0 || toValue(items).length > 0) return;
 
-        initializeItems(cachedItems);
-        await onHydrate?.(cachedItems);
-      }).match(noop, console.error);
+      readCachedItems(newPartitionKey);
     },
   );
 
-  const flush = () => pendingOperation;
+  // The cache is written from watchers, so nothing hands the operations back to a caller — a consumer that
+  // Needs them landed (a test asserting the stored rows) awaits the primitive's own completion signal rather
+  // Than watching a pending flag settle, which would be polling for something the primitive already knows
   return { flush };
 };

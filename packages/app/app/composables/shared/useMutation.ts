@@ -7,8 +7,6 @@ import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> extends QueryOptions<TResult> {
   applyOptimistic?: () => Promisable<() => void>;
-  // Single-flight: drop the call outright while another call with the same key is still in flight
-  isExclusive?: true;
   // Latest-wins instead of queueing, for a control that fires per keystroke or per drag frame where the
   // Earlier call's value is already replaced on screen by the later one, so losing it costs nothing
   isSupersede?: true;
@@ -31,6 +29,11 @@ interface OperationContext<TResult> {
 }
 
 interface QueryOptions<TResult> {
+  // Single-flight per target: while a call with the same key is in flight, a second one issues no request of
+  // Its own. A read joins that call and resolves with its outcome, because its caller wanted the data and a
+  // Caller handed nothing renders empty beside a populated one. A write is dropped, because its caller wanted
+  // The effect and the effect is already on its way
+  isExclusive?: true;
   // The identity of the operation's target, always explicit (like a Pinia store id): the entity id or
   // Natural composite for per-entity operations, a stable name for a singleton target,
   // Or a per-call Symbol(description) for independent creates with no natural key
@@ -47,6 +50,9 @@ export const useMutation = () => {
   const callIds = new Map<PropertyKey, number>();
   // The tail of each target's write queue, so two writes to one target run one after the other
   const queues = new Map<PropertyKey, Promise<void>>();
+  // The in-flight outcome of each target's exclusive read, so a second caller for data already on its way
+  // Awaits that response instead of issuing a duplicate request
+  const sharedQueries = new Map<PropertyKey, Promise<MutationOutcome<never>>>();
   const pendingCounts = ref(new Map<PropertyKey, number>());
   const isPending = computed(() => pendingCounts.value.size > 0);
   // Per-key pending for per-item surfaces (a table row's own button), same getter idiom as getRoles(roomId)
@@ -117,18 +123,28 @@ export const useMutation = () => {
   // Nothing to unwind — discarding it loses no information
   const executeQuery = async <TResult>(
     query: (checkIsStale: () => boolean) => Promise<TResult>,
-    { key, onError, onSuccess }: QueryOptions<TResult>,
+    { isExclusive, key, onError, onSuccess }: QueryOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
+    const sharedQuery = isExclusive ? sharedQueries.get(key) : undefined;
+    // The call already in flight applies the state and runs the callbacks for this target, so awaiting it is
+    // The whole read — the joiner sees the same data and the same outcome one request later
+    if (sharedQuery) return await sharedQuery;
+
     const checkIsStale = getCheckIsStale(key);
     claimKey(key);
     // The finalizer guarantees pending bookkeeping unwinds even when a callback throws,
     // So a thrown callback can never strand the key as permanently pending
-    return await withFinalizerAsync(
+    const outcome = withFinalizerAsync(
       () => settle(query, { checkIsStale, isSilentWhenStale: true, onError, onSuccess }),
       () => {
         releaseKey(key);
+        if (isExclusive) sharedQueries.delete(key);
       },
     );
+    // The compiler cannot state that a target's entry carries the result type its registrant read — the map is
+    // Heterogeneous by key, which is the contract every caller sharing one key already lives under
+    if (isExclusive) sharedQueries.set(key, outcome as Promise<MutationOutcome<never>>);
+    return await outcome;
   };
   // Writes queue per target: discarding one loses its error and its rollback, so it is never dropped by
   // Default — a caller opts into latest-wins with isSupersede where dropping the earlier call is the intent
@@ -150,5 +166,12 @@ export const useMutation = () => {
       },
     );
   };
-  return { executeMutation, executeQuery, getIsPending, isPending };
+  // Resolves once nothing this instance issued is still in flight. It awaits the operations themselves rather
+  // Than watching isPending settle, so a caller that must observe landed state — a cache written from watchers,
+  // Where nothing hands the promise back — has a real completion signal instead of a timer to poll
+  const flush = async () => {
+    while (queues.size > 0 || sharedQueries.size > 0)
+      await Promise.allSettled([...queues.values(), ...sharedQueries.values()]);
+  };
+  return { executeMutation, executeQuery, flush, getIsPending, isPending };
 };

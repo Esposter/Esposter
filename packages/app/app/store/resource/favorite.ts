@@ -14,11 +14,12 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   // Every row on /all asks "am I starred?", so the lookup is a Set rather than a scan per row
   const favoriteIds = computed(() => new Set(favorites.value.map(({ id }) => id)));
   const isLoading = computed(() => getIsPending(FAVORITES_KEY));
+  // Read-once-per-session, which single-flight cannot cover: a settled read is no longer in flight to join.
   // A failed read leaves this false so the next mount retries instead of caching the failure
   let isLoaded = false;
-  let loadingPromise: Promise<void> | undefined;
-  const queryFavorites = async () => {
+  const queryFavorites = async ({ isExclusive }: { isExclusive?: true } = {}) => {
     await executeQuery(() => $trpc.resource.readFavorites.query(), {
+      isExclusive,
       key: FAVORITES_KEY,
       onError: (error) => {
         notificationStore.createNotification({ severity: "error", title: error.message });
@@ -35,17 +36,14 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   const readFavorites = async () => {
     if (isLoaded) return;
 
-    loadingPromise ??= queryFavorites().finally(() => {
-      loadingPromise = undefined;
-    });
-    await loadingPromise;
+    await queryFavorites({ isExclusive: true });
   };
   // A delete or a restore changes which stars still point at a live resource, and only the server knows the
   // Resulting set. This re-reads rather than setting a dirty flag: issuing the read is what supersedes one
-  // Already in flight, so the primitive drops the older response instead of this store tracking which is current
+  // Already in flight, so the primitive drops the older response instead of this store tracking which is
+  // Current. It never joins one either — the answer in flight is the one the invalidation just invalidated
   const refreshFavorites = async () => {
     isLoaded = false;
-    loadingPromise = undefined;
     await queryFavorites();
   };
   const toggleFavorite = async (resource: Resource) => {

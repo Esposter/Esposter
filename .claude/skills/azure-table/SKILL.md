@@ -76,6 +76,20 @@ Only a `409` may fall back — any other failure is a real fault and must propag
 
 `MockTableClient.submitTransaction` applies its actions **synchronously** precisely so this is testable: awaiting between actions would let a concurrent caller interleave writes that the rollback then drops. Trust it to model atomicity faithfully under `Promise.all` in tests.
 
+## Read-Modify-Write Is Conditional
+
+**A server-side read-modify-write over an entity reads through `getEntityWithEtag` and writes conditionally.** Azure Table stores an entity as one blob, so a write that echoes back a field the caller computed from what it read carries the whole version it read. Two of them running at once both compute from the same version, and the later write silently erases the earlier change — no error, no log, and the caller whose write landed first is told it succeeded. This applies to any procedure whose write depends on what it just read: a votes map, a `files` array a delete splices, or any `"Replace"` of a full entity.
+
+`getEntity` is the wrong reader here — it exists to **drop** the etag for callers that don't need it. `getEntityWithEtag` returns `{ entity, etag }`, and `updateEntity` forwards its extra arguments to the SDK, so the conditional write is `updateEntity(client, entity, "Merge", { etag })`. Where a shared procedure performs the read (as `getMessageProcedure` does), the etag belongs on the procedure context beside the entity — the round trip is already paid, and every procedure built on it then gets the option.
+
+A rejected conditional write is a `412`, and it means only that the version is stale — the caller's own intent is still valid. So re-read and re-apply rather than surfacing it:
+
+- **Bounded retries.** Loop a small fixed number of attempts against a named constant (`MAX_VIEW_COUNT_ETAG_RETRIES`, `MAX_VOTE_POLL_ETAG_RETRIES`) — never until it lands, or one hot row spins a request a user is waiting on.
+- **Exhaustion is a real outcome, and the call decides which.** Fire-and-forget telemetry drops it (`incrementResourceViewCount`); anything a user is waiting on throws `CONFLICT` so they can retry, rather than returning success over a change that never landed.
+- **Only a lost race retries.** Re-read after a failed write: a version that moved is the concurrent writer, an unchanged version means the write failed for something a retry cannot fix, so that error propagates as itself. Without that split a transient fault degrades into `CONFLICT` after N attempts and names the wrong cause.
+
+`MockTableClient` honours the condition (`#applyUpdate` throws a `412` `MockRestError` when the passed etag doesn't match the stored one, `"*"` being the wildcard), and re-etags on every write, so the whole loop is testable. What it does **not** reproduce is the interleaving: every mock client resolves in the same microtask drain, so two concurrent procedures run to completion one after the other and a bare `Promise.all` over them passes against the unconditional bug. Force the overlap by holding the first write open (see below) — never conclude from a green `Promise.all` that concurrency is covered.
+
 ## Intercepting a Write in a Test
 
 `useTableClient` builds a fresh client per call (`getTableClient` → `TableClient.fromConnectionString`, plus an idempotent `createTable`), so a `vi.spyOn` on a client the test obtained never sees the write the code under test performs. Read the written entities back through `listEntities` against `MockTableDatabase` — the default, since it exercises the real serialization — and mock the **composable** only when the test needs to control the write's timing rather than its result:

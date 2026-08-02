@@ -302,6 +302,64 @@ describe(useMutation, () => {
     expect(alerts.value).toHaveLength(0);
   });
 
+  test("shares one in-flight exclusive read with the caller that joined it", async () => {
+    expect.hasAssertions();
+
+    const onSuccess = vi.fn<(result: string) => void>();
+    const joinedOnSuccess = vi.fn<(result: string) => void>();
+    const query = vi.fn<() => Promise<string>>();
+    const { executeQuery } = useMutation();
+    let resolveQuery: (result: string) => void = noop;
+    query.mockImplementationOnce(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveQuery = resolve;
+        }),
+    );
+    const inFlight = executeQuery(query, { isExclusive: true, key, onSuccess });
+    const joined = executeQuery(query, { isExclusive: true, key, onSuccess: joinedOnSuccess });
+    await flushPromises();
+    resolveQuery("result");
+
+    expect(await joined).toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+    expect(await inFlight).toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(onSuccess).toHaveBeenCalledExactlyOnceWith("result");
+    expect(joinedOnSuccess).not.toHaveBeenCalled();
+  });
+
+  test("reports an exclusive read's failure to the caller that joined it", async () => {
+    expect.hasAssertions();
+
+    const { executeQuery } = useMutation();
+    const error = new Error("error");
+    let rejectQuery: (reason: unknown) => void = noop;
+    const inFlight = executeQuery(
+      () =>
+        new Promise<void>((_, reject) => {
+          rejectQuery = reject;
+        }),
+      { isExclusive: true, key, onError: noop },
+    );
+    const joined = executeQuery(() => Promise.resolve(), { isExclusive: true, key, onError: noop });
+    await flushPromises();
+    rejectQuery(error);
+
+    expect(await joined).toStrictEqual({ error, status: MutationStatus.Failed });
+    expect(await inFlight).toStrictEqual({ error, status: MutationStatus.Failed });
+  });
+
+  test("issues a fresh exclusive read once the one it would have joined has settled", async () => {
+    expect.hasAssertions();
+
+    const query = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const { executeQuery } = useMutation();
+    await executeQuery(query, { isExclusive: true, key });
+    await executeQuery(query, { isExclusive: true, key });
+
+    expect(query).toHaveBeenCalledTimes(2);
+  });
+
   test("alerts a read that fails while it is still the latest", async () => {
     expect.hasAssertions();
 

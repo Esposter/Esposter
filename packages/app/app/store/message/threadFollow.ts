@@ -4,6 +4,7 @@ import { useRoomStore } from "@/store/message/room";
 
 export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const { $trpc } = useNuxtApp();
+  const { executeQuery } = useMutation();
   const roomStore = useRoomStore();
   const {
     data: followedThreads,
@@ -22,28 +23,27 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     () => roomStore.currentRoomId,
     () => [],
   );
+  // Read-once-per-room, which single-flight cannot cover: a settled read is no longer in flight to join
   const loadedRoomIds = reactive(new Set<string>());
-  const loadingPromises = new Map<string, Promise<void>>();
 
-  const readFollowedThreads = async (roomId: string) => {
-    const { threadRootRowKeys, threads } = await $trpc.message.readFollowedThreads.query({ roomId });
-    setFollowedThreads(roomId, threads);
-    setFollowedThreadRootRowKeys(roomId, threadRootRowKeys);
-    loadedRoomIds.add(roomId);
+  const readFollowedThreads = async (roomId: string, { isExclusive }: { isExclusive?: true } = {}) => {
+    await executeQuery(() => $trpc.message.readFollowedThreads.query({ roomId }), {
+      isExclusive,
+      key: roomId,
+      onSuccess: ({ threadRootRowKeys, threads }) => {
+        setFollowedThreads(roomId, threads);
+        setFollowedThreadRootRowKeys(roomId, threadRootRowKeys);
+        loadedRoomIds.add(roomId);
+      },
+    });
   };
-  // Load once per room so the follow-state check is accurate without re-fetching on every thread open.
-  // Concurrent callers (follow button, threads drawer) share the in-flight promise instead of re-querying.
+  // Load once per room so the follow-state check is accurate without re-fetching on every thread open. Every
+  // Follow button in the room mounts its own call, so they join one read rather than each issuing their own —
+  // A caller handed nothing here renders an unfollowed star for a thread the user follows
   const ensureFollowedThreadsLoaded = async (roomId: string) => {
     if (loadedRoomIds.has(roomId)) return;
 
-    let loadingPromise = loadingPromises.get(roomId);
-    if (!loadingPromise) {
-      loadingPromise = readFollowedThreads(roomId).finally(() => {
-        loadingPromises.delete(roomId);
-      });
-      loadingPromises.set(roomId, loadingPromise);
-    }
-    await loadingPromise;
+    await readFollowedThreads(roomId, { isExclusive: true });
   };
   const checkIsFollowing = (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) =>
     Boolean(getFollowedThreadRootRowKeys(roomId)?.includes(threadRootRowKey));

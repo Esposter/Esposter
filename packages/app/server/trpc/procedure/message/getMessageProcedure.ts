@@ -8,7 +8,7 @@ import { getMessageOperationPermission } from "#shared/services/message/getMessa
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { getEntity } from "@esposter/db";
+import { getEntityWithEtag } from "@esposter/db";
 import { AzureEntityType, AzureTable, RoomPermission, StandardMessageEntity } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -22,13 +22,22 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
 ) =>
   getMemberProcedure(schema, "partitionKey").use(async ({ ctx, input, next }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    const messageEntity = await getEntity(messageClient, StandardMessageEntity, input.partitionKey, input.rowKey);
-    if (!messageEntity)
+    // Read through the etag reader rather than getEntity, which drops it: every procedure built here already
+    // Performs this read, so carrying the version it saw costs no extra round trip and is what lets a procedure
+    // Whose write echoes back the whole message blob make that write conditional (see votePoll)
+    const messageEntityWithEtag = await getEntityWithEtag(
+      messageClient,
+      StandardMessageEntity,
+      input.partitionKey,
+      input.rowKey,
+    );
+    if (!messageEntityWithEtag)
       throw new TRPCError({
         code: "NOT_FOUND",
         message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
       });
 
+    const { entity: messageEntity, etag: messageEtag } = messageEntityWithEtag;
     const permission = getMessageOperationPermission(messageEntity.type, operation);
     if (!permission)
       throw new TRPCError({
@@ -52,5 +61,5 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
       })
     )
       throw new TRPCError({ code: "UNAUTHORIZED" });
-    return next({ ctx: { messageClient, messageEntity } });
+    return next({ ctx: { messageClient, messageEntity, messageEtag } });
   });

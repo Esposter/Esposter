@@ -25,27 +25,30 @@ interface PaginationCacheVariant {
     initializeItems: (data: { items: MessageValue[] }) => void,
     items: Ref<MessageValue[]>,
     partitionKey: Ref<string>,
+    onHydrate?: () => Promise<void>,
   ) => { flush: () => Promise<void> };
 }
 
 describe.each<PaginationCacheVariant>([
   {
     name: useCursorPaginationCache.name,
-    useCache: (initializeItems, items, partitionKey) =>
+    useCache: (initializeItems, items, partitionKey, onHydrate) =>
       useCursorPaginationCache({
         configuration: MessageIndexedDbStoreConfiguration,
         initializeCursorPaginationData: initializeItems,
         items,
+        onHydrate,
         partitionKey,
       }),
   },
   {
     name: useOffsetPaginationCache.name,
-    useCache: (initializeItems, items, partitionKey) =>
+    useCache: (initializeItems, items, partitionKey, onHydrate) =>
       useOffsetPaginationCache({
         configuration: MessageIndexedDbStoreConfiguration,
         initializeOffsetPaginationData: initializeItems,
         items,
+        onHydrate,
         partitionKey,
       }),
   },
@@ -65,13 +68,13 @@ describe.each<PaginationCacheVariant>([
     await flushPromises();
     await flush();
   };
-  const mountCache = async (initialKey: string = partitionKey) => {
+  const mountCache = async (initialKey: string = partitionKey, onHydrate?: () => Promise<void>) => {
     partitionKeyRef.value = initialKey;
     wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          ({ flush } = useCache(initializeItems, items, partitionKeyRef));
+          ({ flush } = useCache(initializeItems, items, partitionKeyRef, onHydrate));
         },
       }),
     );
@@ -194,6 +197,33 @@ describe.each<PaginationCacheVariant>([
     await flushCache();
 
     expect(items.value).toHaveLength(0);
+  });
+
+  // Each partition's cache is its own target, so the room the user is looking at now persists while a hydration
+  // For the room they just left is still finishing
+  test("writes a partition's cache while another partition's hydration is still running", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const thirdPartitionKey = crypto.randomUUID();
+    const { promise, resolve: resolveHydrate }: PromiseWithResolvers<void> = Promise.withResolvers();
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [new StandardMessageEntity({ message, partitionKey: secondPartitionKey, rowKey, userId })],
+      secondPartitionKey,
+    );
+    await mountCache(partitionKey, () => promise);
+    partitionKeyRef.value = secondPartitionKey;
+    await flushPromises();
+    partitionKeyRef.value = thirdPartitionKey;
+    items.value = [new StandardMessageEntity({ message, partitionKey: thirdPartitionKey, rowKey, userId })];
+
+    await vi.waitFor(async () => {
+      expect(await readIndexedDb(MessageIndexedDbStoreConfiguration, thirdPartitionKey)).toHaveLength(1);
+    });
+
+    resolveHydrate();
+    await flushCache();
   });
 
   test("does not populate store if partition key changed during async read", async () => {

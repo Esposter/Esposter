@@ -60,6 +60,23 @@ describe(useFavoriteStore, () => {
     expect(favorites.value).toStrictEqual([resource]);
   });
 
+  // Joining the read in flight has to hand over its data — Home and the workbench list mount together, and the
+  // One that joined would otherwise render an empty favorites list beside a populated one
+  test("hands the caller that joined the in-flight read the favorites it asked for", async () => {
+    expect.hasAssertions();
+
+    server.use(trpcMsw.resource.readFavorites.query(() => [resource]));
+    const favoriteStore = useFavoriteStore();
+    const { favorites } = storeToRefs(favoriteStore);
+    const { readFavorites } = favoriteStore;
+    const inFlightRead = readFavorites();
+    await readFavorites();
+    const favoritesAfterJoinedRead = [...favorites.value];
+    await inFlightRead;
+
+    expect(favoritesAfterJoinedRead).toStrictEqual([resource]);
+  });
+
   // A delete or a restore changes which stars still resolve to a live resource, so the cached set is dropped
   test("re-reads the favorites after an invalidation", async () => {
     expect.hasAssertions();
