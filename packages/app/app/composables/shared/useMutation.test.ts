@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { useAlertStore } from "@/store/alert";
 import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
@@ -184,6 +185,63 @@ describe(useMutation, () => {
 
     expect(isPending.value).toBe(false);
     expect(getIsPending(key)).toBe(false);
+  });
+
+  test("reports the persisted result on success", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation } = useMutation();
+    const outcome = await executeMutation(() => Promise.resolve("result"), { key });
+
+    expect(outcome).toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+  });
+
+  test("reports the error on failure rather than throwing it", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation } = useMutation();
+    const error = new Error("error");
+    const outcome = await executeMutation(() => Promise.reject(error), { key, onError: noop });
+
+    expect(outcome).toStrictEqual({ error, status: MutationStatus.Failed });
+  });
+
+  test("reports a dropped exclusive call as distinct from success", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation } = useMutation();
+    let resolveFirst: () => void = noop;
+    const first = executeMutation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveFirst = resolve;
+        }),
+      { isExclusive: true, key },
+    );
+    await flushPromises();
+    const outcome = await executeMutation(() => Promise.resolve(), { isExclusive: true, key });
+    resolveFirst();
+    await first;
+
+    expect(outcome).toStrictEqual({ status: MutationStatus.Dropped });
+  });
+
+  test("reports a superseded call as stale rather than succeeded", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation } = useMutation();
+    let resolveStale: () => void = noop;
+    const stale = executeMutation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveStale = resolve;
+        }),
+      { key },
+    );
+    await executeMutation(() => Promise.resolve(), { key });
+    resolveStale();
+
+    expect(await stale).toStrictEqual({ status: MutationStatus.Stale });
   });
 
   test("drops a concurrent exclusive call with the same key", async () => {

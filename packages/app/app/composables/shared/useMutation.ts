@@ -1,8 +1,17 @@
 import type { Promisable } from "type-fest";
 
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
 import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
+
+// The four ways a call can end, so a caller can tell a persisted write from one that was dropped as a duplicate,
+// Superseded by a newer call, or rejected — the mutation never throws, so this is the only signal it did not land
+type MutationOutcome<TResult> =
+  | { error: Error; status: MutationStatus.Failed }
+  | { result: TResult; status: MutationStatus.Succeeded }
+  | { status: MutationStatus.Dropped }
+  | { status: MutationStatus.Stale };
 
 interface MutationOptions<TResult> {
   applyOptimistic?: () => Promisable<() => void>;
@@ -27,8 +36,8 @@ export const useMutation = () => {
   const executeMutation = async <TResult>(
     mutate: () => Promise<TResult>,
     { applyOptimistic, isExclusive, key, onError, onSuccess }: MutationOptions<TResult>,
-  ) => {
-    if (isExclusive && pendingCounts.value.has(key)) return;
+  ): Promise<MutationOutcome<TResult>> => {
+    if (isExclusive && pendingCounts.value.has(key)) return { status: MutationStatus.Dropped };
 
     const id = (callIds.get(key) ?? 0) + 1;
     callIds.set(key, id);
@@ -36,20 +45,25 @@ export const useMutation = () => {
     pendingCounts.value.set(key, (pendingCounts.value.get(key) ?? 0) + 1);
     // The finalizer guarantees pending bookkeeping unwinds even when applyOptimistic or a callback throws,
     // So a thrown callback can never strand the key as permanently pending
-    await withFinalizerAsync(
+    return await withFinalizerAsync(
       async () => {
         const rollback = await applyOptimistic?.();
-        await getResultAsync(mutate).match(
+        return await getResultAsync(mutate).match<Promise<MutationOutcome<TResult>>>(
           async (result) => {
-            if (!checkIsStale()) await onSuccess?.(result);
+            if (checkIsStale()) return { status: MutationStatus.Stale };
+
+            await onSuccess?.(result);
+            return { result, status: MutationStatus.Succeeded };
           },
           async (error) => {
-            if (checkIsStale()) return;
+            if (checkIsStale()) return { status: MutationStatus.Stale };
+
             rollback?.();
             if (onError) await onError(error);
             // The error link already put the codes it owns in front of the user, so alerting the same message here
             // Would stack two identical toasts on every mutation this primitive runs
             else if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+            return { error, status: MutationStatus.Failed };
           },
         );
       },
