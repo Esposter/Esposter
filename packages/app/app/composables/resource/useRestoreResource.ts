@@ -10,7 +10,7 @@ export const useRestoreResource = (refresh: () => Promise<void>) => {
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const favoriteStore = useFavoriteStore();
-  const { invalidateFavorites } = favoriteStore;
+  const { refreshFavorites } = favoriteStore;
   const { executeMutation: executeRestoreResourceMutation, getIsPending: getIsRestorePending } = useMutation();
   const restoreResource = async (resource: Resource) => {
     await executeRestoreResourceMutation(() => $trpc.resource.restoreResource.mutate({ id: resource.id }), {
@@ -24,7 +24,7 @@ export const useRestoreResource = (refresh: () => Promise<void>) => {
           title: `Restored "${resource.name}" as a draft`,
         });
         // The row is reachable again, so a star it still holds belongs back in Home's Favorites list
-        invalidateFavorites();
+        await refreshFavorites();
         await refresh();
       },
     });

@@ -14,7 +14,7 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
   const { executeMutation: executeDeleteResourcesMutation } = useMutation();
   const { restoreResource } = useRestoreResource(refresh);
   const favoriteStore = useFavoriteStore();
-  const { invalidateFavorites } = favoriteStore;
+  const { refreshFavorites } = favoriteStore;
   // Owned here because the row leaves `items` optimistically, which unmounts the v-if-gated delete dialog mid-flight
   const deleteResources = async (resources: Resource[]) => {
     const snapshot = [...items.value];
@@ -57,7 +57,7 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
         },
         onSuccess: async () => {
           // A star only resolves while its resource is live, so the set the next surface mounts with is re-read
-          invalidateFavorites();
+          await refreshFavorites();
           createNotification({
             // The undo toast: a single delete is one click away from coming back, no bin trip needed
             action:

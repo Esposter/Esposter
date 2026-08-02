@@ -67,9 +67,9 @@ describe(useFavoriteStore, () => {
     const handler = vi.fn(() => [resource]);
     server.use(trpcMsw.resource.readFavorites.query(handler));
     const favoriteStore = useFavoriteStore();
-    const { invalidateFavorites, readFavorites } = favoriteStore;
+    const { readFavorites, refreshFavorites } = favoriteStore;
     await readFavorites();
-    invalidateFavorites();
+    await refreshFavorites();
     await readFavorites();
 
     expect(handler).toHaveBeenCalledTimes(2);

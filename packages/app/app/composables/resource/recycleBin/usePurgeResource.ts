@@ -8,7 +8,7 @@ export const usePurgeResource = (refresh: () => Promise<void>) => {
   const notificationStore = useNotificationStore();
   const { createNotification } = notificationStore;
   const favoriteStore = useFavoriteStore();
-  const { invalidateFavorites } = favoriteStore;
+  const { refreshFavorites } = favoriteStore;
   const { executeMutation: executePurgeMutation } = useMutation();
   const purgeResource = async (resource: Resource) => {
     await executePurgeMutation(() => $trpc.resource.purgeResource.mutate({ id: resource.id }), {
@@ -20,7 +20,7 @@ export const usePurgeResource = (refresh: () => Promise<void>) => {
       onSuccess: async () => {
         createNotification({ severity: "success", title: `Permanently deleted "${resource.name}"` });
         // The resource can never come back, so a star it still holds must not survive in Home's Favorites list
-        invalidateFavorites();
+        await refreshFavorites();
         await refresh();
       },
     });

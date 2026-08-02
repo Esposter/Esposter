@@ -1,38 +1,33 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { useNotificationStore } from "@/store/notification";
-import { getResultAsync } from "@esposter/shared";
+
+// One target, so every read of it supersedes the one before — the primitive's latest-wins, not a flag here
+const FAVORITES_KEY = "favorites";
 
 // Favorites are server-side from day one — a star that vanishes on another device reads as data loss
 export const useFavoriteStore = defineStore("resource/favorite", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeToggleFavoriteMutation } = useMutation();
+  const { executeMutation: executeToggleFavoriteMutation, executeQuery, getIsPending } = useMutation();
   const notificationStore = useNotificationStore();
   const favorites = ref<Resource[]>([]);
   // Every row on /all asks "am I starred?", so the lookup is a Set rather than a scan per row
   const favoriteIds = computed(() => new Set(favorites.value.map(({ id }) => id)));
-  const isLoading = ref(false);
+  const isLoading = computed(() => getIsPending(FAVORITES_KEY));
   // A failed read leaves this false so the next mount retries instead of caching the failure
   let isLoaded = false;
   let loadingPromise: Promise<void> | undefined;
-  // Bumped by every invalidation, so a read that was already in flight when the set changed cannot apply its
-  // Now-stale rows or mark them loaded — the delete that invalidated it is exactly what its rows predate
-  let readGeneration = 0;
   const queryFavorites = async () => {
-    const generation = readGeneration;
-    isLoading.value = true;
-    await getResultAsync(() => $trpc.resource.readFavorites.query()).match(
-      (newFavorites) => {
-        if (generation !== readGeneration) return;
-
+    await executeQuery(() => $trpc.resource.readFavorites.query(), {
+      key: FAVORITES_KEY,
+      onError: (error) => {
+        notificationStore.createNotification({ severity: "error", title: error.message });
+      },
+      onSuccess: (newFavorites) => {
         favorites.value = newFavorites;
         isLoaded = true;
       },
-      (error) => {
-        notificationStore.createNotification({ severity: "error", title: error.message });
-      },
-    );
-    isLoading.value = false;
+    });
   };
   // The workbench list, the blade page and Home all want the same MAX_READ_LIMIT joined rows, and the list
   // Mounts inside the blade — so the set is read once and two concurrent mounts share the in-flight query
@@ -46,10 +41,12 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
     await loadingPromise;
   };
   // A delete or a restore changes which stars still point at a live resource, and only the server knows the
-  // Resulting set, so the next surface to mount re-reads it
-  const invalidateFavorites = () => {
+  // Resulting set. This re-reads rather than setting a dirty flag: issuing the read is what supersedes one
+  // Already in flight, so the primitive drops the older response instead of this store tracking which is current
+  const refreshFavorites = async () => {
     isLoaded = false;
-    readGeneration++;
+    loadingPromise = undefined;
+    await queryFavorites();
   };
   const toggleFavorite = async (resource: Resource) => {
     const snapshot = [...favorites.value];
@@ -79,5 +76,5 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
       },
     });
   };
-  return { favoriteIds, favorites, invalidateFavorites, isLoading, readFavorites, toggleFavorite };
+  return { favoriteIds, favorites, isLoading, readFavorites, refreshFavorites, toggleFavorite };
 });
