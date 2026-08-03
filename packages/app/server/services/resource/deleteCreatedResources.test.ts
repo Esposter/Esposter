@@ -30,9 +30,7 @@ const createContext = () => {
 
 const readActivityCount = async () => {
   const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
-  let count = 0;
-  for await (const _entity of resourceActivityClient.listEntities()) count++;
-  return count;
+  return (await Array.fromAsync(resourceActivityClient.listEntities())).length;
 };
 
 describe(deleteCreatedResources, () => {
