@@ -15,11 +15,11 @@ The record bounds the review instead of a change. Scope builds a **claim invento
 Find partitions by **the same size rule as diff mode**, at a lower threshold (25 files, because area finders read whole files rather than hunks):
 
 - **Under 25 files — lens.** Each finder gets the whole area and a different question. One dedicated **conformance finder** owns the entire claim inventory; the lens finders hunt defects and are given no claims.
-- **25 files or more — seam.** One finder per subsystem, each carrying the claims about its own territory, so a single agent answers "is this correct" and "does this match what we wrote down" with the same knowledge of the subsystem. Plus a whole-area pass as the safety net.
+- **25 files or more — seam.** One finder per subsystem, each carrying the claims about its own territory, so a single agent answers "is this correct" and "does this match what we wrote down" with the same knowledge of the subsystem. Plus a whole-area pass as the safety net. Seam mode also needs the Scope agent to have returned **at least two usable seams** — one seam is not a partition, so a thin answer falls back to lens and logs `(seam partition unusable, fell back)`.
 
 Angle B (removed-behaviour auditor) is dropped in both — it reads the deleted side of a diff. **Angle F — invariant archaeology** replaces it, hunting guards enforced on one path and bypassed on the sibling path beside it.
 
-> **This rule was learned the expensive way.** Area mode originally seam-partitioned unconditionally, on the theory that there is no small-enough case. A live run disproved it: a small area split into several seams gave every finder overlapping territory and identical all-lens instructions, so they were clones — most of them independently reported the same line, and the report shipped that one bug once per finder. Small territory needs finders that differ by _question_, not by _address_. Handing every lens finder the same claim inventory reproduces the same failure, which is why one finder owns the claims instead.
+Seam-splitting a small area is the failure the threshold exists to prevent: every finder gets overlapping territory and identical all-lens instructions, so they are clones that report the same lines. Small territory needs finders that differ by _question_, not by _address_ — and handing every lens finder the same claim inventory reproduces the same failure, which is why one finder owns the claims instead.
 
 One extra pass has no counterpart in diff mode: the **coverage finder**, which looks for what neither the code nor the docs will tell you on their own — real, load-bearing, deliberate behaviour that nothing documents. That is the `fixing-findings.md` entry "the decision was deliberate but written nowhere", and an area review is the cheapest place to close it, before it has drawn fire on three separate diff reviews.
 
@@ -37,6 +37,8 @@ A bug and the stale doc sentence describing that same bug stay **separate rows**
 ## Scope it small, and expect it to cost
 
 An area resolving to more than 120 files is **truncated in code**, source files first, with the drop logged. The Scope prompt asks for ~120; the cap enforces it, because an instruction is not a bound and an area review has no diff bounding it externally. A truncation log is the signal to narrow the target and run again, not to accept a thin skim.
+
+The cap binds on the **claim inventory** too: a claim whose files were all truncated away is dropped, because a finder asked to check a documented behaviour against code the run never opened cannot find it and reports the docs as wrong. `stats.claimsChecked` against `stats.claimsInventoried` is how much of the record the run actually audited — the gap is claims nobody looked at, never claims that held.
 
 Cost is materially higher than diff mode: finders read whole files, because in an area review every line is in scope. Measured runs on a modest subsystem at `high` land in the low millions of tokens across a few dozen agents and take tens of minutes — enough to exhaust a session limit mid-run. Budget it deliberately; do not fire it at a whole package casually, and prefer narrowing the target over raising the level.
 

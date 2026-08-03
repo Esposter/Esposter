@@ -34,7 +34,7 @@ export const meta = {
 // lenses, capped at the correctness total so neither family can crowd the
 // other out of the verifier fan-out.
 //   high  → 3 correctness × 6 + 1 cleanup (5 lenses, ≤18 cands)
-//   xhigh → 5 correctness × 8 + 1 cleanup (5 lenses, ≤24 cands) → sweep
+//   xhigh → 5 correctness × 8 + 1 cleanup (5 lenses, ≤40 cands) → sweep
 //   max   → same structure as xhigh (the API reasoning effort differs, not the fan-out)
 // Every finding that survives verification is reported — the level sets how wide the
 // search is, never how much of what it found the user is allowed to see.
@@ -75,13 +75,42 @@ const takeLeadingWord = (input, isWanted) => {
     : { rest: input, word: "" };
 };
 // Own-property check so Object.prototype keys ("constructor", "toString") never parse as a level.
+const isLevelWord = (w) => Object.prototype.hasOwnProperty.call(LEVEL_PARAMS, w);
 const modeParse = takeLeadingWord(RAW_ARGS, (w) => MODE_NAMES.includes(w));
-const levelParse = takeLeadingWord(modeParse.rest, (w) => Object.prototype.hasOwnProperty.call(LEVEL_PARAMS, w));
-const MODE = modeParse.word || "diff";
+// A leading mode word switches modes only when a level word follows it, or when it is the whole of args. Diff
+// Targets are free-form English, so "area of message deletion that PR 812 touched" starts with a mode name while
+// Asking for a diff review — consumed unconditionally it launched a whole-area audit of a sentence fragment,
+// Costing millions of tokens with nothing in the output saying the caller asked for something else. Failing back
+// To diff is the cheap direction, and the parse is logged below so either reading is visible before Scope runs.
+const IS_MODE_INTENDED =
+  modeParse.word !== "" && (modeParse.rest.trim() === "" || takeLeadingWord(modeParse.rest, isLevelWord).word !== "");
+const levelParse = takeLeadingWord(IS_MODE_INTENDED ? modeParse.rest : RAW_ARGS, isLevelWord);
+const MODE = IS_MODE_INTENDED ? modeParse.word : "diff";
 const LEVEL = levelParse.word || "high";
 const TARGET = levelParse.rest.trim();
 const IS_AREA = MODE === "area";
 const P = LEVEL_PARAMS[LEVEL];
+// One stats shape for every exit. The early empty-scope return used to hand-roll its own object, so it drifted
+// Field by field from the real one and a caller reading stats.level or stats.deduped got undefined on exactly the
+// Runs that ended early — indistinguishable from a field the run never populated.
+const makeStats = (known) => ({
+  level: LEVEL,
+  mode: MODE,
+  findMode: null,
+  seams: undefined,
+  claimsChecked: undefined,
+  claimsInventoried: undefined,
+  deduped: 0,
+  droppedUnsettled: 0,
+  droppedLowConfidence: 0,
+  finders: 0,
+  candidates: 0,
+  verifierAgents: 0,
+  verified: 0,
+  refuted: 0,
+  reported: 0,
+  ...known,
+});
 // Project override: review agents are execution roles, not the thinking role — pin them to opus so a
 // premium session model is never inherited by 20 finder/verifier agents (see model-delegation skill).
 const AGENT_MODEL = "opus";
@@ -96,6 +125,15 @@ if (IS_AREA && !TARGET) {
       'Area mode needs a target — the subsystem, path, or feature to audit. e.g. args: "area high packages/app/app/composables/cache".',
   };
 }
+// The parse, before a single agent is spawned: mode and level are inferred from two optional positional words, and
+// A misread of either buys a different (and in area mode far more expensive) review than the caller asked for.
+log(
+  MODE +
+    " mode, " +
+    LEVEL +
+    " effort, target: " +
+    (TARGET ? '"' + TARGET.replace(/\s+/gu, " ").slice(0, 120) + '"' : "(the working diff)"),
+);
 
 // Prompt fragments shared with the inline /code-review cells (one source of truth).
 const CORRECTNESS_ANGLES = [
@@ -126,6 +164,22 @@ const VERDICT_LADDER =
   "- **CONFIRMED** — can name the inputs/state that trigger it and the wrong\n  output or crash. Quote the line.\n- **PLAUSIBLE** — mechanism is real, trigger is uncertain (timing, env,\n  config). State what would confirm it.\n- **REFUTED** — factually wrong (code doesn't say that) or guarded elsewhere.\n  Quote the line that proves it.";
 const VERDICT_LADDER_RECALL =
   '**PLAUSIBLE by default** — do not refute a candidate for being "speculative" or\n"depends on runtime state" when the state is realistic: concurrency races,\nnil/undefined on a rare-but-reachable path (error handler, cold cache, missing\noptional field), falsy-zero treated as missing, off-by-one on a boundary the\ncode does not exclude, retry storms / partial failures, regex/allowlist that\nlost an anchor. These are PLAUSIBLE.\n\n**REFUTED** only when constructible from the code: factually wrong (quote the\nactual line); provably impossible (type/constant/invariant — show it); already\nhandled in this diff (cite the guard); or pure style with no observable effect.';
+// Confidence is asked for as a number and USED as one. A verdict its own author would not defend drives both
+// Ways a review wastes the reader: a CONFIRMED that could not be closed (a fix applied on a guess — this repo's
+// Most common regression source) and a REFUTED that could not be closed (a real defect dismissed, which returns
+// Next round worded differently). Under the floor, either one is not an answer; it is a PLAUSIBLE, and Resolve is
+// Where those are settled. A missing number is read as exactly the floor, so schema drift never mass-downgrades.
+const VERDICT_MIN_CONFIDENCE = 70;
+// The last stop, applied after Resolve. A claim nobody could get above this is not a finding the user should have
+// To triage, and shipping it is what makes successive runs argue with each other over the same lines forever.
+const REPORT_MIN_CONFIDENCE = 50;
+const CONFIDENCE_LADDER =
+  "Also give each verdict a **confidence** (0-100): how sure you are of the verdict itself, given what you " +
+  "actually read — not how severe the defect would be if real. Calibrate it: 90+ means you read the deciding " +
+  "line and can quote it; 70-89 means the evidence is strong but one hop is unread; below 70 means you are " +
+  "reasoning about what the code probably does, which is PLAUSIBLE, not a verdict. Do not round up to look " +
+  "decisive — a low number routes the candidate to a resolver that has the budget to settle it properly, and an " +
+  "inflated one ships a guess to the user as fact.";
 const SEVERITY_LADDER =
   "Also rate each candidate's **severity** — the user-visible impact assuming the finding is real, judged\nindependently of verdict confidence (a PLAUSIBLE data-loss bug is still critical):\n- **critical** — data loss/corruption, security hole, crash or broken core flow in regular use.\n- **major** — wrong behavior on a realistic path: a mishandled edge case, degraded or misleading output,\n  a resilience gap.\n- **minor** — maintainability or cosmetic cost only: cleanup, conventions, stale comments, wasted work\n  with no user-visible effect.";
 // Grounds every surviving finding in history + the written record, so the report says whether this is the
@@ -149,6 +203,21 @@ const PROVENANCE_LADDER =
   "`SKILL.md` path, or the `file:line` of the comment that records the decision. Leave it empty only for **new**.";
 const CLEANUP_PRECEDENCE =
   "Cleanup, altitude, and conventions candidates use the same\n`file`/`line`/`summary` shape; in `failure_scenario`, state the concrete\ncost (what is duplicated, wasted, harder to maintain, or which CLAUDE.md rule\nis broken) instead of a crash. Correctness bugs always outrank cleanup,\naltitude, and conventions findings when the output cap forces a cut.\n";
+// The per-finder cap is a CEILING, and a finder that reads it as a quota is how a review stops converging: over
+// Any mature file there is always one more wording preference to raise, so successive runs report a fresh batch
+// Of them forever and the reader can no longer tell a run that found nothing from a run that found nothing much.
+// Each padded candidate also buys a verifier slot and possibly a resolver — the run's most expensive agent — to
+// Disprove something its own author did not believe. Hence an explicit bar, and explicit non-findings.
+const MATERIALITY_BAR =
+  "\n### The bar every candidate has to clear\n" +
+  "Raise a candidate only when acting on it changes what the code DOES, what a reader CONCLUDES from it, or what " +
+  "the next change to it COSTS. These are NOT findings at any level: a comment or doc sentence that is accurate " +
+  "but you would have worded differently; an identifier you would have named otherwise where the existing name is " +
+  "not misleading; a structure whose alternative is a matter of taste; a rule you infer rather than one you can " +
+  "quote from a CLAUDE.md, a docs page, or a SKILL.md. A stale or false comment IS a finding — an unfashionable " +
+  "one is not.\n" +
+  "Your cap is a ceiling, not a quota. Returning three real findings beats returning your cap padded out, and " +
+  "returning none is a legitimate answer that costs nobody anything to read.\n";
 const SWEEP_GAP_FOCUS =
   "moved/extracted code that dropped a guard\nor anchor; second-tier footguns (dataclass default evaluated once, `hash()`\nnon-determinism, lock-scope shrink, predicate methods with side effects);\nsetup/teardown asymmetry in tests; config defaults flipped.";
 // Area mode's lens set. Angle B (removed-behavior auditor) is dropped outright rather than reworded: it reads the
@@ -201,6 +270,14 @@ const SCOPE_SCHEMA = {
       },
     },
     files: { type: "array", items: { type: "string" } },
+    // Sizes the fan-out. File count alone is a bad proxy — five dense files carry more review surface than fifty
+    // one-line ones — and every finder pays for the whole surface again, so this is what decides how many finders
+    // A territory can actually keep busy. A rough number is fine; it only selects a bucket.
+    changedLines: {
+      type: "number",
+      description:
+        "diff mode — added + deleted lines, from the diff's --stat total; area mode — total lines across the files in scope. An estimate is fine",
+    },
     claudeMdFiles: { type: "array", items: { type: "string" } },
     summary: { type: "string" },
     conventions: { type: "string" },
@@ -273,10 +350,9 @@ const CANDIDATES_SCHEMA = {
     },
   },
 };
-// One verifier per distinct (file, line) location, returning a verdict per
-// candidate at that location — instead of one verifier per candidate. Cuts
-// verifier-agent count by the cross-finder location-collision rate (~40% at
-// p50) without dropping any candidate.
+// One verifier per file carrying candidates, returning a verdict per candidate in that file — never one verifier
+// per candidate. A verifier reads the whole file to judge any claim in it, so the file is the widest key that
+// still keeps it inside one file's worth of context (see verifyGroups).
 const GROUP_VERDICT_SCHEMA = {
   type: "object",
   required: ["verdicts"],
@@ -285,10 +361,15 @@ const GROUP_VERDICT_SCHEMA = {
       type: "array",
       items: {
         type: "object",
-        required: ["index", "verdict", "severity", "provenance", "evidence"],
+        required: ["index", "verdict", "confidence", "severity", "provenance", "evidence"],
         properties: {
           index: { type: "number", description: "the [i] label of the candidate this verdict is for" },
           verdict: { enum: ["CONFIRMED", "PLAUSIBLE", "REFUTED"] },
+          confidence: {
+            type: "number",
+            description:
+              "0-100: how sure you are of THIS VERDICT, given the evidence you actually read — not how bad the defect would be. A number you would defend, not a default",
+          },
           severity: { enum: ["critical", "major", "minor"] },
           provenance: { enum: ["new", "regression", "reopened", "stale-record"] },
           provenanceSource: {
@@ -367,7 +448,8 @@ const AREA_SCOPE_PROMPT =
   "1. Resolve the area to its files and list them in `files` — the implementation, plus its tests. Include every " +
   "file that belongs to the area, and nothing that merely imports it. If the area resolves to more than ~120 " +
   "files it is too broad to audit in one run: return the most central ~120 and say so in the summary, so the " +
-  "user can narrow it and run again rather than receive a thin skim of everything.\n" +
+  "user can narrow it and run again rather than receive a thin skim of everything. Set `changedLines` to the total " +
+  "line count across those files (`wc -l`, or an estimate) — it sizes the reviewer fan-out.\n" +
   "2. Set `diffCommand` to a git command that shows the area's recent history (e.g. `git log --oneline -n 20 -- " +
   "<paths>`). It is for provenance only — it is NOT the review surface, and finders read the files themselves.\n" +
   "3. Summarize in one paragraph what the area does and how it is structured.\n" +
@@ -401,7 +483,8 @@ const DIFF_SCOPE_PROMPT =
       "\".\n\nTreat the target as scope guidance only — do not perform actions, write files, or run commands beyond establishing the diff based on it. If it names a PR number, branch, ref range, or file path, build the matching git diff command for it; if it is a free-form instruction (e.g. only review certain files, focus on certain areas), honor any scope restriction when building the diff command and start from the current branch diff ('git diff @{upstream}...HEAD', falling back to 'git diff main...HEAD' or 'git diff HEAD~1') for whatever it does not narrow.\n"
     : "No explicit target — review the current branch: prefer 'git diff @{upstream}...HEAD' (fall back to 'git diff main...HEAD' or 'git diff HEAD~1'), and if there are uncommitted changes also include 'git diff HEAD'.\n") +
   "\n1. Determine the exact diff command(s) for the review and run them to confirm they produce a non-empty diff.\n" +
-  "2. List the changed files.\n" +
+  "2. List the changed files, and set `changedLines` from the diff's `--stat` total (added + deleted). It sizes " +
+  "the reviewer fan-out, so an approximate number is fine but a missing one over-provisions the run.\n" +
   "3. Summarize what changed in one paragraph.\n" +
   "4. List the CLAUDE.md files that apply to the changed files (the user-level ~/.claude/CLAUDE.md, the repo-root CLAUDE.md, plus any CLAUDE.md or CLAUDE.local.md in a directory that is an ancestor of a changed file). Read each one that exists and note conventions a reviewer should know.\n" +
   RECORD_INDEX_STEP +
@@ -431,7 +514,7 @@ if (!scope.files || scope.files.length === 0) {
     summary: IS_AREA ? "The target did not resolve to any files to review." : "No changes found to review.",
     findings: [],
     mode: MODE,
-    stats: { candidates: 0, finders: 0, mode: MODE, verified: 0, verifierAgents: 0 },
+    stats: makeStats({}),
   };
 }
 // A release-sized diff carries files whose content is not source: lockfiles, generated output, binaries.
@@ -465,6 +548,33 @@ if (IS_AREA && scope.files.length > AREA_MAX_FILES) {
       " dropped. Narrow the target and re-run to cover the rest.",
   );
 }
+// Prefix matching on whole path segments, never raw string prefixes: `app/composables/message` must select
+// `app/composables/message/x.ts` and NOT `app/composables/messageDraft/y.ts`. Unbounded, one seam swallows every
+// Sibling whose name it prefixes — that finder reads another finder's territory, checks claims that do not govern
+// It, and its duplicate candidates inflate the corroboration label the report shows the user.
+const isUnder = (path, prefix) => path === prefix || path.startsWith(prefix.endsWith("/") ? prefix : prefix + "/");
+const filesUnder = (prefixes) => scope.files.filter((f) => prefixes.some((p) => isUnder(f, p)));
+// Fan-out scales with the TERRITORY, not with the level alone. Every finder reads the same material again, and
+// Every candidate it returns buys a verifier slot and possibly a resolver, so a level's full fan-out over a
+// 40-line change costs roughly what it costs over a release — while having nowhere near that many distinct
+// Questions to ask, which is how a tiny review ends up padded with candidates that exist to fill a quota.
+// Lines, not files: five dense files carry more review surface than fifty one-line ones. A Scope agent that
+// Returns no count is treated as a full-size territory, so a missing field never silently narrows a review.
+const SMALL_TERRITORY_LINES = 300;
+const territoryLines = Number.isFinite(scope.changedLines) && scope.changedLines > 0 ? scope.changedLines : null;
+const IS_SMALL_TERRITORY = territoryLines !== null && territoryLines < SMALL_TERRITORY_LINES && scope.files.length < 10;
+const ANGLES = IS_SMALL_TERRITORY ? Math.max(2, P.correctnessAngles - 1) : P.correctnessAngles;
+const PER_ANGLE = IS_SMALL_TERRITORY ? Math.max(3, P.perAngle - 2) : P.perAngle;
+if (IS_SMALL_TERRITORY)
+  log(
+    "small territory (" +
+      territoryLines +
+      " lines): fan-out trimmed to " +
+      ANGLES +
+      " angles × " +
+      PER_ANGLE +
+      " candidates",
+  );
 const sourceFiles = scope.files.filter((f) => !NON_SOURCE_REGEX.test(f));
 const listedFiles = sourceFiles.length > 0 ? sourceFiles : scope.files;
 const unlistedFileCount = scope.files.length - listedFiles.length;
@@ -476,16 +586,34 @@ const rawSeams = (Array.isArray(scope.seams) ? scope.seams : [])
   .filter((s) => s && s.name && Array.isArray(s.pathPrefixes) && s.pathPrefixes.length > 0)
   .slice(0, P.maxSeams);
 // Area mode partitions by the SAME rule as diff mode, and the threshold is lower because an area finder reads
-// Whole files rather than hunks. "Area is always seam" was wrong, and one run proved it: a 10-file area split
-// Into 5 seams gave every finder overlapping territory and identical all-lens instructions, so they were clones —
-// Six of them independently reported the same line, and with the synthesizer dead that shipped as six rows.
-// Lens partitioning is what makes small-territory finders differ, in either mode: a different QUESTION each,
-// Rather than a different address. Seam only earns its place once the territory is too big to all be read.
+// Whole files rather than hunks. Not "area is always seam": seam-splitting a small area gives every finder
+// Overlapping territory and identical all-lens instructions, which makes them clones that all report the same
+// Lines. Lens partitioning is what makes small-territory finders differ, in either mode — a different QUESTION
+// Each, rather than a different address. Seam only earns its place once the territory is too big to all be read.
 const AREA_SEAM_MIN_FILES = 25;
 const SEAM_MIN_FILES = IS_AREA ? AREA_SEAM_MIN_FILES : SEAM_MODE_MIN_FILES;
 const SEAM_MODE = rawSeams.length >= 2 && scope.files.length >= SEAM_MIN_FILES;
 const seams = SEAM_MODE ? rawSeams : [];
-const claims = IS_AREA && Array.isArray(scope.claims) ? scope.claims.filter((c) => c && c.claim && c.source) : [];
+// The file cap has to bind on the CLAIMS as well as the files. A claim whose paths were all truncated away is
+// Still prefix-overlapped onto some surviving seam by claimsFor, so a finder is told to check a documented
+// Behaviour against code the run never opened, cannot find it, and raises a conformance candidate saying the
+// Record describes something the code does not do — which the verifier, scoped to that same truncated surface,
+// Then CONFIRMS. The output is an instruction to delete a correct sentence from a docs page. A claim with no
+// pathPrefixes is area-wide and survives; one whose prefixes resolve to nothing left in scope is dropped, and the
+// Drop is logged so the audited fraction of the record is never overstated.
+const inventoriedClaims =
+  IS_AREA && Array.isArray(scope.claims) ? scope.claims.filter((c) => c && c.claim && c.source) : [];
+const claims = inventoriedClaims.filter(
+  (c) => !Array.isArray(c.pathPrefixes) || c.pathPrefixes.length === 0 || filesUnder(c.pathPrefixes).length > 0,
+);
+if (claims.length < inventoriedClaims.length)
+  log(
+    "area: " +
+      (inventoriedClaims.length - claims.length) +
+      " of " +
+      inventoriedClaims.length +
+      " documented claims dropped — they describe files no longer in scope, so nothing in this run checks them.",
+  );
 log(
   LEVEL +
     " " +
@@ -506,7 +634,7 @@ log(
         (IS_AREA ? "area" : "diff") +
         " pass"
     : "find mode: lens — " +
-        P.correctnessAngles +
+        ANGLES +
         " angles over the whole " +
         (IS_AREA ? "area" : "diff") +
         (scope.files.length >= SEAM_MIN_FILES ? " (seam partition unusable, fell back)" : ""),
@@ -580,19 +708,21 @@ const scopedDiff = (prefixes) =>
 // Themselves. Every prompt that needs to point an agent at some subset of the review — seam finders, their
 // Boundary blocks, verifiers, resolvers — goes through here, so neither mode's phrasing leaks into the other's.
 // Area mode resolves the prefixes against the files actually in scope rather than printing them raw, which is
-// what makes AREA_MAX_FILES bind. Printing a Scope agent's directory prefix tells an agent to read that whole
-// directory, so a 400-file area truncated to 120 still had every seam finder pointed at all 400 while the log
-// Claimed the run was capped. Resolving also absorbs a prefix that selects nothing readable — a glob, an
-// Absolute path — instead of handing the agent a path no Read can open; only if nothing resolves at all do the
-// Prefixes go through verbatim, which at least leaves the agent something to search on.
-const filesUnder = (prefixes) => scope.files.filter((f) => prefixes.some((p) => f === p || f.startsWith(p)));
+// what makes AREA_MAX_FILES bind: a directory prefix printed verbatim tells an agent to read that whole
+// directory, so a capped run still points every seam finder at everything the cap dropped while the log claims
+// otherwise. Nothing resolving is therefore the case that MOST needs the cap — a seam whose files the cap removed,
+// or a prefix naming nothing readable (a glob, an absolute path) — so the fallback names the paths as
+// out-of-scope rather than as a reading list. An agent with no readable territory is a wasted finder; an agent
+// reading past the cap is the unbounded run the cap exists to prevent, and it is invisible in the output.
 const materialFor = IS_AREA
   ? (paths) => {
       const resolved = filesUnder(paths);
-      return (
-        "  Read these paths in full — they are the review surface, and there is no diff:\n  " +
-        (resolved.length > 0 ? resolved : paths).join("\n  ")
-      );
+      return resolved.length > 0
+        ? "  Read these paths in full — they are the review surface, and there is no diff:\n  " + resolved.join("\n  ")
+        : "  (none of these paths resolved to a file in the review scope: " +
+            paths.join(", ") +
+            " — they were dropped by the file cap, or named with a glob or an absolute path. Do NOT open them: the " +
+            "file list above is the whole review surface, and reading past it is the unbounded run the cap prevents.)";
     }
   : scopedDiff;
 // A cited path an agent may want to widen to, expressed as the one action that mode makes sense of. The
@@ -692,6 +822,8 @@ const FINDER_PROMPT = (f) => {
     f.text +
     "\n" +
     (isCleanup ? CLEANUP_PRECEDENCE + "\n" : "") +
+    MATERIALITY_BAR +
+    "\n" +
     "Surface up to " +
     f.cap +
     " candidate findings, each with file, line, a one-line summary, and a concrete failure_scenario — " +
@@ -782,6 +914,8 @@ const GROUP_VERIFIER_PROMPT = (group) =>
   "\n\n" +
   VERDICT_LADDER_RECALL +
   "\n\n" +
+  CONFIDENCE_LADDER +
+  "\n\n" +
   SEVERITY_LADDER +
   "\n\n" +
   PROVENANCE_LADDER +
@@ -790,9 +924,14 @@ const GROUP_VERIFIER_PROMPT = (group) =>
 
 const RESOLUTION_SCHEMA = {
   type: "object",
-  required: ["verdict", "evidence"],
+  required: ["verdict", "confidence", "evidence"],
   properties: {
     verdict: { enum: ["CONFIRMED", "REFUTED", "UNRESOLVABLE"] },
+    confidence: {
+      type: "number",
+      description:
+        "0-100: how sure you are of THIS VERDICT after what you read — you are the last pass, so a number below 60 means you did not settle it and should say UNRESOLVABLE with the blocker instead",
+    },
     evidence: { type: "string", description: "the specific thing you read or ran that settled it" },
     blocker: {
       type: "string",
@@ -824,14 +963,13 @@ const RESOLVER_PROMPT = (candidate) =>
   "UNRESOLVABLE is only for a trigger that cannot be settled from this repository at all — a production-only config value, a cloud service's runtime behaviour — and you must name that blocker. " +
   "Do not return UNRESOLVABLE because the work was large.\n\nStructured output only.";
 
-// ─── Same-location verifier merge — group ingested candidates by loc(c),
-// one verifier agent per location returning N verdicts. Grouping is not
-// dedup: every candidate keeps its own verdict; the synthesis step merges
+// ─── Verify — one agent per file carrying candidates, returning N verdicts.
+// Grouping is not dedup: every candidate keeps its own verdict; the dedupe
+// below collapses same-location reports and the synthesis step merges
 // semantic dupes. A candidate the verifier did not render a verdict on
-// (agent died, or it omitted that index) is dropped — same policy as the
-// old per-candidate verifier — so unverified candidates never reach the
-// report as fabricated PLAUSIBLE. Trade-off vs per-candidate: one verifier-
-// agent failure now drops every candidate at that location instead of one.
+// (agent died, or it omitted that index) is dropped, so unverified candidates
+// never reach the report as fabricated PLAUSIBLE. Trade-off: one verifier-
+// agent failure drops every candidate in that file rather than one.
 let verifierAgents = 0;
 
 async function verifyGroups(candidates) {
@@ -867,14 +1005,23 @@ async function verifyGroups(candidates) {
       return g.flatMap((c, i) => {
         const v = byIdx[i];
         if (!v) return [];
+        // A verdict its author would not defend is not a verdict. Both directions matter: an under-confident
+        // CONFIRMED is a fix applied on a guess, an under-confident REFUTED is a real defect dismissed with no
+        // Evidence — and both come back next run. Downgrading to PLAUSIBLE routes it to the one pass that has the
+        // Budget to settle it, which is exactly what PLAUSIBLE is for.
+        const confidence = Number.isFinite(v.confidence) ? v.confidence : VERDICT_MIN_CONFIDENCE;
+        const isUnderConfident = v.verdict !== "PLAUSIBLE" && confidence < VERDICT_MIN_CONFIDENCE;
         return [
           {
             ...c,
-            evidence: v.evidence,
+            confidence,
+            evidence: isUnderConfident
+              ? "[verifier said " + v.verdict + " at " + confidence + "% confidence] " + v.evidence
+              : v.evidence,
             provenance: v.provenance,
             provenanceSource: v.provenanceSource,
             severity: v.severity,
-            verdict: v.verdict,
+            verdict: isUnderConfident ? "PLAUSIBLE" : v.verdict,
           },
         ];
       });
@@ -887,19 +1034,17 @@ async function verifyGroups(candidates) {
 // for cross-finder location merge: grouping needs every finder's output.
 // Correctness stays 1 finder per angle (lens-partitioning matters for catch).
 // Cleanup is ONE finder covering all cleanup angles (same shared texts, one
-// agent) — keeps the task set identical to inline, breaks only the
-// 1-angle:1-agent mapping. With four fewer finders at every level the
-// barrier wait shortens enough that wall-clock is net-faster than the
-// pre-#45024 per-finder pipeline.
+// agent) — one agent per lens family rather than per lens, which keeps the
+// task set intact while spending a fraction of the fan-out on the family
+// whose findings are minor by definition.
 // Seam finders carry EVERY lens over their own territory rather than one lens over everyone's — the partition
 // Trades territory for lens-diversity-per-file, so the lenses have to travel with the finder or the trade is a
 // Straight loss.
 const ALL_LENSES_TEXT = CORRECTNESS_ANGLES.map((a) => a.text).join("\n");
 // The area lens set as individual angles, so a small area can be lens-partitioned the way a small diff is.
-// Angle B reads the deleted side of a diff and has nothing to audit here; Angle F takes its SLOT — substituted
-// In place, not filtered out and appended. Appending put F last, where `slice(0, correctnessAngles)` cut it at
-// Every level below max, so the lens the comment calls the highest-value one on standing code never ran on the
-// Default path the size switch was written for.
+// Angle B reads the deleted side of a diff and has nothing to audit here, so the invariant angle takes its SLOT —
+// Substituted in place, never appended: appended it lands last, where `slice(0, correctnessAngles)` cuts it at
+// Every level below max, and the highest-value lens on standing code never runs on the default path.
 const AREA_ANGLES = CORRECTNESS_ANGLES.map((a) => (a.label === "angle-B" ? AREA_INVARIANT_ANGLE : a));
 const AREA_LENSES_TEXT = AREA_LENS_NOTE + AREA_ANGLES.map((a) => a.text).join("\n");
 const LENSES_TEXT = IS_AREA ? AREA_LENSES_TEXT : ALL_LENSES_TEXT;
@@ -953,7 +1098,7 @@ const CLAIMS_BLOCK = (mine) => {
 const SEAM_FINDER = (s) => ({
   label: "seam:" + s.name.replace(/\s+/g, "-").slice(0, 24),
   kind: "correctness",
-  cap: P.perAngle,
+  cap: PER_ANGLE,
   preamble:
     "### Your territory — " +
     s.name +
@@ -979,13 +1124,15 @@ const SEAM_FINDER = (s) => ({
     "\nApply every lens below to your territory:\n",
   text: LENSES_TEXT,
 });
-// The safety net. A seam split is the Scope agent's guess, and a wrong guess leaves territory with no reader and
-// No trace of that in the output. One finder over the whole diff makes an unassigned subsystem still reachable,
-// And restores some of the independent-confirmation signal the lens finders used to give by converging.
-const WHOLE_DIFF_FINDER = {
+// The safety net, seam mode only. A seam split is the Scope agent's guess, and a wrong guess leaves territory
+// With no reader and no trace of that in the output. One finder over the whole territory makes an unassigned
+// Subsystem still reachable, and restores some of the independent-confirmation signal the lens finders used to
+// Give by converging. Built lazily, like AREA_LENS_FINDERS: its preamble interpolates the seam names, which are
+// Empty on a lens-mode run.
+const WHOLE_TERRITORY_FINDER = () => ({
   label: IS_AREA ? "whole-area" : "whole-diff",
   kind: "correctness",
-  cap: P.perAngle,
+  cap: PER_ANGLE,
   preamble:
     "### Your territory — the whole " +
     (IS_AREA ? "area" : "diff") +
@@ -999,7 +1146,7 @@ const WHOLE_DIFF_FINDER = {
     "). Where you do overlap them, report anyway — independent agreement is signal, not duplication.\n\n" +
     "Apply every lens below:\n",
   text: LENSES_TEXT,
-};
+});
 // Area mode only. Every other finder is checking the code against something — a lens, a claim, a boundary — so
 // None of them can see the thing that is missing from BOTH sides: a real, deliberate behaviour that no page
 // Describes. That is the failure the code-review skill names as the one which draws fire on every future run
@@ -1008,7 +1155,7 @@ const WHOLE_DIFF_FINDER = {
 const COVERAGE_FINDER = {
   label: "coverage",
   kind: "record-gap",
-  cap: P.perAngle,
+  cap: PER_ANGLE,
   preamble:
     "### Your territory — what the record does not cover\n" +
     "Every other finder on this review is checking the code against something. You are looking for what nothing " +
@@ -1045,7 +1192,7 @@ const COVERAGE_FINDER = {
 // Every cleanup lens is worded around "the diff", and without the note the finder has nothing to match and
 // Returns empty, shipping an area review with zero cleanup findings that still reads as full coverage.
 const CLEANUP_FINDER = {
-  cap: P.correctnessAngles * P.perAngle,
+  cap: ANGLES * PER_ANGLE,
   kind: "cleanup",
   label: "cleanup",
   text: IS_AREA ? AREA_LENS_NOTE + CLEANUP_TEXT : CLEANUP_TEXT,
@@ -1059,13 +1206,13 @@ const CLEANUP_FINDER = {
 // Denominator behind stats.claimsChecked, so constructing this finder in a seam-mode run would count claims that
 // No agent was ever shown.
 const AREA_LENS_FINDERS = () =>
-  AREA_ANGLES.slice(0, P.correctnessAngles)
-    .map((a) => ({ ...a, cap: P.perAngle, kind: "correctness", text: AREA_LENS_NOTE + a.text }))
+  AREA_ANGLES.slice(0, ANGLES)
+    .map((a) => ({ ...a, cap: PER_ANGLE, kind: "correctness", text: AREA_LENS_NOTE + a.text }))
     .concat(
       claims.length > 0
         ? [
             {
-              cap: P.perAngle,
+              cap: PER_ANGLE,
               kind: "conformance",
               label: "conformance",
               preamble:
@@ -1081,10 +1228,10 @@ const AREA_LENS_FINDERS = () =>
     );
 const FINDERS = (
   SEAM_MODE
-    ? seams.map(SEAM_FINDER).concat([WHOLE_DIFF_FINDER])
+    ? seams.map(SEAM_FINDER).concat([WHOLE_TERRITORY_FINDER()])
     : IS_AREA
       ? AREA_LENS_FINDERS()
-      : CORRECTNESS_ANGLES.slice(0, P.correctnessAngles).map((a) => ({ ...a, cap: P.perAngle, kind: "correctness" }))
+      : CORRECTNESS_ANGLES.slice(0, ANGLES).map((a) => ({ ...a, cap: PER_ANGLE, kind: "correctness" }))
 )
   .concat(IS_AREA ? [COVERAGE_FINDER] : [])
   .concat([CLEANUP_FINDER]);
@@ -1092,13 +1239,19 @@ const FINDERS = (
 const finderOuts = await parallel(
   FINDERS.map(
     (f) => () =>
-      agent(FINDER_PROMPT(f), { label: f.label, model: AGENT_MODEL, phase: "Find", schema: CANDIDATES_SCHEMA }).then(
-        (r) => {
-          if (!r) return [];
-          log(f.label + ": " + r.candidates.length + " candidates");
-          return ingest(r.candidates, f.cap, f.kind, f.label);
-        },
-      ),
+      agent(FINDER_PROMPT(f), {
+        // Cleanup is a lens sweep — is the helper already there, is the comment stale, is this duplicated — and
+        // Its verifiers already run low for the same reason. Reasoning depth is what correctness angles need.
+        ...(f.kind === "cleanup" ? { effort: "low" } : {}),
+        label: f.label,
+        model: AGENT_MODEL,
+        phase: "Find",
+        schema: CANDIDATES_SCHEMA,
+      }).then((r) => {
+        if (!r) return [];
+        log(f.label + ": " + r.candidates.length + " candidates");
+        return ingest(r.candidates, f.cap, f.kind, f.label);
+      }),
   ),
 );
 const allCandidates = finderOuts.filter(Boolean).flat();
@@ -1122,7 +1275,9 @@ if (P.sweep) {
         : "Re-read the diff and the enclosing functions looking ONLY for defects not already listed. ") +
       "Focus on what the first pass tends to miss: " +
       SWEEP_GAP_FOCUS +
-      "\n\n" +
+      "\n" +
+      MATERIALITY_BAR +
+      "\n" +
       "Surface up to " +
       SWEEP_MAX +
       " additional candidates. If nothing new, return an empty list — do not pad.\n\nStructured output only.",
@@ -1137,39 +1292,6 @@ if (P.sweep) {
   }
 }
 
-// ─── Resolve: PLAUSIBLE is not an outcome ───
-// A PLAUSIBLE finding hands the decision back to a human who has less context than the agent that raised it, and
-// The reader either fixes it without evidence or dismisses it without evidence. Both are worse than an answer.
-// Verification is a fast pass over one file, so "the mechanism is real but I cannot reach the trigger" is usually
-// A budget limit, not a fact about the code — a resolver given one finding and no other job can read the callee,
-// The dependency's source, and the git history that a per-file verifier had no reason to open. It must come back
-// CONFIRMED or REFUTED; UNRESOLVABLE exists only for a trigger that genuinely cannot be settled from the repo
-// (a production config, a vendor's runtime behaviour), and it has to name the blocker.
-const undecided = verified.filter((c) => c.verdict === "PLAUSIBLE");
-if (undecided.length > 0) {
-  phase("Resolve");
-  log("resolve: " + undecided.length + " plausible findings to settle");
-  const resolutions = await parallel(
-    undecided.map((c) => async () => {
-      const r = await agent(RESOLVER_PROMPT(c), {
-        label: "resolve:" + c.file.split("/").pop(),
-        model: AGENT_MODEL,
-        phase: "Resolve",
-        schema: RESOLUTION_SCHEMA,
-      });
-      // A resolver that dies leaves the finding exactly as the verifier left it — reported, still PLAUSIBLE.
-      if (r) {
-        c.verdict = r.verdict === "UNRESOLVABLE" ? "PLAUSIBLE" : r.verdict;
-        c.evidence = r.evidence;
-        if (r.verdict === "UNRESOLVABLE") c.unresolvedBlocker = r.blocker;
-      }
-      return r;
-    }),
-  );
-  const settled = resolutions.filter(Boolean).filter((r) => r.verdict !== "UNRESOLVABLE").length;
-  log("resolve: " + settled + " settled, " + (undecided.length - settled) + " left undecided");
-}
-
 // Ranking, declared here because the dedupe below picks a group's primary by the same severity ordering the
 // Report ranks by — two different orderings for "which of these is the worse reading" would eventually disagree.
 // Severity first; within a tier the kind breaks the tie and CONFIRMED outranks PLAUSIBLE. An unrated candidate
@@ -1182,22 +1304,27 @@ const severityRank = (c) => SEVERITY_RANK[c.severity] ?? 1;
 const rank = (c) => severityRank(c) * 4 + (KIND_RANK[c.kind] ?? 0) + (c.verdict === "PLAUSIBLE" ? 1 : 0);
 
 const allSurviving = verified.filter((c) => c.verdict !== "REFUTED");
-const refuted = verified.filter((c) => c.verdict === "REFUTED");
+const refutedAtVerify = verified.filter((c) => c.verdict === "REFUTED");
 
+// ─── Dedupe, BEFORE Resolve ───
 // Independent finders converging on one defect is signal, and turning N reports of it into one row with N
-// citations is the synthesizer's job. But the synthesizer is a single agent with no retry, and when it dies —
-// a session limit, a transient error — the backfill path ships every candidate raw. One run did exactly that:
-// six finders found the same line, the synthesizer hit a limit, and the report carried the same bug six times.
-// So the merge that needs no judgement happens HERE, in code, where nothing can kill it: an exact (file, line)
-// collision is the same finding by construction. The synthesizer still merges findings that share a root cause
-// across DIFFERENT lines, which is the part that actually requires reading them.
+// citations is the synthesizer's job. But the synthesizer is a single agent with no retry, and when it dies the
+// backfill path ships every candidate raw — the same bug once per finder that found it. So the merge that needs
+// no judgement happens HERE, in code, where nothing can kill it: an exact same-kind (file, line) collision is the
+// same finding by construction. The synthesizer still merges findings that share a root cause across DIFFERENT
+// lines, which is the part that actually requires reading them.
+// It runs before Resolve because a resolver is the most expensive agent in the run: N clones of one finding all
+// arrive PLAUSIBLE together and would buy N full-effort agents to settle one line.
+// The key carries `kind`, not just the location. A bug and the stale doc sentence describing that same bug are
+// Two deliverables — a code fix and a doc edit — so collapsing them silently deletes one, and can hand the
+// Surviving row the wrong kind's label. Merging across kinds is what the synthesizer is explicitly told not to do.
 // `line` is optional, and lineless candidates are the NORM for the kinds whose subject is a file rather than a
 // statement — the coverage finder's record-gaps and the conformance finder's claim mismatches. Keying those on
 // loc() degrades to the bare filename, so two genuinely different undocumented decisions in one file collapse
 // and the second is discarded outright: not refuted, not reported, just gone, under a row falsely stamped as
 // independently corroborated. That also contradicts what this file tells its own verifiers — sharing a file is
-// NOT evidence of sharing a cause. Only a real (file, line) collision is the same finding by construction, so a
-// candidate without a line is never a dedupe candidate and passes through untouched.
+// NOT evidence of sharing a cause. So a candidate without a line is never a dedupe candidate and passes through.
+const dedupeKey = (c) => loc(c) + " " + (c.kind ?? "");
 const byLocation = new Map();
 const unkeyed = [];
 for (const c of allSurviving) {
@@ -1205,7 +1332,7 @@ for (const c of allSurviving) {
     unkeyed.push({ ...c, preMerged: [] });
     continue;
   }
-  const key = loc(c);
+  const key = dedupeKey(c);
   const seenAt = byLocation.get(key);
   if (!seenAt) {
     byLocation.set(key, { duplicates: [], primary: c });
@@ -1221,9 +1348,78 @@ for (const c of allSurviving) {
     seenAt.primary = c;
   } else seenAt.duplicates.push(c);
 }
-const surviving = [...byLocation.values()].map((g) => ({ ...g.primary, preMerged: g.duplicates })).concat(unkeyed);
-const collapsed = allSurviving.length - surviving.length;
-if (collapsed > 0) log("dedupe: " + collapsed + " duplicate reports collapsed onto " + surviving.length + " findings");
+const dedupedFindings = [...byLocation.values()]
+  .map((g) => ({ ...g.primary, preMerged: g.duplicates }))
+  .concat(unkeyed);
+const collapsed = allSurviving.length - dedupedFindings.length;
+if (collapsed > 0)
+  log("dedupe: " + collapsed + " duplicate reports collapsed onto " + dedupedFindings.length + " findings");
+
+// ─── Resolve: PLAUSIBLE is not an outcome ───
+// A PLAUSIBLE finding hands the decision back to a human who has less context than the agent that raised it, and
+// The reader either fixes it without evidence or dismisses it without evidence. Both are worse than an answer.
+// Verification is a fast pass over one file, so "the mechanism is real but I cannot reach the trigger" is usually
+// A budget limit, not a fact about the code — a resolver given one finding and no other job can read the callee,
+// The dependency's source, and the git history that a per-file verifier had no reason to open. It must come back
+// CONFIRMED or REFUTED; UNRESOLVABLE exists only for a trigger that genuinely cannot be settled from the repo
+// (a production config, a vendor's runtime behaviour), and it has to name the blocker.
+// Resolution is BUDGETED, worst-first. A resolver reads callers, callees, dependency source and git history for
+// One claim, so it is the costliest agent in the run and an unbounded fan-out here is what makes a review of five
+// Files cost as much as a review of five hundred. Anything past the budget is dropped rather than shipped
+// Unsettled: an unconfirmed minor is not worth a row, and the drop is logged so the truncation is never silent.
+const RESOLVE_MAX = ANGLES * 2;
+const undecided = dedupedFindings.filter((c) => c.verdict === "PLAUSIBLE").sort((a, b) => rank(a) - rank(b));
+const toResolve = undecided.slice(0, RESOLVE_MAX);
+const unresolvedDropped = undecided.slice(RESOLVE_MAX);
+for (const c of unresolvedDropped) c.droppedUnsettled = true;
+if (toResolve.length > 0) {
+  phase("Resolve");
+  log(
+    "resolve: " +
+      toResolve.length +
+      " plausible findings to settle" +
+      (unresolvedDropped.length > 0
+        ? " (" + unresolvedDropped.length + " lower-ranked ones dropped unsettled at the resolve budget)"
+        : ""),
+  );
+  const resolutions = await parallel(
+    toResolve.map((c) => async () => {
+      const r = await agent(RESOLVER_PROMPT(c), {
+        label: "resolve:" + c.file.split("/").pop(),
+        model: AGENT_MODEL,
+        phase: "Resolve",
+        schema: RESOLUTION_SCHEMA,
+      });
+      // A resolver that dies leaves the finding exactly as the verifier left it — reported, still PLAUSIBLE.
+      if (r) {
+        c.verdict = r.verdict === "UNRESOLVABLE" ? "PLAUSIBLE" : r.verdict;
+        c.confidence = Number.isFinite(r.confidence) ? r.confidence : c.confidence;
+        c.evidence = r.evidence;
+        if (r.verdict === "UNRESOLVABLE") c.unresolvedBlocker = r.blocker;
+      }
+      return r;
+    }),
+  );
+  const settled = resolutions.filter(Boolean).filter((r) => r.verdict !== "UNRESOLVABLE").length;
+  log("resolve: " + settled + " settled, " + (toResolve.length - settled) + " left undecided");
+}
+
+// A finding a resolver refuted leaves the report the same way a verifier-refuted one does. So does one that came
+// Through both passes without anyone reaching the floor: after a verifier and a resolver have each had it, an
+// Unsettled claim is a question the run could not answer, and printing it as a row hands the reader a decision
+// With less evidence than the agents had. It is dropped, and the count is logged rather than hidden.
+const isReportable = (c) => (Number.isFinite(c.confidence) ? c.confidence : 100) >= REPORT_MIN_CONFIDENCE;
+const surviving = dedupedFindings.filter((c) => c.verdict !== "REFUTED" && !c.droppedUnsettled && isReportable(c));
+const lowConfidence = dedupedFindings.filter((c) => c.verdict !== "REFUTED" && !c.droppedUnsettled && !isReportable(c));
+if (lowConfidence.length > 0)
+  log(
+    "dropped " +
+      lowConfidence.length +
+      " finding(s) below " +
+      REPORT_MIN_CONFIDENCE +
+      "% confidence after resolution — unsettled claims, not reportable defects",
+  );
+const refuted = refutedAtVerify.concat(dedupedFindings.filter((c) => c.verdict === "REFUTED"));
 log(
   "Verify done: " +
     verified.length +
@@ -1232,27 +1428,28 @@ log(
     " kept, " +
     refuted.length +
     " refuted" +
-    (collapsed > 0 ? ", " + collapsed + " deduped" : ""),
+    (collapsed > 0 ? ", " + collapsed + " deduped" : "") +
+    (unresolvedDropped.length > 0 ? ", " + unresolvedDropped.length + " dropped unsettled" : ""),
 );
 
-const stats = {
-  level: LEVEL,
-  // Which mode and which Find strategy produced these findings — a run is not comparable to another without both.
-  mode: MODE,
+const stats = makeStats({
+  // Which Find strategy produced these findings — a run is not comparable to another without it.
   findMode: SEAM_MODE ? "seam" : "lens",
   seams: SEAM_MODE ? seams.map((s) => s.name) : undefined,
   // The claims actually put in front of an agent, not the size of the inventory: a claim whose pathPrefixes
-  // Overlap no seam reaches no finder, and counting it overstates the one number that says how much of the
-  // Record this run audited — in a mode whose entire purpose is auditing the record.
+  // Overlap no seam, or whose files the cap dropped, reaches no finder, and counting it overstates the one number
+  // That says how much of the record this run audited — in a mode whose entire purpose is auditing the record.
   claimsChecked: IS_AREA ? claimsShown.size : undefined,
-  claimsInventoried: IS_AREA ? claims.length : undefined,
+  claimsInventoried: IS_AREA ? inventoriedClaims.length : undefined,
   deduped: collapsed,
+  droppedUnsettled: unresolvedDropped.length,
+  droppedLowConfidence: lowConfidence.length,
   finders: FINDERS.length,
   candidates: candidatesSeen,
   verifierAgents,
   verified: verified.length,
   refuted: refuted.length,
-};
+});
 
 if (surviving.length === 0) {
   return {
@@ -1277,6 +1474,8 @@ const block = ranked
       loc(c) +
       " (" +
       c.verdict +
+      " " +
+      (Number.isFinite(c.confidence) ? c.confidence + "%" : "unrated") +
       ", " +
       (c.severity ?? "major") +
       (c.kind && c.kind !== "correctness" ? ", " + c.kind : "") +
@@ -1369,6 +1568,9 @@ const toFinding = (c, merged, shortSummary) => {
     summary: c.summary + also + corroborated,
     failure_scenario: c.failure_scenario,
     category: c.kind,
+    // The best-evidenced member's number, not an average: corroboration and a resolver's read RAISE how sure the
+    // Group is, and averaging in a first-pass verifier's hedge would hide the pass that actually settled it.
+    confidence: Math.max(...group.map((m) => (Number.isFinite(m.confidence) ? m.confidence : 0))),
     // A merged group escalates to its most severe member, and to CONFIRMED if any member is.
     severity: group.toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity ?? "major",
     verdict: group.some((m) => m.verdict === "CONFIRMED") ? "CONFIRMED" : c.verdict,

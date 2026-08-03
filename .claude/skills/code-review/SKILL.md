@@ -29,7 +29,7 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "[mode] 
 - `level` — `high` (default), `xhigh`, or `max`. Post-merge PR audits in this project run `high` unless asked otherwise.
 - `target` — optional in `diff` mode (PR number, branch, ref range, path, or free-form instruction); **required in `area` mode**, where it names the subsystem to audit.
 
-Both leading words are positional and optional, so `"high"`, `"diff high"`, and `"area high packages/app/app/composables/cache"` all parse. The mode is logged and lands in `stats.mode` alongside `stats.findMode`.
+Both leading words are positional and optional, so `"high"`, `"diff high"`, and `"area high packages/app/app/composables/cache"` all parse. **A leading mode word only switches modes when a level word follows it** (or when it is the entire `args`) — otherwise it is part of the target, because diff targets are free-form English and `"area of message deletion PR 812 touched"` asks for a diff review, not a whole-subsystem audit. So always spell the level out when you mean the mode. The parse is logged before the Scope agent runs, and the mode lands in `stats.mode` alongside `stats.findMode`.
 
 ### A run reports the top findings per finder, never all of them
 
@@ -37,13 +37,25 @@ Both leading words are positional and optional, so `"high"`, `"diff high"`, and 
 
 So a level does not "find everything and stop" — it finds the most salient handful per seam or lens, and the next-ranked defects surface only on a later run, after the ones above them are fixed.
 
-Reported findings are deduped in code before synthesis: two candidates at the same `file:line` are the same finding by construction, so they collapse to one row carrying `[independently reported by N finders]`. The synthesizer still merges findings that share a root cause across _different_ lines — the part that needs judgement — but a synthesizer that dies can no longer ship the same bug N times.
+Reported findings are deduped in code before Resolve: two candidates at the same `file:line` **of the same kind** are the same finding by construction, so they collapse to one row carrying `[independently reported by N finders]`. Kind is part of the key because a bug and the stale doc sentence describing that bug are two deliverables, not one. The synthesizer still merges findings that share a root cause across _different_ lines — the part that needs judgement — but a synthesizer that dies can no longer ship the same bug N times.
 
 This is why a large diff yields a steady tens-per-round trickle rather than one exhaustive list, and why "the last round found N, this round found N again" is not evidence the code is or isn't converging. Read it as sampling depth, not as a defect count.
 
 A finder that hits its cap now logs `dropped N at cap` — that line is the difference between "ran dry" and "was not allowed to report more", and it is the signal to re-run at a wider level. Absent it, the level's ceiling is what you got.
 
-Raise coverage by **raising the level** (`xhigh`/`max` widen `perAngle`, `maxSeams`, and add a sweep pass), never by re-running the same level hoping for different candidates: repeat rounds at one level re-pay the verification cost — the dominant one, since a verifier is spawned per candidate — to resample the same ranking.
+Raise coverage by **raising the level** (`xhigh`/`max` widen `perAngle`, `maxSeams`, and add a sweep pass), never by re-running the same level hoping for different candidates: repeat rounds at one level re-pay the verification cost — the dominant one, since a verifier runs per file and a resolver per unsettled claim — to resample the same ranking.
+
+### What each run costs, and the three things that bound it
+
+Cost is **agents × the material each one reads**, and agent count is set by the level, not by the size of the change — so a five-file review of dense code costs about what a five-hundred-file review of shallow code does. Three bounds keep that honest, and each one logs when it bites:
+
+- **Fan-out scales with the territory.** Under ~300 changed lines (`stats` reports the trim) the level's angle count and per-angle cap are reduced: a small change does not hold five angles' worth of distinct questions, and every extra finder re-reads the same files.
+- **Resolution is budgeted, worst-first.** A resolver reads callers, callees, dependency source and history for one claim, which makes it the most expensive agent in the run — historically ~40% of a run's tokens. Only the top `2 × correctnessAngles` unsettled findings get one; anything below that is dropped rather than shipped unsettled, and the drop is logged.
+- **Confidence gates both directions.** Verifiers and resolvers return a 0-100 confidence with every verdict. Under 70 the verdict is not an answer — CONFIRMED _or_ REFUTED — and the finding is routed to Resolve; under 50 after that, it is dropped. An under-confident CONFIRMED is a fix applied on a guess; an under-confident REFUTED is a real defect dismissed, which returns next run with different wording.
+
+### When to stop re-running
+
+**The stop rule: a round whose CONFIRMED findings are all `minor` is converged.** Fix them if they are cheap, and stop. Minor findings are advisory and their supply is effectively unbounded on any mature file — a cleanup lens can always find one more preference to state — so treating "the run reported something" as "the code is not done" is a loop with no exit. What justifies another round is a CONFIRMED `critical`/`major`, a `dropped N at cap` line, or a fix round that touched lines an earlier fix wrote (see `fixing-findings.md`).
 
 - **Never `Workflow({ name: "code-review" })`** — name resolution always loads the built-in, which inherits the premium session model onto ~20 finder/verifier agents (verified 2026-07-17, ~1.46M tokens). The project script pins `model: "opus"` on every agent (execution role per the model-delegation skill).
 - `args: "probe"` exits instantly with `{ probe: true }` — free parse check after editing the script. **It proves syntax only.** The probe returns before the Scope agent, so no phase has run and no ordering, TDZ, or prompt-assembly bug is caught by it; a live run is the only check for those. The script cannot be split into modules to make this easier — see the `.claude/workflows/*.js` entry in the `file-organization` skill for the probe evidence.
@@ -69,6 +81,8 @@ A PLAUSIBLE verdict means a verifier reading one file under a budget could not r
 
 Only a trigger that genuinely cannot be settled from the repository — a production-only config value, a cloud service's runtime behaviour — may stay unsettled, and it must name that blocker. "The investigation looked large" is not a blocker. **An unsettleable finding is still never a table row**: keep it out of the verdict table entirely and write it as the one line below the table (see Handling findings), phrased as the blocker and the fact that would settle it — "unsettleable without the deployed `MAX_UPLOAD_BYTES`; confirm that value and it decides" — so the user is asked for evidence rather than handed a verdict nobody reached.
 
+The workflow enforces the same thing by budget: only the worst-ranked `2 × correctnessAngles` unsettled findings buy a resolver, and the rest are dropped (`stats.droppedUnsettled`) rather than shipped as PLAUSIBLE rows. A drop is not a dismissal — it says the run ran out of resolution budget below that rank. Re-run to reach them only when the round also produced a CONFIRMED major; otherwise the stop rule above applies.
+
 Two things make this rule earn its cost. A PLAUSIBLE finding shipped to a human is decided by whoever has _less_ context than the agent that raised it, so it gets fixed without evidence or dropped without evidence — and a fix applied on an unconfirmed premise is the single most common way this repo introduces regressions. And a finding you dismiss without settling comes back on the next run, worded differently, forever.
 
 ## Closing a finding so the next review cannot reopen it
@@ -81,6 +95,8 @@ It exists because the dominant defect class on a re-review is not a missed bug �
 
 0. **Always show the user every finding the workflow reports, and keep it short.** The workflow reports every finding that survives verification — there is no cap, and duplicates are merged onto one row rather than dropped. The final message is the compact table below — one row per reported finding and nothing per-finding beyond it. The Finding column is the workflow's `shortSummary` field rendered **verbatim** (it is already the ≤60-char claim — never substitute the longer `summary`, and never re-expand it into a sentence). No failure-scenario prose, no category column. Render `severity` as a color dot: 🔴 critical, 🟡 major, 🟢 minor (default 🟡 if absent). Sort by severity. Disposition is a few words; the commit hash is stated once in a single line under the table, never per-row. Do **not** write a paragraph per finding — add at most one line below the table, and only when a disposition needs the user to decide something (e.g. a deferred fix). Workflow-refuted candidates get one footnote line naming them, nothing more. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
 
+   The Verdict column carries the workflow's `confidence` beside the verdict (`CONFIRMED 80%`) — it is the number the agent that judged it would defend, and it is what tells the user whether a fix rests on a read line or on an inference. Never restate it in prose and never round it up.
+
    The Origin column is the workflow's `provenance`, with `provenanceSource` as its citation — it is what stops a review from silently re-arguing itself. `new` is first contact. `regression` means the cited line came from an earlier fix, so the fix commit is where to look for the next one. `reopened` means the record already settled this and the finding survived anyway — say what the code does that the record does not cover, or the row is a false positive. `stale-record` means the code is right and the doc is wrong, so the fix is the doc edit. Render it as the label plus its source (`regression 57dcbd3`, `stale-record docs/architecture/publishing.md`); a bare `new` needs no source.
 
    **In `area` mode, add a Kind column** between Where and Severity (`correctness` / `conformance` / `record-gap` / `cleanup`), because there the kind decides what the deliverable is — a code fix, a doc edit, or a new page — and the table is unreadable without it. `diff` mode omits the column: its findings are correctness or cleanup, and severity already separates them.
@@ -88,12 +104,12 @@ It exists because the dominant defect class on a re-review is not a missed bug �
    **The table must actually render as a table.** Emit it flush-left at the top level of the final message — never indented, never nested inside a numbered/bulleted list item, blockquote, or code fence — with a blank line before the header row and after the last row. An indented or list-nested table is not parsed as a table by the terminal renderer and degrades into per-finding dot points, which is exactly the failure this format exists to prevent. Every row must have the same column count with `|` at both ends.
 
    ```markdown
-   | #   | Finding                                     | Where              | Severity    | Verdict   | Origin                             | Disposition                          |
-   | --- | ------------------------------------------- | ------------------ | ----------- | --------- | ---------------------------------- | ------------------------------------ |
-   | 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED | regression 57dcbd3                 | Fixed                                |
-   | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | CONFIRMED | new                                | Fixed                                |
-   | 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | REFUTED   | reopened architecture/standard.md  | By-design (architecture/standard.md) |
-   | 4   | Comment names a deleted symbol              | helper.ts:6        | 🟢 minor    | CONFIRMED | stale-record readPublishHistory.ts | Fixed                                |
+   | #   | Finding                                     | Where              | Severity    | Verdict       | Origin                             | Disposition                          |
+   | --- | ------------------------------------------- | ------------------ | ----------- | ------------- | ---------------------------------- | ------------------------------------ |
+   | 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED 95% | regression 57dcbd3                 | Fixed                                |
+   | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | CONFIRMED 80% | new                                | Fixed                                |
+   | 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | REFUTED 90%   | reopened architecture/standard.md  | By-design (architecture/standard.md) |
+   | 4   | Comment names a deleted symbol              | helper.ts:6        | 🟢 minor    | CONFIRMED 75% | stale-record readPublishHistory.ts | Fixed                                |
 
    Fixes committed as abc1234. Refuted by verifiers: removeThing timeout bound ×2, batch submission ordering.
    ```
