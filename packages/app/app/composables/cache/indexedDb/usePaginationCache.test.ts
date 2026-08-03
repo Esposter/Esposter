@@ -218,8 +218,8 @@ describe.each<PaginationCacheVariant>([
     expect(takeOne(items.value).message).toStrictEqual(message);
   });
 
-  // Members and rooms share one global list across partitions, so at the moment of a switch it still holds the
-  // Previous partition's rows. Readiness is per-partition and says the new one has produced nothing yet
+  // Readiness is per-partition rather than a reading of the list, so a caller whose rows have not yet been
+  // Swapped out at the moment of the switch still hydrates instead of taking them for the new partition's own
   test("populates store from cache when the previous partition's items are still loaded", async () => {
     expect.hasAssertions();
 
@@ -237,6 +237,30 @@ describe.each<PaginationCacheVariant>([
 
     expect(items.value).toHaveLength(1);
     expect(takeOne(items.value).message).toStrictEqual(secondMessage);
+  });
+
+  // Losing the network mid-session leaves a partition whose load never landed with nothing on screen and no way
+  // To fetch it, so connectivity has to trigger hydration on its own rather than wait for a switch
+  test("populates store from cache when the network drops without a partition key change", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [new StandardMessageEntity({ message, partitionKey, rowKey, userId })],
+      partitionKey,
+    );
+    goOnline();
+    await mountCache();
+    await flushCache();
+
+    expect(items.value).toHaveLength(0);
+
+    goOffline();
+    await flushCache();
+
+    expect(items.value).toHaveLength(1);
+    expect(takeOne(items.value).message).toStrictEqual(message);
   });
 
   test("does not populate store from cache when switching partition key online", async () => {

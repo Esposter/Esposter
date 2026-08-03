@@ -63,6 +63,23 @@ describe(useMemberStore, () => {
     expect(countsByTopRole.value).toStrictEqual([{ count: 0, roleId: role.id }]);
   });
 
+  // The offline cache decides whether to hydrate or persist by asking whether the loaded rows are the current
+  // Room's. A list shared across rooms cannot answer that, and every guard built on top of one is a guess
+  test("scopes the member list to the current room", () => {
+    expect.hasAssertions();
+
+    const memberStore = useMemberStore();
+    const { storeCreateMember } = memberStore;
+    const { members } = storeToRefs(memberStore);
+    storeCreateMember(member);
+
+    expect(members.value).toStrictEqual([member]);
+
+    router.currentRoute.value.params.id = crypto.randomUUID();
+
+    expect(members.value).toStrictEqual([]);
+  });
+
   test("deletes a roleless member without touching the role groups", () => {
     expect.hasAssertions();
 

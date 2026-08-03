@@ -17,7 +17,10 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const { storeUser, storeUsers } = userStore;
   const userToRoomStore = useUserToRoomStore();
   const { getDisplayName } = userToRoomStore;
-  const { items, ...restData } = useCursorPaginationData<User>();
+  // Keyed by room, like messages. A single global list would still hold the previous room's members after a
+  // Switch, which is unreadable state for anything asking "are these rows this room's" — the offline cache asks
+  // Exactly that before it hydrates or persists, and cannot answer it from a list that outlives the partition
+  const { items, ...restData } = useCursorPaginationDataMap<User>(() => roomStore.currentRoomId);
   const members = computed(() => items.value.toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name)));
   // Single source of truth for resolving a member id to its room display name (nickname over global name),
   // Falling back to the raw id for actors/targets no longer in the loaded member list.

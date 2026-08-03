@@ -47,7 +47,9 @@ export const usePaginationCache = <
   // It stored, while another partition's cache is a different target and never waits behind it
   const { executeMutation, executeQuery } = useMutation();
   // The partition whose rows on screen are its own, rather than the empty list a load starts from. Dropped on
-  // Every switch: carried across one, the list a revisit begins with would pass for a loaded empty partition
+  // Every switch: carried across one, the list a revisit begins with would pass for a loaded empty partition.
+  // This only means anything because `items` is itself partition-scoped at every call site — a caller whose
+  // List outlives the partition hands both watchers another partition's rows under this one's key
   let readyPartitionKey: PartitionKey<TStore, TIndex> | undefined;
 
   // Both operations are fired from a watcher, so each is adapted to that sync slot rather than floated
@@ -65,11 +67,8 @@ export const usePaginationCache = <
       onError: console.error,
       // State is seeded here so the primitive's own staleness filter runs first; only the switch away needs a
       // Guard of its own, because the read for the partition that replaced this one is a different target.
-      // Readiness is the partition-scoped question — has THIS partition produced rows since the switch onto it —
-      // Which is what decides whether hydrating would clobber live data. `items` only answers it for a store
-      // Keyed by partition: members and rooms are one global list that still holds the previous partition's rows
-      // At this point, so testing it there means a switch never hydrates and the user keeps seeing room A's
-      // Members while in room B, with no way back because the network read cannot land offline
+      // Readiness answers the one question hydration turns on — has THIS partition produced rows since the
+      // Switch onto it, and would restoring the cache therefore overwrite live data
       onSuccess: async (cachedItems) => {
         if (
           toValue(partitionKey) !== newPartitionKey ||
@@ -108,17 +107,20 @@ export const usePaginationCache = <
     { flush: "post" },
   );
 
-  // Immediate, because the partition a cold start opens on never changes and so would never be hydrated. The
-  // Room id comes from the route, and the layout that calls this already has it at setup, so opening the
-  // Installed app offline on /messages/{roomId} — the flagship offline case — is precisely the mount where the
-  // Key arrives already set. Without this the cache only ever restores on a room-to-room switch made inside a
-  // Session that was already running, which is the one path the tests happened to cover
+  // Both sources restore a partition the user is looking at with no way to fetch it, so both have to fire:
+  // Immediate, because the partition a cold start opens on never changes — the room id comes from the route and
+  // The layout that calls this already has it at setup, so opening the installed app offline on
+  // /messages/{roomId}, the flagship offline case, is precisely the mount where the key arrives already set —
+  // And connectivity, because a network lost in place leaves a partition whose load never landed empty until a
+  // Switch the user has no reason to make. Watching the key alone covered only a room-to-room switch made
+  // Inside an already-running session, which is the one path the tests happened to cover
   watchImmediate(
-    () => toValue(partitionKey),
-    (newPartitionKey) => {
-      // Pre-flush, so the write watcher below sees the partition as unready for the list it arrives holding
-      readyPartitionKey = undefined;
-      if (!newPartitionKey || online.value) return;
+    [() => toValue(partitionKey), online],
+    ([newPartitionKey, newOnline], previous) => {
+      // Pre-flush, so the write watcher sees the partition as unready for the list it arrives holding. Only a
+      // Switch drops it — a connectivity flip leaves the partition exactly as loaded as it already was
+      if (newPartitionKey !== previous?.[0]) readyPartitionKey = undefined;
+      if (!newPartitionKey || newOnline) return;
 
       readCachedItems(newPartitionKey);
     },
