@@ -16,10 +16,10 @@ export const createOsBaselineBackend = (): ExecBackend => {
     exec: (command, options) =>
       new Promise((resolve, reject) => {
         const cwd = readWslPath(options.cwd || process.cwd());
-        const commandArgs = Array.isArray(command)
+        const commandArguments = Array.isArray(command)
           ? ["sh", "-c", `cd "$1" && shift && exec "$@"`, "virrun-baseline", cwd, ...command]
           : ["sh", "-c", `cd "$1" && ${command}`, "virrun-baseline", cwd];
-        const child = spawnHidden("wsl.exe", ["--exec", "env", ...createWslEnvArgs(options), ...commandArgs], {
+        const child = spawnHidden("wsl.exe", ["--exec", "env", ...createWslEnvArgs(options), ...commandArguments], {
           env: { ...process.env, ...options.env },
           stdio: options.stdio,
         });

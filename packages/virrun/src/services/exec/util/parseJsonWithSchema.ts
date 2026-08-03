@@ -10,6 +10,7 @@ export const parseJsonWithSchema = <TSchema extends z.ZodType>(
   schema: TSchema,
   name: string,
 ): z.infer<TSchema> =>
+  // eslint-disable-next-line no-restricted-syntax -- machine config the caller's schema validates, no dates in it
   getResult(() => schema.parse(JSON.parse(json))).match(
     (value) => value,
     (error) => {

@@ -10,19 +10,19 @@ describe(forkSnapshot, () => {
   const { create, createWorkspace } = setupTemporaryCacheHome();
   // The stdout the recording backend replays, so the test can see the fork's result pass through unchanged.
   const stdout = " ";
-  let repo = "";
+  let repository = "";
 
   beforeEach(() => {
-    repo = createWorkspace();
+    repository = createWorkspace();
   });
 
   test("stacks the captured upper as the sole overlay lower and runs the command", async () => {
     expect.hasAssertions();
 
-    const { upperDir } = resolveSnapshotLocation(repo);
+    const { upperDir } = resolveSnapshotLocation(repository);
     mkdirSync(upperDir, { recursive: true });
     const backend = createRecordingBackend({ exitCode: 0, stderr: "", stdout });
-    const result = await forkSnapshot(backend, "vitest", { cwd: repo, stdio: "pipe" });
+    const result = await forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" });
 
     expect(result.stdout).toBe(stdout);
     expect(backend.calls[0]?.overlayLayers).toStrictEqual({ lowerDirs: [upperDir] });
@@ -31,11 +31,11 @@ describe(forkSnapshot, () => {
   test("stacks extra lower dirs above the deps upper, in order, so the last one wins", async () => {
     expect.hasAssertions();
 
-    const { upperDir } = resolveSnapshotLocation(repo);
+    const { upperDir } = resolveSnapshotLocation(repository);
     mkdirSync(upperDir, { recursive: true });
     const prepareUpperDir = create();
     const backend = createRecordingBackend();
-    await forkSnapshot(backend, "vitest", { cwd: repo, stdio: "pipe" }, [prepareUpperDir]);
+    await forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" }, [prepareUpperDir]);
 
     expect(backend.calls[0]?.overlayLayers).toStrictEqual({ lowerDirs: [upperDir, prepareUpperDir] });
   });
@@ -45,7 +45,7 @@ describe(forkSnapshot, () => {
 
     const backend = createRecordingBackend();
 
-    expect(() => forkSnapshot(backend, "vitest", { cwd: repo, stdio: "pipe" })).toThrowErrorMatchingInlineSnapshot(
+    expect(() => forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" })).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, forkSnapshot.name, "no captured snapshot to fork; run createSnapshot first").message}]`,
     );
   });

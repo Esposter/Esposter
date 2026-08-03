@@ -9,7 +9,7 @@ vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof
 
 describe(spawnHidden, () => {
   const file = "wsl.exe";
-  const args = ["--exec", "true"];
+  const commandArguments = ["--exec", "true"];
 
   beforeEach(() => {
     spawn.mockReset();
@@ -18,17 +18,17 @@ describe(spawnHidden, () => {
   test("forwards file and args and forces windowsHide on top of the caller options", () => {
     expect.hasAssertions();
 
-    spawnHidden(file, args, { stdio: "ignore" });
+    spawnHidden(file, commandArguments, { stdio: "ignore" });
 
-    expect(spawn).toHaveBeenCalledExactlyOnceWith(file, args, { stdio: "ignore", windowsHide: true });
+    expect(spawn).toHaveBeenCalledExactlyOnceWith(file, commandArguments, { stdio: "ignore", windowsHide: true });
   });
 
   test("a caller cannot re-show the window by passing windowsHide false", () => {
     expect.hasAssertions();
 
-    spawnHidden(file, args, { stdio: "ignore", windowsHide: false });
+    spawnHidden(file, commandArguments, { stdio: "ignore", windowsHide: false });
 
     // Spread last, windowsHide overrides the caller's false — the exact-match proves the window stays hidden.
-    expect(spawn).toHaveBeenCalledExactlyOnceWith(file, args, { stdio: "ignore", windowsHide: true });
+    expect(spawn).toHaveBeenCalledExactlyOnceWith(file, commandArguments, { stdio: "ignore", windowsHide: true });
   });
 });

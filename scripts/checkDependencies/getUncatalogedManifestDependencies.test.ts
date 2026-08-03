@@ -15,14 +15,14 @@ describe(getUncatalogedManifestDependencies, () => {
   test("keeps dependencies that are not catalog or workspace references", () => {
     expect.hasAssertions();
 
-    const uncataloged = { ...baseDependency, specifier: "^0.0.0" };
+    const uncatalogedDependency = { ...baseDependency, specifier: "^0.0.0" };
 
     expect(
       getUncatalogedManifestDependencies([
         { ...baseDependency, specifier: "catalog:" },
         { ...baseDependency, specifier: "workspace:" },
-        uncataloged,
+        uncatalogedDependency,
       ]),
-    ).toStrictEqual([uncataloged]);
+    ).toStrictEqual([uncatalogedDependency]);
   });
 });

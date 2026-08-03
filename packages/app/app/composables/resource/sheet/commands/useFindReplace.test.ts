@@ -15,11 +15,11 @@ describe(useFindReplace, () => {
   test("replaces all matching cells across rows and columns", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn(""), createColumn(" ")],
       [createRow({ "": " ", " ": " " }), createRow({ "": " ", " ": 0 })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
     await findReplace(" ", "");
 
@@ -32,8 +32,8 @@ describe(useFindReplace, () => {
   test("replaces substrings within cell values", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": "a " })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "a " })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
     await findReplace(" ", "");
 
@@ -43,8 +43,8 @@ describe(useFindReplace, () => {
   test("undo restores all original values", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
@@ -59,8 +59,8 @@ describe(useFindReplace, () => {
   test("redo re-applies replacements after undo", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
     const sheetHistoryStore = useSheetHistoryStore();
     const { redo, undo } = sheetHistoryStore;
@@ -75,8 +75,11 @@ describe(useFindReplace, () => {
   test("replaces only the specific cell when specificCell is provided", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn(""), createColumn(" ")], [createRow({ "": " ", " ": " " })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": " ", " ": " " })],
+    );
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
     await findReplace(" ", "", { columnName: "", rowIndex: 0 });
 
@@ -87,8 +90,8 @@ describe(useFindReplace, () => {
   test("preserves number type after replace", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createNumberColumn("")], [createRow({ "": 1 })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createNumberColumn("")], [createRow({ "": 1 })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
     await findReplace("1", "2");
 
@@ -98,8 +101,8 @@ describe(useFindReplace, () => {
   test("description shows row number when replacing a single occurrence", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": 0 })]);
-    setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": 0 })]);
+    setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undoDescription } = storeToRefs(sheetHistoryStore);
@@ -111,8 +114,8 @@ describe(useFindReplace, () => {
   test("description shows all when replacing across multiple rows", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
-    setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
+    setupWithDataSource(initialDataSource);
     const findReplace = useFindReplace();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undoDescription } = storeToRefs(sheetHistoryStore);

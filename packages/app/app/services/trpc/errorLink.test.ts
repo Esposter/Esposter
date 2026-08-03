@@ -52,7 +52,7 @@ describe(errorLink, () => {
   const rejectThrough = async (code: string, isBackground = false) => {
     const error = createTrpcClientError(code);
     const link = errorLink({ op: { context: {} } });
-    const op: Operation = {
+    const operation: Operation = {
       context: { isBackground },
       id: 1,
       input: undefined,
@@ -66,7 +66,7 @@ describe(errorLink, () => {
           observable((observer) => {
             observer.error(error);
           }),
-        op,
+        op: operation,
       }).subscribe({
         error: () => {
           resolve();

@@ -58,7 +58,7 @@ describe(readIndexedDb, () => {
     const { limit } = MessageIndexedDbStoreConfiguration;
     const messages = Array.from(
       { length: limit + 10 },
-      (_) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() }),
+      (_value) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() }),
     );
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
 

@@ -19,12 +19,12 @@ describe(pruneStaleTaskCacheEntries, () => {
   let tasksRoot = "";
   // Seed a published `tasks/<key>` entry with a meta file, aged `ageDays` days back by stamping the meta mtime.
   const seedEntry = (name: string, ageDays: number): string => {
-    const dir = seedDirectory(join(tasksRoot, name));
-    const metaFile = join(dir, TASK_CACHE_META_FILENAME);
+    const directory = seedDirectory(join(tasksRoot, name));
+    const metaFile = join(directory, TASK_CACHE_META_FILENAME);
     writeFileSync(metaFile, "");
     const touchedAt = new Date(Date.now() - ageDays * SECONDS_PER_DAY * 1000);
     utimesSync(metaFile, touchedAt, touchedAt);
-    return dir;
+    return directory;
   };
 
   beforeEach(() => {
@@ -36,13 +36,13 @@ describe(pruneStaleTaskCacheEntries, () => {
   test("removes an entry not touched within the max age while keeping a recent one", () => {
     expect.hasAssertions();
 
-    const stale = seedEntry("stale", STALE_AGE_DAYS);
-    const recent = seedEntry("recent", 0);
+    const staleEntry = seedEntry("stale", STALE_AGE_DAYS);
+    const recentEntry = seedEntry("recent", 0);
 
     pruneStaleTaskCacheEntries(tasksRoot);
 
-    expect(existsSync(stale)).toBe(false);
-    expect(existsSync(recent)).toBe(true);
+    expect(existsSync(staleEntry)).toBe(false);
+    expect(existsSync(recentEntry)).toBe(true);
   });
 
   test("never touches a pid-tagged temp even when it is old", () => {
@@ -58,10 +58,10 @@ describe(pruneStaleTaskCacheEntries, () => {
   test("keeps an entry whose meta file is missing rather than evicting on a blind guess", () => {
     expect.hasAssertions();
 
-    const noMeta = seedDirectory(join(tasksRoot, "no-meta"));
+    const noMetaEntry = seedDirectory(join(tasksRoot, "no-meta"));
 
     pruneStaleTaskCacheEntries(tasksRoot);
 
-    expect(existsSync(noMeta)).toBe(true);
+    expect(existsSync(noMetaEntry)).toBe(true);
   });
 });

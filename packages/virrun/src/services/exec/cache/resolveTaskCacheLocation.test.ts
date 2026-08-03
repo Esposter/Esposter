@@ -17,11 +17,11 @@ describe(resolveTaskCacheLocation, () => {
     expect.hasAssertions();
 
     const location = resolveTaskCacheLocation(key);
-    const expectedDir = join(getCacheHome(), VIRRUN_TASKS_DIRECTORY_NAME, key);
+    const expectedDirectory = join(getCacheHome(), VIRRUN_TASKS_DIRECTORY_NAME, key);
 
-    expect(location.dir).toBe(expectedDir);
-    expect(location.metaFile).toBe(join(expectedDir, TASK_CACHE_META_FILENAME));
-    expect(location.payloadDir).toBe(join(expectedDir, TASK_CACHE_PAYLOAD_DIRECTORY_NAME));
+    expect(location.dir).toBe(expectedDirectory);
+    expect(location.metaFile).toBe(join(expectedDirectory, TASK_CACHE_META_FILENAME));
+    expect(location.payloadDir).toBe(join(expectedDirectory, TASK_CACHE_PAYLOAD_DIRECTORY_NAME));
   });
 
   test("exists only once the meta file has been written", () => {

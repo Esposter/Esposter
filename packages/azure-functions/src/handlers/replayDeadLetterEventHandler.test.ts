@@ -15,7 +15,7 @@ import {
   DEAD_LETTER_QUARANTINE_PREFIX,
   MAX_EVENT_GRID_PUBLISH_BYTES,
 } from "@esposter/db-schema";
-import { getResult, ID_SEPARATOR, noop } from "@esposter/shared";
+import { getResult, ID_SEPARATOR, jsonDateParse, noop } from "@esposter/shared";
 import { MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
@@ -231,7 +231,7 @@ describe(replayDeadLetterEventHandler, () => {
     expect(readContainer()).toStrictEqual({ [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: malformedContent });
     expect(errorSpy).toHaveBeenCalledExactlyOnceWith(
       `${AzureFunction.ReplayDeadLetterEvent} quarantined ${blobName}, malformed dead-letter payload: `,
-      getResult(() => JSON.parse(malformedContent) as unknown).match(noop, (error) => error),
+      getResult(() => jsonDateParse<unknown>(malformedContent)).match(noop, (error) => error),
     );
   });
 
@@ -254,7 +254,7 @@ describe(replayDeadLetterEventHandler, () => {
     expect(errorSpy.mock.calls).toStrictEqual([
       [
         `${AzureFunction.ReplayDeadLetterEvent} quarantined ${blobName}, malformed dead-letter payload: `,
-        getResult(() => JSON.parse(malformedContent) as unknown).match(noop, (parseError) => parseError),
+        getResult(() => jsonDateParse<unknown>(malformedContent)).match(noop, (parseError) => parseError),
       ],
       [`${AzureFunction.ReplayDeadLetterEvent} left ${blobName} undeleted: `, error],
     ]);

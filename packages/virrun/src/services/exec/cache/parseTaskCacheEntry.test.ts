@@ -28,9 +28,9 @@ describe(parseTaskCacheEntry, () => {
   test("throws when a flush op carries an unknown type", () => {
     expect.hasAssertions();
 
-    const invalid = JSON.stringify({ ...entry, plan: [{ relativePath: TEST_FILENAME, type: " " }] });
+    const invalidEntry = JSON.stringify({ ...entry, plan: [{ relativePath: TEST_FILENAME, type: " " }] });
 
-    expect(() => parseTaskCacheEntry(invalid)).toThrowErrorMatchingInlineSnapshot(`
+    expect(() => parseTaskCacheEntry(invalidEntry)).toThrowErrorMatchingInlineSnapshot(`
       [InvalidOperationError: Invalid operation: Read, name: parseTaskCacheEntry, ✖ Invalid option: expected one of "copy"|"delete"
         → at plan[0].type]
     `);

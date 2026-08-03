@@ -77,12 +77,13 @@ describe(settleAll, () => {
 
   test("carries every rejection of a wave under the first one's message", async () => {
     expect.hasAssertions();
-    const caught = await settleAll([() => Promise.reject(new Error("a")), () => Promise.reject(new Error("b"))]).catch(
-      (error: unknown) => error,
-    );
+    const caughtError = await settleAll([
+      () => Promise.reject(new Error("a")),
+      () => Promise.reject(new Error("b")),
+    ]).catch((error: unknown) => error);
 
-    expect(caught).toMatchInlineSnapshot(`[AggregateError: a]`);
-    expect(caught instanceof AggregateError ? caught.errors : []).toMatchInlineSnapshot(`
+    expect(caughtError).toMatchInlineSnapshot(`[AggregateError: a]`);
+    expect(caughtError instanceof AggregateError ? caughtError.errors : []).toMatchInlineSnapshot(`
       [
         [Error: a],
         [Error: b],

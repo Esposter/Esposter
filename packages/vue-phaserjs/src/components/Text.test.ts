@@ -21,7 +21,7 @@ describe("text", () => {
     textStore.defaultTextStyle = { color: "#ff0000", fontSize: "16px" };
 
     const scene = startTestScene(sceneKey);
-    const capturedText = scene.children.list.find((obj) => obj instanceof GameObjects.Text);
+    const capturedText = scene.children.list.find((gameObject) => gameObject instanceof GameObjects.Text);
 
     assert.exists(capturedText);
 

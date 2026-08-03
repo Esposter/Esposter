@@ -9,11 +9,11 @@ describe(getNullAffectedRows, () => {
   test("returns rows in ascending index order for non-contiguous null rows", () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const dataSource = createDataSource(
       [createColumn("")],
       [createRow({ "": null }), createRow({ "": "0" }), createRow({ "": null })],
     );
-    const result = getNullAffectedRows(ds);
+    const result = getNullAffectedRows(dataSource);
 
     expect(result).toHaveLength(2);
     expect(takeOne(result).index).toBe(0);

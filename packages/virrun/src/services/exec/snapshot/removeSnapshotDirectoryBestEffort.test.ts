@@ -27,13 +27,13 @@ describe(removeSnapshotDirectoryBestEffort, () => {
   test("removes the directory tree", () => {
     expect.hasAssertions();
 
-    const dir = create();
-    mkdirSync(join(dir, TEST_FILENAME), { recursive: true });
-    writeFileSync(join(dir, TEST_FILENAME, TEST_FILENAME), "");
+    const directory = create();
+    mkdirSync(join(directory, TEST_FILENAME), { recursive: true });
+    writeFileSync(join(directory, TEST_FILENAME, TEST_FILENAME), "");
 
-    removeSnapshotDirectoryBestEffort(dir);
+    removeSnapshotDirectoryBestEffort(directory);
 
-    expect(existsSync(dir)).toBe(false);
+    expect(existsSync(directory)).toBe(false);
   });
 
   // One guard covers every way the delegated removal can throw, so the WSL arm stands for all of them.

@@ -18,6 +18,7 @@ import { TEST_WSL_PREFIX } from "@/services/exec/wsl/constants.test";
 import { createWslSourceMirrorSync } from "@/services/exec/wsl/createWslSourceMirrorSync";
 import { getSourceMirrorKey } from "@/services/exec/wsl/getSourceMirrorKey";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
+import { jsonDateParse } from "@esposter/shared";
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -32,8 +33,8 @@ vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({ getWslNati
 vi.mock(import("@/services/exec/wsl/createSourceMirrorArchive"), async (importOriginal) => {
   const { createSourceMirrorArchive } = await importOriginal();
   return {
-    createSourceMirrorArchive: (...args: Parameters<typeof createSourceMirrorArchive>) => ({
-      ...createSourceMirrorArchive(...args),
+    createSourceMirrorArchive: (...archiveArguments: Parameters<typeof createSourceMirrorArchive>) => ({
+      ...createSourceMirrorArchive(...archiveArguments),
       unarchivedPaths: state.unarchivedPaths,
     }),
   };
@@ -99,7 +100,7 @@ describe(createWslSourceMirrorSync, () => {
     expect(readStaged(`${VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX}${process.pid}.`)).toContain(TEST_FILENAME);
     expect(readStaged(VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX)).toBe("");
     // The next manifest is staged host-side as a pid-tagged temp the script publishes via atomic mv.
-    expect(JSON.parse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toHaveProperty(
+    expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toHaveProperty(
       TEST_FILENAME,
     );
   });
@@ -186,7 +187,7 @@ describe(createWslSourceMirrorSync, () => {
 
     // The run still proceeds — a locked or vanished file is skipped, not fatal — but the manifest must not claim it.
     expect(script).not.toBe("");
-    expect(JSON.parse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).not.toHaveProperty(
+    expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).not.toHaveProperty(
       TEST_FILENAME,
     );
   });

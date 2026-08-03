@@ -9,9 +9,9 @@ describe(deserialize, () => {
 
     const item = { "": "" };
 
-    const serialized = serialize(item, [{ key: "", order: SortOrder.Asc }]);
-    const deserialized = deserialize(serialized);
+    const serializedCursor = serialize(item, [{ key: "", order: SortOrder.Asc }]);
+    const deserializedItem = deserialize(serializedCursor);
 
-    expect(deserialized).toStrictEqual(item);
+    expect(deserializedItem).toStrictEqual(item);
   });
 });

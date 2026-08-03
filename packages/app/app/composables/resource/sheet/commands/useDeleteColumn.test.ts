@@ -57,11 +57,11 @@ describe(useDeleteColumn, () => {
   test("undo preserves row.data key order after restore", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn("a"), createColumn("b"), createColumn("c")],
       [createRow({ a: 1, b: 2, c: 3 })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteColumn = useDeleteColumn();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;

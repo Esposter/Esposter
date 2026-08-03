@@ -55,11 +55,11 @@ describe(createPlatformaticFsProvider, () => {
   test("overlay reads fall through to real disk until a virtual file shadows them", () => {
     expect.hasAssertions();
 
-    const dir = temporaryDirectories.create();
-    const file = join(dir, TEST_FILENAME);
+    const directory = temporaryDirectories.create();
+    const file = join(directory, TEST_FILENAME);
     writeFileSync(file, "");
     const { dispose, mount, writeFile } = createPlatformaticFsProvider({ isOverlayEnabled: true });
-    mount(dir);
+    mount(directory);
     withFinalizer(
       () => {
         const fs = require("node:fs");

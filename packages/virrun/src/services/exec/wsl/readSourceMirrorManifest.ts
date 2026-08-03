@@ -13,6 +13,7 @@ export const readSourceMirrorManifest = (cwd: string): SourceMirrorManifest | un
   const manifestPath = join(getWslSourceMirrorEntryUnc(cwd), VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME);
   return getResult(() => readFileSync(manifestPath, "utf8")).match(
     (data) => {
+      // eslint-disable-next-line no-restricted-syntax -- the manifest is paths and mtimes-as-numbers
       const parsed = getResult(() => JSON.parse(data) as unknown).unwrapOr(undefined);
       const result = sourceMirrorManifestSchema.safeParse(parsed);
       return result.success ? result.data : undefined;

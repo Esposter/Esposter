@@ -75,10 +75,13 @@ describe("searchHistory", () => {
     expect.hasAssertions();
 
     const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
-    const updated = await searchHistoryCaller.updateSearchHistory({ id: newSearchHistory.id, query: updatedQuery });
+    const updatedSearchHistory = await searchHistoryCaller.updateSearchHistory({
+      id: newSearchHistory.id,
+      query: updatedQuery,
+    });
 
-    expect(updated.id).toBe(newSearchHistory.id);
-    expect(updated.query).toBe(updatedQuery);
+    expect(updatedSearchHistory.id).toBe(newSearchHistory.id);
+    expect(updatedSearchHistory.query).toBe(updatedQuery);
   });
 
   test("deletes", async () => {

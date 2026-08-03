@@ -4,6 +4,7 @@ import { getResult } from "@esposter/shared";
 // Undefined to let the caller raise a sandbox error instead of inventing a result.
 export const parseBwrapExitCode = (status: string): number | undefined => {
   for (const line of status.split("\n")) {
+    // eslint-disable-next-line no-restricted-syntax -- bwrap json-status is one numeric exit-code field
     const exitCode = getResult(() => JSON.parse(line) as { "exit-code"?: number }).match(
       (value) => value["exit-code"],
       () => undefined,

@@ -35,20 +35,20 @@ const createFakeBackend = (exitCode: number): ExecBackend & ReturnType<typeof cr
 
 describe(createPrepareLayer, () => {
   const { createWorkspace } = setupTemporaryCacheHome();
-  let repo = "";
+  let repository = "";
 
   beforeEach(() => {
-    repo = createWorkspace();
+    repository = createWorkspace();
   });
 
   test("captures only the declared outputs, dropping dep-tree churn, and publishes the layer", async () => {
     expect.hasAssertions();
 
-    mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
+    mkdirSync(resolveSnapshotLocation(repository).upperDir, { recursive: true });
     const backend = createFakeBackend(0);
-    await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep));
+    await createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep));
 
-    const { exists, upperDir } = resolvePrepareLocation(repo, prepareStep);
+    const { exists, upperDir } = resolvePrepareLocation(repository, prepareStep);
 
     expect(exists).toBe(true);
     expect(existsSync(join(upperDir, TEST_FILENAME, TEST_FILENAME, TEST_FILENAME))).toBe(true);
@@ -58,17 +58,17 @@ describe(createPrepareLayer, () => {
   test("forks the deps snapshot as the lower with a per-invocation capture upper", async () => {
     expect.hasAssertions();
 
-    const depsUpperDir = resolveSnapshotLocation(repo).upperDir;
-    mkdirSync(depsUpperDir, { recursive: true });
+    const dependenciesUpperDir = resolveSnapshotLocation(repository).upperDir;
+    mkdirSync(dependenciesUpperDir, { recursive: true });
     const backend = createFakeBackend(0);
-    await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep));
+    await createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep));
 
-    const { dir } = resolvePrepareLocation(repo, prepareStep);
+    const { dir: directory } = resolvePrepareLocation(repository, prepareStep);
     const { lowerDirs, upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
 
-    expect(lowerDirs).toStrictEqual([depsUpperDir]);
-    expect(upperDir?.startsWith(join(dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
-    expect(workDir?.startsWith(join(dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
+    expect(lowerDirs).toStrictEqual([dependenciesUpperDir]);
+    expect(upperDir?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
+    expect(workDir?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
   });
 
   test("throws when there is no deps snapshot to fork", () => {
@@ -76,7 +76,7 @@ describe(createPrepareLayer, () => {
 
     const backend = createFakeBackend(0);
 
-    expect(() => createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep))).toThrow(
+    expect(() => createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep))).toThrow(
       new InvalidOperationError(
         Operation.Create,
         createPrepareLayer.name,
@@ -88,12 +88,12 @@ describe(createPrepareLayer, () => {
   test("throws when the prepare command fails so a half-built layer is never published", async () => {
     expect.hasAssertions();
 
-    mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
+    mkdirSync(resolveSnapshotLocation(repository).upperDir, { recursive: true });
     const backend = createFakeBackend(1);
 
-    await expect(createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep))).rejects.toThrow(
+    await expect(createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep))).rejects.toThrow(
       InvalidOperationError,
     );
-    expect(resolvePrepareLocation(repo, prepareStep).exists).toBe(false);
+    expect(resolvePrepareLocation(repository, prepareStep).exists).toBe(false);
   });
 });

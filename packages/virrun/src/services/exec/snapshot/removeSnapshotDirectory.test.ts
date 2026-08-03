@@ -20,7 +20,7 @@ const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExec
 vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
 
 // A snapshot leaf on the distro's ext4 (`/home/user/.virrun/snapshots/<hash>/upper`); `h` is a stand-in hash.
-const linuxDir = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SNAPSHOTS_DIRECTORY_NAME}/h/${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}`;
+const linuxDirectory = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SNAPSHOTS_DIRECTORY_NAME}/h/${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}`;
 // The WSL-side teardown removeSnapshotDirectory shells out for a UNC snapshot dir: chmod traversable, then rm -rf.
 // Paths are passed as positional args, never interpolated, so a quote in one can't break the shell quoting — and the
 // Bound is the work timeout, not the probe's: unlinking a node_modules closure is minutes of real work, while an
@@ -28,7 +28,7 @@ const linuxDir = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SNAPSHOTS_DIRECTORY_NAME
 const expectWslRemoval = (timeoutMs: number = WSL_WORK_TIMEOUT_MS) => {
   expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
     "wsl.exe",
-    ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir],
+    ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDirectory],
     { encoding: "buffer", stdio: "pipe", timeout: timeoutMs, windowsHide: true },
   );
 };
@@ -47,13 +47,13 @@ describe(removeSnapshotDirectory, () => {
   test("removes a plain directory tree in-process without invoking WSL", () => {
     expect.hasAssertions();
 
-    const dir = create();
-    mkdirSync(join(dir, TEST_FILENAME), { recursive: true });
-    writeFileSync(join(dir, TEST_FILENAME, TEST_FILENAME), "");
+    const directory = create();
+    mkdirSync(join(directory, TEST_FILENAME), { recursive: true });
+    writeFileSync(join(directory, TEST_FILENAME, TEST_FILENAME), "");
 
-    removeSnapshotDirectory(dir);
+    removeSnapshotDirectory(directory);
 
-    expect(existsSync(dir)).toBe(false);
+    expect(existsSync(directory)).toBe(false);
     expect(execFileSync).not.toHaveBeenCalled();
   });
 
@@ -62,7 +62,7 @@ describe(removeSnapshotDirectory, () => {
   test(`tears down a ${TEST_WSL_UNC_PREFIX} UNC snapshot dir inside WSL via a chmod + rm -rf`, () => {
     expect.hasAssertions();
 
-    removeSnapshotDirectory(createTestWslUnc(linuxDir));
+    removeSnapshotDirectory(createTestWslUnc(linuxDirectory));
 
     expectWslRemoval();
   });
@@ -72,7 +72,7 @@ describe(removeSnapshotDirectory, () => {
   test("removes under the caller's timeout override so a cache clean runs to completion", () => {
     expect.hasAssertions();
 
-    removeSnapshotDirectory(createTestWslUnc(linuxDir), CACHE_CLEAN_TIMEOUT_MS);
+    removeSnapshotDirectory(createTestWslUnc(linuxDirectory), CACHE_CLEAN_TIMEOUT_MS);
 
     expectWslRemoval(CACHE_CLEAN_TIMEOUT_MS);
   });
@@ -93,13 +93,13 @@ describe(removeSnapshotDirectory, () => {
   test("removeSnapshotDirectory is idempotent", () => {
     expect.hasAssertions();
 
-    const dir = join(create(), TEST_FILENAME);
-    mkdirSync(dir);
+    const directory = join(create(), TEST_FILENAME);
+    mkdirSync(directory);
 
-    removeSnapshotDirectory(dir);
-    removeSnapshotDirectory(dir);
+    removeSnapshotDirectory(directory);
+    removeSnapshotDirectory(directory);
 
-    expect(existsSync(dir)).toBe(false);
+    expect(existsSync(directory)).toBe(false);
     expect(execFileSync).not.toHaveBeenCalled();
   });
 });

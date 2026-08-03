@@ -141,10 +141,10 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     mockOsBackend();
-    const snapshotDir = create();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(false, snapshotDir));
+    const snapshotDirectory = create();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(false, snapshotDirectory));
     vi.mocked(createSnapshot).mockResolvedValue({
-      location: snapshotLocation(true, snapshotDir),
+      location: snapshotLocation(true, snapshotDirectory),
       result: { exitCode: 0, stderr: "", stdout: "" },
     });
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
@@ -165,8 +165,8 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     mockOsBackend();
-    const snapshotDir = create();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDir));
+    const snapshotDirectory = create();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDirectory));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     const dir = createWorkspace();
     const { dispose, fork } = await createVirrun({
@@ -184,8 +184,8 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     mockOsBackend();
-    const snapshotDir = create();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDir));
+    const snapshotDirectory = create();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDirectory));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     const dir = createWorkspace();
     const { dispose, fork } = await createVirrun({
@@ -194,7 +194,7 @@ describe(createVirrun, () => {
     });
     await fork("tsgo");
 
-    const leaseFile = join(snapshotDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(process.pid));
+    const leaseFile = join(snapshotDirectory, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(process.pid));
 
     expect(existsSync(leaseFile)).toBe(true);
 

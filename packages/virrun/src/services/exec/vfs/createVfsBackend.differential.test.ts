@@ -30,17 +30,17 @@ describe(createVfsBackend, () => {
   test("matches the native backend for a multi-file file run", async () => {
     expect.hasAssertions();
 
-    const dir = temporaryDirectories.create();
-    mkdirSync(join(dir, TEST_FILENAME));
-    writeFileSync(join(dir, TEST_FILENAME, `${TEST_FILENAME}.cjs`), "module.exports = ' '");
+    const directory = temporaryDirectories.create();
+    mkdirSync(join(directory, TEST_FILENAME));
+    writeFileSync(join(directory, TEST_FILENAME, `${TEST_FILENAME}.cjs`), "module.exports = ' '");
     writeFileSync(
-      join(dir, `${TEST_FILENAME}.cjs`),
+      join(directory, `${TEST_FILENAME}.cjs`),
       `process.stdout.write(require('./${TEST_FILENAME}/${TEST_FILENAME}.cjs'))`,
     );
     const command = `node ${TEST_FILENAME}.cjs`;
 
-    const nativeResult = await native.exec(command, { cwd: dir, stdio: "pipe" });
-    const vfsResult = await vfs.exec(command, { cwd: dir, stdio: "pipe" });
+    const nativeResult = await native.exec(command, { cwd: directory, stdio: "pipe" });
+    const vfsResult = await vfs.exec(command, { cwd: directory, stdio: "pipe" });
 
     expect(vfsResult).toStrictEqual({ exitCode: 0, stderr: "", stdout: " " });
     expect(vfsResult).toStrictEqual(nativeResult);

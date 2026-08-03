@@ -39,6 +39,8 @@ flowchart TB
   end
 ```
 
+`jsonDateParse` is the default parse repo-wide: plain `JSON.parse` is banned by the `no-restricted-syntax` ESLint rule, so each of the deliberate exceptions below carries an `eslint-disable-next-line no-restricted-syntax` with its reason.
+
 ## Why `jsonDateParse` is needed on the transport paths
 
 `StandardMessageEntity` (and all classes in `JSONClassMap`) extend `Serializable`, which defines:

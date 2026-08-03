@@ -14,6 +14,7 @@ const COMMAND_NOT_FOUND_REGEX =
 const packageScriptsSchema = z.object({ scripts: z.record(z.string(), z.string()).default({}) });
 
 const readPackageScripts = (cwd: string): string[] =>
+  // eslint-disable-next-line no-restricted-syntax -- package.json carries no dates
   getResult(() => packageScriptsSchema.parse(JSON.parse(readFileSync(join(cwd, "package.json"), "utf8")))).match(
     (packageJson) => Object.keys(packageJson.scripts),
     () => [],

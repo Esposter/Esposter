@@ -15,11 +15,11 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(reapStaleTemps, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  let dir = "";
-  const seed = (name: string): string => seedDirectory(join(dir, name));
+  let directory = "";
+  const seed = (name: string): string => seedDirectory(join(directory, name));
 
   beforeEach(() => {
-    dir = create();
+    directory = create();
   });
 
   afterEach(cleanup);
@@ -37,7 +37,7 @@ describe(reapStaleTemps, () => {
     const publishedWork = seed(VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME);
     const leases = seed(VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME);
 
-    reapStaleTemps(dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
+    reapStaleTemps(directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
 
     expect(existsSync(deadCaptureUpper)).toBe(false);
     expect(existsSync(deadCaptureWork)).toBe(false);
@@ -55,7 +55,7 @@ describe(reapStaleTemps, () => {
 
     const legacyTemp = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${TEST_FILENAME}`);
 
-    reapStaleTemps(dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
+    reapStaleTemps(directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
 
     expect(existsSync(legacyTemp)).toBe(true);
   });

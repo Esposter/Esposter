@@ -23,15 +23,15 @@ const toOutcome = (operation: () => boolean | string): { ok: boolean; value: boo
 describe(createPlatformaticFsProvider, () => {
   const temporaryDirectories = createTemporaryDirectoryTracker();
   // Absolute virtual root the provider operates under (POSIX-style; the provider's fs is virtual, not host-disk).
-  const VROOT = "/p";
+  const VIRTUAL_ROOT = "/p";
   // A pre-created sub-directory plus the never-written paths ("z", "d/z") that exercise the missing-file branch.
-  const fileArb = fc.constantFrom("f", "g", "d/f", "d/g", "z", "d/z");
+  const fileArbitrary = fc.constantFrom("f", "g", "d/f", "d/g", "z", "d/z");
   // Canonical diff values: "" as the base, " " as a distinct second value.
-  const contentArb = fc.constantFrom("", " ");
-  const operationArb = fc.oneof(
-    fc.record({ content: contentArb, kind: fc.constant("write"), rel: fileArb }),
-    fc.record({ kind: fc.constant("read"), rel: fileArb }),
-    fc.record({ kind: fc.constant("exists"), rel: fileArb }),
+  const contentArbitrary = fc.constantFrom("", " ");
+  const operationArbitrary = fc.oneof(
+    fc.record({ content: contentArbitrary, kind: fc.constant("write"), rel: fileArbitrary }),
+    fc.record({ kind: fc.constant("read"), rel: fileArbitrary }),
+    fc.record({ kind: fc.constant("exists"), rel: fileArbitrary }),
   );
 
   afterEach(() => {
@@ -42,20 +42,20 @@ describe(createPlatformaticFsProvider, () => {
     expect.hasAssertions();
 
     fc.assert(
-      fc.property(fc.array(operationArb, { maxLength: 48, minLength: 1 }), (operations) => {
+      fc.property(fc.array(operationArbitrary, { maxLength: 48, minLength: 1 }), (operations) => {
         // Each fast-check run (including replay/shrinking) allocates its own provider + temp dir and frees them
         // In the finalizer, so the randomized trace never stacks allocations across the run's many iterations.
         const provider = createPlatformaticFsProvider();
         const directory = temporaryDirectories.create();
         withFinalizer(
           () => {
-            provider.mkdir(`${VROOT}/d`);
+            provider.mkdir(`${VIRTUAL_ROOT}/d`);
             mkdirSync(join(directory, "d"), { recursive: true });
             const virtualTrace = [];
             const realTrace = [];
 
             for (const operation of operations) {
-              const virtualPath = `${VROOT}/${operation.rel}`;
+              const virtualPath = `${VIRTUAL_ROOT}/${operation.rel}`;
               const realPath = join(directory, operation.rel);
               if (operation.kind === "write") {
                 const { content } = operation;

@@ -23,5 +23,6 @@ export const readContentBlob = async <TSchema extends z.ZodType>(
   if (!readableStreamBody) return undefined;
   // Parse the blob as plain JSON: the content schema owns date coercion (z.coerce.date()) on its
   // Genuine date fields, so ISO-datetime strings in free-text fields (e.g. Sheet cells) survive as strings.
+  // eslint-disable-next-line no-restricted-syntax -- the content schema owns date coercion, so free-text ISO strings survive
   return contentSchema.parse(JSON.parse(await streamToText(readableStreamBody)));
 };

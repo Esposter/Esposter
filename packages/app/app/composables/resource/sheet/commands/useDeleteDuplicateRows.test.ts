@@ -15,11 +15,11 @@ describe(useDeleteDuplicateRows, () => {
   test("removes duplicate rows keeping first occurrence", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn(""), createColumn(" ")],
       [createRow({ "": 0, " ": 1 }), createRow({ "": 0, " ": 1 }), createRow({ "": 0, " ": 1 })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     await deleteDuplicateRows();
 
@@ -30,8 +30,11 @@ describe(useDeleteDuplicateRows, () => {
   test("removes duplicate rows keeping last occurrence", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("a")], [createRow({ a: 1 }), createRow({ a: 2 }), createRow({ a: 1 })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource(
+      [createColumn("a")],
+      [createRow({ a: 1 }), createRow({ a: 2 }), createRow({ a: 1 })],
+    );
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     await deleteDuplicateRows(KeepDuplicateMode.Last);
 
@@ -43,11 +46,11 @@ describe(useDeleteDuplicateRows, () => {
   test("keeps rows that differ in at least one column", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn(""), createColumn(" ")],
       [createRow({ "": 0, " ": 1 }), createRow({ "": 0, " ": 2 })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
@@ -60,8 +63,8 @@ describe(useDeleteDuplicateRows, () => {
   test("undo restores deleted duplicate rows", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
@@ -75,8 +78,8 @@ describe(useDeleteDuplicateRows, () => {
   test("redo re-applies after undo", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     const sheetHistoryStore = useSheetHistoryStore();
     const { redo, undo } = sheetHistoryStore;

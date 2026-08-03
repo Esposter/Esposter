@@ -9,11 +9,11 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(reapDeadLeases, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  let leasesDir = "";
-  const seedLease = (pid: number): string => writeLeaseFile(leasesDir, pid);
+  let leasesDirectory = "";
+  const seedLease = (pid: number): string => writeLeaseFile(leasesDirectory, pid);
 
   beforeEach(() => {
-    leasesDir = create();
+    leasesDirectory = create();
   });
 
   afterEach(cleanup);
@@ -21,19 +21,19 @@ describe(reapDeadLeases, () => {
   test(`keeps a live lease and reports a live holder`, () => {
     expect.hasAssertions();
 
-    const live = seedLease(process.pid);
+    const liveLease = seedLease(process.pid);
 
-    expect(reapDeadLeases(leasesDir)).toBe(true);
-    expect(existsSync(live)).toBe(true);
+    expect(reapDeadLeases(leasesDirectory)).toBe(true);
+    expect(existsSync(liveLease)).toBe(true);
   });
 
   test(`removes a dead lease and reports no live holder`, () => {
     expect.hasAssertions();
 
-    const dead = seedLease(DEAD_PID);
+    const deadLease = seedLease(DEAD_PID);
 
-    expect(reapDeadLeases(leasesDir)).toBe(false);
-    expect(existsSync(dead)).toBe(false);
+    expect(reapDeadLeases(leasesDirectory)).toBe(false);
+    expect(existsSync(deadLease)).toBe(false);
   });
 
   test(`reports no live holder for an absent leases directory`, () => {

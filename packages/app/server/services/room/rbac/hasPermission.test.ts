@@ -80,12 +80,12 @@ describe(hasPermission, () => {
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     assert.exists(everyoneRole);
     await roleCaller.updateRole({ id: everyoneRole.id, permissions: RoomPermission.ReadMessages, roomId });
-    const [canRead, canManage] = await Promise.all([
+    const [hasReadPermission, hasManagePermission] = await Promise.all([
       hasPermission(mockContext.db, user.id, roomId, RoomPermission.ReadMessages),
       hasPermission(mockContext.db, user.id, roomId, RoomPermission.ManageRoom),
     ]);
 
-    expect(canRead).toBe(true);
-    expect(canManage).toBe(false);
+    expect(hasReadPermission).toBe(true);
+    expect(hasManagePermission).toBe(false);
   });
 });

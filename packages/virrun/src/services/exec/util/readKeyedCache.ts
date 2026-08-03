@@ -15,6 +15,7 @@ export const readKeyedCache = <TValue>(
   key: string,
   maxAgeMs?: number,
 ): TValue | undefined =>
+  // eslint-disable-next-line no-restricted-syntax -- the cache holds a numeric storedAtMs, never a date
   getResult(() => createKeyedCacheSchema(valueSchema).parse(JSON.parse(readFileSync(file, "utf8")))).match(
     (cache) => {
       if (cache.key !== key) return undefined;

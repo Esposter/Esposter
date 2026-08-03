@@ -26,16 +26,16 @@ describe(hasPermission, () => {
   test("combined mask: all bits present returns true", () => {
     expect.hasAssertions();
 
-    const combined = RoomPermission.ReadMessages | RoomPermission.SendMessages;
+    const combinedPermissions = RoomPermission.ReadMessages | RoomPermission.SendMessages;
 
-    expect(hasPermission(combined, combined, false)).toBe(true);
+    expect(hasPermission(combinedPermissions, combinedPermissions, false)).toBe(true);
   });
 
   test("combined mask: partial bit match returns false", () => {
     expect.hasAssertions();
 
-    const combined = RoomPermission.ReadMessages | RoomPermission.SendMessages;
+    const combinedPermissions = RoomPermission.ReadMessages | RoomPermission.SendMessages;
 
-    expect(hasPermission(RoomPermission.ReadMessages, combined, false)).toBe(false);
+    expect(hasPermission(RoomPermission.ReadMessages, combinedPermissions, false)).toBe(false);
   });
 });

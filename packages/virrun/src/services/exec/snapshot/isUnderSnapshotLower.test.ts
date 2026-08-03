@@ -4,13 +4,13 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(isUnderSnapshotLower, () => {
-  const empty = new Set<string>();
+  const emptyPaths = new Set<string>();
   const noOutputs: readonly string[] = [];
 
   test("masks a write inside a node_modules tree even when it has no snapshot entry of its own", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(`${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}/${TEST_FILENAME}`, empty, noOutputs)).toBe(
+    expect(isUnderSnapshotLower(`${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}/${TEST_FILENAME}`, emptyPaths, noOutputs)).toBe(
       true,
     );
   });
@@ -24,8 +24,8 @@ describe(isUnderSnapshotLower, () => {
   test("masks an output dir itself and everything inside it", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(TEST_FILENAME, empty, [TEST_FILENAME])).toBe(true);
-    expect(isUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}`, empty, [TEST_FILENAME])).toBe(true);
+    expect(isUnderSnapshotLower(TEST_FILENAME, emptyPaths, [TEST_FILENAME])).toBe(true);
+    expect(isUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}`, emptyPaths, [TEST_FILENAME])).toBe(true);
   });
 
   test("does not mask a source file under a shared parent the snapshot lower also materialises", () => {
@@ -48,12 +48,12 @@ describe(isUnderSnapshotLower, () => {
     expect.hasAssertions();
 
     // `a` is an output dir; `aa` shares the prefix but is not under it, so it must still flush.
-    expect(isUnderSnapshotLower(`${TEST_FILENAME}${TEST_FILENAME}`, empty, [TEST_FILENAME])).toBe(false);
+    expect(isUnderSnapshotLower(`${TEST_FILENAME}${TEST_FILENAME}`, emptyPaths, [TEST_FILENAME])).toBe(false);
   });
 
   test("does not mask a produced file outside the dependency closure", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(TEST_FILENAME, empty, noOutputs)).toBe(false);
+    expect(isUnderSnapshotLower(TEST_FILENAME, emptyPaths, noOutputs)).toBe(false);
   });
 });

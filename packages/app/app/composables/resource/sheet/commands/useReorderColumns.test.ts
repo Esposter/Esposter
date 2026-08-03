@@ -62,11 +62,11 @@ describe(useReorderColumns, () => {
   test("moves column backward (index 1 to 0) with three columns", async () => {
     expect.hasAssertions();
 
-    const threeColumnDs = createDataSource(
+    const threeColumnDataSource = createDataSource(
       [createColumn("a"), createColumn("b"), createColumn("c")],
       [createRow({ a: 0, b: 1, c: 2 })],
     );
-    const { dataSource } = setupWithDataSource(threeColumnDs);
+    const { dataSource } = setupWithDataSource(threeColumnDataSource);
     const reorderColumns = useReorderColumns();
     const columns = dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns), takeOne(columns, 2)] as StringColumn[];
@@ -80,11 +80,11 @@ describe(useReorderColumns, () => {
   test("moves column forward non-adjacent (index 0 to 2) with three columns", async () => {
     expect.hasAssertions();
 
-    const threeColumnDs = createDataSource(
+    const threeColumnDataSource = createDataSource(
       [createColumn("a"), createColumn("b"), createColumn("c")],
       [createRow({ a: 0, b: 1, c: 2 })],
     );
-    const { dataSource } = setupWithDataSource(threeColumnDs);
+    const { dataSource } = setupWithDataSource(threeColumnDataSource);
     const reorderColumns = useReorderColumns();
     const columns = dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns, 2), takeOne(columns)] as StringColumn[];

@@ -6,6 +6,7 @@ const ISO_DATE_REGEX =
 const MS_AJAX_DATE_REGEX = /^\/Date\((?<timestamp>-?\d+(?:[-+]\d+)?)\)[/\\]$/u;
 // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export const jsonDateParse = <T = any>(text: string): T =>
+  // eslint-disable-next-line no-restricted-syntax -- the reviver every other caller is pointed at is built here
   JSON.parse(text, (_key, value) => {
     let parsedValue = value;
 

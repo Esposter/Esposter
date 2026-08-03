@@ -20,10 +20,10 @@ vi.mock(import("@/services/db"), () => ({
 
 vi.mock(import("@/services/eventGridPublisherClient"), () => import("@/services/eventGridPublisherClient.test"));
 
-const createMockRequest = (params: Record<string, string>, bodyString?: string): HttpRequest =>
+const createMockRequest = (parameters: Record<string, string>, bodyString?: string): HttpRequest =>
   new HttpRequest({
     method: "POST",
-    params,
+    params: parameters,
     url: "http://localhost",
     ...(bodyString !== undefined && { body: { string: bodyString } }),
   });

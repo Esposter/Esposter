@@ -17,13 +17,13 @@ describe(pruneStalePrepareLayers, () => {
   test("removes a superseded prepare layer in the global cache while keeping the current one", () => {
     expect.hasAssertions();
 
-    const prepareDir = join(getCacheHome(), VIRRUN_PREPARE_DIRECTORY_NAME);
-    const current = seedDirectory(join(prepareDir, CURRENT_KEY));
-    const stale = seedDirectory(join(prepareDir, STALE_KEY));
+    const prepareDirectory = join(getCacheHome(), VIRRUN_PREPARE_DIRECTORY_NAME);
+    const layer = seedDirectory(join(prepareDirectory, CURRENT_KEY));
+    const staleLayer = seedDirectory(join(prepareDirectory, STALE_KEY));
 
     pruneStalePrepareLayers(CURRENT_KEY);
 
-    expect(existsSync(current)).toBe(true);
-    expect(existsSync(stale)).toBe(false);
+    expect(existsSync(layer)).toBe(true);
+    expect(existsSync(staleLayer)).toBe(false);
   });
 });

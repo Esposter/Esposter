@@ -24,6 +24,15 @@ export default {
         ":matches(MemberExpression[object.name='expect'][property.name='poll'], MemberExpression[object.name='vi'][property.name=/^(waitFor|waitUntil)$/], CallExpression[callee.name=/^(waitFor|waitUntil)$/])",
     },
     {
+      // Dates survive JSON only as strings, so the default parse has to revive them — see
+      // /docs/architecture/serialization.md. Every place plain parsing is the deliberate choice (the content
+      // Blobs and drafts a Zod schema coerces itself, payloads replayed verbatim, machine config) disables this
+      // Rule on the line with its reason.
+      message:
+        "Use `jsonDateParse` from `@esposter/shared` — plain `JSON.parse` leaves every Date as an ISO string. Disable this rule with a reason where blanket revival is wrong (see /docs/architecture/serialization.md).",
+      selector: "MemberExpression[object.name='JSON'][property.name='parse']",
+    },
+    {
       // The child combinators are load-bearing — they match only the property's own annotation, so
       // `Ref<T | undefined>`, `(T | undefined)[]`, tuple members and function params are untouched.
       message: "Declare the property optional (`field?: T`) instead of `field: T | undefined`.",

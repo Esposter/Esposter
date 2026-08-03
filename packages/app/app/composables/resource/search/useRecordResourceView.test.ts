@@ -8,6 +8,7 @@ import { ResourceType } from "@esposter/db-schema";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const readRecentResourceViews = (): RecentResourceView[] =>
+  // eslint-disable-next-line no-restricted-syntax -- RecentResourceView types viewedAt as an ISO string, so reviving it would contradict the model
   JSON.parse(localStorage.getItem(LocalStorageKey.ResourceRecentViews) ?? "[]");
 
 describe(useRecordResourceView, () => {

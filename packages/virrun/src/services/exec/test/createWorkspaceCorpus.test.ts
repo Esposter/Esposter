@@ -20,13 +20,13 @@ import { describe } from "vitest";
 // `C:\repo\package.json` arrives inside the guest as `/c/repo/package.json` and every manifest dangles
 // (ERR_PNPM_NO_PKG_MANIFEST). Manifests are small and few, so copying costs nothing and keeps the fixture
 // Platform-agnostic.
-export const createWorkspaceCorpus = (repoRoot: string): string => {
+export const createWorkspaceCorpus = (repositoryRoot: string): string => {
   const cache = join(homedir(), HOME_CACHE_DIRECTORY_NAME);
   mkdirSync(cache, { recursive: true });
   const corpus = mkdtempSync(join(cache, VIRRUN_TEMP_DIR_PREFIX));
   for (const manifest of [PACKAGE_JSON_FILENAME, PNPM_WORKSPACE_FILENAME, PNPM_LOCKFILE_FILENAME])
-    copyFileSync(join(repoRoot, manifest), join(corpus, manifest));
-  const packages = join(repoRoot, PACKAGES_DIRECTORY);
+    copyFileSync(join(repositoryRoot, manifest), join(corpus, manifest));
+  const packages = join(repositoryRoot, PACKAGES_DIRECTORY);
   mkdirSync(join(corpus, PACKAGES_DIRECTORY));
   for (const name of readdirSync(packages)) {
     const packageJson = join(packages, name, PACKAGE_JSON_FILENAME);

@@ -8,5 +8,6 @@ export const getDraft = (roomId: string): Draft | undefined => {
   if (getIsServer()) return undefined;
   const value = localStorage.getItem(LocalStorageKey.Draft(roomId));
   if (!value) return undefined;
+  // eslint-disable-next-line no-restricted-syntax -- draftSchema coerces updatedAt itself, so a draft body that is an ISO datetime stays a string
   return getResult(() => draftSchema.parse(JSON.parse(value))).unwrapOr(undefined);
 };

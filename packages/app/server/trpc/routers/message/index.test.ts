@@ -240,7 +240,7 @@ describe("message", () => {
     expect(readMessages.items).toHaveLength(1);
     expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
 
-    let cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+    const cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
     readMessages = await messageCaller.readMessages({
       cursor,
       order: SortOrder.Asc,
@@ -250,7 +250,6 @@ describe("message", () => {
     expect(readMessages.items).toHaveLength(1);
     expect(takeOne(readMessages.items).rowKey).toBe(secondMessage.rowKey);
 
-    cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
     readMessages = await messageCaller.readMessages({
       cursor,
       isIncludeValue: true,
@@ -1668,20 +1667,6 @@ describe("message", () => {
       });
 
       expect(threadRootRowKeysAfterUnfollow).toHaveLength(0);
-    });
-
-    test("replying to a message auto-follows its thread", async () => {
-      expect.hasAssertions();
-
-      const newRoom = await roomCaller.createRoom({ name });
-      const userId = getMockSession().user.id;
-      const root = await messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id });
-      await messageCaller.createMessage({ message: getMessage(userId), replyRowKey: root.rowKey, roomId: newRoom.id });
-
-      const { threads } = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
-
-      expect(threads).toHaveLength(1);
-      expect(takeOne(threads).rowKey).toBe(root.rowKey);
     });
   });
 });

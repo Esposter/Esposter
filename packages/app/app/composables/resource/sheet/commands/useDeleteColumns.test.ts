@@ -85,11 +85,11 @@ describe(useDeleteColumns, () => {
   test("undo preserves row.data key order matching restored column order", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn("a"), createColumn("b"), createColumn("c")],
       [createRow({ a: 1, b: 2, c: 3 })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteColumns = useDeleteColumns();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
@@ -103,11 +103,11 @@ describe(useDeleteColumns, () => {
   test("undo preserves row.data key order when restoring multiple deleted columns", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn("a"), createColumn("b"), createColumn("c"), createColumn("d")],
       [createRow({ a: 1, b: 2, c: 3, d: 4 })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const deleteColumns = useDeleteColumns();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;

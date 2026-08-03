@@ -60,12 +60,12 @@ describe(useCursorPaginationDataMap, () => {
 
     await mountDataMap();
     const { query, resolveQuery } = getPendingData();
-    const pending = readItems(query);
+    const pendingRead = readItems(query);
     // The target switches while the read for the original key is still in flight
     currentId.value = otherKey;
     await flushPromises();
     resolveQuery();
-    await pending;
+    await pendingRead;
 
     expect(items.value).toStrictEqual([]);
 
@@ -80,11 +80,11 @@ describe(useCursorPaginationDataMap, () => {
 
     await mountDataMap();
     const { query, resolveQuery } = getPendingData();
-    const pending = readMoreItems(query);
+    const pendingRead = readMoreItems(query);
     currentId.value = otherKey;
     await flushPromises();
     resolveQuery();
-    await pending;
+    await pendingRead;
 
     expect(items.value).toStrictEqual([]);
 

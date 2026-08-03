@@ -21,18 +21,18 @@ vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
 }));
 
 const ageOut = (entry: string): void => {
-  const aged = new Date(Date.now() - SOURCE_MIRROR_UNMARKED_MAX_AGE_MS - 1);
-  utimesSync(entry, aged, aged);
+  const agedDate = new Date(Date.now() - SOURCE_MIRROR_UNMARKED_MAX_AGE_MS - 1);
+  utimesSync(entry, agedDate, agedDate);
 };
 
 describe(reapAbandonedSourceMirrors, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   // The entry key of the run doing the sweeping; every case here seeds some other repo's entry under "0".
   const liveEntryName = "1";
-  const sourcesDir = (): string => join(cacheRootHolder.value, VIRRUN_SOURCES_DIRECTORY_NAME);
+  const sourcesDirectory = (): string => join(cacheRootHolder.value, VIRRUN_SOURCES_DIRECTORY_NAME);
   // Seed a mirror entry (`sources/<hash>/tree` + an optional `origin` marker) and return its entry dir.
   const seedMirror = (hash: string, origin?: string): string => {
-    const entry = join(sourcesDir(), hash);
+    const entry = join(sourcesDirectory(), hash);
     seedDirectory(join(entry, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME));
     if (origin !== undefined) writeFileSync(join(entry, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME), origin);
     return entry;
@@ -50,31 +50,31 @@ describe(reapAbandonedSourceMirrors, () => {
   test("reaps a mirror whose origin host dir no longer exists", () => {
     expect.hasAssertions();
 
-    const abandoned = seedMirror("0", join(cacheRootHolder.value, TEST_FILENAME));
+    const abandonedMirror = seedMirror("0", join(cacheRootHolder.value, TEST_FILENAME));
 
     reapAbandonedSourceMirrors(liveEntryName);
 
-    expect(existsSync(abandoned)).toBe(false);
+    expect(existsSync(abandonedMirror)).toBe(false);
   });
 
   test("keeps a mirror whose origin host dir still exists", () => {
     expect.hasAssertions();
 
-    const live = seedMirror("0", create());
+    const liveMirror = seedMirror("0", create());
 
     reapAbandonedSourceMirrors(liveEntryName);
 
-    expect(existsSync(live)).toBe(true);
+    expect(existsSync(liveMirror)).toBe(true);
   });
 
   test("keeps a freshly created mirror with no origin marker, which a live planner is mid-writing", () => {
     expect.hasAssertions();
 
-    const unmarked = seedMirror("0");
+    const unmarkedMirror = seedMirror("0");
 
     reapAbandonedSourceMirrors(liveEntryName);
 
-    expect(existsSync(unmarked)).toBe(true);
+    expect(existsSync(unmarkedMirror)).toBe(true);
   });
 
   // The marker is written the instant the entry dir exists, so an aged unmarked entry is a corpse of a sync that
@@ -82,12 +82,12 @@ describe(reapAbandonedSourceMirrors, () => {
   test("reaps an unmarked mirror once it is older than the grace window", () => {
     expect.hasAssertions();
 
-    const abandoned = seedMirror("0");
-    ageOut(abandoned);
+    const abandonedMirror = seedMirror("0");
+    ageOut(abandonedMirror);
 
     reapAbandonedSourceMirrors(liveEntryName);
 
-    expect(existsSync(abandoned)).toBe(false);
+    expect(existsSync(abandonedMirror)).toBe(false);
   });
 
   // A marker that exists settles the entry whatever it says, so the age fallback never sees it. Aged deliberately:
@@ -109,12 +109,12 @@ describe(reapAbandonedSourceMirrors, () => {
   test("keeps this run's own mirror even when it is unmarked and aged out", () => {
     expect.hasAssertions();
 
-    const live = seedMirror(liveEntryName);
-    ageOut(live);
+    const liveMirror = seedMirror(liveEntryName);
+    ageOut(liveMirror);
 
     reapAbandonedSourceMirrors(liveEntryName);
 
-    expect(existsSync(live)).toBe(true);
+    expect(existsSync(liveMirror)).toBe(true);
   });
 
   test("is a no-op when the sources directory does not exist yet", () => {
@@ -122,6 +122,6 @@ describe(reapAbandonedSourceMirrors, () => {
 
     reapAbandonedSourceMirrors(liveEntryName);
 
-    expect(existsSync(sourcesDir())).toBe(false);
+    expect(existsSync(sourcesDirectory())).toBe(false);
   });
 });
