@@ -166,19 +166,19 @@ Consequences that keep this boundary intact:
 - **Read composables know nothing about the cache either** — there is no read-side cache composable to call. Never call `useOnline`, `readIndexedDb`, or `writeIndexedDb` from a feature read composable; hydration is already automatic.
 - `readIndexedDb` / `writeIndexedDb` (`app/services/cache/indexedDb/`) are called **only** from `usePaginationCache`.
 
-**Generic cache composables** (`app/composables/cache/indexedDb/`) — both take one options object and return `{ flush }`:
+**Generic cache composables** (`app/composables/cache/indexedDb/`) — each takes one options object and returns nothing. Both of its operations are fired from watchers through `getSynchronizedFunction`, so the completion signal is the repo-wide drain, `waitForSynchronizedFunctions()`; never give the cache (or the `useMutation` instance under it) a `flush` of its own for a test to await.
 
 - `usePaginationCache` — the base; takes `initializeItems`
 - `useCursorPaginationCache` / `useOffsetPaginationCache` — wrap it, taking `initializeCursorPaginationData` / the offset equivalent instead
 
-**Feature cache composable pattern** — a thin wrapper reading store refs and returning the generic composable:
+**Feature cache composable pattern** — a thin wrapper reading store refs and calling the generic composable:
 
 ```ts
 export const useFooCache = () => {
   const fooStore = useFooStore();
   const { foos } = storeToRefs(fooStore);
   const { initializeCursorPaginationData } = fooStore;
-  return useCursorPaginationCache({
+  useCursorPaginationCache({
     configuration: FooIndexedDbStoreConfiguration,
     initializeCursorPaginationData,
     items: foos,
@@ -190,6 +190,5 @@ export const useFooCache = () => {
 - `configuration` — one per file, `as const satisfies IndexedDbStoreConfiguration` (a key path, plus an optional `limit`)
 - `getWriteItems` — feature-specific filtering before persisting
 - `onHydrate` — companion state updates after an offline hydrate (member counts, user maps)
-- `flush()` — returned so tests can await the pending write
 
 `useMessageCache`, `useMemberCache`, `useRoomCache` are the reference shapes. Architecture doc: `packages/app/content/docs/esbabbler/offline-cache.md`.

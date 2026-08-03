@@ -8,7 +8,7 @@ export const useMessageCache = () => {
   const dataStore = useDataStore();
   const { items } = storeToRefs(dataStore);
   const { initializeCursorPaginationData } = dataStore;
-  return useCursorPaginationCache({
+  useCursorPaginationCache({
     configuration: MessageIndexedDbStoreConfiguration,
     getWriteItems: (messages) => messages.filter((message) => !message.isLoading),
     // Unbound on purpose: usePaginationCache re-checks the partition key after its IndexedDB read and bails when

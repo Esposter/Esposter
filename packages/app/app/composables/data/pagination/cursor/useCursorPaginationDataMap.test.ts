@@ -37,7 +37,12 @@ describe(useCursorPaginationDataMap, () => {
       new Promise<CursorPaginationData<string>>((resolve) => {
         resolveQuery = resolve;
       });
-    return { query, resolveQuery: () => resolveQuery(data) };
+    return {
+      query,
+      resolveQuery: () => {
+        resolveQuery(data);
+      },
+    };
   };
 
   beforeEach(() => {

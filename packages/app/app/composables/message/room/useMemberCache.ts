@@ -11,7 +11,7 @@ export const useMemberCache = () => {
   const { initializeCursorPaginationData } = memberStore;
   const userStore = useUserStore();
   const { storeUsers } = userStore;
-  return useCursorPaginationCache({
+  useCursorPaginationCache({
     configuration: MemberIndexedDbStoreConfiguration,
     initializeCursorPaginationData,
     items: members,

@@ -80,4 +80,4 @@ Fetch composables call the read-cache helper inside their `readItems` query func
 ## Notes
 
 - `ReadItemsCacheOptions` was removed — do not reintroduce cache parameters to pagination helpers.
-- Tests: generic helpers get service tests (partition isolation, re-write replacement, limit); feature caches test feature behavior (transient records not persisted, hydration side effects, `flush()`). `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.
+- Tests: the generic composable owns the whole cache lifecycle (persist on change, clear on empty, hydrate on switch, partition-key guards), tested once for both pagination variants. A feature cache tests only what is its own — its `getWriteItems` filter, its `onHydrate` side effects, and one end-to-end wiring pass over its partition-key source and store hook. Awaiting landed cache state is `waitForSynchronizedFunctions()`; the composables return nothing. `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.

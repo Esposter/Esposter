@@ -4,6 +4,7 @@ import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { goOffline } from "@/composables/shared/network.test";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
@@ -18,7 +19,6 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(useMemberCache, () => {
   let router: Router;
   let wrapper: VueWrapper;
-  let flush: () => Promise<void>;
   let count: Ref<number>;
   let members: Ref<User[]>;
   let initializeCursorPaginationData: (data: CursorPaginationData<User>) => void;
@@ -37,7 +37,7 @@ describe(useMemberCache, () => {
   } satisfies User;
   const flushCache = async () => {
     await flushPromises();
-    await flush();
+    await waitForSynchronizedFunctions();
   };
   const setRouteId = (id: string) => {
     router.currentRoute.value.params.id = id;
@@ -54,7 +54,7 @@ describe(useMemberCache, () => {
           const memberStore = useMemberStore();
           ({ count, members } = storeToRefs(memberStore));
           ({ initializeCursorPaginationData } = memberStore);
-          ({ flush } = useMemberCache());
+          useMemberCache();
 
           onUnmounted(() => {
             count.value = 0;
@@ -75,20 +75,9 @@ describe(useMemberCache, () => {
     await resetIndexedDb();
   });
 
-  test("persists members to cache when items change", async () => {
-    expect.hasAssertions();
-
-    await mountCache();
-    const data = new CursorPaginationData<User>();
-    data.items = [user];
-    initializeCursorPaginationData(data);
-    await flushCache();
-    const cachedMembers = await readIndexedDb(MemberIndexedDbStoreConfiguration, partitionKey);
-
-    expect(cachedMembers).toHaveLength(1);
-    expect(takeOne(cachedMembers).id).toStrictEqual(user.id);
-  });
-
+  // The cache lifecycle itself belongs to usePaginationCache and is tested there for both variants. What only
+  // This composable can get wrong is the wiring — the route id it takes as its partition key, and the store
+  // Hook it hydrates through — so one end-to-end pass over both is all this suite owes
   test("populates store from cache when switching rooms offline", async () => {
     expect.hasAssertions();
 

@@ -9,14 +9,6 @@ import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 
-// The schema types every index key as a string, which is what lets a partition double as a `useMutation` target
-// Verbatim. The conditional cannot resolve while the store stays generic, so the intersection restates the
-// Guarantee the schema already makes
-type PartitionKey<
-  TStore extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
-> = IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> & string;
-
 export interface PaginationCacheOptions<
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
@@ -29,6 +21,14 @@ export interface PaginationCacheOptions<
   onHydrate?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => Promisable<void>;
   partitionKey: MaybeRefOrGetter<PartitionKey<TStore, TIndex> | undefined>;
 }
+
+// The schema types every index key as a string, which is what lets a partition double as a `useMutation` target
+// Verbatim. The conditional cannot resolve while the store stays generic, so the intersection restates the
+// Guarantee the schema already makes
+type PartitionKey<
+  TStore extends IndexedDbStoreName,
+  TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
+> = IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> & string;
 
 export const usePaginationCache = <
   TStore extends IndexedDbStoreName,
@@ -45,7 +45,7 @@ export const usePaginationCache = <
   const online = useOnline();
   // The partition is the target: its writes run one at a time so each rewrite lands on the set the one before
   // It stored, while another partition's cache is a different target and never waits behind it
-  const { executeMutation, executeQuery, flush } = useMutation();
+  const { executeMutation, executeQuery } = useMutation();
   // The partition whose rows on screen are its own, rather than the empty list a load starts from. Dropped on
   // Every switch: carried across one, the list a revisit begins with would pass for a loaded empty partition
   let readyPartitionKey: PartitionKey<TStore, TIndex> | undefined;
@@ -109,8 +109,6 @@ export const usePaginationCache = <
     },
   );
 
-  // The cache is written from watchers, so nothing hands the operations back to a caller — a consumer that
-  // Needs them landed (a test asserting the stored rows) awaits the primitive's own completion signal rather
-  // Than watching a pending flag settle, which would be polling for something the primitive already knows
-  return { flush };
+  // Nothing to return: both operations are fire-and-forget through getSynchronizedFunction, so a caller that
+  // Needs them landed awaits waitForSynchronizedFunctions() — the drain that already covers every one of them
 };

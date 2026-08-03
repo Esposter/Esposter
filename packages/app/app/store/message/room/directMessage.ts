@@ -52,7 +52,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
           const removedParticipant = currentParticipants[removedIndex];
           // The participants that followed it, so a rollback can anchor to whichever of them is still there —
           // An index cannot, because a removal that overlapped this one has shifted someone else into that slot
-          const followingIds = currentParticipants.slice(removedIndex + 1).map(({ id }) => id);
+          const followingIds = new Set(currentParticipants.slice(removedIndex + 1).map(({ id }) => id));
           directMessageParticipantsMap.value.set(
             roomId,
             currentParticipants.filter(({ id }) => id !== userId),
@@ -63,7 +63,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
             // Restore only this participant, ahead of the first one that still follows it. Reinstating a
             // Whole-list snapshot would re-add anyone a removal that overlapped this one had already taken out
             const participantsNow = [...(directMessageParticipantsMap.value.get(roomId) ?? [])];
-            const followingIndex = participantsNow.findIndex(({ id }) => followingIds.includes(id));
+            const followingIndex = participantsNow.findIndex(({ id }) => followingIds.has(id));
             participantsNow.splice(
               followingIndex === -1 ? participantsNow.length : followingIndex,
               0,

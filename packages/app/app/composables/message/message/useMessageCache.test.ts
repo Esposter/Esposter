@@ -3,6 +3,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
+import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { goOffline } from "@/composables/shared/network.test";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
@@ -19,7 +20,6 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(useMessageCache, () => {
   let router: Router;
   let wrapper: VueWrapper;
-  let flush: () => Promise<void>;
   let items: Ref<MessageEntity[]>;
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
@@ -27,7 +27,7 @@ describe(useMessageCache, () => {
   const message = "message";
   const flushCache = async () => {
     await flushPromises();
-    await flush();
+    await waitForSynchronizedFunctions();
   };
   // Router.currentRoute is a shallowRef, so mutating params.id does not trigger
   // Reactivity — this helper replaces the mutation and forces dependents to update
@@ -47,7 +47,7 @@ describe(useMessageCache, () => {
           triggerRef(router.currentRoute);
           const dataStore = useDataStore();
           ({ items } = storeToRefs(dataStore));
-          ({ flush } = useMessageCache());
+          useMessageCache();
 
           onUnmounted(() => {
             items.value = [];
@@ -67,19 +67,9 @@ describe(useMessageCache, () => {
     await resetIndexedDb();
   });
 
-  test("persists messages to cache when items change", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    await mountCache();
-    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
-    await flushCache();
-    const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
-
-    expect(cachedMessages).toHaveLength(1);
-    expect(takeOne(cachedMessages).message).toStrictEqual(message);
-  });
-
+  // The cache lifecycle itself belongs to usePaginationCache and is tested there for both variants. This suite
+  // Owns only what is specific to messages: the getWriteItems filter below, and the wiring — the route id it
+  // Takes as its partition key and the store hook it hydrates through
   test("does not persist loading messages", async () => {
     expect.hasAssertions();
 

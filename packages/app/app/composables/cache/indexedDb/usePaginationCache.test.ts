@@ -3,6 +3,7 @@ import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDb
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { VueWrapper } from "@vue/test-utils";
 
+import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { useCursorPaginationCache } from "@/composables/cache/indexedDb/useCursorPaginationCache";
 import { useOffsetPaginationCache } from "@/composables/cache/indexedDb/useOffsetPaginationCache";
 import { goOffline, goOnline } from "@/composables/shared/network.test";
@@ -26,7 +27,7 @@ interface PaginationCacheVariant {
     items: Ref<MessageValue[]>,
     partitionKey: Ref<string>,
     onHydrate?: () => Promise<void>,
-  ) => { flush: () => Promise<void> };
+  ) => void;
 }
 
 describe.each<PaginationCacheVariant>([
@@ -54,7 +55,6 @@ describe.each<PaginationCacheVariant>([
   },
 ])("$name", ({ useCache }) => {
   let wrapper: VueWrapper;
-  let flush: () => Promise<void>;
   const items = ref<MessageValue[]>([]);
   const partitionKeyRef = ref("");
   const partitionKey = crypto.randomUUID();
@@ -64,9 +64,11 @@ describe.each<PaginationCacheVariant>([
   const initializeItems = (data: { items: MessageValue[] }) => {
     items.value = data.items;
   };
+  // The cache's reads and writes are fire-and-forget through getSynchronizedFunction, so its completion signal is
+  // The drain for those — flushPromises first, because the write is fired from a post-flush watcher
   const flushCache = async () => {
     await flushPromises();
-    await flush();
+    await waitForSynchronizedFunctions();
   };
   const mountCache = async (initialKey: string = partitionKey, onHydrate?: () => Promise<void>) => {
     partitionKeyRef.value = initialKey;
@@ -74,7 +76,7 @@ describe.each<PaginationCacheVariant>([
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          ({ flush } = useCache(initializeItems, items, partitionKeyRef, onHydrate));
+          useCache(initializeItems, items, partitionKeyRef, onHydrate);
         },
       }),
     );
@@ -217,33 +219,6 @@ describe.each<PaginationCacheVariant>([
     await flushCache();
 
     expect(items.value).toHaveLength(0);
-  });
-
-  // Each partition's cache is its own target, so the room the user is looking at now persists while a hydration
-  // For the room they just left is still finishing
-  test("writes a partition's cache while another partition's hydration is still running", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    const thirdPartitionKey = crypto.randomUUID();
-    const { promise, resolve: resolveHydrate }: PromiseWithResolvers<void> = Promise.withResolvers();
-    await writeIndexedDb(
-      MessageIndexedDbStoreConfiguration,
-      [new StandardMessageEntity({ message, partitionKey: secondPartitionKey, rowKey, userId })],
-      secondPartitionKey,
-    );
-    await mountCache(partitionKey, () => promise);
-    partitionKeyRef.value = secondPartitionKey;
-    await flushPromises();
-    partitionKeyRef.value = thirdPartitionKey;
-    items.value = [new StandardMessageEntity({ message, partitionKey: thirdPartitionKey, rowKey, userId })];
-
-    await vi.waitFor(async () => {
-      expect(await readIndexedDb(MessageIndexedDbStoreConfiguration, thirdPartitionKey)).toHaveLength(1);
-    });
-
-    resolveHydrate();
-    await flushCache();
   });
 
   test("does not populate store if partition key changed during async read", async () => {

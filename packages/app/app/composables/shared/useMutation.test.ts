@@ -234,7 +234,7 @@ describe(useMutation, () => {
     await executeMutation(() => Promise.resolve(), { isSupersede: true, key });
     resolveSuperseded();
 
-    expect(await superseded).toStrictEqual({ status: MutationStatus.Stale });
+    await expect(superseded).resolves.toStrictEqual({ status: MutationStatus.Stale });
   });
 
   test("drops the superseded onSuccess for overlapping supersede writes with the same key", async () => {
@@ -276,7 +276,7 @@ describe(useMutation, () => {
     await executeQuery(() => Promise.resolve(), { key, onSuccess: freshOnSuccess });
     resolveSuperseded();
 
-    expect(await superseded).toStrictEqual({ status: MutationStatus.Stale });
+    await expect(superseded).resolves.toStrictEqual({ status: MutationStatus.Stale });
     expect(supersededOnSuccess).not.toHaveBeenCalled();
     expect(freshOnSuccess).toHaveBeenCalledTimes(1);
   });
@@ -298,7 +298,7 @@ describe(useMutation, () => {
     await executeQuery(() => Promise.resolve(), { key });
     rejectSuperseded(new Error("error"));
 
-    expect(await superseded).toStrictEqual({ status: MutationStatus.Stale });
+    await expect(superseded).resolves.toStrictEqual({ status: MutationStatus.Stale });
     expect(alerts.value).toHaveLength(0);
   });
 
@@ -321,8 +321,8 @@ describe(useMutation, () => {
     await flushPromises();
     resolveQuery("result");
 
-    expect(await joined).toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
-    expect(await inFlight).toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+    await expect(joined).resolves.toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+    await expect(inFlight).resolves.toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
     expect(query).toHaveBeenCalledTimes(1);
     expect(onSuccess).toHaveBeenCalledExactlyOnceWith("result");
     expect(joinedOnSuccess).not.toHaveBeenCalled();
@@ -345,8 +345,8 @@ describe(useMutation, () => {
     await flushPromises();
     rejectQuery(error);
 
-    expect(await joined).toStrictEqual({ error, status: MutationStatus.Failed });
-    expect(await inFlight).toStrictEqual({ error, status: MutationStatus.Failed });
+    await expect(joined).resolves.toStrictEqual({ error, status: MutationStatus.Failed });
+    await expect(inFlight).resolves.toStrictEqual({ error, status: MutationStatus.Failed });
   });
 
   // The superseded read applies no state and runs no callback, so a caller that joined it would resolve holding
@@ -368,8 +368,8 @@ describe(useMutation, () => {
     const joined = executeQuery(() => Promise.resolve("joined"), { isExclusive: true, key, onSuccess });
     resolveExclusive("exclusive");
 
-    expect(await joined).toStrictEqual({ result: "joined", status: MutationStatus.Succeeded });
-    expect(await exclusive).toStrictEqual({ status: MutationStatus.Stale });
+    await expect(joined).resolves.toStrictEqual({ result: "joined", status: MutationStatus.Succeeded });
+    await expect(exclusive).resolves.toStrictEqual({ status: MutationStatus.Stale });
     expect(onSuccess.mock.calls).toStrictEqual([["replacement"], ["joined"]]);
   });
 

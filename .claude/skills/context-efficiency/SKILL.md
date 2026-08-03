@@ -33,4 +33,6 @@ A fixed sleep is wrong in both directions — wasted when the work finished earl
 
 ## Diff against a clean tree before chasing an error
 
-Generated types go stale. A typecheck can report errors in files the change never touched — investigating those is pure waste. Before diagnosing any failure in unrelated code, confirm the baseline: stash and re-run. The question is never "are there errors", it is **"does my change add errors"**.
+Generated types go stale, and workspace `dist` output goes stale faster — a typecheck reporting that `@esposter/db` "has no exported member" something long-standing is a build artifact, not a regression. Rebuild the packages the errors name and re-run before reading a single one of them. The question is never "are there errors", it is **"does my change add errors"**.
+
+**"Pre-existing" means pre-dating the change, and HEAD is not that.** On a branch where the work is committed as it goes, HEAD already contains the change under suspicion, so "it fails at HEAD too" proves only that the failure isn't from the uncommitted edit on top. Pick the commit before the one that touched the relevant file (`git log --stat -- <path>`) and check the source there with `git show <sha>:<path>` — never `git stash`, which is banned repo-wide. Getting this wrong inverts the conclusion: a real regression gets filed as unrelated and shipped.

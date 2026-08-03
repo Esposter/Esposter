@@ -86,9 +86,9 @@ export const useMutation = () => {
         release = resolve;
       }),
     );
-    return await withFinalizerAsync(async () => {
+    return withFinalizerAsync(async () => {
       await previous;
-      return await run();
+      return run();
     }, release);
   };
   const settle = async <TResult>(
@@ -96,7 +96,7 @@ export const useMutation = () => {
     { applyOptimistic, checkIsStale, isSilentWhenStale, onError, onSuccess }: OperationContext<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
     const rollback = await applyOptimistic?.();
-    return await getResultAsync(() => operate(checkIsStale)).match<Promise<MutationOutcome<TResult>>>(
+    return getResultAsync(() => operate(checkIsStale)).match<Promise<MutationOutcome<TResult>>>(
       async (result) => {
         // The target already holds a newer call's value, so applying this older one would undo it
         if (checkIsStale()) return { status: MutationStatus.Stale };
@@ -128,7 +128,7 @@ export const useMutation = () => {
     const sharedQuery = isExclusive ? sharedQueries.get(key) : undefined;
     // The call already in flight applies the state and runs the callbacks for this target, so awaiting it is
     // The whole read — the joiner sees the same data and the same outcome one request later
-    if (sharedQuery) return await sharedQuery;
+    if (sharedQuery) return sharedQuery;
 
     const checkIsStale = getCheckIsStale(key);
     claimKey(key);
@@ -148,7 +148,7 @@ export const useMutation = () => {
     // The compiler cannot state that a target's entry carries the result type its registrant read — the map is
     // Heterogeneous by key, which is the contract every caller sharing one key already lives under
     if (isExclusive) sharedQueries.set(key, outcome as Promise<MutationOutcome<never>>);
-    return await outcome;
+    return outcome;
   };
   // Writes queue per target: discarding one loses its error and its rollback, so it is never dropped by
   // Default — a caller opts into latest-wins with isSupersede where dropping the earlier call is the intent
@@ -163,19 +163,12 @@ export const useMutation = () => {
     const run = () => settle(mutate, { applyOptimistic, checkIsStale, isSilentWhenStale: false, onError, onSuccess });
     // The finalizer guarantees pending and queue bookkeeping unwind even when applyOptimistic or a callback
     // Throws, so a thrown callback can never strand the key as permanently pending or wedge its queue
-    return await withFinalizerAsync(
+    return withFinalizerAsync(
       () => (isSupersede ? run() : enqueue(key, run)),
       () => {
         releaseKey(key);
       },
     );
   };
-  // Resolves once nothing this instance issued is still in flight. It awaits the operations themselves rather
-  // Than watching isPending settle, so a caller that must observe landed state — a cache written from watchers,
-  // Where nothing hands the promise back — has a real completion signal instead of a timer to poll
-  const flush = async () => {
-    while (queues.size > 0 || sharedQueries.size > 0)
-      await Promise.allSettled([...queues.values(), ...sharedQueries.values()]);
-  };
-  return { executeMutation, executeQuery, flush, getIsPending, isPending };
+  return { executeMutation, executeQuery, getIsPending, isPending };
 };
