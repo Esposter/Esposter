@@ -140,12 +140,20 @@ git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 
 
 Rename-token-only edits are not `R100` (they have a content diff), but when the sweep landed as **its own commit** they can be classified **exactly** — by replaying the substitution and demanding the result reproduce the committed blob byte-for-byte. Never classify by line counts: a token substitution rewrites each affected line in place, so `--numstat` is symmetric, but a balanced logic edit is symmetric too and the filter cannot tell them apart.
 
-Set `SED` to the sweep's substitutions (one `-e` per rename), then:
+Set `SED` to the sweep's substitutions (one `-e` per rename) — GNU sed, whose `\b` word boundary the identifier substitutions rely on — then:
 
 ```bash
+set -euo pipefail
 SHA=<rename-sha> SED='s/\bOldName\b/NewName/g'
+# a partial path list silently under-protects files, so build it in a checked loop rather than
+# `grep -v | xargs` — an empty commit list must not fall through to `git show` on HEAD
+otherPaths=$(mktemp)
+trap 'rm -f "$otherPaths"' EXIT
 # every sibling commit in the range, not just one — a file any of them touched is reviewable
-git rev-list <base>..<head> | grep -v "$SHA" | xargs -n1 git show --name-only --format="" | sort -u > /tmp/other.txt
+git rev-list <base>..<head> | while IFS= read -r commit; do
+  [ "$commit" = "$SHA" ] && continue
+  git show --name-only --format="" "$commit"
+done | sort -u > "$otherPaths"
 git diff -M --name-status "$SHA^" "$SHA" | while IFS=$'\t' read -r status old new; do
   # R carries old and new paths; M reuses the one path. A/D are content decisions, never mechanical
   case "$status" in
@@ -153,11 +161,18 @@ git diff -M --name-status "$SHA^" "$SHA" | while IFS=$'\t' read -r status old ne
     M)  path_old="$old"; path_new="$old" ;;
     *)  continue ;;
   esac
-  # §When to Exclude never lets these out, whatever the diff says
-  case "$path_new" in
-    *.test.ts|*.test-d.ts|packages/app/content/docs/*|.claude/skills/*|*.coderabbit.yaml) continue ;;
-  esac
-  grep -qxF "$path_new" /tmp/other.txt && continue
+  # both paths are tested: a rename out of a protected tree is still a change to that tree, and a
+  # sibling commit that touched the pre-rename path is a content change this file carries
+  isKept=""
+  for path in "$path_old" "$path_new"; do
+    # §When to Exclude never lets these out, whatever the diff says
+    case "$path" in
+      *.test.ts|*.test-d.ts|packages/app/content/docs/*|.claude/skills/*) isKept=1 ;;
+      *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|packages/app/server/db/migrations/*) isKept=1 ;;
+    esac
+    grep -qxF "$path" "$otherPaths" && isKept=1
+  done
+  [ -n "$isKept" ] && continue
   # exact: replaying the substitution on the parent must reproduce the committed blob
   if git show "$SHA^:$path_old" | sed "$SED" | cmp -s - <(git show "$SHA:$path_new"); then
     echo "    - \"!$path_new\""
@@ -165,7 +180,7 @@ git diff -M --name-status "$SHA^" "$SHA" | while IFS=$'\t' read -r status old ne
 done
 ```
 
-`cmp` is the whole guarantee: if replaying the substitution reproduces the file exactly, there is by construction no other content change, so this cannot admit a balanced logic edit. It errs only toward keeping files reviewable — a rename that forced a reformatter rewrap, or a sweep whose `SED` you under-specified, fails the compare and stays in. On a multi-hundred-file sweep the line-symmetry filter it replaces admitted roughly two thirds of the commit on no evidence at all, where the replay admits only files whose every changed line it can account for.
+`cmp` is the whole guarantee: if replaying the substitution reproduces the file exactly, there is by construction no other content change, so this cannot admit a balanced logic edit. It errs only toward keeping files reviewable — a rename that forced a reformatter rewrap, or a sweep whose `SED` you under-specified, fails the compare and stays in. On a multi-hundred-file sweep the line-symmetry filter it replaces admitted roughly two-thirds of the commit on no evidence at all, where the replay admits only files whose every changed line it can account for.
 
 If the sweep is mixed into a commit carrying other work, there is no parent blob to replay against — read the diffs by hand.
 
