@@ -7,9 +7,10 @@ import { stubFor } from "./stubFor.test";
 
 // Dedupe and resolution. One floor, enforced here: a verdict its own author would not defend routes the finding
 // To the pass with the budget to settle it, and nothing is dropped for confidence.
+const UNDER_CONFIDENT = () => ({ confidence: 40 });
+
 describe("code-review dedupe and resolve", () => {
   const RESOLVED = { confidence: 95, evidence: "read the callee", verdict: "CONFIRMED" };
-  const UNDER_CONFIDENT = () => ({ confidence: 40 });
 
   test("collapses two reports of one line into a single finding", async () => {
     expect.hasAssertions();

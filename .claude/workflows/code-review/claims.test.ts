@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
 
+import type { Claim } from "./models/Claim";
+
 import { AREA_ARGS, AREA_SCOPE } from "./constants.test";
 import { createAreaFiles } from "./createAreaFiles.test";
 import { createSeam } from "./createSeam.test";
@@ -10,8 +12,13 @@ import { stubFor } from "./stubFor.test";
 // The claim inventory is what an area review checks the code against, so every rule here protects one number:
 // How much of the record the run actually audited. Overstating it is the failure mode, in both directions —
 // A claim counted but never shown, and a correct docs page reported as wrong because nobody could read its code.
+const createClaim = (claim: string, pathPrefixes?: string[]): Claim => ({
+  claim,
+  pathPrefixes,
+  source: "docs/cache.md",
+});
+
 describe("code-review claims", () => {
-  const createClaim = (claim: string, pathPrefixes?: string[]) => ({ claim, pathPrefixes, source: "docs/cache.md" });
   const SINGLE_FLIGHT = "reads are single-flight";
 
   test("drops a claim that is missing its source", async () => {

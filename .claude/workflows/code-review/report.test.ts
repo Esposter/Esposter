@@ -251,7 +251,7 @@ describe("code-review report", () => {
 
     const run = await runReview("high 812", stubFor({ candidates: [CANDIDATE] }));
 
-    expect(Object.keys(run.result).sort()).toStrictEqual([
+    expect(Object.keys(run.result).toSorted()).toStrictEqual([
       "findings",
       "level",
       "mode",

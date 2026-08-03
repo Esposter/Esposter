@@ -3,7 +3,8 @@ import { describe } from "vitest";
 import type { AgentStub } from "./models/AgentStub";
 import type { StubOptions } from "./models/StubOptions";
 
-import { SCOPE_DEFAULT, VERDICT_DEFAULT } from "./constants.test";
+import { SCOPE_DEFAULT } from "./constants.test";
+import { createVerdict } from "./createVerdict.test";
 import { getCandidateIndexes } from "./getCandidateIndexes.test";
 
 /**
@@ -27,12 +28,7 @@ export const stubFor = ({
     if (label.startsWith("resolve:")) return resolution;
     if (label.startsWith("verify:"))
       return {
-        verdicts: getCandidateIndexes(prompt).map((index) => ({
-          index,
-          verdict: "CONFIRMED",
-          ...VERDICT_DEFAULT,
-          ...verdictFor(index, prompt),
-        })),
+        verdicts: getCandidateIndexes(prompt).map((index) => createVerdict(index, verdictFor(index, prompt))),
       };
     if (finderFor) {
       const answer = finderFor(label);

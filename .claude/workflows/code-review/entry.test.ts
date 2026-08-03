@@ -53,7 +53,7 @@ describe("code-review entry", () => {
 
     // Tokenising and re-joining collapses a pasted skip list into one run-on directive; the parse slices.
     const target = "review src/x.ts\nskip generated output";
-    const run = await runReview("high " + target, stubFor({ candidates: [CANDIDATE] }));
+    const run = await runReview(`high ${target}`, stubFor({ candidates: [CANDIDATE] }));
 
     expect(getPrompt(run, "scope")).toContain(target);
     expect(getPrompt(run, "angle-A")).toContain(target);
@@ -94,7 +94,9 @@ describe("code-review entry", () => {
     const empty = await runReview("high", stubFor({ scope: { files: [] } }));
     const full = await runReview("high", stubFor({ candidates: [CANDIDATE] }));
 
-    expect(Object.keys(empty.result.stats ?? {}).sort()).toStrictEqual(Object.keys(full.result.stats ?? {}).sort());
+    expect(Object.keys(empty.result.stats ?? {}).toSorted()).toStrictEqual(
+      Object.keys(full.result.stats ?? {}).toSorted(),
+    );
   });
 
   test("requires a diff command in diff mode and not in area mode", async () => {
