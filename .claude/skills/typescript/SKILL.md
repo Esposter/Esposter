@@ -132,7 +132,7 @@ If none apply (sync body, no callback slot to widen), restructure so the sync te
 ## Control Flow
 
 - **Guard clauses first** — `if (!condition) return` to exit early instead of wrapping the body in `if`. Invert and return early aggressively.
-- **One guard per outcome, not one per condition** — consecutive guards whose bodies are identical are a single guard with `||`. `if (a) return; if (b) return;` is always `if (a || b) return;`. Splitting them reads as though the branches differ and invites a later edit to give one of them its own body, which is how two conditions that must stay in lockstep drift apart. Split only when the bodies genuinely differ (a distinct throw, a log, a different return value).
+- **One guard per outcome, not one per condition** — consecutive guards whose bodies are identical are a single guard with `||` — `if (a) return; if (b) return;` collapses to `if (a || b) return;` wherever the two conditions are independent. Splitting them reads as though the branches differ and invites a later edit to give one of them its own body, which is how two conditions that must stay in lockstep drift apart. Keep them split when the bodies genuinely differ (a distinct throw, a log, a different return value), or when the second condition depends on the first having passed or has side effects — `if (!a) return; if (a.b) return;` throws once merged.
 - **Combine consecutive guards with `||`** when they share the same return value:
 
   ```ts

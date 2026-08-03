@@ -370,5 +370,4 @@ describe(useDataStore, () => {
     expect(items.value).toHaveLength(1);
     expect(takeOne(items.value).message).toBe(updatedMessage);
   });
-
 });

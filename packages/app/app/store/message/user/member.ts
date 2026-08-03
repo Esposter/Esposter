@@ -1,7 +1,7 @@
-import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { User } from "@esposter/db-schema";
 
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
+import { MemberCounts } from "@/models/message/user/MemberCounts";
 import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
@@ -28,9 +28,25 @@ export const useMemberStore = defineStore("message/user/member", () => {
     const member = members.value.find(({ id }) => id === userId);
     return member ? getDisplayName(member, roomStore.currentRoomId) : userId;
   };
-  const count = ref(0);
-  // Server-computed group totals for the member list headers — the paginated items only hold loaded pages
-  const countsByTopRole = ref<MemberCountByTopRole[]>([]);
+  // Server-computed totals for the member list headers — the paginated items only hold loaded pages. Keyed by
+  // Room for the same reason the list is: they describe one room, only the network can produce them, and a
+  // Switch made offline would otherwise leave the room being entered wearing the totals of the one just left
+  const { data: memberCounts } = useDataMap(
+    () => roomStore.currentRoomId,
+    () => new MemberCounts(),
+  );
+  const count = computed({
+    get: () => memberCounts.value.count,
+    set: (newCount) => {
+      memberCounts.value.count = newCount;
+    },
+  });
+  const countsByTopRole = computed({
+    get: () => memberCounts.value.countsByTopRole,
+    set: (newCountsByTopRole) => {
+      memberCounts.value.countsByTopRole = newCountsByTopRole;
+    },
+  });
   topRoleChangeHooks.register((roomId, previousTopRoleId, newTopRoleId) => {
     // Counts track the currently open room; the roleless group derives from the total, so "" is a no-op
     if (roomId !== roomStore.currentRoomId) return;

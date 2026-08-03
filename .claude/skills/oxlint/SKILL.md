@@ -31,9 +31,11 @@ The vitest rules come from oxlint's `vitest` plugin (`@vitest/eslint-plugin` is 
 
 ## The `require-await` autofix can break a Promise-returning function
 
-`require-await` strips `async` from a function whose body never awaits — and the lint hook applies it to any file you edit, so it lands on code you did not think you were touching. `async` is not only about awaiting: it also wraps a plain return value in a promise. A function annotated `: Promise<T>` that returns a bare `T` on one early-exit path (a `Dropped`/no-op outcome returned before any async work) stops compiling the moment the keyword goes, and the error surfaces on the *return* line, far from the edit that caused it.
+`require-await` strips `async` from a function whose body never awaits — and the lint hook applies it to any file you edit, so it lands on code you did not think you were touching. `async` is not only about awaiting: it also wraps a plain return value in a promise. A function annotated `: Promise<T>` that returns a bare `T` on one early-exit path (a `Dropped`/no-op outcome returned before any async work) stops compiling the moment the keyword goes, and the error surfaces on the _return_ line, far from the edit that caused it.
 
 Fix it by making that path's value a promise (`return Promise.resolve({ status: … })`) rather than re-adding `async` — the keyword goes straight back out on the next edit of the file. Typecheck after any lint-hook autofix that touched a signature; the hook reports success either way.
+
+That fix restores the return type but not the rejection path: without `async`, a throw in the synchronous part of the body escapes at the call site instead of rejecting the returned promise, so a caller that only attaches `.catch()` never sees it. When the function is written to throw for its callers to handle as a rejection, keep `async` and disable `require-await` on it with that reason.
 
 ## Which directive to use
 

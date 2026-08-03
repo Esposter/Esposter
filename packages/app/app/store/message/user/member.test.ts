@@ -35,13 +35,19 @@ describe(useMemberStore, () => {
     updatedAt: new Date("1970-01-01"),
   };
 
+  // The route is a shallowRef, so mutating a param in place is invisible to everything deriving the room from it
+  const setRouteId = (id: string) => {
+    router.currentRoute.value.params.id = id;
+    triggerRef(router.currentRoute);
+  };
+
   beforeAll(() => {
     router = useRouter();
   });
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    router.currentRoute.value.params.id = roomId;
+    setRouteId(roomId);
   });
 
   test("deletes a roled member out of their role group", () => {
@@ -75,7 +81,7 @@ describe(useMemberStore, () => {
 
     expect(members.value).toStrictEqual([member]);
 
-    router.currentRoute.value.params.id = crypto.randomUUID();
+    setRouteId(crypto.randomUUID());
 
     expect(members.value).toStrictEqual([]);
   });

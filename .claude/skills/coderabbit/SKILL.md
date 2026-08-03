@@ -19,7 +19,7 @@ CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**: deve
 
 **Never add `reviews.auto_review.base_branches` to `.coderabbit.yaml`.** Manual triggering on develop-base PRs is deliberate, not a gap waiting to be closed: it keeps control of _when_ a review starts, which is what makes the never-push-into-a-running-review rule below workable, and it stops every intermediate push from spending a rate-limit slot. A skipped develop-base PR is the configured behaviour — if a PR was not reviewed, comment `@coderabbitai review`, do not change the config. This entry exists because the setting reads like an obvious fix and has been "helpfully" added before.
 
-Commit exclusions **directly to the base branch (`develop`)** as a standalone commit, separate from the work they cover. An exclusion committed on the feature branch does nothing.
+Commit exclusions **directly to the PR's base branch** — the `baseRefName` read above, not a hard-coded `develop` — as a standalone commit, separate from the work they cover. An exclusion committed on the head branch does nothing.
 
 The two branches diverge and that is expected: `develop` carries the live temporary exclusion block, `main` carries only the permanent entries (it picks up the block on release merges and loses it when the block is removed). Always check the branch you are actually on:
 
@@ -123,7 +123,7 @@ A file that was renamed _and_ carries a real logic change still needs review. Wh
 
 Never excludable, whatever the budget:
 
-- **Documentation** (`packages/app/content/docs/**`) — docs are the design record, not commentary. A wrong standard there propagates into every change built on it afterwards, and prose is precisely what a human reviewer catches and no typechecker can.
+- **Documentation** (`packages/app/content/docs/**`) — docs are the design record, not commentary. A wrong standard there propagates into every change built on it afterward, and prose is precisely what a human reviewer catches and no typechecker can.
 - **Agent skills** (`.claude/skills/**`) — a skill binds every future agent session. An unreviewed wrong rule is worse than unreviewed wrong code, because it silently authors more wrong code.
 - **Tests** (`*.test.ts`, `*.test-d.ts`) — tests are the behaviour contract. One asserting the wrong thing is a defect that passes CI forever, and "the source it covers is still reviewed" does not catch it — the reviewer sees green assertions and infers the intent from them.
 - **Config, schema, and migration inputs** — small diffs with large blast radius.
@@ -141,9 +141,11 @@ git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 
 Rename-token-only edits are not `R100` (they have a content diff), but when the sweep landed as **its own commit** they can still be derived mechanically. A 1:1 identifier substitution rewrites each affected line in place, so its `--numstat` is line-symmetric; anything that also gained or lost a line carries real content:
 
 ```bash
-# files touched ONLY by the rename commit (anything a sibling commit also touched has reviewable content)
-git show --name-only --format="" <rename-sha> | grep "\.test\.ts$" | sort > /tmp/renamed.txt
-git show --name-only --format="" <other-sha> | sort -u > /tmp/other.txt
+# files touched ONLY by the rename commit (anything a sibling commit also touched has reviewable content).
+# Tests are dropped here because §When to Exclude never allows them out, not because they are rename-free
+git show --name-only --format="" <rename-sha> | grep -vE "\.test(-d)?\.ts$" | sort > /tmp/renamed.txt
+# every sibling commit in the range, not just one — a file any of them touched is reviewable
+git rev-list <base>..<head> | grep -v <rename-sha> | xargs -n1 git show --name-only --format="" | sort -u > /tmp/other.txt
 # of those, keep the ones whose diff is symmetric — added == removed
 git show --numstat --format="" <rename-sha> | awk '$1==$2 {print $3}' | sort > /tmp/symmetric.txt
 comm -12 <(comm -23 /tmp/renamed.txt /tmp/other.txt) /tmp/symmetric.txt

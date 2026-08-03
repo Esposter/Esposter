@@ -121,6 +121,8 @@ Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when the
 
 **Do NOT use** `useDataMap` when the store reads/writes arbitrary keys with no "current" concept — use a plain `ref(new Map<string, T>())` with a manual getter.
 
+**State describing one key must be keyed by it — a plain `ref` is only correct when the key cannot change under the store.** A global ref outlives the switch: at the moment the current id changes it still holds the previous key's value, so anything asking "is this the current key's data" reads a stale yes. Consumers then grow guards over ambiguous state instead of getting an answer. That is what the member store's list and its two server-computed totals each were before they were keyed on `currentRoomId`; see `content/docs/esbabbler/offline-cache.md` for the failure it produced offline. Applies to every field of that state, not just the list — a keyed list beside global counts is the same bug, half-fixed.
+
 ```typescript
 // useDataMap — "current room" concept applies
 const roomStore = useRoomStore();

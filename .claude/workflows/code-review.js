@@ -1221,9 +1221,7 @@ for (const c of allSurviving) {
     seenAt.primary = c;
   } else seenAt.duplicates.push(c);
 }
-const surviving = [...byLocation.values()]
-  .map((g) => ({ ...g.primary, preMerged: g.duplicates }))
-  .concat(unkeyed);
+const surviving = [...byLocation.values()].map((g) => ({ ...g.primary, preMerged: g.duplicates })).concat(unkeyed);
 const collapsed = allSurviving.length - surviving.length;
 if (collapsed > 0) log("dedupe: " + collapsed + " duplicate reports collapsed onto " + surviving.length + " findings");
 log(

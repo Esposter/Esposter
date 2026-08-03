@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { User } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
@@ -18,6 +19,7 @@ describe(useMemberCache, () => {
   let router: Router;
   let wrapper: VueWrapper;
   let count: Ref<number>;
+  let countsByTopRole: Ref<MemberCountByTopRole[]>;
   let members: Ref<User[]>;
   let initializeCursorPaginationData: (data: CursorPaginationData<User>) => void;
   const partitionKey = crypto.randomUUID();
@@ -46,12 +48,13 @@ describe(useMemberCache, () => {
           router.currentRoute.value.params.id = initialRouteId;
           triggerRef(router.currentRoute);
           const memberStore = useMemberStore();
-          ({ count, members } = storeToRefs(memberStore));
+          ({ count, countsByTopRole, members } = storeToRefs(memberStore));
           ({ initializeCursorPaginationData } = memberStore);
           useMemberCache();
 
           onUnmounted(() => {
             count.value = 0;
+            countsByTopRole.value = [];
             initializeCursorPaginationData(new CursorPaginationData<User>());
           });
         },
@@ -77,11 +80,16 @@ describe(useMemberCache, () => {
 
     await writeIndexedDb(MemberIndexedDbStoreConfiguration, [user], secondPartitionKey);
     await mountCache();
+    // Both totals are server-computed, so the room left behind is the last thing that set them. Neither can be
+    // Refetched offline, and the room being switched into must not inherit either
+    count.value = 5;
+    countsByTopRole.value = [{ count: 5, roleId: crypto.randomUUID() }];
     setRouteId(secondPartitionKey);
     await flushCache();
 
     expect(members.value).toHaveLength(1);
     expect(count.value).toBe(1);
+    expect(countsByTopRole.value).toStrictEqual([]);
     expect(takeOne(members.value).id).toStrictEqual(user.id);
   });
 });

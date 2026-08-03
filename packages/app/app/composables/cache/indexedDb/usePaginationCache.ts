@@ -114,17 +114,14 @@ export const usePaginationCache = <
   // And connectivity, because a network lost in place leaves a partition whose load never landed empty until a
   // Switch the user has no reason to make. Watching the key alone covered only a room-to-room switch made
   // Inside an already-running session, which is the one path the tests happened to cover
-  watchImmediate(
-    [() => toValue(partitionKey), online],
-    ([newPartitionKey, newOnline], previous) => {
-      // Pre-flush, so the write watcher sees the partition as unready for the list it arrives holding. Only a
-      // Switch drops it — a connectivity flip leaves the partition exactly as loaded as it already was
-      if (newPartitionKey !== previous?.[0]) readyPartitionKey = undefined;
-      if (!newPartitionKey || newOnline) return;
+  watchImmediate([() => toValue(partitionKey), online], ([newPartitionKey, newOnline], previous) => {
+    // Pre-flush, so the write watcher sees the partition as unready for the list it arrives holding. Only a
+    // Switch drops it — a connectivity flip leaves the partition exactly as loaded as it already was
+    if (newPartitionKey !== previous?.[0]) readyPartitionKey = undefined;
+    if (!newPartitionKey || newOnline) return;
 
-      readCachedItems(newPartitionKey);
-    },
-  );
+    readCachedItems(newPartitionKey);
+  });
 
   // Nothing to return: both operations are fire-and-forget through getSynchronizedFunction, so a caller that
   // Needs them landed awaits waitForSynchronizedFunctions() — the drain that already covers every one of them
