@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Always runs the project opus-pinned workflow script; never an inline/local review, never the review skill, never the built-in workflow by name. Apply on any review request.
+description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Always runs the project opus-pinned workflow script; never an inline/local review, never the review skill, never the built-in workflow by name. Also owns what a run costs and what bounds it, the confidence numbers on its verdicts, how to close a finding so the next review cannot reopen it, and the stop rule for when to re-run and when a round is converged. Apply on any review request, when deciding whether to run another round, and when applying fixes from one.
 ---
 
 # Code Review — One Entry Point
@@ -49,7 +49,7 @@ Raise coverage by **raising the level** (`xhigh`/`max` widen `perAngle`, `maxSea
 
 Cost is **agents × the material each one reads**, and agent count is set by the level, not by the size of the change — so a five-file review of dense code costs about what a five-hundred-file review of shallow code does. Three bounds keep that honest, and each one logs when it bites:
 
-- **Fan-out scales with the territory.** Under ~300 changed lines (`stats` reports the trim) the level's angle count and per-angle cap are reduced: a small change does not hold five angles' worth of distinct questions, and every extra finder re-reads the same files.
+- **Fan-out scales with the territory.** Under ~300 changed lines _and_ fewer than 10 files, the level's angle count and per-angle cap are reduced: a small change does not hold five angles' worth of distinct questions, and every extra finder re-reads the same files. `stats.angles` and `stats.perAngle` report what actually ran — a trimmed run is otherwise indistinguishable from a full one.
 - **Resolution is budgeted, worst-first.** A resolver reads callers, callees, dependency source and history for one claim, which makes it the most expensive agent in the run — historically ~40% of a run's tokens. Only the top `2 × correctnessAngles` unsettled findings get one; anything below that is dropped rather than shipped unsettled, and the drop is logged.
 - **Confidence gates both directions.** Verifiers and resolvers return a 0-100 confidence with every verdict. Under 70 the verdict is not an answer — CONFIRMED _or_ REFUTED — and the finding is routed to Resolve; under 50 after that, it is dropped. An under-confident CONFIRMED is a fix applied on a guess; an under-confident REFUTED is a real defect dismissed, which returns next run with different wording.
 
@@ -78,6 +78,8 @@ A PLAUSIBLE verdict means a verifier reading one file under a budget could not r
 - **Read the dependency's real source in `node_modules`**, never its reputation — and read the whole path, not the one function named in the claim. `getRouterParams` really does decode only under `{ decode: true }`, and stopping there produced a comment asserting the route param was still percent-encoded; `h3`'s `createAppEventHandler` had already run `_decodePath` on it before routing, and the router then cut the path at the first `?` in that decoded form. One grep refuted the claim as worded and confirmed the defect it was hiding.
 - **Use history.** `git log -S` / `git log -L` answers "was this guard ever here, and what removed it" directly.
 - **Check the record.** A decision stated deliberately with its consequence named REFUTES the finding; a record the code contradicts CONFIRMS it.
+
+A finding the workflow could not settle from the repository comes back carrying `unresolvedBlocker` — the resolver's statement of what is missing. That is the text for the one line below the table; it is never a row.
 
 Only a trigger that genuinely cannot be settled from the repository — a production-only config value, a cloud service's runtime behaviour — may stay unsettled, and it must name that blocker. "The investigation looked large" is not a blocker. **An unsettleable finding is still never a table row**: keep it out of the verdict table entirely and write it as the one line below the table (see Handling findings), phrased as the blocker and the fact that would settle it — "unsettleable without the deployed `MAX_UPLOAD_BYTES`; confirm that value and it decides" — so the user is asked for evidence rather than handed a verdict nobody reached.
 

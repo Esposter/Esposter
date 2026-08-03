@@ -97,6 +97,10 @@ const makeStats = (known) => ({
   level: LEVEL,
   mode: MODE,
   findMode: null,
+  // The fan-out actually run, not the level's nominal one: the small-territory trim changes both, and two runs
+  // Are not comparable without them — a trimmed run reads as a full one on every other field.
+  angles: null,
+  perAngle: null,
   seams: undefined,
   claimsChecked: undefined,
   claimsInventoried: undefined,
@@ -582,9 +586,26 @@ const unlistedFileCount = scope.files.length - listedFiles.length;
 // Have returned a usable partition — one seam is not a partition, so a thin or missing answer falls back to lens
 // Rather than reviewing through a split nobody checked. Every branch feeds the identical candidate schema,
 // Verifier and synthesis: only who reads what changes.
-const rawSeams = (Array.isArray(scope.seams) ? scope.seams : [])
-  .filter((s) => s && s.name && Array.isArray(s.pathPrefixes) && s.pathPrefixes.length > 0)
-  .slice(0, P.maxSeams);
+// A seam is usable only if it points at something. In area mode that is checkable — the prefixes are resolved
+// Against the file set — and a seam whose prefixes resolve to nothing (a glob, an absolute path, files the cap
+// Removed) is not territory: it spawns a finder with nothing to read, counts toward the two-seam partition gate
+// That is supposed to force a lens fallback, and still prints its name in the log and in stats.seams, so a
+// Subsystem nobody opened reads as one that was traced and found clean. Dropped and logged instead. Diff mode's
+// Prefixes are git pathspecs (globs are legitimate there), so they cannot be resolved this way and are taken
+// As given — its equivalent safety net is the whole-diff finder.
+const declaredSeams = (Array.isArray(scope.seams) ? scope.seams : []).filter(
+  (s) => s && s.name && Array.isArray(s.pathPrefixes) && s.pathPrefixes.length > 0,
+);
+const rawSeams = (IS_AREA ? declaredSeams.filter((s) => filesUnder(s.pathPrefixes).length > 0) : declaredSeams).slice(
+  0,
+  P.maxSeams,
+);
+if (IS_AREA && rawSeams.length < declaredSeams.length)
+  log(
+    "area: " +
+      (declaredSeams.length - rawSeams.length) +
+      " seam(s) dropped — their pathPrefixes resolve to no file in scope, so no finder could have read them",
+  );
 // Area mode partitions by the SAME rule as diff mode, and the threshold is lower because an area finder reads
 // Whole files rather than hunks. Not "area is always seam": seam-splitting a small area gives every finder
 // Overlapping territory and identical all-lens instructions, which makes them clones that all report the same
@@ -769,20 +790,33 @@ const SCOPE_BLOCK =
 // File prints NOTHING, and an empty diff under the heading "your slice of it" reads to the verifier as "nothing
 // Changed here" — so it REFUTES for want of evidence exactly the cross-file defects the partition exists to
 // Catch. Those get the whole change instead, with the reason stated, since there is no smaller correct slice.
+// Area mode reaches outside its own file list the same way. The area Scope prompt takes "nothing that merely
+// Imports it", while Angle C traces callers and the boundary block reports against whichever side of a handoff is
+// Wrong — so a cited file outside the area is the NORMAL shape of a cross-boundary finding, not an error. Routing
+// It through materialFor prints "none of these resolved … do NOT open them", which forbids the verifier the one
+// File that could settle the claim, and the whole defect class the seam partition exists for is refuted for want
+// Of evidence. The out-of-area file is named as readable instead, alongside the area itself.
 const VERIFY_SCOPE_BLOCK = (paths) => {
-  const unchanged = IS_AREA ? [] : paths.filter((p) => !scope.files.includes(p));
+  const unchanged = paths.filter((p) => !scope.files.includes(p));
+  const inScope = paths.filter((p) => scope.files.includes(p));
   return (
     "## Review scope\n" +
     (IS_AREA ? "This is an AREA review of " : "The change is ") +
     scope.files.length +
     " files; your slice of it is:\n" +
     (unchanged.length > 0
-      ? "  " +
-        scope.diffCommand +
-        "\n  (" +
-        unchanged.join(", ") +
-        " is NOT in this change — the claim is about how the change affects it, so you are given the whole diff " +
-        "rather than an empty slice. Read that file in full and find the changed code that reaches it.)"
+      ? IS_AREA
+        ? (inScope.length > 0 ? materialFor(inScope) + "\n" : "") +
+          "  (" +
+          unchanged.join(", ") +
+          " is NOT part of the audited area — the claim is about how the area affects it, or how it uses the area, " +
+          "so it is in scope for THIS judgement. Read it in full, plus the area files the claim reaches through.)"
+        : "  " +
+          scope.diffCommand +
+          "\n  (" +
+          unchanged.join(", ") +
+          " is NOT in this change — the claim is about how the change affects it, so you are given the whole diff " +
+          "rather than an empty slice. Read that file in full and find the changed code that reaches it.)"
       : materialFor(paths)) +
     "\nRead the enclosing file(s) in full, not just the cited lines. Widen deliberately when the claim needs it — a " +
     "caller, a callee, the other side of a handoff, " +
@@ -802,6 +836,12 @@ const FINDER_PROMPT = (f) => {
   // Nothing documents both cost a reader a wrong conclusion, and neither has a crash to name. Demanding one
   // Makes the finder either drop the finding or dress a documentation problem up as a runtime failure.
   const isRecordClaim = f.kind === "record-gap" || f.kind === "conformance";
+  // Every area finder is a MIXED finder whatever its declared kind: area mode lets a candidate name its own kind,
+  // And the seam finders — the only ones carrying the claim inventory on a large area — are declared correctness
+  // While being asked in the same prompt to report conformance and record-gap candidates. Keyed on the declared
+  // Kind alone they get "name the user-visible consequence", which is the demand above that makes a finder either
+  // Suppress the documentation finding or invent a crash for it, on exactly the runs seam mode exists for.
+  const isMixedKind = IS_AREA && !isCleanup && !isRecordClaim;
   // Which lens family, then which mode — never mode first. Branching on IS_AREA at the top drops the
   // Cleanup/correctness distinction entirely, so the first preamble-less correctness finder added to area mode
   // Would be told to "review through EACH of the following cleanup lenses" while its candidates were still
@@ -830,7 +870,12 @@ const FINDER_PROMPT = (f) => {
     // Cleanup gets the same override through CLEANUP_PRECEDENCE below.
     (isRecordClaim
       ? "the wrong conclusion a future reader or reviewer would draw from the code alone, and what it costs them. "
-      : "the user-visible consequence (error, wrong output, data loss), not an intermediate state (value stale, set grows). ") +
+      : isMixedKind
+        ? "for a code defect, the user-visible consequence (error, wrong output, data loss) rather than an " +
+          "intermediate state (value stale, set grows); for a conformance or record-gap candidate, the wrong " +
+          "conclusion a future reader or reviewer would draw and what it costs them — never invent a crash for a " +
+          "documentation problem. "
+        : "the user-visible consequence (error, wrong output, data loss), not an intermediate state (value stale, set grows). ") +
     (isCleanup
       ? "Cover whichever lenses apply — you do not need findings from every lens; prioritize the highest-cost issues across all of them. "
       : "") +
@@ -1062,12 +1107,15 @@ const LENSES_TEXT = IS_AREA ? AREA_LENSES_TEXT : ALL_LENSES_TEXT;
 // Path, a typo, a path outside the partition) reaches no agent, and counting it would overstate the one number
 // That says how much of the record this run actually audited.
 const claimsShown = new Set();
+// Matched through `isUnder`, the same segment-aware test the file resolution uses: a raw `startsWith` attaches
+// Every `…/messageDraft` claim to the `…/message` seam, whose files (resolved segment-aware) contain none of that
+// Code — so the finder cannot find the documented behaviour and reports a correct docs page as wrong.
 const claimsFor = (prefixes) =>
   claims.filter(
     (c) =>
       !Array.isArray(c.pathPrefixes) ||
       c.pathPrefixes.length === 0 ||
-      c.pathPrefixes.some((p) => prefixes.some((q) => p.startsWith(q) || q.startsWith(p))),
+      c.pathPrefixes.some((p) => prefixes.some((q) => isUnder(p, q) || isUnder(q, p))),
   );
 // Takes the claims, rather than choosing them: a seam finder passes its own territory's subset, and lens mode's
 // single conformance finder passes the WHOLE inventory. Filtering there too — the same `claimsFor` call — meant
@@ -1390,12 +1438,19 @@ if (toResolve.length > 0) {
         phase: "Resolve",
         schema: RESOLUTION_SCHEMA,
       });
-      // A resolver that dies leaves the finding exactly as the verifier left it — reported, still PLAUSIBLE.
+      // A resolver that dies leaves the finding exactly as the verifier left it — reported, still PLAUSIBLE, per
+      // The resilience contract the mode pages state. `isResolved` is what distinguishes that from a resolver that
+      // Answered: only an answered one may be dropped for low confidence, or a session limit would silently
+      // Delete findings on exactly the degraded runs the reader is told to expect PLAUSIBLE rows from.
       if (r) {
+        c.isResolved = true;
         c.verdict = r.verdict === "UNRESOLVABLE" ? "PLAUSIBLE" : r.verdict;
-        c.confidence = Number.isFinite(r.confidence) ? r.confidence : c.confidence;
-        c.evidence = r.evidence;
+        // An UNRESOLVABLE says "the repository cannot settle this", not "I doubt the finding" — its confidence is
+        // About the resolution attempt, and copying it onto the finding drops the row under the report floor,
+        // Deleting the one thing that needed asking about. The blocker is what gets reported instead.
         if (r.verdict === "UNRESOLVABLE") c.unresolvedBlocker = r.blocker;
+        else c.confidence = Number.isFinite(r.confidence) ? r.confidence : c.confidence;
+        c.evidence = r.evidence;
       }
       return r;
     }),
@@ -1404,11 +1459,18 @@ if (toResolve.length > 0) {
   log("resolve: " + settled + " settled, " + (toResolve.length - settled) + " left undecided");
 }
 
-// A finding a resolver refuted leaves the report the same way a verifier-refuted one does. So does one that came
-// Through both passes without anyone reaching the floor: after a verifier and a resolver have each had it, an
-// Unsettled claim is a question the run could not answer, and printing it as a row hands the reader a decision
-// With less evidence than the agents had. It is dropped, and the count is logged rather than hidden.
-const isReportable = (c) => (Number.isFinite(c.confidence) ? c.confidence : 100) >= REPORT_MIN_CONFIDENCE;
+// A finding a resolver refuted leaves the report the same way a verifier-refuted one does. So does one a resolver
+// ANSWERED without reaching the floor: after a verifier and a resolver have each had it, an unsettled claim is a
+// question the run could not answer, and printing it as a row hands the reader a decision with less evidence than
+// the agents had. It is dropped, and the count is logged rather than hidden.
+// Two exemptions, both because the drop would delete information rather than noise: a resolver that DIED leaves
+// its finding untouched and reportable (the resilience contract the mode pages state — a degraded run must not
+// look like a clean one), and an UNRESOLVABLE keeps its row so the blocker can be handed back as the fact that
+// would settle it.
+const isReportable = (c) =>
+  !c.isResolved ||
+  c.unresolvedBlocker !== undefined ||
+  (Number.isFinite(c.confidence) ? c.confidence : 100) >= REPORT_MIN_CONFIDENCE;
 const surviving = dedupedFindings.filter((c) => c.verdict !== "REFUTED" && !c.droppedUnsettled && isReportable(c));
 const lowConfidence = dedupedFindings.filter((c) => c.verdict !== "REFUTED" && !c.droppedUnsettled && !isReportable(c));
 if (lowConfidence.length > 0)
@@ -1435,6 +1497,8 @@ log(
 const stats = makeStats({
   // Which Find strategy produced these findings — a run is not comparable to another without it.
   findMode: SEAM_MODE ? "seam" : "lens",
+  angles: ANGLES,
+  perAngle: PER_ANGLE,
   seams: SEAM_MODE ? seams.map((s) => s.name) : undefined,
   // The claims actually put in front of an agent, not the size of the inventory: a claim whose pathPrefixes
   // Overlap no seam, or whose files the cap dropped, reaches no finder, and counting it overstates the one number
@@ -1561,6 +1625,10 @@ const toFinding = (c, merged, shortSummary) => {
   // Citation must come off the SAME member. Resolved separately, a group could show one member's "reopened"
   // Beside another's regression commit: a citation that does not back the label, which is worse than none.
   const provenanceMember = group.find((m) => m.provenance && m.provenance !== "new");
+  // A merged group escalates to CONFIRMED if any member is. Hoisted because the confidence below is the number
+  // Attached to THIS verdict, and reading it off a member that concluded something else is what made the column
+  // Unreliable in the first place.
+  const verdict = group.some((m) => m.verdict === "CONFIRMED") ? "CONFIRMED" : c.verdict;
   return {
     file: c.file,
     line: c.line,
@@ -1568,12 +1636,19 @@ const toFinding = (c, merged, shortSummary) => {
     summary: c.summary + also + corroborated,
     failure_scenario: c.failure_scenario,
     category: c.kind,
-    // The best-evidenced member's number, not an average: corroboration and a resolver's read RAISE how sure the
-    // Group is, and averaging in a first-pass verifier's hedge would hide the pass that actually settled it.
-    confidence: Math.max(...group.map((m) => (Number.isFinite(m.confidence) ? m.confidence : 0))),
-    // A merged group escalates to its most severe member, and to CONFIRMED if any member is.
+    // The best-evidenced number for the verdict actually reported — never the group maximum. A member holding a
+    // Different verdict is confident about a different claim ("95% sure this is NOT confirmable"), so pulling its
+    // Number onto a CONFIRMED row prints a figure no agent would defend, on the one column the reader uses to
+    // Decide whether the fix rests on a read line. Among members that agree, corroboration and a resolver's read
+    // Genuinely do raise it, so the max stands there.
+    confidence: (() => {
+      const agreeing = group.filter((m) => m.verdict === verdict && Number.isFinite(m.confidence));
+      return agreeing.length > 0 ? Math.max(...agreeing.map((m) => m.confidence)) : undefined;
+    })(),
+    unresolvedBlocker: c.unresolvedBlocker,
+    // A merged group escalates to its most severe member.
     severity: group.toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity ?? "major",
-    verdict: group.some((m) => m.verdict === "CONFIRMED") ? "CONFIRMED" : c.verdict,
+    verdict,
     provenance: provenanceMember?.provenance ?? "new",
     provenanceSource: provenanceMember?.provenanceSource,
   };
