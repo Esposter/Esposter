@@ -225,6 +225,8 @@ describe("code-review report", () => {
     );
 
     expect(run.result.summary).toBe("No findings survived verification.");
+    // Strict, and `provenanceSource` is spelled out as the `undefined` the row really carries: the assertion is
+    // That a refuted row is these five fields and nothing else, since the footnote renders whatever it holds.
     expect(run.result.refuted).toStrictEqual([
       { file: "a.ts", line: 4, provenance: "new", provenanceSource: undefined, summary: CANDIDATE.summary },
     ]);

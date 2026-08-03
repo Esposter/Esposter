@@ -68,9 +68,19 @@ describe("code-review dedupe and resolve", () => {
   test("counts corroboration by distinct finders, not by report count", async () => {
     expect.hasAssertions();
 
-    const run = await runReview("high", stubFor({ finderFor: (label) => (label === "cleanup" ? [] : [CANDIDATE]) }));
+    // Two reports each, so the report count is twice the finder count and a count of reports cannot pass. The
+    // Expected number comes from the run's own fan-out — hardcoded, this fails as a corroboration bug the day a
+    // Level or the small-territory trim changes how many angles run.
+    const run = await runReview(
+      "high",
+      stubFor({
+        finderFor: (label) => (label === "cleanup" ? [] : [{ ...CANDIDATE }, { ...CANDIDATE, summary: "Same bug" }]),
+      }),
+    );
+    const angles = run.calls.filter((call) => call.label.startsWith("angle-")).length;
 
-    expect(getFinding(run).summary).toContain("[independently reported by 3 finders]");
+    expect(angles).toBeGreaterThan(1);
+    expect(getFinding(run).summary).toContain(`[independently reported by ${angles} finders]`);
   });
 
   test("lets the better-evidenced report lead its group", async () => {
@@ -185,7 +195,9 @@ describe("code-review dedupe and resolve", () => {
       stubFor({
         finderFor: (label) => (label === "angle-A" ? many.slice(0, 6) : label === "angle-B" ? many.slice(6) : []),
         resolution: RESOLVED,
-        verdictFor: (index) => ({ confidence: 40, severity: index === 5 ? "critical" : "minor" }),
+        // Index 7 arrives last, past the six-finding budget: a resolver spending it in arrival order never
+        // Reaches this candidate, so only a worst-first spend can confirm it.
+        verdictFor: (index) => ({ confidence: 40, severity: index === 7 ? "critical" : "minor" }),
       }),
     );
     const resolved = run.result.findings?.filter((finding) => finding.verdict === "CONFIRMED") ?? [];

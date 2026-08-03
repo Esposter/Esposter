@@ -1,4 +1,7 @@
-/** The `stats` block every exit of the workflow returns — one shape whether a run ended early or completed. */
+/**
+ * The `stats` block every reporting exit of the workflow returns — one shape whether the run ended at an empty
+ * scope or completed. The probe and the two argument guards return before a scope exists, so they carry none.
+ */
 export interface ReviewStats {
   angles: null | number;
   candidates: number;

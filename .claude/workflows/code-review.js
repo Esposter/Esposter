@@ -776,8 +776,10 @@ const SCOPE_TAIL =
 // `--` at end of string counts too: `git diff main --` takes the appended pathspec just as badly as `-- <paths>`,
 // And `[;|]` already covers `||`, so spelling that alternative out again only hides which shapes are really
 // Matched. A newline separates two commands as surely as `;` does, and the no-target Scope prompt asks for
-// Exactly that shape when there are uncommitted changes, so it belongs in the same character class.
-const IS_DIFF_COMMAND_SCOPEABLE = Boolean(scope.diffCommand) && !/\s--(\s|$)|&&|[;|\n]/u.test(scope.diffCommand);
+// Exactly that shape when there are uncommitted changes, so it belongs in the same character class — as the
+// Whole vertical-whitespace set, because an agent quoting a two-line command back can separate them with CRLF
+// Or a bare CR, and a class holding only `\n` calls that one command and scopes its last clause alone.
+const IS_DIFF_COMMAND_SCOPEABLE = Boolean(scope.diffCommand) && !/\s--(\s|$)|&&|[;|\r\n]/u.test(scope.diffCommand);
 const scopedDiff = (prefixes) =>
   IS_DIFF_COMMAND_SCOPEABLE
     ? "  " + scope.diffCommand + " -- " + prefixes.map((p) => "'" + p + "'").join(" ")
@@ -1108,23 +1110,21 @@ async function verifyGroups(candidates) {
       return g.flatMap((c, i) => {
         const v = byIdx[i];
         if (!v) return [];
-        // A verdict its author would not defend is not a verdict. Both directions matter: an under-confident
-        // CONFIRMED is a fix applied on a guess, an under-confident REFUTED is a real defect dismissed with no
-        // Evidence — and both come back next run. Downgrading to PLAUSIBLE routes it to the one pass that has the
-        // Budget to settle it, which is exactly what PLAUSIBLE is for.
+        // The floor rule itself lives in `isUnderConfident` and is called, never restated: a second copy of it
+        // Here is the one site a later change to the floor would leave behind, with the helper's test still green.
         const confidence = Number.isFinite(v.confidence) ? v.confidence : VERDICT_MIN_CONFIDENCE;
-        const isUnderConfident = v.verdict !== "PLAUSIBLE" && confidence < VERDICT_MIN_CONFIDENCE;
+        const isUnderConfidentVerdict = isUnderConfident(v.verdict, v.confidence);
         return [
           {
             ...c,
             confidence,
-            evidence: isUnderConfident
+            evidence: isUnderConfidentVerdict
               ? "[verifier said " + v.verdict + " at " + confidence + "% confidence] " + v.evidence
               : v.evidence,
             provenance: v.provenance,
             provenanceSource: v.provenanceSource,
             severity: v.severity,
-            verdict: isUnderConfident ? "PLAUSIBLE" : v.verdict,
+            verdict: isUnderConfidentVerdict ? "PLAUSIBLE" : v.verdict,
           },
         ];
       });

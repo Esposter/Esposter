@@ -75,6 +75,9 @@ describe("code-review finder prompts", () => {
     const optionsFor = (label: string) => run.calls.find((call) => call.label === label)?.options;
 
     expect(optionsFor("cleanup")?.effort).toBe("low");
+    // `not.toHaveProperty` passes against `undefined`, so a run that spawned no correctness angle at all would
+    // Read here as one that spawned it without an effort override.
+    expect(optionsFor("angle-A")).toBeDefined();
     expect(optionsFor("angle-A")).not.toHaveProperty("effort");
   });
 

@@ -98,6 +98,8 @@ describe("code-review seam partition", () => {
     ["two commands joined with &&", "git diff main && git diff HEAD"],
     ["two commands joined with a semicolon", "git diff main; git diff HEAD"],
     ["two commands on separate lines", "git diff main\ngit diff HEAD"],
+    ["two commands separated by a CRLF", "git diff main\r\ngit diff HEAD"],
+    ["two commands separated by a bare carriage return", "git diff main\rgit diff HEAD"],
   ])("does not append a pathspec to %s", async (_case, diffCommand) => {
     expect.hasAssertions();
 

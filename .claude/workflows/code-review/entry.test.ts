@@ -94,9 +94,11 @@ describe("code-review entry", () => {
     const empty = await runReview("high", stubFor({ scope: { files: [] } }));
     const full = await runReview("high", stubFor({ candidates: [CANDIDATE] }));
 
-    expect(Object.keys(empty.result.stats ?? {}).toSorted()).toStrictEqual(
-      Object.keys(full.result.stats ?? {}).toSorted(),
-    );
+    const keys = Object.keys(full.result.stats ?? {}).toSorted();
+
+    // Without this, a run that dropped the stats block entirely compares two empty key lists and passes.
+    expect(keys.length).toBeGreaterThan(0);
+    expect(Object.keys(empty.result.stats ?? {}).toSorted()).toStrictEqual(keys);
   });
 
   test("requires a diff command in diff mode and not in area mode", async () => {
@@ -112,8 +114,13 @@ describe("code-review entry", () => {
   test("asks for a seam partition only above the diff-mode file threshold", async () => {
     expect.hasAssertions();
 
-    const run = await runReview("high", stubFor({}));
+    const diff = await runReview("high", stubFor({}));
+    // An area review has no diff to size, so its partition is unconditional — asking for it above a changed-file
+    // Count there would leave every small area unpartitioned by territory.
+    const area = await runReview(AREA_ARGS, stubFor({ scope: AREA_SCOPE }));
 
-    expect(getPrompt(run, "scope")).toContain("at least 50 files");
+    expect(getPrompt(diff, "scope")).toContain("at least 50 files");
+    expect(getPrompt(area, "scope")).not.toContain("at least 50 files");
+    expect(getPrompt(area, "scope")).toContain("Return seams whenever the area holds more than one coherent");
   });
 });
