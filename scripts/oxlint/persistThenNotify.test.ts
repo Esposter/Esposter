@@ -1,3 +1,4 @@
+import { jsonDateParse } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -209,7 +210,7 @@ describe(RULE, () => {
     );
     if (!stdout) throw new Error(`oxlint produced no output (status ${status}): ${stderr}`);
 
-    const { diagnostics } = JSON.parse(stdout) as { diagnostics: { code: string; filename: string }[] };
+    const { diagnostics } = jsonDateParse<{ diagnostics: { code: string; filename: string }[] }>(stdout);
     codes = diagnostics.map(({ code }) => code);
 
     for (const { name } of FIXTURES) violationsByFixture.set(name, 0);
