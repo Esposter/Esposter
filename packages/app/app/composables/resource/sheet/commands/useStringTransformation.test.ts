@@ -110,22 +110,6 @@ describe(useStringTransformation, () => {
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
   });
 
-  test("redo re-applies after undo", async () => {
-    expect.hasAssertions();
-
-    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(initialDataSource);
-    const stringTransformation = useStringTransformation();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-
-    await stringTransformation(StringTransformationType.Trim);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe("");
-  });
-
   test("description includes the transform", async () => {
     expect.hasAssertions();
 

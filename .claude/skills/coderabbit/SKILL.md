@@ -7,7 +7,13 @@ description: Esposter CodeRabbit review conventions — retrieving review feedba
 
 ## Config Is Read From the PR Base Branch
 
-`.coderabbit.yaml` sits at the repo root. CodeRabbit reads it from the **base branch** of a PR, not the head branch. **PRs target `develop`, so `develop` is the branch that matters** — an exclusion only takes effect once it is on the branch the PR is based against.
+`.coderabbit.yaml` sits at the repo root. CodeRabbit reads it from the **base branch** of a PR, not the head branch. An exclusion only takes effect once it is on the branch the PR is based against, so **read the base off the PR rather than assuming it** — feature PRs target `develop`, but the long-lived release PR is `develop` → `main`, and for that one exclusions must land on `main`:
+
+```bash
+gh pr view <pr> --json baseRefName --jq .baseRefName   # the branch whose config applies
+```
+
+Editing that branch does not mean checking it out over your work: `git worktree add <scratch-path> <base-branch>`, commit the config change there, push, then `git worktree remove`. The working tree keeps whatever is in flight — which matters when agents are mid-edit in it. Rebase inside the worktree before pushing; the base branch moves under you (Renovate).
 
 CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**: develop-base PRs are skipped with "Auto reviews are disabled on base/target branches other than the default branch". Trigger a review on a develop-base PR manually by commenting `@coderabbitai review` on it.
 
@@ -113,6 +119,17 @@ Exclude only files with **no reviewable content change**. Two kinds qualify:
 
 A file that was renamed _and_ carries a real logic change still needs review. When in doubt, leave it in.
 
+**Being over budget is never a reason to exclude a file.** Over budget is a chunking problem: split the work into a second PR, or land it in stages so each incremental review cycle stays under the cap (§PR File Budget). Excluding substantive files buys a smaller review, not a better one — the diff still ships, just unread.
+
+Never excludable, whatever the budget:
+
+- **Documentation** (`packages/app/content/docs/**`) — docs are the design record, not commentary. A wrong standard there propagates into every change built on it afterwards, and prose is precisely what a human reviewer catches and no typechecker can.
+- **Agent skills** (`.claude/skills/**`) — a skill binds every future agent session. An unreviewed wrong rule is worse than unreviewed wrong code, because it silently authors more wrong code.
+- **Tests** (`*.test.ts`, `*.test-d.ts`) — tests are the behaviour contract. One asserting the wrong thing is a defect that passes CI forever, and "the source it covers is still reviewed" does not catch it — the reviewer sees green assertions and infers the intent from them.
+- **Config, schema, and migration inputs** — small diffs with large blast radius.
+
+The rule reduces to: exclude a file only when its diff carries no information a reviewer could act on. Anything else stays in, and the PR gets smaller instead.
+
 ## Generating the List
 
 `R100` is git's marker for a rename with no content change — it gets you the pure-rename subset for free:
@@ -121,7 +138,18 @@ A file that was renamed _and_ carries a real logic change still needs review. Wh
 git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 "\""}' | sort
 ```
 
-Rename-token-only edits are not `R100` (they have a content diff), so they can't be auto-detected — review those diffs and add them by hand.
+Rename-token-only edits are not `R100` (they have a content diff), but when the sweep landed as **its own commit** they can still be derived mechanically. A 1:1 identifier substitution rewrites each affected line in place, so its `--numstat` is line-symmetric; anything that also gained or lost a line carries real content:
+
+```bash
+# files touched ONLY by the rename commit (anything a sibling commit also touched has reviewable content)
+git show --name-only --format="" <rename-sha> | grep "\.test\.ts$" | sort > /tmp/renamed.txt
+git show --name-only --format="" <other-sha> | sort -u > /tmp/other.txt
+# of those, keep the ones whose diff is symmetric — added == removed
+git show --numstat --format="" <rename-sha> | awk '$1==$2 {print $3}' | sort > /tmp/symmetric.txt
+comm -12 <(comm -23 /tmp/renamed.txt /tmp/other.txt) /tmp/symmetric.txt
+```
+
+The filter is deliberately strict, not exact: a rename long enough to force a reformatter rewrap is asymmetric and stays reviewable, which is the safe direction to err. Spot-check a handful of the diffs anyway before committing — and if the sweep is mixed into a commit carrying other work, fall back to reading the diffs by hand.
 
 Verify the count matches what you expect before committing, and validate the result parses:
 

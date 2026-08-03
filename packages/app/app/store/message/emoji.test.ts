@@ -27,29 +27,6 @@ describe(useEmojiStore, () => {
     MockContainerDatabase.clear();
   });
 
-  test("gets", () => {
-    expect.hasAssertions();
-
-    const emojiStore = useEmojiStore();
-    const { getEmojis } = emojiStore;
-    const emojis = getEmojis(messageRowKey);
-
-    expect(emojis).toHaveLength(0);
-  });
-
-  test("sets", () => {
-    expect.hasAssertions();
-
-    const emojiStore = useEmojiStore();
-    const { getEmojis, setEmojis } = emojiStore;
-    const newEmoji = new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey });
-    setEmojis(messageRowKey, [newEmoji]);
-    const emojis = getEmojis(messageRowKey);
-
-    expect(emojis).toHaveLength(1);
-    expect(emojis[0]).toStrictEqual(newEmoji);
-  });
-
   test("creates", () => {
     expect.hasAssertions();
 

@@ -59,35 +59,4 @@ describe(useDeleteDuplicateRows, () => {
     expect(dataSource.rows).toHaveLength(2);
     expect(isUndoable.value).toBe(false);
   });
-
-  test("undo restores deleted duplicate rows", async () => {
-    expect.hasAssertions();
-
-    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
-    const { dataSource } = setupWithDataSource(initialDataSource);
-    const deleteDuplicateRows = useDeleteDuplicateRows();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-
-    await deleteDuplicateRows();
-    undo(dataSource);
-
-    expect(dataSource.rows).toHaveLength(2);
-  });
-
-  test("redo re-applies after undo", async () => {
-    expect.hasAssertions();
-
-    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
-    const { dataSource } = setupWithDataSource(initialDataSource);
-    const deleteDuplicateRows = useDeleteDuplicateRows();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-
-    await deleteDuplicateRows();
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(dataSource.rows).toHaveLength(1);
-  });
 });

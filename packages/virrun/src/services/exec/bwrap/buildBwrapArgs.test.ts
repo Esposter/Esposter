@@ -40,26 +40,26 @@ describe(buildBwrapArgs, () => {
   test("spreads an argv command unchanged so it is never reinterpreted by a shell", () => {
     expect.hasAssertions();
 
-    const bwrapArguments = buildBwrapArgs(["git", "clone", "--", "; rm -rf /"], TEST_DIR);
+    const args = buildBwrapArgs(["git", "clone", "--", "; rm -rf /"], TEST_DIR);
 
-    expect(bwrapArguments.slice(-4)).toStrictEqual(["git", "clone", "--", "; rm -rf /"]);
+    expect(args.slice(-4)).toStrictEqual(["git", "clone", "--", "; rm -rf /"]);
   });
 
   test("mounts the same dir as overlay source, upper, and chdir", () => {
     expect.hasAssertions();
 
-    const bwrapArguments = buildBwrapArgs("pwd", TEST_DIR);
+    const args = buildBwrapArgs("pwd", TEST_DIR);
 
-    expect(bwrapArguments).toContain("--overlay-src");
-    expect(bwrapArguments.filter((argument) => argument === TEST_DIR)).toHaveLength(3);
+    expect(args).toContain("--overlay-src");
+    expect(args.filter((arg) => arg === TEST_DIR)).toHaveLength(3);
   });
 
   test("falls back to the process cwd when the cwd is empty", () => {
     expect.hasAssertions();
 
-    const bwrapArguments = buildBwrapArgs("pwd", "");
+    const args = buildBwrapArgs("pwd", "");
 
-    expect(bwrapArguments).toContain(process.cwd());
+    expect(args).toContain(process.cwd());
   });
 
   test("re-adds the network namespace right after --unshare-all when network is on", () => {
@@ -76,13 +76,13 @@ describe(buildBwrapArgs, () => {
     expect.hasAssertions();
 
     const bindDir = `${TEST_DIR}/${VIRRUN_CACHE_DIRECTORY_NAME}/${VIRRUN_STORE_DIRECTORY_NAME}/${VIRRUN_PNPM_STORE_DIRECTORY_NAME}`;
-    const bwrapArguments = buildBwrapArgs("pwd", TEST_DIR, { bindDirs: [bindDir] });
+    const args = buildBwrapArgs("pwd", TEST_DIR, { bindDirs: [bindDir] });
 
-    expect(bwrapArguments).toStrictEqual(
+    expect(args).toStrictEqual(
       expect.arrayContaining(["--overlay-src", TEST_DIR, "--tmp-overlay", TEST_DIR, "--bind", bindDir, bindDir]),
     );
-    expect(bwrapArguments.indexOf("--bind")).toBeGreaterThan(bwrapArguments.indexOf("--tmp-overlay"));
-    expect(bwrapArguments.indexOf("--chdir")).toBeGreaterThan(bwrapArguments.indexOf("--bind"));
+    expect(args.indexOf("--bind")).toBeGreaterThan(args.indexOf("--tmp-overlay"));
+    expect(args.indexOf("--chdir")).toBeGreaterThan(args.indexOf("--bind"));
   });
 
   test("persists writes to a host upper when capturing a snapshot", () => {
@@ -90,43 +90,43 @@ describe(buildBwrapArgs, () => {
 
     const upperDir = `${TEST_DIR}/upper`;
     const workDir = `${TEST_DIR}/work`;
-    const bwrapArguments = buildBwrapArgs("pnpm install", TEST_DIR, {}, { upperDir, workDir });
+    const args = buildBwrapArgs("pnpm install", TEST_DIR, {}, { upperDir, workDir });
 
-    expect(bwrapArguments).toStrictEqual(
+    expect(args).toStrictEqual(
       expect.arrayContaining(["--overlay-src", TEST_DIR, "--overlay", upperDir, workDir, TEST_DIR]),
     );
-    expect(bwrapArguments).not.toContain("--tmp-overlay");
+    expect(args).not.toContain("--tmp-overlay");
   });
 
   test("stacks extra lower layers above the source before the tmpfs upper when forking", () => {
     expect.hasAssertions();
 
     const snapshotUpper = `${TEST_DIR}/${TEST_FILENAME}`;
-    const bwrapArguments = buildBwrapArgs("vitest", TEST_DIR, {}, { lowerDirs: [snapshotUpper] });
-    const sourceLower = bwrapArguments.indexOf(TEST_DIR);
-    const snapshotLower = bwrapArguments.indexOf(snapshotUpper);
+    const args = buildBwrapArgs("vitest", TEST_DIR, {}, { lowerDirs: [snapshotUpper] });
+    const sourceLower = args.indexOf(TEST_DIR);
+    const snapshotLower = args.indexOf(snapshotUpper);
 
-    expect(bwrapArguments).toStrictEqual(
+    expect(args).toStrictEqual(
       expect.arrayContaining(["--overlay-src", TEST_DIR, "--overlay-src", snapshotUpper, "--tmp-overlay", TEST_DIR]),
     );
     // The snapshot lower must stack after the source so its files shadow it, and both precede the upper.
     expect(snapshotLower).toBeGreaterThan(sourceLower);
-    expect(bwrapArguments.indexOf("--tmp-overlay")).toBeGreaterThan(snapshotLower);
+    expect(args.indexOf("--tmp-overlay")).toBeGreaterThan(snapshotLower);
   });
 
   test("overlays a distinct sourceDir as the lower while mounting and chdiring at cwd", () => {
     expect.hasAssertions();
 
     const mirror = `${TEST_DIR}/${TEST_FILENAME}`;
-    const bwrapArguments = buildBwrapArgs("pwd", TEST_DIR, {}, {}, mirror);
+    const args = buildBwrapArgs("pwd", TEST_DIR, {}, {}, mirror);
 
     // The source content comes from the mirror, but the overlay is mounted at — and the sandbox chdir's into — cwd,
     // So pwd reports the logical path, not the mirror's.
-    expect(bwrapArguments).toStrictEqual(
+    expect(args).toStrictEqual(
       expect.arrayContaining(["--overlay-src", mirror, "--tmp-overlay", TEST_DIR, "--chdir", TEST_DIR]),
     );
     // The lone source lower is the mirror, not cwd — otherwise pwd would leak the mirror path.
-    expect(takeOne(bwrapArguments, bwrapArguments.indexOf("--overlay-src") + 1)).toBe(mirror);
+    expect(takeOne(args, args.indexOf("--overlay-src") + 1)).toBe(mirror);
   });
 
   test("throws when only one of upperDir or workDir is supplied", () => {

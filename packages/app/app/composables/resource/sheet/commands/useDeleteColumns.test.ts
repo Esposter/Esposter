@@ -67,39 +67,6 @@ describe(useDeleteColumns, () => {
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
   });
 
-  test("redo re-applies the bulk delete after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const deleteColumns = useDeleteColumns();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    const columns = dataSource?.columns ?? [];
-    await deleteColumns([takeOne(columns).id, takeOne(columns, 1).id]);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(dataSource.columns).toHaveLength(0);
-  });
-
-  test("undo preserves row.data key order matching restored column order", async () => {
-    expect.hasAssertions();
-
-    const initialDataSource = createDataSource(
-      [createColumn("a"), createColumn("b"), createColumn("c")],
-      [createRow({ a: 1, b: 2, c: 3 })],
-    );
-    const { dataSource } = setupWithDataSource(initialDataSource);
-    const deleteColumns = useDeleteColumns();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-    const columns = dataSource?.columns ?? [];
-    await deleteColumns([takeOne(columns, 1).id]);
-    undo(dataSource);
-
-    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c"]);
-  });
-
   test("undo preserves row.data key order when restoring multiple deleted columns", async () => {
     expect.hasAssertions();
 

@@ -29,6 +29,12 @@ The vitest rules come from oxlint's `vitest` plugin (`@vitest/eslint-plugin` is 
 - **`prefer-describe-function-title` is off** — its fixer only checks that an identifier matching the title is in scope, not that it's a function; for arrays, Zod schemas, routers, or plugin objects the fix produces a `[object Object]` suite title.
 - **`warn-todo`/`require-test-timeout`/`require-top-level-describe` are off** — `describe.todo` placeholders and hook-registering `setup*`/test-setup files are conventions here, and per-test timeouts are not used.
 
+## The `require-await` autofix can break a Promise-returning function
+
+`require-await` strips `async` from a function whose body never awaits — and the lint hook applies it to any file you edit, so it lands on code you did not think you were touching. `async` is not only about awaiting: it also wraps a plain return value in a promise. A function annotated `: Promise<T>` that returns a bare `T` on one early-exit path (a `Dropped`/no-op outcome returned before any async work) stops compiling the moment the keyword goes, and the error surfaces on the *return* line, far from the edit that caused it.
+
+Fix it by making that path's value a promise (`return Promise.resolve({ status: … })`) rather than re-adding `async` — the keyword goes straight back out on the next edit of the file. Typecheck after any lint-hook autofix that touched a signature; the hook reports success either way.
+
 ## Which directive to use
 
 Pick the directive by **which linter reports the rule**, and spell the rule the way that linter names it:

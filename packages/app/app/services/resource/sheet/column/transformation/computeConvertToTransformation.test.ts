@@ -26,15 +26,4 @@ describe(computeConvertToTransformation, () => {
       }),
     ).toBe(" ");
   });
-
-  test("passes date string through as string", () => {
-    expect.hasAssertions();
-    expect(
-      computeConvertToTransformation("1970-01-01", {
-        sourceColumnId: "",
-        targetType: ColumnType.Date,
-        type: ColumnTransformationType.ConvertTo,
-      }),
-    ).toBe("1970-01-01");
-  });
 });

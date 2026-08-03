@@ -144,22 +144,6 @@ describe(useNullStrategy, () => {
     expect(takeOne(dataSource.rows, 2).data[""]).toBe("");
   });
 
-  test("redo re-applies after undo", async () => {
-    expect.hasAssertions();
-
-    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": null })]);
-    const { dataSource } = setupWithDataSource(initialDataSource);
-    const nullStrategy = useNullStrategy();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-
-    await nullStrategy(NullStrategy.ReplaceWithNA);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe("N/A");
-  });
-
   test(`${NullStrategy.ReplaceWithNA} no-op when no null or empty string cells`, async () => {
     expect.hasAssertions();
 

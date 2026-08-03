@@ -12,10 +12,8 @@ import { readWslPath } from "@/services/exec/wsl/readWslPath";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({
-  execFileSync: vi.fn<typeof baseExecFileSync>(((_file, commandArguments) =>
-    Array.isArray(commandArguments)
-      ? `${TEST_WSL_PREFIX}${commandArguments.at(-1) ?? ""}\n`
-      : "") as typeof baseExecFileSync),
+  execFileSync: vi.fn<typeof baseExecFileSync>(((_file, args) =>
+    Array.isArray(args) ? `${TEST_WSL_PREFIX}${args.at(-1) ?? ""}\n` : "") as typeof baseExecFileSync),
 }));
 
 vi.mock(import("node:child_process"), () => ({

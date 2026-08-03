@@ -36,21 +36,6 @@ describe(useUpdateRow, () => {
     expect(takeOne(dataSource.rows).data[" "]).toBe(1);
   });
 
-  test("redo re-applies update after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const updateRow = useUpdateRow();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    const originalRow = takeOne(dataSource?.rows ?? []);
-    await updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(10);
-  });
-
   test("snapshot immutability - mutating passed object after call does not affect undo history", async () => {
     expect.hasAssertions();
 

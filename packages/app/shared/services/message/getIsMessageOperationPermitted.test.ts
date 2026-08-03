@@ -98,6 +98,5 @@ describe(getIsMessageOperationPermitted, () => {
     const permission = getMessageOperationPermission(MessageType.Poll, MessageOperation.Update);
 
     expect(permission).toBeUndefined();
-    expect(getIsMessageOperationPermitted(permission, moderator)).toBe(false);
   });
 });

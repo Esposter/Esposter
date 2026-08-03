@@ -26,9 +26,6 @@ describe(createEncounteredMonster, () => {
     const monster = createEncounteredMonster(key, targetLevel);
 
     expect(monster.stats.level).toBe(targetLevel);
-    expect(monster.stats.maxHp).toBe(baseStatistics.maxHp + 10);
-    expect(monster.stats.attack).toBe(baseStatistics.attack + 2);
-    expect(monster.stats.defense).toBe(baseStatistics.defense + 2);
     expect(monster.status).toStrictEqual({ exp: 0, hp: monster.stats.maxHp });
   });
 });

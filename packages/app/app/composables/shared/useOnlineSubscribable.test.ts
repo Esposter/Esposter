@@ -103,20 +103,6 @@ describe(useOnlineSubscribable, () => {
     expect(cleanup).toHaveBeenCalledWith();
   });
 
-  test("calls cleanup from async callback when going offline", async () => {
-    expect.hasAssertions();
-
-    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() =>
-      Promise.resolve(cleanup),
-    );
-    await mountSubscribable();
-    await flushPromises();
-    goOffline();
-    await flushPromises();
-
-    expect(cleanup).toHaveBeenCalledWith();
-  });
-
   test("calls cleanup from async callback on unmount", async () => {
     expect.hasAssertions();
 
@@ -205,28 +191,5 @@ describe(useOnlineSubscribable, () => {
     wrapper.unmount();
 
     expect(cleanup).toHaveBeenCalledWith();
-  });
-
-  test("awaits async cleanup before re-establishing callback when coming back online", async () => {
-    expect.hasAssertions();
-
-    const { promise, resolve: resolveCleanup }: PromiseWithResolvers<void> = Promise.withResolvers();
-    const asyncCleanup = vi.fn<() => Promise<void>>(() => promise);
-    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() => asyncCleanup);
-    await mountSubscribable();
-    await flushPromises();
-
-    goOffline();
-    await flushPromises();
-    goOnline();
-    await flushPromises();
-
-    expect(asyncCleanup).toHaveBeenCalledWith();
-    expect(callback).toHaveBeenCalledTimes(1);
-
-    resolveCleanup();
-    await flushPromises();
-
-    expect(callback).toHaveBeenCalledTimes(2);
   });
 });

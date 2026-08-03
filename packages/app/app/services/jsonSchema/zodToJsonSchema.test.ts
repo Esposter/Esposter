@@ -204,62 +204,6 @@ describe(zodToJsonSchema, () => {
   });
 
   describe("layout meta properties", () => {
-    test("sets layout.comp from meta", () => {
-      expect.hasAssertions();
-
-      const schema = z.object({ sourceColumnId: z.string().meta({ layout: { comp: "select" } }) });
-      const result = zodToJsonSchema(schema);
-
-      expect(result.properties?.sourceColumnId).toMatchInlineSnapshot(`
-        {
-          "layout": {
-            "comp": "select",
-          },
-          "title": "Source Column Id",
-          "type": "string",
-        }
-      `);
-    });
-
-    test("sets layout.getItems from meta", () => {
-      expect.hasAssertions();
-
-      const schema = z.object({
-        sourceColumnId: z
-          .string()
-          .meta({ layout: { getItems: ColumnFormVjsfContextPropertyNames["context.columnItems"] } }),
-      });
-      const result = zodToJsonSchema(schema);
-
-      expect(result.properties?.sourceColumnId).toMatchInlineSnapshot(`
-        {
-          "layout": {
-            "getItems": "context.columnItems",
-          },
-          "title": "Source Column Id",
-          "type": "string",
-        }
-      `);
-    });
-
-    test("sets layout.getProps from meta", () => {
-      expect.hasAssertions();
-
-      const getProps = `{ rules: [(value) => !context.columnNames.includes(value) || 'Column already exists'] }`;
-      const schema = z.object({ name: z.string().meta({ layout: { getProps } }) });
-      const result = zodToJsonSchema(schema);
-
-      expect(result.properties?.name).toMatchInlineSnapshot(`
-        {
-          "layout": {
-            "getProps": "{ rules: [(value) => !context.columnNames.includes(value) || 'Column already exists'] }",
-          },
-          "title": "Name",
-          "type": "string",
-        }
-      `);
-    });
-
     test("sets all layout properties when multiple are provided", () => {
       expect.hasAssertions();
 

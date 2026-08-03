@@ -21,7 +21,7 @@ const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExec
 vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
 // The distro list is the `-l -q` call; everything else is the `echo $HOME` call.
 const mockWsl = (distro: string, home: string) =>
-  execFileSync.mockImplementation((_file, commandArguments) => (commandArguments?.includes("-l") ? distro : home));
+  execFileSync.mockImplementation((_file, args) => (args?.includes("-l") ? distro : home));
 
 describe("getWslNativeCacheRoot", () => {
   // The shared cache-home fixture isolates the persisted cross-process cache per test.

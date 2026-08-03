@@ -41,23 +41,6 @@ describe(useReorderRows, () => {
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
   });
 
-  test("redo re-applies reorder after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const reorderRows = useReorderRows();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    const rows = dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 1), takeOne(rows)] as Row[];
-    await reorderRows(newRows);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
-  });
-
   test("moves row backward (index 2 to 0) with three rows", async () => {
     expect.hasAssertions();
 

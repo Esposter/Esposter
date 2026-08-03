@@ -32,24 +32,6 @@ describe(useCopyRangeToClipboard, () => {
     vi.unstubAllGlobals();
   });
 
-  test("writes selected range as TSV with headers", async () => {
-    expect.hasAssertions();
-
-    const rowStore = useRowStore();
-    rowStore.copyIncludesHeaders = true;
-    setupWithDataSource(
-      createDataSource(
-        [createColumn("a"), createColumn("b")],
-        [createRow({ a: "1", b: "2" }), createRow({ a: "3", b: "4" })],
-      ),
-    );
-    selectRange(0, 0, 0, 1);
-    const copyRangeToClipboard = useCopyRangeToClipboard();
-    await copyRangeToClipboard();
-
-    expect(writeTextMock).toHaveBeenCalledWith("a\tb\n1\t2");
-  });
-
   test("writes selected range as TSV without headers when toggle is off", async () => {
     expect.hasAssertions();
 

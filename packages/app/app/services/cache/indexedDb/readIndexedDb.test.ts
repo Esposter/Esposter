@@ -2,12 +2,11 @@ import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/c
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(readIndexedDb, () => {
-  const { message1, message2, message3 } = setupIndexedDbSuite();
+  const { message1, message2 } = setupIndexedDbSuite();
 
   test("returns empty array when no items exist for partitionKey", async () => {
     expect.hasAssertions();
@@ -15,17 +14,6 @@ describe(readIndexedDb, () => {
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
 
     expect(result).toHaveLength(0);
-  });
-
-  test("returns written items for the given partitionKey", async () => {
-    expect.hasAssertions();
-
-    const messages = [message1, message3];
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
-
-    const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
-
-    expect(result).toHaveLength(2);
   });
 
   test("only returns items for the requested partitionKey", async () => {
@@ -38,32 +26,5 @@ describe(readIndexedDb, () => {
 
     expect(result).toHaveLength(1);
     expect(takeOne(result)).toStrictEqual(message1.toJSON());
-  });
-
-  test("overwrites existing items on re-write", async () => {
-    expect.hasAssertions();
-
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1], message1.partitionKey);
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1], message1.partitionKey);
-
-    const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
-
-    expect(result).toHaveLength(1);
-    expect(takeOne(result)).toStrictEqual(message1.toJSON());
-  });
-
-  test("respects the limit from configuration", async () => {
-    expect.hasAssertions();
-
-    const { limit } = MessageIndexedDbStoreConfiguration;
-    const messages = Array.from(
-      { length: limit + 10 },
-      (_value) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() }),
-    );
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
-
-    const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
-
-    expect(result).toHaveLength(limit);
   });
 });

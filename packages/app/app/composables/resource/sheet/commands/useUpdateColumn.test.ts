@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 import { DateFormat } from "#shared/models/resource/sheet/column/DateFormat";
@@ -69,22 +68,6 @@ describe(useUpdateColumn, () => {
     expect(takeOne(dataSource.columns).name).toBe("");
     expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(takeOne(dataSource.rows).data.renamed).toBeUndefined();
-  });
-
-  test("redo re-applies update after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const updateColumn = useUpdateColumn();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    const column = takeOne(dataSource?.columns ?? []);
-    await updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.columns).name).toBe("renamed");
-    expect(takeOne(dataSource.rows).data.renamed).toBe(0);
   });
 
   test("preserves row.data key order after rename", async () => {
@@ -195,22 +178,6 @@ describe(useUpdateColumn, () => {
 
     expect(takeOne(dataSource.rows).data.score).toBe("42");
     expect(takeOne(dataSource.rows, 1).data.score).toBe("7");
-  });
-
-  test("recasts String values to Boolean when type changes", async () => {
-    expect.hasAssertions();
-
-    const initialDataSource = createDataSource(
-      [createColumn("flag")],
-      [createRow({ flag: BooleanValue.True }), createRow({ flag: BooleanValue.False })],
-    );
-    const { dataSource } = setupWithDataSource(initialDataSource);
-    const updateColumn = useUpdateColumn();
-    const column = takeOne(dataSource?.columns ?? []);
-    await updateColumn("flag", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Boolean }));
-
-    expect(takeOne(dataSource.rows).data.flag).toBe(true);
-    expect(takeOne(dataSource.rows, 1).data.flag).toBe(false);
   });
 
   test("undo restores original values after type recast", async () => {

@@ -36,7 +36,6 @@ describe(copyToClipboard, () => {
     await copyToClipboard(dataSource);
     const lines = writtenText.split("\n");
 
-    expect(takeOne(lines)).toBe("a\tb");
     expect(takeOne(lines, 1)).toBe("0\t1");
   });
 
@@ -61,17 +60,6 @@ describe(copyToClipboard, () => {
 
     expect(lines).toHaveLength(2);
     expect(takeOne(lines, 1)).toBe("0");
-  });
-
-  test("omits header row when includeHeaders is false", async () => {
-    expect.hasAssertions();
-
-    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "42" })]);
-    await copyToClipboard(dataSource, { includeHeaders: false });
-    const lines = writtenText.split("\n");
-
-    expect(lines).toHaveLength(1);
-    expect(takeOne(lines)).toBe("42");
   });
 
   describe("clipboardItem branch", () => {

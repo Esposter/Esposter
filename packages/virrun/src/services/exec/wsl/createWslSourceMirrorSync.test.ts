@@ -33,8 +33,8 @@ vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({ getWslNati
 vi.mock(import("@/services/exec/wsl/createSourceMirrorArchive"), async (importOriginal) => {
   const { createSourceMirrorArchive } = await importOriginal();
   return {
-    createSourceMirrorArchive: (...archiveArguments: Parameters<typeof createSourceMirrorArchive>) => ({
-      ...createSourceMirrorArchive(...archiveArguments),
+    createSourceMirrorArchive: (...args: Parameters<typeof createSourceMirrorArchive>) => ({
+      ...createSourceMirrorArchive(...args),
       unarchivedPaths: state.unarchivedPaths,
     }),
   };
