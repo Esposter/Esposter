@@ -13,7 +13,7 @@ export const meta = {
     {
       title: "Find",
       detail:
-        "diff: lens-partitioned under 50 changed files, seam-partitioned at 50 or more, plus a whole-diff pass. area: always seam-partitioned with the record's claims folded in, plus a coverage pass for what the record misses. Cleanup finder either way",
+        "Both modes lens-partition a small territory and seam-partition a large one — 50 changed files for diff, 25 for area, since area finders read whole files rather than hunks. Area folds the record's claims into each seam finder, or hands the whole inventory to one conformance finder in lens mode, and adds a coverage pass for what the record misses. Cleanup finder either way",
     },
     {
       title: "Verify",
@@ -221,7 +221,9 @@ const SCOPE_SCHEMA = {
           pathPrefixes: {
             type: "array",
             items: { type: "string" },
-            description: "directory prefixes or globs selecting this seam's files — pathspecs for `git diff -- …`",
+            description: IS_AREA
+              ? "concrete directory prefixes or whole file paths from the files list you return — never globs; they are prefix-matched against the file set and printed for an agent to Read"
+              : "directory prefixes or globs selecting this seam's files — pathspecs for `git diff -- …`",
           },
           adjacentPathPrefixes: {
             type: "array",
@@ -386,7 +388,9 @@ const AREA_SCOPE_PROMPT =
   " " +
   SEAM_PARTITION_STEP +
   "Every file in `files` must fall under at least one seam's pathPrefixes — make the last seam a catch-all if the " +
-  "rest do not cover the area. Unlike a diff review, seams are REQUIRED here: there is no small-enough case.\n\n" +
+  "rest do not cover the area. Return seams whenever the area holds more than one coherent subsystem: they are " +
+  "used only if it is large enough to be worth splitting by territory, and ignored in favour of lens " +
+  "partitioning if it is not.\n\n" +
   "Structured output only.";
 
 const DIFF_SCOPE_PROMPT =
@@ -444,15 +448,16 @@ const NON_SOURCE_REGEX =
 // To prevent. Diff mode is deliberately uncapped — the diff is the scope, and dropping half of it reviews a lie.
 const AREA_MAX_FILES = 120;
 if (IS_AREA && scope.files.length > AREA_MAX_FILES) {
-  const dropped = scope.files.length - AREA_MAX_FILES;
+  const resolvedFileCount = scope.files.length;
   // Source first: when something has to go, a lockfile or a snapshot is never the most valuable thing to keep.
   scope.files = scope.files
     .filter((f) => !NON_SOURCE_REGEX.test(f))
     .concat(scope.files.filter((f) => NON_SOURCE_REGEX.test(f)))
     .slice(0, AREA_MAX_FILES);
+  const dropped = resolvedFileCount - scope.files.length;
   log(
     "area: Scope resolved " +
-      (AREA_MAX_FILES + dropped) +
+      resolvedFileCount +
       " files — capped at " +
       AREA_MAX_FILES +
       ", " +
@@ -477,7 +482,8 @@ const rawSeams = (Array.isArray(scope.seams) ? scope.seams : [])
 // Lens partitioning is what makes small-territory finders differ, in either mode: a different QUESTION each,
 // Rather than a different address. Seam only earns its place once the territory is too big to all be read.
 const AREA_SEAM_MIN_FILES = 25;
-const SEAM_MODE = rawSeams.length >= 2 && scope.files.length >= (IS_AREA ? AREA_SEAM_MIN_FILES : SEAM_MODE_MIN_FILES);
+const SEAM_MIN_FILES = IS_AREA ? AREA_SEAM_MIN_FILES : SEAM_MODE_MIN_FILES;
+const SEAM_MODE = rawSeams.length >= 2 && scope.files.length >= SEAM_MIN_FILES;
 const seams = SEAM_MODE ? rawSeams : [];
 const claims = IS_AREA && Array.isArray(scope.claims) ? scope.claims.filter((c) => c && c.claim && c.source) : [];
 log(
@@ -490,7 +496,6 @@ log(
     (unlistedFileCount > 0 ? " (" + unlistedFileCount + " generated/binary unlisted)" : "") +
     (IS_AREA ? ", " + claims.length + " documented claims to check" : ""),
 );
-const SEAM_MIN_FILES = IS_AREA ? AREA_SEAM_MIN_FILES : SEAM_MODE_MIN_FILES;
 log(
   SEAM_MODE
     ? "find mode: seam — " +
@@ -601,7 +606,7 @@ const WIDEN_HINT = IS_AREA
     ? "another file's diff (`" + scope.diffCommand + " -- '<other-path>'`)"
     : "another file's diff (run `" +
       scope.diffCommand +
-      "` and read that path's hunks out of the result — this command already carries a pathspec, so it cannot take another)";
+      "` and read that path's hunks out of the result — this command cannot be narrowed with an appended pathspec)";
 
 const SCOPE_HEADER = IS_AREA
   ? "## Review scope\nThis is an AREA review: there is no diff and no change under review. You are auditing the code as it " +
@@ -901,7 +906,8 @@ const LENSES_TEXT = IS_AREA ? AREA_LENSES_TEXT : ALL_LENSES_TEXT;
 // In SEAM mode, conformance is folded into the seam finder rather than given finders of its own: a separate
 // Claim-checker would re-read the files the seam finder already has open, and would judge each claim without the
 // Knowledge of the subsystem that distinguishes "the code does not do this" from "the code does this elsewhere".
-// One agent, one territory, both questions. In LENS mode the reverse holds — see AREA_CONFORMANCE_FINDER.
+// One agent, one territory, both questions. In LENS mode the reverse holds — see the conformance finder built by
+// AREA_LENS_FINDERS, which owns the whole inventory because every lens finder already reads the whole area.
 // No all-claims fallback. Handing every claim to a seam that matched none of them tells a finder to check
 // "reads are single-flight via isExclusive" against a territory holding no such code; it cannot find the
 // Behaviour in the files it was told to read, so it CONFIRMS a conformance finding saying the docs describe
@@ -954,9 +960,6 @@ const SEAM_FINDER = (s) => ({
     "\n" +
     (s.summary || "") +
     "\n\nYour scope:\n" +
-    // The fallback seam IS the whole area, and its pathPrefixes are the entire file list — printing them here
-    // Reproduces the listing SCOPE_BLOCK already carries, twice in one prompt, for a territory that needs no
-    // Narrowing at all.
     materialFor(s.pathPrefixes) +
     (IS_AREA
       ? "\n\nRead those files in full"
