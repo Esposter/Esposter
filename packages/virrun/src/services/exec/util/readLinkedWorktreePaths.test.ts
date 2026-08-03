@@ -12,6 +12,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 const WORKTREE_NAME = "b";
+const DOT_PREFIXED_WORKTREE_NAME = `..${WORKTREE_NAME}`;
 
 describe(readLinkedWorktreePaths, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
@@ -60,9 +61,24 @@ describe(readLinkedWorktreePaths, () => {
   test("skips an entry whose gitdir record is missing or empty", () => {
     expect.hasAssertions();
 
-    mkdirSync(join(cwd, GIT_DIRECTORY, GIT_WORKTREES_DIRECTORY_NAME, WORKTREE_NAME), { recursive: true });
+    const entryDirectory = join(cwd, GIT_DIRECTORY, GIT_WORKTREES_DIRECTORY_NAME, WORKTREE_NAME);
+    mkdirSync(entryDirectory, { recursive: true });
 
     expect(readLinkedWorktreePaths(cwd)).toStrictEqual([]);
+
+    writeFileSync(join(entryDirectory, GIT_WORKTREE_GITDIR_FILENAME), "");
+
+    expect(readLinkedWorktreePaths(cwd)).toStrictEqual([]);
+  });
+
+  // Only a leading `..` segment escapes the root — a name that merely starts with those characters is nested, and
+  // Reading it as outside would leave a whole parallel checkout mirrored.
+  test("reads a nested worktree whose directory name starts with two dots", () => {
+    expect.hasAssertions();
+
+    registerWorktree(WORKTREE_NAME, join(cwd, DOT_PREFIXED_WORKTREE_NAME));
+
+    expect(readLinkedWorktreePaths(cwd)).toStrictEqual([DOT_PREFIXED_WORKTREE_NAME]);
   });
 
   // Run from inside a linked worktree, `.git` is a file pointing at the entry in the repo's single registry — so a

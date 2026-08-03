@@ -47,10 +47,12 @@ export const readLinkedWorktreePaths = (cwd: string): readonly string[] => {
       .trim();
     if (!gitdir) continue;
     // The recorded path is the worktree's own `.git` file, so its parent is the worktree root.
-    const relativePath = relative(root, dirname(resolve(gitdir)));
+    const relativePath = relative(root, dirname(resolve(gitdir))).replaceAll("\\", "/");
     // Only a worktree nested inside this tree is this mirror's problem; a sibling checkout is outside the walk anyway.
-    if (!relativePath || relativePath.startsWith("..") || isAbsolute(relativePath)) continue;
-    paths.push(relativePath.replaceAll("\\", "/"));
+    // What escapes the root is a leading `..` SEGMENT — a directory whose NAME merely starts with those characters
+    // (`..worktree`) is nested like any other, and dropping it would mirror a whole parallel checkout unmasked.
+    if (!relativePath || relativePath === ".." || relativePath.startsWith("../") || isAbsolute(relativePath)) continue;
+    paths.push(relativePath);
   }
   return paths.toSorted();
 };
