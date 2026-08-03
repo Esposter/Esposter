@@ -139,7 +139,7 @@ When the captured arg is a known shared reference, assert it directly (`expect(c
 
 `jsonDateParse` from `@esposter/shared` is the default parse: plain `JSON.parse` leaves every Date as an ISO string. Same rule and file as the `expect.any` ban.
 
-Disable it on the line, with the reason, only where blanket revival would change runtime behaviour that is wanted — the parses a Zod schema then validates and coerces itself (resource content blobs, drafts, machine config), payloads replayed verbatim (dead-letter events), and `jsonDateParse`'s own implementation. See `/docs/architecture/serialization.md`. **Tests do not get a disable** — a test parses with `jsonDateParse` like everything else, unless the model it asserts against types the field as a string.
+Disable it on the line, with the reason, only where blanket revival would change runtime behaviour that is wanted — the parse feeds a Zod schema that validates and coerces the result itself (resource content blobs, drafts, machine config), payloads replayed verbatim (dead-letter events), and `jsonDateParse`'s own implementation. See `/docs/architecture/serialization.md`. **Tests do not get a disable** — a test parses with `jsonDateParse` like everything else, unless the model it asserts against types the field as a string.
 
 ```ts
 // eslint-disable-next-line no-restricted-syntax -- the content schema owns date coercion, so free-text ISO strings survive
