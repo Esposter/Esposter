@@ -458,8 +458,9 @@ const AREA_SCOPE_PROMPT =
   "via isExclusive', 'the cache evicts on room switch', 'errors surface through neverthrow rather than throwing'. " +
   "It is NOT a summary of a page, a design goal, or a statement of intent. Give each claim its source path (and " +
   "heading), and pathPrefixes naming which of the area's files it is about when it does not govern all of them — " +
-  "concrete paths or directory prefixes copied from your `files` list, NEVER globs: they are matched against that " +
-  "list, so a wildcard matches nothing and the claim reaches no finder. " +
+  "concrete paths or directory prefixes copied from your `files` list, never globs: they are matched against " +
+  "that list, and a wildcard matches nothing, so the claim is treated as governing the whole area and every " +
+  "finder is asked to check it. Omit pathPrefixes entirely when that is what you mean. " +
   "This inventory is what the review checks the code against, so precision here decides the run: 10 sharp claims " +
   "beat 40 vague ones. Return an empty array only if genuinely nothing documents this area.\n" +
   "7. Partition the area into 3-" +
@@ -578,6 +579,7 @@ const NON_SOURCE_REGEX =
 // To prevent. Diff mode is deliberately uncapped — the diff is the scope, and dropping half of it reviews a lie.
 const AREA_MAX_FILES = 120;
 const isAreaCapped = IS_AREA && scope.files.length > AREA_MAX_FILES;
+const preCapFiles = scope.files;
 if (isAreaCapped) {
   const resolvedFileCount = scope.files.length;
   // Source first: when something has to go, a lockfile or a snapshot is never the most valuable thing to keep.
@@ -674,16 +676,23 @@ const seams = SEAM_MODE ? rawSeams : [];
 // Unchecked forever. Uncapped, an unresolvable prefix is treated as area-wide instead: over-broad beats unread.
 const inventoriedClaims =
   IS_AREA && Array.isArray(scope.claims) ? scope.claims.filter((c) => c && c.claim && c.source) : [];
-const isClaimResolvable = (c) =>
-  !Array.isArray(c.pathPrefixes) || c.pathPrefixes.length === 0 || filesUnder(c.pathPrefixes).length > 0;
-const claims = isAreaCapped ? inventoriedClaims.filter(isClaimResolvable) : inventoriedClaims;
+const isClaimResolvable = (c, files) =>
+  !Array.isArray(c.pathPrefixes) || c.pathPrefixes.length === 0 || filterUnder(files, c.pathPrefixes).length > 0;
+// The cap is the only thing allowed to drop a claim, so the test is what the cap CHANGED: resolvable against the
+// Files the Scope agent returned and no longer resolvable against the ones that survived. A claim that resolved
+// Against neither — a glob, an absolute path — was never about the truncation, and dropping it there blames the
+// Coverage gap on a size problem, sending the user to narrow a target that was not the cause.
+const claims = isAreaCapped
+  ? inventoriedClaims.filter((c) => !isClaimResolvable(c, preCapFiles) || isClaimResolvable(c, scope.files))
+  : inventoriedClaims;
 if (claims.length < inventoriedClaims.length)
   log(
     "area: " +
       (inventoriedClaims.length - claims.length) +
       " of " +
       inventoriedClaims.length +
-      " documented claims dropped — they describe files no longer in scope, so nothing in this run checks them.",
+      " documented claims dropped — the file cap removed every file they describe, so nothing in this run " +
+      "checks them.",
   );
 log(
   LEVEL +
@@ -884,16 +893,13 @@ const VERIFY_SCOPE_BLOCK = (paths) => {
 // correctness angle).
 const FINDER_PROMPT = (f) => {
   const isCleanup = f.kind === "cleanup";
-  // Conformance sits with record-gap here, not with correctness: a claim the code contradicts and a decision
-  // Nothing documents both cost a reader a wrong conclusion, and neither has a crash to name. Demanding one
-  // Makes the finder either drop the finding or dress a documentation problem up as a runtime failure.
-  const isRecordClaim = f.kind === "record-gap" || f.kind === "conformance";
-  // Every area finder is a MIXED finder whatever its declared kind: area mode lets a candidate name its own kind,
-  // And the seam finders — the only ones carrying the claim inventory on a large area — are declared correctness
-  // While being asked in the same prompt to report conformance and record-gap candidates. Keyed on the declared
-  // Kind alone they get "name the user-visible consequence", which is the demand above that makes a finder either
-  // Suppress the documentation finding or invent a crash for it, on exactly the runs seam mode exists for.
-  const isMixedKind = IS_AREA && !isCleanup && !isRecordClaim;
+  // A record finding has no crash to name, and demanding one makes the finder either drop it or dress a
+  // Documentation problem up as a runtime failure. The coverage finder is the ONLY one that raises record
+  // Findings alone; every other area finder raises both — the seam finders are declared correctness while being
+  // Asked for conformance candidates, and the conformance finder's own claims block tells it to raise
+  // `correctness` where a mismatch breaks something — so they need the wording for both.
+  const isRecordOnly = f.kind === "record-gap";
+  const isMixedKind = IS_AREA && !isCleanup && !isRecordOnly;
   // Which lens family, then which mode — never mode first. Branching on IS_AREA at the top drops the
   // Cleanup/correctness distinction entirely, so the first preamble-less correctness finder added to area mode
   // Would be told to "review through EACH of the following cleanup lenses" while its candidates were still
@@ -919,15 +925,17 @@ const FINDER_PROMPT = (f) => {
     "Surface up to " +
     f.cap +
     " candidate findings, each with file, line, a one-line summary, and a concrete failure_scenario — " +
-    // Cleanup gets the same override through CLEANUP_PRECEDENCE below.
-    (isRecordClaim
-      ? "the wrong conclusion a future reader or reviewer would draw from the code alone, and what it costs them. "
-      : isMixedKind
-        ? "for a code defect, the user-visible consequence (error, wrong output, data loss) rather than an " +
-          "intermediate state (value stale, set grows); for a conformance or record-gap candidate, the wrong " +
-          "conclusion a future reader or reviewer would draw and what it costs them — never invent a crash for a " +
-          "documentation problem. "
-        : "the user-visible consequence (error, wrong output, data loss), not an intermediate state (value stale, set grows). ") +
+    (isCleanup
+      ? "the concrete cost — what is duplicated, wasted, harder to maintain, or which recorded rule is broken — " +
+        "never a crash, since a cleanup finding by definition has none. "
+      : isRecordOnly
+        ? "the wrong conclusion a future reader or reviewer would draw from the code alone, and what it costs them. "
+        : isMixedKind
+          ? "for a code defect, the user-visible consequence (error, wrong output, data loss) rather than an " +
+            "intermediate state (value stale, set grows); for a conformance or record-gap candidate, the wrong " +
+            "conclusion a future reader or reviewer would draw and what it costs them — never invent a crash for a " +
+            "documentation problem. "
+          : "the user-visible consequence (error, wrong output, data loss), not an intermediate state (value stale, set grows). ") +
     (isCleanup
       ? "Cover whichever lenses apply — you do not need findings from every lens; prioritize the highest-cost issues across all of them. "
       : "") +
@@ -1025,7 +1033,7 @@ const RESOLUTION_SCHEMA = {
     confidence: {
       type: "number",
       description:
-        "0-100: how sure you are of THIS VERDICT after what you read — you are the last pass, so a number below 60 means you did not settle it and should say UNRESOLVABLE with the blocker instead",
+        "0-100: how sure you are of THIS VERDICT after what you read — you are the last pass, so anything under 70 means you did not settle it: say UNRESOLVABLE and name the blocker instead of reporting a verdict you would not defend",
     },
     evidence: { type: "string", description: "the specific thing you read or ran that settled it" },
     blocker: {
@@ -1168,7 +1176,7 @@ const claimsFor = (prefixes) =>
     (c) =>
       !Array.isArray(c.pathPrefixes) ||
       c.pathPrefixes.length === 0 ||
-      filesUnder(c.pathPrefixes).length === 0 ||
+      filterUnder(preCapFiles, c.pathPrefixes).length === 0 ||
       c.pathPrefixes.some((p) => prefixes.some((q) => isUnder(p, q) || isUnder(q, p))),
   );
 // Takes the claims, rather than choosing them: a seam finder passes its own territory's subset, and lens mode's
@@ -1206,36 +1214,43 @@ const adjacentFor = (s) =>
       ? s.adjacentPathPrefixes.filter((p) => filesUnder([p]).length > 0)
       : s.adjacentPathPrefixes
     : [];
-const SEAM_FINDER = (s) => ({
-  label: "seam:" + s.name.replace(/\s+/g, "-").slice(0, 24),
-  kind: "correctness",
-  cap: PER_ANGLE,
-  claims: IS_AREA ? claimsFor(s.pathPrefixes) : [],
-  preamble:
-    "### Your territory — " +
-    s.name +
-    "\n" +
-    (s.summary || "") +
-    "\n\nYour scope:\n" +
-    materialFor(s.pathPrefixes) +
-    (IS_AREA
-      ? "\n\nRead those files in full"
-      : "\n\nRead the enclosing code for every hunk, not just the changed lines") +
-    ", and follow the seam THROUGH the files it crosses — this partition exists so somebody traces a path end to " +
-    "end instead of skimming everything.\n" +
-    (adjacentFor(s).length > 0
-      ? "\n### Your boundary\n" +
-        "This seam exchanges data with:\n" +
-        materialFor(adjacentFor(s)) +
-        "\nRead it and check the handoff in both directions: what your seam writes, mints, or emits, does the other " +
-        "side read, parse, or consume in the same shape, order, units and lifetime — and vice versa? A producer and " +
-        "a consumer that disagree is the defect class this partition is for, and it is invisible to a reader of " +
-        "either side alone. Report it against whichever side is wrong.\n"
-      : "") +
-    (IS_AREA ? CLAIMS_BLOCK(claimsFor(s.pathPrefixes)) : "") +
-    "\nApply every lens below to your territory:\n",
-  text: LENSES_TEXT,
-});
+const SEAM_FINDER = (s) => {
+  // One call, used for both the finder's claim-coverage accounting and the claims it is actually shown. Two
+  // Calls are two chances to narrow one and not the other, which is how `stats.claimsChecked` starts counting
+  // Claims no finder was handed — the exact reading the counter exists to make impossible.
+  const mine = IS_AREA ? claimsFor(s.pathPrefixes) : [];
+  const adjacent = adjacentFor(s);
+  return {
+    label: "seam:" + s.name.replace(/\s+/g, "-").slice(0, 24),
+    kind: "correctness",
+    cap: PER_ANGLE,
+    claims: mine,
+    preamble:
+      "### Your territory — " +
+      s.name +
+      "\n" +
+      (s.summary || "") +
+      "\n\nYour scope:\n" +
+      materialFor(s.pathPrefixes) +
+      (IS_AREA
+        ? "\n\nRead those files in full"
+        : "\n\nRead the enclosing code for every hunk, not just the changed lines") +
+      ", and follow the seam THROUGH the files it crosses — this partition exists so somebody traces a path end to " +
+      "end instead of skimming everything.\n" +
+      (adjacent.length > 0
+        ? "\n### Your boundary\n" +
+          "This seam exchanges data with:\n" +
+          materialFor(adjacent) +
+          "\nRead it and check the handoff in both directions: what your seam writes, mints, or emits, does the " +
+          "other side read, parse, or consume in the same shape, order, units and lifetime — and vice versa? A " +
+          "producer and a consumer that disagree is the defect class this partition is for, and it is invisible " +
+          "to a reader of either side alone. Report it against whichever side is wrong.\n"
+        : "") +
+      (IS_AREA ? CLAIMS_BLOCK(mine) : "") +
+      "\nApply every lens below to your territory:\n",
+    text: LENSES_TEXT,
+  };
+};
 const seamsWithoutBoundary = () =>
   seams.filter(
     (s) => Array.isArray(s.adjacentPathPrefixes) && s.adjacentPathPrefixes.length > 0 && !adjacentFor(s).length,
@@ -1377,9 +1392,10 @@ let candidatesSeen = allCandidates.length;
 // The boundary checks that did not happen, named once the finders have run: a seam whose neighbours resolve to
 // Nothing readable gets no boundary block at all, and the producer/consumer defect it was there to catch is
 // Simply unlooked-for. Nothing else in the output distinguishes that from a boundary traced and found clean.
-if (SEAM_MODE && seamsWithoutBoundary().length > 0)
+const uncheckedBoundaries = SEAM_MODE ? seamsWithoutBoundary() : [];
+if (uncheckedBoundaries.length > 0)
   log(
-    seamsWithoutBoundary().length +
+    uncheckedBoundaries.length +
       " seam(s) got no boundary check — the neighbours they name resolve to no file in scope",
   );
 
@@ -1577,22 +1593,35 @@ const stats = makeStats({
   refuted: refuted.length,
 });
 
+// "Nothing survived verification" and "nothing was left to verify" are different runs, and the stop rule turns
+// On which one this was: a finding sliced off at the resolve budget was never examined by anything, so a report
+// That does not say so reads as a clean bill of health for claims nobody judged. One wording for both exits —
+// Two phrasings of one condition drift, and which one the user gets would depend only on whether anything else
+// Survived. The refuted rows are built once for the same reason: the report format asks for them on every run,
+// Including the run that refuted everything.
+const unexaminedNote =
+  unresolvedDropped.length > 0
+    ? " " +
+      unresolvedDropped.length +
+      " further finding(s) were dropped unsettled at the resolve budget rather than refuted — this round did not " +
+      "clear them."
+    : "";
+const refutedRows = refuted.map((c) => ({
+  file: c.file,
+  line: c.line,
+  provenance: c.provenance,
+  provenanceSource: c.provenanceSource,
+  summary: c.summary,
+}));
+
 if (surviving.length === 0) {
-  // "Nothing survived verification" and "nothing was left to verify" are different runs, and the stop rule turns
-  // On which one this was: a finding sliced off at the resolve budget was never examined by anything, so an empty
-  // Report that does not say so reads as a clean bill of health for claims nobody judged.
-  const unexamined = unresolvedDropped.length;
   return {
     level: LEVEL,
     target: TARGET || undefined,
-    summary:
-      unexamined > 0
-        ? "No findings survived verification, but " +
-          unexamined +
-          " were dropped unsettled at the resolve budget rather than refuted — this round did not clear them."
-        : "No findings survived verification.",
+    summary: "No findings survived verification." + unexaminedNote,
     findings: [],
     mode: MODE,
+    refuted: refutedRows,
     stats,
   };
 }
@@ -1712,7 +1741,7 @@ const toFinding = (c, merged, shortSummary) => {
     // Asking the reader for the fact that would settle it contradicts itself and the report format both.
     unresolvedBlocker: verdict === "PLAUSIBLE" ? group.find((m) => m.unresolvedBlocker)?.unresolvedBlocker : undefined,
     // A merged group escalates to its most severe member.
-    severity: group.toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity ?? "major",
+    severity: group.reduce((worst, m) => (severityRank(m) < severityRank(worst) ? m : worst)).severity ?? "major",
     verdict,
     provenance: provenanceMember?.provenance ?? "new",
     provenanceSource: provenanceMember?.provenanceSource,
@@ -1731,14 +1760,6 @@ for (let i = 0; i < ranked.length; i++) {
   findings.push(toFinding(ranked[i], [], ""));
   backfilled++;
 }
-// Anything the run dropped without judging rides on the summary, not only in stats: the report table is what the
-// Session shows the user, and a round that ran out of resolve budget is not a round that found nothing more.
-const unexaminedNote =
-  unresolvedDropped.length > 0
-    ? " (" +
-      unresolvedDropped.length +
-      " further finding(s) were dropped unsettled at the resolve budget rather than refuted.)"
-    : "";
 const summary =
   (usedDecisions && report
     ? report.summary +
@@ -1754,12 +1775,6 @@ return {
   target: TARGET || undefined,
   summary,
   findings,
-  refuted: refuted.map((c) => ({
-    file: c.file,
-    line: c.line,
-    summary: c.summary,
-    provenance: c.provenance,
-    provenanceSource: c.provenanceSource,
-  })),
+  refuted: refutedRows,
   stats: { ...stats, reported: findings.length },
 };

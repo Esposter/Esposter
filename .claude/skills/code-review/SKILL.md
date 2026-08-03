@@ -33,7 +33,7 @@ Both leading words are positional and optional, so `"high"`, `"diff high"`, and 
 
 ### A run reports the top findings per finder, never all of them
 
-**The per-finder cap is the ceiling on what a run can report, and it is a budget — not a measurement of the code.** Each finder returns at most `perAngle` candidates and `ingest` truncates the rest; the reportable total is roughly `(finders × perAngle) + (cleanup finder × correctnessAngles × perAngle)`. The cleanup finder covers five lenses but is capped at the correctness total, because every candidate — minor or critical — buys a verifier slot, and cleanup left on a per-lens budget crowded the fan-out with findings that are minor by definition. That cap is derived from the level, not hardcoded, so retuning `correctnessAngles` keeps the invariant true.
+**The per-finder cap is the ceiling on what a run can report, and it is a budget — not a measurement of the code.** Each finder returns at most `stats.perAngle` candidates and `ingest` truncates the rest, except the cleanup finder, whose single budget is `stats.angles × stats.perAngle`. So the reportable total is roughly `2 × (angles × perAngle)` — half correctness, half cleanup. The cleanup finder covers five lenses on that one budget, because every candidate — minor or critical — buys a verifier slot, and a per-lens budget crowded the fan-out with findings that are minor by definition. The cap is derived from the fan-out actually run, not hardcoded, so retuning a level or hitting the small-territory trim keeps the invariant true.
 
 So a level does not "find everything and stop" — it finds the most salient handful per seam or lens, and the next-ranked defects surface only on a later run, after the ones above them are fixed.
 

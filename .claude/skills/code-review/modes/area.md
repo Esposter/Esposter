@@ -32,7 +32,7 @@ One extra pass has no counterpart in diff mode: the **coverage finder**, which l
 | `record-gap`  | the behaviour is deliberate but undocumented                 | a docs page, per the `docs` skill                       |
 | `cleanup`     | reuse / simplification / efficiency / altitude / conventions | as in diff mode                                         |
 
-A bug and the stale doc sentence describing that same bug stay **separate rows**: one is a code fix and the other is a doc edit, so merging them loses a deliverable. Severity for `conformance` and `record-gap` is the cost of the wrong conclusion a reader would draw, which is usually minor — a critical `record-gap` should make you suspicious that it is really a `correctness` finding wearing the wrong label.
+The kinds never merge into each other (SKILL.md, dedupe). Severity for `conformance` and `record-gap` is the cost of the wrong conclusion a reader would draw, which is usually minor — a critical `record-gap` should make you suspicious that it is really a `correctness` finding wearing the wrong label.
 
 ## Scope it small, and expect it to cost
 
