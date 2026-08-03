@@ -2,9 +2,9 @@ import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn"
 import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { describe, expect, test } from "vitest";
 
-describe(getVisibleColumns, () => {
-  const createColumn = (name: string, hidden: boolean) => new StringColumn({ hidden, name });
+const createColumn = (name: string, hidden: boolean) => new StringColumn({ hidden, name });
 
+describe(getVisibleColumns, () => {
   test("keeps only the columns the user can see, in order", () => {
     expect.hasAssertions();
 

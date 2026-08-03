@@ -373,6 +373,41 @@ describe(useMutation, () => {
     expect(onSuccess.mock.calls).toStrictEqual([["replacement"], ["joined"]]);
   });
 
+  // A superseded read's cleanup owns only the entry it registered itself — dropping the one a later exclusive
+  // Read put there sends the next caller to a duplicate request instead of the call already in flight
+  test("leaves a newer exclusive read joinable once the one it superseded settles", async () => {
+    expect.hasAssertions();
+
+    const duplicateQuery = vi.fn<() => Promise<string>>(() => Promise.resolve("duplicate"));
+    const { executeQuery } = useMutation();
+    let resolveSupersededQuery: (result: string) => void = noop;
+    let resolveNewerQuery: (result: string) => void = noop;
+    const supersededRead = executeQuery(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveSupersededQuery = resolve;
+        }),
+      { isExclusive: true, key },
+    );
+    await executeQuery(() => Promise.resolve("replacement"), { key });
+    const newerRead = executeQuery(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveNewerQuery = resolve;
+        }),
+      { isExclusive: true, key },
+    );
+    await flushPromises();
+    resolveSupersededQuery("superseded");
+    await supersededRead;
+    const joinedRead = executeQuery(duplicateQuery, { isExclusive: true, key });
+    resolveNewerQuery("newer");
+
+    await expect(joinedRead).resolves.toStrictEqual({ result: "newer", status: MutationStatus.Succeeded });
+    await expect(newerRead).resolves.toStrictEqual({ result: "newer", status: MutationStatus.Succeeded });
+    expect(duplicateQuery).not.toHaveBeenCalled();
+  });
+
   test("issues a fresh exclusive read once the one it would have joined has settled", async () => {
     expect.hasAssertions();
 

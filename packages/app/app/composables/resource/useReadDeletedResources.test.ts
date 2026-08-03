@@ -44,7 +44,7 @@ describe(useReadDeletedResources, () => {
   test("counts once for a page change and re-counts on a refresh", async () => {
     expect.hasAssertions();
 
-    const countHandler = vi.fn(() => 0);
+    const countHandler = vi.fn<() => number>(() => 0);
     server.use(
       trpcMsw.resource.countDeletedResources.query(countHandler),
       trpcMsw.resource.readDeletedResources.query(() => ({ hasMore: false, items: firstPage })),

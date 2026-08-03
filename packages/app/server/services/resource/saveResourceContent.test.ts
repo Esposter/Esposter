@@ -20,6 +20,11 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 // And the type's registered after-save hook — is asserted here once. Every path that writes content (the
 // Editor's save, blueprint deploy, duplicate, restore) keeps only a wiring test proving it comes through here.
 // TodoList is the representative type: it is the one with a registered after-save hook
+const readActivityTypes = () =>
+  [...(MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [])].map(
+    ({ activityType }) => activityType as ResourceActivityType,
+  );
+
 describe(saveResourceContent, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
@@ -34,10 +39,6 @@ describe(saveResourceContent, () => {
     body: { dueAt, itemId: item.id, resourceId },
     scheduledEnqueueTimeUtc: dueAt,
   });
-  const readActivityTypes = () =>
-    [...(MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [])].map(
-      ({ activityType }) => activityType as ResourceActivityType,
-    );
 
   beforeAll(async () => {
     mockContext = await createMockContext();

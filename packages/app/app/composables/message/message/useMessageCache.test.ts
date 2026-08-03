@@ -3,7 +3,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
-import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "@/composables/shared/network.test";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
@@ -14,7 +14,6 @@ import { getMockSession } from "@@/server/trpc/context.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMessageCache, () => {
@@ -25,10 +24,6 @@ describe(useMessageCache, () => {
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const message = "message";
-  const flushCache = async () => {
-    await flushPromises();
-    await waitForSynchronizedFunctions();
-  };
   // Router.currentRoute is a shallowRef, so mutating params.id does not trigger
   // Reactivity — this helper replaces the mutation and forces dependents to update
   const setRouteId = (id: string) => {

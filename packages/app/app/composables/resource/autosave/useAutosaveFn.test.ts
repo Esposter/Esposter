@@ -7,6 +7,11 @@ import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+const elapseDebounce = async () => {
+  vi.advanceTimersByTime(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
+  await waitForSynchronizedFunctions();
+};
+
 describe(useAutosaveFn, () => {
   let router: Router;
   let wrapper: VueWrapper;
@@ -24,10 +29,6 @@ describe(useAutosaveFn, () => {
       }),
     );
     vi.useFakeTimers({ now: 0 });
-  };
-  const elapseDebounce = async () => {
-    vi.advanceTimersByTime(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
-    await waitForSynchronizedFunctions();
   };
 
   beforeAll(() => {

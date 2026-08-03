@@ -8,20 +8,21 @@ import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
+const createParticipant = (name: string): User => ({
+  biography: "",
+  createdAt: new Date("1970-01-01"),
+  deletedAt: null,
+  email: "",
+  emailVerified: false,
+  id: crypto.randomUUID(),
+  image: "",
+  name,
+  updatedAt: new Date("1970-01-01"),
+});
+
 describe(useDirectMessageStore, () => {
   const server = setupMswTrpc();
   const roomId = crypto.randomUUID();
-  const createParticipant = (name: string): User => ({
-    biography: "",
-    createdAt: new Date("1970-01-01"),
-    deletedAt: null,
-    email: "",
-    emailVerified: false,
-    id: crypto.randomUUID(),
-    image: "",
-    name,
-    updatedAt: new Date("1970-01-01"),
-  });
   const first = createParticipant("first");
   const second = createParticipant("second");
   const third = createParticipant("third");

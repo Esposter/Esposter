@@ -21,7 +21,7 @@ export const useCursorPaginationCache = <
 >({
   initializeCursorPaginationData,
   ...options
-}: CursorPaginationCacheOptions<TStore, TIndex, TItem>) =>
+}: CursorPaginationCacheOptions<TStore, TIndex, TItem>) => {
   usePaginationCache({
     ...options,
     initializeItems: (cachedItems) => {
@@ -30,3 +30,4 @@ export const useCursorPaginationCache = <
       initializeCursorPaginationData(cachedData);
     },
   });
+};

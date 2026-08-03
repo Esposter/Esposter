@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { ReadFollowedThreadsOutput } from "#shared/models/message/thread/ReadFollowedThreadsOutput";
+
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { createPinia, setActivePinia } from "pinia";
@@ -18,7 +20,10 @@ describe(useThreadFollowStore, () => {
   test("hands every concurrent caller the follow state from one read", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn(() => ({ threadRootRowKeys: [threadRootRowKey], threads: [] }));
+    const handler = vi.fn<() => ReadFollowedThreadsOutput>(() => ({
+      threadRootRowKeys: [threadRootRowKey],
+      threads: [],
+    }));
     server.use(trpcMsw.message.readFollowedThreads.query(handler));
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing, ensureFollowedThreadsLoaded } = threadFollowStore;

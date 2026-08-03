@@ -5,6 +5,11 @@ import { AzureEntityType, StandardMessageEntity } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
+type WriteEntity = (entity: AzureUpdateEntity<StandardMessageEntity>, etag: string) => Promise<unknown>;
+
+const getTableClient = (getEntityImplementation: () => Promise<Record<string, unknown>>) =>
+  ({ getEntity: getEntityImplementation }) as unknown as CustomTableClient<StandardMessageEntity>;
+
 describe(updateEntityConditionally, () => {
   const partitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
@@ -19,8 +24,6 @@ describe(updateEntityConditionally, () => {
     partitionKey,
     rowKey,
   });
-  const getTableClient = (getEntityImplementation: () => Promise<Record<string, unknown>>) =>
-    ({ getEntity: getEntityImplementation }) as unknown as CustomTableClient<StandardMessageEntity>;
   // Every caller's intent is "derive the new body from whichever version I am writing against", so the test's
   // Intent is the same shape: append to the message it was handed
   const getUpdateEntity = ({
@@ -34,10 +37,7 @@ describe(updateEntityConditionally, () => {
   test("re-applies the intent to the version it re-read rather than the one it started from", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi
-      .fn<(entity: AzureUpdateEntity<StandardMessageEntity>, etag: string) => Promise<unknown>>()
-      .mockRejectedValueOnce(new Error("412"))
-      .mockResolvedValueOnce(undefined);
+    const writeEntity = vi.fn<WriteEntity>().mockRejectedValueOnce(new Error("412")).mockResolvedValueOnce(undefined);
     const updatedEntity = await updateEntityConditionally(
       getTableClient(() => Promise.resolve(getEntityRecord(concurrentMessage, "2"))),
       StandardMessageEntity,
@@ -63,7 +63,7 @@ describe(updateEntityConditionally, () => {
   test("rethrows the write error when the version has not moved", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn(() => Promise.reject(new Error("failure")));
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("failure")));
 
     await expect(
       updateEntityConditionally(
@@ -82,7 +82,7 @@ describe(updateEntityConditionally, () => {
   test("throws NOT_FOUND when the entity is gone by the time it re-reads", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn(() => Promise.reject(new Error("412")));
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("412")));
 
     await expect(
       updateEntityConditionally(
@@ -104,7 +104,7 @@ describe(updateEntityConditionally, () => {
   test("throws CONFLICT when every attempt loses the race", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn(() => Promise.reject(new Error("412")));
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("412")));
     let etag = 1;
 
     await expect(

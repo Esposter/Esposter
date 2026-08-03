@@ -48,7 +48,7 @@ describe(useFavoriteStore, () => {
   test("reads the favorites once for repeat and concurrent mounts", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn(() => [resource]);
+    const handler = vi.fn<() => Resource[]>(() => [resource]);
     server.use(trpcMsw.resource.readFavorites.query(handler));
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
@@ -81,7 +81,7 @@ describe(useFavoriteStore, () => {
   test("re-reads the favorites after an invalidation", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn(() => [resource]);
+    const handler = vi.fn<() => Resource[]>(() => [resource]);
     server.use(trpcMsw.resource.readFavorites.query(handler));
     const favoriteStore = useFavoriteStore();
     const { readFavorites, refreshFavorites } = favoriteStore;

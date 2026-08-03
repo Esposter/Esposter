@@ -77,7 +77,7 @@ export const useMutation = () => {
   // Chains a target's writes so each starts only after the previous settles, which is what makes a write
   // Build on the state the write ahead of it stored. A rejection neither blocks the queue nor leaks to the
   // Calls behind it
-  const enqueue = async <TResult>(key: PropertyKey, run: () => Promise<TResult>) => {
+  const enqueue = <TResult>(key: PropertyKey, run: () => Promise<TResult>) => {
     const previous = queues.get(key) ?? Promise.resolve();
     let release = noop;
     queues.set(
@@ -121,7 +121,7 @@ export const useMutation = () => {
   };
   // Reads are latest-wins per target: the caller wants the freshest data, and a superseded response has
   // Nothing to unwind — discarding it loses no information
-  const executeQuery = async <TResult>(
+  const executeQuery = <TResult>(
     query: (checkIsStale: () => boolean) => Promise<TResult>,
     { isExclusive, key, onError, onSuccess }: QueryOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
@@ -142,7 +142,9 @@ export const useMutation = () => {
       () => settle(query, { checkIsStale, isSilentWhenStale: true, onError, onSuccess }),
       () => {
         releaseKey(key);
-        if (isExclusive) sharedQueries.delete(key);
+        // Only this call's own entry is dropped: the read that superseded it registers its own, and clearing
+        // That one would send the next exclusive caller to a duplicate request instead of the call in flight
+        if (isExclusive && sharedQueries.get(key) === outcome) sharedQueries.delete(key);
       },
     );
     // The compiler cannot state that a target's entry carries the result type its registrant read — the map is
@@ -152,11 +154,11 @@ export const useMutation = () => {
   };
   // Writes queue per target: discarding one loses its error and its rollback, so it is never dropped by
   // Default — a caller opts into latest-wins with isSupersede where dropping the earlier call is the intent
-  const executeMutation = async <TResult>(
+  const executeMutation = <TResult>(
     mutate: (checkIsStale: () => boolean) => Promise<TResult>,
     { applyOptimistic, isExclusive, isSupersede, key, onError, onSuccess }: MutationOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
-    if (isExclusive && pendingCounts.value.has(key)) return { status: MutationStatus.Dropped };
+    if (isExclusive && pendingCounts.value.has(key)) return Promise.resolve({ status: MutationStatus.Dropped });
 
     const checkIsStale = isSupersede ? getCheckIsStale(key) : () => false;
     claimKey(key);

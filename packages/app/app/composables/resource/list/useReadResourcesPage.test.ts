@@ -7,16 +7,17 @@ import { useReadResourcesPage } from "@/composables/resource/list/useReadResourc
 import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
+const createOptions = (
+  readCount: () => Promise<number>,
+  readPage: (options: ReadResourcesOptions) => Promise<Resource[]>,
+  getFilterKey: () => string = () => "",
+) => ({ getFilterKey, readCount, readPage });
+
 describe(useReadResourcesPage, () => {
   const firstPage = [{ id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource];
   const secondPage = [{ id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource];
   const firstOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 1, sortBy: [] };
   const secondOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 2, sortBy: [] };
-  const createOptions = (
-    readCount: () => Promise<number>,
-    readPage: (options: ReadResourcesOptions) => Promise<Resource[]>,
-    getFilterKey: () => string = () => "",
-  ) => ({ getFilterKey, readCount, readPage });
 
   // The recycle bin pages quickly, or a Refresh lands while a page read is in flight: the slower earlier
   // Response arriving last would leave the table showing page 1 while the pager reads page 2, and a purge
@@ -48,7 +49,7 @@ describe(useReadResourcesPage, () => {
   test("counts once for a page or sort change and re-counts when the filter changes", async () => {
     expect.hasAssertions();
 
-    const readCount = vi.fn(() => Promise.resolve(0));
+    const readCount = vi.fn<() => Promise<number>>(() => Promise.resolve(0));
     const filterKey = ref("");
     const { read } = useReadResourcesPage(
       createOptions(
@@ -73,7 +74,7 @@ describe(useReadResourcesPage, () => {
   test("re-counts on a refresh", async () => {
     expect.hasAssertions();
 
-    const readCount = vi.fn(() => Promise.resolve(0));
+    const readCount = vi.fn<() => Promise<number>>(() => Promise.resolve(0));
     const { read, refresh } = useReadResourcesPage(createOptions(readCount, () => Promise.resolve(firstPage)));
     await read(firstOptions);
     await refresh();
@@ -85,7 +86,7 @@ describe(useReadResourcesPage, () => {
     expect.hasAssertions();
 
     const message = "message";
-    const readCount = vi.fn(() => Promise.resolve(1));
+    const readCount = vi.fn<() => Promise<number>>(() => Promise.resolve(1));
     let isFailing = true;
     const { count, error, items, read } = useReadResourcesPage(
       createOptions(readCount, () => {

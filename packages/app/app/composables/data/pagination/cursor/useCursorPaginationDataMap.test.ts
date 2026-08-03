@@ -3,6 +3,7 @@ import type { VueWrapper } from "@vue/test-utils";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { goOnline } from "@/composables/shared/network.test";
+import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -32,7 +33,7 @@ describe(useCursorPaginationDataMap, () => {
   const getPendingData = () => {
     const data = new CursorPaginationData<string>();
     data.items = [item];
-    let resolveQuery: (data: CursorPaginationData<string>) => void = () => undefined;
+    let resolveQuery: (data: CursorPaginationData<string>) => void = noop;
     const query = () =>
       new Promise<CursorPaginationData<string>>((resolve) => {
         resolveQuery = resolve;

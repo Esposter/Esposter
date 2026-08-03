@@ -52,7 +52,7 @@ export const useFooCache = () => {
   const { items } = storeToRefs(fooStore);
   const { initializeCursorPaginationData } = fooStore;
 
-  return useCursorPaginationCache({
+  useCursorPaginationCache({
     configuration: FooIndexedDbStoreConfiguration,
     getWriteItems: (items) => items.filter((item) => !item.isLoading),
     initializeCursorPaginationData,

@@ -19,7 +19,7 @@ describe(useReadResources, () => {
   test("counts once for a page or sort change and re-counts when the filter changes", async () => {
     expect.hasAssertions();
 
-    const countHandler = vi.fn(() => 0);
+    const countHandler = vi.fn<() => number>(() => 0);
     server.use(
       trpcMsw.resource.count.query(countHandler),
       trpcMsw.resource.readResources.query(() => ({ hasMore: false, items })),

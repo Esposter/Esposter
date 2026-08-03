@@ -7,13 +7,14 @@ import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { ResourceType } from "@esposter/db-schema";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const readRecentResourceViews = (): RecentResourceView[] =>
+  JSON.parse(localStorage.getItem(LocalStorageKey.ResourceRecentViews) ?? "[]");
+
 describe(useRecordResourceView, () => {
   const id = crypto.randomUUID();
   const name = "name";
   const createResource = (contentVersion: number) =>
     ({ contentVersion, id, name, type: ResourceType.Sheet }) as Resource;
-  const readRecentResourceViews = (): RecentResourceView[] =>
-    JSON.parse(localStorage.getItem(LocalStorageKey.ResourceRecentViews) ?? "[]");
 
   beforeEach(() => {
     localStorage.clear();

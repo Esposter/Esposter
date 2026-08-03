@@ -4,16 +4,14 @@ import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "@/composables/shared/network.test";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useMemberStore } from "@/store/message/user/member";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMemberCache, () => {
@@ -35,10 +33,6 @@ describe(useMemberCache, () => {
     name: "name",
     updatedAt: new Date(),
   } satisfies User;
-  const flushCache = async () => {
-    await flushPromises();
-    await waitForSynchronizedFunctions();
-  };
   const setRouteId = (id: string) => {
     router.currentRoute.value.params.id = id;
     triggerRef(router.currentRoute);

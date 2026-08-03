@@ -253,6 +253,7 @@ export const baseMessageRouter = router({
     await updateEntityConditionally(messageClient, StandardMessageEntity, {
       entityType: AzureEntityType.Message,
       entityWithEtag: { entity: messageEntity, etag: messageEtag },
+      // oxlint-disable-next-line typescript/no-misused-spread
       getUpdateEntity: (entity) => ({ ...entity, linkPreviewResponse: null }),
       writeEntity: (entity, etag) => updateMessage(messageClient, entity, "Replace", { etag }),
     });
@@ -619,6 +620,7 @@ export const baseMessageRouter = router({
       await updateEntityConditionally(messageClient, StandardMessageEntity, {
         entityType: AzureEntityType.Message,
         entityWithEtag: { entity: messageEntity, etag: messageEtag },
+        // oxlint-disable-next-line typescript/no-misused-spread
         getUpdateEntity: (entity) => ({ ...entity, isPinned: undefined }),
         // A pin is not an edit of the message, so this writes through updateEntity rather than updateMessage
         writeEntity: (entity, etag) => updateEntity(messageClient, entity, "Replace", { etag }),

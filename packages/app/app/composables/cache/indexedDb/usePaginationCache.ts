@@ -59,19 +59,19 @@ export const usePaginationCache = <
     },
   );
   const readCachedItems = getSynchronizedFunction(async (newPartitionKey: PartitionKey<TStore, TIndex>) => {
-    await executeQuery(
-      async () => {
-        const cachedItems = await readIndexedDb(configuration, newPartitionKey);
-        // The partition can move on while IndexedDB answers, and the read for the partition that replaced it
-        // Is a different target — latest-wins covers a re-entry into the same partition, never the switch away
+    await executeQuery(() => readIndexedDb(configuration, newPartitionKey), {
+      key: newPartitionKey,
+      // Hydration is a background restore of what the user already had, so a failure is logged, not alerted
+      onError: console.error,
+      // State is seeded here so the primitive's own staleness filter runs first; only the switch away needs a
+      // Guard of its own, because the read for the partition that replaced this one is a different target
+      onSuccess: async (cachedItems) => {
         if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0 || toValue(items).length > 0) return;
 
         initializeItems(cachedItems);
         await onHydrate?.(cachedItems);
       },
-      // Hydration is a background restore of what the user already had, so a failure is logged, not alerted
-      { key: newPartitionKey, onError: console.error },
-    );
+    });
   });
 
   // The capped write set is both what gets persisted and what the deep watch tracks. Watching the whole
