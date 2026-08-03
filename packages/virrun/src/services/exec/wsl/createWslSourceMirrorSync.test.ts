@@ -1,6 +1,6 @@
 import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { AGENT_WORKTREES_DIRECTORY, SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
+import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { buildSourceMirrorManifest } from "@/services/exec/wsl/buildSourceMirrorManifest";
 import {
@@ -210,34 +210,46 @@ describe(createWslSourceMirrorSync, () => {
     expect(script).toContain(`rm -rf '${mirrorPath}'`);
   });
 
-  // The bug this closes: a path added to the excludes after it was already mirrored is in neither side of the diff,
-  // So no delete is ever emitted and the mirror keeps its copy forever — the sandbox still reads that ghost tree, and
-  // A tool that rewrites one of its files copies it up into the upper the write-back then flushes, recreating on the
-  // Host a directory the user deleted. Only the clearing full materialize can drop content no manifest lists.
-  test("rebuilds from scratch when the exclude set has grown, so newly excluded paths cannot linger in the mirror", () => {
+  // The bug this closes: a path on either side of an exclude change is in NEITHER manifest — the old one excluded it,
+  // The new walk doesn't produce it — so an entries-only diff emits no delete and the mirror keeps its copy forever.
+  // The sandbox goes on reading that ghost tree, and any tool that rewrites one of its files copies it up into the
+  // Upper the write-back flushes, recreating on the host a directory the user deleted. Linked worktrees make this the
+  // Normal case rather than a one-off, since they come and go while a repo is worked on.
+  test("deletes a path the published exclude set disagrees with, without rebuilding the whole mirror", () => {
     expect.hasAssertions();
 
-    publish(resolveMirrorExcludes(cwd).filter((exclude) => exclude !== AGENT_WORKTREES_DIRECTORY));
+    const worktreePath = "b/c";
+    publish([...resolveMirrorExcludes(cwd), worktreePath]);
 
     const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
 
-    expect(script).toContain(`rm -rf '${mirrorPath}' && mkdir -p '${mirrorPath}'`);
-    // Published under the set in force now, so the rebuild is paid exactly once rather than on every later run.
+    expect(readStaged(VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX)).toBe(`${worktreePath}\0`);
+    // A targeted delete, not the clearing materialize — worktree churn must not cost a full re-copy of the tree.
+    expect(script).not.toContain(`rm -rf '${mirrorPath}' &&`);
+    // Published under the set in force now, so the reconciliation is paid once rather than on every later run.
     expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toStrictEqual({
       entries: buildSourceMirrorManifest(cwd, resolveMirrorExcludes(cwd)),
       excludes: resolveMirrorExcludes(cwd),
     });
   });
 
-  test("keeps the delta when the exclude set is merely ordered differently", () => {
+  test("keeps the skip path when the exclude set is merely ordered differently", () => {
     expect.hasAssertions();
 
     publish(resolveMirrorExcludes(cwd).toReversed());
-    writeFileSync(join(cwd, TEST_FILENAME), `${TEST_FILENAME}${TEST_FILENAME}`);
+
+    expect(createWslSourceMirrorSync(cwd).script).toBe("");
+  });
+
+  // A bare name matches its segment at any depth, so no delete list can target it — only clearing the tree can.
+  test("falls back to the full materialize when a bare-name exclude changed", () => {
+    expect.hasAssertions();
+
+    publish([...resolveMirrorExcludes(cwd), "dist"]);
 
     const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
 
-    expect(script).not.toContain(`rm -rf '${mirrorPath}'`);
+    expect(script).toContain(`rm -rf '${mirrorPath}' && mkdir -p '${mirrorPath}'`);
   });
 
   test("distrusts a manifest whose mirror tree is gone and forces the full materialize", () => {

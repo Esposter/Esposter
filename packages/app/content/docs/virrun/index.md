@@ -35,6 +35,7 @@ Correctness beats speed; a fast wrong answer is worthless.
 - **Write-back** — a mutation command's produced files are flushed back to the host so disk matches native, while `node_modules` structurally never flushes. See [write-back](/docs/virrun/write-back).
 - **Task cache** — a persist run keyed by environment key + working-tree + command hash; a hit skips the sandbox and replays the recorded diff and streams.
 - **The prefix is the switch** — `virrun -- <cmd>` opts one command in; removing it opts out. No allowlist, no env flag.
+- **Derived, not named** — no path is special because of the tool that made it; every special case falls out of a structural property, with git the one sanctioned exception. See [derived, not named](/docs/virrun/derived-not-named).
 
 ## Pages
 
@@ -52,6 +53,7 @@ Correctness beats speed; a fast wrong answer is worthless.
 | [Configuration](/docs/virrun/configuration)             | the committed `virrun.config.*` — backend selection + environment preset          |
 | [Cache](/docs/virrun/cache)                             | the gitignored `.virrun` layout, probe caches, cleanup & self-healing             |
 | [Correctness](/docs/virrun/correctness)                 | the correctness gate — differential, equivalence, and property/fuzz layers        |
+| [Derived, not named](/docs/virrun/derived-not-named)    | no tool-specific knowledge — special cases come from structure, git excepted      |
 | [Benchmarking](/docs/virrun/benchmarking)               | the speed gate — committed bench artifacts, methodology, honest numbers           |
 | [Orchestrator API](/docs/virrun/orchestrator-api)       | the public `createVirrun` TypeScript surface                                      |
 | [Prior art](/docs/virrun/prior-art)                     | surveyed landscape — what was adopted, studied, or ruled out                      |

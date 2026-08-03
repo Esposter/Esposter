@@ -40,7 +40,7 @@ Native-equivalence is a statement about a sandbox that saw the host's tree. Wher
 
 So the persist call takes `maskedPaths` — prepare outputs everywhere, and on win32 the whole mirror exclude set (a superset of them) — matched by the same `isExcludedPath` the mirror walk uses, so the two directions of the boundary cannot drift. This is not a name-based smart filter: the rule is still structural (_did the sandbox receive this path from the host?_), and the excluded set is derived, never enumerated per command.
 
-The failure it closes, observed: deleted `.claude/worktrees/agent-*` trees reappearing on the host after every `pnpm lint:fix`, holding stale copies of repo files. The mirror still carried them, the linter fixed them in place, and the write-back materialised the fixed ghosts. The mirror side of the same bug — why the copies were still there — is the [exclude-set rebuild](/docs/virrun/wsl-source-mirror).
+The failure it closes, observed: deleted agent worktree trees reappearing on the host after every `pnpm lint:fix`, holding stale copies of repo files. The mirror still carried them, the linter fixed them in place, and the write-back materialised the fixed ghosts. The mirror side of the same bug — why the copies were still there — is the [exclude reconciliation](/docs/virrun/wsl-source-mirror); which directories those are is [derived from git, not named](/docs/virrun/derived-not-named).
 
 ## Overlay upper format (empirically confirmed)
 

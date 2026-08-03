@@ -1,5 +1,5 @@
 import { isUnderSnapshotLower } from "@/services/exec/snapshot/isUnderSnapshotLower";
-import { AGENT_WORKTREES_DIRECTORY, GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
+import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
@@ -57,9 +57,11 @@ describe(isUnderSnapshotLower, () => {
   test("masks a mirror-excluded path at any depth so a ghost write can never reach the host", () => {
     expect.hasAssertions();
 
-    const maskedPaths = [AGENT_WORKTREES_DIRECTORY, GIT_DIRECTORY];
+    // A linked worktree root the mirror excluded, and the repo git dir.
+    const worktreePath = `${TEST_FILENAME}/worktree`;
+    const maskedPaths = [worktreePath, GIT_DIRECTORY];
 
-    expect(isUnderSnapshotLower(`${AGENT_WORKTREES_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
+    expect(isUnderSnapshotLower(`${worktreePath}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
     expect(isUnderSnapshotLower(`${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
     expect(isUnderSnapshotLower(`${TEST_FILENAME}/${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(
       true,

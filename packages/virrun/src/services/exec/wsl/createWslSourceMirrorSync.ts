@@ -23,9 +23,16 @@ import { shellQuote } from "@/services/exec/wsl/shellQuote";
 import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-// Compare exclude sets by membership, not by list identity: resolveMirrorExcludes appends an environment's prepare
-// Outputs to the base patterns, so a reordering must not read as drift and rebuild a perfectly good mirror.
-const getExcludeSignature = (excludes: readonly string[]): string => excludes.toSorted().join("\0");
+// Whether the two exclude sets disagree on a bare name — the one exclude shape a delete list can't target, since it
+// Matches that segment at any depth rather than one path. Membership only: resolveMirrorExcludes builds the set by
+// Appending discovered entries to the base patterns, so a reordering must never read as a change.
+const getHasBareNameExcludeChange = (previous: readonly string[], current: readonly string[]): boolean => {
+  const previousExcludes = new Set(previous);
+  const currentExcludes = new Set(current);
+  return [...previous, ...current].some(
+    (exclude) => !exclude.includes("/") && previousExcludes.has(exclude) !== currentExcludes.has(exclude),
+  );
+};
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
 // CreateWslOsBackend folds into the run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
@@ -81,16 +88,17 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
   const publication = existsSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME))
     ? readSourceMirrorPublication(cwd)
     : undefined;
-  // …and only while it was walked under the exclude set in force now. A grown exclude set leaves the mirror holding
-  // Copies of paths that are in neither side of the diff — the manifest never listed them again and the walk no
-  // Longer produces them — so no delete is ever emitted and they linger for the life of the entry: still read by the
-  // Sandbox (a lint run walks a whole ghost worktree), and still able to reach the host, since a tool that rewrites
-  // One copies it up into the upper the write-back flushes. Treat the change as drift and rebuild.
-  const previousManifest =
-    publication !== undefined && getExcludeSignature(publication.excludes) === getExcludeSignature(excludes)
-      ? publication.entries
-      : undefined;
-  const delta = previousManifest === undefined ? undefined : diffSourceMirrorManifests(previousManifest, manifest);
+  // …and only while every exclude it disagrees with can be reconciled by a targeted delete. The exclude set is not
+  // Constant — linked worktrees come and go while a repo is worked on — and a path on either side of that change is
+  // In neither manifest, so the entries diff alone can never emit a delete for it and the mirror keeps its copy
+  // Forever: read by the sandbox as if it were source, and copied up into the write-back's upper by any tool that
+  // Rewrites it. DiffSourceMirrorManifests turns each disagreement into an `rm -rf`, which is a no-op on a mirror
+  // That never held it. A *bare-name* change is the one shape a path list can't express (it matches at any depth),
+  // So that alone falls back to the clearing full materialize.
+  const current = { entries: manifest, excludes };
+  const previous =
+    publication !== undefined && !getHasBareNameExcludeChange(publication.excludes, excludes) ? publication : undefined;
+  const delta = previous === undefined ? undefined : diffSourceMirrorManifests(previous, current);
   if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) {
     // A live repo returns here on nearly every run, so this is where a marker that failed to publish gets a second
     // Chance. Without it the reaper's "no marker and old enough" arm has no invariant to stand on: one swallowed
@@ -126,7 +134,7 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     // Rename) as the last step inside the lock, so it never claims a state the mirror doesn't hold and a concurrent
     // Planner reads either the old or the new one, never a torn file. The temp carries the *host* pid
     // ReapStaleSourceMirrorTemps can attribute (a Linux-side `$$` temp would sit in the wrong pid domain forever).
-    writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify({ entries: manifest, excludes }));
+    writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(current));
     const publish = `mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
       `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(lockPath)}`;
