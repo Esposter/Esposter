@@ -64,12 +64,22 @@ const MODE_NAMES = ["diff", "area"];
 
 const RAW_ARGS = (typeof args === "string" ? args : "").trim();
 // "[mode] [level] [target…]" — both leading words are optional and positional, so consume them only when they
-// Actually match. Own-property check so Object.prototype keys ("constructor", "toString") never parse as a level.
-const TOKENS = RAW_ARGS.split(/\s+/).filter(Boolean);
-let consumed = 0;
-const MODE = MODE_NAMES.includes(TOKENS[0] ?? "") ? TOKENS[consumed++] : "diff";
-const LEVEL = Object.prototype.hasOwnProperty.call(LEVEL_PARAMS, TOKENS[consumed] ?? "") ? TOKENS[consumed++] : "high";
-const TARGET = TOKENS.slice(consumed).join(" ");
+// Actually match. Consume by SLICING the raw string, never by tokenising and re-joining: TARGET is handed to the
+// Scope agent and to every finder, verifier and sweep agent under the heading "user-supplied, verbatim", and a
+// Token round-trip collapses newlines and indentation — exactly the structure a multi-line skip list or a pasted
+// Instruction block carries its meaning in, so "review X\nskip Y" would arrive as one run-on directive.
+const takeLeadingWord = (input, isWanted) => {
+  const match = /^(\S+)(\s*)/u.exec(input);
+  return match && isWanted(match[1])
+    ? { rest: input.slice(match[0].length), word: match[1] }
+    : { rest: input, word: "" };
+};
+// Own-property check so Object.prototype keys ("constructor", "toString") never parse as a level.
+const modeParse = takeLeadingWord(RAW_ARGS, (w) => MODE_NAMES.includes(w));
+const levelParse = takeLeadingWord(modeParse.rest, (w) => Object.prototype.hasOwnProperty.call(LEVEL_PARAMS, w));
+const MODE = modeParse.word || "diff";
+const LEVEL = levelParse.word || "high";
+const TARGET = levelParse.rest.trim();
 const IS_AREA = MODE === "area";
 const P = LEVEL_PARAMS[LEVEL];
 // Project override: review agents are execution roles, not the thinking role — pin them to opus so a
@@ -146,12 +156,18 @@ const SWEEP_GAP_FOCUS =
 // Angle A with extra words. Angle F replaces it, and is the highest-value lens on standing code specifically
 // Because it hunts the failure the code-review skill names as the one that keeps coming back: an invariant that
 // Holds on the path someone thought about and is bypassed on the sibling path nobody did.
-const AREA_INVARIANT_ANGLE =
-  "### Angle F — invariant archaeology\n\nFor each guard, validation, cap, or ordering constraint in your\nterritory, ask what enforces it on EVERY path in — not only the one the happy\npath takes. Grep the callers of the function that holds it, and the field or\nhelper the guard reads, looking for a route that reaches the same state\nwithout passing through it. A guard applied at one call site and skipped at\nits sibling is the defect this angle exists for; report the site that skips\nit, and name the primitive both should have gone through.\n";
+const AREA_INVARIANT_ANGLE = {
+  label: "angle-F",
+  text: "### Angle F — invariant archaeology\n\nFor each guard, validation, cap, or ordering constraint in your\nterritory, ask what enforces it on EVERY path in — not only the one the happy\npath takes. Grep the callers of the function that holds it, and the field or\nhelper the guard reads, looking for a route that reaches the same state\nwithout passing through it. A guard applied at one call site and skipped at\nits sibling is the defect this angle exists for; report the site that skips\nit, and name the primitive both should have gone through.\n",
+};
 const AREA_LENS_NOTE =
   "These lenses were written for a change under review. This review has no diff: apply each of them to the code\nas it stands — read whole files, treat every line as in scope, and ignore any instruction that refers to added\nor deleted lines.\n\n";
 
 // ─── Schemas ───
+// One source of truth for the candidate kinds: the schema's enum, `ingest`'s validation and `KIND_RANK` are three
+// Views of this list, and a fifth kind added to only one of them fails silently — the schema would accept it and
+// `ingest` would rewrite it to the finder's default with nothing logged.
+const KINDS = ["correctness", "conformance", "record-gap", "cleanup"];
 const SCOPE_SCHEMA = {
   type: "object",
   // Area mode has no diff, so diffCommand stops being the thing that makes a scope usable — the file surface does.
@@ -238,11 +254,18 @@ const CANDIDATES_SCHEMA = {
           // A diff-mode finder produces one kind and the finder's own label settles it. An area-mode seam finder
           // Produces a mix — a real bug, a place the code contradicts its documentation, a behaviour nothing
           // Documents — from the same pass over the same territory, so only the candidate can say which it is.
-          kind: {
-            enum: ["correctness", "conformance", "record-gap", "cleanup"],
-            description:
-              "correctness = a defect in the code; conformance = code and the written record disagree (say which side is wrong in failure_scenario); record-gap = the behaviour is real and deliberate but nothing documents it; cleanup = reuse/simplification/efficiency/altitude/conventions. Omit to accept your finder's default.",
-          },
+          // The field exists ONLY in area mode: exposing the enum in diff mode, where no prompt explains it, is
+          // An invitation for a correctness finder to self-label `cleanup` and thereby route its own real defect
+          // Into low-effort verification and a demoted rank, with nothing in the output showing it happened.
+          ...(IS_AREA
+            ? {
+                kind: {
+                  enum: KINDS,
+                  description:
+                    "correctness = a defect in the code; conformance = code and the written record disagree (say which side is wrong in failure_scenario); record-gap = the behaviour is real and deliberate but nothing documents it; cleanup = reuse/simplification/efficiency/altitude/conventions. Omit to accept your finder's default.",
+                },
+              }
+            : {}),
         },
       },
     },
@@ -317,11 +340,17 @@ const RECORD_INDEX_STEP =
   "that swallows its error, a chosen ordering). This is the single most repeated lookup in the run — every finder " +
   "and verifier would otherwise re-derive it — so spend real effort here. Return an empty string only if neither " +
   "tree says anything about the area.\n";
+// pathPrefixes mean different things in the two modes and a shared wording gets one of them wrong. Diff mode
+// Appends them to `git diff -- `, so a glob is exactly right. Area mode prints them for an agent to Read and
+// Prefix-matches them against each claim's paths, so a glob opens no file and matches no claim — the seam's
+// Files get no reader and every one of its claims silently detaches from it.
 const SEAM_PARTITION_STEP =
   "**seams** so the review can be split by territory. A seam is a coherent subsystem or an " +
   "end-to-end path (e.g. 'resource publishing', 'blob deletion lifecycle', 'messaging store') — " +
   "NOT one seam per directory, and NOT one per package. Give each a name, a one-line summary, and pathPrefixes: " +
-  "directory prefixes or globs that select its files and work verbatim as git pathspecs after `-- `. " +
+  (IS_AREA
+    ? "concrete directory prefixes or whole file paths, copied from the `files` list you are returning — NEVER globs or wildcards. They are printed for an agent to open with Read and are prefix-matched against each claim's paths, so a `**/*.ts` selects no file and detaches every claim from the seam. "
+    : "directory prefixes or globs that select its files and work verbatim as git pathspecs after `-- `. ") +
   "Also give adjacentPathPrefixes: the prefixes of the seams this one exchanges data with — where one seam writes " +
   "what another reads, mints what another parses, or publishes what another consumes. Getting adjacency right is " +
   "the point: a producer and its consumer disagreeing is the defect no single-file reader can see.\n";
@@ -407,24 +436,49 @@ if (!scope.files || scope.files.length === 0) {
 // Updated to match a bug, a doc that now contradicts the code). Nothing is filtered out of the review itself.
 const NON_SOURCE_REGEX =
   /(^|\/)(pnpm-lock\.yaml|package-lock\.json|dependency-graph\.svg)$|\.(snap|svg|png|jpg|jpeg|ico|woff2?|lock)$/iu;
+// The area Scope prompt asks for at most ~120 files, and an instruction is not a bound. A Scope agent that
+// Resolves "the messaging feature" to 400 files hands all 400 to every seam finder, to the whole-area finder and
+// To the cleanup finder — the one way an area review runs away, since unlike a diff there is nothing external
+// Bounding it. Enforce the cap here so a too-broad target costs one truncated run instead of an unbounded one,
+// And log the drop: a silent cap reads as full coverage, which is the exact failure the rest of this script exists
+// To prevent. Diff mode is deliberately uncapped — the diff is the scope, and dropping half of it reviews a lie.
+const AREA_MAX_FILES = 120;
+if (IS_AREA && scope.files.length > AREA_MAX_FILES) {
+  const dropped = scope.files.length - AREA_MAX_FILES;
+  // Source first: when something has to go, a lockfile or a snapshot is never the most valuable thing to keep.
+  scope.files = scope.files
+    .filter((f) => !NON_SOURCE_REGEX.test(f))
+    .concat(scope.files.filter((f) => NON_SOURCE_REGEX.test(f)))
+    .slice(0, AREA_MAX_FILES);
+  log(
+    "area: Scope resolved " +
+      (AREA_MAX_FILES + dropped) +
+      " files — capped at " +
+      AREA_MAX_FILES +
+      ", " +
+      dropped +
+      " dropped. Narrow the target and re-run to cover the rest.",
+  );
+}
 const sourceFiles = scope.files.filter((f) => !NON_SOURCE_REGEX.test(f));
 const listedFiles = sourceFiles.length > 0 ? sourceFiles : scope.files;
 const unlistedFileCount = scope.files.length - listedFiles.length;
-// The Find strategies. In diff mode the choice is on diff size alone, and seam mode additionally needs the Scope
-// Agent to have returned a usable partition — one seam is not a partition, so a thin or missing answer falls back
-// To lens mode rather than reviewing a 500-file diff through a split nobody checked. Area mode has no lens
-// Fallback available: the lens angles read a diff, and there isn't one, so an area with an unusable partition is
-// Reviewed as a single whole-area seam instead. Every branch feeds the identical candidate schema, verifier and
-// Synthesis: only who reads what changes.
+// The Find strategies. Both modes choose on territory size, and seam mode additionally needs the Scope agent to
+// Have returned a usable partition — one seam is not a partition, so a thin or missing answer falls back to lens
+// Rather than reviewing through a split nobody checked. Every branch feeds the identical candidate schema,
+// Verifier and synthesis: only who reads what changes.
 const rawSeams = (Array.isArray(scope.seams) ? scope.seams : [])
   .filter((s) => s && s.name && Array.isArray(s.pathPrefixes) && s.pathPrefixes.length > 0)
   .slice(0, P.maxSeams);
-const AREA_FALLBACK_SEAM = { name: TARGET || "the area", pathPrefixes: listedFiles, summary: scope.summary };
-const seams = IS_AREA && rawSeams.length < 2 ? [AREA_FALLBACK_SEAM] : rawSeams;
-const SEAM_MODE = IS_AREA || (scope.files.length >= SEAM_MODE_MIN_FILES && seams.length >= 2);
-// The whole-X pass is the safety net for a bad partition, so it is pointless when there is only one territory:
-// It would re-read exactly what the single seam finder already reads, at full cost, and report it twice.
-const WANT_WHOLE_PASS = SEAM_MODE && seams.length >= 2;
+// Area mode partitions by the SAME rule as diff mode, and the threshold is lower because an area finder reads
+// Whole files rather than hunks. "Area is always seam" was wrong, and one run proved it: a 10-file area split
+// Into 5 seams gave every finder overlapping territory and identical all-lens instructions, so they were clones —
+// Six of them independently reported the same line, and with the synthesizer dead that shipped as six rows.
+// Lens partitioning is what makes small-territory finders differ, in either mode: a different QUESTION each,
+// Rather than a different address. Seam only earns its place once the territory is too big to all be read.
+const AREA_SEAM_MIN_FILES = 25;
+const SEAM_MODE = rawSeams.length >= 2 && scope.files.length >= (IS_AREA ? AREA_SEAM_MIN_FILES : SEAM_MODE_MIN_FILES);
+const seams = SEAM_MODE ? rawSeams : [];
 const claims = IS_AREA && Array.isArray(scope.claims) ? scope.claims.filter((c) => c && c.claim && c.source) : [];
 log(
   LEVEL +
@@ -436,19 +490,21 @@ log(
     (unlistedFileCount > 0 ? " (" + unlistedFileCount + " generated/binary unlisted)" : "") +
     (IS_AREA ? ", " + claims.length + " documented claims to check" : ""),
 );
+const SEAM_MIN_FILES = IS_AREA ? AREA_SEAM_MIN_FILES : SEAM_MODE_MIN_FILES;
 log(
   SEAM_MODE
     ? "find mode: seam — " +
         seams.length +
         " seams (" +
         seams.map((s) => s.name).join(", ") +
-        ")" +
-        (WANT_WHOLE_PASS ? " + whole-" + (IS_AREA ? "area" : "diff") + " pass" : " (single territory, no whole pass)") +
-        (IS_AREA && rawSeams.length < 2 ? " — partition unusable, whole area treated as one seam" : "")
+        ") + whole-" +
+        (IS_AREA ? "area" : "diff") +
+        " pass"
     : "find mode: lens — " +
         P.correctnessAngles +
-        " angles over the whole diff" +
-        (scope.files.length >= SEAM_MODE_MIN_FILES ? " (seam partition unusable, fell back)" : ""),
+        " angles over the whole " +
+        (IS_AREA ? "area" : "diff") +
+        (scope.files.length >= SEAM_MIN_FILES ? " (seam partition unusable, fell back)" : ""),
 );
 
 const claudeMdFiles = scope.claudeMdFiles || [];
@@ -522,10 +578,18 @@ const materialFor = IS_AREA
   ? (paths) =>
       "  Read these paths in full — they are the review surface, and there is no diff:\n  " + paths.join("\n  ")
   : scopedDiff;
-// A cited path an agent may want to widen to, expressed as the one action that mode makes sense of.
+// A cited path an agent may want to widen to, expressed as the one action that mode makes sense of. The
+// Non-scopeable branch is not optional: the same `diffCommand` shapes that make `scopedDiff` fall back — already
+// Carrying `-- <paths>`, or compound — turn an appended pathspec here into a second `--` that git rejects, so a
+// Hint ignoring the guard hands every verifier and resolver a command that errors, and widening fails exactly
+// When the claim needed it. That costs a PLAUSIBLE and a resolver agent, which is more than the diff it saved.
 const WIDEN_HINT = IS_AREA
   ? "another file (Read it)"
-  : "another file's diff (`" + scope.diffCommand + " -- '<other-path>'`)";
+  : IS_DIFF_COMMAND_SCOPEABLE
+    ? "another file's diff (`" + scope.diffCommand + " -- '<other-path>'`)"
+    : "another file's diff (run `" +
+      scope.diffCommand +
+      "` and read that path's hunks out of the result — this command already carries a pathspec, so it cannot take another)";
 
 const SCOPE_HEADER = IS_AREA
   ? "## Review scope\nThis is an AREA review: there is no diff and no change under review. You are auditing the code as it " +
@@ -553,17 +617,33 @@ const SCOPE_BLOCK =
 // Scope it to the file under judgement instead, and say plainly that widening is allowed: the claims that need a
 // Caller, a callee, or the other side of a seam are exactly the ones worth spending context on, and a verifier
 // That cannot widen returns PLAUSIBLE, which costs a resolver agent — more than the diff it saved.
-const VERIFY_SCOPE_BLOCK = (paths) =>
-  "## Review scope\n" +
-  (IS_AREA ? "This is an AREA review of " : "The change is ") +
-  scope.files.length +
-  " files; your slice of it is:\n" +
-  materialFor(paths) +
-  "\nRead the enclosing file(s) in full, not just the cited lines. Widen deliberately when the claim needs it — a " +
-  "caller, a callee, the other side of a handoff, " +
-  WIDEN_HINT +
-  " — rather than judging a claim you could not reach the trigger for.\n" +
-  SCOPE_TAIL;
+// A candidate can name a file the change never touched: Angle C traces callers, and the seam boundary block
+// Explicitly tells a finder to report against whichever side of a handoff is wrong. Narrowing the diff to such a
+// File prints NOTHING, and an empty diff under the heading "your slice of it" reads to the verifier as "nothing
+// Changed here" — so it REFUTES for want of evidence exactly the cross-file defects the partition exists to
+// Catch. Those get the whole change instead, with the reason stated, since there is no smaller correct slice.
+const VERIFY_SCOPE_BLOCK = (paths) => {
+  const unchanged = IS_AREA ? [] : paths.filter((p) => !scope.files.includes(p));
+  return (
+    "## Review scope\n" +
+    (IS_AREA ? "This is an AREA review of " : "The change is ") +
+    scope.files.length +
+    " files; your slice of it is:\n" +
+    (unchanged.length > 0
+      ? "  " +
+        scope.diffCommand +
+        "\n  (" +
+        unchanged.join(", ") +
+        " is NOT in this change — the claim is about how the change affects it, so you are given the whole diff " +
+        "rather than an empty slice. Read that file in full and find the changed code that reaches it.)"
+      : materialFor(paths)) +
+    "\nRead the enclosing file(s) in full, not just the cited lines. Widen deliberately when the claim needs it — a " +
+    "caller, a callee, the other side of a handoff, " +
+    WIDEN_HINT +
+    " — rather than judging a claim you could not reach the trigger for.\n" +
+    SCOPE_TAIL
+  );
+};
 
 // ─── Prompts ───
 // Kind-varying prose stays as ternaries (two kinds, not per-finder data —
@@ -571,6 +651,15 @@ const VERIFY_SCOPE_BLOCK = (paths) =>
 // correctness angle).
 const FINDER_PROMPT = (f) => {
   const isCleanup = f.kind === "cleanup";
+  const isRecordGap = f.kind === "record-gap";
+  // Which lens family, then which mode — never mode first. Branching on IS_AREA at the top drops the
+  // Cleanup/correctness distinction entirely, so the first preamble-less correctness finder added to area mode
+  // Would be told to "review through EACH of the following cleanup lenses" while its candidates were still
+  // Ingested as correctness, with nothing in the output revealing the mismatch.
+  const readInstruction = IS_AREA ? "Read the files in your scope" : "Run the diff command above";
+  const defaultPreamble = isCleanup
+    ? readInstruction + " and review through EACH of the following cleanup lenses:\n\n"
+    : readInstruction + " and review ONLY through the lens of your assigned angle:\n\n";
   return (
     "## Code-review finder — " +
     f.label +
@@ -579,18 +668,19 @@ const FINDER_PROMPT = (f) => {
     "\n" +
     // A seam finder's preamble replaces the "which lens" instruction with "which territory" — it is the only
     // Place the two Find strategies differ, and everything after it is identical for both.
-    (f.preamble ??
-      (IS_AREA
-        ? "Read the area's files and review through EACH of the following cleanup lenses:\n\n"
-        : isCleanup
-          ? "Run the diff command above and review through EACH of the following cleanup lenses:\n\n"
-          : "Run the diff command above and review ONLY through the lens of your assigned angle:\n\n")) +
+    (f.preamble ?? defaultPreamble) +
     f.text +
     "\n" +
     (isCleanup ? CLEANUP_PRECEDENCE + "\n" : "") +
     "Surface up to " +
     f.cap +
-    " candidate findings, each with file, line, a one-line summary, and a concrete failure_scenario — the user-visible consequence (error, wrong output, data loss), not an intermediate state (value stale, set grows). " +
+    " candidate findings, each with file, line, a one-line summary, and a concrete failure_scenario — " +
+    // A record-gap has no crash to name, and the shared definition demanding one is why a coverage finder either
+    // Drops real gaps for want of a runtime failure or dresses them up as bugs — the outcome the area
+    // Instructions explicitly warn against. Cleanup gets the same override through CLEANUP_PRECEDENCE below.
+    (isRecordGap
+      ? "the wrong conclusion a future reader or reviewer would draw from the code alone, and what it costs them. "
+      : "the user-visible consequence (error, wrong output, data loss), not an intermediate state (value stale, set grows). ") +
     (isCleanup
       ? "Cover whichever lenses apply — you do not need findings from every lens; prioritize the highest-cost issues across all of them. "
       : "") +
@@ -622,13 +712,15 @@ const canonFile = (raw) => {
 // The cap is a budget, not a statement about the code, so a finder that hits it is reported: "found nothing more"
 // and "was not allowed to report more" are otherwise indistinguishable in the output, and a run that truncated
 // reads as complete coverage. A logged drop is the signal to re-run at a level with a wider per-finder cap.
-// A candidate may name its own kind — an area seam finder returns a mix from one pass, so the finder's kind is
-// Only the default. Validated against the known set rather than trusted: an unrecognised string would silently
-// Rank as correctness in the report and escape the cleanup family's cheaper verification.
-const KINDS = ["correctness", "conformance", "record-gap", "cleanup"];
+// A candidate may name its own kind, but only in area mode — that is the only mode whose finders are told what
+// The kinds mean and asked to choose one. In diff mode the finder's own kind is authoritative and a self-declared
+// One is ignored, so a candidate cannot demote itself out of full-effort verification. Validated against KINDS
+// Either way: an unrecognised string would rank as correctness and escape the cleanup family's cheaper pass.
 const ingest = (cs, cap, kind, label) => {
   if (cs.length > cap) log(label + ": dropped " + (cs.length - cap) + " at cap " + cap + " — coverage truncated");
-  return cs.slice(0, cap).map((c) => ({ ...c, file: canonFile(c.file), kind: KINDS.includes(c.kind) ? c.kind : kind }));
+  return cs
+    .slice(0, cap)
+    .map((c) => ({ ...c, file: canonFile(c.file), kind: IS_AREA && KINDS.includes(c.kind) ? c.kind : kind }));
 };
 const loc = (c) => c.file + (c.line != null ? ":" + c.line : "");
 const inBounds = (i, n) => Number.isInteger(i) && i >= 0 && i < n;
@@ -654,7 +746,7 @@ const GROUP_VERIFIER_PROMPT = (group) =>
     )
     .join("\n") +
   "\n\n" +
-  (IS_AREA ? "Read " : "Run the scoped diff above, read ") +
+  (IS_AREA ? "Read " : "Run the diff command above, read ") +
   group[0].file +
   " in full, and return one verdict per candidate. " +
   (IS_AREA
@@ -781,20 +873,24 @@ async function verifyGroups(candidates) {
 // Trades territory for lens-diversity-per-file, so the lenses have to travel with the finder or the trade is a
 // Straight loss.
 const ALL_LENSES_TEXT = CORRECTNESS_ANGLES.map((a) => a.text).join("\n");
-// Angle B reads the deleted side of a diff, so it is dropped rather than reworded when there is no diff; Angle F
-// Takes its slot. See AREA_INVARIANT_ANGLE for why that specific replacement.
-const AREA_LENSES_TEXT =
-  AREA_LENS_NOTE +
-  CORRECTNESS_ANGLES.filter((a) => a.label !== "angle-B")
-    .map((a) => a.text)
-    .join("\n") +
-  "\n" +
-  AREA_INVARIANT_ANGLE;
+// The area lens set as individual angles, so a small area can be lens-partitioned the way a small diff is.
+// Angle B reads the deleted side of a diff and has nothing to audit here; Angle F takes its slot.
+const AREA_ANGLES = CORRECTNESS_ANGLES.filter((a) => a.label !== "angle-B").concat([AREA_INVARIANT_ANGLE]);
+const AREA_LENSES_TEXT = AREA_LENS_NOTE + AREA_ANGLES.map((a) => a.text).join("\n");
 const LENSES_TEXT = IS_AREA ? AREA_LENSES_TEXT : ALL_LENSES_TEXT;
-// Conformance is folded into the seam finder rather than given finders of its own. A separate claim-checker would
-// Re-read the same files the seam finder already has open, and would judge each claim without the surrounding
-// Knowledge of the subsystem that makes "the code does not actually do this" distinguishable from "the code does
-// This somewhere else". One agent, one territory, both questions.
+// In SEAM mode, conformance is folded into the seam finder rather than given finders of its own: a separate
+// Claim-checker would re-read the files the seam finder already has open, and would judge each claim without the
+// Knowledge of the subsystem that distinguishes "the code does not do this" from "the code does this elsewhere".
+// One agent, one territory, both questions. In LENS mode the reverse holds — see AREA_CONFORMANCE_FINDER.
+// No all-claims fallback. Handing every claim to a seam that matched none of them tells a finder to check
+// "reads are single-flight via isExclusive" against a territory holding no such code; it cannot find the
+// Behaviour in the files it was told to read, so it CONFIRMS a conformance finding saying the docs describe
+// Something the code does not do — and the verifier, scoped to that same file, sees the same absence and agrees.
+// An unmatched seam legitimately has no claims, which is what the empty branch of CLAIMS_BLOCK is for.
+// `claimsShown` is the honest denominator for stats: a claim whose pathPrefixes overlap no seam (an absolute
+// Path, a typo, a path outside the partition) reaches no agent, and counting it would overstate the one number
+// That says how much of the record this run actually audited.
+const claimsShown = new Set();
 const claimsFor = (prefixes) => {
   const scoped = claims.filter(
     (c) =>
@@ -802,7 +898,8 @@ const claimsFor = (prefixes) => {
       c.pathPrefixes.length === 0 ||
       c.pathPrefixes.some((p) => prefixes.some((q) => p.startsWith(q) || q.startsWith(p))),
   );
-  return scoped.length > 0 ? scoped : claims;
+  for (const c of scoped) claimsShown.add(c);
+  return scoped;
 };
 const CLAIMS_BLOCK = (prefixes) => {
   const mine = claimsFor(prefixes);
@@ -834,13 +931,16 @@ const SEAM_FINDER = (s) => ({
     s.name +
     "\n" +
     (s.summary || "") +
-    (IS_AREA ? "\n\nRead all of it:\n" : "\n\nScope the diff to your seam and read all of it:\n") +
+    "\n\nYour scope:\n" +
+    // The fallback seam IS the whole area, and its pathPrefixes are the entire file list — printing them here
+    // Reproduces the listing SCOPE_BLOCK already carries, twice in one prompt, for a territory that needs no
+    // Narrowing at all.
     materialFor(s.pathPrefixes) +
     (IS_AREA
-      ? "\n\nRead these files in full and follow the seam THROUGH the files it crosses — this partition exists so " +
-        "somebody traces a path end to end instead of skimming everything.\n"
-      : "\n\nRead the enclosing code for every hunk, not just the changed lines, and follow the seam THROUGH the files " +
-        "it crosses — this partition exists so somebody traces a path end to end instead of skimming everything.\n") +
+      ? "\n\nRead those files in full"
+      : "\n\nRead the enclosing code for every hunk, not just the changed lines") +
+    ", and follow the seam THROUGH the files it crosses — this partition exists so somebody traces a path end to " +
+    "end instead of skimming everything.\n" +
     (Array.isArray(s.adjacentPathPrefixes) && s.adjacentPathPrefixes.length > 0
       ? "\n### Your boundary\n" +
         "This seam exchanges data with:\n" +
@@ -893,8 +993,15 @@ const COVERAGE_FINDER = {
     (Array.isArray(scope.docPaths) && scope.docPaths.length > 0 ? scope.docPaths : ["(none found)"])
       .map((d) => "  - " + d)
       .join("\n") +
-    "\n\nThe claims already inventoried from them are listed under Recorded decisions above — those are covered " +
-    "ground. Read the area's code and find the decisions that are NOT there: a cap, a retry policy, an ordering, " +
+    // The inventory has to be IN this prompt. It is rendered nowhere else an agent without a seam can see it —
+    // CLAIMS_BLOCK is attached only to seam finders, and SCOPE_TAIL carries `recordIndex`, which is a different
+    // Artefact. A coverage finder told "the claims are listed above" when they are not re-reports documented
+    // Decisions as record-gaps, each buying a full-effort verifier slot to conclude the page already exists.
+    "\n\nThe claims already inventoried from those pages — this is the covered ground, do NOT re-report any of it:\n" +
+    (claims.length > 0
+      ? claims.map((c, i) => "  " + (i + 1) + ". " + c.claim + " — " + c.source).join("\n")
+      : "  (the Scope pass inventoried no claims — treat the whole area as uncovered ground)") +
+    "\n\nRead the area's code and find the decisions that are NOT there: a cap, a retry policy, an ordering, " +
     "an accepted cost, a deliberately swallowed error, an invariant a whole subsystem rests on. For each, the " +
     "`failure_scenario` is what it costs to leave it unwritten — name the wrong conclusion a future reader or " +
     "reviewer would draw from the code alone.\n\n" +
@@ -905,15 +1012,54 @@ const COVERAGE_FINDER = {
 };
 // The cleanup finder covers five lenses, and giving it a per-lens budget made cleanup the majority of every
 // Run's candidates — each one buying a verifier slot for a finding that is minor by definition, while the
-// Correctness caps that decide whether a real bug ships stayed where they were. The cap is now the correctness
-// Total, so the two families compete on equal footing; `ingest` logs what it truncated, so a run that genuinely
-// Had more cleanup to report says so rather than silently reading as clean.
-const CLEANUP_CAP_ANGLES = 3;
-const CLEANUP_FINDER = { label: "cleanup", kind: "cleanup", cap: CLEANUP_CAP_ANGLES * P.perAngle, text: CLEANUP_TEXT };
+// Correctness caps that decide whether a real bug ships stayed where they were. Its cap is DERIVED from the
+// Correctness angle count rather than hardcoded, so the stated invariant ("capped at the correctness total")
+// Stays true when a level is retuned; a literal 3 was that invariant at `high` only and quietly false above it.
+// `ingest` logs what it truncated, so a run that genuinely had more cleanup to report says so rather than
+// Silently reading as clean. In area mode the lenses need the same no-diff reframing the correctness ones get —
+// Every cleanup lens is worded around "the diff", and without the note the finder has nothing to match and
+// Returns empty, shipping an area review with zero cleanup findings that still reads as full coverage.
+const CLEANUP_FINDER = {
+  cap: P.correctnessAngles * P.perAngle,
+  kind: "cleanup",
+  label: "cleanup",
+  text: IS_AREA ? AREA_LENS_NOTE + CLEANUP_TEXT : CLEANUP_TEXT,
+};
+// Lens mode gives every finder the whole territory and a different QUESTION. In area mode the claims cannot ride
+// Along with each of them — N finders all handed the same inventory all report the same mismatches, which is the
+// Clone problem the size switch above exists to end. One finder owns the whole inventory instead, and the lens
+// Finders are left to hunt defects. (In seam mode the split is by territory, so claims travel per-seam and this
+// Finder is not built — see the note above SEAM_FINDER.)
+// Built lazily inside the lens branch, never at module scope: CLAIMS_BLOCK feeds `claimsShown`, which is the
+// Denominator behind stats.claimsChecked, so constructing this finder in a seam-mode run would count claims that
+// No agent was ever shown.
+const AREA_LENS_FINDERS = () =>
+  AREA_ANGLES.slice(0, P.correctnessAngles)
+    .map((a) => ({ ...a, cap: P.perAngle, kind: "correctness", text: AREA_LENS_NOTE + a.text }))
+    .concat(
+      claims.length > 0
+        ? [
+            {
+              cap: P.perAngle,
+              kind: "conformance",
+              label: "conformance",
+              preamble:
+                "### Your territory — the record, checked against the code\n" +
+                "The other finders on this review are hunting defects. You own one question: does this area actually " +
+                "do what it is documented to do? Read the area's files and check every claim below.\n" +
+                CLAIMS_BLOCK(listedFiles) +
+                "\nApply no other lens — a defect that is not a claim mismatch belongs to another finder.\n",
+              text: "",
+            },
+          ]
+        : [],
+    );
 const FINDERS = (
   SEAM_MODE
-    ? seams.map(SEAM_FINDER).concat(WANT_WHOLE_PASS ? [WHOLE_DIFF_FINDER] : [])
-    : CORRECTNESS_ANGLES.slice(0, P.correctnessAngles).map((a) => ({ ...a, kind: "correctness", cap: P.perAngle }))
+    ? seams.map(SEAM_FINDER).concat([WHOLE_DIFF_FINDER])
+    : IS_AREA
+      ? AREA_LENS_FINDERS()
+      : CORRECTNESS_ANGLES.slice(0, P.correctnessAngles).map((a) => ({ ...a, cap: P.perAngle, kind: "correctness" }))
 )
   .concat(IS_AREA ? [COVERAGE_FINDER] : [])
   .concat([CLEANUP_FINDER]);
@@ -999,9 +1145,58 @@ if (undecided.length > 0) {
   log("resolve: " + settled + " settled, " + (undecided.length - settled) + " left undecided");
 }
 
-const surviving = verified.filter((c) => c.verdict !== "REFUTED");
+// Ranking, declared here because the dedupe below picks a group's primary by the same severity ordering the
+// Report ranks by — two different orderings for "which of these is the worse reading" would eventually disagree.
+// Severity first; within a tier the kind breaks the tie and CONFIRMED outranks PLAUSIBLE. An unrated candidate
+// Ranks as major. Conformance sits with correctness because a code/record disagreement is a claim about the code
+// That someone has to act on; record-gap sits with cleanup because the fix is a page, not a behaviour. Every
+// Penalty stays under 4 so a kind or a verdict can never cross a severity tier.
+const SEVERITY_RANK = { critical: 0, major: 1, minor: 2 };
+const KIND_RANK = { cleanup: 2, conformance: 0, correctness: 0, "record-gap": 2 };
+const severityRank = (c) => SEVERITY_RANK[c.severity] ?? 1;
+const rank = (c) => severityRank(c) * 4 + (KIND_RANK[c.kind] ?? 0) + (c.verdict === "PLAUSIBLE" ? 1 : 0);
+
+const allSurviving = verified.filter((c) => c.verdict !== "REFUTED");
 const refuted = verified.filter((c) => c.verdict === "REFUTED");
-log("Verify done: " + verified.length + " verified → " + surviving.length + " kept, " + refuted.length + " refuted");
+
+// Independent finders converging on one defect is signal, and turning N reports of it into one row with N
+// citations is the synthesizer's job. But the synthesizer is a single agent with no retry, and when it dies —
+// a session limit, a transient error — the backfill path ships every candidate raw. One run did exactly that:
+// six finders found the same line, the synthesizer hit a limit, and the report carried the same bug six times.
+// So the merge that needs no judgement happens HERE, in code, where nothing can kill it: an exact (file, line)
+// collision is the same finding by construction. The synthesizer still merges findings that share a root cause
+// across DIFFERENT lines, which is the part that actually requires reading them.
+const byLocation = new Map();
+for (const c of allSurviving) {
+  const key = loc(c);
+  const seenAt = byLocation.get(key);
+  if (!seenAt) {
+    byLocation.set(key, { duplicates: [], primary: c });
+    continue;
+  }
+  // The best-described member leads: CONFIRMED outranks PLAUSIBLE, then the more severe reading wins. The rest
+  // Ride along as duplicates so their evidence still reaches toFinding's escalation.
+  const isBetter =
+    (c.verdict === "CONFIRMED" && seenAt.primary.verdict !== "CONFIRMED") ||
+    (c.verdict === seenAt.primary.verdict && severityRank(c) < severityRank(seenAt.primary));
+  if (isBetter) {
+    seenAt.duplicates.push(seenAt.primary);
+    seenAt.primary = c;
+  } else seenAt.duplicates.push(c);
+}
+const surviving = [...byLocation.values()].map((g) => ({ ...g.primary, preMerged: g.duplicates }));
+const collapsed = allSurviving.length - surviving.length;
+if (collapsed > 0) log("dedupe: " + collapsed + " duplicate reports collapsed onto " + surviving.length + " locations");
+log(
+  "Verify done: " +
+    verified.length +
+    " verified → " +
+    surviving.length +
+    " kept, " +
+    refuted.length +
+    " refuted" +
+    (collapsed > 0 ? ", " + collapsed + " deduped" : ""),
+);
 
 const stats = {
   level: LEVEL,
@@ -1009,7 +1204,12 @@ const stats = {
   mode: MODE,
   findMode: SEAM_MODE ? "seam" : "lens",
   seams: SEAM_MODE ? seams.map((s) => s.name) : undefined,
-  claimsChecked: IS_AREA ? claims.length : undefined,
+  // The claims actually put in front of an agent, not the size of the inventory: a claim whose pathPrefixes
+  // Overlap no seam reaches no finder, and counting it overstates the one number that says how much of the
+  // Record this run audited — in a mode whose entire purpose is auditing the record.
+  claimsChecked: IS_AREA ? claimsShown.size : undefined,
+  claimsInventoried: IS_AREA ? claims.length : undefined,
+  deduped: collapsed,
   finders: FINDERS.length,
   candidates: candidatesSeen,
   verifierAgents,
@@ -1030,14 +1230,6 @@ if (surviving.length === 0) {
 
 // ─── Synthesize: rank, merge semantic dupes, cap ───
 phase("Synthesize");
-// Severity first; within a severity tier the kind breaks the tie and CONFIRMED outranks PLAUSIBLE. An unrated
-// Candidate ranks as major. Conformance sits with correctness because a code/record disagreement is a claim about
-// The code that someone has to act on; record-gap sits with cleanup because the fix is a page, not a behaviour.
-// Every penalty stays under 4 so the severity tier can never be crossed by a kind or a verdict.
-const SEVERITY_RANK = { critical: 0, major: 1, minor: 2 };
-const KIND_RANK = { cleanup: 2, conformance: 0, correctness: 0, "record-gap": 2 };
-const severityRank = (c) => SEVERITY_RANK[c.severity] ?? 1;
-const rank = (c) => severityRank(c) * 4 + (KIND_RANK[c.kind] ?? 0) + (c.verdict === "PLAUSIBLE" ? 1 : 0);
 const ranked = surviving.slice().sort((a, b) => rank(a) - rank(b));
 const block = ranked
   .map(
@@ -1115,8 +1307,14 @@ const deriveShort = (s) => {
 // One finding shape for both paths — a merged primary and a backfilled straggler differ only in what the
 // Merge escalates, so they are the same object built from a different group.
 const toFinding = (c, merged, shortSummary) => {
-  const group = [c, ...merged];
+  // `preMerged` are the same-location reports the code-level dedupe already collapsed onto this one. They join
+  // The group so their verdicts and provenance citations still escalate it, but they are NOT listed in `also`:
+  // "also at" names other places the root cause shows up, and by construction these are all the same place.
+  const sameLocation = Array.isArray(c.preMerged) ? c.preMerged : [];
+  const group = [c, ...sameLocation, ...merged];
   const also = merged.length > 0 ? " [same root cause also at: " + merged.map(loc).join(", ") + "]" : "";
+  const corroborated =
+    sameLocation.length > 0 ? " [independently reported by " + (sameLocation.length + 1) + " finders]" : "";
   // "new" is the absence of a citation, so any member that found one carries the group — but the label and the
   // Citation must come off the SAME member. Resolved separately, a group could show one member's "reopened"
   // Beside another's regression commit: a citation that does not back the label, which is worse than none.
@@ -1125,7 +1323,7 @@ const toFinding = (c, merged, shortSummary) => {
     file: c.file,
     line: c.line,
     shortSummary: shortSummary || deriveShort(c.summary),
-    summary: c.summary + also,
+    summary: c.summary + also + corroborated,
     failure_scenario: c.failure_scenario,
     category: c.kind,
     // A merged group escalates to its most severe member, and to CONFIRMED if any member is.

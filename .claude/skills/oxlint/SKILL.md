@@ -127,6 +127,17 @@ expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIR, PLAN)
 
 When the captured arg is a known shared reference, assert it directly (`expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop)`); when only its type is knowable, use `toBeTypeOf` (`expect(checkIsStale).toBeTypeOf("function")`). `takeOne` and `noop` come from `@esposter/shared`.
 
+## `no-restricted-syntax` — `JSON.parse` is banned (ESLint)
+
+`jsonDateParse` from `@esposter/shared` is the default parse: plain `JSON.parse` leaves every Date as an ISO string. Same rule and file as the `expect.any` ban.
+
+Disable it on the line, with the reason, only where blanket revival would change runtime behaviour that is wanted — the parses a Zod schema then validates and coerces itself (resource content blobs, drafts, machine config), payloads replayed verbatim (dead-letter events), and `jsonDateParse`'s own implementation. See `/docs/architecture/serialization.md`. **Tests do not get a disable** — a test parses with `jsonDateParse` like everything else, unless the model it asserts against types the field as a string.
+
+```ts
+// eslint-disable-next-line no-restricted-syntax -- the content schema owns date coercion, so free-text ISO strings survive
+return contentSchema.parse(JSON.parse(await streamToText(readableStreamBody)));
+```
+
 ## `prefer-named-capture-group` (oxlint)
 
 Every capturing group `(...)` must be named `(?<name>...)`:
