@@ -143,7 +143,7 @@ Rename-token-only edits are not `R100` (they have a content diff), but when the 
 Set `SED` to the sweep's substitutions (one `-e` per rename), then:
 
 ```bash
-SHA=<rename-sha> SED='s/\bnever\b/checkNever/g'
+SHA=<rename-sha> SED='s/\bOldName\b/NewName/g'
 # every sibling commit in the range, not just one — a file any of them touched is reviewable
 git rev-list <base>..<head> | grep -v "$SHA" | xargs -n1 git show --name-only --format="" | sort -u > /tmp/other.txt
 git diff -M --name-status "$SHA^" "$SHA" | while IFS=$'\t' read -r status old new; do
@@ -165,7 +165,7 @@ git diff -M --name-status "$SHA^" "$SHA" | while IFS=$'\t' read -r status old ne
 done
 ```
 
-`cmp` is the whole guarantee: if replaying the substitution reproduces the file exactly, there is by construction no other content change, so this cannot admit a balanced logic edit. It errs only toward keeping files reviewable — a rename that forced a reformatter rewrap, or a sweep whose `SED` you under-specified, fails the compare and stays in. Measured on the `fix: test renames` sweep (118 files), the old line-symmetry filter admitted **81** files on no evidence; the replay check proves **1** under a single substitution and holds the rest back until their substitutions are supplied.
+`cmp` is the whole guarantee: if replaying the substitution reproduces the file exactly, there is by construction no other content change, so this cannot admit a balanced logic edit. It errs only toward keeping files reviewable — a rename that forced a reformatter rewrap, or a sweep whose `SED` you under-specified, fails the compare and stays in. On a multi-hundred-file sweep the line-symmetry filter it replaces admitted roughly two thirds of the commit on no evidence at all, where the replay admits only files whose every changed line it can account for.
 
 If the sweep is mixed into a commit carrying other work, there is no parent blob to replay against — read the diffs by hand.
 
