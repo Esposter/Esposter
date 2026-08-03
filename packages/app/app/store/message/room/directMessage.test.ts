@@ -41,6 +41,7 @@ describe(useDirectMessageStore, () => {
         return first;
       }),
     );
+    const alertStore = useAlertStore();
     const directMessageStore = useDirectMessageStore();
     const { deleteDirectMessageParticipant } = directMessageStore;
     const { directMessageParticipantsMap } = storeToRefs(directMessageStore);
@@ -51,6 +52,7 @@ describe(useDirectMessageStore, () => {
     ]);
 
     expect(directMessageParticipantsMap.value.get(roomId)).toStrictEqual([second, third]);
+    expect(alertStore.alerts).toHaveLength(1);
   });
 
   test("removes a participant from the list on success", async () => {
