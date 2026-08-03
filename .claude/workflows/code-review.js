@@ -1720,8 +1720,10 @@ const toFinding = (c, merged, shortSummary) => {
     })(),
     // Off the group, like every other group-level field: a synthesizer that folds an unsettleable finding into
     // Another decision would otherwise drop the blocker, and the blocker is the entire deliverable of that row —
-    // The one fact the user is being asked for.
-    unresolvedBlocker: group.find((m) => m.unresolvedBlocker)?.unresolvedBlocker,
+    // The one fact the user is being asked for. It survives only while the group is still unsettled: once a
+    // Member's CONFIRMED escalates the verdict, the finding HAS been settled, and a row that says CONFIRMED while
+    // Asking the reader for the fact that would settle it contradicts itself and the report format both.
+    unresolvedBlocker: verdict === "PLAUSIBLE" ? group.find((m) => m.unresolvedBlocker)?.unresolvedBlocker : undefined,
     // A merged group escalates to its most severe member.
     severity: group.toSorted((a, b) => severityRank(a) - severityRank(b))[0].severity ?? "major",
     verdict,
