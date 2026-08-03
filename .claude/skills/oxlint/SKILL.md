@@ -20,6 +20,14 @@ Oxlint keeps the `correctness` category enabled by default even when the config 
 
 **Manual ESLint disables for oxlint-covered rules are dead weight** — `eslint-plugin-oxlint` is appended last in every flat config, so its `"off"` entries win; hand-written deletes/offs stay only for rules it leaves enabled. Notable exception: its `vue-svelte-astro-exceptions` config deliberately keeps `no-unused-vars`, `@typescript-eslint/no-unused-vars`, and `@typescript-eslint/consistent-type-imports` **enabled on `.vue` files**, so vue-side offs for those are load-bearing. Verify with `eslint --print-config <file>` on both a `.ts` and a `.vue` file before deleting a manual disable.
 
+## Configure a plugin rule under its prefixed name only
+
+Oxlint resolves a bare rule name to the plugin rule of that name, so a bare entry and a prefixed entry are **the same rule** — and the bare one wins. `"no-unassigned-import": "off"` therefore silently voided the `"import/no-unassigned-import": ["error", { allow: … }]` entry above it: the rule never ran and its options were never read. The same aliasing applies to `no-async-await` (oxc), `no-namespace` (import), `no-await-expression-member`/`prefer-add-event-listener`/`prefer-global-this` (unicorn).
+
+A dead entry looks exactly like a passing one, so audit it empirically: copy `.oxlintrc.json`, delete the suspect `"off"` entries, run `oxlint -c <probe> --format=json`, and count diagnostics per `code`. A rule reporting hits under the probe while the real config is green was never enforcing anything. Rules with **zero** hits are free to enable — delete the `"off"` line — but first plant a violation and confirm the rule fires, since a stale or unimplemented rule name also scores zero.
+
+Path-glob options (`allow`, `ignorePatterns`) match the **whole import specifier**, and `*` does not cross `/`: `*.css` never matches `grapesjs/dist/css/grapes.min.css`. Always write `**/*.css`.
+
 ## `vitest/` rules run under oxlint
 
 The vitest rules come from oxlint's `vitest` plugin (`@vitest/eslint-plugin` is removed). All categories are on, so every plugin rule is an error unless configured in `.oxlintrc.json`. Non-obvious entries there:
