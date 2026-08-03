@@ -62,6 +62,7 @@ describe.each<PaginationCacheVariant>([
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const message = "message";
+  const secondMessage = "secondMessage";
   const initializeItems = (data: { items: MessageValue[] }) => {
     items.value = data.items;
   };
@@ -197,6 +198,45 @@ describe.each<PaginationCacheVariant>([
 
     expect(items.value).toHaveLength(1);
     expect(takeOne(items.value).message).toStrictEqual(message);
+  });
+
+  // The cold start is the flagship offline case, not an edge case: the room id is already on the route when the
+  // Layout mounts, so the partition key never changes and a change-only watcher would never hydrate at all
+  test("populates store from cache when the partition key is already set on mount", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [new StandardMessageEntity({ message, partitionKey, rowKey, userId })],
+      partitionKey,
+    );
+    await mountCache();
+    await flushCache();
+
+    expect(items.value).toHaveLength(1);
+    expect(takeOne(items.value).message).toStrictEqual(message);
+  });
+
+  // Members and rooms share one global list across partitions, so at the moment of a switch it still holds the
+  // Previous partition's rows. Readiness is per-partition and says the new one has produced nothing yet
+  test("populates store from cache when the previous partition's items are still loaded", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [new StandardMessageEntity({ message: secondMessage, partitionKey: secondPartitionKey, rowKey, userId })],
+      secondPartitionKey,
+    );
+    await mountCache();
+    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
+    await flushCache();
+    partitionKeyRef.value = secondPartitionKey;
+    await flushCache();
+
+    expect(items.value).toHaveLength(1);
+    expect(takeOne(items.value).message).toStrictEqual(secondMessage);
   });
 
   test("does not populate store from cache when switching partition key online", async () => {

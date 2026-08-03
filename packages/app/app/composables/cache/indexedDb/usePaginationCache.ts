@@ -64,9 +64,19 @@ export const usePaginationCache = <
       // Hydration is a background restore of what the user already had, so a failure is logged, not alerted
       onError: console.error,
       // State is seeded here so the primitive's own staleness filter runs first; only the switch away needs a
-      // Guard of its own, because the read for the partition that replaced this one is a different target
+      // Guard of its own, because the read for the partition that replaced this one is a different target.
+      // Readiness is the partition-scoped question — has THIS partition produced rows since the switch onto it —
+      // Which is what decides whether hydrating would clobber live data. `items` only answers it for a store
+      // Keyed by partition: members and rooms are one global list that still holds the previous partition's rows
+      // At this point, so testing it there means a switch never hydrates and the user keeps seeing room A's
+      // Members while in room B, with no way back because the network read cannot land offline
       onSuccess: async (cachedItems) => {
-        if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0 || toValue(items).length > 0) return;
+        if (
+          toValue(partitionKey) !== newPartitionKey ||
+          cachedItems.length === 0 ||
+          readyPartitionKey === newPartitionKey
+        )
+          return;
 
         initializeItems(cachedItems);
         await onHydrate?.(cachedItems);
@@ -98,7 +108,12 @@ export const usePaginationCache = <
     { flush: "post" },
   );
 
-  watch(
+  // Immediate, because the partition a cold start opens on never changes and so would never be hydrated. The
+  // Room id comes from the route, and the layout that calls this already has it at setup, so opening the
+  // Installed app offline on /messages/{roomId} — the flagship offline case — is precisely the mount where the
+  // Key arrives already set. Without this the cache only ever restores on a room-to-room switch made inside a
+  // Session that was already running, which is the one path the tests happened to cover
+  watchImmediate(
     () => toValue(partitionKey),
     (newPartitionKey) => {
       // Pre-flush, so the write watcher below sees the partition as unready for the list it arrives holding
