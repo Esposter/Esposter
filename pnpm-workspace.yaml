@@ -215,7 +215,7 @@ catalog:
   three: ^0.185.1
   three-globe: ^2.45.2
   trpc-nuxt: ^2.1.1
-  tsx: ^4.23.1
+  tsx: ^4.23.4
   type-fest: ^5.8.0
   typedoc: ^0.28.20
   typescript: 6.0.3
@@ -237,7 +237,7 @@ catalog:
   vue-tsc: ^3.3.9
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.1.7
-  vuetify-nuxt-module: ^1.0.0-rc.3
+  vuetify-nuxt-module: ^1.0.0-rc.4
   web-push: ^3.6.7
   worker-timers: ^8.0.34
   write-excel-file: ^4.1.1
