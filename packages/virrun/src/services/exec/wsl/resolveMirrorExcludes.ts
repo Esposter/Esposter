@@ -1,5 +1,6 @@
 import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
+import { AGENT_WORKTREES_DIRECTORY, GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { getResult } from "@esposter/shared";
 // What never enters the source mirror: node_modules (supplied by the snapshot RO lower — mirrors the write-back
 // Rule), .git (large, churns every commit, unread by dev-loop commands), .claude/worktrees (agent worktrees are whole
@@ -13,8 +14,11 @@ import { getResult } from "@esposter/shared";
 // Best-effort: a resolution hiccup falls back to the base excludes (the prepare layer still shadows the host copy
 // When forking). The patterns feed the host manifest walk (buildSourceMirrorManifest), and the walk's manifest is the
 // Single source of truth for the mirrored set — the archive data plane copies exactly the manifest's paths.
+// They feed the write-back mask too (createVirrun's `maskedPaths`): the two directions are one rule, since a path
+// The sandbox never received from the host is a path it may never hand back — an upper entry under one can only have
+// Come from stale mirror content, and flushing it resurrects a tree the host deleted.
 export const resolveMirrorExcludes = (cwd: string): readonly string[] => {
   const environment = resolveVirrunConfiguration(cwd)?.environment;
   const outputs = getResult(() => resolvePrepareStep(environment, cwd)?.outputs ?? []).unwrapOr([]);
-  return ["node_modules", ".git", ".claude/worktrees", ...outputs];
+  return [NODE_MODULES_DIRECTORY, GIT_DIRECTORY, AGENT_WORKTREES_DIRECTORY, ...outputs];
 };

@@ -23,7 +23,7 @@ export const persistWithCache = async (
   command: readonly string[] | string,
   options: ExecOptions,
   extraLowerDirs: readonly string[] = [],
-  outputDirs: readonly string[] = [],
+  maskedPaths: readonly string[] = [],
 ): Promise<ExecResult> => {
   const key = isTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd) : null;
   if (key === null) {
@@ -32,7 +32,7 @@ export const persistWithCache = async (
         ? "task cache off — no key (not a git repo or no lockfile)"
         : "task cache off — disabled (CI or VIRRUN_NO_CACHE)",
     );
-    return persistRun(backend, command, options, extraLowerDirs, outputDirs);
+    return persistRun(backend, command, options, extraLowerDirs, maskedPaths);
   }
   // Reproduce a result under the caller's stdio convention, matching createBwrapBackend: "inherit" already put its
   // Output on the terminal so it returns empty streams; "pipe" returns the captured streams.
@@ -59,7 +59,7 @@ export const persistWithCache = async (
     command,
     { ...options, isNetworkEnabled: false, stdio: "pipe", tee: options.stdio === "inherit" ? "stdout" : undefined },
     extraLowerDirs,
-    outputDirs,
+    maskedPaths,
     (upperDir, plan, persistResult) => {
       // A write-network install (`pnpm install`/`add`/`update`) can still succeed offline from the warm store, so the
       // Net-unshare gate alone would cache it. Its output isn't determined by the key it mutates, so skip recording —

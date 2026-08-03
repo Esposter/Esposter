@@ -13,6 +13,11 @@ export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
 // The dependency-closure dir. The persist flush must never leak it: it comes from the snapshot lower, and writes
 // Into it (e.g. node_modules/.vite) must not reach the host.
 export const NODE_MODULES_DIRECTORY = "node_modules";
+// The repo's own git dir, and the root Claude Code nests agent worktrees under. Both are host-owned working state
+// The source mirror keeps out of the sandbox (resolveMirrorExcludes) and the write-back therefore masks — named
+// Here rather than spelled inline, so the two directions and their tests can never disagree on the spelling.
+export const GIT_DIRECTORY = ".git";
+export const AGENT_WORKTREES_DIRECTORY = ".claude/worktrees";
 // The dir pnpm/npm link executables into; prepended to the sandbox PATH so a bare command resolves the overlaid
 // (current-platform) binary ahead of any host `.bin` the WSL login PATH leaks in. See createOsExecOptions.
 export const NODE_MODULES_BIN_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.bin`;

@@ -16,13 +16,16 @@ import { getWslSourceMirrorEntryUnc } from "@/services/exec/wsl/getWslSourceMirr
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
 import { publishSourceMirrorOrigin } from "@/services/exec/wsl/publishSourceMirrorOrigin";
-import { readSourceMirrorManifest } from "@/services/exec/wsl/readSourceMirrorManifest";
+import { readSourceMirrorPublication } from "@/services/exec/wsl/readSourceMirrorPublication";
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
 import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
 import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+// Compare exclude sets by membership, not by list identity: resolveMirrorExcludes appends an environment's prepare
+// Outputs to the base patterns, so a reordering must not read as drift and rebuild a perfectly good mirror.
+const getExcludeSignature = (excludes: readonly string[]): string => excludes.toSorted().join("\0");
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
 // CreateWslOsBackend folds into the run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
@@ -45,9 +48,11 @@ import { join } from "node:path";
 //   Targets are mirrored too, so they resolve at extract) and a path the archive couldn't capture — Windows-locked, or
 //   Vanished since the walk — is skipped and pruned from the published manifest rather than fatal
 //   (createSourceMirrorArchive).
-// - No readable manifest (first run, corrupt file, `cache clean`) or a missing tree materializes from scratch: the
+// - No readable manifest (first run, corrupt file, `cache clean`), a missing tree, or a manifest published under a
+//   Different exclude set than the one in force now materializes from scratch: the
 //   Archive carries the whole manifest file set and the script clears `tree/` before extracting, which also
-//   Self-heals any mirror-vs-manifest drift; the fresh manifest is published either way. The old whole-tree
+//   Self-heals any mirror-vs-manifest drift — including the copies a since-added exclude orphaned, which no delta
+//   Could ever delete; the fresh manifest is published either way. The old whole-tree
 //   `rsync -a --delete` here read every source file across v9fs — a cold materialize could blow past the 5-minute
 //   Timeout; the archive does it in seconds.
 //
@@ -58,8 +63,10 @@ import { join } from "node:path";
 // Extract, not a cross-boundary copy. Readers hold the other side of the same lock: createWslOsBackend wraps every
 // Run (skip included) in a shared flock on lockPath for bwrap's whole duration, so this script's deletes/renames can
 // Never land under a live same-cwd reader — the exclusive acquire waits for readers to drain (bounded by the same
-// -w). Write-back is unaffected: persistRun flushes to `options.cwd` (the host /mnt/c path), derived independently of
-// This mirror. A failed sync fails the folded script before bwrap — the os backend never falls back.
+// -w). Write-back's target is unaffected: persistRun flushes to `options.cwd` (the host /mnt/c path), derived
+// Independently of this mirror — but its *set* is not, since a path this sync excludes is one the flush must mask
+// (createVirrun passes the same excludes as `maskedPaths`), or the sandbox could write the host a path the mirror
+// Never carried. A failed sync fails the folded script before bwrap — the os backend never falls back.
 export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
   const entryPath = getWslSourceMirrorEntryPath(cwd);
   const entryUnc = getWslSourceMirrorEntryUnc(cwd);
@@ -71,9 +78,18 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
   // A manifest is only trusted while the tree it describes exists: a mirror whose tree was removed out-of-band but
   // Whose manifest survived would otherwise diff to an empty/near-empty delta against a gone tree — force the full
   // Materialize instead, which rebuilds tree and manifest together.
-  const previousManifest = existsSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME))
-    ? readSourceMirrorManifest(cwd)
+  const publication = existsSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME))
+    ? readSourceMirrorPublication(cwd)
     : undefined;
+  // …and only while it was walked under the exclude set in force now. A grown exclude set leaves the mirror holding
+  // Copies of paths that are in neither side of the diff — the manifest never listed them again and the walk no
+  // Longer produces them — so no delete is ever emitted and they linger for the life of the entry: still read by the
+  // Sandbox (a lint run walks a whole ghost worktree), and still able to reach the host, since a tool that rewrites
+  // One copies it up into the upper the write-back flushes. Treat the change as drift and rebuild.
+  const previousManifest =
+    publication !== undefined && getExcludeSignature(publication.excludes) === getExcludeSignature(excludes)
+      ? publication.entries
+      : undefined;
   const delta = previousManifest === undefined ? undefined : diffSourceMirrorManifests(previousManifest, manifest);
   if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) {
     // A live repo returns here on nearly every run, so this is where a marker that failed to publish gets a second
@@ -110,7 +126,7 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     // Rename) as the last step inside the lock, so it never claims a state the mirror doesn't hold and a concurrent
     // Planner reads either the old or the new one, never a torn file. The temp carries the *host* pid
     // ReapStaleSourceMirrorTemps can attribute (a Linux-side `$$` temp would sit in the wrong pid domain forever).
-    writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(manifest));
+    writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify({ entries: manifest, excludes }));
     const publish = `mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
       `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(lockPath)}`;

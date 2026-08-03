@@ -1,6 +1,6 @@
 import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
+import { AGENT_WORKTREES_DIRECTORY, SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { buildSourceMirrorManifest } from "@/services/exec/wsl/buildSourceMirrorManifest";
 import {
@@ -18,6 +18,7 @@ import { TEST_WSL_PREFIX } from "@/services/exec/wsl/constants.test";
 import { createWslSourceMirrorSync } from "@/services/exec/wsl/createWslSourceMirrorSync";
 import { getSourceMirrorKey } from "@/services/exec/wsl/getSourceMirrorKey";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
+import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { jsonDateParse } from "@esposter/shared";
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -58,12 +59,29 @@ describe(createWslSourceMirrorSync, () => {
     const name = readdirSync(entryUnc).find((entry) => entry.startsWith(prefix));
     return name === undefined ? "" : readFileSync(join(entryUnc, name), "utf8");
   };
-  // Simulate a prior successful sync: the tree dir exists and the published manifest matches the given tree state.
-  const publish = (): void => {
+  // Simulate a prior successful sync: the tree dir exists and the published manifest matches the given tree state,
+  // Recorded under the exclude set in force (resolveMirrorExcludes) unless a case is exercising an exclude change.
+  const publish = (excludes: readonly string[] = resolveMirrorExcludes(cwd)): void => {
     mkdirSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { recursive: true });
     writeFileSync(
       join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME),
-      JSON.stringify(buildSourceMirrorManifest(cwd, [])),
+      JSON.stringify({ entries: buildSourceMirrorManifest(cwd, excludes), excludes }),
+    );
+  };
+
+  // A prior sync whose manifest also claims a path the working tree no longer holds — the delete side of a delta.
+  const publishRemoved = (removedFilename: string): void => {
+    const excludes = resolveMirrorExcludes(cwd);
+    mkdirSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { recursive: true });
+    writeFileSync(
+      join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME),
+      JSON.stringify({
+        entries: {
+          ...buildSourceMirrorManifest(cwd, excludes),
+          [removedFilename]: { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.File },
+        },
+        excludes,
+      }),
     );
   };
 
@@ -99,10 +117,12 @@ describe(createWslSourceMirrorSync, () => {
     // Null-delimited copy-list input is consumed and unlinked during planning, before the script ever runs.
     expect(readStaged(`${VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX}${process.pid}.`)).toContain(TEST_FILENAME);
     expect(readStaged(VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX)).toBe("");
-    // The next manifest is staged host-side as a pid-tagged temp the script publishes via atomic mv.
-    expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toHaveProperty(
-      TEST_FILENAME,
-    );
+    // The next manifest is staged host-side as a pid-tagged temp the script publishes via atomic mv, carrying the
+    // Exclude set it was walked under so a later run can tell a stale mirrored set from a current one.
+    expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toStrictEqual({
+      entries: expect.objectContaining({ [TEST_FILENAME]: expect.anything() }),
+      excludes: resolveMirrorExcludes(cwd),
+    });
   });
 
   // Publishing the marker up front is what makes an entry reapable at all: a sync that dies before the script runs
@@ -135,15 +155,8 @@ describe(createWslSourceMirrorSync, () => {
   test("stages the delta archive and delete list and applies only the delta", () => {
     expect.hasAssertions();
 
-    publish();
     const removedFilename = "b";
-    writeFileSync(
-      join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME),
-      JSON.stringify({
-        ...buildSourceMirrorManifest(cwd, []),
-        [removedFilename]: { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.File },
-      }),
-    );
+    publishRemoved(removedFilename);
     writeFileSync(join(cwd, TEST_FILENAME), `${TEST_FILENAME}${TEST_FILENAME}`);
 
     const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
@@ -160,15 +173,8 @@ describe(createWslSourceMirrorSync, () => {
   test("skips the archive and extract when the delta only deletes", () => {
     expect.hasAssertions();
 
-    publish();
     const removedFilename = "b";
-    writeFileSync(
-      join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME),
-      JSON.stringify({
-        ...buildSourceMirrorManifest(cwd, []),
-        [removedFilename]: { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.File },
-      }),
-    );
+    publishRemoved(removedFilename);
 
     const { script } = createWslSourceMirrorSync(cwd);
 
@@ -187,9 +193,10 @@ describe(createWslSourceMirrorSync, () => {
 
     // The run still proceeds — a locked or vanished file is skipped, not fatal — but the manifest must not claim it.
     expect(script).not.toBe("");
-    expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).not.toHaveProperty(
-      TEST_FILENAME,
-    );
+    expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toStrictEqual({
+      entries: {},
+      excludes: resolveMirrorExcludes(cwd),
+    });
   });
 
   test("falls back to the full materialize when the manifest is unreadable", () => {
@@ -201,6 +208,36 @@ describe(createWslSourceMirrorSync, () => {
     const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
 
     expect(script).toContain(`rm -rf '${mirrorPath}'`);
+  });
+
+  // The bug this closes: a path added to the excludes after it was already mirrored is in neither side of the diff,
+  // So no delete is ever emitted and the mirror keeps its copy forever — the sandbox still reads that ghost tree, and
+  // A tool that rewrites one of its files copies it up into the upper the write-back then flushes, recreating on the
+  // Host a directory the user deleted. Only the clearing full materialize can drop content no manifest lists.
+  test("rebuilds from scratch when the exclude set has grown, so newly excluded paths cannot linger in the mirror", () => {
+    expect.hasAssertions();
+
+    publish(resolveMirrorExcludes(cwd).filter((exclude) => exclude !== AGENT_WORKTREES_DIRECTORY));
+
+    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+
+    expect(script).toContain(`rm -rf '${mirrorPath}' && mkdir -p '${mirrorPath}'`);
+    // Published under the set in force now, so the rebuild is paid exactly once rather than on every later run.
+    expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toStrictEqual({
+      entries: buildSourceMirrorManifest(cwd, resolveMirrorExcludes(cwd)),
+      excludes: resolveMirrorExcludes(cwd),
+    });
+  });
+
+  test("keeps the delta when the exclude set is merely ordered differently", () => {
+    expect.hasAssertions();
+
+    publish(resolveMirrorExcludes(cwd).toReversed());
+    writeFileSync(join(cwd, TEST_FILENAME), `${TEST_FILENAME}${TEST_FILENAME}`);
+
+    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+
+    expect(script).not.toContain(`rm -rf '${mirrorPath}'`);
   });
 
   test("distrusts a manifest whose mirror tree is gone and forces the full materialize", () => {
