@@ -138,20 +138,36 @@ The rule reduces to: exclude a file only when its diff carries no information a 
 git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 "\""}' | sort
 ```
 
-Rename-token-only edits are not `R100` (they have a content diff), but when the sweep landed as **its own commit** they can still be derived mechanically. A 1:1 identifier substitution rewrites each affected line in place, so its `--numstat` is line-symmetric; anything that also gained or lost a line carries real content:
+Rename-token-only edits are not `R100` (they have a content diff), but when the sweep landed as **its own commit** they can be classified **exactly** — by replaying the substitution and demanding the result reproduce the committed blob byte-for-byte. Never classify by line counts: a token substitution rewrites each affected line in place, so `--numstat` is symmetric, but a balanced logic edit is symmetric too and the filter cannot tell them apart.
+
+Set `SED` to the sweep's substitutions (one `-e` per rename), then:
 
 ```bash
-# files touched ONLY by the rename commit (anything a sibling commit also touched has reviewable content).
-# Tests are dropped here because §When to Exclude never allows them out, not because they are rename-free
-git show --name-only --format="" <rename-sha> | grep -vE "\.test(-d)?\.ts$" | sort > /tmp/renamed.txt
+SHA=<rename-sha> SED='s/\bnever\b/checkNever/g'
 # every sibling commit in the range, not just one — a file any of them touched is reviewable
-git rev-list <base>..<head> | grep -v <rename-sha> | xargs -n1 git show --name-only --format="" | sort -u > /tmp/other.txt
-# of those, keep the ones whose diff is symmetric — added == removed
-git show --numstat --format="" <rename-sha> | awk '$1==$2 {print $3}' | sort > /tmp/symmetric.txt
-comm -12 <(comm -23 /tmp/renamed.txt /tmp/other.txt) /tmp/symmetric.txt
+git rev-list <base>..<head> | grep -v "$SHA" | xargs -n1 git show --name-only --format="" | sort -u > /tmp/other.txt
+git diff -M --name-status "$SHA^" "$SHA" | while IFS=$'\t' read -r status old new; do
+  # R carries old and new paths; M reuses the one path. A/D are content decisions, never mechanical
+  case "$status" in
+    R*) path_old="$old"; path_new="$new" ;;
+    M)  path_old="$old"; path_new="$old" ;;
+    *)  continue ;;
+  esac
+  # §When to Exclude never lets these out, whatever the diff says
+  case "$path_new" in
+    *.test.ts|*.test-d.ts|packages/app/content/docs/*|.claude/skills/*|*.coderabbit.yaml) continue ;;
+  esac
+  grep -qxF "$path_new" /tmp/other.txt && continue
+  # exact: replaying the substitution on the parent must reproduce the committed blob
+  if git show "$SHA^:$path_old" | sed "$SED" | cmp -s - <(git show "$SHA:$path_new"); then
+    echo "    - \"!$path_new\""
+  fi
+done
 ```
 
-The filter is deliberately strict, not exact: a rename long enough to force a reformatter rewrap is asymmetric and stays reviewable, which is the safe direction to err. Spot-check a handful of the diffs anyway before committing — and if the sweep is mixed into a commit carrying other work, fall back to reading the diffs by hand.
+`cmp` is the whole guarantee: if replaying the substitution reproduces the file exactly, there is by construction no other content change, so this cannot admit a balanced logic edit. It errs only toward keeping files reviewable — a rename that forced a reformatter rewrap, or a sweep whose `SED` you under-specified, fails the compare and stays in. Measured on the `fix: test renames` sweep (118 files), the old line-symmetry filter admitted **81** files on no evidence; the replay check proves **1** under a single substitution and holds the rest back until their substitutions are supplied.
+
+If the sweep is mixed into a commit carrying other work, there is no parent blob to replay against — read the diffs by hand.
 
 Verify the count matches what you expect before committing, and validate the result parses:
 
