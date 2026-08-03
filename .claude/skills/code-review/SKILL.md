@@ -50,7 +50,7 @@ Raise coverage by **raising the level** (`xhigh`/`max` widen `perAngle`, `maxSea
 Cost is **agents × the material each one reads**, and agent count is set by the level, not by the size of the change — so a five-file review of dense code costs about what a five-hundred-file review of shallow code does. Three bounds keep that honest, and each one logs when it bites:
 
 - **Fan-out scales with the territory.** Under ~300 changed lines _and_ fewer than 10 files, the level's angle count and per-angle cap are reduced: a small change does not hold five angles' worth of distinct questions, and every extra finder re-reads the same files. `stats.angles` and `stats.perAngle` report what actually ran — a trimmed run is otherwise indistinguishable from a full one.
-- **Resolution is budgeted, worst-first.** A resolver reads callers, callees, dependency source and history for one claim, which makes it the most expensive agent in the run — historically ~40% of a run's tokens. Only the top `2 × correctnessAngles` unsettled findings get one; anything below that is dropped rather than shipped unsettled, and the drop is logged.
+- **Resolution is budgeted, worst-first.** A resolver reads callers, callees, dependency source and history for one claim, which makes it the most expensive agent in the run — historically ~40% of a run's tokens. Only the worst-ranked `2 × stats.angles` unsettled findings get one (so the small-territory trim narrows this budget too); anything below that is dropped rather than shipped unsettled, and the drop is counted in `stats.droppedUnsettled` and named in the run's summary.
 - **Confidence gates both directions.** Verifiers and resolvers return a 0-100 confidence with every verdict. Under 70 the verdict is not an answer — CONFIRMED _or_ REFUTED — and the finding is routed to Resolve; under 50 after that, it is dropped. An under-confident CONFIRMED is a fix applied on a guess; an under-confident REFUTED is a real defect dismissed, which returns next run with different wording.
 
 ### When to stop re-running
@@ -83,7 +83,7 @@ A finding the workflow could not settle from the repository comes back carrying 
 
 Only a trigger that genuinely cannot be settled from the repository — a production-only config value, a cloud service's runtime behaviour — may stay unsettled, and it must name that blocker. "The investigation looked large" is not a blocker. **An unsettleable finding is still never a table row**: keep it out of the verdict table entirely and write it as the one line below the table (see Handling findings), phrased as the blocker and the fact that would settle it — "unsettleable without the deployed `MAX_UPLOAD_BYTES`; confirm that value and it decides" — so the user is asked for evidence rather than handed a verdict nobody reached.
 
-The workflow enforces the same thing by budget: only the worst-ranked `2 × correctnessAngles` unsettled findings buy a resolver, and the rest are dropped (`stats.droppedUnsettled`) rather than shipped as PLAUSIBLE rows. A drop is not a dismissal — it says the run ran out of resolution budget below that rank. Re-run to reach them only when the round also produced a CONFIRMED major; otherwise the stop rule above applies.
+A finding dropped at the resolve budget (see the cost bounds above) is not a dismissal — it says the run ran out of resolution budget below that rank, and the summary says so. Re-run to reach them only when the round also produced a CONFIRMED major; otherwise the stop rule above applies.
 
 Two things make this rule earn its cost. A PLAUSIBLE finding shipped to a human is decided by whoever has _less_ context than the agent that raised it, so it gets fixed without evidence or dropped without evidence — and a fix applied on an unconfirmed premise is the single most common way this repo introduces regressions. And a finding you dismiss without settling comes back on the next run, worded differently, forever.
 
@@ -91,7 +91,7 @@ Two things make this rule earn its cost. A PLAUSIBLE finding shipped to a human 
 
 Applying fixes is a different activity from running the review, and it has its own checklist: **`fixing-findings.md`** in this skill directory. Read it before committing a fix, and paste it into the prompt whenever a fix round is delegated.
 
-It exists because the dominant defect class on a re-review is not a missed bug — it is a regression introduced by the previous round's fixes. Every entry on that list describes a fix that shipped, passed its own new test, and was found again one round later, and the list is append-only: when a finding arrives with `provenance: regression` or `reopened` and no entry names why it came back, writing the new entry is part of that round.
+It exists because the dominant defect class on a re-review is not a missed bug — it is a regression introduced by the previous round's fixes. That page owns the entries, the append rule, and the order of work.
 
 ## Handling findings
 
