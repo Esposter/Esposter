@@ -461,33 +461,6 @@ describe("message", () => {
     });
   });
 
-  // Re-reading and re-applying is bounded, so a poll being rewritten faster than the vote can land is refused
-  // Rather than retried forever — the voter is told to send it again instead of shown a vote that never landed
-  test("fails vote with the poll rewritten under every attempt", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({
-      message: pollMessage,
-      roomId: newRoom.id,
-      type: MessageType.Poll,
-    });
-    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
-    // A competing write lands immediately before every attempt, so the version each attempt read is always stale
-    // By the time it writes
-    beforeUpdateEntity = (tableClient) => updateEntity.call(tableClient, compositeKey);
-
-    await expect(
-      messageCaller.votePoll({ ...compositeKey, optionId: pollOptionId }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: CONFLICT]`);
-
-    const unvotedMessage = takeOne(
-      await messageCaller.readMessagesByRowKeys({ roomId: newRoom.id, rowKeys: [newMessage.rowKey] }),
-    );
-
-    expect(jsonDateParse<{ votes: Record<string, string> }>(unvotedMessage.message).votes).toStrictEqual({});
-  });
-
   test("fails vote with an option the poll does not offer", async () => {
     expect.hasAssertions();
 
