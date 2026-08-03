@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE, VERDICT_DEFAULT } from "./constants.test";
+import { getFinding } from "./getFinding.test";
 import { runReview } from "./runReview.test";
 import { stubFor } from "./stubFor.test";
 
@@ -15,7 +16,7 @@ describe("code-review verify", () => {
       stubFor({ candidates: [{ ...CANDIDATE, file: "C:\\repo\\a.ts" }], scope: { files: ["a.ts", "util/a.ts"] } }),
     );
 
-    expect(run.result.findings?.[0].file).toBe("a.ts");
+    expect(getFinding(run).file).toBe("a.ts");
   });
 
   test("truncates a finder at its cap and logs what it dropped", async () => {
@@ -37,8 +38,8 @@ describe("code-review verify", () => {
     const area = await runReview(AREA_ARGS, stubFor({ candidates, scope: AREA_SCOPE }));
     const diff = await runReview("high", stubFor({ candidates }));
 
-    expect(area.result.findings?.[0].category).toBe("cleanup");
-    expect(diff.result.findings?.[0].category).toBe("correctness");
+    expect(getFinding(area).category).toBe("cleanup");
+    expect(getFinding(diff).category).toBe("correctness");
   });
 
   test("ignores a kind outside the enum", async () => {
@@ -49,7 +50,7 @@ describe("code-review verify", () => {
       stubFor({ candidates: [{ ...CANDIDATE, kind: "invented" }], scope: AREA_SCOPE }),
     );
 
-    expect(run.result.findings?.[0].category).toBe("correctness");
+    expect(getFinding(run).category).toBe("correctness");
   });
 
   test("survives a finder that died", async () => {
@@ -107,7 +108,7 @@ describe("code-review verify", () => {
     );
 
     expect(run.result.findings).toHaveLength(1);
-    expect(run.result.findings?.[0].file).toBe("b.ts");
+    expect(getFinding(run).file).toBe("b.ts");
   });
 
   test("verifies a cleanup-only file at low effort", async () => {
@@ -132,7 +133,7 @@ describe("code-review verify", () => {
       stubFor({ candidates: [CANDIDATE], verdictFor: () => ({ confidence: undefined }) }),
     );
 
-    expect(run.result.findings?.[0].verdict).toBe("CONFIRMED");
+    expect(getFinding(run).verdict).toBe("CONFIRMED");
   });
 
   test.each([

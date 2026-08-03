@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
+import { getFinding } from "./getFinding.test";
 import { runReview } from "./runReview.test";
 import { stubFor } from "./stubFor.test";
 
@@ -25,7 +26,7 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(run.result.findings?.[0].summary).toContain("Write is dropped");
+    expect(getFinding(run).summary).toContain("Write is dropped");
   });
 
   test("treats an unrated severity as major", async () => {
@@ -36,7 +37,7 @@ describe("code-review report", () => {
       stubFor({ candidates: [CANDIDATE], verdictFor: () => ({ severity: undefined }) }),
     );
 
-    expect(run.result.findings?.[0].severity).toBe("major");
+    expect(getFinding(run).severity).toBe("major");
   });
 
   test("appends every finding the synthesizer left out", async () => {
@@ -65,8 +66,8 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(run.result.findings?.[0].shortSummary).toBe("Chosen wording");
-    expect(run.result.findings?.[1].shortSummary).toBe("Second defect");
+    expect(getFinding(run).shortSummary).toBe("Chosen wording");
+    expect(getFinding(run, 1).shortSummary).toBe("Second defect");
   });
 
   test.each([
@@ -85,7 +86,7 @@ describe("code-review report", () => {
     // Worse than a long row.
     const run = await runReview("high", stubFor({ candidates: [{ ...CANDIDATE, summary }] }));
 
-    expect(run.result.findings?.[0].shortSummary).toBe(expected);
+    expect(getFinding(run).shortSummary).toBe(expected);
   });
 
   test("falls back to a stated summary when the synthesizer's decisions are unusable", async () => {
@@ -105,7 +106,7 @@ describe("code-review report", () => {
     const run = await runReview("high", stubFor({ candidates: [CANDIDATE, SECOND_LINE], synthesis: MERGE_ONE }));
 
     expect(run.result.findings).toHaveLength(1);
-    expect(run.result.findings?.[0].summary).toContain("[same root cause also at: a.ts:9]");
+    expect(getFinding(run).summary).toContain("[same root cause also at: a.ts:9]");
   });
 
   test("escalates a merged group to its worst verdict and severity", async () => {
@@ -121,7 +122,7 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(run.result.findings?.[0]).toMatchObject({ severity: "critical", verdict: "CONFIRMED" });
+    expect(getFinding(run)).toMatchObject({ severity: "critical", verdict: "CONFIRMED" });
   });
 
   test("reads a group's confidence off a member that reached the reported verdict", async () => {
@@ -142,7 +143,7 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(run.result.findings?.[0].confidence).toBe(72);
+    expect(getFinding(run).confidence).toBe(72);
   });
 
   test("takes a finding's provenance label and its citation off the same member", async () => {
@@ -160,7 +161,7 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(run.result.findings?.[0]).toMatchObject({ provenance: "regression", provenanceSource: "abc1234" });
+    expect(getFinding(run)).toMatchObject({ provenance: "regression", provenanceSource: "abc1234" });
   });
 
   test("clears the blocker once a merged member settles the group", async () => {
@@ -176,8 +177,8 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(run.result.findings?.[0].verdict).toBe("CONFIRMED");
-    expect(run.result.findings?.[0].unresolvedBlocker).toBeUndefined();
+    expect(getFinding(run).verdict).toBe("CONFIRMED");
+    expect(getFinding(run).unresolvedBlocker).toBeUndefined();
   });
 
   test("reports an unsettleable finding even when its resolver named no blocker", async () => {
@@ -192,7 +193,7 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(run.result.findings?.[0].unresolvedBlocker).toBe("the resolver named no blocker");
+    expect(getFinding(run).unresolvedBlocker).toBe("the resolver named no blocker");
   });
 
   test("carries the resolver's blocker through to the report", async () => {
@@ -212,7 +213,7 @@ describe("code-review report", () => {
       }),
     );
 
-    expect(run.result.findings?.[0].unresolvedBlocker).toBe("the deployed MAX_UPLOAD_BYTES");
+    expect(getFinding(run).unresolvedBlocker).toBe("the deployed MAX_UPLOAD_BYTES");
   });
 
   test("returns the refuted rows on the run that refuted everything", async () => {

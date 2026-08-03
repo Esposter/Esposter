@@ -2,6 +2,7 @@ import { fileURLToPath } from "node:url";
 import { describe } from "vitest";
 
 import type { Candidate } from "./models/Candidate";
+import type { ScopeAnswer } from "./models/ScopeAnswer";
 
 /**
  * The shipped script, loaded from disk rather than imported: it is a workflow body using top-level `return` and
@@ -9,9 +10,9 @@ import type { Candidate } from "./models/Candidate";
  * (see the `.claude/workflows/*.js` entry in the file-organization skill). Testing a copy of its logic would
  * pass while the file it stands in for was broken.
  */
-export const SCRIPT_PATH = fileURLToPath(new URL("../code-review.js", import.meta.url));
+export const SCRIPT_PATH: string = fileURLToPath(new URL("../code-review.js", import.meta.url));
 /** A Scope answer complete enough for any run; individual suites override one field. */
-export const SCOPE_DEFAULT = {
+export const SCOPE_DEFAULT: ScopeAnswer = {
   changedLines: 900,
   claudeMdFiles: [],
   conventions: "",
@@ -31,6 +32,6 @@ export const CANDIDATE: Candidate = {
 };
 export const AREA_ARGS = "area high the cache";
 /** A minimal area scope: two files, one governing page, no claims. */
-export const AREA_SCOPE = { claims: [], docPaths: ["docs/cache.md"], files: ["cache/a.ts", "cache/b.ts"] };
+export const AREA_SCOPE: ScopeAnswer = { claims: [], docPaths: ["docs/cache.md"], files: ["cache/a.ts", "cache/b.ts"] };
 
 describe.todo("constants");

@@ -1,4 +1,5 @@
 import type { Candidate } from "./Candidate";
+import type { ScopeAnswer } from "./ScopeAnswer";
 
 /** What one test varies about the default responder. Every leg has a default; a test overrides one or two. */
 export interface StubOptions {
@@ -9,7 +10,7 @@ export interface StubOptions {
   /** What every resolver returns; `null`/absent models one that died. */
   resolution?: unknown;
   /** Overrides on top of the default Scope answer. */
-  scope?: Record<string, unknown>;
+  scope?: ScopeAnswer;
   /** What the synthesizer returns; `null` (the default) exercises the backfill path. */
   synthesis?: unknown;
   /** Overrides on top of the default CONFIRMED verdict, per candidate index. */

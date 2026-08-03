@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
+import { getFinding } from "./getFinding.test";
 import { runReview } from "./runReview.test";
 import { stubFor } from "./stubFor.test";
 
@@ -68,7 +69,7 @@ describe("code-review dedupe and resolve", () => {
 
     const run = await runReview("high", stubFor({ finderFor: (label) => (label === "cleanup" ? [] : [CANDIDATE]) }));
 
-    expect(run.result.findings?.[0].summary).toContain("[independently reported by 3 finders]");
+    expect(getFinding(run).summary).toContain("[independently reported by 3 finders]");
   });
 
   test("lets the better-evidenced report lead its group", async () => {
@@ -82,7 +83,7 @@ describe("code-review dedupe and resolve", () => {
       }),
     );
 
-    expect(run.result.findings?.[0].severity).toBe("critical");
+    expect(getFinding(run).severity).toBe("critical");
   });
 
   test("routes an under-confident CONFIRMED to a resolver instead of reporting it", async () => {
@@ -94,7 +95,7 @@ describe("code-review dedupe and resolve", () => {
     );
 
     expect(run.logs).toContainEqual("resolve: 1 plausible findings to settle");
-    expect(run.result.findings?.[0]).toMatchObject({ confidence: 95, verdict: "CONFIRMED" });
+    expect(getFinding(run)).toMatchObject({ confidence: 95, verdict: "CONFIRMED" });
   });
 
   test("routes an under-confident REFUTED to a resolver rather than dismissing the finding", async () => {
@@ -122,7 +123,7 @@ describe("code-review dedupe and resolve", () => {
     );
 
     expect(run.result.findings).toHaveLength(1);
-    expect(run.result.findings?.[0].verdict).toBe("PLAUSIBLE");
+    expect(getFinding(run).verdict).toBe("PLAUSIBLE");
   });
 
   test("treats a resolver's own under-confident verdict as no answer", async () => {
@@ -137,8 +138,8 @@ describe("code-review dedupe and resolve", () => {
       }),
     );
 
-    expect(run.result.findings?.[0].unresolvedBlocker).toContain("below the floor");
-    expect(run.result.findings?.[0].verdict).toBe("PLAUSIBLE");
+    expect(getFinding(run).unresolvedBlocker).toContain("below the floor");
+    expect(getFinding(run).verdict).toBe("PLAUSIBLE");
   });
 
   test("keeps the verifier's confidence when the resolver could not settle it", async () => {
@@ -154,7 +155,7 @@ describe("code-review dedupe and resolve", () => {
       }),
     );
 
-    expect(run.result.findings?.[0].confidence).toBe(45);
+    expect(getFinding(run).confidence).toBe(45);
   });
 
   test("names findings dropped at the resolve budget in the summary", async () => {

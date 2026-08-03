@@ -4,15 +4,15 @@ import { describe } from "vitest";
 import type { AgentCall } from "./models/AgentCall";
 import type { AgentOptions } from "./models/AgentOptions";
 import type { AgentStub } from "./models/AgentStub";
+import type { AsyncFunctionConstructor } from "./models/AsyncFunctionConstructor";
 import type { RunResult } from "./models/RunResult";
 
 import { SCRIPT_PATH } from "./constants.test";
 
 // Relative imports: `.claude/` sits outside every workspace package, so none of the repo's path aliases resolve
 // here — the same exception `packages/configuration` carries.
-const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor as new (
-  ...parameters: string[]
-) => (...values: unknown[]) => Promise<Record<string, unknown>>;
+const AsyncFunction: AsyncFunctionConstructor = Object.getPrototypeOf(async () => {})
+  .constructor as AsyncFunctionConstructor;
 
 /**
  * Drives one whole run of the real script against stubbed agents, and hands back everything a test can assert

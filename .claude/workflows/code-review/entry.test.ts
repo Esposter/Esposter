@@ -1,3 +1,4 @@
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
@@ -23,8 +24,8 @@ describe("code-review entry", () => {
 
     const run = await runReview(args, stubFor({}));
 
-    expect(run.logs[0]).toBe(
-      mode + " mode, " + level + " effort, target: " + (target ? '"' + target + '"' : "(the working diff)"),
+    expect(takeOne(run.logs)).toBe(
+      `${mode} mode, ${level} effort, target: ${target ? `"${target}"` : "(the working diff)"}`,
     );
     expect(run.result.stats).toMatchObject({ level, mode });
   });
@@ -102,8 +103,8 @@ describe("code-review entry", () => {
     const diff = await runReview("high", stubFor({}));
     const area = await runReview(AREA_ARGS, stubFor({ scope: AREA_SCOPE }));
 
-    expect(diff.calls[0].options.schema?.required).toStrictEqual(["diffCommand", "files", "summary"]);
-    expect(area.calls[0].options.schema?.required).toStrictEqual(["files", "summary"]);
+    expect(takeOne(diff.calls).options.schema?.required).toStrictEqual(["diffCommand", "files", "summary"]);
+    expect(takeOne(area.calls).options.schema?.required).toStrictEqual(["files", "summary"]);
   });
 
   test("asks for a seam partition only above the diff-mode file threshold", async () => {
