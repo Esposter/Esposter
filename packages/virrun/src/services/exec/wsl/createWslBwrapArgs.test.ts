@@ -25,7 +25,7 @@ describe(createWslBwrapArgs, () => {
   test("sources reads from the ext4 mirror but mounts and chdirs at the logical repo path", () => {
     expect.hasAssertions();
 
-    const wslBindDir = `${TEST_WSL_PREFIX}${TEST_PNPM_STORE_PATH_WIN}`;
+    const wslBindDirectory = `${TEST_WSL_PREFIX}${TEST_PNPM_STORE_PATH_WIN}`;
     const args = createWslBwrapArgs("pwd", TEST_REPO_ROOT_WIN, { bindDirs: [TEST_PNPM_STORE_PATH_WIN] });
 
     expect(args).toStrictEqual([
@@ -45,8 +45,8 @@ describe(createWslBwrapArgs, () => {
       "--tmp-overlay",
       TEST_WSL_LOGICAL,
       "--bind",
-      wslBindDir,
-      wslBindDir,
+      wslBindDirectory,
+      wslBindDirectory,
       "--chdir",
       TEST_WSL_LOGICAL,
       "--",

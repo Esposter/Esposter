@@ -12,12 +12,12 @@ import { describe } from "vitest";
 // CreateWorkspaceCorpus). A bare local path makes git hardlink the object store (`--local` default) rather than copy —
 // Near-instant and near-zero extra disk even on a large monorepo, so no `--depth` (which git ignores for local clones
 // Anyway, only warning about it).
-export const createCleanRepositoryCheckout = (repoRoot: string): string => {
+export const createCleanRepositoryCheckout = (repositoryRoot: string): string => {
   const cache = join(homedir(), HOME_CACHE_DIRECTORY_NAME);
   mkdirSync(cache, { recursive: true });
   const checkout = mkdtempSync(join(cache, VIRRUN_TEMP_DIR_PREFIX));
   // `--` ends option parsing so the repo path can't be smuggled in as a git flag; `-q` drops the volatile progress line.
-  execFileSync("git", ["clone", "-q", "--", repoRoot, checkout]);
+  execFileSync("git", ["clone", "-q", "--", repositoryRoot, checkout]);
   return checkout;
 };
 

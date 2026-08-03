@@ -141,12 +141,12 @@ describe("blueprint", () => {
     const audience = await programCaller.createResource({ name: "a" });
     const blueprint = await caller.captureBlueprint({ ids: [audience.id], name });
     const deployments = await caller.deployBlueprint({ id: blueprint.id, parameterValues: {} });
-    const deployed = deployments.find(({ key }) => key === "a");
-    assert.exists(deployed);
+    const deployment = deployments.find(({ key }) => key === "a");
+    assert.exists(deployment);
 
     // A content-less source deploys to a content-less resource — the state it is actually in. Standing an
     // Empty object in instead would fail every deploy against the type's own schema
-    await expect(programCaller.readResourceContent({ id: deployed.resource.id })).resolves.toBeUndefined();
+    await expect(programCaller.readResourceContent({ id: deployment.resource.id })).resolves.toBeUndefined();
   });
 
   test("fails deploy with non-existent id", async () => {

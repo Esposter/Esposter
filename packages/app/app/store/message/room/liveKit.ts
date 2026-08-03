@@ -7,7 +7,6 @@ import type {
   RemoteTrackPublication,
 } from "livekit-client";
 
-import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { MicrophoneProcessor } from "@/models/message/room/call/MicrophoneProcessor";
 import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
@@ -35,6 +34,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let microphoneProcessor: MicrophoneProcessor | undefined;
   let pushToTalkReleaseTimeoutId: number | undefined;
   let virtualBackgroundProcessor: ReturnType<typeof BackgroundProcessor> | undefined;
+  const { executeMutation: executeSetVirtualBackgroundMutation } = useMutation();
   const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
@@ -239,31 +239,38 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     mediaStore.isScreenSharing = isScreenSharing;
     if (!isScreenSharing) setLocalScreenShareStream(undefined);
   };
-  const setVirtualBackground = getConcurrentFunction(async (checkIsStale, imagePath: string) => {
-    mediaStore.selectedVirtualBackground = imagePath;
-    if (!localCameraTrack) return;
-    else if (!supportsBackgroundProcessors()) {
-      console.warn("Background processors are not supported in this browser.");
-      return;
-    }
+  // Local media pipeline work rather than a server write: clicking through the background picker means only
+  // The last pick matters, and the picks before it have nothing to unwind, so they supersede rather than queue
+  const setVirtualBackground = async (imagePath: string) => {
+    await executeSetVirtualBackgroundMutation(
+      async (checkIsStale) => {
+        mediaStore.selectedVirtualBackground = imagePath;
+        if (!localCameraTrack) return;
+        else if (!supportsBackgroundProcessors()) {
+          console.warn("Background processors are not supported in this browser.");
+          return;
+        }
 
-    virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
-    if (!localCameraTrack.getProcessor()) {
-      await localCameraTrack.setProcessor(virtualBackgroundProcessor);
-      if (checkIsStale()) return;
-      if (virtualBackgroundProcessor.processedTrack)
-        mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
-    }
-    if (!imagePath) {
-      if (checkIsStale()) return;
-      await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
-      return;
-    }
+        virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
+        if (!localCameraTrack.getProcessor()) {
+          await localCameraTrack.setProcessor(virtualBackgroundProcessor);
+          if (checkIsStale()) return;
+          if (virtualBackgroundProcessor.processedTrack)
+            mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
+        }
+        if (!imagePath) {
+          if (checkIsStale()) return;
+          await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
+          return;
+        }
 
-    const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-    if (checkIsStale() || !resolvedPath) return;
-    await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
-  });
+        const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
+        if (checkIsStale() || !resolvedPath) return;
+        await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
+      },
+      { isSupersede: true, key: "virtualBackground" },
+    );
+  };
   // Selecting a device just writes the persisted ref (via setActiveDevice); these watchers restart the
   // Live track on change. The guard skips no-op switches - including the echo from LiveKit's own
   // ActiveDeviceChanged event - so there is no feedback loop.

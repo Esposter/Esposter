@@ -9,12 +9,12 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(hasLiveLease, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  let hashDir = "";
+  let hashDirectory = "";
   const seedLease = (pid: number): string =>
-    writeLeaseFile(join(hashDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME), pid);
+    writeLeaseFile(join(hashDirectory, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME), pid);
 
   beforeEach(() => {
-    hashDir = create();
+    hashDirectory = create();
   });
 
   afterEach(cleanup);
@@ -24,21 +24,21 @@ describe(hasLiveLease, () => {
 
     seedLease(process.pid);
 
-    expect(hasLiveLease(hashDir)).toBe(true);
+    expect(hasLiveLease(hashDirectory)).toBe(true);
   });
 
   test(`is false once only dead leases remain, reaping them`, () => {
     expect.hasAssertions();
 
-    const dead = seedLease(DEAD_PID);
+    const deadLeaseFile = seedLease(DEAD_PID);
 
-    expect(hasLiveLease(hashDir)).toBe(false);
-    expect(existsSync(dead)).toBe(false);
+    expect(hasLiveLease(hashDirectory)).toBe(false);
+    expect(existsSync(deadLeaseFile)).toBe(false);
   });
 
   test(`is false when the hash dir has no leases directory`, () => {
     expect.hasAssertions();
 
-    expect(hasLiveLease(hashDir)).toBe(false);
+    expect(hasLiveLease(hashDirectory)).toBe(false);
   });
 });

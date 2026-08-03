@@ -78,7 +78,7 @@ export const useCallStore = defineStore("message/room/call", () => {
             setHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
           };
         },
-        // Keyed per participant so a moderator lowering several hands never stale-drops a rollback
+        // Keyed per participant so a moderator lowering several hands never queues behind the other
         key: participantSessionId,
       },
     );

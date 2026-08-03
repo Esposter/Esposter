@@ -13,7 +13,8 @@ import { takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectAnchor = (rowIndex: number, columnIndex: number) => {
-  const { startCellSelection } = useCellStore();
+  const cellStore = useCellStore();
+  const { startCellSelection } = cellStore;
   startCellSelection(rowIndex, columnIndex);
 };
 

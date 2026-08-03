@@ -1,7 +1,7 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import { getBenchmarkPlugins } from "./getBenchmarkPlugins";
-import { getBenchmarkRunner } from "./getBenchmarkRunner";
+import { getBenchmarkPlugins } from "./getBenchmarkPlugins.ts";
+import { getBenchmarkRunner } from "./getBenchmarkRunner.ts";
 
 export const getVitestConfiguration = (): ViteUserConfig => ({
   plugins: getBenchmarkPlugins(),

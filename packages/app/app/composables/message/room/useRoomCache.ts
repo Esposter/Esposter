@@ -7,7 +7,7 @@ export const useRoomCache = () => {
   const roomStore = useRoomStore();
   const { rooms } = storeToRefs(roomStore);
   const { initializeCursorPaginationData } = roomStore;
-  return useCursorPaginationCache({
+  useCursorPaginationCache({
     configuration: RoomIndexedDbStoreConfiguration,
     initializeCursorPaginationData,
     items: rooms,

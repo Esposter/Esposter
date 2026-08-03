@@ -2,7 +2,6 @@ import type { BlueprintDeployment } from "#shared/models/resource/blueprint/Blue
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 
-import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { mapBlueprintEntryContentStrings } from "@@/server/services/blueprint/mapBlueprintEntryContentStrings";
 import { sortBlueprintEntriesTopologically } from "@@/server/services/blueprint/sortBlueprintEntriesTopologically";
 import { substituteBlueprintEntryAliasTokens } from "@@/server/services/blueprint/substituteBlueprintEntryAliasTokens";
@@ -10,9 +9,7 @@ import { substituteBlueprintParameterTokens } from "@@/server/services/blueprint
 import { validateBlueprintEntries } from "@@/server/services/blueprint/validateBlueprintEntries";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
-import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
-import { AzureContainer } from "@esposter/db-schema";
+import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Substitute parameters → pre-validate every entry against its type's contentSchema → topologically create
@@ -54,10 +51,11 @@ export const deployBlueprint = async (
       const content = mapBlueprintEntryContentStrings(entry, (value) =>
         substituteBlueprintEntryAliasTokens(value, aliasToId),
       );
-      await useUpload(AzureContainer.ResourceAssets, getContentBlobName(newResource.id), JSON.stringify(content));
-      // The same hook the editor's save fires (scheduling a TodoList's reminders, and whatever a type
-      // Registers later), so a deployed resource is never missing the side effects its content declares
-      runAfterSaveResourceContent(ctx, newResource, content);
+      // The one content-write path the editor's save takes, so a deployed resource is never missing the side
+      // Effects its content declares — scheduling a TodoList's reminders, and whatever a type registers later.
+      // No activityType: createResourceRow has already opened this resource's trail with its Created entry,
+      // And a ContentSaved beside it would claim the owner edited a resource they have not opened yet
+      await saveResourceContent(ctx, { content, resource: newResource });
     }
   }).match(noop, async (error) => {
     await deleteCreatedResources(ctx, createdIds);

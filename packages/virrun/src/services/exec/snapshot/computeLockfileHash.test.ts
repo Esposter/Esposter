@@ -11,7 +11,7 @@ const lockfileContent = "lockfileVersion: '9.0'\n";
 describe(computeLockfileHash, () => {
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   // A lockfile-less dir exercises the throw path; any other content makes a workspace root.
-  const createRepo = (content?: string): string => (content === undefined ? create() : createWorkspace(content));
+  const createRepository = (content?: string): string => (content === undefined ? create() : createWorkspace(content));
 
   afterEach(() => {
     cleanup();
@@ -20,44 +20,46 @@ describe(computeLockfileHash, () => {
   test("hashes the lockfile content to a sha256 hex digest", () => {
     expect.hasAssertions();
 
-    expect(computeLockfileHash(createRepo(lockfileContent))).toMatch(/^[0-9a-f]{64}$/u);
+    expect(computeLockfileHash(createRepository(lockfileContent))).toMatch(/^[0-9a-f]{64}$/u);
   });
 
   test("yields the same hash for identical lockfiles and a different one when content changes", () => {
     expect.hasAssertions();
 
-    expect(computeLockfileHash(createRepo(lockfileContent))).toBe(computeLockfileHash(createRepo(lockfileContent)));
-    expect(computeLockfileHash(createRepo(lockfileContent))).not.toBe(
-      computeLockfileHash(createRepo(`${lockfileContent}  added: true\n`)),
+    expect(computeLockfileHash(createRepository(lockfileContent))).toBe(
+      computeLockfileHash(createRepository(lockfileContent)),
+    );
+    expect(computeLockfileHash(createRepository(lockfileContent))).not.toBe(
+      computeLockfileHash(createRepository(`${lockfileContent}  added: true\n`)),
     );
   });
 
   test("hashes the workspace-root lockfile when invoked from a nested subdirectory", () => {
     expect.hasAssertions();
 
-    const repo = createRepo(lockfileContent);
-    const nested = join(repo, TEST_FILENAME, TEST_FILENAME);
-    mkdirSync(nested, { recursive: true });
+    const repository = createRepository(lockfileContent);
+    const nestedDirectory = join(repository, TEST_FILENAME, TEST_FILENAME);
+    mkdirSync(nestedDirectory, { recursive: true });
 
-    expect(computeLockfileHash(nested)).toBe(computeLockfileHash(repo));
+    expect(computeLockfileHash(nestedDirectory)).toBe(computeLockfileHash(repository));
   });
 
   test("re-reads the same lockfile path when its content changes (memoization stays honest)", () => {
     expect.hasAssertions();
 
-    const repo = createRepo(lockfileContent);
-    const lockfile = join(repo, PNPM_LOCKFILE_FILENAME);
-    const before = computeLockfileHash(repo);
+    const repository = createRepository(lockfileContent);
+    const lockfile = join(repository, PNPM_LOCKFILE_FILENAME);
+    const beforeHash = computeLockfileHash(repository);
     // An in-process rewrite (an install regenerating the lockfile) must invalidate the cached digest; the size
     // Change alone defeats the stat guard even where the mtime resolution can't see a fast back-to-back write.
     writeFileSync(lockfile, `${lockfileContent}  added: true\n`);
 
-    expect(computeLockfileHash(repo)).not.toBe(before);
+    expect(computeLockfileHash(repository)).not.toBe(beforeHash);
   });
 
   test("throws when the repo has no lockfile to snapshot", () => {
     expect.hasAssertions();
 
-    expect(() => computeLockfileHash(createRepo())).toThrow(PNPM_LOCKFILE_FILENAME);
+    expect(() => computeLockfileHash(createRepository())).toThrow(PNPM_LOCKFILE_FILENAME);
   });
 });

@@ -60,6 +60,17 @@ describe(computeDatePartTransformation, () => {
     ).toBe(0);
   });
 
+  test("extracts weekday (0-indexed from Sunday)", () => {
+    expect.hasAssertions();
+    expect(
+      computeDatePartTransformation(
+        "1970-01-01",
+        { part: DatePartType.Weekday, sourceColumnId: "", type: ColumnTransformationType.DatePart },
+        DateFormat["YYYY-MM-DD"],
+      ),
+    ).toBe(4);
+  });
+
   test("returns null for invalid date", () => {
     expect.hasAssertions();
     expect(

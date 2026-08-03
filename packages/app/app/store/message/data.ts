@@ -26,7 +26,8 @@ export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
-  const { createAlert } = useAlertStore();
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const roomStore = useRoomStore();
   const threadFollowStore = useThreadFollowStore();
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
@@ -125,7 +126,7 @@ export const useDataStore = defineStore("message/data", () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
         };
       },
-      // Keyed per message so edits to different messages through this shared executor never stale-drop each other
+      // Keyed per message so edits to different messages through this shared executor run independently instead of queueing behind each other
       key: input.rowKey,
     });
   };

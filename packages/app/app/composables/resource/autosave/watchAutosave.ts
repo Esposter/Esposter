@@ -1,7 +1,6 @@
 import type { Promisable } from "type-fest";
 
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
-
-// Deep-watch edited resource content and save on the one shared autosave cadence
+// Deep-watch edited resource content and save on the one shared autosave cadence — the debounce, its scope
+// Cleanup and its resource binding all come from useAutosaveFn, so both autosave entry points behave alike
 export const watchAutosave = (source: object, save: () => Promisable<unknown>) =>
-  watchDebounced(source, save, { debounce: RESOURCE_AUTOSAVE_DEBOUNCE_MS, deep: true });
+  watchDeep(source, useAutosaveFn(save));

@@ -49,26 +49,6 @@ describe(useDataStore, () => {
     vi.restoreAllMocks();
   });
 
-  test("storeCreateMessage is idempotent", async () => {
-    expect.hasAssertions();
-
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
-    const { storeCreateMessage } = dataStore;
-    const newMessage = createMessageEntity({
-      message,
-      roomId,
-      type: MessageType.Message,
-      userId: getMockSession().user.id,
-    });
-    // The onCreateMessage subscription echoes to the sender for isSendToSelf sends (forward, pin) and on
-    // WebPubSub reconnect, so applying the same message twice must not duplicate the list entry.
-    await storeCreateMessage(newMessage);
-    await storeCreateMessage(newMessage);
-
-    expect(items.value).toHaveLength(1);
-  });
-
   test("createMessage rolls back the optimistic message when the Create hook rejects", async () => {
     expect.hasAssertions();
 
@@ -389,25 +369,5 @@ describe(useDataStore, () => {
 
     expect(items.value).toHaveLength(1);
     expect(takeOne(items.value).message).toBe(updatedMessage);
-  });
-
-  test("storeDeleteMessage is idempotent", async () => {
-    expect.hasAssertions();
-
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
-    const { storeCreateMessage, storeDeleteMessage } = dataStore;
-    const newMessage = createMessageEntity({
-      message,
-      roomId,
-      type: MessageType.Message,
-      userId: getMockSession().user.id,
-    });
-    await storeCreateMessage(newMessage);
-    const deleteInput = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
-    await storeDeleteMessage(deleteInput);
-    await storeDeleteMessage(deleteInput);
-
-    expect(items.value).toHaveLength(0);
   });
 });

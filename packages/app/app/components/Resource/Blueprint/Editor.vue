@@ -13,6 +13,7 @@ const { cloned: manifestJson } = useCloned(() => JSON.stringify(blueprint.value,
 const errorMessage = ref("");
 const save = async () => {
   errorMessage.value = "";
+  // eslint-disable-next-line no-restricted-syntax -- blueprintResourceSchema validates the manifest and coerces its own dates
   const parsed = getResult(() => JSON.parse(manifestJson.value) as unknown).match(
     (value) => value,
     (error) => {

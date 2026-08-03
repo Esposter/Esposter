@@ -42,6 +42,8 @@ sequenceDiagram
 
 `ResourceActivityEntity` carries `activityType` (`Created | Renamed | ContentSaved | Published | Unpublished | Imported | Duplicated | Restored`), `userId`, and per-type payload fields (`oldName`/`newName`, `publishVersion`, `format`). Every payload field is optional: Azure Table is schemaless per row, and a `Renamed` has nothing to say about `publishVersion`.
 
+`Restored` covers both restores: out of the [recycle bin](/docs/platform/recycle-bin), and of a [published snapshot](/docs/platform/publish-history) into the working copy. Both hand the owner back content they had before, so the trail says the same thing about them.
+
 ### Cleanup
 
 Azure Table has no partition-drop, so clearing a resource's history means enumerating its partition and batch-deleting in transactions of up to 100 — all within one partition, which the batch API requires anyway. Already-gone entities are the success case, so a retry is safe.

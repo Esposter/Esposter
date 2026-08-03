@@ -1,15 +1,17 @@
 ---
 name: pinia
-description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), per-service dialog stores, blade-scoped store state torn down on unmount, never redirecting store functions through wrappers, selection state in the store, useDataMap vs a plain Map, cursor pagination helpers, tRPC mutation placement via useMutation with optimistic rollback, createOperationData CRUD verbs and store* subscription handlers, CRUD/parameter naming, full tRPC input objects, minimal-input actions, reusing existing store maps, reactive Map mutations, markRaw for class instances, and session auth in stores. Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store.
+description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), per-service dialog stores, blade-scoped store state torn down on unmount, never redirecting store functions through wrappers, selection state in the store, useDataMap vs a plain Map, cursor pagination helpers, tRPC mutation placement via useMutation with optimistic rollback, single-flight reads via isExclusive (never a promise map or a chained promise in a store), createOperationData CRUD verbs and store* subscription handlers, CRUD/parameter naming, full tRPC input objects, minimal-input actions, reusing existing store maps, reactive Map mutations, markRaw for class instances, and session auth in stores. Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store.
 ---
 
 # Pinia Store Conventions
 
-## Usage in Vue Components
+## Consuming a Store
+
+Applies **everywhere a store is consumed** — components, composables, services and **tests alike**. Tests are not exempt: a test that reaches into a store differently from the code it covers stops being a description of how the store is used. Scoping this rule to components is exactly how it drifted.
 
 - **Full descriptive store variable name** — `const fileTableEditorStore = useFileTableEditorStore()`, never `const store = ...`. Exception: conditional assignment where the store type varies at runtime.
 - **`storeToRefs` and `defineStore` are auto-imported** — never `import { storeToRefs } from "pinia"`.
-- **In components**: assign the store to a named variable first (`const roleStore = useRoleStore()`), then destructure. Never destructure directly from the `useXxxStore()` call. Keep each store's lines grouped — fully extract one store before the next. Never batch all inits, then all refs, then all methods. Order per store:
+- Assign the store to a named variable first (`const roleStore = useRoleStore()`), then destructure. **Never destructure directly from the `useXxxStore()` call** — neither `storeToRefs(useRoleStore())` nor `const { method } = useRoleStore()`. Keep each store's lines grouped — fully extract one store before the next. Never batch all inits, then all refs, then all methods. Order per store:
   1. `const xyzStore = useXyzStore()`
   2. `const { ref1, ref2 } = storeToRefs(xyzStore)` _(omit if no refs/computeds)_
   3. `const { method1 } = xyzStore` _(omit if no methods)_
@@ -119,6 +121,8 @@ Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when the
 
 **Do NOT use** `useDataMap` when the store reads/writes arbitrary keys with no "current" concept — use a plain `ref(new Map<string, T>())` with a manual getter.
 
+**State describing one key must be keyed by it — a plain `ref` is only correct when the key cannot change under the store.** A global ref outlives the switch: at the moment the current id changes it still holds the previous key's value, so anything asking "is this the current key's data" reads a stale yes. Consumers then grow guards over ambiguous state instead of getting an answer. That is what the member store's list and its two server-computed totals each were before they were keyed on `currentRoomId`; see `content/docs/esbabbler/offline-cache.md` for the failure it produced offline. Applies to every field of that state, not just the list — a keyed list beside global counts is the same bug, half-fixed.
+
 ```typescript
 // useDataMap — "current room" concept applies
 const roomStore = useRoomStore();
@@ -189,9 +193,9 @@ Add a store action only when it adds meaningful client logic:
 - Shared state updates not covered by subscriptions
 - Coordination of multiple stores, requests, or validation steps
 
-A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`) — declare `const { executeMutation } = useMutation()` at the store root and never hand-roll the alert/rollback wiring. It handles error surfacing (`createAlert` unless you pass `onError`) and discards stale responses per `key`, so only the latest call wins. Destructure `isPending` only where a control consumes it, and never hand-roll a pending flag — the in-flight guard decision tree (dialog / plain button / keyed single-flight / optimistic / unmount) is in `packages/app/content/docs/architecture/client-data.md` § In-flight guarding.
+A store action that mutates goes through `useMutation` (`composables/shared/useMutation.ts`) — declare `const { executeMutation } = useMutation()` at the store root and never hand-roll the alert/rollback wiring. It handles error surfacing (`createAlert` unless you pass `onError`) and runs writes to one `key` one at a time, so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it, and never hand-roll a pending flag — the in-flight guard decision tree (dialog / plain button / keyed single-flight / optimistic / unmount) is in `packages/app/content/docs/architecture/client-data.md` § In-flight guarding.
 
-- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. Snapshot the previous value outside the callback and restore it in the returned closure.
+- **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure. It runs when the write is **sent**, so take the snapshot **inside** the callback — a queued write must roll back to what the write ahead of it stored, not to the state the user was looking at when they clicked. For the same reason, anything else the payload reads from live state (a version token, a create-or-update branch) is read inside the `mutate` callback, never before the call.
 - **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id) — apply those after the response instead of optimistically.
 
 ```typescript
@@ -200,26 +204,30 @@ $trpc.friend.deleteFriend.mutate(friendId);
 
 // store action justified — optimistic local state with automatic rollback
 const deleteBan = async (input: DeleteBanInput) => {
-  const snapshot = [...items.value];
   await executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
     applyOptimistic: () => {
+      const snapshot = [...items.value];
       storeDeleteBan(input);
       return () => {
         items.value = snapshot;
       };
     },
+    // A ban is identified by the room-and-user pair, so that composite is the target — there is no `id`
+    key: `${input.roomId}-${input.userId}`,
   });
 };
 ```
 
-- **One `useMutation()` instance per mutation**, via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's staleness tracking can't cancel another's.
+- **A store never orders its own async work** — no promise chained onto the previous one, no `Map<id, Promise>` of in-flight reads, no generation counter or `isSaving` flag. That ordering lives in the primitive, keyed by target; a store that seems to need its own needs the right `key`. Protection applied by hand is protection that gets forgotten, and the stores that forgot it were silently losing writes or serving stale reads.
+- **A read that must not be issued twice at once passes `isExclusive: true` to `executeQuery`** — the fan-out read every mounted instance of a surface fires (`readFavorites` from the list, the blade and Home). Concurrent callers **join** one request and all of them get the data; a read is never dropped, which would leave the caller that joined rendering an empty list. It joins only what is still in flight, so read-once semantics stay a separate cache flag (`isLoaded`, a `loadedRoomIds` set) the action checks first, and an invalidating re-read (`refreshFavorites`) omits the opt-in so it cannot join the answer it just invalidated.
+- **One `useMutation()` instance per mutation**, via destructure renames (`const { executeMutation: executeCreateFooMutation } = useMutation()`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's queue and pending state can't hold up another's.
 - **All instances are declared at the store root** — never call `useMutation()` inside an action (detached effect scope leak).
-- **`key` is required on every call** — like a Pinia store id, identity is always explicit. Same key = genuine latest-wins supersession (repeated saves of one target). Pick it by case:
+- **`key` is required on every call** — like a Pinia store id, identity is always explicit. Same key = same target, so those writes queue. Pick it by case:
   - Per-entity operations → the entity id or natural composite (`key: input.id`, `` key: `${userId}-${roleId}` ``).
-  - Creates with no natural key → a per-call `Symbol("createFoo")`, since every create is independent. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
+  - Creates with no natural key → a per-call `Symbol("createFoo")`, since every create is independent and must not wait behind its siblings. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
   - Singleton targets → the scope's id or a stable target name.
 
-Full rationale: `packages/app/content/docs/architecture/client-data.md`.
+Full rationale: `packages/app/content/docs/architecture/async-operations.md` (concurrency) and `client-data.md` (optimistic apply, in-flight guarding).
 
 ## createOperationData Usage
 

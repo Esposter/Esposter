@@ -1,4 +1,4 @@
-import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult, InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { z } from "zod";
 // Parse untrusted JSON text (a probe's stdout, an on-disk cache/manifest file) into a typed value in one step:
 // JSON-parse then zod-validate inside a single getResult, throwing an InvalidOperationError named for the caller when
@@ -10,7 +10,7 @@ export const parseJsonWithSchema = <TSchema extends z.ZodType>(
   schema: TSchema,
   name: string,
 ): z.infer<TSchema> =>
-  getResult(() => schema.parse(JSON.parse(json))).match(
+  getResult(() => schema.parse(jsonDateParse<unknown>(json))).match(
     (value) => value,
     (error) => {
       // GetResult preserves the thrown value when it is an Error (toAppError returns Error instances as-is), and

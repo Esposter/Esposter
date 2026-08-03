@@ -20,12 +20,12 @@ vi.mock(import("@/services/exec/snapshot/removeSnapshotDirectoriesDetached"), as
 
 describe(sweepStaleEntries, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  let dir = "";
-  const seedEntry = (name: string): string => seedDirectory(join(dir, name));
+  let directory = "";
+  const seedEntry = (name: string): string => seedDirectory(join(directory, name));
 
   beforeEach(() => {
     vi.clearAllMocks();
-    dir = create();
+    directory = create();
   });
 
   afterEach(cleanup);
@@ -33,22 +33,22 @@ describe(sweepStaleEntries, () => {
   test("removes every directory the predicate selects, keeping the rest", () => {
     expect.hasAssertions();
 
-    const stale = seedEntry(" ");
-    const live = seedEntry(TEST_FILENAME);
+    const staleEntry = seedEntry(" ");
+    const liveEntry = seedEntry(TEST_FILENAME);
 
-    sweepStaleEntries(dir, isStale);
+    sweepStaleEntries(directory, isStale);
 
-    expect(existsSync(stale)).toBe(false);
-    expect(existsSync(live)).toBe(true);
+    expect(existsSync(staleEntry)).toBe(false);
+    expect(existsSync(liveEntry)).toBe(true);
   });
 
   test("skips files even when the predicate selects them, so a stray file is never removed", () => {
     expect.hasAssertions();
 
-    const file = join(dir, " ");
+    const file = join(directory, " ");
     writeFileSync(file, "");
 
-    sweepStaleEntries(dir, isStale);
+    sweepStaleEntries(directory, isStale);
 
     expect(existsSync(file)).toBe(true);
   });
@@ -56,20 +56,20 @@ describe(sweepStaleEntries, () => {
   test("hands every selected entry to one teardown call, never one call per entry", () => {
     expect.hasAssertions();
 
-    const stale = [" ", "  "].map((name) => seedEntry(name));
+    const staleEntries = [" ", "  "].map((name) => seedEntry(name));
 
-    sweepStaleEntries(dir, isStale);
+    sweepStaleEntries(directory, isStale);
 
-    expect(removeSnapshotDirectoriesDetached).toHaveBeenCalledExactlyOnceWith(stale);
+    expect(removeSnapshotDirectoriesDetached).toHaveBeenCalledExactlyOnceWith(staleEntries);
   });
 
   test("is a no-op when the directory does not exist", () => {
     expect.hasAssertions();
 
-    const absent = join(dir, "absent");
+    const absentDirectory = join(directory, "absent");
 
-    sweepStaleEntries(absent, isStale);
+    sweepStaleEntries(absentDirectory, isStale);
 
-    expect(existsSync(absent)).toBe(false);
+    expect(existsSync(absentDirectory)).toBe(false);
   });
 });

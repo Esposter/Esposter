@@ -23,7 +23,7 @@ export const useDeleteResourceFile = (type: ResourceType, id: MaybeRefOrGetter<s
     // The server rejects, and drifts the moment either side is tightened
     const blobPath = getResult(() => decodeURIComponent(url.slice(filesDirectoryPrefix.length))).unwrapOr("");
     if (!BLOB_SEGMENT_REGEX.test(blobPath)) return;
-    // Keyed per blob so concurrent file deletions never stale-drop each other
+    // Keyed per blob so concurrent file deletions run independently instead of queueing behind each other
     await executeMutation(() => deleteFile({ blobPath, id: idValue }), { key: blobPath });
   };
 };

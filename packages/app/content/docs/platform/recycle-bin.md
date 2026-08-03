@@ -58,11 +58,12 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 | `server/trpc/procedure/resource/getOwnerProcedure.ts`             | Soft-delete guard + `isDeletedOnly` mode  |
 | `packages/azure-functions/src/functions/purgeDeletedResources.ts` | Daily 30-day timer sweep                  |
 | `app/pages/resources/recycle-bin.vue`                             | The bin page                              |
+| `app/composables/resource/list/useReadResourcesPage.ts`           | The paged reader it shares with `/all`    |
 
 ## Notes
 
 - Delete confirmations say the resource moves to the bin for 30 days; the post-delete toast offers **Restore** directly, so the common undo never needs a trip to the bin. A bulk delete links to the bin instead — restoring twelve things one toast button at a time is not an undo.
-- Purge keeps the type-the-name guard. It is the only destroy that is now real.
+- Purge keeps the type-the-name guard. It is the only destroy that is now real. The bin reads through the same [`useReadResourcesPage`](/docs/platform/list-filters-and-views) as `/all`, so paging quickly or refreshing mid-read can never leave the table showing an earlier page's rows — a purge fired from a stale row is unrecoverable in a way a stale list elsewhere is not.
 - Dataset references to a soft-deleted source fail exactly as they did under hard delete ([dangling dataset references](/docs/platform/deferred/dangling-dataset-references)); restore heals them.
 - Names are not unique, so a restore can never conflict.
 - The [activity log](/docs/platform/activity-log) partition survives the bin window — history outlives the delete, and restore appends `Restored` to it. The sweep runs at purge time, before the row goes.

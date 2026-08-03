@@ -22,14 +22,14 @@ describe(filterDataSourceColumns, () => {
   test(`non-exported columns are excluded from rows`, () => {
     expect.hasAssertions();
 
-    const colA = createNumberColumn("a");
-    const colB = createNumberColumn("b");
-    const dataSource = createDataSource([colA, colB], [createRow({ a: 1, b: 2 })]);
+    const columnA = createNumberColumn("a");
+    const columnB = createNumberColumn("b");
+    const dataSource = createDataSource([columnA, columnB], [createRow({ a: 1, b: 2 })]);
 
-    const { columns, rows } = filterDataSourceColumns(dataSource.columns, dataSource.rows, [colA.id]);
+    const { columns, rows } = filterDataSourceColumns(dataSource.columns, dataSource.rows, [columnA.id]);
 
     expect(columns).toHaveLength(1);
-    expect(takeOne(columns).id).toBe(colA.id);
+    expect(takeOne(columns).id).toBe(columnA.id);
     expect(takeOne(rows).data).toStrictEqual({ a: 1 });
   });
 });

@@ -18,7 +18,8 @@ const { resourceId } = defineProps<ResourceActivityLogProps>();
 const { readActivities, readMoreActivities } = useReadActivities(resourceId);
 const activityStore = useActivityStore();
 const { hasMore, items } = storeToRefs(activityStore);
-const { createAlert } = useAlertStore();
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const isLoading = ref(true);
 
 onMounted(async () => {

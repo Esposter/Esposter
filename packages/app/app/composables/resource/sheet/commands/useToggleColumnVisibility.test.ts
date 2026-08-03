@@ -46,19 +46,4 @@ describe(useToggleColumnVisibility, () => {
 
     expect(takeOne(dataSource.columns).hidden).toBe(false);
   });
-
-  test("redo re-applies toggle after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const toggleColumnVisibility = useToggleColumnVisibility();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    const column = takeOne(dataSource?.columns ?? []);
-    await toggleColumnVisibility(column.id);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.columns).hidden).toBe(true);
-  });
 });

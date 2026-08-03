@@ -29,7 +29,8 @@ const { editor } = await useGrapesJsEditor(
 watchImmediate(editor, (newEditor) => {
   storeEditor.value = newEditor;
 });
-const { pendingDataset } = storeToRefs(useEmailExportDialogStore());
+const emailExportDialogStore = useEmailExportDialogStore();
+const { pendingDataset } = storeToRefs(emailExportDialogStore);
 // The stores outlive the blade, so anything the blade staged or bridged is torn down with it
 onUnmounted(() => {
   pendingDataset.value = undefined;

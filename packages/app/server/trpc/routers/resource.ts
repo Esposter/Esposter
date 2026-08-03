@@ -10,7 +10,6 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -21,13 +20,12 @@ import { cloneContentAssets } from "@@/server/services/resource/cloneContentAsse
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
+import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
-import { storeSelfContainedContent } from "@@/server/services/resource/storeSelfContainedContent";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -205,12 +203,20 @@ export const resourceRouter = router({
     // A copy starts as Draft, so only the draft content is copied — never the publication. The clone gives
     // The copy its own blobs for every referenced asset — working-copy and published — under {newId}/ with
     // The source-relative path preserved, and rewrites the embedded urls, so the copy is fully self-contained:
-    // Its editor can delete its files, and deleting or unpublishing the original never strands it
+    // Its editor can delete its files, and deleting or unpublishing the original never strands it. Content
+    // Taken from somewhere else is never written without that clone — a copy that kept the source's urls is
+    // Broken by anything the source does later, and only surfaces once a reader opens a page whose images 404
     await getResultAsync(async () => {
       const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
       // The blob is written on first save, so missing content just means there is nothing to copy yet
       if (content === undefined) return;
-      await storeSelfContainedContent(ctx.db, ctx.getSessionPayload.user.id, newResource.id, content);
+
+      const clonedContent = await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, content, newResource.id);
+      // The one content-write path, so the copy fires the same after-save hook the editor's save does — a
+      // Duplicated TodoList's future due dates get their reminders scheduled rather than silently lost.
+      // No activityType: createResourceRow has already opened the copy's trail with its Duplicated entry, and
+      // A ContentSaved beside it would claim the owner edited a copy they have not opened yet
+      await saveResourceContent(ctx, { content: clonedContent, resource: newResource });
     }).match(noop, async (error) => {
       // Never leave a content-less orphan copy behind when the content clone fails
       await deleteCreatedResources(ctx, [newResource.id]);
@@ -331,23 +337,29 @@ export const resourceRouter = router({
       // The resource it clears was created moments earlier; the target here is a live working copy whose
       // Existing files a directory-wide cleanup would destroy.
       const clonedContent = await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, publishedContent, id);
-      // The bump and the content write stay in one transaction so a failed write rolls the contentVersion back —
-      // A restore that did not land must never advance the version every client caches against.
-      return ctx.db.transaction(async (tx) => {
-        const restoredResource = requireMutation(
-          (
-            await tx
-              .update(resources)
-              .set({ contentVersion: sql`${resources.contentVersion} + 1` })
-              .where(eq(resources.id, id))
-              .returning()
-          )[0],
-          Operation.Update,
-          DatabaseEntityType.Resource,
-          id,
-        );
-        await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(clonedContent));
-        return restoredResource;
+      // The one content-write path, so a restore is a content write like any other: the editors open in the
+      // Owner's other tabs adopt the restored content and its new contentVersion instead of autosaving the
+      // Pre-restore draft into a permanent stale-version rejection, the type's after-save hook re-derives what
+      // The restored content declares, and the trail records the restore the way the recycle bin's does
+      return saveResourceContent(ctx, {
+        activityType: ResourceActivityType.Restored,
+        content: clonedContent,
+        resource: ctx.resource,
+        // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
+        // A restore that did not land must never advance the version every client caches against
+        updateContentVersion: async (tx) =>
+          requireMutation(
+            (
+              await tx
+                .update(resources)
+                .set({ contentVersion: sql`${resources.contentVersion} + 1` })
+                .where(eq(resources.id, id))
+                .returning()
+            )[0],
+            Operation.Update,
+            DatabaseEntityType.Resource,
+            id,
+          ),
       });
     },
   ),

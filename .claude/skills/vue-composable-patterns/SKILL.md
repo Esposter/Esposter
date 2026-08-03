@@ -1,6 +1,6 @@
 ---
 name: vue-composable-patterns
-description: Esposter Vue 3 composable and form patterns — MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting mutation blocks with builder args, permission-gated settings tabs, schema-controlling selectors in the prepend-form slot, type-driven state reset via create maps, toRawDeep, resource cleanup, useOnline, SSR-safe watches, dirty-check saves with useSave, async sequencing primitives (getConcurrentFunction for reads, getSequentialFunction for writes, getSynchronizedFunction/useQuery — hand-rolling stale guards banned), dialog data loading, capturing the instance before await, and use*Subscribables. Apply when writing or reviewing a composable, a form dialog, or browser-aware reactive code.
+description: Esposter Vue 3 composable and form patterns — MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting mutation blocks with builder args, permission-gated settings tabs, schema-controlling selectors in the prepend-form slot, type-driven state reset via create maps, toRawDeep, resource cleanup, useOnline, SSR-safe watches, dirty-check saves with useSave, async sequencing through the one useMutation primitive (executeQuery latest-wins for reads, executeMutation queued per target for writes, isSupersede/isExclusive opt-ins with a deduped read joining the in-flight call, getSynchronizedFunction/useQuery — promise chains, in-flight promise maps and hand-rolled stale guards banned), dialog data loading, capturing the instance before await, and use*Subscribables. Apply when writing or reviewing a composable, a form dialog, or browser-aware reactive code.
 ---
 
 # Vue Composable & Form Patterns
@@ -230,15 +230,21 @@ Rules:
 - The snapshot updates only after a **successful** save so failures retry on the next trigger.
 - Snapshots are JSON strings (`Serializable.toJSON` handles reactive proxies/class instances) with `updatedAt` excluded — `saveItemMetadata` bumps it as part of saving, so it must not participate in the dirty check.
 
-## Async Sequencing — Shared Primitives (hand-rolling BANNED)
+## Async Sequencing — One Primitive (hand-rolling BANNED)
 
-`#shared/util/function/` and `composables/shared/` own the async plumbing — grep them before writing any stale-guard, latest-wins, or fire-from-sync logic:
+A composable never decides **how** concurrency is handled. It declares **what the operation targets** (`key`) and **whether it reads or writes** (which entry point it calls) — `useMutation` (`composables/shared/useMutation.ts`) derives the rest.
 
-- **`getConcurrentFunction(fn)`** — latest-wins guard: wraps `fn(checkIsStale, ...args)` and bumps an internal call id per invocation. Any composable exposing a `refresh`/read that can re-fire while in flight wraps it in this, so a slower earlier response can never overwrite a newer one. Never hand-roll the call-id bookkeeping.
-- **`getSequentialFunction(fn)`** — serializing queue: each call starts only after the previous settles, and a rejection neither blocks the queue nor leaks to other callers. **Writes take this, not latest-wins** — a superseded write's completion (e.g. an optimistic-concurrency version write-back) must still apply, so dropping it as "stale" wedges the next write. Reads drop stale results; writes queue.
-- **`getSynchronizedFunction(fn)`** — fire an async fn from a sync context (e.g. kick off a fetch during setup without a Suspense boundary).
-- **`useQuery(query, { onSuccess })`** — `getConcurrentFunction` + `shallowRef` data + auto-fetch on setup + error alert. Reach for it before writing a bespoke read composable; write a custom one only when the state shape genuinely differs (manual-trigger read exposing `isLoading`/`error` refs), and build its refresh on `getConcurrentFunction` even then.
-- **`useMutation`** — the one sanctioned inline call-id copy: its per-call generic result type cannot thread through `getConcurrentFunction`'s creation-time signature. Don't cite it as precedent for new copies. Usage conventions live in the `pinia` skill.
+**No call site chains promises, holds a map of in-flight promises, or tracks a generation counter, a call id or an `isSaving` flag to order its own async work.** An ordering worth having belongs in the primitive, keyed by target — protection applied by hand is protection that gets forgotten, and every surface that forgot it was silently losing writes or serving stale reads. A composable that seems to need its own ordering needs the right `key`.
+
+- **`executeQuery(query, { key, onError, onSuccess })`** — reads, latest-wins per key. A superseded read is silent: no callbacks, no alert, `Stale`. Discarding it loses nothing, which is exactly why it is the read default.
+- **`isExclusive: true` on a read** — single-flight, for the fan-out read every instance of a surface issues on mount (one room's follow state behind every follow button in it). The second caller **joins** the in-flight call and resolves with its outcome, so the data is in the store by the time it returns — a read is never `Dropped`, which would leave that caller rendering empty. It joins only what is still in flight, so read-once-per-session stays a separate cache flag (`isLoaded`, a `loadedRoomIds` set) at the call site, and a re-read issued _because_ something changed omits it rather than joining the answer it just invalidated.
+- **`executeMutation(mutate, { applyOptimistic, key, onError, onSuccess })`** — writes, **queued** per key. Discarding a write loses its error and its rollback, so it is never dropped by default. `isSupersede: true` opts into latest-wins for a control that fires per keystroke or drag frame (a superseded write still rolls back and still reports its failure); `isExclusive: true` drops a duplicate outright, because its caller wanted an effect that is already happening.
+- **Neither is tRPC-only** — both take a plain `() => Promise<T>`, so IndexedDB writes and other local async work order through the same keys (`usePaginationCache` keys its cache writes on the partition).
+- **`isPending` / `getIsPending(key)`** — the pending flag comes from the same instance, so a read composable exposes `isPending` renamed (`isPending: isLoading`) instead of keeping its own ref.
+- **`getSynchronizedFunction(fn)`** (`#shared/util/function/`) — fire an async fn from a sync context (a watcher callback, or a fetch kicked off during setup without a Suspense boundary). Pair it with the entry point instead of floating the promise.
+- **`useQuery(query, { onSuccess })`** — `executeQuery` + `shallowRef` data + auto-fetch on setup + error alert. Reach for it before writing a bespoke read composable; write a custom one only when the state shape genuinely differs (its own cursor, an inline error panel), and build it on `executeQuery` even then.
+
+An operation that must check mid-flight (a multi-step local media switch) receives `checkIsStale` as its callback's first argument — the guard is handed to it, never built by it. Latest-wins is **per target**, so an operation whose target moved on entirely (the room changed while IndexedDB answered) was never superseded — re-check the source after the await and bail. Full model: `packages/app/content/docs/architecture/async-operations.md`.
 
 ## Dialog Data Loading
 

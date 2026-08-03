@@ -11,10 +11,13 @@ export const useMemberCache = () => {
   const { initializeCursorPaginationData } = memberStore;
   const userStore = useUserStore();
   const { storeUsers } = userStore;
-  return useCursorPaginationCache({
+  useCursorPaginationCache({
     configuration: MemberIndexedDbStoreConfiguration,
     initializeCursorPaginationData,
     items: members,
+    // Hydration only ever runs offline, where the server-computed total cannot be fetched. The cached page is
+    // The whole of what this room can show, so it is also the only honest total. The per-role breakdown is left
+    // Alone: it is keyed by room in the store, so entering a room offline already finds it empty
     onHydrate: (cachedMembers) => {
       count.value = cachedMembers.length;
       storeUsers(cachedMembers);

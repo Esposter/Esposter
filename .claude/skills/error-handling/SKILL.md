@@ -170,6 +170,8 @@ const updated = requireMutation(
 );
 ```
 
+**A `cause` without a `message` rewrites what the client is told.** `TRPCError` falls back to `cause.message` when no `message` is passed, so attaching the underlying failure to an otherwise-bare error (`new TRPCError({ cause: writeError, code: "CONFLICT" })`) replaces the code-shaped message the client renders with the raw upstream text — a `CONFLICT` starts reporting itself as `412`. Attach a `cause` only alongside an explicit `message`, and only when it carries something the code does not already say: where the code is definitionally the diagnosis (every retry lost the same race), the cause is noise bought at the price of the client-facing message. An inline snapshot over the thrown error catches this — the message is what it renders.
+
 ## A best-effort effect a rollback compensates is awaited
 
 Best-effort means "its failure doesn't fail the caller" — it does not mean "nothing needs to know when it finished". The moment a **compensating cleanup deletes the artifact that effect writes**, the effect stops being fire-and-forget: a write still in flight lands after the cleanup and re-creates what the cleanup existed to remove, and the resurrected artifact is usually unreachable (its parent row is gone), so nothing ever reclaims it.

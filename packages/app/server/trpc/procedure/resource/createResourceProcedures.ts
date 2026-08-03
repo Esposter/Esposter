@@ -11,7 +11,6 @@ import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
@@ -21,13 +20,12 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
+import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
-import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
-import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
+import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -54,7 +52,6 @@ import {
   MAX_READ_LIMIT,
   noop,
   Operation,
-  streamToText,
 } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
@@ -101,9 +98,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
   // Intersection of every content type; pin them back to this TType's concrete content shape.
   const { transformPublicReadContent, transformPublishedContent } = (args[0] ??
     {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
-  // The after-save hook is registered per type in its own map rather than passed in here, so every path
-  // That writes this type's content fires it — this one and blueprint deploy alike
-  const afterSaveResourceContent = ResourceAfterSaveContentMap[type];
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
   // Would erase the procedure's input type for consumers like achievement condition paths.
@@ -121,6 +115,22 @@ export const createResourceProcedures = <TType extends ResourceType>(
   >;
   const readContent = async (id: Resource["id"]): Promise<ResourceContent<TType> | undefined> =>
     (await readResourceContent(contentSchema, id)) as ResourceContent<TType> | undefined;
+  // The one snapshot read both published paths go through. It reads through `readContentBlob` because
+  // `BlobClient.download()` rejects on a missing blob rather than returning an empty body: a snapshot the
+  // Unpublish prefix sweep removed between the listing and the click must reach the visitor as the 404 page,
+  // Not as an internal error. The generic contentSchema parses to the union of all content types; the
+  // Concrete caller's TType pins it back down so consumers read their own content shape
+  const readPublishedContent = async (
+    id: Resource["id"],
+    publishVersion: ResourcePublication["publishVersion"],
+  ): Promise<ResourceContent<TType>> => {
+    const content = (await readContentBlob(contentSchema, getPublishedContentBlobName(id, publishVersion))) as
+      | ResourceContent<TType>
+      | undefined;
+    if (content === undefined) throw new TRPCError({ code: "NOT_FOUND" });
+
+    return content;
+  };
   const baseProcedures = {
     createResource: standardAuthedProcedure
       .input(createResourceInputSchema)
@@ -180,47 +190,25 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return getOffsetPaginationData(resultResources, limit);
       }),
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { content, contentVersion, id } }) => {
-        // Read the prior content before the upload overwrites it, so an afterSaveResourceContent hook can
-        // Diff against it (undefined on the first save). Only paid when a hook is registered for this type.
-        // Best-effort: the hook itself is best-effort, so an unreadable or schema-invalid prior blob
-        // Degrades to "no previous content" instead of blocking the save of valid new content
-        const previousContent = afterSaveResourceContent
-          ? await getResultAsync(() => readContent(id)).match(
-              (priorContent) => priorContent,
-              () => undefined,
-            )
-          : undefined;
-        // Bump the version and write the blob in one transaction so a failed upload rolls the version back,
-        // Keeping Postgres and blob storage consistent instead of stranding the resource at a version with stale content
-        const updatedResource = await ctx.db.transaction(async (tx) => {
-          // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
-          const savedResource = (
-            await tx
-              .update(resources)
-              .set({ contentVersion: contentVersion + 1 })
-              .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
-              .returning()
-          )[0];
-          if (!savedResource) throw new TRPCError({ code: "BAD_REQUEST", message: staleContentVersionErrorMessage });
-
-          await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(content));
-          return savedResource;
-        });
-        // Fire-and-forget: the activity trail is best-effort and autosave must not pay its coalescing
-        // Table scan on every save the user is waiting on
-        getSynchronizedFunction(writeResourceActivity)({
+      ({ ctx, input: { content, contentVersion, id } }) =>
+        saveResourceContent(ctx, {
           activityType: ResourceActivityType.ContentSaved,
-          resourceId: id,
-          userId: ctx.getSessionPayload.user.id,
-        });
-        resourceEventEmitter.emit("saveResourceContent", [
-          { content, contentVersion: updatedResource.contentVersion, id },
-          { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
-        ]);
-        runAfterSaveResourceContent(ctx, updatedResource, content, previousContent);
-        return updatedResource;
-      },
+          content,
+          resource: ctx.resource,
+          updateContentVersion: async (tx) => {
+            // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
+            const savedResource = (
+              await tx
+                .update(resources)
+                .set({ contentVersion: contentVersion + 1 })
+                .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
+                .returning()
+            )[0];
+            if (!savedResource) throw new TRPCError({ code: "BAD_REQUEST", message: staleContentVersionErrorMessage });
+
+            return savedResource;
+          },
+        }),
     ),
     updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<Resource>(
       async ({ ctx, input: { id, ...rest } }) => {
@@ -383,17 +371,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         );
         if (!resource.publication) throw new TRPCError({ code: "NOT_FOUND" });
 
-        const { readableStreamBody } = await useDownload(
-          AzureContainer.ResourceAssets,
-          getPublishedContentBlobName(input, resource.publication.publishVersion),
-        );
-        if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
-        // The generic contentSchema parses to the union of all content types; the concrete caller's
-        // TType pins it back down so consumers read their own content shape. Plain JSON.parse leaves
-        // Date coercion to the content schema, so ISO-datetime free-text fields survive as strings.
-        const content = contentSchema.parse(
-          JSON.parse(await streamToText(readableStreamBody)),
-        ) as ResourceContent<TType>;
+        const content = await readPublishedContent(input, resource.publication.publishVersion);
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
         // Fire-and-forget: the increment swallows its own failures and the viewer must never wait on telemetry
         getSynchronizedFunction(incrementResourceViewCount)(input);
@@ -403,17 +381,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
     // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
     // Visitors never reach this — the public read above always serves the latest publish
     readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query(
-      async ({ ctx, input: { id, version } }) => {
-        const { readableStreamBody } = await useDownload(
-          AzureContainer.ResourceAssets,
-          getPublishedContentBlobName(id, version),
-        );
-        if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
-        const content = contentSchema.parse(
-          JSON.parse(await streamToText(readableStreamBody)),
-        ) as ResourceContent<TType>;
-        return { content, name: ctx.resource.name };
-      },
+      async ({ ctx, input: { id, version } }) => ({
+        content: await readPublishedContent(id, version),
+        name: ctx.resource.name,
+      }),
     ),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
       ResourcePublication | undefined

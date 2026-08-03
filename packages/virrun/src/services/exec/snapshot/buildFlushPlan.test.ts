@@ -7,7 +7,7 @@ import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
-const never = (): boolean => false;
+const checkNever = (): boolean => false;
 const isSnapshotLowerPath = (relativePath: string): boolean => relativePath.startsWith(`${NODE_MODULES_DIRECTORY}/`);
 
 describe(buildFlushPlan, () => {
@@ -16,7 +16,7 @@ describe(buildFlushPlan, () => {
 
     const entries: OverlayEntry[] = [{ kind: OverlayEntryKind.Whiteout, relativePath: TEST_FILENAME }];
 
-    expect(buildFlushPlan(entries, never)).toStrictEqual([{ relativePath: TEST_FILENAME, type: FlushOpType.Delete }]);
+    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([{ relativePath: TEST_FILENAME, type: FlushOpType.Delete }]);
   });
 
   test(`a ${OverlayEntryKind.Regular} entry becomes a single ${FlushOpType.Copy}`, () => {
@@ -24,7 +24,7 @@ describe(buildFlushPlan, () => {
 
     const entries: OverlayEntry[] = [{ kind: OverlayEntryKind.Regular, relativePath: TEST_FILENAME }];
 
-    expect(buildFlushPlan(entries, never)).toStrictEqual([{ relativePath: TEST_FILENAME, type: FlushOpType.Copy }]);
+    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([{ relativePath: TEST_FILENAME, type: FlushOpType.Copy }]);
   });
 
   test(`an ${OverlayEntryKind.OpaqueDir} expands to a ${FlushOpType.Delete} then a ${FlushOpType.Copy}`, () => {
@@ -32,7 +32,7 @@ describe(buildFlushPlan, () => {
 
     const entries: OverlayEntry[] = [{ kind: OverlayEntryKind.OpaqueDir, relativePath: TEST_FILENAME }];
 
-    expect(buildFlushPlan(entries, never)).toStrictEqual([
+    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([
       { relativePath: TEST_FILENAME, type: FlushOpType.Delete },
       { relativePath: TEST_FILENAME, type: FlushOpType.Copy },
     ]);
@@ -59,7 +59,7 @@ describe(buildFlushPlan, () => {
       { kind: OverlayEntryKind.Whiteout, relativePath: `${TEST_FILENAME}/${TEST_FILENAME}` },
     ];
 
-    expect(buildFlushPlan(entries, never)).toStrictEqual([
+    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([
       { relativePath: `${TEST_FILENAME}/${TEST_FILENAME}`, type: FlushOpType.Delete },
       { relativePath: TEST_FILENAME, type: FlushOpType.Copy },
     ]);
@@ -74,7 +74,7 @@ describe(buildFlushPlan, () => {
       { kind: OverlayEntryKind.Regular, relativePath: `${TEST_FILENAME}/${TEST_FILENAME}` },
     ];
 
-    expect(buildFlushPlan(entries, never)).toStrictEqual([
+    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([
       { relativePath: TEST_FILENAME, type: FlushOpType.Copy },
       { relativePath: `${TEST_FILENAME}/${TEST_FILENAME}`, type: FlushOpType.Copy },
       { relativePath: `${TEST_FILENAME}/${TEST_FILENAME}/${TEST_FILENAME}`, type: FlushOpType.Copy },
@@ -89,7 +89,7 @@ describe(buildFlushPlan, () => {
       { kind: OverlayEntryKind.Regular, relativePath: `${TEST_FILENAME}/${TEST_FILENAME}` },
     ];
 
-    expect(buildFlushPlan(entries, never)).toStrictEqual([
+    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([
       { relativePath: TEST_FILENAME, type: FlushOpType.Delete },
       { relativePath: TEST_FILENAME, type: FlushOpType.Copy },
       { relativePath: `${TEST_FILENAME}/${TEST_FILENAME}`, type: FlushOpType.Copy },

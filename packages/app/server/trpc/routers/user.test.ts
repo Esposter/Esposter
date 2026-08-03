@@ -129,13 +129,13 @@ describe("user", () => {
     expect.hasAssertions();
 
     const status = UserStatus.DoNotDisturb;
-    const returned = await caller.upsertStatus({ message, status });
+    const returnedUserStatus = await caller.upsertStatus({ message, status });
     vi.advanceTimersByTime(1);
     const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
-    expect(returned.status).toBe(status);
-    expect(returned.userId).toBe(userId);
+    expect(returnedUserStatus.status).toBe(status);
+    expect(returnedUserStatus.userId).toBe(userId);
     expect(userStatus.message).toBe(message);
     expect(userStatus.status).toBe(status);
   });
@@ -145,13 +145,13 @@ describe("user", () => {
 
     await caller.upsertStatus({ message, status: UserStatus.DoNotDisturb });
     vi.advanceTimersByTime(1);
-    const returned = await caller.upsertStatus({ message: updatedMessage, status: UserStatus.Idle });
+    const returnedUserStatus = await caller.upsertStatus({ message: updatedMessage, status: UserStatus.Idle });
     vi.advanceTimersByTime(1);
     const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
-    expect(returned.status).toBe(UserStatus.Idle);
-    expect(returned.userId).toBe(userId);
+    expect(returnedUserStatus.status).toBe(UserStatus.Idle);
+    expect(returnedUserStatus.userId).toBe(userId);
     expect(userStatus.message).toBe(updatedMessage);
     expect(userStatus.status).toBe(UserStatus.Idle);
   });

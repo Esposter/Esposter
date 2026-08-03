@@ -60,14 +60,14 @@ describe(getTopRolePosition, () => {
   test("returns max position across multiple roles", async () => {
     expect.hasAssertions();
 
-    const mod = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
+    const moderatorRole = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
     const senior = await roleCaller.createRole({
       name: updatedName,
       permissions: 0n,
       position: updatedPosition,
       roomId,
     });
-    await roleCaller.assignRole({ roleId: mod.id, roomId, userId: owner.id });
+    await roleCaller.assignRole({ roleId: moderatorRole.id, roomId, userId: owner.id });
     await roleCaller.assignRole({ roleId: senior.id, roomId, userId: owner.id });
 
     const result = await getTopRolePosition(mockContext.db, owner.id, roomId);

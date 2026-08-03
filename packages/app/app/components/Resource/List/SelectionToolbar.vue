@@ -13,7 +13,8 @@ interface ResourceListSelectionToolbarProps {
 const { selectedResources } = defineProps<ResourceListSelectionToolbarProps>();
 const emit = defineEmits<{ clear: []; delete: [resources: Resource[]] }>();
 const { exportResourcesCsv } = useExportResourcesCsv();
-const { captureIds } = storeToRefs(useBlueprintCaptureDialogStore());
+const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
+const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 const selectedLabel = computed(() => `${selectedResources.length} ${pluralize("resource", selectedResources.length)}`);
 // One selection guards on the name, matching the row and blade delete dialogs;
 // Past one no single name identifies the set, so the guard falls back to the count phrase

@@ -9,9 +9,12 @@ const { storeDeleteMessage } = dataStore;
 const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
 const { deletingRowKey } = storeToRefs(messageDialogStore);
-const message = computed(() => items.value.find(({ rowKey }) => rowKey === deletingRowKey.value));
+// Resolved through the primitive rather than a computed of our own, so a target whose message has left the
+// Timeline is dropped with it instead of re-opening this dialog by itself when a later read brings it back
+const { isOpen, item: message } = useSingletonDialog(deletingRowKey, () =>
+  items.value.find(({ rowKey }) => rowKey === deletingRowKey.value),
+);
 const creator = useCreator(message);
-const { isOpen } = useSingletonDialog(deletingRowKey);
 const { executeMutation } = useMutation();
 const deleteMessage = async (onComplete: () => void) => {
   if (!message.value) return;

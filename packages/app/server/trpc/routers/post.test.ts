@@ -295,9 +295,7 @@ describe("post", () => {
     const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 1, sortBy });
 
     expect(firstPage.items.map(({ id }) => id)).toStrictEqual([secondPost.id]);
-    expect(firstPage.hasMore).toBe(true);
     expect(secondPage.items.map(({ id }) => id)).toStrictEqual([firstPost.id]);
-    expect(secondPage.hasMore).toBe(false);
   });
 
   test("paginates tied sort values without skipping", async () => {

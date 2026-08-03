@@ -17,7 +17,8 @@ interface FileProps {
 
 const { columnLayout, file, index, isPreview, message } = defineProps<FileProps>();
 const isCreator = await useIsCreator(() => message);
-const { deleteFile } = useDataStore();
+const dataStore = useDataStore();
+const { deleteFile } = dataStore;
 const downloadFileStore = useDownloadFileStore();
 const { viewFiles } = downloadFileStore;
 const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);

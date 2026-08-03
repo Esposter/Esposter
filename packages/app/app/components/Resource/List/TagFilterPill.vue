@@ -5,11 +5,15 @@ import { tagValueRules } from "@/services/resource/tag/tagValueRules";
 const tagName = defineModel<string>("tagName", { required: true });
 const tagValue = defineModel<string>("tagValue", { required: true });
 const emit = defineEmits<{ remove: [] }>();
+// Both fields write query params the data table treats as its `search`, so they debounce like the search box
+const { input: tagNameInput } = useDebouncedFilter(tagName);
+const { input: tagValueInput } = useDebouncedFilter(tagValue);
 // Without a name there is nothing to match on, so the pill reads as unset until one is typed.
 // A name with no value means "tagged with this at all", which is the common case.
+// Reads the fields rather than the debounced filters so the chip keeps up with typing
 const label = computed(() => {
-  if (!tagName.value) return "Tag == all";
-  return tagValue.value ? `Tag == ${tagName.value}: ${tagValue.value}` : `Tag == ${tagName.value}`;
+  if (!tagNameInput.value) return "Tag == all";
+  return tagValueInput.value ? `Tag == ${tagNameInput.value}: ${tagValueInput.value}` : `Tag == ${tagNameInput.value}`;
 });
 </script>
 
@@ -21,9 +25,9 @@ const label = computed(() => {
     <v-card min-w-72>
       <v-card-text>
         <div flex flex-col gap-2>
-          <v-text-field v-model="tagName" autofocus density="comfortable" label="Name" :rules="tagNameRules" />
+          <v-text-field v-model="tagNameInput" autofocus density="comfortable" label="Name" :rules="tagNameRules" />
           <v-text-field
-            v-model="tagValue"
+            v-model="tagValueInput"
             density="comfortable"
             hint="Leave empty to match any value"
             label="Value"

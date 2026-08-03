@@ -4,7 +4,6 @@ import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
 
@@ -40,13 +39,13 @@ model.onCurrentPageChanged.add(saveSurveyResponse);
 model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSaveSuccess }) => {
   showSaveInProgress();
   survey.clearIncorrectValues(true);
-  await getResultAsync(() => saveSurveyResponse(survey)).match(
-    () => {
-      clearSurveyResponseId();
-      showSaveSuccess();
-    },
-    (error) => showSaveError(error.message),
-  );
+  // Only a save that actually persisted may clear the resume id and thank the respondent — the mutation
+  // Reports a rejection rather than throwing, so a failed submit would otherwise wipe the id their answers
+  // Are stored under and send them back to a blank survey
+  if (await saveSurveyResponse(survey)) {
+    clearSurveyResponseId();
+    showSaveSuccess();
+  } else showSaveError("We could not submit your answers. Please try again.");
 });
 useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 

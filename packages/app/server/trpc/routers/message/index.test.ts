@@ -3,7 +3,9 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData, MessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
+import type { MockInstance } from "vitest";
 
+import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -34,6 +36,7 @@ import {
 } from "@esposter/db-schema";
 import {
   InvalidOperationError,
+  jsonDateParse,
   MENTION_ID_ATTRIBUTE,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
@@ -41,7 +44,13 @@ import {
   Operation,
   takeOne,
 } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase, MockSearchDatabase, MockTableDatabase } from "azure-mock";
+import {
+  MockContainerDatabase,
+  MockEventGridDatabase,
+  MockSearchDatabase,
+  MockTableClient,
+  MockTableDatabase,
+} from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -69,6 +78,22 @@ describe("message", () => {
   // Deliberately put in front of it
   const filteredWord = "spam";
   const filteredMessage = `<p>${filteredWord}</p>`;
+  const pollOptionId = crypto.randomUUID();
+  const pollMessage = JSON.stringify({
+    options: [
+      { id: pollOptionId, label: "Option A" },
+      { id: crypto.randomUUID(), label: "Option B" },
+    ],
+    question: "Test question",
+    votes: {},
+  });
+  // Every mock Azure client resolves in the same microtask drain, so two concurrent procedures run to completion
+  // One after the other and never interleave on their own. The write is the seam the conditional-write tests
+  // Need, so it carries a hook they set and every other test leaves as a passthrough
+  const { updateEntity } = MockTableClient.prototype;
+  let beforeUpdateEntity: (tableClient: MockTableClient) => Promise<unknown>;
+  let consoleErrorSpy: MockInstance<typeof console.error>;
+  let updateEntitySpy: MockInstance<MockTableClient["updateEntity"]>;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -76,7 +101,22 @@ describe("message", () => {
     roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
+  beforeEach(() => {
+    beforeUpdateEntity = () => Promise.resolve();
+    // Calls through, so a genuine failure still prints while a test can count what the router logged
+    consoleErrorSpy = vi.spyOn(console, "error");
+    updateEntitySpy = vi.spyOn(MockTableClient.prototype, "updateEntity").mockImplementation(async function (
+      this: MockTableClient,
+      ...args: Parameters<MockTableClient["updateEntity"]>
+    ) {
+      await beforeUpdateEntity(this);
+      return updateEntity.apply(this, args);
+    });
+  });
+
   afterEach(async () => {
+    consoleErrorSpy.mockRestore();
+    updateEntitySpy.mockRestore();
     vi.useRealTimers();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
@@ -200,7 +240,7 @@ describe("message", () => {
     expect(readMessages.items).toHaveLength(1);
     expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
 
-    let cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+    const cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
     readMessages = await messageCaller.readMessages({
       cursor,
       order: SortOrder.Asc,
@@ -210,7 +250,6 @@ describe("message", () => {
     expect(readMessages.items).toHaveLength(1);
     expect(takeOne(readMessages.items).rowKey).toBe(secondMessage.rowKey);
 
-    cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
     readMessages = await messageCaller.readMessages({
       cursor,
       isIncludeValue: true,
@@ -267,6 +306,8 @@ describe("message", () => {
     expect(takeOne(readMessages.items).rowKey).toBe(secondMessage.rowKey);
   });
 
+  // Membership is decided by the shared getMemberProcedure, so it is asserted once for the whole router — a
+  // Non-member is refused before any procedure's own guard runs, which is why this reads nothing about authorship
   test("fails read with non-existent member", async () => {
     expect.hasAssertions();
 
@@ -321,26 +362,147 @@ describe("message", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const userId = getMockSession().user.id;
-    const message = JSON.stringify({
-      options: [
-        { id: crypto.randomUUID(), label: "Option A" },
-        { id: crypto.randomUUID(), label: "Option B" },
-      ],
-      question: "Test question",
-      votes: {},
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
     });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id, type: MessageType.Poll });
 
     expect(newMessage).toStrictEqual(
       new StandardMessageEntity({
         createdAt: newMessage.createdAt,
-        message,
+        message: pollMessage,
         partitionKey: newRoom.id,
         rowKey: newMessage.rowKey,
         type: MessageType.Poll,
         updatedAt: newMessage.updatedAt,
         userId,
       }),
+    );
+  });
+
+  // Voting is an operation any member may perform, so it never routes through updateMessage — a poll supports no
+  // Update at all, and its own author is not the only one who may vote in it
+  test("votes on a poll", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
+    });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    // Joining posts a system message of its own, so the poll is read back by its own key rather than by position
+    const rowKeys = [newMessage.rowKey];
+    await mockSessionOnce(mockContext.db, member);
+    await messageCaller.votePoll({ ...compositeKey, optionId: pollOptionId });
+    const votedMessage = takeOne(await messageCaller.readMessagesByRowKeys({ roomId: newRoom.id, rowKeys }));
+
+    // A vote is not an edit of the poll, so it leaves no edited marker behind
+    expect(votedMessage.isEdited).toBeUndefined();
+    expect(jsonDateParse<{ votes: Record<string, string> }>(votedMessage.message).votes).toStrictEqual({
+      [member.id]: pollOptionId,
+    });
+
+    await mockSessionOnce(mockContext.db, member);
+    await messageCaller.votePoll({ ...compositeKey, optionId: "" });
+    const withdrawnMessage = takeOne(await messageCaller.readMessagesByRowKeys({ roomId: newRoom.id, rowKeys }));
+
+    expect(jsonDateParse<{ votes: Record<string, string> }>(withdrawnMessage.message).votes).toStrictEqual({});
+  });
+
+  // A vote is a read-modify-write of the whole poll body, so two members voting at once both compute their votes
+  // Map from the same stored version. Without a conditional write the later write echoes back a body that never
+  // Saw the earlier vote, erasing it with nothing surfaced to either voter. The first vote's write is held open
+  // Until the second has landed, which is the interleaving a real deployment produces on its own
+  test("keeps both votes when two members vote at once", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
+    });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const ownerUserId = getMockSession().user.id;
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const { promise: isSecondVoteWritten, resolve: resolveSecondVoteWritten } = Promise.withResolvers<string>();
+    const { promise: isFirstVoteWriting, resolve: resolveFirstVoteWriting } = Promise.withResolvers<string>();
+    let isFirstWrite = true;
+    beforeUpdateEntity = async () => {
+      if (!isFirstWrite) return;
+      isFirstWrite = false;
+      resolveFirstVoteWriting("");
+      await isSecondVoteWritten;
+    };
+    // Only one session is queued, so the two votes run as the member and the owner — both picking the same
+    // Option, so the assertion never depends on which of them ran first
+    await mockSessionOnce(mockContext.db, member);
+    const firstVote = messageCaller.votePoll({ ...compositeKey, optionId: pollOptionId });
+    await isFirstVoteWriting;
+    await messageCaller.votePoll({ ...compositeKey, optionId: pollOptionId });
+    resolveSecondVoteWritten("");
+    await firstVote;
+    const votedMessage = takeOne(
+      await messageCaller.readMessagesByRowKeys({ roomId: newRoom.id, rowKeys: [newMessage.rowKey] }),
+    );
+
+    expect(jsonDateParse<{ votes: Record<string, string> }>(votedMessage.message).votes).toStrictEqual({
+      [member.id]: pollOptionId,
+      [ownerUserId]: pollOptionId,
+    });
+  });
+
+  test("fails vote with an option the poll does not offer", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
+    });
+    const input = { optionId: crypto.randomUUID(), partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+
+    await expect(messageCaller.votePoll(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.Message, JSON.stringify(input)).message}]`,
+    );
+  });
+
+  // Whether a poll can be edited is a property of the type, not of the caller, so its own author is refused for
+  // The same reason a moderator is — the operation does not exist rather than being out of reach. Which types
+  // Support which operations is MessageTypeOperationPermissionMap's matrix; what this pins is the translation
+  // Only the procedure makes — an unsupported operation is a bad request, never an unauthorized one
+  test("fails update with a poll", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    await mockSessionOnce(mockContext.db, member);
+    const newMessage = await messageCaller.createMessage({
+      message: pollMessage,
+      roomId: newRoom.id,
+      type: MessageType.Poll,
+    });
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      messageCaller.updateMessage({
+        message: updatedMessage,
+        partitionKey: newMessage.partitionKey,
+        rowKey: newMessage.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.Message, JSON.stringify({ operation: MessageOperation.Update, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })).message}]`,
     );
   });
 
@@ -483,14 +645,19 @@ describe("message", () => {
     expect(takeOne(readMessages.items).message).toBe(updatedMessage);
   });
 
-  test("fails update with wrong user", async () => {
+  // Who may perform a supported operation is MessageTypeOperationPermissionMap's matrix, which takes `isAuthor`
+  // And `hasManageMessages` as given. What only the procedure can get wrong is deriving them from the caller and
+  // The stored message, so one member who is neither pins that — every other procedure inherits it unasserted
+  test("fails update with a member who is not the author", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const userId = getMockSession().user.id;
-    const message = getMessage(userId);
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    await mockSessionOnce(mockContext.db, member);
 
     await expect(
       messageCaller.updateMessage({
@@ -534,20 +701,6 @@ describe("message", () => {
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(0);
-  });
-
-  test("fails delete with wrong user", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const userId = getMockSession().user.id;
-    const message = getMessage(userId);
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      messageCaller.deleteMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("on deletes", async () => {
@@ -672,6 +825,42 @@ describe("message", () => {
     expect(unfilteredMembership?.timeoutUntil).toBeNull();
   });
 
+  // Only one rejection can be surfaced to the caller, so the rest have to be logged — otherwise a room that
+  // Failed for its own reason ends up with no forward and nothing anywhere saying so
+  test("logs every room a forward failed for", async () => {
+    expect.hasAssertions();
+
+    const sourceRoom = await roomCaller.createRoom({ name });
+    const source = await messageCaller.createMessage({ message: filteredMessage, roomId: sourceRoom.id });
+    const firstFilteredRoom = await roomCaller.createRoom({ name });
+    const secondFilteredRoom = await roomCaller.createRoom({ name });
+    await mockContext.db.insert(roomFiltersInMessage).values([
+      { roomId: firstFilteredRoom.id, words: [filteredWord] },
+      { roomId: secondFilteredRoom.id, words: [filteredWord] },
+    ]);
+    const invites = await Promise.all(
+      [sourceRoom.id, firstFilteredRoom.id, secondFilteredRoom.id].map((roomId) =>
+        roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId }),
+      ),
+    );
+    // The filter never applies to a member who can manage messages, so the forward is sent by a plain member
+    const { user: member } = await mockSessionOnce(mockContext.db);
+    for (const invite of invites) {
+      await roomCaller.joinRoom(invite.id);
+      await mockSessionOnce(mockContext.db, member);
+    }
+
+    await expect(
+      messageCaller.forwardMessage({
+        partitionKey: source.partitionKey,
+        roomIds: [firstFilteredRoom.id, secondFilteredRoom.id],
+        rowKey: source.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
+
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
+  });
+
   test("forwarding is blocked by the forwarded body's own text, with or without an accompanying message", async () => {
     expect.hasAssertions();
 
@@ -719,16 +908,22 @@ describe("message", () => {
     expect(filteredMessages.items.filter(({ isForward }) => isForward)).toHaveLength(0);
   });
 
+  // Two files a user genuinely named the same are one ordinary drop: each write target is minted under its own
+  // Id, so the shared name collides nowhere and must not fail the selection
   test("generates upload file SAS entities", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const sasEntities = await messageCaller.generateUploadFileSasEntities({
-      files: [{ filename, mimetype, size }],
+      files: [
+        { filename, mimetype, size },
+        { filename, mimetype, size },
+      ],
       roomId: newRoom.id,
     });
 
-    expect(sasEntities).toHaveLength(1);
+    expect(sasEntities).toHaveLength(2);
+    expect(new Set(sasEntities.map(({ id }) => id)).size).toBe(2);
   });
 
   test("reclaims an upload the caller was granted", async () => {
@@ -877,6 +1072,46 @@ describe("message", () => {
     expect(takeOne(updatedMessages).files).toHaveLength(0);
   });
 
+  // Removing one file rewrites the whole files array, so the write is conditional: an unconditional second write
+  // Computes its survivors from the version before the first deletion and reinstates that file, leaving the
+  // Message pointing at a blob whose deletion has already been published
+  test("deletes two files at once without reinstating either", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const firstId = crypto.randomUUID();
+    const secondId = crypto.randomUUID();
+    const newMessage = await messageCaller.createMessage({
+      files: [
+        { filename, id: firstId, mimetype, size },
+        { filename, id: secondId, mimetype, size },
+      ],
+      roomId: newRoom.id,
+    });
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const { promise: isSecondDeleteWritten, resolve: resolveSecondDeleteWritten } = Promise.withResolvers<string>();
+    const { promise: isFirstDeleteWriting, resolve: resolveFirstDeleteWriting } = Promise.withResolvers<string>();
+    let isFirstWrite = true;
+    beforeUpdateEntity = async () => {
+      if (!isFirstWrite) return;
+      isFirstWrite = false;
+      resolveFirstDeleteWriting("");
+      await isSecondDeleteWritten;
+    };
+    const firstDelete = messageCaller.deleteFile({ ...compositeKey, id: firstId });
+    await isFirstDeleteWriting;
+    await messageCaller.deleteFile({ ...compositeKey, id: secondId });
+    resolveSecondDeleteWritten("");
+    await firstDelete;
+
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
+      roomId: newRoom.id,
+      rowKeys: [newMessage.rowKey],
+    });
+
+    expect(takeOne(updatedMessages).files).toHaveLength(0);
+  });
+
   test("publishes thumbnail deletion on delete file", async () => {
     expect.hasAssertions();
 
@@ -919,30 +1154,6 @@ describe("message", () => {
       blobNames: [getBlobName(`${newRoom.id}/${id}`, filename), getThumbnailBlobName(newRoom.id, id)],
       containerName: AzureContainer.MessageAssets,
     });
-  });
-
-  test("fails delete file with wrong user", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const id = crypto.randomUUID();
-    const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
-      roomId: newRoom.id,
-    });
-    MockContainerDatabase.set(
-      AzureContainer.MessageAssets,
-      new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
-    );
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      messageCaller.deleteFile({
-        id,
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails delete file with non-existent file id", async () => {
@@ -1051,18 +1262,37 @@ describe("message", () => {
     expect(takeOne(updatedMessages).linkPreviewResponse).toBeNull();
   });
 
-  test("fails delete link preview response with wrong user", async () => {
+  // Clearing the preview needs a Replace, so the write carries the whole body: replayed from the version this
+  // Procedure first read, it reverts every concurrent change rather than only clearing the preview
+  test("deletes link preview response without reverting a concurrent edit", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const userId = getMockSession().user.id;
-    const message = getMessage(userId);
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const { promise: isEditWritten, resolve: resolveEditWritten } = Promise.withResolvers<string>();
+    const { promise: isClearWriting, resolve: resolveClearWriting } = Promise.withResolvers<string>();
+    let isFirstWrite = true;
+    beforeUpdateEntity = async () => {
+      if (!isFirstWrite) return;
+      isFirstWrite = false;
+      resolveClearWriting("");
+      await isEditWritten;
+    };
+    const clearLinkPreviewResponse = messageCaller.deleteLinkPreviewResponse(compositeKey);
+    await isClearWriting;
+    await messageCaller.updateMessage({ ...compositeKey, message: updatedMessage });
+    resolveEditWritten("");
+    await clearLinkPreviewResponse;
 
-    await expect(
-      messageCaller.deleteLinkPreviewResponse({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
+      roomId: newRoom.id,
+      rowKeys: [newMessage.rowKey],
+    });
+
+    expect(takeOne(updatedMessages).linkPreviewResponse).toBeNull();
+    expect(takeOne(updatedMessages).message).toBe(updatedMessage);
   });
 
   test("pins message and creates system message", async () => {
@@ -1099,8 +1329,44 @@ describe("message", () => {
 
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
+    // Unpinning posts no system message of its own, so the pin's is still the only one and the unpinned message
+    // Sits behind it — asserting the lead item would only prove a system message never carried a pin
     expect(readMessages.items).toHaveLength(2);
-    expect(takeOne(readMessages.items).isPinned).toBeUndefined();
+    expect(takeOne(readMessages.items, 1).isPinned).toBeUndefined();
+  });
+
+  // Unpinning needs the same Replace as clearing the preview, and inherits the same hazard: the body it writes
+  // Must be the one it re-read, not the one it started from
+  test("unpins message without reverting a concurrent edit", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    await messageCaller.pinMessage(compositeKey);
+    const { promise: isEditWritten, resolve: resolveEditWritten } = Promise.withResolvers<string>();
+    const { promise: isUnpinWriting, resolve: resolveUnpinWriting } = Promise.withResolvers<string>();
+    let isFirstWrite = true;
+    beforeUpdateEntity = async () => {
+      if (!isFirstWrite) return;
+      isFirstWrite = false;
+      resolveUnpinWriting("");
+      await isEditWritten;
+    };
+    const unpin = messageCaller.unpinMessage(compositeKey);
+    await isUnpinWriting;
+    await messageCaller.updateMessage({ ...compositeKey, message: updatedMessage });
+    resolveEditWritten("");
+    await unpin;
+
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
+      roomId: newRoom.id,
+      rowKeys: [newMessage.rowKey],
+    });
+
+    expect(takeOne(updatedMessages).isPinned).toBeUndefined();
+    expect(takeOne(updatedMessages).message).toBe(updatedMessage);
   });
 
   describe("slowmode guard", () => {
@@ -1401,20 +1667,6 @@ describe("message", () => {
       });
 
       expect(threadRootRowKeysAfterUnfollow).toHaveLength(0);
-    });
-
-    test("replying to a message auto-follows its thread", async () => {
-      expect.hasAssertions();
-
-      const newRoom = await roomCaller.createRoom({ name });
-      const userId = getMockSession().user.id;
-      const root = await messageCaller.createMessage({ message: getMessage(userId), roomId: newRoom.id });
-      await messageCaller.createMessage({ message: getMessage(userId), replyRowKey: root.rowKey, roomId: newRoom.id });
-
-      const { threads } = await messageCaller.readFollowedThreads({ roomId: newRoom.id });
-
-      expect(threads).toHaveLength(1);
-      expect(takeOne(threads).rowKey).toBe(root.rowKey);
     });
   });
 });

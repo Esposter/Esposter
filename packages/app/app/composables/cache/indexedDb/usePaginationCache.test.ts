@@ -3,6 +3,7 @@ import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDb
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { VueWrapper } from "@vue/test-utils";
 
+import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { useCursorPaginationCache } from "@/composables/cache/indexedDb/useCursorPaginationCache";
 import { useOffsetPaginationCache } from "@/composables/cache/indexedDb/useOffsetPaginationCache";
 import { goOffline, goOnline } from "@/composables/shared/network.test";
@@ -14,7 +15,6 @@ import { getMockSession } from "@@/server/trpc/context.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 type MessageValue = IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"];
@@ -25,53 +25,54 @@ interface PaginationCacheVariant {
     initializeItems: (data: { items: MessageValue[] }) => void,
     items: Ref<MessageValue[]>,
     partitionKey: Ref<string>,
-  ) => { flush: () => Promise<void> };
+    onHydrate?: () => Promise<void>,
+  ) => void;
 }
 
 describe.each<PaginationCacheVariant>([
   {
     name: useCursorPaginationCache.name,
-    useCache: (initializeItems, items, partitionKey) =>
+    useCache: (initializeItems, items, partitionKey, onHydrate) => {
       useCursorPaginationCache({
         configuration: MessageIndexedDbStoreConfiguration,
         initializeCursorPaginationData: initializeItems,
         items,
+        onHydrate,
         partitionKey,
-      }),
+      });
+    },
   },
   {
     name: useOffsetPaginationCache.name,
-    useCache: (initializeItems, items, partitionKey) =>
+    useCache: (initializeItems, items, partitionKey, onHydrate) => {
       useOffsetPaginationCache({
         configuration: MessageIndexedDbStoreConfiguration,
         initializeOffsetPaginationData: initializeItems,
         items,
+        onHydrate,
         partitionKey,
-      }),
+      });
+    },
   },
 ])("$name", ({ useCache }) => {
   let wrapper: VueWrapper;
-  let flush: () => Promise<void>;
   const items = ref<MessageValue[]>([]);
   const partitionKeyRef = ref("");
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const message = "message";
+  const secondMessage = "secondMessage";
   const initializeItems = (data: { items: MessageValue[] }) => {
     items.value = data.items;
   };
-  const flushCache = async () => {
-    await flushPromises();
-    await flush();
-  };
-  const mountCache = async (initialKey: string = partitionKey) => {
+  const mountCache = async (initialKey: string = partitionKey, onHydrate?: () => Promise<void>) => {
     partitionKeyRef.value = initialKey;
     wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          ({ flush } = useCache(initializeItems, items, partitionKeyRef));
+          useCache(initializeItems, items, partitionKeyRef, onHydrate);
         },
       }),
     );
@@ -136,6 +137,26 @@ describe.each<PaginationCacheVariant>([
     expect(cachedItems).toHaveLength(1);
   });
 
+  // Readiness cannot survive a switch away: the list a revisit starts from is empty until its rows arrive, and
+  // Treating that as a loaded empty partition wipes the rows the offline hydration is there to restore
+  test("does not clear cache when a revisited partition is empty again", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    goOnline();
+    await mountCache();
+    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
+    await flushCache();
+    partitionKeyRef.value = secondPartitionKey;
+    await flushCache();
+    partitionKeyRef.value = partitionKey;
+    items.value = [];
+    await flushCache();
+    const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
+
+    expect(cachedItems).toHaveLength(1);
+  });
+
   test("does not clear cache when items become empty on partition key switch", async () => {
     expect.hasAssertions();
 
@@ -173,6 +194,69 @@ describe.each<PaginationCacheVariant>([
     );
     await mountCache();
     partitionKeyRef.value = secondPartitionKey;
+    await flushCache();
+
+    expect(items.value).toHaveLength(1);
+    expect(takeOne(items.value).message).toStrictEqual(message);
+  });
+
+  // The cold start is the flagship offline case, not an edge case: the room id is already on the route when the
+  // Layout mounts, so the partition key never changes and a change-only watcher would never hydrate at all
+  test("populates store from cache when the partition key is already set on mount", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [new StandardMessageEntity({ message, partitionKey, rowKey, userId })],
+      partitionKey,
+    );
+    await mountCache();
+    await flushCache();
+
+    expect(items.value).toHaveLength(1);
+    expect(takeOne(items.value).message).toStrictEqual(message);
+  });
+
+  // Readiness is per-partition rather than a reading of the list, so a caller whose rows have not yet been
+  // Swapped out at the moment of the switch still hydrates instead of taking them for the new partition's own
+  test("populates store from cache when the previous partition's items are still loaded", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [new StandardMessageEntity({ message: secondMessage, partitionKey: secondPartitionKey, rowKey, userId })],
+      secondPartitionKey,
+    );
+    await mountCache();
+    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
+    await flushCache();
+    partitionKeyRef.value = secondPartitionKey;
+    await flushCache();
+
+    expect(items.value).toHaveLength(1);
+    expect(takeOne(items.value).message).toStrictEqual(secondMessage);
+  });
+
+  // Losing the network mid-session leaves a partition whose load never landed with nothing on screen and no way
+  // To fetch it, so connectivity has to trigger hydration on its own rather than wait for a switch
+  test("populates store from cache when the network drops without a partition key change", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [new StandardMessageEntity({ message, partitionKey, rowKey, userId })],
+      partitionKey,
+    );
+    goOnline();
+    await mountCache();
+    await flushCache();
+
+    expect(items.value).toHaveLength(0);
+
+    goOffline();
     await flushCache();
 
     expect(items.value).toHaveLength(1);

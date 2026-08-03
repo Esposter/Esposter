@@ -41,6 +41,28 @@ Real-time delivery is two-layered:
 
 Push notification filtering and delivery detail lives in [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications).
 
+## Conditional writes
+
+A message is stored as one blob, so a procedure that changes part of it reads the whole entity and writes the whole entity back. Two of those running at once both compute their result from the same stored version, and the later write echoes back a body that never saw the earlier one — the earlier change is erased with nothing surfaced to either caller. Poll voting is where that is routine rather than rare: every member of the room writes into the same poll body.
+
+`getMessageProcedure` therefore reads through `getEntityWithEtag` and carries the version it saw on the procedure context as `messageEtag`, alongside `messageClient` and `messageEntity`. The read already happens, so the version costs no extra round trip and any message procedure can make its write conditional. `votePoll` passes it as the `etag` option on `updateEntity`, so the write lands only if nothing else has written since.
+
+```mermaid
+sequenceDiagram
+    participant A as Voter A
+    participant B as Voter B
+    participant AT as Azure Table Storage
+
+    A->>AT: getEntityWithEtag — version 1
+    B->>AT: getEntityWithEtag — version 1
+    B->>AT: updateEntity with version 1 — accepted, stored as version 2
+    A->>AT: updateEntity with version 1 — rejected 412
+    A->>AT: getEntityWithEtag — version 2, carrying B's vote
+    A->>AT: updateEntity with version 2 — accepted, both votes stored
+```
+
+A rejected write means the vote is still valid and only the version it was computed against is stale, so it is re-read and re-applied rather than surfaced. Retries are bounded by `MAX_VOTE_POLL_ETAG_RETRIES`, and a vote that still cannot land is refused with `CONFLICT` so the voter sends it again instead of being shown a vote that never counted. A failed write whose re-read finds the version unchanged was never a lost race, so that error propagates as itself rather than being retried into a `CONFLICT`.
+
 ## Message types
 
 `MessageType` (in `@esposter/db-schema`) discriminates rendering and behaviour: `Message`, `Poll`, `Call` (call started / call-end duration system message), `EditRoom`, `PinMessage`, `System` (join/leave), and `Webhook`. Adding a type requires updating `MessageEntityMap` (type → entity class) and `MessageComponentMap` (type → Vue rendering component).
@@ -57,6 +79,7 @@ The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`
 | `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure) |
 | `forwardMessage`                  | member | Forward into another room                           |
 | `pinMessage` / `unpinMessage`     | member | Room-wide pins                                      |
+| `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write   |
 | `readMessages` / `readThread`     | member | Cursor pagination / thread view                     |
 | `searchMessages`                  | member | Filtered search via the Azure AI Search index       |
 | `readMySentMessages`              | authed | Cross-room sent list from the Search index          |

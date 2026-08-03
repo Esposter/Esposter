@@ -13,6 +13,7 @@ export const deserializeJson = async (file: File, _settings: JsonFileSettings): 
   const text = await file.text();
   // Plain JSON.parse preserves an imported ISO-datetime cell as its original string instead of
   // Reviving it to a Date that String() would then stringify to a different, locale-shaped value.
+  // eslint-disable-next-line no-restricted-syntax -- an imported cell keeps the string it was written as
   const rows = getResult(() => jsonRowsSchema.parse(JSON.parse(text))).match(
     (parsed) => parsed,
     (error) => {

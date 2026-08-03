@@ -15,8 +15,11 @@ const { items } = storeToRefs(webhookStore);
 const { deleteWebhook } = webhookStore;
 const webhookDialogStore = useWebhookDialogStore();
 const { deletingId } = storeToRefs(webhookDialogStore);
-const webhook = computed(() => items.value.find(({ id }) => id === deletingId.value));
-const { isOpen } = useSingletonDialog(deletingId);
+// Resolved through the primitive rather than a computed of our own, so a target whose webhook has left the
+// List is dropped with it instead of re-opening this dialog by itself when a later read brings it back
+const { isOpen, item: webhook } = useSingletonDialog(deletingId, () =>
+  items.value.find(({ id }) => id === deletingId.value),
+);
 </script>
 
 <template>

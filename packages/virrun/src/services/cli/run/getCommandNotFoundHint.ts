@@ -1,7 +1,7 @@
 import { Color } from "@/models/cli/Color";
 import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
-import { getResult, takeOne } from "@esposter/shared";
+import { getResult, jsonDateParse, takeOne } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
@@ -14,7 +14,9 @@ const COMMAND_NOT_FOUND_REGEX =
 const packageScriptsSchema = z.object({ scripts: z.record(z.string(), z.string()).default({}) });
 
 const readPackageScripts = (cwd: string): string[] =>
-  getResult(() => packageScriptsSchema.parse(JSON.parse(readFileSync(join(cwd, "package.json"), "utf8")))).match(
+  getResult(() =>
+    packageScriptsSchema.parse(jsonDateParse<unknown>(readFileSync(join(cwd, "package.json"), "utf8"))),
+  ).match(
     (packageJson) => Object.keys(packageJson.scripts),
     () => [],
   );

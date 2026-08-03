@@ -13,7 +13,8 @@ export const useAutoSearch = (
   searchQuery: Ref<string>,
   { isIncludeEmptySearchQuery, reset, search }: UseAutoSearchOptions,
 ) => {
-  const { createAlert } = useAlertStore();
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const isPending = ref(false);
   const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
   const isSearchQueryEmpty = computed(() => !normalizeString(searchQuery.value));

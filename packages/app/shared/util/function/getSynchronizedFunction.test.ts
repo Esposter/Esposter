@@ -5,10 +5,10 @@ describe(getSynchronizedFunction, () => {
   test("calls the original function with the forwarded arguments", () => {
     expect.hasAssertions();
 
-    const fn = vi.fn<(value: string) => Promise<string>>().mockResolvedValue("");
+    const originalFunction = vi.fn<(value: string) => Promise<string>>().mockResolvedValue("");
 
-    getSynchronizedFunction(fn)("");
+    getSynchronizedFunction(originalFunction)("");
 
-    expect(fn).toHaveBeenCalledExactlyOnceWith("");
+    expect(originalFunction).toHaveBeenCalledExactlyOnceWith("");
   });
 });

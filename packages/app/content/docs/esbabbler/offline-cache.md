@@ -40,6 +40,12 @@ Every object store is partitioned; `readIndexedDb` / `writeIndexedDb` always tak
 - **Members** → `roomId` (injected `partitionKey`; key path `[partitionKey, id]`)
 - **Rooms** → `userId` (injected `partitionKey`; key path `[partitionKey, id]`)
 
+### The store list must be partition-scoped too
+
+A partitioned cache asks one question on every switch: **are the rows currently loaded this partition's own?** It answers it from a per-partition readiness flag rather than from the list, because an empty list is either "not loaded yet" or "loaded and genuinely empty". That flag only means anything while **the store's list cannot outlive its partition** — otherwise, at the moment of a switch the list still holds the previous partition's rows, which read as "this partition has data" to the write side and as "do not hydrate" to the read side, and the user keeps seeing room A's members in room B with no way back offline. Guards added inside the cache to compensate are guesses over ambiguous state; fix the store's scoping instead.
+
+A store whose partition key can change while it is alive therefore uses `useCursorPaginationDataMap(() => currentKey)` / `useOffsetPaginationDataMap` — messages and members both key on `currentRoomId`. The unkeyed `useCursorPaginationData` is correct only where the key cannot change under the store: the room list partitions on the signed-in user, and signing out reloads the page, so that list is recreated with its partition rather than outliving it.
+
 ## Patterns
 
 Feature cache composables wrap the generic one — `getWriteItems` only for feature-specific filtering, `onHydrate` only for side effects not represented by the paginated store itself (member counts, companion user maps):
@@ -52,7 +58,7 @@ export const useFooCache = () => {
   const { items } = storeToRefs(fooStore);
   const { initializeCursorPaginationData } = fooStore;
 
-  return useCursorPaginationCache({
+  useCursorPaginationCache({
     configuration: FooIndexedDbStoreConfiguration,
     getWriteItems: (items) => items.filter((item) => !item.isLoading),
     initializeCursorPaginationData,
@@ -80,4 +86,4 @@ Fetch composables call the read-cache helper inside their `readItems` query func
 ## Notes
 
 - `ReadItemsCacheOptions` was removed — do not reintroduce cache parameters to pagination helpers.
-- Tests: generic helpers get service tests (partition isolation, re-write replacement, limit); feature caches test feature behavior (transient records not persisted, hydration side effects, `flush()`). `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.
+- Tests: the generic composable owns the whole cache lifecycle (persist on change, clear on empty, hydrate on switch, partition-key guards), tested once for both pagination variants. A feature cache tests only what is its own — its `getWriteItems` filter, its `onHydrate` side effects, and one end-to-end wiring pass over its partition-key source and store hook. Awaiting landed cache state is `waitForSynchronizedFunctions()`; the composables return nothing. `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.

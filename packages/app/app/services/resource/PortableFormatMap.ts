@@ -51,10 +51,13 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     {
       export: async () => {
         const { $trpc } = useNuxtApp();
-        const { createAlert } = useAlertStore();
+        const alertStore = useAlertStore();
+        const { createAlert } = alertStore;
         // The live editor + bound dataset live on the email store (set by the blade); the export needs both
-        const { datasetReference, editor, resource } = storeToRefs(useEmailEditorStore());
-        const { pendingDataset } = storeToRefs(useEmailExportDialogStore());
+        const emailEditorStore = useEmailEditorStore();
+        const { datasetReference, editor, resource } = storeToRefs(emailEditorStore);
+        const emailExportDialogStore = useEmailExportDialogStore();
+        const { pendingDataset } = storeToRefs(emailExportDialogStore);
         const exportPersonalizedHtml = useExportPersonalizedHtml();
         const referenceValue = datasetReference.value;
         if (!editor.value || !resource.value) {

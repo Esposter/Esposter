@@ -4,10 +4,10 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { IndexKey, IndexNames } from "idb";
 import type { Promisable } from "type-fest";
 
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { getResultAsync, noop } from "@esposter/shared";
 
 export interface PaginationCacheOptions<
   TStore extends IndexedDbStoreName,
@@ -19,8 +19,16 @@ export interface PaginationCacheOptions<
   initializeItems: (cachedItems: IndexedDbDatabaseSchema[TStore]["value"][]) => void;
   items: MaybeRefOrGetter<TItem[]>;
   onHydrate?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => Promisable<void>;
-  partitionKey: MaybeRefOrGetter<"" | IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | undefined>;
+  partitionKey: MaybeRefOrGetter<PartitionKey<TStore, TIndex> | undefined>;
 }
+
+// The schema types every index key as a string, which is what lets a partition double as a `useMutation` target
+// Verbatim. The conditional cannot resolve while the store stays generic, so the intersection restates the
+// Guarantee the schema already makes
+type PartitionKey<
+  TStore extends IndexedDbStoreName,
+  TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
+> = IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> & string;
 
 export const usePaginationCache = <
   TStore extends IndexedDbStoreName,
@@ -35,13 +43,45 @@ export const usePaginationCache = <
   partitionKey,
 }: PaginationCacheOptions<TStore, TIndex, TItem>) => {
   const online = useOnline();
-  let pendingOperation: Promise<void> = Promise.resolve();
-  // @TODO: loadedPartitionKey only flips after a non-empty page,
-  // So an empty first load leaves stale IndexedDB rows behind,
-  // And a later revisit can treat a transient empty array as loaded
-  // And overwrite cached data before fresh items arrive. Use an explicit
-  // Ready/loaded signal instead.
-  let loadedPartitionKey: "" | IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | undefined;
+  // The partition is the target: its writes run one at a time so each rewrite lands on the set the one before
+  // It stored, while another partition's cache is a different target and never waits behind it
+  const { executeMutation, executeQuery } = useMutation();
+  // The partition whose rows on screen are its own, rather than the empty list a load starts from. Dropped on
+  // Every switch: carried across one, the list a revisit begins with would pass for a loaded empty partition.
+  // This only means anything because `items` is itself partition-scoped at every call site — a caller whose
+  // List outlives the partition hands both watchers another partition's rows under this one's key
+  let readyPartitionKey: PartitionKey<TStore, TIndex> | undefined;
+
+  // Both operations are fired from a watcher, so each is adapted to that sync slot rather than floated
+  const writeCachedItems = getSynchronizedFunction(
+    async (newItems: IndexedDbDatabaseSchema[TStore]["value"][], partitionKeyValue: PartitionKey<TStore, TIndex>) => {
+      await executeMutation(() => writeIndexedDb(configuration, newItems, partitionKeyValue), {
+        key: partitionKeyValue,
+      });
+    },
+  );
+  const readCachedItems = getSynchronizedFunction(async (newPartitionKey: PartitionKey<TStore, TIndex>) => {
+    await executeQuery(() => readIndexedDb(configuration, newPartitionKey), {
+      key: newPartitionKey,
+      // Hydration is a background restore of what the user already had, so a failure is logged, not alerted
+      onError: console.error,
+      // State is seeded here so the primitive's own staleness filter runs first; only the switch away needs a
+      // Guard of its own, because the read for the partition that replaced this one is a different target.
+      // Readiness answers the one question hydration turns on — has THIS partition produced rows since the
+      // Switch onto it, and would restoring the cache therefore overwrite live data
+      onSuccess: async (cachedItems) => {
+        if (
+          toValue(partitionKey) !== newPartitionKey ||
+          cachedItems.length === 0 ||
+          readyPartitionKey === newPartitionKey
+        )
+          return;
+
+        initializeItems(cachedItems);
+        await onHydrate?.(cachedItems);
+      },
+    });
+  });
 
   // The capped write set is both what gets persisted and what the deep watch tracks. Watching the whole
   // Loaded list instead traversed it on every store write to discover changes that can never reach the cache —
@@ -56,36 +96,33 @@ export const usePaginationCache = <
     (newItems) => {
       const partitionKeyValue = toValue(partitionKey);
       if (!partitionKeyValue) return;
-      // Only persist an empty array once this partition has actually produced data — clearing the cache on
-      // Emptied items lets deletions propagate offline, while a transient empty array during initial load or a
-      // Partition switch (before its data arrives) must not clobber a partition we have not loaded yet.
-      if (newItems.length > 0) loadedPartitionKey = partitionKeyValue;
-      else if (loadedPartitionKey !== partitionKeyValue) return;
-      const previousOperation = pendingOperation;
-      pendingOperation = getResultAsync(async () => {
-        await previousOperation;
-        await writeIndexedDb(configuration, newItems, partitionKeyValue);
-      }).match(noop, console.error);
+      // Only persist an empty array once this partition has produced data since the switch onto it — clearing
+      // The cache on emptied items lets deletions propagate offline, while the empty array an initial load, a
+      // Partition switch or a revisit starts from must not clobber rows the hydration is about to restore
+      if (newItems.length > 0) readyPartitionKey = partitionKeyValue;
+      else if (readyPartitionKey !== partitionKeyValue) return;
+
+      writeCachedItems(newItems, partitionKeyValue);
     },
     { flush: "post" },
   );
 
-  watch(
-    () => toValue(partitionKey),
-    (newPartitionKey) => {
-      if (!newPartitionKey || online.value) return;
-      const previousOperation = pendingOperation;
-      pendingOperation = getResultAsync(async () => {
-        await previousOperation;
-        const cachedItems = await readIndexedDb(configuration, newPartitionKey);
-        if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0 || toValue(items).length > 0) return;
+  // Both sources restore a partition the user is looking at with no way to fetch it, so both have to fire:
+  // Immediate, because the partition a cold start opens on never changes — the room id comes from the route and
+  // The layout that calls this already has it at setup, so opening the installed app offline on
+  // /messages/{roomId}, the flagship offline case, is precisely the mount where the key arrives already set —
+  // And connectivity, because a network lost in place leaves a partition whose load never landed empty until a
+  // Switch the user has no reason to make. Watching the key alone covered only a room-to-room switch made
+  // Inside an already-running session, which is the one path the tests happened to cover
+  watchImmediate([() => toValue(partitionKey), online], ([newPartitionKey, newOnline], previous) => {
+    // Pre-flush, so the write watcher sees the partition as unready for the list it arrives holding. Only a
+    // Switch drops it — a connectivity flip leaves the partition exactly as loaded as it already was
+    if (newPartitionKey !== previous?.[0]) readyPartitionKey = undefined;
+    if (!newPartitionKey || newOnline) return;
 
-        initializeItems(cachedItems);
-        await onHydrate?.(cachedItems);
-      }).match(noop, console.error);
-    },
-  );
+    readCachedItems(newPartitionKey);
+  });
 
-  const flush = () => pendingOperation;
-  return { flush };
+  // Nothing to return: both operations are fire-and-forget through getSynchronizedFunction, so a caller that
+  // Needs them landed awaits waitForSynchronizedFunctions() — the drain that already covers every one of them
 };

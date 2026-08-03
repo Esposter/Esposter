@@ -8,28 +8,39 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
   const setData = (key: string, value: TItem) => {
     dataMap.value.set(key, value);
   };
+  const readDataByKey = (key: string) => {
+    if (!key) return createDefaultValue();
 
-  const data = computed({
-    get: () => {
-      const currentIdValue = toValue(currentId);
-      if (!currentIdValue) return createDefaultValue();
+    // Existence, not truthiness — a key holding `false`, `0` or `""` is stored data, and treating it as absent
+    // Would regenerate the default over a value a caller explicitly wrote
+    if (dataMap.value.has(key)) return getData(key) ?? createDefaultValue();
 
-      const value = dataMap.value.get(currentIdValue);
-      if (value) return value;
+    const newDefaultValue = createDefaultValue();
+    setData(key, newDefaultValue);
+    // Return the value read back from the reactive map, not the raw object we just created — the map
+    // Wraps object values in a reactive proxy on read, so returning newDefaultValue directly would hand
+    // Callers (and deep watchers) a non-reactive object whose later mutations never trigger reactivity.
+    return getData(key) ?? newDefaultValue;
+  };
+  const writeDataByKey = (key: string, newData: TItem) => {
+    if (!key) return;
+    setData(key, newData);
+  };
 
-      const newDefaultValue = createDefaultValue();
-      dataMap.value.set(currentIdValue, newDefaultValue);
-      // Return the value read back from the reactive map, not the raw object we just created — the map
-      // Wraps object values in a reactive proxy on read, so returning newDefaultValue directly would hand
-      // Callers (and deep watchers) a non-reactive object whose later mutations never trigger reactivity.
-      return dataMap.value.get(currentIdValue) ?? newDefaultValue;
-    },
-    set: (newData) => {
-      const currentIdValue = toValue(currentId);
-      if (!currentIdValue) return;
-      dataMap.value.set(currentIdValue, newData);
-    },
-  });
+  const getDataRef = (key: MaybeRefOrGetter<string>): Ref<TItem> =>
+    computed({
+      get: () => readDataByKey(toValue(key)),
+      set: (newData) => {
+        writeDataByKey(toValue(key), newData);
+      },
+    });
+
+  // Tracks the current key, so it always reads and writes whichever slice is current.
+  const data = getDataRef(currentId);
+  // Pins the key as it is right now. An operation that binds once up front and writes through this ref files its
+  // Result under the key it was issued for even when the current key has moved on by the time it lands, which is
+  // What `data` cannot do — it would file that result under whatever happens to be current at write time.
+  const getBoundData = () => getDataRef(toValue(currentId));
 
   const initializeData = (newData: TItem) => {
     data.value = newData;
@@ -42,6 +53,7 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
 
   return {
     data,
+    getBoundData,
     getData,
     initializeData,
     resetData,

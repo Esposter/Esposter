@@ -17,13 +17,13 @@ describe(pruneStaleSnapshots, () => {
   test("removes a superseded snapshot in the global cache while keeping the current one", () => {
     expect.hasAssertions();
 
-    const snapshotsDir = join(getCacheHome(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
-    const current = seedDirectory(join(snapshotsDir, CURRENT_HASH));
-    const stale = seedDirectory(join(snapshotsDir, STALE_HASH));
+    const snapshotsDirectory = join(getCacheHome(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
+    const snapshot = seedDirectory(join(snapshotsDirectory, CURRENT_HASH));
+    const staleSnapshot = seedDirectory(join(snapshotsDirectory, STALE_HASH));
 
     pruneStaleSnapshots(CURRENT_HASH);
 
-    expect(existsSync(current)).toBe(true);
-    expect(existsSync(stale)).toBe(false);
+    expect(existsSync(snapshot)).toBe(true);
+    expect(existsSync(staleSnapshot)).toBe(false);
   });
 });

@@ -1,17 +1,20 @@
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { dayjs } from "#shared/services/dayjs";
-import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
-import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
+import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
+import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
+import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useForwardStore } from "@/store/message/input/forward";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
+import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useThreadStore } from "@/store/message/thread";
-import { MessageType } from "@esposter/db-schema";
+import { MessageType, RoomPermission } from "@esposter/db-schema";
 import { exhaustiveGuard, normalizeString, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
@@ -34,7 +37,28 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
   const threadStore = useThreadStore();
   const { openThread } = threadStore;
+  const roleStore = useRoleStore();
+  const { getMyPermissions } = roleStore;
   const runtimeConfig = useRuntimeConfig();
+  const hasManageMessages = computed(() => {
+    const myPermissions = getMyPermissions(message.partitionKey);
+    if (!myPermissions) return false;
+    return hasPermission(myPermissions.permissions, RoomPermission.ManageMessages, myPermissions.isRoomOwner);
+  });
+  // The same declaration getMessageProcedure guards with, so the menu can never offer an operation the procedure
+  // Refuses — presence answers whether the type supports it, the value answers whether this caller may perform it
+  const getIsOperationPermitted = (operation: MessageOperation) =>
+    getIsMessageOperationPermitted(getMessageOperationPermission(message.type, operation), {
+      hasManageMessages: hasManageMessages.value,
+      isAuthor: isCreator.value,
+    });
+  // Replying to and forwarding a message are neither authored nor moderated actions, so they ride the type's
+  // Support for an update rather than this caller's permission to perform one
+  const isUpdateSupported = computed(() =>
+    Boolean(getMessageOperationPermission(message.type, MessageOperation.Update)),
+  );
+  const isDeletePermitted = computed(() => getIsOperationPermitted(MessageOperation.Delete));
+  const isPinPermitted = computed(() => getIsOperationPermitted(MessageOperation.Pin));
   const editMessageItem: Item = {
     icon: "mdi-pencil",
     onClick: () => {
@@ -127,15 +151,16 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     },
     title: "Mark Unread From Here",
   };
+  const pinMessageItems = computed<Item[]>(() => (isPinPermitted.value ? [pinMessageItem.value] : []));
   const updateMessageItems = computed<Item[]>(() =>
-    UpdatableMessageTypes.has(message.type)
+    isUpdateSupported.value
       ? isEditable.value
         ? [editMessageItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
       : [],
   );
   const updateMessageMenuItems = computed<Item[]>(() =>
-    UpdatableMessageTypes.has(message.type)
+    isUpdateSupported.value
       ? isEditable.value
         ? [editMessageItem, replyItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
@@ -148,21 +173,21 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
       case MessageType.EditRoom:
         return [copyTextItem, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Message:
-        return [copyTextItem, viewThreadItem, pinMessageItem.value, markUnreadFromHereItem, copyMessageLinkItem];
+        return [copyTextItem, viewThreadItem, ...pinMessageItems.value, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.PinMessage:
         return [markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Poll:
-        return [pinMessageItem.value, markUnreadFromHereItem, copyMessageLinkItem];
+        return [...pinMessageItems.value, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.System:
         return [markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Webhook:
-        return [copyTextItem, pinMessageItem.value, markUnreadFromHereItem, copyMessageLinkItem];
+        return [copyTextItem, ...pinMessageItems.value, markUnreadFromHereItem, copyMessageLinkItem];
       default:
         return exhaustiveGuard(message);
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    DeletableMessageTypes.has(message.type) && isCreator.value
+    isDeletePermitted.value
       ? {
           color: "error",
           icon: "mdi-delete",

@@ -10,7 +10,7 @@ Every user-facing tRPC call on the client goes through one of two symmetric prim
 - **`useQuery`** — reads. Fetches without blocking setup, populates reactive data, surfaces errors.
 - **`useMutation`** — writes. Applies optimistically, rolls back on failure, surfaces errors.
 
-Both share the same error stack (`getResultAsync` → `createAlert`) and latest-wins staleness guarding, so no call site re-implements loading, error handling, or race protection.
+Both share the same error stack (`getResultAsync` → `createAlert`) and the same concurrency model — reads latest-wins per target, writes queued per target **by default**, with a write opting into latest-wins via `isSupersede` where dropping the earlier call is the intent, described in [Async operations](/docs/architecture/async-operations) — so no call site re-implements loading, error handling, or race protection.
 
 ## useQuery
 
@@ -35,10 +35,10 @@ On failure the real `Error.message` is raised as an alert and `data` stays `unde
 
 ## useMutation
 
-`useMutation` (`composables/shared/useMutation.ts`) returns `{ executeMutation, getIsPending, isPending }` and bundles the four things every write needs:
+`useMutation` (`composables/shared/useMutation.ts`) returns `{ executeMutation, executeQuery, getIsPending, isPending }` and bundles the four things every write needs:
 
 - **Optimistic apply + rollback** — write the change to the store immediately, roll it back if the server rejects it.
-- **Staleness guarding** — when the same action fires repeatedly (rapid clicks, drags, select changes), a slower earlier call can never overwrite a newer call's state. Staleness is tracked **per `key`**, so one instance serving many sibling items (a store action keyed by `postId`) never lets item B's call cancel item A's callbacks.
+- **Concurrency by target** — writes to one `key` run one at a time, so two controls writing different fields of the same entity both land; reads for one `key` are latest-wins. The full model, the opt-ins, and the outcome statuses live in [Async operations](/docs/architecture/async-operations).
 - **Pending state** — `isPending` is true while any of the instance's calls is in flight; `getIsPending(key)` scopes it to one key for per-item surfaces (a table row's own button). They are what the triggering control binds as `:loading`/`:disabled` (see [In-flight guarding](#in-flight-guarding)).
 - **Error surfacing** — a failed mutation raises the actual error message as an alert; no call site writes `try`/`catch` or bespoke alert strings.
 
@@ -60,52 +60,40 @@ await executeMutation(mutate, {
 ```
 
 - `mutate` — the tRPC call.
-- `key` — **required**: the identity of the mutation's target, scoping staleness, pending, and exclusivity bookkeeping; calls with different keys are fully independent. It is explicit for the same reason a Pinia store id is — identity is the caller's knowledge, and a silently shared default was exactly the class of bug that kept resurfacing (operations on different entities stale-dropping each other's rollbacks and `onSuccess`). The choice is mechanical:
-  - **Operation on an existing entity** → its id or natural composite (`input.id`, `` `${userId}-${roleId}` ``, a blob path). Repeated saves of the same target share the key, so genuine latest-wins supersession still works.
-  - **Create with no id yet** → a per-call `Symbol("createRoom")` (every create is its own independent operation), or a stable key + `isExclusive` when a duplicate fire must be dropped instead (`createLike`, the initial survey response).
-  - **Singleton target** (current user's settings, one screen's single subject) → the scope's id when one exists, else a stable name string for the target (`key: "userSettings"`). Keys are scoped per instance, so names cannot collide across instances.
-
-  Never call `useMutation()` inside an action to fake isolation — that leaks a detached effect scope; key the shared store-root instance instead.
-
-- `isExclusive` — single-flight: while a call with the same key is in flight, further calls are dropped outright — nothing fires, no staleness bump. For non-idempotent creates that must never double-fire (`createLike`).
-- `applyOptimistic` — the normal path. Apply the local change and return its rollback closure. On failure the rollback runs (unless a newer call has superseded this one); the confirming server state still arrives via subscriptions, which idempotently re-apply the same value.
-- `onSuccess` — the rare path, for mutations whose result the client can't predict (server-generated ids/tokens like `createInvite`). Omit `applyOptimistic` and take the server result here; it is written only if this call is still the latest.
+- `key` — **required**: the identity of the mutation's target. It scopes the write queue, the pending state, and exclusivity; calls with different keys are fully independent. How to choose one is in [Async operations](/docs/architecture/async-operations#targets). Never call `useMutation()` inside an action to fake isolation — that leaks a detached effect scope; key the shared store-root instance instead.
+- `applyOptimistic` — the normal path. Apply the local change and return its rollback closure. It runs when the write is sent, so a queued write snapshots the state its predecessor stored. On failure the rollback runs. Where the entity has a subscription, the confirming server state also arrives through it and idempotently re-applies the same value — but not every mutation has one, so the rollback is what the correctness rests on, never the echo.
+- `onSuccess` — the rare path, for mutations whose result the client can't predict (server-generated ids/tokens like `createInvite`). Omit `applyOptimistic` and take the server result here.
 - `onError` — replaces the default alert, only for surfaces that own a different error channel: the platform resource operations route failures into the [notifications bell](/docs/platform/notifications), including the stale-`contentVersion` warning with its Refresh action. Everything else omits it and gets the alert.
 
-Both `applyOptimistic` and `onSuccess` are staleness-guarded so a superseded call leaves the newer state intact. The error alert always fires with the real `Error.message`.
+The optimistic apply and the server's own broadcast coexist — the write lands locally at once, and the echo re-applies the same value when it arrives:
 
 ```mermaid
 flowchart TD
-  Action[User action] --> Exclusive{isExclusive and same key still in flight?}
-  Exclusive -->|yes| DropCall[Drop call — nothing fires]
-  Exclusive -->|no| Apply[applyOptimistic]
+  Action[User action] --> Apply[applyOptimistic]
   Apply -->|writes change now| Store[(Store)]
   Apply -->|returns rollback closure| Mutate[tRPC mutate]
-  Mutate -->|resolves| Stale{Superseded by a newer call?}
-  Mutate -->|rejects| StaleError{Superseded by a newer call?}
-  Stale -->|no| Success[onSuccess — server-authoritative result]
-  Stale -->|yes| Drop[Discard result — newer state wins]
-  Success --> Store
-  StaleError -->|no| Rollback[Run rollback closure]
-  StaleError -->|yes| Drop
+  Mutate -->|rejects| Rollback[Run rollback closure]
+  Mutate -->|resolves| Success[onSuccess — server-authoritative result]
   Rollback --> Store
   Rollback --> Alert[createAlert with the real Error.message]
+  Success --> Store
   Mutate -.->|server broadcast| Echo[Subscription echo]
   Echo -->|idempotently re-applies same value| Store
 ```
 
-Call `useMutation()` once per logical action — each instance owns its own staleness and pending bookkeeping, so two independent actions must **never** share one. A shared instance lets a newer unrelated call supersede an older action's `onSuccess`/rollback (fire `deleteRole` while `createRole` is in flight and the created role never lands in the store). In a store with several mutations, declare one named instance per action via destructure renames (`const { executeMutation: executeCreateRoleMutation } = useMutation();`, with `isPending: isCreateRolePending` where the pending state is consumed); a single flow that branches into two tRPC calls (create-or-update save) correctly shares one instance, because its successive calls do supersede each other. One instance serving many sibling **items** of the same action is the `key` case, not a reason for per-item instances.
+Call `useMutation()` once per logical action — each instance owns its own queue and pending bookkeeping, so two independent actions must **never** share one. A shared instance makes unrelated actions on the same entity id contend for one target: fire `deleteRole` while `createRole` is in flight and the delete waits behind a create it has nothing to do with, while `isPending` disables both surfaces. In a store with several mutations, declare one named instance per action via destructure renames (`const { executeMutation: executeCreateRoleMutation } = useMutation();`, with `isPending: isCreateRolePending` where the pending state is consumed); a single flow that branches into two tRPC calls (create-or-update save) correctly shares one instance, because its successive calls are successive writes to one target. One instance serving many sibling **items** of the same action is the `key` case, not a reason for per-item instances.
 
-**Placeholder creates stay on the shared store-root instance with a per-call `Symbol` key** (`createRoomCategory`). Each call owns a distinct placeholder object, so successive creates are independent — they must never supersede each other. Under a shared key, a second create would mark the first stale and skip its `onSuccess`, stranding a temp-id placeholder for a row that exists server-side under a different id (a later rename/delete then 404s); the per-call `Symbol` gives every create its own key, so nothing supersedes anything. Superseding is only correct when the later call targets the _same_ state as the earlier one.
+**Placeholder creates stay on the shared store-root instance with a per-call `Symbol` key** (`createRoomCategory`). Each call owns a distinct placeholder object, so successive creates are genuinely independent operations — a shared key would serialize them behind one another for no reason, and every create is free to run at once.
 
 ## In-flight guarding
 
-Latest-wins staleness protects **state**, not **the server**: every latest-wins `executeMutation` call still fires its network write (only an `isExclusive` drop prevents one). The surface that triggers a write is therefore responsible for making a second trigger impossible while the first is in flight. Exactly one guard applies per surface — pick by shape, never hand-roll a pending flag:
+Queueing protects **state**, not **the server**: every `executeMutation` call still fires its network write (only an `isExclusive` drop prevents one), it just waits its turn. The surface that triggers a write is therefore responsible for making a pointless second trigger impossible while the first is in flight. Exactly one guard applies per surface — pick by shape, never hand-roll a pending flag:
 
 - **Form dialogs** — free. `StyledFormDialog`'s submit path holds `isSubmitting`: it early-returns re-entrant submits and drives the confirm button's `loading`/`disabled`. Consumers wire nothing.
 - **Plain buttons firing a non-optimistic write** (publish, duplicate, deploy, generate, restore) — bind the instance's `isPending` as both `:loading` and `:disabled`. When the mutation lives in a composable, the composable returns the renamed ref (`isPublishPending`) and it threads down as an ordinary prop; overflow/action list items bind it as `disabled`. For per-item surfaces (each table row has its own button), bind `getIsPending(item.id)` instead so one row's in-flight write doesn't disable its siblings.
 - **Per-item creates through a shared instance** — `key` + `isExclusive` (`createLike`), so one item's in-flight create drops only its own duplicates while sibling items stay live.
-- **Optimistic writes** — no guard. The state flips synchronously, so a second click reads the new state and means something new (a favorite toggle un-favorites); disabling the control would swallow real intent, and a superseded call is already staleness-guarded.
+- **Optimistic writes** — no guard. The state flips synchronously, so a second click reads the new state and means something new (a favorite toggle un-favorites); disabling the control would swallow real intent, and the second write simply queues behind the first.
+- **Fields that commit on blur and on Enter** — guard with a dirty check against the value last stored (`isDirty`), so the second emit for an unchanged field never issues a write at all.
 - **Synchronous unmount** — closing/unmounting the triggering control before the round trip (`onComplete()`-first dialog closes, a selection toolbar cleared on click) is a complete guard by construction; don't add a second one. Where the mutation resolves its own target from the dialog store target (`renamingId` → the list row), **call it before the close and await the promise after** — closing first clears the target out from under it, and the mutation silently no-ops.
 
 ## Optimistic by default
@@ -144,11 +132,9 @@ Both shapes are correct; what is never correct is leaving the state stale becaus
 
 ## When not to use them
 
-Both primitives alert on failure. Two neighbouring patterns stay on the lower-level `getConcurrentFunction` (`packages/app/shared/util/function/getConcurrentFunction.ts`), which provides staleness guarding alone:
+`useQuery` is the wrapper for a one-shot setup fetch. A read whose state shape differs — its own cursor, an inline error panel instead of an alert — skips the wrapper but still goes through `executeQuery` on a `useMutation()` instance of its own (`useDataset`, `useReadResourcesPage`, `useReadResourceTypeCounts`), so it inherits the latest-wins guarding and the pending flag without owning either. These stay off both wrappers entirely:
 
-- **Paginated / event-driven reads** (e.g. `useReadMessages`, `useDataset`) — own their own cursor/error state and surface failure inline rather than as an alert; they are not one-shot setup fetches, so `useQuery` doesn't fit.
-- **Local-only concurrency** (e.g. LiveKit virtual-background switching) — no server call, nothing to alert.
-- **Search-as-you-type reads** go through `useAutoSearch` (see [Search](/docs/architecture/search)) — it shares the `getResultAsync` → `createAlert` error stack but replaces `getConcurrentFunction` with an `AbortController`, cancelling the superseded request instead of merely ignoring its result.
+- **Search-as-you-type reads** go through `useAutoSearch` (see [Search](/docs/architecture/search)) — it shares the `getResultAsync` → `createAlert` error stack but cancels the superseded request with an `AbortController` instead of merely ignoring its result.
 - **Background bookkeeping writes** (mark-read + mention-count clear on room enter, typing pings, push-subscription registration) — the user didn't act, so surfacing a failure as an alert would be noise; they stay raw fire-and-forget calls.
 - **Composed SAS-upload flows** (generate upload URL → `uploadBlocks` → assign public URL) — the mutation is one step of a multi-step flow whose error/loading handling belongs to the composing function, like the device-coupled call operations.
 - **The message send path** (`createMessage` in `store/message/data.ts`) — a bespoke optimistic flow (reactive `isLoading` placeholder + `MessageHookMap` hooks) that predates and exceeds what `applyOptimistic` models. `storeCreateMessage` is shared with the subscription handler, so **the push/hook order is a parameter, not a constant**: the sender's own message renders before its hooks (`isOptimistic`) because it has a loading bubble to keep responsive and a rollback if they reject, while a message from anyone else waits for them — pushed first it renders every attachment as a broken image until the url fetch lands, and pushed first on a rejected fetch it renders broken forever.

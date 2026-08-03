@@ -59,12 +59,12 @@ describe(useSheetHistoryStore, () => {
     const { redo, undo } = sheetHistoryStore;
     await deleteRow(takeOne(dataSource?.rows ?? []).id);
     await deleteColumn(" ");
-    const dataSourceAfterOps = dataSource;
+    const dataSourceAfterOperations = dataSource;
 
-    assert.exists(dataSourceAfterOps);
+    assert.exists(dataSourceAfterOperations);
 
-    expect(dataSourceAfterOps.rows).toHaveLength(1);
-    expect(dataSourceAfterOps.columns).toHaveLength(1);
+    expect(dataSourceAfterOperations.rows).toHaveLength(1);
+    expect(dataSourceAfterOperations.columns).toHaveLength(1);
 
     undo(dataSource);
     const dataSourceAfterUndo1 = dataSource;

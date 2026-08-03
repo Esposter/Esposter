@@ -4,7 +4,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { computeColumnChartData } from "@/services/resource/sheet/column/computeColumnChartData";
 import { describe, expect, test } from "vitest";
 
-const createNumberStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+const createNumberStatistics = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
   average: 1,
   columnName: "",
   columnType: ColumnType.Number,
@@ -22,7 +22,7 @@ const createNumberStats = (overrides: Partial<ColumnStatistics> = {}): ColumnSta
   ...overrides,
 });
 
-const createBooleanStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+const createBooleanStatistics = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
   average: undefined,
   columnName: "",
   columnType: ColumnType.Boolean,
@@ -40,7 +40,7 @@ const createBooleanStats = (overrides: Partial<ColumnStatistics> = {}): ColumnSt
   ...overrides,
 });
 
-const createStringStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+const createStringStatistics = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
   average: undefined,
   columnName: "",
   columnType: ColumnType.String,
@@ -62,7 +62,7 @@ describe(computeColumnChartData, () => {
   test(`number column returns bar chart with minimum, average, maximum`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(createNumberStats({ average: 1, maximum: 2, minimum: 0 }));
+    const result = computeColumnChartData(createNumberStatistics({ average: 1, maximum: 2, minimum: 0 }));
 
     expect(result?.type).toBe("bar");
     expect(result?.series).toStrictEqual([{ data: [0, 1, 2], name: "" }]);
@@ -72,14 +72,14 @@ describe(computeColumnChartData, () => {
     expect.hasAssertions();
 
     expect(
-      computeColumnChartData(createNumberStats({ average: undefined, maximum: undefined, minimum: undefined })),
+      computeColumnChartData(createNumberStatistics({ average: undefined, maximum: undefined, minimum: undefined })),
     ).toBeUndefined();
   });
 
   test(`boolean column returns pie chart with trueCount, falseCount, nullCount`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(createBooleanStats({ falseCount: 1, nullCount: 1, trueCount: 2 }));
+    const result = computeColumnChartData(createBooleanStatistics({ falseCount: 1, nullCount: 1, trueCount: 2 }));
 
     expect(result?.type).toBe("pie");
     expect(result?.series).toStrictEqual([2, 1, 1]);
@@ -89,7 +89,7 @@ describe(computeColumnChartData, () => {
     expect.hasAssertions();
 
     const result = computeColumnChartData(
-      createBooleanStats({ falseCount: undefined, nullCount: 2, trueCount: undefined }),
+      createBooleanStatistics({ falseCount: undefined, nullCount: 2, trueCount: undefined }),
     );
 
     expect(result?.series).toStrictEqual([0, 0, 2]);
@@ -98,14 +98,14 @@ describe(computeColumnChartData, () => {
   test(`string column with no top frequencies returns undefined`, () => {
     expect.hasAssertions();
 
-    expect(computeColumnChartData(createStringStats({ topFrequencies: undefined }))).toBeUndefined();
+    expect(computeColumnChartData(createStringStatistics({ topFrequencies: undefined }))).toBeUndefined();
   });
 
   test(`string column returns horizontal bar chart of top frequencies`, () => {
     expect.hasAssertions();
 
     const result = computeColumnChartData(
-      createStringStats({
+      createStringStatistics({
         columnName: " ",
         topFrequencies: [
           ["a", 3],

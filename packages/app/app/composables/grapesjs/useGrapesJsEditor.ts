@@ -24,7 +24,8 @@ export const useGrapesJsEditor = async (
   // https://antfu.me/posts/async-with-composition-api
   const currentInstance = getCurrentInstance();
   const { data: session } = await authClient.useSession(useFetch);
-  const { createAlert } = useAlertStore();
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const validateFile = useValidateFile();
   const editor = shallowRef<Editor>();
   // The document stores branch between the authenticated document path and local storage,

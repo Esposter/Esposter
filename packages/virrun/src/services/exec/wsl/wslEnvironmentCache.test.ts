@@ -3,6 +3,7 @@ import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCach
 import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
+import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -28,7 +29,7 @@ describe("wslEnvironmentCache", () => {
     writeWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, { key, value });
     const content = readFileSync(join(getCacheHome(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME), "utf8");
 
-    const { storedAtMs, ...cache } = createKeyedCacheSchema(z.string()).parse(JSON.parse(content));
+    const { storedAtMs, ...cache } = createKeyedCacheSchema(z.string()).parse(jsonDateParse(content));
 
     expect(cache).toStrictEqual({ key, value });
     expect(storedAtMs).toBeTypeOf("number");

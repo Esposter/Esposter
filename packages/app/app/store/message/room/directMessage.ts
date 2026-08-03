@@ -27,10 +27,11 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     directMessages.value.find(({ id }) => id === currentDirectMessageId.value),
   );
   const { executeMutation: executeCreateDirectMessageMutation } = useMutation();
+  const { executeMutation: executeDeleteDirectMessageParticipantMutation } = useMutation();
   const { executeMutation: executeHideDirectMessageMutation } = useMutation();
   const createDirectMessage = async (userIds: string[]) => {
     // Server-generated room — non-optimistic, applied in onSuccess. Creates have no natural entity key,
-    // So each call gets a unique one — overlapping creates must never stale-drop each other's onSuccess
+    // So each call gets a unique one — overlapping creates must never queue behind each other
     await executeCreateDirectMessageMutation(() => $trpc.room.directMessage.createDirectMessage.mutate(userIds), {
       key: Symbol("createDirectMessage"),
       onSuccess: async (room) => {
@@ -39,6 +40,43 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
         await navigateTo(RoutePath.Messages(room.id));
       },
     });
+  };
+  const deleteDirectMessageParticipant = async (roomId: string, userId: string) => {
+    await executeDeleteDirectMessageParticipantMutation(
+      () => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }),
+      {
+        applyOptimistic: () => {
+          // Read here rather than before the call, so this reflects whatever a concurrent removal already stored
+          const currentParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
+          const removedIndex = currentParticipants.findIndex(({ id }) => id === userId);
+          const removedParticipant = currentParticipants[removedIndex];
+          // The participants that followed it, so a rollback can anchor to whichever of them is still there —
+          // An index cannot, because a removal that overlapped this one has shifted someone else into that slot
+          const followingIds = new Set(currentParticipants.slice(removedIndex + 1).map(({ id }) => id));
+          directMessageParticipantsMap.value.set(
+            roomId,
+            currentParticipants.filter(({ id }) => id !== userId),
+          );
+          return () => {
+            if (!removedParticipant) return;
+
+            // Restore only this participant, ahead of the first one that still follows it. Reinstating a
+            // Whole-list snapshot would re-add anyone a removal that overlapped this one had already taken out
+            const participantsNow = [...(directMessageParticipantsMap.value.get(roomId) ?? [])];
+            const followingIndex = participantsNow.findIndex(({ id }) => followingIds.has(id));
+            participantsNow.splice(
+              followingIndex === -1 ? participantsNow.length : followingIndex,
+              0,
+              removedParticipant,
+            );
+            directMessageParticipantsMap.value.set(roomId, participantsNow);
+          };
+        },
+        // The target is the room-and-participant pair: the same person can be in more than one direct message,
+        // So keying on userId alone would make unrelated rooms' removals queue behind each other
+        key: `${roomId}-${userId}`,
+      },
+    );
   };
   const hideDirectMessage = async (input: HideDirectMessageInput) => {
     const snapshot = [...items.value];
@@ -51,7 +89,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
           items.value = snapshot;
         };
       },
-      // Keyed per room so hiding two conversations in quick succession never stale-drops a rollback
+      // Keyed per room so hiding two conversations in quick succession never queues behind the other
       key: input,
       onSuccess: async () => {
         if (!isCurrent) return;
@@ -69,6 +107,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     createDirectMessage,
     currentDirectMessage,
     currentDirectMessageId,
+    deleteDirectMessageParticipant,
     directMessageParticipantsMap,
     directMessages,
     hideDirectMessage,

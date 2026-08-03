@@ -12,7 +12,8 @@ import { RoutePath } from "@esposter/shared";
 export const useResourceListActionItems = () => {
   const listDialogStore = useListDialogStore();
   const { deletingId, renamingId } = storeToRefs(listDialogStore);
-  const { captureIds } = storeToRefs(useBlueprintCaptureDialogStore());
+  const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
+  const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
   const getActionItems = ({ id }: Resource): Item[] => [
     {
       icon: "mdi-open-in-new",

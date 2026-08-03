@@ -13,7 +13,14 @@ Every upload site funnels through the `uploadFileToSas` service, which generates
 
 Thumbnails are generated on the client with a canvas — each image is scaled so its longest edge is a fixed size and re-encoded to WebP. The server issues a second write SAS for the sibling blob at `{roomId}/{fileId}.thumb` whenever an image is uploaded, so the thumbnail lands in the same container and inherits the same blob-lifecycle tiering as the original. The message list renders the thumbnail inline and opens the full-resolution original in the lightbox.
 
-Per-room limits live as columns on the `rooms` table and are enforced at the only server chokepoint that sees every upload — the SAS-issuing procedure — because the block PUT goes straight to Azure and never passes back through Nitro. The composer mirrors the same limits so a rejected file is surfaced before any network call.
+Per-room limits live as columns on the `rooms` table and are checked at the SAS-issuing procedure, the only place a server sees an upload at all — the block PUT goes straight to Azure and never passes back through Nitro. The composer mirrors the same limits so a rejected file is surfaced before any network call.
+
+The two limits are not enforced equally, and the difference matters:
+
+- **The mime category is enforced.** The category is derived from the declared mimetype, and that same mimetype is signed into the write SAS as the blob's content type, so the PUT cannot store the blob as anything else.
+- **The size cap is not enforced — it is checked against the size the client declares.** An Azure write SAS carries no length constraint, nothing re-reads the committed blob, and the persisted `FileEntity.size` is the declared number rather than a measured one. A client that declares a small size receives a SAS and can write past the room's cap with it until the SAS expires (`WRITE_SAS_DURATION_MS`). The check rejects an honest oversized drop early; it is not a defence against a client that lies.
+
+Closing that gap needs something the direct-to-blob design does not have: either the upload passes back through the server, or a post-commit reader measures the blob and reconciles it. Neither exists today, so the size cap is a room-configured guardrail rather than a security boundary, and nothing downstream should assume an attachment is no larger than `maxFileSizeBytes`.
 
 One rejected file rejects the whole drop, and the alert names it — the repo-wide rule for batch input ([file uploads](/docs/architecture/file-uploads)).
 
@@ -23,7 +30,7 @@ flowchart TD
   validate -->|rejected| alert[Alert shown and upload aborts]
   validate -->|ok| thumb[generateImageThumbnail downscales images to WebP]
   validate --> sas[message.generateUploadFileSasEntities]
-  sas --> enforce[Server re-checks room limits and issues original plus thumbnail write SAS]
+  sas --> enforce[Server re-checks the declared limits and issues original plus thumbnail write SAS]
   enforce --> upload[uploadFileToSas PUTs original blocks]
   thumb --> upthumb[Thumbnail blob PUT to thumbnailSasUrl]
   upload --> render[Message list renders the thumbnail]
@@ -40,12 +47,12 @@ Two columns on `rooms` (`packages/db-schema/src/schema/roomsInMessage.ts`):
 
 ## Procedures
 
-| Procedure                                  | Auth        | Input                               | Purpose                                                         |
-| :----------------------------------------- | :---------- | :---------------------------------- | :-------------------------------------------------------------- |
-| `message.generateUploadFileSasEntities`    | Room member | files (filename, mimetype, size)    | Enforce room limits, issue original and thumbnail write SAS     |
-| `message.generateDownloadThumbnailSasUrls` | Room member | file ids                            | Read SAS for the `.thumb` blobs the message list renders        |
-| `message.searchMessages`                   | Room member | query, filters, `hasFiles`          | Files-in-room listing filters to messages that have attachments |
-| `room.updateRoom`                          | ManageRoom  | room fields incl. attachment limits | Persist per-room limits from the settings Moderation group      |
+| Procedure                                  | Auth        | Input                               | Purpose                                                           |
+| :----------------------------------------- | :---------- | :---------------------------------- | :---------------------------------------------------------------- |
+| `message.generateUploadFileSasEntities`    | Room member | files (filename, mimetype, size)    | Check the declared limits, issue original and thumbnail write SAS |
+| `message.generateDownloadThumbnailSasUrls` | Room member | file ids                            | Read SAS for the `.thumb` blobs the message list renders          |
+| `message.searchMessages`                   | Room member | query, filters, `hasFiles`          | Files-in-room listing filters to messages that have attachments   |
+| `room.updateRoom`                          | ManageRoom  | room fields incl. attachment limits | Persist per-room limits from the settings Moderation group        |
 
 ## Deletion is eventual, not guaranteed
 

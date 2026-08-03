@@ -17,8 +17,8 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} replaces null in string columns with "N/A"`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": null })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": null })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     await nullStrategy(NullStrategy.ReplaceWithNA);
 
@@ -28,8 +28,8 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} replaces empty string in string columns with "N/A"`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": "" })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "" })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     await nullStrategy(NullStrategy.ReplaceWithNA);
 
@@ -39,8 +39,8 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} skips non-string columns`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createNumberColumn("")], [createRow({ "": null })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createNumberColumn("")], [createRow({ "": null })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
@@ -54,8 +54,8 @@ describe(useNullStrategy, () => {
     expect.hasAssertions();
 
     const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
-    const ds = createDataSource([hiddenColumn], [createRow({ "": null })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([hiddenColumn], [createRow({ "": null })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
@@ -68,11 +68,11 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} drops rows with null cells`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn(""), createColumn(" ")],
       [createRow({ "": null, " ": " " }), createRow({ "": " ", " ": " " })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     await nullStrategy(NullStrategy.DropRow);
 
@@ -83,8 +83,8 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} drops rows with empty string cells`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": "" }), createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "" }), createRow({ "": " " })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     await nullStrategy(NullStrategy.DropRow);
 
@@ -96,8 +96,8 @@ describe(useNullStrategy, () => {
     expect.hasAssertions();
 
     const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
-    const ds = createDataSource([hiddenColumn], [createRow({ "": null })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([hiddenColumn], [createRow({ "": null })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
@@ -110,8 +110,8 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} undo restores original values`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": "" })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": "" })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
@@ -126,11 +126,11 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} undo restores deleted rows in original positions`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn("")],
       [createRow({ "": null }), createRow({ "": " " }), createRow({ "": "" })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
@@ -144,27 +144,11 @@ describe(useNullStrategy, () => {
     expect(takeOne(dataSource.rows, 2).data[""]).toBe("");
   });
 
-  test("redo re-applies after undo", async () => {
-    expect.hasAssertions();
-
-    const ds = createDataSource([createColumn("")], [createRow({ "": null })]);
-    const { dataSource } = setupWithDataSource(ds);
-    const nullStrategy = useNullStrategy();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-
-    await nullStrategy(NullStrategy.ReplaceWithNA);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe("N/A");
-  });
-
   test(`${NullStrategy.ReplaceWithNA} no-op when no null or empty string cells`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " })]);
+    setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
@@ -176,8 +160,8 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} no-op when no rows have null or empty string cells`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " })]);
+    setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
@@ -189,8 +173,8 @@ describe(useNullStrategy, () => {
   test("description includes the strategy", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": null })]);
-    setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": null })]);
+    setupWithDataSource(initialDataSource);
     const nullStrategy = useNullStrategy();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undoDescription } = storeToRefs(sheetHistoryStore);

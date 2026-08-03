@@ -16,7 +16,8 @@ interface NotesDialogProps {
 const { roomId, user } = defineProps<NotesDialogProps>();
 const { $trpc } = useNuxtApp();
 const rules = useVRules();
-const { createAlert } = useAlertStore();
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const { readModerationNotes, readMoreModerationNotes } = useReadModerationNotes(roomId, () => user.id);
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId, hasMore, items } = storeToRefs(moderationNoteStore);
@@ -26,7 +27,10 @@ const { getMemberName } = memberStore;
 const moderationNoteCount = computed(() => getModerationNoteCount(user.id));
 const note = ref("");
 const isNoteValid = computed(() => createModerationNoteInputSchema.shape.note.safeParse(note.value).success);
-// Scope the store's paginated slice to this target before loading so concurrent dialogs stay isolated.
+// Points the store's paginated slice at this target before loading. Only one of these is ever mounted —
+// A closed v-menu unmounts its content — so whichever dialog is open owns the ref. It is deliberately not
+// Cleared on unmount: hovering one member then another mounts the new dialog before the old one tears down,
+// So a teardown that blanked the ref would blank the list the new dialog has already claimed
 currentTargetUserId.value = user.id;
 // Load on setup (no Suspense boundary) so the count badge reflects existing notes before the dialog opens.
 useQuery(readModerationNotes);
@@ -49,10 +53,6 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
       },
     },
   );
-
-onUnmounted(() => {
-  currentTargetUserId.value = "";
-});
 </script>
 
 <template>

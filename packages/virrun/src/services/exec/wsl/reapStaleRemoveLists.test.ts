@@ -10,11 +10,11 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(reapStaleRemoveLists, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  let dir = "";
+  let directory = "";
   // Every list a reap can legitimately see was staged by an earlier run, so seeding back-dates past the age gate;
   // The one test that needs a just-staged list writes it itself
   const seed = (name: string): string => {
-    const path = join(dir, name);
+    const path = join(directory, name);
     writeFileSync(path, "");
     const stagedAt = new Date(Date.now() - REMOVE_LIST_REAP_MINIMUM_AGE_MS * 2);
     utimesSync(path, stagedAt, stagedAt);
@@ -22,7 +22,7 @@ describe(reapStaleRemoveLists, () => {
   };
 
   beforeEach(() => {
-    dir = create();
+    directory = create();
   });
 
   afterEach(cleanup);
@@ -33,10 +33,10 @@ describe(reapStaleRemoveLists, () => {
     const deadList = seed(`${VIRRUN_REMOVE_LIST_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
     const liveList = seed(`${VIRRUN_REMOVE_LIST_TEMP_PREFIX}${process.pid}.${TEST_FILENAME}`);
     const unrelatedFile = seed(TEST_FILENAME);
-    const cacheDirectory = join(dir, `${VIRRUN_REMOVE_LIST_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}.d`);
+    const cacheDirectory = join(directory, `${VIRRUN_REMOVE_LIST_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}.d`);
     mkdirSync(cacheDirectory);
 
-    reapStaleRemoveLists(dir);
+    reapStaleRemoveLists(directory);
 
     expect(existsSync(deadList)).toBe(false);
     expect(existsSync(liveList)).toBe(true);
@@ -49,10 +49,10 @@ describe(reapStaleRemoveLists, () => {
   test("keeps a freshly staged list whose owner is already dead", () => {
     expect.hasAssertions();
 
-    const deadList = join(dir, `${VIRRUN_REMOVE_LIST_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
+    const deadList = join(directory, `${VIRRUN_REMOVE_LIST_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
     writeFileSync(deadList, "");
 
-    reapStaleRemoveLists(dir);
+    reapStaleRemoveLists(directory);
 
     expect(existsSync(deadList)).toBe(true);
   });

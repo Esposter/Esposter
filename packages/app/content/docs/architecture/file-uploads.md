@@ -16,9 +16,9 @@ sequenceDiagram
   participant B as Azure Blob
 
   C->>S: generate*UploadUrl(input)
-  S-->>C: { sasUrl, publicUrl } — SAS scoped to exact blob path + max size
+  S-->>C: { sasUrl, publicUrl } — SAS scoped to exact blob path and content type
   C->>B: uploadBlocks(file, sasUrl)
-  Note over B: Azure enforces the size limit at the blob level
+  Note over B: Azure enforces the content type but not any size
   C->>S: update*(entity, { image: publicUrl })
   Note over S: saves the deterministic blob URL
 ```
@@ -60,7 +60,7 @@ export const MAX_REQUEST_SIZE = 2 * MEGABYTE; // tRPC body limit (JSON payloads)
 export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE; // SAS max blob size (file uploads)
 ```
 
-`MAX_REQUEST_SIZE` applies to all tRPC requests. `MAX_FILE_REQUEST_SIZE` is baked into the SAS token — Azure rejects uploads that exceed it at the blob level, with no tRPC involvement.
+`MAX_REQUEST_SIZE` applies to all tRPC requests. `MAX_FILE_REQUEST_SIZE` is **not** enforced by Azure: a write SAS carries a content type, an expiry and a permission set, but no length constraint. It is checked against the size the client declares when it asks for the SAS, and the composer checks the real file before uploading — so it bounds an honest client and nothing else. A client that declares a small size and then writes a large blob succeeds until the SAS expires, and the persisted `FileEntity.size` is the declared number rather than the blob's. Nothing downstream may assume an attachment is within `MAX_FILE_REQUEST_SIZE` or a room's `maxFileSizeBytes`. Closing this would require the upload to pass through a server that sees the bytes, or a post-commit size check that also revokes the SAS — neither exists today.
 
 ## Notes
 

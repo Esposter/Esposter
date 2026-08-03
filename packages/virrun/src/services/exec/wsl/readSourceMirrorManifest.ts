@@ -3,7 +3,7 @@ import type { SourceMirrorManifest } from "@/models/exec/wsl/SourceMirrorManifes
 import { sourceMirrorManifestSchema } from "@/models/exec/wsl/SourceMirrorManifest";
 import { VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME } from "@/services/exec/wsl/constants";
 import { getWslSourceMirrorEntryUnc } from "@/services/exec/wsl/getWslSourceMirrorEntryUnc";
-import { getResult } from "@esposter/shared";
+import { getResult, jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 // Read the mirror entry's published manifest back over the UNC (one small-file round-trip). It crossed a process
@@ -13,7 +13,7 @@ export const readSourceMirrorManifest = (cwd: string): SourceMirrorManifest | un
   const manifestPath = join(getWslSourceMirrorEntryUnc(cwd), VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME);
   return getResult(() => readFileSync(manifestPath, "utf8")).match(
     (data) => {
-      const parsed = getResult(() => JSON.parse(data) as unknown).unwrapOr(undefined);
+      const parsed = getResult(() => jsonDateParse<unknown>(data)).unwrapOr(undefined);
       const result = sourceMirrorManifestSchema.safeParse(parsed);
       return result.success ? result.data : undefined;
     },

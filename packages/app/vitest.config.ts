@@ -1,7 +1,7 @@
 import { getBenchmarkPlugins, getBenchmarkRunner } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 
-import { dayjs } from "./shared/services/dayjs";
+import { dayjs } from "./shared/services/dayjs/index.ts";
 
 const vitestConfig = await defineVitestProject({
   // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire the bench plugin via the shared

@@ -63,23 +63,25 @@ describe(removeSnapshotDirectoriesDetached, () => {
   test("removes a plain directory tree in-process without spawning a background process", () => {
     expect.hasAssertions();
 
-    const dir = create();
-    mkdirSync(join(dir, TEST_FILENAME, TEST_FILENAME), { recursive: true });
+    const directory = create();
+    mkdirSync(join(directory, TEST_FILENAME, TEST_FILENAME), { recursive: true });
 
-    removeSnapshotDirectoriesDetached([dir]);
+    removeSnapshotDirectoriesDetached([directory]);
 
-    expect(existsSync(dir)).toBe(false);
+    expect(existsSync(directory)).toBe(false);
     expect(spawn).not.toHaveBeenCalled();
   });
 
   test("tears down every WSL-UNC dir in ONE hidden, unref'd WSL process off the critical path", () => {
     expect.hasAssertions();
 
-    const linuxDirs = [TEST_FILENAME, `${TEST_FILENAME}/${TEST_FILENAME}`].map(
+    const linuxDirectories = [TEST_FILENAME, `${TEST_FILENAME}/${TEST_FILENAME}`].map(
       (name) => `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_PREPARE_DIRECTORY_NAME}/${name}`,
     );
 
-    removeSnapshotDirectoriesDetached(linuxDirs.map((dir) => createTestWslUnc(dir, TEST_WSL_LEGACY_UNC_PREFIX)));
+    removeSnapshotDirectoriesDetached(
+      linuxDirectories.map((directory) => createTestWslUnc(directory, TEST_WSL_LEGACY_UNC_PREFIX)),
+    );
 
     // One launch for the whole sweep however many dirs it holds, because the paths ride in a list file rather than
     // The argv: each wsl.exe launch is a service RPC plus a relay process, and a fan-out wedges the WSL service
@@ -90,7 +92,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
       ["--exec", "sh", "-c", WSL_REMOVE_LIST_SCRIPT, "sh", expect.stringContaining(VIRRUN_REMOVE_LIST_TEMP_PREFIX)],
       { stdio: "ignore", windowsHide: true },
     );
-    expect(readStagedList()).toBe(joinNullDelimited(linuxDirs));
+    expect(readStagedList()).toBe(joinNullDelimited(linuxDirectories));
     expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop);
     expect(child.unref).toHaveBeenCalledExactlyOnceWith();
   });
@@ -124,16 +126,16 @@ describe(removeSnapshotDirectoriesDetached, () => {
     rmSync.mockImplementationOnce(() => {
       throw new Error(" ");
     });
-    const linuxDir = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_PREPARE_DIRECTORY_NAME}/${TEST_FILENAME}`;
+    const linuxDirectory = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_PREPARE_DIRECTORY_NAME}/${TEST_FILENAME}`;
 
     removeSnapshotDirectoriesDetached([
       join(TEST_DIR, TEST_FILENAME),
-      createTestWslUnc(linuxDir, TEST_WSL_LEGACY_UNC_PREFIX),
+      createTestWslUnc(linuxDirectory, TEST_WSL_LEGACY_UNC_PREFIX),
     ]);
 
     expect(rmSync).toHaveBeenCalledTimes(1);
     expect(spawn).toHaveBeenCalledTimes(1);
     expect(takeOne(spawn.mock.calls)[0]).toBe("wsl.exe");
-    expect(readStagedList()).toBe(joinNullDelimited([linuxDir]));
+    expect(readStagedList()).toBe(joinNullDelimited([linuxDirectory]));
   });
 });

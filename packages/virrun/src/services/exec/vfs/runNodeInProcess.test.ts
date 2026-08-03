@@ -7,14 +7,14 @@ import { afterAll, describe, expect, test } from "vitest";
 
 describe(runNodeInProcess, () => {
   const temporaryDirectories = createTemporaryDirectoryTracker();
-  const dir = temporaryDirectories.create();
+  const directory = temporaryDirectories.create();
 
   afterAll(() => {
     temporaryDirectories.cleanup();
   });
 
   const writeScript = (source: string) => {
-    const file = join(dir, `${TEST_FILENAME}.cjs`);
+    const file = join(directory, `${TEST_FILENAME}.cjs`);
     writeFileSync(file, source);
     return file;
   };
@@ -48,10 +48,10 @@ describe(runNodeInProcess, () => {
 
     const result = runNodeInProcess(
       { code: "process.stdout.write(process.cwd())", file: "" },
-      { cwd: dir, stdio: "pipe" },
+      { cwd: directory, stdio: "pipe" },
     );
 
-    expect(result?.stdout).toBe(dir);
+    expect(result?.stdout).toBe(directory);
   });
 
   test("propagates the code passed to process.exit", () => {

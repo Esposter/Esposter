@@ -16,7 +16,7 @@ describe(submitTransactionBatches, () => {
     status: 202,
     subResponses: [],
   };
-  const entities = Array.from({ length: AZURE_MAX_BATCH_SIZE * 2 + 1 }, (_, index) => ({
+  const entities = Array.from({ length: AZURE_MAX_BATCH_SIZE * 2 + 1 }, (_value, index) => ({
     partitionKey,
     rowKey: String(index),
   }));

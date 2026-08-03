@@ -6,6 +6,7 @@ import { createDataSource } from "@/composables/resource/sheet/commands/createDa
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { computeAggregationValue } from "@/services/resource/sheet/column/computeAggregationValue";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(computeAggregationValue, () => {
@@ -13,6 +14,8 @@ describe(computeAggregationValue, () => {
   const rows = [createRow({ "": 10 }), createRow({ "": 20 }), createRow({ "": 30 }), createRow({ "": 40 })];
   const dataSource = createDataSource([sourceColumn], rows);
   const findSource = (sourceColumnId: string) => dataSource.columns.find(({ id }) => id === sourceColumnId);
+  const mixedRows = [createRow({ "": 10 }), createRow({ "": null }), createRow({ "": 20 })];
+  const allNullRows = [createRow({ "": null })];
 
   const createAggregationTransformation = (
     aggregationTransformationType: AggregationTransformationType,
@@ -96,12 +99,54 @@ describe(computeAggregationValue, () => {
     expect.hasAssertions();
 
     const transformation = createAggregationTransformation(AggregationTransformationType.RunningSummation);
-    const rowsWithNull = [createRow({ "": 10 }), createRow({ "": null }), createRow({ "": 20 })];
-    const dataSourceWithNull = createDataSource([sourceColumn], rowsWithNull);
-    const findSourceWithNull = (sourceColumnId: string) =>
-      dataSourceWithNull.columns.find(({ id }) => id === sourceColumnId);
 
-    expect(computeAggregationValue(dataSourceWithNull.rows, findSourceWithNull, transformation, 0)).toBe(10);
-    expect(computeAggregationValue(dataSourceWithNull.rows, findSourceWithNull, transformation, 2)).toBe(30);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(10);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 2)).toBe(30);
+  });
+
+  test(`${AggregationTransformationType.Average} averages non-null values and returns null when there are none`, () => {
+    expect.hasAssertions();
+
+    const transformation = createAggregationTransformation(AggregationTransformationType.Average);
+
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(25);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(15);
+    expect(computeAggregationValue([takeOne(rows, 0)], findSource, transformation, 0)).toBe(10);
+    expect(computeAggregationValue(allNullRows, findSource, transformation, 0)).toBeNull();
+    expect(computeAggregationValue([], findSource, transformation, 0)).toBeNull();
+  });
+
+  test(`${AggregationTransformationType.Count} counts rows whose source value is a number`, () => {
+    expect.hasAssertions();
+
+    const transformation = createAggregationTransformation(AggregationTransformationType.Count);
+
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(4);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(2);
+    expect(computeAggregationValue([createRow({ "": " " })], findSource, transformation, 0)).toBe(0);
+    expect(computeAggregationValue(allNullRows, findSource, transformation, 0)).toBe(0);
+    expect(computeAggregationValue([], findSource, transformation, 0)).toBe(0);
+  });
+
+  test(`${AggregationTransformationType.Maximum} returns the largest non-null value and null when there are none`, () => {
+    expect.hasAssertions();
+
+    const transformation = createAggregationTransformation(AggregationTransformationType.Maximum);
+
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(40);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(20);
+    expect(computeAggregationValue(allNullRows, findSource, transformation, 0)).toBeNull();
+    expect(computeAggregationValue([], findSource, transformation, 0)).toBeNull();
+  });
+
+  test(`${AggregationTransformationType.Minimum} returns the smallest non-null value and null when there are none`, () => {
+    expect.hasAssertions();
+
+    const transformation = createAggregationTransformation(AggregationTransformationType.Minimum);
+
+    expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(10);
+    expect(computeAggregationValue(mixedRows, findSource, transformation, 0)).toBe(10);
+    expect(computeAggregationValue(allNullRows, findSource, transformation, 0)).toBeNull();
+    expect(computeAggregationValue([], findSource, transformation, 0)).toBeNull();
   });
 });

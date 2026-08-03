@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { useAlertStore } from "@/store/alert";
 import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
@@ -54,7 +55,8 @@ describe(useMutation, () => {
 
     const onError = vi.fn<(error: Error) => void>();
     const { executeMutation } = useMutation();
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     const error = new Error("error");
     await executeMutation(() => Promise.reject(error), { key, onError });
 
@@ -62,29 +64,371 @@ describe(useMutation, () => {
     expect(alerts.value).toHaveLength(0);
   });
 
-  test("does not roll back a superseded call once a newer one has started", async () => {
+  test("queues writes to one target so each starts only after the one ahead of it settles", async () => {
     expect.hasAssertions();
 
-    const staleRollback = vi.fn<() => void>();
+    const startOrder: string[] = [];
     const { executeMutation } = useMutation();
-    const { alerts } = storeToRefs(useAlertStore());
-    let rejectStale: (reason: unknown) => void = noop;
-    const stale = executeMutation(
+    let resolveFirst: () => void = noop;
+    const first = executeMutation(
       () =>
-        new Promise<void>((_, reject) => {
-          rejectStale = reject;
+        new Promise<void>((resolve) => {
+          startOrder.push("first");
+          resolveFirst = resolve;
         }),
-      {
-        applyOptimistic: () => staleRollback,
-        key,
-      },
+      { key },
     );
-    await executeMutation(() => Promise.resolve(), { key });
-    rejectStale(new Error("error"));
-    await stale;
+    const second = executeMutation(
+      () => {
+        startOrder.push("second");
+        return Promise.resolve();
+      },
+      { key },
+    );
+    await flushPromises();
+    const startOrderWhileFirstInFlight = [...startOrder];
+    resolveFirst();
+    await Promise.all([first, second]);
 
-    expect(staleRollback).not.toHaveBeenCalled();
+    expect(startOrderWhileFirstInFlight).toStrictEqual(["first"]);
+    expect(startOrder).toStrictEqual(["first", "second"]);
+  });
+
+  test("runs every queued write's onSuccess rather than dropping the earlier one", async () => {
+    expect.hasAssertions();
+
+    const firstOnSuccess = vi.fn<() => void>();
+    const secondOnSuccess = vi.fn<() => void>();
+    const { executeMutation } = useMutation();
+    let resolveFirst: () => void = noop;
+    const first = executeMutation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveFirst = resolve;
+        }),
+      { key, onSuccess: firstOnSuccess },
+    );
+    const second = executeMutation(() => Promise.resolve(), { key, onSuccess: secondOnSuccess });
+    await flushPromises();
+    resolveFirst();
+    await Promise.all([first, second]);
+
+    expect(firstOnSuccess).toHaveBeenCalledTimes(1);
+    expect(secondOnSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  test("rolls back and alerts a queued write that fails behind another", async () => {
+    expect.hasAssertions();
+
+    const rollback = vi.fn<() => void>();
+    const { executeMutation } = useMutation();
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    let resolveFirst: () => void = noop;
+    const first = executeMutation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveFirst = resolve;
+        }),
+      { key },
+    );
+    const second = executeMutation(() => Promise.reject(new Error("error")), {
+      applyOptimistic: () => rollback,
+      key,
+    });
+    await flushPromises();
+    resolveFirst();
+    await Promise.all([first, second]);
+
+    expect(rollback).toHaveBeenCalledTimes(1);
+    expect(alerts.value).toHaveLength(1);
+  });
+
+  test("runs the next queued write once the one ahead of it fails", async () => {
+    expect.hasAssertions();
+
+    const mutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const { executeMutation } = useMutation();
+    let rejectFirst: (reason: unknown) => void = noop;
+    const first = executeMutation(
+      () =>
+        new Promise<void>((_resolve, reject) => {
+          rejectFirst = reject;
+        }),
+      { key, onError: noop },
+    );
+    const second = executeMutation(mutate, { key });
+    await flushPromises();
+    const isSecondStartedWhileFirstInFlight = mutate.mock.calls.length > 0;
+    rejectFirst(new Error("error"));
+    await Promise.all([first, second]);
+
+    expect(isSecondStartedWhileFirstInFlight).toBe(false);
+    expect(mutate).toHaveBeenCalledTimes(1);
+  });
+
+  test("runs writes to different targets concurrently", async () => {
+    expect.hasAssertions();
+
+    const startOrder: string[] = [];
+    const { executeMutation } = useMutation();
+    let resolveFirst: () => void = noop;
+    const first = executeMutation(
+      () =>
+        new Promise<void>((resolve) => {
+          startOrder.push("first");
+          resolveFirst = resolve;
+        }),
+      { key },
+    );
+    const second = executeMutation(
+      () => {
+        startOrder.push("second");
+        return Promise.resolve();
+      },
+      { key: otherKey },
+    );
+    await flushPromises();
+    const startOrderWhileFirstInFlight = [...startOrder];
+    resolveFirst();
+    await Promise.all([first, second]);
+
+    expect(startOrderWhileFirstInFlight).toStrictEqual(["first", "second"]);
+  });
+
+  test("rolls back and alerts a superseded write that fails", async () => {
+    expect.hasAssertions();
+
+    const rollback = vi.fn<() => void>();
+    const { executeMutation } = useMutation();
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    let rejectSuperseded: (reason: unknown) => void = noop;
+    const supersededWrite = executeMutation(
+      () =>
+        new Promise<void>((_resolve, reject) => {
+          rejectSuperseded = reject;
+        }),
+      { applyOptimistic: () => rollback, isSupersede: true, key },
+    );
+    await executeMutation(() => Promise.resolve(), { isSupersede: true, key });
+    rejectSuperseded(new Error("error"));
+    await supersededWrite;
+
+    expect(rollback).toHaveBeenCalledTimes(1);
+    expect(alerts.value).toHaveLength(1);
+  });
+
+  test("reports a superseded write as stale rather than succeeded", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation } = useMutation();
+    let resolveSuperseded: () => void = noop;
+    const supersededWrite = executeMutation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSuperseded = resolve;
+        }),
+      { isSupersede: true, key },
+    );
+    await executeMutation(() => Promise.resolve(), { isSupersede: true, key });
+    resolveSuperseded();
+
+    await expect(supersededWrite).resolves.toStrictEqual({ status: MutationStatus.Stale });
+  });
+
+  test("drops the superseded onSuccess for overlapping supersede writes with the same key", async () => {
+    expect.hasAssertions();
+
+    const supersededOnSuccess = vi.fn<() => void>();
+    const freshOnSuccess = vi.fn<() => void>();
+    const { executeMutation } = useMutation();
+    let resolveSuperseded: () => void = noop;
+    const supersededWrite = executeMutation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSuperseded = resolve;
+        }),
+      { isSupersede: true, key, onSuccess: supersededOnSuccess },
+    );
+    await executeMutation(() => Promise.resolve(), { isSupersede: true, key, onSuccess: freshOnSuccess });
+    resolveSuperseded();
+    await supersededWrite;
+
+    expect(supersededOnSuccess).not.toHaveBeenCalled();
+    expect(freshOnSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  test("runs reads for one target concurrently and keeps only the latest", async () => {
+    expect.hasAssertions();
+
+    const supersededOnSuccess = vi.fn<() => void>();
+    const freshOnSuccess = vi.fn<() => void>();
+    const { executeQuery } = useMutation();
+    let resolveSuperseded: () => void = noop;
+    const supersededRead = executeQuery(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSuperseded = resolve;
+        }),
+      { key, onSuccess: supersededOnSuccess },
+    );
+    await executeQuery(() => Promise.resolve(), { key, onSuccess: freshOnSuccess });
+    resolveSuperseded();
+
+    await expect(supersededRead).resolves.toStrictEqual({ status: MutationStatus.Stale });
+    expect(supersededOnSuccess).not.toHaveBeenCalled();
+    expect(freshOnSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  test("drops a superseded read's failure without alerting", async () => {
+    expect.hasAssertions();
+
+    const { executeQuery } = useMutation();
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    let rejectSuperseded: (reason: unknown) => void = noop;
+    const supersededRead = executeQuery(
+      () =>
+        new Promise<void>((_resolve, reject) => {
+          rejectSuperseded = reject;
+        }),
+      { key },
+    );
+    await executeQuery(() => Promise.resolve(), { key });
+    rejectSuperseded(new Error("error"));
+
+    await expect(supersededRead).resolves.toStrictEqual({ status: MutationStatus.Stale });
     expect(alerts.value).toHaveLength(0);
+  });
+
+  test("shares one in-flight exclusive read with the caller that joined it", async () => {
+    expect.hasAssertions();
+
+    const onSuccess = vi.fn<(result: string) => void>();
+    const joinedOnSuccess = vi.fn<(result: string) => void>();
+    const query = vi.fn<() => Promise<string>>();
+    const { executeQuery } = useMutation();
+    let resolveQuery: (result: string) => void = noop;
+    query.mockImplementationOnce(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveQuery = resolve;
+        }),
+    );
+    const inFlightRead = executeQuery(query, { isExclusive: true, key, onSuccess });
+    const joinedRead = executeQuery(query, { isExclusive: true, key, onSuccess: joinedOnSuccess });
+    await flushPromises();
+    resolveQuery("result");
+
+    await expect(joinedRead).resolves.toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+    await expect(inFlightRead).resolves.toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(onSuccess).toHaveBeenCalledExactlyOnceWith("result");
+    expect(joinedOnSuccess).not.toHaveBeenCalled();
+  });
+
+  test("reports an exclusive read's failure to the caller that joined it", async () => {
+    expect.hasAssertions();
+
+    const { executeQuery } = useMutation();
+    const error = new Error("error");
+    let rejectQuery: (reason: unknown) => void = noop;
+    const inFlightRead = executeQuery(
+      () =>
+        new Promise<void>((_resolve, reject) => {
+          rejectQuery = reject;
+        }),
+      { isExclusive: true, key, onError: noop },
+    );
+    const joinedRead = executeQuery(() => Promise.resolve(), { isExclusive: true, key, onError: noop });
+    await flushPromises();
+    rejectQuery(error);
+
+    await expect(joinedRead).resolves.toStrictEqual({ error, status: MutationStatus.Failed });
+    await expect(inFlightRead).resolves.toStrictEqual({ error, status: MutationStatus.Failed });
+  });
+
+  // The superseded read applies no state and runs no callback, so a caller that joined it would resolve holding
+  // Nothing — an empty list beside a populated one, which is the outcome isExclusive exists to prevent
+  test("issues its own exclusive read rather than joining one a later read superseded", async () => {
+    expect.hasAssertions();
+
+    const onSuccess = vi.fn<(result: string) => void>();
+    const { executeQuery } = useMutation();
+    let resolveExclusive: (result: string) => void = noop;
+    const exclusiveRead = executeQuery(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveExclusive = resolve;
+        }),
+      { isExclusive: true, key, onSuccess },
+    );
+    await executeQuery(() => Promise.resolve("replacement"), { key, onSuccess });
+    const joinedRead = executeQuery(() => Promise.resolve("joined"), { isExclusive: true, key, onSuccess });
+    resolveExclusive("exclusive");
+
+    await expect(joinedRead).resolves.toStrictEqual({ result: "joined", status: MutationStatus.Succeeded });
+    await expect(exclusiveRead).resolves.toStrictEqual({ status: MutationStatus.Stale });
+    expect(onSuccess.mock.calls).toStrictEqual([["replacement"], ["joined"]]);
+  });
+
+  // A superseded read's cleanup owns only the entry it registered itself — dropping the one a later exclusive
+  // Read put there sends the next caller to a duplicate request instead of the call already in flight
+  test("leaves a newer exclusive read joinable once the one it superseded settles", async () => {
+    expect.hasAssertions();
+
+    const duplicateQuery = vi.fn<() => Promise<string>>(() => Promise.resolve("duplicate"));
+    const { executeQuery } = useMutation();
+    let resolveSupersededQuery: (result: string) => void = noop;
+    let resolveNewerQuery: (result: string) => void = noop;
+    const supersededRead = executeQuery(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveSupersededQuery = resolve;
+        }),
+      { isExclusive: true, key },
+    );
+    await executeQuery(() => Promise.resolve("replacement"), { key });
+    const newerRead = executeQuery(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveNewerQuery = resolve;
+        }),
+      { isExclusive: true, key },
+    );
+    await flushPromises();
+    resolveSupersededQuery("superseded");
+    await supersededRead;
+    const joinedRead = executeQuery(duplicateQuery, { isExclusive: true, key });
+    resolveNewerQuery("newer");
+
+    await expect(joinedRead).resolves.toStrictEqual({ result: "newer", status: MutationStatus.Succeeded });
+    await expect(newerRead).resolves.toStrictEqual({ result: "newer", status: MutationStatus.Succeeded });
+    expect(duplicateQuery).not.toHaveBeenCalled();
+  });
+
+  test("issues a fresh exclusive read once the one it would have joined has settled", async () => {
+    expect.hasAssertions();
+
+    const query = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const { executeQuery } = useMutation();
+    await executeQuery(query, { isExclusive: true, key });
+    await executeQuery(query, { isExclusive: true, key });
+
+    expect(query).toHaveBeenCalledTimes(2);
+  });
+
+  test("alerts a read that fails while it is still the latest", async () => {
+    expect.hasAssertions();
+
+    const { executeQuery } = useMutation();
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    const outcome = await executeQuery(() => Promise.reject(new Error("error")), { key });
+
+    expect(outcome.status).toBe(MutationStatus.Failed);
+    expect(alerts.value).toHaveLength(1);
   });
 
   test("tracks pending state across a call's lifecycle", async () => {
@@ -92,7 +436,7 @@ describe(useMutation, () => {
 
     const { executeMutation, isPending } = useMutation();
     let resolveMutate: () => void = noop;
-    const pending = executeMutation(
+    const pendingWrite = executeMutation(
       () =>
         new Promise<void>((resolve) => {
           resolveMutate = resolve;
@@ -102,7 +446,7 @@ describe(useMutation, () => {
     const isPendingWhileInFlight = isPending.value;
     await flushPromises();
     resolveMutate();
-    await pending;
+    await pendingWrite;
 
     expect(isPendingWhileInFlight).toBe(true);
     expect(isPending.value).toBe(false);
@@ -113,7 +457,7 @@ describe(useMutation, () => {
 
     const { executeMutation, getIsPending, isPending } = useMutation();
     let resolveMutate: () => void = noop;
-    const pending = executeMutation(
+    const pendingWrite = executeMutation(
       () =>
         new Promise<void>((resolve) => {
           resolveMutate = resolve;
@@ -124,7 +468,7 @@ describe(useMutation, () => {
     const isOtherKeyPendingWhileInFlight = getIsPending(otherKey);
     await flushPromises();
     resolveMutate();
-    await pending;
+    await pendingWrite;
 
     expect(isKeyPendingWhileInFlight).toBe(true);
     expect(isOtherKeyPendingWhileInFlight).toBe(false);
@@ -186,6 +530,64 @@ describe(useMutation, () => {
     expect(getIsPending(key)).toBe(false);
   });
 
+  test("keeps a target's queue running after a write throws from a callback", async () => {
+    expect.hasAssertions();
+
+    const mutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const { executeMutation } = useMutation();
+
+    await expect(
+      executeMutation(() => Promise.resolve(), {
+        key,
+        onSuccess: () => {
+          throw new Error("error");
+        },
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
+    await executeMutation(mutate, { key });
+
+    expect(mutate).toHaveBeenCalledTimes(1);
+  });
+
+  test("reports the persisted result on success", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation } = useMutation();
+    const outcome = await executeMutation(() => Promise.resolve("result"), { key });
+
+    expect(outcome).toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+  });
+
+  test("reports the error on failure rather than throwing it", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation } = useMutation();
+    const error = new Error("error");
+    const outcome = await executeMutation(() => Promise.reject(error), { key, onError: noop });
+
+    expect(outcome).toStrictEqual({ error, status: MutationStatus.Failed });
+  });
+
+  test("reports a dropped exclusive call as distinct from success", async () => {
+    expect.hasAssertions();
+
+    const { executeMutation } = useMutation();
+    let resolveFirst: () => void = noop;
+    const first = executeMutation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveFirst = resolve;
+        }),
+      { isExclusive: true, key },
+    );
+    await flushPromises();
+    const outcome = await executeMutation(() => Promise.resolve(), { isExclusive: true, key });
+    resolveFirst();
+    await first;
+
+    expect(outcome).toStrictEqual({ status: MutationStatus.Dropped });
+  });
+
   test("drops a concurrent exclusive call with the same key", async () => {
     expect.hasAssertions();
 
@@ -210,8 +612,8 @@ describe(useMutation, () => {
   test("runs onSuccess for overlapping calls with different keys", async () => {
     expect.hasAssertions();
 
-    const staleOnSuccess = vi.fn<() => void>();
-    const freshOnSuccess = vi.fn<() => void>();
+    const firstOnSuccess = vi.fn<() => void>();
+    const secondOnSuccess = vi.fn<() => void>();
     const { executeMutation } = useMutation();
     let resolveFirst: () => void = noop;
     const first = executeMutation(
@@ -219,35 +621,13 @@ describe(useMutation, () => {
         new Promise<void>((resolve) => {
           resolveFirst = resolve;
         }),
-      { key, onSuccess: staleOnSuccess },
+      { key, onSuccess: firstOnSuccess },
     );
-    await executeMutation(() => Promise.resolve(), { key: otherKey, onSuccess: freshOnSuccess });
+    await executeMutation(() => Promise.resolve(), { key: otherKey, onSuccess: secondOnSuccess });
     resolveFirst();
     await first;
 
-    expect(staleOnSuccess).toHaveBeenCalledTimes(1);
-    expect(freshOnSuccess).toHaveBeenCalledTimes(1);
-  });
-
-  test("drops the superseded onSuccess for overlapping calls with the same key", async () => {
-    expect.hasAssertions();
-
-    const staleOnSuccess = vi.fn<() => void>();
-    const freshOnSuccess = vi.fn<() => void>();
-    const { executeMutation } = useMutation();
-    let resolveStale: () => void = noop;
-    const stale = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveStale = resolve;
-        }),
-      { key, onSuccess: staleOnSuccess },
-    );
-    await executeMutation(() => Promise.resolve(), { key, onSuccess: freshOnSuccess });
-    resolveStale();
-    await stale;
-
-    expect(staleOnSuccess).not.toHaveBeenCalled();
-    expect(freshOnSuccess).toHaveBeenCalledTimes(1);
+    expect(firstOnSuccess).toHaveBeenCalledTimes(1);
+    expect(secondOnSuccess).toHaveBeenCalledTimes(1);
   });
 });

@@ -9,12 +9,12 @@ Follow a thread and receive a push notification whenever someone replies to it, 
 
 ## How it works
 
-Replying to a message is an implicit follow (Discord behaviour), and a bell toggle on the thread header is the explicit follow. Both write a row to `threadFollowsInMessage`. When a reply lands, the room's followers of that thread — everyone except the replier and anyone whose room notification preference is `Never` — receive a push notification through the existing web-push pipeline.
+Replying to a message is an implicit follow (Discord behaviour) for the replier **and for the root message's author**, and a bell toggle on the thread header is the explicit follow. All three write a row to `threadFollowsInMessage`. Following the replier alone would leave the one member the thread belongs to as the only one the pipeline never reaches, while anyone who merely replied once keeps being told. When a reply lands, the room's followers of that thread — everyone except the replier and anyone whose room notification preference is `Never` — receive a push notification through the existing web-push pipeline.
 
 ```mermaid
 flowchart TD
   R["createMessage with replyRowKey"] --> P["persist the reply — Azure Table"]
-  P --> AF["auto-follow the replier — onConflictDoNothing"]
+  P --> AF["auto-follow the replier and the root's author — onConflictDoNothing"]
   P --> Q["getPushSubscriptionsForThreadFollowers"]
   Q -->|followers exist| E["EventGrid ProcessThreadReplyNotification"]
   E --> F["azure-functions web-push to followers"]

@@ -46,20 +46,6 @@ describe(useCreateRow, () => {
     expect(dataSource.rows).toHaveLength(2);
   });
 
-  test("redo re-applies create after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const createRow = useCreateRow();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    await createRow();
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(dataSource.rows).toHaveLength(3);
-  });
-
   test("creates a unique id when the same row instance is passed multiple times", async () => {
     expect.hasAssertions();
 

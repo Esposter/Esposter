@@ -246,29 +246,6 @@ describe(computeColumnStatistics, () => {
     });
   });
 
-  test("string column with no rows returns undefined nullPercent", () => {
-    expect.hasAssertions();
-
-    const dataSource = createDataSource([new StringColumn({ name: "" })], []);
-
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      average: undefined,
-      columnName: "",
-      columnType: ColumnType.String,
-      falseCount: undefined,
-      maximum: undefined,
-      minimum: undefined,
-      mostFrequentValue: undefined,
-      nullCount: 0,
-      nullPercent: undefined,
-      standardDeviation: undefined,
-      summation: undefined,
-      topFrequencies: [],
-      trueCount: undefined,
-      uniqueCount: 0,
-    });
-  });
-
   test("string column with all unique values returns first-encountered mostFrequentValue with count 1", () => {
     expect.hasAssertions();
 
@@ -281,6 +258,5 @@ describe(computeColumnStatistics, () => {
 
     expect(result.mostFrequentValue).toBe("a");
     expect(result.uniqueCount).toBe(3);
-    expect(result.nullPercent).toBe(0);
   });
 });

@@ -37,10 +37,10 @@ describe(computeEnvironmentKey, () => {
     expect.hasAssertions();
 
     getSandboxNodeVersion.mockReturnValue("v26.5.0");
-    const before = computeEnvironmentKey(createWorkspace(lockfileContent));
+    const beforeKey = computeEnvironmentKey(createWorkspace(lockfileContent));
     getSandboxNodeVersion.mockReturnValue("v27.0.0");
 
-    expect(computeEnvironmentKey(createWorkspace(lockfileContent))).not.toBe(before);
+    expect(computeEnvironmentKey(createWorkspace(lockfileContent))).not.toBe(beforeKey);
   });
 
   test("throws when the sandbox node probe comes back empty, so the sweep never runs on a degraded key", () => {
@@ -64,9 +64,9 @@ describe(computeEnvironmentKey, () => {
     expect.hasAssertions();
 
     getSandboxNodeVersion.mockReturnValue("v26.5.0");
-    const before = computeEnvironmentKey(createWorkspace(lockfileContent));
+    const beforeKey = computeEnvironmentKey(createWorkspace(lockfileContent));
     getSandboxNodeVersion.mockReturnValue("v26.9.1");
 
-    expect(computeEnvironmentKey(createWorkspace(lockfileContent))).toBe(before);
+    expect(computeEnvironmentKey(createWorkspace(lockfileContent))).toBe(beforeKey);
   });
 });

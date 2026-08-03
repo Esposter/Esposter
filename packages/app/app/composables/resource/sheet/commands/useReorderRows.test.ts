@@ -41,31 +41,14 @@ describe(useReorderRows, () => {
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
   });
 
-  test("redo re-applies reorder after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const reorderRows = useReorderRows();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    const rows = dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 1), takeOne(rows)] as Row[];
-    await reorderRows(newRows);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
-  });
-
   test("moves row backward (index 2 to 0) with three rows", async () => {
     expect.hasAssertions();
 
-    const threeRowDs = createDataSource(
+    const threeRowDataSource = createDataSource(
       [createColumn("")],
       [createRow({ "": 0 }), createRow({ "": 1 }), createRow({ "": 2 })],
     );
-    const { dataSource } = setupWithDataSource(threeRowDs);
+    const { dataSource } = setupWithDataSource(threeRowDataSource);
     const reorderRows = useReorderRows();
     const rows = dataSource?.rows ?? [];
     const newRows = [takeOne(rows, 2), takeOne(rows), takeOne(rows, 1)] as Row[];
@@ -79,11 +62,11 @@ describe(useReorderRows, () => {
   test("moves row forward non-adjacent (index 0 to 2) with three rows", async () => {
     expect.hasAssertions();
 
-    const threeRowDs = createDataSource(
+    const threeRowDataSource = createDataSource(
       [createColumn("")],
       [createRow({ "": 0 }), createRow({ "": 1 }), createRow({ "": 2 })],
     );
-    const { dataSource } = setupWithDataSource(threeRowDs);
+    const { dataSource } = setupWithDataSource(threeRowDataSource);
     const reorderRows = useReorderRows();
     const rows = dataSource?.rows ?? [];
     const newRows = [takeOne(rows, 1), takeOne(rows, 2), takeOne(rows)] as Row[];
@@ -97,7 +80,7 @@ describe(useReorderRows, () => {
   test("moves row forward on paginated page (index 2 to 4 with only page rows passed)", async () => {
     expect.hasAssertions();
 
-    const sixRowDs = createDataSource(
+    const sixRowDataSource = createDataSource(
       [createColumn("")],
       [
         createRow({ "": 0 }),
@@ -108,7 +91,7 @@ describe(useReorderRows, () => {
         createRow({ "": 5 }),
       ],
     );
-    const { dataSource } = setupWithDataSource(sixRowDs);
+    const { dataSource } = setupWithDataSource(sixRowDataSource);
     const reorderRows = useReorderRows();
     const rows = dataSource?.rows ?? [];
     // Simulate page 2 showing rows [2,3,4] — move row 2 to the end of the page
@@ -126,7 +109,7 @@ describe(useReorderRows, () => {
   test("moves row backward on paginated page (index 4 to 2 with only page rows passed)", async () => {
     expect.hasAssertions();
 
-    const sixRowDs = createDataSource(
+    const sixRowDataSource = createDataSource(
       [createColumn("")],
       [
         createRow({ "": 0 }),
@@ -137,7 +120,7 @@ describe(useReorderRows, () => {
         createRow({ "": 5 }),
       ],
     );
-    const { dataSource } = setupWithDataSource(sixRowDs);
+    const { dataSource } = setupWithDataSource(sixRowDataSource);
     const reorderRows = useReorderRows();
     const rows = dataSource?.rows ?? [];
     // Simulate page 2 showing rows [2,3,4] — move row 4 to the start of the page

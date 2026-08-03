@@ -30,7 +30,7 @@ vi.mock(import("@/services/exec/snapshot/removeSnapshotDirectory"), () => ({
 describe(persistRun, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   const PLAN: FlushOp[] = [];
-  const HOST_DIR = "/host";
+  const HOST_DIRECTORY = "/host";
   const exec = vi.fn<ExecBackend["exec"]>();
   const backend: ExecBackend = { exec, name: BackendType.Os };
   // Typed to persistRun's own onPersist param so the mock returns void (an untyped vi.fn returns any, which trips
@@ -53,14 +53,14 @@ describe(persistRun, () => {
 
     exec.mockResolvedValue({ exitCode: 0, stderr: "", stdout: "" });
 
-    const result = await persistRun(backend, "oxfmt", { cwd: HOST_DIR, stdio: "pipe" }, [], [], onPersist);
+    const result = await persistRun(backend, "oxfmt", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
 
     expect(result.exitCode).toBe(0);
 
     // The per-run upper dir is a random mkdtemp path; capture it to assert the same dir threads into onPersist.
     const [upperDir] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
 
-    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIR, PLAN);
+    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIRECTORY, PLAN);
     expect(onPersist).toHaveBeenCalledExactlyOnceWith(upperDir, PLAN, { exitCode: 0, stderr: "", stdout: "" });
   });
 
@@ -69,13 +69,13 @@ describe(persistRun, () => {
 
     exec.mockResolvedValue({ exitCode: 1, stderr: "", stdout: "" });
 
-    const result = await persistRun(backend, "eslint --fix", { cwd: HOST_DIR, stdio: "pipe" }, [], [], onPersist);
+    const result = await persistRun(backend, "eslint --fix", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
 
     expect(result.exitCode).toBe(1);
 
     const [upperDir] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
 
-    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIR, PLAN);
+    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIRECTORY, PLAN);
     expect(onPersist).not.toHaveBeenCalled();
   });
 
@@ -84,7 +84,7 @@ describe(persistRun, () => {
 
     exec.mockResolvedValue({ exitCode: 1, stderr: "", stdout: "" });
 
-    await persistRun(backend, "eslint --fix", { cwd: HOST_DIR, stdio: "pipe" });
+    await persistRun(backend, "eslint --fix", { cwd: HOST_DIRECTORY, stdio: "pipe" });
 
     expect(removeSnapshotDirectory).toHaveBeenCalledTimes(2);
   });

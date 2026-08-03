@@ -10,7 +10,8 @@ interface ThreadsListItemProps {
 
 const { thread } = defineProps<ThreadsListItemProps>();
 const creator = useCreator(() => thread);
-const { openThread } = useThreadStore();
+const threadStore = useThreadStore();
+const { openThread } = threadStore;
 </script>
 
 <template>

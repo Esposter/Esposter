@@ -9,11 +9,11 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(createLease, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  let hashDir = "";
-  const leaseFileFor = (pid: number): string => join(hashDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(pid));
+  let hashDirectory = "";
+  const leaseFileFor = (pid: number): string => join(hashDirectory, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(pid));
 
   beforeEach(() => {
-    hashDir = create();
+    hashDirectory = create();
   });
 
   afterEach(cleanup);
@@ -21,7 +21,7 @@ describe(createLease, () => {
   test(`writes a lease for the current pid and releases it on demand`, () => {
     expect.hasAssertions();
 
-    const lease = createLease(hashDir);
+    const lease = createLease(hashDirectory);
     const leaseFile = leaseFileFor(process.pid);
 
     expect(existsSync(leaseFile)).toBe(true);
@@ -34,9 +34,9 @@ describe(createLease, () => {
   test(`self-heals a dead lease left in the live dir`, () => {
     expect.hasAssertions();
 
-    const deadLease = writeLeaseFile(join(hashDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME), DEAD_PID);
+    const deadLease = writeLeaseFile(join(hashDirectory, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME), DEAD_PID);
 
-    createLease(hashDir);
+    createLease(hashDirectory);
 
     expect(existsSync(deadLease)).toBe(false);
     expect(existsSync(leaseFileFor(process.pid))).toBe(true);
@@ -45,7 +45,7 @@ describe(createLease, () => {
   test(`release does not throw when the lease is already gone`, () => {
     expect.hasAssertions();
 
-    const lease = createLease(hashDir);
+    const lease = createLease(hashDirectory);
     lease.release();
 
     expect(() => {

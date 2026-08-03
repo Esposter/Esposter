@@ -52,7 +52,7 @@ describe(errorLink, () => {
   const rejectThrough = async (code: string, isBackground = false) => {
     const error = createTrpcClientError(code);
     const link = errorLink({ op: { context: {} } });
-    const op: Operation = {
+    const operation: Operation = {
       context: { isBackground },
       id: 1,
       input: undefined,
@@ -66,7 +66,7 @@ describe(errorLink, () => {
           observable((observer) => {
             observer.error(error);
           }),
-        op,
+        op: operation,
       }).subscribe({
         error: () => {
           resolve();
@@ -103,7 +103,8 @@ describe(errorLink, () => {
     // The regression this guards: the link declined every background op wholesale while `getIsAlertedByErrorLink`
     // Still reported the code as its own, so an attachment read rejected by the rate limiter rolled the optimistic
     // Bubble back out of the room with no toast from either side
-    const { alerts } = storeToRefs(useAlertStore());
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
     await rejectThrough("TOO_MANY_REQUESTS", true);
 
     expect(alerts.value).toHaveLength(1);

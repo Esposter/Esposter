@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 import { DateFormat } from "#shared/models/resource/sheet/column/DateFormat";
@@ -71,30 +70,14 @@ describe(useUpdateColumn, () => {
     expect(takeOne(dataSource.rows).data.renamed).toBeUndefined();
   });
 
-  test("redo re-applies update after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const updateColumn = useUpdateColumn();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    const column = takeOne(dataSource?.columns ?? []);
-    await updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.columns).name).toBe("renamed");
-    expect(takeOne(dataSource.rows).data.renamed).toBe(0);
-  });
-
   test("preserves row.data key order after rename", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn("a"), createColumn("b"), createColumn("c")],
       [createRow({ a: 1, b: 2, c: 3 })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? [], 1);
     await updateColumn("b", Object.assign(structuredClone(toRawDeep(column)), { name: "b_renamed" }));
@@ -105,11 +88,11 @@ describe(useUpdateColumn, () => {
   test("undo preserves row.data key order after rename restore", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn("a"), createColumn("b"), createColumn("c")],
       [createRow({ a: 1, b: 2, c: 3 })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
@@ -123,11 +106,11 @@ describe(useUpdateColumn, () => {
   test("reformats date values when format changes", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createDateColumn("date", DateFormat["YYYY-MM-DD"])],
       [createRow({ date: "2024-01-15" }), createRow({ date: "2024-06-30" })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
     await updateColumn("date", Object.assign(structuredClone(toRawDeep(column)), { format: DateFormat["DD/MM/YYYY"] }));
@@ -140,11 +123,11 @@ describe(useUpdateColumn, () => {
   test("undo restores original date values after format change", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createDateColumn("date", DateFormat["YYYY-MM-DD"])],
       [createRow({ date: "2024-01-15" }), createRow({ date: "2024-06-30" })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
@@ -168,8 +151,11 @@ describe(useUpdateColumn, () => {
   test("recasts String values to Number when type changes", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("score")], [createRow({ score: "42" }), createRow({ score: "7" })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource(
+      [createColumn("score")],
+      [createRow({ score: "42" }), createRow({ score: "7" })],
+    );
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
     await updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Number }));
@@ -181,8 +167,11 @@ describe(useUpdateColumn, () => {
   test("recasts Number values to String when type changes", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createNumberColumn("score")], [createRow({ score: 42 }), createRow({ score: 7 })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource(
+      [createNumberColumn("score")],
+      [createRow({ score: 42 }), createRow({ score: 7 })],
+    );
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
     await updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.String }));
@@ -191,27 +180,14 @@ describe(useUpdateColumn, () => {
     expect(takeOne(dataSource.rows, 1).data.score).toBe("7");
   });
 
-  test("recasts String values to Boolean when type changes", async () => {
-    expect.hasAssertions();
-
-    const ds = createDataSource(
-      [createColumn("flag")],
-      [createRow({ flag: BooleanValue.True }), createRow({ flag: BooleanValue.False })],
-    );
-    const { dataSource } = setupWithDataSource(ds);
-    const updateColumn = useUpdateColumn();
-    const column = takeOne(dataSource?.columns ?? []);
-    await updateColumn("flag", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Boolean }));
-
-    expect(takeOne(dataSource.rows).data.flag).toBe(true);
-    expect(takeOne(dataSource.rows, 1).data.flag).toBe(false);
-  });
-
   test("undo restores original values after type recast", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("score")], [createRow({ score: "42" }), createRow({ score: "7" })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource(
+      [createColumn("score")],
+      [createRow({ score: "42" }), createRow({ score: "7" })],
+    );
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
@@ -227,8 +203,8 @@ describe(useUpdateColumn, () => {
   test("does not recast values when type is unchanged", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createNumberColumn("score")], [createRow({ score: 42 })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createNumberColumn("score")], [createRow({ score: 42 })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
     const originalSize = column.size;

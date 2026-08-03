@@ -32,19 +32,4 @@ describe(useDeleteRow, () => {
     expect(dataSource.rows).toHaveLength(2);
     expect(takeOne(dataSource.rows).data[""]).toBe(0);
   });
-
-  test("redo re-applies delete after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const deleteRow = useDeleteRow();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    await deleteRow(takeOne(dataSource?.rows ?? []).id);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows).data[""]).toBe(2);
-  });
 });

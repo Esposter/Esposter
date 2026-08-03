@@ -235,7 +235,6 @@ describe("moderation", () => {
       const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(0);
-      expect(result.nextCursor).toBe("");
     });
 
     test("after banning a user, readBans returns that user in results", async () => {

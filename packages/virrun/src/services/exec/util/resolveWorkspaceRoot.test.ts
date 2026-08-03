@@ -25,10 +25,10 @@ describe(resolveWorkspaceRoot, () => {
     expect.hasAssertions();
 
     const root = createWorkspace();
-    const nested = join(root, TEST_FILENAME, TEST_FILENAME);
-    mkdirSync(nested, { recursive: true });
+    const nestedDirectory = join(root, TEST_FILENAME, TEST_FILENAME);
+    mkdirSync(nestedDirectory, { recursive: true });
 
-    expect(resolveWorkspaceRoot(nested)).toBe(root);
+    expect(resolveWorkspaceRoot(nestedDirectory)).toBe(root);
   });
 
   test("throws when no lockfile exists up the tree", () => {

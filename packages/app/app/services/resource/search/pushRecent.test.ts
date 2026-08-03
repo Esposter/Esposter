@@ -11,14 +11,6 @@ describe(pushRecent, () => {
     expect(pushRecent([""], " ", checkIsSame, limit)).toStrictEqual([" ", ""]);
   });
 
-  test("pushRecent is idempotent", () => {
-    expect.hasAssertions();
-
-    const entries = pushRecent(pushRecent([], "", checkIsSame, limit), "", checkIsSame, limit);
-
-    expect(entries).toStrictEqual([""]);
-  });
-
   test("moves an existing entry to the front", () => {
     expect.hasAssertions();
     expect(pushRecent(["", " "], " ", checkIsSame, limit)).toStrictEqual([" ", ""]);

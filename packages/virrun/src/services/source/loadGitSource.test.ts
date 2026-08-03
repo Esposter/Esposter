@@ -54,20 +54,20 @@ describe(loadGitSource, () => {
   test("throws InvalidOperationError with git's stderr when the clone fails", async () => {
     expect.hasAssertions();
 
-    const missingRepo = join(temporaryDirectories.create(), TEST_FILENAME);
+    const missingRepository = join(temporaryDirectories.create(), TEST_FILENAME);
     const destination = temporaryDirectories.create();
     // Reconstruct the expected message from a live `-q` clone of the same missing repo: its stderr references
     // Only the source, never the random destination, so the snapshot is exact on every platform without
     // Hard-coding git's wording.
     const { exitCode, stderr } = await backend.exec(
-      ["git", "clone", "-q", "--depth", "1", "--", missingRepo, destination],
+      ["git", "clone", "-q", "--depth", "1", "--", missingRepository, destination],
       { cwd: "", stdio: "pipe" },
     );
 
     await expect(
-      loadGitSource({ ref: "", repo: missingRepo, type: SourceType.Git }),
+      loadGitSource({ ref: "", repo: missingRepository, type: SourceType.Git }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, missingRepo, `git clone failed (exit ${exitCode}): ${stderr}`).message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, missingRepository, `git clone failed (exit ${exitCode}): ${stderr}`).message}]`,
     );
   });
 });

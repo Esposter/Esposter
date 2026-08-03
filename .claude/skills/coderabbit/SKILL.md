@@ -7,11 +7,19 @@ description: Esposter CodeRabbit review conventions — retrieving review feedba
 
 ## Config Is Read From the PR Base Branch
 
-`.coderabbit.yaml` sits at the repo root. CodeRabbit reads it from the **base branch** of a PR, not the head branch. **PRs target `develop`, so `develop` is the branch that matters** — an exclusion only takes effect once it is on the branch the PR is based against.
+`.coderabbit.yaml` sits at the repo root. CodeRabbit reads it from the **base branch** of a PR, not the head branch. An exclusion only takes effect once it is on the branch the PR is based against, so **read the base off the PR rather than assuming it** — feature PRs target `develop`, but the long-lived release PR is `develop` → `main`, and for that one exclusions must land on `main`:
 
-CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**: develop-base PRs are skipped with "Auto reviews are disabled on base/target branches other than the default branch" unless `reviews.auto_review.base_branches` lists `develop` (regex list, additive to the default branch). Until that setting lands, trigger a review on a develop-base PR manually by commenting `@coderabbitai review` on it.
+```bash
+gh pr view <pr> --json baseRefName --jq .baseRefName   # the branch whose config applies
+```
 
-Commit exclusions **directly to the base branch (`develop`)** as a standalone commit, separate from the work they cover. An exclusion committed on the feature branch does nothing.
+Editing that branch does not mean checking it out over your work: `git worktree add <scratch-path> <base-branch>`, commit the config change there, push, then `git worktree remove`. The working tree keeps whatever is in flight — which matters when agents are mid-edit in it. Rebase inside the worktree before pushing; the base branch moves under you (Renovate).
+
+CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**: develop-base PRs are skipped with "Auto reviews are disabled on base/target branches other than the default branch". Trigger a review on a develop-base PR manually by commenting `@coderabbitai review` on it.
+
+**Never add `reviews.auto_review.base_branches` to `.coderabbit.yaml`.** Manual triggering on develop-base PRs is deliberate, not a gap waiting to be closed: it keeps control of _when_ a review starts, which is what makes the never-push-into-a-running-review rule below workable, and it stops every intermediate push from spending a rate-limit slot. A skipped develop-base PR is the configured behaviour — if a PR was not reviewed, comment `@coderabbitai review`, do not change the config. This entry exists because the setting reads like an obvious fix and has been "helpfully" added before.
+
+Commit exclusions **directly to the PR's base branch** — the `baseRefName` read above, not a hard-coded `develop` — as a standalone commit, separate from the work they cover. An exclusion committed on the head branch does nothing.
 
 The two branches diverge and that is expected: `develop` carries the live temporary exclusion block, `main` carries only the permanent entries (it picks up the block on release merges and loses it when the block is removed). Always check the branch you are actually on:
 
@@ -111,6 +119,17 @@ Exclude only files with **no reviewable content change**. Two kinds qualify:
 
 A file that was renamed _and_ carries a real logic change still needs review. When in doubt, leave it in.
 
+**Being over budget is never a reason to exclude a file.** Over budget is a chunking problem: split the work into a second PR, or land it in stages so each incremental review cycle stays under the cap (§PR File Budget). Excluding substantive files buys a smaller review, not a better one — the diff still ships, just unread.
+
+Never excludable, whatever the budget:
+
+- **Documentation** (`packages/app/content/docs/**`) — docs are the design record, not commentary. A wrong standard there propagates into every change built on it afterward, and prose is precisely what a human reviewer catches and no typechecker can.
+- **Agent skills** (`.claude/skills/**`) — a skill binds every future agent session. An unreviewed wrong rule is worse than unreviewed wrong code, because it silently authors more wrong code.
+- **Tests** (`*.test.ts`, `*.test-d.ts`) — tests are the behaviour contract. One asserting the wrong thing is a defect that passes CI forever, and "the source it covers is still reviewed" does not catch it — the reviewer sees green assertions and infers the intent from them.
+- **Config, schema, and migration inputs** — small diffs with large blast radius.
+
+The rule reduces to: exclude a file only when its diff carries no information a reviewer could act on. Anything else stays in, and the PR gets smaller instead.
+
 ## Generating the List
 
 `R100` is git's marker for a rename with no content change — it gets you the pure-rename subset for free:
@@ -119,7 +138,51 @@ A file that was renamed _and_ carries a real logic change still needs review. Wh
 git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 "\""}' | sort
 ```
 
-Rename-token-only edits are not `R100` (they have a content diff), so they can't be auto-detected — review those diffs and add them by hand.
+Rename-token-only edits are not `R100` (they have a content diff), but when the sweep landed as **its own commit** they can be classified **exactly** — by replaying the substitution and demanding the result reproduce the committed blob byte-for-byte. Never classify by line counts: a token substitution rewrites each affected line in place, so `--numstat` is symmetric, but a balanced logic edit is symmetric too and the filter cannot tell them apart.
+
+Set `SED` to the sweep's substitutions (one `-e` per rename) — GNU sed, whose `\b` word boundary the identifier substitutions rely on — then:
+
+```bash
+set -euo pipefail
+SHA=<rename-sha> SED='s/\bOldName\b/NewName/g'
+# a partial path list silently under-protects files, so build it in a checked loop rather than
+# `grep -v | xargs` — an empty commit list must not fall through to `git show` on HEAD
+otherPaths=$(mktemp)
+trap 'rm -f "$otherPaths"' EXIT
+# every sibling commit in the range, not just one — a file any of them touched is reviewable
+git rev-list <base>..<head> | while IFS= read -r commit; do
+  [ "$commit" = "$SHA" ] && continue
+  git show --name-only --format="" "$commit"
+done | sort -u > "$otherPaths"
+git diff -M --name-status "$SHA^" "$SHA" | while IFS=$'\t' read -r status old new; do
+  # R carries old and new paths; M reuses the one path. A/D are content decisions, never mechanical
+  case "$status" in
+    R*) path_old="$old"; path_new="$new" ;;
+    M)  path_old="$old"; path_new="$old" ;;
+    *)  continue ;;
+  esac
+  # both paths are tested: a rename out of a protected tree is still a change to that tree, and a
+  # sibling commit that touched the pre-rename path is a content change this file carries
+  isKept=""
+  for path in "$path_old" "$path_new"; do
+    # §When to Exclude never lets these out, whatever the diff says
+    case "$path" in
+      *.test.ts|*.test-d.ts|packages/app/content/docs/*|.claude/skills/*) isKept=1 ;;
+      *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|packages/app/server/db/migrations/*) isKept=1 ;;
+    esac
+    grep -qxF "$path" "$otherPaths" && isKept=1
+  done
+  [ -n "$isKept" ] && continue
+  # exact: replaying the substitution on the parent must reproduce the committed blob
+  if git show "$SHA^:$path_old" | sed "$SED" | cmp -s - <(git show "$SHA:$path_new"); then
+    echo "    - \"!$path_new\""
+  fi
+done
+```
+
+`cmp` is the whole guarantee: if replaying the substitution reproduces the file exactly, there is by construction no other content change, so this cannot admit a balanced logic edit. It errs only toward keeping files reviewable — a rename that forced a reformatter rewrap, or a sweep whose `SED` you under-specified, fails the compare and stays in. On a multi-hundred-file sweep the line-symmetry filter it replaces admitted roughly two-thirds of the commit on no evidence at all, where the replay admits only files whose every changed line it can account for.
+
+If the sweep is mixed into a commit carrying other work, there is no parent blob to replay against — read the diffs by hand.
 
 Verify the count matches what you expect before committing, and validate the result parses:
 

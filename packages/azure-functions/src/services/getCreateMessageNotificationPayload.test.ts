@@ -1,6 +1,7 @@
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { InvocationContext } from "@azure/functions";
 import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
+import { jsonDateParse } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
 describe(getCreateMessageNotificationPayload, () => {
@@ -39,8 +40,8 @@ describe(getCreateMessageNotificationPayload, () => {
     const result = getCreateMessageNotificationPayload(context, `<p>${longText}</p>`, { url });
 
     assert.exists(result);
-    const parsed = JSON.parse(result);
+    const parsedPayload = jsonDateParse<{ body: string }>(result);
 
-    expect(parsed.body.length).toBeLessThanOrEqual(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH);
+    expect(parsedPayload.body.length).toBeLessThanOrEqual(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH);
   });
 });

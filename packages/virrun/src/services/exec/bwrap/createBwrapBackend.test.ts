@@ -116,7 +116,7 @@ describe(createBwrapBackend, () => {
     const trailer = `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":0}\n${WSL_BWRAP_STATUS_END}`;
     // Cut inside the BEGIN marker (< marker length into the trailer) so it genuinely spans two chunks.
     const splitIndex = firstChunk.length + secondChunk.length + Math.floor(WSL_BWRAP_STATUS_BEGIN.length / 2);
-    const full = `${firstChunk}${secondChunk}${trailer}`;
+    const fullStderr = `${firstChunk}${secondChunk}${trailer}`;
     const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
     spawn.mockImplementation(() => {
       const child = new EventEmitter();
@@ -126,8 +126,8 @@ describe(createBwrapBackend, () => {
         stderrStream.emit("data", Buffer.from(firstChunk));
         stderrStream.emit("data", Buffer.from(secondChunk));
         // The status marker is split mid-marker across two chunks; neither half may leak to the host.
-        stderrStream.emit("data", Buffer.from(full.slice(firstChunk.length + secondChunk.length, splitIndex)));
-        stderrStream.emit("data", Buffer.from(full.slice(splitIndex)));
+        stderrStream.emit("data", Buffer.from(fullStderr.slice(firstChunk.length + secondChunk.length, splitIndex)));
+        stderrStream.emit("data", Buffer.from(fullStderr.slice(splitIndex)));
         child.emit("close");
       });
       return child as unknown as ChildProcess;

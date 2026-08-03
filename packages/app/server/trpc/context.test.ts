@@ -90,15 +90,15 @@ const createSession = (userId: string): Session => {
 };
 
 export const createMockContext = async (): Promise<Context> => {
-  const req = new IncomingMessage(new Socket());
-  req.headers = {
+  const request = new IncomingMessage(new Socket());
+  request.headers = {
     "x-forwarded-for": "::1",
   };
   return {
     db: await createMockDb(),
-    headers: new Headers(Object.entries(req.headers as Record<string, string>)),
-    req,
-    res: new ServerResponse(req),
+    headers: new Headers(Object.entries(request.headers as Record<string, string>)),
+    req: request,
+    res: new ServerResponse(request),
   };
 };
 

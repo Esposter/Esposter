@@ -66,6 +66,19 @@ await readFoos();
 - Which pagination helper a store uses (single list vs per-key lists) is the `pinia` skill's ("Cursor Pagination in Stores").
 - The endpoint-side input schemas are the `trpc` skill's ("Pagination Params Schemas").
 
+### A keyed read is bound to its key when it is issued, not when it lands
+
+`useCursorPaginationDataMap` takes a **binder**, not a ref: it resolves the current key once, up front, and the operation writes through that. So a read issued for room A files under A even when the user has already switched to B — `readItems` and `readMoreItems` give this for free and a `useRead*` composable needs nothing.
+
+This is why the ambient `data` ref must never be assigned after an await. `useDataMap`'s setter resolves `toValue(currentId)` at **write** time, so a slower response lands under whichever key is current by then — one member's private moderation notes rendered against another member, one room's messages appended to another's.
+
+Two corollaries that are easy to get backwards:
+
+- **Bind per operation, never per composable.** A composable that outlives one target (`useMessageCache` is constructed once and lives across every room switch) binds to the first key and stays there forever, which is worse than not binding at all.
+- **Confirm the defect before converging a call site.** A consumer that owns its own await may already re-check the key after it — `usePaginationCache` does exactly that and bails when the partition moved on. Converging it onto a binder breaks it.
+
+`initializeCursorPaginationData` still resolves the key when called, which is correct for synchronous seeding and wrong across an await. If a new consumer needs to write after its own await, it binds at the moment that operation begins — only it knows when that was.
+
 ## StyledWaypoint — Infinite Scroll
 
 Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. Never use a manual "Load more" `v-btn` with `isLoadingMore` state — that belongs to `StyledWaypoint`.
@@ -153,19 +166,19 @@ Consequences that keep this boundary intact:
 - **Read composables know nothing about the cache either** — there is no read-side cache composable to call. Never call `useOnline`, `readIndexedDb`, or `writeIndexedDb` from a feature read composable; hydration is already automatic.
 - `readIndexedDb` / `writeIndexedDb` (`app/services/cache/indexedDb/`) are called **only** from `usePaginationCache`.
 
-**Generic cache composables** (`app/composables/cache/indexedDb/`) — both take one options object and return `{ flush }`:
+**Generic cache composables** (`app/composables/cache/indexedDb/`) — each takes one options object and returns nothing. Both of its operations are fired from watchers through `getSynchronizedFunction`, so the completion signal is the repo-wide drain, `waitForSynchronizedFunctions()`; never give the cache (or the `useMutation` instance under it) a `flush` of its own for a test to await.
 
 - `usePaginationCache` — the base; takes `initializeItems`
 - `useCursorPaginationCache` / `useOffsetPaginationCache` — wrap it, taking `initializeCursorPaginationData` / the offset equivalent instead
 
-**Feature cache composable pattern** — a thin wrapper reading store refs and returning the generic composable:
+**Feature cache composable pattern** — a thin wrapper reading store refs and calling the generic composable:
 
 ```ts
 export const useFooCache = () => {
   const fooStore = useFooStore();
   const { foos } = storeToRefs(fooStore);
   const { initializeCursorPaginationData } = fooStore;
-  return useCursorPaginationCache({
+  useCursorPaginationCache({
     configuration: FooIndexedDbStoreConfiguration,
     initializeCursorPaginationData,
     items: foos,
@@ -177,6 +190,5 @@ export const useFooCache = () => {
 - `configuration` — one per file, `as const satisfies IndexedDbStoreConfiguration` (a key path, plus an optional `limit`)
 - `getWriteItems` — feature-specific filtering before persisting
 - `onHydrate` — companion state updates after an offline hydrate (member counts, user maps)
-- `flush()` — returned so tests can await the pending write
 
 `useMessageCache`, `useMemberCache`, `useRoomCache` are the reference shapes. Architecture doc: `packages/app/content/docs/esbabbler/offline-cache.md`.

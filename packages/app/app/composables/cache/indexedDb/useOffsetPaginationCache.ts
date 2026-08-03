@@ -21,7 +21,7 @@ export const useOffsetPaginationCache = <
 >({
   initializeOffsetPaginationData,
   ...options
-}: OffsetPaginationCacheOptions<TStore, TIndex, TSourceItem>) =>
+}: OffsetPaginationCacheOptions<TStore, TIndex, TSourceItem>) => {
   usePaginationCache({
     ...options,
     initializeItems: (cachedItems) => {
@@ -30,3 +30,4 @@ export const useOffsetPaginationCache = <
       initializeOffsetPaginationData(cachedData);
     },
   });
+};

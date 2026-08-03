@@ -10,7 +10,8 @@ const { $trpc } = useNuxtApp();
 const { executeMutation } = useMutation();
 const captureDialogStore = useBlueprintCaptureDialogStore();
 const { captureIds } = storeToRefs(captureDialogStore);
-const { createErrorNotification, createNotification } = useNotificationStore();
+const notificationStore = useNotificationStore();
+const { createErrorNotification, createNotification } = notificationStore;
 // The dialog is open exactly while a selection is targeted; closing clears the target
 const isOpen = computed({
   get: () => captureIds.value.length > 0,

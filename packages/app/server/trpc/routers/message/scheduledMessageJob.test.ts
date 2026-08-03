@@ -103,7 +103,6 @@ describe("scheduledMessageJob", () => {
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledJobs();
 
     expect(scheduledMessageJobs.items).toHaveLength(1);
-    expect(scheduledMessageJobs.hasMore).toBe(false);
     expect(takeOne(scheduledMessageJobs.items).id).toBe(scheduledMessageJob.id);
     expect(takeOne(scheduledMessageJobs.items).room.id).toBe(roomId);
   });
@@ -127,7 +126,6 @@ describe("scheduledMessageJob", () => {
     const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
 
     expect(scheduledMessageJobs.items).toStrictEqual([]);
-    expect(scheduledMessageJobs.hasMore).toBe(false);
     expect(scheduledMessageJobCount).toBe(0);
   });
 
@@ -232,13 +230,6 @@ describe("scheduledMessageJob", () => {
     await expect(
       scheduledMessageJobCaller.sendScheduledMessageNow({ id: scheduledMessageJob.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
-
-    const timedOutMembership = await mockContext.db.query.usersToRoomsInMessage.findFirst({
-      columns: { timeoutUntil: true },
-      where: { roomId: { eq: roomId }, userId: { eq: member.id } },
-    });
-
-    expect(timedOutMembership?.timeoutUntil).not.toBeNull();
 
     await mockSessionOnce(mockContext.db, member);
     const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();

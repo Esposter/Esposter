@@ -51,6 +51,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     let parseError: Error | undefined;
     // Decoded and JSON-parsed once and reused: a dead-letter blob carries up to a megabyte of events, and the
     // Raw objects are needed again below to write a quarantine copy that keeps Event Grid's diagnostics
+    // eslint-disable-next-line no-restricted-syntax -- a dead-letter payload is replayed and quarantined verbatim, so no value is rewritten on the way through
     const rawEvents = getResult(() => JSON.parse(content.toString("utf8")) as unknown)
       .orTee((error) => {
         parseError = error;

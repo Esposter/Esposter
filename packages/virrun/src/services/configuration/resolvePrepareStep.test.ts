@@ -11,10 +11,10 @@ import { afterEach, describe, expect, test } from "vitest";
 // A canonical nuxt.config filename (an instance of NUXT_CONFIG_PATTERN) for the fixture to stage. git ls-files only
 // Reports tracked files, so the fixture inits a repo and stages the config for detection.
 const NUXT_CONFIG_FILENAME = "nuxt.config.ts";
-const initRepositoryWith = (workspace: string, relativeDir: string): void => {
+const initRepositoryWith = (workspace: string, relativeDirectory: string): void => {
   execFileSync("git", ["init", "-q"], { cwd: workspace });
-  mkdirSync(join(workspace, relativeDir), { recursive: true });
-  writeFileSync(join(workspace, relativeDir, NUXT_CONFIG_FILENAME), "");
+  mkdirSync(join(workspace, relativeDirectory), { recursive: true });
+  writeFileSync(join(workspace, relativeDirectory, NUXT_CONFIG_FILENAME), "");
   execFileSync("git", ["add", "-A"], { cwd: workspace });
 };
 
@@ -35,12 +35,12 @@ describe(resolvePrepareStep, () => {
     expect.hasAssertions();
 
     const workspace = createWorkspace();
-    const packageDir = `${TEST_FILENAME}/${TEST_FILENAME}`;
-    initRepositoryWith(workspace, packageDir);
+    const packageDirectory = `${TEST_FILENAME}/${TEST_FILENAME}`;
+    initRepositoryWith(workspace, packageDirectory);
 
     expect(resolvePrepareStep(Environment.Nuxt, workspace)).toStrictEqual({
-      command: `pnpm --filter ./${packageDir} exec ${NUXT_PREPARE_COMMAND}`,
-      outputs: [`${packageDir}/${NUXT_OUTPUT_DIRECTORY}`],
+      command: `pnpm --filter ./${packageDirectory} exec ${NUXT_PREPARE_COMMAND}`,
+      outputs: [`${packageDirectory}/${NUXT_OUTPUT_DIRECTORY}`],
     });
   });
 

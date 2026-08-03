@@ -1,32 +1,13 @@
 <script setup lang="ts">
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
-const { $trpc } = useNuxtApp();
 const directMessageStore = useDirectMessageStore();
 const { currentDirectMessage, directMessageParticipantsMap } = storeToRefs(directMessageStore);
+const { deleteDirectMessageParticipant } = directMessageStore;
 const directMessageName = useDirectMessageName(currentDirectMessage);
 const participants = computed(() =>
   currentDirectMessage.value ? (directMessageParticipantsMap.value.get(currentDirectMessage.value.id) ?? []) : [],
 );
-const { executeMutation } = useMutation();
-const deleteDirectMessageParticipant = async (userId: string) => {
-  const roomId = currentDirectMessage.value?.id;
-  if (!roomId) return;
-  const previousParticipants = directMessageParticipantsMap.value.get(roomId) ?? [];
-  await executeMutation(() => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }), {
-    applyOptimistic: () => {
-      directMessageParticipantsMap.value.set(
-        roomId,
-        previousParticipants.filter(({ id }) => id !== userId),
-      );
-      return () => {
-        directMessageParticipantsMap.value.set(roomId, previousParticipants);
-      };
-    },
-    // Keyed per participant so removing two people in quick succession never stale-drops a rollback
-    key: userId,
-  });
-};
 </script>
 
 <template>
@@ -42,7 +23,7 @@ const deleteDirectMessageParticipant = async (userId: string) => {
           density="compact"
           size="small"
           closable
-          @click:close="deleteDirectMessageParticipant(id)"
+          @click:close="deleteDirectMessageParticipant(currentDirectMessage.id, id)"
         >
           <StyledAvatar mr-1 :image :name :avatar-props="{ size: '1rem' }" />
           {{ name }}
