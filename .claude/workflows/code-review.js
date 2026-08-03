@@ -105,7 +105,6 @@ const makeStats = (known) => ({
   claimsInventoried: undefined,
   deduped: 0,
   droppedUnsettled: 0,
-  droppedLowConfidence: 0,
   finders: 0,
   candidates: 0,
   verifierAgents: 0,
@@ -173,9 +172,6 @@ const VERDICT_LADDER_RECALL =
 // Next round worded differently). Under the floor, either one is not an answer; it is a PLAUSIBLE, and Resolve is
 // Where those are settled. A missing number is read as exactly the floor, so schema drift never mass-downgrades.
 const VERDICT_MIN_CONFIDENCE = 70;
-// The last stop, applied after Resolve. A claim nobody could get above this is not a finding the user should have
-// To triage, and shipping it is what makes successive runs argue with each other over the same lines forever.
-const REPORT_MIN_CONFIDENCE = 50;
 const CONFIDENCE_LADDER =
   "Also give each verdict a **confidence** (0-100): how sure you are of the verdict itself, given what you " +
   "actually read — not how severe the defect would be if real. Calibrate it: 90+ means you read the deciding " +
@@ -499,6 +495,56 @@ const DIFF_SCOPE_PROMPT =
   "seam a catch-all if the rest do not cover the diff. Below that file count, omit seams entirely.\n\n" +
   "Return diffCommand exactly as a reviewer should run it. Structured output only.";
 
+// ─── Pure decision helpers ───
+// Everything the run's outcome turns on that needs no agent: which paths a prefix selects, which candidates are
+// The same finding, which verdicts stand, what a row says. They live above the phases so the test beside this
+// file can exercise them by driving whole runs with stubbed agents — the script cannot be split into modules
+// (see the file-organization skill), and decision logic nothing pins is why fix rounds land regressions here.
+
+// Prefix matching on whole path segments, never raw string prefixes: `app/composables/message` must select
+// `app/composables/message/x.ts` and NOT `app/composables/messageDraft/y.ts`. Unbounded, one seam swallows every
+// Sibling whose name it prefixes — that finder reads another finder's territory, checks claims that do not govern
+// It, and its duplicate candidates inflate the corroboration label the report shows the user.
+const isUnder = (path, prefix) => path === prefix || path.startsWith(prefix.endsWith("/") ? prefix : prefix + "/");
+const filterUnder = (files, prefixes) => files.filter((f) => prefixes.some((p) => isUnder(f, p)));
+const loc = (c) => c.file + (c.line != null ? ":" + c.line : "");
+const inBounds = (i, n) => Number.isInteger(i) && i >= 0 && i < n;
+// A same-kind collision at one line is the same finding by construction; a cross-kind one is a code fix and a doc
+// Edit, which are two deliverables. Lineless candidates — the norm for record-gaps and claim mismatches, whose
+// Subject is a file rather than a statement — would key to the bare filename, so they are never deduped at all.
+const dedupeKey = (c) => loc(c) + " " + (c.kind ?? "");
+// Severity first; within a tier the kind breaks the tie and CONFIRMED outranks PLAUSIBLE. An unrated candidate
+// Ranks as major. Conformance sits with correctness because a code/record disagreement is a claim about the code
+// That someone has to act on; record-gap sits with cleanup because the fix is a page, not a behaviour. Every
+// Penalty stays under 4 so a kind or a verdict can never cross a severity tier. The dedupe picks a group's
+// Primary by the same ordering the report ranks by — two orderings for "which reading is worse" would disagree.
+const SEVERITY_RANK = { critical: 0, major: 1, minor: 2 };
+const KIND_RANK = { cleanup: 2, conformance: 0, correctness: 0, "record-gap": 2 };
+const severityRank = (c) => SEVERITY_RANK[c.severity] ?? 1;
+const rank = (c) => severityRank(c) * 4 + (KIND_RANK[c.kind] ?? 0) + (c.verdict === "PLAUSIBLE" ? 1 : 0);
+// A verdict its own author would not defend is not a verdict, in either direction — an under-confident CONFIRMED
+// Is a fix applied on a guess, an under-confident REFUTED is a real defect dismissed. Both become PLAUSIBLE,
+// Which is the one state that buys a pass with the budget to settle it. A missing number reads as exactly the
+// Floor, so schema drift never mass-downgrades a run.
+const isUnderConfident = (verdict, confidence) =>
+  verdict !== "PLAUSIBLE" &&
+  (Number.isFinite(confidence) ? confidence : VERDICT_MIN_CONFIDENCE) < VERDICT_MIN_CONFIDENCE;
+// The compact one-line table renders shortSummary verbatim. The synthesizer supplies it per decision; backfilled
+// Findings fall back to a clipped first clause, split on real clause boundaries only — a bare `.` or `:` cuts
+// `0.5s` to `0` and `canonFile: returns …` to `canonFile`, and a fragment asserting a value the code does not
+// Have is worse than a long row.
+const deriveShort = (s) => {
+  const oneLine = s
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(/\s—\s|;\s|\.\s/u)[0]
+    .trim();
+  if (oneLine.length <= 60) return oneLine;
+  const cut = oneLine.slice(0, 60);
+  const lastSpace = cut.lastIndexOf(" ");
+  return (lastSpace > 30 ? cut.slice(0, lastSpace) : cut) + "…";
+};
+
 phase("Scope");
 const scope = await agent(IS_AREA ? AREA_SCOPE_PROMPT : DIFF_SCOPE_PROMPT, {
   label: "scope",
@@ -550,12 +596,7 @@ if (isAreaCapped) {
       " dropped. Narrow the target and re-run to cover the rest.",
   );
 }
-// Prefix matching on whole path segments, never raw string prefixes: `app/composables/message` must select
-// `app/composables/message/x.ts` and NOT `app/composables/messageDraft/y.ts`. Unbounded, one seam swallows every
-// Sibling whose name it prefixes — that finder reads another finder's territory, checks claims that do not govern
-// It, and its duplicate candidates inflate the corroboration label the report shows the user.
-const isUnder = (path, prefix) => path === prefix || path.startsWith(prefix.endsWith("/") ? prefix : prefix + "/");
-const filesUnder = (prefixes) => scope.files.filter((f) => prefixes.some((p) => isUnder(f, p)));
+const filesUnder = (prefixes) => filterUnder(scope.files, prefixes);
 // Fan-out scales with the TERRITORY, not with the level alone. Every finder reads the same material again, and
 // Every candidate it returns buys a verifier slot and possibly a resolver, so a level's full fan-out over a
 // 40-line change costs roughly what it costs over a release — while having nowhere near that many distinct
@@ -805,10 +846,11 @@ const SCOPE_BLOCK =
 // Wrong — so a cited file outside the area is the NORMAL shape of a cross-boundary finding, not an error. Routing
 // It through materialFor prints "none of these resolved … do NOT open them", which forbids the verifier the one
 // File that could settle the claim, and the whole defect class the seam partition exists for is refuted for want
-// Of evidence. The out-of-area file is named as readable instead, alongside the area itself.
+// Of evidence. The out-of-area file is named as readable, and so is the AREA — a verifier handed only the
+// Outside file has nothing to check the handoff against, and this block deliberately omits the scope listing
+// Every other prompt carries, so no other part of its input names the area's files.
 const VERIFY_SCOPE_BLOCK = (paths) => {
   const unchanged = paths.filter((p) => !scope.files.includes(p));
-  const inScope = paths.filter((p) => scope.files.includes(p));
   return (
     "## Review scope\n" +
     (IS_AREA ? "This is an AREA review of " : "The change is ") +
@@ -816,11 +858,11 @@ const VERIFY_SCOPE_BLOCK = (paths) => {
     " files; your slice of it is:\n" +
     (unchanged.length > 0
       ? IS_AREA
-        ? (inScope.length > 0 ? materialFor(inScope) + "\n" : "") +
-          "  (" +
+        ? "  " +
           unchanged.join(", ") +
-          " is NOT part of the audited area — the claim is about how the area affects it, or how it uses the area, " +
-          "so it is in scope for THIS judgement. Read it in full, plus the area files the claim reaches through.)"
+          " is NOT part of the audited area — the claim is about how the area affects it, or how it uses the " +
+          "area, so it is in scope for THIS judgement. Read it in full, and read the area side of the handoff:\n" +
+          listedFiles.map((f) => "  - " + f).join("\n")
         : "  " +
           scope.diffCommand +
           "\n  (" +
@@ -931,8 +973,6 @@ const ingest = (cs, cap, kind, label) => {
     kind: IS_AREA && KINDS.includes(c.kind) ? c.kind : kind,
   }));
 };
-const loc = (c) => c.file + (c.line != null ? ":" + c.line : "");
-const inBounds = (i, n) => Number.isInteger(i) && i >= 0 && i < n;
 
 const GROUP_VERIFIER_PROMPT = (group) =>
   "## Code-review verifier\n\n" +
@@ -1378,17 +1418,6 @@ if (P.sweep) {
   }
 }
 
-// Ranking, declared here because the dedupe below picks a group's primary by the same severity ordering the
-// Report ranks by — two different orderings for "which of these is the worse reading" would eventually disagree.
-// Severity first; within a tier the kind breaks the tie and CONFIRMED outranks PLAUSIBLE. An unrated candidate
-// Ranks as major. Conformance sits with correctness because a code/record disagreement is a claim about the code
-// That someone has to act on; record-gap sits with cleanup because the fix is a page, not a behaviour. Every
-// Penalty stays under 4 so a kind or a verdict can never cross a severity tier.
-const SEVERITY_RANK = { critical: 0, major: 1, minor: 2 };
-const KIND_RANK = { cleanup: 2, conformance: 0, correctness: 0, "record-gap": 2 };
-const severityRank = (c) => SEVERITY_RANK[c.severity] ?? 1;
-const rank = (c) => severityRank(c) * 4 + (KIND_RANK[c.kind] ?? 0) + (c.verdict === "PLAUSIBLE" ? 1 : 0);
-
 const allSurviving = verified.filter((c) => c.verdict !== "REFUTED");
 const refutedAtVerify = verified.filter((c) => c.verdict === "REFUTED");
 
@@ -1410,7 +1439,6 @@ const refutedAtVerify = verified.filter((c) => c.verdict === "REFUTED");
 // and the second is discarded outright: not refuted, not reported, just gone, under a row falsely stamped as
 // independently corroborated. That also contradicts what this file tells its own verifiers — sharing a file is
 // NOT evidence of sharing a cause. So a candidate without a line is never a dedupe candidate and passes through.
-const dedupeKey = (c) => loc(c) + " " + (c.kind ?? "");
 const byLocation = new Map();
 const unkeyed = [];
 for (const c of allSurviving) {
@@ -1511,33 +1539,11 @@ if (toResolve.length > 0) {
   log("resolve: " + settled + " settled, " + (toResolve.length - settled) + " left undecided");
 }
 
-// A finding a resolver refuted leaves the report the same way a verifier-refuted one does. So does one a resolver
-// ANSWERED without reaching the floor: after a verifier and a resolver have each had it, an unsettled claim is a
-// question the run could not answer, and printing it as a row hands the reader a decision with less evidence than
-// the agents had. It is dropped, and the count is logged rather than hidden.
-// Two exemptions, both because the drop would delete information rather than noise: a resolver that DIED leaves
-// its finding untouched and reportable (the resilience contract the mode pages state — a degraded run must not
-// look like a clean one), and an UNRESOLVABLE keeps its row so the blocker can be handed back as the fact that
-// would settle it.
-const isReportable = (c) =>
-  !c.isResolved || c.isUnresolvable || (Number.isFinite(c.confidence) ? c.confidence : 100) >= REPORT_MIN_CONFIDENCE;
-// One partition, so the two halves stay complementary by construction: as two filters they had to be kept
-// Negation-exact by hand, and a third exclusion added to one of them would have made the drop count name the
-// Wrong reason on the single log line that tells the user why a finding vanished.
-const surviving = [];
-const lowConfidence = [];
-for (const c of dedupedFindings) {
-  if (c.verdict === "REFUTED" || c.droppedUnsettled) continue;
-  (isReportable(c) ? surviving : lowConfidence).push(c);
-}
-if (lowConfidence.length > 0)
-  log(
-    "dropped " +
-      lowConfidence.length +
-      " finding(s) below " +
-      REPORT_MIN_CONFIDENCE +
-      "% confidence after resolution — unsettled claims, not reportable defects",
-  );
+// A finding a resolver refuted leaves the report the same way a verifier-refuted one does. Nothing else is
+// Dropped for confidence: there is ONE floor in this script and Resolve is where it is enforced, so a claim
+// Below it comes back as PLAUSIBLE carrying the blocker that says why, rather than disappearing. A second floor
+// Here would delete exactly the findings the first one flagged as needing evidence.
+const surviving = dedupedFindings.filter((c) => c.verdict !== "REFUTED" && !c.droppedUnsettled);
 const refuted = refutedAtVerify.concat(dedupedFindings.filter((c) => c.verdict === "REFUTED"));
 log(
   "Verify done: " +
@@ -1564,7 +1570,6 @@ const stats = makeStats({
   claimsInventoried: IS_AREA ? inventoriedClaims.length : undefined,
   deduped: collapsed,
   droppedUnsettled: unresolvedDropped.length,
-  droppedLowConfidence: lowConfidence.length,
   finders: FINDERS.length,
   candidates: candidatesSeen,
   verifierAgents,
@@ -1576,7 +1581,7 @@ if (surviving.length === 0) {
   // "Nothing survived verification" and "nothing was left to verify" are different runs, and the stop rule turns
   // On which one this was: a finding sliced off at the resolve budget was never examined by anything, so an empty
   // Report that does not say so reads as a clean bill of health for claims nobody judged.
-  const unexamined = unresolvedDropped.length + lowConfidence.length;
+  const unexamined = unresolvedDropped.length;
   return {
     level: LEVEL,
     target: TARGET || undefined,
@@ -1584,11 +1589,7 @@ if (surviving.length === 0) {
       unexamined > 0
         ? "No findings survived verification, but " +
           unexamined +
-          " were dropped unsettled rather than refuted (" +
-          unresolvedDropped.length +
-          " past the resolve budget, " +
-          lowConfidence.length +
-          " below the report confidence floor) — this round did not clear them."
+          " were dropped unsettled at the resolve budget rather than refuted — this round did not clear them."
         : "No findings survived verification.",
     findings: [],
     mode: MODE,
@@ -1663,20 +1664,6 @@ const claim = (i) => (inBounds(i, ranked.length) && !seen.has(i) ? (seen.add(i),
 // The compact one-line table renders shortSummary verbatim. The synthesizer supplies it per decision;
 // backfilled findings (appended without a decision) fall back to a clipped first-clause of the summary
 // so the table column is never a full paragraph.
-// Split on real clause boundaries only. A bare `.` or `:` cuts `0.5s` to `0` and `canonFile: returns …` to
-// `canonFile`, and this text is rendered verbatim as the finding's whole claim on the backfill path — a fragment
-// That asserts a value the code does not have is worse than a long row.
-const deriveShort = (s) => {
-  const oneLine = s
-    .replace(/\s+/g, " ")
-    .trim()
-    .split(/\s—\s|;\s|\.\s/u)[0]
-    .trim();
-  if (oneLine.length <= 60) return oneLine;
-  const cut = oneLine.slice(0, 60);
-  const lastSpace = cut.lastIndexOf(" ");
-  return (lastSpace > 30 ? cut.slice(0, lastSpace) : cut) + "…";
-};
 // One finding shape for both paths — a merged primary and a backfilled straggler differ only in what the
 // Merge escalates, so they are the same object built from a different group.
 const toFinding = (c, merged, shortSummary) => {
@@ -1747,14 +1734,10 @@ for (let i = 0; i < ranked.length; i++) {
 // Anything the run dropped without judging rides on the summary, not only in stats: the report table is what the
 // Session shows the user, and a round that ran out of resolve budget is not a round that found nothing more.
 const unexaminedNote =
-  unresolvedDropped.length + lowConfidence.length > 0
+  unresolvedDropped.length > 0
     ? " (" +
-      (unresolvedDropped.length + lowConfidence.length) +
-      " further finding(s) were dropped unsettled rather than refuted — " +
       unresolvedDropped.length +
-      " past the resolve budget, " +
-      lowConfidence.length +
-      " below the report confidence floor.)"
+      " further finding(s) were dropped unsettled at the resolve budget rather than refuted.)"
     : "";
 const summary =
   (usedDecisions && report
