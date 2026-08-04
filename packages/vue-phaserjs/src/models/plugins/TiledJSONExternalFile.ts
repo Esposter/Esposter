@@ -60,8 +60,8 @@ export class TiledJSONExternalFile extends MultiFile {
 
     for (const tilesetFile of tilesetFiles) {
       const responseText = tilesetFile.xhrLoader?.responseText;
-      if (!responseText)
-        throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
+      // Phaser types `url` as `object | string`, so the key is what reliably names the failing tileset
+      if (!responseText) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.key);
 
       const responseData = await parseXmlString<{ tileset: TMXEmbeddedTilesetNode }>(responseText);
       const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;

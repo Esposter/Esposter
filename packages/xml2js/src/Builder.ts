@@ -62,7 +62,9 @@ export class Builder {
           element = this.#render(element.ele(key), child as Record<string, string>).up();
         // Case #5 String and remaining types
         else if (typeof child === "string" && this.#options.cdata) element = element.ele(key).dat(child).up();
-        else element = element.ele(key, child?.toString() ?? "").up();
+        else if (typeof child === "boolean" || typeof child === "number" || typeof child === "string")
+          element = element.ele(key, String(child)).up();
+        else element = element.ele(key, "").up();
 
     return element;
   }

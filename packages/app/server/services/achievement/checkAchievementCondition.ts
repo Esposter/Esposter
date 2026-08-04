@@ -24,7 +24,13 @@ export const checkAchievementCondition = (
         case AchievementOperator.IsPalindrome: {
           if (typeof value !== "string") return false;
           const sanitizedValue = value.toLowerCase().replaceAll(/[^a-z0-9]/gu, "");
-          return sanitizedValue === [...EN_US_SEGMENTER.segment(sanitizedValue)].toReversed().join("");
+          return (
+            sanitizedValue ===
+            [...EN_US_SEGMENTER.segment(sanitizedValue)]
+              .map(({ segment }) => segment)
+              .toReversed()
+              .join("")
+          );
         }
         case AchievementOperator.Matches:
           if (!(condition.value instanceof RegExp)) return false;

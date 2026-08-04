@@ -3,7 +3,7 @@ import { DelimiterRegexMap } from "#shared/models/compiler/DelimiterRegexMap";
 
 export const decompileVariables = (
   string: string,
-  context: Record<string, unknown>,
+  context: Record<string, boolean | null | number | string | undefined>,
   delimiter: Delimiter = Delimiter.CurlyBraces,
 ): string =>
   string.replaceAll(DelimiterRegexMap[delimiter], (_, key: string) => {
