@@ -153,7 +153,21 @@ describe("code-review verify", () => {
     );
 
     expect(run.result.stats?.droppedUnverified).toBe(1);
-    expect(run.result.summary).toContain("reached no verdict at all");
+    expect(run.result.summary).toContain("1 candidate(s) in a.ts reached no verdict at all");
+  });
+
+  test("counts a verifier that answered without verdicts as a drop rather than ending the run", async () => {
+    expect.hasAssertions();
+
+    // The schema requires the array, so this is schema drift — and drift must degrade into the counted drop the
+    // Dead-agent path already produces, not throw inside the fan-out and take the whole run down with it.
+    const base = stubFor({ candidates: [CANDIDATE, { ...CANDIDATE, file: "b.ts" }] });
+    const run = await runReview("high", (prompt, options) =>
+      options.label?.startsWith("verify:a.ts") ? {} : base(prompt, options),
+    );
+
+    expect(run.result.stats?.droppedUnverified).toBe(1);
+    expect(getFinding(run).file).toBe("b.ts");
   });
 
   test.each([

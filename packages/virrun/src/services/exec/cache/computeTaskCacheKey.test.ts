@@ -69,6 +69,20 @@ describe(computeTaskCacheKey, () => {
     );
   });
 
+  // POSIX permits newlines in path names, so a delimiter-joined key hashed the command text and the mask onto the
+  // Same bytes: a hit would replay a flush plan recorded under a mask the run never asked for.
+  test("keys a newline in the command apart from the same text in the write-back mask", () => {
+    expect.hasAssertions();
+
+    const directory = createWorkspace();
+    initRepository(directory);
+    const maskedPath = toRootAnchoredExclude(TEST_FILENAME);
+
+    expect(computeTaskCacheKey(`${command}\n${maskedPath}`, directory, MASKED_PATHS)).not.toBe(
+      computeTaskCacheKey(command, directory, [`${maskedPath}\n`]),
+    );
+  });
+
   test("treats a string command and its argv form as distinct keys", () => {
     expect.hasAssertions();
 

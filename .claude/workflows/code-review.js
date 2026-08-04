@@ -1021,6 +1021,9 @@ let verifierAgents = 0;
 // The stop rule reads "no findings" as converged, so a session limit mid-verify would end a review early with the
 // Reader told nothing. Counted here, logged with the other losses, and published in stats.
 let unverifiedDropped = 0;
+// The files those candidates sat in, named in the summary alongside the count: a bare number tells the reader some
+// Of the diff went unexamined without telling them WHICH of it, which is the half they need to re-run or read by hand.
+const unverifiedDroppedFiles = new Set();
 
 const verifyGroups = async (candidates) => {
   // Grouped by FILE, not by (file, line): a verifier reads the whole file to judge any claim in it, so two
@@ -1049,8 +1052,12 @@ const verifyGroups = async (candidates) => {
         phase: "Verify",
         schema: GROUP_VERDICT_SCHEMA,
       });
-      if (!r) {
+      // A missing or non-array `verdicts` is treated exactly like a dead agent: the schema requires the array, but a
+      // Throw here escapes the fan-out and ends the run — the outcome this whole block exists to turn into a counted
+      // Drop, so schema drift must degrade the same way an agent failure does.
+      if (!r || !Array.isArray(r.verdicts)) {
         unverifiedDropped += g.length;
+        unverifiedDroppedFiles.add(g[0].file);
         return [];
       }
       const byIdx = {};
@@ -1059,6 +1066,7 @@ const verifyGroups = async (candidates) => {
         const v = byIdx[i];
         if (!v) {
           unverifiedDropped++;
+          unverifiedDroppedFiles.add(c.file);
           return [];
         }
         // The floor rule itself lives in `isUnderConfident` and is called, never restated: a second copy of it
@@ -1596,8 +1604,10 @@ const unexaminedNote =
   (unverifiedDropped > 0
     ? " " +
       unverifiedDropped +
-      " candidate(s) reached no verdict at all — a verifier agent returned nothing, so this round did not examine " +
-      "them and their absence is not evidence of a clean file."
+      " candidate(s) in " +
+      [...unverifiedDroppedFiles].sort().join(", ") +
+      " reached no verdict at all — a verifier agent returned nothing, so this round did not examine them and " +
+      "their absence is not evidence of a clean file."
     : "");
 const refutedRows = refuted.map((c) => ({
   file: c.file,

@@ -21,19 +21,16 @@ export const computeTaskCacheKey = (
 ): null | string => {
   const sourceTreeHash = computeSourceTreeHash(cwd);
   if (sourceTreeHash === null) return null;
-  return getResult(() => {
-    const environmentKey = computeEnvironmentKey(cwd);
-    const commandKey = typeof command === "string" ? command : JSON.stringify(command);
-    return createHash("sha256")
-      .update(environmentKey)
-      .update("\n")
-      .update(sourceTreeHash)
-      .update("\n")
-      .update(commandKey)
-      .update("\n")
-      .update(maskedPaths.join("\0"))
-      .digest("hex");
-  }).match(
+  return getResult(() =>
+    // One JSON payload rather than delimiter-joined fields: a delimiter only separates fields that cannot contain
+    // It, and POSIX permits newlines in path names — so a newline-joined key hashed the command `"x\n./a"` under no
+    // Mask identically to `"x"` under the mask `"./a\n"`, and a hit would replay a flush plan recorded under a
+    // Different mask. JSON quotes and escapes every field, so the encoding is injective whatever the content, and it
+    // Keeps a string command distinct from its single-element argv form for free.
+    createHash("sha256")
+      .update(JSON.stringify([computeEnvironmentKey(cwd), sourceTreeHash, command, maskedPaths]))
+      .digest("hex"),
+  ).match(
     (key) => key,
     () => null,
   );
