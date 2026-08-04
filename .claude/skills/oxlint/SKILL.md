@@ -37,6 +37,10 @@ The vitest rules come from oxlint's `vitest` plugin (`@vitest/eslint-plugin` is 
 - **`prefer-describe-function-title` is off** — its fixer only checks that an identifier matching the title is in scope, not that it's a function; for arrays, Zod schemas, routers, or plugin objects the fix produces a `[object Object]` suite title.
 - **`warn-todo`/`require-test-timeout`/`require-top-level-describe` are off** — `describe.todo` placeholders and hook-registering `setup*`/test-setup files are conventions here, and per-test timeouts are not used.
 
+## Workflow scripts (`.claude/workflows/*.js`) — oxlint only
+
+They are async function bodies the harness injects globals into, so they carry a top-level `return`. That is a **parse error** for ESLint's parser (`'return' outside of function`), not a finding it can report — so the root `eslint.config.js` ignores them and oxlint is their only linter. Oxlint parses them fine; the one rule turned off for them, via an `overrides` entry in `.oxlintrc.json`, is `unicorn/prefer-module` (it reads every top-level `return` as a violation). Everything else applies, including the repo's comment and template-literal style. There is no module system in the sandbox, so a fix that suggests an import is always wrong.
+
 ## The `require-await` autofix can break a Promise-returning function
 
 `require-await` strips `async` from a function whose body never awaits — and the lint hook applies it to any file you edit, so it lands on code you did not think you were touching. `async` is not only about awaiting: it also wraps a plain return value in a promise. A function annotated `: Promise<T>` that returns a bare `T` on one early-exit path (a `Dropped`/no-op outcome returned before any async work) stops compiling the moment the keyword goes, and the error surfaces on the _return_ line, far from the edit that caused it.
