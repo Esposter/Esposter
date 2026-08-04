@@ -17,6 +17,9 @@ export const NODE_MODULES_DIRECTORY = "node_modules";
 // (resolveMirrorExcludes) and the write-back therefore masks. Named here rather than spelled inline, so the two
 // Directions and their tests can never disagree on the spelling.
 export const GIT_DIRECTORY = ".git";
+// Marks an exclude pattern as naming ONE place in the tree rather than a segment at any depth (getIsBareNameExclude).
+// Kept a valid relative path so a consumer that spends the pattern as one still resolves inside the tree.
+export const ROOT_ANCHOR_PREFIX = "./";
 // Git's registry of linked worktrees under the common git dir: one `worktrees/<name>/gitdir` file per worktree,
 // Holding the absolute path of that worktree's own `.git` file. A `.git` that is a file rather than a directory
 // Points back at its entry with the same `gitdir: ` prefix. Read by readLinkedWorktreePaths to derive which nested

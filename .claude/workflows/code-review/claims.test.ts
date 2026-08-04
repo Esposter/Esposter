@@ -131,4 +131,18 @@ describe("code-review claims", () => {
     expect(getPrompt(run, "coverage")).toContain(SINGLE_FLIGHT);
     expect(getPrompt(run, "coverage")).toContain("docs/cache.md");
   });
+
+  test("carries the claims the cap dropped into the coverage finder too", async () => {
+    expect.hasAssertions();
+
+    // The cap filter answers "which claims can still be CHECKED"; the coverage finder asks "what is already
+    // Written down". A claim's pathPrefixes name where it is documented to apply, not every file implementing it,
+    // So a dropped claim's behaviour routinely survives in a file the cap kept — and the coverage finder, not
+    // Shown it, reports a record-gap telling the user to write a page that already exists.
+    const claims = [createClaim(SINGLE_FLIGHT, ["cache/f199.ts"])];
+    const run = await runReview(AREA_ARGS, stubFor({ scope: { ...AREA_SCOPE, claims, files: createAreaFiles(200) } }));
+
+    expect(run.result.stats).toMatchObject({ claimsChecked: 0, claimsInventoried: 1 });
+    expect(getPrompt(run, "coverage")).toContain(SINGLE_FLIGHT);
+  });
 });

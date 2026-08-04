@@ -124,16 +124,36 @@ describe("code-review verify", () => {
     expect(verifier?.label).toContain("cleanup");
   });
 
-  test("lets a verdict stand when the agent gave no confidence number", async () => {
+  test("lets a verdict stand when the agent gave no confidence number, and reports no number for it", async () => {
     expect.hasAssertions();
 
-    // A missing number reads as exactly the floor, so schema drift never mass-downgrades a run.
+    // A missing number reads as exactly the floor for the GATE, so schema drift never mass-downgrades a run — but
+    // It is not written onto the finding: the reported percentage is the number the judging agent would defend, so
+    // Materialising the floor prints a fabricated borderline figure and makes the report's "unrated" path dead.
     const run = await runReview(
       "high",
       stubFor({ candidates: [CANDIDATE], verdictFor: () => ({ confidence: undefined }) }),
     );
 
     expect(getFinding(run).verdict).toBe("CONFIRMED");
+    expect(getFinding(run).confidence).toBeUndefined();
+  });
+
+  test("counts and names the candidates a dead verifier left unexamined", async () => {
+    expect.hasAssertions();
+
+    // Silently dropping them makes a degraded run indistinguishable from a clean one, and the stop rule reads
+    // "no findings" as converged — so a session limit mid-verify would end a review with the reader told nothing.
+    const run = await runReview(
+      "high",
+      stubFor({
+        candidates: [CANDIDATE, { ...CANDIDATE, file: "b.ts" }],
+        verifierFor: (label) => (label.startsWith("verify:a.ts") ? null : undefined),
+      }),
+    );
+
+    expect(run.result.stats?.droppedUnverified).toBe(1);
+    expect(run.result.summary).toContain("reached no verdict at all");
   });
 
   test.each([

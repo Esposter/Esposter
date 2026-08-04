@@ -8,7 +8,7 @@ import {
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { readLinkedWorktreePaths } from "@/services/exec/util/readLinkedWorktreePaths";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 const WORKTREE_NAME = "b";
@@ -79,6 +79,23 @@ describe(readLinkedWorktreePaths, () => {
     registerWorktree(WORKTREE_NAME, join(cwd, DOT_PREFIXED_WORKTREE_NAME));
 
     expect(readLinkedWorktreePaths(cwd)).toStrictEqual([DOT_PREFIXED_WORKTREE_NAME]);
+  });
+
+  // Git writes this record relative whenever the repo is on relative worktrees (`worktree.useRelativePaths`, git
+  // 2.48+ / `git worktree repair --relative-paths`). Resolved against the process cwd it lands outside the repo and
+  // Reads as "no worktrees at all", so every nested worktree would be mirrored again — the regression this exclude
+  // Exists to stop, restored silently.
+  test("resolves a relative gitdir record against the entry directory, not the process cwd", () => {
+    expect.hasAssertions();
+
+    const entryDirectory = join(cwd, GIT_DIRECTORY, GIT_WORKTREES_DIRECTORY_NAME, WORKTREE_NAME);
+    mkdirSync(entryDirectory, { recursive: true });
+    writeFileSync(
+      join(entryDirectory, GIT_WORKTREE_GITDIR_FILENAME),
+      `${relative(entryDirectory, join(cwd, TEST_FILENAME, WORKTREE_NAME, GIT_DIRECTORY)).replaceAll("\\", "/")}\n`,
+    );
+
+    expect(readLinkedWorktreePaths(cwd)).toStrictEqual([`${TEST_FILENAME}/${WORKTREE_NAME}`]);
   });
 
   // Run from inside a linked worktree, `.git` is a file pointing at the entry in the repo's single registry — so a

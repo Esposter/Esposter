@@ -31,7 +31,16 @@ export const CANDIDATE: Candidate = {
   summary: "Reordered write drops the entity",
 };
 export const AREA_ARGS = "area high the cache";
-/** A minimal area scope: two files, one governing page, no claims. */
-export const AREA_SCOPE: ScopeAnswer = { claims: [], docPaths: ["docs/cache.md"], files: ["cache/a.ts", "cache/b.ts"] };
+/**
+ * A minimal area scope: three files, one governing page, no claims. `CANDIDATE.file` is one of them on purpose —
+ * a fixture whose candidate sits outside the audited area sends every area test down the "NOT part of the audited
+ * area" branch, leaving the ordinary in-area verifier path (materialFor's resolved reading list) driven by
+ * nothing. The out-of-area branch has its own test, which names its own file.
+ */
+export const AREA_SCOPE: ScopeAnswer = {
+  claims: [],
+  docPaths: ["docs/cache.md"],
+  files: [CANDIDATE.file, "cache/a.ts", "cache/b.ts"],
+};
 
 describe.todo("constants");

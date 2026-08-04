@@ -68,7 +68,7 @@ describe.skipIf(!isSandboxInstallSupported)(
       async () => {
         expect.hasAssertions();
 
-        const key = computeTaskCacheKey(command, corpus);
+        const key = computeTaskCacheKey(command, corpus, []);
 
         assert.exists(key);
 

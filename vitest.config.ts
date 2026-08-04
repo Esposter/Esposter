@@ -25,10 +25,12 @@ const vitestConfiguration: ViteUserConfig = defineConfig({
       // The workflow scripts under `.claude/` are not a workspace package either. They cannot be imported or
       // Split into modules — they are async function bodies the harness injects globals into — so their tests
       // Load the real file and drive it with stubbed agents, which is the only way to pin the decisions a review
-      // Makes without spawning one.
+      // Makes without spawning one. Both globs are scoped for the same reason as `scripts` above: an unscoped
+      // `benchmark.include` inherits `**/*.bench.ts` and re-collects every package's benches under this project.
       {
         extends: true,
         test: {
+          benchmark: { include: [".claude/**/*.bench.ts"] },
           include: [".claude/**/*.test.ts"],
           name: "claude",
         },

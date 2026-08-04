@@ -1,6 +1,7 @@
 import type { WslSourceMirrorSync } from "@/models/exec/wsl/WslSourceMirrorSync";
 
 import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
+import { getIsBareNameExclude } from "@/services/exec/util/getIsBareNameExclude";
 import { buildSourceMirrorManifest } from "@/services/exec/wsl/buildSourceMirrorManifest";
 import {
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
@@ -30,7 +31,7 @@ const getHasBareNameExcludeChange = (previous: readonly string[], current: reado
   const previousExcludes = new Set(previous);
   const currentExcludes = new Set(current);
   return [...previous, ...current].some(
-    (exclude) => !exclude.includes("/") && previousExcludes.has(exclude) !== currentExcludes.has(exclude),
+    (exclude) => getIsBareNameExclude(exclude) && previousExcludes.has(exclude) !== currentExcludes.has(exclude),
   );
 };
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux

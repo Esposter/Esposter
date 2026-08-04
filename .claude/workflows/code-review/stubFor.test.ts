@@ -19,6 +19,7 @@ export const stubFor = ({
   scope = {},
   synthesis = null,
   verdictFor = () => ({}),
+  verifierFor,
 }: StubOptions): AgentStub => {
   let isFirstFinder = true;
   return (prompt, options) => {
@@ -26,10 +27,12 @@ export const stubFor = ({
     if (label === "scope") return { ...SCOPE_DEFAULT, ...scope };
     if (label === "synthesize") return synthesis;
     if (label.startsWith("resolve:")) return resolution;
-    if (label.startsWith("verify:"))
+    if (label.startsWith("verify:")) {
+      if (verifierFor?.(label) === null) return null;
       return {
         verdicts: getCandidateIndexes(prompt).map((index) => createVerdict(index, verdictFor(index, prompt))),
       };
+    }
     if (finderFor) {
       const answer = finderFor(label);
       return answer === null ? null : { candidates: answer };

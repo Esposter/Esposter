@@ -37,6 +37,10 @@ describe("code-review scope sizing", () => {
     );
 
     expect(run.logs).toContainEqual(expect.stringContaining("Scope resolved 201 files — capped at 120, 81 dropped"));
+    // The discriminating half: a non-source file is never listed individually anyway, so `not.toContain` passes
+    // With or without the ordering. What "source first" buys is that a source file BELOW the drop line survives —
+    // Capping without it spends the 120-file budget on lockfiles and snapshots while the log reads identically.
+    expect(getPrompt(run, "angle-A")).toContain("cache/f119.ts");
     expect(getPrompt(run, "angle-A")).not.toContain("lock.snap");
   });
 

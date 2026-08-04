@@ -32,6 +32,35 @@ describe("code-review seam partition", () => {
     expect(run.calls.map((call) => call.label)).toContain("whole-area");
   });
 
+  test("reports the fan-out that ran and budgets resolution off it, not off the lens angle count", async () => {
+    expect.hasAssertions();
+
+    // In seam mode no angle finder is spawned, so `ANGLES` describes a split that did not happen: publishing it
+    // Understates a seam run's coverage by ~40%, and budgeting resolution off it gave the largest reviews — the
+    // Ones seam mode exists for — the same six resolvers a two-file lens review gets, dropping the rest unexamined.
+    const seams = [createSeam("reads", ["cache/f1.ts"]), createSeam("writes", ["cache/f2.ts"])];
+    // Twelve unsettled findings, split across two finders because each one's own cap is six.
+    const many = Array.from({ length: 12 }, (_, index) => ({ ...CANDIDATE, line: index + 1 }));
+    const run = await runReview(
+      AREA_ARGS,
+      stubFor({
+        finderFor: (label) => (label === "whole-area" ? many.slice(0, 6) : label === "seam:reads" ? many.slice(6) : []),
+        resolution: { confidence: 95, evidence: "read the callee", verdict: "CONFIRMED" },
+        scope: areaScope({ seams }),
+        verdictFor: () => ({ confidence: 40 }),
+      }),
+    );
+    const NON_FINDER_LABELS = new Set(["scope", "sweep", "synthesize"]);
+    const finders = run.calls.filter(
+      (call) =>
+        !call.label.startsWith("verify:") && !call.label.startsWith("resolve:") && !NON_FINDER_LABELS.has(call.label),
+    ).length;
+
+    // Every finder but cleanup, and two resolvers apiece.
+    expect(run.result.stats).toMatchObject({ angles: finders - 1, findMode: "seam" });
+    expect(run.calls.filter((call) => call.label.startsWith("resolve:"))).toHaveLength((finders - 1) * 2);
+  });
+
   test("falls back to lens when only one seam is usable", async () => {
     expect.hasAssertions();
 
@@ -66,6 +95,20 @@ describe("code-review seam partition", () => {
 
     expect(run.logs).toContainEqual(expect.stringContaining("2 seam(s) past the level's cap of 6"));
     expect(run.logs).not.toContainEqual(expect.stringContaining("seam(s) dropped"));
+  });
+
+  test("never names cap-truncated seams on a run that fell back to lens", async () => {
+    expect.hasAssertions();
+
+    // The cap log's remedy is "raise the level", which buys nothing here: the partition was discarded wholesale,
+    // So no seam got a finder and the file-count gate refuses the same fallback at every level.
+    // Eight readable seams — past the level's cap of six — over a file set below the 25-file seam threshold.
+    const seams = Array.from({ length: 8 }, (_, index) => createSeam(`s${index}`, [`cache/f${index}.ts`]));
+    const run = await runReview(AREA_ARGS, stubFor({ scope: { ...AREA_SCOPE, files: createAreaFiles(8), seams } }));
+
+    expect(run.result.stats).toMatchObject({ findMode: "lens" });
+    expect(run.logs).not.toContainEqual(expect.stringContaining("seam(s) dropped"));
+    expect(run.logs).not.toContainEqual(expect.stringContaining("past the level's cap"));
   });
 
   test("gives a seam a boundary block only when its neighbours are readable", async () => {
