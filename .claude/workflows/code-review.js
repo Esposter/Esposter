@@ -1605,7 +1605,7 @@ const unexaminedNote =
     ? " " +
       unverifiedDropped +
       " candidate(s) in " +
-      [...unverifiedDroppedFiles].sort().join(", ") +
+      [...unverifiedDroppedFiles].toSorted((a, b) => a.localeCompare(b)).join(", ") +
       " reached no verdict at all — a verifier agent returned nothing, so this round did not examine them and " +
       "their absence is not evidence of a clean file."
     : "");

@@ -28,6 +28,7 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - **No `current*` caching of `.value`** just to use it once. If narrowing is needed after a guard, assign a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source is already non-reactive (e.g. a `readonly` prop field).
 - **Cloning** — `structuredClone(obj)` for deep clones; `Object.assign(structuredClone(obj), { ...updates })` to clone+override. Never `{ ...spread }` to clone a class instance (loses prototype). **Exception**: `structuredClone(new ClassName(...))` when a plain object is explicitly required (e.g. Vjsf rejects class instances) — add a comment explaining why.
 - **Boolean casting** — never `!!`; always `Boolean(value)`.
+- **Prefer the shortened assignment forms** — compound assignment (`x += y`, `x ??= y`) over `x = x + y`, and chained assignment (`a.value = b.value = value`) over repeating the right-hand side. `typescript/restrict-plus-operands` and `no-multi-assign` are off in `.oxlintrc.json` for exactly this reason: a `+=` on a `Record<string, unknown>` value is kept as-is rather than widened into a cast, since a cast to silence a lint rule is strictly worse than the operator it replaces.
 
 ## Type Assertions — `as unknown as` Is `any` With Extra Steps
 
