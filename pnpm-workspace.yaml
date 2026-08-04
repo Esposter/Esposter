@@ -63,7 +63,7 @@ catalog:
   "@pulumi/github": ^6.14.1
   "@pulumi/pulumi": ^3.255.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^2.5.4
+  "@takumi-rs/core": ^2.5.5
   "@tiptap/core": ^3.29.2
   "@tiptap/extension-code-block-lowlight": ^3.29.2
   "@tiptap/extension-file-handler": ^3.29.2
