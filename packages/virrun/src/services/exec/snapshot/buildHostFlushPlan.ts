@@ -7,12 +7,13 @@ import { parseOverlayEntryKind } from "@/services/exec/snapshot/parseOverlayEntr
 import { parseOverlayManifest } from "@/services/exec/snapshot/parseOverlayManifest";
 import { runOverlayScript } from "@/services/exec/snapshot/runOverlayScript";
 // Probe a persist run's overlay upper Linux-side and classify + order its entries into a host flush plan
-// (specs/write-back.md), skipping anything the snapshot lower supplies so node_modules never flushes. Pure of any
-// Host mutation (applyFlushPlan performs it), so the plan can be reused for both the host flush and the task cache.
+// (specs/write-back.md), skipping anything the snapshot lower supplies so node_modules never flushes, plus the
+// Caller's `maskedPaths` (prepare outputs, and the source-mirror excludes on win32 — isUnderSnapshotLower). Pure of
+// Any host mutation (applyFlushPlan performs it), so the plan can be reused for both the host flush and the task cache.
 export const buildHostFlushPlan = (
   upperDir: string,
   snapshotUpperDir: string,
-  outputDirs: readonly string[] = [],
+  maskedPaths: readonly string[] = [],
 ): FlushOp[] => {
   const manifest = parseOverlayManifest(runOverlayScript(OVERLAY_PROBE_SCRIPT, [upperDir, snapshotUpperDir]));
   const snapshotLowerPaths = new Set(
@@ -22,5 +23,5 @@ export const buildHostFlushPlan = (
     kind: parseOverlayEntryKind(entry, entry.isOpaque),
     relativePath: entry.relativePath,
   }));
-  return buildFlushPlan(entries, (relativePath) => isUnderSnapshotLower(relativePath, snapshotLowerPaths, outputDirs));
+  return buildFlushPlan(entries, (relativePath) => isUnderSnapshotLower(relativePath, snapshotLowerPaths, maskedPaths));
 };

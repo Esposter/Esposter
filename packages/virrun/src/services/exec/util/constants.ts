@@ -13,6 +13,17 @@ export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
 // The dependency-closure dir. The persist flush must never leak it: it comes from the snapshot lower, and writes
 // Into it (e.g. node_modules/.vite) must not reach the host.
 export const NODE_MODULES_DIRECTORY = "node_modules";
+// The repo's own git dir — host-owned working state the source mirror keeps out of the sandbox
+// (resolveMirrorExcludes) and the write-back therefore masks. Named here rather than spelled inline, so the two
+// Directions and their tests can never disagree on the spelling.
+export const GIT_DIRECTORY = ".git";
+// Git's registry of linked worktrees under the common git dir: one `worktrees/<name>/gitdir` file per worktree,
+// Holding the absolute path of that worktree's own `.git` file. A `.git` that is a file rather than a directory
+// Points back at its entry with the same `gitdir: ` prefix. Read by readLinkedWorktreePaths to derive which nested
+// Directories are parallel checkouts rather than this tree's source — the generic form of "don't mirror a worktree".
+export const GIT_WORKTREES_DIRECTORY_NAME = "worktrees";
+export const GIT_WORKTREE_GITDIR_FILENAME = "gitdir";
+export const GIT_WORKTREE_GITDIR_PREFIX = "gitdir: ";
 // The dir pnpm/npm link executables into; prepended to the sandbox PATH so a bare command resolves the overlaid
 // (current-platform) binary ahead of any host `.bin` the WSL login PATH leaks in. See createOsExecOptions.
 export const NODE_MODULES_BIN_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.bin`;

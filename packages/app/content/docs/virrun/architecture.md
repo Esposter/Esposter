@@ -36,7 +36,7 @@ flowchart TB
     os --> sandboxprim["bubblewrap\nLinux direct / Windows WSL2"]
     sandboxprim --> ram[("tmpfs + overlayfs\nRAM FS — every process sees it")]
     os --> snap["snapshot + warm-fork\ndeps: environment-key · prepare: source-hash"]
-    os --> wb["write-back\nflush top upper → host\nmutation runs only"]
+    os --> wb["write-back\nflush top upper → host\nminus what the sandbox's source\nview never carried\nmutation runs only"]
     wb --> disk
 ```
 

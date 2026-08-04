@@ -1,16 +1,16 @@
 import { isUnderSnapshotLower } from "@/services/exec/snapshot/isUnderSnapshotLower";
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
+import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(isUnderSnapshotLower, () => {
   const emptyPaths = new Set<string>();
-  const noOutputs: readonly string[] = [];
+  const noMaskedPaths: readonly string[] = [];
 
   test("masks a write inside a node_modules tree even when it has no snapshot entry of its own", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(`${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}/${TEST_FILENAME}`, emptyPaths, noOutputs)).toBe(
+    expect(isUnderSnapshotLower(`${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}/${TEST_FILENAME}`, emptyPaths, noMaskedPaths)).toBe(
       true,
     );
   });
@@ -18,7 +18,7 @@ describe(isUnderSnapshotLower, () => {
   test("masks a snapshot-lower entry itself", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(TEST_FILENAME, new Set([TEST_FILENAME]), noOutputs)).toBe(true);
+    expect(isUnderSnapshotLower(TEST_FILENAME, new Set([TEST_FILENAME]), noMaskedPaths)).toBe(true);
   });
 
   test("masks an output dir itself and everything inside it", () => {
@@ -40,7 +40,7 @@ describe(isUnderSnapshotLower, () => {
     ]);
 
     expect(
-      isUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}/${TEST_FILENAME}`, snapshotLowerPaths, noOutputs),
+      isUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}/${TEST_FILENAME}`, snapshotLowerPaths, noMaskedPaths),
     ).toBe(false);
   });
 
@@ -51,9 +51,28 @@ describe(isUnderSnapshotLower, () => {
     expect(isUnderSnapshotLower(`${TEST_FILENAME}${TEST_FILENAME}`, emptyPaths, [TEST_FILENAME])).toBe(false);
   });
 
+  // The write-back half of the source-mirror exclude rule: on win32 the sandbox reads a mirror those paths were
+  // Filtered out of, so an upper entry under one is stale mirror content, not a host file the command edited —
+  // Flushing it resurrected `.claude/worktrees` trees the host had already deleted.
+  test("masks a mirror-excluded path at any depth so a ghost write can never reach the host", () => {
+    expect.hasAssertions();
+
+    // A linked worktree root the mirror excluded, and the repo git dir.
+    const worktreePath = `${TEST_FILENAME}/worktree`;
+    const maskedPaths = [worktreePath, GIT_DIRECTORY];
+
+    expect(isUnderSnapshotLower(`${worktreePath}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
+    expect(isUnderSnapshotLower(`${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
+    expect(isUnderSnapshotLower(`${TEST_FILENAME}/${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(
+      true,
+    );
+    // Source that merely shares a masked path's prefix is a normal flush — the mask is segment-anchored.
+    expect(isUnderSnapshotLower(`${GIT_DIRECTORY}ignore`, emptyPaths, maskedPaths)).toBe(false);
+  });
+
   test("does not mask a produced file outside the dependency closure", () => {
     expect.hasAssertions();
 
-    expect(isUnderSnapshotLower(TEST_FILENAME, emptyPaths, noOutputs)).toBe(false);
+    expect(isUnderSnapshotLower(TEST_FILENAME, emptyPaths, noMaskedPaths)).toBe(false);
   });
 });

@@ -4,7 +4,7 @@ import { z } from "zod";
 // Size + mtimeMs (rsync's classic quick-check signal), symlinks carry their target, directories carry presence only —
 // Non-participating fields are zeroed/blank rather than optional so equality is a flat four-field compare. Persisted
 // As JSON beside the mirror and read back by a later process, so it is zod-validated before use
-// (readSourceMirrorManifest).
+// (readSourceMirrorPublication).
 export interface SourceMirrorManifestEntry {
   readonly mtimeMs: number;
   readonly size: number;

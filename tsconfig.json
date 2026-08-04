@@ -6,5 +6,5 @@
   },
   "exclude": ["node_modules", "packages"],
   "extends": "./packages/configuration/tsconfig.node.json",
-  "include": ["**/*.ts"]
+  "include": [".claude/**/*.ts", "**/*.ts"]
 }
