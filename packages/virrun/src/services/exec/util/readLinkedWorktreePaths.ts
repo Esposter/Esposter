@@ -17,7 +17,11 @@ const readGitCommonDirectory = (root: string): string | undefined => {
   else if (stats.isDirectory()) return gitPath;
   const gitdir = getResult(() => readFileSync(gitPath, "utf8")).unwrapOr("");
   if (!gitdir.startsWith(GIT_WORKTREE_GITDIR_PREFIX)) return undefined;
-  return dirname(dirname(resolve(gitdir.slice(GIT_WORKTREE_GITDIR_PREFIX.length).trim())));
+  // Resolved against the record's own directory, never the process cwd: git writes this path relative whenever the
+  // Repo is on relative worktrees (`worktree.useRelativePaths`, git 2.48+) or is a submodule (always
+  // `gitdir: ../.git/modules/<name>`), and anchoring it anywhere else lands outside the repo — which reads as "no
+  // Registry", so every nested worktree silently mirrors again.
+  return dirname(dirname(resolve(root, gitdir.slice(GIT_WORKTREE_GITDIR_PREFIX.length).trim())));
 };
 // Read the repository's linked worktrees (`git worktree add`) that live INSIDE `cwd`, as posix relative paths.
 //
@@ -46,8 +50,12 @@ export const readLinkedWorktreePaths = (cwd: string): readonly string[] => {
       .unwrapOr("")
       .trim();
     if (!gitdir) continue;
-    // The recorded path is the worktree's own `.git` file, so its parent is the worktree root.
-    const relativePath = relative(root, dirname(resolve(gitdir))).replaceAll("\\", "/");
+    // The recorded path is the worktree's own `.git` file, so its parent is the worktree root. Relative records
+    // (`git worktree repair --relative-paths`) resolve against the entry dir holding them, not the process cwd.
+    const relativePath = relative(root, dirname(resolve(join(worktreesDirectory, entry), gitdir))).replaceAll(
+      "\\",
+      "/",
+    );
     // Only a worktree nested inside this tree is this mirror's problem; a sibling checkout is outside the walk anyway.
     // What escapes the root is a leading `..` SEGMENT — a directory whose NAME merely starts with those characters
     // (`..worktree`) is nested like any other, and dropping it would mirror a whole parallel checkout unmasked.

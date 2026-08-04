@@ -69,9 +69,9 @@ const searchDocuments = (
   const normalizedSearchText = searchText.toLocaleLowerCase();
   return documents.filter((document) =>
     (searchFields ?? Object.keys(document)).some((searchField) =>
+      // Only string leaves match a search: every other field type is filterable rather than searchable in Azure Search
       getSearchFieldValues(document, searchField.split("/")).some(
-        (value) =>
-          value !== null && value !== undefined && String(value).toLocaleLowerCase().includes(normalizedSearchText),
+        (value) => typeof value === "string" && value.toLocaleLowerCase().includes(normalizedSearchText),
       ),
     ),
   );

@@ -3,17 +3,19 @@
  * scope or completed. The probe and the two argument guards return before a scope exists, so they carry none.
  */
 export interface ReviewStats {
-  angles: null | number;
+  angles?: number;
   candidates: number;
   claimsChecked?: number;
   claimsInventoried?: number;
+  cleanupCap?: number;
   deduped: number;
   droppedUnsettled: number;
+  droppedUnverified: number;
   finders: number;
-  findMode: null | string;
+  findMode?: string;
   level: string;
   mode: string;
-  perAngle: null | number;
+  perAngle?: number;
   refuted: number;
   reported: number;
   seams?: string[];

@@ -125,6 +125,12 @@ describe(checkAchievementCondition, () => {
     expect(
       checkAchievementCondition(
         { ...baseCondition, operator: AchievementOperator.IsPalindrome, path: "message", value: true },
+        { message: "A man, a plan, a canal: Panama" },
+      ),
+    ).toBe(true);
+    expect(
+      checkAchievementCondition(
+        { ...baseCondition, operator: AchievementOperator.IsPalindrome, path: "message", value: true },
         data,
       ),
     ).toBe(false);

@@ -18,13 +18,24 @@ const parallel = (thunks: (() => Promise<unknown>)[]): Promise<unknown[]> =>
   Promise.all(thunks.map((thunk) => thunk()));
 
 /**
+ * The script's body, read and stripped once for the whole suite run. Every test in the ten driving suites calls
+ * `runReview`, and the file cannot change between them — so re-reading and re-parsing ~1800 lines per call is
+ * pure repetition. Held as the promise itself, so concurrent tests share the one read rather than racing it.
+ *
+ * `export` is the one thing an async function body cannot carry; the harness strips it the same way.
+ */
+let bodyPromise: Promise<string> | undefined;
+const readBody = (): Promise<string> =>
+  (bodyPromise ??= readFile(SCRIPT_PATH, "utf8").then((source) =>
+    source.replace(/^export const meta/mu, "const meta"),
+  ));
+
+/**
  * Drives one whole run of the real script against stubbed agents, and hands back everything a test can assert
  * on: the returned report, the logs, and every agent call the run made.
  */
 export const runReview = async (args: string, agentStub: AgentStub): Promise<RunResult> => {
-  const source = await readFile(SCRIPT_PATH, "utf8");
-  // `export` is the one thing an async function body cannot carry; the harness strips it the same way.
-  const body = source.replace(/^export const meta/mu, "const meta");
+  const body = await readBody();
   const logs: string[] = [];
   const calls: AgentCall[] = [];
   const run = new AsyncFunction("args", "log", "agent", "parallel", "phase", "pipeline", "budget", "workflow", body);

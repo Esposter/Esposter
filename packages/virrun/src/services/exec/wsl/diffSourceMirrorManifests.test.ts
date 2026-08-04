@@ -4,6 +4,7 @@ import type { SourceMirrorPublication } from "@/models/exec/wsl/SourceMirrorPubl
 
 import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
 import { diffSourceMirrorManifests } from "@/services/exec/wsl/diffSourceMirrorManifests";
 import { describe, expect, test } from "vitest";
 
@@ -120,6 +121,20 @@ describe(diffSourceMirrorManifests, () => {
     const delta = diffSourceMirrorManifests(publish({}, [worktreePath]), publish({ [worktreePath]: file() }));
 
     expect(delta).toStrictEqual({ copyPaths: [worktreePath], deletePaths: [worktreePath] });
+  });
+
+  // A root-level worktree is a single-segment path, so only the anchor keeps it out of the bare-name shape — and the
+  // Delete list is spent as paths under the mirror tree, so the anchor comes off again here. Without both halves the
+  // Registration forces the clearing full materialize instead of one targeted delete.
+  test("strips the anchor from a path exclude before adding it to the delete list", () => {
+    expect.hasAssertions();
+
+    const anchoredPath = toRootAnchoredExclude(TEST_FILENAME);
+
+    expect(diffSourceMirrorManifests(publish({}), publish({}, [anchoredPath]))).toStrictEqual({
+      copyPaths: [],
+      deletePaths: [TEST_FILENAME],
+    });
   });
 
   // A bare name matches its segment at any depth, which no path list can express; the planner rebuilds instead.

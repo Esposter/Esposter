@@ -3,18 +3,19 @@ new="$1"
 old="$2"
 
 # If the caller's shell enabled fnm's built-in corepack support (FNM_COREPACK_ENABLED, set by
-# `fnm env --corepack-enabled`), fnm runs `corepack enable` on every install/use/default. Node 25+ no
+# `fnm env --corepack-enabled`), fnm runs `corepack enable` on every install/default. Node 25+ no
 # longer bundles corepack, so that fires against a binary this fresh version doesn't have yet and hard-errors
 # ("Can't enable corepack: Can't spawn program"). Suppress it here and let the block below provision corepack
 # ourselves; once it's globally installed, the user's cd-triggered `fnm use --corepack-enabled` resolves fine.
 unset FNM_COREPACK_ENABLED
 
+# `fnm default` is the only switch worth making: it persists for every new shell. A `fnm use` here would
+# only mutate this nested shell's PATH, which dies with the script.
 fnm install "$new"
 fnm default "$new"
-fnm use "$new"
 # A freshly installed node has corepack disabled, and Node 25+ no longer bundles corepack at all, so pnpm
-# is unavailable until we provide and enable it. This script runs in a nested non-interactive shell where
-# `fnm use` can't rewrite PATH, so we can't trust ambient `corepack`/`npm` (they resolve to the OLD version).
+# is unavailable until we provide and enable it. This script runs in a nested non-interactive shell whose
+# PATH still points at the OLD version, so we can't trust ambient `corepack`/`npm`.
 # `npm`/`corepack` are node scripts (`#!/usr/bin/env node`), so calling them by absolute path still resolves
 # the wrong node off PATH - run them through `fnm exec --using "$new"` so their shebang picks the NEW node.
 # (The .ps1 sibling can't do this because fnm exec on Windows won't spawn the .cmd shims; hence its absolute

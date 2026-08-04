@@ -1,6 +1,7 @@
 import { GIT_DIRECTORY, NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { isExcludedPath } from "@/services/exec/util/isExcludedPath";
+import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
 import { describe, expect, test } from "vitest";
 
 // Any nested slashed pattern — a linked worktree root, a prepare output dir — matches the same way.
@@ -25,6 +26,21 @@ describe(isExcludedPath, () => {
     expect(isExcludedPath(`${NESTED_PATH}/${TEST_FILENAME}`, [NESTED_PATH])).toBe(true);
     // The same tail nested deeper is a different path — a slashed pattern is anchored, never floating.
     expect(isExcludedPath(`${TEST_FILENAME}/${NESTED_PATH}`, [NESTED_PATH])).toBe(false);
+  });
+
+  // The shape that only the anchor can express: a derived exclude naming ONE root-level directory. Left bare it would
+  // Read as a name matching at any depth, so `git worktree add app` would drop every `packages/*/app` in the repo
+  // From the mirror and mask it out of the write-back.
+  test("matches a single-segment anchored path at the root only", () => {
+    expect.hasAssertions();
+
+    const anchoredPath = toRootAnchoredExclude(TEST_FILENAME);
+
+    expect(isExcludedPath(TEST_FILENAME, [anchoredPath])).toBe(true);
+    expect(isExcludedPath(`${TEST_FILENAME}/${NESTED_PATH}`, [anchoredPath])).toBe(true);
+    expect(isExcludedPath(`${NESTED_PATH}/${TEST_FILENAME}`, [anchoredPath])).toBe(false);
+    // The same name unanchored is the bare-name shape, which does float — the distinction the anchor exists for.
+    expect(isExcludedPath(`${NESTED_PATH}/${TEST_FILENAME}`, [TEST_FILENAME])).toBe(true);
   });
 
   test("never matches a sibling that merely shares the pattern's prefix", () => {

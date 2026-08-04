@@ -30,6 +30,19 @@ describe("code-review entry", () => {
     expect(run.result.stats).toMatchObject({ level, mode });
   });
 
+  // The whole-args clause of the mode parse: without it "area" alone parses as a diff review whose TARGET is the
+  // Literal string "area", and the user who asked for a subsystem audit gets a working-tree diff review with no
+  // Error at all. Every other row in the table above supplies a level word or free-form English, so the clause is
+  // Unpinned by them.
+  test("refuses a bare mode word with no target", async () => {
+    expect.hasAssertions();
+
+    const run = await runReview("area", stubFor({}));
+
+    expect(run.result.error).toContain("Area mode needs a target");
+    expect(run.calls).toHaveLength(0);
+  });
+
   test("probes without spawning an agent", async () => {
     expect.hasAssertions();
 

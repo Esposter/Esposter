@@ -15,4 +15,6 @@ export interface StubOptions {
   synthesis?: unknown;
   /** Overrides on top of the default CONFIRMED verdict, per candidate index. */
   verdictFor?: (index: number, prompt: string) => Record<string, unknown>;
+  /** Per-verifier answer by label; `null` models a verifier that died, so its whole group reaches no verdict. */
+  verifierFor?: (label: string) => null | undefined;
 }

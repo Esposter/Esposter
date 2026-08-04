@@ -18,6 +18,9 @@ import { resolveCwd } from "@/services/exec/util/resolveCwd";
 // Sandbox is skipped: the recorded diff is flushed to the host and the recorded streams + exit code reproduced. On a
 // Miss the run executes (capturing output) and its exit-0 result is recorded. Falls back to a plain persistRun when
 // The cache is off or the key can't be computed (not a git repo / no lockfile).
+//
+// `maskedPaths` is keyed on, not re-applied: a hit replays the recorded plan verbatim, so an entry built under a
+// Different mask must miss rather than flush what today's mask forbids (computeTaskCacheKey).
 export const persistWithCache = async (
   backend: ExecBackend,
   command: readonly string[] | string,
@@ -25,7 +28,7 @@ export const persistWithCache = async (
   extraLowerDirs: readonly string[] = [],
   maskedPaths: readonly string[] = [],
 ): Promise<ExecResult> => {
-  const key = isTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd) : null;
+  const key = isTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd, maskedPaths) : null;
   if (key === null) {
     writeVirrunDebug(
       isTaskCacheEnabled()

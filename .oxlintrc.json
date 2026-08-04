@@ -8,17 +8,18 @@
     "style": "error",
     "suspicious": "error"
   },
-  "ignorePatterns": [
-    ".claude/workflows/*.js",
-    "public",
-    "**/auto-imports.d.ts",
-    "**/composables/visual/useFluidSimulator.ts"
-  ],
+  "ignorePatterns": ["public", "**/auto-imports.d.ts", "**/composables/visual/useFluidSimulator.ts"],
   "jsPlugins": ["./scripts/oxlint/persistThenNotify.ts"],
   "options": {
     "typeAware": true
   },
   "overrides": [
+    {
+      "files": [".claude/workflows/*.js"],
+      "rules": {
+        "unicorn/prefer-module": "off"
+      }
+    },
     {
       "files": ["packages/app/server/**/*.ts"],
       "rules": {
@@ -95,7 +96,6 @@
     "prefer-add-event-listener": "off",
     "prefer-destructuring": "off",
     "prefer-global-this": "off",
-    "radix": "off",
     "sort-imports": "off",
     "sort-keys": "off",
     "typescript/ban-types": "off",
@@ -103,7 +103,6 @@
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-member-accessibility": ["error", { "accessibility": "no-public" }],
     "typescript/explicit-module-boundary-types": "off",
-    "typescript/no-base-to-string": "off",
     "typescript/no-dynamic-delete": "off",
     "typescript/no-empty-interface": "off",
     "typescript/no-empty-object-type": "off",
@@ -129,9 +128,8 @@
     "typescript/prefer-readonly-parameter-types": "off",
     "typescript/promise-function-async": "off",
     "typescript/restrict-plus-operands": "off",
-    "typescript/restrict-template-expressions": "off",
     "typescript/strict-boolean-expressions": "off",
-    "typescript/switch-exhaustiveness-check": "off",
+    "typescript/switch-exhaustiveness-check": ["error", { "considerDefaultExhaustiveForUnions": true }],
     "typescript/unbound-method": "off",
     "unicorn/filename-case": "off",
     "unicorn/import-style": "off",

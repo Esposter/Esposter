@@ -49,7 +49,7 @@ export const parseTileLayer = async (
         break;
       }
       case Encoding.Csv:
-        layer.data = layerData.split(",").map((d) => Number.parseInt(d));
+        layer.data = layerData.split(",").map(Number);
         break;
       default:
         exhaustiveGuard(encoding);

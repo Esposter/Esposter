@@ -97,6 +97,44 @@ describe("code-review dedupe and resolve", () => {
     expect(getFinding(run).severity).toBe("critical");
   });
 
+  test("lets the worse READING lead its group, not merely the settled one", async () => {
+    expect.hasAssertions();
+
+    // The dedupe picks its primary by the same ordering the report ranks by. Verdict-first, a CONFIRMED minor
+    // Outranks a PLAUSIBLE critical at one line: toFinding still escalates the row to critical, but every word of
+    // Its text comes from the minor, and the critical's own summary is printed nowhere — pre-merged members are
+    // Deliberately not listed in `also`. The reader then fixes the wrong thing at a critical-labelled line.
+    const run = await runReview(
+      "high",
+      stubFor({
+        finderFor: (label) => (label === "cleanup" ? [] : [{ ...CANDIDATE, summary: label }]),
+        verdictFor: (index) =>
+          index === 0 ? { confidence: 40, severity: "critical" } : { confidence: 95, severity: "minor" },
+      }),
+    );
+
+    expect(getFinding(run).severity).toBe("critical");
+    expect(getFinding(run).summary).toContain("angle-A");
+  });
+
+  test("dedupes before spending the resolve budget", async () => {
+    expect.hasAssertions();
+
+    // A resolver is the costliest agent in the run, so N clones of one line must collapse first: resolving first
+    // Buys N full-effort agents to settle one location, and evicts N-1 genuinely distinct findings from the budget.
+    const run = await runReview(
+      "high",
+      stubFor({
+        finderFor: (label) => (label === "cleanup" ? [] : [{ ...CANDIDATE }]),
+        resolution: RESOLVED,
+        verdictFor: UNDER_CONFIDENT,
+      }),
+    );
+
+    expect(run.calls.filter((call) => call.label.startsWith("resolve:"))).toHaveLength(1);
+    expect(run.logs).toContainEqual("resolve: 1 plausible findings to settle");
+  });
+
   test("routes an under-confident CONFIRMED to a resolver instead of reporting it", async () => {
     expect.hasAssertions();
 

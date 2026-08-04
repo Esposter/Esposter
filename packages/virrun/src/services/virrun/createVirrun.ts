@@ -24,6 +24,7 @@ import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareL
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
+import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
 import { withColorEnv } from "@/services/exec/util/withColorEnv";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnvironment";
@@ -64,11 +65,16 @@ export const createVirrun = async ({
   // What a persist run may never write back to the host. On native Linux the sandbox reads the real working tree, so
   // Only the prepare layer's outputs are masked — everything else the command wrote is a genuine native-equivalent
   // Mutation. On win32 the sandbox reads the WSL source mirror instead, which the mirror excludes were filtered out
-  // Of (resolveMirrorExcludes, a superset of those same outputs): a path that never entered the mirror has no
-  // Legitimate host origin, so an upper entry under one can only be a ghost of stale mirror content — flushing it
-  // Resurrects a tree the host already deleted (`.claude/worktrees`) or clobbers host-only state (`.git`).
+  // Of (resolveMirrorExcludes, handed these same resolved outputs so the two sets cannot disagree on the environment):
+  // A path that never entered the mirror has no legitimate host origin, so an upper entry under one can only be a
+  // Ghost of stale mirror content — flushing it resurrects a tree the host already deleted (`.claude/worktrees`) or
+  // Clobbers host-only state (`.git`). Either way the outputs are root-anchored (toRootAnchoredExclude): they name one
+  // Directory, and a root-level one (`.nuxt`) left bare would mask that name at every depth in the repo.
+  const prepareOutputs = prepareStep?.outputs ?? [];
   const maskedPaths =
-    isOsBackend && process.platform === "win32" ? resolveMirrorExcludes(cwd) : (prepareStep?.outputs ?? []);
+    isOsBackend && process.platform === "win32"
+      ? resolveMirrorExcludes(cwd, prepareOutputs)
+      : prepareOutputs.map((output) => toRootAnchoredExclude(output));
   const toOptions = (stdio: ExecStdio): ExecOptions =>
     withColorEnv(isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio });
   // Provisioning (deps install / prepare) always pipes: its output must never land on the host's stdout, or a piped

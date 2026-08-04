@@ -9,7 +9,7 @@ Skip a persist run whose inputs are unchanged. Each entry records one exit-0 per
 
 ## How it works
 
-The key is `sha256(environment-key + working-tree-hash + command)` (`computeTaskCacheKey`, where the environment key is the lockfile digest plus the sandbox node major — the same key the warm snapshot uses); the working-tree hash is git-based (`git ls-files -s` + `git diff --binary` + untracked walk, `computeSourceTreeHash`). Two runs share a key iff all three match, so a hit is safe to replay verbatim. When the key can't be computed (not a git repo, no lockfile), the run falls back to a plain uncached persist rather than keying on partial state.
+The key is `sha256(environment-key + working-tree-hash + command + write-back mask)` (`computeTaskCacheKey`, where the environment key is the lockfile digest plus the sandbox node major — the same key the warm snapshot uses); the working-tree hash is git-based (`git ls-files -s` + `git diff --binary` + untracked walk, `computeSourceTreeHash`). Two runs share a key iff all four match, so a hit is safe to replay verbatim. The [mask](/docs/virrun/write-back) is in the key because a hit replays a recorded plan instead of rebuilding one, so it never passes the mask again — an entry recorded under a looser mask (a worktree registered since, or anything predating the mask) would flush exactly the ghosts the mask exists to stop, on every hit until it aged out. When the key can't be computed (not a git repo, no lockfile), the run falls back to a plain uncached persist rather than keying on partial state.
 
 ```mermaid
 flowchart TB
@@ -29,7 +29,7 @@ Each entry holds `meta.json` (recorded exit code, stdout, stderr, and the write-
 
 ## Honest keys — the two guards
 
-The key is only honest if the command is deterministic in its three inputs — and the network is not one of them. Two guards keep it so, neither needing a second "replay" run to compare:
+The key is only honest if the command is deterministic in the inputs it names — and the network is not one of them. Two guards keep it so, neither needing a second "replay" run to compare:
 
 - **Read-network → hermetic execution.** A cacheable command's fork runs with the network namespace **unshared** (`isNetworkEnabled: false` — the sandbox is `--unshare-all` by default and virrun simply stops re-adding network for the cached run; deps are already provisioned, so `createSnapshot`/`createPrepareLayer` keep network). This doesn't _detect_ network use; it _removes_ network as a hidden input, so the key becomes complete by construction. A pure task (`tsgo`/`eslint`/`vitest`) is unaffected; a read-network command (`pnpm outdated`/`audit`) can't reach the registry, exits non-zero, and is never recorded. virrun makes that failure legible: `isNetworkFailure` matches the network-error signature (undici's `fetch failed`, `getaddrinfo`/`ENETUNREACH`, …) in the failed run's streams and prints a "did you mean `--no-cache`" hint (`formatVirrunNetworkHint`). A command _known_ to need the registry simply runs native — no prefix.
 - **Write-network → dependency-closure guard.** `pnpm install`/`add`/`update` rewrite `pnpm-lock.yaml` — and a warm store lets them succeed **offline**, so the hermetic gate alone won't stop them. Recording one would replay a stale dependency closure. `hasDependencyClosureMutation` inspects the miss's flush plan and, if it rewrote the lockfile, drops the entry — the run is still flushed and correct, merely uncached. The lockfile op is the whole signal: `node_modules` never reaches a flush plan (structurally masked by the snapshot lower). Installs are the snapshot layer's job anyway, never the task cache's.
@@ -40,18 +40,18 @@ One accepted caveat: a command that makes a _soft/optional_ network call and sti
 
 Paths relative to `packages/virrun/src/services/exec/cache/`.
 
-| File                              | Role                                                                          |
-| --------------------------------- | ----------------------------------------------------------------------------- |
-| `computeTaskCacheKey.ts`          | sha256 over environment key + source-tree hash + command; null → run uncached |
-| `computeSourceTreeHash.ts`        | git-based working-tree hash (also keys the prepare layer)                     |
-| `isTaskCacheEnabled.ts`           | default-on, off in CI / `--no-cache` / `VIRRUN_NO_CACHE`                      |
-| `persistWithCache.ts`             | the orchestration above — hit replay, hermetic miss, record on exit 0         |
-| `resolveTaskCacheLocation.ts`     | resolve `tasks/<key>` — pure addressing + existence                           |
-| `recordTaskCache.ts`              | materialize payload + meta in a pid-tagged temp, atomic rename publish        |
-| `replayTaskCache.ts`              | apply the recorded flush plan to the host, reproduce streams + exit code      |
-| `hasDependencyClosureMutation.ts` | the lockfile-rewrite guard                                                    |
-| `isNetworkFailure.ts`             | network-error signature match for the `--no-cache` hint                       |
-| `taskCache.equivalence.test.ts`   | replay must be observably identical to a real re-run                          |
+| File                              | Role                                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| `computeTaskCacheKey.ts`          | sha256 over environment key + source-tree hash + command + mask; null → run uncached |
+| `computeSourceTreeHash.ts`        | git-based working-tree hash (also keys the prepare layer)                            |
+| `isTaskCacheEnabled.ts`           | default-on, off in CI / `--no-cache` / `VIRRUN_NO_CACHE`                             |
+| `persistWithCache.ts`             | the orchestration above — hit replay, hermetic miss, record on exit 0                |
+| `resolveTaskCacheLocation.ts`     | resolve `tasks/<key>` — pure addressing + existence                                  |
+| `recordTaskCache.ts`              | materialize payload + meta in a pid-tagged temp, atomic rename publish               |
+| `replayTaskCache.ts`              | apply the recorded flush plan to the host, reproduce streams + exit code             |
+| `hasDependencyClosureMutation.ts` | the lockfile-rewrite guard                                                           |
+| `isNetworkFailure.ts`             | network-error signature match for the `--no-cache` hint                              |
+| `taskCache.equivalence.test.ts`   | replay must be observably identical to a real re-run                                 |
 
 ## Notes
 
