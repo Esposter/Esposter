@@ -81,7 +81,7 @@ Dependency installs and graph generation (run from repo root):
 
 ```bash
 pnpm i                # refresh dependencies/lockfile after package.json changes
-pnpm update:node      # bump engines.node + @types/node, install/switch via fnm, remove old version
+pnpm update:node      # bump engines.node + @types/node, install + fnm default, remove old version
 pnpm depcruise:graph  # generate dependency-graph.svg from package entrypoints
 ```
 

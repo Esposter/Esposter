@@ -61,7 +61,7 @@ When only dependency versions change, follow the dependency update process and r
 pnpm refresh:lockfile
 ```
 
-To bump the node version, run `pnpm update:node [version]` — it edits `engines.node` + the `@types/node` catalog, installs/switches via fnm, and removes the old version in one call (then refresh the lockfile).
+To bump the node version, run `pnpm update:node [version]` — it edits `engines.node` + the `@types/node` catalog, installs the version and makes it the fnm default, and removes the old version in one call (then refresh the lockfile). Already-open shells keep the old version until reopened.
 
 ## CI job shape
 

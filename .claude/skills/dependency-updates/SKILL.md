@@ -37,13 +37,13 @@ Don't hand-edit the node version — run `pnpm update:node [version]` from the r
 
 1. Bumps `engines.node` in root `package.json` (CI reads this via `node-version-file: package.json`, so it's the single source of truth)
 2. Bumps the `@types/node` catalog entry to the highest release matching the new node major
-3. Installs the new version with fnm, sets it as the default, and switches the current shell to it (`fnm install`/`default`/`use`)
+3. Installs the new version with fnm and sets it as the default (`fnm install`/`default`) — `fnm default` persists for every new shell. It deliberately does not run `fnm use`: the script runs in a nested non-interactive shell, so a `use` would only mutate a PATH that dies with the script
 4. Enables corepack on the new version (a freshly installed node ships it disabled, so `pnpm` would otherwise be missing)
 5. Schedules removal of the old version — fnm can't delete a node version while it's in use, so a detached process retries `fnm uninstall <old>` until this call's node processes exit, then removes it (self-cleaning, no process killing)
 
 The TS orchestration (`scripts/updateNode/`) resolves versions and edits the manifests; the per-OS `install.ps1`/`install.sh` (dispatched via `crossOS`, like `refresh:lockfile`) do the fnm work. Pure helpers (version selection, manifest editing) live beside them with unit tests; the generic registry/version utilities are shared from `scripts/services/`.
 
-It deliberately does **not** refresh the lockfile (per step 3 above). After it finishes, run `pnpm refresh:lockfile` to resolve the new `@types/node`, and `fnm use` in any other open shells.
+It deliberately does **not** refresh the lockfile. After it finishes, run `pnpm refresh:lockfile` to resolve the new `@types/node`. Already-open shells keep the old version until reopened.
 
 When `@electric-sql/pglite` changes between minor versions, regenerate the db-mock data directory snapshot from `packages/db-mock/` with `pnpm snapshot:gen`, then verify the db-mock tests. The committed `packages/db-mock/src/snapshot.tar.gz` is tied to PGlite's dump format and may need refreshing even without schema changes.
 
