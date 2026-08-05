@@ -37,11 +37,11 @@ Keep permanent structural entries (`!pnpm-lock.yaml`, generated migrations) at t
 
 ## Opening a PR Spends a Review Slot
 
-Auto-review is on for PRs targeting the default branch, so **`gh pr create` against `main` is itself a review trigger** — the slot is spent the moment the PR exists, and the rate limit puts the next one roughly an hour out. There is no "open it now, review it later".
+Auto-review is on for PRs targeting the default branch. **Creating such a PR, and every push to one, starts a review** — the slot goes immediately and the next is about an hour out.
 
-So never open a PR while anything the review depends on is still being decided: the split point, the commits in range, or the `.coderabbit.yaml` on that PR's base. Ask before opening one, even when a review is the agreed goal — "get part 1 reviewed" is agreement on the destination, not permission to spend the slot before the shape is settled. Until then push the branch and stop; a pushed branch costs nothing and can be re-cut freely, while a premature PR costs the slot, and re-cutting it afterwards throws away findings that cannot be re-requested for an hour.
+So ask first, every time. Agreement on the goal ("get this reviewed") is not permission to spend the slot before the shape is settled — the commit range, the cut point, and the base's `.coderabbit.yaml` all have to be final. Until then push the branch and stop: a branch is free and re-cuttable, a PR is not.
 
-If a PR was opened too early, the slot is gone either way — closing it costs nothing further, and the commits stay reviewable under whichever PR they actually belong to, since each PR reviews its own range. Close it when it shouldn't exist; the lesson is the hour, not the branch.
+Opened one too early? Close it. The slot is already gone and the commits stay reviewable under the PR they belong to.
 
 ## Never Push Into an In-Flight Review
 
@@ -116,23 +116,33 @@ The merge-base count above still governs the **first** review of a PR (and any f
 
 The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
 
-## Splitting an Over-Budget PR
+## Cutting the Release PR Back to the Budget
 
-The release PR (`develop` → `main`) cannot be planned to a budget the way feature work can — it accumulates whatever merged. Split it **by commit window, not by file**: every merge boundary in the `<base>..<head>` range is a prefix of the head branch's history, so a branch pointing at one is a plain pointer. No cherry-pick, no rewrite of published history, and no conflicts by construction.
+The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged. When it outgrows the cap, **shorten `develop` itself and park the rest**. Don't open side PRs against `main`: each one spends a slot, and the release PR shrinks by itself anyway once its commits land.
 
-Find the boundaries and what each costs:
+Cut **by commit window, not by file**, at a merge boundary — the cumulative count jumps there, each jump is one topical cluster, and the prefix is already coherent history:
 
 ```bash
-for commit in $(git rev-list --reverse <base>..<head>); do
+for commit in $(git rev-list --reverse <base>..develop); do
   printf '%4d  %s\n' "$(git diff --name-only -M "<base>..$commit" | wc -l)" "$(git log -1 --oneline "$commit")"
 done
 ```
 
-The cumulative count jumps at each merge commit — those are the topical clusters. Cut where one lands under the cap, branch at that commit, and PR it against `<base>`.
+Pick the boundary nearest ~80 files, then park and cut:
 
-**One split branch is enough.** When it merges, `<base>` contains that prefix and the original PR's diff collapses to the remainder on its own — the head branch needs no edit at all. A second branch for the remainder duplicates the head branch and only adds cleanup.
+```bash
+git branch queue/<scope> develop && git push origin queue/<scope>   # everything, nothing lost
+git reset --hard <cut> && git push --force-with-lease origin develop
+```
 
-Counts do not subtract: a file touched in both windows is counted in each, so the remainder is bigger than `total - prefix`. Measure it (`git diff --name-only -M <cut>..<head> | wc -l`) instead of doing the arithmetic — the difference decides whether the remainder still needs exclusions.
+The queue branch never gets a PR. After the release PR merges, merge one window of it back into `develop` at a time — each window is its own release PR and its own review cycle, so the queue drains at the cap instead of piling up again.
+
+Two things to check before running it:
+
+- **The force-push retriggers the open release PR's review.** Confirm the timing (§Opening a PR Spends a Review Slot) and that no other session is pushing `develop`.
+- **Counts don't subtract.** A file touched in two windows counts in both, so the remainder is bigger than `total - prefix`. Measure it: `git diff --name-only -M <cut>..queue/<scope> | wc -l`.
+
+Keep doc and skill commits on `develop` when you cut — cherry-pick them across so the working tree keeps the conventions it is being asked to follow. Identical hunks merge cleanly when the queue window comes back.
 
 The split PR targets the default branch, so it is auto-reviewed on open; no `@coderabbitai review` comment. Each PR reads `.coderabbit.yaml` from **its own** base (§Config Is Read From the PR Base Branch) — a branch cut from the head carries the head's config, not the base's, so exclusions the remainder relies on must exist on whatever branch that PR is based against.
 
