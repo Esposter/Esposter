@@ -34,6 +34,17 @@ describe(Builder, () => {
     );
   });
 
+  test("renders nothing for a nullish root array member or attribute bag", () => {
+    expect.hasAssertions();
+
+    const builder = new Builder({ renderOpts: { pretty: false } });
+
+    expect(builder.buildObject({ root: [{ item: 1 }, null, undefined] })).toBe(
+      `${xmlDeclaration}<root><item>1</item></root>`,
+    );
+    expect(builder.buildObject({ root: { $: null, item: 1 } })).toBe(`${xmlDeclaration}<root><item>1</item></root>`);
+  });
+
   test("wraps every scalar value in cdata", () => {
     expect.hasAssertions();
 
