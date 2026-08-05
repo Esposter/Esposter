@@ -2,6 +2,7 @@ import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
 import { buildSourceMirrorManifest } from "@/services/exec/wsl/buildSourceMirrorManifest";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
@@ -44,34 +45,32 @@ vi.mock(import("@/services/exec/wsl/createSourceMirrorArchive"), async (importOr
 vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
 }));
-// The temp cwd resolves no config on disk, so resolveMirrorExcludes would walk up to the real repo's
-// Virrun.config.json (environment nuxt) and fire `git ls-files` ahead of the plan. Pin it undefined so the
-// Environment defaults to none and the mirror excludes stay the base patterns.
-vi.mock(import("@/services/configuration/resolveVirrunConfiguration"), () => ({
-  resolveVirrunConfiguration: () => undefined,
-}));
 
 describe(createWslSourceMirrorSync, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   let cwd = "";
   let entryUnc = "";
+  // The set the run resolved (createWslOsBackend); the planner never derives one of its own.
+  let excludes: readonly string[] = [];
   const readStaged = (prefix: string): string => {
     const name = readdirSync(entryUnc).find((entry) => entry.startsWith(prefix));
     return name === undefined ? "" : readFileSync(join(entryUnc, name), "utf8");
   };
   // Simulate a prior successful sync: the tree dir exists and the published manifest matches the given tree state,
-  // Recorded under the exclude set in force (resolveMirrorExcludes) unless a case is exercising an exclude change.
-  const publish = (excludes: readonly string[] = resolveMirrorExcludes(cwd)): void => {
+  // Recorded under the exclude set in force unless a case is exercising an exclude change.
+  const publish = (publishedExcludes: readonly string[] = excludes): void => {
     mkdirSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { recursive: true });
     writeFileSync(
       join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME),
-      JSON.stringify({ entries: buildSourceMirrorManifest(cwd, excludes), excludes }),
+      JSON.stringify({
+        entries: buildSourceMirrorManifest(cwd, publishedExcludes),
+        excludes: publishedExcludes,
+      }),
     );
   };
 
   // A prior sync whose manifest also claims a path the working tree no longer holds — the delete side of a delta.
   const publishRemoved = (removedFilename: string): void => {
-    const excludes = resolveMirrorExcludes(cwd);
     mkdirSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { recursive: true });
     writeFileSync(
       join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME),
@@ -90,6 +89,7 @@ describe(createWslSourceMirrorSync, () => {
     state.cacheRoot = create();
     state.unarchivedPaths = [];
     entryUnc = join(state.cacheRoot, VIRRUN_SOURCES_DIRECTORY_NAME, getSourceMirrorKey(cwd));
+    excludes = resolveMirrorExcludes(cwd, []);
     writeFileSync(join(cwd, TEST_FILENAME), TEST_FILENAME);
   });
 
@@ -98,7 +98,7 @@ describe(createWslSourceMirrorSync, () => {
   test("first run materializes from scratch: full archive extract into a cleared tree", () => {
     expect.hasAssertions();
 
-    const { lockPath, mirrorPath, script } = createWslSourceMirrorSync(cwd);
+    const { lockPath, mirrorPath, script } = createWslSourceMirrorSync(cwd, excludes);
 
     expect(mirrorPath).toBe(getWslSourceMirrorPath(cwd));
     expect(lockPath).toBe(`${mirrorPath}.lock`);
@@ -121,7 +121,7 @@ describe(createWslSourceMirrorSync, () => {
     // Exclude set it was walked under so a later run can tell a stale mirrored set from a current one.
     expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toStrictEqual({
       entries: expect.objectContaining({ [TEST_FILENAME]: expect.anything() }),
-      excludes: resolveMirrorExcludes(cwd),
+      excludes,
     });
   });
 
@@ -130,7 +130,7 @@ describe(createWslSourceMirrorSync, () => {
   test("publishes the origin marker as soon as the entry exists, before the script has run", () => {
     expect.hasAssertions();
 
-    createWslSourceMirrorSync(cwd);
+    createWslSourceMirrorSync(cwd, excludes);
 
     expect(readFileSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME), "utf8")).toBe(cwd);
     // Staged then renamed, never written in place: a reaper reading a torn path would judge the repo deleted and
@@ -143,7 +143,7 @@ describe(createWslSourceMirrorSync, () => {
 
     publish();
 
-    const { lockPath, mirrorPath, script } = createWslSourceMirrorSync(cwd);
+    const { lockPath, mirrorPath, script } = createWslSourceMirrorSync(cwd, excludes);
 
     expect(script).toBe("");
     // The skip path still returns the lock path — the run holds a shared flock on it while bwrap reads the mirror.
@@ -159,7 +159,7 @@ describe(createWslSourceMirrorSync, () => {
     publishRemoved(removedFilename);
     writeFileSync(join(cwd, TEST_FILENAME), `${TEST_FILENAME}${TEST_FILENAME}`);
 
-    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+    const { mirrorPath, script } = createWslSourceMirrorSync(cwd, excludes);
 
     expect(script).toContain(`xargs -0r rm -rf --`);
     expect(script).toContain(`timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar --warning=no-unknown-keyword -xf`);
@@ -176,7 +176,7 @@ describe(createWslSourceMirrorSync, () => {
     const removedFilename = "b";
     publishRemoved(removedFilename);
 
-    const { script } = createWslSourceMirrorSync(cwd);
+    const { script } = createWslSourceMirrorSync(cwd, excludes);
 
     expect(script).toContain(`xargs -0r rm -rf --`);
     expect(script).not.toContain("tar --warning=no-unknown-keyword -xf");
@@ -189,13 +189,33 @@ describe(createWslSourceMirrorSync, () => {
 
     state.unarchivedPaths = [TEST_FILENAME];
 
-    const { script } = createWslSourceMirrorSync(cwd);
+    const { script } = createWslSourceMirrorSync(cwd, excludes);
 
     // The run still proceeds — a locked or vanished file is skipped, not fatal — but the manifest must not claim it.
     expect(script).not.toBe("");
     expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toStrictEqual({
       entries: {},
-      excludes: resolveMirrorExcludes(cwd),
+      excludes,
+    });
+  });
+
+  // The planner walks and publishes the caller's set, never one it re-derives: only the caller knows the run's
+  // `environment`, and a re-read of `virrun.config` cannot see one passed programmatically. A set derived here would
+  // Keep a prepare output the write-back mask drops (or drop one it keeps), and the two directions the mirror
+  // Promises are one rule would describe different trees.
+  test("walks and publishes the exclude set it is handed", () => {
+    expect.hasAssertions();
+
+    const outputDirectory = "c";
+    const callerExcludes = [...excludes, toRootAnchoredExclude(outputDirectory)];
+    mkdirSync(join(cwd, outputDirectory), { recursive: true });
+    writeFileSync(join(cwd, outputDirectory, TEST_FILENAME), TEST_FILENAME);
+
+    createWslSourceMirrorSync(cwd, callerExcludes);
+
+    expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toStrictEqual({
+      entries: { [TEST_FILENAME]: expect.anything() },
+      excludes: callerExcludes,
     });
   });
 
@@ -205,7 +225,7 @@ describe(createWslSourceMirrorSync, () => {
     publish();
     writeFileSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME), "{");
 
-    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+    const { mirrorPath, script } = createWslSourceMirrorSync(cwd, excludes);
 
     expect(script).toContain(`rm -rf '${mirrorPath}'`);
   });
@@ -219,35 +239,35 @@ describe(createWslSourceMirrorSync, () => {
     expect.hasAssertions();
 
     const worktreePath = "b/c";
-    publish([...resolveMirrorExcludes(cwd), worktreePath]);
+    publish([...excludes, worktreePath]);
 
-    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+    const { mirrorPath, script } = createWslSourceMirrorSync(cwd, excludes);
 
     expect(readStaged(VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX)).toBe(`${worktreePath}\0`);
     // A targeted delete, not the clearing materialize — worktree churn must not cost a full re-copy of the tree.
     expect(script).not.toContain(`rm -rf '${mirrorPath}' &&`);
     // Published under the set in force now, so the reconciliation is paid once rather than on every later run.
     expect(jsonDateParse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toStrictEqual({
-      entries: buildSourceMirrorManifest(cwd, resolveMirrorExcludes(cwd)),
-      excludes: resolveMirrorExcludes(cwd),
+      entries: buildSourceMirrorManifest(cwd, excludes),
+      excludes,
     });
   });
 
   test("keeps the skip path when the exclude set is merely ordered differently", () => {
     expect.hasAssertions();
 
-    publish(resolveMirrorExcludes(cwd).toReversed());
+    publish(excludes.toReversed());
 
-    expect(createWslSourceMirrorSync(cwd).script).toBe("");
+    expect(createWslSourceMirrorSync(cwd, excludes).script).toBe("");
   });
 
   // A bare name matches its segment at any depth, so no delete list can target it — only clearing the tree can.
   test("falls back to the full materialize when a bare-name exclude changed", () => {
     expect.hasAssertions();
 
-    publish([...resolveMirrorExcludes(cwd), "dist"]);
+    publish([...excludes, "dist"]);
 
-    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+    const { mirrorPath, script } = createWslSourceMirrorSync(cwd, excludes);
 
     expect(script).toContain(`rm -rf '${mirrorPath}' && mkdir -p '${mirrorPath}'`);
   });
@@ -258,7 +278,7 @@ describe(createWslSourceMirrorSync, () => {
     publish();
     rmSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { force: true, recursive: true });
 
-    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+    const { mirrorPath, script } = createWslSourceMirrorSync(cwd, excludes);
 
     expect(script).toContain(`rm -rf '${mirrorPath}'`);
   });

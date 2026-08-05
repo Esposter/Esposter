@@ -17,14 +17,15 @@ export const useReadSearchedMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
-  const { getReadMoreItems } = searchMessageStore;
-  const { count, hasFiles, isSearching, menu, page, searchQuery } = storeToRefs(searchMessageStore);
+  const { getBoundCount, getBoundPage, getReadMoreItems } = searchMessageStore;
+  const { hasFiles, isSearching, menu, searchQuery } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
   return getReadMoreItems(
     async (offset) => {
-      if (!currentRoomId.value)
+      const roomId = currentRoomId.value;
+      if (!roomId)
         throw new InvalidOperationError(
           Operation.Read,
           useReadSearchedMessages.name,
@@ -35,25 +36,34 @@ export const useReadSearchedMessages = () => {
       isSearching.value = true;
       isRightDrawerOpen.value = true;
       rightDrawer.value = RightDrawer.Search;
+      // Everything this read writes back is resolved before its first await, exactly as the result slice it is
+      // Issued against is: the room and the tab can both move while it is in flight, and its totals, its page
+      // And its history entry all belong to the search that was actually run, not to whatever is on screen when
+      // The response lands
+      const isFilesSearch = hasFiles.value;
+      const filters = [...selectedFilters.value];
+      const query = searchQuery.value;
+      const boundCount = getBoundCount();
+      const boundPage = getBoundPage();
       const { count: newCount, data } = await $trpc.message.searchMessages.query({
-        filters: dedupeFilters(selectedFilters.value),
-        hasFiles: hasFiles.value,
+        filters: dedupeFilters(filters),
+        hasFiles: isFilesSearch,
         offset,
-        query: searchQuery.value,
-        roomId: currentRoomId.value,
+        query,
+        roomId,
       });
       // No offset means a fresh search rather than reading the next offset page.
       if (!offset) {
-        page.value = 1;
+        boundPage.value = 1;
         // The Files tab is a browse, not a text query, so it is never written to search history.
-        if (!hasFiles.value)
+        if (!isFilesSearch)
           await createSearchHistory({
-            filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
-            query: searchQuery.value,
-            roomId: currentRoomId.value,
+            filters: filters.length > 0 ? filters : undefined,
+            query,
+            roomId,
           });
       }
-      if (newCount !== undefined) count.value = newCount;
+      if (newCount !== undefined) boundCount.value = newCount;
       return data;
     },
     () => {

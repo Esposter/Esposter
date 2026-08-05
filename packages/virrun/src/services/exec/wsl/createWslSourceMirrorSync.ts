@@ -19,7 +19,6 @@ import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
 import { publishSourceMirrorOrigin } from "@/services/exec/wsl/publishSourceMirrorOrigin";
 import { readSourceMirrorPublication } from "@/services/exec/wsl/readSourceMirrorPublication";
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
-import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
 import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -72,15 +71,16 @@ const getHasBareNameExcludeChange = (previous: readonly string[], current: reado
 // Run (skip included) in a shared flock on lockPath for bwrap's whole duration, so this script's deletes/renames can
 // Never land under a live same-cwd reader — the exclusive acquire waits for readers to drain (bounded by the same
 // -w). Write-back's target is unaffected: persistRun flushes to `options.cwd` (the host /mnt/c path), derived
-// Independently of this mirror — but its *set* is not, since a path this sync excludes is one the flush must mask
-// (createVirrun passes the same excludes as `maskedPaths`), or the sandbox could write the host a path the mirror
-// Never carried. A failed sync fails the folded script before bwrap — the os backend never falls back.
-export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
+// Independently of this mirror — but its *set* is not, since a path this sync excludes is one the flush must mask,
+// Or the sandbox could write the host a path the mirror never carried. `excludes` is therefore handed in rather than
+// Resolved here: the caller resolves it once from the run's own `environment` (createWslOsBackend) and createVirrun
+// Derives `maskedPaths` from that same `environment`, so the walk and the mask cannot describe different sets.
+// A failed sync fails the folded script before bwrap — the os backend never falls back.
+export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string[]): WslSourceMirrorSync => {
   const entryPath = getWslSourceMirrorEntryPath(cwd);
   const entryUnc = getWslSourceMirrorEntryUnc(cwd);
   const mirrorPath = getWslSourceMirrorPath(cwd);
   const lockPath = `${mirrorPath}.lock`;
-  const excludes = resolveMirrorExcludes(cwd);
   const manifest = buildSourceMirrorManifest(cwd, excludes);
   reapStaleSourceMirrorTemps(entryUnc);
   // A manifest is only trusted while the tree it describes exists: a mirror whose tree was removed out-of-band but

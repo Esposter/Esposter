@@ -1,11 +1,15 @@
 import type { AzureEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
+import { getIsNotFound } from "@/services/azure/getIsNotFound";
 import { deserializeEntity } from "@/services/azure/transformer/deserializeEntity";
 import { getResultAsync } from "@esposter/shared";
 
 // GetEntity strips the etag for callers that don't need it; optimistic-concurrency callers read through
-// Here instead so their subsequent update can be made conditional on the version they saw
+// Here instead so their subsequent update can be made conditional on the version they saw.
+// Only the service's own 404 becomes the not-found sentinel — a read that merely failed (throttling, a socket
+// Reset, an entity that will not deserialize) propagates, because a caller cannot tell the two apart once they
+// Collapse into one value and reports a transient fault as a deletion the user is looking straight at
 export const getEntityWithEtag = <TTableEntity extends AzureEntity, TEntity extends TTableEntity>(
   tableClient: CustomTableClient<TTableEntity>,
   cls: Class<TEntity>,
@@ -14,4 +18,10 @@ export const getEntityWithEtag = <TTableEntity extends AzureEntity, TEntity exte
   getResultAsync(async () => {
     const { etag, ...entity } = await tableClient.getEntity(...args);
     return { entity: deserializeEntity(entity, cls), etag };
-  }).unwrapOr(undefined);
+  }).match<undefined | { entity: TEntity; etag: string }>(
+    (entityWithEtag) => entityWithEtag,
+    (error) => {
+      if (getIsNotFound(error)) return undefined;
+      throw error;
+    },
+  );

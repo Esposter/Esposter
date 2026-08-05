@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
-import { RestError } from "@azure/storage-blob";
+import { getIsNotFound } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, streamToText } from "@esposter/shared";
 
@@ -16,7 +16,7 @@ export const readContentBlob = async <TSchema extends z.ZodType>(
   const { readableStreamBody } = await getResultAsync(() => useDownload(AzureContainer.ResourceAssets, blobName)).match(
     (response) => response,
     (error) => {
-      if (error instanceof RestError && error.statusCode === 404) return { readableStreamBody: undefined };
+      if (getIsNotFound(error)) return { readableStreamBody: undefined };
       throw error;
     },
   );

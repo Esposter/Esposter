@@ -35,6 +35,14 @@ List every excluded file explicitly instead. It is verbose, and that verbosity i
 
 Keep permanent structural entries (`!pnpm-lock.yaml`, generated migrations) at the top of `path_filters`, above any temporary block.
 
+## Opening a PR Spends a Review Slot
+
+Auto-review is on for PRs targeting the default branch. **Creating such a PR, and every push to one, starts a review** — the slot goes immediately and the next is about an hour out.
+
+So ask first, every time. Agreement on the goal ("get this reviewed") is not permission to spend the slot before the shape is settled — the commit range, the cut point, and the base's `.coderabbit.yaml` all have to be final. Until then push the branch and stop: a branch is free and re-cuttable, a PR is not.
+
+Opened one too early? Close it. The slot is already gone and the commits stay reviewable under the PR they belong to.
+
 ## Never Push Into an In-Flight Review
 
 **Check CodeRabbit's state before every push to a branch with an open PR.** Pushing while a review is running cancels it and retriggers a fresh one, which costs a rate-limit slot and loses the in-progress review's findings. CodeRabbit is an **incremental** system — it does not re-review commits it has already reviewed — so a cancelled review's comments do not reliably come back on the next run. They are simply gone.
@@ -108,14 +116,67 @@ The merge-base count above still governs the **first** review of a PR (and any f
 
 The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
 
+## Cutting the Release PR Back to the Budget
+
+The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged, and CodeRabbit skips it outright once it passes the file limit ("Review skipped: N files exceed the limit of 100"). The fix is to **shorten `develop` and park the rest on a queue branch**, then feed the queue back one window at a time.
+
+Never open side PRs against `main` to slice it up. Each one spends a review slot on arrival, and the release PR is not the thing that needs splitting — its _review cycles_ are.
+
+**There are only ever two branches: `develop` and `queue/<scope>`. One PR: the release PR, which stays open the whole time.**
+
+### 1. Cut
+
+Cut by commit window, not by file, at a merge boundary — the cumulative count jumps there, each jump is one topical cluster, and any prefix is coherent history by construction:
+
+```bash
+for commit in $(git rev-list --reverse <base>..develop); do
+  printf '%4d  %s\n' "$(git diff --name-only -M "<base>..$commit" | wc -l)" "$(git log -1 --oneline "$commit")"
+done
+```
+
+Take the boundary nearest ~80 files. The next three commands discard and rewrite published history, so they are the one place in this repo that needs a gate first — **get explicit approval for this cut**, and check all three of: the worktree is clean (`git status --porcelain -uall` empty — a `reset --hard` eats uncommitted work), you are on `develop` and not a worktree branch, and the local tip matches `origin/develop` (`git rev-parse develop origin/develop`) so no other session's push is about to be overwritten. `--force-with-lease` refuses the push if the remote moved, but nothing catches a dirty tree or the wrong branch.
+
+Then park, cut, and re-base the park onto the cut:
+
+```bash
+git branch queue/<scope> develop && git push origin queue/<scope>   # nothing lost yet
+git reset --hard <cut> && git push --force-with-lease origin develop
+git rebase --rebase-merges --onto develop <cut> queue/<scope> && git push --force-with-lease origin queue/<scope>
+```
+
+The rebase is what makes it two branches instead of three: without it the queue is a copy of `develop` plus the remainder. `--rebase-merges` because the cut lands on a merge boundary and the remainder above it normally holds several more — a plain `--onto` flattens them, taking with them the boundaries the next window is sized at.
+
+Cherry-picked doc commits replay as no-ops, or conflict if reworded since — `git rebase --skip` those, `develop`'s version is newer. Read the commit's **patch**, `git show <commit>`, before skipping: `--skip` drops the whole commit rather than the conflicting hunk, so one that also carried unrelated work loses it, and `--stat` shows only which files it touched, not whether their content is the cherry-pick. Verify the same way before force-pushing the queue — `git diff <old-queue-head> queue/<scope>`, patch not `--stat`, should show only rewordings you recognise.
+
+Cherry-pick doc and skill commits across the cut so the working tree keeps the conventions it is being asked to follow.
+
+### 2. Drain
+
+Merge one queue window into `develop`, trigger a review, wait for `Review completed`, fix findings, then merge the next. Reviews are incremental — each cycle reads only what changed since the last completed one (§PR File Budget) — so every window gets a full-budget review even though the PR's cumulative diff grows past the cap.
+
+### 3. Merge
+
+Merge the release PR to `main` only when the queue is empty and every window came back clean.
+
+Three things break the scheme:
+
+- **Pushing before the running review reports `Review completed`** — it cancels that review and its findings do not come back.
+- **Asking for a full re-review** — it re-reads the cumulative diff and trips the file limit again.
+- **A force-push while a review is running** — the cut in step 1 retriggers the open PR's review like any other push, so check the state first and check no other session is pushing `develop`.
+
+Counts don't subtract: a file touched in two windows counts in both, so the remainder is bigger than `total - prefix`. Measure it — `git diff --name-only -M develop..queue/<scope> | wc -l`.
+
 ## When to Exclude
 
 Chunk at the budget where you can. A mechanical rename can't be chunked — it's one atomic commit — so exclude the files within it that carry no reviewable content.
 
-Exclude only files with **no reviewable content change**. Two kinds qualify:
+**Every exclusion is derived from an open PR's diff.** Enumerate what that PR actually changed, classify each file, and list the ones that qualify. Never write an exclusion for a file class the repo merely _could_ produce — a speculative glob block (generated artifacts, binaries, vendored assets) added outside a PR is unreviewed config change for no benefit, and it silently blinds every later PR that does touch those paths. A class earns a permanent entry only when a real PR puts it in a diff.
+
+Exclude only files with **no reviewable content change**. Three kinds qualify:
 
 - **Pure renames** — 100% similarity, zero content change (`R100`).
 - **Rename-token-only edits** — the file's only diff is the mechanical substitution itself (e.g. every `File` identifier → `Sheet`). The live block covers both, and its header comment says so.
+- **Import-path-only edits** — a module moved (`@/` → `#shared`, say) and the file's entire diff is the same imports pointing at the new path. "Every changed line is an `import`" is _not_ the test: a new symbol, a new package, or an added side-effect import is a real change that passes it. The test is that the added and removed imports pair up with **only the quoted specifier differing** — same symbols, same shape, new module.
 
 A file that was renamed _and_ carries a real logic change still needs review. When in doubt, leave it in.
 
@@ -136,6 +197,36 @@ The rule reduces to: exclude a file only when its diff carries no information a 
 
 ```bash
 git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 "\""}' | sort
+```
+
+Import-path-only edits need two conditions, not one — every changed line is an import, **and** the added imports are the removed ones with a different specifier. Blanking the quoted path turns the second into a set comparison, which is what rejects an added symbol or an added package that the first condition alone would wave through:
+
+```bash
+git diff --name-only -M <base>..<head> | while IFS= read -r path; do
+  # §When to Exclude never lets these out, whatever the diff shape says
+  case "$path" in
+    *.test.ts|*.test-d.ts|packages/app/content/docs/*|.claude/skills/*) continue ;;
+    *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|packages/app/server/db/migrations/*) continue ;;
+  esac
+  diff=$(git diff -U0 -M <base>..<head> -- "$path")
+  # a mode flip rides in the diff header rather than on a +/- line, so it would survive every
+  # filter below and leave a permission change unreviewed
+  printf '%s\n' "$diff" | grep -qE '^(old|new|deleted file|new file) mode ' && continue
+  # -U0 so context lines can't be mistaken for changes; the +++/--- headers are dropped
+  changed=$(printf '%s\n' "$diff" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---)')
+  [ -z "$changed" ] && continue
+  printf '%s\n' "$changed" | grep -qvE '^[+-][[:space:]]*(import[[:space:]]|$)' && continue
+  # a bare side-effect import is sequenced for its effect, and the sort below cannot tell a
+  # reordering of them from a repathing
+  printf '%s\n' "$changed" | grep -qE '^[+-][[:space:]]*import[[:space:]]+"' && continue
+  # an import attribute value is quoted too (`with { type: "json" }`), so blanking every quoted
+  # string would normalize a changed attribute away. A line carrying a second quoted value stays in
+  # the review set rather than being classified
+  printf '%s\n' "$changed" | grep -qE '"[^"]*"[^"]*"' && continue
+  # every quoted string blanked, so two lines match only if the specifier was the sole difference
+  blank() { printf '%s\n' "$changed" | grep "^[$1]" | sed -E 's/^.//; s/"[^"]*"/""/g' | sort; }
+  [ "$(blank +)" = "$(blank -)" ] && echo "    - \"!$path\""
+done
 ```
 
 Rename-token-only edits are not `R100` (they have a content diff), but when the sweep landed as **its own commit** they can be classified **exactly** — by replaying the substitution and demanding the result reproduce the committed blob byte-for-byte. Never classify by line counts: a token substitution rewrites each affected line in place, so `--numstat` is symmetric, but a balanced logic edit is symmetric too and the filter cannot tell them apart.

@@ -1,9 +1,13 @@
 import { describe, expect, test } from "vitest";
 
+import type { RunResult } from "./models/RunResult";
+
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
 import { getPrompt } from "./getPrompt.test";
 import { runReview } from "./runReview.test";
 import { stubFor } from "./stubFor.test";
+
+const getOptionsFor = (result: RunResult, label: string) => result.calls.find((call) => call.label === label)?.options;
 
 // What a finder is asked for decides what it can report at all. Demanding a crash from a documentation finding
 // Makes the finder either drop it or invent one, and neither outcome is visible anywhere in the output.
@@ -68,17 +72,30 @@ describe("code-review finder prompts", () => {
     expect(getPrompt(run, "cleanup")).toContain("Your cap is a ceiling, not a quota");
   });
 
-  test("runs cleanup finders at low effort and correctness angles at the session's", async () => {
+  test("runs cleanup finders at low effort and correctness angles at the level's", async () => {
     expect.hasAssertions();
 
     const run = await runReview("high", stubFor({}));
-    const optionsFor = (label: string) => run.calls.find((call) => call.label === label)?.options;
+    const maxRun = await runReview("max", stubFor({}));
 
-    expect(optionsFor("cleanup")?.effort).toBe("low");
-    // `not.toHaveProperty` passes against `undefined`, so a run that spawned no correctness angle at all would
-    // Read here as one that spawned it without an effort override.
-    expect(optionsFor("angle-A")).toBeDefined();
-    expect(optionsFor("angle-A")).not.toHaveProperty("effort");
+    expect(getOptionsFor(run, "cleanup")?.effort).toBe("low");
+    expect(getOptionsFor(run, "angle-A")?.effort).toBe("high");
+    // The level's second axis: without it `max` spawns the same agents as `xhigh` thinking exactly as hard, so a
+    // Re-run after a capped round buys a wider skim rather than the deeper read the level was raised for.
+    expect(getOptionsFor(maxRun, "angle-A")?.effort).toBe("max");
+    expect(getOptionsFor(maxRun, "cleanup")?.effort).toBe("low");
+  });
+
+  test("tells the area sweep what the kinds mean, since its schema offers it the enum", async () => {
+    expect.hasAssertions();
+
+    // The sweep gets `kind` in area mode exactly as a finder does. Handed the enum with nothing explaining it, a
+    // Candidate can self-label `cleanup` and demote its own defect into low-effort verification and a lower rank.
+    const area = await runReview("area xhigh the cache", stubFor({ candidates: [CANDIDATE], scope: AREA_SCOPE }));
+    const diff = await runReview("xhigh", stubFor({ candidates: [CANDIDATE] }));
+
+    expect(getPrompt(area, "sweep")).toContain("Set each candidate's `kind`");
+    expect(getPrompt(diff, "sweep")).not.toContain("Set each candidate's `kind`");
   });
 
   test("carries the record's settled decisions to finders and verifiers alike", async () => {

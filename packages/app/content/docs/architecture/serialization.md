@@ -109,6 +109,12 @@ Resource content (Sheet, Dashboard, TodoList, …) takes a **fourth** path that 
 
 Blanket revival is wrong here because the content is already schema-validated, so the schema knows exactly which fields are dates and coerces them itself with `z.coerce.date()`: the item-metadata timestamps (`aItemEntitySchema` — `createdAt`, `updatedAt`, `deletedAt`), `Metadata.importedAt`, and `TodoListItem.dueAt`. A reviver that guesses from string shape instead would mis-revive a genuine string field: a Sheet cell value is typed `boolean | null | number | string`, so an ISO-datetime string typed into a cell would be turned into a `Date` that `columnValueSchema` then rejects — failing the entire resource read, not just one cell. The same rule covers the localStorage draft path: `getDraft` parses with `JSON.parse` and `draftSchema.updatedAt` is a `z.coerce.date()`, so a draft body that is itself an ISO datetime stays a string.
 
+## Machine JSON whose strings are paths — same rule, other side of the repo
+
+The same argument applies wherever a schema reads a document that a program wrote but a person named parts of: virrun's overlay manifests, task-cache entries, source-mirror publications and on-disk probe caches all carry repo-relative paths and symlink targets as plain `z.string()` fields. A path may legitimately be an ISO datetime (`2026-08-05T12:00:00Z` is a legal Linux filename), and a reviver reads shape rather than schema, so blanket revival turns that path into a `Date` the schema rejects — failing the whole read over one filename, and on the write-back path throwing after the command already ran, so every file it wrote is discarded.
+
+These parse plainly through a single named helper per package (`parseMachineJson` in virrun), so the exception lives in one place with one disable rather than being re-argued per file. "The data has no dates" is still not the test — the test is whether any string field is free-form text a person chose.
+
 ## What does not apply here
 
 - **Plain objects / tRPC primitives**: SuperJSON handles these natively without class registration.

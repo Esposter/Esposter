@@ -23,11 +23,20 @@ describe(resolveMirrorExcludes, () => {
     ]);
   });
 
-  // The caller's outputs are the ones its prepare layer actually built. Re-reading the config here would miss an
-  // `environment` passed programmatically, and the mask would then omit the very directory the layer regenerates.
-  test("takes the caller's resolved prepare outputs rather than re-reading the config", () => {
+  // The caller's outputs are the ones its prepare layer actually built, and the only ones this may use: re-reading
+  // The config to fill an omission would miss an `environment` passed programmatically, so the mirror walk and the
+  // Write-back mask — resolved by different callers — would answer differently for the same run.
+  test("takes the caller's resolved prepare outputs rather than reading a config", () => {
     expect.hasAssertions();
 
-    expect(resolveMirrorExcludes(create(), [])).toStrictEqual([NODE_MODULES_DIRECTORY, GIT_DIRECTORY]);
+    // A name no config declares: it can only reach the excludes by being the argument, so its presence is the
+    // Proof the caller's set is honoured, where an empty array proves only that nothing was invented
+    const programmaticOutput = "programmaticOutput";
+
+    expect(resolveMirrorExcludes(create(), [programmaticOutput])).toStrictEqual([
+      NODE_MODULES_DIRECTORY,
+      GIT_DIRECTORY,
+      toRootAnchoredExclude(programmaticOutput),
+    ]);
   });
 });

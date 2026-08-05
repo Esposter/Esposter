@@ -234,8 +234,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
   };
   // Binary assets live under {id}/files/… — the owner uploads through short-lived SAS urls and reads resolve
-  // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature), and
-  // DeleteResource already removes the whole {id}/ directory, so the assets need no separate teardown
+  // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature). Teardown comes
+  // At purge, not at delete: a delete only stamps deletedAt, so every asset survives the Recycle bin window and a
+  // Restore hands back a whole resource, and purgeResource is what takes the {id}/ directory wholesale
   const fileAssetsProcedures = {
     deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation(async ({ input: { blobPath, id } }) => {
       // The path is a single separator-free segment (BLOB_SEGMENT_REGEX) anchored under {id}/files/, so this can

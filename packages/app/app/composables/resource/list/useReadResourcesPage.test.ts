@@ -11,7 +11,7 @@ const createOptions = (
   readCount: () => Promise<number>,
   readPage: (options: ReadResourcesOptions) => Promise<Resource[]>,
   getFilterKey: () => string = () => "",
-) => ({ getFilterKey, readCount, readPage });
+) => ({ getFilterInput: () => undefined, getFilterKey, readCount, readPage });
 
 describe(useReadResourcesPage, () => {
   const firstPage = [{ id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource];
@@ -68,6 +68,28 @@ describe(useReadResourcesPage, () => {
     await read(firstOptions);
 
     expect(readCount).toHaveBeenCalledTimes(2);
+  });
+
+  // A relative Updated preset anchors its boundary to the current time, so resolving the filter once per query
+  // Would count over a window the page never read
+  test("hands one resolved filter input to both queries", async () => {
+    expect.hasAssertions();
+
+    let resolveCount = 0;
+    const readCount = vi.fn<(filterInput: number) => Promise<number>>(() => Promise.resolve(0));
+    const readPage = vi.fn<(options: ReadResourcesOptions, filterInput: number) => Promise<Resource[]>>(() =>
+      Promise.resolve(firstPage),
+    );
+    const { read } = useReadResourcesPage({
+      getFilterInput: () => resolveCount++,
+      getFilterKey: () => "",
+      readCount,
+      readPage,
+    });
+    await read(firstOptions);
+
+    expect(readCount).toHaveBeenCalledWith(0);
+    expect(readPage).toHaveBeenCalledWith(firstOptions, 0);
   });
 
   // A delete, restore or purge moves the total behind an unchanged filter

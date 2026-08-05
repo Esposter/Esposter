@@ -24,25 +24,27 @@ const isVisible = computed(() => isCreator.value || checkIsManageable(room.id));
 </script>
 
 <template>
-  <v-tooltip :text="`${DatabaseEntityType.Room} Settings`">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn
-        v-show="(isActive || isHovering) && isVisible"
-        :="tooltipProps"
-        :ripple="false"
-        density="compact"
-        icon="mdi-cog"
-        variant="plain"
-        size="small"
-        @click.stop="
-          async () => {
-            // Settings panels (Roles, Members) load and key their data by the current room,
-            // so opening settings for another room navigates there first
-            if (!isActive) await navigateTo(RoutePath.Messages(room.id));
-            settingsRoomId = room.id;
-          }
-        "
-      />
-    </template>
-  </v-tooltip>
+  <StyledLinkRowActions>
+    <v-tooltip :text="`${DatabaseEntityType.Room} Settings`">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn
+          v-show="(isActive || isHovering) && isVisible"
+          :="tooltipProps"
+          :ripple="false"
+          density="compact"
+          icon="mdi-cog"
+          variant="plain"
+          size="small"
+          @click="
+            async () => {
+              // Settings panels (Roles, Members) load and key their data by the current room,
+              // so opening settings for another room navigates there first
+              if (!isActive) await navigateTo(RoutePath.Messages(room.id));
+              settingsRoomId = room.id;
+            }
+          "
+        />
+      </template>
+    </v-tooltip>
+  </StyledLinkRowActions>
 </template>

@@ -19,7 +19,7 @@ Azure "All resources" parity for `/resources/all`: a filter-pill row, checkbox m
 ## Bulk operations
 
 - `show-select` checkbox column; a selection toolbar replaces the filter row while items are selected (`n selected · Delete (n) · Export CSV · Clear`). `useResourceSelection` remembers full rows selected on other pages, since Vuetify's selection model only carries ids.
-- `resource.deleteResources`: owner-scoped `inArray` delete returning the deleted rows, plus per-id publication rows (cascade) and `{id}/` blob directories. One confirm dialog listing the names, guarded by typing `delete {n}` (the count variant of the [type-the-name guard](/docs/platform/resource-page-parity)).
+- `resource.deleteResources`: owner-scoped `inArray` soft delete returning the deleted rows, stamping `deletedAt` and dropping their publication rows — blobs stay put until purge ([recycle bin](/docs/platform/recycle-bin)). One confirm dialog listing the names, guarded by typing `delete {n}` (the count variant of the [type-the-name guard](/docs/platform/resource-page-parity)).
 
 ## Views
 
@@ -47,16 +47,16 @@ flowchart LR
   STATE --> WHERE["createResourcesWhere<br/>(single filter source)"]
   WHERE --> RR["resource.readResources"] --> TABLE["StyledDataTableServer"]
   WHERE --> CNT["resource.count"] --> FOOTER["footer x–y of N"]
-  TABLE -->|"select n → Delete (n)"| BULK["resource.deleteResources"] -->|"rows + publications + {id}/ blobs"| GONE[("deleted")]
+  TABLE -->|"select n → Delete (n)"| BULK["resource.deleteResources"] -->|"deletedAt + publications dropped"| GONE[("recycle bin")]
   TABLE -->|"Export CSV (chunked)"| CSV["getResourcesCsv"]
 ```
 
 ## Procedures
 
-| Procedure                                   | Auth                          | Input                                                         | Purpose                                          |
-| ------------------------------------------- | ----------------------------- | ------------------------------------------------------------- | ------------------------------------------------ |
-| `resource.readResources` / `resource.count` | authed                        | `isPublished?: boolean`, `updatedAfter?/updatedBefore?: Date` | status + date filters via `createResourcesWhere` |
-| `resource.deleteResources`                  | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                             | bulk delete rows + publications + blob dirs      |
+| Procedure                                   | Auth                          | Input                                                         | Purpose                                           |
+| ------------------------------------------- | ----------------------------- | ------------------------------------------------------------- | ------------------------------------------------- |
+| `resource.readResources` / `resource.count` | authed                        | `isPublished?: boolean`, `updatedAfter?/updatedBefore?: Date` | status + date filters via `createResourcesWhere`  |
+| `resource.deleteResources`                  | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                             | bulk soft delete — `deletedAt` + publication rows |
 
 ## Key files
 
@@ -77,4 +77,4 @@ flowchart LR
 - Publish **status stays off the default columns** (the consolidation decision) — it appears only as an opt-in filter pill, not a column.
 - One filter source: every filter lands in `createResourcesWhere` so `count` and `readResources` can never disagree.
 - All filters funnel through the data table's `search` prop (a JSON key of the filter state) so Vuetify resets to page 1 and refires `update:options` on any change. That is also why every text filter — the search box and a tag pill's name and value — writes through `useDebouncedFilter` instead of per keystroke: a raw binding would reset to page 1 and re-run both queries on every character.
-- `update:options` also fires for a page turn, a page-size change and a sort change, none of which move the total, so the count is keyed to the serialized filter and reused until that changes (or a mutation refreshes). The list and the [recycle bin](/docs/platform/recycle-bin) share one `useReadResourcesPage`, which owns both that keying and the latest-wins stale guard that keeps a slower earlier read from overwriting a fresher one.
+- `update:options` also fires for a page turn, a page-size change and a sort change, none of which move the total, so the count is keyed to the filter the user picked (`getResourceFilterKey`) and reused until that changes (or a mutation refreshes). The key is deliberately built from the **selection**, not from the input the queries send: a relative Updated preset anchors its boundary to the current time, so a key holding that resolved date would never repeat and every page turn would re-run the count. For the same reason `useReadResourcesPage` resolves the filter input once per read and hands the same one to both queries, so the total and the rows always describe the same window. The list and the [recycle bin](/docs/platform/recycle-bin) share that composable, which owns the keying and the latest-wins stale guard that keeps a slower earlier read from overwriting a fresher one.

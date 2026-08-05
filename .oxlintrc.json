@@ -8,7 +8,12 @@
     "style": "error",
     "suspicious": "error"
   },
-  "ignorePatterns": ["public", "**/auto-imports.d.ts", "**/composables/visual/useFluidSimulator.ts"],
+  "ignorePatterns": [
+    "public",
+    ".claude/worktrees",
+    "**/auto-imports.d.ts",
+    "**/composables/visual/useFluidSimulator.ts"
+  ],
   "jsPlugins": ["./scripts/oxlint/persistThenNotify.ts"],
   "options": {
     "typeAware": true

@@ -26,15 +26,17 @@ const isActive = computed(() => room.id === currentDirectMessageId.value);
         {{ directMessageName }}
       </v-list-item-title>
       <template #append>
-        <v-btn
-          v-show="isActive || isHovering"
-          density="compact"
-          icon="mdi-close"
-          variant="plain"
-          size="small"
-          :ripple="false"
-          @click.stop="hideDirectMessage(room.id)"
-        />
+        <StyledLinkRowActions>
+          <v-btn
+            v-show="isActive || isHovering"
+            density="compact"
+            icon="mdi-close"
+            variant="plain"
+            size="small"
+            :ripple="false"
+            @click="hideDirectMessage(room.id)"
+          />
+        </StyledLinkRowActions>
       </template>
     </v-list-item>
   </v-hover>

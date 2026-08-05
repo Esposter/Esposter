@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData, MessageEntity } from "@esposter/db-schema";
@@ -404,8 +405,11 @@ describe("message", () => {
 
     // A vote is not an edit of the poll, so it leaves no edited marker behind
     expect(votedMessage.isEdited).toBeUndefined();
-    expect(jsonDateParse<{ votes: Record<string, string> }>(votedMessage.message).votes).toStrictEqual({
-      [member.id]: pollOptionId,
+    // The whole body is asserted, not only the votes map: the vote rewrites the stored poll, so anything the
+    // Server drops on the way through is gone for good — the option labels first, which the renderer requires
+    expect(jsonDateParse(votedMessage.message)).toStrictEqual({
+      ...jsonDateParse<PollMessageContent>(pollMessage),
+      votes: { [member.id]: pollOptionId },
     });
 
     await mockSessionOnce(mockContext.db, member);

@@ -1,10 +1,11 @@
 /** One reported row of the review. */
 export interface ReviewFinding {
-  category?: string;
+  alsoAt?: string[];
   confidence?: number;
-  evidence?: string;
+  corroboration?: number;
   failure_scenario?: string;
   file: string;
+  kind?: string;
   line?: number;
   provenance: string;
   provenanceSource?: string;

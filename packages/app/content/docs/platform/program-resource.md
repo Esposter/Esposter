@@ -30,7 +30,7 @@ flowchart LR
   - the **Status blade** — owner-only, never a dataset; columns `keyValue · addedAt · responded`, so the owner can see _who_ hasn't answered.
   - the **`ProgramStatus` dataset provider** — columns `participant · addedAt · responded`, where `participant` is the non-secret `publicId`, never `keyValue` and never the token. A dataset flows into dashboards, and a dashboard is publishable, so its snapshot is a public read. Putting the key column into the dataset would make publishing a funnel chart leak the participant list; publishing the token would hand every viewer the ability to respond as that participant. Response-rate charting needs counts and dates, not identities; anything genuinely per-participant is blade work, not chart work.
 - **Blades** — Overview, Setup (the three pickers, reusing `DatasetReferencePicker`), and Status. There is no Editor blade: a program has no canvas.
-- **Lifecycle** — standard resource create/save/delete; `deleteResource` also clears the program's participant partition, declared through `ResourceOwnedTablesMap`. Deleting the bound survey leaves status readable — participants persist, responses are gone — the same fail-soft posture as every dangling reference.
+- **Lifecycle** — standard resource create/save/delete; the program's participant partition is declared through `ResourceOwnedTablesMap`, which is what `purgeResource` reads to clear it — a delete is soft and leaves the partition intact for the [recycle bin](/docs/platform/recycle-bin) window, so a restored program still knows its participants. Deleting the bound survey leaves status readable — participants persist, responses are gone — the same fail-soft posture as every dangling reference.
 
 ## Procedures
 

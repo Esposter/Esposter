@@ -1,5 +1,7 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { Environment } from "@/models/virrun/Environment";
 
+import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep";
 import {
   WSL_BWRAP_STATUS_BEGIN,
   WSL_BWRAP_STATUS_END,
@@ -17,9 +19,12 @@ import { createWslSourceMirrorSync } from "@/services/exec/wsl/createWslSourceMi
 import { getSourceMirrorKey } from "@/services/exec/wsl/getSourceMirrorKey";
 import { reapAbandonedSourceMirrors } from "@/services/exec/wsl/reapAbandonedSourceMirrors";
 import { reapOrphanedWslRuns } from "@/services/exec/wsl/reapOrphanedWslRuns";
+import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
-
-export const createWslOsBackend = (errorName: string): ExecBackend => {
+// `environment` is the run's preset as the caller resolved it, threaded down rather than re-read from `virrun.config`
+// Here: a programmatically passed one is invisible to that file, and the mirror excludes derived from it are the same
+// Set createVirrun masks the write-back with — so guessing differs from the mask exactly when the two must agree.
+export const createWslOsBackend = (errorName: string, environment?: Environment): ExecBackend => {
   // Reap any bwrap tree a previous hard-killed run left orphaned (its onTerminate reaper never fired) before this
   // Backend spawns its own — off the critical path, and scoped to true orphans so a concurrent live run is untouched.
   reapOrphanedWslRuns();
@@ -46,7 +51,10 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
       // Holders don't block each other, and the sync prelude's own exclusive flock uses a nested fd-9 redirect (a
       // Separate open file description), released before this shared acquire — `flock -s -w` bounds a stuck writer.
       const cwd = resolveCwd(options.cwd);
-      const { lockPath, script } = createWslSourceMirrorSync(cwd);
+      const { lockPath, script } = createWslSourceMirrorSync(
+        cwd,
+        resolveMirrorExcludes(cwd, resolvePrepareStep(environment, cwd)?.outputs ?? []),
+      );
       // Reap ext4 source mirrors whose host repo/worktree was deleted — the one cache entry with no lockfile/source
       // Key to supersede it, so it needs its own origin-marker sweep. Strictly after the planning call above, not
       // After the script it returns: the marker publish is host-side and synchronous inside createWslSourceMirrorSync

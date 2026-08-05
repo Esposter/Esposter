@@ -4,14 +4,19 @@ import { withFinalizerAsync } from "@esposter/shared";
 export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems: Ref<TItem[]>) => {
   const items = defaultItems;
   const hasMore = ref(false);
+  // The caller owns the list, so this slice cannot drift onto another key — readiness is still recorded so the
+  // Shape matches the keyed variant a consumer may be handed instead
+  const isLoaded = ref(false);
 
   const initializeOffsetPaginationData = (data: OffsetPaginationData<TItem>) => {
     hasMore.value = data.hasMore;
     items.value = data.items;
+    isLoaded.value = true;
   };
   const resetOffsetPaginationData = () => {
     hasMore.value = false;
     items.value = [];
+    isLoaded.value = false;
   };
   const readItems = async (query: () => Promise<OffsetPaginationData<TItem>>, onComplete?: () => void) => {
     await withFinalizerAsync(async () => {
@@ -26,6 +31,7 @@ export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems:
         const { hasMore: newHasMore, items: newItems } = await query(offset);
         hasMore.value = newHasMore;
         items.value.push(...newItems);
+        isLoaded.value = true;
       }, onComplete);
     };
 
@@ -33,6 +39,7 @@ export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems:
     getReadMoreItems,
     hasMore,
     initializeOffsetPaginationData,
+    isLoaded,
     items,
     readItems,
     resetOffsetPaginationData,

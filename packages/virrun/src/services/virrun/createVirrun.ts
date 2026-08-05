@@ -1,6 +1,7 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions, ExecStdio } from "@/models/exec/ExecOptions";
 import type { Lease } from "@/models/exec/snapshot/Lease";
+import type { Environment } from "@/models/virrun/Environment";
 import type { Virrun } from "@/models/virrun/Virrun";
 import type { VirrunOptions } from "@/models/virrun/VirrunOptions";
 
@@ -31,8 +32,10 @@ import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnviron
 import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { loadSource } from "@/services/source/loadSource";
 import { existsSync } from "node:fs";
-// "auto" resolves to native until vfs beats it on the gates.
-const backendFactories: Record<BackendType, () => ExecBackend> = {
+// "auto" resolves to native until vfs beats it on the gates. Every factory takes the run's `environment` so the one
+// Backend that narrows what the sandbox can see (os on win32, via the source mirror) derives its exclude set from the
+// Same preset `maskedPaths` below does; the others have no mirror and ignore it.
+const backendFactories: Record<BackendType, (environment?: Environment) => ExecBackend> = {
   [BackendType.Auto]: createNativeBackend,
   [BackendType.Native]: createNativeBackend,
   [BackendType.Os]: createOsBackend,
@@ -45,7 +48,7 @@ export const createVirrun = async ({
   environment,
   source = { dir: "", type: SourceType.Dir },
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
-  const execBackend = backendFactories[backend]();
+  const execBackend = backendFactories[backend](environment);
   const { cwd, dispose: disposeSource } = await loadSource(source);
   // Leases this run holds on the snapshot/prepare hash dirs it mounts — released on dispose so pruneStale* can reclaim
   // A superseded layer once no live run is reading it.
@@ -65,7 +68,8 @@ export const createVirrun = async ({
   // What a persist run may never write back to the host. On native Linux the sandbox reads the real working tree, so
   // Only the prepare layer's outputs are masked — everything else the command wrote is a genuine native-equivalent
   // Mutation. On win32 the sandbox reads the WSL source mirror instead, which the mirror excludes were filtered out
-  // Of (resolveMirrorExcludes, handed these same resolved outputs so the two sets cannot disagree on the environment):
+  // Of (resolveMirrorExcludes, which the backend above resolves from this same `environment`, so neither direction
+  // Can answer for a preset the other did not see):
   // A path that never entered the mirror has no legitimate host origin, so an upper entry under one can only be a
   // Ghost of stale mirror content — flushing it resurrects a tree the host already deleted (`.claude/worktrees`) or
   // Clobbers host-only state (`.git`). Either way the outputs are root-anchored (toRootAnchoredExclude): they name one

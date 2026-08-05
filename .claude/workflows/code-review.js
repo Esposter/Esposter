@@ -29,19 +29,23 @@ export const meta = {
 };
 
 // Code-review: Scope → Find (barrier) → group-by-file → Verify → Sweep (xhigh/max) → Resolve → Synthesize
-// Effort parameterization mirrors the inline /code-review cells. Correctness
-// Keeps one finder per angle; cleanup is one finder covering all five cleanup
-// Lenses, capped at the correctness total so neither family can crowd the
-// Other out of the verifier fan-out.
+// Correctness keeps one finder per angle; cleanup is one finder covering all
+// Five cleanup lenses, capped at the correctness total so neither family can
+// Crowd the other out of the verifier fan-out.
 //   High  → 3 correctness × 6 + 1 cleanup (5 lenses, ≤18 cands)
 //   Xhigh → 5 correctness × 8 + 1 cleanup (5 lenses, ≤40 cands) → sweep
-//   Max   → same structure as xhigh (the API reasoning effort differs, not the fan-out)
+//   Max   → 5 correctness × 12 + 1 cleanup (5 lenses, ≤60 cands) → sweep
 // Every finding that survives verification is reported — the level sets how wide the
 // Search is, never how much of what it found the user is allowed to see.
+// `effort` is the reasoning effort every non-cleanup agent runs at, and it is the level's
+// Second axis: a level that widened the fan-out alone would spawn more agents that each
+// Think exactly as hard, so `max` after a capped `xhigh` bought a wider skim rather than a
+// Deeper read. Cleanup finders and cleanup-only verifiers override it downward regardless —
+// Their claims are settled by looking, not by reasoning.
 const LEVEL_PARAMS = {
-  high: { correctnessAngles: 3, perAngle: 6, sweep: false, maxSeams: 6 },
-  xhigh: { correctnessAngles: 5, perAngle: 8, sweep: true, maxSeams: 10 },
-  max: { correctnessAngles: 5, perAngle: 8, sweep: true, maxSeams: 10 },
+  high: { correctnessAngles: 3, effort: "high", perAngle: 6, sweep: false, maxSeams: 6 },
+  xhigh: { correctnessAngles: 5, effort: "xhigh", perAngle: 8, sweep: true, maxSeams: 10 },
+  max: { correctnessAngles: 5, effort: "max", perAngle: 12, sweep: true, maxSeams: 14 },
 };
 const SWEEP_MAX = 8;
 // Lens partitioning gives every finder the whole diff and a different way of looking at it. That is right while
@@ -101,10 +105,13 @@ const makeStats = (known) => ({
   angles: undefined,
   perAngle: undefined,
   cleanupCap: undefined,
+  sweepCap: undefined,
+  reportableCeiling: undefined,
   seams: undefined,
   claimsChecked: undefined,
   claimsInventoried: undefined,
   deduped: 0,
+  droppedUnfound: 0,
   droppedUnsettled: 0,
   droppedUnverified: 0,
   finders: 0,
@@ -137,7 +144,6 @@ log(
   }`,
 );
 
-// Prompt fragments shared with the inline /code-review cells (one source of truth).
 const CORRECTNESS_ANGLES = [
   {
     label: "angle-A",
@@ -172,10 +178,16 @@ const VERDICT_LADDER_RECALL =
 // Next round worded differently). Under the floor, either one is not an answer; it is a PLAUSIBLE, and Resolve is
 // Where those are settled. A missing number is read as exactly the floor, so schema drift never mass-downgrades.
 const VERDICT_MIN_CONFIDENCE = 70;
+// The width of the one field the findings table renders verbatim. Asked of the synthesizer, enforced on the
+// Backfill path, and quoted in the skill's report format — three places that have to agree, so they read it here.
+const SHORT_SUMMARY_MAX = 60;
+// How much of a seam's name its finder label carries, before the index that makes the label unique.
+const SEAM_LABEL_MAX = 24;
 const CONFIDENCE_LADDER =
   "Also give each verdict a **confidence** (0-100): how sure you are of the verdict itself, given what you " +
   "actually read — not how severe the defect would be if real. Calibrate it: 90+ means you read the deciding " +
-  "line and can quote it; 70-89 means the evidence is strong but one hop is unread; below 70 means you are " +
+  `line and can quote it; ${VERDICT_MIN_CONFIDENCE}-89 means the evidence is strong but one hop is unread; below ` +
+  `${VERDICT_MIN_CONFIDENCE} means you are ` +
   "reasoning about what the code probably does, which is PLAUSIBLE, not a verdict. Do not round up to look " +
   "decisive — a low number routes the candidate to a resolver that has the budget to settle it properly, and an " +
   "inflated one ships a guess to the user as fact.";
@@ -236,6 +248,27 @@ const AREA_LENS_NOTE =
 // Views of this list, and a fifth kind added to only one of them fails silently — the schema would accept it and
 // `ingest` would rewrite it to the finder's default with nothing logged.
 const KINDS = ["correctness", "conformance", "record-gap", "cleanup"];
+// Likewise for the verdict ladder: the schema's enum and the check that a returned entry actually carries one are
+// Two views of this list. Structured output is a request, not a guarantee — an entry can arrive well-formed in
+// Every other field and simply omit `verdict`, and `undefined` then passes the confidence gate (a missing number
+// Reads as the floor, and a present-but-high one clears it outright) and is written onto the row. The result is a
+// Report line rendered `undefined 90%`: a candidate no agent ruled on, presented to the reader as judged.
+const VERDICTS = ["CONFIRMED", "PLAUSIBLE", "REFUTED"];
+// One statement of what the four kinds MEAN, pointed at by the schema's enum and quoted by every prompt that asks
+// An agent to choose one. Written out separately they reach the same finder in the same request as two wordings
+// Of one taxonomy, and refining either leaves the agent holding both and choosing arbitrarily — which mis-routes a
+// Real defect into the cleanup family's cheaper verification and lower rank, invisibly.
+const KIND_TAXONOMY =
+  "correctness = a defect in the code; conformance = the code and the written record disagree (say which side is " +
+  "wrong); record-gap = the behaviour is real and deliberate but nothing documents it; cleanup = " +
+  "reuse/simplification/efficiency/altitude/conventions.";
+// The instruction itself, so the finders and the sweep ask for the field in one voice. The sweep needs it because
+// The schema exposes `kind` to it in area mode exactly as it does to a finder, and a candidate handed the enum
+// With nothing explaining it can self-label `cleanup` and demote its own defect out of full-effort verification.
+const AREA_KIND_INSTRUCTION =
+  `Set each candidate's \`kind\`: ${KIND_TAXONOMY} ` +
+  "An area review's whole value is that it can report all four, so do not force a documentation problem into the " +
+  "shape of a bug. ";
 const SCOPE_SCHEMA = {
   type: "object",
   // Area mode has no diff, so diffCommand stops being the thing that makes a scope usable — the file surface does.
@@ -337,8 +370,7 @@ const CANDIDATES_SCHEMA = {
             ? {
                 kind: {
                   enum: KINDS,
-                  description:
-                    "correctness = a defect in the code; conformance = code and the written record disagree (say which side is wrong in failure_scenario); record-gap = the behaviour is real and deliberate but nothing documents it; cleanup = reuse/simplification/efficiency/altitude/conventions. Omit to accept your finder's default.",
+                  description: `${KIND_TAXONOMY} Omit to accept your finder's default.`,
                 },
               }
             : {}),
@@ -361,7 +393,7 @@ const GROUP_VERDICT_SCHEMA = {
         required: ["index", "verdict", "confidence", "severity", "provenance", "evidence"],
         properties: {
           index: { type: "number", description: "the [i] label of the candidate this verdict is for" },
-          verdict: { enum: ["CONFIRMED", "PLAUSIBLE", "REFUTED"] },
+          verdict: { enum: VERDICTS },
           confidence: {
             type: "number",
             description:
@@ -394,8 +426,7 @@ const REPORT_SCHEMA = {
           index: { type: "number", description: "the [i] label of a finding to keep in the report" },
           shortSummary: {
             type: "string",
-            description:
-              "≤60-char compressed claim for the compact one-line findings table — the defect alone, no rationale and no consequence clause",
+            description: `≤${SHORT_SUMMARY_MAX}-char compressed claim for the compact one-line findings table — the defect alone, no rationale and no consequence clause`,
           },
           merge: {
             type: "array",
@@ -537,14 +568,17 @@ const deriveShort = (s) => {
     .trim()
     .split(/\s—\s|;\s|\.\s/u)[0]
     .trim();
-  if (oneLine.length <= 60) return oneLine;
-  const cut = oneLine.slice(0, 60);
+  if (oneLine.length <= SHORT_SUMMARY_MAX) return oneLine;
+  // The ellipsis is part of the budget, not appended past it: cutting at the limit and then adding a character
+  // Returns one over on every clipped row, in the one field whose whole contract is that width.
+  const cut = oneLine.slice(0, SHORT_SUMMARY_MAX - 1);
   const lastSpace = cut.lastIndexOf(" ");
   return `${lastSpace > 30 ? cut.slice(0, lastSpace) : cut}…`;
 };
 
 phase("Scope");
 const scope = await agent(IS_AREA ? AREA_SCOPE_PROMPT : DIFF_SCOPE_PROMPT, {
+  effort: P.effort,
   label: "scope",
   model: AGENT_MODEL,
   schema: SCOPE_SCHEMA,
@@ -749,6 +783,11 @@ const SCOPE_TAIL =
 // Or a bare CR, and a class holding only `\n` calls that one command and scopes its last clause alone.
 const IS_DIFF_COMMAND_SCOPEABLE =
   Boolean(scope.diffCommand) && !/\s--(?<afterPathspecSeparator>\s|$)|&&|[;|\r\n]/u.test(scope.diffCommand);
+// Seam mode's whole premise is that each finder sees ITS territory. When the command cannot take a pathspec every
+// Seam finder is handed the full diff plus a written request to restrict itself — which is a weaker bound than the
+// One the partition was logged as having, and nothing else in the output says so.
+if (SEAM_MODE && !IS_AREA && !IS_DIFF_COMMAND_SCOPEABLE)
+  log("seam finders could not narrow the diff command — each gets the full diff plus a path list to stay within");
 const scopedDiff = (prefixes) =>
   IS_DIFF_COMMAND_SCOPEABLE
     ? `  ${scope.diffCommand} -- ${prefixes.map((p) => `'${p}'`).join(" ")}`
@@ -903,10 +942,7 @@ const FINDER_PROMPT = (f) => {
         ? "Cover whichever lenses apply — you do not need findings from every lens; prioritize the highest-cost issues across all of them. "
         : ""
     }Pass every candidate with a nameable failure scenario through — do not silently drop half-believed candidates; an independent verifier judges them next. ${
-      IS_AREA
-        ? "Set each candidate's `kind`: correctness for a defect, conformance where the code and the record disagree (say which side is wrong), record-gap where the behaviour is deliberate but undocumented, cleanup otherwise. " +
-          "An area review's whole value is that it can report all four, so do not force a documentation problem into the shape of a bug. "
-        : ""
+      IS_AREA ? AREA_KIND_INSTRUCTION : ""
     }If nothing qualifies, return an empty list.\n\nStructured output only.`
   );
 };
@@ -982,8 +1018,7 @@ const RESOLUTION_SCHEMA = {
     verdict: { enum: ["CONFIRMED", "REFUTED", "UNRESOLVABLE"] },
     confidence: {
       type: "number",
-      description:
-        "0-100: how sure you are of THIS VERDICT after what you read — you are the last pass, so anything under 70 means you did not settle it: say UNRESOLVABLE and name the blocker instead of reporting a verdict you would not defend",
+      description: `0-100: how sure you are of THIS VERDICT after what you read — you are the last pass, so anything under ${VERDICT_MIN_CONFIDENCE} means you did not settle it: say UNRESOLVABLE and name the blocker instead of reporting a verdict you would not defend`,
     },
     evidence: { type: "string", description: "the specific thing you read or ran that settled it" },
     blocker: {
@@ -1044,9 +1079,7 @@ const verifyGroups = async (candidates) => {
       // Level, so spending the same per-agent effort on both is where the level's budget quietly goes.
       const isCleanupOnly = g.every((c) => c.kind === "cleanup");
       const r = await agent(GROUP_VERIFIER_PROMPT(g), {
-        // Spread rather than a ternary to undefined: `effort` is a validated enum, and an explicitly-passed
-        // Undefined is not the same input as an absent key to every validator that could sit behind it.
-        ...(isCleanupOnly ? { effort: "low" } : {}),
+        effort: isCleanupOnly ? "low" : P.effort,
         label: `verify:${short}(${g.length})${isCleanupOnly ? " cleanup" : ""}`,
         model: AGENT_MODEL,
         phase: "Verify",
@@ -1061,7 +1094,16 @@ const verifyGroups = async (candidates) => {
         return [];
       }
       const byIdx = {};
-      for (const v of r.verdicts) if (inBounds(v.index, g.length)) byIdx[v.index] = v;
+      // An entry has to be addressed to a real candidate AND carry a verdict to count as one. Anything else falls
+      // Through to the counted-drop path below rather than being written onto the row: the same treatment a
+      // Missing entry gets, because it is the same thing — a candidate nothing judged.
+      // The entry itself is checked before its fields: `verdicts: [null]` makes `v.index` throw, and a throw here
+      // Does not reach the counted-drop path — it kills the thunk, `parallel` resolves it to null, and the
+      // `filter(Boolean)` backstop discards the whole group with `droppedUnverified` still at zero. Unexamined
+      // Candidates would then be indistinguishable from a file with nothing wrong in it.
+      for (const v of r.verdicts)
+        if (v && typeof v === "object" && inBounds(v.index, g.length) && VERDICTS.includes(v.verdict))
+          byIdx[v.index] = v;
       return g.flatMap((c, i) => {
         const v = byIdx[i];
         if (!v) {
@@ -1094,6 +1136,10 @@ const verifyGroups = async (candidates) => {
       });
     }),
   );
+  // `filter(Boolean)` is not dead defensiveness: `parallel` resolves a thunk that THREW to null, and every thunk
+  // Here returns an array only on the paths that reach a return. It is the harness's documented contract, so it
+  // Stays at both fan-out sites — the alternative is a null reaching `.flat()` and dying later, in the assembler,
+  // Where nothing can attribute it to the agent that failed.
   return out.filter(Boolean).flat();
 };
 
@@ -1190,14 +1236,20 @@ const adjacentFor = (s) => {
     );
   return adjacentBySeam.get(s);
 };
-const SEAM_FINDER = (s) => {
+const SEAM_FINDER = (s, index) => {
   // One call, used for both the finder's claim-coverage accounting and the claims it is actually shown. Two
   // Calls are two chances to narrow one and not the other, which is how `stats.claimsChecked` starts counting
   // Claims no finder was handed — the exact reading the counter exists to make impossible.
   const mine = IS_AREA ? claimsFor(s.pathPrefixes) : [];
   const adjacent = adjacentFor(s);
   return {
-    label: `seam:${s.name.replaceAll(/\s+/gu, "-").slice(0, 24)}`,
+    // The label is this finder's IDENTITY, not just its log line: `ingest` stamps it on every candidate as
+    // `finder`, and the dedupe counts distinct finders to decide whether a row is one agent's guess or several
+    // Agreeing independently. Scope-agent seam names are descriptive phrases that routinely share a long prefix,
+    // So the slug truncation alone silently makes two seams one identity — understating the corroboration on every
+    // Row they both reported. The trailing index is what makes it unique by construction, and it trails rather
+    // Than leads so the label still reads as the seam it belongs to.
+    label: `seam:${s.name.replaceAll(/\s+/gu, "-").slice(0, SEAM_LABEL_MAX)}#${index + 1}`,
     kind: "correctness",
     cap: PER_ANGLE,
     claims: mine,
@@ -1337,7 +1389,7 @@ const AREA_LENS_FINDERS = () => [
 ];
 const FINDERS = [
   ...(SEAM_MODE
-    ? [...seams.map((s) => SEAM_FINDER(s)), WHOLE_TERRITORY_FINDER()]
+    ? [...seams.map((s, i) => SEAM_FINDER(s, i)), WHOLE_TERRITORY_FINDER()]
     : IS_AREA
       ? AREA_LENS_FINDERS()
       : // CORRECTNESS_ANGLES is a shared const AREA_ANGLES also derives from, so the per-finder cap has to land
@@ -1355,25 +1407,45 @@ const FINDERS = [
 // Cleanup is excluded because it is the one finder with a different (single, derived) budget.
 const NON_CLEANUP_FINDER_COUNT = FINDERS.filter((f) => f.kind !== "cleanup").length;
 
+// A finder that died and one that answered without a `candidates` array are the same loss with the same remedy:
+// Its lens or its seam went unread. Verify already turns both into one counted drop, and this is the second site
+// That had to — an unguarded `r.candidates.length` throws inside the fan-out and ends the whole run, discarding
+// Every other finder's completed work, which is the outcome that guard exists to prevent. One reader for both
+// Phases so a third caller cannot reintroduce either half.
+// The loss is also LOGGED and counted, not just survived: a dead finder that returns silently leaves a run
+// Missing a third of its territory looking exactly like a run that found nothing there, and the stop rule reads
+// The second as converged. Every other degradation in this script is named in `stats` for the same reason.
+let finderDropped = 0;
+const finderDroppedLabels = new Set();
+const readCandidates = (result, label) => {
+  if (result && Array.isArray(result.candidates)) return result.candidates;
+  finderDropped++;
+  finderDroppedLabels.add(label);
+  log(`${label}: returned no usable candidates — this finder's territory went unread`);
+  return null;
+};
+
 const finderOuts = await parallel(
   FINDERS.map(
     (f) => () =>
       agent(FINDER_PROMPT(f), {
         // Cleanup is a lens sweep — is the helper already there, is the comment stale, is this duplicated — and
-        // Its verifiers already run low for the same reason. Reasoning depth is what correctness angles need.
-        ...(f.kind === "cleanup" ? { effort: "low" } : {}),
+        // Its verifiers already run low for the same reason. Reasoning depth is what correctness angles need,
+        // So they get the level's own effort and cleanup overrides it downward.
+        effort: f.kind === "cleanup" ? "low" : P.effort,
         label: f.label,
         model: AGENT_MODEL,
         phase: "Find",
         schema: CANDIDATES_SCHEMA,
       }).then((r) => {
-        if (!r) return [];
+        const candidates = readCandidates(r, f.label);
+        if (!candidates) return [];
         // Counted here, on the finders that actually returned. A claim recorded while the prompt was being built
         // Is counted even when its finder dies, so stats.claimsChecked — the one number saying how much of the
         // Record was audited — reads as full coverage on exactly the session-limited runs that audited least.
         for (const c of f.claims ?? []) claimsShown.add(c);
-        log(`${f.label}: ${r.candidates.length} candidates`);
-        return ingest(r.candidates, f.cap, f.kind, f.label);
+        log(`${f.label}: ${candidates.length} candidates`);
+        return ingest(candidates, f.cap, f.kind, f.label);
       }),
   ),
 );
@@ -1402,14 +1474,17 @@ if (P.sweep) {
         IS_AREA
           ? "Re-read the area's files looking ONLY for defects not already listed. "
           : "Re-read the diff and the enclosing functions looking ONLY for defects not already listed. "
-      }Focus on what the first pass tends to miss: ${SWEEP_GAP_FOCUS}\n${MATERIALITY_BAR}\n` +
+      }Focus on what the first pass tends to miss: ${SWEEP_GAP_FOCUS}\n${MATERIALITY_BAR}\n${
+        IS_AREA ? AREA_KIND_INSTRUCTION + "\n" : ""
+      }` +
       `Surface up to ${
         SWEEP_MAX
       } additional candidates. If nothing new, return an empty list — do not pad.\n\nStructured output only.`,
-    { label: "sweep", model: AGENT_MODEL, phase: "Sweep", schema: CANDIDATES_SCHEMA },
+    { effort: P.effort, label: "sweep", model: AGENT_MODEL, phase: "Sweep", schema: CANDIDATES_SCHEMA },
   );
-  if (sweep && sweep.candidates.length > 0) {
-    const sliced = ingest(sweep.candidates, SWEEP_MAX, "correctness", "sweep");
+  const sweepCandidates = readCandidates(sweep, "sweep");
+  if (sweepCandidates && sweepCandidates.length > 0) {
+    const sliced = ingest(sweepCandidates, SWEEP_MAX, "correctness", "sweep");
     candidatesSeen += sliced.length;
     log(`sweep: ${sliced.length} candidates`);
     const sweepVerified = await verifyGroups(sliced);
@@ -1506,6 +1581,7 @@ if (toResolve.length > 0) {
   await parallel(
     toResolve.map((c) => async () => {
       const r = await agent(RESOLVER_PROMPT(c), {
+        effort: P.effort,
         label: `resolve:${c.file.split("/").pop()}`,
         model: AGENT_MODEL,
         phase: "Resolve",
@@ -1569,9 +1645,15 @@ const stats = makeStats({
   // Numbers, and the smaller one reads as ~40% less coverage than the run bought.
   angles: NON_CLEANUP_FINDER_COUNT,
   perAngle: PER_ANGLE,
-  // The cleanup finder's single budget, which is derived from the lens angle count rather than the fan-out — so
-  // The reportable ceiling is `(angles × perAngle) + cleanupCap`, and neither half can be inferred from the other.
+  // The cleanup finder's single budget, which is derived from the lens angle count rather than the fan-out.
   cleanupCap: CLEANUP_FINDER.cap,
+  // The sweep's own budget — a third cap that is neither `perAngle` nor `cleanupCap`, and absent below xhigh.
+  sweepCap: P.sweep ? SWEEP_MAX : 0,
+  // The ceiling COMPUTED from the fan-out that ran, never a formula for a reader to reassemble. Every term here
+  // Has drifted out of the prose at least once — the sweep's cap was missing from it for two levels — and a
+  // Reader who re-derives it budgets for a run of a different size than the one they got. There is one number
+  // And the script owns it: three caps, each from the finder family that actually spawned.
+  reportableCeiling: NON_CLEANUP_FINDER_COUNT * PER_ANGLE + CLEANUP_FINDER.cap + (P.sweep ? SWEEP_MAX : 0),
   seams: SEAM_MODE ? seams.map((s) => s.name) : undefined,
   // The claims actually put in front of an agent, not the size of the inventory: a claim whose pathPrefixes
   // Overlap no seam, or whose files the cap dropped, reaches no finder, and counting it overstates the one number
@@ -1579,6 +1661,7 @@ const stats = makeStats({
   claimsChecked: IS_AREA ? claimsShown.size : undefined,
   claimsInventoried: IS_AREA ? inventoriedClaims.length : undefined,
   deduped: collapsed,
+  droppedUnfound: finderDropped,
   droppedUnsettled: unresolvedDropped.length,
   droppedUnverified: unverifiedDropped,
   finders: FINDERS.length,
@@ -1608,6 +1691,16 @@ const unexaminedNote =
       [...unverifiedDroppedFiles].toSorted((a, b) => a.localeCompare(b)).join(", ") +
       " reached no verdict at all — a verifier agent returned nothing, so this round did not examine them and " +
       "their absence is not evidence of a clean file."
+    : "") +
+  // The loudest of the three, because it is the only one that costs a whole lens or seam rather than a handful of
+  // Candidates: the finders are NAMED, since which territory went unread is what decides whether re-running is
+  // Worth it, and a bare count reads as a rounding error against a run that reported thirty findings.
+  (finderDropped > 0
+    ? " " +
+      finderDropped +
+      " finder(s) returned nothing usable (" +
+      [...finderDroppedLabels].toSorted((a, b) => a.localeCompare(b)).join(", ") +
+      ") — that territory went unread this round, so a clean result for it means nobody looked."
     : "");
 const refutedRows = refuted.map((c) => ({
   file: c.file,
@@ -1651,14 +1744,14 @@ const report = await agent(
     `## Instructions\n` +
     `Return decisions about findings BY INDEX — never re-emit finding text.\n` +
     `1. For each distinct defect, emit one decision with its index. When several findings describe the same defect (same root cause), keep one entry and list the others in its merge array.\n` +
-    `2. Give each decision a shortSummary: a ≤60-char compressed claim for the compact one-line findings table — the defect alone, no rationale and no consequence clause (e.g. 'Reordered write drops entity on DB failure').\n` +
+    `2. Give each decision a shortSummary: a ≤${SHORT_SUMMARY_MAX}-char compressed claim for the compact one-line findings table — the defect alone, no rationale and no consequence clause (e.g. 'Reordered write drops entity on DB failure').\n` +
     `3. Order decisions most-severe first. Correctness bugs always outrank cleanup and record-gap findings.\n${
       IS_AREA
         ? "3b. This is an AREA review, so findings come in four kinds and they are NOT interchangeable: a defect in the code, a place the code and its documentation disagree, a deliberate behaviour nothing documents, and a cleanup. Merge two findings only when they share a root cause in the same sense — a bug and the stale doc sentence describing that same bug are two separate deliverables (one is a code fix, the other a doc edit), so keep them as separate decisions.\n"
         : ""
     }4. Account for EVERY index — each one is either a decision's index or listed in some decision's merge array. Nothing is dropped for being minor; there is no cap.\n` +
     `5. Write a 2-3 sentence summary of the review.\n\nStructured output only.`,
-  { label: "synthesize", model: AGENT_MODEL, schema: REPORT_SCHEMA },
+  { effort: P.effort, label: "synthesize", model: AGENT_MODEL, schema: REPORT_SCHEMA },
 );
 
 // Assembler invariants:
@@ -1706,7 +1799,15 @@ const toFinding = (c, merged, shortSummary) => {
     shortSummary: shortSummary || deriveShort(c.summary),
     summary: c.summary + also + corroborated,
     failure_scenario: c.failure_scenario,
-    category: c.kind,
+    // `kind`, the word the schema, `ingest`, `KIND_RANK` and both mode pages all use. Emitting it under a second
+    // Name left the area table's own column with no field behind it — the reader looked up `kind`, got undefined,
+    // And dropped the one column that says whether a row is a code fix, a doc edit or a new page.
+    kind: c.kind,
+    // The corroboration and merge signals as FIELDS, not just as text spliced into `summary` — the report format
+    // Renders `shortSummary` verbatim and is told never to substitute `summary`, so a label that lives only there
+    // Is unreachable by construction, and the reader cannot tell one finder's guess from three agreeing.
+    corroboration: finders.size,
+    alsoAt: merged.map((m) => loc(m)),
     // The best-evidenced number for the verdict actually reported — never the group maximum. A member holding a
     // Different verdict is confident about a different claim ("95% sure this is NOT confirmable"), so pulling its
     // Number onto a CONFIRMED row prints a figure no agent would defend, on the one column the reader uses to

@@ -2,7 +2,8 @@ import type { AzureUpdateEntity, CustomTableClient } from "@esposter/db-schema";
 
 import { updateEntityConditionally } from "@@/server/services/azure/table/updateEntityConditionally";
 import { AzureEntityType, StandardMessageEntity } from "@esposter/db-schema";
-import { NotFoundError } from "@esposter/shared";
+import { noop, NotFoundError } from "@esposter/shared";
+import { MockRestError } from "azure-mock";
 import { describe, expect, test, vi } from "vitest";
 
 type WriteEntity = (entity: AzureUpdateEntity<StandardMessageEntity>, etag: string) => Promise<unknown>;
@@ -86,7 +87,8 @@ describe(updateEntityConditionally, () => {
 
     await expect(
       updateEntityConditionally(
-        getTableClient(() => Promise.reject(new Error("404"))),
+        // The service's own 404, which is the only read failure that means the entity is actually gone
+        getTableClient(() => Promise.reject(new MockRestError("The specified resource does not exist.", 404))),
         StandardMessageEntity,
         {
           entityType: AzureEntityType.Message,
@@ -98,6 +100,33 @@ describe(updateEntityConditionally, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message}]`,
     );
+  });
+
+  // Whatever rejected the write routinely rejects the read behind it, so the two must not collapse: a re-read
+  // That merely failed is not the entity being gone, and reporting it as NOT_FOUND tells a member the message
+  // They are looking straight at does not exist
+  test("throws CONFLICT when the re-read itself fails, logging the fault", async () => {
+    expect.hasAssertions();
+
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
+    const readError = new MockRestError("The server is busy.", 503);
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("412")));
+
+    await expect(
+      updateEntityConditionally(
+        getTableClient(() => Promise.reject(readError)),
+        StandardMessageEntity,
+        {
+          entityType: AzureEntityType.Message,
+          entityWithEtag: { entity: getEntity(message), etag: "1" },
+          getUpdateEntity,
+          writeEntity,
+        },
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: CONFLICT]`);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(readError);
+
+    consoleErrorSpy.mockRestore();
   });
 
   // Bounded, so an entity being rewritten faster than the caller can land is refused rather than retried forever

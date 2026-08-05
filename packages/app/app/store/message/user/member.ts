@@ -31,7 +31,10 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Server-computed totals for the member list headers — the paginated items only hold loaded pages. Keyed by
   // Room for the same reason the list is: they describe one room, only the network can produce them, and a
   // Switch made offline would otherwise leave the room being entered wearing the totals of the one just left
-  const { data: memberCounts } = useDataMap(
+  // The read that fetches them binds this slice before its first await, the way it already binds the member
+  // List — `memberCounts` itself tracks whichever room is current, which is what the rendered headers want and
+  // Exactly what a response arriving after a room switch must not use
+  const { data: memberCounts, getBoundData: getBoundMemberCounts } = useDataMap(
     () => roomStore.currentRoomId,
     () => new MemberCounts(),
   );
@@ -75,23 +78,30 @@ export const useMemberStore = defineStore("message/user/member", () => {
     ["id"],
     "Member",
   );
-  const storeCreateMember = (member: User) => {
-    baseStoreCreateMember(member);
+  // A join or a leave is subscribed for every room the user is in, so both handlers are told which room the
+  // Event happened in. The list and the running total describe the room that is open, and are left alone for
+  // Any other — that room's members are re-read when it is entered, which is the same rule the top-role hook
+  // Above follows for the per-role totals
+  const storeCreateMember = (roomId: string, member: User) => {
     storeUser(member);
+    if (roomId !== roomStore.currentRoomId) return;
+    baseStoreCreateMember(member);
     count.value++;
   };
-  const storeDeleteMember = (id: User["id"]) => {
+  const storeDeleteMember = (roomId: string, id: User["id"]) => {
     // A member who leaves is a member whose top role became "none", so the departure goes through the one
     // Funnel that owns the per-role totals rather than decrementing them a second time here — otherwise the
     // Total drops while the role group keeps the leaver, and the roleless remainder absorbs the whole error
     // (in a room where every member holds a role it goes negative).
-    mutateMemberRoles(roomStore.currentRoomId, id, []);
+    mutateMemberRoles(roomId, id, []);
+    if (roomId !== roomStore.currentRoomId) return;
     baseStoreDeleteMember({ id });
     count.value--;
   };
   return {
     count,
     countsByTopRole,
+    getBoundMemberCounts,
     getMemberName,
     members,
     ...restData,

@@ -11,6 +11,7 @@ import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
+import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
@@ -34,6 +35,7 @@ import { readMessages } from "@@/server/services/message/readMessages";
 import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
+import { createThreadUnfollow } from "@@/server/services/message/thread/createThreadUnfollow";
 import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
@@ -80,7 +82,6 @@ import {
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
-  threadFollowsInMessage,
 } from "@esposter/db-schema";
 import {
   createUniqueArraySchema,
@@ -97,7 +98,6 @@ import {
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 // Azure Table Storage has no real sorting; messages are insert-sorted via a reverse-ticked timestamp rowKey.
 // We still pass a dummy default sortBy because cursor pagination always requires one.
@@ -181,14 +181,6 @@ const votePollInputSchema = z.object({
   // "" withdraws the caller's vote — the radio group emits no selection rather than an option id
   optionId: z.union([z.literal(""), z.uuid()]),
   ...standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
-});
-
-// Only the two fields a vote reads and writes, kept loose so the poll's question and any other authored field
-// Survive the round trip untouched. A vote is not an edit of the poll, so the client never sends the body — it
-// Names the option, and the server applies it to the stored poll.
-const votablePollMessageContentSchema = z.looseObject({
-  options: z.object({ id: z.string() }).array().min(1),
-  votes: z.record(z.string(), z.string()),
 });
 
 const getWebPubSubClientAccessUrlInputSchema = roomIdSchema;
@@ -296,7 +288,8 @@ export const baseMessageRouter = router({
   ),
   followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation(
     async ({ ctx, input: { roomId, threadRootRowKey } }) => {
-      await createThreadFollow(ctx.db, { roomId, threadRootRowKey, userId: ctx.getSessionPayload.user.id });
+      // The bell is the member's own decision, so it clears any unfollow they recorded earlier
+      await createThreadFollow(ctx.db, { roomId, threadRootRowKey, userId: ctx.getSessionPayload.user.id }, true);
     },
   ),
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
@@ -602,15 +595,7 @@ export const baseMessageRouter = router({
   }),
   unfollowThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation(
     async ({ ctx, input: { roomId, threadRootRowKey } }) => {
-      await ctx.db
-        .delete(threadFollowsInMessage)
-        .where(
-          and(
-            eq(threadFollowsInMessage.userId, ctx.getSessionPayload.user.id),
-            eq(threadFollowsInMessage.roomId, roomId),
-            eq(threadFollowsInMessage.threadRootRowKey, threadRootRowKey),
-          ),
-        );
+      await createThreadUnfollow(ctx.db, { roomId, threadRootRowKey, userId: ctx.getSessionPayload.user.id });
     },
   ),
   // Unpinning needs a Replace — Merge cannot unset a property — so the same conditional write as
@@ -651,9 +636,14 @@ export const baseMessageRouter = router({
       const votedMessageEntity = await updateEntityConditionally(messageClient, StandardMessageEntity, {
         entityType: AzureEntityType.Message,
         entityWithEtag: { entity: messageEntity, etag: messageEtag },
+        // A vote is not an edit of the poll, so the client never sends the body — it names the option, and the
+        // Server applies it to the stored poll. The whole poll is parsed and re-serialized through the one
+        // Schema that owns its shape, the same one the renderer reads it back with: a second, narrower copy of
+        // It here would strip every field it does not name — the option labels among them — off a poll that
+        // Only ever passed through a vote
         getUpdateEntity: (pollMessageEntity) => {
           const pollContentResult = getResult(() => jsonDateParse<unknown>(pollMessageEntity.message))
-            .map((pollContent) => votablePollMessageContentSchema.safeParse(pollContent))
+            .map((pollContent) => pollMessageContentSchema.safeParse(pollContent))
             .unwrapOr(undefined);
           if (
             !pollContentResult?.success ||
