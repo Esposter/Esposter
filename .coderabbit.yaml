@@ -3,6 +3,8 @@ reviews:
     - "!pnpm-lock.yaml"
     # auto-generated migrations
     - "!packages/app/server/db/migrations/**"
+    # generated pglite snapshot (binary)
+    - "!packages/db-mock/src/snapshot.tar.gz"
 
   auto_review:
     ignore_usernames:
