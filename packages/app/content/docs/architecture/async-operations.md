@@ -35,6 +35,14 @@ Two writes that share a key are two writes to the same thing, and they run one a
 
 Reads and writes never share a queue, even on one key: a read waits for nobody.
 
+## The state an operation writes back is bound where the key is
+
+The `key` is not the only thing an operation resolves when it is issued. **Every per-key slice an operation writes back is resolved at the same moment, never at the moment the response lands.** A store that keys state by the room, the tab or the post exposes that state twice: a current-key ref, which is what the rendered surface binds because it must track whatever is on screen, and a **binder** — `useDataMap`'s `getBoundData()` — which pins the key as it is right now and hands back a ref that keeps writing there. An operation takes the binder.
+
+`useCursorPaginationDataMap` and `useOffsetPaginationDataMap` both hand their operation-data composable that binder, so `readItems` / `readMoreItems` / `getReadMoreItems` file their rows under the key the read was issued for with nothing at the call site. Anything else the same read writes back — a total, a page number, a per-role breakdown — is bound the same way, **before the read's first await**, and so is any plain value the response is interpreted against (which tab was open, which filters were applied). A read composable that calls `getBoundCount()` at the top of its query and writes `boundCount.value` after it is the shape; reading a current-key ref after an await is the defect, and it does not announce itself — the result simply appears under whatever the user switched to.
+
+The same rule decides what a **subscription** may apply. A subscription spans every entity the client is interested in, so its payload carries the key the event happened under and the handler takes it as a parameter (`storeDeleteMember(roomId, id)`). A handler that resolves the key itself can only resolve the one on screen, which is the wrong one for every event that did not happen there.
+
 ## Reads — `executeQuery`
 
 `executeQuery(query, { isExclusive, key, onError, onSuccess })` is latest-wins for its key. A superseded read never runs `onSuccess`, never runs `onError`, and never alerts — it reports `Stale` and stays silent, because a race it lost is not something the user needs to hear about. Reads for one key otherwise run concurrently, so a slow response can never overwrite a fast one issued after it.

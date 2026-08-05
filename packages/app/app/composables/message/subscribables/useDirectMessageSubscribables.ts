@@ -22,41 +22,39 @@ export const useDirectMessageSubscribables = () => {
           storeUpdateDirectMessage(updatedDirectMessage);
         },
       });
-      const joinRoomUnsubscribables = roomIds.map((roomId) =>
-        $trpc.room.onJoinRoom.subscribe([roomId], {
-          onData: (user) => {
-            const participants = directMessageParticipantsMap.value.get(roomId) ?? [];
-            if (!participants.some(({ id }) => id === user.id))
-              directMessageParticipantsMap.value.set(roomId, [user, ...participants]);
-          },
-        }),
-      );
-      const leaveRoomUnsubscribables = roomIds.map((roomId) =>
-        $trpc.room.onLeaveRoom.subscribe([roomId], {
-          onData: getSynchronizedFunction(async (userId) => {
-            if (userId === session.value.data?.user.id) {
-              storeDeleteDirectMessage({ id: roomId });
-              await navigateTo(
-                directMessages.value.length > 0
-                  ? RoutePath.Messages(takeOne(directMessages.value).id)
-                  : RoutePath.MessagesIndex,
-                { replace: true },
-              );
-              return;
-            }
-            const participants = directMessageParticipantsMap.value.get(roomId) ?? [];
-            directMessageParticipantsMap.value.set(
-              roomId,
-              participants.filter(({ id }) => id !== userId),
+      // One subscription over every direct message, because the event carries the room it happened in — a
+      // Subscription per room existed only to recover a room id the payload used to drop
+      const joinRoomUnsubscribable = $trpc.room.onJoinRoom.subscribe(roomIds, {
+        onData: ({ roomId, user }) => {
+          const participants = directMessageParticipantsMap.value.get(roomId) ?? [];
+          if (!participants.some(({ id }) => id === user.id))
+            directMessageParticipantsMap.value.set(roomId, [user, ...participants]);
+        },
+      });
+      const leaveRoomUnsubscribable = $trpc.room.onLeaveRoom.subscribe(roomIds, {
+        onData: getSynchronizedFunction(async ({ roomId, userId }) => {
+          if (userId === session.value.data?.user.id) {
+            storeDeleteDirectMessage({ id: roomId });
+            await navigateTo(
+              directMessages.value.length > 0
+                ? RoutePath.Messages(takeOne(directMessages.value).id)
+                : RoutePath.MessagesIndex,
+              { replace: true },
             );
-          }),
+            return;
+          }
+          const participants = directMessageParticipantsMap.value.get(roomId) ?? [];
+          directMessageParticipantsMap.value.set(
+            roomId,
+            participants.filter(({ id }) => id !== userId),
+          );
         }),
-      );
+      });
 
       return () => {
         updateRoomUnsubscribable.unsubscribe();
-        for (const unsubscribable of joinRoomUnsubscribables) unsubscribable.unsubscribe();
-        for (const unsubscribable of leaveRoomUnsubscribables) unsubscribable.unsubscribe();
+        joinRoomUnsubscribable.unsubscribe();
+        leaveRoomUnsubscribable.unsubscribe();
       };
     },
   );

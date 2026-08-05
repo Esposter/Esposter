@@ -3,6 +3,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "@/composables/shared/network.test";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
@@ -20,6 +21,7 @@ describe(useMessageCache, () => {
   let router: Router;
   let wrapper: VueWrapper;
   let items: Ref<MessageEntity[]>;
+  let initializeCursorPaginationData: (data: CursorPaginationData<MessageEntity>) => void;
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
@@ -42,6 +44,7 @@ describe(useMessageCache, () => {
           triggerRef(router.currentRoute);
           const dataStore = useDataStore();
           ({ items } = storeToRefs(dataStore));
+          ({ initializeCursorPaginationData } = dataStore);
           useMessageCache();
 
           onUnmounted(() => {
@@ -70,7 +73,11 @@ describe(useMessageCache, () => {
 
     const userId = getMockSession().user.id;
     await mountCache();
-    items.value = [new StandardMessageEntity({ isLoading: true, message, partitionKey, rowKey, userId })];
+    const loadedData = new CursorPaginationData<MessageEntity>();
+    loadedData.items = [new StandardMessageEntity({ isLoading: true, message, partitionKey, rowKey, userId })];
+    // Through the store hook a read would use, so the room counts as loaded — an unloaded room persists nothing
+    // At all, which would leave the filter untested
+    initializeCursorPaginationData(loadedData);
     await flushCache();
     const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
 

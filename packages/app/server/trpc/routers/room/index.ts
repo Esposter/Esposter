@@ -391,7 +391,10 @@ export const baseRoomRouter = router({
 
     for await (const [{ roomId, sessionId, user }] of on(roomEventEmitter, "joinRoom", { signal })) {
       if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload)) continue;
-      yield user;
+      // One subscription spans every room the client is in, so the room the event happened in travels with it.
+      // Dropping it leaves the client to infer which room a join belongs to, and the only thing it can infer
+      // From is the room that happens to be open
+      yield { roomId, user };
     }
   }),
   onLeaveRoom: standardAuthedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({
@@ -403,7 +406,9 @@ export const baseRoomRouter = router({
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
       if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
-      yield userId;
+      // Yielded with its room for the same reason a join is: a departure applied to the room the user happens
+      // To be looking at removes a member who never left it
+      yield { roomId, userId };
     }
   }),
   onUpdateRoom: standardAuthedProcedure.input(onUpdateRoomInputSchema).subscription(async function* ({

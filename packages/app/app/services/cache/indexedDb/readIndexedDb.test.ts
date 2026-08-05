@@ -3,7 +3,7 @@ import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(readIndexedDb, () => {
   const { message1, message2 } = setupIndexedDbSuite();
@@ -26,5 +26,22 @@ describe(readIndexedDb, () => {
 
     expect(result).toHaveLength(1);
     expect(takeOne(result)).toStrictEqual(message1.toJSON());
+  });
+
+  // An empty partition and an unreadable one are different facts, and answering both with an empty list hands
+  // The hydration a "nothing cached here" it cannot tell from the truth
+  test("reports a refused read to its caller", async () => {
+    expect.hasAssertions();
+
+    const error = new Error("error");
+    vi.spyOn(indexedDB, "open").mockImplementation(() => {
+      throw error;
+    });
+
+    await expect(
+      readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: ${error.message}]`);
+
+    vi.restoreAllMocks();
   });
 });

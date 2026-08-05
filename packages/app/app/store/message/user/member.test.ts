@@ -10,6 +10,7 @@ import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 describe(useMemberStore, () => {
   let router: Router;
   const roomId = crypto.randomUUID();
+  const otherRoomId = crypto.randomUUID();
   const name = "name";
   const member: User = {
     biography: "",
@@ -63,10 +64,42 @@ describe(useMemberStore, () => {
     setMemberRoles(roomId, member.id, [role]);
     count.value = 1;
     countsByTopRole.value = [{ count: 1, roleId: role.id }];
-    storeDeleteMember(member.id);
+    storeDeleteMember(roomId, member.id);
 
     expect(count.value).toBe(0);
     expect(countsByTopRole.value).toStrictEqual([{ count: 0, roleId: role.id }]);
+  });
+
+  // The leave subscription spans every room the user is in, so the event names the room it happened in. Applied
+  // To the open one instead, a departure from anywhere removes a member who is still there
+  test("leaves the open room alone when a member leaves another room", () => {
+    expect.hasAssertions();
+
+    const roleStore = useRoleStore();
+    const { setMemberRoles } = roleStore;
+    const memberStore = useMemberStore();
+    const { storeCreateMember, storeDeleteMember } = memberStore;
+    const { count, countsByTopRole, members } = storeToRefs(memberStore);
+    setMemberRoles(roomId, member.id, [role]);
+    storeCreateMember(roomId, member);
+    countsByTopRole.value = [{ count: 1, roleId: role.id }];
+    storeDeleteMember(otherRoomId, member.id);
+
+    expect(members.value).toStrictEqual([member]);
+    expect(count.value).toBe(1);
+    expect(countsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
+  });
+
+  test("leaves the open room alone when a member joins another room", () => {
+    expect.hasAssertions();
+
+    const memberStore = useMemberStore();
+    const { storeCreateMember } = memberStore;
+    const { count, members } = storeToRefs(memberStore);
+    storeCreateMember(otherRoomId, member);
+
+    expect(members.value).toStrictEqual([]);
+    expect(count.value).toBe(0);
   });
 
   // The offline cache decides whether to hydrate or persist by asking whether the loaded rows are the current
@@ -77,7 +110,7 @@ describe(useMemberStore, () => {
     const memberStore = useMemberStore();
     const { storeCreateMember } = memberStore;
     const { members } = storeToRefs(memberStore);
-    storeCreateMember(member);
+    storeCreateMember(roomId, member);
 
     expect(members.value).toStrictEqual([member]);
 
@@ -94,7 +127,7 @@ describe(useMemberStore, () => {
     const { count, countsByTopRole } = storeToRefs(memberStore);
     count.value = 2;
     countsByTopRole.value = [{ count: 1, roleId: role.id }];
-    storeDeleteMember(member.id);
+    storeDeleteMember(roomId, member.id);
 
     expect(count.value).toBe(1);
     expect(countsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
