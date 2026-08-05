@@ -337,10 +337,12 @@ export const resourceRouter = router({
       // The resource it clears was created moments earlier; the target here is a live working copy whose
       // Existing files a directory-wide cleanup would destroy.
       const clonedContent = await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, publishedContent, id);
-      // The one content-write path, so a restore is a content write like any other: the editors open in the
-      // Owner's other tabs adopt the restored content and its new contentVersion instead of autosaving the
-      // Pre-restore draft into a permanent stale-version rejection, the type's after-save hook re-derives what
-      // The restored content declares, and the trail records the restore the way the recycle bin's does
+      // The one content-write path, so a restore is a content write like any other: the version bump and the blob
+      // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
+      // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
+      // The subscription filters the emitting device out, and no publishable type subscribes to it client-side, so
+      // An editor left open on this resource keeps the pre-restore draft and the version it cached, and its next
+      // Autosave is rejected as stale until it reloads
       return saveResourceContent(ctx, {
         activityType: ResourceActivityType.Restored,
         content: clonedContent,
