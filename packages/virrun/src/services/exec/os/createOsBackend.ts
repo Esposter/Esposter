@@ -1,4 +1,5 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { Environment } from "@/models/virrun/Environment";
 
 import { createLinuxOsBackend } from "@/services/exec/bwrap/createLinuxOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
@@ -8,14 +9,17 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Source, writes land in an invisible tmpfs upper. Unlike the vfs backend it NEVER falls back to native —
 // Isolation IS the result here, so a silent fallback would run the command un-isolated (a wrong answer
 // Disguised as success); an unsupported host throws at construction instead.
-export const createOsBackend = (): ExecBackend => {
+//
+// `environment` is only read on win32, where the source mirror's exclude set is derived from the same preset the
+// Write-back mask is (createWslOsBackend). Linux mounts the real source, so there is no mirror and nothing to align.
+export const createOsBackend = (environment?: Environment): ExecBackend => {
   if (!isOsBackendSupported())
     throw new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux/WSL + bubblewrap");
   switch (process.platform) {
     case "linux":
       return createLinuxOsBackend(createOsBackend.name);
     case "win32":
-      return createWslOsBackend(createOsBackend.name);
+      return createWslOsBackend(createOsBackend.name, environment);
     default:
       throw new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux/WSL + bubblewrap");
   }

@@ -27,6 +27,11 @@ export const ROOT_ANCHOR_PREFIX = "./";
 export const GIT_WORKTREES_DIRECTORY_NAME = "worktrees";
 export const GIT_WORKTREE_GITDIR_FILENAME = "gitdir";
 export const GIT_WORKTREE_GITDIR_PREFIX = "gitdir: ";
+// Git's own record of where a git dir's common dir is, written into every linked worktree's git dir (`../..`, or an
+// Absolute path). Its ABSENCE is equally a fact: a git dir that is not a worktree entry — a submodule's
+// `.git/modules/<name>` — is its own common dir. Reading it is what keeps readGitCommonDirectory from inferring the
+// Answer from the path's shape, which only holds for the `worktrees/<name>` layout.
+export const GIT_COMMON_DIRECTORY_FILENAME = "commondir";
 // The dir pnpm/npm link executables into; prepended to the sandbox PATH so a bare command resolves the overlaid
 // (current-platform) binary ahead of any host `.bin` the WSL login PATH leaks in. See createOsExecOptions.
 export const NODE_MODULES_BIN_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.bin`;

@@ -1,5 +1,6 @@
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import {
+  GIT_COMMON_DIRECTORY_FILENAME,
   GIT_DIRECTORY,
   GIT_WORKTREE_GITDIR_FILENAME,
   GIT_WORKTREE_GITDIR_PREFIX,
@@ -7,22 +8,37 @@ import {
 } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { readLinkedWorktreePaths } from "@/services/exec/util/readLinkedWorktreePaths";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 const WORKTREE_NAME = "b";
 const DOT_PREFIXED_WORKTREE_NAME = `..${WORKTREE_NAME}`;
+const SUBMODULE_NAME = "sub";
+// Where git keeps a submodule's git dir inside the superproject — a directory this module never names, since the
+// Common dir is read from `commondir` rather than inferred from the layout; the test builds the real thing.
+const GIT_MODULES_DIRECTORY_NAME = "modules";
+// Git's own bookkeeping for one linked worktree, both halves of it: `<commonDir>/worktrees/<name>/gitdir` holds the
+// Path of that worktree's `.git` file (whose parent is the worktree root), that git dir records the common dir it
+// Belongs to, and the worktree's `.git` file points back at the entry. `gitdirRecord` overrides only the outward
+// Record, for the relative-path form git writes under `worktree.useRelativePaths`.
+const registerWorktree = (commonDirectory: string, name: string, worktreeRoot: string, gitdirRecord = ""): void => {
+  const entryDirectory = join(commonDirectory, GIT_WORKTREES_DIRECTORY_NAME, name);
+  mkdirSync(entryDirectory, { recursive: true });
+  writeFileSync(
+    join(entryDirectory, GIT_WORKTREE_GITDIR_FILENAME),
+    `${gitdirRecord || join(worktreeRoot, GIT_DIRECTORY)}\n`,
+  );
+  writeFileSync(join(entryDirectory, GIT_COMMON_DIRECTORY_FILENAME), "../..\n");
+  mkdirSync(worktreeRoot, { recursive: true });
+  writeFileSync(join(worktreeRoot, GIT_DIRECTORY), `${GIT_WORKTREE_GITDIR_PREFIX}${entryDirectory}\n`);
+};
 
 describe(readLinkedWorktreePaths, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   let cwd = "";
-  // Git's own bookkeeping for one linked worktree: `<commonDir>/worktrees/<name>/gitdir` holds the absolute path of
-  // That worktree's `.git` file, whose parent is the worktree root.
-  const registerWorktree = (name: string, worktreeRoot: string): void => {
-    const entryDirectory = join(cwd, GIT_DIRECTORY, GIT_WORKTREES_DIRECTORY_NAME, name);
-    mkdirSync(entryDirectory, { recursive: true });
-    writeFileSync(join(entryDirectory, GIT_WORKTREE_GITDIR_FILENAME), `${join(worktreeRoot, GIT_DIRECTORY)}\n`);
+  const register = (name: string, worktreeRoot: string, gitdirRecord = ""): void => {
+    registerWorktree(join(cwd, GIT_DIRECTORY), name, worktreeRoot, gitdirRecord);
   };
 
   beforeEach(() => {
@@ -36,7 +52,7 @@ describe(readLinkedWorktreePaths, () => {
     expect.hasAssertions();
 
     const worktreePath = `${TEST_FILENAME}/${WORKTREE_NAME}`;
-    registerWorktree(WORKTREE_NAME, join(cwd, TEST_FILENAME, WORKTREE_NAME));
+    register(WORKTREE_NAME, join(cwd, TEST_FILENAME, WORKTREE_NAME));
 
     expect(readLinkedWorktreePaths(cwd)).toStrictEqual([worktreePath]);
   });
@@ -44,7 +60,7 @@ describe(readLinkedWorktreePaths, () => {
   test("ignores a worktree outside the tree, which the walk never reaches anyway", () => {
     expect.hasAssertions();
 
-    registerWorktree(WORKTREE_NAME, create());
+    register(WORKTREE_NAME, create());
 
     expect(readLinkedWorktreePaths(cwd)).toStrictEqual([]);
   });
@@ -76,9 +92,39 @@ describe(readLinkedWorktreePaths, () => {
   test("reads a nested worktree whose directory name starts with two dots", () => {
     expect.hasAssertions();
 
-    registerWorktree(WORKTREE_NAME, join(cwd, DOT_PREFIXED_WORKTREE_NAME));
+    register(WORKTREE_NAME, join(cwd, DOT_PREFIXED_WORKTREE_NAME));
 
     expect(readLinkedWorktreePaths(cwd)).toStrictEqual([DOT_PREFIXED_WORKTREE_NAME]);
+  });
+
+  // A registry entry survives `rm -rf <worktree>` until a `git worktree prune` that only runs under gc, and the path
+  // Is then free for real source to occupy. Trusting the entry alone keeps that directory out of the mirror AND out
+  // Of the write-back mask: the sandbox never sees it (imports from it fail to resolve) and everything the command
+  // Writes under it is silently dropped. Git's own prune signal — the worktree's `.git` file — is the fact here.
+  test("skips an entry whose worktree was deleted and its path retaken by real source", () => {
+    expect.hasAssertions();
+
+    const worktreeRoot = join(cwd, TEST_FILENAME, WORKTREE_NAME);
+    register(WORKTREE_NAME, worktreeRoot);
+    rmSync(worktreeRoot, { force: true, recursive: true });
+    mkdirSync(join(worktreeRoot, TEST_FILENAME), { recursive: true });
+
+    expect(readLinkedWorktreePaths(cwd)).toStrictEqual([]);
+  });
+
+  // Only THIS entry's worktree may be excluded on it: a `.git` file at the recorded path pointing somewhere else is
+  // Another tree that happens to sit there, and dropping it would mask real source out of both directions.
+  test("skips an entry whose worktree points back at a different entry", () => {
+    expect.hasAssertions();
+
+    const worktreeRoot = join(cwd, TEST_FILENAME, WORKTREE_NAME);
+    register(WORKTREE_NAME, worktreeRoot);
+    writeFileSync(
+      join(worktreeRoot, GIT_DIRECTORY),
+      `${GIT_WORKTREE_GITDIR_PREFIX}${join(cwd, GIT_DIRECTORY, GIT_WORKTREES_DIRECTORY_NAME, DOT_PREFIXED_WORKTREE_NAME)}\n`,
+    );
+
+    expect(readLinkedWorktreePaths(cwd)).toStrictEqual([]);
   });
 
   // Git writes this record relative whenever the repo is on relative worktrees (`worktree.useRelativePaths`, git
@@ -89,10 +135,11 @@ describe(readLinkedWorktreePaths, () => {
     expect.hasAssertions();
 
     const entryDirectory = join(cwd, GIT_DIRECTORY, GIT_WORKTREES_DIRECTORY_NAME, WORKTREE_NAME);
-    mkdirSync(entryDirectory, { recursive: true });
-    writeFileSync(
-      join(entryDirectory, GIT_WORKTREE_GITDIR_FILENAME),
-      `${relative(entryDirectory, join(cwd, TEST_FILENAME, WORKTREE_NAME, GIT_DIRECTORY)).replaceAll("\\", "/")}\n`,
+    const worktreeRoot = join(cwd, TEST_FILENAME, WORKTREE_NAME);
+    register(
+      WORKTREE_NAME,
+      worktreeRoot,
+      relative(entryDirectory, join(worktreeRoot, GIT_DIRECTORY)).replaceAll("\\", "/"),
     );
 
     expect(readLinkedWorktreePaths(cwd)).toStrictEqual([`${TEST_FILENAME}/${WORKTREE_NAME}`]);
@@ -104,15 +151,33 @@ describe(readLinkedWorktreePaths, () => {
     expect.hasAssertions();
 
     const mainRepository = cwd;
-    registerWorktree(WORKTREE_NAME, join(mainRepository, TEST_FILENAME, WORKTREE_NAME));
     const worktree = join(mainRepository, TEST_FILENAME, WORKTREE_NAME);
-    mkdirSync(worktree, { recursive: true });
-    const entryDirectory = join(mainRepository, GIT_DIRECTORY, GIT_WORKTREES_DIRECTORY_NAME, WORKTREE_NAME);
-    writeFileSync(join(worktree, GIT_DIRECTORY), `${GIT_WORKTREE_GITDIR_PREFIX}${entryDirectory}\n`);
+    register(WORKTREE_NAME, worktree);
 
     // The registry is the main repo's, so from the worktree the sibling entry resolves to a path outside it — the
     // Point being that the lookup succeeded rather than bailing on a `.git` that is not a directory.
     expect(readLinkedWorktreePaths(worktree)).toStrictEqual([]);
     expect(readLinkedWorktreePaths(mainRepository)).toStrictEqual([`${TEST_FILENAME}/${WORKTREE_NAME}`]);
+  });
+
+  // A submodule's `.git` file points at `<super>/.git/modules/<name>`, which IS its common dir — it holds no
+  // `commondir`. Stripping two levels off it lands on the superproject's `.git`, whose registry holds none of the
+  // Submodule's worktrees, so every one of them mirrors as source: a whole parallel checkout per worktree swamping
+  // The delta, which is the exact regression this exclude exists to close.
+  test("reads the submodule's own registry rather than the superproject's", () => {
+    expect.hasAssertions();
+
+    const superProject = cwd;
+    const submodule = join(superProject, SUBMODULE_NAME);
+    const submoduleGitDirectory = join(superProject, GIT_DIRECTORY, GIT_MODULES_DIRECTORY_NAME, SUBMODULE_NAME);
+    mkdirSync(submodule, { recursive: true });
+    mkdirSync(submoduleGitDirectory, { recursive: true });
+    writeFileSync(
+      join(submodule, GIT_DIRECTORY),
+      `${GIT_WORKTREE_GITDIR_PREFIX}${relative(submodule, submoduleGitDirectory).replaceAll("\\", "/")}\n`,
+    );
+    registerWorktree(submoduleGitDirectory, WORKTREE_NAME, join(submodule, TEST_FILENAME, WORKTREE_NAME));
+
+    expect(readLinkedWorktreePaths(submodule)).toStrictEqual([`${TEST_FILENAME}/${WORKTREE_NAME}`]);
   });
 });
