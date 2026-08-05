@@ -1,13 +1,13 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — StyledButton for primary actions, :to never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, v-btn tooltips, mergeProps for nested activators, typed SelectItemCategoryDefinition for selects/lists/menus (clearable banned), enum-value-as-display-title, dialog form validity (StyledFormDialog vs StyledEditFormDialog), StyledList, useVRules form validation, StyledAvatar, CSS custom properties over SASS variables, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
+description: Esposter Vuetify 4 conventions — StyledButton for primary actions, button backgrounds (colourless-flat transparency rule, container-provided variant="text" answered with StyledButton/StyledTooltipIconButton rather than variant="elevated"), :to never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, v-btn tooltips, mergeProps for nested activators, typed SelectItemCategoryDefinition for selects/lists/menus (clearable banned), enum-value-as-display-title, dialog form validity (StyledFormDialog vs StyledEditFormDialog), StyledList, useVRules form validation, StyledAvatar, CSS custom properties over SASS variables, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
 ---
 
 # Vuetify Conventions
 
 ## Primary Buttons
 
-Use `StyledButton` for every confirm / complete / primary call-to-action button (create, save, accept, publish, request, start). **Never use a raw `color="primary"` `v-btn`** — the global `VBtn` default has a transparent background, so a primary-coloured button reads badly on the app's transparent / `v-main` base; `StyledButton` renders the midnight-bloom gradient + white text instead.
+Use `StyledButton` for every confirm / complete / primary call-to-action button (create, save, accept, publish, request, start). **Never use a raw `color="primary"` `v-btn`** — colourless buttons are transparent by default (see below), so a primary-coloured fill reads badly on the app's transparent / `v-main` base; `StyledButton` renders the midnight-bloom gradient + white text instead. `StyledButton` paints with `background-image`, so it is immune to every background rule and inherited variant below.
 
 - Pass Vuetify props through `:button-props="{ ... }"` (camelCase — e.g. `{ prependIcon: 'mdi-plus', disabled: !isValid, loading: isSubmitting }`). For navigation put `:to="RoutePath.X"` on the `<StyledButton>` (it falls through to the root `v-btn`) — never a `to` inside `buttonProps`.
 - `type` is a **native attribute, not a typed `VBtn` prop** — put `type="submit"` directly on `<StyledButton>` (it falls through to the root `v-btn`), never inside `buttonProps` (which fails typecheck).
@@ -46,9 +46,31 @@ These variants are set globally and must **never** be repeated on individual com
 | `VSelect`       | `variant="outlined"`           |
 | `VTextarea`     | `variant="outlined"`           |
 | `VTextField`    | `variant="outlined"`           |
-| `VBtn`          | `flat`, transparent background |
+| `VBtn`          | `flat`                         |
 | `VDialog`       | `maxWidth="100%"`, `width=500` |
 | `VTooltip`      | `location="top"`               |
+
+## Button Backgrounds — the Two Rules That Decide the Fill
+
+1. `globals.scss` (`@layer vuetify-overrides`) transparentises **colourless** flat buttons only: `.v-btn--flat:not([class*="bg-"])`. A `color` on an `elevated`/`flat` variant emits a `bg-*` class in the later `vuetify-utilities` layer, so the fill survives — never add `bg-transparent` to a colourless button, it is already transparent.
+2. **A parent container can override the variant.** `v-card-actions`, `v-toolbar` (so also `StyledPageHeader`), `v-toolbar-items`, `v-banner-actions`, `v-bottom-navigation`, `v-snackbar`, `v-btn-group`, `v-stepper-actions` all `provideDefaults({ VBtn: { variant: … } })` — mostly `"text"`. `variant="text"` routes `color` to the **text**, not the background, so no `bg-*` class is emitted and rule 1 then paints the button transparent.
+
+**Do not fight rule 2 with `variant="elevated"`.** Transparent-on-container is the app's look, and a lone re-elevated button is the odd one out. A filled action inside a container uses a primitive that is immune because it paints with `background-image`, not `background-color`:
+
+| Need                              | Use                                              |
+| --------------------------------- | ------------------------------------------------ |
+| Filled primary action (label)     | `StyledButton`                                   |
+| Icon action in a toolbar / header | `StyledTooltipIconButton` (transparent, no fill) |
+| Destructive confirm               | `color="error"` `v-btn` — red text, no fill      |
+
+```vue
+<v-card-actions>
+  <!-- Immune to the inherited variant="text"; a v-btn color="..." variant="elevated" here is the wrong fix -->
+  <StyledButton :button-props="{ text: 'Edit Settings' }" @click="editMode = true" />
+</v-card-actions>
+```
+
+Corollary: `color` on a container-nested `v-btn` only tints text. Never reach for a non-semantic theme colour as a fill (`color="border"` is for borders) — that only ever worked via an explicit `variant="elevated"`.
 
 ## Button Conventions
 
@@ -100,10 +122,10 @@ Consumers then bind the slot scope directly (`:="activatorProps"`) — **do not*
 
 ## Icon Buttons Inside Input Slots
 
-When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use `variant="plain"` and omit `color`. The global `VBtn` default sets `style: { backgroundColor: "transparent" }` inline, which `variant="flat"` + `color="primary"` cannot override. `variant="plain"` works with the transparent default and lets the icon inherit the surrounding text color.
+When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use `variant="plain"` and omit `color` — a `variant="flat" color="primary"` button paints a filled block inside the input. `variant="plain"` stays transparent and lets the icon inherit the surrounding text color.
 
 ```vue
-<!-- CORRECT — plain variant works with the transparent default -->
+<!-- CORRECT — plain variant stays transparent inside the input -->
 <v-tooltip text="Add item">
   <template #activator="{ props: tooltipProps }">
     <v-btn icon="mdi-plus" variant="plain" :="tooltipProps" @click="submit()" />
