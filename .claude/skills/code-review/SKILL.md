@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Always runs the project opus-pinned workflow script; never an inline/local review, never the review skill, never the built-in workflow by name. Also owns what a run costs and what bounds it, the confidence numbers on its verdicts, how to close a finding so the next review cannot reopen it, and the stop rule for when to re-run and when a round is converged. Apply on any review request, when deciding whether to run another round, and when applying fixes from one.
+description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Always runs the project opus-pinned workflow script; never an inline/local review, never the review skill, never the built-in workflow by name. Also owns how to size the commit window a review is launched from, what a run costs and what bounds it, the confidence numbers on its verdicts, how to close a finding so the next review cannot reopen it, and the stop rule for when to re-run and when a round is converged. Apply on any review request, when choosing the scope or boundary to review, when deciding whether to run another round, and when applying fixes from one.
 ---
 
 # Code Review — One Entry Point
@@ -27,7 +27,7 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "[mode] 
 
 - `mode` — `diff` (default, omittable) or `area`.
 - `level` — `high` (default), `xhigh`, or `max`. Post-merge PR audits in this project run `high` unless asked otherwise.
-- `target` — optional in `diff` mode (PR number, branch, ref range, path, or free-form instruction); **required in `area` mode**, where it names the subsystem to audit.
+- `target` — optional in `diff` mode (PR number, branch, ref range, path, or free-form instruction); **required in `area` mode**, where it names the subsystem to audit. Omitting it takes the working diff, which is usually the wrong scope — `modes/diff.md` owns how to pick the commit window a review is launched from.
 
 Both leading words are positional and optional, so `"high"`, `"diff high"`, and `"area high packages/app/app/composables/cache"` all parse. **A leading mode word only switches modes when a level word follows it** (or when it is the entire `args`) — otherwise it is part of the target, because diff targets are free-form English and `"area of message deletion PR 812 touched"` asks for a diff review, not a whole-subsystem audit. So always spell the level out when you mean the mode. The parse is logged before the Scope agent runs, and the mode lands in `stats.mode` alongside `stats.findMode`.
 

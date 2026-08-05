@@ -9,6 +9,30 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "diff <l
 
 `diff` is implied when the first word is not a mode name, so both forms are the same run. `target` is optional: a PR number, branch, ref range, path, or free-form instruction (`"only review src/foo.ts"`). Omit it for the working diff.
 
+## Choosing the window — batch up to one, never review dribs
+
+A run's cost is set by the level, not by the size of the diff (SKILL.md), so a handful of files pays close to a full run's price for a fraction of its coverage. Reviewing each small commit as it lands is the most expensive way to use this workflow, and the small-territory trim then cuts the fan-out too, so the thin run is also a shallow one.
+
+**Unless the ask names a specific change, don't take the working diff — pick a commit window and review everything in it.** Not a release boundary: releases here are cut whenever it suits, so a tag sits an arbitrary distance back — sometimes one commit, sometimes fifty. Walk back instead, and stop when the range is worth a run:
+
+```bash
+git log --oneline --first-parent -40 | cat -n                                # find candidates
+git diff --stat HEAD~<n>..HEAD -- . ':(exclude)pnpm-lock.yaml' | tail -3     # size each one
+```
+
+Widen `<n>` until the diff clears the 50-file seam threshold below, so the run partitions by subsystem instead of lens-skimming, then stop. **Count first-parent commits, not raw ones, and don't count dependency bumps** — a wall of `chore(deps)` inflates the commit count without adding review surface, so a window that looks like 30 commits can hold three files of real work.
+
+Prefer the last reviewed commit as the start when it is known and lands inside that window — reviewing across it re-pays for findings already dispositioned.
+
+Past a few hundred files the reportable ceiling (`angles × perAngle + cleanupCap`) has not moved, so widening the window only samples thinner — **raise the level instead** (`xhigh` at seam scale) and let the next chunk have its own run.
+
+Two exclusions belong in the target string, because a finder spends real attention on them otherwise:
+
+- Lockfiles and version-only catalog churn.
+- Anything already merged and reviewed upstream. An empty `git diff --stat origin/<trunk> HEAD -- <path>` proves the path shipped there — a range that spans a trunk merge otherwise re-reviews it.
+
+`area` mode pulls the opposite way — narrow the target, don't batch it (see `area.md`), because its finders read whole files rather than hunks.
+
 ## The Find phase partitions itself by diff size — nothing to pass
 
 Under 50 changed files the finders split by **lens** (one angle each over the whole diff), which is right while the territory is small enough that every finder reads every hunk. At 50 or more they split by **seam** — one finder per subsystem, tracing it end to end plus the boundary it hands data across — since lens-splitting a release-sized diff degenerates into parallel skims that all converge on whatever is loudest. Seam mode adds a whole-diff finder so a bad seam split cannot leave territory unread.
