@@ -35,6 +35,14 @@ List every excluded file explicitly instead. It is verbose, and that verbosity i
 
 Keep permanent structural entries (`!pnpm-lock.yaml`, generated migrations) at the top of `path_filters`, above any temporary block.
 
+## Opening a PR Spends a Review Slot
+
+Auto-review is on for PRs targeting the default branch, so **`gh pr create` against `main` is itself a review trigger** — the slot is spent the moment the PR exists, and the rate limit puts the next one roughly an hour out. There is no "open it now, review it later".
+
+So never open a PR while anything the review depends on is still being decided: the split point, the commits in range, or the `.coderabbit.yaml` on that PR's base. Ask before opening one, even when a review is the agreed goal — "get part 1 reviewed" is agreement on the destination, not permission to spend the slot before the shape is settled. Until then push the branch and stop; a pushed branch costs nothing and can be re-cut freely, while a premature PR costs the slot, and re-cutting it afterwards throws away findings that cannot be re-requested for an hour.
+
+If a PR was opened too early, **do not close it** — let the review land and keep the branch. A review already spent is only wasted if its findings are discarded with the branch.
+
 ## Never Push Into an In-Flight Review
 
 **Check CodeRabbit's state before every push to a branch with an open PR.** Pushing while a review is running cancels it and retriggers a fresh one, which costs a rate-limit slot and loses the in-progress review's findings. CodeRabbit is an **incremental** system — it does not re-review commits it has already reviewed — so a cancelled review's comments do not reliably come back on the next run. They are simply gone.
@@ -107,6 +115,26 @@ git diff --name-only <last-reviewed-sha>..HEAD | wc -l   # what the next increme
 The merge-base count above still governs the **first** review of a PR (and any full re-review).
 
 The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
+
+## Splitting an Over-Budget PR
+
+The release PR (`develop` → `main`) cannot be planned to a budget the way feature work can — it accumulates whatever merged. Split it **by commit window, not by file**: every merge boundary in the `<base>..<head>` range is a prefix of the head branch's history, so a branch pointing at one is a plain pointer. No cherry-pick, no rewrite of published history, and no conflicts by construction.
+
+Find the boundaries and what each costs:
+
+```bash
+for commit in $(git rev-list --reverse <base>..<head>); do
+  printf '%4d  %s\n' "$(git diff --name-only -M "<base>..$commit" | wc -l)" "$(git log -1 --oneline "$commit")"
+done
+```
+
+The cumulative count jumps at each merge commit — those are the topical clusters. Cut where one lands under the cap, branch at that commit, and PR it against `<base>`.
+
+**One split branch is enough.** When it merges, `<base>` contains that prefix and the original PR's diff collapses to the remainder on its own — the head branch needs no edit at all. A second branch for the remainder duplicates the head branch and only adds cleanup.
+
+Counts do not subtract: a file touched in both windows is counted in each, so the remainder is bigger than `total - prefix`. Measure it (`git diff --name-only -M <cut>..<head> | wc -l`) instead of doing the arithmetic — the difference decides whether the remainder still needs exclusions.
+
+The split PR targets the default branch, so it is auto-reviewed on open; no `@coderabbitai review` comment. Each PR reads `.coderabbit.yaml` from **its own** base (§Config Is Read From the PR Base Branch) — a branch cut from the head carries the head's config, not the base's, so exclusions the remainder relies on must exist on whatever branch that PR is based against.
 
 ## When to Exclude
 
