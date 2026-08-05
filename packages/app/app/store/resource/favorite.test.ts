@@ -4,6 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { ResourceType } from "@esposter/db-schema";
+import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -41,6 +42,29 @@ describe(useFavoriteStore, () => {
     const { readFavorites, toggleFavorite } = favoriteStore;
     await readFavorites();
     await toggleFavorite(resource);
+
+    expect(favorites.value).toStrictEqual([resource]);
+  });
+
+  // Two quick clicks on one star queue under the same key, so the second one's rollback has to undo its own
+  // Flip — restoring the list from click time would drop the star the first click just persisted, and nothing
+  // Reconciles that until a reload
+  test("rolls a failed toggle back to the state the toggle ahead of it stored", async () => {
+    expect.hasAssertions();
+
+    let isFailing = false;
+    server.use(
+      trpcMsw.resource.toggleFavorite.mutation(() => {
+        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+
+        isFailing = true;
+        return true;
+      }),
+    );
+    const favoriteStore = useFavoriteStore();
+    const { favorites } = storeToRefs(favoriteStore);
+    const { toggleFavorite } = favoriteStore;
+    await Promise.all([toggleFavorite(resource), toggleFavorite(resource)]);
 
     expect(favorites.value).toStrictEqual([resource]);
   });

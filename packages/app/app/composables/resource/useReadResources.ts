@@ -1,3 +1,4 @@
+import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
 import type { ResourceListFilters } from "@/models/resource/list/ResourceListFilters";
 import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
@@ -5,6 +6,7 @@ import type { ResourceType } from "@esposter/db-schema";
 
 import { useReadResourcesPage } from "@/composables/resource/list/useReadResourcesPage";
 import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
+import { getResourceFilterKey } from "@/services/resource/list/getResourceFilterKey";
 
 export const useReadResources = ({
   searchQuery = ref(""),
@@ -17,28 +19,29 @@ export const useReadResources = ({
   updatedFilter = ref<"" | ResourceUpdatedFilter>(""),
 }: Partial<ResourceListFilters> = {}) => {
   const { $trpc } = useNuxtApp();
-  const getFilterInput = () =>
-    getResourceFilterInput({
-      searchQuery: searchQuery.value,
-      status: status.value,
-      tagName: tagName.value,
-      tagValue: tagValue.value,
-      types: types.value,
-      updatedAfter: updatedAfter.value,
-      updatedBefore: updatedBefore.value,
-      updatedFilter: updatedFilter.value,
-    });
+  const getFilterValues = (): ResourceFilterValues => ({
+    searchQuery: searchQuery.value,
+    status: status.value,
+    tagName: tagName.value,
+    tagValue: tagValue.value,
+    types: types.value,
+    updatedAfter: updatedAfter.value,
+    updatedBefore: updatedBefore.value,
+    updatedFilter: updatedFilter.value,
+  });
+  const getFilterInput = () => getResourceFilterInput(getFilterValues());
   const { count, error, getLastSortBy, isLoading, items, read, refresh } = useReadResourcesPage({
-    // The count depends on the filter alone, so the serialized filter input is exactly what it is keyed by
-    getFilterKey: () => JSON.stringify(getFilterInput()),
-    readCount: () => $trpc.resource.count.query(getFilterInput()),
-    readPage: async ({ itemsPerPage, page, sortBy }) =>
+    getFilterInput,
+    // The count depends on the filter alone, so the filter the user picked is exactly what it is keyed by
+    getFilterKey: () => getResourceFilterKey(getFilterValues()),
+    readCount: (filterInput) => $trpc.resource.count.query(filterInput),
+    readPage: async ({ itemsPerPage, page, sortBy }, filterInput) =>
       (
         await $trpc.resource.readResources.query({
           limit: itemsPerPage,
           offset: (page - 1) * itemsPerPage,
           sortBy,
-          ...getFilterInput(),
+          ...filterInput,
         })
       ).items,
   });

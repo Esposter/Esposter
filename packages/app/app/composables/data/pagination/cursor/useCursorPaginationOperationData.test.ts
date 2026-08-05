@@ -32,7 +32,11 @@ describe(useCursorPaginationOperationData, () => {
           const cursorPaginationData = ref(new CursorPaginationData<string>());
           cursorPaginationData.value.hasMore = true;
           cursorPaginationData.value.nextCursor = "cursor";
-          ({ readMoreItems } = useCursorPaginationOperationData(() => cursorPaginationData));
+          const isLoaded = ref(false);
+          ({ readMoreItems } = useCursorPaginationOperationData(
+            () => cursorPaginationData,
+            () => isLoaded,
+          ));
         },
       }),
     );
@@ -57,7 +61,11 @@ describe(useCursorPaginationOperationData, () => {
           const cursorPaginationData = ref(new CursorPaginationData<string>());
           cursorPaginationData.value.hasMore = true;
           cursorPaginationData.value.nextCursor = "cursor";
-          ({ readMoreItems } = useCursorPaginationOperationData(() => cursorPaginationData));
+          const isLoaded = ref(false);
+          ({ readMoreItems } = useCursorPaginationOperationData(
+            () => cursorPaginationData,
+            () => isLoaded,
+          ));
         },
       }),
     );

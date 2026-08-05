@@ -7,7 +7,7 @@ import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSu
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { MimeCategory, RoomType, StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(writeIndexedDb, () => {
   const { message1, message2, message3 } = setupIndexedDbSuite();
@@ -89,5 +89,23 @@ describe(writeIndexedDb, () => {
 
     expect(result).toHaveLength(1);
     expect(takeOne(result)).toStrictEqual(Object.assign(structuredClone(room), { partitionKey: userId }));
+  });
+
+  // A browser that refuses the write — quota reached, private mode, a database another tab has blocked — is
+  // Reported to the caller, which owns how the cache reports a failure. Swallowing it here would put a second
+  // Error channel beside that one, and the two can disagree about whether anything went wrong
+  test("reports a refused write to its caller", async () => {
+    expect.hasAssertions();
+
+    const error = new Error("error");
+    vi.spyOn(indexedDB, "open").mockImplementation(() => {
+      throw error;
+    });
+
+    await expect(
+      writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1], message1.partitionKey),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: ${error.message}]`);
+
+    vi.restoreAllMocks();
   });
 });

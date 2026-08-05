@@ -40,15 +40,20 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   };
   const hasFilters = computed(() => selectedFilters.value.length > 0);
   const { items, ...restData } = useOffsetPaginationDataMap<MessageEntity>(() => searchResultId.value);
-  const { data: count } = useDataMap(() => searchResultId.value, 0);
+  // The totals a search writes back belong to the tab it was issued for, so a read binds them alongside the
+  // Result slice it is already binding — `count`/`page` themselves track whichever tab is current, which is
+  // What the rendered header and paginator want and exactly what an in-flight response must not use
+  const { data: count, getBoundData: getBoundCount } = useDataMap(() => searchResultId.value, 0);
   const pageCount = computed(() => Math.ceil(count.value / DEFAULT_READ_LIMIT));
-  const { data: page } = useDataMap(() => searchResultId.value, 1);
+  const { data: page, getBoundData: getBoundPage } = useDataMap(() => searchResultId.value, 1);
   return {
     activeSelectedFilter,
     clearFilters,
     count,
     createFilter,
     deleteFilter,
+    getBoundCount,
+    getBoundPage,
     hasFiles,
     hasFilters,
     isSearching,

@@ -760,7 +760,9 @@ describe("room", () => {
       () => roomCaller.joinRoom(newInvite.id),
     );
 
-    expect(data).toStrictEqual(session.user);
+    // The room travels with the member: the client subscribes for every room it is in at once, so a payload
+    // Without it can only be applied to the room that happens to be open
+    expect(data).toStrictEqual({ roomId: newRoom.id, user: session.user });
   });
 
   test("leaves", async () => {
@@ -811,7 +813,7 @@ describe("room", () => {
       () => roomCaller.leaveRoom(newRoom.id),
     );
 
-    expect(data).toBe(session.user.id);
+    expect(data).toStrictEqual({ roomId: newRoom.id, userId: session.user.id });
   });
 
   test("counts members", async () => {

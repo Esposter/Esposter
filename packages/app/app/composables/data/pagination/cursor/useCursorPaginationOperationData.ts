@@ -8,6 +8,10 @@ export const useCursorPaginationOperationData = <TItem>(
   // Resolves the slice to write to, at the moment it is called. An operation binds once up front, so its response
   // Is filed under the key it was issued for rather than whichever key is current by the time it lands.
   bindCursorPaginationData: () => Ref<CursorPaginationData<TItem>>,
+  // Whether the rows this slice holds are its own, recorded the moment a read or a hydration lands rather than
+  // Inferred from the list — an empty list is either "not loaded yet" or "loaded and genuinely empty", and only
+  // The load knows which. Bound the same way, and for the same reason, as the slice it describes
+  bindIsLoaded: () => Ref<boolean>,
 ) => {
   const online = useOnline();
   // The waypoint re-arms via onComplete even when the query fails, so pace retries instead of spinning hot
@@ -18,6 +22,12 @@ export const useCursorPaginationOperationData = <TItem>(
     get: () => bindCursorPaginationData().value,
     set: (newData) => {
       bindCursorPaginationData().value = newData;
+    },
+  });
+  const isLoaded = computed({
+    get: () => bindIsLoaded().value,
+    set: (newIsLoaded) => {
+      bindIsLoaded().value = newIsLoaded;
     },
   });
   const items = computed({
@@ -40,9 +50,11 @@ export const useCursorPaginationOperationData = <TItem>(
   });
   const initializeCursorPaginationData = (data: CursorPaginationData<TItem>) => {
     cursorPaginationData.value = data;
+    isLoaded.value = true;
   };
   const resetCursorPaginationData = () => {
     cursorPaginationData.value = new CursorPaginationData<TItem>();
+    isLoaded.value = false;
   };
   const readItems = async (
     query: () => Promise<CursorPaginationData<TItem>>,
@@ -50,12 +62,16 @@ export const useCursorPaginationOperationData = <TItem>(
   ) => {
     const isPending = ref(true);
     const boundCursorPaginationData = bindCursorPaginationData();
+    const boundIsLoaded = bindIsLoaded();
     const refresh = async () => {
       isPending.value = true;
       await withFinalizerAsync(
         async () => {
           const data = await query();
           boundCursorPaginationData.value = data;
+          // Readiness is recorded whether the page came back full or empty, so a partition the server says is
+          // Empty is distinguishable from one that has not answered yet
+          boundIsLoaded.value = true;
           // Absorbs onComplete errors so data already set above is never lost
           await Promise.allSettled([onComplete?.(data)]);
         },
@@ -89,6 +105,7 @@ export const useCursorPaginationOperationData = <TItem>(
   return {
     hasMore,
     initializeCursorPaginationData,
+    isLoaded,
     items,
     nextCursor,
     readItems,

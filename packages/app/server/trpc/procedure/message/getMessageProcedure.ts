@@ -3,6 +3,7 @@ import type { z } from "zod";
 
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { MessageOperationPermission } from "#shared/models/message/MessageOperationPermission";
+import { getIsMessageAuthor } from "#shared/services/message/getIsMessageAuthor";
 import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -57,7 +58,7 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
     if (
       !getIsMessageOperationPermitted(permission, {
         hasManageMessages,
-        isAuthor: messageEntity.userId === ctx.getSessionPayload.user.id,
+        isAuthor: getIsMessageAuthor(messageEntity, ctx.getSessionPayload.user.id),
       })
     )
       throw new TRPCError({ code: "UNAUTHORIZED" });
