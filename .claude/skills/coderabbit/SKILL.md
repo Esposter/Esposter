@@ -118,9 +118,15 @@ The budget is a **target to fill, not only a cap**. A single roadmap item is typ
 
 ## Cutting the Release PR Back to the Budget
 
-The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged. When it outgrows the cap, **shorten `develop` itself and park the rest**. Don't open side PRs against `main`: each one spends a slot, and the release PR shrinks by itself anyway once its commits land.
+The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged, and CodeRabbit skips it outright once it passes the file limit ("Review skipped: N files exceed the limit of 100"). The fix is to **shorten `develop` and park the rest on a queue branch**, then feed the queue back one window at a time.
 
-Cut **by commit window, not by file**, at a merge boundary — the cumulative count jumps there, each jump is one topical cluster, and the prefix is already coherent history:
+Never open side PRs against `main` to slice it up. Each one spends a review slot on arrival, and the release PR is not the thing that needs splitting — its _review cycles_ are.
+
+**There are only ever two branches: `develop` and `queue/<scope>`. One PR: the release PR, which stays open the whole time.**
+
+### 1. Cut
+
+Cut by commit window, not by file, at a merge boundary — the cumulative count jumps there, each jump is one topical cluster, and any prefix is coherent history by construction:
 
 ```bash
 for commit in $(git rev-list --reverse <base>..develop); do
@@ -128,26 +134,33 @@ for commit in $(git rev-list --reverse <base>..develop); do
 done
 ```
 
-Pick the boundary nearest ~80 files, then park, cut, and re-base the park onto the cut:
+Take the boundary nearest ~80 files. Park, cut, then re-base the park onto the cut:
 
 ```bash
-git branch queue/<scope> develop && git push origin queue/<scope>   # everything, nothing lost yet
+git branch queue/<scope> develop && git push origin queue/<scope>   # nothing lost yet
 git reset --hard <cut> && git push --force-with-lease origin develop
 git rebase --onto develop <cut> queue/<scope> && git push --force-with-lease origin queue/<scope>
 ```
 
-That last step is what leaves **exactly two branches**: `develop` at the cut, and the queue holding only the commits still to come. Skip the rebase and the queue duplicates everything `develop` already has. Any doc commit cherry-picked across the cut replays as a no-op or, if reworded since, conflicts — `git rebase --skip` it, `develop`'s version is the newer one.
+The rebase is what makes it two branches instead of three: without it the queue is a copy of `develop` plus the remainder. Cherry-picked doc commits replay as no-ops, or conflict if reworded since — `git rebase --skip` them, `develop`'s version is newer. Verify before force-pushing the queue: `git diff --stat <old-queue-head> queue/<scope>` should show only files you knowingly reworded.
 
-The queue never gets a PR. After the release PR merges, merge one window of it back into `develop` at a time — each window is its own release PR and its own review cycle, so the queue drains at the cap instead of piling up again.
+Cherry-pick doc and skill commits across the cut so the working tree keeps the conventions it is being asked to follow.
 
-Two things to check before running it:
+### 2. Drain
 
-- **The force-push retriggers the open release PR's review.** Confirm the timing (§Opening a PR Spends a Review Slot) and that no other session is pushing `develop`.
-- **Counts don't subtract.** A file touched in two windows counts in both, so the remainder is bigger than `total - prefix`. Measure it: `git diff --name-only -M <cut>..queue/<scope> | wc -l`.
+Merge one queue window into `develop`, trigger a review, wait for `Review completed`, fix findings, then merge the next. Reviews are incremental — each cycle reads only what changed since the last completed one (§PR File Budget) — so every window gets a full-budget review even though the PR's cumulative diff grows past the cap.
 
-Keep doc and skill commits on `develop` when you cut — cherry-pick them across so the working tree keeps the conventions it is being asked to follow. Identical hunks merge cleanly when the queue window comes back.
+### 3. Merge
 
-The split PR targets the default branch, so it is auto-reviewed on open; no `@coderabbitai review` comment. Each PR reads `.coderabbit.yaml` from **its own** base (§Config Is Read From the PR Base Branch) — a branch cut from the head carries the head's config, not the base's, so exclusions the remainder relies on must exist on whatever branch that PR is based against.
+Merge the release PR to `main` only when the queue is empty and every window came back clean.
+
+Three things break the scheme:
+
+- **Pushing before the running review reports `Review completed`** — it cancels that review and its findings do not come back.
+- **Asking for a full re-review** — it re-reads the cumulative diff and trips the file limit again.
+- **A force-push while a review is running** — the cut in step 1 retriggers the open PR's review like any other push, so check the state first and check no other session is pushing `develop`.
+
+Counts don't subtract: a file touched in two windows counts in both, so the remainder is bigger than `total - prefix`. Measure it — `git diff --name-only -M develop..queue/<scope> | wc -l`.
 
 ## When to Exclude
 
