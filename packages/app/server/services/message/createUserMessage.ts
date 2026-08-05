@@ -121,19 +121,17 @@ export const createUserMessage = async (
     )
       .orTee(console.error)
       .unwrapOr(null);
-    const followerUserIds = [user.id];
-    if (threadRootMessage && threadRootMessage.userId !== user.id) followerUserIds.push(threadRootMessage.userId);
-    await getResultAsync(() =>
-      Promise.all(
-        followerUserIds.map((followerUserId) =>
-          createThreadFollow(db, {
-            roomId: newMessageEntity.partitionKey,
-            threadRootRowKey,
-            userId: followerUserId,
-          }),
-        ),
-      ),
-    ).match(noop, console.error);
+    const roomId = newMessageEntity.partitionKey;
+    // The replier's own send is their own decision, so it undoes an unfollow they made earlier
+    const threadFollows = [createThreadFollow(db, { roomId, threadRootRowKey, userId: user.id }, true)];
+    // Guarded on the author existing, not merely on the root being read: a webhook root has no author at all
+    // (`WebhookMessageEntity` declares `userId?: undefined`) and the follow row's `userId` is NOT NULL, so an
+    // Unguarded push turns every reply to a webhook message into a constraint violation. The root's author did
+    // Not do this — somebody else replied — so their follow is only ever created, never restored: an author who
+    // Turned the bell off on their own thread stays off it
+    if (threadRootMessage?.userId && threadRootMessage.userId !== user.id)
+      threadFollows.push(createThreadFollow(db, { roomId, threadRootRowKey, userId: threadRootMessage.userId }, false));
+    await getResultAsync(() => Promise.all(threadFollows)).match(noop, console.error);
     const excludedUserIds = [...new Set(readPushSubscriptions.map((pushSubscription) => pushSubscription.userId))];
     await getResultAsync(() =>
       notifyThreadReplyFollowers(db, newMessageEntity, notificationOptions, excludedUserIds),

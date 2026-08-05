@@ -61,7 +61,9 @@ sequenceDiagram
     A->>AT: updateEntity with version 2 — accepted, both votes stored
 ```
 
-A rejected write means the vote is still valid and only the version it was computed against is stale, so it is re-read and re-applied rather than surfaced. Retries are bounded by `MAX_VOTE_POLL_ETAG_RETRIES`, and a vote that still cannot land is refused with `CONFLICT` so the voter sends it again instead of being shown a vote that never counted. A failed write whose re-read finds the version unchanged was never a lost race, so that error propagates as itself rather than being retried into a `CONFLICT`.
+A rejected write means the vote is still valid and only the version it was computed against is stale, so it is re-read and re-applied rather than surfaced. Retries are bounded by `MAX_ENTITY_ETAG_RETRIES`, and a vote that still cannot land is refused with `CONFLICT` so the voter sends it again instead of being shown a vote that never counted. A failed write whose re-read finds the version unchanged was never a lost race, so that error propagates as itself rather than being retried into a `CONFLICT`. The whole outcome table is [conditional writes](/docs/architecture/conditional-writes)'.
+
+The stored poll body is parsed and re-serialized through `pollMessageContentSchema` (`shared/models/message/poll/`) — the one schema that owns a poll's shape, and the same one `Poll.vue` reads it back with. A vote sends only the option id, so nothing else in the body may change across it: a narrower server-side copy of that schema strips every field it does not name, and the first vote on a poll would take its option labels with it.
 
 ## Message types
 

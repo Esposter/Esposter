@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
 
-import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
+import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";

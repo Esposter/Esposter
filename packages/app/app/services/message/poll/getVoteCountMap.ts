@@ -1,4 +1,4 @@
-import type { PollMessageContent } from "@/models/message/poll/PollMessageContent";
+import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
 
 export const getVoteCountMap = (votes: PollMessageContent["votes"]) => {
   const map = new Map<string, number>();

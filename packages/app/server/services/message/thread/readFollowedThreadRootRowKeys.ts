@@ -7,6 +7,7 @@ import { MAX_FOLLOWED_THREADS } from "@esposter/db-schema";
 // Message still exists. readFollowedThreads drops deleted roots for the drawer, but the DB follow row (and
 // Its notifications) outlive the root, so follow-state must read this instead — otherwise a followed thread
 // Whose root was deleted looks unfollowed and can never be unfollowed.
+// Unfollowed rows are the member's recorded decision to stop, not a follow, so they never appear here.
 export const readFollowedThreadRootRowKeys = async (
   db: Context["db"],
   roomId: string,
@@ -16,7 +17,7 @@ export const readFollowedThreadRootRowKeys = async (
     columns: { threadRootRowKey: true },
     limit: MAX_FOLLOWED_THREADS,
     orderBy: { createdAt: "desc" },
-    where: { roomId: { eq: roomId }, userId: { eq: userId } },
+    where: { isUnfollowed: { eq: false }, roomId: { eq: roomId }, userId: { eq: userId } },
   });
   return follows.map(({ threadRootRowKey }) => threadRootRowKey);
 };

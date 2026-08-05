@@ -2,8 +2,8 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
+import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { useVotePoll } from "@/composables/message/poll/useVotePoll";
-import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
 import { getVoteCountMap } from "@/services/message/poll/getVoteCountMap";
 import { getVoteDescription } from "@/services/message/poll/getVoteDescription";

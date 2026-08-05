@@ -24,6 +24,8 @@ export const getPushSubscriptionsForThreadFollowers = (
   }: Pick<ThreadFollowInMessage, "roomId" | "threadRootRowKey"> & { excludedUserIds: string[]; senderUserId: string },
 ) => {
   const wheres = [
+    // An unfollowed row records the member's decision to stop hearing about this thread, so it is not a follower
+    eq(threadFollowsInMessage.isUnfollowed, false),
     eq(threadFollowsInMessage.roomId, roomId),
     eq(threadFollowsInMessage.threadRootRowKey, threadRootRowKey),
     ne(threadFollowsInMessage.userId, senderUserId),
