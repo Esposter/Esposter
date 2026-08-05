@@ -112,10 +112,13 @@ The budget is a **target to fill, not only a cap**. A single roadmap item is typ
 
 Chunk at the budget where you can. A mechanical rename can't be chunked — it's one atomic commit — so exclude the files within it that carry no reviewable content.
 
-Exclude only files with **no reviewable content change**. Two kinds qualify:
+**Every exclusion is derived from an open PR's diff.** Enumerate what that PR actually changed, classify each file, and list the ones that qualify. Never write an exclusion for a file class the repo merely _could_ produce — a speculative glob block (generated artifacts, binaries, vendored assets) added outside a PR is unreviewed config change for no benefit, and it silently blinds every later PR that does touch those paths. A class earns a permanent entry only when a real PR puts it in a diff.
+
+Exclude only files with **no reviewable content change**. Three kinds qualify:
 
 - **Pure renames** — 100% similarity, zero content change (`R100`).
 - **Rename-token-only edits** — the file's only diff is the mechanical substitution itself (e.g. every `File` identifier → `Sheet`). The live block covers both, and its header comment says so.
+- **Import-path-only edits** — a module moved (`@/` → `#shared`, say) and the file's entire diff is the rewritten import lines. Confirm it mechanically rather than by eye: every `+`/`-` line in the file's diff must be an `import` line.
 
 A file that was renamed _and_ carries a real logic change still needs review. When in doubt, leave it in.
 
@@ -136,6 +139,17 @@ The rule reduces to: exclude a file only when its diff carries no information a 
 
 ```bash
 git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 "\""}' | sort
+```
+
+Import-path-only edits are found by demanding every changed line in a file's diff be an import — no commit-shape assumption needed, so this works on any PR:
+
+```bash
+git diff --name-only -M <base>..<head> | while IFS= read -r path; do
+  # -U0 so context lines can't be mistaken for changes; the +++/--- headers are dropped
+  changed=$(git diff -U0 -M <base>..<head> -- "$path" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---)')
+  [ -z "$changed" ] && continue
+  printf '%s\n' "$changed" | grep -qvE '^[+-][[:space:]]*(import[[:space:]]|$)' || echo "    - \"!$path\""
+done
 ```
 
 Rename-token-only edits are not `R100` (they have a content diff), but when the sweep landed as **its own commit** they can be classified **exactly** — by replaying the substitution and demanding the result reproduce the committed blob byte-for-byte. Never classify by line counts: a token substitution rewrites each affected line in place, so `--numstat` is symmetric, but a balanced logic edit is symmetric too and the filter cannot tell them apart.
