@@ -65,7 +65,7 @@ Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by i
 {id}/files/…                      binary assets (FileAssets types only)
 ```
 
-Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource deletes the row and the `{id}/` blob directory — identically for every type.
+Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource is soft — identically for every type: it stamps `deletedAt` and drops the publication row, leaving the `{id}/` blob directory intact so a restore can hand the content back. Purging is what deletes the directory and then the row ([recycle bin](/docs/platform/recycle-bin)).
 
 Each type owns one content schema (Zod, interface-first, one export per file) in `packages/app/shared/models/`. A content schema always produces an **object** (never a bare string/array) so future fields extend without a blob-shape break.
 
@@ -142,7 +142,7 @@ One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/
 | `createResource`                                                                                     | authed                                                             | metadata row; content blob written on first save               |
 | `readResources`                                                                                      | authed                                                             | per-type offset-paginated list, publication state joined along |
 | `updateResource`                                                                                     | owner                                                              | rename                                                         |
-| `deleteResource`                                                                                     | owner                                                              | row + `{id}/` blob directory                                   |
+| `deleteResource`                                                                                     | owner                                                              | soft delete — stamps `deletedAt`, blobs survive until purge    |
 | `readResourceContent` / `saveResourceContent`                                                        | owner                                                              | blob read/write with `contentVersion` check                    |
 | `onSaveResourceContent`                                                                              | owner                                                              | subscription — streams each save's content to other devices    |
 | `publishResource` / `unpublishResource` / `readResourcePublication` / `readPublishedResourceContent` | see [/docs/architecture/publishing](/docs/architecture/publishing) | Publishable types only                                         |

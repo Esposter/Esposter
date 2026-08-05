@@ -41,7 +41,9 @@ Reads and writes never share a queue, even on one key: a read waits for nobody.
 
 One opt-in narrows this:
 
-- **`isExclusive`** — single-flight. While a read with the same key is in flight, a second caller issues no request of its own: it **joins** that call and resolves with its outcome. Its own `onSuccess`/`onError` do not run — the call it joined already applied the state and reported — so by the time the joiner resolves, the data it asked for is in the store. For the fan-out reads that every instance of a surface issues on mount: one favourites set behind a list, a blade and Home, or one room's follow state behind every follow button in it.
+- **`isExclusive`** — single-flight. While an `isExclusive` read with the same key is in flight, a second `isExclusive` caller issues no request of its own: it **joins** that call and resolves with its outcome. Its own `onSuccess`/`onError` do not run — the call it joined already applied the state and reported — so a joiner of a call that succeeded finds the data it asked for in the store. For the fan-out reads that every instance of a surface issues on mount: one favourites set behind a list, a blade and Home, or one room's follow state behind every follow button in it.
+
+  **Only a call that passed the flag is joinable, so a key's reads flag all or none.** A plain read publishes nothing to join, and every read — flagged or not — supersedes whatever was joinable and takes its place. So one unflagged read on a key the rest of the surface flags costs two round trips instead of one, and the joiners of the call it superseded resolve `Stale` over a store that read never wrote — an empty list beside a populated one, which is the outcome the flag exists to prevent. The exception below is the one place a key deliberately mixes.
 
 A joined read is never `Dropped`. Dropping is right for a write, whose caller wanted an effect that is already happening, and wrong for a read, whose caller wanted the data — a caller handed nothing renders an empty list beside a populated one.
 
@@ -65,14 +67,16 @@ Everything else queues. If a write is worth issuing, it is worth landing.
 
 ## The two opt-ins at a glance
 
-| Opt-in        | On a read                                       | On a write                          |
-| ------------- | ----------------------------------------------- | ----------------------------------- |
-| `isExclusive` | Joins the in-flight call and shares its outcome | Drops the duplicate — nothing fires |
-| `isSupersede` | Not an option — a read is latest-wins already   | Latest-wins instead of queueing     |
+| Opt-in        | On a read                                                         | On a write                          |
+| ------------- | ----------------------------------------------------------------- | ----------------------------------- |
+| `isExclusive` | Joins another `isExclusive` call in flight and shares its outcome | Drops the duplicate — nothing fires |
+| `isSupersede` | Not an option — a read is latest-wins already                     | Latest-wins instead of queueing     |
 
 ## Outcomes
 
-Neither entry point throws; both resolve to an outcome discriminated on `MutationStatus`, which is the only signal a call did not land.
+The operation's own rejection never escapes: both entry points resolve to an outcome discriminated on `MutationStatus`, which is the only signal a call did not land.
+
+A **callback** is the exception. A throw from `applyOptimistic`, from the rollback it returns, or from `onSuccess`/`onError` rejects the promise the entry point returned, and nothing catches it — the pending bookkeeping still unwinds, but the caller gets a rejection instead of an outcome, and a caller that stored the promise without a rejection handler gets an unhandled rejection. A callback body that can fail therefore produces its own result rather than throwing.
 
 | Status      | For a read                                                                                                                 | For a write                                                                                                                     |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -81,16 +85,16 @@ Neither entry point throws; both resolve to an outcome discriminated on `Mutatio
 | `Stale`     | Superseded by a newer read for the same target. Silent by design — no callbacks, no alert, whether it resolved or rejected | Only with `isSupersede`, and only after resolving **successfully**. A superseded write that _failed_ reports `Failed`, not this |
 | `Dropped`   | Never — a read is joined, not dropped                                                                                      | With `isExclusive`, behind an in-flight sibling. Never sent                                                                     |
 
-A joined read reports the outcome of the call it joined, failures included.
+A joined read reports the outcome of the call it joined — failures and `Stale` included, so a joiner resolves `Stale` when a later read superseded the call it was waiting on.
 
 ## Read lifecycle
 
 ```mermaid
 flowchart TD
-  Need[Surface needs data] --> Exclusive{isExclusive and same key still in flight?}
+  Need[Surface needs data] --> Exclusive{isExclusive and an isExclusive read for this key still in flight?}
   Exclusive -->|yes| Join[Join it — no request is issued]
-  Exclusive -->|no| Bind[Bind to the target key and claim latest-for-target]
-  Join --> Shared[Resolve with that call's outcome, over the state it applied]
+  Exclusive -->|no| Bind[Bind to the target key, claim latest-for-target, drop whatever was joinable]
+  Join --> Shared[Resolve with that call's outcome — Stale if a later read superseded it]
   Bind --> Send[Send the read]
   Send -->|resolves| Superseded{Superseded by a newer read?}
   Send -->|rejects| Lost{Superseded by a newer read?}

@@ -135,8 +135,10 @@ stateDiagram-v2
   Draft --> Published: publishResource (Publishable types) — snapshot to {id}/published/{n}
   Published --> Published: re-publish (publishVersion++)
   Published --> Draft: unpublishResource (delete publication row)
-  Draft --> [*]: deleteResource (row + {id}/ blob dir)
-  Published --> [*]: deleteResource (row + publication + blob dir)
+  Draft --> Deleted: deleteResource (deletedAt set)
+  Published --> Deleted: deleteResource (deletedAt set, publication dropped)
+  Deleted --> Draft: restoreResource
+  Deleted --> [*]: purgeResource (blob dir, partitions, row)
 ```
 
 **Create → first write.** `createResource` writes only the Postgres identity row; the content blob does not exist until the first `saveResourceContent` inside an editor blade — no half-written blob to reconcile.
@@ -145,7 +147,7 @@ stateDiagram-v2
 
 **Linking to other resources** is the dataset capability ([/docs/architecture/datasets](/docs/architecture/datasets)), not a resource-to-resource foreign key: a consumer holds a `DatasetReference` (`{ type, id }`) and either copies (Sheet import — one-time row copy) or references (Dashboard visual / Email merge fields — re-resolved on load via `dataset.readDataset`).
 
-**Delete.** `deleteResource` removes the row, the `resource_publications` row (if any), and the whole `{id}/` blob directory — identical for every type. Because links are bare `DatasetReference` ids (not FKs), deleting a source leaves consumers' stored references dangling; the consumer re-resolves on load and fails/returns empty rather than cascading. Published snapshots are unaffected (they baked data in at publish time). Surfacing a "source no longer available" state is deferred ([dangling dataset references](/docs/platform/deferred/dangling-dataset-references)).
+**Delete.** `deleteResource` is a soft delete — identical for every type: it stamps `deletedAt` and drops the `resource_publications` row, while the `{id}/` blob directory and the type's table partitions survive so a restore can hand the whole resource back. `purgeResource` is what destroys them, from the bin or from the 30-day timer ([recycle bin](/docs/platform/recycle-bin)). Because links are bare `DatasetReference` ids (not FKs), deleting a source leaves consumers' stored references dangling; the consumer re-resolves on load and fails/returns empty rather than cascading. Published snapshots are unaffected (they baked data in at publish time). Surfacing a "source no longer available" state is deferred ([dangling dataset references](/docs/platform/deferred/dangling-dataset-references)).
 
 ## Key files
 

@@ -32,7 +32,7 @@ flowchart TD
   R["Read through getEntityWithEtag — entity plus the version it came from"] --> D["getUpdateEntity(entity) — apply the intent to this version"]
   D --> W["Conditional write — updateEntity/updateMessage with { etag }"]
   W -->|"accepted"| N["Notify — emit the delta, never the replaced body"]
-  W -->|"412, version moved"| RR["Re-read the entity"]
+  W -->|"rejected — any error, not only a 412"| RR["Re-read the entity"]
   RR -->|"gone"| NF["NOT_FOUND — the entity was deleted under the write"]
   RR -->|"version unchanged"| PE["Rethrow — the write failed for something a retry cannot fix"]
   RR -->|"version moved"| B{"Attempts left?"}
