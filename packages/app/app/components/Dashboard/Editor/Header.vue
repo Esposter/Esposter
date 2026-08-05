@@ -26,13 +26,7 @@ const { visualType } = storeToRefs(visualStore);
       />
     </template>
     <template #actions>
-      <v-tooltip :text="`Add ${prettify(visualType)} Visual`">
-        <template #activator="{ props }">
-          <v-btn :flat="false" :="props" @click="createVisual">
-            <v-icon icon="mdi-plus" />
-          </v-btn>
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton icon="mdi-plus" :text="`Add ${prettify(visualType)} Visual`" @click="createVisual" />
     </template>
   </StyledPageHeader>
 </template>

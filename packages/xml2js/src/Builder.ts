@@ -27,49 +27,39 @@ export class Builder {
     return this.#render(rootElement, rootObject).end(this.#options.renderOpts);
   }
 
-  #render(
-    element: XMLBuilder,
-    object: null | Record<string, Record<string, unknown>>[] | Record<string, unknown> | string | undefined,
-  ): XMLBuilder {
+  #render(element: XMLBuilder, object: unknown): XMLBuilder {
     // `typeof null === "object"`, so a nullish leaf would otherwise reach `Object.entries` and throw. Xml has no
     // Representation for it, so it renders as the empty element its caller already created.
     if (object === null || object === undefined) return element;
-    else if (typeof object !== "object")
-      if (this.#options.cdata) return element.dat(object);
-      else element.txt(object);
+    else if (typeof object !== "object") return this.#renderText(element, object);
     else if (Array.isArray(object))
       // https://github.com/Leonidas-from-XIV/node-xml2js/issues/119
       for (const child of object.values())
-        for (const [key, entry] of Object.entries(child)) return this.#render(element.ele(key), entry).up();
+        for (const [key, entry] of Object.entries(child as Record<string, unknown>))
+          element = this.#render(element.ele(key), entry).up();
     else
-      // Case #1 Attribute
       for (const [key, child] of Object.entries(object))
+        // Case #1 Attribute
         if (key === this.#options.attrkey) {
           if (typeof child === "object")
             // Inserts tag attributes
             for (const [attr, value] of Object.entries(child as Record<string, string>))
               element = element.att(attr, value);
           // Case #2 Char data (CDATA, etc.)
-        } else if (key === this.#options.charkey)
-          if (this.#options.cdata) element = element.dat(child as string);
-          else element = element.txt(child as string);
+        } else if (key === this.#options.charkey) element = this.#renderText(element, child);
         // Case #3 Array data
         else if (Array.isArray(child))
-          for (const entry of child.values())
-            if (typeof entry === "string")
-              if (this.#options.cdata) element = element.ele(key).dat(entry).up();
-              else element = element.ele(key).txt(entry).up();
-            else element = this.#render(element.ele(key), entry).up();
-        // Case #4 Objects
-        else if (typeof child === "object")
-          element = this.#render(element.ele(key), child as Record<string, string>).up();
-        // Case #5 String and remaining types
-        else if (typeof child === "string" && this.#options.cdata) element = element.ele(key).dat(child).up();
-        // A string second argument to `ele` is xmlbuilder2's namespace overload, not the element's text
-        else if (typeof child === "boolean" || typeof child === "number" || typeof child === "string")
-          element = element.ele(key).txt(String(child)).up();
-        else element = element.ele(key).up();
+          for (const entry of child.values()) element = this.#render(element.ele(key), entry).up();
+        // Case #4 Objects, scalars and nullish leaves
+        else element = this.#render(element.ele(key), child).up();
 
     return element;
+  }
+
+  // A string second argument to `ele` is xmlbuilder2's namespace overload, not the element's text, so scalars are
+  // Written onto the element the caller already created.
+  #renderText(element: XMLBuilder, text: unknown): XMLBuilder {
+    const content = String(text);
+    return this.#options.cdata ? element.dat(content) : element.txt(content);
   }
 }
