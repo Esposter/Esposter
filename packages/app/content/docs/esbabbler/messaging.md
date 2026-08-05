@@ -63,6 +63,8 @@ sequenceDiagram
 
 A rejected write means the vote is still valid and only the version it was computed against is stale, so it is re-read and re-applied rather than surfaced. `votePoll` does not own that loop: it hands `getUpdateEntity` and `writeEntity` to the shared `updateEntityConditionally` helper ([conditional writes](/docs/architecture/conditional-writes)), which owns the re-read, the retry and the bound. The bound is private to the helper and shared by every conditional write in the repo, so there is no poll-specific retry budget to raise — changing it changes `deleteFile`, `deleteLinkPreviewResponse` and `unpinMessage` with it. A vote that still cannot land is refused with `CONFLICT` so the voter sends it again instead of being shown a vote that never counted, and a failed write whose re-read finds the version unchanged was never a lost race, so that error propagates as itself rather than being retried into a `CONFLICT`.
 
+The stored poll body is parsed and re-serialized through `pollMessageContentSchema` (`shared/models/message/poll/`) — the one schema that owns a poll's shape, and the same one `Poll.vue` reads it back with. A vote sends only the option id, so nothing else in the body may change across it: a narrower server-side copy of that schema strips every field it does not name, and the first vote on a poll would take its option labels with it.
+
 ## Message types
 
 `MessageType` (in `@esposter/db-schema`) discriminates rendering and behaviour: `Message`, `Poll`, `Call` (call started / call-end duration system message), `EditRoom`, `PinMessage`, `System` (join/leave), and `Webhook`. Adding a type requires updating `MessageEntityMap` (type → entity class) and `MessageComponentMap` (type → Vue rendering component).

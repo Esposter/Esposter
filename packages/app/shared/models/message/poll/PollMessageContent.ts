@@ -1,6 +1,6 @@
-import type { PollOption } from "@/models/message/poll/PollOption";
+import type { PollOption } from "#shared/models/message/poll/PollOption";
 
-import { pollOptionSchema } from "@/models/message/poll/PollOption";
+import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
 import { createUniqueArraySchema, normalizeString } from "@esposter/shared";
 import { z } from "zod";
 

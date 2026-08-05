@@ -1,6 +1,6 @@
 ---
 name: esbabbler
-description: Esposter messaging feature (esbabbler) conventions — Discord parity rule, display name/nickname resolution, push notification titles, store-mutation pattern (subscriptions as source of truth), online-subscribable watch sources, and scheduled-message jobs. Apply when working on the messaging module (packages/app/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Calls/voice internals live in the esbabbler-call skill.
+description: Esposter messaging feature (esbabbler) conventions — Discord parity rule, display name/nickname resolution, push notification titles, store-mutation pattern (subscriptions as source of truth), online-subscribable watch sources, subscriptions written on another member's behalf (thread follows), and scheduled-message jobs. Apply when working on the messaging module (packages/app/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Calls/voice internals live in the esbabbler-call skill.
 ---
 
 # Esbabbler (Messaging) Feature Conventions
@@ -140,6 +140,13 @@ Both settings dialogs share one structure and three conventions — apply them t
 - **Panels are lazy + skeletoned.** Each tab is a `defineAsyncComponent` in `SettingsContentMap` (room) / `UserSettingsContentMap` (user); the shared `Content.vue` wraps `<component :is>` in `<Suspense :timeout="0">` with `<MessageModelSettingsSkeleton />` as fallback. New tabs get the skeleton for free — never add per-panel spinners; if a panel needs data, top-level `await` it and let Suspense show the skeleton.
 - **Every settings mutation is optimistic.** Never make a control wait on the server round-trip. Use `useMutation()` (`app/composables/shared/useMutation.ts`, standard: [/docs/architecture/client-data](/docs/architecture/client-data)): `applyOptimistic` mutates the store immediately and returns the rollback closure; the mutation runs in the background; failure rolls back + surfaces the error. Subscriptions stay the confirming source of truth. It bundles staleness guarding, so a slow earlier call never clobbers a newer one.
 - **Sidebar section highlight uses `StyledSlideIndicator` with ALL visible keys.** Items carry `data-slide-indicator-key`; pass every visible section id (docs table-of-contents behaviour — the rail stretches across them), pinning to the clicked target while the programmatic scroll runs (`isScrollingToSection`). Never hand-roll a sliding/active rail.
+
+## A Subscription Written on Somebody Else's Behalf Records the Member's Own Decision
+
+Discord parity means a member's action routinely subscribes _another_ member — replying to a message follows [that thread](/docs/esbabbler/thread-follows) for its root's author too. Two rules fall out, and both are about the row, not the caller:
+
+- **Deleting the row on opt-out makes "never subscribed" and "opted out" the same absence**, so the next third-party action re-subscribes them and the opt-out can never stick. Record the decision on the row instead (`threadFollowsInMessage.isUnfollowed`) and filter it out of every read. Whether a write may clear that tombstone is decided by **whose action it is** — the member's own (the bell, their own reply) clears it, anyone else's only ever inserts.
+- **The other member may not exist.** A webhook message has no `userId` at all, so any id lifted off a message entity is guarded on presence before it reaches a `NOT NULL` column — the whole best-effort tail is swallowed into `console.error`, so the constraint violation costs the operator a stack trace per message and nothing else surfaces.
 
 ## Scheduled Message Jobs Architecture
 

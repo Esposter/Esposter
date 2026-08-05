@@ -1,4 +1,4 @@
-import type { PollMessageContent } from "@/models/message/poll/PollMessageContent";
+import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
