@@ -5,14 +5,6 @@ reviews:
     - "!packages/app/server/db/migrations/**"
     # generated pglite snapshot (binary)
     - "!packages/db-mock/src/snapshot.tar.gz"
-    # poll model move to #shared (PR #1049) — pure rename plus import-path-only
-    # edits, no content change; remove these once that PR merges
-    - "!packages/app/app/components/Message/Model/Message/Input/PollDialog.vue"
-    - "!packages/app/app/components/Message/Model/Message/Type/Poll.vue"
-    - "!packages/app/app/composables/message/poll/useVotePoll.ts"
-    - "!packages/app/app/services/message/poll/getVoteCountMap.ts"
-    - "!packages/app/shared/models/message/poll/PollMessageContent.ts"
-    - "!packages/app/shared/models/message/poll/PollOption.ts"
 
   auto_review:
     ignore_usernames:
