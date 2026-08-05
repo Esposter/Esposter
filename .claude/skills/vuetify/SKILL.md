@@ -72,6 +72,17 @@ These variants are set globally and must **never** be repeated on individual com
 
 Corollary: `color` on a container-nested `v-btn` only tints text. Never reach for a non-semantic theme colour as a fill (`color="border"` is for borders) — that only ever worked via an explicit `variant="elevated"`.
 
+A **deliberately raised** button (e.g. a raised add action in a page header) is the one case that restates the variant, and it needs **both** halves — `variant="elevated"` to beat the container's `"text"`, and `flat: false` to beat the global `VBtn` `flat` default, since elevation only applies when `variant === "elevated" && !flat`:
+
+```vue
+<StyledTooltipIconButton
+  icon="mdi-plus"
+  :button-props="{ flat: false, variant: 'elevated' }"
+  :is-icon-button="false"
+  text="Add Visual"
+/>
+```
+
 ## Button Conventions
 
 - **Every icon-only `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text` so the action is discoverable. A button with **visible label text** (`text="Remove"` or default-slot text) is self-describing and does **not** need a tooltip.

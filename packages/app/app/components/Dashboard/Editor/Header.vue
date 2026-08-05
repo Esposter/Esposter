@@ -10,23 +10,29 @@ const { visualType } = storeToRefs(visualStore);
 </script>
 
 <template>
-  <StyledPageHeader>
-    <template #filters>
-      <v-select
-        v-model="visualType"
-        max-width="16rem"
-        label="Visual Type"
-        hide-details
-        :items="visualTypeItemCategoryDefinitions"
-        @update:model-value="
-          $router.replace({
-            query: { ...$router.currentRoute.value.query, [ITEM_TYPE_QUERY_PARAMETER_KEY]: $event },
-          })
-        "
-      />
-    </template>
-    <template #actions>
-      <StyledTooltipIconButton icon="mdi-plus" :text="`Add ${prettify(visualType)} Visual`" @click="createVisual" />
-    </template>
-  </StyledPageHeader>
+  <v-toolbar px-4 py-2 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
+    <v-select
+      v-model="visualType"
+      density="comfortable"
+      hide-details
+      label="Visual Type"
+      max-width="16rem"
+      :items="visualTypeItemCategoryDefinitions"
+      @update:model-value="
+        $router.replace({
+          query: { ...$router.currentRoute.value.query, [ITEM_TYPE_QUERY_PARAMETER_KEY]: $event },
+        })
+      "
+    />
+    <v-spacer />
+    <!-- v-toolbar provides variant="text" and the global VBtn default is flat, so this deliberately
+      raised button has to restate both -->
+    <StyledTooltipIconButton
+      icon="mdi-plus"
+      :button-props="{ flat: false, variant: 'elevated' }"
+      :is-icon-button="false"
+      :text="`Add ${prettify(visualType)} Visual`"
+      @click="createVisual"
+    />
+  </v-toolbar>
 </template>
