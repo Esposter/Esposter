@@ -94,7 +94,8 @@ describe(saveResourceContent, () => {
     expect(saveEvent.id).toBe(resource.id);
     // The event carries the version the update returned, so a subscriber's next save is not rejected as stale
     expect(saveEvent.contentVersion).toBe(savedResource.contentVersion);
-    expect(saveEvent.content).toBe(content);
+    // The event carries what was written, which is the parsed content — the same shape every reader gets back
+    expect(saveEvent.content).toStrictEqual(jsonDateParse(JSON.stringify(content)));
     expect(readActivityTypes()).toStrictEqual([ResourceActivityType.ContentSaved]);
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
   });
@@ -110,6 +111,35 @@ describe(saveResourceContent, () => {
     await waitForSynchronizedFunctions();
 
     // The second write repeats an unchanged due date, so it schedules nothing on top of the first
+    expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
+  });
+
+  // `content` arrives as `unknown`, so a caller that never parsed it — blueprint deploy reads every manifest
+  // Entry's content as `z.unknown()` — otherwise reaches the hook with the ISO string JSON.parse left behind
+  // Where the type declares a Date, and the hook's TypeError is swallowed by its own best-effort wrapper
+  test("parses the caller's content, so a hook declaring Dates never receives ISO strings", async () => {
+    expect.hasAssertions();
+
+    // What JSON.parse of a manifest blob leaves behind: a plain object with every Date serialized to the ISO
+    // String it was written as, the due date the hook calls `.getTime()` on among them
+    const { createdAt, deletedAt, id, notes, type, updatedAt } = item;
+    const unrevivedContent: unknown = {
+      items: [
+        {
+          createdAt: createdAt.toISOString(),
+          deletedAt,
+          dueAt: dueAt.toISOString(),
+          id,
+          name,
+          notes,
+          type,
+          updatedAt: updatedAt.toISOString(),
+        },
+      ],
+    };
+    await saveResourceContent(ctx, { content: unrevivedContent, resource });
+    await waitForSynchronizedFunctions();
+
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
   });
 

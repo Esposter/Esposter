@@ -3,14 +3,17 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { dayjs } from "#shared/services/dayjs";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
+import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { blueprintRouter } from "@@/server/trpc/routers/blueprint";
 import { programRouter } from "@@/server/trpc/routers/program";
-import { DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
+import { AzureQueue, DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { MockContainerDatabase, MockServiceBusDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered in createResourceProcedures.test.ts; here the blueprint
@@ -42,6 +45,7 @@ describe("blueprint", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
+    MockServiceBusDatabase.clear();
     await mockContext.db.delete(resources);
   });
 
@@ -84,6 +88,27 @@ describe("blueprint", () => {
     expect(funnel.resource.type).toBe(ResourceType.Program);
     // The {{entry:audience}} alias resolved to the audience entry's real created id
     expect(funnelContent?.emailId).toBe(audience.resource.id);
+  });
+
+  // Deploy is the only content-write path whose content was never parsed by the type's own schema — the
+  // Manifest carries every entry's content as `z.unknown()` — so this is the one that proves the after-save
+  // Hook still receives the type's shape, and a deployed TodoList's future due dates get their reminders
+  test("deploys a TodoList whose due dates still schedule their reminders", async () => {
+    expect.hasAssertions();
+
+    const dueAt = dayjs().add(1, "day").toDate();
+    const item = new TodoListItem({ dueAt, name });
+    const blueprint = await createBlueprint({
+      entries: [{ content: { items: [item] }, key: "todo", name: "t", type: ResourceType.TodoList }],
+      parameters: [],
+    });
+    const deployments = await caller.deployBlueprint({ id: blueprint.id, parameterValues: {} });
+    const deployment = takeOne(deployments);
+    await waitForSynchronizedFunctions();
+
+    expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([
+      { body: { dueAt, itemId: item.id, resourceId: deployment.resource.id }, scheduledEnqueueTimeUtc: dueAt },
+    ]);
   });
 
   test("fails deploy with invalid entry content", async () => {
