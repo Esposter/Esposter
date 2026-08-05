@@ -34,6 +34,7 @@ flowchart TD
   W -->|"accepted"| N["Notify — emit the delta, never the replaced body"]
   W -->|"412, version moved"| RR["Re-read the entity"]
   RR -->|"gone"| NF["NOT_FOUND — the entity was deleted under the write"]
+  RR -->|"the read itself failed"| RF["Log it, then CONFLICT — the attempt could not be classified"]
   RR -->|"version unchanged"| PE["Rethrow — the write failed for something a retry cannot fix"]
   RR -->|"version moved"| B{"Attempts left?"}
   B -->|"yes"| D
@@ -47,6 +48,7 @@ The loop back to `getUpdateEntity` is the whole design: **the retry re-applies t
 ## Rules that fall out of it
 
 - **Read through `getEntityWithEtag`, not `getEntity`.** The latter exists to drop the etag. Where a shared procedure already performs the read — as `getMessageProcedure` does — the etag rides on the procedure context beside the entity, so the round trip is paid once and every procedure built on it gets the option.
+- **An absent entity and a failed read are different facts.** `getEntityWithEtag` returns its not-found sentinel for the service's own 404 and nothing else (`getIsNotFound`); every other fault propagates. Collapsing them is how a throttled re-read gets reported to a voter as `NOT_FOUND` for the message they are looking straight at. A re-read that fails leaves the attempt unclassified, which is what `CONFLICT` already means here — so it is logged with its real cause and the caller is told to send it again.
 - **Retries are bounded.** A fixed small number of attempts, never until it lands, or one hot row spins a request a user is waiting on.
 - **Exhaustion is an outcome the call chooses.** Anything a user is waiting on throws `CONFLICT`, so they can send it again rather than being shown success over a change that never landed. Fire-and-forget telemetry drops it instead.
 - **Only a lost race retries.** The re-read is what tells a stale version from a broken write, without a status code to read. An unchanged version means retrying cannot help, so that error propagates as itself — otherwise a transient fault degrades into `CONFLICT` and names the wrong cause.

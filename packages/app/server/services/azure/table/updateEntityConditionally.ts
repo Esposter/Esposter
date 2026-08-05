@@ -43,8 +43,20 @@ export const updateEntityConditionally = async <TTableEntity extends AzureEntity
     );
     if (!updateError) return updatedEntity;
 
-    const rereadEntityWithEtag = await getEntityWithEtag(tableClient, cls, partitionKey, rowKey);
-    if (!rereadEntityWithEtag)
+    // The re-read is the only thing that classifies the failed write, and whatever rejected the write routinely
+    // Rejects the read behind it — so a read that FAILED must not arrive here as the entity being gone. It
+    // Leaves the attempt unclassified, which is what CONFLICT already means: the write did not land, the caller
+    // Sends it again, and the fault itself is logged rather than renamed into a deletion for the user
+    const rereadEntityVersion = await getResultAsync(() =>
+      getEntityWithEtag(tableClient, cls, partitionKey, rowKey),
+    ).match(
+      (readEntityVersion) => readEntityVersion,
+      (error) => {
+        console.error(error);
+        throw new TRPCError({ code: "CONFLICT" });
+      },
+    );
+    if (!rereadEntityVersion)
       throw new TRPCError({
         code: "NOT_FOUND",
         message: new NotFoundError(entityType, JSON.stringify({ partitionKey, rowKey })).message,
@@ -52,9 +64,9 @@ export const updateEntityConditionally = async <TTableEntity extends AzureEntity
     // Only a lost race is retried, and the re-read is what tells the two apart without a status code: a version
     // That moved is the concurrent write this one was rejected for, while an unchanged version means the write
     // Failed for a reason retrying cannot fix, so that error propagates as itself
-    else if (rereadEntityWithEtag.etag === etag) throw updateError;
+    else if (rereadEntityVersion.etag === etag) throw updateError;
 
-    entityVersion = rereadEntityWithEtag;
+    entityVersion = rereadEntityVersion;
   }
 
   throw new TRPCError({ code: "CONFLICT" });
