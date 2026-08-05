@@ -205,6 +205,10 @@ git diff --name-only -M <base>..<head> | while IFS= read -r path; do
   changed=$(git diff -U0 -M <base>..<head> -- "$path" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---)')
   [ -z "$changed" ] && continue
   printf '%s\n' "$changed" | grep -qvE '^[+-][[:space:]]*(import[[:space:]]|$)' && continue
+  # an import attribute value is quoted too (`with { type: "json" }`), so blanking every quoted
+  # string would normalize a changed attribute away. A line carrying a second quoted value stays in
+  # the review set rather than being classified
+  printf '%s\n' "$changed" | grep -qE '"[^"]*"[^"]*"' && continue
   # every quoted string blanked, so two lines match only if the specifier was the sole difference
   blank() { printf '%s\n' "$changed" | grep "^[$1]" | sed -E 's/^.//; s/"[^"]*"/""/g' | sort; }
   [ "$(blank +)" = "$(blank -)" ] && echo "    - \"!$path\""

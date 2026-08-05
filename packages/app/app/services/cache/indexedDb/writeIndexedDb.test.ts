@@ -7,7 +7,7 @@ import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSu
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { MimeCategory, RoomType, StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(writeIndexedDb, () => {
   const { message1, message2, message3 } = setupIndexedDbSuite();
@@ -29,6 +29,10 @@ describe(writeIndexedDb, () => {
     updatedAt: new Date(),
     userId,
   } satisfies RoomInMessage;
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   test("writes items for a given partitionKey successfully", async () => {
     expect.hasAssertions();
@@ -105,7 +109,5 @@ describe(writeIndexedDb, () => {
     await expect(
       writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1], message1.partitionKey),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: ${error.message}]`);
-
-    vi.restoreAllMocks();
   });
 });
