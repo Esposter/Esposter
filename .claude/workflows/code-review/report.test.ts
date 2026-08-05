@@ -89,6 +89,33 @@ describe("code-review report", () => {
     expect(getFinding(run).shortSummary).toBe(expected);
   });
 
+  test("keeps a clipped short summary inside its budget, ellipsis included", async () => {
+    expect.hasAssertions();
+
+    // An unbroken clause takes the no-word-boundary branch, where appending the ellipsis past the cut returned one
+    // Character over the width the column's whole contract is.
+    const run = await runReview("high", stubFor({ candidates: [{ ...CANDIDATE, summary: "A".repeat(90) }] }));
+
+    expect(getFinding(run).shortSummary).toHaveLength(60);
+  });
+
+  test("reports corroboration and merged locations as fields, not only as summary text", async () => {
+    expect.hasAssertions();
+
+    // The report format renders `shortSummary` verbatim and forbids substituting `summary`, so a label that lives
+    // Only in `summary` is unreachable — the reader cannot tell one finder's guess from several agreeing.
+    const run = await runReview(
+      "high",
+      stubFor({
+        finderFor: (label) => (label === "angle-A" || label === "angle-B" ? [CANDIDATE] : [SECOND_LINE]),
+        synthesis: MERGE_ONE,
+      }),
+    );
+
+    expect(getFinding(run).corroboration).toBe(2);
+    expect(getFinding(run).alsoAt).toStrictEqual(["a.ts:9"]);
+  });
+
   test("falls back to a stated summary when the synthesizer's decisions are unusable", async () => {
     expect.hasAssertions();
 

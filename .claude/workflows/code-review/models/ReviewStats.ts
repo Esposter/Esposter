@@ -9,6 +9,7 @@ export interface ReviewStats {
   claimsInventoried?: number;
   cleanupCap?: number;
   deduped: number;
+  droppedUnfound: number;
   droppedUnsettled: number;
   droppedUnverified: number;
   finders: number;
@@ -17,8 +18,10 @@ export interface ReviewStats {
   mode: string;
   perAngle?: number;
   refuted: number;
+  reportableCeiling?: number;
   reported: number;
   seams?: string[];
+  sweepCap?: number;
   verified: number;
   verifierAgents: number;
 }

@@ -18,6 +18,9 @@ const areaScope = (overrides: ScopeAnswer): ScopeAnswer => ({
 });
 
 describe("code-review seam partition", () => {
+  // The sweep's own budget, the third cap the reportable ceiling has to account for.
+  const SWEEP_CAP = 8;
+
   test("splits a large area by seam and adds the whole-territory safety net", async () => {
     expect.hasAssertions();
 
@@ -44,7 +47,8 @@ describe("code-review seam partition", () => {
     const run = await runReview(
       AREA_ARGS,
       stubFor({
-        finderFor: (label) => (label === "whole-area" ? many.slice(0, 6) : label === "seam:reads" ? many.slice(6) : []),
+        finderFor: (label) =>
+          label === "whole-area" ? many.slice(0, 6) : label.startsWith("seam:reads") ? many.slice(6) : [],
         resolution: { confidence: 95, evidence: "read the callee", verdict: "CONFIRMED" },
         scope: areaScope({ seams }),
         verdictFor: () => ({ confidence: 40 }),
@@ -59,6 +63,40 @@ describe("code-review seam partition", () => {
     // Every finder but cleanup, and two resolvers apiece.
     expect(run.result.stats).toMatchObject({ angles: finders - 1, findMode: "seam" });
     expect(run.calls.filter((call) => call.label.startsWith("resolve:"))).toHaveLength((finders - 1) * 2);
+  });
+
+  test("gives two seams whose names share a long prefix separate finder identities", async () => {
+    expect.hasAssertions();
+
+    // The label is the finder's identity — `ingest` stamps it on every candidate and the dedupe counts distinct
+    // Finders to decide whether a row is one agent's guess or several agreeing. Scope-agent seam names are
+    // Descriptive phrases, so a truncated slug alone silently merges two seams into one finder.
+    const shared = "the verdict pipeline and its";
+    const seams = [
+      createSeam(`${shared} verify phase`, ["cache/f1.ts"]),
+      createSeam(`${shared} resolve phase`, ["cache/f2.ts"]),
+    ];
+    const run = await runReview(AREA_ARGS, stubFor({ scope: areaScope({ seams }) }));
+    const seamLabels = run.calls.map((call) => call.label).filter((label) => label.startsWith("seam:"));
+
+    expect(seamLabels).toHaveLength(2);
+    expect(new Set(seamLabels).size).toBe(2);
+  });
+
+  test("publishes the ceiling it computed rather than a formula to reassemble", async () => {
+    expect.hasAssertions();
+
+    // Every term of the prose formula has drifted out of date at least once — the sweep's own cap was missing from
+    // It for two levels — and a reader who re-derives it budgets for a run of a different size than they got.
+    const high = (await runReview("high", stubFor({}))).result.stats;
+    const xhigh = (await runReview("xhigh", stubFor({}))).result.stats;
+
+    expect(high?.sweepCap).toBe(0);
+    expect(high?.reportableCeiling).toBe((high?.angles ?? 0) * (high?.perAngle ?? 0) + (high?.cleanupCap ?? 0));
+    expect(xhigh?.sweepCap).toBe(SWEEP_CAP);
+    expect(xhigh?.reportableCeiling).toBe(
+      (xhigh?.angles ?? 0) * (xhigh?.perAngle ?? 0) + (xhigh?.cleanupCap ?? 0) + SWEEP_CAP,
+    );
   });
 
   test("falls back to lens when only one seam is usable", async () => {
