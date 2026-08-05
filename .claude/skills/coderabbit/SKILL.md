@@ -128,14 +128,17 @@ for commit in $(git rev-list --reverse <base>..develop); do
 done
 ```
 
-Pick the boundary nearest ~80 files, then park and cut:
+Pick the boundary nearest ~80 files, then park, cut, and re-base the park onto the cut:
 
 ```bash
-git branch queue/<scope> develop && git push origin queue/<scope>   # everything, nothing lost
+git branch queue/<scope> develop && git push origin queue/<scope>   # everything, nothing lost yet
 git reset --hard <cut> && git push --force-with-lease origin develop
+git rebase --onto develop <cut> queue/<scope> && git push --force-with-lease origin queue/<scope>
 ```
 
-The queue branch never gets a PR. After the release PR merges, merge one window of it back into `develop` at a time — each window is its own release PR and its own review cycle, so the queue drains at the cap instead of piling up again.
+That last step is what leaves **exactly two branches**: `develop` at the cut, and the queue holding only the commits still to come. Skip the rebase and the queue duplicates everything `develop` already has. Any doc commit cherry-picked across the cut replays as a no-op or, if reworded since, conflicts — `git rebase --skip` it, `develop`'s version is the newer one.
+
+The queue never gets a PR. After the release PR merges, merge one window of it back into `develop` at a time — each window is its own release PR and its own review cycle, so the queue drains at the cap instead of piling up again.
 
 Two things to check before running it:
 
