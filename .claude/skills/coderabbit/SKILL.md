@@ -134,7 +134,9 @@ for commit in $(git rev-list --reverse <base>..develop); do
 done
 ```
 
-Take the boundary nearest ~80 files. Park, cut, then re-base the park onto the cut:
+Take the boundary nearest ~80 files. The next three commands discard and rewrite published history, so they are the one place in this repo that needs a gate first — **get explicit approval for this cut**, and check all three of: the worktree is clean (`git status --porcelain -uall` empty — a `reset --hard` eats uncommitted work), you are on `develop` and not a worktree branch, and the local tip matches `origin/develop` (`git rev-parse develop origin/develop`) so no other session's push is about to be overwritten. `--force-with-lease` refuses the push if the remote moved, but nothing catches a dirty tree or the wrong branch.
+
+Then park, cut, and re-base the park onto the cut:
 
 ```bash
 git branch queue/<scope> develop && git push origin queue/<scope>   # nothing lost yet
@@ -172,7 +174,7 @@ Exclude only files with **no reviewable content change**. Three kinds qualify:
 
 - **Pure renames** — 100% similarity, zero content change (`R100`).
 - **Rename-token-only edits** — the file's only diff is the mechanical substitution itself (e.g. every `File` identifier → `Sheet`). The live block covers both, and its header comment says so.
-- **Import-path-only edits** — a module moved (`@/` → `#shared`, say) and the file's entire diff is the rewritten import lines. Confirm it mechanically rather than by eye: every `+`/`-` line in the file's diff must be an `import` line.
+- **Import-path-only edits** — a module moved (`@/` → `#shared`, say) and the file's entire diff is the same imports pointing at the new path. "Every changed line is an `import`" is _not_ the test: a new symbol, a new package, or an added side-effect import is a real change that passes it. The test is that the added and removed imports pair up with **only the quoted specifier differing** — same symbols, same shape, new module.
 
 A file that was renamed _and_ carries a real logic change still needs review. When in doubt, leave it in.
 
@@ -195,14 +197,17 @@ The rule reduces to: exclude a file only when its diff carries no information a 
 git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 "\""}' | sort
 ```
 
-Import-path-only edits are found by demanding every changed line in a file's diff be an import — no commit-shape assumption needed, so this works on any PR:
+Import-path-only edits need two conditions, not one — every changed line is an import, **and** the added imports are the removed ones with a different specifier. Blanking the quoted path turns the second into a set comparison, which is what rejects an added symbol or an added package that the first condition alone would wave through:
 
 ```bash
 git diff --name-only -M <base>..<head> | while IFS= read -r path; do
   # -U0 so context lines can't be mistaken for changes; the +++/--- headers are dropped
   changed=$(git diff -U0 -M <base>..<head> -- "$path" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---)')
   [ -z "$changed" ] && continue
-  printf '%s\n' "$changed" | grep -qvE '^[+-][[:space:]]*(import[[:space:]]|$)' || echo "    - \"!$path\""
+  printf '%s\n' "$changed" | grep -qvE '^[+-][[:space:]]*(import[[:space:]]|$)' && continue
+  # every quoted string blanked, so two lines match only if the specifier was the sole difference
+  blank() { printf '%s\n' "$changed" | grep "^[$1]" | sed -E 's/^.//; s/"[^"]*"/""/g' | sort; }
+  [ "$(blank +)" = "$(blank -)" ] && echo "    - \"!$path\""
 done
 ```
 

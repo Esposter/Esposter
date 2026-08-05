@@ -29,6 +29,14 @@ describe(resolveMirrorExcludes, () => {
   test("takes the caller's resolved prepare outputs rather than reading a config", () => {
     expect.hasAssertions();
 
-    expect(resolveMirrorExcludes(create(), [])).toStrictEqual([NODE_MODULES_DIRECTORY, GIT_DIRECTORY]);
+    // A name no config declares: it can only reach the excludes by being the argument, so its presence is the
+    // Proof the caller's set is honoured, where an empty array proves only that nothing was invented
+    const programmaticOutput = "programmaticOutput";
+
+    expect(resolveMirrorExcludes(create(), [programmaticOutput])).toStrictEqual([
+      NODE_MODULES_DIRECTORY,
+      GIT_DIRECTORY,
+      toRootAnchoredExclude(programmaticOutput),
+    ]);
   });
 });
