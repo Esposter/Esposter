@@ -24,7 +24,7 @@ Widen `<n>` until the diff clears the 50-file seam threshold below, so the run p
 
 Prefer the last reviewed commit as the start when it is known and lands inside that window — reviewing across it re-pays for findings already dispositioned.
 
-Past a few hundred files the reportable ceiling (`angles × perAngle + cleanupCap`) has not moved, so widening the window only samples thinner — **raise the level instead** (`xhigh` at seam scale) and let the next chunk have its own run.
+Past a few hundred files the reportable ceiling (`stats.reportableCeiling`) has not moved, so widening the window only samples thinner — **raise the level instead** (`xhigh` at seam scale) and let the next chunk have its own run.
 
 Two exclusions belong in the target string, because a finder spends real attention on them otherwise:
 

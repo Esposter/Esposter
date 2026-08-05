@@ -1097,7 +1097,13 @@ const verifyGroups = async (candidates) => {
       // An entry has to be addressed to a real candidate AND carry a verdict to count as one. Anything else falls
       // Through to the counted-drop path below rather than being written onto the row: the same treatment a
       // Missing entry gets, because it is the same thing — a candidate nothing judged.
-      for (const v of r.verdicts) if (inBounds(v.index, g.length) && VERDICTS.includes(v.verdict)) byIdx[v.index] = v;
+      // The entry itself is checked before its fields: `verdicts: [null]` makes `v.index` throw, and a throw here
+      // Does not reach the counted-drop path — it kills the thunk, `parallel` resolves it to null, and the
+      // `filter(Boolean)` backstop discards the whole group with `droppedUnverified` still at zero. Unexamined
+      // Candidates would then be indistinguishable from a file with nothing wrong in it.
+      for (const v of r.verdicts)
+        if (v && typeof v === "object" && inBounds(v.index, g.length) && VERDICTS.includes(v.verdict))
+          byIdx[v.index] = v;
       return g.flatMap((c, i) => {
         const v = byIdx[i];
         if (!v) {

@@ -108,6 +108,21 @@ describe("code-review verify", () => {
     expect(run.result.findings).toHaveLength(0);
   });
 
+  test("counts a null verdict entry as a drop rather than losing the group silently", async () => {
+    expect.hasAssertions();
+
+    // Reading `v.index` off a null entry throws, and a throw here does not reach the counted-drop path: it kills
+    // The thunk, `parallel` resolves it to null, and the `filter(Boolean)` backstop discards the whole group with
+    // `droppedUnverified` still at zero — unexamined candidates reported as a clean file.
+    const base = stubFor({ candidates: [CANDIDATE] });
+    const run = await runReview("high", (prompt, options) =>
+      options.label?.startsWith("verify:") ? { verdicts: [null] } : base(prompt, options),
+    );
+
+    expect(run.result.stats?.droppedUnverified).toBe(1);
+    expect(run.result.findings).toHaveLength(0);
+  });
+
   test("spawns one verifier per file, not per candidate", async () => {
     expect.hasAssertions();
 
