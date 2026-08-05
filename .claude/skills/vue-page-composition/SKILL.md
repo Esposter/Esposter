@@ -134,6 +134,20 @@ When **multiple list components** (different data sources/stores) render the sam
 
 Trigger: the same `v-list-item` + prepend block copy-pasted across 2+ lists.
 
+### Controls nested inside a link row
+
+When the row itself is a link (`<v-list-item :to>` renders a real `<a href>`), every interactive control inside it goes in `StyledLinkRowActions`:
+
+```vue
+<template #append>
+  <StyledLinkRowActions>
+    <StyledTooltipIconButton icon="mdi-plus" text="Create" @click="..." />
+  </StyledLinkRowActions>
+</template>
+```
+
+`@click.stop` on the control is **not** enough and is the bug this replaces. The DOM fixes an anchor's activation target while building the event path, before any listener runs, so stopping propagation only suppresses the router's own handler — the one thing that would have called `preventDefault` — and the browser still follows the row's href, hard-loading the row's route on top of whatever the control just did. Only `preventDefault` cancels it, and it lives in the one wrapper so no row can hold half the pair. Buttons only: `preventDefault` would also cancel the default action of a control that has one (a checkbox's toggle).
+
 ### Shell attrs passthrough
 
 When the shell's consumers need different root interactions (one passes `@click`, another `tabindex`), do NOT add props for them — declare `defineOptions({ inheritAttrs: false })` and spread onto the actual interactive element: `<v-list-item :="{ ...props, ...$attrs }">` (here `props` comes from a wrapping `v-hover` slot). Render optional chrome only when the consumer supplies it: `v-if="$slots.default"` around the hover/focus action toolbar. Use VueUse `useFocusWithin(useTemplateRef(...))` for focus-visibility instead of hand-rolled focusin/focusout handlers (a `@ts-expect-error TS2590` may be needed on Vuetify component refs).

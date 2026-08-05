@@ -1,13 +1,19 @@
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 import type { Resource } from "@esposter/db-schema";
 
-interface ReadResourcesPageOptions {
+interface ReadResourcesPageOptions<TFilterInput> {
+  // Resolved once per read and handed to both queries, so the total and the rows always describe the same
+  // Filter — a relative Updated preset anchors its boundary to Date.now(), so two calls a millisecond apart
+  // Would count over a window the page never read
+  getFilterInput: () => TFilterInput;
   // Identity of the query the total belongs to. Vuetify reports a page change, a page-size change and a sort
   // Change through the same @update:options as a filter change, and none of the first three move the total —
-  // For a search it is a COUNT(*) behind a trigram predicate over every resource the caller owns
+  // For a search it is a COUNT(*) behind a trigram predicate over every resource the caller owns. It is the
+  // Filter the caller picked, never the resolved input: a key holding a Date.now()-anchored boundary never
+  // Repeats, so the total would be re-counted on every one of those three
   getFilterKey: () => string;
-  readCount: () => Promise<number>;
-  readPage: (options: ReadResourcesOptions) => Promise<Resource[]>;
+  readCount: (filterInput: TFilterInput) => Promise<number>;
+  readPage: (options: ReadResourcesOptions, filterInput: TFilterInput) => Promise<Resource[]>;
 }
 
 // The one reader behind every server-paged resource table (the workbench list and the Recycle bin). Both page
@@ -15,7 +21,12 @@ interface ReadResourcesPageOptions {
 // Search, filter pills, Refresh, Retry, a restore or a purge — so a stale response must neither overwrite
 // Fresher rows nor flip loading state early. A stale page paired with a fresher pager is how a purge lands on
 // A row the user never picked
-export const useReadResourcesPage = ({ getFilterKey, readCount, readPage }: ReadResourcesPageOptions) => {
+export const useReadResourcesPage = <TFilterInput>({
+  getFilterInput,
+  getFilterKey,
+  readCount,
+  readPage,
+}: ReadResourcesPageOptions<TFilterInput>) => {
   const { executeQuery, isPending: isLoading } = useMutation();
   const items = ref<Resource[]>([]);
   const count = ref(0);
@@ -28,12 +39,16 @@ export const useReadResourcesPage = ({ getFilterKey, readCount, readPage }: Read
   const key = Symbol("useReadResourcesPage");
   const read = async (options: ReadResourcesOptions) => {
     lastOptions = options;
+    const filterInput = getFilterInput();
     const filterKey = getFilterKey();
     const isCounted = filterKey === countedFilterKey;
     error.value = "";
     await executeQuery(
       async () => {
-        const [newCount, newItems] = await Promise.all([isCounted ? undefined : readCount(), readPage(options)]);
+        const [newCount, newItems] = await Promise.all([
+          isCounted ? undefined : readCount(filterInput),
+          readPage(options, filterInput),
+        ]);
         return { newCount, newItems };
       },
       {

@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import ResourceSearchResultList from "@/components/Resource/Search/ResultList.vue";
 import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
+import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
@@ -34,6 +35,34 @@ describe("resourceSearchResultList", () => {
     });
 
     expect(component.get(".v-list-item").element.tagName).toBe("A");
+  });
+
+  // The row is an anchor, so stopping the Create click short of it is not enough — the browser follows the row's
+  // Href regardless, hard-loading the type-filtered list on top of the create form the button just routed to
+  test("cancels the row's navigation when the create button is clicked", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(ResourceSearchResultList, {
+      props: {
+        items: [
+          {
+            createTo: RoutePath.ResourcesCreateType(ResourceType.Sheet),
+            group: ResourceSearchGroup.Services,
+            icon: "mdi-file-outline",
+            id,
+            title: "name",
+            to: RoutePath.ResourcesAll,
+          },
+        ],
+        searchQuery,
+        seeAllTo: RoutePath.ResourcesAll,
+        selectedIndex: -1,
+      },
+    });
+    const event = new MouseEvent("click", { bubbles: true, cancelable: true });
+    component.get(".v-list-item__append button").element.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
   });
 
   test("renders the see-all footer as a real link", async () => {

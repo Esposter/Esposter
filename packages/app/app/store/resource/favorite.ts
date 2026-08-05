@@ -47,9 +47,12 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
     await queryFavorites();
   };
   const toggleFavorite = async (resource: Resource) => {
-    const snapshot = [...favorites.value];
     await executeToggleFavoriteMutation(() => $trpc.resource.toggleFavorite.mutate({ id: resource.id }), {
+      // The snapshot is taken here rather than at click time, because this runs when the write is sent: a
+      // Second click on one star queues behind the first, so a list captured at click time is the state from
+      // Before the write ahead of it landed, and rolling back to it would leave the star reading a toggle stale
       applyOptimistic: () => {
+        const snapshot = [...favorites.value];
         favorites.value = favoriteIds.value.has(resource.id)
           ? favorites.value.filter(({ id }) => id !== resource.id)
           : [resource, ...favorites.value];

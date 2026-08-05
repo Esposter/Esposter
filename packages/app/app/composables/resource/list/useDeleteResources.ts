@@ -2,7 +2,6 @@ import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { useNotificationStore } from "@/store/notification";
-import { useFavoriteStore } from "@/store/resource/favorite";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 
@@ -13,12 +12,9 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
   const { createErrorNotification, createNotification } = notificationStore;
   const { executeMutation: executeDeleteResourcesMutation } = useMutation();
   const { restoreResource } = useRestoreResource(refresh);
-  const favoriteStore = useFavoriteStore();
-  const { refreshFavorites } = favoriteStore;
+  const { refreshFavorites, refreshResources } = useRefreshResources(refresh);
   // Owned here because the row leaves `items` optimistically, which unmounts the v-if-gated delete dialog mid-flight
   const deleteResources = async (resources: Resource[]) => {
-    const snapshot = [...items.value];
-    const snapshotCount = count.value;
     const ids = resources.map(({ id }) => id);
     // Read up front — the optimistic removal drops the rows before the notification fires
     const deletedNotificationTitle =
@@ -33,7 +29,11 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
           await $trpc.resource.deleteResources.mutate({ ids: ids.slice(offset, offset + MAX_READ_LIMIT) });
       },
       {
+        // Snapshotted here rather than at call time, since this runs when the write is sent: a rollback built
+        // From the rows the screen held when the user clicked would undo whatever landed in between
         applyOptimistic: () => {
+          const snapshot = [...items.value];
+          const snapshotCount = count.value;
           const optimisticItems = items.value.filter(({ id }) => !ids.includes(id));
           items.value = optimisticItems;
           count.value -= resources.length;
@@ -52,8 +52,8 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
           createErrorNotification(error);
           // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure
           // Still leaves earlier chunks deleted server-side. The rollback restores every row, so re-read to
-          // Reconcile the list with what actually persisted rather than resurrecting deleted resources
-          await refresh();
+          // Reconcile the list — and the stars with it, since an earlier chunk's rows are gone for good
+          await refreshResources();
         },
         onSuccess: async () => {
           // A star only resolves while its resource is live, so the set the next surface mounts with is re-read

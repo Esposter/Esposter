@@ -60,17 +60,19 @@ const selectedDomIndex = computed(() => {
         </template>
         <!-- Stays imperative: the row is an anchor now, and an anchor inside an anchor is invalid markup -->
         <template v-if="createTo" #append>
-          <StyledTooltipIconButton
-            icon="mdi-plus"
-            text="Create"
-            :button-props="{ size: 'small', variant: 'text' }"
-            @click.stop="
-              async () => {
-                await navigateTo(createTo);
-                emit('select');
-              }
-            "
-          />
+          <StyledLinkRowActions>
+            <StyledTooltipIconButton
+              icon="mdi-plus"
+              text="Create"
+              :button-props="{ size: 'small', variant: 'text' }"
+              @click="
+                async () => {
+                  await navigateTo(createTo);
+                  emit('select');
+                }
+              "
+            />
+          </StyledLinkRowActions>
         </template>
       </v-list-item>
     </template>
