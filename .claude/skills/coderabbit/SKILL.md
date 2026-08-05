@@ -41,7 +41,7 @@ Auto-review is on for PRs targeting the default branch, so **`gh pr create` agai
 
 So never open a PR while anything the review depends on is still being decided: the split point, the commits in range, or the `.coderabbit.yaml` on that PR's base. Ask before opening one, even when a review is the agreed goal — "get part 1 reviewed" is agreement on the destination, not permission to spend the slot before the shape is settled. Until then push the branch and stop; a pushed branch costs nothing and can be re-cut freely, while a premature PR costs the slot, and re-cutting it afterwards throws away findings that cannot be re-requested for an hour.
 
-If a PR was opened too early, **do not close it** — let the review land and keep the branch. A review already spent is only wasted if its findings are discarded with the branch.
+If a PR was opened too early, the slot is gone either way — closing it costs nothing further, and the commits stay reviewable under whichever PR they actually belong to, since each PR reviews its own range. Close it when it shouldn't exist; the lesson is the hour, not the branch.
 
 ## Never Push Into an In-Flight Review
 
