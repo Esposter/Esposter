@@ -9,13 +9,13 @@ description: Esposter Vue 3 component authoring — the shared Styled/App shell 
 
 Cross-product chrome is a small set of shared components in `components/Styled/` (design-system) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare `v-toolbar` per editor.** Their design and rationale live in `packages/app/content/docs/platform/shell-cohesion.md`; keep that spec live in the same change when you add or alter a shell primitive.
 
-- `StyledPageHeader` — the canonical editor/page header (breadcrumb row + `actions` slot + `controls` slot). Every editor header mounts document picker / selects / search through it; controls never go inside `v-toolbar-title`.
+- `StyledPageHeader` — the canonical editor/page header (breadcrumb row + `actions` slot + `controls` slot). Every editor header mounts document picker / selects / search through it; controls never go inside `v-toolbar-title`. **One per route.** Its `breadcrumbs` slot falls back to `<AppBreadcrumbs :title />`, so a second `StyledPageHeader` nested under a page that already has one renders a second, title-less trail (`Home / Resources`). A toolbar _inside_ a page — a resource blade, a card header — is a plain `v-toolbar` (`px-4 py-2 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center`, `v-spacer` before the trailing actions), as in `Resource/List/Toolbar.vue`, `Resource/Email/Editor.vue` and `Dashboard/Editor/Header.vue`.
 - `StyledEmptyState` — icon + title + description + action slot for empty lists/states.
 - `StyledSkeleton` — bordered `v-skeleton-loader` for per-region loading.
 - `StyledSearchDialog` — the canonical Ctrl+K search palette (dialog + solo autofocus search field + `hotkey` prop registered via `useVHotkey`, `activator` slot, results in the default slot). Every dialog-style search UI mounts through it — never re-roll a `v-dialog` + `v-text-field` + hotkey listener (`onKeyStroke`/`useEventListener`) per feature. See `docs/architecture/search.md`.
 - `AppBreadcrumbs` — route→product trail (matched against `ProductListLinkItems`), rendered by `StyledPageHeader`.
 
-When a new product/editor is added, give it a `StyledPageHeader`, a launcher entry in `ProductListLinkItems`, and — if it is resource-backed — an entry in `ResourceDefinitionMap` (`shared/services/resource/`), the single map carrying each resource type's `icon`, `title`, and route for the `/resources` hub. Document the result in the shell-cohesion spec.
+When a new product/editor is added, give its **page** a `StyledPageHeader`, a launcher entry in `ProductListLinkItems`, and — if it is resource-backed — an entry in `ResourceDefinitionMap` (`shared/services/resource/`), the single map carrying each resource type's `icon`, `title`, and route for the `/resources` hub. Document the result in the shell-cohesion spec.
 
 ## Same Level of Abstraction
 
