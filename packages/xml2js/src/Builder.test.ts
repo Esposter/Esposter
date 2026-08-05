@@ -24,6 +24,16 @@ describe(Builder, () => {
     );
   });
 
+  test("renders every entry of a root array", () => {
+    expect.hasAssertions();
+
+    const builder = new Builder({ renderOpts: { pretty: false } });
+
+    expect(builder.buildObject({ root: [{ item: 1, other: 2 }, { item: 3 }] })).toBe(
+      `${xmlDeclaration}<root><item>1</item><other>2</other><item>3</item></root>`,
+    );
+  });
+
   test("wraps every scalar value in cdata", () => {
     expect.hasAssertions();
 

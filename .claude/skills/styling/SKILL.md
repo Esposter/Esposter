@@ -270,6 +270,25 @@ Use axis-specific gap utilities instead of omnidirectional `gap-{n}`:
 <div grid grid-cols-3 gap-4>...</div>
 ```
 
+## Sentence-Like Rows Stay Inline Flow
+
+A row that reads as one sentence (avatar + "Posted by" + name + timestamp, an inline label with an icon) must stay in **inline flow** — `space-x-{n}` on the container, `align-middle` on the avatar/icon. Do not use `flex`.
+
+```html
+<!-- Bad: every item is a shrinkable flex box — narrow viewports break each one internally
+     ("Posted / by", "Jimmy / Chen", "4 minutes / ago" stacked in columns) -->
+<div flex gap-x-1 items-center>…</div>
+
+<!-- Good: text wraps mid-sentence across lines like prose -->
+<div space-x-1>
+  <StyledAvatar align-middle … />
+  <span>Posted by</span>
+  …
+</div>
+```
+
+`flex` is for rows of independent boxes (toolbars, cards, controls) — there each item wrapping as a unit is what you want. `gap-x-*` has no effect in inline flow, which is why this is the one place `space-x-*` is the right utility.
+
 ## The Parent Owns Spacing
 
 Space between siblings belongs to the container, as `gap-*`. Space inside a boundary belongs to that boundary, as `padding`. A child should not carry a margin to position itself against its siblings — it can't know what it sits next to, so the same margin gets re-solved in every component that renders it.

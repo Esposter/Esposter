@@ -13,11 +13,11 @@ const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
 </script>
 
 <template>
-  <div flex gap-x-1 items-center>
+  <div space-x-1>
     <NuxtInvisibleLink v-if="isLink" :to="RoutePath.User(post.userId)">
-      <StyledAvatar :image="post.user.image" :name="post.user.name" />
+      <StyledAvatar align-middle :image="post.user.image" :name="post.user.name" />
     </NuxtInvisibleLink>
-    <StyledAvatar v-else :image="post.user.image" :name="post.user.name" />
+    <StyledAvatar v-else align-middle :image="post.user.image" :name="post.user.name" />
     <span>Posted by</span>
     <NuxtInvisibleLink v-if="isLink" font-bold :to="RoutePath.User(post.userId)">
       {{ post.user.name }}

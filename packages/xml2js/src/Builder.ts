@@ -36,7 +36,7 @@ export class Builder {
       // https://github.com/Leonidas-from-XIV/node-xml2js/issues/119
       for (const child of object.values())
         for (const [key, entry] of Object.entries(child as Record<string, unknown>))
-          return this.#render(element.ele(key), entry).up();
+          element = this.#render(element.ele(key), entry).up();
     else
       for (const [key, child] of Object.entries(object))
         // Case #1 Attribute
