@@ -11,8 +11,8 @@ describe("styledLinkRowActions", () => {
   test("cancels the row's activation while still running the control's action", async () => {
     expect.hasAssertions();
 
-    const onActionClick = vi.fn();
-    const onRowClick = vi.fn();
+    const onActionClick = vi.fn<() => void>();
+    const onRowClick = vi.fn<() => void>();
     const component = await mountSuspended(StyledLinkRowActions, {
       slots: { default: () => h("button", { onClick: onActionClick, type: "button" }) },
     });
