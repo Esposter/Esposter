@@ -141,10 +141,12 @@ Then park, cut, and re-base the park onto the cut:
 ```bash
 git branch queue/<scope> develop && git push origin queue/<scope>   # nothing lost yet
 git reset --hard <cut> && git push --force-with-lease origin develop
-git rebase --onto develop <cut> queue/<scope> && git push --force-with-lease origin queue/<scope>
+git rebase --rebase-merges --onto develop <cut> queue/<scope> && git push --force-with-lease origin queue/<scope>
 ```
 
-The rebase is what makes it two branches instead of three: without it the queue is a copy of `develop` plus the remainder. Cherry-picked doc commits replay as no-ops, or conflict if reworded since — `git rebase --skip` them, `develop`'s version is newer. Verify before force-pushing the queue: `git diff --stat <old-queue-head> queue/<scope>` should show only files you knowingly reworded.
+The rebase is what makes it two branches instead of three: without it the queue is a copy of `develop` plus the remainder. `--rebase-merges` because the cut lands on a merge boundary and the remainder above it normally holds several more — a plain `--onto` flattens them, taking with them the boundaries the next window is sized at.
+
+Cherry-picked doc commits replay as no-ops, or conflict if reworded since — `git rebase --skip` those, `develop`'s version is newer. Read `git show --stat <commit>` before skipping: `--skip` drops the whole commit rather than the conflicting hunk, so one that also carried unrelated work loses it. Verify before force-pushing the queue: `git diff --stat <old-queue-head> queue/<scope>` should show only files you knowingly reworded.
 
 Cherry-pick doc and skill commits across the cut so the working tree keeps the conventions it is being asked to follow.
 
