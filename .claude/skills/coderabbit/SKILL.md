@@ -146,7 +146,7 @@ git rebase --rebase-merges --onto develop <cut> queue/<scope> && git push --forc
 
 The rebase is what makes it two branches instead of three: without it the queue is a copy of `develop` plus the remainder. `--rebase-merges` because the cut lands on a merge boundary and the remainder above it normally holds several more — a plain `--onto` flattens them, taking with them the boundaries the next window is sized at.
 
-Cherry-picked doc commits replay as no-ops, or conflict if reworded since — `git rebase --skip` those, `develop`'s version is newer. Read `git show --stat <commit>` before skipping: `--skip` drops the whole commit rather than the conflicting hunk, so one that also carried unrelated work loses it. Verify before force-pushing the queue: `git diff --stat <old-queue-head> queue/<scope>` should show only files you knowingly reworded.
+Cherry-picked doc commits replay as no-ops, or conflict if reworded since — `git rebase --skip` those, `develop`'s version is newer. Read the commit's **patch**, `git show <commit>`, before skipping: `--skip` drops the whole commit rather than the conflicting hunk, so one that also carried unrelated work loses it, and `--stat` shows only which files it touched, not whether their content is the cherry-pick. Verify the same way before force-pushing the queue — `git diff <old-queue-head> queue/<scope>`, patch not `--stat`, should show only rewordings you recognise.
 
 Cherry-pick doc and skill commits across the cut so the working tree keeps the conventions it is being asked to follow.
 
@@ -203,10 +203,22 @@ Import-path-only edits need two conditions, not one — every changed line is an
 
 ```bash
 git diff --name-only -M <base>..<head> | while IFS= read -r path; do
+  # §When to Exclude never lets these out, whatever the diff shape says
+  case "$path" in
+    *.test.ts|*.test-d.ts|packages/app/content/docs/*|.claude/skills/*) continue ;;
+    *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|packages/app/server/db/migrations/*) continue ;;
+  esac
+  diff=$(git diff -U0 -M <base>..<head> -- "$path")
+  # a mode flip rides in the diff header rather than on a +/- line, so it would survive every
+  # filter below and leave a permission change unreviewed
+  printf '%s\n' "$diff" | grep -qE '^(old|new|deleted file|new file) mode ' && continue
   # -U0 so context lines can't be mistaken for changes; the +++/--- headers are dropped
-  changed=$(git diff -U0 -M <base>..<head> -- "$path" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---)')
+  changed=$(printf '%s\n' "$diff" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---)')
   [ -z "$changed" ] && continue
   printf '%s\n' "$changed" | grep -qvE '^[+-][[:space:]]*(import[[:space:]]|$)' && continue
+  # a bare side-effect import is sequenced for its effect, and the sort below cannot tell a
+  # reordering of them from a repathing
+  printf '%s\n' "$changed" | grep -qE '^[+-][[:space:]]*import[[:space:]]+"' && continue
   # an import attribute value is quoted too (`with { type: "json" }`), so blanking every quoted
   # string would normalize a changed attribute away. A line carrying a second quoted value stays in
   # the review set rather than being classified
