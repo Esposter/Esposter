@@ -4,6 +4,7 @@ import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGrou
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSearchResultList", () => {
@@ -61,6 +62,9 @@ describe("resourceSearchResultList", () => {
     });
     const event = new MouseEvent("click", { bubbles: true, cancelable: true });
     component.get(".v-list-item__append button").element.dispatchEvent(event);
+    // The button's own handler navigates, and nothing here holds that promise — left to settle after the test,
+    // It lands in a torn-down environment where the router's scroll behaviour reads a `window` that is gone
+    await flushPromises();
 
     expect(event.defaultPrevented).toBe(true);
   });
