@@ -4,6 +4,7 @@ import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesO
 import type { Resource } from "@esposter/db-schema";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
+import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
 import {
   DEFAULT_RESOURCE_SORT_BY,
   RESOURCE_LIST_ITEMS_PER_PAGE,
@@ -24,6 +25,7 @@ interface ResourceListViewProps {
 
 const { closeTo, isSearchable = true } = defineProps<ResourceListViewProps>();
 const { getActionItems } = useResourceListActionItems();
+const { getTrailQuery } = useNavigationTrail();
 const listDialogStore = useListDialogStore();
 const { deletingId, renamingId } = storeToRefs(listDialogStore);
 const favoriteStore = useFavoriteStore();
@@ -110,7 +112,10 @@ const { isOpen: isRenameOpen, item: renamingResource } = useSingletonDialog(rena
 const renameResource = useRenameResource(renamingResource, refresh);
 const deletingResource = computed(() => items.value.find(({ id }) => id === deletingId.value));
 const deleteResources = useDeleteResources(items, count, refresh);
-const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigateTo(RoutePath.Resource(item.id));
+// The row carries the list into the resource's url, which is what gives it a way back and the two-pane view —
+// A resource reached any other way has neither. See /docs/platform/breadcrumb-trail
+const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) =>
+  navigateTo({ path: RoutePath.Resource(item.id), query: getTrailQuery(NavigationTrailPage.All) });
 const onContextMenuRow = (event: MouseEvent, { item }: ItemSlot<Resource>) => {
   if (!isSearchable) return;
 

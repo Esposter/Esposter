@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
+import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
+
 interface ResourceExplorerProps {
   activeBlade: string;
   duplicate: () => Promise<void>;
@@ -37,12 +39,17 @@ const {
 // On mobile the list box is dropped entirely — the full-width All resources page is the mobile list, reached
 // Via the blade's Close button — so the blade box gets the whole surface instead of a cramped drawer.
 const { smAndDown } = useVDisplay();
+const { trail } = useNavigationTrail();
+// The two-pane view is what drilling into a list looks like, so it exists only when the visitor actually
+// Drilled: a resource opened from a link, a favourite or search has no list behind it to peel back to, and
+// Rendering one would invent a context they never had. See /docs/platform/breadcrumb-trail
+const isListShown = computed(() => !smAndDown.value && trail.value.at(-1) === NavigationTrailPage.All);
 </script>
 
 <template>
   <!-- Two flex boxes on one surface: the list box (collapsible, desktop-only) and the blade box -->
   <v-sheet flex flex-1 relative>
-    <ResourceExplorerList v-if="!smAndDown" />
+    <ResourceExplorerList v-if="isListShown" />
     <!-- min-w-0 lets the blade box shrink below its content's intrinsic width so wide blades scroll internally -->
     <div flex flex-1 flex-col min-w-0>
       <ResourceBladeToolbar
@@ -60,8 +67,18 @@ const { smAndDown } = useVDisplay();
         :resource
         :unpublish
       />
-      <!-- The blade box owns the vertical divider (b-l) that meets the list toolbar's b-b at the corner -->
-      <div b-b-0 b-l-1 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
+      <!-- The blade box owns the vertical divider (b-l) that meets the list toolbar's b-b at the corner, so it
+           is drawn only when there is a list box on the other side of it -->
+      <div
+        b-b-0
+        b-t-1
+        b-border
+        b-solid
+        flex
+        flex-1
+        min-w-0
+        :class="[smAndDown ? 'flex-col' : 'flex-row', { 'b-l-1': isListShown }]"
+      >
         <ResourceBladeNav :active-blade :resource />
         <div flex-1 min-w-0 overflow-auto>
           <ResourceBladeOutlet :active-blade :is-loading :publication :resource :update-tags />

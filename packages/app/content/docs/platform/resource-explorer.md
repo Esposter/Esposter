@@ -7,15 +7,15 @@ description: The single Azure-portal-like UI for every resource — Home, list, 
 
 The single Azure-portal-like UI for every resource: one list, one resource page with capability-aware blades, one public view route. It replaced the documents hub and all per-editor top-level pages — the shell is driven entirely by `ResourceDefinitionMap` ([/docs/architecture/resources](/docs/architecture/resources)). Azure Portal is the UX reference, deliberately literal: Home mirrors the portal landing, Create mirrors the marketplace (a page per resource type, never a modal).
 
-| Azure portal                    | Resource Explorer                                                           |
-| ------------------------------- | --------------------------------------------------------------------------- |
-| Home (search + recents)         | `/resources`                                                                |
-| All resources list              | `/resources/all`                                                            |
-| Create a resource (marketplace) | `/resources/create` gallery → `/resources/create/[type]`                    |
-| Resource menu (left nav)        | blade menu on `/resources/[id]/[[blade]]`                                   |
-| Overview + Essentials           | Overview blade with Essentials panel                                        |
-| Toolbar commands                | Refresh/Rename/Delete/Duplicate always; Publish/Import/Export by capability |
-| Breadcrumbs                     | `AppBreadcrumbs`: Resource Explorer → All → {name}                          |
+| Azure portal                    | Resource Explorer                                                                                    |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Home (search + recents)         | `/resources`                                                                                         |
+| All resources list              | `/resources/all`                                                                                     |
+| Create a resource (marketplace) | `/resources/create` gallery → `/resources/create/[type]`                                             |
+| Resource menu (left nav)        | blade menu on `/resources/[id]/[[blade]]`                                                            |
+| Overview + Essentials           | Overview blade with Essentials panel                                                                 |
+| Toolbar commands                | Refresh/Rename/Delete/Duplicate always; Publish/Import/Export by capability                          |
+| Breadcrumbs                     | the click path only, current page as the title ([breadcrumb trail](/docs/platform/breadcrumb-trail)) |
 
 ## Routes
 
@@ -60,7 +60,7 @@ The Azure-portal landing. Not a table — a dashboard of entry points: the inlin
 
 ## All resources — `/resources/all`
 
-`pages/resources/all.vue` is a `StyledPageHeader title="All"` (rendering the `Home › Resource Explorer › All` breadcrumb) above a `v-sheet flex-1` wrapping `ResourceListView` (`:close-to`; the blade list box passes `:is-searchable="false"` to strip the workbench) — `StyledDataTableServer` over `resource.readResources` (cross-type, owner, offset-paginated):
+`pages/resources/all.vue` renders the `resource` layout with `title="All"` above a `v-sheet flex-1` wrapping `ResourceListView` (`:close-to`; the blade list box passes `:is-searchable="false"` to strip the workbench) — `StyledDataTableServer` over `resource.readResources` (cross-type, owner, offset-paginated):
 
 - Columns: type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt — subject to the column chooser. Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
 - Toolbar (a fully-bordered `b-1` box, workbench only): search, group-by-type toggle, column chooser, Export CSV, Refresh, and a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
@@ -74,10 +74,11 @@ Create is a **page per resource type**, mirroring the Azure marketplace + create
 
 ## Resource page — `/resources/[id]/[[blade]]`
 
-Azure-portal-faithful **two flex boxes** on one surface (deliberately simple — no absolute overlay, no `z-index`): a full-width **breadcrumb bar** (a `StyledPageHeader` whose `#breadcrumbs` slot renders the single unified `AppBreadcrumbs`) on top, then `<ResourceExplorer>` — a single `<v-sheet flex flex-1>` holding the **list box** (`ResourceExplorerList`, collapsible) and the **blade box** (`flex-1`) side by side.
+Azure-portal-faithful **two flex boxes** on one surface (deliberately simple — no absolute overlay, no `z-index`): a full-width **header bar** (the `resource` layout's `StyledPageHeader` — trail, resource name, storage meter) on top, then `<ResourceExplorer>` — a single `<v-sheet flex flex-1>` holding the **list box** (`ResourceExplorerList`, collapsible) and the **blade box** (`flex-1`) side by side.
 
 ```text
-  Home › Resource Explorer › All › Q3 Report          ← single breadcrumb (base page owns it)
+  Home › All                          [▓▓▓░░ 3.2 GB of 10 GB used]  ← trail + storage meter
+  Q3 Report                                                         ← page title (never a crumb)
 ┌───────────────┬──────────────────────────────────────────────┐
 │ « Resources   │ 📄 Q3 Report | Overview   [Rename][Delete] [✕] │  ← blade box header (type + name)
 │ ───────────── ├───────────────┬──────────────────────────────┤
@@ -88,11 +89,12 @@ Azure-portal-faithful **two flex boxes** on one surface (deliberately simple —
    list box (collapsible)         blade box (flex-1, owns the divider)
 ```
 
+- **The list box exists only when the visitor drilled in from the list** ([breadcrumb trail](/docs/platform/breadcrumb-trail)). A resource opened from a link, a favourite or search renders the blade at full width with no rail and no divider — there is no list behind it to collapse back to, so the caret would peel back to a page the visitor never opened.
 - **Collapse caret next to the list title (desktop)** — the list box header is `« Resources`; clicking `«` collapses the whole list box to a thin `shrink-0` strip containing just `»` to restore it, so the blade box simply grows to fill. No width animation math, no overlay. The collapse/restore carets are each shown only in their own state (`«` when open, `»` when collapsed).
 - **Mobile-native** — on `smAndDown` (`useVDisplay`) the inline list box is removed entirely; there is no drawer — the full-width `/resources/all` page is the mobile list, reached via the blade box's Close ✕ (which peels back to `/resources/all`), so the blade box owns the full width. The blade nav collapses from the vertical rail into a dropdown (`v-menu`) whose activator shows the active blade — its caret (`mdi-chevron-up`) renders only while the menu is open. Desktop keeps the inline rail and collapsible list box unchanged.
 - **Borders drawn exactly once** — no component double-draws an edge. The **blade box** owns the full-height list↔blade divider (`b-l` on its header and content, plus `b-t` under the header); the list box draws no right edge. The **list box header** owns its bottom separator (`b-b`); the **blade nav** is borderless. Both headers are the shared `v-toolbar` primitive (identical native height/padding, no bespoke sizing).
 - **Nested close** — the close ✕ peels back one layer: the blade box's ✕ → `/resources/all`; `/all`'s ✕ → Home. Each ✕ lives in its box's header, never on the breadcrumb's level.
-- **Single unified breadcrumb** — the base page owns the only breadcrumb; the blade box has none. Vuetify components with a plain destination take `:to`; an inline `@click="navigateTo(...)"` is for logic-then-navigate actions. Declarative links use `NuxtLink`/`NuxtInvisibleLink`. Raw `<a>` is never used — see [navigation](/docs/architecture/navigation).
+- **Single unified breadcrumb** — the `resource` layout owns the only breadcrumb; the blade box has none. Vuetify components with a plain destination take `:to`; an inline `@click="navigateTo(...)"` is for logic-then-navigate actions. Declarative links use `NuxtLink`/`NuxtInvisibleLink`. Raw `<a>` is never used — see [navigation](/docs/architecture/navigation).
 - **Blade box header** — type icon + `{name} | {active blade}` with the resource type as a caption line, plus the command bar and close ✕.
 
 On a narrow viewport the two-box layout folds into a single full-width column with on-demand menus:
@@ -174,5 +176,5 @@ stateDiagram-v2
 - **One list mechanism**: the explorer replaced `DocumentPicker`, the surveyer CRUD list, and the documents hub — no per-editor pickers survive. Home recents and `/resources/all` are both `resource.readResources` (different sort/limit), not two data paths.
 - **One create mechanism**: the gallery + per-type form replaced every per-editor "new" button and modal. Create is a page (marketplace parity), never a dialog.
 - **Editors are pure editors.** The resource lifecycle (create / select / rename / delete / publish) lives only in the Explorer + Overview blade — never in an editor's header. Editor headers keep only editing tools; editors save independently (autosave / edit-dialog).
-- **The breadcrumb bar is the only `StyledPageHeader` on the page.** A blade's own header is a plain `v-toolbar` (`Resource/Email/Editor.vue`, `Dashboard/Editor/Header.vue`) — a nested `StyledPageHeader` would render a second, title-less `AppBreadcrumbs` from its slot fallback.
+- **The layout's header bar is the only `StyledPageHeader` on the page.** A blade's own header is a plain `v-toolbar` (`Resource/Email/Editor.vue`, `Dashboard/Editor/Header.vue`) — a nested `StyledPageHeader` would render a second breadcrumb trail and a second storage meter.
 - Deleted routes: `/documents`, `/table-editor`, `/surveyer`, `/surveyer/[id]`, `/survey/[id]`, `/dashboard`, `/dashboard/editor`, `/email-editor`, `/webpage-editor`, `/flowchart-editor`, `/calendar`, `/view/dashboard/[id]`, `/view/webpage/[id]`.

@@ -1,21 +1,12 @@
 <script setup lang="ts">
-import { RoutePath } from "@esposter/shared";
-
 definePageMeta({ middleware: "auth" });
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout name="resource" title="Recycle bin">
     <Head>
       <Title>Recycle Bin</Title>
     </Head>
-    <div flex flex-col h-full>
-      <StyledPageHeader title="Recycle bin">
-        <template #breadcrumbs>
-          <AppBreadcrumbs :crumbs="[{ title: 'All', to: RoutePath.ResourcesAll }]" title="Recycle bin" />
-        </template>
-      </StyledPageHeader>
-      <ResourceRecycleBin />
-    </div>
+    <ResourceRecycleBin />
   </NuxtLayout>
 </template>

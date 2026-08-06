@@ -1,6 +1,6 @@
 ---
 title: Storage quotas
-description: Per-user blob-storage quotas (Free = 10 GiB) held atomically at SAS issuance and charged by Storage's own BlobCreated event, with a usage bar on the explorer home.
+description: Per-user blob-storage quotas (Free = 10 GiB) held atomically at SAS issuance and charged by Storage's own BlobCreated event, with a usage meter in the resource explorer's header.
 ---
 
 # Storage quotas
@@ -124,11 +124,12 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 | `packages/azure-functions/src/handlers/reconcileStorageBlobHandler.ts`          | the `BlobCreated` handler                         |
 | `packages/infra/.../eventSubscriptions/prodEvgsEsposterAe007.ts`                | the subscription, filtered to the two containers  |
 | `packages/app/server/trpc/routers/storage.ts`                                   | `getUsage`                                        |
-| `packages/app/app/components/Resource/Home/StorageCard.vue`                     | the usage bar                                     |
+| `packages/app/app/components/Resource/StorageMeter.vue`                         | the usage meter in the explorer shell             |
+| `packages/app/app/layouts/resource.vue`                                         | the shell that mounts it, once per area           |
 
 ## Notes
 
-- The bar lives on the explorer home, not on user settings. Storage is a property of the things you have made, so it belongs beside the create and resources cards rather than next to your display name — even though the number also covers room attachments, which the card says.
+- The meter lives in the [resource shell](/docs/platform/resource-explorer)'s header, not in the app bar and not on user settings. Storage is what this area spends, so the number sits where uploads happen and on no route that cannot spend it; the app bar would make every page pay for a query about resources. It reads as a bar plus "X of Y used", with the tier and the fact that room attachments count too in its tooltip, and it narrows to the bar alone on a small viewport. One mount per area, so navigating between explorer pages does not re-read it.
 - The resource upload input gained a `size` per file, matching the message path. It is bounded at the Zod boundary (`z.int().positive().max(MAX_FILE_REQUEST_SIZE)`) because a negative or non-finite declaration would shrink the pending sum and weaken the gate.
 - Thumbnails are held with a **zero** declaration. The client downscales them itself, so their size is declared nowhere and cannot be reserved — but a ledger row means `BlobCreated` charges their real size and a deletion gives it back, instead of bytes stored under a user's name that nothing ever counts. A zero hold takes no in-flight slot, as above.
 - `purgeResource` releases its directory **by prefix**. The purge never enumerates blob names, and the `resources` row it deletes has no foreign key into the ledger, so without this the rows would be dropped by no one and their bytes held forever.

@@ -69,6 +69,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "activity-log",
       "publish-history",
       "shell-cohesion",
+      "breadcrumb-trail",
       "resource-consolidation",
     ],
     Resources: [

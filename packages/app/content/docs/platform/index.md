@@ -34,6 +34,7 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Activity log](/docs/platform/activity-log) — the per-resource audit trail blade, in Azure Table Storage
 - [Publish history](/docs/platform/publish-history) — versioned snapshot blade with per-version view and restore-to-draft
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
+- [Breadcrumb trail](/docs/platform/breadcrumb-trail) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Create from file](/docs/platform/create-from-file) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset

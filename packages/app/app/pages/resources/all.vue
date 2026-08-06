@@ -5,15 +5,12 @@ definePageMeta({ middleware: "auth" });
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout name="resource" title="All">
     <Head>
       <Title>All Resources</Title>
     </Head>
-    <div flex flex-col h-full>
-      <StyledPageHeader title="All" />
-      <v-sheet flex-1>
-        <ResourceListView :close-to="RoutePath.Resources" />
-      </v-sheet>
-    </div>
+    <v-sheet flex-1>
+      <ResourceListView :close-to="RoutePath.Resources" />
+    </v-sheet>
   </NuxtLayout>
 </template>

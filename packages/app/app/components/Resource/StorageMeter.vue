@@ -4,6 +4,7 @@ import { getFileSize } from "@/services/file/getFileSize";
 
 const { $trpc } = useNuxtApp();
 const { data: storageUsage } = useQuery(() => $trpc.storage.getUsage.query());
+const { smAndDown } = useVDisplay();
 // A tier with no quota would divide by zero; the gate treats it as no allowance at all, so a full bar is the
 // Honest reading rather than an empty one
 const usedPercentage = computed(() => {
@@ -18,23 +19,18 @@ const usedColor = computed(() => {
 });
 </script>
 
+<!-- Mounted by the resource shell, so it reads the number once for the whole area rather than once per page -->
 <template>
-  <v-card>
-    <v-card-item>
-      <div flex flex-wrap gap-4 items-center justify-between>
-        <span text-h6>Storage</span>
-        <span v-if="storageUsage" op-70 text-body-medium>{{ storageUsage.tier }} plan</span>
-      </div>
-    </v-card-item>
-    <v-card-text>
-      <template v-if="storageUsage">
-        <v-progress-linear :color="usedColor" height="8" :model-value="usedPercentage" rounded />
-        <div mt-4 text-body-large>
+  <v-tooltip v-if="storageUsage" location="bottom">
+    <template #activator="{ props }">
+      <div :="props" flex gap-2 items-center>
+        <v-progress-linear :color="usedColor" height="6" :model-value="usedPercentage" rounded w-16 />
+        <span v-if="!smAndDown" op-70 whitespace-nowrap text-body-medium>
           {{ getFileSize(storageUsage.bytesUsed) }} of {{ getFileSize(storageUsage.quotaBytes) }} used
-        </div>
-        <div mt-1 op-70 text-body-medium>Everything you have uploaded, across resources and rooms</div>
-      </template>
-      <v-skeleton-loader v-else type="text" />
-    </v-card-text>
-  </v-card>
+        </span>
+      </div>
+    </template>
+    {{ storageUsage.tier }} plan — {{ getFileSize(storageUsage.bytesUsed) }} of
+    {{ getFileSize(storageUsage.quotaBytes) }} used across resources and rooms
+  </v-tooltip>
 </template>

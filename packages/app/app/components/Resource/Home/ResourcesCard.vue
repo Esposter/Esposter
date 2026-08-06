@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ResourceHomeTab, ResourceHomeTabs } from "@/models/resource/ResourceHomeTab";
+import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 
+const { getTrailQuery } = useNavigationTrail();
 const tab = useEnumRouteQuery("tab", ResourceHomeTabs, ResourceHomeTab.Recent);
 const {
   error: recentError,
@@ -26,7 +28,13 @@ onMounted(async () => {
     <v-card-item>
       <div flex flex-wrap gap-4 items-center justify-between>
         <span text-h6>Resources</span>
-        <v-btn :to="RoutePath.ResourcesAll" append-icon="mdi-arrow-right" variant="text">See all</v-btn>
+        <v-btn
+          :to="{ path: RoutePath.ResourcesAll, query: getTrailQuery(NavigationTrailPage.Resources) }"
+          append-icon="mdi-arrow-right"
+          variant="text"
+        >
+          See all
+        </v-btn>
       </div>
     </v-card-item>
     <v-tabs v-model="tab">
