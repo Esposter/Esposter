@@ -89,6 +89,20 @@ describe(reconcileStorageBlobHandler, () => {
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
   });
 
+  // A lone `%` is legal in a filename and decodes to nothing valid. The blob is simply one nobody reserved —
+  // A clone or an upload from outside the chokepoints — so it is a no-op, never an event that poisons its queue
+  test("ignores an unreserved blob whose name cannot be decoded", async () => {
+    expect.hasAssertions();
+
+    await expect(
+      reconcileStorageBlobHandler(
+        createEventGridEvent(`${getBlobSubjectPrefix(containerName)}roomId/id|50%off.png`),
+        context,
+      ),
+    ).resolves.toBeUndefined();
+    await expect(readStorageBytesUsed()).resolves.toBe(0);
+  });
+
   test("ignores a container no upload reserves against", async () => {
     expect.hasAssertions();
 

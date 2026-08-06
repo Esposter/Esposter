@@ -3,7 +3,6 @@ import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { bigint, check, index, pgEnum, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-orm/zod";
 
 export const azureContainerEnum = pgEnum("azure_container", AzureContainer);
 // The per-blob ledger behind `users.storageBytesUsed`: one row per write target this user was handed, holding
@@ -12,9 +11,10 @@ export const azureContainerEnum = pgEnum("azure_container", AzureContainer);
 // Decrement reads its amount off the row rather than recomputing it — which is also the only way a delete can
 // Attribute a blob to an owner at all (a message asset is keyed by room, not by uploader).
 //
-// A row is born unreconciled, carrying the size the client *declared* before it uploaded anything. The settle
-// Sweep is what turns it into the truth: past `expiresAt` the write SAS is dead, so whatever is in blob storage
-// Is final — the blob's real size replaces the declaration, or the row is dropped and its bytes returned.
+// A row is born unreconciled, carrying the size the client *declared* before it uploaded anything. Storage's
+// Own `BlobCreated` is what turns it into the truth, replacing the declaration with the stored object's real
+// Size. Nothing settles the rest: past `expiresAt` the write SAS is dead, so a hold that never landed simply
+// Stops counting, and the next reserve that user makes drops it.
 export const storageBlobs = pgTable(
   "storage_blobs",
   {
@@ -32,18 +32,15 @@ export const storageBlobs = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ blobName, containerName, countedBytes, declaredBytes, expiresAt, reconciledAt, userId }) => [
+    extraConfig: ({ blobName, containerName, countedBytes, declaredBytes, reconciledAt, userId }) => [
       primaryKey({ columns: [containerName, blobName] }),
       check("storage_blobs_declared_bytes_check", sql`${declaredBytes} >= 0`),
       check("storage_blobs_counted_bytes_check", sql`${countedBytes} >= 0`),
-      // The sweep's only query: rows whose SAS has died without their real size ever being read back
-      index("storage_blobs_reconciledAt_expiresAt_index").on(reconciledAt, expiresAt),
-      // Backs the outstanding-reservation cap, which is counted per user on every reserve
+      // Backs the outstanding-reservation cap and the expired-hold collection, both of which lead with the
+      // User on every reserve. No index leads with `reconciledAt`: nothing scans the ledger account-wide
       index("storage_blobs_userId_reconciledAt_index").on(userId, reconciledAt),
     ],
   },
 );
 
 export type StorageBlob = typeof storageBlobs.$inferSelect;
-
-export const selectStorageBlobSchema = createSelectSchema(storageBlobs);

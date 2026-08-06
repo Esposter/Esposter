@@ -7,7 +7,7 @@ import { getContainerClient } from "@/services/getContainerClient";
 import { InvocationContext } from "@azure/functions";
 import { dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, storageBlobs, users } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -53,18 +53,46 @@ describe(processBlobDeletionHandler, () => {
   const prefix = "a";
   const prefixedBlobName = `${prefix}/${blobName}`;
   const content = "";
+  const userId = crypto.randomUUID();
+  const countedBytes = 1;
   const seedBlob = async (name: string) => {
     const containerClient = await getContainerClient(AzureContainer.MessageAssets);
     await containerClient.getBlockBlobClient(name).upload(content, content.length);
   };
+  // A blob storage has already reported, so the counter is carrying its bytes and a release gives them back
+  const seedStorageBlob = (name: string) =>
+    mockDb.insert(storageBlobs).values({
+      blobName: name,
+      containerName: AzureContainer.MessageAssets,
+      countedBytes,
+      declaredBytes: countedBytes,
+      expiresAt: new Date(),
+      reconciledAt: new Date(),
+      userId,
+    });
+  const readStorageBytesUsed = async () =>
+    (await mockDb.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
+      ?.storageBytesUsed;
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    const createdAt = new Date();
+    await mockDb.insert(users).values({
+      createdAt,
+      email: userId,
+      emailVerified: true,
+      id: userId,
+      image: "",
+      name: "name",
+      updatedAt: createdAt,
+    });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     MockContainerDatabase.clear();
     vi.restoreAllMocks();
+    await mockDb.delete(storageBlobs);
+    await mockDb.update(users).set({ storageBytesUsed: 0 });
   });
 
   test("deletes every blob in the batch", async () => {
@@ -120,5 +148,28 @@ describe(processBlobDeletionHandler, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(readContainer()).toStrictEqual([blobName]);
+  });
+
+  // The redelivery re-resolves the set from what is still there, so a blob this attempt removed is one the
+  // Retry can never name again — its bytes have to be given back now or they are held against its owner forever
+  test("gives back the bytes of the blobs a failing batch did delete", async () => {
+    expect.hasAssertions();
+
+    await seedBlob(blobName);
+    await seedBlob(secondBlobName);
+    await seedStorageBlob(blobName);
+    await seedStorageBlob(secondBlobName);
+    await mockDb.update(users).set({ storageBytesUsed: countedBytes * 2 });
+    vi.spyOn(MockBlockBlobClient.prototype, "deleteIfExists").mockRejectedValueOnce(new Error(" "));
+
+    await expect(
+      processBlobDeletionHandler(createEvent([blobName, secondBlobName]), context),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+
+    expect(readContainer()).toStrictEqual([blobName]);
+    await expect(readStorageBytesUsed()).resolves.toBe(countedBytes);
+    await expect(mockDb.query.storageBlobs.findMany({ columns: { blobName: true } })).resolves.toStrictEqual([
+      { blobName },
+    ]);
   });
 });

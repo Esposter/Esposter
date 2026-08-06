@@ -4,7 +4,7 @@ export interface ResourceMutations {
   deleteFile?: (input: { blobPath: string; id: string }) => Promise<void>;
   deleteResource: (input: { id: string }) => Promise<Resource>;
   // `size` is what the storage quota reserves against before a write target is minted — the client's own
-  // Declaration, which the settle sweep later replaces with the stored object's real size
+  // Declaration, which storage's `BlobCreated` later replaces with the stored object's real size
   generateUploadFileSasEntities?: (input: {
     files: Pick<FileEntity, "filename" | "mimetype" | "size">[];
     id: string;

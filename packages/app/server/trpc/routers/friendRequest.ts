@@ -29,20 +29,19 @@ export const friendRequestRouter = router({
       const userId = ctx.getSessionPayload.user.id;
       const friendshipId = getFriendshipId(senderId, userId);
       // The sender is both the emit payload and the return value, so it is resolved as a guard — a sender that
-      // Does not exist fails before anything is written, and nothing fallible sits between the write and the emit.
-      const senderUser = await requireEntity(
-        ctx.db.query.users.findFirst({ where: { id: { eq: senderId } } }),
-        DatabaseEntityType.User,
-        senderId,
-      );
-      // Read rather than rebuilt from the session: the session carries better-auth's own view of the user,
-      // Which is a subset of the row — a payload assembled from it can only be completed by inventing values
-      // For the columns it does not carry. Resolved before the write for the same reason the sender is.
-      const receiverUser = await requireEntity(
-        ctx.db.query.users.findFirst({ where: { id: { eq: userId } } }),
-        DatabaseEntityType.User,
-        userId,
-      );
+      // Does not exist fails before anything is written, and nothing fallible sits between the write and the
+      // Emit. Both users are read rather than rebuilt from the session: the session carries better-auth's own
+      // View of the user, which is a subset of the row — a payload assembled from it can only be completed by
+      // Inventing values for the columns it does not carry. Neither read depends on the other, so they go out
+      // Together
+      const [senderUser, receiverUser] = await Promise.all([
+        requireEntity(
+          ctx.db.query.users.findFirst({ where: { id: { eq: senderId } } }),
+          DatabaseEntityType.User,
+          senderId,
+        ),
+        requireEntity(ctx.db.query.users.findFirst({ where: { id: { eq: userId } } }), DatabaseEntityType.User, userId),
+      ]);
       requireMutation(
         (
           await ctx.db.transaction(async (tx) => {
@@ -133,19 +132,17 @@ export const friendRequestRouter = router({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message,
         });
-      const receiverUser = await requireEntity(
-        ctx.db.query.users.findFirst({ where: { id: { eq: receiverId } } }),
-        DatabaseEntityType.User,
-        receiverId,
-      );
       // Read rather than rebuilt from the session: the session carries better-auth's own view of the user,
       // Which is a subset of the row — a payload assembled from it can only be completed by inventing values
-      // For the columns it does not carry
-      const senderUser = await requireEntity(
-        ctx.db.query.users.findFirst({ where: { id: { eq: userId } } }),
-        DatabaseEntityType.User,
-        userId,
-      );
+      // For the columns it does not carry. Neither read depends on the other, so they go out together
+      const [receiverUser, senderUser] = await Promise.all([
+        requireEntity(
+          ctx.db.query.users.findFirst({ where: { id: { eq: receiverId } } }),
+          DatabaseEntityType.User,
+          receiverId,
+        ),
+        requireEntity(ctx.db.query.users.findFirst({ where: { id: { eq: userId } } }), DatabaseEntityType.User, userId),
+      ]);
       const friendshipId = getFriendshipId(userId, receiverId);
       const [newRequest] = await ctx.db.transaction(async (tx) => {
         const existingBlock = await tx.query.blocks.findFirst({

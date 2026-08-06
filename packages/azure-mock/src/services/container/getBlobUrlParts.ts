@@ -1,4 +1,4 @@
-import { getResult, takeOne } from "@esposter/shared";
+import { getDecodedUriComponent, getResult, takeOne } from "@esposter/shared";
 // The container and blob a blob url addresses, or undefined when it names no blob (fewer than two path segments).
 // Expected format: https://account.blob.core.windows.net/container/blob-name
 //
@@ -10,7 +10,7 @@ import { getResult, takeOne } from "@esposter/shared";
 // Module did not build, so a name holding a lone `%` (`100%.png` — legal in a blob name) can reach
 // `decodeURIComponent` as malformed input, and a throw would reject a caller's whole batch rather than the one
 // Blob it names.
-const decodeSegment = (segment: string) => getResult(() => decodeURIComponent(segment)).unwrapOr(segment);
+const decodeSegment = (segment: string) => getDecodedUriComponent(segment, segment);
 
 export const getBlobUrlParts = (url: string): undefined | { blobName: string; containerName: string } => {
   // A string `URL` cannot parse is exactly what the `undefined` result means, so it is returned rather than thrown:

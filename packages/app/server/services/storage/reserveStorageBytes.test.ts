@@ -106,6 +106,24 @@ describe("reserveStorageBytes", () => {
     expect(ledgeredStorageBlobs[0]?.blobName).toBe(`${blobName}Second`);
   });
 
+  // A thumbnail is best-effort and the client may never upload one, so its zero hold can only leave the ledger
+  // At expiry — a slot each would let a handful of undecodable images lock a user out of uploading for an hour
+  test("spends no in-flight slot on a hold that declares nothing", async () => {
+    expect.hasAssertions();
+
+    await reserveStorageBytes(mockContext.db, userId, containerName, [
+      { blobName, declaredBytes },
+      ...Array.from({ length: MAX_UNRECONCILED_STORAGE_BLOBS }, (_, index) => ({
+        blobName: `${blobName}Thumbnail${index}`,
+        declaredBytes: 0,
+      })),
+    ]);
+
+    await expect(
+      reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName}Second`, declaredBytes }]),
+    ).resolves.toBeUndefined();
+  });
+
   test("rejects once too many holds are outstanding", async () => {
     expect.hasAssertions();
 
