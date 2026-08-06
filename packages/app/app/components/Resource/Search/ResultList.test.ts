@@ -3,9 +3,13 @@ import ResourceSearchResultList from "@/components/Resource/Search/ResultList.vu
 import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
-import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
+import { describe, expect, test, vi } from "vitest";
+
+// The create button's handler navigates, and a real navigation resolves route middleware through a dynamic
+// Import that outlives the assertion — it lands in a torn-down environment and fails the run as an unhandled
+// Rejection. No test here asserts on the destination, so the navigation itself is stubbed out
+mockNuxtImport("navigateTo", () => vi.fn<typeof navigateTo>());
 
 describe("resourceSearchResultList", () => {
   const id = crypto.randomUUID();
@@ -62,9 +66,6 @@ describe("resourceSearchResultList", () => {
     });
     const event = new MouseEvent("click", { bubbles: true, cancelable: true });
     component.get(".v-list-item__append button").element.dispatchEvent(event);
-    // The button's own handler navigates, and nothing here holds that promise — left to settle after the test,
-    // It lands in a torn-down environment where the router's scroll behaviour reads a `window` that is gone
-    await flushPromises();
 
     expect(event.defaultPrevented).toBe(true);
   });
