@@ -9,8 +9,8 @@ import { AzureContainer, storageBlobs, users } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-// The release and the reconcile are the two halves of one ledger: whichever settles a row is the only thing
-// That may move the counter for it, so they are exercised against the same fixture.
+// The counter carries stored bytes and nothing else, so every case here is about which of the two signals —
+// Storage saying a blob landed, or a deletion saying it is gone — moved it, and by how much.
 describe("storage blob ledger", () => {
   let db: PostgresJsDatabase<typeof relations>;
   const userId = crypto.randomUUID();
@@ -19,35 +19,34 @@ describe("storage blob ledger", () => {
   const blobName = `${resourceId}/files/blobName`;
   const declaredBytes = 10;
   const actualBytes = 4;
+  const overwrittenBytes = 7;
   const readStorageBytesUsed = async () =>
     (await db.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
-  const createStorageBlob = async () => {
-    await db.update(users).set({ storageBytesUsed: declaredBytes }).where(eq(users.id, userId));
-    await db.insert(storageBlobs).values({
+  // A hold as the reserve writes it: the space is claimed through declaredBytes, but nothing is counted
+  // Against the user until storage reports what landed
+  const createStorageBlob = () =>
+    db.insert(storageBlobs).values({
       blobName,
       containerName,
-      countedBytes: declaredBytes,
+      countedBytes: 0,
       declaredBytes,
       expiresAt: new Date(),
       userId,
     });
-  };
 
   beforeAll(async () => {
     db = await createMockDb();
     const createdAt = new Date();
-    await db
-      .insert(users)
-      .values({
-        createdAt,
-        email: userId,
-        emailVerified: true,
-        id: userId,
-        image: "",
-        name: "name",
-        updatedAt: createdAt,
-      });
+    await db.insert(users).values({
+      createdAt,
+      email: userId,
+      emailVerified: true,
+      id: userId,
+      image: "",
+      name: "name",
+      updatedAt: createdAt,
+    });
   });
 
   afterEach(async () => {
@@ -55,10 +54,54 @@ describe("storage blob ledger", () => {
     await db.update(users).set({ storageBytesUsed: 0 });
   });
 
-  test("gives the held bytes back and drops the row", async () => {
+  test("counts the size storage reports, not the size the client declared", async () => {
     expect.hasAssertions();
 
     await createStorageBlob();
+
+    await expect(reconcileStorageBlob(db, containerName, blobName, actualBytes)).resolves.toBe(true);
+    await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
+
+    const [reconciledStorageBlob] = await db.query.storageBlobs.findMany();
+
+    expect(reconciledStorageBlob).toMatchObject({ countedBytes: actualBytes, declaredBytes });
+    expect(reconciledStorageBlob?.reconciledAt).not.toBeNull();
+  });
+
+  test("computes a zero delta for a redelivered event", async () => {
+    expect.hasAssertions();
+
+    await createStorageBlob();
+    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
+    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
+  });
+
+  test("corrects the counter when the same write target is uploaded again", async () => {
+    expect.hasAssertions();
+
+    await createStorageBlob();
+    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
+    // The SAS outlives one PUT, so a second upload replaces the blob — the counter must follow it rather
+    // Than keep charging for the size the first one had
+    await reconcileStorageBlob(db, containerName, blobName, overwrittenBytes);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(overwrittenBytes);
+  });
+
+  test("accounts a blob nothing reserved to nobody", async () => {
+    expect.hasAssertions();
+
+    await expect(reconcileStorageBlob(db, containerName, blobName, actualBytes)).resolves.toBe(false);
+    await expect(readStorageBytesUsed()).resolves.toBe(0);
+  });
+
+  test("gives the stored size back when the blob is deleted", async () => {
+    expect.hasAssertions();
+
+    await createStorageBlob();
+    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
     await releaseStorageBlobs(db, containerName, [blobName]);
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
@@ -69,18 +112,30 @@ describe("storage blob ledger", () => {
     expect.hasAssertions();
 
     await createStorageBlob();
+    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
     await releaseStorageBlobs(db, containerName, [blobName]);
-    await db.update(users).set({ storageBytesUsed: declaredBytes }).where(eq(users.id, userId));
+    await db.update(users).set({ storageBytesUsed: actualBytes }).where(eq(users.id, userId));
     // The row is what carries the amount, so a redelivered deletion event finds nothing left to give back
     await releaseStorageBlobs(db, containerName, [blobName]);
 
-    await expect(readStorageBytesUsed()).resolves.toBe(declaredBytes);
+    await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
+  });
+
+  test("takes nothing off the counter for a hold that never landed", async () => {
+    expect.hasAssertions();
+
+    await createStorageBlob();
+    await releaseStorageBlobs(db, containerName, [blobName]);
+
+    await expect(readStorageBytesUsed()).resolves.toBe(0);
+    await expect(db.query.storageBlobs.findMany()).resolves.toStrictEqual([]);
   });
 
   test("releases a whole directory without enumerating it", async () => {
     expect.hasAssertions();
 
     await createStorageBlob();
+    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
     await releaseStorageBlobsByPrefix(db, containerName, `${resourceId}/`);
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
@@ -91,42 +146,9 @@ describe("storage blob ledger", () => {
     expect.hasAssertions();
 
     await createStorageBlob();
+    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
     await releaseStorageBlobs(db, AzureContainer.MessageAssets, [blobName]);
 
-    await expect(readStorageBytesUsed()).resolves.toBe(declaredBytes);
-  });
-
-  test("replaces the declaration with the stored size", async () => {
-    expect.hasAssertions();
-
-    await createStorageBlob();
-    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
-
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
-
-    const [reconciledStorageBlob] = await db.query.storageBlobs.findMany();
-
-    expect(reconciledStorageBlob).toMatchObject({ countedBytes: actualBytes, declaredBytes });
-    expect(reconciledStorageBlob?.reconciledAt).not.toBeNull();
-  });
-
-  test("reconciles a second time without adjusting again", async () => {
-    expect.hasAssertions();
-
-    await createStorageBlob();
-    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
-    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
-
-    await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
-  });
-
-  test("gives the stored size back once a reconciled blob is deleted", async () => {
-    expect.hasAssertions();
-
-    await createStorageBlob();
-    await reconcileStorageBlob(db, containerName, blobName, actualBytes);
-    await releaseStorageBlobs(db, containerName, [blobName]);
-
-    await expect(readStorageBytesUsed()).resolves.toBe(0);
   });
 });

@@ -23,11 +23,11 @@ export const IsIdempotentAzureFunctionMap = {
   [AzureFunction.ProcessWebhook]: false,
   [AzureFunction.PurgeDeletedResources]: true,
   [AzureFunction.PushWebhook]: false,
+  // Sets the ledger row's counted bytes to what storage reports and moves the counter by the difference it
+  // Observed, so a redelivery computes a zero delta rather than double-counting.
+  [AzureFunction.ReconcileStorageBlob]: true,
   // Republishes a dead-letter blob it then deletes; a rerun of the same blob is a no-op, but it is never itself
   // Dead-lettered onto a topic, so the value is only here for exhaustiveness.
   [AzureFunction.ReplayDeadLetterEvent]: true,
   [AzureFunction.SendTodoReminder]: true,
-  // Every transition it writes is conditional on the state it expects — a reconcile on `reconciledAt IS NULL`, a
-  // Release on the ledger row still existing — so a rerun settles nothing a previous pass already settled.
-  [AzureFunction.SettleStorageBlobs]: true,
 } as const satisfies Record<AzureFunction, boolean>;

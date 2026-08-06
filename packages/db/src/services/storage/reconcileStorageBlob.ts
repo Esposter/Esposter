@@ -2,36 +2,41 @@ import type { AzureContainer, relations, StorageBlob } from "@esposter/db-schema
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { storageBlobs, users } from "@esposter/db-schema";
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
-// Replaces what the client declared with what is actually stored. Conditional on the row still being
-// Unreconciled, so a replayed sweep is a no-op rather than a second adjustment; a row that matches nothing
-// Leaves the counter alone. Until this runs, `countedBytes` is still `declaredBytes` — the reserve wrote both
-// From the same number and nothing else moves either — so the declaration is what the counter is holding and
-// The difference against it is the whole adjustment.
+// Storage told us how many bytes actually landed, so the counter takes them. `countedBytes` is what the counter
+// Is already carrying for this blob — zero until the first reconcile — and the adjustment is the difference
+// Against it, which makes this right in all three cases at once: the first event adds the whole object, a
+// Redelivery computes a zero delta instead of double-counting, and a re-upload to the same write target (the
+// SAS outlives one PUT) corrects the counter rather than stranding the old size on it.
+// Returns whether a ledger row matched, so a caller holding an ambiguous blob name can try its other form.
 export const reconcileStorageBlob = (
   db: PostgresJsDatabase<typeof relations>,
   containerName: AzureContainer,
   blobName: StorageBlob["blobName"],
   actualBytes: number,
-): Promise<void> =>
+): Promise<boolean> =>
   db.transaction(async (tx) => {
-    const [reconciledStorageBlob] = await tx
+    // Locked before the delta is read, so a concurrent reconcile of the same blob cannot read the same
+    // `countedBytes` and apply its difference twice
+    const [storageBlob] = await tx
+      .select({ countedBytes: storageBlobs.countedBytes, userId: storageBlobs.userId })
+      .from(storageBlobs)
+      .where(and(eq(storageBlobs.containerName, containerName), eq(storageBlobs.blobName, blobName)))
+      .for("update");
+    // A blob nothing reserved — a published or duplicated clone, or anything written outside the upload
+    // Chokepoints. Not an error: it is simply not accounted to anyone
+    if (!storageBlob) return false;
+
+    const { countedBytes, userId } = storageBlob;
+    await tx
       .update(storageBlobs)
       .set({ countedBytes: actualBytes, reconciledAt: new Date() })
-      .where(
-        and(
-          eq(storageBlobs.containerName, containerName),
-          eq(storageBlobs.blobName, blobName),
-          isNull(storageBlobs.reconciledAt),
-        ),
-      )
-      .returning({ declaredBytes: storageBlobs.declaredBytes, userId: storageBlobs.userId });
-    if (!reconciledStorageBlob) return;
-
-    const { declaredBytes, userId } = reconciledStorageBlob;
-    await tx
-      .update(users)
-      .set({ storageBytesUsed: sql`GREATEST(0, ${users.storageBytesUsed} + ${actualBytes - declaredBytes})` })
-      .where(eq(users.id, userId));
+      .where(and(eq(storageBlobs.containerName, containerName), eq(storageBlobs.blobName, blobName)));
+    if (actualBytes !== countedBytes)
+      await tx
+        .update(users)
+        .set({ storageBytesUsed: sql`GREATEST(0, ${users.storageBytesUsed} + ${actualBytes - countedBytes})` })
+        .where(eq(users.id, userId));
+    return true;
   });

@@ -9,9 +9,9 @@ export enum AzureFunction {
   ProcessWebhook = "ProcessWebhook",
   PurgeDeletedResources = "PurgeDeletedResources",
   PushWebhook = "PushWebhook",
+  ReconcileStorageBlob = "ReconcileStorageBlob",
   ReplayDeadLetterEvent = "ReplayDeadLetterEvent",
   SendTodoReminder = "SendTodoReminder",
-  SettleStorageBlobs = "SettleStorageBlobs",
 }
 
 export const azureFunctionSchema = z.enum(AzureFunction);

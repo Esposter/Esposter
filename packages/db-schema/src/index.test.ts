@@ -8,11 +8,11 @@ const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
 describe("@esposter/db-schema", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 98.69 KB (101056 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 99.06 KB (101439 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 5488.03 KB (5619746 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 5488.34 KB (5620062 bytes)"`);
   });
 });

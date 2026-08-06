@@ -18,6 +18,7 @@ useResourceKeyboardShortcuts();
             </div>
             <ResourceHomeCreateCard />
             <ResourceHomeResourcesCard />
+            <ResourceHomeStorageCard />
           </div>
         </v-container>
       </v-sheet>

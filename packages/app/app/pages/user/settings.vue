@@ -23,7 +23,6 @@ const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General
         </v-col>
         <v-col :cols="smAndDown ? 12 : 7">
           <UserProfileCard />
-          <UserStorageCard mt-10 />
         </v-col>
       </v-row>
     </v-container>

@@ -19,24 +19,22 @@ const usedColor = computed(() => {
 </script>
 
 <template>
-  <div>
-    <div font-bold text-title-large>Storage</div>
-    <div text-body-large>Files you have uploaded across rooms and resources</div>
-    <StyledCard mt-6 p-2>
-      <v-card-title>
-        <div font-bold>Usage</div>
-        <v-divider mt-2 />
-      </v-card-title>
-      <v-card-text>
-        <template v-if="storageUsage">
-          <v-progress-linear :color="usedColor" height="8" :model-value="usedPercentage" rounded />
-          <div mt-4 text-body-large>
-            {{ getFileSize(storageUsage.bytesUsed) }} of {{ getFileSize(storageUsage.quotaBytes) }} used
-          </div>
-          <div mt-1 op-70 text-body-medium>{{ storageUsage.tier }} plan</div>
-        </template>
-        <v-skeleton-loader v-else type="text" />
-      </v-card-text>
-    </StyledCard>
-  </div>
+  <v-card>
+    <v-card-item>
+      <div flex flex-wrap gap-4 items-center justify-between>
+        <span text-h6>Storage</span>
+        <span v-if="storageUsage" op-70 text-body-medium>{{ storageUsage.tier }} plan</span>
+      </div>
+    </v-card-item>
+    <v-card-text>
+      <template v-if="storageUsage">
+        <v-progress-linear :color="usedColor" height="8" :model-value="usedPercentage" rounded />
+        <div mt-4 text-body-large>
+          {{ getFileSize(storageUsage.bytesUsed) }} of {{ getFileSize(storageUsage.quotaBytes) }} used
+        </div>
+        <div mt-1 op-70 text-body-medium>Everything you have uploaded, across resources and rooms</div>
+      </template>
+      <v-skeleton-loader v-else type="text" />
+    </v-card-text>
+  </v-card>
 </template>
