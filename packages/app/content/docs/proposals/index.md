@@ -19,6 +19,8 @@ Each product area's roadmap is the prioritized index over its proposals:
 
 posts, vue-phaserjs, clicker, dungeons, anime, and fluid-simulator have no roadmap and no open proposals.
 
+Only infra has an open area proposal right now; every other area's roadmap is clear.
+
 Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [Comment cleanup](/docs/proposals/refactors/comment-cleanup) — sweep ledger for keeping comments tight repo-wide.
