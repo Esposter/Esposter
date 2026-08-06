@@ -63,7 +63,7 @@ catalog:
   "@pulumi/github": ^6.14.1
   "@pulumi/pulumi": ^3.256.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^2.5.8
+  "@takumi-rs/core": ^2.5.9
   "@tiptap/core": ^3.29.2
   "@tiptap/extension-code-block-lowlight": ^3.29.2
   "@tiptap/extension-file-handler": ^3.29.2
@@ -183,7 +183,7 @@ catalog:
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
   node-html-parser: ^9.0.1
-  nuxt: ^4.5.1
+  nuxt: ^4.5.2
   nuxt-security: ^2.6.0
   oxfmt: ^0.62.0
   oxlint: ^1.77.0
@@ -215,7 +215,7 @@ catalog:
   three: ^0.185.1
   three-globe: ^2.45.2
   trpc-nuxt: ^2.1.1
-  tsx: ^4.23.7
+  tsx: ^4.23.8
   type-fest: ^5.8.0
   typedoc: ^0.28.20
   typescript: 6.0.3
