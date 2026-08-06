@@ -1,6 +1,12 @@
 # Router and DB Test Setup
 
-For tests that drive tRPC callers, queue mock sessions, or seed rows into the mock DB.
+For tests that drive tRPC callers, queue mock sessions, seed rows into the mock DB, or name a router test.
+
+## Naming and coverage
+
+- **CRUD descriptions** — happy paths use the bare verb (`"creates"`, `"updates"`, `"deletes"`), one per operation with all field assertions combined; error paths follow `"fails <operation> with <condition>"`. Never a scratch or repro label — name the condition being rejected, not the mechanics of triggering it.
+- **Don't repeat generic middleware tests** — shared middleware (auth, membership, permissions) is tested once; no redundant UNAUTHORIZED/NotFound test per procedure.
+- **Shared procedure/subscription builders: thorough once, wiring smoke per consumer** — where endpoints are config-only instantiations of a shared builder, its full behaviour matrix lives in the builder's own colocated test through ONE representative endpoint, and each consuming router keeps a single happy-path wiring test.
 
 ## Caller declaration
 

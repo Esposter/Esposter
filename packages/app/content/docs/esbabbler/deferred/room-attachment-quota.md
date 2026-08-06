@@ -5,7 +5,7 @@ description: A storage allowance for a room's attachments, charged to the room r
 
 # Room attachment quota
 
-Message attachments are the one upload path with no storage bound. The [per-user storage quota](/docs/platform/storage-quotas) counts resource files only, so a member can upload into a room until the account's own limits bite.
+Message attachments are the one upload path with no **storage** bound. The [per-user storage quota](/docs/platform/storage-quotas) counts resource files only, so nothing caps the total a room accumulates. What still applies per file is the room's `maxFileSizeBytes` check at SAS issuance — a declared-size gate, which an under-declaring client can exceed the same way it can anywhere else ([file uploads](/docs/architecture/file-uploads)).
 
 **Why deferred.** Charging room attachments to the uploader's personal allowance was tried and removed: it makes one person's quota depend on how much they contribute to shared rooms, and it puts a number about chat in the resource explorer. The honest model is a **room-scoped** allowance — a room has a size, an owner sees it, and a room that fills up stops accepting attachments — but that needs an owner-facing surface (where the bar lives, who is warned, what happens at the limit) and a decision about who pays for a room nobody owns any more. None of that is worth building before rooms are large enough for the number to matter.
 

@@ -7,14 +7,21 @@ Read when a constant map associates a discriminant key with a type-parameterised
 Define an explicit type map first, then use a mapped type in `satisfies` for per-entry type safety without `as` casts:
 
 ```typescript
-// 1. Explicit type map (one file, in models/)
-type DataSourceItemTypeMap = { [DataSourceType.Csv]: CsvDataSourceItem };
-// 2. Satisfies mapped type — each entry checked against its specific type parameter
-export const DataSourceConfigurationMap: Record<
-  DataSourceType,
-  DataSourceConfiguration<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>
-> = { ... };
+// 1. Explicit type map (one file, in models/) — one entry per discriminant value
+type DataSourceItemTypeMap = {
+  [DataSourceType.Csv]: CsvDataSourceItem;
+  [DataSourceType.Json]: JsonDataSourceItem;
+};
+// 2. Satisfies a mapped type keyed by the SAME parameter the value is looked up with, so each entry
+//    is checked against its own type argument — a `Record<DataSourceType, DataSourceConfiguration<
+//    DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>>` widens every entry to the union instead,
+//    and accepts a Json configuration filed under the Csv key
+export const DataSourceConfigurationMap = { ... } satisfies {
+  [TDataSourceType in DataSourceType]: DataSourceConfiguration<DataSourceItemTypeMap[TDataSourceType]>;
+};
 ```
+
+The uncorrelated `DataSourceItemTypeMap[keyof DataSourceItemTypeMap]` union is still the right thing in a **constraint** — it is the bound of what a generic parameter may be, not a claim about one key.
 
 ## Generic map lookup composables
 

@@ -23,7 +23,9 @@ const usedColor = computed(() => {
 <template>
   <v-tooltip v-if="storageUsage" location="bottom">
     <template #activator="{ props }">
-      <div :="props" flex gap-2 items-center>
+      <!-- Focusable so the tooltip is reachable without a pointer — it carries the tier and the exact numbers,
+           which the bar alone does not say -->
+      <div :="props" flex gap-2 items-center tabindex="0">
         <v-progress-linear :color="usedColor" height="6" :model-value="usedPercentage" rounded w-16 />
         <span v-if="!smAndDown" op-70 whitespace-nowrap text-body-medium>
           {{ getFileSize(storageUsage.bytesUsed) }} of {{ getFileSize(storageUsage.quotaBytes) }} used

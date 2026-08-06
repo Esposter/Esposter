@@ -1,6 +1,19 @@
 # Module Mocks (`vi.mock`, colocated doubles, msw-trpc)
 
-How a module-level double is declared, where it lives, and which registration form to use.
+What deserves a double at all, how a module-level one is declared, where it lives, and which registration form to use.
+
+## What to mock
+
+Mock the **smallest seam that makes the behaviour under test reachable**, and never re-declare a mock another file already owns.
+
+- **Prefer driving state over mocking a getter** — a store's derived state usually has a real input to set (`router.currentRoute.value.params.id = roomId` gives the room stores a current room). `vi.spyOn(store, "prop", "get")` breaks `storeToRefs`, which reads the underlying ref rather than the spied accessor.
+- **Mock a module only for what the environment genuinely cannot do** — a canvas downscale, a network PUT, a clock. If a fake is only saving setup lines, build the real input instead.
+
+## Gating a double to prove a caller awaits it
+
+An ordering contract ("the caller does not return until its side effect is durable") is untestable by observing the side effect afterwards — every assertion that reads it `await`s something first, handing the fire-and-forget chain the turns it needed, so the test passes against the bug. Make the dependency block instead: stub the client so the write returns a promise the test resolves by hand, start the call without awaiting it, drain past one timer boundary (`await new Promise((resolve) => { setTimeout(resolve); })`), and assert the caller has **not** settled; then release and await it. A single one-shot boundary flushes every pending microtask and re-checks nothing, so it is not polling. Verify the test fails against the un-awaited version before keeping it.
+
+**Under fake timers that boundary is `await vi.advanceTimersByTimeAsync(0)`, never a bare `setTimeout` promise** — the clock is frozen, so the `setTimeout` above never fires and the test hangs to its timeout instead of failing on the contract. The sync `vi.advanceTimersByTime` is no substitute either: it fires the timer without ever yielding, so the continuations behind it have not run when the assertion reads, and the awaiting caller looks exactly like the un-awaiting one again. Microtask drains (`flushPromises()`, `waitForSynchronizedFunctions()`) are unaffected — Vitest fakes timers and `Date`, not the microtask queue.
 
 ## Colocated mock files
 

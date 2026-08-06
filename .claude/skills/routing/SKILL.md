@@ -41,7 +41,14 @@ The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRul
 Decide by what the value **is**, not by what is reachable:
 
 - **Part of what the page shows** (filter, page number, tab) → the **URL**, so a share, a bookmark and a refresh all show the same thing (`useEnumRouteQuery` below).
-- **How the visitor got here** (a breadcrumb trail, whether this was a drill-down) → the **history entry**, via `history.replaceState({ ...window.history.state, … })` read back from `window.history.state`. Its lifetime already matches: per entry, kept across a reload, restored on back/forward, gone with the entry.
+- **How the visitor got here** (a breadcrumb trail, whether this was a drill-down) → the **history entry**, read back from `window.history.state` and written by merging into it — spread the current state, or the write erases whatever the router keeps there:
+
+  ```typescript
+  window.history.replaceState({ ...window.history.state, trail }, "");
+  ```
+
+  Its lifetime already matches: per entry, kept across a reload, restored on back/forward, gone with the entry.
+
 - **What the visitor prefers** (a collapsed rail, a theme) → **`localStorage`** through the `LocalStorageKey` registry — it outlives the tab and belongs to the person.
 
 The middle case is the one that gets mis-filed. Putting "how I got here" in the URL mints a second address for one page (worse for sharing, bookmarks and analytics, and editable by anyone who types); putting it in storage makes it outlive the journey, so a tab restored later claims a path nobody walked.

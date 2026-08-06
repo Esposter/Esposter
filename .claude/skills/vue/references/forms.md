@@ -22,9 +22,10 @@ interface PostUpsertFormProps {
   isCreate?: boolean;
 }
 const { initialValues = { description: "", title: "" }, isCreate = false } = defineProps<PostUpsertFormProps>();
-const values = ref(initialValues);
+const { cloned: values } = useCloned(() => initialValues);
 ```
 
+- **`useCloned`, never `ref(initialValues)`** — a bare `ref` makes the prop's own object the editable state, so the first keystroke mutates the parent's row before anything is saved, and it never resyncs when the source changes. The `sync`/`clone` options are in `references/watch-decision-tree.md`.
 - Template binds to `values.title` etc. (auto-unwrapped); emit passes `values` directly.
 - `isCreate` drives button text: `isCreate ? 'Post' : 'Edit Post'`.
 - Create page passes `is-create`; update page passes `:initial-values` (no `is-create`).

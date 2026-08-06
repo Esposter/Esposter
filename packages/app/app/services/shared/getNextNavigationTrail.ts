@@ -21,8 +21,9 @@ export const getNextNavigationTrail = (
   toPath: string,
   trail: NavigationTrailPage[],
 ): NavigationTrailPage[] => {
-  // Outside the area nothing carries a trail, and the landing page is where one starts
-  if (!toPath.startsWith(RoutePath.Resources) || toPath === RoutePath.Resources) return [];
+  // Outside the area nothing carries a trail, and the landing page is where one starts. The `/` is what makes
+  // It a path boundary: a sibling route that merely shares the prefix is a different area, not a page inside it
+  if (!toPath.startsWith(`${RoutePath.Resources}/`)) return [];
 
   const toPage = getPage(toPath);
   const toPageIndex = toPage ? trail.indexOf(toPage) : -1;

@@ -10,16 +10,20 @@ interface GetPermissions {
   (db: Db, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
 }
 
-export const getPermissions: GetPermissions = async (db, userId, roomIds: string | string[]) => {
+export const getPermissions: GetPermissions = (async (
+  db: Db,
+  userId: string,
+  roomIds: string | string[],
+): Promise<bigint | Map<string, bigint>> => {
   const roomIdArray = Array.isArray(roomIds) ? roomIds : [roomIds];
-  // ...shared implementation...
-  if (Array.isArray(roomIds)) return result; // Map branch
-  return result.get(roomIds) ?? fallback; // scalar branch
-};
+  // ...shared implementation, producing `result: Map<string, bigint>`...
+  return Array.isArray(roomIds) ? result : (result.get(roomIds) ?? 0n);
+}) as GetPermissions;
 ```
 
 - Overload signatures go on the `const`'s **type annotation**, not repeated in the body.
-- Implementation parameter types must be the **union** of all overload variants.
+- Implementation parameter **and return** types are the **union** of all overload variants, both written out — the implementation is not contextually typed once it is cast.
+- **Parenthesise the arrow and cast it back to the interface.** TypeScript checks an implementation against each call signature separately, and a `Promise<bigint | Map<string, bigint>>` satisfies neither of them, so the assignment does not compile without the `as`. The interface above stays the contract every caller sees, so the cast widens nothing at a call site.
 - Use `Array.isArray` to branch; each branch returns its specific type.
 
 ## Options argument defaults

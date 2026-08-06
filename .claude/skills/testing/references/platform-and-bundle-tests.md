@@ -1,4 +1,9 @@
-# Skipped Suites and Bundle Size Snapshots
+# Skipped Suites, Host-Dependent Output and Bundle Size Snapshots
+
+## Output that depends on the host
+
+- **Strip ANSI before snapshotting CLI output** — `isColorEnabled()` reads the ambient terminal/env (TTY, `FORCE_COLOR`, `NO_COLOR`), so a raw snapshot of colorized output flip-flops between an interactive shell, `-u` and CI. Wrap the value in `stripAnsi(...)` (`@/services/cli/color/stripAnsi.test` in virrun) so the snapshot checks message content alone; colouring is verified in the `colorize`/`isColorEnabled` tests. Narrow a `string | undefined` with `assert.exists(value)` first.
+- **Non-deterministic / OS-specific error messages are not snapshotted at all** — when a thrown message embeds something unreconstructable portably (an absolute path differing by OS, e.g. a Node `ENOENT`), a `toThrowErrorMatchingInlineSnapshot` passes locally and fails in CI. Observe the behaviour portably instead: assert `fs.existsSync(path)` is `false`, or that the returned value changed.
 
 ## Capability and platform gating
 

@@ -17,11 +17,12 @@ gh api "repos/Esposter/Esposter/pulls/<pr>/comments?per_page=100" --paginate \
   --jq '.[] | "\(.id) \(.path):\(.line // .original_line)\n\(.body)\n"'
 
 # 3. Issue comments -> the walkthrough, status, and rate-limit notices.
+#    Sorted so the newest state is last; the endpoint ignores sort/direction, so jq does it.
 gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate \
-  --jq '.[] | select(.user.login=="coderabbitai[bot]") | .body'
+  --jq 'map(select(.user.login=="coderabbitai[bot]")) | sort_by(.updated_at) | .[].body'
 ```
 
-The walkthrough issue-comment is **edited in place** across reviews, so its `created_at` stays pinned to the first review while `updated_at` moves. Filtering issue comments by `created_at` hides the current walkthrough — sort by `updated_at`.
+The walkthrough issue-comment is **edited in place** across reviews, so its `created_at` stays pinned to the first review while `updated_at` moves. Filtering issue comments by `created_at` hides the current walkthrough — sort by `updated_at`, as the call above does. `--jq` runs once per page (and `--slurp` cannot be combined with it), so past 100 comments on a PR the newest state is the tail of the **last** page rather than of the whole output.
 
 ## Replying to a review comment
 

@@ -59,8 +59,8 @@ git diff --name-only -M <base>..<head> | while IFS= read -r path; do
   [ -z "$changed" ] && continue
   printf '%s\n' "$changed" | grep -qvE '^[+-][[:space:]]*(import[[:space:]]|$)' && continue
   # a bare side-effect import is sequenced for its effect, and the sort below cannot tell a
-  # reordering of them from a repathing
-  printf '%s\n' "$changed" | grep -qE '^[+-][[:space:]]*import[[:space:]]+"' && continue
+  # reordering of them from a repathing. Both quote styles, or a single-quoted one slips through
+  printf '%s\n' "$changed" | grep -qE "^[+-][[:space:]]*import[[:space:]]+[\"']" && continue
   # an import attribute value is quoted too (`with { type: "json" }`), so blanking every quoted
   # string would normalize a changed attribute away. A line carrying a second quoted value stays in
   # the review set rather than being classified

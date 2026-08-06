@@ -17,7 +17,11 @@ const getRecordedTrail = (trail: unknown) =>
 export default defineNuxtPlugin(() => {
   const router = useRouter();
   const navigationTrailStore = useNavigationTrailStore();
-  router.afterEach((to, from) => {
+  router.afterEach((to, from, failure) => {
+    // An aborted or redirected navigation never landed, so the entry the visitor is on is still the old one —
+    // Resolving a trail for a page nobody is looking at would record it against that entry
+    if (failure) return;
+
     // An entry that already carries a trail was visited before — a reload, or back/forward onto it — so its own
     // Record wins over anything recomputed from a navigation that is no longer happening
     const recordedTrail = getRecordedTrail(window.history.state?.trail);

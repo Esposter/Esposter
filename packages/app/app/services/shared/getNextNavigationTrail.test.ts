@@ -60,5 +60,9 @@ describe(getNextNavigationTrail, () => {
     expect(
       getNextNavigationTrail(RoutePath.ResourcesAll, RoutePath.MessagesFriends, [NavigationTrailPage.All]),
     ).toStrictEqual([]);
+    // A sibling route that merely shares the prefix is a different area, not a page inside this one
+    expect(
+      getNextNavigationTrail(RoutePath.ResourcesAll, `${RoutePath.Resources}-archive`, [NavigationTrailPage.All]),
+    ).toStrictEqual([]);
   });
 });

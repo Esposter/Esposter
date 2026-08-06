@@ -44,7 +44,7 @@ Read it when choosing a level, reading a run's `stats`, or deciding on another r
 
 The dominant false-positive class is a finding arguing against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every run with a different answer.
 
-`packages/app/content/docs/` and `.claude/skills/*/SKILL.md` are the tiebreaker. A choice either tree states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
+`packages/app/content/docs/` and `.claude/skills/**/*.md` are the tiebreaker — the whole skill tree, not the index pages alone: a binding rule as often sits in a skill's `references/*.md` deep dive as in its `SKILL.md`. A choice either tree states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
 
 Finder and verifier agents carry this rule, so grep both trees before accepting one they still surface. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record.
 

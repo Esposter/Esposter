@@ -10,7 +10,7 @@ Never open side PRs against `main` to slice it up. Each one spends a review slot
 
 ## 1. Cut
 
-Cut by commit window, not by file, at a merge boundary — the cumulative count jumps there, each jump is one topical cluster, and any prefix is coherent history by construction:
+Cut by commit window, not by file. The loop prints the cumulative file count at **every** commit in the range, because a topical cluster does not always land as a merge — the count jumps at the merges, each jump is one cluster, so prefer the merge boundary nearest the budget and fall back to a plain commit when none sits there. Any prefix is coherent history by construction, so either is a valid cut:
 
 ```bash
 for commit in $(git rev-list --reverse <base>..develop); do
@@ -37,6 +37,18 @@ Cherry-pick doc and skill commits across the cut so the working tree keeps the c
 ## 2. Drain
 
 Merge one queue window into `develop`, trigger a review, wait for `Review completed`, fix findings, then merge the next. Reviews are incremental — each cycle reads only what changed since the last completed one (SKILL.md § PR File Budget) — so every window gets a full-budget review even though the PR's cumulative diff grows past the cap.
+
+Size each window off the queue the way the cut was sized, and **merge the window commit, never the branch** — `git merge queue/<scope>` takes the whole remainder and rebuilds the over-budget PR in a single push:
+
+```bash
+for commit in $(git rev-list --reverse develop..queue/<scope>); do
+  printf '%4d  %s\n' "$(git diff --name-only -M "develop..$commit" | wc -l)" "$(git log -1 --oneline "$commit")"
+done
+git switch develop && git merge --no-ff <window> && git push origin develop
+git rev-list --count develop..queue/<scope>   # what the queue still owes
+```
+
+`--no-ff` rather than `--ff-only`: the fixes for one window's findings land on `develop`, so from the second window on the queue is no longer a descendant of `develop` and a fast-forward is refused. The queue branch itself is never moved — `develop..queue/<scope>` shrinks on its own as windows merge, and it is empty (count `0`) when the branch can be deleted.
 
 ## 3. Merge
 
