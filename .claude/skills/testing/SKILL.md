@@ -328,7 +328,14 @@ describe(useMyComposable, () => {
 });
 ```
 
-**A dispatched event whose handler is async needs `await flushPromises()` before the test ends.** `element.dispatchEvent(e)` returns a `boolean`, so an `async` handler behind it — a template `@click` that awaits `navigateTo`, a mutation, any `await` at all — leaves a promise nobody holds. It settles after the environment is torn down, where the nuxt router's scroll behaviour reads a `window` that no longer exists, and the run dies as `ReferenceError: window is not defined` wrapped in a `statusCode: 500` attributed to whichever file was unlucky. Flush between the dispatch and the assertion; assertions on the event itself (`defaultPrevented`) are already set synchronously during bubbling, so the flush cannot cost you them.
+**A dispatched event whose handler is async leaves a promise nobody holds.** `element.dispatchEvent(e)` returns a `boolean`, so an `async` handler behind it — a template `@click` that awaits `navigateTo`, a mutation, any `await` at all — settles after the environment is torn down, and the run dies as a `statusCode: 500` attributed to whichever file was unlucky. Assertions on the event itself (`defaultPrevented`) are set synchronously during bubbling, so nothing you assert on depends on that promise — the only question is where it lands.
+
+- **In-process work: `await flushPromises()`** between the dispatch and the assertion. Enough for anything that stays in microtasks — a store write, a mocked mutation.
+- **A real navigation: stub it, don't wait for it.** `navigateTo` resolves route middleware through a dynamic import served by Vite's module runner — real I/O, not microtasks — so `flushPromises()` returns long before it lands and the load hits a dead environment: `EnvironmentTeardownError: Cannot load '/app/middleware/guest.ts' … after the environment was torn down`. Awaiting harder cannot fix it; a test that asserts on the row's cancelled default has no stake in the destination, so take the router out of the picture at file scope (hoisted, so once per file):
+
+```ts
+mockNuxtImport("navigateTo", () => vi.fn<typeof navigateTo>());
+```
 
 `typescript/no-floating-promises` will not save you here — it sees `dispatchEvent`'s `boolean`, not the handler Vue invokes — though it does cover the forms written directly in a test (a bare `navigateTo(...)`, an un-awaited `.trigger()`). Vitest exits `1` on an unhandled error even when every test passes, so this does fail the build; it fails it **intermittently**, since the promise only loses the race when teardown is prompt. A suite that passes alone and fails in the full run is this shape until proven otherwise.
 

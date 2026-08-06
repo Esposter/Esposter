@@ -183,7 +183,7 @@ catalog:
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
   node-html-parser: ^9.0.1
-  nuxt: ^4.5.1
+  nuxt: ^4.5.2
   nuxt-security: ^2.6.0
   oxfmt: ^0.62.0
   oxlint: ^1.77.0
@@ -215,7 +215,7 @@ catalog:
   three: ^0.185.1
   three-globe: ^2.45.2
   trpc-nuxt: ^2.1.1
-  tsx: ^4.23.7
+  tsx: ^4.23.8
   type-fest: ^5.8.0
   typedoc: ^0.28.20
   typescript: 6.0.3
