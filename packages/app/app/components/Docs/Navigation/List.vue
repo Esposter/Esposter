@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from "@nuxt/content";
 
+import { DOCS_NAVIGATION_OVERVIEW_SUFFIX } from "@/services/docs/constants";
+
 interface NavigationListProps {
   items: ContentNavigationItem[];
 }
@@ -15,7 +17,13 @@ const route = useRoute();
       <template #activator="{ props: activatorProps }">
         <v-list-item :="activatorProps" :title="item.title" />
       </template>
-      <v-list-item v-if="item.page !== false" :active="route.path === item.path" title="Overview" :to="item.path" />
+      <v-list-item
+        v-if="item.page !== false"
+        :active="route.path === item.path"
+        title="Overview"
+        :to="item.path"
+        :value="`${item.path}${DOCS_NAVIGATION_OVERVIEW_SUFFIX}`"
+      />
       <DocsNavigationList :items="item.children" />
     </v-list-group>
     <v-list-item v-else :active="route.path === item.path" :title="item.title" :to="item.path" />

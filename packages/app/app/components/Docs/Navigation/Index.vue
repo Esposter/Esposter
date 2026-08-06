@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from "@nuxt/content";
 
+import { DOCS_NAVIGATION_OVERVIEW_SUFFIX } from "@/services/docs/constants";
 import { getNavigationGroups } from "@/services/docs/getNavigationGroups";
 import { getOpenedNavigationPaths } from "@/services/docs/getOpenedNavigationPaths";
 import { getSectionIcon } from "@/services/docs/getSectionIcon";
@@ -34,7 +35,12 @@ const sectionsWithGroups = computed(() =>
           :title="section.title"
         />
       </template>
-      <v-list-item :active="router.currentRoute.value.path === section.path" title="Overview" :to="section.path" />
+      <v-list-item
+        :active="router.currentRoute.value.path === section.path"
+        title="Overview"
+        :to="section.path"
+        :value="`${section.path}${DOCS_NAVIGATION_OVERVIEW_SUFFIX}`"
+      />
       <template v-for="group of groups" :key="group.title ?? ''">
         <v-list-subheader v-if="group.title">{{ group.title }}</v-list-subheader>
         <DocsNavigationList :items="group.items" />
