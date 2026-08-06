@@ -41,13 +41,13 @@ flowchart LR
 
 ## Key files
 
-| File                                          | Role                                                 |
-| --------------------------------------------- | ---------------------------------------------------- |
-| `app/store/notification.ts`                   | session-scoped notification list + snackbar queue    |
-| `app/components/App/NotificationBell.vue`     | app-bar bell + panel                                 |
-| `app/components/App/NotificationSnackbar.vue` | single snackbar queue rendering the store head       |
-| `app/components/App/NotificationBellItem.vue` | one panel row (severity icon, time, action, dismiss) |
-| `app/models/notification/AppNotification.ts`  | client model                                         |
+| File                                           | Role                                                 |
+| ---------------------------------------------- | ---------------------------------------------------- |
+| `app/store/notification.ts`                    | session-scoped notification list + snackbar queue    |
+| `app/components/App/Notification/Bell.vue`     | app-bar bell + panel                                 |
+| `app/components/App/Notification/Snackbar.vue` | single snackbar queue rendering the store head       |
+| `app/components/App/Notification/BellItem.vue` | one panel row (severity icon, time, action, dismiss) |
+| `app/models/notification/AppNotification.ts`   | client model                                         |
 
 ## Notes
 

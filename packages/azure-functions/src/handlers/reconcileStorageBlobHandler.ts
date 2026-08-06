@@ -9,9 +9,10 @@ import { getDecodedUriComponent, getResultAsync, noop } from "@esposter/shared";
 // Storage's own BlobCreated event is what turns a client's declared size into the truth. It arrives seconds
 // After the PUT lands, carries the stored object's real length, and — unlike anything we could publish
 // Ourselves — it reports what happened on a data path our servers are never part of.
-// The two asset containers only; the subscription filters to them and this agrees with that filter, so an event
-// From anywhere else is dropped rather than mis-attributed. See /docs/platform/storage-quotas
-const STORAGE_BLOB_CONTAINERS = [AzureContainer.MessageAssets, AzureContainer.ResourceAssets];
+// Resource assets only — the quota counts what a user keeps in their own resources, and a room's attachments
+// Belong to the room. The subscription filters to this container and the handler agrees with that filter, so an
+// Event from anywhere else is dropped rather than mis-attributed. See /docs/platform/storage-quotas
+const STORAGE_BLOB_CONTAINERS = [AzureContainer.ResourceAssets];
 
 export const reconcileStorageBlobHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ReconcileStorageBlob} processed subject: `, event.subject);

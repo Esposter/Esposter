@@ -31,6 +31,6 @@ const usedColor = computed(() => {
       </div>
     </template>
     {{ storageUsage.tier }} plan — {{ getFileSize(storageUsage.bytesUsed) }} of
-    {{ getFileSize(storageUsage.quotaBytes) }} used across resources and rooms
+    {{ getFileSize(storageUsage.quotaBytes) }} used by your resource files
   </v-tooltip>
 </template>

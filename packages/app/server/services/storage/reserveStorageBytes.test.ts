@@ -11,7 +11,7 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe("reserveStorageBytes", () => {
   let mockContext: Context;
   let userId: string;
-  const containerName = AzureContainer.MessageAssets;
+  const containerName = AzureContainer.ResourceAssets;
   const blobName = "blobName";
   const declaredBytes = 1;
   const quotaBytes = StorageTierQuotaMap[StorageTier.Free];

@@ -17,7 +17,6 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { MAX_UNRECONCILED_STORAGE_BLOBS } from "#shared/services/storage/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
@@ -40,7 +39,6 @@ import { createThreadUnfollow } from "@@/server/services/message/thread/createTh
 import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
-import { generateReservedUploadFileSasEntities } from "@@/server/services/storage/generateReservedUploadFileSasEntities";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
@@ -55,6 +53,7 @@ import {
   createMessage,
   generateDownloadFileSasUrls,
   generateDownloadThumbnailSasUrls,
+  generateUploadFileSasEntities,
   getEntity,
   getFileBlobNames,
   getTableNullClause,
@@ -124,15 +123,7 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
   // So two files a user genuinely named the same collide nowhere, and rejecting the drop over the shared name
   // Would fail the whole selection for something the storage layout already keeps apart. The sibling delete and
   // Download schemas key on the id because by then the id exists; here the client has no id to send yet.
-  //
-  // Bounded by the in-flight hold cap rather than the generic read limit: a batch above the cap can never pass
-  // The reserve however long the client waits, and rejecting it there would answer it with a "wait for them to
-  // Finish" that nothing makes true. See /docs/platform/storage-quotas
-  files: fileEntitySchema
-    .pick({ filename: true, mimetype: true, size: true })
-    .array()
-    .min(1)
-    .max(MAX_UNRECONCILED_STORAGE_BLOBS),
+  files: fileEntitySchema.pick({ filename: true, mimetype: true, size: true }).array().min(1).max(MAX_READ_LIMIT),
   ...roomIdSchema.shape,
 });
 
@@ -416,14 +407,12 @@ export const baseMessageRouter = router({
             .message,
         });
 
-    const fileSasEntities = await generateReservedUploadFileSasEntities(
-      ctx.db,
-      ctx.getSessionPayload.user.id,
-      AzureContainer.MessageAssets,
-      files,
-      roomId,
-      { withThumbnail: true },
-    );
+    // Room attachments are outside the personal storage quota, which counts what a user keeps in their own
+    // Resources — a room's files belong to the room. See /docs/platform/storage-quotas
+    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+    const fileSasEntities = await generateUploadFileSasEntities(containerClient, files, roomId, {
+      withThumbnail: true,
+    });
     // The grant travels with the write target: whoever can upload the blob is the only one who can reclaim it
     return fileSasEntities.map((fileSasEntity) =>
       Object.assign(fileSasEntity, {

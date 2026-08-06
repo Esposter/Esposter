@@ -33,7 +33,7 @@ flowchart TD
 
 **Everything after the notify is best-effort**, wrapped and logged, never rethrown:
 
-```typescript
+```ts
 // Best-effort after the Table write — a failed increment loses one badge count, never a message.
 const mentionedUsersToRooms = await getResultAsync(() => incrementMentionCounts(db, newMessageEntity))
   .orTee(console.error)

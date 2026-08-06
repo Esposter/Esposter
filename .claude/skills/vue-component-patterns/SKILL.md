@@ -186,24 +186,38 @@ For state-sync emits, use the `update:x` form where `x` is the state name (`"upd
 
 ## Component Folder Naming
 
-**Group components with the same prefix into a folder** — Nuxt auto-imports with the folder path as prefix, so co-located components share it without repeating it in filenames.
+**The folder path is the prefix — never repeat it in the filename.** Nuxt builds the auto-import name from the directory words plus the filename words, so `Feature/Group/ItemCard.vue` → `FeatureGroupItemCard` and `Feature/Group/ItemCardHeader.vue` → `FeatureGroupItemCardHeader`. `Index.vue` contributes nothing, so a folder's own root component is `Group/Index.vue` → `FeatureGroup`.
 
-- `components/Feature/Group/ItemCard.vue` → `FeatureGroupItemCard`
-- `components/Feature/Group/ItemCardHeader.vue` → `FeatureGroupItemCardHeader`
-- The folder `Group/` provides the `FeatureGroup` prefix — no need to repeat it in the filename
+### Fold a shared prefix into a folder
 
-**Nuxt name compression — avoid adjacent duplicate words across folder and file boundaries.** Nuxt collapses consecutive identical words when building the auto-import name. A file `components/Feature/ItemList/ListItem.vue` produces `FeatureItemListItem`, not `FeatureItemListListItem`. So if a folder ends with a word and the filename starts with the same word, that word appears only once in the generated component name — which can cause silent collisions:
+**Two or more components in one directory whose names start with the same word belong in a folder named for that word** — `FooList.vue` + `FooListItem.vue` + `FooDeleteButton.vue` → `Foo/{List,ListItem,DeleteButton}.vue`. Because the folder re-supplies the word, **the generated component names are unchanged** — a pure move, no template edits.
+
+Fold when either holds:
+
+- the directory is **crowded** (roughly ≥10 flat components) — folding is what keeps it navigable; a 3-file feature folder is already readable and stays flat
+- a file sits **beside a folder of the same name** (`Node/` + `NodeDropzoneBackground.vue`) — always untidy, fold regardless of size
+
+Two carve-outs:
+
+- **Don't split a suffix family.** `TypeCell` + `TypeFilterPill` share a prefix, but `TypeFilterPill` also belongs to `Status/Tag/Updated FilterPill`. Folding `Type/` scatters the family — leave it.
+- **Don't nest for two.** Once a fold leaves the new folder with a handful of files, stop; `Menu/{Button,LinkList,LinkListItem}.vue` beats a further `Menu/LinkList/{Index,Item}.vue`.
+
+The parent of a folded group becomes `Index.vue` in it (`Room/List.vue` + `Room/ListItem.vue` → `Room/List/{Index,Item}.vue`).
+
+### Nuxt name compression
+
+**A filename whose leading words repeat the trailing words of its folder path emits that run only once.** `Feature/ItemList/ListItem.vue` → `FeatureItemListItem`, not `FeatureItemListListItem`:
 
 - `Feature/Group/GroupCard.vue` → `FeatureGroupCard` (not `FeatureGroupGroupCard`)
 - `Feature/Items/ItemsHeader.vue` → `FeatureItemsHeader` (not `FeatureItemsItemsHeader`)
 
-**Rule:** ensure the filename's first word differs from the last word of its folder path. If they must share a word, choose a more specific filename (e.g. `GroupDetailCard.vue` instead of `GroupCard.vue`).
+The collapse is against the folder path's **trailing run**, not just its last word, and it hits any repeat — including a word repeated from a **compound** folder name higher up (`Feature/ThisAndThat/ThatList.vue` → `FeatureThisAndThatList`).
 
-**When the shared word is intentional** (the folder name legitimately ends with the word the file starts with), Nuxt still collapses it — so reference the **collapsed** name in the template, never the naive un-collapsed concatenation:
+**Rule:** the filename's first word must differ from the last word of its folder path. If they must share one, pick a more specific filename (`GroupDetailCard.vue` over `GroupCard.vue`) — otherwise two files can silently generate one name, and the naive un-collapsed tag resolves to no component and renders **empty with no error**.
 
-- `Message/DraftsAndSent/SentList.vue` → tag is `<MessageDraftsAndSentList />`, **not** `<MessageDraftsAndSentSentList />`. The duplicated form resolves to no component and renders **empty with no error**, so it fails silently.
-- `Message/DraftsAndSent/SentListItem.vue` → tag is `<MessageDraftsAndSentListItem />`.
-- This collapse affects **only the template tag**. A props interface is a plain TS type and does not collapse, so `MessageDraftsAndSentSentListItemProps` remains valid (if redundant) — don't "fix" it to match the tag.
+This is also the one shape where folding a prefix into a folder **does** change the name: the flat file was collapsing against a word further up the path, and the folder form no longer is (`ThisAndThat/ThatList.vue` → `FeatureThisAndThatList` becomes `ThisAndThat/That/List.vue` → `FeatureThisAndThatThatList`). Update the tags in the same change.
+
+Collapse affects **only the template tag**. A props interface is a plain TS type and does not collapse, so a redundant-looking `FeatureThisAndThatThatListProps` stays valid — don't "fix" it to match the tag.
 
 Verify with `typecheck`, which flags an unknown collapsed tag.
 
@@ -232,7 +246,7 @@ const slots = defineSlots<{ ... }>(); // assign only when the script reads `slot
 <template v-if="$slots.default" #default><slot /></template>
 ```
 
-Canonical: `Styled/TooltipIconButton.vue`. An unconditional `<slot />` directly inside a library component has the same always-registered problem — only safe when the wrapped component has no prop fallback for that slot.
+Canonical: `Styled/Tooltip/IconButton.vue`. An unconditional `<slot />` directly inside a library component has the same always-registered problem — only safe when the wrapped component has no prop fallback for that slot.
 
 ## Slot Extraction (Complex Components)
 

@@ -1,6 +1,6 @@
 ---
 name: routing
-description: Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or Vuetify :to (raw <a> lint-banned), navigateTo for imperative navigation (always awaited or returned — never a floating statement), useRouter for reactive route reads, route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
+description: Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or Vuetify :to (raw <a> lint-banned), navigateTo for imperative navigation (always awaited or returned — never a floating statement), useRouter for reactive route reads, where navigation state lives (url for what the page shows, history-entry state for how the visitor got here, localStorage for preferences — written once in a router.afterEach hook, never per link), route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
 ---
 
 # Routing
@@ -35,6 +35,18 @@ The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRul
 - **`useRoute()` for plain reads** — params/query outside a reactive context (a page's `<script setup>`, a regular function, an async handler).
 
 > This inverts the usual Vue Router split deliberately: `useRoute()` returns a stale, non-reactive snapshot when called outside a component setup (composables, stores, middleware, async handlers), whereas `useRouter().currentRoute` stays reactive everywhere. Route reads often live in composables, so standardizing on `useRouter()` for reactive reads avoids that footgun.
+
+## Where Navigation State Lives — URL vs History Entry vs Storage
+
+Decide by what the value **is**, not by what is reachable:
+
+- **Part of what the page shows** (filter, page number, tab) → the **URL**, so a share, a bookmark and a refresh all show the same thing (`useEnumRouteQuery` below).
+- **How the visitor got here** (a breadcrumb trail, whether this was a drill-down) → the **history entry**, via `history.replaceState({ ...window.history.state, … })` read back from `window.history.state`. Its lifetime already matches: per entry, kept across a reload, restored on back/forward, gone with the entry.
+- **What the visitor prefers** (a collapsed rail, a theme) → **`localStorage`** through the `LocalStorageKey` registry — it outlives the tab and belongs to the person.
+
+The middle case is the one that gets mis-filed. Putting "how I got here" in the URL mints a second address for one page (worse for sharing, bookmarks and analytics, and editable by anyone who types); putting it in storage makes it outlive the journey, so a tab restored later claims a path nobody walked.
+
+**Write that state in one place — a `router.afterEach` hook in a client plugin — never at each link.** A value appended by hand at N call sites is one the N+1th link silently drops, and the page that lost it is indistinguishable from a page that never had it. Keep the rules as a pure function so they are testable without a browser, and validate anything read back off an entry (it may predate the release). Worked example: `/docs/platform/breadcrumb-trail`.
 
 ## Route-Synced Tabs — `useEnumRouteQuery`
 

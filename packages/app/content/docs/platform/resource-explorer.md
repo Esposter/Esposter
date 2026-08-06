@@ -156,13 +156,13 @@ stateDiagram-v2
 | File                                                  | Role                                                                                                                   |
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `app/pages/resources/[id]/[[blade]].vue`              | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>`                           |
-| `app/components/Resource/Explorer.vue`                | the two-flex-box body (list box \| blade box); on mobile drops the list box so the blade takes the whole surface       |
-| `app/components/Resource/ExplorerList.vue`            | desktop-only collapsible list box (owns `isListCollapsed`); on mobile the full-width `/resources/all` page is the list |
-| `app/components/Resource/ListView.vue`                | `StyledDataTableServer` over `resource.readResources` (shared by `/all` — the workbench)                               |
-| `app/components/Resource/BladeToolbar.vue`            | blade box header composing `BladeTitle` + `BladeActions`                                                               |
-| `app/components/Resource/BladeActions.vue`            | command bar: refresh, rename, delete, duplicate, `PublishToggle`, `PortableActions`, `…` overflow, close ✕             |
-| `app/components/Resource/BladeNav.vue`                | blade menu from `ResourceBladeTypes` + type blades; desktop rail, mobile dropdown (`v-menu`, caret only while open)    |
-| `app/components/Resource/BladeOutlet.vue`             | Overview vs inline editor vs type blade on the active slug                                                             |
+| `app/components/Resource/Explorer/Index.vue`          | the two-flex-box body (list box \| blade box); on mobile drops the list box so the blade takes the whole surface       |
+| `app/components/Resource/Explorer/List.vue`           | desktop-only collapsible list box (owns `isListCollapsed`); on mobile the full-width `/resources/all` page is the list |
+| `app/components/Resource/List/View.vue`               | `StyledDataTableServer` over `resource.readResources` (shared by `/all` — the workbench)                               |
+| `app/components/Resource/Blade/Toolbar.vue`           | blade box header composing `BladeTitle` + `BladeActions`                                                               |
+| `app/components/Resource/Blade/Actions.vue`           | command bar: refresh, rename, delete, duplicate, `PublishToggle`, `PortableActions`, `…` overflow, close ✕             |
+| `app/components/Resource/Blade/Nav.vue`               | blade menu from `ResourceBladeTypes` + type blades; desktop rail, mobile dropdown (`v-menu`, caret only while open)    |
+| `app/components/Resource/Blade/Outlet.vue`            | Overview vs inline editor vs type blade on the active slug                                                             |
 | `app/components/Resource/Overview.vue`                | generic Overview blade (Essentials + type summary slot)                                                                |
 | `app/services/resource/ResourceBladeDefinitionMap.ts` | type → its own blade definitions                                                                                       |
 | `app/services/resource/ResourceEditorComponentMap.ts` | type → inline Editor-blade component                                                                                   |

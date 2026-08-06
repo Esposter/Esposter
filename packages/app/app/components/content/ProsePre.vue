@@ -3,15 +3,21 @@ interface ProsePreProps {
   code?: string;
   language?: string;
 }
-
+// Shiki tags the <pre> with the class its injected stylesheet keys token colours off (html .shiki span),
+// So the fallthrough attrs have to reach the <pre> rather than this wrapper — and the mermaid branch
+// Must not inherit them at all, or that stylesheet also repaints the diagram's foreignObject labels
+defineOptions({ inheritAttrs: false });
 const { code = "", language } = defineProps<ProsePreProps>();
 const { copied, copy } = useClipboard({ source: code });
+const copyButtonProps = { color: "grey-lighten-1", density: "comfortable", size: "small", variant: "text" } as const;
 </script>
 
 <template>
   <DocsMermaid v-if="language === 'mermaid'" :code />
-  <div v-else class="prose-pre group" my-4 rd-lg relative overflow-hidden>
-    <v-btn
+  <!-- Colours are github-dark's own pair (configuration/content.ts) — shiki emits no wrapper background,
+    and code stays dark in both app themes, so a --v-theme token cannot supply them -->
+  <div v-else class="group" text-sm lh-1.6 my-4 rd-lg relative overflow-hidden bg="[#24292e]" c="[#e1e4e8]">
+    <StyledTooltipIconButton
       op-0
       transition-opacity
       duration-[--transition-duration]
@@ -20,22 +26,11 @@ const { copied, copy } = useClipboard({ source: code });
       absolute
       focus:op-100
       group-hover:op-100
-      color="grey-lighten-1"
-      density="comfortable"
+      :button-props="copyButtonProps"
       :icon="copied ? 'mdi-check' : 'mdi-content-copy'"
-      size="small"
-      variant="text"
+      :text="copied ? 'Copied' : 'Copy'"
       @click="copy()"
     />
-    <pre m-0 p-4 overflow-x-auto><slot /></pre>
+    <pre :="$attrs" m-0 p-4 overflow-x-auto><slot /></pre>
   </div>
 </template>
-
-<style scoped>
-.prose-pre {
-  background-color: #24292e;
-  color: #e1e4e8;
-  font-size: 0.875rem;
-  line-height: 1.6;
-}
-</style>

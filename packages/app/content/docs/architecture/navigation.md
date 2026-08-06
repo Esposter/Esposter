@@ -29,6 +29,20 @@ flowchart TD
 
 A link-styled affordance that has no destination (it only emits/handles an event) is not a link — render a `<span text-info underline cursor-pointer @click="…">`, not an anchor.
 
+## Where navigation state lives
+
+Three places can hold state a navigation produces, and picking the wrong one is the recurring mistake. Decide by asking what the value _is_, never by what is easiest to reach:
+
+| The value is…                                              | Lives in              | Why                                                                                                                     |
+| ---------------------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Part of what the page is showing (a filter, a page, a tab) | the **url**           | It identifies the view, so it must survive a share, a bookmark and a refresh — two people opening it must see one thing |
+| How the visitor got here (a trail, a drill-down)           | the **history entry** | It is true of this entry, not of the address; the browser keeps it across a reload and restores it on back/forward      |
+| What the visitor prefers (a collapsed rail, a theme)       | **localStorage**      | It outlives the tab and belongs to the person, not to any one page                                                      |
+
+The middle row is the one worth stating, because both neighbours look tempting. Putting "how I got here" in the url mints a second address for one page — worse for sharing, bookmarks and analytics, and editable by anyone who types. Putting it in storage makes it outlive the journey that produced it, so a tab restored a week later claims a path nobody walked. History-entry state (`history.replaceState`, read back from `window.history.state`) is the only one whose lifetime matches: per entry, restored on back and forward, gone when the entry is.
+
+Write it in **one** place — a `router.afterEach` hook — never at each link. A value appended by hand at N call sites is one the N+1th link silently drops, and the page that lost it is indistinguishable from a page that never had it. [Breadcrumb trail](/docs/platform/breadcrumb-trail) is the worked example.
+
 ## Instant docs navigation
 
 The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between pages via the sidebar or the prev/next surround. It does **not** force a full component remount per route: `path` is a `computed` off the route and is passed as the reactive `useAsyncData` key (`watch: [path]`), so page content refetches in place instead of tearing down and rebuilding the page (and re-blocking on `await` during the transition). `useSeoMeta` takes getters so the title/description track the active page. The surround and sidebar are Vuetify components that navigate via their `:to` props — no bespoke navigation.
@@ -41,7 +55,7 @@ The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between
 | `packages/configuration/eslint/overrides/vueRules.js` | bans the raw `a` element and `router.push` in templates              |
 | `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`) |
 | `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                 |
-| `app/components/Docs/TableOfContentsItem.vue`         | in-page hash anchor via `NuxtInvisibleLink` + custom smooth scroll   |
+| `app/components/Docs/TableOfContents/Item.vue`        | in-page hash anchor via `NuxtInvisibleLink` + custom smooth scroll   |
 
 ## Notes
 

@@ -1,0 +1,21 @@
+# Where cross-package code and constants live
+
+Read when putting a module or constant in a shared package (`@esposter/shared`, `@esposter/shared-node`, `@esposter/configuration`, `@esposter/db`, `@esposter/db-schema`, the mock packages), when moving an existing module for symmetry, or when a second package needs behaviour the app already has.
+
+## A shared package is for code with ≥2 consuming packages
+
+This is the load-bearing placement rule and it covers **every** cross-package home. Code only one package imports belongs in that package, not hoisted "in case". Before adding a module to a shared package, name the second consumer — if you can't, put it beside its single consumer and move it later. Two exceptions: published mock/dev-tool packages keep generic client surface even when currently unused (see the mocks rule in the `testing` skill), and a package's own scripts/tests are not consumers.
+
+- **This binds refactors, not just new code.** Never relocate an existing single-consumer module into a shared package for symmetry — "its three siblings live in `@esposter/db-schema`" is not a second consumer, and neither is "the map/registry I'm adding there would need it". Colocation with the sole consumer _is_ the tidy state: it keeps the shared package minimal for every other consumer that pays to build and bundle it. Reshape the abstraction (make the shared piece generic over the part that varies) instead of dragging the one-off across.
+- **When a second consumer does appear, move the one implementation — never write the second.** Grep for the behaviour before adding it anywhere: the usual trigger is a background handler needing a rule the app server already enforces. Promote the existing function into the lowest package both consumers already depend on, leave a thin wrapper wherever the original site needed process-local extras (an in-process event emitter, a client resolver), and delete the old body. Two near-identical implementations that drift are the failure this prevents; a shared core plus thin wrappers is the fix, and a hoist with no second consumer is the over-correction.
+- **Env-reading code belongs in the package that owns the env.** A one-consumer operations script goes in that consumer (`packages/app/scripts/*`, run via a `tsx --tsconfig tsconfig.root.json` package script) where `process.env.X` is already typed by the generated `shared/types/env.d.ts` — call `config()` from `dotenv` first (the deployment environment supplies the values in CI), then read it directly, no presence checks, no credential parameters. Hoisting the same script into a shared package buys nothing and costs a hand-rolled env-validation layer plus dependencies that package otherwise wouldn't carry.
+
+## Constant home = the lowest shared dependency, once the threshold is met
+
+A constant only earns a shared-package home when ≥2 packages consume it; a single-consumer value stays beside its consumer. When it is genuinely shared, pick the package both consumers already depend on: `@esposter/shared` (client-safe, universal) or `@esposter/configuration` (node/build-tooling base). Example: `PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH` lives only in `@esposter/db-schema` and downstream packages import it.
+
+**The one sanctioned duplication is the client/node cross-realm case**: a value is duplicated across realms only when one realm is client-bundle-safe and the other is node-only and they can't share a package (e.g. `KIBIBYTE` exists in both `packages/app/shared/services/app/constants.ts` for client code and `@esposter/configuration` for build scripts). This is the exception the no-duplicate-constants rule points to, and it never justifies hoisting a client-unsafe value into a shared package.
+
+## Helper home follows the same rule — the domain package
+
+Azure blob/table/queue primitives shared by server code live in `@esposter/db` (`generateReadSasUrl`, `generateWriteSasUrl`, `getEntityWithEtag`, `copyBlob`); `packages/app/server` keeps only app-specific compositions of them (e.g. `cloneContentAssets`, which walks content for asset urls before delegating each copy). Never re-implement a signer/entity helper locally when the domain package can host it — after adding one, run `pnpm export:gen` + `pnpm build` in the package before consumers can import it.

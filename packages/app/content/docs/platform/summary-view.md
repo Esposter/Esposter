@@ -40,7 +40,7 @@ flowchart LR
 
 | File                                                    | Role                                                |
 | ------------------------------------------------------- | --------------------------------------------------- |
-| `app/components/Resource/ListView.vue`                  | the toggle command and the lens switch              |
+| `app/components/Resource/List/View.vue`                 | the toggle command and the lens switch              |
 | `app/components/Resource/List/SummaryCards.vue`         | the card grid, its empty/loading/error states       |
 | `app/composables/resource/useReadResourceTypeCounts.ts` | the grouped-count read over the shared filter input |
 | `server/trpc/routers/resource.ts`                       | `countsByType` behind `createResourcesWhere`        |

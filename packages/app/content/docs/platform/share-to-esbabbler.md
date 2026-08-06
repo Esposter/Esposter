@@ -28,11 +28,11 @@ flowchart LR
 
 ## Key files
 
-| File                                       | Role                                        |
-| ------------------------------------------ | ------------------------------------------- |
-| `app/components/Resource/ShareDialog.vue`  | room picker, note, send, empty state        |
-| `app/components/Resource/BladeActions.vue` | the Share command (publishable + published) |
-| `app/services/resource/getShareMessage.ts` | note + link composition                     |
+| File                                        | Role                                        |
+| ------------------------------------------- | ------------------------------------------- |
+| `app/components/Resource/ShareDialog.vue`   | room picker, note, send, empty state        |
+| `app/components/Resource/Blade/Actions.vue` | the Share command (publishable + published) |
+| `app/services/resource/getShareMessage.ts`  | note + link composition                     |
 
 ## Notes
 

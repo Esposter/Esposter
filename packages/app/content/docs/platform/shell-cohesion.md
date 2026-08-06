@@ -15,8 +15,8 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 - `Styled/EmptyState.vue` — icon + title + description + optional action slot, for "no resources yet" / "no rows" / "not bound to data" states.
 - `Styled/Skeleton.vue` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the single global `AppLoadingIndicator`).
 - `Styled/KeyboardShortcutsDialog.vue` — the shared shortcuts help dialog (category groups + `kbd` chips over a `KeyboardShortcutCategory[]` prop); bound to the messaging shortcuts dialog and the resource explorer's `Resource/ShortcutsOverlay`.
-- `App/Breadcrumbs.vue` — renders `Home` plus the pages the visitor actually came through, never the page they are on ([breadcrumb trail](/docs/platform/breadcrumb-trail)); rendered by `PageHeader`, not the global app bar, so it carries page context and never duplicates.
-- `App/MenuLinkListItem.vue` — a single launcher leaf (extracted from `MenuLinkList` so leaves render identically at top level and inside a group).
+- `App/Breadcrumbs.vue` — renders the pages the visitor actually came through, never the page they are on, and nothing at all on a direct arrival ([breadcrumb trail](/docs/platform/breadcrumb-trail)); rendered by `PageHeader`, not the global app bar, so it carries page context and never duplicates.
+- `App/Menu/LinkListItem.vue` — a single launcher leaf (extracted from `MenuLinkList` so leaves render identically at top level and inside a group).
 
 ## Navigation
 
@@ -32,7 +32,7 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 | `app/components/Styled/EmptyState.vue`     | shared empty state                                                   |
 | `app/components/Styled/Skeleton.vue`       | shared skeleton loader                                               |
 | `app/components/App/Breadcrumbs.vue`       | navigation-derived breadcrumb trail rendered by `PageHeader`         |
-| `app/components/App/MenuLinkListItem.vue`  | launcher leaf, reused by group + top level                           |
+| `app/components/App/Menu/LinkListItem.vue` | launcher leaf, reused by group + top level                           |
 | `app/services/app/ProductListLinkItems.ts` | launcher data (Resources entry + Games group)                        |
 | `app/models/shared/ListLinkItem.ts`        | `children` field for submenus                                        |
 | `app/components/App/Bar.vue`               | top app bar; `#append` button order (launcher · theme · bell · more) |

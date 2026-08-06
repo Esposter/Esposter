@@ -87,6 +87,10 @@ Exemptions: `index.md` pages, `deferred/`/`rejected/` pages, `roadmap.md`, and s
 
 Every diagram is parse-validated by `packages/app/content/docs.test.ts` (`mermaid.parse` over all ` ```mermaid ` blocks), so a syntax error fails `pnpm test`. Gotcha: `;` is a mermaid statement separator even inside message/note text — never use a semicolon in labels or notes (use `—` or a comma).
 
+## Code fences
+
+Fence languages are bundled grammars, listed in `configuration/content.ts` (`build.markdown.highlight.langs` — that list **replaces** the module defaults). A language missing from it renders as plain text with only a dev-server warning, so add the language there in the same change that first uses it. Use the short alias — `ts`, never `typescript` — so one fence language means one spelling.
+
 ## Feature page template
 
 ```markdown

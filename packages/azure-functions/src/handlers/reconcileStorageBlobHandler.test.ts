@@ -19,7 +19,7 @@ vi.mock(import("@/services/db"), () => ({
 describe(reconcileStorageBlobHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const userId = crypto.randomUUID();
-  const containerName = AzureContainer.MessageAssets;
+  const containerName = AzureContainer.ResourceAssets;
   const blobName = `roomId/id|file name.png`;
   const contentLength = 4;
   const createEventGridEvent = (subject: string): EventGridEvent => ({
@@ -108,7 +108,7 @@ describe(reconcileStorageBlobHandler, () => {
 
     await createStorageBlob();
     await reconcileStorageBlobHandler(
-      createEventGridEvent(`${getBlobSubjectPrefix(AzureContainer.PublicUserAssets)}${blobName}`),
+      createEventGridEvent(`${getBlobSubjectPrefix(AzureContainer.MessageAssets)}${blobName}`),
       context,
     );
 

@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import StyledTooltipIconButton from "@/components/Styled/TooltipIconButton.vue";
+import StyledTooltipIconButton from "@/components/Styled/Tooltip/IconButton.vue";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

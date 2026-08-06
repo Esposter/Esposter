@@ -13,9 +13,9 @@ const eventSubscriptionName = "dev-evgs-esposter-ae-007";
 // Storage reports how many bytes actually landed, which is the only authority on it — the client PUTs straight
 // To Azure, so nothing of ours is in the data path. This is what settles a storage quota hold into a real
 // Charge against a user's allowance (/docs/platform/storage-quotas).
-// Filtered to the two containers whose uploads go through a quota reserve: every other blob in the account —
-// Published clones, avatars, dead-letter payloads — is accounted to nobody, so delivering it would only pay a
-// Function invocation to look up a ledger row that cannot exist.
+// Filtered to the one container whose uploads go through a quota reserve: every other blob in the account —
+// Room attachments, published clones, avatars, dead-letter payloads — is accounted to nobody, so delivering it
+// Would only pay a function invocation to look up a ledger row that cannot exist.
 export const devEvgsEsposterAe007: azure_native.eventgrid.SystemTopicEventSubscription =
   new azure_native.eventgrid.SystemTopicEventSubscription(
     eventSubscriptionName,
@@ -34,21 +34,8 @@ export const devEvgsEsposterAe007: azure_native.eventgrid.SystemTopicEventSubscr
       eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
       eventSubscriptionName,
       filter: {
-        // Two containers, so the prefix cannot be expressed as the single `subjectBeginsWith` — an advanced
-        // Filter is the only form that takes a set
-        advancedFilters: [
-          {
-            key: "subject",
-            operatorType: "StringBeginsWith",
-            values: [
-              getBlobSubjectPrefix(AzureContainer.MessageAssets),
-              getBlobSubjectPrefix(AzureContainer.ResourceAssets),
-            ],
-          },
-        ],
-        enableAdvancedFilteringOnArrays: true,
         includedEventTypes: ["Microsoft.Storage.BlobCreated"],
-        subjectBeginsWith: "",
+        subjectBeginsWith: getBlobSubjectPrefix(AzureContainer.ResourceAssets),
         subjectEndsWith: "",
       },
       resourceGroupName: devRgEsposterAe001.name,

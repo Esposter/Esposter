@@ -2,6 +2,7 @@
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
+import { useNavigationTrailStore } from "@/store/navigationTrail";
 
 interface ResourceExplorerProps {
   activeBlade: string;
@@ -39,7 +40,8 @@ const {
 // On mobile the list box is dropped entirely — the full-width All resources page is the mobile list, reached
 // Via the blade's Close button — so the blade box gets the whole surface instead of a cramped drawer.
 const { smAndDown } = useVDisplay();
-const { trail } = useNavigationTrail();
+const navigationTrailStore = useNavigationTrailStore();
+const { trail } = storeToRefs(navigationTrailStore);
 // The two-pane view is what drilling into a list looks like, so it exists only when the visitor actually
 // Drilled: a resource opened from a link, a favourite or search has no list behind it to peel back to, and
 // Rendering one would invent a context they never had. See /docs/platform/breadcrumb-trail
