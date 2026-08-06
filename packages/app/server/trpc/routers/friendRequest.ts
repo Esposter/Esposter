@@ -1,4 +1,4 @@
-import type { FriendRequestNotificationEventGridData, FriendRequestWithRelations, User } from "@esposter/db-schema";
+import type { FriendRequestNotificationEventGridData, FriendRequestWithRelations } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
@@ -35,6 +35,14 @@ export const friendRequestRouter = router({
         DatabaseEntityType.User,
         senderId,
       );
+      // Read rather than rebuilt from the session: the session carries better-auth's own view of the user,
+      // Which is a subset of the row — a payload assembled from it can only be completed by inventing values
+      // For the columns it does not carry. Resolved before the write for the same reason the sender is.
+      const receiverUser = await requireEntity(
+        ctx.db.query.users.findFirst({ where: { id: { eq: userId } } }),
+        DatabaseEntityType.User,
+        userId,
+      );
       requireMutation(
         (
           await ctx.db.transaction(async (tx) => {
@@ -51,12 +59,6 @@ export const friendRequestRouter = router({
         friendshipId,
         "NOT_FOUND",
       );
-      const receiverUser: User = {
-        ...ctx.getSessionPayload.user,
-        biography: ctx.getSessionPayload.user.biography,
-        deletedAt: null,
-        image: ctx.getSessionPayload.user.image ?? "",
-      };
       friendEventEmitter.emit("acceptFriendRequest", {
         receiverId: userId,
         receiverUser,
@@ -136,13 +138,15 @@ export const friendRequestRouter = router({
         DatabaseEntityType.User,
         receiverId,
       );
+      // Read rather than rebuilt from the session: the session carries better-auth's own view of the user,
+      // Which is a subset of the row — a payload assembled from it can only be completed by inventing values
+      // For the columns it does not carry
+      const senderUser = await requireEntity(
+        ctx.db.query.users.findFirst({ where: { id: { eq: userId } } }),
+        DatabaseEntityType.User,
+        userId,
+      );
       const friendshipId = getFriendshipId(userId, receiverId);
-      const senderUser: User = {
-        ...ctx.getSessionPayload.user,
-        biography: ctx.getSessionPayload.user.biography,
-        deletedAt: null,
-        image: ctx.getSessionPayload.user.image ?? "",
-      };
       const [newRequest] = await ctx.db.transaction(async (tx) => {
         const existingBlock = await tx.query.blocks.findFirst({
           where: {

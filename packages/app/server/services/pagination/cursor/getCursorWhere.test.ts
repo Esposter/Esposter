@@ -5,7 +5,7 @@ import type { BinaryOperator as DrizzleBinaryOperator } from "drizzle-orm";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
-import { BinaryOperator, users } from "@esposter/db-schema";
+import { BinaryOperator, StorageTier, users } from "@esposter/db-schema";
 import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 
@@ -20,6 +20,8 @@ describe(getCursorWhere, () => {
     id: crypto.randomUUID(),
     image: "",
     name: "",
+    storageBytesUsed: 0,
+    storageTier: StorageTier.Free,
     updatedAt: createdAt,
   };
   const BinaryOperatorSortItemMap = {

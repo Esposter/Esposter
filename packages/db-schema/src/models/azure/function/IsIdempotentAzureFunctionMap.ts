@@ -27,4 +27,7 @@ export const IsIdempotentAzureFunctionMap = {
   // Dead-lettered onto a topic, so the value is only here for exhaustiveness.
   [AzureFunction.ReplayDeadLetterEvent]: true,
   [AzureFunction.SendTodoReminder]: true,
+  // Every transition it writes is conditional on the state it expects — a reconcile on `reconciledAt IS NULL`, a
+  // Release on the ledger row still existing — so a rerun settles nothing a previous pass already settled.
+  [AzureFunction.SettleStorageBlobs]: true,
 } as const satisfies Record<AzureFunction, boolean>;

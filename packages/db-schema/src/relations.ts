@@ -20,6 +20,7 @@ import { roomsInMessageRelation } from "@/relations/roomsInMessageRelation";
 import { scheduledMessageJobsInMessageRelation } from "@/relations/scheduledMessageJobsInMessageRelation";
 import { searchHistoriesInMessageRelation } from "@/relations/searchHistoriesInMessageRelation";
 import { sessionsRelation } from "@/relations/sessionsRelation";
+import { storageBlobsRelation } from "@/relations/storageBlobsRelation";
 import { threadFollowsInMessageRelation } from "@/relations/threadFollowsInMessageRelation";
 import { userAchievementsRelation } from "@/relations/userAchievementsRelation";
 import { usersRelation } from "@/relations/usersRelation";
@@ -51,6 +52,7 @@ export const relations = {
   ...scheduledMessageJobsInMessageRelation,
   ...searchHistoriesInMessageRelation,
   ...sessionsRelation,
+  ...storageBlobsRelation,
   ...threadFollowsInMessageRelation,
   ...userAchievementsRelation,
   ...userStatusesInMessageRelation,

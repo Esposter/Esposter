@@ -1,8 +1,9 @@
 import type { EventGridHandler } from "@azure/functions";
 
+import { db } from "@/services/db";
 import { getContainerClient } from "@/services/getContainerClient";
 import { logAndRethrow } from "@/services/logAndRethrow";
-import { listBlobNames } from "@esposter/db";
+import { listBlobNames, releaseStorageBlobs } from "@esposter/db";
 import { AzureFunction, blobDeletionEventGridDataSchema, MAX_CONCURRENT_BLOB_DELETIONS } from "@esposter/db-schema";
 import { chunk, getResultAsync, noop } from "@esposter/shared";
 // A read SAS url outlives the delete request that should have invalidated it, so a blob whose delete was dropped stays
@@ -30,6 +31,10 @@ export const processBlobDeletionHandler: EventGridHandler = (event, context) => 
       await Promise.all(
         blobNamesChunk.map((blobName) => containerClient.getBlockBlobClient(blobName).deleteIfExists()),
       );
+    // After the blobs are gone, so a release can never hand bytes back for a blob still stored. The ledger row
+    // Is what carries the amount and the owner, and dropping it is what makes a redelivery a no-op — the same
+    // Reason the deletes above are `deleteIfExists`. See /docs/platform/storage-quotas
+    await releaseStorageBlobs(db, data.containerName, blobNames);
     context.log(`${AzureFunction.ProcessBlobDeletion} deleted ${blobNames.length} blobs from ${data.containerName}.`);
   }).match(noop, logAndRethrow(context, AzureFunction.ProcessBlobDeletion));
 };

@@ -1,13 +1,25 @@
 import type { EventGridEvent } from "@azure/functions";
-import type { BlobDeletionEventGridData } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, relations } from "@esposter/db-schema";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { processBlobDeletionHandler } from "@/handlers/processBlobDeletionHandler";
 import { getContainerClient } from "@/services/getContainerClient";
 import { InvocationContext } from "@azure/functions";
 import { dayjs } from "@esposter/db";
+import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
-import { afterEach, assert, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+
+let mockDb: PostgresJsDatabase<typeof relations>;
+
+// The handler releases each deleted blob's storage hold, so it reaches the database even when this suite
+// Only cares about the blobs — the module-scope client would otherwise dial a real Postgres at import
+vi.mock(import("@/services/db"), () => ({
+  get db() {
+    return mockDb;
+  },
+}));
 
 vi.mock(import("@/services/getContainerClient"), () => import("@/services/getContainerClient.test"));
 
@@ -45,6 +57,10 @@ describe(processBlobDeletionHandler, () => {
     const containerClient = await getContainerClient(AzureContainer.MessageAssets);
     await containerClient.getBlockBlobClient(name).upload(content, content.length);
   };
+
+  beforeAll(async () => {
+    mockDb = await createMockDb();
+  });
 
   afterEach(() => {
     MockContainerDatabase.clear();

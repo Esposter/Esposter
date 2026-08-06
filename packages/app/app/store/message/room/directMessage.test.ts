@@ -4,6 +4,7 @@ import type { User } from "@esposter/db-schema";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
+import { StorageTier } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -17,6 +18,8 @@ const createParticipant = (name: string): User => ({
   id: crypto.randomUUID(),
   image: "",
   name,
+  storageBytesUsed: 0,
+  storageTier: StorageTier.Free,
   updatedAt: new Date("1970-01-01"),
 });
 

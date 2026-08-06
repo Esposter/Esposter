@@ -5,6 +5,7 @@ import type { PublishableResourceProcedureOptions } from "@@/server/models/resou
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { PUBLISHED_DIRECTORY_SEGMENT, staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
@@ -28,6 +29,8 @@ import { readResourceViewCount } from "@@/server/services/resource/readResourceV
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
+import { getStorageBlobReservations } from "@@/server/services/storage/getStorageBlobReservations";
+import { reserveStorageBytes } from "@@/server/services/storage/reserveStorageBytes";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
@@ -69,7 +72,17 @@ const updateResourceInputSchema = z.object({
 const resourceIdInputSchema = selectResourceSchema.pick({ id: true });
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true }), "filename")
+  // `size` is what the storage quota reserves against, so it is bounded at the input boundary rather than
+  // Trusted: a negative or non-finite declaration would decrement the counter and bypass the quota entirely.
+  // It is the client's own claim — an Azure write SAS carries no length constraint — so the settle sweep is
+  // What replaces it with the stored object's real size. See /docs/platform/storage-quotas
+  files: createUniqueArraySchema(
+    z.object({
+      ...fileEntitySchema.pick({ filename: true, mimetype: true }).shape,
+      size: fileEntitySchema.shape.size.max(MAX_FILE_REQUEST_SIZE),
+    }),
+    "filename",
+  )
     .min(1)
     .max(MAX_READ_LIMIT),
   id: selectResourceSchema.shape.id,
@@ -245,9 +258,19 @@ export const createResourceProcedures = <TType extends ResourceType>(
     }),
     generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
       FileSasEntity[]
-    >(async ({ input: { files, id } }) => {
+    >(async ({ ctx, input: { files, id } }) => {
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      return generateUploadFileSasEntities(containerClient, files, getFilesDirectoryName(id));
+      const filesDirectoryName = getFilesDirectoryName(id);
+      const fileSasEntities = await generateUploadFileSasEntities(containerClient, files, filesDirectoryName);
+      // Reserved after the signing and before the response: signing is local and touches nothing in Azure, so a
+      // Rejection here is a write target the client never receives. See /docs/platform/storage-quotas
+      await reserveStorageBytes(
+        ctx.db,
+        ctx.getSessionPayload.user.id,
+        AzureContainer.ResourceAssets,
+        getStorageBlobReservations(files, fileSasEntities, filesDirectoryName),
+      );
+      return fileSasEntities;
     }),
   };
   const publishProcedures = {

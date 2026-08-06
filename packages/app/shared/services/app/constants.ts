@@ -10,6 +10,7 @@ export const RIGHT_DRAWER_WIDTH = 256;
 
 export const KIBIBYTE = 2 ** 10;
 export const MEGABYTE = KIBIBYTE ** 2;
+export const GIBIBYTE = MEGABYTE * KIBIBYTE;
 export const MAX_REQUEST_SIZE = 2 * MEGABYTE;
 export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE;
 

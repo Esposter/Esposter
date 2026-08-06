@@ -50,6 +50,7 @@ describe("createResourceProcedures", () => {
   const updatedName = "updatedName";
   const filename = "filename";
   const mimetype = "mimetype";
+  const size = 1;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -451,7 +452,7 @@ describe("createResourceProcedures", () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const sasEntities = await webpageCaller.generateUploadFileSasEntities({
-      files: [{ filename, mimetype }],
+      files: [{ filename, mimetype, size }],
       id: newResource.id,
     });
 
@@ -465,7 +466,7 @@ describe("createResourceProcedures", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      webpageCaller.generateUploadFileSasEntities({ files: [{ filename, mimetype }], id: newResource.id }),
+      webpageCaller.generateUploadFileSasEntities({ files: [{ filename, mimetype, size }], id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 

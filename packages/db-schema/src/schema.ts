@@ -21,9 +21,10 @@ import { mimeCategoryEnum, roomsInMessage, roomTypeEnum } from "@/schema/roomsIn
 import { scheduledMessageJobsInMessage } from "@/schema/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "@/schema/searchHistoriesInMessage";
 import { sessions } from "@/schema/sessions";
+import { azureContainerEnum, storageBlobs } from "@/schema/storageBlobs";
 import { threadFollowsInMessage } from "@/schema/threadFollowsInMessage";
 import { userAchievements } from "@/schema/userAchievements";
-import { users } from "@/schema/users";
+import { storageTierEnum, users } from "@/schema/users";
 import { noiseSuppressionModeEnum, userSettingsInMessage, voiceInputModeEnum } from "@/schema/userSettingsInMessage";
 import { userStatusEnum, userStatusesInMessage } from "@/schema/userStatusesInMessage";
 import { usersToRoomRolesInMessage } from "@/schema/usersToRoomRolesInMessage";
@@ -36,6 +37,7 @@ export const schema = {
   achievementNameEnum,
   achievements,
   appUsersInMessage,
+  azureContainerEnum,
   bansInMessage,
   blocks,
   callSessionsInMessage,
@@ -61,6 +63,8 @@ export const schema = {
   scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessions,
+  storageBlobs,
+  storageTierEnum,
   threadFollowsInMessage,
   userAchievements,
   users,

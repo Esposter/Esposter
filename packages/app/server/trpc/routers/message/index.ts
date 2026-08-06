@@ -39,6 +39,8 @@ import { createThreadUnfollow } from "@@/server/services/message/thread/createTh
 import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
+import { getStorageBlobReservations } from "@@/server/services/storage/getStorageBlobReservations";
+import { reserveStorageBytes } from "@@/server/services/storage/reserveStorageBytes";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
@@ -411,6 +413,14 @@ export const baseMessageRouter = router({
     const fileSasEntities = await generateUploadFileSasEntities(containerClient, files, roomId, {
       withThumbnail: true,
     });
+    // Reserved after the signing and before the response: signing is local and touches nothing in Azure, so a
+    // Rejection here is a write target the client never receives. See /docs/platform/storage-quotas
+    await reserveStorageBytes(
+      ctx.db,
+      ctx.getSessionPayload.user.id,
+      AzureContainer.MessageAssets,
+      getStorageBlobReservations(files, fileSasEntities, roomId),
+    );
     // The grant travels with the write target: whoever can upload the blob is the only one who can reclaim it
     return fileSasEntities.map((fileSasEntity) =>
       Object.assign(fileSasEntity, {
