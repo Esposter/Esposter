@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
 import { getFinding } from "./getFinding.test";
+import { getResolveLog } from "./getResolveLog.test";
 import { runReview } from "./runReview.test";
 import { stubFor } from "./stubFor.test";
 
@@ -132,7 +133,7 @@ describe("code-review dedupe and resolve", () => {
     );
 
     expect(run.calls.filter((call) => call.label.startsWith("resolve:"))).toHaveLength(1);
-    expect(run.logs).toContainEqual("resolve: 1 plausible findings to settle");
+    expect(run.logs).toContainEqual(getResolveLog(1));
   });
 
   test("routes an under-confident CONFIRMED to a resolver instead of reporting it", async () => {
@@ -143,7 +144,7 @@ describe("code-review dedupe and resolve", () => {
       stubFor({ candidates: [CANDIDATE], resolution: RESOLVED, verdictFor: UNDER_CONFIDENT }),
     );
 
-    expect(run.logs).toContainEqual("resolve: 1 plausible findings to settle");
+    expect(run.logs).toContainEqual(getResolveLog(1));
     expect(getFinding(run)).toMatchObject({ confidence: 95, verdict: "CONFIRMED" });
   });
 
@@ -159,7 +160,7 @@ describe("code-review dedupe and resolve", () => {
       }),
     );
 
-    expect(run.logs).toContainEqual("resolve: 1 plausible findings to settle");
+    expect(run.logs).toContainEqual(getResolveLog(1));
     expect(run.result.findings).toHaveLength(0);
   });
 
