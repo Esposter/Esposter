@@ -65,7 +65,7 @@ The same applies to numbers: keep only the magnitudes the rule operates on (a li
 
 ## SKILL.md is the always-on layer; `references/` holds the rest
 
-A selected skill loads **whole**, so every line in `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. Past roughly **150 lines** a skill stops being a rule list and becomes a manual nobody reads to the end, which is the same failure as not writing it.
+A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. The budget is **~15 KB, and ~150 lines**: bytes are what the context actually costs, lines are the readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second. Past that a skill stops being a rule list and becomes a manual nobody reads to the end, which is the same failure as not writing it.
 
 So a skill is two tiers:
 
@@ -77,6 +77,8 @@ Move a section out when it is a **procedure** (ordered steps run occasionally), 
 **The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — `references/mock-cleanup.md` — _when a test creates spies, fake timers or global stubs_. An index line that reads "see X for more detail" guarantees the page is never opened.
 
 Never split to hit a number. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page.
+
+**A split breaks inbound pointers, so fix them in the same change.** Other skills cite sections by heading (`see the `pinia` skill ("Cursor Pagination in Stores")`), and a heading that moved into `references/` leaves that citation pointing at nothing — silently, because nothing resolves skill links. After moving a section, grep the tree for its heading text and repoint each citation at the page (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to the heading itself.
 
 ## Tight, not fluffy
 

@@ -63,8 +63,8 @@ await readFoos();
 - **Never** call `readItems`/`readMoreItems` from a component directly — always via a `useRead*` composable.
 - Optimistic mutations update `items.value` directly (spread for create, filter for delete) — no re-fetch.
 - `readMoreItems` appends; `readItems` resets the full `CursorPaginationData` ref (handles navigating back to first page).
-- Which pagination helper a store uses (single list vs per-key lists) is the `pinia` skill's ("Cursor Pagination in Stores").
-- The endpoint-side input schemas are the `trpc` skill's ("Pagination Params Schemas").
+- Which pagination helper a store uses (single list vs per-key lists) is the `pinia` skill's (`references/keyed-state-and-pagination.md`).
+- The endpoint-side input schemas are the `trpc` skill's (`references/read-endpoints.md`).
 
 ### A keyed read is bound to its key when it is issued, not when it lands
 

@@ -1,9 +1,14 @@
 ---
 name: oxlint
-description: Esposter oxlint + ESLint linting conventions — the explicit correctness category rule in .oxlintrc.json (eslint-plugin-oxlint replaces default categories), the vitest plugin's configured/paired/off rules, method-signature-style exceptions (built-in augmentations, third-party .d.ts), prefer-named-capture-group naming patterns, and when to use disable directives. Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, or adding regexes/interface declarations.
+description: Esposter oxlint + ESLint linting conventions — which lint script to run locally vs in CI (oxlint is repo-wide, per-package scripts are ESLint only), never hand-fixing lint errors, the require-await autofix that breaks a Promise-returning function, picking oxlint-disable vs eslint-disable and spelling the rule the reporting linter's way, method-signature-style and its overload exceptions, the expect.any and JSON.parse no-restricted-syntax bans and when a JSON.parse disable is earned, prefer-named-capture-group, and why nothing type-aware can be linted, plus deep dives on editing .oxlintrc.json (categories, prefixed rule names, vitest entries, ignorePatterns, stale-directive audits) and on authoring a custom JS plugin. Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, or adding regexes, interface declarations or JSON parsing.
 ---
 
 # Oxlint + ESLint Conventions
+
+## Deep Dives
+
+- `references/lint-configuration.md` — when editing `.oxlintrc.json` (a category, a rule entry, a vitest option, `ignorePatterns`, an `overrides` scope), deleting a manual ESLint disable, or hunting stale disable directives.
+- `references/custom-js-plugins.md` — when a repo-specific convention needs its own lint rule under `scripts/oxlint/`.
 
 ## Running lint
 
@@ -14,42 +19,11 @@ Oxlint runs as **repo-wide passes**, never per-package — there are no per-pack
 
 **Local verification runs the fix variants**: `pnpm lint:fix:packages` (root) for `packages/*` (non-app) changes; `pnpm lint:fix` from `packages/app/` for app changes. Neither local path oxlints the app — `lint:fix:packages` ignores `packages/app/**` and the app-local script is ESLint-only; app oxlint coverage comes solely from the root `pnpm lint` in CI. Reserve the check-only `pnpm lint` for CI. Never hand-fix lint errors — let the fix script do it.
 
-## `.oxlintrc.json` categories — always list `correctness` explicitly
-
-Oxlint keeps the `correctness` category enabled by default even when the config specifies other categories — but `eslint-plugin-oxlint` **replaces** its default categories with whatever the config lists. If `correctness` is missing from the explicit `categories` map, the plugin assumes the category is off and leaves every correctness rule's ESLint twin enabled — ESLint then re-runs the expensive type-aware rules (`no-floating-promises`, `await-thenable`, …) that oxlint/tsgolint already checks. Symptom: a rule shows up in ESLint `TIMING` output even though oxlint covers it. See `/docs/proposals/refactors/eslint-to-oxlint-migration` for the ongoing migration process.
-
-**Manual ESLint disables for oxlint-covered rules are dead weight** — `eslint-plugin-oxlint` is appended last in every flat config, so its `"off"` entries win; hand-written deletes/offs stay only for rules it leaves enabled. Notable exception: its `vue-svelte-astro-exceptions` config deliberately keeps `no-unused-vars`, `@typescript-eslint/no-unused-vars`, and `@typescript-eslint/consistent-type-imports` **enabled on `.vue` files**, so vue-side offs for those are load-bearing. Verify with `eslint --print-config <file>` on both a `.ts` and a `.vue` file before deleting a manual disable.
-
-## Configure a plugin rule under its prefixed name only
-
-Oxlint resolves a bare rule name to the plugin rule of that name, so a bare entry and a prefixed entry are **the same rule** — and the bare one wins. `"no-unassigned-import": "off"` therefore silently voided the `"import/no-unassigned-import": ["error", { allow: … }]` entry above it: the rule never ran and its options were never read. The same aliasing applies to `no-async-await` (oxc), `no-namespace` (import), `no-await-expression-member`/`prefer-add-event-listener`/`prefer-global-this` (unicorn).
-
-A dead entry looks exactly like a passing one, so audit it empirically: copy `.oxlintrc.json`, delete the suspect `"off"` entries, run `oxlint -c <probe> --format=json`, and count diagnostics per `code`. A rule reporting hits under the probe while the real config is green was never enforcing anything. Rules with **zero** hits are free to enable — delete the `"off"` line — but first plant a violation and confirm the rule fires, since a stale or unimplemented rule name also scores zero.
-
-Path-glob options (`allow`, `ignorePatterns`) match the **whole import specifier**, and `*` does not cross `/`: `*.css` never matches `grapesjs/dist/css/grapes.min.css`. Always write `**/*.css`.
-
-## `vitest/` rules run under oxlint
-
-The vitest rules come from oxlint's `vitest` plugin (`@vitest/eslint-plugin` is removed). All categories are on, so every plugin rule is an error unless configured in `.oxlintrc.json`. Non-obvious entries there:
-
-- **Configured, not enabled** — `consistent-test-it` (`fn: "test"`; the default demands `it` inside `describe`) and `valid-title` (`ignoreTypeOfDescribeName`/`ignoreTypeOfTestName` allow the repo's `describe(functionRef)` convention). The rules are already on via categories; the entries exist only to pass options.
-- **Pair rules** — oxlint ships both sides of style pairs; exactly one must be off or they fight: `prefer-called-once` is off because `prefer-called-times` matches the repo's `toHaveBeenCalledTimes(1)`; `no-importing-vitest-globals` is off because the repo imports vitest APIs explicitly (its counterpart `prefer-importing-vitest-globals` stays on).
-- **`prefer-describe-function-title` is off** — its fixer only checks that an identifier matching the title is in scope, not that it's a function; for arrays, Zod schemas, routers, or plugin objects the fix produces a `[object Object]` suite title.
-- **`warn-todo`/`require-test-timeout`/`require-top-level-describe` are off** — `describe.todo` placeholders and hook-registering `setup*`/test-setup files are conventions here, and per-test timeouts are not used.
-
-## Workflow scripts (`.claude/workflows/*.js`) — oxlint only
-
-They are async function bodies the harness injects globals into, so they carry a top-level `return`. That is a **parse error** for ESLint's parser (`'return' outside of function`), not a finding it can report — so the root `eslint.config.js` ignores them and oxlint is their only linter. Oxlint parses them fine; the one rule turned off for them, via an `overrides` entry in `.oxlintrc.json`, is `unicorn/prefer-module` (it reads every top-level `return` as a violation). Everything else applies, including the repo's comment and template-literal style. There is no module system in the sandbox, so a fix that suggests an import is always wrong.
-
-## `ignorePatterns` — `.claude/worktrees` is load-bearing
-
-Agent worktrees are full parallel checkouts of this monorepo nested at `.claude/worktrees/<name>/`, so without that entry both linters walk a second copy of the whole repo per live worktree and report every diagnostic at another branch's path. It has to be stated here rather than left to git: the only thing hiding those paths from git is the agent harness's machine-local `.git/info/exclude`, which no clone or CI runner has. This one entry covers ESLint too — `eslint-plugin-oxlint`'s `buildFromOxlintConfigFile` turns `ignorePatterns` into flat-config `ignores`. The path itself is owned by `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` (which carries the full rationale) and pinned to this file by `scripts/agentWorktrees.test.ts`.
-
 ## The `require-await` autofix can break a Promise-returning function
 
-`require-await` strips `async` from a function whose body never awaits — and the lint hook applies it to any file you edit, so it lands on code you did not think you were touching. `async` is not only about awaiting: it also wraps a plain return value in a promise. A function annotated `: Promise<T>` that returns a bare `T` on one early-exit path (a `Dropped`/no-op outcome returned before any async work) stops compiling the moment the keyword goes, and the error surfaces on the _return_ line, far from the edit that caused it.
+`require-await` strips `async` from a function whose body never awaits — and the lint hook applies it to any file you edit, so it lands on code you did not think you were touching. `async` is not only about awaiting: it also wraps a plain return value in a promise. A function annotated `: Promise<T>` that returns a bare `T` on one early-exit path (a no-op outcome returned before any async work) stops compiling the moment the keyword goes, and the error surfaces on the _return_ line, far from the edit that caused it.
 
-Fix it by making that path's value a promise (`return Promise.resolve({ status: … })`) rather than re-adding `async` — the keyword goes straight back out on the next edit of the file. Typecheck after any lint-hook autofix that touched a signature; the hook reports success either way.
+Fix it by making that path's value a promise (`return Promise.resolve({ status: … })`) rather than re-adding `async` — the keyword goes straight back out on the next edit of the file. **Typecheck after any lint-hook autofix that touched a signature**; the hook reports success either way.
 
 That fix restores the return type but not the rejection path: without `async`, a throw in the synchronous part of the body escapes at the call site instead of rejecting the returned promise, so a caller that only attaches `.catch()` never sees it. When the function is written to throw for its callers to handle as a rejection, keep `async` and disable `require-await` on it with that reason.
 
@@ -59,139 +33,35 @@ Pick the directive by **which linter reports the rule**, and spell the rule the 
 
 - **Oxlint rule** → `oxlint-disable`, using oxlint's plugin prefix: `typescript/`, `unicorn/`, `import/`, `oxc/`, `vitest/`, `vue/`. Never `@typescript-eslint/` — oxlint accepts it as an alias, so it silently works and drifts. Core rules take no prefix (`no-void`, `prefer-spread`). `no-inferrable-types` and `require-await` exist under both a core and a `typescript/` name — prefix them.
 - **ESLint-only rule** → `eslint-disable`, using the plugin's real name (`perfectionist/sort-objects`, `@typescript-eslint/no-misused-spread`). Rules oxlint owns are switched off in ESLint by `eslint-plugin-oxlint`, so an `eslint-disable` for one is dead weight.
+- Oxlint honours **both** prefixes; ESLint honours only its own. A rule needing both (e.g. `no-control-regex`) needs one directive each — see `stripAnsi.test.ts`.
+- Format: file-level on the first line, `/* oxlint-disable <rule> -- reason */`; line-level, `// oxlint-disable-next-line <rule>`. Always state the reason.
 
-Oxlint honours **both** prefixes; ESLint honours only its own. A rule needing both (e.g. `no-control-regex`) needs one directive each — see `stripAnsi.test.ts`.
+## Nothing type-aware runs in either linter
 
-To find stale directives, let each linter judge its own — never read one's verdict on the other's:
-
-```bash
-# oxlint: only "Unused oxlint-disable" lines are real. It flags every
-# eslint-disable for a plugin it lacks (perfectionist) as unused — false.
-pnpm dlx oxlint --disable-nested-config --report-unused-disable-directives
-# eslint: reports unused directives even for rules it has turned off
-eslint . --report-unused-disable-directives
-```
-
-## Custom JS plugins
-
-The repo authors its own oxlint rules as **JS plugins** (`jsPlugins` in `.oxlintrc.json`) — for repo-specific conventions no off-the-shelf rule covers. Only viable for **purely syntactic** rules: oxlint JS plugins get no type information (type-aware linting goes through Rust/tsgolint, which can't run JS rules), so anything needing the type checker cannot be authored here. **Nothing type-aware runs in either linter.** ESLint could host such a rule, but only by turning on `parserOptions.projectService`, which multiplies lint time; `neverthrow/must-use-result` was dropped for exactly that reason rather than moved. A convention that needs types is enforced by review, not by a rule — do not re-add a type-aware plugin to buy one back.
-
-- Plugins are **TypeScript** files under `scripts/oxlint/` (one rule-set per file), so the root `tsgo` typecheck covers them and oxlint loads them directly via Node type-stripping. Author them with `@oxlint/plugins`: `definePlugin`/`defineRule` (their sole purpose is inference — visitor handler params like `AwaitExpression(node)` type themselves, so **never annotate them inline**), and the `ESTree` namespace / `Context`/`Plugin` types for standalone helpers. There is no node-type enum — `node.type === "CallExpression"` literals are the discriminants, checked against `ESTree` so a typo won't compile. `@oxlint/plugins` and `oxlint` are catalogued as a caret pair and bumped together by the dependency-updates sweep — the repo tracks latest rather than pinning, so keep the two entries in step there.
-- Reference the `.ts` by path in the root `jsPlugins` array; enable the rule under `rules` (or a scoped `overrides` entry) as `<meta.name>/<rule>`.
-- **Scope with `overrides`** when a rule only applies to part of the tree — e.g. `persistThenNotify.ts` (the [persist-then-notify](/docs/architecture/persist-then-notify) enforcer) is scoped to `packages/app/server/**/*.ts`, because an `EventEmitter.emit` only means "realtime notify" in server mutations; client emitters (the Phaser game bus) are unrelated. `overrides` objects reject unknown keys — no `"//"` comment field; document intent in the plugin file's header instead.
-- The plugin runs in oxlint's single root pass, so it's fast enough to stay always-on. **The JS plugin API is alpha and not subject to semver** — re-verify every plugin after an `oxlint` bump (plant a violation and confirm it still fires); a contract change silently drops the rule while CI stays green.
-- The plugin file is itself linted by the repo's own oxlint+eslint pass (it lives under `scripts/`), so it must satisfy every repo convention — no `void` operator, sorted `Set`s (`perfectionist/sort-sets`), capitalized comments, comments on their own line.
-- Verify a new plugin empirically before wiring it in: run it over the whole repo to measure false positives, and plant a violation in a matching path to confirm it actually fires under the real config (a mis-scoped `files` glob or wrong rule name fails silently to zero hits).
+Type-aware linting goes through Rust/tsgolint, which can't run JS rules, and ESLint could only host such a rule by turning on `parserOptions.projectService`, which multiplies lint time (`neverthrow/must-use-result` was dropped for exactly that reason rather than moved). **A convention that needs types is enforced by review, not by a rule** — do not re-add a type-aware plugin to buy one back.
 
 ## `typescript/method-signature-style` (oxlint)
 
-Interface method signatures must be property signatures:
+Interface method signatures must be property signatures (`bar: (x: string) => void`, not `bar(x: string): void`). Two exceptions take a file-level `/* oxlint-disable typescript/method-signature-style -- reason */`:
 
-```ts
-// ✗ method signature
-interface Foo {
-  bar(x: string): void;
-}
+1. **Built-in interface augmentations needing generic-per-call-site overloads** (`declare global { interface ObjectConstructor { … } }`) — method signatures let each call site pass different type arguments; property signatures don't.
+2. **Third-party declaration files with real overloads** (DefinitelyTyped-style `.d.ts`) — overloaded method signatures can't be cleanly converted.
 
-// ✓ property signature
-interface Foo {
-  bar: (x: string) => void;
-}
-```
+**Overloads in your own code** don't qualify: use call signatures inside an object type — `bar: { (x: string): void; (x: number): string }`.
 
-**Exceptions — use `/* oxlint-disable */` with a reason comment:**
+## `no-restricted-syntax` bans (ESLint, `packages/configuration/eslint/typescriptRules.js`)
 
-1. **Built-in interface augmentations needing generic-per-call-site overloads.** Method signatures on augmented built-ins (e.g. `ObjectConstructor`) let each call site pass different type arguments; property signatures don't. Example: `global.d.ts`.
+**`expect.any(...)`** and the other `expect.<asymmetric>` matchers are banned in tests — they assert only the type, not the value. Capture the real argument from the mock's `mock.calls` and assert it exactly (`const [upperDir] = takeOne(vi.mocked(fn).mock.calls);`). When the captured arg is a known shared reference, assert it directly (`toHaveBeenCalledExactlyOnceWith("error", noop)`); when only its type is knowable, use `toBeTypeOf`. `takeOne` and `noop` come from `@esposter/shared`.
 
-   ```ts
-   /* oxlint-disable typescript/method-signature-style -- method signatures required for generic overloads on built-in interfaces */
-   declare global {
-     interface ObjectConstructor {
-       entries<T extends object>(o: T): ...;
-     }
-   }
-   ```
+**`JSON.parse`** is banned because `jsonDateParse` from `@esposter/shared` is the default parse: plain `JSON.parse` leaves every Date as an ISO string. It also replaces the `as` cast — `jsonDateParse<{ "exit-code"?: number }>(line)`. See `/docs/architecture/serialization.md`.
 
-2. **Third-party declaration files with real overloads.** Files from DefinitelyTyped or similar with overloaded method signatures can't be cleanly converted. Example: `desmos.d.ts`.
-
-   ```ts
-   /* oxlint-disable typescript/method-signature-style -- third-party declaration file with overloaded method signatures */
-   ```
-
-**Overloads in your own code** — use call signatures inside an object type:
-
-```ts
-interface Foo {
-  bar: {
-    (x: string): void;
-    (x: number): string;
-  };
-}
-```
-
-**Disable directive format:**
-
-- File-level (first line of file): `/* oxlint-disable typescript/method-signature-style -- reason */`
-- Line-level: `// oxlint-disable-next-line typescript/method-signature-style`
-
-## `no-restricted-syntax` — `expect.any` is banned (ESLint)
-
-`expect.any(...)` (and the other `expect.<asymmetric>` matchers) are banned in tests via `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`. They are loose — they assert only the type, not the value.
-
-Instead, capture the real argument from the mock's `mock.calls` and assert it exactly:
-
-```ts
-// ✗ loose matcher — also errors on no-restricted-syntax
-expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(expect.any(String), HOST_DIR, PLAN);
-
-// ✓ capture the real value (takeOne asserts exactly one call) and assert it exactly
-const [upperDir] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
-expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIR, PLAN);
-```
-
-When the captured arg is a known shared reference, assert it directly (`expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop)`); when only its type is knowable, use `toBeTypeOf` (`expect(checkIsStale).toBeTypeOf("function")`). `takeOne` and `noop` come from `@esposter/shared`.
-
-## `no-restricted-syntax` — `JSON.parse` is banned (ESLint)
-
-`jsonDateParse` from `@esposter/shared` is the default parse: plain `JSON.parse` leaves every Date as an ISO string. Same rule and file as the `expect.any` ban.
-
-Disable it on the line, with the reason, only where blanket revival would change runtime behaviour that is wanted — the parse feeds a Zod schema that validates and coerces the result itself while a free-text field could hold an ISO-shaped string (resource content blobs, drafts), payloads replayed verbatim (dead-letter events), and `jsonDateParse`'s own implementation. See `/docs/architecture/serialization.md`. **Tests do not get a disable** — a test parses with `jsonDateParse` like everything else, unless the model it asserts against types the field as a string.
-
-**"The data has no dates" is not a reason to disable** — the reviver is then a no-op, so `jsonDateParse` is the shorter correct call and stays correct if a date ever appears. It also replaces the `as` cast: `jsonDateParse<{ "exit-code"?: number }>(line)`. That holds for machine-generated JSON whose string fields are a fixed vocabulary a program writes — versions, rule ids, status keys (`pnpm outdated` output, oxlint diagnostics).
-
-**It stops holding the moment a string field is free-form text a person names** — a repo-relative path, a symlink target, a script body. The reviver reads shape, not schema, so a file legitimately called `2026-08-05T12:00:00Z` arrives as a `Date` the reading schema's `z.string()` then rejects, failing a whole read over one filename. Those documents parse plainly, through **one named helper per package** rather than a per-file judgement call (`parseMachineJson` in virrun, which owns the single disable) — same rule as the content blobs above: the schema owns coercion, so the parse must not guess.
-
-```ts
-// eslint-disable-next-line no-restricted-syntax -- the content schema owns date coercion, so free-text ISO strings survive
-return contentSchema.parse(JSON.parse(await streamToText(readableStreamBody)));
-```
+- Disable it on the line, with the reason, only where blanket revival would change wanted runtime behaviour: the parse feeds a Zod schema that validates and coerces the result itself while a free-text field could hold an ISO-shaped string (resource content blobs, drafts), payloads replayed verbatim (dead-letter events), and `jsonDateParse`'s own implementation.
+- **Tests do not get a disable** — a test parses with `jsonDateParse` like everything else, unless the model it asserts against types the field as a string.
+- **"The data has no dates" is not a reason** — the reviver is then a no-op, so `jsonDateParse` is the shorter correct call and stays correct if a date ever appears. That holds for machine-generated JSON whose string fields are a fixed vocabulary a program writes (versions, rule ids, status keys).
+- **It stops holding the moment a string field is free-form text a person names** — a repo-relative path, a symlink target, a script body. The reviver reads shape, not schema, so a file legitimately called `2026-08-05T12:00:00Z` arrives as a `Date` the reading schema's `z.string()` then rejects, failing a whole read over one filename. Those documents parse plainly, through **one named helper per package** that owns the single disable — same rule as the content blobs above: the schema owns coercion, so the parse must not guess.
 
 ## `prefer-named-capture-group` (oxlint)
 
-Every capturing group `(...)` must be named `(?<name>...)`:
+Every capturing group `(...)` must be named `(?<name>...)` — including plain groups inside lookaheads (`(?=...)`, `(?!...)`). `(?:...)` is already non-capturing and needs no name.
 
-```ts
-// ✗
-const match = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(str);
-
-// ✓
-const match = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$/u.exec(str);
-```
-
-**Named groups retain positional indices** — all existing usages keep working; only `match.groups.name` is new:
-
-```ts
-str.replace(/(?<id>\d+)/gu, "$1"); // replacement string $1
-str.replace(/(?<id>\d+)/gu, (_, id) => id); // callback positional arg
-/(?<id>\d+)/u.exec(str)?.[1]; // positional index match[1]
-/(?<name>\w+) = \1/u; // back-reference \1 (also \k<name>)
-```
-
-**Non-capturing groups** — `(?:...)` is already non-capturing; doesn't need a name. Only plain `(...)` must be named.
-
-**Lookahead groups** — plain capturing groups inside lookaheads (`(?=...)`, `(?!...)`) still need naming:
-
-```ts
-// ✓
-/(?<count>\d+)(?!.*(?<trailing>\d+))/u;
-```
+**Named groups retain positional indices**, so all existing usages keep working and only `match.groups.name` is new: replacement strings (`"$1"`), callback positional args, `exec(str)?.[1]`, and back-references (`\1`, also `\k<name>`).

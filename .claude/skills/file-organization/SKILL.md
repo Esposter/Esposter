@@ -62,7 +62,7 @@ Tracked symlinks: `AGENTS.md` is the canonical agent guide, with `CLAUDE.md` and
 
 ## Constant Maps
 
-- **PascalCase matching the filename, with `as const satisfies`** — `export const FooConfigurationMap = { ... } as const satisfies Record<...>`. Per-variant definition maps and their `as const satisfies` mapped type — see the `typescript` skill ("Discriminant-Keyed Maps").
+- **PascalCase matching the filename, with `as const satisfies`** — `export const FooConfigurationMap = { ... } as const satisfies Record<...>`. Per-variant definition maps and their `as const satisfies` mapped type — see the `typescript` skill (`references/type-modelling.md`).
   - **Exception**: when consumers need optional interface fields visible after enum lookup (e.g. `Item.color` on a map where some entries omit it), annotate explicitly — `const MapName: Record<Enum, Interface> = { ... }` — which widens lookup results to the shared interface while still enforcing every enum key.
 - **Reuse existing item interfaces for UI metadata maps** instead of re-declaring an inline entry shape — the `Item` interface and its narrower alternatives are the `vue-page-composition` skill's.
 - **Destructure in `v-for` unless passing the base item as props** — `v-for="{ key, format } of FooDefinitions"` over `v-for="definition of ..."` when only specific fields are needed. Exception: if the item itself is passed as a prop (`<SomeCard :item="definition" />`), don't destructure.
