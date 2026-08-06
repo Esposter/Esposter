@@ -17,12 +17,20 @@ gh api "repos/Esposter/Esposter/pulls/<pr>/comments?per_page=100" --paginate \
   --jq '.[] | "\(.id) \(.path):\(.line // .original_line)\n\(.body)\n"'
 
 # 3. Issue comments -> the walkthrough, status, and rate-limit notices.
-#    Sorted so the newest state is last; the endpoint ignores sort/direction, so jq does it.
-gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate \
-  --jq 'map(select(.user.login=="coderabbitai[bot]")) | sort_by(.updated_at) | .[].body'
+#    Sorted so the newest state is last; the endpoint ignores sort/direction, and --jq would sort
+#    each page on its own, so --slurp hands every page to one process that sorts across all of them.
+gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate --slurp |
+  node -e 'const pages = JSON.parse(require("fs").readFileSync(0, "utf8"));
+    for (const { body } of pages.flat()
+      .filter(({ user }) => user.login === "coderabbitai[bot]")
+      .sort((a, b) => a.updated_at.localeCompare(b.updated_at))) console.log(body);'
 ```
 
-The walkthrough issue-comment is **edited in place** across reviews, so its `created_at` stays pinned to the first review while `updated_at` moves. Filtering issue comments by `created_at` hides the current walkthrough — sort by `updated_at`, as the call above does. `--jq` runs once per page (and `--slurp` cannot be combined with it), so past 100 comments on a PR the newest state is the tail of the **last** page rather than of the whole output.
+The walkthrough issue-comment is **edited in place** across reviews, so its `created_at` stays pinned to the first review while `updated_at` moves. Filtering issue comments by `created_at` hides the current walkthrough — sort by `updated_at`, as the call above does.
+
+**Anything that must see the whole result set goes downstream of `--paginate --slurp`, never in `--jq`.** `gh` runs `--jq` once per page, so a `sort_by`, a `.[-1]`, a `.[-N:]` or a `length` computed there describes one page rather than the PR — silently, and only once a PR passes 100 comments, which is exactly when the answer matters. Per-element work (`select`, string building) is unaffected and stays in `--jq`, which is why calls 1 and 2 above still use it.
+
+`--slurp` emits an **array of pages**, hence the `.flat()`. It cannot be combined with `--jq` or `--template` (gh rejects the pair), so the aggregation runs in a second process — `node -e`, not `jq`, because the repo's toolchain guarantees node and this machine has no standalone `jq` on `PATH`.
 
 ## Replying to a review comment
 

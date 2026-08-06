@@ -107,6 +107,7 @@ const makeStats = (known) => ({
   cleanupCap: undefined,
   sweepCap: undefined,
   reportableCeiling: undefined,
+  resolveCeiling: undefined,
   seams: undefined,
   claimsChecked: undefined,
   claimsInventoried: undefined,
@@ -1570,7 +1571,7 @@ for (const c of unresolvedDropped) c.droppedUnsettled = true;
 if (toResolve.length > 0) {
   phase("Resolve");
   log(
-    `resolve: ${toResolve.length} plausible findings to settle${
+    `resolve: ${toResolve.length} of a ${RESOLVE_MAX} budget plausible findings to settle${
       unresolvedDropped.length > 0
         ? ` (${unresolvedDropped.length} lower-ranked ones dropped unsettled at the resolve budget)`
         : ""
@@ -1654,6 +1655,11 @@ const stats = makeStats({
   // Reader who re-derives it budgets for a run of a different size than the one they got. There is one number
   // And the script owns it: three caps, each from the finder family that actually spawned.
   reportableCeiling: NON_CLEANUP_FINDER_COUNT * PER_ANGLE + CLEANUP_FINDER.cap + (P.sweep ? SWEEP_MAX : 0),
+  // How many unsettled findings a resolver was allowed, which is NOT what the resolve log line reports: that
+  // Counts the ones actually sent, and a run with fewer plausible findings than the cap sends fewer. Only this
+  // Field distinguishes "nothing else needed resolving" from "the budget ran out", and the two have opposite
+  // Meanings for whether to re-run.
+  resolveCeiling: RESOLVE_MAX,
   seams: SEAM_MODE ? seams.map((s) => s.name) : undefined,
   // The claims actually put in front of an agent, not the size of the inventory: a claim whose pathPrefixes
   // Overlap no seam, or whose files the cap dropped, reaches no finder, and counting it overstates the one number
