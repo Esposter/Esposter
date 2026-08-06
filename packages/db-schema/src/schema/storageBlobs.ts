@@ -20,8 +20,9 @@ export const storageBlobs = pgTable(
   {
     blobName: text().notNull(),
     containerName: azureContainerEnum().notNull(),
-    // What the counter is holding for this blob right now. Equal to `declaredBytes` until the sweep reconciles
-    // It to the stored object's real size — kept separate so the adjustment is a difference, never a re-read.
+    // What the counter is holding for this blob right now — zero until reconciliation reads the stored object's
+    // Real size back, because nothing is charged before then and `declaredBytes` is what holds the space in the
+    // Meantime. Kept separate so the adjustment is a difference, never a re-read.
     countedBytes: bigint({ mode: "number" }).notNull(),
     declaredBytes: bigint({ mode: "number" }).notNull(),
     expiresAt: timestamp().notNull(),

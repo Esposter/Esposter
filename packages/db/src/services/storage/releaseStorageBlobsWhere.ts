@@ -32,7 +32,9 @@ export const releaseStorageBlobsWhere = (
     for (const { countedBytes, userId } of releasedStorageBlobs)
       releasedBytesMap.set(userId, (releasedBytesMap.get(userId) ?? 0) + countedBytes);
 
-    for (const [userId, releasedBytes] of releasedBytesMap)
+    // Sorted because `DELETE ... RETURNING` fixes no row order: two releases over an overlapping set of owners
+    // Would otherwise take their `users` locks in opposite orders and deadlock
+    for (const [userId, releasedBytes] of [...releasedBytesMap].sort(([a], [b]) => a.localeCompare(b)))
       await tx
         .update(users)
         .set({ storageBytesUsed: sql`GREATEST(0, ${users.storageBytesUsed} - ${releasedBytes})` })

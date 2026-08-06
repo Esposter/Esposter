@@ -65,7 +65,9 @@ A lost `BlobCreated` would leave a blob stored but uncharged. The subscription t
 
 ## The residual gap, and why it is acceptable
 
-Between the PUT and the `BlobCreated` event, a client that under-declared is holding less space than it is about to use. It is bounded by capping how many outstanding holds one user may have (`MAX_UNRECONCILED_STORAGE_BLOBS`), so the ceiling is that cap times `MAX_FILE_REQUEST_SIZE` (10 MB) — and it closes in seconds rather than at the end of a sweep interval. Even at the ceiling the abuser only ever exhausts **their own** allowance — never another user's, never the account globally.
+Between the PUT and the `BlobCreated` event, a client that under-declared is holding less space than it is about to use. The size of that gap is **not** bounded: Azure blob SAS has no upload-length option, and the PUT never passes back through Nitro, so `MAX_FILE_REQUEST_SIZE` constrains the declaration the client sends us and nothing about the bytes it sends Azure.
+
+What is bounded is the gap's **shape**. `MAX_UNRECONCILED_STORAGE_BLOBS` caps how many under-declared uploads one user can have in flight at once, and `BlobCreated` charges each one's real size within seconds of its PUT completing — after which the counter is truthful and every further reserve is rejected. So abuse is a single burst, not a sustained drain, and it only ever exhausts **their own** allowance — never another user's.
 
 True Gmail-style hard enforcement would require **proxying uploads through our own server** so it can count bytes and abort mid-stream. That is rejected: it puts our compute in the data path for every upload — cost, latency, and re-architecting the entire SAS flow — to close a self-inflicted gap that only harms its own author.
 
