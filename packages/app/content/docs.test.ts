@@ -18,8 +18,8 @@ const ALLOWED_LINK_TARGETS = ["/docs/api"];
 // Path prefixes a Key Files cell may use relative to `packages/app` instead of the repo root.
 const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "content/", "public/", "server/", "shared/"];
 // Pages every section owns that the sidebar map never lists — they trail in an automatic Planning group.
-const UNMAPPED_PAGES = ["index", "roadmap"];
-const PLANNING_DIRECTORIES = ["deferred", "rejected"];
+const UNMAPPED_PAGES = new Set(["index", "roadmap"]);
+const PLANNING_DIRECTORIES = new Set(["deferred", "rejected"]);
 const contentDirectory = import.meta.dirname;
 const docsDirectory = join(contentDirectory, "docs");
 const appDirectory = join(contentDirectory, "..");
@@ -49,7 +49,7 @@ describe(mermaid.parse, () => {
   });
 });
 
-describe("docs links", () => {
+describe("docsLinks", () => {
   test("every /docs link resolves to a page", () => {
     expect.hasAssertions();
 
@@ -68,7 +68,7 @@ describe("docs links", () => {
   });
 });
 
-describe("DocsSectionGroupsMap", () => {
+describe("docsSectionGroupsMap", () => {
   test("every mapped slug has a page", () => {
     expect.hasAssertions();
 
@@ -94,8 +94,8 @@ describe("DocsSectionGroupsMap", () => {
           .filter(
             (slug) =>
               !slug.includes("/") &&
-              !UNMAPPED_PAGES.includes(slug) &&
-              !PLANNING_DIRECTORIES.includes(slug) &&
+              !UNMAPPED_PAGES.has(slug) &&
+              !PLANNING_DIRECTORIES.has(slug) &&
               !mappedSlugs.has(slug),
           )
           .map((slug) => `${section} → ${slug}`);
@@ -106,7 +106,7 @@ describe("DocsSectionGroupsMap", () => {
   });
 });
 
-describe("key files", () => {
+describe("keyFiles", () => {
   test("every key files path exists", () => {
     expect.hasAssertions();
 
