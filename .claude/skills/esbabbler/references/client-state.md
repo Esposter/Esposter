@@ -13,8 +13,9 @@ Subscriptions handle state updates for **all** clients including the caller. Don
 3. Combines multiple mutations or concerns
 
 ```ts
-// call tRPC directly where the user action happens; the onLeaveRoom subscription owns state
-$trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId });
+// call tRPC directly where the user action happens; the onLeaveRoom subscription owns state. Awaited, never a
+// floating statement — see the pinia skill's references/mutation-actions.md
+await $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId });
 ```
 
 ### Genuine optimistic update — `createMessage` is the canonical example

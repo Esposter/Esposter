@@ -17,7 +17,7 @@ Always explicit, descriptive names — never bare column names like `"name"` or 
 
 ## CHECK constraints with `sql` template literals
 
-- Always use ` sql` `` template literals — never a raw string.
+- Always use `sql` template literals — never a raw string.
 - **Numeric literals MUST use `sql.raw()`** — bare interpolation makes Drizzle emit a parameterised placeholder (`$1`), invalid in DDL:
 
   ```ts

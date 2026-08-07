@@ -15,7 +15,7 @@ When **multiple list components** (different data sources/stores) render the sam
 
 <!-- each list supplies only its buttons -->
 <FooUserListItem v-for="{ id, name, image } of foos" :key="id" :image :name>
-  <template #append><v-btn text="Remove" @click="$trpc.foo.deleteFoo.mutate(id)" /></template>
+  <template #append><v-btn text="Remove" @click="removeFoo(id)" /></template>
 </FooUserListItem>
 ```
 

@@ -78,7 +78,7 @@ Move a section out when it is a **procedure** (ordered steps run occasionally), 
 
 Never split to hit a number. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page.
 
-**A split breaks inbound pointers, so fix them in the same change.** Other skills cite sections by heading (`see the `pinia` skill ("Cursor Pagination in Stores")`), and a heading that moved into `references/` leaves that citation pointing at nothing — silently, because nothing resolves skill links. After moving a section, grep the tree for its heading text and repoint each citation at the page (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to the heading itself.
+**A split breaks inbound pointers, so fix them in the same change.** Other skills cite sections by heading (``see the `pinia` skill ("Cursor Pagination in Stores")``), and a heading that moved into `references/` leaves that citation pointing at nothing — silently, because nothing resolves skill links. After moving a section, grep the tree for its heading text and repoint each citation at the page (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to the heading itself.
 
 ## Tight, not fluffy
 
