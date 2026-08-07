@@ -19,7 +19,7 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - Prefer theme primitives over bespoke styling: `StyledCard` / `v-sheet` for card/panel/surface backgrounds; theme colours (`bg-background`, `b-border`, `text-primary`, `text-error`) and semantic opacity utilities before custom colours. For surface colour use `v-sheet`, not `bg-surface` on a `<div>` (`references/layout.md`).
 - Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. If a semantic colour is genuinely needed, prefer Vuetify theme colours or the Material palette with lighten/darken variants (`text-green-darken-2`, `bg-yellow-lighten-5`, `text-red`) over raw values.
 - Never hardcode a fixed dimension to lay out a **region** (sidebar/panel/column split) — `references/layout.md`. Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds); first check whether the component hierarchy or flex/grid structure is wrong.
-- **Always `rem`, never `px`** for every CSS value (font sizes, spacing, widths, heights, borders).
+- **Always `rem`, never `px`** for every authored CSS length — style blocks, and arbitrary `[...]` values (font sizes, spacing, widths, heights, borders). Documented UnoCSS utilities keep their canonical form: scale tokens (`p-4`, `top--1`) and `b-{n}` widths are utility names, not authored lengths.
 - `field-sizing: content` is an attributify utility — put `field-sizing-content` directly on the `<input>` / `<textarea>`, never in a scoped class.
 
 ## Slashes / fractions → valued attributify (never bare, never `class`)
