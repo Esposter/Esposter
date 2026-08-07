@@ -40,13 +40,13 @@ interface VisualDatasetBinding {
 
 ## Key files
 
-| File                                                       | Role                               |
-| ---------------------------------------------------------- | ---------------------------------- |
-| `app/shared/models/dashboard/data/VisualDatasetBinding.ts` | binding shape (reference + query)  |
-| `app/shared/models/dataset/DatasetQuery.ts`                | x column + aggregated series       |
-| `app/components/Resource/Dashboard/Editor.vue`             | canvas incl. bind-to-data flow     |
-| `app/components/Resource/Dashboard/View.vue`               | published renderer over baked data |
-| `app/components/Dataset/ReferencePicker.vue`               | shared provider/resource picker    |
+| File                                                   | Role                               |
+| ------------------------------------------------------ | ---------------------------------- |
+| `shared/models/dashboard/data/VisualDatasetBinding.ts` | binding shape (reference + query)  |
+| `shared/models/dataset/DatasetQuery.ts`                | x column + aggregated series       |
+| `app/components/Resource/Dashboard/Editor.vue`         | canvas incl. bind-to-data flow     |
+| `app/components/Resource/Dashboard/View.vue`           | published renderer over baked data |
+| `app/components/Dataset/ReferencePicker.vue`           | shared provider/resource picker    |
 
 ## Notes
 
