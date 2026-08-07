@@ -2,6 +2,7 @@
 import type { ContentNavigationItem } from "@nuxt/content";
 
 import { DOCS_NAVIGATION_OVERVIEW_SUFFIX } from "@/services/docs/constants";
+import { getChildNavigationItems } from "@/services/docs/getChildNavigationItems";
 
 interface NavigationListProps {
   items: ContentNavigationItem[];
@@ -9,11 +10,12 @@ interface NavigationListProps {
 
 const { items } = defineProps<NavigationListProps>();
 const route = useRoute();
+const itemsWithChildren = computed(() => items.map((item) => ({ children: getChildNavigationItems(item), item })));
 </script>
 
 <template>
-  <template v-for="item of items" :key="item.path">
-    <v-list-group v-if="item.children && item.children.length > 0" :value="item.path">
+  <template v-for="{ children, item } of itemsWithChildren" :key="item.path">
+    <v-list-group v-if="children.length > 0" :value="item.path">
       <template #activator="{ props: activatorProps }">
         <v-list-item :="activatorProps" :title="item.title" />
       </template>
@@ -24,7 +26,7 @@ const route = useRoute();
         :to="item.path"
         :value="`${item.path}${DOCS_NAVIGATION_OVERVIEW_SUFFIX}`"
       />
-      <DocsNavigationList :items="item.children" />
+      <DocsNavigationList :items="children" />
     </v-list-group>
     <v-list-item v-else :active="route.path === item.path" :title="item.title" :to="item.path" />
   </template>

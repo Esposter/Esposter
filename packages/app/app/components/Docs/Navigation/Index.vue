@@ -2,6 +2,7 @@
 import type { ContentNavigationItem } from "@nuxt/content";
 
 import { DOCS_NAVIGATION_OVERVIEW_SUFFIX } from "@/services/docs/constants";
+import { getChildNavigationItems } from "@/services/docs/getChildNavigationItems";
 import { getNavigationGroups } from "@/services/docs/getNavigationGroups";
 import { getOpenedNavigationPaths } from "@/services/docs/getOpenedNavigationPaths";
 import { getSectionIcon } from "@/services/docs/getSectionIcon";
@@ -15,10 +16,7 @@ const router = useRouter();
 const { cloned: opened } = useCloned(() => getOpenedNavigationPaths(router.currentRoute.value.path));
 const sectionsWithGroups = computed(() =>
   sections.map((section) => ({
-    groups: getNavigationGroups(
-      section.path,
-      (section.children ?? []).filter(({ path }) => path !== section.path),
-    ),
+    groups: getNavigationGroups(section.path, getChildNavigationItems(section)),
     section,
   })),
 );
