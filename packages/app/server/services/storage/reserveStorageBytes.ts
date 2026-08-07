@@ -37,11 +37,14 @@ export const reserveStorageBytes = async (
   const now = new Date();
   const expiresAt = dayjs(now).add(WRITE_SAS_DURATION_MS, "ms").toDate();
   // A row must outlive every `BlobCreated` that can still name it, or a retry of one whose blob did land finds
-  // No row, charges nothing, and reports no failure. The last PUT a write SAS authorizes happens at `expiresAt`,
-  // And Event Grid keeps retrying that PUT's event for `EVENT_GRID_DELIVERY_TTL_MS` after it — so that sum is
-  // The one bound the collection may use, and it is derived from the subscription's own policy rather than
-  // Restated. See /docs/platform/storage-quotas
-  const collectableBefore = dayjs(now).subtract(EVENT_GRID_DELIVERY_TTL_MS, "ms").toDate();
+  // No row, charges nothing, and reports no failure. Storage checks a SAS when it receives the request, not when
+  // It finishes, so the last PUT a write SAS authorizes STARTS at `expiresAt` and its event is raised whenever
+  // That upload completes; Event Grid then keeps retrying it for `EVENT_GRID_DELIVERY_TTL_MS`. The completion
+  // Allowance is the SAS's own duration reused — a bound already in hand, and orders of magnitude beyond what a
+  // `MAX_FILE_REQUEST_SIZE` PUT takes — so nothing new can drift from the policy. See /docs/platform/storage-quotas
+  const collectableBefore = dayjs(now)
+    .subtract(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS, "ms")
+    .toDate();
   await db.transaction(async (tx) => {
     // `storage_blobs` before `users`, the order every path that touches both takes — a release and a reconcile
     // Lock the ledger row first and move the counter second, so a reserve that took the user row first would

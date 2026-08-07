@@ -59,7 +59,7 @@ The last two rows are the same address: what differs is the entry the visitor is
 Four pieces implement it:
 
 - **`NavigationTrailPage`** with **`NavigationTrailPageMap`** — the slugs a trail may contain and what each renders as. A page absent from the map can be navigated _from_ without ever becoming a crumb, which is how a page opts out.
-- **`getNextNavigationTrail`** — the rules above as one pure function: truncate, append, or carry. Being pure is what makes the model testable without a browser.
+- **`getNextNavigationTrail`** — the rules above as one pure function: reset, truncate, append, or carry. Being pure is what makes the model testable without a browser.
 - **`navigationTrail.client.ts`** — the router hook. It adopts an entry's recorded trail when there is one (a reload or a back/forward lands on an entry that already knows its own trail) and otherwise resolves and records.
 - **`navigationTrail` store** — what components read. The plugin is the only writer.
 
@@ -95,7 +95,7 @@ A link you send someone lands them on the direct view: they did not walk your pa
 ## Notes
 
 - Adding a page to the model is one map entry; adding a page that should never be a crumb is nothing at all.
-- **Leaving the area is the only reset**, and everything short of a real drill-in carries the trail untouched. A direct arrival is therefore not a case the resolver detects — it is the empty trail that navigating out of the area already left behind. The consequence is the one worth stating: a rule that instead reset on "did not come from a crumb page" empties the trail on the second row clicked in the list rail, and one that appends without checking the navigation left the page turns a filter change on the list into a crumb linking to the page already open.
+- **Leaving the area or landing back on `/resources` is the only reset**, and everything short of a real drill-in carries the trail untouched. A direct arrival is therefore not a case the resolver detects — it is the empty trail that navigating out of the area already left behind. The consequence is the one worth stating: a rule that instead reset on "did not come from a crumb page" empties the trail on the second row clicked in the list rail, and one that appends without checking the navigation left the page turns a filter change on the list into a crumb linking to the page already open.
 - A trail read back off an entry is validated against the map before it renders — an entry written by an older release, or edited in devtools, is filtered down to slugs that still exist rather than rendering a crumb to nowhere.
 - A crumb is a real link; the title is plain text. Anything not navigable is not a crumb, which is why the current page cannot be one.
 - Pasting a url into the address bar is a direct arrival even in a tab that was on the list: it is a new entry with no trail, which is the honest reading of typing an address.

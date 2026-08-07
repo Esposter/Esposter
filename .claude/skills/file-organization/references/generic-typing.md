@@ -8,15 +8,15 @@ Define an explicit type map first, then use a mapped type in `satisfies` for per
 
 ```typescript
 // 1. Explicit type map (one file, in models/) — one entry per discriminant value
-type FooItemTypeMap = {
+interface FooItemTypeMap {
   [FooType.Bar]: BarFooItem;
   [FooType.Baz]: BazFooItem;
-};
+}
 // 2. Satisfies a mapped type keyed by the SAME parameter the value is looked up with, so each entry
 //    is checked against its own type argument — a `Record<FooType, FooConfiguration<
 //    FooItemTypeMap[keyof FooItemTypeMap]>>` widens every entry to the union instead,
 //    and accepts a Baz configuration filed under the Bar key
-export const FooConfigurationMap = { ... } satisfies {
+export const FooConfigurationMap = { ... } as const satisfies {
   [TFooType in FooType]: FooConfiguration<FooItemTypeMap[TFooType]>;
 };
 ```

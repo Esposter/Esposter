@@ -44,8 +44,10 @@ export const useFooSubscribables = () => {
 
 // composables/<domain>/subscribables/useSubscribables.ts
 export const useSubscribables = async () => {
-  await useBarSubscribables();
   useFooSubscribables();
+  // The ones that await internally (a session read) go last and together — every synchronous registration
+  // Has to happen before the first await, or its hooks and watchers are created without an instance
+  await Promise.all([useBarSubscribables(), useBazSubscribables()]);
 };
 ```
 

@@ -17,14 +17,14 @@ A local value entirely derived from — and written back to — a store value is
 Local form state that starts from a prop/store value but is independently editable initializes the `ref` directly. **Never use `watchImmediate` just to set an initial value** — always a code smell.
 
 ```typescript
-const selectedBarId = ref(foo.value?.barId ?? null);
+const selectedBarId = ref(foo.value?.barId ?? "");
 ```
 
 If the source can change externally while the form is open (real-time collaboration, an optimistic store that rolls back on failure), the local copy must **resync**. Use VueUse's `useCloned` — never a hand-written `ref` + `watch` mirror:
 
 ```typescript
 // useCloned owns the editable copy and resyncs automatically
-const { cloned: selectedBarId } = useCloned(() => foo.value?.barId ?? null);
+const { cloned: selectedBarId } = useCloned(() => foo.value?.barId ?? "");
 ```
 
 `useCloned(source, options)` returns `{ cloned, isModified, sync }`:

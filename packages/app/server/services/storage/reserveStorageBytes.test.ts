@@ -4,7 +4,14 @@ import { MAX_UNRECONCILED_STORAGE_BLOBS } from "#shared/services/storage/constan
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import { reserveStorageBytes } from "@@/server/services/storage/reserveStorageBytes";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
-import { AzureContainer, EVENT_GRID_DELIVERY_TTL_MS, storageBlobs, StorageTier, users } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  EVENT_GRID_DELIVERY_TTL_MS,
+  storageBlobs,
+  StorageTier,
+  users,
+  WRITE_SAS_DURATION_MS,
+} from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -118,8 +125,9 @@ describe("reserveStorageBytes", () => {
       containerName,
       countedBytes: 0,
       declaredBytes: quotaBytes,
-      // An upload that was never made, past the last moment storage could still be telling us otherwise
-      expiresAt: new Date(Date.now() - EVENT_GRID_DELIVERY_TTL_MS - 1),
+      // An upload that was never made, past the last moment storage could still be telling us otherwise — a PUT
+      // The SAS authorized at the final instant has had its whole completion allowance and its event's retries
+      expiresAt: new Date(Date.now() - EVENT_GRID_DELIVERY_TTL_MS - WRITE_SAS_DURATION_MS - 1),
       userId,
     });
     await reserveStorageBytes(mockContext.db, userId, containerName, [
