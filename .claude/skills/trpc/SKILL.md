@@ -14,28 +14,28 @@ description: Esposter tRPC conventions — return-type generics on the method, a
 
 ## Procedures
 
-- **Return type generic on the method, not as a callback return annotation** — `readFriends: standardAuthedProcedure.query<User[]>(async ({ ctx }) => { ... })`. Same for `.mutation<T>(...)`.
+- **Return type generic on the method, not as a callback return annotation** — `readFoos: standardAuthedProcedure.query<Foo[]>(async ({ ctx }) => { ... })`. Same for `.mutation<T>(...)`.
 - **Omit `async` when there is no `await`** — e.g. a body that only `return`s a Drizzle query chain.
 
 ## Where the Pieces Live
 
-- **Input schemas → `shared/models/db/<feature>/`** — one file per input type, named after the type (`FriendUserIdInput.ts`), exporting both the schema (`...Schema`) and the inferred type. Never re-export types from router files; each type lives in exactly one place.
+- **Input schemas → `shared/models/db/<feature>/`** — one file per input type, named after the type (`FooBarIdInput.ts`), exporting both the schema (`...Schema`) and the inferred type. Never re-export types from router files; each type lives in exactly one place.
 - **Server-only utility functions → `server/services/<feature>/`** — one function per file, named after the function.
 - **Also needed by a Pinia store → `shared/services/<feature>/`** — importable on both server and client without duplication.
-- **Also needed by `packages/azure-functions` → `packages/db/src/services/`** — Postgres/Drizzle helpers called from both the Nuxt app server and Azure Functions, with `PostgresJsDatabase<typeof relations>` as the `db` parameter, exported from `packages/db/src/index.ts`; the app re-exports via a thin `export { fn } from "@esposter/db"` wrapper. Error-throwing wrappers (`assertCanCreateMessage` etc.) stay in their own packages because they throw package-specific types (`TRPCError` in the app, `InvalidOperationError` in azure-functions) — only the underlying DB query helpers move.
+- **Also needed by `packages/azure-functions` → `packages/db/src/services/`** — Postgres/Drizzle helpers called from both the Nuxt app server and Azure Functions, with `PostgresJsDatabase<typeof relations>` as the `db` parameter, exported from `packages/db/src/index.ts`; the app re-exports via a thin `export { fn } from "@esposter/db"` wrapper. Error-throwing wrappers (`assertCanCreateFoo` etc.) stay in their own packages because they throw package-specific types (`TRPCError` in the app, `InvalidOperationError` in azure-functions) — only the underlying DB query helpers move.
 
 ## Client-Side Calling Conventions
 
 - **Every user-facing client read/write goes through `useQuery` / `useMutation`** (`composables/shared/`). Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it matches a documented exception — the raw call sites are deliberate, not omissions. Primitive semantics, "Optimistic by default" and the full exception list: `content/docs/architecture/client-data.md`.
-- **Never call `.query({})` / `.mutate({})` with a bare empty object** — all-optional inputs chain `.prefault({})`, which makes the input itself optional: `$trpc.survey.readSurveys.query()`. Same for test callers: `caller.readDocuments()`.
+- **Never call `.query({})` / `.mutate({})` with a bare empty object** — all-optional inputs chain `.prefault({})`, which makes the input itself optional: `$trpc.foo.readFoos.query()`. Same for test callers: `caller.readFoos()`.
 - **Omit optional UUID fields instead of passing `undefined`** — when the value comes from a ref defaulting to `""`, use a conditional spread, not `|| undefined`:
 
   ```ts
-  // key absent when empty — not { roomId: currentRoomId.value || undefined }
-  $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {});
+  // key absent when empty — not { barId: currentBarId.value || undefined }
+  $trpc.foo.readFoos.query(currentBarId.value ? { barId: currentBarId.value } : {});
   ```
 
-- **Guard required UUID fields with an early return** — `if (!currentRoomId.value) return;` before the call, rather than letting an empty string reach the UUID validator.
+- **Guard required UUID fields with an early return** — `if (!currentBarId.value) return;` before the call, rather than letting an empty string reach the UUID validator.
 
 ## Router Structure
 
@@ -44,9 +44,9 @@ Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The clien
 - **Sub-routers compose in the feature's own `index.ts`** — export a `base*Router` with the feature's own procedures, then `mergeRouters` it with the sub-routers. `routers/index.ts` imports only the composed router, never a sub-router directly.
 
   ```ts
-  // routers/call/index.ts — the composition root
-  export const baseCallRouter = router({ createCall: ..., joinCall: ... });
-  export const callRouter = mergeRouters(baseCallRouter, router({ knocker: knockerRouter }));
+  // routers/foo/index.ts — the composition root
+  export const baseFooRouter = router({ createFoo: ..., updateFoo: ... });
+  export const fooRouter = mergeRouters(baseFooRouter, router({ bar: barRouter }));
   ```
 
 - **Exception**: `achievement` is merged separately (via `mergeRouters`) to avoid a circular dep with the router that fires achievement events.
@@ -55,8 +55,8 @@ Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The clien
 ## Procedure & Result Naming
 
 - `upsert*` for procedures that do `insert().onConflictDoUpdate()` — never `update*` (update implies the record already exists). Domain operation names (`subscribe`, `connect`) are exempt.
-- Subscription naming: `on` + exact mutation name (camelCase): `createMessage` → `onCreateMessage`, `updateRole` → `onUpdateRole`.
-- DB result variables named after the entity: `newFriend`, `updatedFriend`, `existingFriend` — never `created`, `updated`, `existing`.
+- Subscription naming: `on` + exact mutation name (camelCase): `createFoo` → `onCreateFoo`.
+- DB result variables named after the entity: `newFoo`, `updatedFoo`, `existingFoo` — never `created`, `updated`, `existing`.
 
 ## Procedure Helpers (Room RBAC)
 
@@ -70,13 +70,13 @@ Three builders in `server/trpc/procedure/room/`:
 
 ## Ownership Guards in Mutations
 
-- **`ownedBy(table, id, userId)`** (`server/services/db/ownedBy.ts`) — the where-predicate for "this row must belong to the caller": `.where(ownedBy(surveys, input, ctx.getSessionPayload.user.id))`. Compose extra clauses with `and(ownedBy(...), isNull(...))`. Never hand-write `and(eq(table.id, id), eq(table.userId, userId))`.
+- **`ownedBy(table, id, userId)`** (`server/services/db/ownedBy.ts`) — the where-predicate for "this row must belong to the caller": `.where(ownedBy(foos, input, ctx.getSessionPayload.user.id))`. Compose extra clauses with `and(ownedBy(...), isNull(...))`. Never hand-write `and(eq(table.id, id), eq(table.userId, userId))`.
 - Repeated multi-clause where-fragments within one router (e.g. "not cancelled and not completed") get a named module-level `const`/helper in that router file.
 
 ## Router and Store Structure
 
 - **One router + one Pinia store per DB table** — never bundle multiple tables into one router or store.
-- **Naming derived from the table name, not semantics** — `friend_requests` → `friendRequests` store ref and `readFriendRequests` / `readSentFriendRequests` procedures (never `pendingRequests`/`sentRequests`; the table implies the state); `blocks` → `blockUser`, `unblockUser`, `readBlockedUsers`, `blockedUsers`.
+- **Naming derived from the table name, not semantics** — `foo_bars` → `fooBars` store ref and `readFooBars` procedure, never a semantic rename of the same rows (the table implies the state).
 - **Nuxt does NOT auto-import store functions** — always `import { useXxxStore } from "@/store/..."` when calling other stores. Avoid circular imports with a one-way dependency direction: `block` may import `friend` + `friendRequest`; `friendRequest` may import `friend`; `friend` imports neither.
 
 ## Error Handling
@@ -86,7 +86,7 @@ Three builders in `server/trpc/procedure/room/`:
 
 ## Azure Table Clause Typing
 
-- **`Clause<T extends Record<string, unknown>>` has no default** — type the array with the entity being queried (`const clauses: Clause<ModerationLogEntity>[] = [...]`). Never bare `Clause[]`.
+- **`Clause<T extends Record<string, unknown>>` has no default** — type the array with the entity being queried (`const clauses: Clause<FooEntity>[] = [...]`). Never bare `Clause[]`.
 - **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never string literals: `{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }`.
-- **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<ModerationLogEntity>(...)`. `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
-- **Entity-specific fields stay on their own `PropertyNames` constant** — `StandardMessageEntityPropertyNames.isPinned`, `MessageEmojiMetadataEntityPropertyNames.type`; `ItemMetadataPropertyNames.deletedAt` for metadata.
+- **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(...)`. `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
+- **Entity-specific fields stay on their own `PropertyNames` constant** — `FooEntityPropertyNames.bar`; `ItemMetadataPropertyNames.deletedAt` for metadata.

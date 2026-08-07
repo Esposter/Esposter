@@ -22,8 +22,9 @@ export const purgeResource = async (
 ) => {
   await deleteDirectory(containerClient, resourceId);
   // The directory takes every asset at once, so its owner's storage counter has to give the whole directory
-  // Back at once too — the deletion never enumerates names, and the resource row's cascade would drop the
-  // Ledger rows below without ever decrementing what they were holding. Resources are the only thing purged,
+  // Back at once too — the deletion never enumerates names. The ledger's only foreign key is `userId`, so the
+  // Row deleted below cascades nothing here: without this call the rows survive the purge forever, holding
+  // Their `countedBytes` against an owner who no longer has the resource. Resources are the only thing purged,
   // So the container is theirs by construction. See /docs/platform/storage-quotas
   await releaseStorageBlobsByPrefix(db, AzureContainer.ResourceAssets, `${resourceId}/`);
   // The partitions are independent, so only the blob-before-tables and tables-before-row ordering matters

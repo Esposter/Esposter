@@ -2,46 +2,43 @@
 
 ## Generic schemas
 
-When an abstract class/interface has a generic type param (e.g. `AColumn<TColumnType>`), its schema must be generic too: export a `create*Schema` function taking typed zod schemas as params. Never hardcode type-specific values in a base schema. Use `T` for one param, descriptive `T*` (`TType`, `TConfiguration`) for multiple. Canonical: `createAColumnSchema` / `createAColumnFormSchema` (`shared/models/resource/sheet/column/`), `createCursorPaginationParamsSchema`, `createSortItemSchema`.
+When an abstract class/interface has a generic type param (e.g. `AFoo<TFooType>`), its schema must be generic too: export a `create*Schema` function taking typed zod schemas as params. Never hardcode type-specific values in a base schema. Use `T` for one param, descriptive `T*` (`TType`, `TConfiguration`) for multiple. Canonical: `createCursorPaginationParamsSchema`, `createSortItemSchema`.
 
 ```typescript
-// AColumnForm.ts — generic factory; concrete literal passed by callers
-export const createAColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) => {
-  const aColumnSchema = createAColumnSchema(typeSchema);
+// AFooForm.ts — generic factory; concrete literal passed by callers
+export const createAFooFormSchema = <T extends z.ZodType<FooType>>(typeSchema: T) => {
+  const aFooSchema = createAFooSchema(typeSchema);
   return z.object({
-    description: aColumnSchema.shape.description,
-    name: aColumnSchema.shape.name.meta({ title: "Column", [uniqueColumnNameKeywordDefinition.keyword]: true }),
-    sourceName: aColumnSchema.shape.sourceName.meta({ title: "Source Column" }),
+    bar: aFooSchema.shape.bar.meta({ title: "Bar" }),
+    description: aFooSchema.shape.description,
+    name: aFooSchema.shape.name.meta({ [uniqueFooNameKeywordDefinition.keyword]: true }),
     type: typeSchema,
   });
 };
 
-// DateColumnForm.ts — caller spreads the factory's .shape (never .extend()), adds its own fields, satisfies its interface
-export const dateColumnFormSchema = z
+// BarFooForm.ts — caller spreads the factory's .shape (never .extend()), adds its own fields, satisfies its interface
+export const barFooFormSchema = z
   .object({
-    ...createAColumnFormSchema(z.literal(ColumnType.Date).readonly()).shape,
-    format: dateColumnSchema.shape.format,
+    ...createAFooFormSchema(z.literal(FooType.Bar).readonly()).shape,
+    baz: barFooSchema.shape.baz,
   })
-  .meta({ title: ColumnType.Date }) satisfies z.ZodType<DateColumnForm>;
+  .meta({ title: FooType.Bar }) satisfies z.ZodType<BarFooForm>;
 ```
 
 ## Discriminated unions
 
-The union lives in the file named after the union type (`ColumnForm.ts`), declared **before** the schema, with `satisfies` — see `~/.claude/rules/zod.md`. Adding a new type = add its schema to the union array.
+The union lives in the file named after the union type (`FooForm.ts`), declared **before** the schema, with `satisfies` — see `~/.claude/rules/zod.md`. Adding a new type = add its schema to the union array.
 
 ```typescript
-export type ColumnForm = BooleanColumnForm | ComputedColumnForm | DateColumnForm | NumberColumnForm | StringColumnForm;
+export type FooForm = BarFooForm | BazFooForm;
 
-export const columnFormSchema = z.discriminatedUnion("type", [
-  booleanColumnFormSchema,
-  computedColumnFormSchema,
-  dateColumnFormSchema,
-  numberColumnFormSchema,
-  stringColumnFormSchema,
-]) satisfies z.ZodType<ColumnForm>;
+export const fooFormSchema = z.discriminatedUnion("type", [
+  barFooFormSchema,
+  bazFooFormSchema,
+]) satisfies z.ZodType<FooForm>;
 ```
 
-Discriminant enum values are short descriptive names matching the domain (`Aggregation`, `ConvertTo`, `DatePart`, `Math`, `RegexMatch`, `String`), distinct from the member interface names (`AggregationTransformation` → `ColumnTransformationType.Aggregation`).
+Discriminant enum values are short descriptive names matching the domain (`Bar`, `Baz`), distinct from the member interface names (`BarFoo` → `FooType.Bar`).
 
 ## Envelope schemas are factories, not copies
 
@@ -53,4 +50,4 @@ When _some_ (not all) members of a discriminated union share a field, give it it
 
 ## Maintaining `createUniqueArraySchema`
 
-TS infers `T` from the schema, so a non-existent key argument is a type error. In Zod 4, derive object-schema keys from `z.ZodObject["shape"]` rather than `keyof z.output<TSchema>` — output types can expand into unresolved mapped internals in generic factories. Keep the keyed/keyless signatures as an **intersection function type**, not an overload interface, if `typescript/unified-signatures` pushes to merge them — merging into one optional conditional parameter breaks generic callers like `createTableEditorSchema(schema, "id")`. The keyed signature must still support non-`ZodObject` object-output schemas (e.g. discriminated unions) by falling back to output keys.
+TS infers `T` from the schema, so a non-existent key argument is a type error. In Zod 4, derive object-schema keys from `z.ZodObject["shape"]` rather than `keyof z.output<TSchema>` — output types can expand into unresolved mapped internals in generic factories. Keep the keyed/keyless signatures as an **intersection function type**, not an overload interface, if `typescript/unified-signatures` pushes to merge them — merging into one optional conditional parameter breaks generic callers like `createUniqueArraySchema(schema, "id")`. The keyed signature must still support non-`ZodObject` object-output schemas (e.g. discriminated unions) by falling back to output keys.

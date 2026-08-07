@@ -11,17 +11,17 @@ Read when a store action calls a tRPC mutation, or when picking its `useMutation
 await $trpc.foo.deleteFoo.mutate(id);
 
 // store action justified — optimistic local state with automatic rollback
-const deleteBan = async (input: DeleteBanInput) => {
-  await executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
+const deleteFoo = async (input: DeleteFooInput) => {
+  await executeMutation(() => $trpc.foo.deleteFoo.mutate(input), {
     applyOptimistic: () => {
       const snapshot = [...items.value];
-      storeDeleteBan(input);
+      storeDeleteFoo(input);
       return () => {
         items.value = snapshot;
       };
     },
-    // A ban is identified by the room-and-user pair, so that composite is the target — there is no `id`
-    key: `${input.roomId}-${input.userId}`,
+    // A foo is identified by the parent-and-child pair, so that composite is the target — there is no `id`
+    key: `${input.parentId}-${input.childId}`,
   });
 };
 ```
@@ -46,7 +46,7 @@ const createFoo = async (input: CreateFooInput) => {
 
 Same key = same target, so those writes queue behind each other.
 
-- **Per-entity operations** → the entity id or its natural composite (`key: input.id`, `` key: `${userId}-${roleId}` ``).
+- **Per-entity operations** → the entity id or its natural composite (`key: input.id`, `` key: `${parentId}-${childId}` ``).
 - **Creates with no natural key** → a per-call `Symbol("createFoo")`, since every create is independent and must not wait behind its siblings. Use a stable key plus `isExclusive` instead when duplicate fires must drop.
 - **Singleton targets** → the scope's id or a stable target name.
 

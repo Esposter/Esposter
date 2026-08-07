@@ -17,11 +17,11 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 
 ## Functions
 
-- `get*` for derivation/display functions: `getVisibilityTooltip`, `getRowTitle`
-- `read*` for async data-fetching functions — never `fetch*` (`fetch` is reserved for the Web API): `readMemberMentionItems`, `readRoles`
+- `get*` for derivation/display functions: `getFooTooltip`, `getFooTitle`
+- `read*` for async data-fetching functions — never `fetch*` (`fetch` is reserved for the Web API): `readFoos`
 - CRUD prefixes (`create*`, `update*`, `delete*`) for data/store operations
-- `store*` prefix for subscription-driven state-update counterparts of async user actions: `deleteFriend` (user action) + `storeDeleteFriend` (subscription update). Never on unpaired methods
-- `on*` prefix for handlers **only when wrapping an existing named store/service fn**: `onUpdateMessage` wraps `updateMessage`. Direct actions use the action name: `submit`, `save`, `delete` — never `onSubmit`/`onSave`/`onDelete`
+- `store*` prefix for subscription-driven state-update counterparts of async user actions: `deleteFoo` (user action) + `storeDeleteFoo` (subscription update). Never on unpaired methods
+- `on*` prefix for handlers **only when wrapping an existing named store/service fn**: `onUpdateFoo` wraps `updateFoo`. Direct actions use the action name: `submit`, `save`, `delete` — never `onSubmit`/`onSave`/`onDelete`
 - **No cardinality suffixes** — when upgrading single-item → batch, keep the same name. Never add `ByRooms`, `ByIds`, `Many`, `Batch`
 
 ## Variables
@@ -35,7 +35,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`
 - `edited{PropName}` for a **local editable copy** of a prop/store field (form drafts, buffered inputs) — the value a `v-text-field`/`v-model` binds to before save: `editedName` (copy of `resource.name`), `editedRow`, `editedImage`. Never `{prop}Value` (`renameValue` ✗) nor a bare restatement of the field. Holds whether the copy is a plain `ref(source)` or a `useCloned(() => source)` — the prefix marks it as the draft, not the source of truth
 - **Unused params keep the `_` prefix _and_ a readable name** — `_event`, `_index`, never bare `_`. The prefix satisfies lint; the name documents the slot. Applies to inlined handlers too: `@submit="async (_event, onComplete) => {...}"`
-- `display*` for presentation-layer computed that sorts/filters raw store data: `displayFriends`. Never `sorted*` or `filtered*`
+- `display*` for presentation-layer computed that sorts/filters raw store data: `displayFoos`. Never `sorted*` or `filtered*`
 
 ## Numbers & Time
 
@@ -56,12 +56,12 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - **No `With` prefix on mixin interfaces** — name after the capability: `SourceColumnId`, not `WithSourceColumnId`. Schema factories follow: `createSourceColumnIdSchema` not `createWithSourceColumnIdSchema`
 - **`A` prefix for abstract classes only** — never on interfaces. `AColumn` (abstract class) ✓, `SlashCommand` (interface) ✓, `ASlashCommand` ✗
 - **Interface fields use full type name** — `aggregationType: AggregationTransformationType` not `transform`, `mode`, or `type`. Never abbreviate enum field names
-- **Constant arrays/maps use PascalCase, and the file name matches the export** — `ProductListLinkItems.ts` → `export const ProductListLinkItems = [...]`; likewise `SoundMap.ts`, `EffectOperatorMap.ts`, `ColumnStatisticsDefinitionMap.ts`. (The `app/services/anime/*Expressions.ts` files are camelCase-named legacy outliers — don't copy them.)
-- **UI section enums: one per group, values double as title + id** — when a panel has scrollable subsections (or any list whose labels also serve as stable ids/anchors), model each group as its own enum whose values are the human title (e.g. `VoiceSettingsSection { InputMode = "Input Mode", ... }`). The value is reused as the display title and the DOM/scroll id, so don't derive a separate slug. One enum per subsection group, never a shared catch-all.
+- **Constant arrays/maps use PascalCase, and the file name matches the export** — `FooMap.ts` → `export const FooMap = { ... }`. (Any camelCase-named file holding such a constant is a legacy outlier — don't copy it.)
+- **UI section enums: one per group, values double as title + id** — when a panel has scrollable subsections (or any list whose labels also serve as stable ids/anchors), model each group as its own enum whose values are the human title (e.g. `FooSection { Bar = "Bar Baz", ... }`). The value is reused as the display title and the DOM/scroll id, so don't derive a separate slug. One enum per subsection group, never a shared catch-all.
 
 ## Regex Constants
 
-- Named regex constants use `_REGEX` suffix — `EMPTY_TEXT_REGEX`, `INVITE_ID_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix.
+- Named regex constants use `_REGEX` suffix — `FOO_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix.
 
 ## Framework-Specific Naming
 

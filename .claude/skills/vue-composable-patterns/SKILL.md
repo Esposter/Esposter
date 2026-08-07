@@ -45,12 +45,12 @@ When the input is a **discriminated union**, don't type the param `Except<Input,
 
 ## Settings Tab Permissions — Hide at the Tab Level
 
-Permission-gated settings tabs are hidden via `SettingsPermissionMap` (`services/message/settings/`), which maps a `SettingsType` to the `RoomPermission` it requires; `LeftSideBar.vue` filters visible tabs through `hasPermission` in a `computed`. Individual tab components **never** check permissions — they just fetch and render, because the tab simply isn't shown to users lacking it. **Do NOT** render "Insufficient permissions" text; hide the tab entirely.
+Permission-gated settings tabs are hidden via a tab-definition map (`FooPermissionMap` in `services/<domain>/settings/`), which maps each tab type to the permission it requires; the nav component filters visible tabs through `hasPermission` in a `computed`. Individual tab components **never** check permissions — they just fetch and render, because the tab simply isn't shown to users lacking it. **Do NOT** render "Insufficient permissions" text; hide the tab entirely.
 
 ## Unwrapping Reactive Proxies
 
 - Always `toRawDeep` from `@esposter/shared`, never Vue's `toRaw` — `toRaw` only unwraps one level. Critical when passing reactive data to APIs requiring plain objects (IndexedDB `store.put()`, `structuredClone`, `postMessage`).
-- **Only clone what came out of reactive state.** `structuredClone(toRawDeep(...))` is for data pulled from stores/refs; a freshly constructed class instance is already plain and non-reactive — pass it straight through (`executeAndRecord(new CreateRowCommand(index, newRow))`).
+- **Only clone what came out of reactive state.** `structuredClone(toRawDeep(...))` is for data pulled from stores/refs; a freshly constructed class instance is already plain and non-reactive — pass it straight through (`push(new CreateFooCommand(...))`).
 
 ## Resource Management
 
@@ -81,7 +81,7 @@ onMounted(async () => {
 
 Every API call must be necessary. **Never fire a persistence call (tRPC mutation or localStorage write) when the payload equals what was last persisted.** Two silent offenders this kills: a `watch` on saveable state firing when the load assigns the just-loaded value (save-on-mount), and an interval that saves every tick even when nothing changed.
 
-The dirty check is built into `useSave` (`composables/shared/useSave.ts`) — **never hand-roll a snapshot or a `set*` wrapper in a store.** It returns `{ save, setState }`; loads go through `setState` (renamed per domain, `setClicker`/`setDungeons`) so the snapshot resets, and read composables never assign the state ref directly. Options, snapshot semantics and worked wiring: `references/async-sequencing.md`.
+The dirty check is built into `useSave` (`composables/shared/useSave.ts`) — **never hand-roll a snapshot or a `set*` wrapper in a store.** It returns `{ save, setState }`; loads go through `setState` (renamed per domain, `setFoo`/`setBar`) so the snapshot resets, and read composables never assign the state ref directly. Options, snapshot semantics and worked wiring: `references/async-sequencing.md`.
 
 ## Async Sequencing — One Primitive (hand-rolling BANNED)
 

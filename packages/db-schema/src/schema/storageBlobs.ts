@@ -14,7 +14,8 @@ export const azureContainerEnum = pgEnum("azure_container", AzureContainer);
 // A row is born unreconciled, carrying the size the client *declared* before it uploaded anything. Storage's
 // Own `BlobCreated` is what turns it into the truth, replacing the declaration with the stored object's real
 // Size. Nothing settles the rest: past `expiresAt` the write SAS is dead, so a hold that never landed simply
-// Stops counting, and the next reserve that user makes drops it.
+// Stops counting. The row itself outlives that, because a `BlobCreated` for a blob that did land can still be
+// Inside the delivery window — a later reserve by that user drops it only once no such event can still arrive.
 export const storageBlobs = pgTable(
   "storage_blobs",
   {

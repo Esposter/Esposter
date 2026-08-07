@@ -11,14 +11,14 @@ Nuxt builds the auto-import name from the directory words plus the filename word
 Fold when either holds:
 
 - the directory is **crowded** (roughly ≥10 flat components) — folding is what keeps it navigable; a 3-file feature folder is already readable and stays flat
-- a file sits **beside a folder of the same name** (`Node/` + `NodeDropzoneBackground.vue`) — always untidy, fold regardless of size
+- a file sits **beside a folder whose name is its prefix** (`Foo/` + `FooBarBackground.vue`) — always untidy, fold regardless of size
 
 Two carve-outs:
 
-- **Don't split a suffix family.** `TypeCell` + `TypeFilterPill` share a prefix, but `TypeFilterPill` also belongs to `Status/Tag/Updated FilterPill`. Folding `Type/` scatters the family — leave it.
+- **Don't split a suffix family.** `FooCell` + `FooFilterPill` share a prefix, but `FooFilterPill` also belongs to the `Bar`/`Baz` `FilterPill` family. Folding `Foo/` scatters the family — leave it.
 - **Don't nest for two.** Once a fold leaves the new folder with a handful of files, stop; `Menu/{Button,LinkList,LinkListItem}.vue` beats a further `Menu/LinkList/{Index,Item}.vue`.
 
-The parent of a folded group becomes `Index.vue` in it (`Room/List.vue` + `Room/ListItem.vue` → `Room/List/{Index,Item}.vue`).
+When a fold **is** warranted, the parent of the folded group becomes `Index.vue` in it — `Foo/{List,ListItem,ListHeader,ListFooter}.vue` → `Foo/List/{Index,Item,Header,Footer}.vue`. A bare `List` + `ListItem` pair is the "don't nest for two" case and stays flat.
 
 ## Nuxt name compression
 

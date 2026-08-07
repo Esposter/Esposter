@@ -16,7 +16,8 @@ const copyButtonProps = { color: "grey-lighten-1", density: "comfortable", size:
   <DocsMermaid v-if="language === 'mermaid'" :code />
   <!-- Colours are github-dark's own pair (configuration/content.ts) — shiki emits no wrapper background,
     and code stays dark in both app themes, so a --v-theme token cannot supply them -->
-  <div v-else class="group" text-sm lh-1.6 my-4 rd-lg relative overflow-hidden bg="[#24292e]" c="[#e1e4e8]">
+  <!-- lh="[1.6]" not lh-1.6 — the bare number is spacing-scaled (calc(var(--spacing) * 1.6) = 0.4rem) -->
+  <div v-else class="group" text-sm my-4 rd-lg relative overflow-hidden bg="[#24292e]" c="[#e1e4e8]" lh="[1.6]">
     <StyledTooltipIconButton
       op-0
       transition-opacity

@@ -35,7 +35,7 @@ const {
 </script>
 
 <template>
-  <v-toolbar pl-4 b-l-1 b-border b-solid>
+  <v-toolbar pl-4>
     <ResourceBladeTitle :active-blade :resource />
     <v-spacer />
     <ResourceBladeActions

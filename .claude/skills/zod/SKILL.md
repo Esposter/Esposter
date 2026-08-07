@@ -37,7 +37,7 @@ z.string()
 
 ```typescript
 createUniqueArraySchema(z.string()).max(MAX_READ_LIMIT); // not z.string().array()
-createUniqueArraySchema(fileEntitySchema, "id").max(FILE_MAX_LENGTH).default([]);
+createUniqueArraySchema(fooSchema, "id").max(FOO_MAX_LENGTH).default([]);
 ```
 
 **Exception — duplicates are valid:** use plain `.array()` when the array semantically allows duplicates (positional DOM bounds, the same config at different values, ordered content blocks). Don't add an artificial `id` field just to force uniqueness.
@@ -75,7 +75,7 @@ Rules:
 ## Schema Rules
 
 - **Minimal strict input schemas** — model the exact case being implemented now. Prefer required fields over optional + `.refine()` when only one flow is supported; split future variants into separate schemas/procedures later. Use `.refine()` only for cross-field rules that can't be represented structurally.
-- **Schema must match its type exactly** — if a field is `ColumnFormat`, use `columnFormatSchema`, never inline `z.union([booleanFormatSchema, ...])`. Every named type has exactly one named schema; never reconstruct a union inline.
+- **Schema must match its type exactly** — if a field is `FooType`, use `fooTypeSchema`, never inline `z.union([barSchema, ...])`. Every named type has exactly one named schema; never reconstruct a union inline.
 - **`.default()`** — never combine `.optional().default(value)` (`.default()` already handles `undefined`). Only use `.default()` in schemas whose TS type is a **class with actual property defaults** (e.g. `class Foo { bar = [] }`). Never add `.default()` to a schema that `satisfies z.ZodType<Interface>` — interfaces have no defaults, so schema and type would misalign. Initialise empties explicitly at the call site (`new MyClass()` or `{ steps: [] }`).
 - **Shared ID field schemas** — always use the named ID schemas (`roomIdSchema`, `userIdSchema`, `userIdsSchema` from `@esposter/db-schema`) for object fields matching their canonical name. Whole schema is just an ID field → use it directly (`const onUpdateSchema = roomIdSchema`). Multi-field objects → spread the shape (`z.object({ ...roomIdSchema.shape, ...userIdSchema.shape, otherField: ... })`). Constrained variants → chain from the shape field (`userIds: userIdsSchema.shape.userIds.min(1)`). For differently-named fields (`targetUserId`, `actorUserId`), use `selectUserSchema.shape.id` directly.
 - **`refineAtLeastOne`** — when an update/patch schema has all-optional fields and at least one must be provided, use `refineAtLeastOne(schema, ["field1", "field2"])` from `#shared/services/zod/refineAtLeastOne`. Never inline `.refine((data) => ...)`.
@@ -83,7 +83,7 @@ Rules:
 - **`satisfies z.ZodType<T>` with class types** — when schema output is plain objects but the interface uses class instances (with `toJSON`), use `Except` + `ToData` to strip `toJSON` from nested classes:
 
   ```typescript
-  export const dataSourceSchema = z.object({...}) satisfies z.ZodType<Except<DataSource, "columns"> & { columns: ToData<Column>[] }>;
+  export const fooSchema = z.object({...}) satisfies z.ZodType<Except<Foo, "bars"> & { bars: ToData<Bar>[] }>;
   ```
 
 - **vjsf form schemas** — a schema rendered by Vjsf gets a separate `*Form` interface + schema, `layout`/title meta, ajv keywords, and its own discriminated-union rules: the `vjsf` skill owns all of it.

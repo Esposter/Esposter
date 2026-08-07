@@ -58,8 +58,8 @@ For **external sync** (a parent can reset the model), add a second watch on the 
 
 ```typescript
 // fetch once on mount — never re-fetch on every dialog open
-const { readFriends } = useReadFriends();
-await readFriends();
+const { readFoos } = useReadFoos();
+await readFoos();
 ```
 
-The one-time `await readFriends()` in `<script setup>` handles opening the dialog without having visited the friends page first; the store then stays fresh via subscriptions.
+The one-time `await readFoos()` in `<script setup>` handles opening the dialog without having visited the foo page first; the store then stays fresh via subscriptions.

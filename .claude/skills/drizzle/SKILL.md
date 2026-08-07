@@ -16,7 +16,7 @@ description: Esposter Drizzle ORM conventions — bare column builders (camelCas
 **Never pass a name string to a column builder** — call it bare. Casing is handled centrally: the `pgTable` wrapper builds through drizzle's `camelCase` helper (`packages/db-schema/src/pgTable.ts`), and `messageSchema` is `camelCase.schema("message")`, so the DB column name is the camelCase property key automatically.
 
 ```typescript
-receiverId: text().notNull(), // not text("receiverId"), never "receiver_id"
+barId: text().notNull(), // not text("barId"), never "bar_id"
 isHidden: boolean().notNull().default(false),
 ```
 
@@ -27,7 +27,7 @@ isHidden: boolean().notNull().default(false),
 - Pass `schema: messageSchema` for message-feature tables to group them under the `message` Postgres schema. Tables shared beyond the messaging feature (`friends`, `users`, `posts`, `blocks`) take no `schema` and land in the default schema.
 
 ```typescript
-export const roomsInMessage = pgTable("rooms", { id: uuid().primaryKey().defaultRandom(), ... }, { schema: messageSchema });
+export const foosInMessage = pgTable("foos", { id: uuid().primaryKey().defaultRandom(), ... }, { schema: messageSchema });
 ```
 
 ## Registering Exports in the `schema` Object
@@ -60,9 +60,9 @@ After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock an
 Always use `alias()` for both references — never the raw table object for either side. Name variables and alias strings `tableName1`, `tableName2`, etc. (numeric suffix, no role-based names):
 
 ```ts
-const usersToRooms1 = alias(usersToRooms, "usersToRooms1");
-const usersToRooms2 = alias(usersToRooms, "usersToRooms2");
-ctx.db.from(usersToRooms1).innerJoin(usersToRooms2, eq(usersToRooms2.roomId, usersToRooms1.roomId));
+const foos1 = alias(foos, "foos1");
+const foos2 = alias(foos, "foos2");
+ctx.db.from(foos1).innerJoin(foos2, eq(foos2.barId, foos1.barId));
 ```
 
 ## Batch Inserts
@@ -72,8 +72,8 @@ Always batch over an array — never loop individual `INSERT`s:
 ```ts
 // CORRECT — one INSERT with multiple rows
 await tx
-  .insert(usersToRooms)
-  .values(allUserIds.map((userId) => ({ roomId: room.id, userId })))
+  .insert(foos)
+  .values(ids.map((id) => ({ id, parentId })))
   .onConflictDoNothing();
 ```
 
@@ -88,7 +88,7 @@ await tx
 The schema carries the empty-sentinel convention itself so types and defaults propagate end-to-end through Drizzle's inference — never store `null` and map a sentinel to/from it in app code.
 
 - **`.notNull().default("")` for optional user-editable text fields** — `""` is the canonical absent value (biography, color, topic, description), never `null`.
-- **`.notNull().default(0)` for optional numeric fields where `0` has no domain meaning** — e.g. `maxUses`: `0` = unlimited. CHECK constraints treat the sentinel explicitly (`maxUses = 0 OR uses <= maxUses`), and queries compare against it (`eq(column, 0)`), not `isNull`.
+- **`.notNull().default(0)` for optional numeric fields where `0` has no domain meaning** — e.g. a capacity column `maxFoos`: `0` = unlimited. CHECK constraints treat the sentinel explicitly (`maxFoos = 0 OR foos <= maxFoos`), and queries compare against it (`eq(column, 0)`), not `isNull`.
 - **Timestamps keep `null` for absence** — a timestamp has no empty value (`expiresAt`: null = never expires). The mapping from the input's sentinel happens once at the insert site.
 - **Keep `null` only for semantically distinct absence** — URL fields (`""` would fail URL validation); fields a CHECK constraint forces to `null` for some row type; nullable FKs where `null` means the referenced row was deleted (audit trail); auth-framework-managed tables (`accounts`, `sessions`), which are not to be touched.
 - **Update downstream `??` fallbacks to `||`** when a field changes nullable → `""` — `"" ?? fallback` returns `""`.

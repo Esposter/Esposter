@@ -29,16 +29,16 @@ description: Esposter Vue 3 SFC conventions — macro ordering, script-setup dec
 useHead({ titleTemplate: ... });       // 0. static page metadata — top, may precede macros
 defineSlots<{ default: () => VNode }>();
 const { $trpc } = useNuxtApp();        // 2. third-party
-const roomStore = useRoomStore();      // 3. custom store
-const { currentRoom } = storeToRefs(roomStore);
-const roomName = useRoomName(...);     // 4. custom composable / state
+const fooStore = useFooStore();        // 3. custom store
+const { currentFoo } = storeToRefs(fooStore);
+const fooName = useFooName(...);       // 4. custom composable / state
 ```
 
 Never leave a framework value composable stranded at the bottom below custom stores and refs. **Exceptions that stay in category 4:** `useTemplateRef` (a ref — group with refs), and side-effect registrations that depend on local state (`useEventListener`, a `useSeoMeta` reading store refs) which must stay after the state they depend on.
 
 ## Single-use functions must be inlined — `references/inline-handlers.md`
 
-Read it when naming, extracting or reviewing a function used once. **A single-use function that only defers a block must be inlined**; the discriminator is whether its name states its _trigger_ (`onMount`, `handleX` — inline it, including template handlers however long) or its _result_ (`getColumnType` — keep it, single use is fine). The page owns every form of ceremony, the template-scope exception, and the list of legitimate keeps.
+Read it when naming, extracting or reviewing a function used once. **A single-use function that only defers a block must be inlined**; the discriminator is whether its name states its _trigger_ (`onMount`, `handleX` — inline it, including template handlers however long) or its _result_ (`getFooType` — keep it, single use is fine). The page owns every form of ceremony, the template-scope exception, and the list of legitimate keeps.
 
 - **Prefer `useEventListener` over manual `addEventListener`/`removeEventListener`** — it auto-removes on unmount, replacing an `onMounted`/`onUnmounted` pair and letting the handler be inlined. Omit the target for `window` events (`useEventListener("resize", ...)`) — the omitted-target form is SSR-safe (don't reference `window` at setup top-level). Fall back to manual hooks only when the target isn't reachable SSR-safely as a getter and the listener is genuinely tied to mount.
 - **Never destructure event parameters** — `(event: KeyboardEvent) => { event.key ... }`, not `({ key })`. Destructuring event methods (`preventDefault`, …) causes "Illegal invocation" via lost `this` binding. Keep the full `event` object even when only reading properties.
@@ -76,7 +76,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 ## Template Conventions
 
 - **Truthiness** — `v-if="value"`, not `v-if="value !== null"`. Explicit null/undefined comparisons only when distinguishing falsy values (`0` valid, `false` meaningful, `null` vs `undefined` matters).
-- **No bare function references in `@event` bindings** — a bare ref forwards the event object as first arg (almost always unintended). Use `fn()` for zero-arg calls, an arrow function when args are needed: `@complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"`.
+- **No bare function references in `@event` bindings** — a bare ref forwards the event object as first arg (almost always unintended). Use `fn()` for zero-arg calls, an arrow function when args are needed: `@complete="(a, b) => useFoo(a, b)"`.
 - **`v-for` destructuring** — destructure when properties are accessed (`v-for="{ value, icon, title } of items"`); keep a full reference only when the whole object is needed (passed as prop or stored), naming the loop var to match the target prop for `:propName` shorthand.
 - **Dotted slot names need dynamic binding** — Vue rejects dots in static slot names; Vuetify item slots use brackets: ``#[`item.drag`]``. Only dot-free names are static (`#top`, `#activator`). `#activator` ordering is the `vuetify` skill's.
 - **`v-bind` shorthand** — the `:` forms (including `:="object"` and same-name `:prop`) are autofixed by `vue/v-bind-style` with `sameNameShorthand: "always"` (`packages/configuration/eslint/overrides/vueRules.js`); `pnpm lint:fix` settles it.
@@ -85,12 +85,12 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 - **Event modifiers over raw event methods** — an unconditional `preventDefault()`/`stopPropagation()` opening a template handler is what modifiers express (`@click.stop`, `@keydown.enter.prevent`); enforced for that shape by `vue/no-restricted-syntax`. Raw calls stay correct where no modifier can encode the trigger: behind a runtime guard (e.g. `preventDefault` only when the cursor sits at position 0), and in programmatic listeners (`useEventListener`, `onKeyStroke`, Tiptap `onKeyDown`) where modifiers don't exist. `stopImmediatePropagation()` is banned outright (lint-enforced) — it couples behavior to listener registration order.
 - **`v-html` only on a plain element** — on a component (`<v-card-text v-html="html" />`) it compiles to an `innerHTML` prop that the component's own children patch drops, so the element renders empty in SSR and on the client with no warning. Wrap instead: `<v-card-text><div class="rich-text-content" v-html="html" /></v-card-text>`.
 - Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
-- **`import type` names ARE visible in template casts** — a type-only imported name works in a template `as` cast (`$event as NoiseSuppressionMode`); never widen it to a value import for the cast's sake. Only a template _value_ usage — enum member access (`FooType.Bar`), a `v-for` source, a call — needs the value import. When vue-tsc reports TS2551 `Property 'X' does not exist on type '{ …ctx… }'` on a template identifier, the culprit is a value usage of a type-only import somewhere in the template, not the cast — find it before changing import forms.
+- **`import type` names ARE visible in template casts** — a type-only imported name works in a template `as` cast (`$event as FooType`); never widen it to a value import for the cast's sake. Only a template _value_ usage — enum member access (`FooType.Bar`), a `v-for` source, a call — needs the value import. When vue-tsc reports TS2551 `Property 'X' does not exist on type '{ …ctx… }'` on a template identifier, the culprit is a value usage of a type-only import somewhere in the template, not the cast — find it before changing import forms.
 
 ## Props, Refs & Computed
 
-- **`defineProps` takes a named `interface <ComponentName>Props`** — never an inline object-literal type or a plain `interface Props`. Name it after the component's identity (file/folder name, stripping `Index`): `PreJoin/Index.vue` → `PreJoinProps`; `JoinNotice/KnockerItem.vue` → `KnockerItemProps`.
-- **Prop shorthand naming** — when binding a simple local `ref`/`computed` directly to a prop, name it to match that prop so the `:prop` shorthand works (`const dataSourceType = ref(...)` → `:dataSourceType`). Doesn't apply to complex expressions (`:src="session.user.image"`) or named `defineModel` variables.
+- **`defineProps` takes a named `interface <ComponentName>Props`** — never an inline object-literal type or a plain `interface Props`. Name it after the component's identity (file/folder name, stripping `Index`): `Foo/Index.vue` → `FooProps`; `Foo/BarItem.vue` → `BarItemProps`.
+- **Prop shorthand naming** — when binding a simple local `ref`/`computed` directly to a prop, name it to match that prop so the `:prop` shorthand works (`const fooType = ref(...)` → `:fooType`). Doesn't apply to complex expressions (`:src="session.user.image"`) or named `defineModel` variables.
 - **Optional refs omit the initial value** — `ref<string>()` infers `Ref<string | undefined>`; never `ref<string | undefined>(undefined)`.
 - **Template refs always use `useTemplateRef`** — prefer no generic (Vue 3.5+ infers from the template), never a `Ref` suffix, and use a semantic name matching the `ref="..."` value (`const video = useTemplateRef("video")`). If a component type was imported only for the generic, remove that import. A generic is justified only when inference doesn't give the type you need: the element/component doesn't expose the property you want, or the inferred type is an overly complex union you want to simplify.
 - **Sort at display time** — apply `.toSorted()` in the `computed` that feeds the template; never in store ingestion (`readX`, `setX`, mutation helpers). Stores hold natural order; components transform for display. **Exception**: sort before the API call when sorted order is sent to the backend (message pagination cursors).

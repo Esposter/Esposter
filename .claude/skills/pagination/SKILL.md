@@ -105,11 +105,11 @@ Pick the layer by result shape:
 
 ```ts
 // stores/dialogs with cursor pagination
-export const useSearchStore = defineStore("message/room/search", () => {
+export const useSearchStore = defineStore("<feature>/foo/search", () => {
   const { $trpc } = useNuxtApp();
   return useCursorSearcher((searchQuery, cursor, opts) => {
     const normalizedSearchQuery = normalizeString(searchQuery);
-    return $trpc.room.readRooms.query(
+    return $trpc.foo.readFoos.query(
       { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined },
       opts,
     );
@@ -122,7 +122,7 @@ const { isPending } = useAutoSearch(searchQuery, {
     searchResults.value = [];
   },
   search: async (sanitizedSearchQuery, signal) => {
-    searchResults.value = await $trpc.friend.searchUsers.query(sanitizedSearchQuery, { signal });
+    searchResults.value = await $trpc.foo.searchFoos.query(sanitizedSearchQuery, { signal });
   },
 });
 ```
@@ -137,24 +137,22 @@ Anything else that looks like a new exception should be refactored onto `useAuto
 
 ## Bundle Ancillary Reads with the Primary Read
 
-When a component needs ancillary data (permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`. `readMyPermissions` and similar belong inside the composable owning the load (`useReadRooms`, `useReadMembers`), called in `Promise.all` alongside other metadata reads. If there is no natural companion read, call it directly in `<script setup>` — still no `onMounted`.
+When a component needs ancillary data (permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`. An ancillary read belongs inside the composable owning the load (`useReadFoos`), called in `Promise.all` alongside other metadata reads. If there is no natural companion read, call it directly in `<script setup>` — still no `onMounted`.
 
 ```typescript
 // bundle ancillary reads in the owning read composable — not a separate component onMounted fetch
-const readMyUsersToRooms = useReadMyUsersToRooms();
-const readMyPermissions = useReadMyPermissions();
-const readRoles = useReadRoles();
-const readRooms = () =>
+const readBars = useReadBars();
+const readBazes = useReadBazes();
+const readFoos = () =>
   readItems(async () => {
-    const data = await $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {});
-    const roomIds = data.items.map(({ id }) => id);
-    if (roomIds.length > 0)
-      await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
+    const data = await $trpc.foo.readFoos.query();
+    const fooIds = data.items.map(({ id }) => id);
+    if (fooIds.length > 0) await Promise.all([readBars(fooIds), readBazes(fooIds)]);
     return data;
   });
 ```
 
-Follow the `useReadMyUsersToRooms` pattern for batch ancillary reads — a composable taking an **array** of ids, early-returning when it is empty, and issuing one batched query rather than N per-id calls.
+Follow the `useReadBars` shape for batch ancillary reads — a composable taking an **array** of ids, early-returning when it is empty, and issuing one batched query rather than N per-id calls.
 
 ## Offline IndexedDB Cache via Pagination Cache Composables
 

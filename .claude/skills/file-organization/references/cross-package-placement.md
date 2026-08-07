@@ -12,7 +12,7 @@ This is the load-bearing placement rule and it covers **every** cross-package ho
 
 ## Constant home = the lowest shared dependency, once the threshold is met
 
-A constant only earns a shared-package home when ≥2 packages consume it; a single-consumer value stays beside its consumer. When it is genuinely shared, pick the package both consumers already depend on: `@esposter/shared` (client-safe, universal) or `@esposter/configuration` (node/build-tooling base). Example: `PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH` lives only in `@esposter/db-schema` and downstream packages import it.
+A constant only earns a shared-package home when ≥2 packages consume it; a single-consumer value stays beside its consumer. When it is genuinely shared, pick the package both consumers already depend on: `@esposter/shared` (client-safe, universal) or `@esposter/configuration` (node/build-tooling base). A constant whose domain belongs to one package stays declared in that package, and downstream packages import it from there rather than re-declaring it.
 
 **The one sanctioned duplication is the client/node cross-realm case**: a value is duplicated across realms only when one realm is client-bundle-safe and the other is node-only and they can't share a package (e.g. `KIBIBYTE` exists in both `packages/app/shared/services/app/constants.ts` for client code and `@esposter/configuration` for build scripts). This is the exception the no-duplicate-constants rule points to, and it never justifies hoisting a client-unsafe value into a shared package.
 

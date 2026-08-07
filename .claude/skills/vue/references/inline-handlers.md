@@ -5,7 +5,7 @@ Read when naming, extracting, or reviewing a function used once — an event han
 **A single-use function that only defers a block must be inlined.** A single reference is the _trigger_ for the question, not the answer to it. Ask what the name buys:
 
 - **Ceremony → inline.** The name describes _when_ it runs (`onMount`, `init`, `load`, `setup`, `handleX`) and the body is simply the block its one caller would have contained. The name adds a jump and buys nothing, and inlining makes the file strictly smaller.
-- **Abstraction → keep.** The name describes _what it computes_ (`getColumnType`, `isStyleNode`, `checkIsInteractableDirection`) and compresses a non-obvious computation — a switch, a predicate, a parse — so its call site reads as one idea. Inlining a 14-line switch into a loop body is bigger, more nested, and deletes the only word explaining what it means. Single use is not a reason to destroy it.
+- **Abstraction → keep.** The name describes _what it computes_ (`getFooType`, `checkIsFoo`) and compresses a non-obvious computation — a switch, a predicate, a parse — so its call site reads as one idea. Inlining a 14-line switch into a loop body is bigger, more nested, and deletes the only word explaining what it means. Single use is not a reason to destroy it.
 
 The discriminator: **does the name state its trigger or its result?** A trigger-named function is the caller wearing a disguise. A result-named function is a concept. Never inline a function whose call site would then need a comment to explain what the block does — that comment is the name you just removed.
 
@@ -34,8 +34,8 @@ Not only callbacks passed as arguments:
 - **Template handlers** — a handler bound to exactly one element is ceremony, whatever its length. Inline it into the binding (`@submit="async (_, onComplete) => { ... }"`), which also lets Vue infer the event arg types. Multi-statement and `async` bodies are fine inline; the handler's trigger is the element it sits on, so that is where it belongs:
 
   ```vue
-  <!-- WRONG — copyPublicLink is bound once -->
-  <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
+  <!-- WRONG — copyFooLink is bound once -->
+  <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyFooLink" />
 
   <!-- CORRECT -->
   <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="async () => { ... }" />
@@ -45,11 +45,12 @@ Not only callbacks passed as arguments:
 
   ```ts
   // Stays named: the template cannot reference window
-  const copyPublicLink = async () => {
-    if (!publicUrl.value) return;
-    await getResultAsync(() =>
-      window.navigator.clipboard.writeText(`${window.location.origin}${publicUrl.value}`),
-    ).match(noop, noop);
+  const copyFooLink = async () => {
+    if (!fooUrl.value) return;
+    await getResultAsync(() => window.navigator.clipboard.writeText(`${window.location.origin}${fooUrl.value}`)).match(
+      noop,
+      noop,
+    );
   };
   ```
 
@@ -61,7 +62,7 @@ Not only callbacks passed as arguments:
 - The handler references something the **template has no scope for** (`window.…`, a type annotation).
 - The same **reference** is needed twice (`addEventListener` + `removeEventListener`), or one handler is bound to two elements.
 - It is the component's **public API** via `defineExpose({ onKeyDown })` — the expose _is_ the second reference.
-- A mutation must re-run a setup read: `refreshResponses` awaited at setup **and** bound to `@delete`.
+- A mutation must re-run a setup read: `refreshFoos` awaited at setup **and** bound to `@delete`.
 
 ## Handler details
 

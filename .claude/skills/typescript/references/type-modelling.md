@@ -32,8 +32,7 @@ Prefer a single `as T` whenever TS accepts it, and comment **what the compiler c
 When a configuration interface re-declares properties already on a source type (e.g. a Phaser `GameObjects.X`), use `Pick<SourceType, "prop1" | "prop2">` in the `extends` clause instead of re-declaring each.
 
 ```ts
-export interface ArcConfiguration
-  extends ShapeConfiguration, Pick<GameObjects.Arc, "closePath" | "endAngle" | "radius" | "startAngle"> {}
+export interface FooConfiguration extends BarConfiguration, Pick<SourceType, "a" | "b"> {}
 ```
 
 Use `Pick` for all properties derived directly from the source type. Keep explicit declarations only for `Parameters<SourceType["method"]>` tuples and their indexed members (no readable property to pick), and plain primitives representing constructor args with no matching readable property on the source type.
@@ -67,7 +66,7 @@ return FooComputeMap[foo.type](foo as never, { find, resolve });
 - Each per-variant function lives in its own co-located file; the map file imports them. Adding a variant = one new file + one map entry.
 - Export the `ComputeContext` interface so callers can implement it.
 - **`as never` at the call site** is required and safe wherever the key↔entry correlation is lost — dispatching by a runtime key (`Map[foo.type](foo as never)`), or destructuring an entry (`format(item[key] as never)`). TypeScript can't correlate the key with the entry's parameter type.
-- Discriminant narrowing inside an entry (`if (column.type !== ColumnType.Date) return null;`) gives type-safe subtype access without casts.
+- Discriminant narrowing inside an entry (`if (foo.type !== FooType.Bar) return undefined;`) gives type-safe subtype access without casts.
 
 ## Missing `NuxtConfig` module keys — augment `nuxt.d.ts`, never touch tsconfig
 

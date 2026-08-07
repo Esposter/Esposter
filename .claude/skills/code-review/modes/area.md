@@ -10,7 +10,7 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "area <l
 
 ## What makes it a different review, not a diff review with no diff
 
-The record bounds the review instead of a change. Scope builds a **claim inventory**: the specific, checkable assertions the docs and skills make about how this code behaves — "reads are single-flight via `isExclusive`", "the cache evicts on room switch" — each with the page that states it. That inventory is what the review checks the code against, so a run is only as good as it: 10 sharp claims beat 40 vague ones.
+The record bounds the review instead of a change. Scope builds a **claim inventory**: the specific, checkable assertions the docs and skills make about how this code behaves — "<read path> is single-flight via <named flag>", "<cache> evicts on <event>" — each with the page that states it. That inventory is what the review checks the code against, so a run is only as good as it: 10 sharp claims beat 40 vague ones.
 
 Find partitions by **the same size rule as diff mode**, at a lower threshold (25 files, because area finders read whole files rather than hunks):
 

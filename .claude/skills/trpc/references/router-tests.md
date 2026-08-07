@@ -17,9 +17,8 @@ Suites alias the getters into local `let`s in their own `beforeAll`/`beforeEach`
 Always `TRPCRouter` path notation, never `typeof subRouter`:
 
 ```ts
-let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-let roomFilterCaller: DecorateRouterRecord<TRPCRouter["room"]["filter"]>;
-let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
+let fooCaller: DecorateRouterRecord<TRPCRouter["foo"]>;
+let fooBarCaller: DecorateRouterRecord<TRPCRouter["foo"]["bar"]>;
 ```
 
 ## A guard test must get past every guard in front of the one it names
@@ -27,9 +26,7 @@ let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
 Procedures stack gates — membership, then permission, then ownership/authorship — and they all throw a bare `UNAUTHORIZED`, so a test that fails at the first gate is indistinguishable from one that reached the gate its title claims. `mockSessionOnce(mockContext.db)` alone makes a **brand-new user who never joined the room**: that proves membership and nothing else, whatever the title says. To assert a permission or authorship rule, the caller has to be a member first:
 
 ```ts
-const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
-const { user } = await mockSessionOnce(mockContext.db);
-await roomCaller.joinRoom(invite.id);
+const user = await createMember(); // the fixture's membership path — this user is actually in the room
 await mockSessionOnce(mockContext.db, user); // replay the same user for the guarded call
 ```
 

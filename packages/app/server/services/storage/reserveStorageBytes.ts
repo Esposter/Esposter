@@ -5,7 +5,13 @@ import type { AzureContainer, User } from "@esposter/db-schema";
 import { dayjs } from "#shared/services/dayjs";
 import { MAX_UNRECONCILED_STORAGE_BLOBS, storageQuotaExceededErrorMessage } from "#shared/services/storage/constants";
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
-import { DatabaseEntityType, storageBlobs, users, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  EVENT_GRID_DELIVERY_TTL_MS,
+  storageBlobs,
+  users,
+  WRITE_SAS_DURATION_MS,
+} from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq, gt, isNull, lte, sum } from "drizzle-orm";
 
@@ -27,25 +33,35 @@ export const reserveStorageBytes = async (
 ): Promise<void> => {
   if (reservations.length === 0) return;
 
-  // A thumbnail rides on the file it belongs to: the client downscales it, so its size is declared nowhere and
-  // Its hold is zero. Those riders claim no space and take no in-flight slot — a thumbnail the client never
-  // Manages to generate would otherwise hold a slot until its write SAS expires, while the upload it belongs
-  // To succeeded. Every reservation a caller declares bytes for is one upload. See /docs/platform/storage-quotas
-  const declaredReservations = reservations.filter(({ declaredBytes: bytes }) => bytes > 0);
-  const declaredBytes = declaredReservations.reduce((total, { declaredBytes: bytes }) => total + bytes, 0);
+  const declaredBytes = reservations.reduce((total, { declaredBytes: bytes }) => total + bytes, 0);
   const now = new Date();
   const expiresAt = dayjs(now).add(WRITE_SAS_DURATION_MS, "ms").toDate();
+  // A row must outlive every `BlobCreated` that can still name it, or a retry of one whose blob did land finds
+  // No row, charges nothing, and reports no failure. Storage checks a SAS when it receives the request, not when
+  // It finishes, so the last PUT a write SAS authorizes STARTS at `expiresAt` and its event is raised whenever
+  // That upload completes; Event Grid then keeps retrying it for `EVENT_GRID_DELIVERY_TTL_MS`. The completion
+  // Allowance is the SAS's own duration reused — a bound already in hand, and orders of magnitude beyond what a
+  // `MAX_FILE_REQUEST_SIZE` PUT takes — so nothing new can drift from the policy. See /docs/platform/storage-quotas
+  const collectableBefore = dayjs(now)
+    .subtract(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS, "ms")
+    .toDate();
   await db.transaction(async (tx) => {
     // `storage_blobs` before `users`, the order every path that touches both takes — a release and a reconcile
     // Lock the ledger row first and move the counter second, so a reserve that took the user row first would
     // Close a lock cycle with them and deadlock. See /docs/platform/storage-quotas
     //
-    // The expired holds are dropped rather than filtered, so the ledger stays bounded without anything
-    // Sweeping it. They never entered the counter, so removing them moves nothing — it is pure garbage
-    // Collection, and it rides the one write path this user already makes
+    // The collectable holds are dropped, so the ledger stays bounded without anything sweeping it. They never
+    // Entered the counter, so removing them moves nothing — it is pure garbage collection, and it rides the one
+    // Write path this user already makes
     await tx
       .delete(storageBlobs)
-      .where(and(eq(storageBlobs.userId, userId), isNull(storageBlobs.reconciledAt), lte(storageBlobs.expiresAt, now)));
+      .where(
+        and(
+          eq(storageBlobs.userId, userId),
+          isNull(storageBlobs.reconciledAt),
+          lte(storageBlobs.expiresAt, collectableBefore),
+        ),
+      );
     const [user] = await tx
       .select({ storageBytesUsed: users.storageBytesUsed, storageTier: users.storageTier })
       .from(users)
@@ -53,20 +69,19 @@ export const reserveStorageBytes = async (
       .for("update");
     if (!user) throw new TRPCError({ code: "NOT_FOUND", message: DatabaseEntityType.User });
 
-    // Read behind that lock, so a concurrent reserve cannot see the same outstanding set and pass on it. The
-    // Zero-declared riders are excluded here for the same reason they are excluded above — the sum is
-    // Unaffected by them, the count is what they would distort
+    // Read behind that lock, so a concurrent reserve cannot see the same outstanding set and pass on it.
+    // Expiry is what stops a hold counting, not the collection above — a row is kept past `expiresAt` only so a
+    // Late `BlobCreated` can still find it, and a dead write target must never hold space or a slot in the
+    // Meantime
     const [outstanding] = await tx
       .select({ pendingBytes: sum(storageBlobs.declaredBytes), value: count() })
       .from(storageBlobs)
-      .where(
-        and(eq(storageBlobs.userId, userId), isNull(storageBlobs.reconciledAt), gt(storageBlobs.declaredBytes, 0)),
-      );
+      .where(and(eq(storageBlobs.userId, userId), isNull(storageBlobs.reconciledAt), gt(storageBlobs.expiresAt, now)));
     // `sum` is a bigint aggregate, so postgres hands it back as a string — and as null for an empty set
     const pendingBytes = Number(outstanding?.pendingBytes ?? 0);
     if (user.storageBytesUsed + pendingBytes + declaredBytes > StorageTierQuotaMap[user.storageTier])
       throw new TRPCError({ code: "FORBIDDEN", message: storageQuotaExceededErrorMessage });
-    else if ((outstanding?.value ?? 0) + declaredReservations.length > MAX_UNRECONCILED_STORAGE_BLOBS)
+    else if ((outstanding?.value ?? 0) + reservations.length > MAX_UNRECONCILED_STORAGE_BLOBS)
       throw new TRPCError({
         code: "TOO_MANY_REQUESTS",
         message: "Too many uploads are still in flight — wait for them to finish.",

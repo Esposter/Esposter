@@ -10,8 +10,8 @@ const NAVIGATION_TRAIL_PAGE_ENTRIES = Object.entries(NavigationTrailPageMap) as 
 ][];
 // A page absent from the map can be navigated from without ever becoming a crumb — that is how a page opts out
 const getPage = (path: string) => NAVIGATION_TRAIL_PAGE_ENTRIES.find(([, crumb]) => crumb.path === path)?.[0];
-// A page and its own sub-views (a resource and its blades) share these leading segments, which is what tells a
-// Blade switch apart from a navigation to somewhere else
+// A page and its own sub-views (a resource and its blades) share these leading segments, which is what tells
+// Moving around inside one page apart from leaving it for another
 const getPageKey = (path: string) => path.split("/").slice(0, 3).join("/");
 
 // Where a navigation leaves the trail — the whole model, as one pure function, so it is testable without a
@@ -32,9 +32,10 @@ export const getNextNavigationTrail = (
   if (toPageIndex !== -1) return trail.slice(0, toPageIndex);
 
   const fromPage = getPage(fromPath);
-  // Drilling in from a page that can be a crumb appends it; moving between views of the page already open
-  // Carries its trail through; anything else is a direct arrival, with nothing above it
-  if (fromPage) return [...trail, fromPage];
-  else if (getPageKey(toPath) === getPageKey(fromPath)) return trail;
-  return [];
+  // Only leaving a page that can be a crumb is a drill-in from it, so only that appends. Every other navigation
+  // Carries the trail through untouched — another blade, another row clicked in the list rail, or the same page
+  // Re-entered with different filters — and one arriving from outside the area carries the empty trail that
+  // Leaving it left behind, which is exactly what a direct arrival is
+  if (fromPage && getPageKey(fromPath) !== getPageKey(toPath)) return [...trail, fromPage];
+  return trail;
 };

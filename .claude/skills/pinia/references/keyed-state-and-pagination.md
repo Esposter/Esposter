@@ -7,17 +7,14 @@ Read when a store keys state by an id, holds a list of entities, or paginates on
 `useDataMap<T>(currentId, defaultValue)` provides `getDataMap`, `setDataMap`, `data`, `initializeData`, `resetData`; `data` is tied to the current key. `useCursorPaginationDataMap`/`useOffsetPaginationDataMap` are thin wrappers that pass a factory default for their class instance.
 
 ```typescript
-// useDataMap — "current room" concept applies
-const roomStore = useRoomStore();
-const { data: notificationType, setDataMap } = useDataMap(
-  () => roomStore.currentRoomId,
-  NotificationType.DirectMessage,
-);
+// useDataMap — "current foo" concept applies
+const fooStore = useFooStore();
+const { data: barType, setDataMap } = useDataMap(() => fooStore.currentFooId, BarType.Baz);
 
 // Manual Map — an entity cache keyed by arbitrary id, with no "current" concept
-const userMap = ref(new Map<string, User>());
-const storeUser = (user: User) => {
-  userMap.value.set(user.id, user);
+const entityMap = ref(new Map<string, Foo>());
+const storeEntity = (entity: Foo) => {
+  entityMap.value.set(entity.id, entity);
 };
 ```
 
@@ -25,12 +22,12 @@ Generic usage — the explicit generic goes on the unions and empty containers, 
 
 ```typescript
 // CORRECT — generic for union / complex types
-const { data: pendingSlashCommand } = useDataMap<null | SlashCommand>(() => roomStore.currentRoomId, null);
-const { data: parameterValues } = useDataMap<Record<string, string>>(() => roomStore.currentRoomId, {});
-const { data: errors } = useDataMap<SlashCommandParameterError[]>(() => roomStore.currentRoomId, []);
+const { data: pendingFoo } = useDataMap<null | Foo>(() => fooStore.currentFooId, null);
+const { data: fooValues } = useDataMap<Record<string, string>>(() => fooStore.currentFooId, {});
+const { data: errors } = useDataMap<FooError[]>(() => fooStore.currentFooId, []);
 
 // primitive default infers — no generic needed
-const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
+const { data: trailingText } = useDataMap(() => fooStore.currentFooId, "");
 ```
 
 Selection state uses the same primitive — the selected id is `useDataMap(() => parentStore.currentId, "")` and the selected entity a `computed` that `find`s it, so mutations set the id directly (`setSelectedFooId(input.parentId, newFoo.id)` from a create's `onSuccess`) rather than emitting.
@@ -45,31 +42,31 @@ Selection state uses the same primitive — the selected id is `useDataMap(() =>
 
 ## `createOperationData`
 
-Use it **wherever the item type satisfies `ToData<AEntity>`** — it generates typed CRUD (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for an entity list ref. `User` satisfies this (`id`, `createdAt`, `updatedAt`, `deletedAt` from `pgTable`).
+Use it **wherever the item type satisfies `ToData<AEntity>`** — it generates typed CRUD (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for an entity list ref. `Foo` satisfies this (`id`, `createdAt`, `updatedAt`, `deletedAt` from `pgTable`).
 
 `EntityIdKeys<T>` resolves to `["id"]` (SQL entities extending `AItemEntity`), `["partitionKey","rowKey"]` (Azure entities), or `(keyof T & string)[]` as a fallback. Always pass keys matching the DB primary key exactly — a composite PK passes both.
 
 ```typescript
 // cursor pagination + createOperationData for a typed, composite-key delete
-const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<BanInMessageWithRelations>();
-const { deleteBan: storeDeleteBan } = createOperationData(items, ["roomId", "userId"], DatabaseEntityType.Ban);
+const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<FooWithRelations>();
+const { deleteFoo: storeDeleteFoo } = createOperationData(items, ["parentId", "childId"], DatabaseEntityType.Foo);
 ```
 
 Destructure as `base` aliases and wrap in `storeXxx` functions when the operation needs side effects or a guard, keeping the public API a plain identifier:
 
 ```ts
-const friends = ref<User[]>([]);
-const { createFriend: baseStoreCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
-  friends,
+const foos = ref<Foo[]>([]);
+const { createFoo: baseStoreCreateFoo, deleteFoo: baseStoreDeleteFoo } = createOperationData(
+  foos,
   ["id"],
-  DatabaseEntityType.Friend,
+  DatabaseEntityType.Foo,
 );
-const storeCreateFriend = (friend: User) => {
-  if (!friends.value.some(({ id }) => id === friend.id)) baseStoreCreateFriend(friend);
+const storeCreateFoo = (foo: Foo) => {
+  if (!foos.value.some(({ id }) => id === foo.id)) baseStoreCreateFoo(foo);
 };
-const storeDeleteFriend = (friendId: string) => {
-  baseStoreDeleteFriend({ id: friendId });
+const storeDeleteFoo = (fooId: string) => {
+  baseStoreDeleteFoo({ id: fooId });
 };
 ```
 
-**When to add `storeCreateXxx`/`storeDeleteXxx` subscription handlers:** only when a subscription fires to _all_ affected parties. For bans, `onAdminAction` only fires to the banned user — the moderator initiates the ban, so the store just updates locally after the mutation, and no `storeCreateBan` handler is needed.
+**When to add `storeCreateXxx`/`storeDeleteXxx` subscription handlers:** only when a subscription fires to _all_ affected parties. When the subscription fires only to one party — the one who did not initiate the mutation — the initiator's store already updated locally after its own mutation, so no `storeCreateXxx` handler is needed.

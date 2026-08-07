@@ -6,7 +6,7 @@ What deserves a double at all, how a module-level one is declared, where it live
 
 Mock the **smallest seam that makes the behaviour under test reachable**, and never re-declare a mock another file already owns.
 
-- **Prefer driving state over mocking a getter** — a store's derived state usually has a real input to set (`router.currentRoute.value.params.id = roomId` gives the room stores a current room). `vi.spyOn(store, "prop", "get")` breaks `storeToRefs`, which reads the underlying ref rather than the spied accessor.
+- **Prefer driving state over mocking a getter** — a store's derived state usually has a real input to set (set the route param the store derives its state from). `vi.spyOn(store, "prop", "get")` breaks `storeToRefs`, which reads the underlying ref rather than the spied accessor.
 - **Mock a module only for what the environment genuinely cannot do** — a canvas downscale, a network PUT, a clock. If a fake is only saving setup lines, build the real input instead.
 
 ## Gating a double to prove a caller awaits it
@@ -31,20 +31,16 @@ vi.mock(import("@/services/getFoo"), () => ({ getFoo: () => fooMock.current() })
 
 ### Placement and export
 
-Place mock files directly next to the service, same directory, `.test.ts` suffix (`src/services/getTableClient.ts` → `src/services/getTableClient.test.ts`).
+Place mock files directly next to the service, same directory, `.test.ts` suffix (`src/services/getFoo.ts` → `src/services/getFoo.test.ts`).
 
-**Export with the real name — never a `Mock` suffix** (e.g. `useTableClient`, not `useTableClientMock`). This lets `vi.mock(import("real"), () => import("real.test"))` work and lets tests import from the real path to get the mock. Centralize all `as unknown as` casts in the mock file. Every mock-only `.test.ts` must end with `describe.todo("serviceName")` so Vitest accepts it without a real suite:
+**Export with the real name — never a `Mock` suffix** (e.g. `getFoo`, not `getFooMock`). This lets `vi.mock(import("real"), () => import("real.test"))` work and lets tests import from the real path to get the mock. Centralize all `as unknown as` casts in the mock file. Every mock-only `.test.ts` must end with `describe.todo("serviceName")` so Vitest accepts it without a real suite:
 
 ```ts
-// src/services/getTableClient.test.ts — export the real name, cast here, end with describe.todo
-export const getTableClient = <T extends AzureTable>(
-  tableName: T,
-): Promise<CustomTableClient<AzureTableEntityMap[T]>> =>
-  Promise.resolve(
-    new MockTableClient<AzureTableEntityMap[T]>("", tableName) as unknown as CustomTableClient<AzureTableEntityMap[T]>,
-  );
+// src/services/getFoo.test.ts — export the real name, cast here, end with describe.todo
+export const getFoo = <T extends BarType>(type: T): Promise<Bar<BarEntityMap[T]>> =>
+  Promise.resolve(new MockBar<BarEntityMap[T]>("", type) as unknown as Bar<BarEntityMap[T]>);
 
-describe.todo("getTableClient");
+describe.todo("getFoo");
 ```
 
 **A module mocked through a colocated `*.test.ts` must be imported at module scope, never with `await import(...)` inside a test body.** The factory is evaluated at the mocked module's first import, so a first import from inside a test evaluates the mock file — and the `describe.todo` every such file carries — while a test is running, which Vitest rejects with `There was an error when mocking a module` / `Calling the suite function inside test function is not allowed`, naming the mock file rather than the import that triggered it. This is specific to the `() => import("real.test")` form: an inline factory registers no suite, so a lazy import of a module mocked that way is fine. Nothing is wrong with the registration itself either — a factory evaluated during collection, the normal case, registers no suite anywhere, so mocked modules cost their importers nothing.
@@ -52,7 +48,7 @@ describe.todo("getTableClient");
 ### Usage in test files
 
 ```ts
-vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
+vi.mock(import("@/services/getFoo"), () => import("@/services/getFoo.test"));
 ```
 
 **A mock every suite wants is registered once in the package's vitest `setupFiles`, never per file.** A `vi.mock` is hoisted only within the file that writes it, so one written in a shared helper module (e.g. `context.test.ts`) does not intercept a test file's own direct import of the same module — the reason a registration tends to get copied verbatim into every suite that reads through it. A setup file runs before the test module is imported, so it covers both paths. In this repo every Azure composable is registered in `packages/app/shared/test/setup.ts`; a test file adds its own `vi.mock` only for a double that is specific to it (an inline factory over local state).
@@ -60,8 +56,8 @@ vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableCl
 When a test needs to call the mock directly (assert on calls / read mock state), import from the **real path** — Vitest intercepts it and returns the mock:
 
 ```ts
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-const messagesClient = await useTableClient(AzureTable.Messages);
+import { getFoo } from "@/services/getFoo";
+const bar = await getFoo(BarType.Baz);
 ```
 
 - Typed `vi.mock(import(...))` enforces type compatibility — casts stay in the mock file, never in individual tests.
@@ -87,7 +83,7 @@ vi.mock(import("@/services/db"), () => ({
 
 ## Client-side tRPC calls are answered at the network
 
-Call `setupMswTrpc()` at `describe` scope (`@/services/trpc/mswTrpc.test`) and declare per-test handlers on the server it returns: `server.use(trpcMsw.message.createMessage.mutation(({ input }) => …))`. Handlers are typed off `TRPCRouter`, so a renamed or re-shaped procedure fails to compile instead of silently answering a call that no longer exists — the thing a hand-written client stub cannot do. The real plugin, links and transformer all run. **Never `vi.mock` `trpc-nuxt/client`.**
+Call `setupMswTrpc()` at `describe` scope (`@/services/trpc/mswTrpc.test`) and declare per-test handlers on the server it returns: `server.use(trpcMsw.foo.createFoo.mutation(({ input }) => …))`. Handlers are typed off `TRPCRouter`, so a renamed or re-shaped procedure fails to compile instead of silently answering a call that no longer exists — the thing a hand-written client stub cannot do. The real plugin, links and transformer all run. **Never `vi.mock` `trpc-nuxt/client`.**
 
 - The handler receives `{ input }` and its assertion sees that whole object: `expect(handler).toHaveBeenCalledWith({ input: { … } })`.
 - Two transport settings differ under test, both via `IS_TEST` in `app/plugins/trpc.ts`: the client uses `@trpc/client`'s `httpLink` (trpc-nuxt's wraps Nuxt's `$fetch`, which resolves internally and never reaches an interceptor) against an absolute url (node's fetch rejects a bare path), and batching is off (a batched call puts several procedures behind one url that no per-procedure handler can match). Neither changes anything a test asserts on.

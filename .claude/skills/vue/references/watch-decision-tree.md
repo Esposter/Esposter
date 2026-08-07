@@ -17,14 +17,14 @@ A local value entirely derived from — and written back to — a store value is
 Local form state that starts from a prop/store value but is independently editable initializes the `ref` directly. **Never use `watchImmediate` just to set an initial value** — always a code smell.
 
 ```typescript
-const selectedCategoryId = ref(room.value?.categoryId ?? null);
+const selectedBarId = ref(foo.value?.barId ?? "");
 ```
 
 If the source can change externally while the form is open (real-time collaboration, an optimistic store that rolls back on failure), the local copy must **resync**. Use VueUse's `useCloned` — never a hand-written `ref` + `watch` mirror:
 
 ```typescript
 // useCloned owns the editable copy and resyncs automatically
-const { cloned: selectedCategoryId } = useCloned(() => room.value?.categoryId ?? null);
+const { cloned: selectedBarId } = useCloned(() => foo.value?.barId ?? "");
 ```
 
 `useCloned(source, options)` returns `{ cloned, isModified, sync }`:
@@ -68,12 +68,12 @@ If the user opens → changes → closes without saving → reopens, they see th
 
 Before watching an id to re-read on change, ask: **can it actually change under this instance?** When the router or the parent already keys the component by that id, a change unmounts and remounts it — the watch's re-run branch is dead code, and any staleness guard defends a transition that cannot happen.
 
-Resource pages are keyed by id (``definePageMeta({ key: (route) => `resource-${route.params.id}` })``), and `BladeOutlet` keys each blade by `` `${resource.id}-${activeBlade}` `` inside `<Suspense>`. So inside a page, an Overview or a blade, the resource id is **fixed for the instance's lifetime** — read it once in `onMounted`, not `watchImmediate(() => resource.id, ...)`:
+Entity pages are keyed by id (``definePageMeta({ key: (route) => `foo-${route.params.id}` })``), and `BladeOutlet` keys each blade by `` `${foo.id}-${activeBlade}` `` inside `<Suspense>`. So inside a page, an Overview or a blade, the entity id is **fixed for the instance's lifetime** — read it once in `onMounted`, not `watchImmediate(() => foo.id, ...)`:
 
 ```typescript
-const viewCount = ref<number>();
+const count = ref<number>();
 onMounted(async () => {
-  viewCount.value = await getResultAsync(() => readResourceViewCount({ id: resource.id })).unwrapOr(undefined);
+  count.value = await getResultAsync(() => readFooCount({ id: foo.id })).unwrapOr(undefined);
 });
 ```
 
@@ -81,12 +81,12 @@ A blade sits inside `<Suspense>`, so it can go further and `await` the read at s
 
 ```typescript
 const id = route.params.id as string; // keyed by id upstream, so a plain cast is safe
-await refreshResponses(); // Suspense shows StyledSkeleton until this resolves
+await refreshFoos(); // Suspense shows StyledSkeleton until this resolves
 ```
 
 Keep the read in a named function when a mutation must re-run it (a delete dialog's `@delete`), and call that same function at setup.
 
-**A watch is only right here when the source genuinely varies under a live instance** — a reactive reference bound to a form control, e.g. `useDataset(() => modelValue.value?.reference)` in a picker. Then the concurrency guard earns its place, because two reads really can overlap.
+**A watch is only right here when the source genuinely varies under a live instance** — a reactive reference bound to a form control, e.g. `useFoo(() => modelValue.value?.bar)` in a picker. Then the concurrency guard earns its place, because two reads really can overlap.
 
 ## 5. Bridging to external imperative APIs → `watch` is correct
 
