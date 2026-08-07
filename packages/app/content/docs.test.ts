@@ -1,8 +1,9 @@
 // @vitest-environment happy-dom
 import { DocsSectionGroupsMap } from "@/services/docs/DocsSectionGroupsMap";
+import { takeOne } from "@esposter/shared";
 import mermaid from "mermaid";
 import { existsSync } from "node:fs";
-import { glob, readFile } from "node:fs/promises";
+import { glob, readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -16,7 +17,7 @@ const REPOSITORY_PATH_REGEX = /^[\w./[\]-]+$/u;
 // Real /docs routes that are not content pages — the api section is generated TypeDoc output.
 const ALLOWED_LINK_TARGETS = ["/docs/api"];
 // Path prefixes a Key Files cell may use relative to `packages/app` instead of the repo root.
-const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "content/", "public/", "server/", "shared/"];
+const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "content/", "public/", "scripts/", "server/", "shared/"];
 // Pages every section owns that the sidebar map never lists — they trail in an automatic Planning group.
 const UNMAPPED_PAGES = new Set(["index", "roadmap"]);
 const PLANNING_DIRECTORIES = new Set(["deferred", "rejected"]);
@@ -30,6 +31,14 @@ const pagePaths = (await Array.fromAsync(glob("**/*.md", { cwd: docsDirectory })
 const pages = await Promise.all(
   pagePaths.map(async (page) => ({ markdown: await readFile(join(docsDirectory, page), "utf8"), page })),
 );
+// A token is a path when its first segment names something at the repo root or it carries an app-relative
+// Prefix — which keeps the hundreds of identifier tokens in the same tables (`useQuery`, `--no-cache`,
+// `/all`) out of the check. `scripts/` lives under both roots, so a path is resolved against either.
+const repositoryEntryNames = new Set(await readdir(repositoryDirectory));
+const getIsRepositoryPath = (token: string) =>
+  REPOSITORY_PATH_REGEX.test(token) &&
+  (repositoryEntryNames.has(takeOne(token.split("/"), 0)) ||
+    APP_RELATIVE_PREFIXES.some((prefix) => token.startsWith(prefix)));
 const getIsPage = (slugPath: string) =>
   existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
 
@@ -127,13 +136,12 @@ describe("keyFiles", () => {
           }));
         });
       })
-      .filter(({ token }) => {
-        if (!REPOSITORY_PATH_REGEX.test(token)) return false;
-        else if (token.startsWith("packages/")) return !existsSync(join(repositoryDirectory, token));
-        else if (APP_RELATIVE_PREFIXES.some((prefix) => token.startsWith(prefix)))
-          return !existsSync(join(appDirectory, token));
-        return false;
-      })
+      .filter(
+        ({ token }) =>
+          getIsRepositoryPath(token) &&
+          !existsSync(join(repositoryDirectory, token)) &&
+          !existsSync(join(appDirectory, token)),
+      )
       .map(({ page, token }) => `${page} → ${token}`);
 
     expect(missingPaths).toStrictEqual([]);
