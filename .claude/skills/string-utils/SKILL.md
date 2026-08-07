@@ -54,14 +54,13 @@ const sanitizedOld = oldValue !== undefined ? normalizeString(oldValue) : oldVal
 
 ## Zod Schema Alignment
 
-Base select schemas normalize so server validation matches client input. Always transform first, then validators in the pipe. Never add trim transforms to derived schemas (`UpdateRoomInput`, `UpdateSurveyInput`, etc.) — only in the base select schema.
+Base select schemas normalize so server validation matches client input. Always transform first, then validators in the pipe. Never add trim transforms to derived schemas (`UpdateFooInput`, etc.) — only in the base select schema.
 
 Prefer the shared schema helpers over hand-rolling the transform+pipe — see the `zod` skill.
 
 ```ts
 // db-schema createSelectSchema overrides — the canonical form
-topic: (schema) => createNormalizedStringSchema(ROOM_TOPIC_MAX_LENGTH, schema),
-nickname: (schema) => createNormalizedStringSchema(NICKNAME_MAX_LENGTH, schema),
+foo: (schema) => createNormalizedStringSchema(FOO_MAX_LENGTH, schema),
 ```
 
 ## Matching a Token Inside Authored Content
@@ -80,12 +79,10 @@ Same principle as `normalizeString`: user-authored rich-text HTML (messages, pos
 - `sanitizeHtml` and `sanitizeTextHtml` live in `@esposter/shared` (so `db-schema` schemas can import them). `sanitizeHtml` is the generic wrapper (table styling); `sanitizeTextHtml` adds the rich-text allowlist (mentions, code, links, inline styles).
 - Applied to every rich-text field in the base `db-schema` model, transform-first then validators:
   ```ts
-  // BaseMessageEntity.ts
-  message: z.string().transform(sanitizeTextHtml).pipe(z.string().max(MESSAGE_MAX_LENGTH)).default(""),
-  // posts.ts — selectPostSchema / selectCommentSchema
-  description: (schema) => schema.transform(sanitizeTextHtml).pipe(z.string().max(POST_DESCRIPTION_MAX_LENGTH)),
+  // the base select schema
+  foo: z.string().transform(sanitizeTextHtml).pipe(z.string().max(FOO_MAX_LENGTH)),
   ```
-  Derived input schemas (`UpdateMessageInput`, `ScheduleMessageInput`, …) `.pick()` these fields and inherit the transform — never re-declare it.
+  Derived input schemas (`UpdateFooInput`, …) `.pick()` these fields and inherit the transform — never re-declare it.
 - **No frontend sanitize on the send path.** `createMessage`/`updateMessage` pass raw `input` to the mutation; the zod boundary sanitizes. The brief optimistic render of your own message is self-XSS only (you typed it) and is replaced by the sanitized server echo.
 - **Exception — localStorage drafts:** `setDraft` still calls `sanitizeTextHtml` because drafts are loaded into the editor without passing through a tRPC zod boundary.
 - **Testing:** only the base `sanitizeHtml`/`sanitizeTextHtml` functions are unit-tested (in `@esposter/shared`). Schema wiring needs no test — declaring the transform is the contract. `marked.parse` is third-party and untested.

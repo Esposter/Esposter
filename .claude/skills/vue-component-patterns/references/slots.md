@@ -31,21 +31,21 @@ When a component has many named slots with non-trivial content, extract each slo
 
 The extracted component:
 
-- Receives the minimum props to derive its content (e.g. `dataSource`)
-- Pulls shared state from the same stores the parent uses (e.g. `useFilterStore`)
+- Receives the minimum props to derive its content (e.g. `foo`)
+- Pulls shared state from the same stores the parent uses
 - Lives in the same folder as the parent to share the auto-import prefix
 
 ```vue
-<!-- Before: inline slot content in Table.vue -->
+<!-- Before: inline slot content in Foo/Table.vue -->
 <template #tfoot>
   <tr>
-    <td v-for="column of displayColumns" :key="column.id">{{ summaries.get(column.name) }}</td>
+    <td v-for="item of displayItems" :key="item.id">{{ summaries.get(item.name) }}</td>
   </tr>
 </template>
 
-<!-- After: extracted to FooterSlot.vue, used in Table.vue -->
+<!-- After: extracted to FooterSlot.vue, used in Foo/Table.vue -->
 <template #tfoot>
-  <ResourceSheetRowFooterSlot :data-source="dataSource" />
+  <FooTableFooterSlot :foo />
 </template>
 ```
 

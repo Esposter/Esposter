@@ -9,14 +9,14 @@ import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 
 // findFirst → throws TRPCError NOT_FOUND if null
-const post = await requireEntity(tx.query.posts.findFirst({ where: ... }), DatabaseEntityType.Post, input.postId);
+const foo = await requireEntity(tx.query.foos.findFirst({ where: ... }), DatabaseEntityType.Foo, input.fooId);
 
 // insert/update .returning()[0] → throws TRPCError BAD_REQUEST if undefined
-const updated = requireMutation(
-  (await ctx.db.update(users).set(input).returning())[0],
+const updatedFoo = requireMutation(
+  (await ctx.db.update(foos).set(input).returning())[0],
   Operation.Update,
-  DatabaseEntityType.User,
-  ctx.getSessionPayload.user.id,
+  DatabaseEntityType.Foo,
+  input.fooId,
 );
 ```
 

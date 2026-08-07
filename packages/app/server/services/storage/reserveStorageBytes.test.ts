@@ -4,7 +4,7 @@ import { MAX_UNRECONCILED_STORAGE_BLOBS } from "#shared/services/storage/constan
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import { reserveStorageBytes } from "@@/server/services/storage/reserveStorageBytes";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
-import { AzureContainer, storageBlobs, StorageTier, users, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
+import { AzureContainer, EVENT_GRID_DELIVERY_TTL_MS, storageBlobs, StorageTier, users } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -84,7 +84,10 @@ describe("reserveStorageBytes", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: You have run out of storage.]`);
   });
 
-  test("stops counting a hold whose write sas has expired, and drops it", async () => {
+  // The hold stops counting the instant its write SAS dies, but the row itself stays: a BlobCreated for a blob
+  // That did land can still be inside Event Grid's retry window, and a reconcile that finds no row charges
+  // Nothing and reports nothing — the bytes would be stored and counted against no one, forever
+  test("stops counting a hold whose write sas has expired while a blob created event for it can still arrive", async () => {
     expect.hasAssertions();
 
     await mockContext.db.insert(storageBlobs).values({
@@ -92,8 +95,31 @@ describe("reserveStorageBytes", () => {
       containerName,
       countedBytes: 0,
       declaredBytes: quotaBytes,
-      // An upload that was never made: its SAS is long dead, so the space it claimed is not claimed by anything
-      expiresAt: new Date(Date.now() - WRITE_SAS_DURATION_MS),
+      expiresAt: new Date(Date.now() - 1),
+      userId,
+    });
+    await reserveStorageBytes(mockContext.db, userId, containerName, [
+      { blobName: `${blobName}Second`, declaredBytes },
+    ]);
+
+    const ledgeredStorageBlobs = await mockContext.db.query.storageBlobs.findMany();
+
+    expect(ledgeredStorageBlobs.map(({ blobName: name }) => name).toSorted()).toStrictEqual([
+      blobName,
+      `${blobName}Second`,
+    ]);
+  });
+
+  test("drops a hold once no blob created event for it can still be redelivered", async () => {
+    expect.hasAssertions();
+
+    await mockContext.db.insert(storageBlobs).values({
+      blobName,
+      containerName,
+      countedBytes: 0,
+      declaredBytes: quotaBytes,
+      // An upload that was never made, past the last moment storage could still be telling us otherwise
+      expiresAt: new Date(Date.now() - EVENT_GRID_DELIVERY_TTL_MS - 1),
       userId,
     });
     await reserveStorageBytes(mockContext.db, userId, containerName, [
@@ -104,24 +130,6 @@ describe("reserveStorageBytes", () => {
 
     expect(ledgeredStorageBlobs).toHaveLength(1);
     expect(ledgeredStorageBlobs[0]?.blobName).toBe(`${blobName}Second`);
-  });
-
-  // A thumbnail is best-effort and the client may never upload one, so its zero hold can only leave the ledger
-  // At expiry — a slot each would let a handful of undecodable images lock a user out of uploading for an hour
-  test("spends no in-flight slot on a hold that declares nothing", async () => {
-    expect.hasAssertions();
-
-    await reserveStorageBytes(mockContext.db, userId, containerName, [
-      { blobName, declaredBytes },
-      ...Array.from({ length: MAX_UNRECONCILED_STORAGE_BLOBS }, (_, index) => ({
-        blobName: `${blobName}Thumbnail${index}`,
-        declaredBytes: 0,
-      })),
-    ]);
-
-    await expect(
-      reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName}Second`, declaredBytes }]),
-    ).resolves.toBeUndefined();
   });
 
   test("rejects once too many holds are outstanding", async () => {

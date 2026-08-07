@@ -5,7 +5,7 @@
 Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and CSS variable references — directly as props:
 
 ```html
-<UserSideBar sticky top="[calc(1rem+--app-bar-height)]" />
+<div sticky top="[calc(1rem+--app-bar-height)]" />
 <div h="[calc(100dvh_-_--app-bar-height)]" overflow-y-auto />
 <div bg="[#f0f0f0]" />
 ```
@@ -35,7 +35,7 @@ The CSS `transition` shorthand is written as separate UnoCSS attributes — one 
 
 ```html
 <!-- Single property + CSS-variable duration -->
-<NuxtInvisibleLink transition-colors duration-[--transition-duration] />
+<a transition-colors duration-[--transition-duration] />
 <!-- Multi-property with the same static duration: single arbitrary value -->
 <button transition="[box-shadow_0.2s,transform_0.2s]" />
 ```
@@ -51,5 +51,5 @@ Append `!` inside the attribute value to generate `!important`. Use only when ov
 
 ```html
 <!-- top: var(--app-bar-height) !important; z-index: 1500 !important -->
-<NuxtLoadingIndicator top="[--app-bar-height]!" z="[1500]!" />
+<div top="[--app-bar-height]!" z="[1500]!" />
 ```

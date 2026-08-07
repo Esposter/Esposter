@@ -18,14 +18,14 @@ description: Esposter file and folder organisation — the alias imports (shared
 
 - **One export per file** — each exported function, class, or interface in its own file. Exception: Zod schemas may colocate with their interface/type (tightly coupled).
 - **Enums and shared model schemas get their own files** — exported enums, discriminated-union variants, payload types, and reusable Zod schemas belong in `models/` (or the relevant shared model folder), one named concern per file. Don't define an enum/reusable payload schema inside a Drizzle table file just because that table is the first consumer; schema files import model enums/types/schemas and only define the table plus its table-derived select schema/type.
-- **Colocate single-use event/hook map types** — when an event/hook map interface (`AdminActionHookMap`, `MessageHookMap`) is imported only by its own service file (which creates the singleton), define the interface in that service file rather than a separate `models/` file; consumers import the instance, not the type. Does **not** apply to general type maps (`ColumnTypeColumnMap`, `DataSourceConfigurationTypeMap`) — those stay in `models/` regardless of consumer count.
+- **Colocate single-use event/hook map types** — when an event/hook map interface (`FooHookMap`, `BarHookMap`) is imported only by its own service file (which creates the singleton), define the interface in that service file rather than a separate `models/` file; consumers import the instance, not the type. Does **not** apply to general type maps (`FooTypeMap`, `BarTypeMap`) — those stay in `models/` regardless of consumer count.
 - **Interfaces go in `models/`** — never define an exported interface inline in a `.vue` component. Extract to `app/models/<feature>/InterfaceName.ts` (app-local) or `shared/models/<feature>/InterfaceName.ts` (cross-package).
 - **One class per file**, in a `models/` folder.
 - **Never use `export { }` syntax** — always inline `export const`/`class`/`interface`/`type`/`function` at the declaration site. Only valid exceptions: empty `export {}` in `.d.ts` files (module marker) and `ctix`-generated barrel files (pinned package).
 - **Functions go in `services/`** — factory functions, command creators, and other exported functions. `models/` is strictly classes and interfaces/types.
-- **External library extensions go in `services/`** — helpers that extend/wrap third-party libraries (`services/zod/extractSchemaFields.ts`, `services/dayjs/index.ts`), not `utils/`.
-- **`utils/` is for truly universal utilities only** — math, string, regex, type utilities, Node/browser engine extensions with no external dependency. If the helper imports a third-party package, it belongs in `services/`. Generic browser utilities go in `app/utils/` (e.g. `readFileAsText.ts`).
-- **Feature folders** — group related models/services/components under a feature subfolder (e.g. `resource/sheet/`).
+- **External library extensions go in `services/`** — helpers that extend/wrap third-party libraries (`services/<lib>/doThing.ts`, `services/dayjs/index.ts`), not `utils/`.
+- **`utils/` is for truly universal utilities only** — math, string, regex, type utilities, Node/browser engine extensions with no external dependency. If the helper imports a third-party package, it belongs in `services/`. Generic browser utilities go in `app/utils/` (e.g. `readFoo.ts`).
+- **Feature folders** — group related models/services/components under a feature subfolder (e.g. `feature/sub-feature/`).
 - **Sole-consumer subfolder rule (CRITICAL — keeps flat dirs from bloating).** A file lives in the subfolder of the **one feature that consumes it**; it stays at the parent level **only** when two or more sibling features import it, or it is a shared primitive with no single owning feature. A directory should never accumulate 15–20 loose files that each belong to a distinct sub-concern. When a `models/` folder mirrors a `services/` folder, mirror its feature subfolders too, leaving only genuinely cross-feature types at the mirrored root. Don't over-fragment the other way: a legitimate shared-primitive bucket (a feature's `util/`) stays whole even when large, and an already-feature-organised folder is not nested further.
 - **No magic strings** — always use enums for discriminants, command types, and other categorical values.
 
@@ -78,16 +78,16 @@ Read it when a map's entries are type-parameterised generics, when a component l
 
 Every localStorage key lives in **one** central registry, `app/services/shared/LocalStorageKey.ts` — a `RoutePath`-style `as const` object. Never scatter `*_LOCAL_STORAGE_KEY` constants across `services/*/constants.ts`, and never inline a literal into `useLocalStorage("literal")` / `localStorage.getItem("literal")`. One registry = keys can never silently overlap.
 
-- **PascalCase entries; kebab-case string values** for new keys. Boolean-valued keys follow the boolean naming rule (`IsResourceListCollapsed`).
-- **Parameterised keys are functions** returning the composed string (`` Draft: (roomId: string) => `draft:${roomId}` ``, like `RoutePath.Messages(id)`). Derive a prefix for enumeration from the empty call — `LocalStorageKey.Draft("")` → `"draft:"` for `.startsWith`/`.slice`.
+- **PascalCase entries; kebab-case string values** for new keys. Boolean-valued keys follow the boolean naming rule (`IsFooCollapsed`).
+- **Parameterised keys are functions** returning the composed string (`` Foo: (barId: string) => `foo:${barId}` ``, like `RoutePath.Foo(id)`). Derive a prefix for enumeration from the empty call — `LocalStorageKey.Foo("")` → `"foo:"` for `.startsWith`/`.slice`.
 - **Keep existing string values byte-identical** when migrating scattered keys into the registry — changing a value orphans users' already-persisted data.
-- Not every `*_KEY` constant is a localStorage key — `THEME_KEY` is a property key inside a model's JSON. Only storage keys belong here.
+- Not every `*_KEY` constant is a localStorage key — `FOO_KEY` may be a property key inside a model's JSON. Only storage keys belong here.
 
 ## Command Pattern
 
 Commands are classes extending `ADataSourceCommand<T extends CommandType>`, each declaring `readonly type = CommandType.X` (no `name` — the base provides `get name() { return this.type; }`); the `CommandType` enum lives in `models/resource/sheet/commands/CommandType.ts`. Field ordering within a command: `readonly type` → blank line → `get description()` → blank line → all `readonly #` private fields grouped together (no blank lines between same-level fields) → blank line → constructor → blank line between each method. Use ECMAScript `#` private members, never the TypeScript `private` keyword (see the `typescript` skill); subclass-reachable methods like `doExecute`/`doUndo` stay `protected`.
 
-Command instances are stored in `useSheetHistoryStore` `ref` arrays, so they MUST be `markRaw`'d on entry — a reactive `Proxy` breaks `#` private brand checks at execute/undo time. See the `pinia` skill "Storing Class Instances — markRaw".
+Command instances are stored in a store's `ref` array holding command instances, so they MUST be `markRaw`'d on entry — a reactive `Proxy` breaks `#` private brand checks at execute/undo time. See the `pinia` skill "Storing Class Instances — markRaw".
 
 ## MIME Types
 
@@ -103,7 +103,7 @@ When renaming a file (`createFoo.ts` → `createBar.ts`), **delete the old file*
 
 ## Shared Schemas
 
-When multiple models share a field (e.g. `description`), define a single named interface + schema (`Description` / `descriptionSchema`) in `shared/models/entity/` and spread the schema's `.shape` into each model schema. No `With` prefix (follows `SourceColumnId`, `ApplicableColumnTypes`). Don't add `.default(...)` to the shared schema — each implementing class declares its own default as a class field and adds it at the schema call site.
+When multiple models share a field (e.g. `bar`), define a single named interface + schema (`Bar` / `barSchema`) in `shared/models/entity/` and spread the schema's `.shape` into each model schema. No `With` prefix. Don't add `.default(...)` to the shared schema — each implementing class declares its own default as a class field and adds it at the schema call site.
 
 ## File Length
 

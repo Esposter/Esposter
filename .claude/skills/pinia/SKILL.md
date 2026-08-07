@@ -9,27 +9,27 @@ description: Esposter Pinia store conventions — full store name, destructure w
 
 Applies **everywhere a store is consumed** — components, composables, services and **tests alike**. Tests are not exempt: a test that reaches into a store differently from the code it covers stops being a description of how the store is used.
 
-- **Full descriptive store variable name** — `const fileTableEditorStore = useFileTableEditorStore()`, never `const store = ...`. Exception: conditional assignment where the store type varies at runtime.
+- **Full descriptive store variable name** — `const fooBarStore = useFooBarStore()`, never `const store = ...`. Exception: conditional assignment where the store type varies at runtime.
 - **`storeToRefs` and `defineStore` are auto-imported** — never `import { storeToRefs } from "pinia"`.
-- Assign the store to a named variable first, then destructure. **Never destructure directly from the `useXxxStore()` call** — neither `storeToRefs(useRoleStore())` nor `const { method } = useRoleStore()`.
+- Assign the store to a named variable first, then destructure. **Never destructure directly from the `useXxxStore()` call** — neither `storeToRefs(useFooStore())` nor `const { method } = useFooStore()`.
 - Keep each store's lines grouped — fully extract one store before the next, never all inits, then all refs, then all methods. Order per store: `const xyzStore = useXyzStore()`, then `const { ref1 } = storeToRefs(xyzStore)`, then `const { method1 } = xyzStore` (omit either line if empty).
 - Never use dot-access (`store.method()`) in components.
-- **Store-to-store** (inside a store file): declare nested stores at the root of the setup function, never `useXxxStore()` inside an action (repeated lookups). Access refs/computeds by dot syntax (`otherStore.someRef`) to keep reactivity — **never `storeToRefs` inside a store**. Methods **must** be destructured at the root (`const { storeCreateFriend } = friendStore`), never called inline as `otherStore.method()`.
+- **Store-to-store** (inside a store file): declare nested stores at the root of the setup function, never `useXxxStore()` inside an action (repeated lookups). Access refs/computeds by dot syntax (`otherStore.someRef`) to keep reactivity — **never `storeToRefs` inside a store**. Methods **must** be destructured at the root (`const { storeCreateFoo } = fooStore`), never called inline as `otherStore.method()`.
 
 ```typescript
 // each store fully extracted before the next
-const blockStore = useBlockStore();
-const { blockedUsers } = storeToRefs(blockStore);
-const { blockUser, unblockUser } = blockStore;
+const fooStore = useFooStore();
+const { foos } = storeToRefs(fooStore);
+const { createFoo } = fooStore;
 
-const friendStore = useFriendStore();
-const { friends } = storeToRefs(friendStore);
-const { deleteFriend } = friendStore;
+const barStore = useBarStore();
+const { bars } = storeToRefs(barStore);
+const { deleteBar } = barStore;
 ```
 
 ## Dialog UI State Lives in Per-Service Dialog Stores
 
-Singleton-dialog targets (`deletingId`, `editingColumnName`, …) never live in a business-logic store — each service gets a dedicated dialog store beside its business store: `store/message/dialog.ts` → `useMessageDialogStore` when a feature folder exists, otherwise `<feature>Dialog.ts` beside the business store file (`store/message/roomCategoryDialog.ts` → `useRoomCategoryDialogStore`).
+Singleton-dialog targets (`deletingId`, `editingFooName`, …) never live in a business-logic store — each service gets a dedicated dialog store beside its business store: `store/<feature>/dialog.ts` → `use<Feature>DialogStore` when a feature folder exists, otherwise `<feature>Dialog.ts` beside the business store file (`store/<feature>/fooDialog.ts` → `useFooDialogStore`).
 
 Targets are strings defaulting to `""` (never `undefined`), and components derive `v-model` from them via `useSingletonDialog`. Full pattern: the Singleton Dialogs section in the `vue-page-composition` skill and `packages/app/content/docs/architecture/singleton-dialogs.md`.
 
@@ -80,15 +80,15 @@ A store action that mutates goes through `useMutation` (`composables/shared/useM
 ## CRUD Conventions
 
 - **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteMember` not `kick`. Reserve domain terms only when there's no clean CRUD mapping.
-- **`store*` prefix for subscription-driven state-update counterparts** — `storeCreateFriend`/`storeDeleteFriend`. If the user action is only a direct tRPC call, don't add a matching non-`store*` wrapper. State-update methods use CRUD prefixes (`createXxx` to insert, `deleteXxx` to remove) — never `addXxx`.
+- **`store*` prefix for subscription-driven state-update counterparts** — `storeCreateFoo`/`storeDeleteFoo`. If the user action is only a direct tRPC call, don't add a matching non-`store*` wrapper. State-update methods use CRUD prefixes (`createXxx` to insert, `deleteXxx` to remove) — never `addXxx`.
 - **update**: `findIndex` first, guard `if (index === -1) return`, then mutate in place with `Object.assign(takeOne(items.value, index), updatedItem)`.
 - **delete**: reassign the array — `items.value = items.value.filter(...)` — never `splice`.
 - Always guard a missing parent ref before any operation: `if (!parentRef.value) return`.
-- **Parameter names** mirror `createOperationData` — create takes `newXxx`, update takes `updatedXxx`, delete takes just `id` (or the most natural identifier name when extra context is genuinely required, e.g. `deleteColumn(name: string)`).
+- **Parameter names** mirror `createOperationData` — create takes `newXxx`, update takes `updatedXxx`, delete takes just `id` (or the most natural identifier name when extra context is genuinely required, e.g. `deleteFoo(name: string)`).
 
 ## Store Action Inputs
 
-- **Pass the full tRPC input object, never split it.** Store action params mirror the tRPC input type directly — never pull a shared field (`roomId`) out as a separate argument with `Except<Input, "roomId">` for the rest. Call sites pass the whole object inline: `await createRole({ roomId, id: selectedRole.value.id, permissions: pendingPermissions.value })`.
+- **Pass the full tRPC input object, never split it.** Store action params mirror the tRPC input type directly — never pull a shared field (`parentId`) out as a separate argument with `Except<Input, "parentId">` for the rest. Call sites pass the whole object inline: `await createFoo({ parentId, id: selectedFoo.value.id, bars: pendingBars.value })`.
 - **Minimal input** — params are the minimum required (typically just an id); the full entity comes from the **API response**, not the caller. Design tRPC mutations to return the affected entity when the store needs it for local state.
 
 ## Reuse Existing Store Maps — Never Build Local Maps in Actions

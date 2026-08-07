@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { STORAGE_USAGE_ERROR_PERCENTAGE, STORAGE_USAGE_WARNING_PERCENTAGE } from "#shared/services/storage/constants";
 import { getFileSize } from "@/services/file/getFileSize";
+import { useStorageStore } from "@/store/storage";
 
-const { $trpc } = useNuxtApp();
-const { data: storageUsage } = useQuery(() => $trpc.storage.getUsage.query());
+const storageStore = useStorageStore();
+const { storageUsage } = storeToRefs(storageStore);
 const { smAndDown } = useVDisplay();
 // A tier with no quota would divide by zero; the gate treats it as no allowance at all, so a full bar is the
 // Honest reading rather than an empty one
@@ -17,9 +18,11 @@ const usedColor = computed(() => {
   else if (usedPercentage.value >= STORAGE_USAGE_WARNING_PERCENTAGE) return "warning";
   return "primary";
 });
+
+onMounted(() => storageStore.readStorageUsage());
 </script>
 
-<!-- Mounted by the resource shell, so it reads the number once for the whole area rather than once per page -->
+<!-- Mounted by the resource shell on every page in the area, reading the number the store already holds -->
 <template>
   <v-tooltip v-if="storageUsage" location="bottom">
     <template #activator="{ props }">

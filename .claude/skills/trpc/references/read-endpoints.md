@@ -15,24 +15,24 @@ Both use `.prefault(defaultSortBy)` (not `.default()`) on `sortBy` — `prefault
 
 ```ts
 // CORRECT — cursor: non-empty defaultSortBy, .prefault({}) on outer object
-const readRoomsInputSchema = z
+const readFoosInputSchema = z
   .object({
-    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
+    ...createCursorPaginationParamsSchema(selectFooSchema.keyof(), [
       { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
     ]).shape,
   })
   .prefault({});
 
 // CORRECT — offset: minimumSortBy=0, empty default is fine
-const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).prefault({});
+const readBarsInputSchema = createOffsetPaginationParamsSchema(selectBarSchema.keyof()).prefault({});
 ```
 
 Server-side, wire the cursor into `getCursorWhereAzureTable` (Azure Table) or `getCursorWhere` (Postgres), fetch `limit + 1` rows, and return `getCursorPaginationData(items, limit, sortBy)`:
 
 ```ts
-const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
+const sortBy: SortItem<keyof FooEntity>[] = [FOO_ROWKEY_SORT_ITEM];
 if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-const items = await getTopNEntities(client, limit + 1, ModerationLogEntity, { filter: serializeClauses(clauses) });
+const items = await getTopNEntities(client, limit + 1, FooEntity, { filter: serializeClauses(clauses) });
 return getCursorPaginationData(items, limit, sortBy);
 ```
 
@@ -42,7 +42,7 @@ Every `read*` procedure that may be called for multiple items **must** accept an
 
 ```ts
 // one request for N items; spread userIdsSchema (max baked in); chain .min(1) when required
-export const readMemberRolesInputSchema = z.object({
+export const readFooBarsInputSchema = z.object({
   ...roomIdSchema.shape,
   userIds: userIdsSchema.shape.userIds.min(1),
 });
@@ -51,11 +51,11 @@ export const readMemberRolesInputSchema = z.object({
 Server: use `inArray(table.userId, userIds)` and include `userId` in the select so the client can group. Client: initialize all requested IDs to `[]` before grouping so users with no results are still set (clearing stale data):
 
 ```ts
-const readMemberRoles = async (input: ReadMemberRolesInput) => {
-  const memberRoles = await $trpc.role.readMemberRoles.query(input);
-  const rolesByUserId = new Map<string, RoomRole[]>(input.userIds.map((userId) => [userId, []]));
-  for (const { userId, ...role } of memberRoles) rolesByUserId.get(userId)?.push(role);
-  for (const [userId, roles] of rolesByUserId) setDataMap(userId, roles);
+const readFooBars = async (input: ReadFooBarsInput) => {
+  const fooBars = await $trpc.foo.readFooBars.query(input);
+  const foosByKey = new Map<string, Foo[]>(input.userIds.map((userId) => [userId, []]));
+  for (const { userId, ...foo } of fooBars) foosByKey.get(userId)?.push(foo);
+  for (const [userId, foos] of foosByKey) setDataMap(userId, foos);
 };
 ```
 
@@ -64,13 +64,13 @@ const readMemberRoles = async (input: ReadMemberRolesInput) => {
 When a `useRead*` composable fetches a list, load all per-item metadata in a single `readMetadata` helper firing concurrently via `Promise.all`. Both the `readItems` and `readMoreItems` callbacks call the same `readMetadata` so logic is never duplicated.
 
 ```ts
-const readMetadata = (memberIds: User["id"][]) => {
-  if (!currentRoomId.value || memberIds.length === 0) return Promise.resolve();
-  const roomId = currentRoomId.value;
-  return Promise.all([readUserStatuses(memberIds), readMemberRoles({ roomId, userIds: memberIds })]);
+const readMetadata = (ids: Foo["id"][]) => {
+  if (!currentParentId.value || ids.length === 0) return Promise.resolve();
+  const parentId = currentParentId.value;
+  return Promise.all([readBars(ids), readBazes({ ids, parentId })]);
 };
 ```
 
 - Capture reactive refs into a local `const` before `Promise.all` so all concurrent calls see the same value.
-- Guard `memberIds.length === 0` to avoid unnecessary requests.
+- Guard `ids.length === 0` to avoid unnecessary requests.
 - Every call inside `Promise.all` must be a **single batch request** — never spread N individual calls (`...ids.map(...)`). If the endpoint accepts one ID, make it accept an array first.

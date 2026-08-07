@@ -52,8 +52,8 @@ One `Item[]` feeds both branches — the desktop buttons and the mobile menu are
 A `v-dialog` mounted inside a `v-menu`'s list is destroyed when the menu closes, so its dialog never opens. Mount the dialog in the **toolbar** component and have the menu item flip its model:
 
 ```vue
-<ResourceBladeOverflowMenu v-else :refresh :resource @delete="isDeleteOpen = true" @rename="isRenameOpen = true" />
-<ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename :resource />
+<FooOverflowMenu v-else :foo :refresh @delete="isDeleteOpen = true" @rename="isRenameOpen = true" />
+<FooRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :foo :rename />
 ```
 
 Mounting with `v-if` alongside `v-model` (rather than keeping it mounted) means the dialog's fields re-initialise from the current props on every open — no `watch` to reset them.

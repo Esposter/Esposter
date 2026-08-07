@@ -8,30 +8,30 @@ Define an explicit type map first, then use a mapped type in `satisfies` for per
 
 ```typescript
 // 1. Explicit type map (one file, in models/) — one entry per discriminant value
-type DataSourceItemTypeMap = {
-  [DataSourceType.Csv]: CsvDataSourceItem;
-  [DataSourceType.Json]: JsonDataSourceItem;
+type FooItemTypeMap = {
+  [FooType.Bar]: BarFooItem;
+  [FooType.Baz]: BazFooItem;
 };
 // 2. Satisfies a mapped type keyed by the SAME parameter the value is looked up with, so each entry
-//    is checked against its own type argument — a `Record<DataSourceType, DataSourceConfiguration<
-//    DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>>` widens every entry to the union instead,
-//    and accepts a Json configuration filed under the Csv key
-export const DataSourceConfigurationMap = { ... } satisfies {
-  [TDataSourceType in DataSourceType]: DataSourceConfiguration<DataSourceItemTypeMap[TDataSourceType]>;
+//    is checked against its own type argument — a `Record<FooType, FooConfiguration<
+//    FooItemTypeMap[keyof FooItemTypeMap]>>` widens every entry to the union instead,
+//    and accepts a Baz configuration filed under the Bar key
+export const FooConfigurationMap = { ... } satisfies {
+  [TFooType in FooType]: FooConfiguration<FooItemTypeMap[TFooType]>;
 };
 ```
 
-The uncorrelated `DataSourceItemTypeMap[keyof DataSourceItemTypeMap]` union is still the right thing in a **constraint** — it is the bound of what a generic parameter may be, not a claim about one key.
+The uncorrelated `FooItemTypeMap[keyof FooItemTypeMap]` union is still the right thing in a **constraint** — it is the bound of what a generic parameter may be, not a claim about one key.
 
 ## Generic map lookup composables
 
 When a component looks up a typed configuration from a generic map using a discriminant key on a generic item, extract the lookup into a composable. Use `MaybeRefOrGetter<TItem>` with `toValue()` so callers pass refs or plain values. Hide the single internal `as` cast and expose a fully typed API:
 
 ```typescript
-export const useDataSourceConfiguration = <TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>(
-  item: MaybeRefOrGetter<TDataSourceItem>,
-): ComputedRef<DataSourceConfiguration<TDataSourceItem>> =>
-  computed(() => DataSourceConfigurationMap[toValue(item).type] as DataSourceConfiguration<TDataSourceItem>);
+export const useFooConfiguration = <TFooItem extends FooItemTypeMap[keyof FooItemTypeMap]>(
+  item: MaybeRefOrGetter<TFooItem>,
+): ComputedRef<FooConfiguration<TFooItem>> =>
+  computed(() => FooConfigurationMap[toValue(item).type] as FooConfiguration<TFooItem>);
 ```
 
 ## Generic Vue components
@@ -40,12 +40,12 @@ Use `<script setup lang="ts" generic="T extends SomeBase">` to make a component 
 
 ```vue
 <!-- Parent (knows concrete type): -->
-<FilePicker :item="modelValue" :configuration="DataSourceConfigurationMap[DataSourceType.Csv]" />
+<FooPicker :item="modelValue" :configuration="FooConfigurationMap[FooType.Bar]" />
 <!-- Child: -->
-<script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
-interface FilePickerProps {
-  configuration: DataSourceConfiguration<TDataSourceItem>;
-  item: TDataSourceItem;
+<script setup lang="ts" generic="TFooItem extends FooItemTypeMap[keyof FooItemTypeMap]">
+interface FooPickerProps {
+  configuration: FooConfiguration<TFooItem>;
+  item: TFooItem;
 }
 </script>
 ```

@@ -48,7 +48,7 @@ A scoped class (with `v-bind()` for reactive values) also stays correct where at
 - Custom theme colours: `bg-surface-opacity-80`, `bg-background-opacity-40`, etc.
 - Material Design palette: `text-amber`, `bg-deep-purple`, `text-yellow-darken-4`, etc.
 
-Only registered colors generate utilities — don't assume a Vuetify default theme colour works: use `text-primary` not `text-success`, `bg-surface` not `bg-surface-variant`. Registration rules (theme colours, palette, safelisting) live in the `unocss` skill. When reading hyphenated theme colours from `useColorsStore()`, destructure quoted keys and alias to camel-case: `const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore);`.
+Only registered colors generate utilities — don't assume a Vuetify default theme colour works: use `text-primary` not `text-success`, `bg-surface` not `bg-surface-variant`. Registration rules (theme colours, palette, safelisting) live in the `unocss` skill. When reading hyphenated theme colours from a colours store, destructure quoted keys and alias to camel-case: `const { "hyphenated-key": hyphenatedKey } = storeToRefs(colorsStore);`.
 
 ### Links use `text-info` (the blue), never `text-primary`
 

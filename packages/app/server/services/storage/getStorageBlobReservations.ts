@@ -12,18 +12,7 @@ export const getStorageBlobReservations = (
   fileSasEntities: FileSasEntity[],
   prefix: string,
 ): StorageBlobReservation[] =>
-  fileSasEntities.flatMap(({ id, thumbnailSasUrl }, index) => {
+  fileSasEntities.map(({ id }, index) => {
     const { filename, size } = takeOne(files, index);
-    const { blobName, thumbnailBlobName } = getFileBlobNames(prefix, id, filename);
-    // The client downscales the thumbnail itself, so its size is declared nowhere and cannot be reserved.
-    // Holding zero for it still puts it in the ledger, which is what lets `BlobCreated` charge its real size
-    // Once the blob exists and a deletion give it back — the alternative is bytes stored under a user's name
-    // That nothing ever counts. A zero hold takes no in-flight slot either, because the client's thumbnail is
-    // Best-effort: one it never manages to generate must not cost its owner an upload (see reserveStorageBytes)
-    return thumbnailSasUrl
-      ? [
-          { blobName, declaredBytes: size },
-          { blobName: thumbnailBlobName, declaredBytes: 0 },
-        ]
-      : [{ blobName, declaredBytes: size }];
+    return { blobName: getFileBlobNames(prefix, id, filename).blobName, declaredBytes: size };
   });

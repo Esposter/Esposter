@@ -17,17 +17,17 @@ Default to `v-model="ref"`. Keep the split form only when the update is not a di
 When a form handles both create and edit, use an explicit `isCreate` prop (default `false`) rather than deriving mode from `initialValues`. The parent passes `is-create` explicitly. Use a single `values` ref over per-field refs:
 
 ```ts
-interface PostUpsertFormProps {
-  initialValues?: Pick<Post, "description" | "title">;
+interface FooUpsertFormProps {
+  initialValues?: Pick<Foo, "bar" | "baz">;
   isCreate?: boolean;
 }
-const { initialValues = { description: "", title: "" }, isCreate = false } = defineProps<PostUpsertFormProps>();
+const { initialValues = { bar: "", baz: "" }, isCreate = false } = defineProps<FooUpsertFormProps>();
 const { cloned: values } = useCloned(() => initialValues);
 ```
 
 - **`useCloned`, never `ref(initialValues)`** — a bare `ref` makes the prop's own object the editable state, so the first keystroke mutates the parent's row before anything is saved, and it never resyncs when the source changes. The `sync`/`clone` options are in `references/watch-decision-tree.md`.
-- Template binds to `values.title` etc. (auto-unwrapped); emit passes `values` directly.
-- `isCreate` drives button text: `isCreate ? 'Post' : 'Edit Post'`.
+- Template binds to `values.bar` etc. (auto-unwrapped); emit passes `values` directly.
+- `isCreate` drives button text: `isCreate ? 'Create Foo' : 'Edit Foo'`.
 - Create page passes `is-create`; update page passes `:initial-values` (no `is-create`).
 
-The same `isCreate?: boolean` pattern applies to dialog buttons (e.g. `CrudView/EditDialogButton`), where it also skips the equality check that would disable the save button when state matches the original.
+The same `isCreate?: boolean` pattern applies to dialog buttons (e.g. `Foo/EditDialogButton`), where it also skips the equality check that would disable the save button when state matches the original.

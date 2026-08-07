@@ -47,7 +47,7 @@ When a child has **local mutable state initialized from a prop**, don't watch th
 <FooEditor v-if="selectedFoo" :key="selectedFoo.id" :foo="selectedFoo" />
 ```
 
-**Prefer props-down when the parent is adjacent and already has the data** — the child initializes its ref from the prop (`const { categoryId } = defineProps<Props>(); const selectedCategoryId = ref(categoryId);`), no watch, no store duplication. Only pass through an intermediate generic router component (e.g. `Content.vue`) if the prop is truly shared by all children; if only one leaf needs it, keep the store read in that leaf and initialize its ref directly.
+**Prefer props-down when the parent is adjacent and already has the data** — the child initializes its ref from the prop (`const { fooId } = defineProps<Props>(); const selectedFooId = ref(fooId);`), no watch, no store duplication. Only pass through an intermediate generic router component if the prop is truly shared by all children; if only one leaf needs it, keep the store read in that leaf and initialize its ref directly.
 
 ## Async Data: Wrapper + Pure Child Pattern
 
@@ -61,13 +61,13 @@ This avoids async races where a `ref` initialized once at setup time (before the
 ```vue
 <!-- Index.vue — wrapper owns the lookup and v-if guard -->
 <template>
-  <FeatureForm v-if="userToRoom" :room-id :user-to-room="userToRoom" />
+  <FooForm v-if="foo" :foo :parent-id />
 </template>
 
 <!-- Form.vue — pure: prop is guaranteed non-undefined, so the ref init is safe -->
 <script setup lang="ts">
-const { roomId, userToRoom } = defineProps<{ roomId: string; userToRoom: UserToRoom }>();
-const nickname = ref(userToRoom.nickname);
+const { foo, parentId } = defineProps<{ foo: Foo; parentId: string }>();
+const bar = ref(foo.bar);
 </script>
 ```
 

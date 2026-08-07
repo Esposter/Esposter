@@ -9,9 +9,9 @@ General Zod schema conventions are the `zod` skill's; this skill owns only what 
 
 ## Form Schema ≠ Validation Schema
 
-**Never pass a full entity schema to `zodToJsonSchema()`** — an entity schema contains `z.date()` fields and Vjsf throws on them. Model a separate `*Form` interface + `*FormSchema` (one per file, e.g. `DateColumnForm.ts`) covering only user-editable fields (no `id`/`createdAt`/`updatedAt`), built by spreading the base factory's `.shape` and re-`.meta()`-ing fields for titles. Pull individual field validators off the entity schema's `.shape` (`dateColumnSchema.shape.format`) rather than redeclaring them — the entity schema stays the validation contract, the form schema is the rendering contract.
+**Never pass a full entity schema to `zodToJsonSchema()`** — an entity schema contains `z.date()` fields and Vjsf throws on them. Model a separate `*Form` interface + `*FormSchema` (one per file, e.g. `BarFooForm.ts`) covering only user-editable fields (no `id`/`createdAt`/`updatedAt`), built by spreading the base factory's `.shape` and re-`.meta()`-ing fields for titles. Pull individual field validators off the entity schema's `.shape` (`fooSchema.shape.bar`) rather than redeclaring them — the entity schema stays the validation contract, the form schema is the rendering contract.
 
-`.meta({ title })` values use **enum values directly**, not string literals; `zodToJsonSchema` runs `toTitleCase(prettify(...))` automatically, so an enum value like `ColumnTransformationType.ConvertTo` renders as `"Convert To"`.
+`.meta({ title })` values use **enum values directly**, not string literals; `zodToJsonSchema` runs `toTitleCase(prettify(...))` automatically, so an enum value like `FooType.ConvertTo` renders as `"Convert To"`.
 
 ## `layout` Meta
 
@@ -19,7 +19,7 @@ Put `comp`, `getItems`, `getProps` under the `layout` key of the field's `.meta(
 
 ```typescript
 description: z.string().meta({ layout: { comp: "textarea" } }),
-sourceColumnId: z.string().meta({ layout: { comp: "select", getItems: "context.columnItems" }, title: "Source Column" }),
+fooId: z.string().meta({ layout: { comp: "select", getItems: "context.fooItems" } }),
 ```
 
 **`GlobalMeta` carries only `layout` + ajv keywords** (`interface GlobalMeta extends AjvKeywords { layout?: Partial<PartialCompObject> }`). Don't add per-feature meta keys to it — filtering that looks like it wants a meta key is done by passing a pre-filtered context key into the field's factory (see `getItems` below).
@@ -29,7 +29,7 @@ sourceColumnId: z.string().meta({ layout: { comp: "select", getItems: "context.c
 A check needing values outside the field (e.g. name uniqueness against sibling rows) is declared as a `.meta()` ajv keyword flag and implemented as an ajv `validate` fn passed through `options.ajvOptions.keywords`, so the rule stays typed and testable:
 
 ```typescript
-name: aColumnSchema.shape.name.meta({ title: "Column", [uniqueColumnNameKeywordDefinition.keyword]: true }),
+name: aFooSchema.shape.name.meta({ [uniqueFooNameKeywordDefinition.keyword]: true }),
 ```
 
 Choosing between an ajv keyword, a validation composable, and a global rule alias — and the runtime wiring of the `validate` fn — is the `vue-composable-patterns` skill's ("Validation Rules — Pick the Right Layer").
@@ -39,7 +39,7 @@ Choosing between an ajv keyword, a validation composable, and a global rule alia
 - **Every variant needs `.meta({ title })` on the variant object** (not just on its fields), else Vjsf shows "Option 1", "Option 2". Set it on the schema at definition time:
 
   ```typescript
-  export const datePartTransformationSchema = z.object({ ... }).meta({ title: ColumnTransformationType.DatePart });
+  export const barFooSchema = z.object({ ... }).meta({ title: FooType.Bar });
   ```
 
 - **The discriminant's typing decides whether editing works** — four cases, only two are usable:
@@ -51,48 +51,47 @@ Choosing between an ajv keyword, a validation composable, and a global rule alia
 - **Pass the discriminated union straight to Vjsf.** Because every variant's discriminant is a single `const`, Vjsf auto-detects the active `oneOf` variant when pre-populating and renders its own variant selector. So there is no per-type discriminant ref, no type-selector reset handler, and no precomputed JSON schema map file. `jsonSchema` is a plain `const` (the union schema never changes), not a `computed`:
 
   ```typescript
-  const jsonSchema = zodToJsonSchema(columnFormSchema);
-  // <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
+  const jsonSchema = zodToJsonSchema(fooFormSchema);
+  // <Vjsf v-model="editedFoo" :schema="jsonSchema" :options />
   ```
 
 - **`*TypeFormSchemaMap` is for narrowing a value to one variant's fields, not for choosing the form schema.** It lives in the union's own file (alongside the union schema), maps each enum key to **its own** variant schema, and is consumed by `extractSchemaFields(FooTypeFormSchemaMap[foo.type], foo)` to compare edited-vs-original for dirty state:
 
   ```typescript
-  export const ColumnTypeFormSchemaMap = {
-    [ColumnType.Boolean]: booleanColumnFormSchema,
-    [ColumnType.Date]: dateColumnFormSchema,
+  export const FooTypeFormSchemaMap = {
+    [FooType.Bar]: barFooFormSchema,
+    [FooType.Baz]: bazFooFormSchema,
     // …one per enum member
-  } as const satisfies Record<ColumnType, z.ZodType<ColumnForm>>;
+  } as const satisfies Record<FooType, z.ZodType<FooForm>>;
   ```
 
 ## `getItems` Filtering via the Context
 
-To show only certain rows in a select, pass the **pre-filtered context key** into the field's `create*Schema` factory (e.g. `createSourceColumnIdSchema(getItems)`, defaulting to `context.columnItems`). The factory bakes `getItems` into `layout`, so consumers just spread its `.shape`. The per-type lists are built once by the form-options composable, not inline in each component:
+To show only certain rows in a select, pass the **pre-filtered context key** into the field's `create*Schema` factory (e.g. `createFooIdSchema(getItems)`, defaulting to `context.fooItems`). The factory bakes `getItems` into `layout`, so consumers just spread its `.shape`. The per-type lists are built once by the form-options composable, not inline in each component:
 
 ```typescript
-export const datePartTransformationSchema = z
+export const barFooSchema = z
   .object({
-    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
-    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]).shape,
-    part: datePartTypeSchema,
+    ...createItemEntityTypeSchema(z.literal(FooType.Bar).readonly()).shape,
+    ...createFooIdSchema(FooFormVjsfContextPropertyNames["context.barItems"]).shape,
+    baz: bazTypeSchema,
   })
-  .meta({ title: ColumnTransformationType.DatePart }) satisfies z.ZodType<DatePartTransformation>;
+  .meta({ title: FooType.Bar }) satisfies z.ZodType<BarFoo>;
 ```
 
-`getItems` is a JS expression string, so spread works for multiple sources: `"[...context.dateColumnItems, ...context.numberColumnItems]"`.
+`getItems` is a JS expression string, so spread works for multiple sources: `"[...context.barItems, ...context.bazItems]"`.
 
 ## Options Typing
 
 Type the `options` computed as `VjsfOptions<TContext>` (`VjsfOptions` from `app/models/vjsf/VjsfOptions.ts`); the context interface lives in `app/models/<feature>/<Name>VjsfContext.ts` (one per file), and the computed that builds it is a composable shared by the create and edit dialogs. Alongside `context`, `ajvOptions.keywords` wires the custom ajv keywords:
 
 ```typescript
-export interface ColumnFormVjsfContext {
-  columnItems: SelectItemCategoryDefinition<Column["id"]>[];
-  dateColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
+export interface FooFormVjsfContext {
+  barItems: SelectItemCategoryDefinition<Foo["id"]>[];
+  fooItems: SelectItemCategoryDefinition<Foo["id"]>[];
   // …one per variant that needs a filtered list
 }
-export const ColumnFormVjsfContextPropertyNames =
-  getPropertyNames<Pick<VjsfOptions<ColumnFormVjsfContext>, "context">>();
+export const FooFormVjsfContextPropertyNames = getPropertyNames<Pick<VjsfOptions<FooFormVjsfContext>, "context">>();
 ```
 
 Factory defaults for the edited value come from the discriminant-keyed `*TypeCreateMap` (the `typescript` skill owns that map's shape; the reset-on-discriminant-change watch is the `vue-composable-patterns` skill's). **Dialogs `structuredClone` the created instance** — Vjsf rejects class instances, and fast-deep-equal compares constructors.
@@ -104,10 +103,10 @@ A selector that controls _which_ schema renders belongs in the dialog's `#prepen
 For every schema passed to `zodToJsonSchema()` and rendered by Vjsf, add a `toMatchInlineSnapshot()` test co-located next to the schema file (same folder/base name). Fill via `pnpm vitest run --update`:
 
 ```typescript
-describe("DateColumn", () => {
+describe("Foo", () => {
   test("produces correct json schema for vjsf", () => {
     expect.hasAssertions();
-    expect(zodToJsonSchema(dateColumnFormSchema)).toMatchInlineSnapshot();
+    expect(zodToJsonSchema(fooFormSchema)).toMatchInlineSnapshot();
   });
 });
 ```

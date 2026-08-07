@@ -33,17 +33,14 @@ flowchart TD
   OUT -->|yes| EMPTY["No trail — this is where one starts"]
   OUT -->|no| BACKUP{"Destination already on the trail?"}
   BACKUP -->|yes| TRUNCATE["Truncate to it<br/>(a crumb, or a close affordance)"]
-  BACKUP -->|no| DRILL{"Came from a page<br/>that can be a crumb?"}
-  DRILL -->|yes| APPEND["Append it"]
-  DRILL -->|no| SAME{"Same page, another view?<br/>(a blade)"}
-  SAME -->|yes| CARRY["Carry the trail through"]
-  SAME -->|no| DIRECT["No trail — direct arrival"]
+  BACKUP -->|no| DRILL{"Did it leave a page<br/>that can be a crumb?"}
+  DRILL -->|yes| APPEND["Append that page"]
+  DRILL -->|no| CARRY["Carry the trail through<br/>(another blade, another row in the rail,<br/>the same page under new filters —<br/>and an empty one is a direct arrival)"]
   ADOPT --> STORE
   EMPTY --> STORE
   TRUNCATE --> RECORD
   APPEND --> RECORD
   CARRY --> RECORD
-  DIRECT --> STORE
   RECORD["history.replaceState — the entry<br/>remembers what it was left with"] --> STORE["navigationTrail store"]
   STORE --> RENDER["Breadcrumbs render the trail·<br/>the resource page shows its list rail<br/>only when the trail ends at the list"]
 ```
@@ -62,7 +59,7 @@ The last two rows are the same address: what differs is the entry the visitor is
 Four pieces implement it:
 
 - **`NavigationTrailPage`** with **`NavigationTrailPageMap`** — the slugs a trail may contain and what each renders as. A page absent from the map can be navigated _from_ without ever becoming a crumb, which is how a page opts out.
-- **`getNextNavigationTrail`** — the rules above as one pure function: truncate, append, carry, or reset. Being pure is what makes the model testable without a browser.
+- **`getNextNavigationTrail`** — the rules above as one pure function: truncate, append, or carry. Being pure is what makes the model testable without a browser.
 - **`navigationTrail.client.ts`** — the router hook. It adopts an entry's recorded trail when there is one (a reload or a back/forward lands on an entry that already knows its own trail) and otherwise resolves and records.
 - **`navigationTrail` store** — what components read. The plugin is the only writer.
 
@@ -73,8 +70,10 @@ Four pieces implement it:
 | `/resources`                      | launcher, logo, direct         | none              | Resources | —         |
 | `/resources/all`                  | Resources → See all            | `Resources`       | All       | —         |
 | `/resources/all`                  | direct link                    | none              | All       | —         |
+| `/resources/all`                  | search, sort or page change    | unchanged         | All       | —         |
 | `/resources/[id]`                 | Resources → All → row click    | `Resources › All` | {name}    | shown     |
 | `/resources/[id]`                 | row click, All opened directly | `All`             | {name}    | shown     |
+| `/resources/[id]`                 | row click in the list rail     | unchanged         | {name}    | shown     |
 | `/resources/[id]`                 | favourite, search, shared link | none              | {name}    | hidden    |
 | `/resources/[id]` (another blade) | blade nav inside the page      | unchanged         | {name}    | unchanged |
 
@@ -96,6 +95,7 @@ A link you send someone lands them on the direct view: they did not walk your pa
 ## Notes
 
 - Adding a page to the model is one map entry; adding a page that should never be a crumb is nothing at all.
+- **Leaving the area is the only reset**, and everything short of a real drill-in carries the trail untouched. A direct arrival is therefore not a case the resolver detects — it is the empty trail that navigating out of the area already left behind. The consequence is the one worth stating: a rule that instead reset on "did not come from a crumb page" empties the trail on the second row clicked in the list rail, and one that appends without checking the navigation left the page turns a filter change on the list into a crumb linking to the page already open.
 - A trail read back off an entry is validated against the map before it renders — an entry written by an older release, or edited in devtools, is filtered down to slugs that still exist rather than rendering a crumb to nowhere.
 - A crumb is a real link; the title is plain text. Anything not navigable is not a crumb, which is why the current page cannot be one.
 - Pasting a url into the address bar is a direct arrival even in a tab that was on the list: it is a new entry with no trail, which is the honest reading of typing an address.

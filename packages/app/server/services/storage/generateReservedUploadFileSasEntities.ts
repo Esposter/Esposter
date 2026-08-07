@@ -6,10 +6,6 @@ import { getStorageBlobReservations } from "@@/server/services/storage/getStorag
 import { reserveStorageBytes } from "@@/server/services/storage/reserveStorageBytes";
 import { generateUploadFileSasEntities } from "@esposter/db";
 
-interface GenerateReservedUploadFileSasEntitiesOptions {
-  withThumbnail?: boolean;
-}
-
 // The upload chokepoint: every write target this app hands out is minted here, and the quota hold for it is
 // Taken in the same call. Signing is local and touches nothing in Azure, so the reserve runs after it and
 // Before the response — a rejection is a write target the client never receives. Keeping the two in one
@@ -21,10 +17,9 @@ export const generateReservedUploadFileSasEntities = async (
   containerName: AzureContainer,
   files: Pick<FileEntity, "filename" | "mimetype" | "size">[],
   prefix: string,
-  options: GenerateReservedUploadFileSasEntitiesOptions = {},
 ): Promise<FileSasEntity[]> => {
   const containerClient = await useContainerClient(containerName);
-  const fileSasEntities = await generateUploadFileSasEntities(containerClient, files, prefix, options);
+  const fileSasEntities = await generateUploadFileSasEntities(containerClient, files, prefix);
   await reserveStorageBytes(db, userId, containerName, getStorageBlobReservations(files, fileSasEntities, prefix));
   return fileSasEntities;
 };

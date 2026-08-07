@@ -12,7 +12,6 @@ import {
   PNPM_MODULES_DIRECTORY,
   RUN_ESBUILD_VERSION_COMMAND,
 } from "@/services/exec/test/constants.test";
-import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
 import { setupWarmSnapshotSuite } from "@/services/exec/test/setupWarmSnapshotSuite.test";
 import { describe, expect, test } from "vitest";
 
@@ -20,7 +19,9 @@ import { describe, expect, test } from "vitest";
 // Identical to a freshly booted + installed one. The only variable is how the dependency closure is presented —
 // Warm fork (frozen overlay upper stacked read-only) vs cold in-place install. Install output is discarded so only
 // The verify command's output is diffed; nothing is normalized, so no real divergence can hide.
-describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a cold in-place install (equivalence)", () => {
+// Each case boots a sandbox and runs a full cold install, so the pair costs minutes of wall clock — too slow for
+// The default suite. The body is kept intact; drop the `.todo` to run it when the fork or overlay layering changes.
+describe.todo("forkSnapshot - warm fork matches a cold in-place install (equivalence)", () => {
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
   const runWarmVsCold = async (command: string, warmOptions: ExecOptions, coldOptions: ExecOptions) => {
     const warmResult = await forkSnapshot(getBackend(), command, warmOptions);

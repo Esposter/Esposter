@@ -14,58 +14,52 @@ Keep a sentinel member only when that value is a genuinely distinct, selectable 
 
 When a large enum has a meaningful "base" subset handled separately, split it:
 
-1. Declare **named sub-groups used independently** as exported enums in their own files (e.g. `BasicStringTransformationType.ts`).
-2. Declare **unlabelled/catch-all values** (e.g. `Interpolate`) as an **unexported `enum BaseXxxType`** inside the merged type's file — never a separate file.
+1. Declare **named sub-groups used independently** as exported enums in their own files (e.g. `BasicFooType.ts`).
+2. Declare **unlabelled/catch-all values** (e.g. `Qux`) as an **unexported `enum BaseXxxType`** inside the merged type's file — never a separate file.
 3. Merge with `mergeObjectsStrict` from `@esposter/shared`; export the union type using enum type names.
 
 ```ts
-// BasicStringTransformationType.ts (exported — sub-functions accept this for exhaustive switch)
-export enum BasicStringTransformationType {
-  LowerCase = "LowerCase",
-  TitleCase = "TitleCase",
-  Trim = "Trim",
-  UpperCase = "UpperCase",
+// BasicFooType.ts (exported — sub-functions accept this for exhaustive switch)
+export enum BasicFooType {
+  Bar = "Bar",
+  Baz = "Baz",
 }
-export const basicStringTransformationTypeSchema = z.enum(
-  BasicStringTransformationType,
-) satisfies z.ZodType<BasicStringTransformationType>;
+export const basicFooTypeSchema = z.enum(BasicFooType) satisfies z.ZodType<BasicFooType>;
 
-// StringTransformationType.ts (the merged full type)
-enum BaseStringTransformationType {
+// FooType.ts (the merged full type)
+enum BaseFooType {
   // NOT exported — internal only
-  Interpolate = "Interpolate",
+  Qux = "Qux",
 }
-export const StringTransformationType = mergeObjectsStrict(BasicStringTransformationType, BaseStringTransformationType);
-export type StringTransformationType = BasicStringTransformationType | BaseStringTransformationType;
-export const stringTransformationTypeSchema = z.enum(
-  StringTransformationType,
-) satisfies z.ZodType<StringTransformationType>;
+export const FooType = mergeObjectsStrict(BasicFooType, BaseFooType);
+export type FooType = BasicFooType | BaseFooType;
+export const fooTypeSchema = z.enum(FooType) satisfies z.ZodType<FooType>;
 ```
 
-**Why**: functions like `computeStringTransformation` accept `BasicStringTransformationType` so their `switch` stays exhaustive (TypeScript verifies all cases; `default: exhaustiveGuard` is truly unreachable). `mergeObjectsStrict` makes `StringTransformationType.LowerCase`/`.Interpolate` work identically to a plain enum at call sites. Keeping the catch-all unexported and co-located avoids polluting exports.
+**Why**: functions like `computeFoo` accept `BasicFooType` so their `switch` stays exhaustive (TypeScript verifies all cases; `default: exhaustiveGuard` is truly unreachable). `mergeObjectsStrict` makes `FooType.Bar`/`.Qux` work identically to a plain enum at call sites. Keeping the catch-all unexported and co-located avoids polluting exports.
 
 ## Values array
 
 - **Export a pluralized values collection from the enum file only when it's actually used** — at the bottom, after the Zod schema. Never pre-emptively: an export with zero call sites is dead code.
-- **Plain `Object.values` array by default, `new Set` only when Set functionality is genuinely used** — enum values are unique by construction, so a Set adds nothing for iteration and forces `[...EnumNames]` spreads at every array call site (`v-for`, `.map`, `.filter`, `.join` all want arrays). Reach for a Set only when call sites actually use `.has()`/`.difference()`, or the source can contain duplicates (e.g. `ContentTypes` dedupes mime-type values):
+- **Plain `Object.values` array by default, `new Set` only when Set functionality is genuinely used** — enum values are unique by construction, so a Set adds nothing for iteration and forces `[...EnumNames]` spreads at every array call site (`v-for`, `.map`, `.filter`, `.join` all want arrays). Reach for a Set only when call sites actually use `.has()`/`.difference()`, or the source can contain duplicates (e.g. `BazTypes` dedupes mime-type values):
 
   ```ts
   // Default — plain array; iterate, map, filter, join directly with no spreads
-  export const PostSortTypes = Object.values(PostSortType);
+  export const FooTypes = Object.values(FooType);
 
   // Set — earned by real membership checks at the call sites
-  export const NumberFormats: ReadonlySet<NumberFormat> = new Set(Object.values(NumberFormat));
-  NumberFormats.has(format); // O(1)
+  export const BarTypes: ReadonlySet<BarType> = new Set(Object.values(BarType));
+  BarTypes.has(barType); // O(1)
   ```
 
-  In published packages (`db-schema` etc., isolatedDeclarations) annotate the array explicitly: `export const MessageTypes: readonly MessageType[] = Object.values(MessageType);`. In the app, let it infer.
+  In published packages (`db-schema` etc., isolatedDeclarations) annotate the array explicitly: `export const FooTypes: readonly FooType[] = Object.values(FooType);`. In the app, let it infer.
 
 - **Never write `Object.values(SomeEnum)` inline** — use the exported array.
 - **The values array lives in the source's own file, never at a consumption site** — a `const FooTypes = Object.values(FooType)` declared locally in a service/component (or duplicated across two consumers) is the violation shape even when typed and named correctly; move it to the enum's file and import it. Same rule for map-derived collections: `export const FooDefinitions = Object.values(FooDefinitionMap)` sits at the bottom of the map's file. Exception: test files may derive values locally when the point of the test is independently re-deriving them (e.g. exhaustiveness assertions against a map).
 
 ## Enum refs
 
-- **Never `ref<EnumType | null>(null)`** — default to a sensible first value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`.
-- **Never `ref<EnumType>(EnumValue)`** — TypeScript infers the type from the value: `ref(ColumnType.String)`.
+- **Never `ref<EnumType | null>(null)`** — default to a sensible first value: `ref(FooType.Bar)`.
+- **Never `ref<EnumType>(EnumValue)`** — TypeScript infers the type from the value: `ref(FooType.Bar)`.
 - **Filter/selection refs where "nothing selected" is a real state** use the string-enum `""` sentinel — `ref<"" | EnumType>("")` — never `| null` or `| undefined`. Pair with an explicit "All …" select item (`value: ""`), never `clearable` (see the `vuetify` skill).
-- **Prefer inferred refs** — `ref("")`, `ref(0)`, `ref(EnumType.Value)`. Annotate only when the value space genuinely exceeds the seed: `ref<"" | EnumType>("")`, literal-union inputs like `ref<CreateInviteInput["maxUses"]>(0)`.
+- **Prefer inferred refs** — `ref("")`, `ref(0)`, `ref(EnumType.Value)`. Annotate only when the value space genuinely exceeds the seed: `ref<"" | EnumType>("")`, literal-union inputs like `ref<CreateFooInput["baz"]>(0)`.
