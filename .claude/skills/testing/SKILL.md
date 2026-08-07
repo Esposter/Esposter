@@ -9,7 +9,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 - `references/router-test-setup.md` — tRPC callers, mock sessions, seeded mock-DB rows, naming a router test.
 - `references/module-mocks.md` — what to mock; colocated doubles, `vi.mock` factories, the `db` getter, client tRPC calls, gating a double to prove a caller awaits it.
-- `references/nuxt-environment-and-mounting.md` — a DOM, the nuxt runtime, a mounted component, a dispatched event.
+- `references/nuxt-environment-and-mounting.md` — a DOM, the nuxt runtime, a mounted component, a routed link, a dispatched event.
 - `references/platform-and-bundle-tests.md` — skipping on some hosts, colorized CLI output, a built `dist` size.
 - `references/test-helper-files.md` — anything that isn't a plain suite: shared helpers, `constants.test.ts` fixtures, filesystem path names, a wrapper suite delegating its matrix, `.test-d.ts`.
 - `references/running-the-suite.md` — a failure or timeout only the full parallel run produces, and the Windows module allowlist.

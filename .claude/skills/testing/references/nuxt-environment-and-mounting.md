@@ -29,6 +29,18 @@ describe(useMyComposable, () => {
 });
 ```
 
+## `mountSuspended` stubs `RouterLink`, so link-active assertions pass vacuously
+
+The mount helper overrides the app's global `RouterLink` with its own component that has no static `useLink`. Anything deriving state from the link — Vuetify's `v-btn`/`v-tab` highlighting above all — then takes its no-router branch: no `href`, never active, so an assertion that the wrong element is _not_ highlighted holds no matter what the component does. Pass the real component back in; `global.components` wins over the helper's defaults:
+
+```ts
+import { RouterLink } from "vue-router";
+
+await mountSuspended(Foo, { global: { components: { RouterLink } }, props, route: "/docs/architecture" });
+```
+
+The `route` option resolves against the app's real routes, so route matching (params, catch-alls) behaves exactly as it does in the browser.
+
 ## A dispatched event whose handler is async leaves a promise nobody holds
 
 `element.dispatchEvent(e)` returns a `boolean`, so an `async` handler behind it — a template `@click` that awaits `navigateTo`, a mutation, any `await` at all — settles after the environment is torn down, and the run dies as a `statusCode: 500` attributed to whichever file was unlucky. Assertions on the event itself (`defaultPrevented`) are set synchronously during bubbling, so nothing you assert on depends on that promise — the only question is where it lands.

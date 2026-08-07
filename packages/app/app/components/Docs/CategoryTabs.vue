@@ -16,11 +16,16 @@ interface CategoryTabsProps {
 const { activeCategory, sections } = defineProps<CategoryTabsProps>();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
-// Each tab lands on its category's first section
+const route = useRoute();
+// Vuetify highlights a tab from its router link, never from the tabs' model value, and every docs page resolves
+// To the same [...slug] route, so a link only counts as active on its own exact path. Each tab lands on its
+// Category's first section, except the active one, which points at the page you are on so that it stays lit
 const categories = computed(() =>
   DocsCategories.flatMap((category) => {
     const firstSection = sections.find(({ path }) => getSectionCategory(path) === category);
-    return firstSection ? [{ category, firstSection }] : [];
+    if (!firstSection) return [];
+    else if (category === activeCategory) return [{ category, path: route.path }];
+    else return [{ category, path: firstSection.path }];
   }),
 );
 </script>
@@ -36,13 +41,16 @@ const categories = computed(() =>
       @click="isLeftDrawerOpen = true"
     />
     <v-tabs color="primary" :model-value="activeCategory ?? RoutePath.Docs" show-arrows>
-      <v-tab class="text-none" prepend-icon="mdi-home" :to="RoutePath.Docs" :value="RoutePath.Docs"> Overview </v-tab>
+      <!-- Exact, or "/docs" resolves with no slug param and counts as active on every docs page -->
+      <v-tab class="text-none" exact prepend-icon="mdi-home" :to="RoutePath.Docs" :value="RoutePath.Docs">
+        Overview
+      </v-tab>
       <v-tab
-        v-for="{ category, firstSection } of categories"
+        v-for="{ category, path } of categories"
         :key="category"
         class="text-none"
         :prepend-icon="DocsCategoryIconMap[category]"
-        :to="firstSection.path"
+        :to="path"
         :value="category"
       >
         {{ category }}

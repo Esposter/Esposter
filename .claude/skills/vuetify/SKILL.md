@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — StyledButton for primary actions, button backgrounds (colourless-flat transparency rule, container-provided variant="text" answered with StyledButton/StyledTooltipIconButton rather than variant="elevated"), the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, tooltips on icon-only buttons, mergeProps for nested activators, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, StyledList, StyledAvatar, no SASS variables in component styles, plus deep dives on form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
+description: Esposter Vuetify 4 conventions — StyledButton for primary actions, button backgrounds (colourless-flat transparency rule, container-provided variant="text" answered with StyledButton/StyledTooltipIconButton rather than variant="elevated"), the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, tooltips on icon-only buttons, router-link-driven highlighting on linked buttons and tabs (exact links, catch-all params, the explicit :active escape hatch), mergeProps for nested activators, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, StyledList, StyledAvatar, no SASS variables in component styles, plus deep dives on form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
 ---
 
 # Vuetify Conventions
@@ -67,6 +67,15 @@ These variants are set globally and must **never** be repeated on individual com
 - **`#activator` slot always first** in `v-tooltip` (and `v-menu`).
 - **Icon choice for create actions** — use the semantically specific MDI icon when available (`mdi-table-row-plus-after`, `mdi-table-column-plus-after`); fall back to `mdi-plus` for generic create.
 - **Inside a `v-text-field` slot** (`#append-inner` etc.) use `variant="plain"` and omit `color` — a `variant="flat" color="primary"` button paints a filled block inside the input, where plain stays transparent and inherits the surrounding text colour.
+
+## Linked Buttons and Tabs Are Highlighted by the Router, Not by `model-value`
+
+Once a `v-btn`/`v-tab` carries `to`, Vuetify derives its highlight from the router link and ignores the group's `model-value`: the colour comes from `link.isActive` alone, and `useSelectLink` pushes that same link state into the group, so an over-matching link steals the `v-tab--selected` slider from whichever tab the `model-value` names. Two consequences worth knowing before binding `to`:
+
+- **A link is only active on its own exact path when the page is a catch-all** (`pages/foo/[...slug].vue`) — vue-router requires the params to be included, and `["a"]` never includes `["a", "b"]`. Worse, the bare parent path (`/foo`) resolves with **no** param at all, so it "includes" everything and stays lit on every child page. Add `exact` to any tab or button linking to that parent.
+- **A tab standing for a group of pages must link to the page you are on** (`:to="category === activeCategory ? route.path : firstPage.path"`) — no single fixed path can match the whole group, so the active tab otherwise renders unlit while a sibling holds the slider.
+
+`v-list-item` is immune because every call site passes an explicit `:active` (`props.active !== false` wins over the link), which is also the escape hatch when a linked control's highlight must be computed rather than matched.
 
 ## Nested Activators — `mergeProps`, Never Stacked `v-bind`
 
