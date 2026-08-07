@@ -34,3 +34,5 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [No manual recovery](/docs/architecture/no-manual-recovery)                               | Failed async work retries itself on an event, with an attempt cap and a quarantine       |
 | [Null vs undefined](/docs/architecture/null-vs-undefined)                                 | One absent-value sentinel in app-owned code — null survives only in boundary shapes      |
 | [Search](/docs/architecture/search)                                                       | One search stack — StyledSearchDialog palettes + useAutoSearch/useCursorSearcher         |
+
+Cross-cutting standards we decided against are recorded in [rejected](/docs/architecture/rejected) — check it before proposing a new one.

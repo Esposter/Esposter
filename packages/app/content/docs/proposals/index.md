@@ -25,5 +25,3 @@ Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [Comment cleanup](/docs/proposals/refactors/comment-cleanup) — sweep ledger for keeping comments tight repo-wide.
 - [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
-- [Docs consistency tests](/docs/proposals/refactors/docs-consistency-tests) — fail CI on broken `/docs` links, unregistered pages, and dead Key Files paths.
-- [Migration chain guard](/docs/proposals/refactors/migration-chain-guard) — assert the Drizzle snapshot chain is linear in CI instead of at the next `db:gen`.

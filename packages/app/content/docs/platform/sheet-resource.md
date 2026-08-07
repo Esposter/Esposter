@@ -39,13 +39,13 @@ Both blades edit sections of one blob and save through one `saveResourceContent`
 
 ## Key files
 
-| File                                                | Role                                                |
-| --------------------------------------------------- | --------------------------------------------------- |
-| `app/shared/models/resource/sheet/SheetResource.ts` | content blob schema (`data` + `settings`)           |
-| `app/components/Resource/Sheet/Data.vue`            | Data blade (grid editor)                            |
-| `app/components/Resource/Sheet/Settings.vue`        | Settings blade (parse configuration form)           |
-| `app/store/resource/sheet/`                         | grid state + command/undo stack over `content.data` |
-| `app/services/resource/PortableFormatMap.ts`        | CSV/JSON/XLSX import/export formats                 |
+| File                                            | Role                                                |
+| ----------------------------------------------- | --------------------------------------------------- |
+| `shared/models/resource/sheet/SheetResource.ts` | content blob schema (`data` + `settings`)           |
+| `app/components/Resource/Sheet/Data.vue`        | Data blade (grid editor)                            |
+| `app/components/Resource/Sheet/Settings.vue`    | Settings blade (parse configuration form)           |
+| `app/store/resource/sheet/`                     | grid state + command/undo stack over `content.data` |
+| `app/services/resource/PortableFormatMap.ts`    | CSV/JSON/XLSX import/export formats                 |
 
 ## Notes
 
