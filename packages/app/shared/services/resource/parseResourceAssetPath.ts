@@ -1,7 +1,7 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 
 import { FILES_DIRECTORY_SEGMENT, PUBLISHED_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
-import { getResult } from "@esposter/shared";
+import { getDecodedUriComponent } from "@esposter/shared";
 import { z } from "zod";
 
 // Hoisted: this runs once per embedded asset url on a publish and once per asset request on a published page,
@@ -16,7 +16,7 @@ const UUID_SCHEMA = z.uuid();
 export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath | undefined => {
   const decodedSegments: string[] = [];
   for (const segment of encodedPath.split("/")) {
-    const decodedSegment = getResult(() => decodeURIComponent(segment)).unwrapOr("");
+    const decodedSegment = getDecodedUriComponent(segment, "");
     if (
       !decodedSegment ||
       decodedSegment === "." ||

@@ -1,11 +1,10 @@
 import { AzureContainer } from "@/models/azure/container/AzureContainer";
+import { getBlobSubjectPrefix } from "@/services/azure/container/getBlobSubjectPrefix";
 import { dayjs } from "@/services/dayjs";
 import { ID_SEPARATOR, UUID_LENGTH } from "@esposter/shared";
 
 export const DEAD_LETTER_ARCHIVED_PREFIX = "archived/";
-// Storage's BlobCreated subject shape; the replay subscription filters on it and the replay handler
-// Strips it back off to recover the blob name.
-export const DEAD_LETTER_BLOB_SUBJECT_PREFIX = `/blobServices/default/containers/${AzureContainer.DeadLetter}/blobs/`;
+export const DEAD_LETTER_BLOB_SUBJECT_PREFIX = getBlobSubjectPrefix(AzureContainer.DeadLetter);
 export const DEAD_LETTER_QUARANTINE_PREFIX = "quarantine/";
 // Every client-supplied piece of a blob name is one separator-free, non-dot segment. Blob names are assembled by
 // Interpolation and the storage sdk hands the result to `URL.pathname`, which normalizes `..` away — so a segment

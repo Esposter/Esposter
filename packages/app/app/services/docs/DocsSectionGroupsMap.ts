@@ -69,6 +69,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "activity-log",
       "publish-history",
       "shell-cohesion",
+      "breadcrumb-trail",
       "resource-consolidation",
     ],
     Resources: [
@@ -80,6 +81,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "blueprint-resource",
       "blueprint-capture",
       "resource-file-assets",
+      "storage-quotas",
     ],
     "Survey funnel": [
       "survey-response-controls",

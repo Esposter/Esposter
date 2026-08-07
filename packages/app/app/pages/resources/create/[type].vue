@@ -13,15 +13,12 @@ const type = typeParam;
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout name="resource" :title="`Create ${ResourceDefinitionMap[type].title}`">
     <Head>
       <Title>{{ `Create ${ResourceDefinitionMap[type].title}` }}</Title>
     </Head>
-    <div flex flex-col h-full>
-      <StyledPageHeader :title="`Create ${ResourceDefinitionMap[type].title}`" />
-      <v-sheet flex-1 overflow-y-auto>
-        <ResourceCreateForm :type />
-      </v-sheet>
-    </div>
+    <v-sheet flex-1 overflow-y-auto>
+      <ResourceCreateForm :type />
+    </v-sheet>
   </NuxtLayout>
 </template>

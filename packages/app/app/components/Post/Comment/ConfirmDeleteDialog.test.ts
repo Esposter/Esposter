@@ -4,6 +4,7 @@ import type { PostWithRelations } from "@esposter/db-schema";
 import PostCommentConfirmDeleteDialog from "@/components/Post/Comment/ConfirmDeleteDialog.vue";
 import { useCommentStore } from "@/store/post/comment";
 import { useCommentDialogStore } from "@/store/post/comment/dialog";
+import { StorageTier } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -36,6 +37,8 @@ describe("postCommentConfirmDeleteDialog", () => {
       id: userId,
       image: "",
       name,
+      storageBytesUsed: 0,
+      storageTier: StorageTier.Free,
       updatedAt: createdAt,
     },
     userId,

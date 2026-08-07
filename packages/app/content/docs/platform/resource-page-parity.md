@@ -44,7 +44,7 @@ sequenceDiagram
 
 | File                                         | Role                                                        |
 | -------------------------------------------- | ----------------------------------------------------------- |
-| `app/components/Resource/BladeActions.vue`   | labeled buttons, dividers, narrow-viewport `…` menu         |
+| `app/components/Resource/Blade/Actions.vue`  | labeled buttons, dividers, narrow-viewport `…` menu         |
 | `app/components/Styled/DeleteFormDialog.vue` | `confirmName` guard prop                                    |
 | `app/composables/resource/useResource.ts`    | refresh/duplicate actions, conflict + outcome notifications |
 

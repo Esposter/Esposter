@@ -15,7 +15,7 @@ Each imported file (CSV/JSON/XLSX) is its own resource. The old table editor fus
 
 ## Data model
 
-```typescript
+```ts
 // packages/app/shared/models/resource/sheet/SheetResource.ts — interface-first
 export const sheetResourceSchema = z.object({
   data: dataSourceSchema, // columns, rows, metadata, statistics

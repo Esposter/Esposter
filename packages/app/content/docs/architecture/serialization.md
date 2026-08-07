@@ -45,7 +45,7 @@ flowchart TB
 
 `StandardMessageEntity` (and all classes in `JSONClassMap`) extend `Serializable`, which defines:
 
-```typescript
+```ts
 toJSON(): this {
   return structuredClone(toRawDeep(this));
 }
@@ -61,7 +61,7 @@ Both the SSR and tRPC paths fix this by passing the raw JSON string through `jso
 
 Runs server-side only, before any transport. The Azure SDK already returns `Date` objects for columns stored as `Edm.DateTime`. For columns stored as JSON strings (arrays, nested objects), `getIsSerializable` detects them and `jsonDateParse` restores any dates inside.
 
-```typescript
+```ts
 const instance = new cls(); // restores class identity
 for (const [property, value] of Object.entries(entity))
   if (!(value instanceof Date) && getIsSerializable(instance[property]))
@@ -75,7 +75,7 @@ for (const [property, value] of Object.entries(entity))
 
 Registered with Nuxt's payload plugin API. Fires for any class instance in Pinia state or `useAsyncData` that Nuxt serializes into the HTML payload for client hydration.
 
-```typescript
+```ts
 definePayloadReducer(name, (data) => data instanceof cls && JSON.stringify(data));
 definePayloadReviver(name, (data) => new cls(jsonDateParse(data)));
 ```
@@ -84,7 +84,7 @@ definePayloadReviver(name, (data) => new cls(jsonDateParse(data)));
 
 Used as the SuperJSON transformer for all tRPC HTTP batch links and WebSocket links. `registerClass` alone does not call `jsonDateParse` on revival, so `registerCustom` is used instead.
 
-```typescript
+```ts
 SuperJSON.registerCustom(
   {
     isApplicable: (value): value is InstanceType<typeof cls> => value instanceof cls,

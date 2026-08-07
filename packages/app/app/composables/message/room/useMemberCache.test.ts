@@ -11,6 +11,7 @@ import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/co
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useMemberStore } from "@/store/message/user/member";
+import { StorageTier } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -33,6 +34,8 @@ describe(useMemberCache, () => {
     id: crypto.randomUUID(),
     image: "",
     name: "name",
+    storageBytesUsed: 0,
+    storageTier: StorageTier.Free,
     updatedAt: new Date(),
   } satisfies User;
   const setRouteId = (id: string) => {

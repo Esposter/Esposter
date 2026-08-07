@@ -34,6 +34,7 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Activity log](/docs/platform/activity-log) — the per-resource audit trail blade, in Azure Table Storage
 - [Publish history](/docs/platform/publish-history) — versioned snapshot blade with per-version view and restore-to-draft
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
+- [Breadcrumb trail](/docs/platform/breadcrumb-trail) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Create from file](/docs/platform/create-from-file) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
@@ -51,6 +52,7 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Email web view](/docs/platform/email-web-view) — Email is Publishable: save-time HTML capture, `/view/email/[id]` browser copy
 - [Flowchart publish](/docs/platform/flowchart-publish) — Flowchart is Publishable: read-only VueFlow render at `/view/flowchart/[id]`
 - [Resource file assets](/docs/platform/resource-file-assets) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
+- [Storage quotas](/docs/platform/storage-quotas) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar on the explorer home
 - [Webpage survey invite blocks](/docs/platform/webpage-survey-invite-blocks) — published surveys as drag-in invite buttons in both GrapesJS editors
 - [Resource Explorer consolidation](/docs/platform/resource-consolidation) — the shipped six-phase program record
 
@@ -79,4 +81,5 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - **Blueprint resource + capture** — a parameterized manifest resource: `deployBlueprint` substitutes `{{parameter:key}}`/`{{entry:key}}` tokens, validates every entry against its type's contentSchema, topologically creates the wired set (with mid-deploy compensating cleanup), and `captureBlueprint` turns a selection of live resources into that manifest by rewriting cross-resource ids to aliases. One Postgres enum value, no new services.
 - Storage-backed explorer features — `resourceFavorites` + Home Recent/Favorites tabs, `tags` jsonb with Essentials editing and an `/all` pill, `deletedAt` soft delete with a Recycle bin and a 30-day timer purge, `pg_trgm` relevance ranking, and the Azure Table activity blade. Three Postgres migrations, one new Azure Table, no new Azure services.
 - Publish history blade — a capability-gated built-in blade listing every retained `{id}/published/{n}` snapshot from a blob prefix listing (no history table), an owner-only `?version=` preview on the view route, and a restore-to-draft copying a snapshot into the working copy. No new tables or Azure services.
+- **Storage quotas** — a per-user blob allowance (Free = 10 GiB) held under a row lock at SAS issuance and charged by Storage's own `BlobCreated` event; deletion and purge decrement through the same per-blob ledger, an abandoned hold expires as a predicate rather than as work for a job, and the explorer home grows a usage bar. One Postgres migration, one Event Grid subscription on the system topic that already existed, nothing scheduled.
 - **TodoList due reminders** — the first platform feature on the notification stack: a post-save due-date diff enqueues one scheduled Service Bus message per new or changed `(itemId, dueAt)`, and the `SendTodoReminder` function re-reads the content blob at fire time (dropping deleted or re-dated items) before web-pushing `『{item}』 is due` to the owner. Stateless — no Postgres row backs the reminder; the scheduled message is the state. One new Service Bus queue, no new services.

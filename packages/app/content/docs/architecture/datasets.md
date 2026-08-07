@@ -13,7 +13,7 @@ Serving is the **DatasetProvider capability** ([/docs/architecture/resources](/d
 
 Shared models in `packages/app/shared/models/dataset/` (one type + schema per file, interface-first). `ColumnType` and `ColumnValue` are reused from the Sheet resource models — they are already the canonical cell-type vocabulary.
 
-```typescript
+```ts
 interface DatasetColumn {
   name: string;
   type: DatasetColumnType; // ColumnType minus Computed — computed values are derived at render time

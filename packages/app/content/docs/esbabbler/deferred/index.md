@@ -16,6 +16,7 @@ One page per idea; each states why it waits and the concrete trigger to revisit.
 - [Outbound webhooks](/docs/esbabbler/deferred/outbound-webhooks) — POST room events to endpoints; revisit on integration demand
 - [Per-channel permission overrides](/docs/esbabbler/deferred/per-channel-permission-overrides) — revisit when sub-channels exist
 - [Raid mode](/docs/esbabbler/deferred/raid-mode) — join lockdown; revisit on a real raid or public discovery
+- [Room attachment quota](/docs/esbabbler/deferred/room-attachment-quota) — a room-scoped storage allowance; revisit when a room's attachments pass a gigabyte
 - [Room discovery](/docs/esbabbler/deferred/room-discovery) — public room directory; revisit with the platform discover surface
 - [Server-side transcoding](/docs/esbabbler/deferred/server-side-transcoding) — revisit at media-volume scale
 - [Softban preview](/docs/esbabbler/deferred/softban-preview) — confirm-with-messages UX; revisit if softban misfires

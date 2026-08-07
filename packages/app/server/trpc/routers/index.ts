@@ -23,6 +23,7 @@ import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
+import { storageRouter } from "@@/server/trpc/routers/storage";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { userRouter } from "@@/server/trpc/routers/user";
@@ -55,6 +56,7 @@ const trpcRouterWithoutAchievements = router({
   room: roomRouter,
   searchHistory: searchHistoryRouter,
   sheet: sheetRouter,
+  storage: storageRouter,
   survey: surveyRouter,
   todoList: todoListRouter,
   user: userRouter,

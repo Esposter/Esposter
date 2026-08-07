@@ -58,7 +58,7 @@ A store whose partition key can change while it is alive therefore uses `useCurs
 
 Feature cache composables wrap the generic one — `getWriteItems` only for feature-specific filtering, `onHydrate` only for side effects not represented by the paginated store itself (member counts, companion user maps):
 
-```typescript
+```ts
 export const useFooCache = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);

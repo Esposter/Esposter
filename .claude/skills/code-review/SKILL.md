@@ -5,11 +5,11 @@ description: The single entry point for every code review — a working diff, a 
 
 # Code Review — One Entry Point
 
-Every review request — `/code-review`, "review this", "review PR N", "review the docs on X and everything implementing them", post-merge audits — goes through the project workflow script. **Never review inline in the session** (reading the code yourself and reporting findings): inline reviews skip the independent verifiers, burn premium-session tokens on an execution role, and historically missed what the workflow catches. Never use the `review` skill/command — two overlapping commands is how the shallower one gets picked.
+Every review request — `/code-review`, "review this", "review PR N", post-merge audits — goes through the project workflow script. **Never review inline in the session** (reading the code yourself and reporting findings): inline reviews skip the independent verifiers, spend premium-session tokens on an execution role, and historically missed what the workflow catches. Never use the `review` skill/command — two overlapping commands is how the shallower one gets picked.
 
 ## Pick the mode first
 
-One script, two modes. They differ only in Scope and Find; Verify → Resolve → Synthesize and the report shape are shared by construction, so a finding means the same thing whichever mode raised it.
+One script, two modes, differing only in Scope and Find; Verify → Resolve → Synthesize and the report shape are shared, so a finding means the same thing whichever mode raised it.
 
 | Ask                                                                         | Mode                                                                  | Reference       |
 | --------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------- |
@@ -17,7 +17,7 @@ One script, two modes. They differ only in Scope and Find; Verify → Resolve �
 | Audit subsystem X — does the code match its docs, and what is broken in it? | `area`                                                                | `modes/area.md` |
 | Is this proposal right, before anything is built?                           | neither — that is the `docs` skill's proposal path, not a code review | —               |
 
-**Read the mode's page before invoking**, not after: each names what its `target` must be and how its findings differ. When the ask contains a change to review, it is `diff` — an area audit of code that a PR is currently rewriting reviews the wrong thing.
+**Read the mode's page before invoking**, not after: each names what its `target` must be and how its findings differ. When the ask contains a change to review, it is `diff` — an area audit of code a PR is rewriting reviews the wrong thing.
 
 ## Invocation
 
@@ -26,106 +26,67 @@ Workflow({ scriptPath: "<repo>/.claude/workflows/code-review.js", args: "[mode] 
 ```
 
 - `mode` — `diff` (default, omittable) or `area`.
-- `level` — `high` (default), `xhigh`, or `max`. Post-merge PR audits in this project run `high` unless asked otherwise.
-- `target` — optional in `diff` mode (PR number, branch, ref range, path, or free-form instruction); **required in `area` mode**, where it names the subsystem to audit. Omitting it takes the working diff, which is usually the wrong scope — `modes/diff.md` owns how to pick the commit window a review is launched from.
+- `level` — `high` (default), `xhigh`, or `max`. Post-merge PR audits run `high` unless asked otherwise.
+- `target` — optional in `diff` (PR number, branch, ref range, path, free-form instruction); **required in `area`**, where it names the subsystem. Omitting it takes the working diff, which is usually the wrong scope — `modes/diff.md` owns picking the commit window.
 
-Both leading words are positional and optional, so `"high"`, `"diff high"`, and `"area high packages/app/app/composables/cache"` all parse. **A leading mode word only switches modes when a level word follows it** (or when it is the entire `args`) — otherwise it is part of the target, because diff targets are free-form English and `"area of message deletion PR 812 touched"` asks for a diff review, not a whole-subsystem audit. So always spell the level out when you mean the mode. The parse is logged before the Scope agent runs, and the mode lands in `stats.mode` alongside `stats.findMode`.
+Both leading words are positional and optional (`"high"`, `"diff high"`, `"area high packages/app/…"` all parse). **A leading mode word only switches modes when a level word follows it** — otherwise it is part of the target, because diff targets are free-form English. So always spell the level out when you mean the mode.
 
-### A run reports the top findings per finder, never all of them
+- **Never `Workflow({ name: "code-review" })`** — name resolution loads the built-in, which inherits the premium session model onto ~20 agents (~1.46M tokens). The project script pins `model: "opus"` on every agent.
+- `args: "probe"` exits instantly with `{ probe: true }` — a free **syntax** check after editing the script. It returns before the Scope agent, so no ordering, TDZ or prompt-assembly bug is caught by it; only a live run checks those.
 
-**The per-finder cap is the ceiling on what a run can report, and it is a budget — not a measurement of the code.** Each finder returns at most `stats.perAngle` candidates and `ingest` truncates the rest; the cleanup finder has its own single budget (`stats.cleanupCap`), and at `xhigh`/`max` the sweep pass has a third (`stats.sweepCap`).
+## Coverage, cost and when to re-run — `references/run-economics.md`
 
-**Read the ceiling off `stats.reportableCeiling` — never reassemble it from a formula.** The script computes it from the fan-out that actually ran, which is the only place all three caps are known: `stats.angles` is the non-cleanup fan-out (the correctness angles in lens mode, `seams + 1` in seam mode, plus the conformance and coverage passes in `area`), `cleanupCap` is derived from the level's angle count, and `sweepCap` is zero below `xhigh`. None of the three can be inferred from the others, which is exactly why a prose formula here went stale — it omitted the sweep's budget for two levels, and every reader who trusted it under-budgeted the two expensive levels. The cleanup finder covers five lenses on one budget, because every candidate — minor or critical — buys a verifier slot, and a per-lens budget crowded the fan-out with findings that are minor by definition.
+Read it when choosing a level, reading a run's `stats`, or deciding on another round. In short: a run reports the top findings **per finder**, so its ceiling (`stats.reportableCeiling`) is a budget, not a defect count; widen by raising the level, never by re-running the same one; every discard is counted in a `stats.dropped*` field, and a degraded run is not a clean file.
 
-So a level does not "find everything and stop" — it finds the most salient handful per seam or lens, and the next-ranked defects surface only on a later run, after the ones above them are fixed.
-
-Reported findings are deduped in code before Resolve: two candidates at the same `file:line` **of the same kind** collapse to one row, whose `corroboration` field counts the distinct finders that reported it. Kind is part of the key because a bug and the stale doc sentence describing that bug are two deliverables, not one. The synthesizer still merges findings that share a root cause across _different_ lines — the part that needs judgement, cited on the row as `alsoAt` — but a synthesizer that dies can no longer ship the same bug N times.
-
-**A candidate with no `line` is never deduped.** Lineless candidates are the norm for the two kinds whose subject is a file rather than a statement — an area run's `record-gap` and `conformance` findings — and keying those on the bare filename discards the second undocumented decision in a file outright, under a row falsely stamped as corroborated. So `stats.deduped: 0` on an area run does not mean no two finders converged; it usually means the kinds that dominate the run were never eligible to.
-
-This is why a large diff yields a steady tens-per-round trickle rather than one exhaustive list, and why "the last round found N, this round found N again" is not evidence the code is or isn't converging. Read it as sampling depth, not as a defect count.
-
-A finder that hits its cap now logs `dropped N at cap` — that line is the difference between "ran dry" and "was not allowed to report more", and it is the signal to re-run at a wider level. Absent it, the level's ceiling is what you got.
-
-Raise coverage by **raising the level**, never by re-running the same level hoping for different candidates: repeat rounds at one level re-pay the verification cost — the dominant one, since a verifier runs per file and a resolver per unsettled claim — to resample the same ranking. A level moves two axes at once, and both matter: `xhigh` and `max` widen `perAngle` and `maxSeams` and add a sweep pass, **and** every non-cleanup agent runs at the level's own reasoning effort. Without the second axis a raised level buys a wider skim by agents thinking exactly as hard — which is what `max` was for a while, when it was byte-identical to `xhigh`.
-
-### What each run costs, and the three things that bound it
-
-Cost is **agents × the material each one reads**, and agent count is set by the level, not by the size of the change — so a five-file review of dense code costs about what a five-hundred-file review of shallow code does. Three bounds pull that back toward the actual territory, and each one logs when it bites:
-
-- **Fan-out scales with the territory.** Under ~300 changed lines _and_ fewer than 10 files, the level's angle count and per-angle cap are reduced: a small change does not hold five angles' worth of distinct questions, and every extra finder re-reads the same files. `stats.angles` and `stats.perAngle` report what actually ran — a trimmed run is otherwise indistinguishable from a full one.
-- **The cleanup family runs cheap on purpose.** The cleanup finder and any verifier whose file holds only cleanup candidates run at `low` effort regardless of level: those claims are settled by looking at the code they name — is the helper already there, is the comment stale — with no trigger to construct. Reasoning depth is what correctness angles buy, and spending it equally on both is where a level's budget quietly goes.
-- **Generated and binary files are collapsed out of every file listing, on every run, in both modes.** Lockfiles, snapshots, images and generated output are replaced by a bare count in the listing each agent is shown — naming them costs a prompt slot each. They stay inside the diff or path set, so nothing is filtered out of the review itself, but no agent is handed their names. A snapshot updated to match a bug is exactly the kind of thing a review earns its keep on, so "no finding against the snapshot" here means nobody was pointed at it, not that it is fine.
-- **Resolution is budgeted, worst-first.** A resolver reads callers, callees, dependency source and history for one claim, which makes it the most expensive agent in the run — historically ~40% of a run's tokens. Only the worst-ranked `2 × stats.angles` unsettled findings get one — off the fan-out that ran, so a seam-partitioned run gets a budget proportional to its finders rather than a lens run's, and the small-territory trim narrows it the same way. Anything below that is dropped rather than shipped unsettled, and the drop is counted in `stats.droppedUnsettled` and named in the run's summary.
-- **Confidence gates both directions, at one floor.** Verifiers and resolvers return a 0-100 confidence with every verdict. Under 70 the verdict is not an answer — CONFIRMED _or_ REFUTED — so a verifier's under-confident verdict routes the finding to Resolve, and a resolver's comes back as an unsettled row carrying the blocker that says why. An under-confident CONFIRMED is a fix applied on a guess; an under-confident REFUTED is a real defect dismissed, which returns next run with different wording. Nothing is dropped for confidence.
-- **Every discard is counted in a `stats` field and logged — read the fields, don't count the sites from this page.** Candidates past a finder cap never become findings (`dropped N at cap`); a finder that died or answered unusably took its whole lens or seam with it (`stats.droppedUnfound`, named in the summary); a dead verifier left its candidates unjudged (`stats.droppedUnverified`, named); findings below the resolve budget were dropped unsettled (`stats.droppedUnsettled`, named); and in `area` mode the file cap and its dependent claims drop too (logged, with `stats.claimsChecked` against `stats.claimsInventoried`). Any of these is a **degraded run, not a clean file**, and the stop rule must not read one as convergence. An earlier version of this page promised "exactly three places" and was wrong within one round — a count here is a claim about every path, so the fields are the record and this list is only a map to them.
-
-### When to stop re-running
-
-**The stop rule: a round whose CONFIRMED findings are all `minor` is converged.** Fix them if they are cheap, and stop. Minor findings are advisory and their supply is effectively unbounded on any mature file — a cleanup lens can always find one more preference to state — so treating "the run reported something" as "the code is not done" is a loop with no exit. What justifies another round is a CONFIRMED `critical`/`major`, a `dropped N at cap` line, or a fix round that touched lines an earlier fix wrote (see `fixing-findings.md`).
-
-- **Never `Workflow({ name: "code-review" })`** — name resolution always loads the built-in, which inherits the premium session model onto ~20 finder/verifier agents (verified 2026-07-17, ~1.46M tokens). The project script pins `model: "opus"` on every agent (execution role per the model-delegation skill).
-- `args: "probe"` exits instantly with `{ probe: true }` — free parse check after editing the script. **It proves syntax only.** The probe returns before the Scope agent, so no phase has run and no ordering, TDZ, or prompt-assembly bug is caught by it; a live run is the only check for those. The script cannot be split into modules to make this easier — see the `.claude/workflows/*.js` entry in the `file-organization` skill for the probe evidence.
+**The stop rule: a round whose CONFIRMED findings are all `minor` is converged.** Fix them if cheap, then stop. Another round needs a CONFIRMED `critical`/`major`, a `dropped N at cap` line, or a fix round that touched lines an earlier fix wrote.
 
 ## The written record wins — never re-litigate a settled decision
 
-The dominant false-positive class here is a finding that argues against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. Derived from the diff alone the argument always sounds right, and it comes back on every run, with a different answer each time.
+The dominant false-positive class is a finding arguing against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every run with a different answer.
 
-`packages/app/content/docs/` (as-built docs, one page per feature/decision) and `.claude/skills/*/SKILL.md` (conventions) are the tiebreaker. A choice either tree states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing from the code, or when the change ships behaviour the record does not cover.
+`packages/app/content/docs/` and `.claude/skills/**/*.md` are the tiebreaker — the whole skill tree, not the index pages alone: a binding rule as often sits in a skill's `references/*.md` deep dive as in its `SKILL.md`. A choice either tree states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
 
-The finder/verifier agents carry this rule in their scope block, so grep both trees before accepting a finding they still surface. When a decision is genuinely undocumented and keeps drawing fire, the fix is to write the page (docs skill), not to argue it again next review. The same goes for a record invalidated by materially new evidence (a security advisory, a changed dependency contract, an assumption the code has since outgrown): that reopens the decision — but the move is to update the page first and then fix the code against the new record, never to re-argue the old one inside a review thread.
+Finder and verifier agents carry this rule, so grep both trees before accepting one they still surface. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record.
 
 ## PLAUSIBLE is a to-do, never an answer
 
-The workflow's Resolve phase settles every PLAUSIBLE finding to CONFIRMED or REFUTED before the report is written, so a run should hand you none. **If one still arrives PLAUSIBLE — a resolver died, or you are working findings from an older run — settling it is your job and does not need asking for.** Never report one, never fix one on the strength of the claim alone, and never dismiss one as "by-design" without the evidence a REFUTED verdict would have required.
+Resolve settles every finding before the report, so a run should hand you none. **If one arrives PLAUSIBLE — a resolver died, or the findings are from an older run — settling it is your job and needs no asking.** Never report one, never fix one on the claim alone, never dismiss one as by-design without the evidence a REFUTED verdict would need.
 
-A PLAUSIBLE verdict means a verifier reading one file under a budget could not reach the trigger. That is a statement about the budget, not about the code. Settling it is a different activity from verifying, and it is usually cheap:
+PLAUSIBLE means a verifier reading one file under a budget could not reach the trigger — a statement about the budget, not the code. Settling is usually cheap: go one hop out to the caller or callee; read the dependency's real source in `node_modules` along the whole path, never its reputation; use `git log -S` / `git log -L` for "was this guard ever here"; check the record.
 
-- **Go one hop out.** Most of these die or harden at the callee or the caller — a claim about `createMessage` rejecting after a partial write is settled by reading which table `readMessages` serves, not by re-reading `createMessage`.
-- **Read the dependency's real source in `node_modules`**, never its reputation — and read the whole path, not the one function named in the claim. `getRouterParams` really does decode only under `{ decode: true }`, and stopping there produced a comment asserting the route param was still percent-encoded; `h3`'s `createAppEventHandler` had already run `_decodePath` on it before routing, and the router then cut the path at the first `?` in that decoded form. One grep refuted the claim as worded and confirmed the defect it was hiding.
-- **Use history.** `git log -S` / `git log -L` answers "was this guard ever here, and what removed it" directly.
-- **Check the record.** A decision stated deliberately with its consequence named REFUTES the finding; a record the code contradicts CONFIRMS it.
+Only a trigger that genuinely cannot be settled from the repository (a production-only config value, a cloud service's runtime behaviour) may stay unsettled, and it must name that blocker — "the investigation looked large" is not one. **An unsettleable finding is never a table row**: write it as the one line below the table, phrased as the blocker and the fact that would settle it, so the user is asked for evidence rather than handed a verdict nobody reached.
 
-A finding the workflow could not settle from the repository comes back carrying `unresolvedBlocker` — the resolver's statement of what is missing. That is the text for the one line below the table; it is never a row.
+Two things make this worth its cost: a PLAUSIBLE finding shipped to a human is decided by whoever has _less_ context than the agent that raised it, and a fix on an unconfirmed premise is the most common way this repo introduces regressions; and a finding dismissed without evidence comes back next run, worded differently, forever.
 
-Only a trigger that genuinely cannot be settled from the repository — a production-only config value, a cloud service's runtime behaviour — may stay unsettled, and it must name that blocker. "The investigation looked large" is not a blocker. **An unsettleable finding is still never a table row**: keep it out of the verdict table entirely and write it as the one line below the table (see Handling findings), phrased as the blocker and the fact that would settle it — "unsettleable without the deployed `MAX_UPLOAD_BYTES`; confirm that value and it decides" — so the user is asked for evidence rather than handed a verdict nobody reached.
+## Reporting findings
 
-A finding dropped at the resolve budget (see the cost bounds above) is not a dismissal — it says the run ran out of resolution budget below that rank, and the summary says so. Re-run to reach them only when the round also produced a CONFIRMED `critical` or `major` — the same bar the stop rule uses; otherwise the stop rule above applies.
+**Show the user every finding the workflow reports, as one compact table and nothing per-finding beyond it.** Final assembly adds no cap of its own. Never jump to fixes and report only what changed — the visible findings list is the deliverable.
 
-Two things make this rule earn its cost. A PLAUSIBLE finding shipped to a human is decided by whoever has _less_ context than the agent that raised it, so it gets fixed without evidence or dropped without evidence — and a fix applied on an unconfirmed premise is the single most common way this repo introduces regressions. And a finding you dismiss without settling comes back on the next run, worded differently, forever.
+Emit the table **flush-left at the top level** of the message — never indented or nested in a list, blockquote or code fence, blank line before and after, same column count in every row. An indented table degrades into dot points, which is the failure this format exists to prevent.
 
-## Closing a finding so the next review cannot reopen it
+| #   | Finding                                     | Where              | Severity    | Verdict       | Origin                             | Disposition                          |
+| --- | ------------------------------------------- | ------------------ | ----------- | ------------- | ---------------------------------- | ------------------------------------ |
+| 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED 95% | regression 57dcbd3                 | Fixed                                |
+| 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | CONFIRMED 80% | new                                | Fixed                                |
+| 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | REFUTED 90%   | reopened architecture/standard.md  | By-design (architecture/standard.md) |
+| 4   | Comment names a deleted symbol              | helper.ts:6        | 🟢 minor    | CONFIRMED 75% | stale-record readPublishHistory.ts | Fixed                                |
 
-Applying fixes is a different activity from running the review, and it has its own checklist: **`fixing-findings.md`** in this skill directory. Read it before committing a fix, and paste it into the prompt whenever a fix round is delegated.
+Fixes committed as abc1234. Refuted by verifiers: removeThing timeout bound ×2, batch submission ordering.
 
-It exists because the dominant defect class on a re-review is not a missed bug — it is a regression introduced by the previous round's fixes. That page owns the entries, the append rule, and the order of work.
+- **Finding** — the workflow's `shortSummary` **verbatim** (already the ≤60-char claim; never substitute `summary`, never re-expand it). Append `×N` when `corroboration > 1`.
+- **Where** — `file:line`, plus `(+N)` when `alsoAt` is non-empty.
+- **Severity** — 🔴 critical, 🟡 major (default), 🟢 minor. Sort by it.
+- **Verdict** — verdict plus the workflow's `confidence`. Never restate it in prose, never round up.
+- **Origin** — `provenance` + `provenanceSource`: `new` (bare, no source), `regression <sha>` (the cited line came from an earlier fix — look there next), `reopened <page>` (the record settled this; say what the code does that the record does not cover, or it is a false positive), `stale-record <path>` (the code is right and the doc is wrong, so the fix is the doc edit).
+- **Disposition** — a few words. State the commit hash once under the table, never per row.
+- Add at most one line below the table, and only when a disposition needs the user to decide something. Workflow-refuted candidates get one footnote line.
+- **`area` mode adds a Kind column** after Where (`correctness` / `conformance` / `record-gap` / `cleanup`) — there the kind decides whether the deliverable is a code fix, a doc edit or a new page. `diff` omits it; severity already separates its two kinds.
 
-## Handling findings
+**A merged row's columns describe the group, not the printed claim**: verdict escalates to CONFIRMED if any member is, severity takes the worst member, confidence the highest among members agreeing with the escalated verdict. So a `🔴 critical | CONFIRMED 95%` row can print a milder member's text, with the confirming evidence in a member the report does not show — `corroboration` and `alsoAt` are the only visible signal, which is why both are rendered.
 
-0. **Always show the user every finding the workflow reports, and keep it short.** The workflow reports every finding that survives verification and the budgets above — final assembly adds no cap of its own, and duplicates are merged onto one row rather than dropped. The final message is the compact table below — one row per reported finding and nothing per-finding beyond it. The Finding column is the workflow's `shortSummary` field rendered **verbatim** (it is already the ≤60-char claim — never substitute the longer `summary`, and never re-expand it into a sentence). No failure-scenario prose, no category column. Render `severity` as a color dot: 🔴 critical, 🟡 major, 🟢 minor (default 🟡 if absent). Sort by severity. Disposition is a few words; the commit hash is stated once in a single line under the table, never per-row. Do **not** write a paragraph per finding — add at most one line below the table, and only when a disposition needs the user to decide something (e.g. a deferred fix). Workflow-refuted candidates get one footnote line naming them, nothing more. Never jump straight to fixes and report only what was changed — the visible findings list is the review deliverable.
+## Then: fix, verify, commit
 
-   The Verdict column carries the workflow's `confidence` beside the verdict (`CONFIRMED 80%`) — it is the number the agent that judged it would defend, and it is what tells the user whether a fix rests on a read line or on an inference. Never restate it in prose and never round it up.
-
-   **On a merged row those columns describe the group, not the displayed claim.** A merged finding escalates `verdict` to CONFIRMED if any member is, takes `severity` from its worst member, `confidence` as the highest among the members agreeing with the escalated verdict, and `provenance`/`provenanceSource` off whichever member carries a citation — while only the primary's text is printed. So a row can read `🔴 critical | CONFIRMED 95%` over a `shortSummary` describing the milder claim, and the confirming evidence is in a member the report does not print. Two fields say when this is in play: `corroboration > 1` (that many distinct finders reported this same location) and a non-empty `alsoAt` (the other lines the merged root cause showed up at). Append `×N` to the Finding column when `corroboration > 1`, and `(+N)` to Where when `alsoAt` is non-empty — otherwise the only signal distinguishing one finder's guess from several agreeing is invisible in the prescribed output.
-
-   The Origin column is the workflow's `provenance`, with `provenanceSource` as its citation — it is what stops a review from silently re-arguing itself. `new` is first contact. `regression` means the cited line came from an earlier fix, so the fix commit is where to look for the next one. `reopened` means the record already settled this and the finding survived anyway — say what the code does that the record does not cover, or the row is a false positive. `stale-record` means the code is right and the doc is wrong, so the fix is the doc edit. Render it as the label plus its source (`regression 57dcbd3`, `stale-record docs/architecture/publishing.md`); a bare `new` needs no source.
-
-   **In `area` mode, add a Kind column** between Where and Severity, rendered from the workflow's `kind` field (`correctness` / `conformance` / `record-gap` / `cleanup`), because there the kind decides what the deliverable is — a code fix, a doc edit, or a new page — and the table is unreadable without it. `diff` mode omits the column: its findings are correctness or cleanup, and severity already separates them.
-
-   **The table must actually render as a table.** Emit it flush-left at the top level of the final message — never indented, never nested inside a numbered/bulleted list item, blockquote, or code fence — with a blank line before the header row and after the last row. An indented or list-nested table is not parsed as a table by the terminal renderer and degrades into per-finding dot points, which is exactly the failure this format exists to prevent. Every row must have the same column count with `|` at both ends.
-
-   ```markdown
-   | #   | Finding                                     | Where              | Severity    | Verdict       | Origin                             | Disposition                          |
-   | --- | ------------------------------------------- | ------------------ | ----------- | ------------- | ---------------------------------- | ------------------------------------ |
-   | 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | 🔴 critical | CONFIRMED 95% | regression 57dcbd3                 | Fixed                                |
-   | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | 🟡 major    | CONFIRMED 80% | new                                | Fixed                                |
-   | 3   | Publish error swallowed, not surfaced       | updateThing.ts:88  | 🟡 major    | REFUTED 90%   | reopened architecture/standard.md  | By-design (architecture/standard.md) |
-   | 4   | Comment names a deleted symbol              | helper.ts:6        | 🟢 minor    | CONFIRMED 75% | stale-record readPublishHistory.ts | Fixed                                |
-
-   Fixes committed as abc1234. Refuted by verifiers: removeThing timeout bound ×2, batch submission ordering.
-   ```
-
-1. Verify each finding against current HEAD before fixing — post-merge findings can be stale (fixed by a later commit, file renamed), and check it against the written record above before treating it as real.
-2. Fix confirmed findings. **PLAUSIBLE is not a disposition** — see below.
-3. Run the checklist in `fixing-findings.md` over your own fixes **before** verifying — it is cheapest while the change is still in the editor. That page also owns the order of work (root-cause fix → converge the call sites → docs and skills → **then** one check pass over the finished tree, never interleaved).
-4. Verify per the package-scripts skill (typecheck → tests), then commit per the git skill. Before pushing to a branch with an open PR, check CodeRabbit state (coderabbit skill).
+1. Verify each finding against current HEAD before fixing — post-merge findings can be stale — and check it against the written record above.
+2. Fix confirmed findings. **PLAUSIBLE is not a disposition.**
+3. Run **`fixing-findings.md`** over your own fixes before verifying — it owns the regression checklist and the order of work (root cause → converge the call sites → docs and skills → then one check pass), and it is the block to paste into a delegated fix round.
+4. Verify per the `package-scripts` skill (typecheck → tests), commit per the `git` skill. Before pushing to a branch with an open PR, check CodeRabbit state (`coderabbit` skill).

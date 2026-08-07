@@ -1,9 +1,15 @@
 ---
 name: drizzle
-description: Esposter Drizzle ORM conventions — bare column builders (camelCase applied by the pgTable wrapper), pgTable wrapper for metadata, schema placement, select patterns, relational vs SQL-style API preference, and v2 relation definitions (defineRelationsPart, optional:false, naming). Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers.
+description: Esposter Drizzle ORM conventions — bare column builders (camelCase applied by the pgTable wrapper), the pgTable wrapper and schema placement, registering every table and pgEnum in the schema object, select patterns (getColumns, aliased selects), relational vs SQL-style API preference and read-limit constants, the v2 relations API at a glance (no v1 relations(), object-based where/orderBy, createSelectSchema from drizzle-orm/zod), self-joins, batch inserts, .returning() with requireMutation, empty-sentinel columns and optional insert values, Ms-suffixed duration columns, primary key choice, plus deep dives on writing v2 relation files, generating and fixing migrations, and naming constraints/indexes and writing CHECK constraints. Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers.
 ---
 
 # Drizzle ORM Conventions
+
+## Deep dives
+
+- `references/relations-v2.md` — when adding or editing a file in `packages/db-schema/src/relations/`, or writing a relational query's `where` / `orderBy` / `with`.
+- `references/migrations.md` — when running `db:gen`, editing a generated `migration.sql`, regenerating the db-mock snapshot, or recovering a forked migration chain.
+- `references/table-constraints.md` — when adding a CHECK constraint, unique constraint or index to a table.
 
 ## Column Names
 
@@ -16,7 +22,7 @@ isHidden: boolean().notNull().default(false),
 
 ## Table Definition
 
-- Use `pgTable` wrapper from `@/pgTable` (not raw `drizzle-orm/pg-core`) for all tables, including join tables. Pass composite PKs via `extraConfig`.
+- Use the `pgTable` wrapper from `@/pgTable` (not raw `drizzle-orm/pg-core`) for all tables, including join tables. Pass composite PKs via `extraConfig`.
 - Table name strings stay snake_case plural (`"room_categories"`, `"push_subscriptions"`) — only columns are camelCase.
 - Pass `schema: messageSchema` for message-feature tables to group them under the `message` Postgres schema. Tables shared beyond the messaging feature (`friends`, `users`, `posts`, `blocks`) take no `schema` and land in the default schema.
 
@@ -26,134 +32,28 @@ export const roomsInMessage = pgTable("rooms", { id: uuid().primaryKey().default
 
 ## Registering Exports in the `schema` Object
 
-**Every schema export — tables AND `pgEnum`s — must be added to the `schema` object in `packages/db-schema/src/schema.ts`** (both the import and the object key, kept alphabetical). This is not optional bookkeeping; the object is the single source consumed by:
+**Every schema export — tables AND `pgEnum`s — must be added to the `schema` object in `packages/db-schema/src/schema.ts`** (both the import and the object key, kept alphabetical). The object is the single source consumed by `db.query.*` at runtime (a missing table breaks relational queries) and by drizzle-kit's `generateMigration` / `generateDrizzleJson`, which feed `pnpm db:gen` and the db-mock snapshot generator. drizzle-kit only emits `CREATE TYPE` for `pgEnum`s present here, so a missing enum produces SQL referencing a type that is never created and fails at apply time with `type "..." does not exist`. The common trap is adding a second enum alongside an existing one and registering only the first.
 
-- `db.query.*` at runtime — a missing table breaks relational queries.
-- `generateMigration` / `generateDrizzleJson` (drizzle-kit), which feed `pnpm db:gen` and the `db-mock` snapshot generator (`pnpm snapshot:gen`). drizzle-kit only emits `CREATE TYPE` for `pgEnum`s present here. A missing enum produces SQL that references a type that is never created, failing at apply time with `type "..." does not exist` (e.g. a snapshot/migration crash).
-
-A common trap: adding a second enum alongside an existing one and registering only the first. After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock and other consumers import the built `dist`, not `src`), then regenerate the snapshot with `pnpm snapshot:gen` in `packages/db-mock/`.
+After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock and other consumers import the built `dist`, not `src`), then `pnpm snapshot:gen` in `packages/db-mock/`.
 
 ## Selects
 
 - **`getColumns(table)` (from `drizzle-orm`) for flat results** — extracts only column definitions. Use when joining and you want one table's columns flat: `.select(getColumns(users))`. Never spread the table object directly (`{ ...users }`) — it carries metadata beyond columns.
-- **`.select({ alias: tableObject })` for namespaced results** — e.g. `.select({ user: users })` → `{ user: User }`, then `.map(({ user }) => user)` to unwrap.
+- **`.select({ alias: tableObject })` for namespaced results** — `.select({ user: users })` → `{ user: User }`, then `.map(({ user }) => user)` to unwrap.
 - **`.select()` with no args only when selecting all columns from the FROM table** — adding joins with bare `.select()` mixes joined columns in, losing type clarity.
 
 ## Query API: Relational vs SQL-style
 
 - **Prefer the relational API (`db.query.table.findFirst/findMany`) by default** — more readable, type-safe, supports eager loading via `with:`. Use for all reads unless a reason forces SQL-style.
-- **Use SQL-style (`db.select/update/delete/insert`) only when necessary**:
-  - All mutations (`insert`/`update`/`delete` are SQL-style only).
-  - Complex `OR` join conditions spanning multiple FK columns.
-  - Aggregations: `db.select({ count: count() }).from(...)`.
-  - `onConflictDoNothing` / `onConflictDoUpdate` (upserts).
-- **Never use number literals for `limit:`** — use `MAX_READ_LIMIT` (1000) from `@esposter/shared` or `DEFAULT_READ_LIMIT` (15) from `#shared/services/pagination/constants`.
+- **Use SQL-style (`db.select/update/delete/insert`) only when necessary**: all mutations (`insert`/`update`/`delete` are SQL-style only); complex `OR` join conditions spanning multiple FK columns; aggregations (`db.select({ count: count() }).from(...)`); `onConflictDoNothing` / `onConflictDoUpdate`.
+- **Never use number literals for `limit:`** — use `MAX_READ_LIMIT` from `@esposter/shared` or `DEFAULT_READ_LIMIT` from `#shared/services/pagination/constants`.
 - `.map()` to unwrap `with:` results is intentional — Drizzle always nests them.
 
-## Relations (v2 API)
+## Relations (v2 API) — at a glance
 
-Uses Drizzle v2's `defineRelationsPart`. **Never use the v1 `relations()` function** — incompatible with v2.
-
-### File Structure
-
-- Relations live in separate files under `packages/db-schema/src/relations/`, one file per table (e.g. `friendsRelation.ts`).
-- **Never define relations inside schema files** — `packages/db-schema/src/schema/*.ts` must not import `relations` from `drizzle-orm` or define any `*Relations`.
-- Register every relation file in `packages/db-schema/src/relations.ts` (both the import and the spread into the `relations` export).
-- Register every table and `pgEnum` in the `schema` object in `packages/db-schema/src/schema.ts`.
-
-### Defining Relations
-
-```ts
-// packages/db-schema/src/relations/friendsRelation.ts
-import { schema } from "@/schema";
-import { defineRelationsPart } from "drizzle-orm";
-
-export const friendsRelation = defineRelationsPart(schema, (r) => ({
-  friends: {
-    receiver: r.one.users({ from: r.friends.receiverId, optional: false, to: r.users.id }),
-    sender: r.one.users({ from: r.friends.senderId, optional: false, to: r.users.id }),
-  },
-}));
-```
-
-### `optional: false`
-
-- Always set `optional: false` on `r.one` when the FK column is `notNull()`. v2 defaults to optional (nullable result), producing wrong types (`user: User | null` instead of `user: User`).
-- Omit `optional` (or set `true`) only when the FK column is nullable (e.g. soft-delete style optional FK).
-
-### Naming Conventions
-
-- **`r.one` → singular, descriptive name after what it represents, not the table:** FK to `users` → `user`, `rooms` → `room`, `appUsers` (bot) → `appUser`, `achievements` → `achievement`.
-- **`r.many` → camelCase plural after the junction/child table:** `usersToRooms`, `webhooksInMessages` (plural of `webhooksInMessage`).
-- **Through (many-to-many) → `{target}Via{JunctionTable}`:** `usersViaInvitesInMessage`, `postsViaLikes`, `achievementsViaUserAchievements`.
-- **`alias` required for through relations** — format `"{targetTable}_id_{sourceTable}_id_via_{junctionTable}"`, e.g. `"rooms_id_users_id_via_invitesInMessage"`.
-
-### v2 `where` Syntax
-
-Object-based `where` (not callbacks). **Almost never use `RAW:`** — all common operators have object syntax:
-
-```ts
-where: { id: { eq: input }, userId: { eq: userId } }          // implicit AND
-where: { deletedAt: { isNull: true } }                        // isNull / isNotNull
-where: { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] }
-where: {                                                      // nested OR; each OR element is implicitly ANDed
-  OR: [
-    { blockerId: { eq: userId }, blockedId: { eq: targetId } },
-    { blockerId: { eq: targetId }, blockedId: { eq: userId } },
-  ],
-}
-where: { NOT: { id: { gt: 10 } } }
-where: { position: { gte: 0 } }   // other operators: gt, gte, lt, lte, ne, in, notIn, like, ilike
-
-// WRONG — v1 callback syntax (incompatible with v2)
-where: (rooms, { and, eq }) => and(eq(rooms.id, input), eq(rooms.userId, userId)),
-```
-
-**Use `RAW:` ONLY for operators with no object equivalent** — currently `EXISTS` subqueries, `isNull` on a join condition (not a column filter), or raw SQL. When using `RAW:`, always guard against `undefined`:
-
-```ts
-where: {
-  RAW: (rooms, { and, eq, exists }) => {
-    const where = and(eq(rooms.id, input), exists(...));
-    if (!where) throw new InvalidOperationError(...);
-    return where;
-  },
-},
-```
-
-### v2 `orderBy` Syntax
-
-Object-based (not callbacks):
-
-```ts
-orderBy: { createdAt: "desc" }
-orderBy: { position: "asc", name: "asc" }
-
-// WRONG — v1 callback syntax
-orderBy: (table, { asc }) => [asc(table.position)]
-```
-
-### `with:` Eager Loading Workaround
-
-Due to [drizzle-team/drizzle-orm#695](https://github.com/drizzle-team/drizzle-orm/issues/695), eager-loaded relation shapes must be a constant object exported from the relation file. Define `XxxWithRelations` types inline right after the constant. Consumers import both from `@esposter/db-schema`:
-
-```ts
-// usersToRoomsInMessageRelation.ts
-export const UserToRoomInMessageRelations = { roomInMessage: true, user: true } as const;
-export type UserToRoomInMessageWithRelations = UserToRoomInMessage & { roomInMessage: RoomInMessage; user: User };
-
-// In the router
-const result = await ctx.db.query.usersToRoomsInMessage.findFirst({ where: { ... }, with: UserToRoomInMessageRelations });
-```
-
-### `createSelectSchema`
-
-Always import from `drizzle-orm/zod`, never from `drizzle-zod` (the v1 package):
-
-```ts
-import { createSelectSchema } from "drizzle-orm/zod"; // ✓
-import { createSelectSchema } from "drizzle-zod"; // ✗
-```
+- **Never the v1 `relations()` function** — the repo is on Drizzle v2's `defineRelationsPart`, and v1 is incompatible.
+- **`where` and `orderBy` are object-based, never v1 callbacks** — `where: { id: { eq: input } }`, `orderBy: { createdAt: "desc" }`.
+- **`createSelectSchema` always imports from `drizzle-orm/zod`**, never from `drizzle-zod` (the v1 package).
 
 ## Self-Joins (Same Table Twice)
 
@@ -177,85 +77,21 @@ await tx
   .onConflictDoNothing();
 ```
 
-## Constraint & Index Naming
-
-Always explicit, descriptive names — never bare column names like `"name"` or `"position"`. Underscores between components; the `{table}` component is the snake_case table name, but the `{column}` components keep their camelCase.
-
-| Type              | Pattern                         | Example                                       |
-| ----------------- | ------------------------------- | --------------------------------------------- |
-| Length check      | `{table}_{column}_length_check` | `"users_name_length_check"`                   |
-| Other check       | `{table}_{column}_check`        | `"room_categories_position_check"`            |
-| Semantic check    | descriptive phrase              | `"no_self_block"`, `"rooms_name_check"`       |
-| Unique constraint | `{table}_{col1}_{col2}_unique`  | `"push_subscriptions_endpoint_userId_unique"` |
-| Index             | `{table}_{col}_index`           | `"blocks_blockedId_index"`                    |
-| Composite index   | `{table}_{col1}_{col2}_index`   | `"room_roles_roomId_position_index"`          |
-
-## CHECK Constraints with `sql` Template Literals
-
-- Always use `sql\`\`` template literals — never a raw string.
-- **Numeric literals MUST use `sql.raw()`** — bare interpolation makes Drizzle emit a parameterised placeholder (`$1`), invalid in DDL:
-
-  ```ts
-  // CORRECT
-  check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`);
-  // WRONG — becomes LENGTH("name") <= $1 in DDL
-  check("name", sql`LENGTH(${name}) <= ${ROOM_NAME_MAX_LENGTH}`);
-  ```
-
-- Use `BETWEEN` when a column has both a lower and upper bound:
-
-  ```ts
-  check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`);
-  ```
-
-## `.returning()` — Error Handling Pattern
-
-All mutations calling `.returning()` must:
+## `.returning()`
 
 1. **Wrap the first element in `requireMutation`** — never hand-roll the undefined guard, never fall back to `?? []` / `?? null`. See the error-handling skill (tRPC Backend Guards).
-2. **Return the full entity** — never a subset of fields (e.g. `.words`). Let callers destructure what they need.
-3. **Add `DatabaseEntityType` if missing** — add to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then run `pnpm build` in `packages/db-schema/` to rebuild dist.
+2. **Return the full entity** — never a subset of fields. Let callers destructure what they need.
+3. **Add `DatabaseEntityType` if missing** — to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then `pnpm build` in `packages/db-schema/` to rebuild dist.
 
-## Migrations
+## Empty-Sentinel Columns — the DB Schema Is the Source of Truth
 
-**`db:gen` is the only sanctioned way to produce a migration. Never hand-clone `snapshot.json`.** Copying a previous snapshot and bumping `id`/`prevIds` by hand forks the chain the instant two migrations descend from the same parent, and the next `db:gen` fails with `Non-commutative migrations detected` — a fork has occurred in practice and had to be linearized by hand. `snapshot.json` is machine state; only `db:gen` writes it.
+The schema carries the empty-sentinel convention itself so types and defaults propagate end-to-end through Drizzle's inference — never store `null` and map a sentinel to/from it in app code.
 
-**Don't run `db:gen` as an unprompted side effect** of a schema edit — note the pending migration and let the user decide when to run it. When you do run it, from `packages/db-schema`:
-
-```sh
-pnpm db:gen   # generates snapshot.json + a first-cut migration.sql from the schema diff
-pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format — NOT an apply command
-```
-
-Nothing applies migrations from the CLI — they apply automatically at app startup (`packages/app/server/plugins/migrate.ts`).
-
-### Fixing Up After `db:gen`
-
-Editing the generated **`migration.sql`** by hand is allowed and expected — but only the SQL, and only before it's applied. The migrator's bookkeeping hash is `sha256(migration.sql)`, computed at apply time, so an un-applied `migration.sql` is free to edit; leave `snapshot.json` exactly as generated.
-
-- **Destructive diffs → rewrite the SQL to preserve data.** drizzle-kit emits drop/recreate where a data-preserving statement exists. Replace it: an enum-value rename should be `ALTER TYPE "public"."resource_type" RENAME VALUE 'File' TO 'Sheet';`, not `DROP TYPE` + `CREATE TYPE`. A value-order-only change generates a text-cast recreate (`SET DATA TYPE text` → `DROP TYPE` → `CREATE TYPE` → cast back). Postgres derives an enum's `ORDER BY`, `MIN`/`MAX`, and `<`/`>` from its declared value order, so a recreate that reorders values silently changes those results — it is **not** harmless by default. Leave the recreate as-is only after confirming the enum is compared for equality only (never ordered on) and has no default; otherwise rewrite the SQL to preserve the declared value order.
-- **Rename the codename folder** descriptively (keep drizzle's timestamp prefix), then rerun `db:gen` — it must report `No schema changes, nothing to migrate`.
-
-### Running `db:gen` — gotchas
-
-- `db:gen` reads `DATABASE_URL` only for config validation (the diff is schema-vs-snapshot, never the live DB) — inject it: `export DATABASE_URL="$(grep '^DATABASE_URL=' ../app/.env | cut -d= -f2-)"`.
-- drizzle-kit has crashed with `Error  Unexpected '''` when semantically comparing json/jsonb defaults stored in the legacy `'{}'::jsonb` snapshot form (its JSON parse sits outside the try/catch). Normalize the offending snapshot's default to `'{}'` and rerun. In normal development this is the only sanctioned `snapshot.json` edit — a parser workaround, not a chain repair. The forked-chain recovery below is a separate, maintainer-only emergency procedure (back up the migrations folder first, then re-run `db:gen` to validate); it is never part of a routine schema change. This keeps the skill consistent with `AGENTS.md`, whose blanket "never hand-edit `snapshot.json`" is the rule for everyday work.
-- Generation surfaces real drift a hand-written chain silently missed — e.g. enum values present in schema + code but never migrated. Verify against the live DB (`select enum_range(null::my_enum)`) before assuming a surprising diff is wrong.
-- **Inherited a forked chain?** Prefer deleting the un-applied migration folders and regenerating from a correct head over hand-patching snapshots. If a repair is genuinely unavoidable, rewrite the stray branch's snapshots as cumulative state on the true head (union ddl entries keyed by `entityType|schema|table|name`, re-point `prevIds`) — but this is recovery for legacy damage, never a routine step.
-
-## Empty-Sentinel Columns — DB Schema Is the Source of Truth
-
-The DB schema carries the empty-sentinel convention itself so types and defaults propagate end-to-end through Drizzle's inference — never store `null` and manually map a sentinel to/from it in app code.
-
-- **`.notNull().default("")` for optional user-editable text fields** — never `null` as the "not set" state for strings. `""` is the canonical absent value (biography, color, topic, group, description, etc.).
-- **`.notNull().default(0)` for optional numeric fields where `0` has no domain meaning** — `0` is the canonical absent value (e.g. `invitesInMessage.maxUses`: `0` = unlimited). CHECK constraints treat the sentinel explicitly: `maxUses = 0 OR uses <= maxUses`. Queries compare against the sentinel (`eq(column, 0)`), not `isNull`.
-- **Timestamps keep `null` for absence** — a timestamp has no empty value (e.g. `expiresAt`: null = never expires). The mapping from the input's sentinel happens once at the insert site.
-- **Keep `null` only for semantically distinct absence**:
-  - URL fields (`image`, `url`) — null means "no image/URL set"; `""` would fail URL validation
-  - Fields constrained to `null` by a CHECK constraint (e.g. `roomsInMessage.name` must be `null` for DirectMessage type)
-  - Nullable FK references where `null` means the referenced row was deleted (audit trail)
-  - Auth-framework-managed fields (`accounts`, `sessions`) — do not touch
-- **Update downstream `??` fallbacks to `||`** when a field changes nullable → `""` — `"" ?? fallback` returns `""`, so `??` must become `||`.
+- **`.notNull().default("")` for optional user-editable text fields** — `""` is the canonical absent value (biography, color, topic, description), never `null`.
+- **`.notNull().default(0)` for optional numeric fields where `0` has no domain meaning** — e.g. `maxUses`: `0` = unlimited. CHECK constraints treat the sentinel explicitly (`maxUses = 0 OR uses <= maxUses`), and queries compare against it (`eq(column, 0)`), not `isNull`.
+- **Timestamps keep `null` for absence** — a timestamp has no empty value (`expiresAt`: null = never expires). The mapping from the input's sentinel happens once at the insert site.
+- **Keep `null` only for semantically distinct absence** — URL fields (`""` would fail URL validation); fields a CHECK constraint forces to `null` for some row type; nullable FKs where `null` means the referenced row was deleted (audit trail); auth-framework-managed tables (`accounts`, `sessions`), which are not to be touched.
+- **Update downstream `??` fallbacks to `||`** when a field changes nullable → `""` — `"" ?? fallback` returns `""`.
 
 ## Optional Insert Values
 
@@ -264,24 +100,17 @@ Do not coerce `undefined` to `null` with `?? null` unless null has distinct doma
 ## Time Duration Columns
 
 - **Always store durations in milliseconds** — never seconds/minutes/hours. Only deviate for genuine sub-millisecond precision.
-- **Column names carry the `Ms` suffix** — `slowmodeMs`, `durationMs`, `timeoutMs`. Explicit exception to the no-abbreviation rule.
-
-  ```ts
-  durationMs: integer().notNull(); // not durationMilliseconds
-  ```
+- **Column names carry the `Ms` suffix** — `slowmodeMs`, `durationMs`, `timeoutMs` (`durationMs: integer().notNull()`, not `durationMilliseconds`). Explicit exception to the no-abbreviation rule.
 
 ## Primary Keys
 
 - **UUID PK for entities referenced by other tables** — `id: uuid().primaryKey().defaultRandom()`.
 - **Text PK for natural-key tables** — computed text PK when uniquely identified by a domain-derived string.
 - **Composite PK for pure join tables** — `primaryKey({ columns: [col1, col2] })` when no surrogate is needed.
-- **Random-id PK** — when a generated random code already uniquely identifies the row (invites, call sessions), use it as `id: text().primaryKey()` directly. Do NOT add a separate `uuid` surrogate alongside a `token`/`code` column. The field is always named `id` for shape consistency, with a colocated `{ENTITY}_ID_LENGTH` constant + length CHECK.
+- **Random-id PK** — when a generated random code already uniquely identifies the row (invites, call sessions), use it as `id: text().primaryKey()` directly, generated by `createId(LENGTH)` from `#shared/util/math/random/createId`. Do NOT add a separate `uuid` surrogate alongside a `token`/`code` column. The field is always named `id` for shape consistency, with a colocated `{ENTITY}_ID_LENGTH` constant + length CHECK.
 
-  ```typescript
-  // the random id IS the PK — no separate uuid surrogate
-  export const CALL_ID_LENGTH = 12;
-  export const callSessionsInMessage = pgTable("call_sessions", {
-    id: text().primaryKey(), // generated by createId(CALL_ID_LENGTH) from #shared/util/math/random/createId
-    roomId: uuid().unique().references(() => roomsInMessage.id, { onDelete: "cascade" }),
-  }, ...);
-  ```
+## Migrations
+
+**`db:gen` (from `packages/db-schema/`) is the only sanctioned way to produce a migration, and `snapshot.json` is machine state — never hand-clone it.** Copying a previous snapshot and bumping `id`/`prevIds` by hand forks the chain the instant two migrations descend from the same parent, and the next `db:gen` fails with `Non-commutative migrations detected`.
+
+**Don't run `db:gen` as an unprompted side effect** of a schema edit — note the pending migration and let the user decide when to run it. Nothing applies migrations from the CLI; they apply automatically at app startup (`packages/app/server/plugins/migrate.ts`). Running it, fixing up the generated SQL and recovering a damaged chain: `references/migrations.md`.

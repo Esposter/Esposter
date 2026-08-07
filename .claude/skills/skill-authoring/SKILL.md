@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, and declaration layout. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
+description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives, ~150-line budget, trigger-named index lines), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, and declaration layout. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
 ---
 
 # Skill Authoring
@@ -63,9 +63,28 @@ The same applies to numbers: keep only the magnitudes the rule operates on (a li
 
 - **Interfaces/types at the top** — within a `.vue` `<script setup>` or `.ts` module, group all local `interface`/`type` declarations together at the top of the block (after imports), before the runtime `const`/logic. Don't interleave a stray interface between logic blocks.
 
+## SKILL.md is the always-on layer; `references/` holds the rest
+
+A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. The budget is **~15 KB, and ~150 lines**: bytes are what the context actually costs, lines are the readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second. Past that a skill stops being a rule list and becomes a manual nobody reads to the end, which is the same failure as not writing it.
+
+So a skill is two tiers:
+
+- **`SKILL.md`** — the rules that apply to _every_ task in the domain, one line each, plus an index of the deep dives. This is what has to land without anyone asking for it.
+- **`references/<topic>.md`** — a rule set that fires only for a _named sub-task_: a ritual, a file type, a single component, a procedure. It is read when the index line matches, the way `code-review` reads its mode pages.
+
+Move a section out when it is a **procedure** (ordered steps run occasionally), when it fires only for one narrow sub-task, or when it runs past ~40 lines of examples. Keep it in `SKILL.md` when violating it is the **default behaviour** — a rule that fires only if someone thought to look it up does not fire.
+
+**The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — `references/mock-cleanup.md` — _when a test creates spies, fake timers or global stubs_. An index line that reads "see X for more detail" guarantees the page is never opened.
+
+Never split to hit a number. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page.
+
+**A split breaks inbound pointers, so fix them in the same change.** Other skills cite sections by heading (``see the `pinia` skill ("Cursor Pagination in Stores")``), and a heading that moved into `references/` leaves that citation pointing at nothing — silently, because nothing resolves skill links. After moving a section, grep the tree for its heading text and repoint each citation at the page (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to the heading itself.
+
 ## Tight, not fluffy
 
 One line per rule where possible. Cut redundant prose and example values that will rot. A skill is read under context pressure — every line competes with the code the reader actually needs.
+
+Long-form prose is the tell. A rule needs its _why_ only where the why is non-obvious and load-bearing; a paragraph re-arguing a rule already stated is the part to cut, and a worked example earns its place only when the prose form is ambiguous without it.
 
 ## Skills vs `~/.claude/rules/*.md`
 

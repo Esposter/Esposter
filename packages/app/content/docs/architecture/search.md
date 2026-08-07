@@ -78,7 +78,7 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 
 | Exception              | Why it is out of scope                                                                                                | Example                                                            |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `v-data-table-server`  | The table owns fetch orchestration — its `search` prop triggers `@update:options`; feed it a `refDebounced` query ref | `Resource/ListView.vue` + `useReadResources`                       |
+| `v-data-table-server`  | The table owns fetch orchestration — its `search` prop triggers `@update:options`; feed it a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`                      |
 | Explicit-submit search | Enter-triggered with filters and search history; nothing fires per keystroke                                          | Message right-sidebar search (`useReadSearchedMessages`)           |
 | Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state                                    | Docs search (MiniSearch), portal search (`useResourceSearchItems`) |
 

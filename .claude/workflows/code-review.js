@@ -107,6 +107,7 @@ const makeStats = (known) => ({
   cleanupCap: undefined,
   sweepCap: undefined,
   reportableCeiling: undefined,
+  resolveCeiling: undefined,
   seams: undefined,
   claimsChecked: undefined,
   claimsInventoried: undefined,
@@ -199,7 +200,7 @@ const SEVERITY_LADDER =
 const PROVENANCE_LADDER =
   "Also establish each candidate's **provenance** — is this new ground, or ground already covered? Run\n" +
   "`git log -n 5 --format='%h %s' -- <file>` and `git log -n 3 -L <line>,<line>:<file>` for the cited line, and\n" +
-  "Grep the written record (`packages/app/content/docs/`, `.claude/skills/*/SKILL.md`) for the decision the\n" +
+  "Grep the written record (`packages/app/content/docs/`, `.claude/skills/**/*.md`) for the decision the\n" +
   "candidate argues against. Then classify:\n" +
   "- **new** — nothing in the history or the record speaks to this behaviour. The default only after you looked.\n" +
   "- **regression** — the cited line was introduced or last touched by a fix/refactor commit, and the defect is\n" +
@@ -316,7 +317,7 @@ const SCOPE_SCHEMA = {
     recordIndex: {
       type: "string",
       description:
-        "the settled decisions in packages/app/content/docs/ and .claude/skills/*/SKILL.md that bear on the changed files — one line each, with the path that states it",
+        "the settled decisions in packages/app/content/docs/ and .claude/skills/**/*.md that bear on the changed files — one line each, with the path that states it",
     },
     seams: {
       type: "array",
@@ -444,7 +445,7 @@ const REPORT_SCHEMA = {
 // Repeat. In diff mode it stops findings that re-litigate a settled decision; in area mode it is also half the
 // Review's subject matter, since a claim inventory is what the conformance pass is checking against.
 const RECORD_INDEX_STEP =
-  "5. Build the **recordIndex**: grep `packages/app/content/docs/` and `.claude/skills/*/SKILL.md` for the " +
+  "5. Build the **recordIndex**: grep `packages/app/content/docs/` and `.claude/skills/**/*.md` for the " +
   "subsystems, symbols, and values in scope, and list the settled decisions that bear on them — one line each, in " +
   "the form `<path>: <the decision, with the consequence it acknowledges>`. Include a decision when a reviewer " +
   "reading the code alone would plausibly flag it as wrong (a deliberate cap, an accepted cost, a best-effort path " +
@@ -483,7 +484,7 @@ const AREA_SCOPE_PROMPT =
   `CLAUDE.md or CLAUDE.local.md in a directory that is an ancestor of an area file). Read each and note ` +
   `conventions a reviewer should know.\n${
     RECORD_INDEX_STEP
-  }6. List in \`docPaths\` every \`packages/app/content/docs/\` page and \`.claude/skills/*/SKILL.md\` that governs this ` +
+  }6. List in \`docPaths\` every \`packages/app/content/docs/\` page and \`.claude/skills/**/*.md\` that governs this ` +
   `area, then read them and build \`claims\`: the specific, CHECKABLE assertions they make about how this code ` +
   `behaves. A claim is something a reader could go and confirm or refute in the code — 'reads are single-flight ` +
   `via isExclusive', 'the cache evicts on room switch', 'errors surface through neverthrow rather than throwing'. ` +
@@ -743,7 +744,7 @@ const SCOPE_TAIL =
   // Written record breaks the tie once, so it rides along to every agent.
   `## Recorded decisions\n` +
   `packages/app/content/docs/ is this repo's as-built documentation and the record of settled design decisions; ` +
-  `.claude/skills/*/SKILL.md records settled conventions. A choice either tree states deliberately — with its consequence ` +
+  `.claude/skills/**/*.md records settled conventions. A choice either tree states deliberately — with its consequence ` +
   `acknowledged — is NOT a finding, however wrong it looks from the code alone. Report it only when the code contradicts ` +
   `the record (name both sides), when a mitigation the record promises is absent from the code, or when the code has ` +
   `behaviour the record does not cover at all.\n\n${
@@ -1037,7 +1038,7 @@ const RESOLVER_PROMPT = (candidate) =>
   `- Read the callees and callers end to end, not just the cited file — most PLAUSIBLE verdicts die or harden one hop out.\n` +
   `- Read the actual source of any dependency whose behaviour the claim rests on, in node_modules, rather than reasoning from its name or reputation.\n` +
   `- Use git history (\`git log -S\`, \`git log -L\`) to find whether the guard was ever there and what removed it.\n` +
-  `- Check the written record (\`packages/app/content/docs/\`, \`.claude/skills/*/SKILL.md\`) — a decision stated deliberately with its consequence named REFUTES the finding, and a record the code contradicts CONFIRMS it.\n` +
+  `- Check the written record (\`packages/app/content/docs/\`, \`.claude/skills/**/*.md\`) — a decision stated deliberately with its consequence named REFUTES the finding, and a record the code contradicts CONFIRMS it.\n` +
   `- Run something if that settles it: a node one-liner against the real dependency, a grep that proves a call site exists or does not.\n\n` +
   `Return CONFIRMED (name the inputs/state that trigger it and the wrong output) or REFUTED (quote the line or the record that makes it impossible). ` +
   `UNRESOLVABLE is only for a trigger that cannot be settled from this repository at all — a production-only config value, a cloud service's runtime behaviour — and you must name that blocker. ` +
@@ -1311,7 +1312,7 @@ const COVERAGE_FINDER = {
     `### Your territory — what the record does not cover\n` +
     `Every other finder on this review is checking the code against something. You are looking for what nothing ` +
     `checks: behaviour in this area that is deliberate and load-bearing, and that neither ` +
-    `\`packages/app/content/docs/\` nor \`.claude/skills/*/SKILL.md\` describes at all.\n\n` +
+    `\`packages/app/content/docs/\` nor \`.claude/skills/**/*.md\` describes at all.\n\n` +
     `The pages that DO govern this area:\n${
       (Array.isArray(scope.docPaths) && scope.docPaths.length > 0 ? scope.docPaths : ["(none found)"])
         .map((d) => "  - " + d)
@@ -1570,7 +1571,7 @@ for (const c of unresolvedDropped) c.droppedUnsettled = true;
 if (toResolve.length > 0) {
   phase("Resolve");
   log(
-    `resolve: ${toResolve.length} plausible findings to settle${
+    `resolve: ${toResolve.length} of a ${RESOLVE_MAX} budget plausible findings to settle${
       unresolvedDropped.length > 0
         ? ` (${unresolvedDropped.length} lower-ranked ones dropped unsettled at the resolve budget)`
         : ""
@@ -1654,6 +1655,11 @@ const stats = makeStats({
   // Reader who re-derives it budgets for a run of a different size than the one they got. There is one number
   // And the script owns it: three caps, each from the finder family that actually spawned.
   reportableCeiling: NON_CLEANUP_FINDER_COUNT * PER_ANGLE + CLEANUP_FINDER.cap + (P.sweep ? SWEEP_MAX : 0),
+  // How many unsettled findings a resolver was allowed, which is NOT what the resolve log line reports: that
+  // Counts the ones actually sent, and a run with fewer plausible findings than the cap sends fewer. Only this
+  // Field distinguishes "nothing else needed resolving" from "the budget ran out", and the two have opposite
+  // Meanings for whether to re-run.
+  resolveCeiling: RESOLVE_MAX,
   seams: SEAM_MODE ? seams.map((s) => s.name) : undefined,
   // The claims actually put in front of an agent, not the size of the inventory: a claim whose pathPrefixes
   // Overlap no seam, or whose files the cap dropped, reaches no finder, and counting it overstates the one number

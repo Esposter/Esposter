@@ -88,7 +88,7 @@ One shared as-const-satisfies map (`packages/app/shared/services/resource/Resour
 
 A generic mapped type derives the subset of types declaring each capability:
 
-```typescript
+```ts
 // packages/app/shared/models/resource/CapabilityResourceType.ts
 export type CapabilityResourceType<TCapability extends keyof ResourceCapabilities> = {
   [T in ResourceType]: (typeof ResourceDefinitionMap)[T]["capabilities"] extends Record<TCapability, true> ? T : never;

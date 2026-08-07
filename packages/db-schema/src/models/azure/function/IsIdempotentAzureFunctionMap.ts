@@ -23,6 +23,13 @@ export const IsIdempotentAzureFunctionMap = {
   [AzureFunction.ProcessWebhook]: false,
   [AzureFunction.PurgeDeletedResources]: true,
   [AzureFunction.PushWebhook]: false,
+  // Sets the ledger row's counted bytes to what storage reports and moves the counter by the difference it
+  // Observed, so a redelivery computes a zero delta rather than double-counting. The replay gate never reads
+  // This one: it is the only handler triggered by a *system* topic, so its dead letters carry the storage
+  // EventType (`Microsoft.Storage.BlobCreated`) rather than an AzureFunction, and getIsReplayable quarantines
+  // Anything it cannot resolve to a function. The value is its honest answer, not a reachable path
+  // (/docs/platform/storage-quotas).
+  [AzureFunction.ReconcileStorageBlob]: true,
   // Republishes a dead-letter blob it then deletes; a rerun of the same blob is a no-op, but it is never itself
   // Dead-lettered onto a topic, so the value is only here for exhaustiveness.
   [AzureFunction.ReplayDeadLetterEvent]: true,

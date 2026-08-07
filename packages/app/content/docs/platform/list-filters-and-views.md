@@ -62,7 +62,7 @@ flowchart LR
 
 | File                                                    | Role                                                                     |
 | ------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `app/components/Resource/ListView.vue`                  | the workbench orchestrator: toolbar, pills, selection, table, singletons |
+| `app/components/Resource/List/View.vue`                 | the workbench orchestrator: toolbar, pills, selection, table, singletons |
 | `app/components/Resource/List/FilterBar.vue`            | pill row + `+ Add filter` menu                                           |
 | `app/components/Resource/List/SelectionToolbar.vue`     | `n selected · Delete (n) · Export CSV · Clear`                           |
 | `app/composables/resource/useResourceListFilters.ts`    | URL-synced filter state                                                  |

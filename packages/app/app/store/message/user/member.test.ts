@@ -4,6 +4,7 @@ import type { Router } from "vue-router";
 
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
+import { StorageTier } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -21,6 +22,8 @@ describe(useMemberStore, () => {
     id: crypto.randomUUID(),
     image: "",
     name,
+    storageBytesUsed: 0,
+    storageTier: StorageTier.Free,
     updatedAt: new Date("1970-01-01"),
   };
   const role: RoomRoleInMessage = {

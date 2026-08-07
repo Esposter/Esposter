@@ -9,5 +9,5 @@ const { srcdoc, title } = defineProps<ResourceSrcdocIframeProps>();
 
 <template>
   <!-- The sandbox allows scripts but blocks same-origin access so published content cannot touch viewer sessions -->
-  <iframe border-none w-full h="[calc(100dvh_-_--app-bar-height)]" sandbox="allow-scripts" :srcdoc :title />
+  <iframe b-none w-full h="[calc(100dvh_-_--app-bar-height)]" sandbox="allow-scripts" :srcdoc :title />
 </template>

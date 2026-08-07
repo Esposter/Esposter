@@ -4,7 +4,6 @@ import { isValidResourceBlade } from "@/services/resource/isValidResourceBlade";
 import { validate } from "@/services/router/validate";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
-import { RoutePath } from "@esposter/shared";
 
 // Key by id only so switching blades reuses this page (the left resource list stays mounted instead of refetching);
 // The page still remounts when the id changes. Per-type blade slugs need the loaded resource's type, so the blade
@@ -49,17 +48,11 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout name="resource" is-header-bordered :title="resource?.name">
     <Head>
       <Title>{{ resource?.name ?? "Resource" }}</Title>
     </Head>
-    <div v-if="resource" flex flex-col h-full>
-      <!-- The single unified breadcrumb lives in the base page and updates with the open resource -->
-      <StyledPageHeader b-b-1 b-border b-solid>
-        <template #breadcrumbs>
-          <AppBreadcrumbs :crumbs="[{ title: 'All', to: RoutePath.ResourcesAll }]" :title="resource.name" />
-        </template>
-      </StyledPageHeader>
+    <template v-if="resource">
       <ResourceExplorer
         :active-blade
         :duplicate
@@ -76,6 +69,6 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
         :unpublish
         :update-tags
       />
-    </div>
+    </template>
   </NuxtLayout>
 </template>

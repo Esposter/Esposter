@@ -9,6 +9,7 @@ How the skills in this directory are organised and maintained. **How to write on
 - **Pointers, not duplication** — cross-reference; never copy. Duplicated guidance drifts out of sync and hides the canonical rule, which is what makes a rule hard to find.
 - **No redirect for its own sake** — a pointer earns its place only when it saves a real duplication across skills or sections. Don't redirect to a section a reader reaches by reading on, and don't replace a self-sufficient one-liner with a "see X" link. When in doubt, state the rule concisely inline.
 - **Tight, not fluffy** — one line per rule where possible. Cut redundant prose and example values that will rot.
+- **Two tiers** — `SKILL.md` holds what applies to every task in the domain (~15 KB and ~150 lines, one line per rule) plus a trigger-named index; sub-task deep dives live in that skill's `references/*.md`. See `skill-authoring`.
 
 `.agents/skills` is a symlink to `.claude/skills`, so edits to either tree apply to both automatically — no manual mirroring.
 

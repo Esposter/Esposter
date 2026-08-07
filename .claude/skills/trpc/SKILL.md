@@ -1,92 +1,62 @@
 ---
 name: trpc
-description: Esposter tRPC conventions — procedure typing with generics, router structure, error handling, and router test patterns. Apply when writing tRPC routers, procedures, or router tests.
+description: Esposter tRPC conventions — return-type generics on the method, async only when there is an await, where input schemas and server/shared/@esposter-db helpers live, useQuery/useMutation for every client read and write, calling conventions for all-optional and UUID inputs, router structure mirroring the file path, Function.prototype router-key collisions, procedure and result naming, base*Router composition with mergeRouters, the three room RBAC procedure builders, ownedBy ownership guards, one router and store per DB table, BAD_REQUEST messages, Azure Table Clause typing, plus deep dives on router tests, subscription procedures, read/pagination endpoints, and mutations that write blobs. Apply when writing tRPC routers, procedures, or router tests.
 ---
 
 # tRPC Conventions
 
-## Procedure Return Types
+## Deep dives
 
-Put the return type generic on the method, not as a callback return annotation. Same rule for `.mutation<T>(...)`.
+- `references/router-tests.md` — when writing or reviewing a test that drives a tRPC caller.
+- `references/subscriptions.md` — when adding a subscription procedure, or deciding whether the caller of a mutation also updates its own store.
+- `references/read-endpoints.md` — when writing a `read*` procedure, its pagination input schema, or the `useRead*` composable that calls it.
+- `references/blob-mutations.md` — when a mutation deletes or replaces a blob.
 
-```ts
-readFriends: standardAuthedProcedure.query<User[]>(async ({ ctx }) => { ... })
-```
+## Procedures
 
-## Async Procedures
+- **Return type generic on the method, not as a callback return annotation** — `readFriends: standardAuthedProcedure.query<User[]>(async ({ ctx }) => { ... })`. Same for `.mutation<T>(...)`.
+- **Omit `async` when there is no `await`** — e.g. a body that only `return`s a Drizzle query chain.
 
-Omit `async` when there is no `await` — e.g. a body that only `return`s a Drizzle query chain.
+## Where the Pieces Live
 
-```ts
-// CORRECT — no await, no async
-readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => ctx.db.query.friends.findMany(...))
-```
-
-## Input Schemas and Utility Functions
-
-- **Input schemas go in `shared/models/db/<feature>/`** — one file per input type, named after the type (e.g. `FriendUserIdInput.ts`). Export both the schema (`...Schema`) and the inferred type. Never re-export types from router files — each type lives in exactly one place.
-
-  ```ts
-  // shared/models/db/friend/FriendUserIdInput.ts
-  import { selectUserSchema } from "@esposter/db-schema";
-  import { z } from "zod";
-
-  export const friendUserIdInputSchema = selectUserSchema.shape.id;
-  export type FriendUserIdInput = z.infer<typeof friendUserIdInputSchema>;
-  ```
-
-- **Server-only utility functions go in `server/services/<feature>/`** — one function per file, named after the function (e.g. `getFriendshipId.ts`).
-- **If also needed by a Pinia store (frontend), put it in `shared/services/<feature>/`** — importable on both server and client without duplication.
-- **If also needed by `packages/azure-functions`, put it in `packages/db`** — Postgres/Drizzle functions called from both the Nuxt app server and Azure Functions belong in `packages/db/src/services/` with `PostgresJsDatabase<typeof relations>` as the `db` parameter. Export from `packages/db/src/index.ts`; the app re-exports via a thin `export { fn } from "@esposter/db"` wrapper. Examples: RBAC helpers (`getPermissions`, `hasPermission`), message moderation checks, push subscription queries. Error-throwing wrappers (`assertCanCreateMessage` etc.) stay in their own packages because they throw package-specific types (`TRPCError` in the app, `InvalidOperationError` in azure-functions); only the underlying DB query helpers move to `packages/db`.
-
-## Client-Side Data Access — `useQuery` / `useMutation`
-
-Every **user-facing** client read/write goes through `useQuery` / `useMutation` (`composables/shared/`). Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it matches a documented exception — the raw call sites are deliberate, not omissions.
-
-Canonical reference (primitive semantics, "Optimistic by default", and the full exception list): `content/docs/architecture/client-data.md`.
+- **Input schemas → `shared/models/db/<feature>/`** — one file per input type, named after the type (`FriendUserIdInput.ts`), exporting both the schema (`...Schema`) and the inferred type. Never re-export types from router files; each type lives in exactly one place.
+- **Server-only utility functions → `server/services/<feature>/`** — one function per file, named after the function.
+- **Also needed by a Pinia store → `shared/services/<feature>/`** — importable on both server and client without duplication.
+- **Also needed by `packages/azure-functions` → `packages/db/src/services/`** — Postgres/Drizzle helpers called from both the Nuxt app server and Azure Functions, with `PostgresJsDatabase<typeof relations>` as the `db` parameter, exported from `packages/db/src/index.ts`; the app re-exports via a thin `export { fn } from "@esposter/db"` wrapper. Error-throwing wrappers (`assertCanCreateMessage` etc.) stay in their own packages because they throw package-specific types (`TRPCError` in the app, `InvalidOperationError` in azure-functions) — only the underlying DB query helpers move.
 
 ## Client-Side Calling Conventions
 
-- **Never call `.query({})` / `.mutate({})` with a bare empty object** — procedures whose inputs are all-optional chain `.prefault({})` on the input schema (see Pagination Params Schemas), which makes the input itself optional. Call with no argument: `$trpc.survey.readSurveys.query()`. Same for test callers: `caller.readDocuments()`.
-- **Omit optional UUID fields instead of passing `undefined`** — when the value comes from a ref defaulting to `""` (e.g. `currentRoomId`), use a conditional spread, not `|| undefined`:
+- **Every user-facing client read/write goes through `useQuery` / `useMutation`** (`composables/shared/`). Before hand-rolling a `getResultAsync(...)` around a `$trpc` call, confirm it matches a documented exception — the raw call sites are deliberate, not omissions. Primitive semantics, "Optimistic by default" and the full exception list: `content/docs/architecture/client-data.md`.
+- **Never call `.query({})` / `.mutate({})` with a bare empty object** — all-optional inputs chain `.prefault({})`, which makes the input itself optional: `$trpc.survey.readSurveys.query()`. Same for test callers: `caller.readDocuments()`.
+- **Omit optional UUID fields instead of passing `undefined`** — when the value comes from a ref defaulting to `""`, use a conditional spread, not `|| undefined`:
 
   ```ts
   // key absent when empty — not { roomId: currentRoomId.value || undefined }
   $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {});
   ```
 
-- **Guard required UUID fields with an early return** — add `if (!currentRoomId.value) return;` before the call rather than letting an empty string reach the UUID validator.
+- **Guard required UUID fields with an early return** — `if (!currentRoomId.value) return;` before the call, rather than letting an empty string reach the UUID validator.
 
 ## Router Structure
 
-Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The client path mirrors the file path segment for segment — `trpc.<feature>.*` is `routers/<feature>/index.ts` and `trpc.<feature>.<sub>.*` is `routers/<feature>/<sub>.ts` — so a nested key is never flattened, and the file for any path is derivable rather than looked up. The two diverge only where a key was renamed to dodge a `Function.prototype` collision (see Router Key Naming).
+Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The client path mirrors the file path segment for segment — `trpc.<feature>.*` is `routers/<feature>/index.ts` and `trpc.<feature>.<sub>.*` is `routers/<feature>/<sub>.ts` — so a nested key is never flattened, and the file for any path is derivable rather than looked up. The two diverge only where a key was renamed to dodge a `Function.prototype` collision.
 
-Exception: `achievement` is merged separately (via `mergeRouters`) to avoid a circular dep with the router that fires achievement events.
+- **Sub-routers compose in the feature's own `index.ts`** — export a `base*Router` with the feature's own procedures, then `mergeRouters` it with the sub-routers. `routers/index.ts` imports only the composed router, never a sub-router directly.
 
-## Router Key Naming
+  ```ts
+  // routers/call/index.ts — the composition root
+  export const baseCallRouter = router({ createCall: ..., joinCall: ... });
+  export const callRouter = mergeRouters(baseCallRouter, router({ knocker: knockerRouter }));
+  ```
 
-- **Never use `call`, `apply`, `bind`, `then`, `catch` as router keys** — they are `Function.prototype` methods. tRPC clients use a `Proxy`; accessing `.call` returns `Function.prototype.call` instead of descending the router, silently breaking the namespace.
-- Use a descriptive compound name: `callSession`, `videoCall`, `roomCall`.
+- **Exception**: `achievement` is merged separately (via `mergeRouters`) to avoid a circular dep with the router that fires achievement events.
+- **Never use `call`, `apply`, `bind`, `then`, `catch` as router keys** — they are `Function.prototype` methods, and tRPC clients use a `Proxy`, so `.call` returns `Function.prototype.call` instead of descending the router, silently breaking the namespace. Use a descriptive compound name: `callSession`, `videoCall`, `roomCall`.
 
 ## Procedure & Result Naming
 
 - `upsert*` for procedures that do `insert().onConflictDoUpdate()` — never `update*` (update implies the record already exists). Domain operation names (`subscribe`, `connect`) are exempt.
 - Subscription naming: `on` + exact mutation name (camelCase): `createMessage` → `onCreateMessage`, `updateRole` → `onUpdateRole`.
 - DB result variables named after the entity: `newFriend`, `updatedFriend`, `existingFriend` — never `created`, `updated`, `existing`.
-
-## Sub-router Composition Pattern
-
-When a feature router has sub-routers, export a `base*Router` with the feature's own procedures, then compose with `mergeRouters`. The feature's `index.ts` is the composition root; `routers/index.ts` only imports the composed router, never sub-routers directly.
-
-```ts
-// routers/call/index.ts
-export const baseCallRouter = router({ createCall: ..., joinCall: ... });
-export const callRouter = mergeRouters(baseCallRouter, router({ knocker: knockerRouter }));
-
-// routers/index.ts
-import { callRouter } from "@@/server/trpc/routers/call";
-router({ callSession: callRouter, ... }) // knocker already nested inside callRouter
-```
 
 ## Procedure Helpers (Room RBAC)
 
@@ -98,18 +68,6 @@ Three builders in `server/trpc/procedure/room/`:
 
 `rateLimiterType` defaults to `RateLimiterType.Standard`; pass another only to opt into a different limiter.
 
-## Room-Scoped Subscriptions — `getRoomEventSubscription`
-
-The shared single-room subscription shape (member check + `roomIdSchema` input + forward `[data, device]` events matching the input room to everyone except the emitting device) is `getRoomEventSubscription(emitter, eventName, getRoomId)` in `server/trpc/procedure/room/`. A subscription whose body would only filter by room id and same-device MUST use it:
-
-```ts
-onCreateEmoji: getRoomEventSubscription(emojiEventEmitter, "createEmoji", ({ partitionKey }) => partitionKey),
-onAssignRole: getRoomEventSubscription(roleEventEmitter, "assignRole", ({ roomId }) => roomId),
-```
-
-- Event map shape must be `[[Data, Device]]`; yield types stay exact per event via `TEventMap[TKey][0][0]` indexed access.
-- **Deliberately NOT abstracted**: multi-room (room/userToRoom), callSession, typing/moderation/achievement subscriptions — their bodies differ in destructure, device-id construction, and yield, so a builder would need as many lambdas as the body has lines. Don't force them in.
-
 ## Ownership Guards in Mutations
 
 - **`ownedBy(table, id, userId)`** (`server/services/db/ownedBy.ts`) — the where-predicate for "this row must belong to the caller": `.where(ownedBy(surveys, input, ctx.getSessionPayload.user.id))`. Compose extra clauses with `and(ownedBy(...), isNull(...))`. Never hand-write `and(eq(table.id, id), eq(table.userId, userId))`.
@@ -118,182 +76,17 @@ onAssignRole: getRoomEventSubscription(roleEventEmitter, "assignRole", ({ roomId
 ## Router and Store Structure
 
 - **One router + one Pinia store per DB table** — never bundle multiple tables into one router or store.
-- **Naming derived from the table name, not semantics:**
-  - `friend_requests` table → `friendRequests` store ref, `readFriendRequests` / `readSentFriendRequests` procedures. Never `pendingRequests`/`sentRequests` — the table implies the state.
-  - `blocks` table → `blockUser`, `unblockUser`, `readBlockedUsers` procedures; `blockedUsers` store ref.
-- **Nuxt does NOT auto-import store functions** — always use explicit `import { useXxxStore } from "@/store/..."` when calling other stores. Avoid circular imports via a one-way dependency direction: `block` may import `friend` + `friendRequest`; `friendRequest` may import `friend`; `friend` imports neither.
+- **Naming derived from the table name, not semantics** — `friend_requests` → `friendRequests` store ref and `readFriendRequests` / `readSentFriendRequests` procedures (never `pendingRequests`/`sentRequests`; the table implies the state); `blocks` → `blockUser`, `unblockUser`, `readBlockedUsers`, `blockedUsers`.
+- **Nuxt does NOT auto-import store functions** — always `import { useXxxStore } from "@/store/..."` when calling other stores. Avoid circular imports with a one-way dependency direction: `block` may import `friend` + `friendRequest`; `friendRequest` may import `friend`; `friend` imports neither.
 
 ## Error Handling
 
-- **`BAD_REQUEST` always includes a `message`** — never throw a bare `new TRPCError({ code: "BAD_REQUEST" })`. Add `message: new InvalidOperationError(Operation.X, EntityType, name).message`. Pick the `Operation` matching the procedure (`Operation.Read` for a query; `Create`/`Update`/`Delete` for mutations), the entity type, and a `name` identifying the invalid value (`JSON.stringify(input)`, the relevant ID, etc.):
-
-  ```ts
-  throw new TRPCError({
-    code: "BAD_REQUEST",
-    message: new InvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds))
-      .message,
-  });
-  ```
-
-- **`if/else if` when an early-exit `if` is followed by a conditional** — if the first branch throws/returns, the next conditional must be `else if`, even when the conditions are logically independent:
-
-  ```ts
-  if (inFilterRoomIds.some((value) => typeof value !== "string")) throw new TRPCError({ ... });
-  else if (inFilterRoomIds.length > 0) await isMember(...);
-  ```
-
-## Blob Storage Mutations
-
-Delete blobs idempotently — use Azure Blob `deleteIfExists()` for user-triggered cleanup (profile images, survey assets). Avoid `delete()` unless a missing blob must fail the whole mutation.
-
-**A delete whose blob names are built from the request body is not authorized by the procedure's scope guard.** Membership/ownership of the container's scope (a room, a resource) says the caller may act _there_, not that this blob is theirs — and any id another user can read off the wire becomes a name they can submit. Either walk a persisted entity the guard already checked (the message's own `files`), or require proof of the grant that created the blob: an HMAC token handed out alongside the write SAS — `[userId, roomId, id]` signed with the application secret, so it binds the upload's identity rather than the SAS value — and verified with `timingSafeEqual` (`createUploadFileToken` / `getIsUploadFileTokenValid`, `/docs/architecture/blob-lifecycle`). A comment reasoning that the name is scope-derived is not the check — scope-derived names are exactly the attack.
-
-**A replace-path sweep keys on the value changing, not on the field being present.** `image !== undefined` fires on a form that resubmits what it loaded; `image !== previousImage` is the replacement.
-
-## Metadata Loading in useRead\* Composables
-
-When a `useRead*` composable fetches a list, load all per-item metadata in a single `readMetadata` helper firing concurrently via `Promise.all`. Both the `readItems` and `readMoreItems` callbacks call the same `readMetadata` so logic is never duplicated.
-
-```ts
-const readMetadata = (memberIds: User["id"][]) => {
-  if (!currentRoomId.value || memberIds.length === 0) return Promise.resolve();
-  const roomId = currentRoomId.value;
-  return Promise.all([readUserStatuses(memberIds), readMemberRoles({ roomId, userIds: memberIds })]);
-};
-```
-
-- Capture reactive refs (e.g. `currentRoomId.value`) into a local `const` before `Promise.all` so all concurrent calls see the same value.
-- Guard `memberIds.length === 0` to avoid unnecessary requests.
-- Every call inside `Promise.all` must be a **single batch request** — never spread N individual calls (`...ids.map(...)`). If the endpoint accepts one ID, make it accept an array first.
-
-## Pagination Params Schemas
-
-Two factory functions in `shared/models/pagination/`:
-
-- **`createCursorPaginationParamsSchema(sortKeySchema, defaultSortBy)`** — cursor-based; `minimumSortBy` hard-coded to `1` (needs a primary cursor key). `defaultSortBy` is typed `[SortItem<T>, ...SortItem<T>[]]` (non-empty tuple) — TS enforces ≥1 item matching the `min(1)` runtime constraint. Spread `.shape` into a `z.object({...})` and chain `.prefault({})` on the outer object for optional-input procedures.
-- **`createOffsetPaginationParamsSchema(sortKeySchema, defaultSortBy?)`** — offset-based; `minimumSortBy` hard-coded to `0` (offset skips N rows without a stable sort key); `defaultSortBy` defaults to `[]`.
-
-Both use `.prefault(defaultSortBy)` (not `.default()`) on `sortBy` — `prefault` applies the default _before_ inner validation, so the default array is itself validated against `.min(minimumSortBy)`. The `defaultSortBy` must satisfy the minimum.
-
-**Never define `limit`/`cursor` manually.** The factories bake in `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT`, and `cursor: z.string().default("")` — never override them. A parsed input therefore always carries a string, so the first page is `!cursor`, never `cursor === undefined`; `.optional()` here would also break the repo's "undefined banned as default — use `''`" rule. Non-cursor endpoints use `createBasePaginationParamsSchema`. When sort order is fixed, still pass a non-empty `defaultSortBy` (the factory's `min(1)` rejects `[]`), then omit `sortBy`: `createCursorPaginationParamsSchema(z.string(), [{ key: "rowKey", order: SortOrder.Desc }]).omit({ sortBy: true })`. Server-side, wire the cursor into `getCursorWhereAzureTable` (Azure Table) or `getCursorWhere` (Postgres), fetch `limit + 1` rows, and return `getCursorPaginationData(items, limit, sortBy)`:
-
-```ts
-const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
-if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-const items = await getTopNEntities(client, limit + 1, ModerationLogEntity, { filter: serializeClauses(clauses) });
-return getCursorPaginationData(items, limit, sortBy);
-```
-
-```ts
-// CORRECT — cursor: non-empty defaultSortBy, .prefault({}) on outer object
-const readRoomsInputSchema = z
-  .object({
-    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
-      { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
-    ]).shape,
-  })
-  .prefault({});
-
-// CORRECT — offset: minimumSortBy=0, empty default is fine
-const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).prefault({});
-```
-
-## Read Endpoints Must Accept Arrays (No N+1)
-
-Every `read*` procedure that may be called for multiple items **must** accept an array of IDs, not a single ID:
-
-```ts
-// one request for N items; spread userIdsSchema (max baked in); chain .min(1) when required
-export const readMemberRolesInputSchema = z.object({
-  ...roomIdSchema.shape,
-  userIds: userIdsSchema.shape.userIds.min(1),
-});
-```
-
-Server: use `inArray(table.userId, userIds)` and include `userId` in the select so the client can group. Client: initialize all requested IDs to `[]` before grouping so users with no results are still set (clearing stale data):
-
-```ts
-const readMemberRoles = async (input: ReadMemberRolesInput) => {
-  const memberRoles = await $trpc.role.readMemberRoles.query(input);
-  const rolesByUserId = new Map<string, RoomRole[]>(input.userIds.map((userId) => [userId, []]));
-  for (const { userId, ...role } of memberRoles) rolesByUserId.get(userId)?.push(role);
-  for (const [userId, roles] of rolesByUserId) setDataMap(userId, roles);
-};
-```
+- **`BAD_REQUEST` always includes a `message`** — never a bare `new TRPCError({ code: "BAD_REQUEST" })`. Use `message: new InvalidOperationError(Operation.X, EntityType, name).message`, picking the `Operation` matching the procedure (`Operation.Read` for a query; `Create`/`Update`/`Delete` for mutations), the entity type, and a `name` identifying the invalid value (`JSON.stringify(input)`, the relevant ID).
+- The `typescript` skill's `if/else if` chain rule applies inside procedure bodies: an early-exit `if` that throws is followed by `else if`, even when the conditions are logically independent.
 
 ## Azure Table Clause Typing
 
-`Clause<T extends Record<string, unknown>>` has no default — always provide the entity type. Never write bare `Clause[]`.
-
-- **Type the array with the entity being queried:** `const clauses: Clause<ModerationLogEntity>[] = [...];`. Never `Clause[]`.
-- **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never string literals:
-
-  ```ts
-  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }
-  ```
-
-- **Null clause helpers infer automatically — no explicit type arg:** `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, `getSearchNullClause(...)`. Never `getTableNullClause<ModerationLogEntity>(...)`.
-- **`getCursorWhereAzureTable` returns `Clause<TItem>[]`** — typed via a cast in the body since deserialized cursor keys are plain strings at runtime.
-- **Entity-specific fields stay on their own `PropertyNames` constant:** `StandardMessageEntityPropertyNames.isPinned`, `MessageEmojiMetadataEntityPropertyNames.type`; `CompositeKeyPropertyNames.partitionKey`/`rowKey`; `ItemMetadataPropertyNames.deletedAt` for metadata.
-
-## No Redundant Store Updates After Mutations That Emit to a Subscription
-
-When a mutation emits to an event emitter and the subscription fires for **all** connected clients (including the caller — no `getIsSameDevice` filter), the subscription's `onData` handler is the single source of truth. Do NOT also call the `store*` action after the mutation returns.
-
-```ts
-// onUpdateRoom subscription fires for the caller too — let it handle the state change
-await $trpc.room.updateRoom.mutate(input);
-```
-
-| Subscription filters caller?                  | After-mutation store call needed?           |
-| --------------------------------------------- | ------------------------------------------- |
-| No (`onUpdateRoom` style)                     | ❌ Remove — subscription handles it         |
-| Yes (`getIsSameDevice`, `onDeleteRoom` style) | ✅ Required — subscription skips the caller |
-
-When adding a new subscription: decide once which pattern it uses, then be consistent — never mix both.
-
-## Subscription Race Condition — Register Listener Before First `await`
-
-In subscription generators, `on(emitter, event, { signal })` from `node:events` MUST be assigned to a `const` **before** any `await`. The `for await (const x of on(...))` form is NOT equivalent when an `await` precedes it — `on()` only runs when the `for await` line is reached. Synchronously-emitting mutations can fire during that `await` and be missed.
-
-```ts
-// CORRECT — listener registered synchronously before control is yielded
-async function* ({ ctx, input, signal }) {
-  const events = on(callEventEmitter, "muteChanged", { signal });
-  await requireCallSession(ctx.db, input);
-  for await (const [data] of events) { ... }
-}
-
-// WRONG — listener registered after requireCallSession resolves; sync mutations can fire during the await
-async function* ({ ctx, input, signal }) {
-  await requireCallSession(ctx.db, input);
-  for await (const [data] of on(callEventEmitter, "muteChanged", { signal })) { ... }
-}
-```
-
-In tests, `Promise.all([iterator.next(), mutation()])` exposes this: the mutation runs synchronously after its middleware, emitting while the generator is still blocked on the validation `await`. `node:events` `on()` buffering only saves you if the listener was registered at emit time.
-
-## Router Test Patterns
-
-- **`setupRoomSuite()` fixture** (`server/trpc/routers/setupRoomSuite.test.ts`) — any room-scoped router suite where every test needs a room uses it at the top of `describe`. It owns `createMockContext`, room/role callers, a fresh room per test (`beforeEach`), and cleanup (`MockTableDatabase.clear()` + `db.delete(roomsInMessage)` in `afterEach`), and returns `createMember`/`setupMemberWithRole` plus `getMockContext`/`getRoomCaller`/`getRoleCaller`/`getRoomId` getters. Suites alias getters into local `let`s in their own `beforeAll`/`beforeEach` so test bodies stay unchanged; suite-specific hooks (fake timers, extra table deletes) compose alongside. Never copy-paste `createMember`/`setupMemberWithRole` or the room lifecycle hooks into a suite.
-- **Subscription tests: builder once, wiring smoke per router** — `getRoomEventSubscription` behavior (member check, room filter, same-device filter, data passthrough) is tested thoroughly ONCE in `server/trpc/procedure/room/getRoomEventSubscription.test.ts` through one representative subscription. Each router keeps only a **single** emit-wiring smoke test (one `getFirstEmit` happy path, e.g. `onCreateRole`); do not add per-subscription filter/UNAUTHORIZED/other-room tests to router suites.
-- **Caller types always use `TRPCRouter` path notation** — never `typeof subRouter`:
-
-  ```ts
-  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let roomFilterCaller: DecorateRouterRecord<TRPCRouter["room"]["filter"]>;
-  let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
-  ```
-
-- **A guard test must get past every guard in front of the one it names.** Procedures stack gates — membership, then permission, then ownership/authorship — and they all throw a bare `UNAUTHORIZED`, so a test that fails at the first gate is indistinguishable from one that reached the gate its title claims. `mockSessionOnce(mockContext.db)` alone makes a **brand-new user who never joined the room**: that proves membership and nothing else, whatever the title says. To assert a permission or authorship rule, the caller has to be a member first:
-
-  ```ts
-  const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
-  const { user } = await mockSessionOnce(mockContext.db);
-  await roomCaller.joinRoom(invite.id);
-  await mockSessionOnce(mockContext.db, user); // replay the same user for the guarded call
-  ```
-
-  Name the gate the test actually exercises — `fails update for a member without ${RoomPermission.ManageRoom} permission`, `fails update with a member who is not the author` — never "with wrong user", which describes no gate in particular and is how four copies of one membership test came to wear authorship titles. Two tests that differ only in setup but reach the same gate are one test; an unknown-id case is the exception worth keeping, because it pins `UNAUTHORIZED` over `NOT_FOUND` (no id enumeration).
-
-- **Caller naming, creating resources via callers not `db.insert`, and error assertions** — see the `testing` skill. Note for tRPC specifically: `toThrowErrorMatchingInlineSnapshot` is the only accepted error assertion (`toBeInstanceOf` is banned), and the TRPCError snapshot format is `[TRPCError: <message>]` — the prefix comes from TRPCError's `toString()`.
+- **`Clause<T extends Record<string, unknown>>` has no default** — type the array with the entity being queried (`const clauses: Clause<ModerationLogEntity>[] = [...]`). Never bare `Clause[]`.
+- **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never string literals: `{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }`.
+- **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<ModerationLogEntity>(...)`. `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
+- **Entity-specific fields stay on their own `PropertyNames` constant** — `StandardMessageEntityPropertyNames.isPinned`, `MessageEmojiMetadataEntityPropertyNames.type`; `ItemMetadataPropertyNames.deletedAt` for metadata.

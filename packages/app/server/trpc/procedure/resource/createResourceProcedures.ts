@@ -5,12 +5,13 @@ import type { PublishableResourceProcedureOptions } from "@@/server/models/resou
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { PUBLISHED_DIRECTORY_SEGMENT, staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { MAX_UNRECONCILED_STORAGE_BLOBS } from "#shared/services/storage/constants";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
@@ -28,12 +29,12 @@ import { readResourceViewCount } from "@@/server/services/resource/readResourceV
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
+import { generateReservedUploadFileSasEntities } from "@@/server/services/storage/generateReservedUploadFileSasEntities";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { generateUploadFileSasEntities } from "@esposter/db";
 import {
   AzureContainer,
   BLOB_SEGMENT_MAX_LENGTH,
@@ -45,14 +46,7 @@ import {
   resources,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import {
-  createUniqueArraySchema,
-  getResultAsync,
-  InvalidOperationError,
-  MAX_READ_LIMIT,
-  noop,
-  Operation,
-} from "@esposter/shared";
+import { createUniqueArraySchema, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -69,9 +63,21 @@ const updateResourceInputSchema = z.object({
 const resourceIdInputSchema = selectResourceSchema.pick({ id: true });
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true }), "filename")
+  // `size` is what the storage quota reserves against, so it is bounded at the input boundary rather than
+  // Trusted: a negative or non-finite declaration would decrement the counter and bypass the quota entirely.
+  // It is the client's own claim — an Azure write SAS carries no length constraint — so `BlobCreated` is what
+  // Replaces it with the stored object's real size. The array is bounded by the in-flight hold cap rather than
+  // The generic read limit: a batch above the cap can never pass the reserve however long the client waits.
+  // See /docs/platform/storage-quotas
+  files: createUniqueArraySchema(
+    z.object({
+      ...fileEntitySchema.pick({ filename: true, mimetype: true }).shape,
+      size: fileEntitySchema.shape.size.max(MAX_FILE_REQUEST_SIZE),
+    }),
+    "filename",
+  )
     .min(1)
-    .max(MAX_READ_LIMIT),
+    .max(MAX_UNRECONCILED_STORAGE_BLOBS),
   id: selectResourceSchema.shape.id,
 });
 
@@ -245,10 +251,15 @@ export const createResourceProcedures = <TType extends ResourceType>(
     }),
     generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
       FileSasEntity[]
-    >(async ({ input: { files, id } }) => {
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      return generateUploadFileSasEntities(containerClient, files, getFilesDirectoryName(id));
-    }),
+    >(({ ctx, input: { files, id } }) =>
+      generateReservedUploadFileSasEntities(
+        ctx.db,
+        ctx.getSessionPayload.user.id,
+        AzureContainer.ResourceAssets,
+        files,
+        getFilesDirectoryName(id),
+      ),
+    ),
   };
   const publishProcedures = {
     publishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourcePublication>(

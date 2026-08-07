@@ -407,6 +407,8 @@ export const baseMessageRouter = router({
             .message,
         });
 
+    // Room attachments are outside the personal storage quota, which counts what a user keeps in their own
+    // Resources — a room's files belong to the room. See /docs/platform/storage-quotas
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     const fileSasEntities = await generateUploadFileSasEntities(containerClient, files, roomId, {
       withThumbnail: true,

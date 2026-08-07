@@ -1,0 +1,35 @@
+# Files That Aren't Plain Test Suites
+
+Shared helpers, fixture constants, canonical filesystem paths, and `.test-d.ts` type tests.
+
+## Test utility files
+
+Shared test helpers live in `.test.ts` files (and bench helpers in `.bench.ts`) — both suffixes are excluded from the published barrel by `ctix` and from the `tsgo` build, so they never ship. The file-organisation rules apply unchanged: **one function per file, named after the function**, never a `testUtils`-style grab-bag.
+
+- **One helper function per file** — `createRow.test.ts` exports only `createRow`, `createWorkspaceCorpus.test.ts` only `createWorkspaceCorpus`. Follow the `create*` prefix convention for factories/builders. Cross-helper reuse is a normal import (`setupWithDataSource.test.ts` imports `createDataSource.test`).
+- **Shared constants/fixtures go in `constants.test.ts` / `constants.bench.ts`** — the test/bench equivalent of the `constants.ts` exception (see the `file-organization` skill). Group module-level fixture data here (e.g. derived bench data sources) instead of one trivial file per constant. A seed constant that a helper function is built around may colocate with that function when grouping it in `constants.*` would create a circular import (the derived fixtures call the generator at module init).
+- **`describe.todo` placeholder** — every helper-only `.test.ts` ends with `describe.todo("<fileName>")` (the function/file name, e.g. `describe.todo("createRow")`) so Vitest accepts the file without a real suite. Bench helper files (`.bench.ts`, `constants.bench.ts`) need no placeholder — Vitest's bench runner tolerates a file with no `bench()`.
+- **`setup*` fixture helpers for repeated hook blocks** — when 2+ suites copy-paste the same `beforeEach`/`afterEach` (or `beforeAll`/`afterAll`) block, extract a `setup*` helper (`setupTemporaryCacheHome.test.ts`, `setupWarmSnapshotSuite.test.ts`, app's `setupWithDataSource`, the router suites' `setupRoomSuite`) that **registers the hooks itself** at the top of `describe` and returns getters for the state it owns (`getCacheHome()`, `getBackend()`). Suite-specific extra hooks stay in the suite — Vitest runs before-hooks in registration order (fixture's first) and after-hooks in reverse, so they compose. The file needs the usual `describe.todo`. When a getter's value is used many times per test (a caller, a per-test `roomId`), the suite aliases it into a local `let` in its own `beforeAll`/`beforeEach` rather than calling the getter at every use.
+- **Twin test files → one behavior matrix + wiring tests** — when two suites are identical modulo constants (because their subjects are thin wrappers over a shared core), move the full behavior matrix to the shared core's test file; each wrapper test keeps only 1–2 wiring cases.
+- **A wrapper's test states where the matrix lives** — a header comment naming the owning test file (`// The list-to-blocks matrix lives in createSurveyInviteBlocks.test.ts; here only the MJML markup flavour`). Without it the next reader cannot tell a deliberately narrow suite from a thin one, and fills the gap with duplicates. The pointer also decays: a file carrying it while still asserting the delegated matrix is a duplicate to delete, not a comment to update.
+
+## Canonical file and directory names (filesystem tests)
+
+A test file or directory name carries **no meaning**; a distinct one is pure noise and a decision nobody should have to make. Where a package tests real filesystem paths, it declares one canonical file name and one canonical directory in the nearest `constants.test.ts` and uses them for **every** test path — today that's `packages/virrun` (`TEST_FILENAME = "a"`, `TEST_DIR = "/a"`, in `src/services/exec/util/constants.test.ts`). **Never invent a custom name** alongside them (`"marker"`, `"helper.cjs"`, `"dist"`, `"nested"`…); diverse names are a recurring mistake. A package with no filesystem tests needs no such constants — don't introduce them speculatively.
+
+- **Extension only when the code under test depends on it** (module resolution, parser/format tests) — then `` `${TEST_FILENAME}.cjs` ``. Otherwise the bare `TEST_FILENAME`.
+- **A path that must be absent** (missing-file / non-existent tests) — build it from `TEST_DIR` (the canonical non-existent dir), e.g. ``join(TEST_DIR, `${TEST_FILENAME}.cjs`)``. Never a custom `"missing.cjs"`.
+- **File content** follows the string-value convention (`""` base, `" "` for a differing value) — never a custom word like `"x"` or `"scratch"`.
+- **When two distinct paths genuinely must coexist** (e.g. a module and the dependency it requires): reuse `TEST_FILENAME` distinguished by nesting (`` `${TEST_FILENAME}/${TEST_FILENAME}.cjs` `` required by `` `${TEST_FILENAME}.cjs` ``) — never a second semantic name. Note a **bare** file `a` and a directory `a` collide, so a flat file plus a nested dir of the same bare name cannot coexist: give the flat file an extension, or test a single nested path. Prefer splitting into separate focused tests over needing two coexisting names.
+- **Real artifacts are not fixtures** — an actual on-disk name the production code owns (`pnpm-lock.yaml`, `.gitignore`, the built `dist/index.js`, the real monorepo `packages/` dir) stays its real name (use the existing constant where one exists); only invented _test_ names get canonicalised.
+- **Temp-dir prefixes and other repeated path fragments** consolidate into `constants.test.ts` the same way. Reuse across all tests; never hardcode raw path strings or diverse custom prefixes.
+
+## Type-level tests (`.test-d.ts`)
+
+- **Placement** — colocate beside the type file.
+- **`describe` string** — `"{camelCaseName} type"`.
+- **`test` descriptions** — enum value or type arg directly.
+- **Assertion** — always `expectTypeOf(...).toEqualTypeOf<ExpectedType>()`.
+- **A `void` return is asserted here, never at runtime** — `expectTypeOf(fn<[string]>).returns.returns.toEqualTypeOf<void>()`. `void` is a type-level contract, and `no-confusing-void-expression` bans asserting or assigning the expression in the `.test.ts`, which is left to assert observable effects only.
+- **`expect.hasAssertions()`** — in every test body.
+- **Prefer type-only fixtures** — drive `expectTypeOf` from a type expression (a type alias, or `ReturnType<typeof fn>` for a non-generic fn) rather than runtime schema values or one-line helpers (prevents unused-value/underscore/value-liveness lint churn). Note `typeof fn<TypeArg>` is invalid — you can't apply type args to a `typeof` query; alias the instantiated type instead.
