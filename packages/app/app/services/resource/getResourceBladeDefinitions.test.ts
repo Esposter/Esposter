@@ -51,4 +51,11 @@ describe(getResourceBladeDefinitions, () => {
     expect.hasAssertions();
     expect(isValidResourceBlade(ResourceType.Note, "not-a-blade")).toBe(false);
   });
+
+  // A guard that only checks the slug against the whole blade vocabulary would route a Blueprint to a
+  // Publish history it has no snapshots for — the blade has to be one *this* type offers
+  test("rejects a real blade the type does not offer", () => {
+    expect.hasAssertions();
+    expect(isValidResourceBlade(ResourceType.Blueprint, ResourceBladeType.PublishHistory)).toBe(false);
+  });
 });
