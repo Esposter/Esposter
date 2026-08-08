@@ -18,7 +18,11 @@ const { isLoading, resources, source } = defineProps<ResourceHomeListProps>();
 
 <template>
   <StyledSkeleton v-if="isLoading" type="list-item-two-line@5" />
-  <StyledEmptyState v-else-if="resources.length === 0" :="ResourceListSourceDefinitionMap[source].emptyState" />
+  <StyledEmptyState
+    v-else-if="resources.length === 0"
+    :="ResourceListSourceDefinitionMap[source].emptyState"
+    :icon="ResourceListSourceDefinitionMap[source].icon"
+  />
   <v-list v-else lines="two">
     <v-list-item
       v-for="resource in resources"

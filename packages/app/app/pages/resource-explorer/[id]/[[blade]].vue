@@ -49,8 +49,8 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
 </script>
 
 <!-- No title on the layout: the blade toolbar below already names the resource and the blade it is showing, and
-     the header repeating the name only pushed the content down a row. The one route without the service menu
-     too — the blade brings a rail of its own, and two on one screen spends width the blade uses better -->
+     the header repeating the name only pushed the content down a row. The one route that hides the service
+     menu, too — this page brings a blade rail of its own -->
 <template>
   <NuxtLayout name="resource" is-header-bordered is-service-menu-hidden>
     <Head>

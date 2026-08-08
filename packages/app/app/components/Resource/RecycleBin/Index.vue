@@ -76,14 +76,7 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
         <StyledSkeleton type="table-row@10" />
       </template>
       <template #no-data>
-        <StyledEmptyState
-          v-if="error"
-          icon="mdi-alert-circle-outline"
-          title="Something went wrong"
-          :description="error"
-        >
-          <v-btn prepend-icon="mdi-refresh" variant="tonal" @click="refresh()">Retry</v-btn>
-        </StyledEmptyState>
+        <StyledErrorState v-if="error" :error @retry="refresh()" />
         <StyledEmptyState
           v-else
           icon="mdi-delete-outline"

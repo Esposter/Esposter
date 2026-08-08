@@ -1,10 +1,10 @@
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 // @vitest-environment nuxt
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { useReadResourcesPage } from "@/composables/resource/list/useReadResourcesPage";
-import { ResourceType } from "@esposter/db-schema";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { describe, expect, test, vi } from "vitest";
 
 const createOptions = (
@@ -14,12 +14,8 @@ const createOptions = (
 ) => ({ getFilterInput: () => undefined, getFilterKey, readCount, readPage });
 
 describe(useReadResourcesPage, () => {
-  const firstPage = [
-    { id: crypto.randomUUID(), lastAccessedAt: null, name: "name", type: ResourceType.Sheet } as ResourceListItem,
-  ];
-  const secondPage = [
-    { id: crypto.randomUUID(), lastAccessedAt: null, name: "name", type: ResourceType.Sheet } as ResourceListItem,
-  ];
+  const firstPage = [createResourceListItem()];
+  const secondPage = [createResourceListItem()];
   const firstOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 1, sortBy: [] };
   const secondOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 2, sortBy: [] };
 

@@ -8,7 +8,7 @@ import type { Clause, Resource } from "@esposter/db-schema";
 
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
+import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListItem";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
@@ -113,19 +113,12 @@ const resourceFilterInputSchema = z.object({
 
 type ResourceFilterInput = z.infer<typeof resourceFilterInputSchema>;
 
-// The list sorts by the joined last-access time as well as by the resource's own columns, so the sort key
-// Is the list row's keys rather than the table's
-const resourceSortKeySchema = z.union([
-  selectResourceSchema.keyof(),
-  z.literal(ResourceListItemPropertyNames.lastAccessedAt),
-]);
-
 const readResourcesInputSchema = z.object({
-  ...createOffsetPaginationParamsSchema(resourceSortKeySchema).shape,
+  ...createOffsetPaginationParamsSchema(resourceListSortKeySchema).shape,
   ...resourceFilterInputSchema.shape,
 });
 
-const readDeletedResourcesInputSchema = createOffsetPaginationParamsSchema(resourceSortKeySchema).prefault({});
+const readDeletedResourcesInputSchema = createOffsetPaginationParamsSchema(resourceListSortKeySchema).prefault({});
 
 const readActivitiesInputSchema = z.object({
   ...readResourceInputSchema.shape,
@@ -142,13 +135,15 @@ const duplicateNameSuffix = " (copy)";
 // Backed by the resources_name_trgm_index GIN index; shared so the filter and the ranking
 // Can never disagree about what "similar" means
 const createSearchSimilarity = (searchQuery: string) => sql`similarity(${resources.name}, ${searchQuery})`;
-// Every resource list — the workbench and the recycle bin alike — reads one row shape, so a column added here
-// Is a column every list can show. Selected once and reused as the sort space, so a column the list can show
-// Is a column it can sort by
+// Every resource list — the workbench, the recycle bin and the favorites read alike — projects one row shape,
+// Reused as the sort space so a column the list can show is a column it can sort by
 const resourceListSelection = { ...getColumns(resources), lastAccessedAt: resourceAccesses.accessedAt };
-// Left-joined and caller-scoped: a resource this user has never opened still lists, with a null time
+// Caller-scoped relationship predicates, shared by the joins that project them and the EXISTS subqueries that
+// Filter on them, so one user's Recent or Favorites can never reflect another's
 const createLastAccessedJoin = (userId: string) =>
   and(eq(resourceAccesses.resourceId, resources.id), eq(resourceAccesses.userId, userId));
+const createFavoriteJoin = (userId: string) =>
+  and(eq(resourceFavorites.resourceId, resources.id), eq(resourceFavorites.userId, userId));
 // Shared filter so count and readResources stay in lockstep as filters evolve
 const createResourcesWhere = (
   db: Context["db"],
@@ -174,14 +169,8 @@ const createResourcesWhere = (
     .where(eq(resourcePublications.resourceId, resources.id));
   // Both are scoped to the caller as well as the resource, so one user's Recent or Favorites can never
   // Reflect another's — the row is the relationship, not a property of the resource
-  const accessExists = db
-    .select()
-    .from(resourceAccesses)
-    .where(and(eq(resourceAccesses.resourceId, resources.id), eq(resourceAccesses.userId, userId)));
-  const favoriteExists = db
-    .select()
-    .from(resourceFavorites)
-    .where(and(eq(resourceFavorites.resourceId, resources.id), eq(resourceFavorites.userId, userId)));
+  const accessExists = db.select().from(resourceAccesses).where(createLastAccessedJoin(userId));
+  const favoriteExists = db.select().from(resourceFavorites).where(createFavoriteJoin(userId));
   return and(
     eq(resources.userId, userId),
     // Soft-deleted resources live on for the Recycle bin window, so every normal read excludes them
@@ -344,14 +333,17 @@ export const resourceRouter = router({
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
+  // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
+  // Star's own timestamp is not a column any list shows. Otherwise it is the same predicate the `isFavorite`
+  // Filter expresses, taken from createResourcesWhere so a rule added there reaches both
   readFavorites: standardAuthedProcedure.query<ResourceListItem[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db
       .select(resourceListSelection)
-      .from(resourceFavorites)
-      .innerJoin(resources, eq(resourceFavorites.resourceId, resources.id))
+      .from(resources)
+      .innerJoin(resourceFavorites, createFavoriteJoin(userId))
       .leftJoin(resourceAccesses, createLastAccessedJoin(userId))
-      .where(and(eq(resourceFavorites.userId, userId), isNull(resources.deletedAt)))
+      .where(createResourcesWhere(ctx.db, userId, {}))
       .orderBy(desc(resourceFavorites.createdAt))
       .limit(MAX_READ_LIMIT);
   }),
@@ -393,8 +385,8 @@ export const resourceRouter = router({
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
-  // One row per user per resource, rewritten on every open: the open that just happened is always the newest,
-  // So there is nothing to compare and no history to prune. Owner-scoped, like every other resource write
+  // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
+  // Compare. Owner-scoped, like every other resource write
   recordAccess: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<void>(
     async ({ ctx, input: { id } }) => {
       const userId = ctx.getSessionPayload.user.id;

@@ -18,55 +18,49 @@ interface ResourceBladeNavProps {
 
 const { activeBlade, resource } = defineProps<ResourceBladeNavProps>();
 const items = computed<CollapsibleNavItem[]>(() => {
-  const createItem = (blade: string, icon: string, title: string, to: string) => ({
-    icon,
-    isActive: activeBlade === blade,
-    title,
-    to,
-  });
+  const resourcePath = RoutePath.Resource(resource.id);
   const results = [
-    createItem(
-      ResourceBladeType.Overview,
-      "mdi-information-outline",
-      ResourceBladeTitleMap[ResourceBladeType.Overview],
-      RoutePath.Resource(resource.id),
-    ),
+    {
+      blade: ResourceBladeType.Overview as string,
+      icon: "mdi-information-outline",
+      title: ResourceBladeTitleMap[ResourceBladeType.Overview],
+      to: resourcePath,
+    },
   ];
   // The Editor blade only exists for types with an inline editor; blade-only types (Sheet/TodoList) skip it
   if (ResourceEditorComponentMap[resource.type])
-    results.push(
-      createItem(
-        ResourceBladeType.Editor,
-        ResourceDefinitionMap[resource.type].icon,
-        ResourceBladeTitleMap[ResourceBladeType.Editor],
-        `${RoutePath.Resource(resource.id)}/${ResourceBladeType.Editor}`,
-      ),
-    );
+    results.push({
+      blade: ResourceBladeType.Editor,
+      icon: ResourceDefinitionMap[resource.type].icon,
+      title: ResourceBladeTitleMap[ResourceBladeType.Editor],
+      to: `${resourcePath}/${ResourceBladeType.Editor}`,
+    });
   // Activity is built-in for every type, and sits above the type's own blades like the portal's
-  results.push(
-    createItem(
-      ResourceBladeType.Activity,
-      "mdi-history",
-      ResourceBladeTitleMap[ResourceBladeType.Activity],
-      `${RoutePath.Resource(resource.id)}/${ResourceBladeType.Activity}`,
-    ),
-  );
+  results.push({
+    blade: ResourceBladeType.Activity,
+    icon: "mdi-history",
+    title: ResourceBladeTitleMap[ResourceBladeType.Activity],
+    to: `${resourcePath}/${ResourceBladeType.Activity}`,
+  });
   // Publish history is the first capability-conditional built-in blade — only publishable types have snapshots
   if (hasCapability(resource.type, "publishable"))
-    results.push(
-      createItem(
-        ResourceBladeType.PublishHistory,
-        "mdi-cloud-clock-outline",
-        ResourceBladeTitleMap[ResourceBladeType.PublishHistory],
-        `${RoutePath.Resource(resource.id)}/${ResourceBladeType.PublishHistory}`,
-      ),
-    );
+    results.push({
+      blade: ResourceBladeType.PublishHistory,
+      icon: "mdi-cloud-clock-outline",
+      title: ResourceBladeTitleMap[ResourceBladeType.PublishHistory],
+      to: `${resourcePath}/${ResourceBladeType.PublishHistory}`,
+    });
   for (const { icon, slug, title } of ResourceBladeDefinitionMap[resource.type])
-    results.push(createItem(slug, icon, title, `${RoutePath.Resource(resource.id)}/${slug}`));
-  return results;
+    results.push({ blade: slug, icon, title, to: `${resourcePath}/${slug}` });
+  return results.map((item) => ({ ...item, isActive: activeBlade === item.blade }));
 });
 </script>
 
 <template>
-  <StyledCollapsibleNav :items label="blade menu" :storage-key="LocalStorageKey.IsResourceBladeNavCollapsed" />
+  <StyledCollapsibleNav
+    :items
+    hide-text="Hide blade menu"
+    show-text="Show blade menu"
+    :storage-key="LocalStorageKey.IsResourceBladeNavCollapsed"
+  />
 </template>

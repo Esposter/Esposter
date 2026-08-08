@@ -89,6 +89,21 @@ Use plain `pnpm i` for dependency installs. See `packages/app/content/docs/archi
 
 `pnpm depcruise:graph` pipes dependency-cruiser DOT output directly into `graphviz-cli` to produce `dependency-graph.svg`. Avoid committing intermediate DOT/Mermaid files unless explicitly needed for debugging.
 
+## Finishing a change
+
+Working is not finished. Once the change does what it should — a feature, a fix, a refactor, a docs pass, anything — run this before saying it is done:
+
+1. **`/simplify`** — the cleanup pass (reuse, simplification, efficiency, altitude). A first draft of anything non-trivial leaves duplicated copy, a constant restated in two files, a twin of an existing helper, or a special case that belonged in the shared mechanism. That gets found and fixed here, not in review.
+2. **Ground the result in tests.** Every simplification is a behaviour claim, so it needs something that fails when the claim breaks:
+   - **Add the regression test** for anything the pass exposed — a bug found, an invariant that was only ever true by accident, a shared helper that now has more callers than the one it was written for.
+   - **Trim and dedupe the tests themselves.** Repeated fixtures become one `create*` helper; twin test files become a behaviour matrix plus a thin wiring test (`testing` skill). Tests bloat exactly like code does.
+   - Skip only when the change genuinely cannot regress — a comment, a rename the compiler proves, a docs edit.
+3. **Carry the docs and skills with it.** A shipped decision updates its owning docs page and, if it is a reusable convention, its owning skill (`docs`, `skill-authoring`) — in the same change, never "later".
+4. **`pnpm format` → `typecheck` → `lint:fix` → tests**, batched once at the end (`context-efficiency`, `package-scripts`).
+5. **Commit** the coherent chunk. Never push unless asked.
+
+Skip step 1 only for a genuinely one-line change. When a step finds nothing, say so — that is a result.
+
 ## Architecture
 
 ### Data Storage Split

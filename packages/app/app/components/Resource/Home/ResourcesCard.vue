@@ -1,23 +1,20 @@
 <script setup lang="ts">
+import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { ResourceHomeTab, ResourceHomeTabs } from "@/models/resource/ResourceHomeTab";
-import { ResourceHomeTabSourceMap } from "@/services/resource/ResourceHomeTabSourceMap";
 import { useFavoriteStore } from "@/store/resource/favorite";
+import { useRecentStore } from "@/store/resource/recent";
 import { RoutePath } from "@esposter/shared";
 
 const tab = useEnumRouteQuery("tab", ResourceHomeTabs, ResourceHomeTab.Recent);
-const {
-  error: recentError,
-  isLoading: isLoadingRecent,
-  readRecentResources,
-  recentResources,
-} = useReadRecentResources();
+const recentStore = useRecentStore();
+const { error: recentError, isLoading: isLoadingRecent, recents } = storeToRefs(recentStore);
 const favoriteStore = useFavoriteStore();
 const { favorites, isLoading: isLoadingFavorites } = storeToRefs(favoriteStore);
 // Fetched after mount (not awaited in setup) so the card shows its skeleton instead of blocking navigation
 const hasLoaded = ref(false);
 
 onMounted(async () => {
-  await Promise.all([readRecentResources(), favoriteStore.readFavorites()]);
+  await Promise.all([recentStore.readRecents(), favoriteStore.readFavorites()]);
   hasLoaded.value = true;
 });
 </script>
@@ -40,21 +37,21 @@ onMounted(async () => {
       <v-tabs-window-item :value="ResourceHomeTab.Recent">
         <v-alert v-if="recentError" ma-4 density="compact" type="error" :text="recentError">
           <template #append>
-            <v-btn size="small" variant="text" @click="readRecentResources()">Retry</v-btn>
+            <v-btn size="small" variant="text" @click="recentStore.readRecents()">Retry</v-btn>
           </template>
         </v-alert>
         <ResourceHomeList
           v-else
           :is-loading="isLoadingRecent || !hasLoaded"
-          :resources="recentResources"
-          :source="ResourceHomeTabSourceMap[ResourceHomeTab.Recent]"
+          :resources="recents"
+          :source="ResourceListSource.Recents"
         />
       </v-tabs-window-item>
       <v-tabs-window-item :value="ResourceHomeTab.Favorites">
         <ResourceHomeList
           :is-loading="isLoadingFavorites || !hasLoaded"
           :resources="favorites"
-          :source="ResourceHomeTabSourceMap[ResourceHomeTab.Favorites]"
+          :source="ResourceListSource.Favorites"
         />
       </v-tabs-window-item>
     </v-tabs-window>

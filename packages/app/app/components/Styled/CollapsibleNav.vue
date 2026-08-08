@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import type { CollapsibleNavItem } from "@/models/shared/CollapsibleNavItem";
+import type { LocalStorageKeyValue } from "@/services/shared/LocalStorageKey";
 
 import { takeOne } from "@esposter/shared";
 
 interface StyledCollapsibleNavProps {
+  // Whole tooltip sentences rather than a noun this interpolates — a component that owns half a sentence
+  // makes every caller guess the other half
+  hideText: string;
   items: CollapsibleNavItem[];
-  // Names what the caret hides, in its tooltip: "Hide blade menu", "Hide resource menu"
-  label: string;
-  storageKey: string;
+  showText: string;
+  storageKey: LocalStorageKeyValue;
 }
 
-const { items, label, storageKey } = defineProps<StyledCollapsibleNavProps>();
+const { hideText, items, showText, storageKey } = defineProps<StyledCollapsibleNavProps>();
 // On mobile the rail collapses into a dropdown so the content keeps the full width.
 const { smAndDown } = useVDisplay();
 const isOpen = ref(false);
@@ -44,12 +47,12 @@ const activeItem = computed(() => items.find(({ isActive }) => isActive) ?? take
     </v-list>
   </v-menu>
   <div v-else-if="isCollapsed" px-1 pt-2>
-    <StyledTooltipIconButton icon="mdi-chevron-double-right" :text="`Show ${label}`" @click="isCollapsed = false" />
+    <StyledTooltipIconButton icon="mdi-chevron-double-right" :text="showText" @click="isCollapsed = false" />
   </div>
   <div v-else flex flex-col>
     <!-- The caret sits at the end of the rail's own row, the way the portal puts it beside the menu's search -->
     <div px-1 pt-2 flex justify-end>
-      <StyledTooltipIconButton icon="mdi-chevron-double-left" :text="`Hide ${label}`" @click="isCollapsed = true" />
+      <StyledTooltipIconButton icon="mdi-chevron-double-left" :text="hideText" @click="isCollapsed = true" />
     </div>
     <v-list nav>
       <v-list-item

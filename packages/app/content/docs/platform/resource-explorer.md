@@ -41,21 +41,16 @@ The whole explorer is **client-only rendered**: `packages/app/configuration/rout
 
 ```mermaid
 flowchart LR
-  SMENU["ResourceServiceMenu<br/>standing rail on every route but the resource page"]
+  SMENU["ResourceServiceMenu<br/>standing rail — Home · All · Favorites · Recent · Tags · Recycle bin"]
   HOME["/resource-explorer (Home)<br/>search · quick-create tiles · recent resources"]
   SMENU --> HOME
   SMENU --> ALL["/resource-explorer/all<br/>full list · search"]
-  SMENU --> SETS["/favorites · /recents<br/>the same list, another set"]
-  SMENU --> TAGS["/resource-explorer/tags<br/>tag names + counts"]
-  SMENU --> BIN["/resource-explorer/recycle-bin"]
   HOME -->|See all| ALL
   HOME -->|Create a resource| CREATE["/resource-explorer/create<br/>type gallery"]
   HOME -->|quick-create tile| CFORM["/resource-explorer/create/[type]<br/>name + initial settings"]
   CREATE -->|pick type| CFORM
   CFORM -->|createResource| RES["/resource-explorer/[id]/[[blade]]"]
   HOME -->|recent row click| RES
-  TAGS -->|click a tag| ALL
-  SETS -->|row click| RES
   ALL -->|row click| RES
 
   subgraph bladepage [Resource page]

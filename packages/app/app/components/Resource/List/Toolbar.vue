@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import type { Item } from "@/models/shared/Item";
 
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 
 interface ResourceListToolbarProps {
-  pinnedColumnKey?: string;
+  source: ResourceListSource;
 }
 
-const { pinnedColumnKey } = defineProps<ResourceListToolbarProps>();
+const { source } = defineProps<ResourceListToolbarProps>();
 const search = defineModel<string>("search", { required: true });
 const isSummaryView = defineModel<boolean>("isSummaryView", { required: true });
 const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true });
-const hiddenColumnKeys = defineModel<string[]>("hiddenColumnKeys", { required: true });
 const emit = defineEmits<{ export: []; refresh: [] }>();
 // When narrow, the toolbar commands collapse into the … overflow menu — the close ✕ never collapses
 const { smAndDown } = useVDisplay();
@@ -69,7 +69,7 @@ const toolbarItems = computed<Item[]>(() => [
       :button-props="{ active }"
       @click="onClick"
     />
-    <ResourceListColumnChooserMenu v-model="hiddenColumnKeys" :pinned-column-key />
+    <ResourceListColumnChooserMenu :source />
     <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
     <StyledTooltipIconButton :to="closeTo" icon="mdi-close" text="Close" />
   </v-toolbar>

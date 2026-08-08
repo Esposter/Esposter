@@ -21,6 +21,8 @@ Batch format/typecheck/tests until **all** edits are done. Each pass re-pays a f
 
 Commit per coherent chunk regardless: commits are cheap and protect against other sessions' resets, checks are not.
 
+The pass runs **after** `/simplify`, not before — cleanup edits code, so checking first pays the startup cost twice. See "Finishing a change" in `CLAUDE.md` for the full order.
+
 ## Wait on a condition, never a sleep
 
 Poll until the thing you need is actually true, with a bounded loop:

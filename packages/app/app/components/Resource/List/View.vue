@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
+import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
+import { useResourceListColumns } from "@/composables/resource/list/useResourceListColumns";
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
-import {
-  DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS,
-  RESOURCE_LIST_ITEMS_PER_PAGE,
-  RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS,
-} from "@/services/resource/constants";
+import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
-import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { RoutePath } from "@esposter/shared";
@@ -23,7 +19,7 @@ interface ResourceListViewProps {
 // Every menu entry renders this one surface pointed at a different set, so a capability built here — filters,
 // Columns, grouping, selection, export — appears on all of them at once
 const { source = ResourceListSource.All } = defineProps<ResourceListViewProps>();
-const { pinnedColumnKey, sortBy: defaultSortBy } = ResourceListSourceDefinitionMap[source];
+const { sortBy: defaultSortBy } = ResourceListSourceDefinitionMap[source];
 const { getActionItems } = useResourceListActionItems();
 const listDialogStore = useListDialogStore();
 const { deletingId, renamingId } = storeToRefs(listDialogStore);
@@ -60,20 +56,20 @@ const { count, createResourcesPageReader, error, isLoading, items, readResources
   source,
 );
 const { exportAllResourcesCsv } = useExportResourcesCsv();
+// One spelling of "everything this list is filtered by", so adding a filter is one edit rather than three
+const filterValues = computed<ResourceFilterValues>(() => ({
+  searchQuery: search.value,
+  source,
+  status: status.value,
+  tagName: tagName.value,
+  tagValue: tagValue.value,
+  types: types.value,
+  updatedAfter: updatedAfter.value,
+  updatedBefore: updatedBefore.value,
+  updatedFilter: updatedFilter.value,
+}));
 // Vuetify resets to page 1 and refires update:options whenever `search` changes, so every filter funnels through it
-const filterKey = computed(() =>
-  JSON.stringify({
-    search: search.value,
-    source,
-    status: status.value,
-    tagName: tagName.value,
-    tagValue: tagValue.value,
-    types: types.value,
-    updatedAfter: updatedAfter.value,
-    updatedBefore: updatedBefore.value,
-    updatedFilter: updatedFilter.value,
-  }),
-);
+const filterKey = computed(() => JSON.stringify(filterValues.value));
 const itemsPerPage = ref(RESOURCE_LIST_ITEMS_PER_PAGE);
 const isGroupedByType = ref(false);
 // Summary is a lens on the same filtered query rather than a route, so it stays local to the workbench
@@ -83,29 +79,12 @@ const {
   error: typeCountsError,
   isLoading: isLoadingTypeCounts,
   refresh: refreshTypeCounts,
-} = useReadResourceTypeCounts(() => ({
-  searchQuery: search.value,
-  source,
-  status: status.value,
-  tagName: tagName.value,
-  tagValue: tagValue.value,
-  updatedAfter: updatedAfter.value,
-  updatedBefore: updatedBefore.value,
-  updatedFilter: updatedFilter.value,
-}));
+} = useReadResourceTypeCounts(() => filterValues.value);
 // The cards are only mounted in summary mode, so the read follows the mode rather than every filter change
 watch([isSummaryView, filterKey], async ([newIsSummaryView]) => {
   if (newIsSummaryView) await refreshTypeCounts();
 });
-const hiddenColumnKeys = useLocalStorage<string[]>(
-  LocalStorageKey.ResourceListHiddenColumns,
-  DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS,
-);
-// The pinned column outranks the stored preference: hiding the column a view is ordered by would leave the
-// Rows in an order with nothing on screen to explain it
-const visibleHeaders = computed(() =>
-  ResourceHeaders.filter(({ key }) => key === pinnedColumnKey || !hiddenColumnKeys.value.includes(key)),
-);
+const { visibleHeaders } = useResourceListColumns(source);
 const { clearSelection, selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
 const contextMenuId = ref("");
 const contextMenuPosition = ref<[number, number]>([0, 0]);
@@ -140,8 +119,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       v-model:search="searchInput"
       v-model:is-summary-view="isSummaryView"
       v-model:is-grouped-by-type="isGroupedByType"
-      v-model:hidden-column-keys="hiddenColumnKeys"
-      :pinned-column-key
+      :source
       @export="exportAllResourcesCsv(createResourcesPageReader())"
       @refresh="isSummaryView ? refreshTypeCounts() : refresh()"
     />

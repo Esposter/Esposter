@@ -35,7 +35,7 @@ With a query set the dropdown shows three groups plus a footer:
 | Pages     | static `PageSearchItems`                                               | page icon · title                       | every [service menu](/docs/platform/resource-service-menu) entry, plus Create a resource |
 | footer    | always when a query is set                                             | "See all results →"                     | `/resource-explorer/all?search={q}`                                                      |
 
-- **Empty query**: two groups instead — recent searches (`LocalStorageKey.ResourceRecentSearches`, capped at 5, pushed on submit/pick) and **Recently opened**, the caller's own server-side access rows read through `useReadRecentResources` ([favorites & recents](/docs/platform/favorites-and-recents)). The two are stored differently on purpose: a query you typed is not something to follow you between machines, while the resources you opened are.
+- **Empty query**: two groups instead — recent searches (`LocalStorageKey.ResourceRecentSearches`, capped at 5, pushed on submit/pick) and **Recently opened**, the caller's own server-side access rows read through the recents store ([favorites & recents](/docs/platform/favorites-and-recents)). The two are stored differently on purpose: a query you typed is not something to follow you between machines, while the resources you opened are.
 - **Match highlight**: the matched substring is bolded in row titles (`ResourceSearchHighlightedTitle` over `getHighlightParts`).
 - **No results**: a single "No resources found for '{q}'" row plus the See-all footer.
 - `/resource-explorer/all` reads `?search=` and `?types=` on load, so the footer and Services rows deep-link into a pre-filtered list.

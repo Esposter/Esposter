@@ -12,14 +12,7 @@ onMounted(() => refresh());
 <template>
   <div flex flex-col h-full min-w-0 overflow-y-auto>
     <StyledSkeleton v-if="isLoading" type="list-item@8" />
-    <StyledEmptyState
-      v-else-if="error"
-      icon="mdi-alert-circle-outline"
-      title="Something went wrong"
-      :description="error"
-    >
-      <v-btn prepend-icon="mdi-refresh" variant="tonal" @click="refresh()">Retry</v-btn>
-    </StyledEmptyState>
+    <StyledErrorState v-else-if="error" :error @retry="refresh()" />
     <StyledEmptyState
       v-else-if="counts.length === 0"
       icon="mdi-tag-multiple-outline"

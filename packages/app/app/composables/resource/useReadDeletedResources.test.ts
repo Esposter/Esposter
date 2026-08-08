@@ -3,18 +3,14 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 
 import { useReadDeletedResources } from "@/composables/resource/useReadDeletedResources";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
-import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useReadDeletedResources, () => {
   const server = setupMswTrpc();
-  const firstPage = [
-    { id: crypto.randomUUID(), lastAccessedAt: null, name: "name", type: ResourceType.Sheet } as ResourceListItem,
-  ];
-  const secondPage = [
-    { id: crypto.randomUUID(), lastAccessedAt: null, name: "name", type: ResourceType.Sheet } as ResourceListItem,
-  ];
+  const firstPage = [createResourceListItem()];
+  const secondPage = [createResourceListItem()];
   const firstOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 1, sortBy: [] };
   const secondOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 2, sortBy: [] };
 

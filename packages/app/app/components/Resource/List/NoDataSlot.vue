@@ -14,9 +14,7 @@ const emit = defineEmits<{ clear: []; refresh: [] }>();
 </script>
 
 <template>
-  <StyledEmptyState v-if="error" icon="mdi-alert-circle-outline" title="Something went wrong" :description="error">
-    <v-btn prepend-icon="mdi-refresh" variant="tonal" @click="emit('refresh')">Retry</v-btn>
-  </StyledEmptyState>
+  <StyledErrorState v-if="error" :error @retry="emit('refresh')" />
   <StyledEmptyState
     v-else-if="hasActiveFilters"
     icon="mdi-filter-off-outline"
@@ -26,5 +24,9 @@ const emit = defineEmits<{ clear: []; refresh: [] }>();
     <v-btn variant="tonal" @click="emit('clear')">Clear filters</v-btn>
   </StyledEmptyState>
   <!-- An empty Favorites list is not an empty account, so the copy comes from the set the view is over -->
-  <StyledEmptyState v-else :="ResourceListSourceDefinitionMap[source].emptyState" />
+  <StyledEmptyState
+    v-else
+    :="ResourceListSourceDefinitionMap[source].emptyState"
+    :icon="ResourceListSourceDefinitionMap[source].icon"
+  />
 </template>

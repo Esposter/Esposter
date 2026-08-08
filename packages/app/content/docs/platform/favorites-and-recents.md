@@ -60,7 +60,7 @@ The list routes use neither of the reads above: they are `resource.readResources
 | `app/store/resource/favorite.ts`                      | Favorites store + optimistic toggle      |
 | `app/components/Resource/FavoriteToggle.vue`          | The star, shared by the list and blade   |
 | `app/composables/resource/useRecordResourceAccess.ts` | Identity-watching access write           |
-| `app/composables/resource/useReadRecentResources.ts`  | The capped opened-first read             |
+| `app/store/resource/recent.ts`                        | Recents store + capped opened-first read |
 | `app/components/Resource/Home/ResourcesCard.vue`      | Home Recent/Favorites tabs               |
 
 ## Notes
@@ -69,3 +69,4 @@ The list routes use neither of the reads above: they are `resource.readResources
 - Favorites are read once per list rather than once per row — every row asks "am I starred?", so the store exposes a `Set` of ids and the rows read it. The set itself is read once per session, not once per mount: the workbench list mounts inside the blade, so concurrent mounts share the in-flight query instead of each running the same joined read, and a delete invalidates it because only the server knows which stars still resolve.
 - Soft-deleted resources are filtered out of every read here, so a starred resource sitting in the [recycle bin](/docs/platform/recycle-bin) disappears from Favorites and returns when restored — the star itself is never lost. The same is true of an access row.
 - The search dropdown's **Recently opened** group reads the same server-side set, so it and the Recent route can never disagree. Recent _searches_ stay in `localStorage`: a query you typed is not something to follow you between machines.
+- Recents are a store for the same reason favorites are: Home mounts the Recent card and the inline search box together, and both want the same capped list — the set is read once per session and the two mounts share the in-flight query rather than each issuing it.

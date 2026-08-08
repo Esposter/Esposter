@@ -1,22 +1,16 @@
 // @vitest-environment nuxt
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useFavoriteStore } from "@/store/resource/favorite";
-import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFavoriteStore, () => {
   const server = setupMswTrpc();
-  const resource = {
-    contentVersion: 0,
-    id: crypto.randomUUID(),
-    lastAccessedAt: null,
-    name: "name",
-    type: ResourceType.Sheet,
-  } as ResourceListItem;
+  const resource = createResourceListItem({ contentVersion: 0 });
 
   beforeEach(() => {
     setActivePinia(createPinia());

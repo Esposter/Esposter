@@ -37,23 +37,13 @@ The filter preset is the whole mechanism. `resource.readResources` gained `isFav
 | `Favorites` | `isFavorite: true` | updated, newest first | —                |
 | `Recents`   | `isAccessed: true` | opened, newest first  | `lastAccessedAt` |
 
-**Favorites deliberately does not sort starred-first.** The star's own timestamp is not a column any list shows, and a list ordered by a value the reader cannot see reads as arbitrary. Recent is the opposite case, so it pins the column it sorts by: `Last accessed` is always rendered there and is not offered to the column chooser, because a sort key the reader can hide is an order nobody can explain. Everywhere else the column exists but is hidden by default.
+**Favorites deliberately does not sort starred-first.** The star's own timestamp is not a column any list shows, and a list ordered by a value the reader cannot see reads as arbitrary. Recent is the opposite case, so it pins the column it sorts by — see the column chooser in [list filters & views](/docs/platform/list-filters-and-views) for what pinning means.
 
-## Last accessed, and why recents went server-side
-
-Recents used to be per-device ids in `localStorage`. Promoting Recent to a route with a visible `Last accessed` column is what forced the change: a card that quietly differed between two browsers was untidy, but a **column** that disagrees is indefensible.
-
-`resourceAccesses` is one row per user per resource, rewritten on every open — so the table is bounded by what exists rather than growing with traffic. Every list read left-joins it, caller-scoped, which is what makes the column sortable rather than decorative: the joined selection is reused as the sort space, so a column the list can show is a column it can sort by.
-
-It is deliberately **not** called a view. `ResourceViewEntity` counts anonymous hits on a _published_ resource ([published view analytics](/docs/platform/published-view-analytics)); this records the owner opening their own. Same word, two different facts.
-
-## Tags
-
-The one genuinely new read. Tag names live inside a single `jsonb` column rather than their own table, so `resource.countsByTag` expands the keys in a subquery and groups over that — a set-returning function cannot sit beside an aggregate in one select list. Values are not part of the grouping: the Tags entry answers "which tags do I use", and the `/all` Tag pill is where a value narrows it further.
+Promoting Recent to a route is what moved recents from per-device `localStorage` to a server-side table — the storage change and the `Last accessed` column it made possible are told in [favorites & recents](/docs/platform/favorites-and-recents).
 
 ## What we deliberately did not copy
 
-**Resource groups have no analogue and were not invented.** A group in the portal is a containment relationship — a resource is _inside_ exactly one — and our resources have no container at all, the same fact that keeps the breadcrumb from deriving ancestry ([breadcrumb trail](/docs/platform/breadcrumb-trail)). Tags already carry the many-to-many grouping people actually want, so the menu has a Tags entry and no Groups entry. Subscriptions, locations and deployments are likewise portal concepts with nothing behind them here — copying the menu's shape must not mean copying its vocabulary.
+The Tags entry is the one genuinely new read — a grouped count over tag names, described in [resource tags](/docs/platform/tags). It exists **instead of** a Groups entry: a portal group is a containment relationship and our resources have no container, so resource groups stay [deferred](/docs/platform/deferred/resource-groups) and tags carry the many-to-many grouping people actually want. Subscriptions, locations and deployments are likewise portal concepts with nothing behind them here — copying the menu's shape must not mean copying its vocabulary.
 
 ## Where the menu renders
 

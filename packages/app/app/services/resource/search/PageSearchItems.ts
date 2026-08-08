@@ -1,9 +1,20 @@
 import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
 
+import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
+import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 import { RoutePath } from "@esposter/shared";
 
-export const PageSearchItems = [
+// The list routes come from the source registry so a new source is searchable without being listed twice.
+// Their titles are spelled out here rather than taken from the definition: the menu sits under a "Resources"
+// Heading that supplies the noun, while a flat search result has to carry it — "Favorites" alone is ambiguous
+const ResourceListSourceSearchTitleMap: Record<ResourceListSource, string> = {
+  [ResourceListSource.All]: "All resources",
+  [ResourceListSource.Favorites]: "Favorite resources",
+  [ResourceListSource.Recents]: "Recent resources",
+};
+
+export const PageSearchItems: readonly ResourceSearchItem[] = [
   {
     group: ResourceSearchGroup.Pages,
     icon: "mdi-home-outline",
@@ -11,27 +22,13 @@ export const PageSearchItems = [
     title: "Home",
     to: RoutePath.ResourceExplorer,
   },
-  {
+  ...Object.values(ResourceListSource).map((source) => ({
     group: ResourceSearchGroup.Pages,
-    icon: "mdi-format-list-bulleted",
-    id: `${ResourceSearchGroup.Pages}-all-resources`,
-    title: "All resources",
-    to: RoutePath.ResourceExplorerAll,
-  },
-  {
-    group: ResourceSearchGroup.Pages,
-    icon: "mdi-star-outline",
-    id: `${ResourceSearchGroup.Pages}-favorite-resources`,
-    title: "Favorite resources",
-    to: RoutePath.ResourceExplorerFavorites,
-  },
-  {
-    group: ResourceSearchGroup.Pages,
-    icon: "mdi-history",
-    id: `${ResourceSearchGroup.Pages}-recent-resources`,
-    title: "Recent resources",
-    to: RoutePath.ResourceExplorerRecents,
-  },
+    icon: ResourceListSourceDefinitionMap[source].icon,
+    id: `${ResourceSearchGroup.Pages}-${source}`,
+    title: ResourceListSourceSearchTitleMap[source],
+    to: ResourceListSourceDefinitionMap[source].to,
+  })),
   {
     group: ResourceSearchGroup.Pages,
     icon: "mdi-tag-multiple-outline",
@@ -53,4 +50,4 @@ export const PageSearchItems = [
     title: "Create a resource",
     to: RoutePath.ResourceExplorerCreate,
   },
-] as const satisfies readonly ResourceSearchItem[];
+];

@@ -17,9 +17,7 @@ const { smAndDown } = useVDisplay();
 
 <!-- The shell every resource page shares: the breadcrumb trail and page title, with the storage meter riding the
      trail's spare width. The meter lives here rather than in the app bar because storage is what this area
-     spends — it belongs where uploads happen, not in chrome every route pays for.
-     The service menu stands beside the content on every route but the resource page, which brings a blade rail
-     of its own — two rails on one screen spends the width the blade itself uses better -->
+     spends — it belongs where uploads happen, not in chrome every route pays for -->
 <template>
   <NuxtLayout>
     <div flex flex-col h-full>

@@ -3,8 +3,6 @@ import type { Resource } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 // Feeds the Recent list route, Home's Recent tab and the search dropdown's Recently opened group.
-// Server-side, so the set follows the caller between devices — the Last accessed column makes a per-device
-// Answer visible, and a column that disagrees between two browsers is one nobody can explain.
 export const useRecordResourceAccess = (resource: Ref<Resource | undefined>) => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
