@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
+import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+
+import { useResourceListColumns } from "@/composables/resource/list/useResourceListColumns";
 import { mergeProps } from "vue";
 
-const hiddenColumnKeys = defineModel<string[]>({ required: true });
-// Name is the identity column — it can never be hidden
-const toggleableHeaders = ResourceHeaders.filter(({ key }) => key !== "name");
-const toggleColumn = (key: string) => {
-  hiddenColumnKeys.value = hiddenColumnKeys.value.includes(key)
-    ? hiddenColumnKeys.value.filter((columnKey) => columnKey !== key)
-    : [...hiddenColumnKeys.value, key];
-};
+interface ResourceListColumnChooserMenuProps {
+  source: ResourceListSource;
+}
+
+const { source } = defineProps<ResourceListColumnChooserMenuProps>();
+// Reads the same composable the table does rather than taking the column state as a model — one owner of
+// Which columns exist, which are pinned, and which are hidden
+const { hiddenColumnKeys, toggleableHeaders, toggleColumn } = useResourceListColumns(source);
 </script>
 
 <template>

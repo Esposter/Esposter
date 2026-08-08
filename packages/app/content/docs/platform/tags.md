@@ -33,10 +33,11 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 
 ## Procedures
 
-| Procedure                          | Auth   | Input                  | Purpose                                |
-| ---------------------------------- | ------ | ---------------------- | -------------------------------------- |
-| `<type>.updateResource` (factory)  | owner  | + `tags?`              | Whole-record replace (Azure semantics) |
-| `resource.readResources` / `count` | authed | + `tags?` / `tagName?` | Containment or key-existence filter    |
+| Procedure                          | Auth   | Input                  | Purpose                                   |
+| ---------------------------------- | ------ | ---------------------- | ----------------------------------------- |
+| `<type>.updateResource` (factory)  | owner  | + `tags?`              | Whole-record replace (Azure semantics)    |
+| `resource.readResources` / `count` | authed | + `tags?` / `tagName?` | Containment or key-existence filter       |
+| `resource.countsByTag`             | authed | —                      | Tag names + how many resources carry each |
 
 ## Key files
 
@@ -46,11 +47,13 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 | `packages/db-schema/src/schema/resources.ts`             | `tags` column + GIN index |
 | `app/components/Resource/TagsEditorDialog.vue`           | Name/value row editor     |
 | `app/components/Resource/List/TagFilterPill.vue`         | The `/all` Tag pill       |
+| `app/components/Resource/TagList.vue`                    | The `/tags` route's list  |
 | `app/components/Resource/Overview.vue`                   | Essentials tags row       |
 
 ## Notes
 
 - Flat name:value only, faithful to Azure — no hierarchies, no typed values.
 - A tags-only update leaves no `Renamed` entry in the [activity log](/docs/platform/activity-log): changing a label is not renaming a resource.
-- Free-text tag search inside [global search](/docs/platform/global-search) is not wired up; the `/all` filter pill is the retrieval path.
+- Free-text tag search inside [global search](/docs/platform/global-search) is not wired up; the `/all` filter pill and the `/resource-explorer/tags` list ([service menu](/docs/platform/resource-service-menu)) are the retrieval paths.
+- `countsByTag` groups by **name only**. Tag names live inside one `jsonb` column, so the read expands the keys in a subquery and groups over that — a set-returning function cannot sit beside an aggregate in one select list. A value narrows the result afterwards, through the pill.
 - If tag usage grows into "give me a folder", that is the [resource groups](/docs/platform/deferred/resource-groups) revisit trigger, not more tag features.

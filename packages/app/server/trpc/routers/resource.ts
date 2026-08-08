@@ -1,11 +1,14 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { PublishHistoryVersion } from "#shared/models/resource/PublishHistoryVersion";
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
 import type { Context } from "@@/server/trpc/context";
 import type { Clause, Resource } from "@esposter/db-schema";
 
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListItem";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
@@ -40,6 +43,7 @@ import {
   DatabaseEntityType,
   getResourceOwnedTableNames,
   RESOURCE_NAME_MAX_LENGTH,
+  resourceAccesses,
   ResourceActivityEntity,
   resourceActivityEntitySchema,
   ResourceActivityType,
@@ -59,7 +63,23 @@ import {
   takeOne,
 } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, count, desc, eq, exists, gte, ilike, inArray, isNull, lte, notExists, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  exists,
+  getColumns,
+  gte,
+  ilike,
+  inArray,
+  isNull,
+  lte,
+  notExists,
+  or,
+  sql,
+} from "drizzle-orm";
 import { z } from "zod";
 
 const readResourceInputSchema = selectResourceSchema.pick({ id: true });
@@ -70,8 +90,13 @@ const restorePublishedVersionInputSchema = z.object({
 });
 
 const resourceFilterInputSchema = z.object({
-  // Hydrates the Home Recent tab from the per-device localStorage view list
+  // Narrows a read to an explicit set — the search dropdown resolves its own ids this way
   ids: createUniqueArraySchema(selectResourceSchema.shape.id).max(MAX_READ_LIMIT).optional(),
+  // Whether the caller has ever opened it, and whether they have starred it. The Recent and Favorites list
+  // Views are these two filters and nothing else, so each inherits every other filter, the row count and the
+  // Summary cards rather than re-implementing the workbench against its own read
+  isAccessed: z.boolean().optional(),
+  isFavorite: z.boolean().optional(),
   isPublished: z.boolean().optional(),
   searchQuery: z.string().optional(),
   // The Tag pill's value is optional, and containment cannot express "has this tag, any value" —
@@ -89,11 +114,11 @@ const resourceFilterInputSchema = z.object({
 type ResourceFilterInput = z.infer<typeof resourceFilterInputSchema>;
 
 const readResourcesInputSchema = z.object({
-  ...createOffsetPaginationParamsSchema(selectResourceSchema.keyof()).shape,
+  ...createOffsetPaginationParamsSchema(resourceListSortKeySchema).shape,
   ...resourceFilterInputSchema.shape,
 });
 
-const readDeletedResourcesInputSchema = createOffsetPaginationParamsSchema(selectResourceSchema.keyof()).prefault({});
+const readDeletedResourcesInputSchema = createOffsetPaginationParamsSchema(resourceListSortKeySchema).prefault({});
 
 const readActivitiesInputSchema = z.object({
   ...readResourceInputSchema.shape,
@@ -110,11 +135,31 @@ const duplicateNameSuffix = " (copy)";
 // Backed by the resources_name_trgm_index GIN index; shared so the filter and the ranking
 // Can never disagree about what "similar" means
 const createSearchSimilarity = (searchQuery: string) => sql`similarity(${resources.name}, ${searchQuery})`;
+// Every resource list — the workbench, the recycle bin and the favorites read alike — projects one row shape,
+// Reused as the sort space so a column the list can show is a column it can sort by
+const resourceListSelection = { ...getColumns(resources), lastAccessedAt: resourceAccesses.accessedAt };
+// Caller-scoped relationship predicates, shared by the joins that project them and the EXISTS subqueries that
+// Filter on them, so one user's Recent or Favorites can never reflect another's
+const createLastAccessedJoin = (userId: string) =>
+  and(eq(resourceAccesses.resourceId, resources.id), eq(resourceAccesses.userId, userId));
+const createFavoriteJoin = (userId: string) =>
+  and(eq(resourceFavorites.resourceId, resources.id), eq(resourceFavorites.userId, userId));
 // Shared filter so count and readResources stay in lockstep as filters evolve
 const createResourcesWhere = (
   db: Context["db"],
   userId: string,
-  { ids, isPublished, searchQuery, tagName, tags, types, updatedAfter, updatedBefore }: ResourceFilterInput,
+  {
+    ids,
+    isAccessed,
+    isFavorite,
+    isPublished,
+    searchQuery,
+    tagName,
+    tags,
+    types,
+    updatedAfter,
+    updatedBefore,
+  }: ResourceFilterInput,
   isDeletedOnly = false,
 ) => {
   // A publication row exists iff the resource is currently published
@@ -122,6 +167,10 @@ const createResourcesWhere = (
     .select()
     .from(resourcePublications)
     .where(eq(resourcePublications.resourceId, resources.id));
+  // Both are scoped to the caller as well as the resource, so one user's Recent or Favorites can never
+  // Reflect another's — the row is the relationship, not a property of the resource
+  const accessExists = db.select().from(resourceAccesses).where(createLastAccessedJoin(userId));
+  const favoriteExists = db.select().from(resourceFavorites).where(createFavoriteJoin(userId));
   return and(
     eq(resources.userId, userId),
     // Soft-deleted resources live on for the Recycle bin window, so every normal read excludes them
@@ -138,6 +187,8 @@ const createResourcesWhere = (
     // Both operators are backed by the resources_tags_index GIN index
     tagName ? sql`jsonb_exists(${resources.tags}, ${tagName})` : undefined,
     types && types.length > 0 ? inArray(resources.type, types) : undefined,
+    isAccessed === undefined ? undefined : isAccessed ? exists(accessExists) : notExists(accessExists),
+    isFavorite === undefined ? undefined : isFavorite ? exists(favoriteExists) : notExists(favoriteExists),
     isPublished === undefined ? undefined : isPublished ? exists(publicationExists) : notExists(publicationExists),
     updatedAfter ? gte(resources.updatedAt, updatedAfter) : undefined,
     updatedBefore ? lte(resources.updatedAt, updatedBefore) : undefined,
@@ -163,6 +214,22 @@ export const resourceRouter = router({
           .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true)),
       ).count,
   ),
+  // The Tags list. Tag names live inside one jsonb column rather than their own table, so the breakdown is a
+  // Grouped count over the expanded keys — the expansion is a subquery because a set-returning function
+  // Cannot sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
+  // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
+  countsByTag: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) => {
+    const tagNames = ctx.db
+      .select({ name: sql<string>`jsonb_object_keys(${resources.tags})`.as("name") })
+      .from(resources)
+      .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}))
+      .as("tag_names");
+    return ctx.db
+      .select({ count: count(), name: tagNames.name })
+      .from(tagNames)
+      .groupBy(tagNames.name)
+      .orderBy(desc(count()), asc(tagNames.name));
+  }),
   // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
   // The affordance for setting it. Behind the same createResourcesWhere, so the cards can never disagree
   // With the list they navigate into
@@ -253,26 +320,33 @@ export const resourceRouter = router({
   readDeletedResources: standardAuthedProcedure
     .input(readDeletedResourcesInputSchema)
     .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      // The bin reads the same row shape as the workbench, so one sort space serves both and neither list can
+      // Be handed a key its query cannot order by
       const resultResources = await ctx.db
-        .select()
+        .select(resourceListSelection)
         .from(resources)
-        .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true))
-        .orderBy(...(sortBy.length > 0 ? parseSortByToSql(resources, sortBy) : [desc(resources.deletedAt)]))
+        .leftJoin(resourceAccesses, createLastAccessedJoin(userId))
+        .where(createResourcesWhere(ctx.db, userId, {}, true))
+        .orderBy(...(sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resources.deletedAt)]))
         .limit(limit + 1)
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
-  readFavorites: standardAuthedProcedure.query<Resource[]>(async ({ ctx }) =>
-    (
-      await ctx.db
-        .select({ resource: resources })
-        .from(resourceFavorites)
-        .innerJoin(resources, eq(resourceFavorites.resourceId, resources.id))
-        .where(and(eq(resourceFavorites.userId, ctx.getSessionPayload.user.id), isNull(resources.deletedAt)))
-        .orderBy(desc(resourceFavorites.createdAt))
-        .limit(MAX_READ_LIMIT)
-    ).map(({ resource }) => resource),
-  ),
+  // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
+  // Star's own timestamp is not a column any list shows. Otherwise it is the same predicate the `isFavorite`
+  // Filter expresses, taken from createResourcesWhere so a rule added there reaches both
+  readFavorites: standardAuthedProcedure.query<ResourceListItem[]>(({ ctx }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    return ctx.db
+      .select(resourceListSelection)
+      .from(resources)
+      .innerJoin(resourceFavorites, createFavoriteJoin(userId))
+      .leftJoin(resourceAccesses, createLastAccessedJoin(userId))
+      .where(createResourcesWhere(ctx.db, userId, {}))
+      .orderBy(desc(resourceFavorites.createdAt))
+      .limit(MAX_READ_LIMIT);
+  }),
   // Which snapshots exist comes from a blob prefix listing — no history table, since the {id}/published/{n}
   // Blobs are already the source of truth for that. Which one is LIVE comes from the publication row instead,
   // Because the two can disagree: the unpublish sweep is a best-effort event, so a republish can land while
@@ -289,10 +363,12 @@ export const resourceRouter = router({
   readResources: standardAuthedProcedure
     .input(readResourcesInputSchema.prefault({}))
     .query(async ({ ctx, input: { limit, offset, sortBy, ...filter } }) => {
+      const userId = ctx.getSessionPayload.user.id;
       const resultResources = await ctx.db
-        .select()
+        .select(resourceListSelection)
         .from(resources)
-        .where(createResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, filter))
+        .leftJoin(resourceAccesses, createLastAccessedJoin(userId))
+        .where(createResourcesWhere(ctx.db, userId, filter))
         .orderBy(
           // Relevance ladder: closest trigram match first so a typo still ranks its resource top, then
           // Prefix matches above the remaining substring matches (true sorts before false under desc),
@@ -303,12 +379,24 @@ export const resourceRouter = router({
                 desc(ilike(resources.name, `${escapeLike(filter.searchQuery)}%`)),
               ]
             : []),
-          ...(sortBy.length > 0 ? parseSortByToSql(resources, sortBy) : [desc(resources.updatedAt)]),
+          ...(sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resources.updatedAt)]),
         )
         .limit(limit + 1)
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);
     }),
+  // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
+  // Compare. Owner-scoped, like every other resource write
+  recordAccess: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation(async ({ ctx, input: { id } }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    await ctx.db
+      .insert(resourceAccesses)
+      .values({ resourceId: id, userId })
+      .onConflictDoUpdate({
+        set: { accessedAt: new Date() },
+        target: [resourceAccesses.userId, resourceAccesses.resourceId],
+      });
+  }),
   // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
   // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
   // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule.

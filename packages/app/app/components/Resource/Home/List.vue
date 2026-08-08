@@ -1,28 +1,27 @@
 <script setup lang="ts">
-import type { RecentResource } from "@/models/resource/RecentResource";
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 
 import { dayjs } from "#shared/services/dayjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 import { RoutePath } from "@esposter/shared";
 
 interface ResourceHomeListProps {
-  emptyDescription: string;
-  emptyIcon: string;
-  emptyTitle: string;
   isLoading?: boolean;
-  resources: RecentResource[];
+  resources: ResourceListItem[];
+  source: ResourceListSource;
 }
 
-const { emptyDescription, emptyIcon, emptyTitle, isLoading, resources } = defineProps<ResourceHomeListProps>();
+const { isLoading, resources, source } = defineProps<ResourceHomeListProps>();
 </script>
 
 <template>
   <StyledSkeleton v-if="isLoading" type="list-item-two-line@5" />
   <StyledEmptyState
     v-else-if="resources.length === 0"
-    :description="emptyDescription"
-    :icon="emptyIcon"
-    :title="emptyTitle"
+    :="ResourceListSourceDefinitionMap[source].emptyState"
+    :icon="ResourceListSourceDefinitionMap[source].icon"
   />
   <v-list v-else lines="two">
     <v-list-item
@@ -34,8 +33,8 @@ const { emptyDescription, emptyIcon, emptyTitle, isLoading, resources } = define
     >
       <template #subtitle>
         {{ ResourceDefinitionMap[resource.type].title }} ·
-        <!-- Views recorded before recents tracked a timestamp have none, so fall back to the row's own recency -->
-        <template v-if="resource.viewedAt">viewed {{ dayjs(resource.viewedAt).fromNow() }}</template>
+        <!-- Favorites are ordered by the resource's own recency, so only Recent has an open time to show -->
+        <template v-if="resource.lastAccessedAt">opened {{ dayjs(resource.lastAccessedAt).fromNow() }}</template>
         <template v-else>{{ dayjs(resource.updatedAt).fromNow() }}</template>
       </template>
     </v-list-item>

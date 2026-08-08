@@ -13,7 +13,6 @@ export const LocalStorageKey = {
   MessageSidebarRoomsCollapsed: "message-sidebar-rooms-collapsed",
   ResourceListHiddenColumns: "resource-list-hidden-columns",
   ResourceRecentSearches: "resource-recent-searches",
-  ResourceRecentViews: "resource-recent-views",
   // Scoped by participant token as well as survey: a shared browser must not resume a response that was
   // Started by a different participant
   SurveyResponseId: (surveyId: string, participantToken: string) =>
@@ -22,3 +21,7 @@ export const LocalStorageKey = {
   VoiceInputDeviceId: "user-settings-voice-input-device-id",
   VoiceOutputDeviceId: "user-settings-voice-output-device-id",
 } as const;
+
+// The fixed keys only — a component handed a key to persist against takes one from this registry rather than
+// Any string, which is what keeps the registry the single guarantee that keys cannot overlap
+export type LocalStorageKeyValue = Extract<(typeof LocalStorageKey)[keyof typeof LocalStorageKey], string>;

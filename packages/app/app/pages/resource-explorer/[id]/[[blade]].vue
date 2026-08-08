@@ -34,8 +34,9 @@ const {
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
 const activeBlade = computed(() => getRouteParamString(route.params.blade) || ResourceBladeType.Overview);
-// Opening a resource feeds Home's Recent tab and the search dropdown's "Recently viewed" group
-useRecordResourceView(resource);
+// Opening a resource is what Recent is a list of — the Recent route, Home's Recent tab and the search
+// Dropdown's "Recently opened" group all read the rows this writes
+useRecordResourceAccess(resource);
 const favoriteStore = useFavoriteStore();
 // The toolbar's star needs to know whether this resource is already starred
 onMounted(() => favoriteStore.readFavorites());

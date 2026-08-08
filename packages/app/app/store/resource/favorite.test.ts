@@ -1,16 +1,16 @@
 // @vitest-environment nuxt
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useFavoriteStore } from "@/store/resource/favorite";
-import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFavoriteStore, () => {
   const server = setupMswTrpc();
-  const resource = { contentVersion: 0, id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource;
+  const resource = createResourceListItem({ contentVersion: 0 });
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -72,7 +72,7 @@ describe(useFavoriteStore, () => {
   test("reads the favorites once for repeat and concurrent mounts", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn<() => Resource[]>(() => [resource]);
+    const handler = vi.fn<() => ResourceListItem[]>(() => [resource]);
     server.use(trpcMsw.resource.readFavorites.query(handler));
     const favoriteStore = useFavoriteStore();
     const { favorites } = storeToRefs(favoriteStore);
@@ -88,7 +88,7 @@ describe(useFavoriteStore, () => {
   test("re-reads the favorites after an invalidation", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn<() => Resource[]>(() => [resource]);
+    const handler = vi.fn<() => ResourceListItem[]>(() => [resource]);
     server.use(trpcMsw.resource.readFavorites.query(handler));
     const favoriteStore = useFavoriteStore();
     const { readFavorites, refreshFavorites } = favoriteStore;

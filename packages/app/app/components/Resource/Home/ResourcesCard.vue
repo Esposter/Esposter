@@ -1,26 +1,26 @@
 <script setup lang="ts">
+import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { ResourceHomeTab, ResourceHomeTabs } from "@/models/resource/ResourceHomeTab";
 import { useFavoriteStore } from "@/store/resource/favorite";
+import { useRecentStore } from "@/store/resource/recent";
 import { RoutePath } from "@esposter/shared";
 
 const tab = useEnumRouteQuery("tab", ResourceHomeTabs, ResourceHomeTab.Recent);
-const {
-  error: recentError,
-  isLoading: isLoadingRecent,
-  readRecentResources,
-  recentResources,
-} = useReadRecentResources();
+const recentStore = useRecentStore();
+const { error: recentError, isLoading: isLoadingRecent, recents } = storeToRefs(recentStore);
 const favoriteStore = useFavoriteStore();
 const { favorites, isLoading: isLoadingFavorites } = storeToRefs(favoriteStore);
 // Fetched after mount (not awaited in setup) so the card shows its skeleton instead of blocking navigation
 const hasLoaded = ref(false);
 
 onMounted(async () => {
-  await Promise.all([readRecentResources(), favoriteStore.readFavorites()]);
+  await Promise.all([recentStore.readRecents(), favoriteStore.readFavorites()]);
   hasLoaded.value = true;
 });
 </script>
 
+<!-- Home's preview of the two sets the service menu gives full list routes. Each tab is the top few rows;
+     See all opens the workbench where they can be filtered, sorted and acted on in bulk -->
 <template>
   <v-card>
     <v-card-item>
@@ -37,25 +37,21 @@ onMounted(async () => {
       <v-tabs-window-item :value="ResourceHomeTab.Recent">
         <v-alert v-if="recentError" ma-4 density="compact" type="error" :text="recentError">
           <template #append>
-            <v-btn size="small" variant="text" @click="readRecentResources()">Retry</v-btn>
+            <v-btn size="small" variant="text" @click="recentStore.readRecents()">Retry</v-btn>
           </template>
         </v-alert>
         <ResourceHomeList
           v-else
-          empty-description="Open a resource and it will show up here."
-          empty-icon="mdi-folder-multiple-outline"
-          empty-title="No recent resources"
           :is-loading="isLoadingRecent || !hasLoaded"
-          :resources="recentResources"
+          :resources="recents"
+          :source="ResourceListSource.Recents"
         />
       </v-tabs-window-item>
       <v-tabs-window-item :value="ResourceHomeTab.Favorites">
         <ResourceHomeList
-          empty-description="Star a resource and it will show up here."
-          empty-icon="mdi-star-outline"
-          empty-title="No favorites yet"
           :is-loading="isLoadingFavorites || !hasLoaded"
           :resources="favorites"
+          :source="ResourceListSource.Favorites"
         />
       </v-tabs-window-item>
     </v-tabs-window>

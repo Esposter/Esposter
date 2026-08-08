@@ -19,7 +19,7 @@ const { isLoading, publication, resource, updateTags } = defineProps<ResourceOve
 // Essentials takes extra rows from the type (the grid owns the two columns, so a slot renders
 // A label/value pair); summary takes whole cards below the card
 defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
-const getResourceMutations = useResourceMutations();
+const getResourceRouter = useResourceRouter();
 const isTagsEditorOpen = ref(false);
 const tagRows = computed(() => Object.entries(resource.tags));
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
@@ -29,15 +29,15 @@ const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, re
 // Read once on mount rather than watching an id that cannot change underneath it
 const viewCount = ref<number>();
 onMounted(async () => {
-  const { readResourceViewCount } = getResourceMutations(resource.type);
-  if (!readResourceViewCount) return;
+  // Only a published resource has views, and only its row renders the count — reading it for a draft spends
+  // A round trip on a number nothing displays. The capability is what makes the procedure reachable, so the
+  // Guard and the availability are one fact
+  const { type } = resource;
+  if (!publication || !hasCapability(type, "publishable")) return;
 
-  viewCount.value = await getResultAsync(() => readResourceViewCount({ id: resource.id })).unwrapOr(undefined);
+  const { readResourceViewCount } = getResourceRouter(type);
+  viewCount.value = await getResultAsync(() => readResourceViewCount.query({ id: resource.id })).unwrapOr(undefined);
 });
-const copyPublicLink = async () => {
-  if (!publicUrl.value) return;
-  await copyLinkToClipboard(publicUrl.value);
-};
 </script>
 
 <template>
@@ -77,7 +77,11 @@ const copyPublicLink = async () => {
             <span op-medium-emphasis>Public link</span>
             <div flex flex-wrap gap-2 items-center>
               <NuxtLink :to="publicUrl" external text-info target="_blank">{{ publicUrl }}</NuxtLink>
-              <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
+              <StyledTooltipIconButton
+                icon="mdi-content-copy"
+                text="Copy link"
+                @click="copyLinkToClipboard(publicUrl)"
+              />
             </div>
           </template>
           <template v-if="updateTags">

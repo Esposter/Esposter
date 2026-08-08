@@ -44,21 +44,24 @@ const { smAndDown } = useVDisplay();
   <v-sheet flex flex-1>
     <!-- min-w-0 lets the box shrink below its content's intrinsic width so wide blades scroll internally -->
     <div b-0 b-border b-solid flex flex-1 flex-col min-w-0>
-      <ResourceBladeToolbar
-        :active-blade
-        :duplicate
-        :is-duplicate-pending
-        :is-loading
-        :is-publish-pending
-        :is-unpublish-pending
-        :publication
-        :publish
-        :refresh
-        :remove
-        :rename
-        :resource
-        :unpublish
-      />
+      <v-toolbar pl-4>
+        <ResourceBladeTitle :active-blade :resource />
+        <v-spacer />
+        <ResourceBladeActions
+          :duplicate
+          :is-duplicate-pending
+          :is-loading
+          :is-publish-pending
+          :is-unpublish-pending
+          :publication
+          :publish
+          :refresh
+          :remove
+          :rename
+          :resource
+          :unpublish
+        />
+      </v-toolbar>
       <div b-0 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
         <ResourceBladeNav :active-blade :resource />
         <div flex-1 min-w-0 overflow-auto>

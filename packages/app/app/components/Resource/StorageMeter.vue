@@ -17,6 +17,12 @@ const usedColor = computed(() => {
   else if (usedPercentage.value >= STORAGE_USAGE_WARNING_PERCENTAGE) return "warning";
   return "primary";
 });
+// The label and the tooltip say the same thing, so they say it from one place
+const usageText = computed(() =>
+  storageUsage.value
+    ? `${getFileSize(storageUsage.value.bytesUsed)} of ${getFileSize(storageUsage.value.quotaBytes)} used`
+    : "",
+);
 
 onMounted(() => storageStore.readStorageUsage());
 </script>
@@ -31,12 +37,9 @@ onMounted(() => storageStore.readStorageUsage());
       <!-- Focusable so the tooltip is reachable without a pointer -->
       <div :="props" flex gap-2 items-center tabindex="0">
         <v-progress-linear :color="usedColor" height="6" :model-value="usedPercentage" rounded w-16 />
-        <span op-70 whitespace-nowrap text-body-medium>
-          {{ getFileSize(storageUsage.bytesUsed) }} of {{ getFileSize(storageUsage.quotaBytes) }} used
-        </span>
+        <span op-70 whitespace-nowrap text-body-medium>{{ usageText }}</span>
       </div>
     </template>
-    {{ storageUsage.tier }} plan — {{ getFileSize(storageUsage.bytesUsed) }} of
-    {{ getFileSize(storageUsage.quotaBytes) }} used by your resource files
+    {{ storageUsage.tier }} plan — {{ usageText }} by your resource files
   </v-tooltip>
 </template>

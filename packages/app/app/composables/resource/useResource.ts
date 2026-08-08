@@ -1,12 +1,17 @@
-import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
+import type { ResourceContent } from "#shared/models/resource/ResourceContent";
+import type { Resource, ResourcePublication, ResourceTags, ResourceType } from "@esposter/db-schema";
 
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { hasCapability } from "#shared/services/resource/hasCapability";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useNotificationStore } from "@/store/notification";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
-// Blade-scoped state for one resource (metadata + content + publication)
-export const useResource = (id: MaybeRefOrGetter<string>) => {
+// Blade-scoped state for one resource (metadata + content + publication).
+// A store that owns one type's content declares it as `useResource<ResourceType.Sheet>`, and its content is
+// Typed as that type's own shape throughout — the metadata half is identical for every type, so the resource
+// Page, which opens whatever the route names, declares nothing and simply leaves the content half alone
+export const useResource = <TType extends ResourceType = ResourceType>(id: MaybeRefOrGetter<string>) => {
   const { $trpc } = useNuxtApp();
   const { executeMutation: executeSaveMutation } = useMutation();
   const { executeMutation: executeRenameMutation } = useMutation();
@@ -17,7 +22,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   const { executeMutation: executeUnpublishMutation, isPending: isUnpublishPending } = useMutation();
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
-  const getResourceMutations = useResourceMutations();
+  const getResourceRouter = useResourceRouter();
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
   const isLoading = ref(false);
@@ -28,7 +33,12 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     await withFinalizerAsync(
       async () => {
         resource.value = await $trpc.resource.readResource.query({ id: idValue });
-        publication.value = await getResourceMutations(resource.value.type).readResourcePublication?.({ id: idValue });
+        const { type } = resource.value;
+        // Only a publishable type has a publication to read, and the capability is what makes the procedure
+        // Reachable — so the guard and the availability are one fact rather than two that can disagree
+        publication.value = hasCapability(type, "publishable")
+          ? await getResourceRouter(type).readResourcePublication.query({ id: idValue })
+          : undefined;
         // A fresh read carries the current contentVersion, so saving is meaningful again
         isContentStale = false;
       },
@@ -41,26 +51,29 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   // So that read is the moment the content in hand becomes this resource's — and it stays the previous
   // Resource's for the whole of `load()` plus the await that follows it
   let contentResourceId: string | undefined;
-  // The blob is written on first save, so a freshly created resource returns undefined content
+  // The blob is written on first save, so a freshly created resource returns undefined content.
+  // The dispatch reads the loaded row's own type, so the procedure resolves to the union of every type's
+  // Content read — narrowing it to TType is the caller's claim about which resources it opens, which is the
+  // Same claim the blade route guard enforces. Made once here rather than restated at every call site
   const readContent = async () => {
     const current = resource.value;
     if (!current) return undefined;
-    const content = await getResourceMutations(current.type).readResourceContent({ id: current.id });
+    const content = await getResourceRouter(current.type).readResourceContent.query({ id: current.id });
     contentResourceId = current.id;
-    return content;
+    return content as ResourceContent<TType> | undefined;
   };
   // The last content shape known to be persisted — save() skips the write when nothing changed, so a
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Stores seed it after hydrating so the first debounced watch tick has something to compare against
   let persistedContentJson: string | undefined;
-  const setPersistedContent = (content: unknown) => {
+  const setPersistedContent = (content: ResourceContent<TType>) => {
     persistedContentJson = JSON.stringify(content);
   };
   // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
   // Retry is a guaranteed rejection — the flag turns save() into a no-op (and the warning into a
   // One-shot) until the next load() reads a fresh version
   let isContentStale = false;
-  const save = async (content: unknown) => {
+  const save = async (content: ResourceContent<TType>) => {
     const current = resource.value;
     // A debounced autosave can fire after `load()` swapped in another resource but before the store has
     // Re-seeded its content ref, and the content in hand is then still the previous resource's — writing it
@@ -77,11 +90,13 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
         // Cross-session edit. A load that swapped the resource in between leaves the issue-time row in place
         const latest = resource.value;
         const target = latest?.id === current.id ? latest : current;
-        return getResourceMutations(target.type).saveResourceContent({
+        // Calling the union of every type's content write needs an argument every arm accepts, so the
+        // Content is narrowed the same way the read above widens it
+        return getResourceRouter(target.type).saveResourceContent.mutate({
           content,
           contentVersion: target.contentVersion,
           id: target.id,
-        });
+        } as never);
       },
       {
         // Content saves of one resource share its id, so they queue instead of overlapping
@@ -118,7 +133,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   const rename = async (name: string) => {
     const current = resource.value;
     if (!current) return;
-    await executeRenameMutation(() => getResourceMutations(current.type).updateResource({ id: current.id, name }), {
+    await executeRenameMutation(() => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name }), {
       // Apply, rollback and success all touch only the name — the ref may have absorbed other
       // Concurrent edits (autosave contentVersion, tags) by the time they run
       applyOptimistic: () => {
@@ -141,7 +156,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     const current = resource.value;
     if (!current) return;
     await executeUpdateTagsMutation(
-      () => getResourceMutations(current.type).updateResource({ id: current.id, name: current.name, tags }),
+      () => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name: current.name, tags }),
       {
         // Apply, rollback and success all touch only the tags — the ref may have absorbed other
         // Concurrent edits (autosave contentVersion, rename) by the time they run
@@ -165,7 +180,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     const current = resource.value;
     if (!current) return false;
     let isSuccessful = false;
-    await executeRemoveMutation(() => getResourceMutations(current.type).deleteResource({ id: current.id }), {
+    await executeRemoveMutation(() => getResourceRouter(current.type).deleteResource.mutate({ id: current.id }), {
       key: current.id,
       onError: createErrorNotification,
       onSuccess: () => {
@@ -194,10 +209,10 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   };
   const publish = async () => {
     const current = resource.value;
-    if (!current) return;
-    const { publishResource } = getResourceMutations(current.type);
-    if (!publishResource) return;
-    await executePublishMutation(() => publishResource({ id: current.id }), {
+    if (!current || !hasCapability(current.type, "publishable")) return;
+
+    const { publishResource } = getResourceRouter(current.type);
+    await executePublishMutation(() => publishResource.mutate({ id: current.id }), {
       key: current.id,
       onError: createErrorNotification,
       onSuccess: (newPublication) => {
@@ -215,11 +230,11 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   };
   const unpublish = async () => {
     const current = resource.value;
-    if (!current) return;
-    const { unpublishResource } = getResourceMutations(current.type);
-    if (!unpublishResource) return;
+    if (!current || !hasCapability(current.type, "publishable")) return;
+
+    const { unpublishResource } = getResourceRouter(current.type);
     const currentPublication = publication.value;
-    await executeUnpublishMutation(() => unpublishResource({ id: current.id }), {
+    await executeUnpublishMutation(() => unpublishResource.mutate({ id: current.id }), {
       applyOptimistic: () => {
         publication.value = undefined;
         return () => {
