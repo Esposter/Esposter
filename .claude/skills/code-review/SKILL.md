@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Always runs the project opus-pinned workflow script; never an inline/local review, never the review skill, never the built-in workflow by name. Also owns how to size the commit window a review is launched from, what a run costs and what bounds it, the confidence numbers on its verdicts, how to close a finding so the next review cannot reopen it, and the stop rule for when to re-run and when a round is converged. Apply on any review request, when choosing the scope or boundary to review, when deciding whether to run another round, and when applying fixes from one.
+description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Always runs the project opus-pinned workflow script; never an inline/local review, never the review skill, never the built-in workflow by name. Also owns how to size the commit window a review is launched from, what a run costs and what bounds it, the confidence numbers on its verdicts, how to close a finding so the next review cannot reopen it, the standing rule that the workflow's own files stay in every review window plus the per-round meta pass that turns a run's telemetry into the next pipeline fix, and the stop rule for when to re-run and when a round is converged. Apply on any review request, when choosing the scope or boundary to review, when deciding whether to run another round, when applying fixes from one, and when improving the review pipeline itself.
 ---
 
 # Code Review — One Entry Point
@@ -39,6 +39,10 @@ Both leading words are positional and optional (`"high"`, `"diff high"`, `"area 
 Read it when choosing a level, reading a run's `stats`, or deciding on another round. In short: a run reports the top findings **per finder**, so its ceiling (`stats.reportableCeiling`) is a budget, not a defect count; widen by raising the level, never by re-running the same one; every discard is counted in a `stats.dropped*` field, and a degraded run is not a clean file.
 
 **The stop rule: a round whose CONFIRMED findings are all `minor` is converged.** Fix them if cheap, then stop. Another round needs a CONFIRMED `critical`/`major`, a `dropped N at cap` line, or a fix round that touched lines an earlier fix wrote.
+
+## The pipeline improves itself — `references/self-improvement.md`
+
+Read it at the end of every run, and when picking a window or writing a target string. In short: **`.claude/` is never excluded from a review window**, so each round's pipeline edits are reviewed by the next round for free; and a per-round **meta pass** converts the run's own telemetry — dropped counts, PLAUSIBLE arrivals, findings you settled by hand, repeat false positives, defects that escaped, tests that pin nothing — into a script fix plus a regression test in `.claude/workflows/code-review/`. Unchanged workflow source is deliberately _not_ forced into every run's scope; only what changed gets read, which is what lets the round converge.
 
 ## The written record wins — never re-litigate a settled decision
 

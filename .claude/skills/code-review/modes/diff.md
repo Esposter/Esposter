@@ -31,6 +31,8 @@ Two exclusions belong in the target string, because a finder spends real attenti
 - Lockfiles and version-only catalog churn.
 - Anything already merged and reviewed upstream. An empty `git diff --stat origin/<trunk> HEAD -- <path>` proves the path shipped there — a range that spans a trunk merge otherwise re-reviews it.
 
+**`.claude/` is never one of them**, however tooling-shaped the window looks. The review workflow's own script, suite and skill tree are edited nearly every round, and reviewing them is how the pipeline compounds instead of drifting — `references/self-improvement.md`.
+
 `area` mode pulls the opposite way — narrow the target, don't batch it (see `area.md`), because its finders read whole files rather than hunks.
 
 ## The Find phase partitions itself by diff size — nothing to pass
