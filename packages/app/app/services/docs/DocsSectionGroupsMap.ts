@@ -25,8 +25,9 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "navigation",
       "search",
     ],
-    Backend: ["auth", "azure-services", "file-uploads"],
+    Backend: ["auth", "rate-limiting", "azure-services", "file-uploads"],
     Development: ["environment", "monorepo-tooling", "server-testing"],
+    Frontend: ["responsive", "security-posture"],
   },
   esbabbler: {
     Messaging: [
@@ -50,7 +51,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     ],
     Moderation: ["moderation", "automod-actions", "moderator-notes", "rbac"],
     Calls: ["voice-video", "push-to-talk", "calls"],
-    Infrastructure: ["push-notifications", "offline-cache"],
+    Infrastructure: ["push-notifications", "offline-cache", "webhooks"],
   },
   platform: {
     "Explorer & shell": [
