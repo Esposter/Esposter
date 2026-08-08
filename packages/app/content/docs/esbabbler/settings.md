@@ -9,11 +9,11 @@ A Discord-style fullscreen settings dialog for **message/communication** prefere
 
 ## The two surfaces
 
-| Surface                       | Panels                                   | Persistence                                                                      |
-| ----------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------- |
-| Message-scoped dialog         | Voice & Video · Notifications · Keybinds | `userSettingsInMessage` (synced); device IDs + UI collapsibles in `localStorage` |
-| Global route `/user/settings` | Account · Profile                        | `users` (`UserIntroductionCard` + `UserProfileCard` + SAS avatar upload)         |
-| Theme                         | top-right toggle, not a panel            | cookie (`THEME_COOKIE_NAME`) — hard SSR constraint (flash-free first paint)      |
+| Surface                       | Panels                                                | Persistence                                                                      |
+| ----------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Message-scoped dialog         | Appearance · Voice & Video · Notifications · Keybinds | `userSettingsInMessage` (synced); device IDs + UI collapsibles in `localStorage` |
+| Global route `/user/settings` | Account · Profile                                     | `users` (`UserIntroductionCard` + `UserProfileCard` + SAS avatar upload)         |
+| Theme                         | top-right toggle, not a panel                         | cookie (`THEME_COOKIE_NAME`) — hard SSR constraint (flash-free first paint)      |
 
 The dialog is opened by the gear in `Message/LeftSideBar/StatusBar.vue` and mirrors the [room settings](/docs/esbabbler/room-settings) pattern (`SettingsType` enum → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
 
@@ -36,7 +36,6 @@ They also share the responsive shell: the sidebar drawer (`MessageModelSettingsL
 | `microphoneVolumePercentage` / `speakerVolumePercentage` | integer                                                           | 100             |
 | `noiseSuppressionMode`                                   | enum → [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video) |                 |
 | `isMuteOnJoin` / `isDeafenOnJoin`                        | boolean                                                           | false           |
-| `defaultUserVolumePercentage`                            | integer (CHECK 0..200)                                            | 100             |
 | `autoIdleThresholdMs`                                    | integer (CHECK 60_000..86_400_000)                                | 600_000         |
 
 Every column is communication-scoped — no account/profile/theme columns, reinforcing the surface split. Read returns the row or an unpersisted defaults object; the first update upserts (`onConflictDoUpdate` on `userId`).
@@ -77,4 +76,4 @@ The dialog uses a Discord-style two-level nav: a `v-list-group` per `UserSetting
 
 ## Notes
 
-The Voice & Video panel's content and how each setting applies to live LiveKit calls is its own page: [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video).
+The Voice & Video panel's content and how each setting applies to live LiveKit calls is its own page: [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video). The Appearance panel's Message Display density is covered by [/docs/esbabbler/room-ui](/docs/esbabbler/room-ui), and per-participant call volume — which is not a column here — by [/docs/esbabbler/calls/per-user-volume](/docs/esbabbler/calls/per-user-volume).

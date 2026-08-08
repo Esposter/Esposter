@@ -41,14 +41,16 @@ Prejoin layout: `flex-col` on mobile, `lg:flex-row` — a `flex-1` left column (
 
 ## Room call vs standalone call
 
-| Aspect                     | Room call (`useCallSubscribables`)        | Standalone (`useCallIdSubscribables`)         |
-| -------------------------- | ----------------------------------------- | --------------------------------------------- |
-| Entry                      | `readCallSessionId({ roomId })` then join | creator/admitted `joinCall({ id })`           |
-| `callRoomId`               | set (enables admin actions)               | not set                                       |
-| `currentRoomCallSessionId` | set for the viewed room                   | not set                                       |
-| Layout                     | compact strip in messages view + dialog   | full-screen (`layout: false`)                 |
-| Moderation actions         | available                                 | not available (no room membership)            |
-| Route cleanup              | unsubscribe viewed-room observers only    | unsubscribe **and** leave (unless popped out) |
+| Aspect                     | Room call (`useCallSubscribables`)                                                      | Standalone (`useCallIdSubscribables`)         |
+| -------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Entry                      | one `joinCallByRoomId({ roomId })` mutation — finds or creates the session and joins it | creator/admitted `joinCall({ id })`           |
+| `callRoomId`               | set (enables admin actions)                                                             | not set                                       |
+| `currentRoomCallSessionId` | set for the viewed room                                                                 | not set                                       |
+| Layout                     | compact strip in messages view + dialog                                                 | full-screen (`layout: false`)                 |
+| Moderation actions         | available                                                                               | not available (no room membership)            |
+| Route cleanup              | unsubscribe viewed-room observers only                                                  | unsubscribe **and** leave (unless popped out) |
+
+`readCallSessionId` is not part of that entry path — `useCallSubscribables` queries it to learn whether the viewed room already has a call running (so the messages view can show the compact strip), and the server-side `StopScreenShare` admin action resolves the room's session through it.
 
 `/calls/[id]` unmount cancels any pending knock, unsubscribes, and calls `store.leaveCall()` — the page is the call context. The one exception is a [picture-in-picture](/docs/esbabbler/calls/picture-in-picture) pop-out, which keeps the standalone call alive across navigation.
 
