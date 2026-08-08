@@ -56,17 +56,21 @@ Run both and sum before starting a sweep. When the budget is reached, cut the ch
 
 **Incremental reviews refresh the budget.** CodeRabbit reviews only the files changed _since its last completed review_ on the PR (the review body states it: "Reviewing files that changed … between `<sha1>` and `<sha2>`"), not the cumulative PR diff. So within one long-lived PR the ~80-file budget applies **per review cycle**: a retrigger or a new push only needs the _newly committed_ files to stay under it. Once a PR has been reviewed, measure the delta rather than the merge-base — `git diff --name-only <last-reviewed-sha>..HEAD | wc -l`. The merge-base count still governs the **first** review of a PR and any full re-review.
 
-### Pipelining — local work never waits on a review
+### Pipelining — work lands on `develop`, review runs against the `develop` → `main` PR
 
-A review takes an hour of wall-clock the working tree has no reason to spend idle. Because reviews are incremental and the budget refreshes per cycle, one long-lived PR can absorb an arbitrarily large body of work as a series of chunks, with local work running ahead of the reviewed frontier:
+**There are no per-chunk feature branches.** Work is committed and pushed straight to `develop`, and the single long-lived PR is `develop` → `main`. Because that PR's base is the default branch, **every push to `develop` auto-triggers a review** — no `@coderabbitai review` comment needed, and no PR to open per chunk. Keeping that PR open is what makes the pipeline work.
 
-1. Commit continuously. When the delta since the last reviewed sha approaches ~80 files, that chunk is ready.
-2. Push it and open the PR (first chunk) or push onto the open one (later chunks). Either spends the slot and starts a review.
-3. **Keep working locally while it runs.** Commit the next chunk on the same branch — commits are free, only pushes trigger reviews. Never push into a running review (see above); the local queue is what absorbs the wait.
-4. When the review completes, address its findings and reply to every one, commit the fixes, and push them **together with** the next queued chunk. That single push starts the next cycle.
+A review takes an hour of wall-clock the working tree has no reason to spend idle. Reviews are incremental and the budget refreshes per cycle, so that one PR absorbs an arbitrarily large body of work as a series of chunks, with local work running ahead of the reviewed frontier:
+
+1. Commit continuously on `develop`. When the delta since the last reviewed sha approaches ~80 files, that chunk is ready.
+2. Push it. The push starts a review.
+3. **Keep working locally while it runs.** Commits are free; only pushes trigger reviews. Never push into a running review (see above) — the local commit queue is what absorbs the wait.
+4. When the review completes, address its findings, reply to every one, commit the fixes, and push them **together with** the next queued chunk. That single push starts the next cycle.
 5. Repeat. Each cycle reviews the fix commits plus one fresh chunk, so review effort tracks the work instead of gating it.
 
 The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's fixes plus the queued chunk exceed the budget, push the fixes with only part of the queue and hold the rest — never split a fix away from the finding it answers.
+
+A `develop` → `main` PR that has accumulated far more than the file cap before its first review is the one case needing `references/exclusions.md` — the cap governs that first review, and `.coderabbit.yaml` must be edited on `main`, the base.
 
 The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items sharing a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land in separate PRs with a stated merge order.
 
