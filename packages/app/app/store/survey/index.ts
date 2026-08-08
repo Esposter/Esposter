@@ -1,5 +1,6 @@
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { SurveySettings } from "#shared/models/resource/survey/SurveySettings";
+import type { ResourceType } from "@esposter/db-schema";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
@@ -7,7 +8,9 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 export const useSurveyStore = defineStore("survey", () => {
   const route = useRoute();
   // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save } = useResource(() => getRouteParamString(route.params.id));
+  const { load, readContent, resource, save } = useResource<ResourceType.Survey>(() =>
+    getRouteParamString(route.params.id),
+  );
   // The SurveyJS creator owns editor/preview state; the resource layer only sees model JSON in/out
   const model = ref("");
   // Collection settings share the survey's single content blob, so the Overview toggle and the editor
@@ -15,8 +18,7 @@ export const useSurveyStore = defineStore("survey", () => {
   const settings = ref<SurveySettings>(surveySettingsSchema.parse({}));
   const loadContent = async () => {
     await load();
-    // Content is untyped at the cross-type dispatch; this store owns the concrete schema
-    const data = (await readContent()) as SurveyResource | undefined;
+    const data = await readContent();
     model.value = data?.model ?? "";
     settings.value = data?.settings ?? surveySettingsSchema.parse({});
   };

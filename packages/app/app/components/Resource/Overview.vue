@@ -19,7 +19,7 @@ const { isLoading, publication, resource, updateTags } = defineProps<ResourceOve
 // Essentials takes extra rows from the type (the grid owns the two columns, so a slot renders
 // A label/value pair); summary takes whole cards below the card
 defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
-const getResourceMutations = useResourceMutations();
+const getResourceRouter = useResourceRouter();
 const isTagsEditorOpen = ref(false);
 const tagRows = computed(() => Object.entries(resource.tags));
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
@@ -30,13 +30,13 @@ const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, re
 const viewCount = ref<number>();
 onMounted(async () => {
   // Only a published resource has views, and only its row renders the count — reading it for a draft spends
-  // A round trip on a number nothing displays
-  if (!publication) return;
+  // A round trip on a number nothing displays. The capability is what makes the procedure reachable, so the
+  // Guard and the availability are one fact
+  const { type } = resource;
+  if (!publication || !hasCapability(type, "publishable")) return;
 
-  const { readResourceViewCount } = getResourceMutations(resource.type);
-  if (!readResourceViewCount) return;
-
-  viewCount.value = await getResultAsync(() => readResourceViewCount({ id: resource.id })).unwrapOr(undefined);
+  const { readResourceViewCount } = getResourceRouter(type);
+  viewCount.value = await getResultAsync(() => readResourceViewCount.query({ id: resource.id })).unwrapOr(undefined);
 });
 </script>
 

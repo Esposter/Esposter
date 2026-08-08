@@ -10,7 +10,6 @@ import { ResourceUpdatedFilters } from "@/models/resource/list/ResourceUpdatedFi
 import { deserializeResourceSortBy } from "@/services/resource/list/deserializeResourceSortBy";
 import { serializeResourceSortBy } from "@/services/resource/list/serializeResourceSortBy";
 import { resourceTypeSchema } from "@esposter/db-schema";
-
 // Dates can't round-trip through a query param directly, so the custom bounds serialize day-granular
 const updatedBoundDateFormat = "YYYY-MM-DD";
 // The list workbench's filter state, mirrored to query params so the list is deep-linkable, refresh-safe and

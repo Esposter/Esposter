@@ -1,3 +1,5 @@
+import type { ResourceType } from "@esposter/db-schema";
+
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
@@ -5,7 +7,7 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
   const route = useRoute();
   // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, save } = useResource(() => getRouteParamString(route.params.id));
+  const { load, readContent, save } = useResource<ResourceType.Flowchart>(() => getRouteParamString(route.params.id));
   // Cast avoids the excessively deep UnwrapRef instantiation on the nested graph node/edge types
   const flowchartEditor = ref(new FlowchartEditor()) as Ref<FlowchartEditor>;
   const loadContent = async () => {

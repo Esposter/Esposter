@@ -1,5 +1,5 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { Resource } from "@esposter/db-schema";
+import type { Resource, ResourceType } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
@@ -9,7 +9,7 @@ import { toRawDeep } from "@esposter/shared";
 export const useTodoListStore = defineStore("resource/todoList", () => {
   const route = useRoute();
   // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save, setPersistedContent } = useResource(() =>
+  const { load, readContent, resource, save, setPersistedContent } = useResource<ResourceType.TodoList>(() =>
     getRouteParamString(route.params.id),
   );
   const todoList = ref<TodoListResource>({ items: [] });
@@ -23,6 +23,8 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   const loadContent = async () => {
     await load();
     const data = await readContent();
+    // Content crosses the wire as plain JSON, so the loaded value carries the list's data shape rather than
+    // Its class instances — the two differ only by the methods ToData strips. See the sweep ledger
     todoList.value = (data as TodoListResource | undefined) ?? { items: [] };
   };
   const saveTodoList = () => save(todoList.value);

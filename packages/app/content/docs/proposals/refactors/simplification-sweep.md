@@ -43,7 +43,10 @@ Ordered by expected payoff — the biggest surfaces with the most recent churn f
 
 - [x] `Resource/List` + the list composables — done as part of the service-menu work
 - [x] `Resource/Blade`, `Resource/Overview`, `Resource/Explorer` — the resource page shell
-- [ ] `Resource/Sheet` — the sheet editor's data source, columns and command stack
+- [ ] `Resource/Sheet` components — the grid, its slots and dialogs
+- [ ] `composables/resource/sheet` — the command/history layer
+- [ ] `services/resource/sheet` — column inference, transformations, (de)serialization
+- [ ] `store/resource/sheet` + `shared/models/resource/sheet`
 - [ ] `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`, `Resource/Flowchart` — the canvas editors
 - [ ] `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`
 - [ ] `app/composables/resource` + `app/services/resource` — what the sweep above leaves behind
@@ -94,7 +97,7 @@ Ordered by expected payoff — the biggest surfaces with the most recent churn f
 Findings a pass surfaced whose fix is real work rather than cleanup. Each needs its own proposal before it is attempted:
 
 - **`useResource` as a blade-scoped store.** The resource page threads its whole state through page → Explorer → Actions/Outlet; the `pinia` and `vue-component-patterns` skills both point at a store instead, which would delete the drilling outright.
-- **`useResourceMutations` as a generic builder.** Ten hand-written per-type objects with no variation but which capability keys are present — a router-key map plus the capability flags already in `ResourceDefinitionMap` would replace them, and a mistyped router key would stop being a runtime-only failure.
+- **Content classes are not what the wire delivers.** A content schema is declared `satisfies z.ZodType<ToData<T>>` and `readContentBlob` parses plain JSON with it, so the client receives the data shape — never the class instances the Sheet, Dashboard and TodoList stores type their refs as. Those three casts are all that is left of the gap; the honest fix is for a store to revive its content the way `Dashboard` already does, or to hold the `ToData` shape it is actually given.
 - **The publication on the generic resource read.** `readResource` then `readResourcePublication` is two round trips where the second re-resolves ownership; `resourcePublications` is one generic table, so the publication could ride the first response.
 - **Lazy portable-format loading.** The command bar statically pulls the xlsx read/write libraries into every resource page's chunk, including types that can never import or export.
 

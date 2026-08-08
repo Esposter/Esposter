@@ -9,13 +9,13 @@ export const useRenameResource = (resource: Ref<Resource | undefined>, refresh: 
   const notificationStore = useNotificationStore();
   const { createErrorNotification } = notificationStore;
   const { executeMutation: executeRenameResourceMutation } = useMutation();
-  const getResourceMutations = useResourceMutations();
+  const getResourceRouter = useResourceRouter();
   return async (name: string) => {
     const current = resource.value;
     if (!current) return;
 
     await executeRenameResourceMutation(
-      () => getResourceMutations(current.type).updateResource({ id: current.id, name }),
+      () => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name }),
       {
         // Applied without a local rollback: the name to restore would be whatever this call happened to read,
         // Which for a second rename of the same row is itself the first call's optimistic value — and only the

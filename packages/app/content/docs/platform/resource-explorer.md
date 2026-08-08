@@ -186,6 +186,7 @@ stateDiagram-v2
 | `app/services/resource/PortableFormatMap.ts`           | portable type → formats (Import/Export)                                                                 |
 | `app/services/resource/ViewComponentMap.ts`            | publishable type → public view renderer                                                                 |
 | `app/composables/resource/useResource.ts`              | row + typed content + save/capability actions                                                           |
+| `app/composables/resource/useResourceRouter.ts`        | a type to its own procedures, through its name — the whole client dispatch                              |
 
 ## Notes
 

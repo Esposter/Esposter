@@ -1,4 +1,5 @@
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
+import type { ResourceType } from "@esposter/db-schema";
 
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 
@@ -7,14 +8,14 @@ const createEmptyBlueprint = (): BlueprintResource => ({ entries: [], parameters
 export const useBlueprintStore = defineStore("resource/blueprint", () => {
   const route = useRoute();
   // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save, setPersistedContent } = useResource(() =>
+  const { load, readContent, resource, save, setPersistedContent } = useResource<ResourceType.Blueprint>(() =>
     getRouteParamString(route.params.id),
   );
   const blueprint = ref<BlueprintResource>(createEmptyBlueprint());
   const loadContent = async () => {
     await load();
     const content = await readContent();
-    blueprint.value = (content as BlueprintResource | undefined) ?? createEmptyBlueprint();
+    blueprint.value = content ?? createEmptyBlueprint();
     // Seed the dirty check so an unedited Save compares equal instead of bumping contentVersion for nothing
     setPersistedContent(blueprint.value);
   };
