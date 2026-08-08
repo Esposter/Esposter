@@ -43,6 +43,8 @@ flowchart TD
 
 Because the middleware already resolved the session, `getIsAuthed.ts` simply pipes it and then rejects when there is no session. Authentication and rate limiting are therefore a single middleware in one order: **a caller is charged before it is told it is unauthorized**, which is what stops an unauthenticated attacker from probing authed procedures for free.
 
+Every limiter writes to one table, so each carries its **own key prefix** and the budgets stay independent. Without one the two procedure limiters would share a counter row per signed-in user — both key an authed caller on the bare user id — and the slow budget would be spent out by ordinary app traffic, refusing the first slow call of the session. The asset limiter namespaces its key by container for the same reason.
+
 Three procedure builders sit on top: `standardRateLimitedProcedure` (public, standard budget), `standardAuthedProcedure`, and `slowAuthedProcedure`. `AuthedProcedureMap.ts` maps the enum onto the latter two, and the room procedure builders — `getPermissionsProcedure` and `getOwnerProcedure`, described in [RBAC](/docs/esbabbler/rbac) — take a `rateLimiterType` parameter defaulting to `Standard` and select through it, so moving a room procedure onto the slow budget is a one-argument change at its declaration.
 
 ## Answering 429 instead of 500

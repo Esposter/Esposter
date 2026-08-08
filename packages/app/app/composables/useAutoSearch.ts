@@ -19,26 +19,30 @@ export const useAutoSearch = (
   const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
   const isSearchQueryEmpty = computed(() => !normalizeString(searchQuery.value));
   let abortController: AbortController | undefined;
+  // The query the results on screen came from, rather than the throttled ref's previous value: emptying the box
+  // Discards those results, so the same string typed again inside one throttle window is a new search even though
+  // The throttled value never changed — comparing against the ref would leave that group permanently empty
+  let searchedQuery: string | undefined;
 
   watch(isSearchQueryEmpty, (newIsSearchQueryEmpty) => {
     if (isIncludeEmptySearchQuery || !newIsSearchQueryEmpty) return;
     abortController?.abort();
     isPending.value = false;
+    searchedQuery = undefined;
     reset();
   });
 
   watch(
     throttledSearchQuery,
-    async (newThrottledSearchQuery, oldThrottledSearchQuery) => {
+    async (newThrottledSearchQuery) => {
       const sanitizedNewThrottledSearchQuery = normalizeString(newThrottledSearchQuery);
-      const sanitizedOldThrottledSearchQuery =
-        oldThrottledSearchQuery === undefined ? oldThrottledSearchQuery : normalizeString(oldThrottledSearchQuery);
       if (
-        sanitizedNewThrottledSearchQuery === sanitizedOldThrottledSearchQuery ||
+        sanitizedNewThrottledSearchQuery === searchedQuery ||
         !(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)
       )
         return;
 
+      searchedQuery = sanitizedNewThrottledSearchQuery;
       abortController?.abort();
       const newAbortController = new AbortController();
       abortController = newAbortController;
@@ -51,6 +55,8 @@ export const useAutoSearch = (
         (error) => {
           if (newAbortController.signal.aborted) return;
           isPending.value = false;
+          // Nothing was rendered for it, so retyping the same query is a retry rather than a repeat
+          searchedQuery = undefined;
           createAlert(error.message, "error");
         },
       );

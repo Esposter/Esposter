@@ -22,7 +22,9 @@ Google and GitHub both report whether the address they return is verified, so si
 - Sign in with Google first, then press Facebook, and the Facebook sign-in is refused.
 - Sign in with Facebook first and the user row is written unverified, which then refuses every later Google or GitHub sign-in as well.
 
-Linking from settings takes a different path. The authenticated `linkSocial` round trip proves ownership from the session rather than from the provider's claim, so it checks only that the returned email matches the profile's and that the provider account does not already belong to someone else. A user in either state above signs in with whichever provider still works and connects the rest here.
+Linking from settings takes a different path, but not a laxer one. The authenticated `linkSocial` round trip proves ownership of the Esposter account from the session rather than from the provider's claim, and it additionally checks that the returned email matches the profile's and that the provider account does not already belong to someone else — yet better-auth's callback applies **the same verified-email gate** on the way back in, refusing any provider that is neither listed in `trustedProviders` nor reporting a verified address.
+
+So the section repairs the first state and not the second. A Google-first or GitHub-first user connects the other of the two here. **Facebook cannot be connected at all**: its Link button redirects to consent and returns `?error=unable_to_link_account` every time, because the Graph profile carries no verified-email claim and `trustedProviders` is empty for the reason recorded above. A Facebook-first user is therefore stuck on Facebook — the unverified user row their sign-in wrote refuses every later Google or GitHub sign-in, and linking cannot let them past it. Nothing short of trusting Facebook, or dropping it as a provider, changes that.
 
 ## How the section works
 
@@ -41,7 +43,7 @@ sequenceDiagram
   S->>BA: linkSocial with callbackURL and errorCallbackURL
   BA-->>P: consent redirect
   P-->>BA: callback with the profile
-  BA->>BA: email matches and no other user owns this account
+  BA->>BA: verified or trusted provider, matching email, no other owner
   BA->>DB: insert an account row on the same userId
   BA-->>S: back to settings, list refetched
   U->>S: Unlink
@@ -49,9 +51,9 @@ sequenceDiagram
   BA->>DB: delete the row unless it is the last one
 ```
 
-The card renders one row per configured provider, connected or not, reading the provider list and its logos from the same `LoginButtonItems` constant the login page renders — a second hand-maintained logo mapping is how the two surfaces drift apart. Both actions run through `useMutation` keyed by the provider id, so the alert store reports a rejection the same way a failed sign-in does.
+The card renders one row per configured provider, connected or not, reading the provider list and its logos from the same `LoginButtonItems` constant the login page renders — a second hand-maintained logo mapping is how the two surfaces drift apart. Both actions run through `useMutation` on **one key for the whole card**, not one per provider: they write a single target — the set of connected accounts — and better-auth's last-account guard reads that set and deletes without a transaction, so two unlinks in flight together would both see two providers, both pass, and both delete. Sharing a key queues them, and the second one meets the guard it is supposed to meet. Rejections reach the alert store the way a failed sign-in does, carrying the api's own message rather than the http status text — `fetchOptions: { throw: true }` throws away the former, so the card reads the returned payload instead (`requireAuthData`).
 
-The link round trip is the exception that needs its own handling: a rejection in the OAuth callback arrives as a **redirect** back to `/user/settings?error=<code>`, never as a rejected promise, so the card reads that query parameter on return and translates the code through `AccountLinkErrorMessageMap`. The case with no remedy is `account_already_linked_to_different_user` — two user rows already exist and better-auth will not join them, so the message says to sign in with that provider directly rather than implying a retry helps.
+The link round trip is the exception that needs its own handling: a rejection in the OAuth callback arrives as a **redirect** back to `/user/settings?error=<code>`, never as a rejected promise, so the card reads that query parameter on return, translates the code through `AccountLinkErrorMessageMap`, and then strips it from the url — the alert is the delivery of that outcome, and a parameter left behind replays the toast on every reload of the address. The case with no remedy is `account_already_linked_to_different_user` — two user rows already exist and better-auth will not join them, so the message says to sign in with that provider directly rather than implying a retry helps.
 
 ## The last account
 
@@ -73,6 +75,7 @@ Paths relative to `packages/app`.
 | `app/components/User/LinkedAccountsCard/Index.vue` | the settings section — lists accounts, links and unlinks       |
 | `app/components/User/LinkedAccountsCard/Row.vue`   | one provider row and its Link / Unlink action                  |
 | `app/services/auth/AccountLinkErrorMessageMap.ts`  | redirect error codes translated into readable text             |
+| `app/services/auth/requireAuthData.ts`             | raises an auth rejection from the payload, keeping its message |
 | `app/services/login/LoginButtonItems.ts`           | the single provider list and logos, shared with the login page |
 | `app/pages/user/settings.vue`                      | sidebar entry and where the section sits                       |
 

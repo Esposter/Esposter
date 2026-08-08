@@ -39,25 +39,26 @@ export default defineEventHandler(async (event) => {
 
   const getSessionPayload = await auth.api.getSession({ headers: event.headers });
   if (IS_PRODUCTION) {
-    const ipAddress = getIpAddress(event.node.req);
-    if (ipAddress)
-      // Its own limiter, and its own namespace within it: a signed-in viewer's key was the bare user id, the
-      // Same key every tRPC call consumes, so opening one published page full of images spent that page's
-      // Asset requests out of the budget for the user's actual API calls and 429'd the app around them. One
-      // Rendered page is many asset requests by construction, and anonymous viewers of it share an egress
-      // Address — so neither the key nor the procedure budget describes this traffic (see assetRateLimiter)
+    // Its own limiter, and its own namespace within it: a signed-in viewer's key was the bare user id, the
+    // Same key every tRPC call consumes, so opening one published page full of images spent that page's
+    // Asset requests out of the budget for the user's actual API calls and 429'd the app around them. One
+    // Rendered page is many asset requests by construction, and anonymous viewers of it share an egress
+    // Address — so neither the key nor the procedure budget describes this traffic (see assetRateLimiter).
+    // An authed viewer is keyed on its user id, which is available whether or not an address is, so only the
+    // Anonymous key depends on the address — bypassing both would leave every signed-in request unbudgeted on
+    // A deployment whose ingress header never arrives
+    const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.node.req);
+    if (!rateLimiterKey)
+      console.warn(
+        "[RateLimiter] Could not determine IP address for an anonymous request. Bypassing middleware... This is expected for local production builds.",
+      );
+    else
       await getResultAsync(() =>
-        assetRateLimiter.consume(
-          `${AzureContainer.ResourceAssets}${ID_SEPARATOR}${getSessionPayload ? getSessionPayload.user.id : ipAddress}`,
-        ),
+        assetRateLimiter.consume(`${AzureContainer.ResourceAssets}${ID_SEPARATOR}${rateLimiterKey}`),
       ).match(noop, (error) => {
         if (getIsRateLimitExceeded(error)) throw createError({ statusCode: 429 });
         throw error;
       });
-    else
-      console.warn(
-        "[RateLimiter] Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
-      );
   }
 
   // Working-copy assets are only ever rendered inside the owner's editor (same-origin, cookies present), so an

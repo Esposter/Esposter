@@ -1,22 +1,35 @@
 <script setup lang="ts">
 import { AccountLinkErrorMessageMap } from "@/services/auth/AccountLinkErrorMessageMap";
 import { authClient } from "@/services/auth/authClient";
+import { requireAuthData } from "@/services/auth/requireAuthData";
 import { LoginButtonItems } from "@/services/login/LoginButtonItems";
 import { useAlertStore } from "@/store/alert";
 import { RoutePath } from "@esposter/shared";
 
+// One key for every row, because they all write one target: the account set. better-auth's last-account guard
+// Reads the accounts and deletes without a transaction, so two unlinks in flight together both see two providers,
+// Both pass, and both delete — leaving an account no provider reaches, which sign-in here can never recover
+const LINKED_ACCOUNTS_KEY = "linkedAccounts";
+
 const route = useRoute();
+const router = useRouter();
 const { linkSocial, listAccounts, unlinkAccount } = authClient;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { executeMutation } = useMutation();
-const { data: accounts, refresh } = useQuery(() => listAccounts({ fetchOptions: { throw: true } }));
+const { data: accounts, refresh } = useQuery(() => requireAuthData(listAccounts()));
 const linkedProviderIds = computed(() => accounts.value?.map(({ providerId }) => providerId) ?? []);
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its
 // Outcome never reaches the promise the button awaited
 const linkError = route.query.error;
-if (typeof linkError === "string")
+if (typeof linkError === "string") {
   createAlert(AccountLinkErrorMessageMap[linkError] ?? "Your account could not be linked.", "error");
+  // The alert is this outcome's delivery, so the param has done its job — left in the url it replays the toast on
+  // Every reload of it. Client-side only: rewriting it during ssr answers the request with a redirect instead
+  onMounted(() => {
+    router.replace({ query: {} });
+  });
+}
 </script>
 
 <template>
@@ -27,7 +40,11 @@ if (typeof linkError === "string")
       <div font-bold>Providers</div>
       <v-divider mt-2 />
     </v-card-title>
-    <v-list py-6>
+    <!-- Keyed on the accounts rather than a pending flag: until they land every provider would read "Not linked"
+         with a Link button, inviting a user to reconnect a provider they already have, and a refresh mid-unlink
+         would blank a list that is still correct -->
+    <StyledSkeleton v-if="!accounts" type="list-item-avatar@3" />
+    <v-list v-else py-6>
       <UserLinkedAccountsCardRow
         v-for="loginButtonProps of LoginButtonItems"
         :key="loginButtonProps.provider"
@@ -38,27 +55,25 @@ if (typeof linkError === "string")
           async () => {
             await executeMutation(
               () =>
-                linkSocial({
-                  callbackURL: RoutePath.UserSettings,
-                  errorCallbackURL: RoutePath.UserSettings,
-                  fetchOptions: { throw: true },
-                  provider: loginButtonProps.provider,
-                }),
-              { key: loginButtonProps.provider },
+                requireAuthData(
+                  linkSocial({
+                    callbackURL: RoutePath.UserSettings,
+                    errorCallbackURL: RoutePath.UserSettings,
+                    provider: loginButtonProps.provider,
+                  }),
+                ),
+              { key: LINKED_ACCOUNTS_KEY },
             );
           }
         "
         @unlink="
           async () => {
-            await executeMutation(
-              () => unlinkAccount({ fetchOptions: { throw: true }, providerId: loginButtonProps.provider }),
-              {
-                key: loginButtonProps.provider,
-                onSuccess: async () => {
-                  await refresh();
-                },
+            await executeMutation(() => requireAuthData(unlinkAccount({ providerId: loginButtonProps.provider })), {
+              key: LINKED_ACCOUNTS_KEY,
+              onSuccess: async () => {
+                await refresh();
               },
-            );
+            });
           }
         "
       />

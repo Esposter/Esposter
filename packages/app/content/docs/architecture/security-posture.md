@@ -43,7 +43,7 @@ The accepted cost is a privacy one, and it is accepted rather than unnoticed: a 
 
 ## Deliberately off
 
-- **`rateLimiter: false`** — the module ships an in-memory rate limiter, and the app has its own Postgres-backed one that is shared across instances and reused by better-auth. Two mechanisms would mean two answers to the same question, so the module's is disabled and [rate limiting](/docs/architecture/rate-limiting) is the single mechanism.
+- **`rateLimiter: false`** — the module ships an in-memory rate limiter, and the app has its own Postgres-backed one that is shared across instances. Two mechanisms would mean two answers to the same question, so the module's is disabled and [rate limiting](/docs/architecture/rate-limiting) is the single mechanism. better-auth is handed the same numbers but keeps its own per-process counters, which that page records.
 - **`xssValidator: false`** — the validator rejects request bodies that look like markup, which tRPC's batched request format trips. It carries a `@TODO` linking the upstream trpc-nuxt issue, and stays off until that is resolved.
 
 ## Key files
