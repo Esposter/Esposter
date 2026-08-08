@@ -1,11 +1,11 @@
 ---
 title: List Filters & Views
-description: The /resources/all workbench — filter pills, URL-synced state, bulk operations, column management, grouping, CSV export, and real-link rows.
+description: The /resource-explorer/all workbench — filter pills, URL-synced state, bulk operations, column management, grouping, CSV export, and real-link rows.
 ---
 
 # List Filters & Views
 
-Azure "All resources" parity for `/resources/all`: a filter-pill row, checkbox multi-select with bulk commands, a Manage-view column chooser, group-by-type, CSV export, and a refresh button — all state deep-linkable via query params. Everything is frontend + procedures on the existing `resource` router — no schema changes. The blade page's compact list box reuses the same `ResourceListView` with the workbench turned off (`:is-searchable="false"`).
+Azure "All resources" parity for `/resource-explorer/all`: a filter-pill row, checkbox multi-select with bulk commands, a Manage-view column chooser, group-by-type, CSV export, and a refresh button — all state deep-linkable via query params. Everything is frontend + procedures on the existing `resource` router — no schema changes.
 
 ## Filters
 

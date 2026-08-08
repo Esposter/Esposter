@@ -15,29 +15,19 @@ import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceListViewProps {
-  // When set, a close ✕ routes here (the base list closes back a layer); omitted when it sits behind a blade
-  closeTo?: string;
-  // The blade list box is a plain table — no toolbar, filter pills, selection, or context menu
-  isSearchable?: false;
-}
-
-const { closeTo, isSearchable = true } = defineProps<ResourceListViewProps>();
 const { getActionItems } = useResourceListActionItems();
 const listDialogStore = useListDialogStore();
 const { deletingId, renamingId } = storeToRefs(listDialogStore);
 const favoriteStore = useFavoriteStore();
 // Every row renders a star, so the favorites are read once for the list rather than once per row
 onMounted(() => favoriteStore.readFavorites());
-// The workbench filter state mirrors to query params (deep links from global search included);
-// The blade list renders no filter UI and rides its host page's route, so its page/sort state
-// Lives in local refs instead of writing query params the workbench owns
+// The filter state mirrors to query params, so a global-search deep link lands the list filtered
 const {
   clearFilters,
   hasActiveFilters,
-  page: routePage,
+  page,
   searchQuery,
-  sortBy: routeSortBy,
+  sortBy,
   status,
   tagName,
   tagValue,
@@ -46,8 +36,6 @@ const {
   updatedBefore,
   updatedFilter,
 } = useResourceListFilters();
-const page = isSearchable ? routePage : ref(1);
-const sortBy = isSearchable ? routeSortBy : ref<SortItem<keyof Resource>[]>([...DEFAULT_RESOURCE_SORT_BY]);
 const { debounced: search, input: searchInput } = useDebouncedFilter(searchQuery);
 const { count, createResourcesPageReader, error, isLoading, items, readResources, refresh } = useReadResources({
   searchQuery: search,
@@ -112,8 +100,6 @@ const deletingResource = computed(() => items.value.find(({ id }) => id === dele
 const deleteResources = useDeleteResources(items, count, refresh);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigateTo(RoutePath.Resource(item.id));
 const onContextMenuRow = (event: MouseEvent, { item }: ItemSlot<Resource>) => {
-  if (!isSearchable) return;
-
   event.preventDefault();
   contextMenuPosition.value = [event.clientX, event.clientY];
   contextMenuId.value = item.id;
@@ -128,40 +114,37 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
 
 <template>
   <div flex flex-col h-full min-w-0>
-    <template v-if="isSearchable">
-      <ResourceListToolbar
-        v-model:search="searchInput"
-        v-model:is-summary-view="isSummaryView"
-        v-model:is-grouped-by-type="isGroupedByType"
-        v-model:hidden-column-keys="hiddenColumnKeys"
-        :close-to
-        @export="exportAllResourcesCsv(createResourcesPageReader())"
-        @refresh="isSummaryView ? refreshTypeCounts() : refresh()"
-      />
-      <ResourceListSelectionToolbar
-        v-if="selectedResources.length > 0"
-        :selected-resources
-        @clear="clearSelection()"
-        @delete="
-          (resources) => {
-            clearSelection();
-            deleteResources(resources);
-          }
-        "
-      />
-      <ResourceListFilterBar
-        v-else
-        v-model:status="status"
-        v-model:tag-name="tagName"
-        v-model:tag-value="tagValue"
-        v-model:types="types"
-        v-model:updated-after="updatedAfter"
-        v-model:updated-before="updatedBefore"
-        v-model:updated-filter="updatedFilter"
-        :has-active-filters
-        @clear="clearFilters()"
-      />
-    </template>
+    <ResourceListToolbar
+      v-model:search="searchInput"
+      v-model:is-summary-view="isSummaryView"
+      v-model:is-grouped-by-type="isGroupedByType"
+      v-model:hidden-column-keys="hiddenColumnKeys"
+      @export="exportAllResourcesCsv(createResourcesPageReader())"
+      @refresh="isSummaryView ? refreshTypeCounts() : refresh()"
+    />
+    <ResourceListSelectionToolbar
+      v-if="selectedResources.length > 0"
+      :selected-resources
+      @clear="clearSelection()"
+      @delete="
+        (resources) => {
+          clearSelection();
+          deleteResources(resources);
+        }
+      "
+    />
+    <ResourceListFilterBar
+      v-else
+      v-model:status="status"
+      v-model:tag-name="tagName"
+      v-model:tag-value="tagValue"
+      v-model:types="types"
+      v-model:updated-after="updatedAfter"
+      v-model:updated-before="updatedBefore"
+      v-model:updated-filter="updatedFilter"
+      :has-active-filters
+      @clear="clearFilters()"
+    />
     <ResourceListSummaryCards
       v-if="isSummaryView"
       :counts="typeCounts"
@@ -193,7 +176,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         modelValue: selectedIds,
         page,
         search: filterKey,
-        showSelect: isSearchable,
+        showSelect: true,
         sortBy,
       }"
       @click:row="onClickRow"
@@ -227,12 +210,11 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       </template>
     </StyledDataTableServer>
     <ResourceListContextMenu
-      v-if="isSearchable && contextMenuResource"
+      v-if="contextMenuResource"
       v-model="isContextMenuOpen"
       :position="contextMenuPosition"
       :resource="contextMenuResource"
     />
-    <!-- Outside the isSearchable gate: the blade list's row ⋮ menu opens these too -->
     <ResourceRenameDialog
       v-if="renamingResource"
       :key="renamingResource.id"

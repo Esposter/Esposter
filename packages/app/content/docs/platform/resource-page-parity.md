@@ -5,7 +5,7 @@ description: Azure command-bar parity on the resource page — labeled commands 
 
 # Resource Page Parity
 
-Azure command-bar and destructive-operation parity on `/resources/[id]/[[blade]]`: labeled toolbar commands with a `…` overflow, Refresh, a Duplicate command, and a type-the-name delete confirmation.
+Azure command-bar and destructive-operation parity on `/resource-explorer/[id]/[[blade]]`: labeled toolbar commands with a `…` overflow, Refresh, a Duplicate command, and a type-the-name delete confirmation.
 
 ## Command bar
 

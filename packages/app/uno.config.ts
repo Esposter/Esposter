@@ -24,6 +24,13 @@ const opacityUtilities = {
   "op-loading": { opacity: "var(--v-loading-opacity, 0.5)" },
   "op-medium-emphasis": { opacity: "var(--v-medium-emphasis-opacity, 0.6)" },
 } as const satisfies Record<string, Record<string, string>>;
+const getOverlayBackgroundColor = (state: string) => ({
+  "background-color": `color-mix(in srgb, currentColor calc(var(--v-${state}-opacity) * var(--v-theme-overlay-multiplier) * 100%), transparent)`,
+});
+const overlayUtilities = {
+  "bg-activated": getOverlayBackgroundColor("activated"),
+  "bg-hover": getOverlayBackgroundColor("hover"),
+} as const satisfies Record<string, Record<string, string>>;
 const toKebabCase = (str: string) => str.replaceAll(/[A-Z]/gu, (m) => `-${m.toLowerCase()}`);
 
 export default defineConfig({
@@ -54,6 +61,12 @@ export default defineConfig({
       ([level, css]) => [`elevation-${level}`, css] as [string, Record<string, string>],
     ),
     ["overflow-anchor-none", { "overflow-anchor": "none" }],
+    // Vuetify's own interaction tints, as backgrounds rather than the `.v-*__overlay` pseudo-element it paints
+    // Them with. The formula is copied from VBtn (`calc(var(--v-<state>-opacity) * var(--v-theme-overlay-
+    // Multiplier))`) so anything hand-rolling a hover or active state lands on the exact colour a button does,
+    // In both themes, and follows the theme when those variables move. `color-mix` is what carries currentColor
+    // Through at a fraction — an `opacity` here would fade the element's own text with it
+    ...Object.entries(overlayUtilities),
     ...Object.entries(opacityUtilities),
   ],
   safelist: [

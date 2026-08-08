@@ -17,7 +17,7 @@ describe("styledLinkRowActions", () => {
       slots: { default: () => h("button", { onClick: onActionClick, type: "button" }) },
     });
     const row = document.createElement("a");
-    row.href = RoutePath.ResourcesAll;
+    row.href = RoutePath.ResourceExplorerAll;
     row.addEventListener("click", onRowClick);
     row.append(component.element);
     const event = new MouseEvent("click", { bubbles: true, cancelable: true });

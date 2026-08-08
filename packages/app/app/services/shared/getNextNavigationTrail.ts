@@ -23,7 +23,7 @@ export const getNextNavigationTrail = (
 ): NavigationTrailPage[] => {
   // Outside the area nothing carries a trail, and the landing page is where one starts. The `/` is what makes
   // It a path boundary: a sibling route that merely shares the prefix is a different area, not a page inside it
-  if (!toPath.startsWith(`${RoutePath.Resources}/`)) return [];
+  if (!toPath.startsWith(`${RoutePath.ResourceExplorer}/`)) return [];
 
   const toPage = getPage(toPath);
   const toPageIndex = toPage ? trail.indexOf(toPage) : -1;
@@ -33,7 +33,7 @@ export const getNextNavigationTrail = (
 
   const fromPage = getPage(fromPath);
   // Only leaving a page that can be a crumb is a drill-in from it, so only that appends. Every other navigation
-  // Carries the trail through untouched — another blade, another row clicked in the list rail, or the same page
+  // Carries the trail through untouched — another blade, another resource opened beside it, or the same page
   // Re-entered with different filters — and one arriving from outside the area carries the empty trail that
   // Leaving it left behind, which is exactly what a direct arrival is
   if (fromPage && getPageKey(fromPath) !== getPageKey(toPath)) return [...trail, fromPage];

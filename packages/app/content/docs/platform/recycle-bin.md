@@ -5,7 +5,7 @@ description: Soft delete with restore — deletedAt marking, a bin page for rest
 
 # Recycle Bin
 
-Deleting a resource marks it rather than destroying it. `/resources/recycle-bin` lists what you deleted, restores it, or destroys it for good, and a timer sweeps anything older than 30 days.
+Deleting a resource marks it rather than destroying it. `/resource-explorer/recycle-bin` lists what you deleted, restores it, or destroys it for good, and a timer sweeps anything older than 30 days.
 
 ## How it works
 
@@ -57,7 +57,7 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 | `server/trpc/routers/resource.ts`                                 | Bin/restore/purge + the `where` predicate |
 | `server/trpc/procedure/resource/getOwnerProcedure.ts`             | Soft-delete guard + `isDeletedOnly` mode  |
 | `packages/azure-functions/src/functions/purgeDeletedResources.ts` | Daily 30-day timer sweep                  |
-| `app/pages/resources/recycle-bin.vue`                             | The bin page                              |
+| `app/pages/resource-explorer/recycle-bin.vue`                     | The bin page                              |
 | `app/composables/resource/list/useReadResourcesPage.ts`           | The paged reader it shares with `/all`    |
 
 ## Notes

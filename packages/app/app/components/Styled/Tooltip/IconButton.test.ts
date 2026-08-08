@@ -11,7 +11,7 @@ describe("styledTooltipIconButton", () => {
     // The root is VTooltip, so an undeclared `to` lands on the popup element by default and the button never
     // Navigates — every call site spells navigation this way
     const component = await mountSuspended(StyledTooltipIconButton, {
-      attrs: { to: RoutePath.ResourcesAll },
+      attrs: { to: RoutePath.ResourceExplorerAll },
       props: { icon: "mdi-close" },
     });
 

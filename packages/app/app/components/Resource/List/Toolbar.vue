@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
+import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
-
-interface ResourceListToolbarProps {
-  closeTo?: string;
-}
 
 const search = defineModel<string>("search", { required: true });
 const isSummaryView = defineModel<boolean>("isSummaryView", { required: true });
 const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true });
 const hiddenColumnKeys = defineModel<string[]>("hiddenColumnKeys", { required: true });
-const { closeTo } = defineProps<ResourceListToolbarProps>();
 const emit = defineEmits<{ export: []; refresh: [] }>();
 // When narrow, the toolbar commands collapse into the … overflow menu — the close ✕ never collapses
 const { smAndDown } = useVDisplay();
+// The ✕ peels back to wherever the trail says the visitor came from, so it and the last crumb are one move
+const navigationTrailStore = useNavigationTrailStore();
+const { closeTo } = storeToRefs(navigationTrailStore);
 const toolbarItems = computed<Item[]>(() => [
   {
     active: isSummaryView.value,
@@ -37,7 +36,7 @@ const toolbarItems = computed<Item[]>(() => [
   {
     icon: "mdi-delete-outline",
     onClick: async () => {
-      await navigateTo(RoutePath.ResourcesRecycleBin);
+      await navigateTo(RoutePath.ResourceExplorerRecycleBin);
     },
     title: "Recycle bin",
   },
@@ -67,6 +66,6 @@ const toolbarItems = computed<Item[]>(() => [
     />
     <ResourceListColumnChooserMenu v-model="hiddenColumnKeys" />
     <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
-    <StyledTooltipIconButton v-if="closeTo" :to="closeTo" icon="mdi-close" text="Close" />
+    <StyledTooltipIconButton :to="closeTo" icon="mdi-close" text="Close" />
   </v-toolbar>
 </template>

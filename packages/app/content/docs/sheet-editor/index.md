@@ -5,7 +5,7 @@ description: The grid editor for CSV/JSON/XLSX Sheet resources — inline editin
 
 # Sheet Editor
 
-The sheet editor is the grid editor of the **Sheet resource** — a spreadsheet-like editor for CSV, JSON, and XLSX files with inline editing, data cleaning, computed columns, statistics, and an Excel-style clipboard. It is surfaced as the Data blade of a Sheet resource in the Resource Explorer (`/resources/[id]/[[blade]]`).
+The sheet editor is the grid editor of the **Sheet resource** — a spreadsheet-like editor for CSV, JSON, and XLSX files with inline editing, data cleaning, computed columns, statistics, and an Excel-style clipboard. It is surfaced as the Data blade of a Sheet resource in the Resource Explorer (`/resource-explorer/[id]/[[blade]]`).
 
 ## Key concepts
 

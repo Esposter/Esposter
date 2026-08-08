@@ -22,7 +22,7 @@ const { dense = false } = defineProps<CreateGalleryProps>();
       gap-2
       h-full
       :max-width="dense ? '10rem' : '18rem'"
-      :to="RoutePath.ResourcesCreateType(type)"
+      :to="RoutePath.ResourceExplorerCreateType(type)"
     >
       <div flex gap-2 items-center>
         <v-icon size="large" :icon="ResourceDefinitionMap[type].icon" />

@@ -5,7 +5,7 @@ description: Azure-portal-faithful resource-explorer search — grouped as-you-t
 
 # Global Search
 
-Azure-portal-faithful search over the resource platform: one `ResourceSearchMenu` combobox with an as-you-type dropdown grouped into Resources / Services / Pages, mounted inline on Home (portal landing parity) and as a `Ctrl+K` command-palette dialog, both from the explorer home page (`pages/resources/index.vue`) — the app bar is cross-product chrome (messaging, posts, games), so it carries no resource-search entry. No new backend — the Resources group rides `resource.readResources`, which ranks prefix matches first.
+Azure-portal-faithful search over the resource platform: one `ResourceSearchMenu` combobox with an as-you-type dropdown grouped into Resources / Services / Pages, mounted inline on Home (portal landing parity) and as a `Ctrl+K` command-palette dialog, both from the explorer home page (`pages/resource-explorer/index.vue`) — the app bar is cross-product chrome (messaging, posts, games), so it carries no resource-search entry. No new backend — the Resources group rides `resource.readResources`, which ranks prefix matches first.
 
 ## How it works
 
@@ -19,31 +19,31 @@ flowchart LR
   SM --> PG["Pages group (static)"]
   SM -->|empty query| LS["LocalStorageKey.ResourceRecentSearches<br/>+ ResourceRecentViews"]
 
-  RG -->|Enter/click| RES["/resources/[id]"]
-  SG --> ALLT["/resources/all?types=X"]
-  SG -->|Create sub-action| CT["/resources/create/[type]"]
-  SM -->|"See all results →"| ALL["/resources/all?search=q"]
+  RG -->|Enter/click| RES["/resource-explorer/[id]"]
+  SG --> ALLT["/resource-explorer/all?types=X"]
+  SG -->|Create sub-action| CT["/resource-explorer/create/[type]"]
+  SM -->|"See all results →"| ALL["/resource-explorer/all?search=q"]
 ```
 
 With a query set the dropdown shows three groups plus a footer:
 
-| Group     | Source                                                                 | Row                                     | Target                                                        |
-| --------- | ---------------------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------- |
-| Resources | `resource.readResources { searchQuery, limit: 5 }` via `useAutoSearch` | type icon · name · type caption         | `RoutePath.Resource(id)`                                      |
-| Services  | client-side match over type titles + descriptions                      | type icon · title · "Create" sub-action | `/resources/all?types=X`; Create → `/resources/create/[type]` |
-| Pages     | static `PageSearchItems`                                               | page icon · title                       | Home, All resources, Create a resource                        |
-| footer    | always when a query is set                                             | "See all results →"                     | `/resources/all?search={q}`                                   |
+| Group     | Source                                                                 | Row                                     | Target                                                                        |
+| --------- | ---------------------------------------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
+| Resources | `resource.readResources { searchQuery, limit: 5 }` via `useAutoSearch` | type icon · name · type caption         | `RoutePath.Resource(id)`                                                      |
+| Services  | client-side match over type titles + descriptions                      | type icon · title · "Create" sub-action | `/resource-explorer/all?types=X`; Create → `/resource-explorer/create/[type]` |
+| Pages     | static `PageSearchItems`                                               | page icon · title                       | Home, All resources, Create a resource                                        |
+| footer    | always when a query is set                                             | "See all results →"                     | `/resource-explorer/all?search={q}`                                           |
 
 - **Empty query**: two groups instead — recent searches (`LocalStorageKey.ResourceRecentSearches`, capped at 5, pushed on submit/pick) and recently viewed (`LocalStorageKey.ResourceRecentViews`, recorded by the resource page via `useRecordResourceView`). Both are per-device by design (localStorage).
 - **Match highlight**: the matched substring is bolded in row titles (`ResourceSearchHighlightedTitle` over `getHighlightParts`).
 - **No results**: a single "No resources found for '{q}'" row plus the See-all footer.
-- `/resources/all` reads `?search=` and `?types=` on load, so the footer and Services rows deep-link into a pre-filtered list.
+- `/resource-explorer/all` reads `?search=` and `?types=` on load, so the footer and Services rows deep-link into a pre-filtered list.
 
 ## Keyboard
 
 - `Ctrl+K` opens the dialog mount on the explorer home page; `Esc` closes; `↑`/`↓` move through a flat list across groups (the See-all footer is the last option); `Enter` activates the selection, falling back to See-all when nothing is selected. The dialog mount traps focus (Vuetify dialog); the inline Home mount keeps normal document tab order.
 - ARIA: the field is `role="combobox"` with `aria-expanded`/`aria-activedescendant`; the panel is `role="listbox"` with `role="option"` rows.
-- Azure `G`-chords via `useResourceKeyboardShortcuts` (registered from the explorer home page): `G /` focuses search (opens the palette), `G A` → `/resources/all`. Chords are suppressed while focus is in an input/editor (`checkIsEditableTarget`).
+- Azure `G`-chords via `useResourceKeyboardShortcuts` (registered from the explorer home page): `G /` focuses search (opens the palette), `G A` → `/resource-explorer/all`. Chords are suppressed while focus is in an input/editor (`checkIsEditableTarget`).
 - `?` opens `ResourceShortcutsOverlay`, a `StyledKeyboardShortcutsDialog` listing all bindings (`ResourceKeyboardShortcutList`).
 - The messaging area keeps its own `Ctrl+K` room palette and `Shift+?` dialog; because the resource handlers only exist on the explorer home page, no route carve-out is needed.
 
@@ -60,7 +60,7 @@ With a query set the dropdown shows three groups plus a footer:
 | `app/components/Resource/Search/HighlightedTitle.vue`       | bolds the matched substring in row titles                                                |
 | `app/components/Resource/Search/Dialog.vue`                 | `Ctrl+K` overlay mount (`v-dialog` bound to `useSearchDialogStore`)                      |
 | `app/components/Resource/ShortcutsOverlay.vue`              | `?` shortcuts help dialog                                                                |
-| `app/pages/resources/index.vue`                             | explorer home — inline mount plus the dialog/overlay mounts and keyboard chords          |
+| `app/pages/resource-explorer/index.vue`                     | explorer home — inline mount plus the dialog/overlay mounts and keyboard chords          |
 | `app/composables/resource/search/useResourceSearchItems.ts` | grouping and recent-search persistence over [`useAutoSearch`](/docs/architecture/search) |
 | `app/composables/resource/search/useRecordResourceView.ts`  | records recently viewed resources from the resource page                                 |
 | `app/composables/resource/useResourceKeyboardShortcuts.ts`  | `Ctrl+K`, `G`-chords, `?` — keydown listener mounted with the explorer home page         |

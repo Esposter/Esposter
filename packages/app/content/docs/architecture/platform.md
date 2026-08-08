@@ -25,7 +25,7 @@ New products join the platform by adding one `ResourceType` and one `ResourceDef
 
 ```mermaid
 flowchart TB
-  subgraph explorer [Resource Explorer — /resources]
+  subgraph explorer [Resource Explorer — /resource-explorer]
     SHEET[Sheet<br/>datasetProvider · portable]
     SURVEY[Survey<br/>publishable · datasetProvider · fileAssets]
     TODO[TodoList]

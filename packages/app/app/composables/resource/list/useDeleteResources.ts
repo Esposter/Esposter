@@ -65,7 +65,7 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
                 ? // Single-use: once the restore lands, a second fire from the bell would target a resource
                   // No longer in the bin, so the action consumes itself on success
                   { handler: () => restoreResource(takeOne(resources)), isSingleUse: true, title: "Restore" }
-                : { title: "Go to Recycle bin", to: RoutePath.ResourcesRecycleBin },
+                : { title: "Go to Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
             severity: "success",
             title: deletedNotificationTitle,
           });
@@ -74,7 +74,7 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
           // So the user sits in an editor that error-toasts on every autosave. The blade's own delete already
           // Routes here, and a delete must not navigate from one entry point and not the other
           if (ids.includes(getRouteParamString(router.currentRoute.value.params.id)))
-            await navigateTo(RoutePath.ResourcesAll);
+            await navigateTo(RoutePath.ResourceExplorerAll);
         },
       },
     );

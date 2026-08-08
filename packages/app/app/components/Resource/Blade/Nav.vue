@@ -7,6 +7,7 @@ import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { ResourceBladeDefinitionMap } from "@/services/resource/ResourceBladeDefinitionMap";
 import { ResourceBladeTitleMap } from "@/services/resource/ResourceBladeTitleMap";
 import { ResourceEditorComponentMap } from "@/services/resource/ResourceEditorComponentMap";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { RoutePath, takeOne } from "@esposter/shared";
 
 interface ResourceBladeNavProps {
@@ -18,6 +19,10 @@ const { activeBlade, resource } = defineProps<ResourceBladeNavProps>();
 // On mobile the rail collapses into a dropdown so the blade content keeps the full width.
 const { smAndDown } = useVDisplay();
 const isOpen = ref(false);
+// Collapsing hides the rail outright rather than narrowing it to icons: a blade is the widest thing on the page
+// And the nav is a handful of links the caret restores in one click. Persisted, because a reader who reclaimed
+// The width wants it reclaimed on the next resource too
+const isCollapsed = useLocalStorage(LocalStorageKey.IsResourceBladeNavCollapsed, false);
 const items = computed(() => {
   const results = [
     {
@@ -79,14 +84,23 @@ const activeItem = computed(() => items.value.find(({ blade }) => blade === acti
       />
     </v-list>
   </v-menu>
-  <v-list v-else nav>
-    <v-list-item
-      v-for="item in items"
-      :key="item.blade"
-      :active="activeBlade === item.blade"
-      :prepend-icon="item.icon"
-      :title="item.title"
-      :to="item.to"
-    />
-  </v-list>
+  <div v-else-if="isCollapsed" px-1 pt-2>
+    <StyledTooltipIconButton icon="mdi-chevron-double-right" text="Show blade menu" @click="isCollapsed = false" />
+  </div>
+  <div v-else flex flex-col>
+    <!-- The caret sits at the end of the rail's own row, the way the portal puts it beside the menu's search -->
+    <div px-1 pt-2 flex justify-end>
+      <StyledTooltipIconButton icon="mdi-chevron-double-left" text="Hide blade menu" @click="isCollapsed = true" />
+    </div>
+    <v-list nav>
+      <v-list-item
+        v-for="item in items"
+        :key="item.blade"
+        :active="activeBlade === item.blade"
+        :prepend-icon="item.icon"
+        :title="item.title"
+        :to="item.to"
+      />
+    </v-list>
+  </div>
 </template>

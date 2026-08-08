@@ -28,24 +28,24 @@ describe("appBreadcrumbs", () => {
   test("leads a page reached with no trail behind it with the hub alone", async () => {
     expect.hasAssertions();
 
-    const component = await mountBreadcrumbs(RoutePath.ResourcesAll, []);
+    const component = await mountBreadcrumbs(RoutePath.ResourceExplorerAll, []);
 
-    expect(readCrumbs(component.element)).toStrictEqual(["Resources"]);
+    expect(readCrumbs(component.element)).toStrictEqual(["Resource Explorer"]);
   });
 
   test("does not repeat the hub a trail already carries", async () => {
     expect.hasAssertions();
 
-    const component = await mountBreadcrumbs(RoutePath.ResourcesAll, [NavigationTrailPage.Resources]);
+    const component = await mountBreadcrumbs(RoutePath.ResourceExplorerAll, [NavigationTrailPage.Resources]);
 
-    expect(readCrumbs(component.element)).toStrictEqual(["Resources"]);
+    expect(readCrumbs(component.element)).toStrictEqual(["Resource Explorer"]);
   });
 
   // The page you are on is the title, never a crumb — and the hub is the one crumb that could link to itself
   test("renders nothing on the hub itself", async () => {
     expect.hasAssertions();
 
-    const component = await mountBreadcrumbs(RoutePath.Resources, []);
+    const component = await mountBreadcrumbs(RoutePath.ResourceExplorer, []);
 
     expect(component.find(".v-breadcrumbs-item").exists()).toBe(false);
   });

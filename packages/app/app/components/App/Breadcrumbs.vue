@@ -11,10 +11,10 @@ const { crumbs } = storeToRefs(navigationTrailStore);
 // Linking to the page it is on. Home needs no crumb: the logo is that link on every route
 const items = computed(() => {
   const trailItems = crumbs.value.map(({ path, title }) => ({ title, to: path }));
-  const isTrailFromResources = trailItems.some(({ to }) => to === RoutePath.Resources);
-  return (isTrailFromResources ? trailItems : [{ title: "Resources", to: RoutePath.Resources }, ...trailItems]).filter(
-    ({ to }) => to !== route.path,
-  );
+  const isTrailFromResources = trailItems.some(({ to }) => to === RoutePath.ResourceExplorer);
+  return (
+    isTrailFromResources ? trailItems : [{ title: "Resource Explorer", to: RoutePath.ResourceExplorer }, ...trailItems]
+  ).filter(({ to }) => to !== route.path);
 });
 </script>
 
@@ -24,7 +24,10 @@ const items = computed(() => {
 <template>
   <v-breadcrumbs v-if="items.length > 0" :items p-0>
     <template #item="{ item }">
-      <v-breadcrumbs-item :to="item.to">
+      <!-- A link, not a button: underline and background both arrive on hover, so a trail of several crumbs reads
+           as one quiet line until pointed at, and it takes just enough padding to draw that background. A `v-btn`
+           here brought button metrics — a control-sized hit box around text that is not a control -->
+      <v-breadcrumbs-item :to="item.to" px-1 rd hover:underline hover:bg-hover>
         {{ item.title }}
       </v-breadcrumbs-item>
     </template>

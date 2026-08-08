@@ -58,6 +58,10 @@ Hyperlinks / clickable inline text get `text-info` — that is the conventional 
 
 A colour that changes on hover/focus/disabled is a variant utility (`hover:text-primary-darken-1`, `focus-within:b-info`, `disabled:op-30`), never a scoped `&:hover` rule. Colons inside attribute names are valid in Vue templates — only a **leading** `:` triggers `v-bind`.
 
+**A hover or active background is `hover:bg-hover` / `bg-activated`, never a hand-picked surface colour.** Those two utilities are Vuetify's own interaction tints, defined in `uno.config.ts` from the same `calc(var(--v-<state>-opacity) * var(--v-theme-overlay-multiplier))` formula `VBtn` uses, so a custom affordance lands on exactly the colour a button does in both themes and follows the theme when those variables move. Picking `hover:bg-surface` instead makes a control that is a shade off every real button beside it, and the drift is invisible until the two sit together.
+
+This is for a **state tint over whatever is underneath**. A control whose background is itself the design — a chip that swaps its own fill to read as selected — keeps its explicit colour; the tint is an overlay, not a palette.
+
 ## Abbreviated Utilities
 
 Always use the UnoCSS abbreviated shorthand forms — they are first-class utilities, and when in doubt the shorter form is canonical here.

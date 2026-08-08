@@ -50,7 +50,7 @@ A star is a toggle, and `toggleFavorite` implements it as a delete-then-insert r
 | `app/store/resource/favorite.ts`                     | Favorites store + optimistic toggle      |
 | `app/components/Resource/FavoriteToggle.vue`         | The star, shared by `/all` and the blade |
 | `app/composables/resource/useReadRecentResources.ts` | Views → live rows, with the fallback     |
-| `app/pages/resources/index.vue`                      | Home Recent/Favorites tabs               |
+| `app/pages/resource-explorer/index.vue`              | Home Recent/Favorites tabs               |
 
 ## Notes
 

@@ -34,7 +34,7 @@ describe("resourceSearchResultList", () => {
           },
         ],
         searchQuery,
-        seeAllTo: RoutePath.ResourcesAll,
+        seeAllTo: RoutePath.ResourceExplorerAll,
         selectedIndex: -1,
       },
     });
@@ -51,16 +51,16 @@ describe("resourceSearchResultList", () => {
       props: {
         items: [
           {
-            createTo: RoutePath.ResourcesCreateType(ResourceType.Sheet),
+            createTo: RoutePath.ResourceExplorerCreateType(ResourceType.Sheet),
             group: ResourceSearchGroup.Services,
             icon: "mdi-file-outline",
             id,
             title: "name",
-            to: RoutePath.ResourcesAll,
+            to: RoutePath.ResourceExplorerAll,
           },
         ],
         searchQuery,
-        seeAllTo: RoutePath.ResourcesAll,
+        seeAllTo: RoutePath.ResourceExplorerAll,
         selectedIndex: -1,
       },
     });
@@ -74,7 +74,7 @@ describe("resourceSearchResultList", () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(ResourceSearchResultList, {
-      props: { items: [], searchQuery, seeAllTo: RoutePath.ResourcesAll, selectedIndex: -1 },
+      props: { items: [], searchQuery, seeAllTo: RoutePath.ResourceExplorerAll, selectedIndex: -1 },
     });
 
     expect(component.findAll(".v-list-item").at(-1)?.element.tagName).toBe("A");

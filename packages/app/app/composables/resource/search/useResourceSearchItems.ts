@@ -26,7 +26,7 @@ export const useResourceSearchItems = (searchQuery: Ref<string>) => {
             icon: "mdi-history",
             id: `${ResourceSearchGroup.RecentSearches}-${recentSearch}`,
             title: recentSearch,
-            to: { path: RoutePath.ResourcesAll, query: { search: recentSearch } },
+            to: { path: RoutePath.ResourceExplorerAll, query: { search: recentSearch } },
           })),
           ...recentResourceViews.value.map((recentResourceView) =>
             getResourceSearchItem(recentResourceView, ResourceSearchGroup.RecentlyViewed),
