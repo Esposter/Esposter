@@ -10,8 +10,9 @@ The account surface: signing in at `/login` (Google, GitHub, or Facebook — see
 ## How it works
 
 - **Login** — a provider-button card (`Login/Button.vue` per provider) driving better-auth's social sign-in; the `guest` middleware keeps signed-in users out.
-- **Settings** — an introduction card plus a sidebar-sectioned profile card (General is the only section today). Name and biography save through `user.updateUser` (biography length enforced by the users schema).
+- **Settings** — an introduction card plus a sidebar of two sections, General (the profile card) and Linked Accounts. Name and biography save through `user.updateUser` (biography length enforced by the users schema).
 - **Profile image** — the standard [two-step SAS upload](/docs/architecture/file-uploads): `user.generateProfileImageUploadUrl` returns a one-hour write SAS for the fixed blob `${userId}/ProfileImage` in the public user-assets container, the client PUTs the image, and the stable public URL is saved on the user.
+- **Account linking** — one account can hold several social providers, listed and managed at `/user/settings`. See [account linking](/docs/users/account-linking).
 - **Public profile** — every user has a public page at `/user/[id]` showing their identity, achievement showcase, and posts. See [public profile](/docs/users/public-profile).
 - Message-scoped user state (presence/status, voice settings, per-room personas) is esbabbler's, not this page's — see [profiles and presence](/docs/esbabbler/profiles-and-presence) and [settings](/docs/esbabbler/settings).
 

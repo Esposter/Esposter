@@ -13,7 +13,7 @@ In-memory PostgreSQL database factory for testing — server environment only. U
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/_esposter_db-mock.html) to level up.
 
 ### Usage
 

@@ -23,7 +23,7 @@ pnpm i @esposter/shared @vueuse/core vue zod
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/shared.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/_esposter_shared.html) to level up.
 
 ### Key Exports
 

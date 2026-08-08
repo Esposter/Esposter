@@ -17,7 +17,7 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 ## Capabilities
 
 - **FileAssets** — asset uploads under `{id}/files/…` through the shared capability procedures ([resource file assets](/docs/platform/resource-file-assets)).
-- **Publishable** — publish goes through the generic `publishResource` plus the two factory hooks: `transformPublishedContent` clones referenced asset blobs into `{id}/published/{publishVersion}/` and rewrites URLs; `transformPublicReadContent` merges the live `settings` onto the public read so closing or gating never needs a re-publish. Publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys. Public reads are counted ([view analytics](/docs/platform/published-view-analytics)).
+- **Publishable** — publish goes through the generic `publishResource` plus the two factory hooks: `transformPublishedContent` clones referenced asset blobs into the attempt's own publish directory and rewrites URLs ([resource file assets](/docs/platform/resource-file-assets)); `transformPublicReadContent` merges the live `settings` onto the public read so closing or gating never needs a re-publish. Publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys. Public reads are counted ([view analytics](/docs/platform/published-view-analytics)).
 - **DatasetProvider** — `readSurveyResponsesDataset` serves responses through `dataset.readDataset`, auth keyed to resource ownership.
 
 ## Procedures
@@ -35,8 +35,8 @@ Asset uploads are not listed here: they come from the shared FileAssets capabili
 
 - **Editor blade** — SurveyJS creator rendered inline (`useSurveyCreator`); autosave goes through the store's `saveModel`, which merges the model with the currently loaded `settings` and saves the whole `{ model, settings }` blob — the shape the content schema requires. SurveyJS keeps owning editor/preview state; the resource layer only sees model JSON in and out.
 - **Overview blade** — wraps the generic Overview to add the response count beside the Views row, plus the Collection card owning the `settings` section.
-- **Responses blade** — dataset table over `dataset.readDataset` (SurveyResponses reference), the first-look surface for results, with per-row detail and delete ([response management](/docs/platform/survey-response-management)).
-- **Respondent page** — `/view/survey/[id]` via `ViewComponentMap`: an interactive published-view renderer (plain `survey-core` Model + theme) that writes responses. In-progress resume stores only a per-survey response id in localStorage — answers live solely in Azure Table — and the id is removed on submit, so a later visitor on a shared device cannot reopen a submitted response. Email invite blocks link it via `RoutePath.View(ResourceType.Survey, id)`.
+- **Responses blade** — a table over `survey.readSurveyResponseRecords`, the first-look surface for results, with per-row detail and delete ([response management](/docs/platform/survey-response-management)).
+- **Respondent page** — `/view/Survey/[id]` via `ViewComponentMap`: an interactive published-view renderer (plain `survey-core` Model + theme) that writes responses. In-progress resume stores only a per-survey response id in localStorage — answers live solely in Azure Table — and the id is removed on submit, so a later visitor on a shared device cannot reopen a submitted response. Email invite blocks link it via `RoutePath.View(ResourceType.Survey, id)`.
 
 ## Key files
 

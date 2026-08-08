@@ -9,20 +9,20 @@ export const PageSearchItems = [
     icon: "mdi-home-outline",
     id: `${ResourceSearchGroup.Pages}-home`,
     title: "Home",
-    to: RoutePath.Resources,
+    to: RoutePath.ResourceExplorer,
   },
   {
     group: ResourceSearchGroup.Pages,
     icon: "mdi-format-list-bulleted",
     id: `${ResourceSearchGroup.Pages}-all-resources`,
     title: "All resources",
-    to: RoutePath.ResourcesAll,
+    to: RoutePath.ResourceExplorerAll,
   },
   {
     group: ResourceSearchGroup.Pages,
     icon: "mdi-plus-box-outline",
     id: `${ResourceSearchGroup.Pages}-create-a-resource`,
     title: "Create a resource",
-    to: RoutePath.ResourcesCreate,
+    to: RoutePath.ResourceExplorerCreate,
   },
 ] as const satisfies readonly ResourceSearchItem[];

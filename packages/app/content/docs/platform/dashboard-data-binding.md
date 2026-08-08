@@ -13,7 +13,7 @@ A dashboard visual can bind to a `DatasetReference` (survey responses, a Sheet r
 flowchart LR
   ED["Dashboard Editor blade<br/>Bind-to-data form"] -->|"pick provider → resource →<br/>x column + series rows"| VIS["Visual.dataset<br/>{ reference, query }"]
   VIS -->|render / per-visual refresh| READ["dataset.readDataset"]
-  READ --> PROV["DatasetProviderMap<br/>Sheet · SurveyResponses"]
+  READ --> PROV["DatasetProviderMap<br/>ProgramStatus · Sheet · SurveyResponses"]
   PROV -->|rows| AGG["client aggregation<br/>count/sum/avg/min/max per series"]
   AGG --> CHART["chart data"]
   PUB["publishResource"] -->|bakes resolved data| SNAP["published snapshot<br/>(no live reads on /view)"]
@@ -29,6 +29,7 @@ flowchart LR
 interface VisualDatasetBinding {
   reference: DatasetReference;
   query: DatasetQuery; // { xColumn, series: { column, aggregation: DatasetAggregationType }[] }
+  snapshot?: Dataset; // baked in at publish time, so public viewers never resolve references
 }
 ```
 
@@ -40,13 +41,13 @@ interface VisualDatasetBinding {
 
 ## Key files
 
-| File                                                   | Role                               |
-| ------------------------------------------------------ | ---------------------------------- |
-| `shared/models/dashboard/data/VisualDatasetBinding.ts` | binding shape (reference + query)  |
-| `shared/models/dataset/DatasetQuery.ts`                | x column + aggregated series       |
-| `app/components/Resource/Dashboard/Editor.vue`         | canvas incl. bind-to-data flow     |
-| `app/components/Resource/Dashboard/View.vue`           | published renderer over baked data |
-| `app/components/Dataset/ReferencePicker.vue`           | shared provider/resource picker    |
+| File                                                   | Role                                                                       |
+| ------------------------------------------------------ | -------------------------------------------------------------------------- |
+| `shared/models/dashboard/data/VisualDatasetBinding.ts` | binding shape — reference + query, plus the optional publish-time snapshot |
+| `shared/models/dataset/DatasetQuery.ts`                | x column + aggregated series                                               |
+| `app/components/Resource/Dashboard/Editor.vue`         | canvas incl. bind-to-data flow                                             |
+| `app/components/Resource/Dashboard/View.vue`           | published renderer over baked data                                         |
+| `app/components/Dataset/ReferencePicker.vue`           | shared provider/resource picker                                            |
 
 ## Notes
 

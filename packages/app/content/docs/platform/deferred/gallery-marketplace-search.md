@@ -5,7 +5,7 @@ description: "Deferred — Azure Marketplace parity in the create gallery: a sea
 
 # Create gallery search + categories
 
-Azure Marketplace parity in `/resources/create`: a search field and category rail over the type tiles.
+Azure Marketplace parity in `/resource-explorer/create`: a search field and category rail over the type tiles.
 
 ## Why deferred
 

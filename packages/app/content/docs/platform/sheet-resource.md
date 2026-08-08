@@ -19,11 +19,11 @@ Each imported file (CSV/JSON/XLSX) is its own resource. The old table editor fus
 // packages/app/shared/models/resource/sheet/SheetResource.ts — interface-first
 export const sheetResourceSchema = z.object({
   data: dataSourceSchema, // columns, rows, metadata, statistics
-  settings: fileSettingsSchema, // { type: DataSourceType, configuration: Csv|Json|Xlsx configuration }
-}) satisfies z.ZodType<SheetResource>;
+  settings: sheetSettingsSchema, // discriminatedUnion("type"): Csv | Json | Xlsx file settings
+}) satisfies z.ZodType<ToData<SheetResource>>;
 ```
 
-A Sheet resource always has a `data` section (empty `DataSource` on create) — there is no `dataSource: null` state. "Not yet imported" is `rows.length === 0`, rendered as `StyledEmptyState` with an Import command. The `DataSource`, `Column` family, transformations, `DataSourceType`, and per-format configurations live in `shared/models/resource/sheet/`.
+A Sheet resource always has a `data` section (empty `DataSource` on create) — there is no `dataSource: null` state. "Not yet imported" is `rows.length === 0`, rendered as `StyledEmptyState` with an Import command. The `Column` family and the per-format configurations live in `shared/models/resource/sheet/`; `DataSource`, `DataSourceType` and the transformations sit under its `datasource/` subfolder.
 
 ## Capabilities
 

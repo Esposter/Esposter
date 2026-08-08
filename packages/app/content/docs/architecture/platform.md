@@ -25,7 +25,7 @@ New products join the platform by adding one `ResourceType` and one `ResourceDef
 
 ```mermaid
 flowchart TB
-  subgraph explorer [Resource Explorer — /resources]
+  subgraph explorer [Resource Explorer — /resource-explorer]
     SHEET[Sheet<br/>datasetProvider · portable]
     SURVEY[Survey<br/>publishable · datasetProvider · fileAssets]
     TODO[TodoList]
@@ -81,13 +81,13 @@ sequenceDiagram
 
   Creator->>SV: 1. Author survey (SurveyJS autosave → saveResourceContent)
   Creator->>SV: 2. Publish — snapshot model + assets to {id}/published/{n}
-  PUB-->>Respondent: 3. Share /view/survey/{id} (esbabbler, email block, anywhere)
+  PUB-->>Respondent: 3. Share /view/Survey/{id} (esbabbler, email block, anywhere)
   Respondent->>AT: 4. Respond → rows (partitionKey = survey resource id)
   Note over SV,AT: Respondents are served the published snapshot — unpublished 404s
   Creator->>SH: 5. Import responses (dataset.readDataset → one-time copy into a Sheet resource)
   SH->>SH: 6. Computed columns (Aggregation, Math, RegexMatch, …)
   Creator->>DB: 7. Bind visual to a DatasetReference (live re-resolve on load)
-  DB->>PUB: 8. Publish dashboard — bakes dataset snapshots → shareable /view/dashboard/{id}
+  DB->>PUB: 8. Publish dashboard — bakes dataset snapshots → shareable /view/Dashboard/{id}
 ```
 
 ## Capability matrix

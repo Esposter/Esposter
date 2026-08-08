@@ -51,10 +51,14 @@ const isLoading = ref(false);
               </button>
             </template>
           </v-tooltip>
+          <!-- The button above is the labelled upload affordance, so this proxy input stays out of the
+            accessibility tree and out of the tab order -->
           <input
             ref="input"
             type="file"
             accept="image/*"
+            aria-hidden="true"
+            tabindex="-1"
             hidden
             @change="
               async (event) => {

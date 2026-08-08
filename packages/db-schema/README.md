@@ -13,20 +13,20 @@ Drizzle ORM schemas, relations, and migrations for Esposter's PostgreSQL databas
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/_esposter_db-schema.html) to level up.
 
 ### Migration Workflow
 
-After editing a schema file, generate and apply the migration:
+After editing a schema file, generate the migration:
 
 ```bash
 # From packages/db-schema/
 pnpm db:gen     # generate migration SQL from schema changes
-pnpm db:up      # apply pending migrations to the database
+pnpm db:up      # upgrade snapshot metadata to a newer drizzle-kit format
 pnpm db:studio  # open Drizzle Studio UI for visual inspection
 ```
 
-Migrations are output to `packages/app/server/db/migrations/`.
+Migrations are output to `packages/app/server/db/migrations/` and are applied automatically at app startup by the Nitro plugin `packages/app/server/plugins/migrate.ts` — there is no apply script.
 
 ### Schema Domains
 
@@ -53,7 +53,7 @@ Run from `packages/db-schema/`:
 
 ```bash
 pnpm db:gen       # generate migration
-pnpm db:up        # apply migrations
+pnpm db:up        # upgrade snapshot metadata
 pnpm db:studio    # Drizzle Studio
 pnpm build        # compile to dist/
 pnpm test         # vitest watch mode

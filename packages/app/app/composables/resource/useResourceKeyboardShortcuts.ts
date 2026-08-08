@@ -37,7 +37,7 @@ export const useResourceKeyboardShortcuts = () => {
     if (key === "/") {
       event.preventDefault();
       isSearchDialogOpen.value = true;
-    } else if (key === "a") await navigateTo(RoutePath.ResourcesAll);
+    } else if (key === "a") await navigateTo(RoutePath.ResourceExplorerAll);
     else if (key === "n") isNotificationPanelOpen.value = true;
   });
 };

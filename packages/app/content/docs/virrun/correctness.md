@@ -1,6 +1,6 @@
 ---
 title: Correctness
-description: The correctness gate — behaviourally identical to native, enforced by differential testing, equivalence suites, and property/fuzz layers that hard-fail CI.
+description: The correctness gate — behaviourally identical to native, enforced by differential and property/fuzz layers that hard-fail CI, plus equivalence suites run on demand.
 ---
 
 # Correctness
@@ -19,16 +19,16 @@ flowchart LR
         unit["1 · unit\nFS provider, backend wiring"]
         int["2 · integration/acceptance\nreal pnpm install + native postinstall in RAM"]
         diff["3 · differential\nsame command: sandbox vs native, normalize, assert identical"]
-        equiv["4 · equivalence\nwarm fork ≡ cold install · persist ≡ native disk · replay ≡ re-run"]
         prop["5 · property/fuzz\nfast-check vs node:fs oracle · randomized commands vs isolation invariants"]
     end
+    equiv["4 · equivalence — parked, run on demand\nwarm fork ≡ cold install · persist ≡ native disk · replay ≡ re-run"]
     corpus["differential corpus\n(grows with every gap a real repo exposes)"] --> diff
 ```
 
 1. **Unit** — FS provider (read/write/overlay/symlink/module-load), exec backend wiring, snapshot addressing. Fast, deterministic, run everywhere; lives beside the code (`*.test.ts`).
 2. **Integration/acceptance** — a real `pnpm install` with a native postinstall (sharp, esbuild) completing fully in RAM — the `os` backend's reason to exist (`*.acceptance.test.ts`).
 3. **Differential (golden)** — the core technique: run the _same command_ through the candidate backend and the native baseline, normalize both, assert identical. Shared infrastructure under `services/exec/differential/`; each backend's `*.differential.test.ts` feeds its corpus to one helper. **Nothing is normalized implicitly** — each case carries explicit `{ pattern, placeholder }` rules, so a real divergence is never hidden. Every reported correctness bug becomes a permanent golden case before it's fixed.
-4. **Equivalence** — `forkSnapshot.equivalence.test.ts` proves a forked warm run is observably identical to a cold in-place install; `persistRun.equivalence.test.ts` proves a persist run leaves the host disk exactly as native would ([write-back](/docs/virrun/write-back)); `taskCache.equivalence.test.ts` proves a replay matches a real re-run.
+4. **Equivalence** — `forkSnapshot.equivalence.test.ts` proves a forked warm run is observably identical to a cold in-place install; `persistRun.equivalence.test.ts` proves a persist run leaves the host disk exactly as native would ([write-back](/docs/virrun/write-back)); `taskCache.equivalence.test.ts` proves a replay matches a real re-run. All three are **parked as `describe.todo`**, not skipped by host capability: every case boots a sandbox and installs, so a layer that costs minutes of wall clock is not worth paying on every run of the whole repo's suite. Bodies stay intact and each grows its golden cases as usual — drop the `.todo` to run one when the path it covers changes. Nothing else in the package asserts these three properties, so a regression in one merges green.
 5. **Property/fuzz** — two halves. The vfs seam: fast-check drives randomized read/write/exists sequences against the provider and a real `node:fs` temp dir in lockstep and diffs the full trace (node:fs is the oracle, so no fs semantics are re-implemented; failures shrink to a minimal counterexample). The os half: randomized _command_ sequences through the ephemeral RAM overlay assert the isolation invariants under every ordering — the host disk is never mutated, no write leaks across fresh-per-exec uppers, every command yields a well-formed result. Host-gated, small run counts (each op is a real subprocess).
 
 ## Key files
@@ -46,6 +46,7 @@ Paths relative to `packages/virrun/src/`.
 | `services/exec/vfs/createVfsBackend.differential.test.ts`    | vfs backend × node corpus + the overlay fall-through case                                     |
 | `services/exec/snapshot/forkSnapshot.equivalence.test.ts`    | warm fork ≡ cold install                                                                      |
 | `services/exec/snapshot/persistRun.equivalence.test.ts`      | write-back host parity vs native                                                              |
+| `services/exec/cache/taskCache.equivalence.test.ts`          | cache replay ≡ a real re-run                                                                  |
 | `services/vfs/createPlatformaticFsProvider.property.test.ts` | fast-check FS sequences vs the node:fs oracle                                                 |
 | `services/exec/os/createOsBackend.property.test.ts`          | fast-check command sequences vs the isolation invariants                                      |
 

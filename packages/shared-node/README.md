@@ -13,7 +13,7 @@ Node-only shared tooling for Esposter — benchmark reporting reused across pack
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/_esposter_shared-node.html) to level up.
 
 ### What's Included
 

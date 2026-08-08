@@ -3,7 +3,7 @@ import type { Item } from "@/models/shared/Item";
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 import { hasCapability } from "#shared/services/resource/hasCapability";
-import { RoutePath } from "@esposter/shared";
+import { useNavigationTrailStore } from "@/store/navigationTrail";
 
 interface ResourceBladeActionsProps {
   duplicate: () => Promise<void>;
@@ -36,6 +36,9 @@ const {
 } = defineProps<ResourceBladeActionsProps>();
 // When narrow, every command collapses into the … overflow menu — the close ✕ never collapses
 const { smAndDown } = useVDisplay();
+// The ✕ peels back to wherever the trail says the visitor came from, so it and the last crumb are one move
+const navigationTrailStore = useNavigationTrailStore();
+const { closeTo } = storeToRefs(navigationTrailStore);
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
 const isPortable = computed(() => hasCapability(resource.type, "portable"));
 // The dialogs mount only while open so their fields start from the current resource every time
@@ -131,7 +134,7 @@ const overflowItems = computed<Item[]>(() => [
   <StyledOverflowMenu v-else icon="mdi-dots-horizontal" :items="overflowItems" />
   <!-- One click, one icon: the star stays out of the overflow menu like the close ✕ -->
   <ResourceFavoriteToggle :resource />
-  <StyledTooltipIconButton :to="RoutePath.ResourcesAll" icon="mdi-close" text="Close" />
+  <StyledTooltipIconButton :to="closeTo" icon="mdi-close" text="Close" />
   <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename :resource />
   <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove :resource />
   <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />

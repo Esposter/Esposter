@@ -22,6 +22,7 @@ interface DatasetColumn {
 interface Dataset {
   columns: DatasetColumn[];
   rows: Record<string, ColumnValue>[];
+  totalRows?: number; // when present, the uncapped count — truncation is detectable only for providers that supply it
 }
 
 enum DatasetProviderType {
@@ -66,7 +67,7 @@ Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `Dat
 
 ## Rules
 
-- **Row cap** — `AZURE_MAX_PAGE_SIZE` (1000) on every provider; datasets are for visualization and import, not bulk export. Add pagination only when a real consumer hits the cap ([deferred](/docs/platform/deferred/dataset-row-cap-pagination)).
+- **Row cap** — `AZURE_MAX_PAGE_SIZE` (1000) on every provider; datasets are for visualization and import, not bulk export. **Truncation is `totalRows > rows.length`, never the presence of `totalRows`** — a provider that can count cheaply always reports the uncapped total, which equals the row count on an uncapped read. `getDatasetTruncation` is the one place that comparison lives, so a warning can never disagree with the rows on screen; a provider that cannot count omits the field and its consumers simply never warn, because truncation is then unknowable rather than absent. Add pagination only when a real consumer hits the cap ([deferred](/docs/platform/deferred/dataset-row-cap-pagination)).
 - **Consumers choose copy or reference.** Import (Sheet resource) copies rows once. Binding (dashboard visuals, email editor merge fields) stores the `DatasetReference` and re-resolves on load. All call the same procedure.
 - **Fetch on load + manual refresh.** No live subscriptions through this layer ([deferred](/docs/platform/deferred/realtime-dataset-refresh)).
 - **No external providers** (HTTP APIs, SQL) until secret storage and injection-safety work is scoped ([deferred](/docs/platform/deferred/api-sql-dataset-providers)) — the enum grows one value per new provider, nothing else changes.

@@ -67,6 +67,18 @@ describe(defineConfig, () => {
             },
           ],
           [
+            "bg-activated",
+            {
+              "background-color": "color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * var(--v-theme-overlay-multiplier) * 100%), transparent)",
+            },
+          ],
+          [
+            "bg-hover",
+            {
+              "background-color": "color-mix(in srgb, currentColor calc(var(--v-hover-opacity) * var(--v-theme-overlay-multiplier) * 100%), transparent)",
+            },
+          ],
+          [
             "op-disabled",
             {
               "opacity": "var(--v-disabled-opacity, 0.38)",

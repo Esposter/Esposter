@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { RoutePath } from "@esposter/shared";
-
 definePageMeta({ middleware: "auth" });
 </script>
 
@@ -10,7 +8,7 @@ definePageMeta({ middleware: "auth" });
       <Title>All Resources</Title>
     </Head>
     <v-sheet flex-1>
-      <ResourceListView :close-to="RoutePath.Resources" />
+      <ResourceListView />
     </v-sheet>
   </NuxtLayout>
 </template>

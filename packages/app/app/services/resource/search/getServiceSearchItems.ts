@@ -14,12 +14,12 @@ export const getServiceSearchItems = (searchQuery: string): ResourceSearchItem[]
       ResourceDefinitionMap[type].title.toLowerCase().includes(query) ||
       ResourceTypeDescriptionMap[type].toLowerCase().includes(query),
   ).map((type) => ({
-    createTo: RoutePath.ResourcesCreateType(type),
+    createTo: RoutePath.ResourceExplorerCreateType(type),
     group: ResourceSearchGroup.Services,
     icon: ResourceDefinitionMap[type].icon,
     id: `${ResourceSearchGroup.Services}-${type}`,
     subtitle: ResourceTypeDescriptionMap[type],
     title: ResourceDefinitionMap[type].title,
-    to: { path: RoutePath.ResourcesAll, query: { types: type } },
+    to: { path: RoutePath.ResourceExplorerAll, query: { types: type } },
   }));
 };

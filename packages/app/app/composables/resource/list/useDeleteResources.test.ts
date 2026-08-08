@@ -39,7 +39,7 @@ describe(useDeleteResources, () => {
     await useDeleteResources(ref([resource]), ref(1), () => Promise.resolve())([resource]);
 
     expect(push).toHaveBeenCalledTimes(1);
-    expect(push).toHaveBeenCalledWith(RoutePath.ResourcesAll);
+    expect(push).toHaveBeenCalledWith(RoutePath.ResourceExplorerAll);
   });
 
   // The ids go out chunk-by-chunk and each chunk commits independently, so a failure still leaves earlier

@@ -1,11 +1,11 @@
 ---
 title: Summary View
-description: The /resources/all List/Summary toggle — per-type count cards over a grouped count procedure.
+description: The /resource-explorer/all List/Summary toggle — per-type count cards over a grouped count procedure.
 ---
 
 # Summary View
 
-The `/resources/all` workbench ([list filters & views](/docs/platform/list-filters-and-views)) has two lenses on the same filtered query. **List** is the table. **Summary** replaces it with one card per resource type — icon, count, and title — and clicking a card drops you back into the list, filtered to that type. It is the Azure portal's List/Summary toggle, built as frontend plus a single procedure: no schema, no route, no new Azure services.
+The `/resource-explorer/all` workbench ([list filters & views](/docs/platform/list-filters-and-views)) has two lenses on the same filtered query. **List** is the table. **Summary** replaces it with one card per resource type — icon, count, and title — and clicking a card drops you back into the list, filtered to that type. It is the Azure portal's List/Summary toggle, built as frontend plus a single procedure: no schema, no route, no new Azure services.
 
 The point is the question the table answers badly: _what do I actually have?_ A hundred rows sorted by date do not say "eleven surveys and two dashboards"; four cards do, and each card is the affordance for narrowing to what it counts.
 
@@ -50,4 +50,3 @@ flowchart LR
 
 - The toggle is deliberately **not** URL-synced, unlike the filters. A filter is a question about your data and deserves a shareable link; a lens is a preference about how you are looking at it right now, and a card click is a one-way trip back into the list anyway.
 - Refresh dispatches on the active lens, so the toolbar's Refresh means "re-read what I am looking at" in both modes.
-- The blade page's compact list box (`:is-searchable="false"`) renders no toolbar, so it never reaches summary mode.

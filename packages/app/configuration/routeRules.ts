@@ -5,6 +5,6 @@ import type { NitroConfig } from "nitropack/types";
 export const routeRules: NitroConfig["routeRules"] = {
   "/calls/**": { ssr: false },
   "/dungeons": { ssr: false },
-  "/resources": { ssr: false },
-  "/resources/**": { ssr: false },
+  "/resource-explorer": { ssr: false },
+  "/resource-explorer/**": { ssr: false },
 };

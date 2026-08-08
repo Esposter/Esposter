@@ -24,12 +24,12 @@ export const RoutePath: {
   readonly PostUpdate: (id: string) => string;
   readonly PrivacyPolicy: "/privacy-policy";
   readonly Resource: (id: string) => string;
+  readonly ResourceExplorer: "/resource-explorer";
+  readonly ResourceExplorerAll: "/resource-explorer/all";
+  readonly ResourceExplorerCreate: "/resource-explorer/create";
+  readonly ResourceExplorerCreateType: (type: string) => string;
+  readonly ResourceExplorerRecycleBin: "/resource-explorer/recycle-bin";
   readonly ResourceItems: (id: string) => string;
-  readonly Resources: "/resources";
-  readonly ResourcesAll: "/resources/all";
-  readonly ResourcesCreate: "/resources/create";
-  readonly ResourcesCreateType: (type: string) => string;
-  readonly ResourcesRecycleBin: "/resources/recycle-bin";
   readonly User: (id: string) => string;
   readonly UserSettings: "/user/settings";
   readonly View: (type: string, id: string) => string;
@@ -56,13 +56,13 @@ export const RoutePath: {
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,
   PrivacyPolicy: "/privacy-policy",
-  Resource: (id: string) => `/resources/${id}`,
-  ResourceItems: (id: string) => `/resources/${id}/items`,
-  Resources: "/resources",
-  ResourcesAll: "/resources/all",
-  ResourcesCreate: "/resources/create",
-  ResourcesCreateType: (type: string) => `/resources/create/${type}`,
-  ResourcesRecycleBin: "/resources/recycle-bin",
+  Resource: (id: string) => `/resource-explorer/${id}`,
+  ResourceExplorer: "/resource-explorer",
+  ResourceExplorerAll: "/resource-explorer/all",
+  ResourceExplorerCreate: "/resource-explorer/create",
+  ResourceExplorerCreateType: (type: string) => `/resource-explorer/create/${type}`,
+  ResourceExplorerRecycleBin: "/resource-explorer/recycle-bin",
+  ResourceItems: (id: string) => `/resource-explorer/${id}/items`,
   User: (id: string) => `/user/${id}`,
   UserSettings: "/user/settings",
   View: (type: string, id: string) => `/view/${type}/${id}`,

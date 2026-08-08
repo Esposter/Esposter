@@ -51,7 +51,7 @@ What's landed and dogfooded in this repo (the [roadmap](https://github.com/Espos
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/virrun.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/virrun.html) to level up.
 
 - 🚀 [Getting Started][doc-getting-started] — prerequisites, CLI, programmatic API, package scripts.
 - 🤖 [CI][doc-ci] — the two gates (differential correctness + speed) and the CI snapshot cache.

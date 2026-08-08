@@ -9,7 +9,7 @@ The room word filter does more than block: each filter carries a configurable ac
 
 ## How it works
 
-`getMessageCreationRejection` (the shared gate in `@esposter/db`) runs on every message-producing path. It is free of side effects: on a match by a member who cannot manage messages it hands back the matched filter rather than applying it, and the caller that rejects the message is the one that spends the consequence — `assertCanCreateMessage` in the app, its namesake in the Function worker. Warn and Timeout call `executeAutomodAction`, which records a moderation-log row attributed to a reserved **AutoMod** actor id; the app's wrapper additionally emits the same `onAdminAction` event a manual warn or timeout would, so the targeted client reacts identically. Timeout additionally sets `timeoutUntil` on the member.
+`getMessageCreationRejection` (the shared gate in `@esposter/db`) runs on every message-producing path. It is free of side effects: on a match by a member who cannot manage messages it hands back the matched filter rather than applying it, and the caller that rejects the message is the one that spends the consequence — `assertCanCreateMessage` in the app, its namesake in the Function worker. Warn and Timeout call `executeAutomodAction`, which records a moderation-log row attributed to a reserved **AutoMod** actor id; the app's wrapper additionally emits the same `onAdminAction` event a manual warn or timeout would, so the targeted client reacts identically. Timeout additionally **extends** `timeoutUntil` on the member: the write is `GREATEST(existing, new)`, so an automod timeout can never shorten a longer one a moderator already applied, and — because Postgres `GREATEST` ignores nulls — a null or expired existing value simply becomes the new date.
 
 ```mermaid
 flowchart TD
@@ -18,7 +18,7 @@ flowchart TD
   WF -->|match| A{"filter.action"}
   A -->|Reject| ERR["reject the message"]
   A -->|Warn| W["executeAutomodAction — log Warn"]
-  A -->|Timeout| T["executeAutomodAction — set timeoutUntil plus log TimeoutUser"]
+  A -->|Timeout| T["executeAutomodAction — extend timeoutUntil via GREATEST, plus log TimeoutUser"]
   W --> EM["emit onAdminAction"]
   T --> EM
   W --> ERR

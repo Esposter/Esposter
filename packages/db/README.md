@@ -13,7 +13,7 @@ Database connection utilities for Esposter — server environment only. Provides
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/_esposter_db.html) to level up.
 
 ### What's Included
 

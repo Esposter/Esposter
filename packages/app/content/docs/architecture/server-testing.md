@@ -72,18 +72,20 @@ flowchart TD
 
 `packages/azure-mock` ships mock implementations:
 
-| Mock class                     | Replaces                                  | In-memory store                         |
-| ------------------------------ | ----------------------------------------- | --------------------------------------- |
-| `MockTableClient`              | `CustomTableClient` (Azure Table Storage) | `MockTableDatabase` (static `Map`)      |
-| `MockContainerClient`          | `ContainerClient` (Azure Blob Storage)    | `MockContainerDatabase` (static `Map`)  |
-| `MockBlobClient`               | `BlobClient` (single blob)                | `MockContainerDatabase`                 |
-| `MockBlobBatchClient`          | `BlobBatchClient` (batch blob deletes)    | `MockContainerDatabase`                 |
-| `MockEventGridPublisherClient` | `EventGridPublisherClient`                | `MockEventGridDatabase` (static `Map`)  |
-| `MockServiceBusSender`         | `ServiceBusSender`                        | `MockServiceBusDatabase` (static `Map`) |
-| `MockSearchClient`             | `SearchClient` (Azure AI Search)          | `MockSearchDatabase` (static `Map`)     |
-| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`                  | none (`sendToAll` no-op)                |
+| Mock class                     | Replaces                                                        | In-memory store                         |
+| ------------------------------ | --------------------------------------------------------------- | --------------------------------------- |
+| `MockTableClient`              | `CustomTableClient` (Azure Table Storage)                       | `MockTableDatabase` (static `Map`)      |
+| `MockContainerClient`          | `ContainerClient` (Azure Blob Storage)                          | `MockContainerDatabase` (static `Map`)  |
+| `MockBlobClient`               | `BlobClient` (single blob)                                      | `MockContainerDatabase`                 |
+| `MockBlockBlobClient`          | `BlockBlobClient` — what every SAS upload path resolves through | `MockContainerDatabase`                 |
+| `MockBlobBatchClient`          | `BlobBatchClient` (batch blob deletes)                          | `MockContainerDatabase`                 |
+| `MockEventGridPublisherClient` | `EventGridPublisherClient`                                      | `MockEventGridDatabase` (static `Map`)  |
+| `MockServiceBusSender`         | `ServiceBusSender`                                              | `MockServiceBusDatabase` (static `Map`) |
+| `MockQueueClient`              | `QueueClient` (Azure Storage Queue)                             | `MockQueueDatabase` (static `Map`)      |
+| `MockSearchClient`             | `SearchClient` (Azure AI Search)                                | `MockSearchDatabase` (static `Map`)     |
+| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`                                        | none (`sendToAll` no-op)                |
 
-The static maps persist across calls within a test run. Clear whichever ones your suite writes to in `afterEach` — `MockEventGridPublisherClient.send` accumulates events, so a suite that fires events must clear `MockEventGridDatabase` or it leaks into the next test:
+The static maps persist across calls within a test run, so **every store your suite writes to is cleared in `afterEach`** — the Store column above names the one behind each client. `MockEventGridPublisherClient.send` accumulates events, and a suite that fires events but clears only the blob and table stores leaks them into the next test; the same holds for a suite that enqueues Service Bus or storage-queue messages. The common three:
 
 ```ts
 afterEach(() => {
@@ -135,8 +137,8 @@ beforeEach
   └─ caller.someProc(input)
 
 afterEach
-  └─ MockContainerDatabase.clear()
-  └─ MockTableDatabase.clear()
+  └─ <every mock store the suite writes to>.clear()   ← Container/Table, plus EventGrid,
+  │                                                     ServiceBus, Queue or Search when used
   └─ db.delete(affectedTable)
   └─ vi.restoreAllMocks()    ← restores spy implementations + clears call history
 ```

@@ -30,7 +30,7 @@ stateDiagram-v2
 
 Blocking is unilateral, but a block in either direction prevents friend requests and excludes the user from `searchUsers` results. Self-relationships are rejected by database CHECK constraints, not just router validation.
 
-The **New Message** dialog lists accepted friends; selecting one or more and confirming calls `createDirectMessage`, which finds or creates the DM room. Idempotency comes from `rooms.participantKey` — the sorted participant ids joined into one string with a unique index — so two users always share exactly one DM room. Group DMs are capped at 10 participants, show a generated name ("You, Alice, Bob") unless the creator sets one, and 1:1 DM names are derived at display time from the other participant so they never go stale. Hovering a DM row reveals a close action that soft-hides it (`usersToRooms.isHidden = true`) without deleting the thread.
+The **New Message** dialog lists accepted friends; selecting one or more and confirming calls `createDirectMessage`, which finds or creates the DM room. Idempotency comes from `rooms.participantKey` — the sorted participant ids joined into one string with a unique index — so two users always share exactly one DM room. Group DMs have no size cap of their own — `createDirectMessageInputSchema` bounds the participant list only by the shared `MAX_READ_LIMIT`, and the router's own check is that every participant is an accepted friend — the creator is deduplicated out of the target list first, so naming yourself is a no-op and naming only yourself is the one rejection. They show a generated name ("You, Alice, Bob") unless the creator sets one, and 1:1 DM names are derived at display time from the other participant so they never go stale. Hovering a DM row reveals a close action that soft-hides it (`usersToRooms.isHidden = true`) without deleting the thread.
 
 DMs are invisible to non-participants: invite links are rejected for `RoomType.DirectMessage` and public room discovery excludes them. DM calls work like room calls (see [/docs/esbabbler/calls](/docs/esbabbler/calls)); starting one posts a `MessageType.Call` system message in the thread.
 
@@ -69,5 +69,5 @@ DMs are invisible to non-participants: invite links are rejected for `RoomType.D
 
 ## Notes
 
-- DMs notify on every message by default — mention/keyword filtering is bypassed for `RoomType.DirectMessage` in the push path.
+- DMs are not a special case in the push path: `getPushSubscriptionsForMessage` has no room-type branch, so a DM is filtered exactly like a room. What makes DMs feel different is the default value of `usersToRooms.notificationType` — `NotificationType.DirectMessage`, whose UI label is **Only @mentions**. That enum value names the _notification preference_, not `RoomType.DirectMessage`, and the two are unrelated: it means notify me when I am mentioned by id. A member who wants every message opts into `All`. See [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications).
 - Re-adding someone to a group DM they hid works because their `usersToRooms` row is kept (soft-hide, not delete).

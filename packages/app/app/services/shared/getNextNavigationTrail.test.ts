@@ -11,14 +11,16 @@ describe(getNextNavigationTrail, () => {
   test("appends the page drilled in from", () => {
     expect.hasAssertions();
 
-    expect(getNextNavigationTrail(RoutePath.Resources, RoutePath.ResourcesAll, [])).toStrictEqual([
+    expect(getNextNavigationTrail(RoutePath.ResourceExplorer, RoutePath.ResourceExplorerAll, [])).toStrictEqual([
       NavigationTrailPage.Resources,
     ]);
-    expect(getNextNavigationTrail(RoutePath.ResourcesAll, resourcePath, [NavigationTrailPage.Resources])).toStrictEqual(
-      [NavigationTrailPage.Resources, NavigationTrailPage.All],
-    );
+    expect(
+      getNextNavigationTrail(RoutePath.ResourceExplorerAll, resourcePath, [NavigationTrailPage.Resources]),
+    ).toStrictEqual([NavigationTrailPage.Resources, NavigationTrailPage.All]);
     // The list opened directly is still a page the visitor navigated through, so it is still the one crumb
-    expect(getNextNavigationTrail(RoutePath.ResourcesAll, resourcePath, [])).toStrictEqual([NavigationTrailPage.All]);
+    expect(getNextNavigationTrail(RoutePath.ResourceExplorerAll, resourcePath, [])).toStrictEqual([
+      NavigationTrailPage.All,
+    ]);
   });
 
   // A resource reached from a favourite, from search or from a link has nothing above it — the crumb and the
@@ -27,7 +29,7 @@ describe(getNextNavigationTrail, () => {
     expect.hasAssertions();
 
     expect(getNextNavigationTrail(RoutePath.Index, resourcePath, [])).toStrictEqual([]);
-    expect(getNextNavigationTrail(RoutePath.Index, RoutePath.ResourcesAll, [])).toStrictEqual([]);
+    expect(getNextNavigationTrail(RoutePath.Index, RoutePath.ResourceExplorerAll, [])).toStrictEqual([]);
   });
 
   test("carries the trail across a blade of the page already open", () => {
@@ -47,9 +49,11 @@ describe(getNextNavigationTrail, () => {
   test("carries the trail across a filter change on the page already open", () => {
     expect.hasAssertions();
 
-    expect(getNextNavigationTrail(RoutePath.ResourcesAll, RoutePath.ResourcesAll, [])).toStrictEqual([]);
+    expect(getNextNavigationTrail(RoutePath.ResourceExplorerAll, RoutePath.ResourceExplorerAll, [])).toStrictEqual([]);
     expect(
-      getNextNavigationTrail(RoutePath.ResourcesAll, RoutePath.ResourcesAll, [NavigationTrailPage.Resources]),
+      getNextNavigationTrail(RoutePath.ResourceExplorerAll, RoutePath.ResourceExplorerAll, [
+        NavigationTrailPage.Resources,
+      ]),
     ).toStrictEqual([NavigationTrailPage.Resources]);
   });
 
@@ -69,7 +73,7 @@ describe(getNextNavigationTrail, () => {
     expect.hasAssertions();
 
     expect(
-      getNextNavigationTrail(resourcePath, RoutePath.ResourcesAll, [
+      getNextNavigationTrail(resourcePath, RoutePath.ResourceExplorerAll, [
         NavigationTrailPage.Resources,
         NavigationTrailPage.All,
       ]),
@@ -80,7 +84,9 @@ describe(getNextNavigationTrail, () => {
     expect.hasAssertions();
 
     expect(
-      getNextNavigationTrail(RoutePath.ResourcesAll, RoutePath.Resources, [NavigationTrailPage.Resources]),
+      getNextNavigationTrail(RoutePath.ResourceExplorerAll, RoutePath.ResourceExplorer, [
+        NavigationTrailPage.Resources,
+      ]),
     ).toStrictEqual([]);
   });
 
@@ -88,11 +94,13 @@ describe(getNextNavigationTrail, () => {
     expect.hasAssertions();
 
     expect(
-      getNextNavigationTrail(RoutePath.ResourcesAll, RoutePath.MessagesFriends, [NavigationTrailPage.All]),
+      getNextNavigationTrail(RoutePath.ResourceExplorerAll, RoutePath.MessagesFriends, [NavigationTrailPage.All]),
     ).toStrictEqual([]);
     // A sibling route that merely shares the prefix is a different area, not a page inside this one
     expect(
-      getNextNavigationTrail(RoutePath.ResourcesAll, `${RoutePath.Resources}-archive`, [NavigationTrailPage.All]),
+      getNextNavigationTrail(RoutePath.ResourceExplorerAll, `${RoutePath.ResourceExplorer}-archive`, [
+        NavigationTrailPage.All,
+      ]),
     ).toStrictEqual([]);
   });
 });

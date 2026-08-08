@@ -17,7 +17,7 @@ High-stakes deletes add the Azure-portal-style guard by passing `confirmName`:
 </StyledDeleteFormDialog>
 ```
 
-The component renders an autofocused text field labelled `Type '<name>' to confirm` and keeps the `Delete` button disabled until the input matches exactly. The typed value resets whenever the dialog closes, so a reopened dialog always starts locked. Bulk actions use a count phrase as the name (`delete 12`), which scales the guard without listing every item.
+The component renders the name in a `v-code` block with a `StyledClipboardIconButton` beside it — copying the name is part of the shared base, not something a caller adds — followed by an autofocused text field labelled `Type '<name>' to confirm`, and keeps the `Delete` button disabled until the input matches exactly. The typed value resets whenever the dialog closes, so a reopened dialog always starts locked. Bulk actions use a count phrase as the name (`delete 12`), which scales the guard without listing every item.
 
 ## Choosing the tier
 
@@ -29,13 +29,13 @@ The component renders an autofocused text field labelled `Type '<name>' to confi
 
 ## Key files
 
-| File                                                                 | Role                                                                            |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `app/components/Styled/DeleteFormDialog.vue`                         | The shared dialog — red Delete button, `delete(onComplete)` emit, `confirmName` |
-| `app/components/Styled/ConfirmDeleteDialogButton.vue`                | Icon-button activator + plain confirm, for toolbars                             |
-| `app/components/Styled/EditFormDialog/ConfirmDeleteDialogButton.vue` | Edit-form entity delete — `confirmName` guard + copyable entity name            |
-| `app/components/Resource/List/DeleteDialog.vue`                      | Singleton resource delete with `confirmName` = resource name                    |
-| `app/components/Resource/List/SelectionToolbar.vue`                  | Bulk delete with `confirmName` = `delete <count>`                               |
+| File                                                                 | Role                                                                                                         |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `app/components/Styled/DeleteFormDialog.vue`                         | The shared dialog — red Delete button, `delete(onComplete)` emit, `confirmName` guard with its copyable name |
+| `app/components/Styled/ConfirmDeleteDialogButton.vue`                | Icon-button activator + plain confirm, for toolbars                                                          |
+| `app/components/Styled/EditFormDialog/ConfirmDeleteDialogButton.vue` | Edit-form entity delete — passes the entity name as `confirmName`                                            |
+| `app/components/Resource/List/DeleteDialog.vue`                      | Singleton resource delete with `confirmName` = resource name                                                 |
+| `app/components/Resource/List/SelectionToolbar.vue`                  | Bulk delete with `confirmName` = `delete <count>`                                                            |
 
 ## Notes
 

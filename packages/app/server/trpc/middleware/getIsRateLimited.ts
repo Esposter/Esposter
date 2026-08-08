@@ -16,9 +16,12 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     if (!IS_PRODUCTION) return next({ ctx: { getSessionPayload } });
 
     const ipAddress = getIpAddress(ctx.req);
-    if (!ipAddress) {
+    // An authed caller is keyed on its user id, which is available whether or not an address is, so only the
+    // Anonymous key depends on this. Bypassing both would leave every signed-in request unbudgeted on a
+    // Deployment whose ingress header never arrives.
+    if (!getSessionPayload && !ipAddress) {
       console.warn(
-        "[RateLimiter] Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
+        "[RateLimiter] Could not determine IP address for an anonymous request. Bypassing middleware... This is expected for local production builds.",
       );
       return next({ ctx: { getSessionPayload } });
     }

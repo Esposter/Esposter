@@ -24,7 +24,7 @@ pnpm i parse-tmx
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/parse-tmx.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/parse-tmx.html) to level up.
 
 ### Usage
 

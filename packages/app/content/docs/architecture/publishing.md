@@ -13,7 +13,7 @@ Adopters: Dashboard, Email, Flowchart, Note, Survey, Webpage. A type opts in by 
 
 Publish state lives in its own `resource_publications` table ([/docs/architecture/resources](/docs/architecture/resources)) — a row exists iff the resource is currently published. This keeps publish attributes off resources that can't publish.
 
-- **Publish = snapshot copy.** `publishResource` upserts the `resource_publications` row (bumping `publishVersion` in SQL), then copies the content blob to `{id}/published/{publishVersion}`. Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
+- **Publish = snapshot copy.** `publishResource` upserts the `resource_publications` row (bumping `publishVersion` in SQL), then copies the content blob to `{id}/published/{publishVersion}.json`. Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
 - **Public reads serve only the publish copy**, never the working copy, and are rate-limited with no auth. A resource with no publication row 404s publicly.
 - **Unpublish** deletes the publication row and the publish blobs; the public URL 404s.
 
@@ -27,13 +27,13 @@ sequenceDiagram
   Owner->>R: publishResource(id)
   R->>R: transformPublishedContent(ctx, resource, content)
   R->>PG: upsert row, bump publishVersion
-  R->>BLOB: write {id}/published/{publishVersion}
+  R->>BLOB: write {id}/published/{publishVersion}.json
   Note over BLOB: immutable snapshot — later edits invisible until re-publish
 
   actor Viewer
   Viewer->>R: readPublishedResourceContent(id) — public, rate-limited
   R->>PG: 404 unless publication row exists
-  R->>BLOB: serve {id}/published/{publishVersion}
+  R->>BLOB: serve {id}/published/{publishVersion}.json
 ```
 
 ## Procedures
@@ -44,6 +44,10 @@ sequenceDiagram
 | `unpublishResource`            | owner                | delete publication row + publish blobs                     |
 | `readResourcePublication`      | owner                | current publish state (for editor UI), or undefined        |
 | `readPublishedResourceContent` | public, rate-limited | serve the publish copy                                     |
+| `readPublishedVersionContent`  | owner                | serve a **retained** snapshot by version number            |
+| `readResourceViewCount`        | owner                | total public views of the resource                         |
+
+`readPublishedVersionContent` is what the view route's `version` query param reads: an anonymous visitor always gets the latest publish from the public procedure, while the owner can open any snapshot the `{id}/published/` prefix still holds ([publish history](/docs/platform/publish-history)).
 
 Two hooks on `createResourceProcedures` support publishing needs:
 

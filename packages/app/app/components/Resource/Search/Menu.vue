@@ -21,7 +21,7 @@ const selectedIndex = ref(-1);
 // The See-all footer participates in keyboard navigation as the last option
 const itemCount = computed(() => items.value.length + (searchQuery.value ? 1 : 0));
 const seeAllTo = computed<RouteLocationRaw>(() => ({
-  path: RoutePath.ResourcesAll,
+  path: RoutePath.ResourceExplorerAll,
   query: searchQuery.value ? { search: searchQuery.value } : {},
 }));
 const select = () => {

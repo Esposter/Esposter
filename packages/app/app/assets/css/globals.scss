@@ -15,6 +15,12 @@
   --apx-grid: rgba(var(--v-theme-on-surface), 0.12);
   --apx-surface: rgb(var(--v-theme-surface));
 }
+// No global `border-width: 0` here. It looks like the right way to stop a bare `b-solid` painting the CSS
+// Initial `medium` (~3px) on sides it gives no width, but a reset matching `*, ::before, ::after` also reaches
+// Vuetify's own internals — `.v-field__outline__start` and the notch pseudo-elements draw an outlined input's
+// Border, so the whole field renders borderless and every text field in the app becomes invisible. Layer order
+// Did not save it in practice. The width belongs on the element instead: a directional border pairs `b-0` with
+// Its side (`b-0 b-b-1`), which UnoCSS emits in that order, so nothing outside the element is touched
 // https://vuetifyjs.com/en/getting-started/upgrade-guide/#css-reset
 @layer vuetify-core.reset {
   ul,

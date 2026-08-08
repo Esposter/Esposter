@@ -1,11 +1,11 @@
 ---
 title: List Filters & Views
-description: The /resources/all workbench — filter pills, URL-synced state, bulk operations, column management, grouping, CSV export, and real-link rows.
+description: The /resource-explorer/all workbench — filter pills, URL-synced state, bulk operations, column management, grouping, CSV export, and real-link rows.
 ---
 
 # List Filters & Views
 
-Azure "All resources" parity for `/resources/all`: a filter-pill row, checkbox multi-select with bulk commands, a Manage-view column chooser, group-by-type, CSV export, and a refresh button — all state deep-linkable via query params. Everything is frontend + procedures on the existing `resource` router — no schema changes. The blade page's compact list box reuses the same `ResourceListView` with the workbench turned off (`:is-searchable="false"`).
+Azure "All resources" parity for `/resource-explorer/all`: a filter-pill row, checkbox multi-select with bulk commands, a Manage-view column chooser, group-by-type, CSV export, and a refresh button — all state deep-linkable via query params. Everything is frontend + procedures on the existing `resource` router — no schema changes.
 
 ## Filters
 
@@ -18,8 +18,8 @@ Azure "All resources" parity for `/resources/all`: a filter-pill row, checkbox m
 
 ## Bulk operations
 
-- `show-select` checkbox column; a selection toolbar replaces the filter row while items are selected (`n selected · Delete (n) · Export CSV · Clear`). `useResourceSelection` remembers full rows selected on other pages, since Vuetify's selection model only carries ids.
-- `resource.deleteResources`: owner-scoped `inArray` soft delete returning the deleted rows, stamping `deletedAt` and dropping their publication rows — blobs stay put until purge ([recycle bin](/docs/platform/recycle-bin)). One confirm dialog listing the names, guarded by typing `delete {n}` (the count variant of the [type-the-name guard](/docs/platform/resource-page-parity)).
+- `show-select` checkbox column; a selection toolbar replaces the filter row while items are selected (`n selected · Delete (n) · Export CSV · Save as blueprint · Clear`). `useResourceSelection` remembers full rows selected on other pages, since Vuetify's selection model only carries ids.
+- `resource.deleteResources`: owner-scoped `inArray` soft delete returning the deleted rows, stamping `deletedAt` and dropping their publication rows — blobs stay put until purge ([recycle bin](/docs/platform/recycle-bin)). One confirm dialog listing the names, guarded by the [type-the-name guard](/docs/platform/resource-page-parity): a single selection types that resource's own name, and past one no single name identifies the set, so the phrase becomes `Delete {n} resources`.
 
 ## Views
 
@@ -30,8 +30,8 @@ Azure "All resources" parity for `/resources/all`: a filter-pill row, checkbox m
 
 ## Rows
 
-- **Name cell is a real `:to` link** (middle-click/ctrl-click work); row click keeps `navigateTo` for the rest of the row.
-- **Context menu** on right-click (positioned `v-menu`, singleton): Open, Open in new tab, Copy link, Rename, Delete — the rename/delete dialogs are store-driven singletons (`useListDialogStore`).
+- **Row click** is the single affordance for opening a resource — the name cell is plain text, not a competing link ([resource explorer](/docs/platform/resource-explorer)).
+- **Context menu** on right-click (positioned `v-menu`, singleton), the same command list as the row `⋮` menu: Open in new tab, Copy link, Save as blueprint, Rename, Delete — the rename/delete dialogs are store-driven singletons (`useListDialogStore`). A plain **Open** command is deliberately absent, since clicking the row already does that.
 - **Export CSV**: serializes the current filtered result via `getResourcesCsv`, re-querying the same filter in page-sized chunks up to `MAX_CSV_EXPORT_ROWS` — never a single query with the full count as its limit; hitting the cap truncates the export with a warning notification. Bulk-selection export uses the selected rows.
 - **Refresh** re-runs `readResources` with the last options the table asked for.
 - **Empty states**: filters active → "No resources match your filters" + Clear-filters action; otherwise the no-resources `StyledEmptyState`; load failure → error state with Retry (an inline alert when stale rows are still showing). Loading renders `StyledSkeleton` table rows; Home recents shows a list skeleton the same way.
@@ -64,7 +64,7 @@ flowchart LR
 | ------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `app/components/Resource/List/View.vue`                 | the workbench orchestrator: toolbar, pills, selection, table, singletons |
 | `app/components/Resource/List/FilterBar.vue`            | pill row + `+ Add filter` menu                                           |
-| `app/components/Resource/List/SelectionToolbar.vue`     | `n selected · Delete (n) · Export CSV · Clear`                           |
+| `app/components/Resource/List/SelectionToolbar.vue`     | `n selected · Delete (n) · Export CSV · Save as blueprint · Clear`       |
 | `app/composables/resource/useResourceListFilters.ts`    | URL-synced filter state                                                  |
 | `app/composables/resource/useReadResources.ts`          | filter input, chunked page reader for CSV export                         |
 | `app/composables/resource/list/useReadResourcesPage.ts` | the shared paged reader: stale guard + filter-keyed count                |

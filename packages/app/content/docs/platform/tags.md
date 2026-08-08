@@ -5,7 +5,7 @@ description: Azure tag parity — name:value pairs on every resource, shown in E
 
 # Resource Tags
 
-Every resource carries a flat `Record<string, string>` of tags: shown in Essentials, edited in place, and filterable on `/resources/all`. Tags are the lightweight organization layer that keeps [resource groups deferred](/docs/platform/deferred/resource-groups) — cross-cutting labels without a grouping entity to model, migrate, and navigate.
+Every resource carries a flat `Record<string, string>` of tags: shown in Essentials, edited in place, and filterable on `/resource-explorer/all`. Tags are the lightweight organization layer that keeps [resource groups deferred](/docs/platform/deferred/resource-groups) — cross-cutting labels without a grouping entity to model, migrate, and navigate.
 
 ## How it works
 

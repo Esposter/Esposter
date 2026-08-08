@@ -5,7 +5,7 @@ description: Azure command-bar parity on the resource page — labeled commands 
 
 # Resource Page Parity
 
-Azure command-bar and destructive-operation parity on `/resources/[id]/[[blade]]`: labeled toolbar commands with a `…` overflow, Refresh, a Duplicate command, and a type-the-name delete confirmation.
+Azure command-bar and destructive-operation parity on `/resource-explorer/[id]/[[blade]]`: labeled toolbar commands with a `…` overflow, Refresh, a Duplicate command, and a type-the-name delete confirmation.
 
 ## Command bar
 
@@ -16,7 +16,7 @@ Azure command-bar and destructive-operation parity on `/resources/[id]/[[blade]]
 
 ## Destructive-operation guard
 
-`StyledDeleteFormDialog` takes an optional `confirmName` prop: a text field whose value must equal it before Delete enables (Azure's "type the resource name to confirm"). The blade Delete command and the `/all` row delete type the resource name; bulk delete on `/all` types the selection count (`delete {n}` — [list filters & views](/docs/platform/list-filters-and-views)).
+`StyledDeleteFormDialog` takes an optional `confirmName` prop: a text field whose value must equal it before Delete enables (Azure's "type the resource name to confirm"). The blade Delete command and the `/all` row delete type the resource name; a bulk delete past one selection has no single name to type, so it falls back to a count phrase ([list filters & views](/docs/platform/list-filters-and-views)).
 
 ## Save-conflict surface
 
@@ -51,5 +51,5 @@ sequenceDiagram
 ## Notes
 
 - Commands stay capability-gated exactly as before — this changed presentation and added Refresh/Duplicate, not the gating model.
-- Publish history (list `{id}/published/{n}` snapshots, view/rollback) is a separate roadmap investigation — blob retention across re-publishes must be verified first.
+- Listing published snapshots, previewing one, and rolling back to it are [publish history](/docs/platform/publish-history), not command-bar parity.
 - JSON view / export-template parity is [out of scope](/docs/platform/rejected/json-config-parity).

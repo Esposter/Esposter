@@ -22,7 +22,7 @@ const { remove, resource } = defineProps<ResourceDeleteDialogProps>();
       async (onComplete) => {
         const isDeleted = await remove();
         onComplete(isDeleted);
-        if (isDeleted) await navigateTo(RoutePath.ResourcesAll);
+        if (isDeleted) await navigateTo(RoutePath.ResourceExplorerAll);
       }
     "
   >

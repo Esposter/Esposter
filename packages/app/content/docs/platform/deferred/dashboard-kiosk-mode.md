@@ -5,7 +5,7 @@ description: Deferred — a fullscreen auto-refreshing render of a published das
 
 # Dashboard kiosk mode
 
-A fullscreen, chrome-less, auto-refreshing render of a published dashboard (`/view/dashboard/[id]?kiosk`) for TVs and wall displays.
+A fullscreen, chrome-less, auto-refreshing render of a published dashboard (`/view/Dashboard/[id]?kiosk`) for TVs and wall displays.
 
 ## Why deferred
 
