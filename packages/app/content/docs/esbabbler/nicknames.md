@@ -34,9 +34,9 @@ One column: `usersToRooms.nickname` — `text`, NOT NULL DEFAULT `""`, max 32 ch
 
 ## Client state — `useUserToRoomStore`
 
-Two internal maps, both keyed `roomId → inner map`, deliberately split for privacy:
+Two internal maps, both keyed by `roomId`, deliberately split for privacy:
 
-- **`userToRoomMap`** — `Map<roomId, Map<userId, UserToRoomInMessage>>` — the **current user's own** full row (notificationType, lastMessageAt, isHidden…); populated by `readMyUsersToRooms` and the `onUpdateUserToRoom` subscription.
+- **`myUserToRoomMap`** — `Map<roomId, UserToRoomInMessage | undefined>` — the **current user's own** full row for that room (notificationType, lastMessageAt, isHidden…), read and written through `getMyUserToRoom` / `setMyUserToRoom`; populated by `readMyUsersToRooms` and the `onUpdateUserToRoom` subscription. There is no per-user inner map here — nobody else's row is ever held.
 - **`nicknameMap`** — `Map<roomId, Map<userId, string>>` — **all members'** nicknames (including self); populated by `readNicknames` (called per-room from `readMetadata` in `useReadMembers`) and the same subscription.
 
 ## Procedures

@@ -16,9 +16,16 @@ flowchart LR
   EG --> FN["processPushNotification<br/>(Azure Function)"]
   FN --> WP["web-push.sendNotification per subscription"]
 
+  CM -->|"the message is a reply"| TF["notifyThreadReplyFollowers<br/>(excludes the generic push recipients)"]
+  TF --> EG2["EventGrid publish"]
+  EG2 --> FN2["processThreadReplyNotification<br/>(Azure Function)"]
+  FN2 --> WP
+
   SMJ["processScheduledMessageJob<br/>(Azure Function, /remind)"] --> FU["getPushSubscriptionsForUser(db, userId)"]
   FU --> WP2["web-push direct — no EventGrid"]
 ```
+
+A reply carries a third path alongside the generic push. `notifyThreadReplyFollowers` publishes its own EventGrid event to `processThreadReplyNotification`, which recomputes the thread's followers inside the Function and applies its own recipient rules. The two pushes cannot double up because the generic recipients are passed along as `excludedUserIds`, so each user is notified once per reply. The follow model and its recipient rules are [/docs/esbabbler/thread-follows](/docs/esbabbler/thread-follows).
 
 ## Recipient filtering
 
@@ -59,8 +66,10 @@ The notification title uses the sender's per-room nickname when set (see [/docs/
 
 ## Key files
 
-| File                                                                 | Role                           |
-| :------------------------------------------------------------------- | :----------------------------- |
-| `packages/db/src/services/message/getPushSubscriptionsForMessage.ts` | recipient filtering            |
-| `packages/azure-functions/src/functions/processPushNotification.ts`  | delivery handler               |
-| `packages/azure-functions/src/services/sendReminderNotification.ts`  | reminder variant (direct push) |
+| File                                                                             | Role                                                  |
+| :------------------------------------------------------------------------------- | :---------------------------------------------------- |
+| `packages/db/src/services/message/getPushSubscriptionsForMessage.ts`             | recipient filtering                                   |
+| `packages/azure-functions/src/functions/processPushNotification.ts`              | delivery handler                                      |
+| `packages/app/server/services/message/thread/notifyThreadReplyFollowers.ts`      | thread-reply publish (de-dupes via `excludedUserIds`) |
+| `packages/azure-functions/src/handlers/processThreadReplyNotificationHandler.ts` | thread-reply delivery handler                         |
+| `packages/azure-functions/src/services/sendReminderNotification.ts`              | reminder variant (direct push)                        |

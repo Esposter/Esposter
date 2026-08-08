@@ -20,8 +20,8 @@ flowchart LR
   end
 
   subgraph blob [Azure Blob resource-assets container]
-    CONTENT["{id}/content<br/>working copy — per-type Zod schema"]
-    PUB["{id}/published/{publishVersion}<br/>immutable snapshots (Publishable only)"]
+    CONTENT["{id}/content.json<br/>working copy — per-type Zod schema"]
+    PUB["{id}/published/{publishVersion}.json<br/>immutable snapshots (Publishable only)"]
     FILES["{id}/files/…<br/>binary assets (FileAssets)"]
   end
 
@@ -45,7 +45,8 @@ Drizzle table `resources` (`packages/db-schema/src/schema/resources.ts`) — pur
 | ---------------- | ---------------------- | --------------------------------------------------------------------------------------- |
 | `id`             | uuid PK                | becomes the blob path prefix                                                            |
 | `type`           | `ResourceType` pg enum | Blueprint, Dashboard, Email, Flowchart, Note, Program, Sheet, Survey, TodoList, Webpage |
-| `name`           | text + length check    | `createNameSchema` pattern                                                              |
+| `name`           | text + length check    | `createNameSchema` pattern; a trigram GIN index backs similarity ranking in search      |
+| `tags`           | jsonb, not null, `{}`  | free-form key/value labels; a GIN index backs the `tags @> input` containment filter    |
 | `userId`         | FK → users, cascade    | owner; resources are single-owner                                                       |
 | `contentVersion` | integer                | optimistic concurrency on content saves                                                 |
 
@@ -60,9 +61,9 @@ Publish state is **normalized into its own table**, `resource_publications` — 
 Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by id only (type lives in the row; ids are UUIDs — a type prefix would duplicate authoritative data into path strings):
 
 ```text
-{id}/content                      working copy (JSON, validated by the type's content schema)
-{id}/published/{publishVersion}   publish snapshots (Publishable only)
-{id}/files/…                      binary assets (FileAssets types only)
+{id}/content.json                      working copy (JSON, validated by the type's content schema)
+{id}/published/{publishVersion}.json   publish snapshots (Publishable only)
+{id}/files/…                           binary assets (FileAssets types only)
 ```
 
 Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource is soft — identically for every type: it stamps `deletedAt` and drops the publication row, leaving the `{id}/` blob directory intact so a restore can hand the content back. Purging is what deletes the directory and then the row ([recycle bin](/docs/platform/recycle-bin)).
@@ -137,15 +138,17 @@ Component wiring cannot live in shared code, so exactly three thin client satell
 
 One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/resource/createResourceProcedures.ts`), spread into each type's router. Content schema and container come from `ResourceDefinitionMap[type]` — callers never pass them. Publish procedures are spread **conditionally with a conditional return type** (guarded by `hasCapability(type, "publishable")` at runtime), so a non-publishable type's router has no publish endpoints at the type level — a compile error on the client `$trpc` type, a 404 on the wire. The options argument itself is a conditional tuple: publish hooks are only accepted when `TType extends PublishableResourceType`.
 
-| Procedure                                                                                            | Auth                                                               | Purpose                                                        |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
-| `createResource`                                                                                     | authed                                                             | metadata row; content blob written on first save               |
-| `readResources`                                                                                      | authed                                                             | per-type offset-paginated list, publication state joined along |
-| `updateResource`                                                                                     | owner                                                              | rename                                                         |
-| `deleteResource`                                                                                     | owner                                                              | soft delete — stamps `deletedAt`, blobs survive until purge    |
-| `readResourceContent` / `saveResourceContent`                                                        | owner                                                              | blob read/write with `contentVersion` check                    |
-| `onSaveResourceContent`                                                                              | owner                                                              | subscription — streams each save's content to other devices    |
-| `publishResource` / `unpublishResource` / `readResourcePublication` / `readPublishedResourceContent` | see [/docs/architecture/publishing](/docs/architecture/publishing) | Publishable types only                                         |
+| Procedure                                     | Auth                                                               | Purpose                                                        |
+| --------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
+| `createResource`                              | authed                                                             | metadata row; content blob written on first save               |
+| `readResources`                               | authed                                                             | per-type offset-paginated list, publication state joined along |
+| `updateResource`                              | owner                                                              | metadata edit — `{ id, name, tags? }`                          |
+| `deleteResource`                              | owner                                                              | soft delete — stamps `deletedAt`, blobs survive until purge    |
+| `readResourceContent` / `saveResourceContent` | owner                                                              | blob read/write with `contentVersion` check                    |
+| `onSaveResourceContent`                       | owner                                                              | subscription — streams each save's content to other devices    |
+| the publish set                               | see [/docs/architecture/publishing](/docs/architecture/publishing) | Publishable types only                                         |
+
+`updateResource` replaces the whole `tags` record rather than merging it (Azure's own tag update semantics), and only a changed `name` writes a `Renamed` [activity](/docs/platform/activity-log) entry — a tags-only edit is not a rename, so it leaves no trail entry.
 
 `saveResourceContent` bumps `contentVersion` and writes the blob in one transaction — the version check is part of the `UPDATE`'s `WHERE`, so concurrent saves cannot both pass and silently lose a write, and a failed blob upload rolls the version back.
 
@@ -159,19 +162,19 @@ The type's after-save hook is registered in `ResourceAfterSaveContentMap`, keyed
 
 The factory also accepts two optional content-transform hooks, `transformPublishedContent` and `transformPublicReadContent` — see [/docs/architecture/publishing](/docs/architecture/publishing).
 
-Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`.
+Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey, isDeletedOnly = false)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`. `isDeletedOnly` inverts which rows resolve, so the [recycle bin](/docs/platform/recycle-bin) procedures (`purgeResource`, `restoreResource`) reach only soft-deleted resources and every other procedure only live ones.
 
 ### Router topology
 
-Router-per-type plus one thin cross-type router:
+Router-per-type plus one cross-type router:
 
-| Router                                                                    | Contents                                                                                                                                                                             |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `resource`                                                                | `readResource` (single row by id, cross-type), `readResources` (explorer list, all types), `count` (filtered total, shares its filter schema with the list so they stay in lockstep) |
-| `sheet`, `todoList`, `dashboard`, `email`, `webpage`, `flowchart`, `note` | `createResourceProcedures(type, …)`                                                                                                                                                  |
-| `survey`                                                                  | factory + type-specific procedures (public respondent responses)                                                                                                                     |
-| `program`                                                                 | factory + type-specific procedures (`generateProgramParticipants`, `readProgramStatus`)                                                                                              |
-| `blueprint`                                                               | factory + type-specific procedures (`captureBlueprint`, `deployBlueprint`)                                                                                                           |
+| Router                                                                    | Contents                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `resource`                                                                | everything that must work without knowing the type — the explorer's reads and counts (sharing one filter schema so list and total stay in lockstep), favourites, activity, publish history, duplicate, and the recycle-bin lifecycle |
+| `sheet`, `todoList`, `dashboard`, `email`, `webpage`, `flowchart`, `note` | `createResourceProcedures(type, …)`                                                                                                                                                                                                  |
+| `survey`                                                                  | factory + type-specific procedures (public respondent responses)                                                                                                                                                                     |
+| `program`                                                                 | factory + type-specific procedures (`generateProgramParticipants`, `readProgramStatus`)                                                                                                                                              |
+| `blueprint`                                                               | factory + type-specific procedures (`captureBlueprint`, `deployBlueprint`)                                                                                                                                                           |
 
 Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key off the literal tRPC path (`"flowchart.saveResourceContent"`), and type-specific procedures need a home.
 

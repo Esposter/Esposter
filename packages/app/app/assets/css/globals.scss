@@ -15,6 +15,20 @@
   --apx-grid: rgba(var(--v-theme-on-surface), 0.12);
   --apx-surface: rgb(var(--v-theme-surface));
 }
+// The width half of preset-wind4's reset, which `uno.config.ts` disables wholesale so it cannot fight Vuetify.
+// Without this, `border-width` keeps its CSS initial value of `medium` (~3px), so any element carrying
+// `b-solid` paints a 3px border on every side it has no explicit width for — a stray frame that reads as
+// Unexplained padding. Zeroed here, a border appears only where a `b-*` width asks for one.
+// `uno-base` is the earliest layer, so Vuetify's own component borders and every `b-*` utility still override it.
+// Deliberately NOT paired with preset-wind4's `border-style: solid`: that would render every element which takes
+// A width from a later layer without declaring a style of its own — Vuetify loaders and skeletons among them
+@layer uno-base {
+  *,
+  ::before,
+  ::after {
+    border-width: 0;
+  }
+}
 // https://vuetifyjs.com/en/getting-started/upgrade-guide/#css-reset
 @layer vuetify-core.reset {
   ul,

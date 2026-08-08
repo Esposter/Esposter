@@ -71,7 +71,7 @@ const isListShown = computed(() => !smAndDown.value && trail.value.at(-1) === Na
         :resource
         :unpublish
       />
-      <div b-b-0 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
+      <div b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
         <ResourceBladeNav :active-blade :resource />
         <div flex-1 min-w-0 overflow-auto>
           <ResourceBladeOutlet :active-blade :is-loading :publication :resource :update-tags />

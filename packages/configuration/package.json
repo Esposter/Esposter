@@ -55,6 +55,7 @@
     "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
+    "eslint-plugin-vuejs-accessibility": "catalog:",
     "rolldown": "catalog:",
     "rolldown-plugin-dts": "catalog:",
     "type-fest": "catalog:",

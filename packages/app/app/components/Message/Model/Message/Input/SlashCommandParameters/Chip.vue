@@ -70,6 +70,8 @@ onMounted(() => {
     >
       {{ name }}
     </span>
+    <!-- eslint-disable vuejs-accessibility/no-autofocus -- Focus follows the parameter the user just added, the
+      same deliberate move a dialog makes on open; without it the chip renders unfocused mid-typing. -->
     <input
       ref="input"
       v-model="modelValue"
@@ -108,5 +110,6 @@ onMounted(() => {
         }
       "
     />
+    <!-- eslint-enable vuejs-accessibility/no-autofocus -->
   </div>
 </template>

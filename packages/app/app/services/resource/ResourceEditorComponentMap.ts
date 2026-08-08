@@ -6,7 +6,7 @@ import ResourceNoteEditor from "@/components/Resource/Note/Editor.vue";
 import ResourceSurveyEditor from "@/components/Resource/Survey/Editor.vue";
 import ResourceWebpageEditor from "@/components/Resource/Webpage/Editor.vue";
 import { ResourceType } from "@esposter/db-schema";
-// The component rendered inside the built-in Editor blade; blade-only types (File/TodoList) have no entry,
+// The component rendered inside the built-in Editor blade; blade-only types (Program/Sheet/TodoList) have no entry,
 // So their nav skips the Editor blade entirely.
 export const ResourceEditorComponentMap: Partial<Record<ResourceType, Component>> = {
   [ResourceType.Blueprint]: ResourceBlueprintEditor,

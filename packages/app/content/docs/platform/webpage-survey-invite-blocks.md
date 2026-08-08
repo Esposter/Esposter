@@ -20,7 +20,7 @@ flowchart LR
   CORE -->|"createWebpageSurveyInviteBlocks<br/>self-styled anchor markup"| WEBBM["webpage block manager"]
   EMAILBM -->|setBlocks re-sync| EMAILCANVAS["email canvas"]
   WEBBM -->|setBlocks re-sync| CANVAS["webpage canvas"]
-  CANVAS -->|publish| VIEW["/view/webpage/[id]<br/>public page with live survey links"]
+  CANVAS -->|publish| VIEW["/view/Webpage/[id]<br/>public page with live survey links"]
 ```
 
 - **Block source** — `useReadPublishedSurveys` reads the owner's surveys and keeps only the published ones: a draft survey has no public URL for a block to link. Both editors share it.

@@ -11,17 +11,17 @@ A Discord-style fullscreen settings dialog for a room, opened from the room list
 
 `SettingsCategoryMap` owns the grouping; every `SettingsType` except `Delete` belongs to exactly one category (enforced by the map's co-located test).
 
-| Category                 | Panels                         | Gated panels (permission)                                   |
-| ------------------------ | ------------------------------ | ----------------------------------------------------------- |
-| _(room name)_            | Overview · Roles · Profile     | —                                                           |
-| Integrations             | Webhooks                       | —                                                           |
-| Moderation               | Word Filter · Audit Log · Bans | Word Filter + Audit Log (`ManageRoom`), Bans (`BanMembers`) |
-| User Management          | Members · Invites              | —                                                           |
-| _(below the categories)_ | Delete                         | owner-only inside its confirm dialog                        |
+| Category                 | Panels                                       | Gated panels (permission)                                                 |
+| ------------------------ | -------------------------------------------- | ------------------------------------------------------------------------- |
+| _(room name)_            | Overview · Roles · Profile                   | —                                                                         |
+| Integrations             | Webhooks                                     | —                                                                         |
+| Moderation               | Word Filter · Audit Log · Bans · Attachments | Word Filter + Audit Log + Attachments (`ManageRoom`), Bans (`BanMembers`) |
+| User Management          | Members · Invites                            | —                                                                         |
+| _(below the categories)_ | Delete                                       | owner-only inside its confirm dialog                                      |
 
 Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from members lacking that `RoomPermission`; a category with no visible panels disappears entirely. Room owners bypass all checks via `hasPermission`.
 
-**Roles** (previously a combined "Permissions" panel) edits roles and their permission bitfields; **Members** (previously a tab inside it) assigns/revokes member roles; **Invites** manages your invite link — the same manager component (`Invite/Manager.vue`) the header's Add Friends dialog uses.
+**Roles** (previously a combined "Permissions" panel) edits roles and their permission bitfields; **Members** (previously a tab inside it) assigns/revokes member roles; **Invites** manages your invite link — the same manager component (`Invite/Manager.vue`) the header's Add Friends dialog uses; **Attachments** edits the room's upload limits, described in [/docs/esbabbler/file-media](/docs/esbabbler/file-media).
 
 ## How it works
 

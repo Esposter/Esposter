@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Serverless Azure Functions backend for Esposter. Handles asynchronous workloads triggered by Azure EventGrid events — push notifications, webhook delivery, and friend request notifications.
+Serverless Azure Functions backend for Esposter. Handles asynchronous workloads triggered by Azure EventGrid events, Service Bus queues, and timers — push notifications, webhook delivery, friend request notifications, scheduled message jobs, and resource purging.
 
 ## Table of Contents
 
@@ -13,25 +13,33 @@ Serverless Azure Functions backend for Esposter. Handles asynchronous workloads 
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/_esposter_azure-functions.html) to level up.
 
 ### Architecture
 
-Functions are triggered by **Azure EventGrid** events published by the main app — they are never called directly via HTTP from the client. Each function handles one async concern:
+Most functions are triggered by **Azure EventGrid** events published by the main app; the rest run on Service Bus queues or timers. `pushWebhook` is the one publicly routed HTTP trigger. Each function handles one async concern:
 
-| Function                           | Trigger   | Description                                                                 |
-| ---------------------------------- | --------- | --------------------------------------------------------------------------- |
-| `processPushNotification`          | EventGrid | Sends web-push notifications to offline users when a new message is created |
-| `processWebhook`                   | EventGrid | Delivers outgoing webhook payloads to registered endpoints                  |
-| `pushWebhook`                      | EventGrid | Pushes webhook events to Azure WebPubSub for fan-out delivery               |
-| `processFriendRequestNotification` | EventGrid | Notifies users of incoming friend requests                                  |
+| Function                           | Trigger                              | Description                                                                 |
+| ---------------------------------- | ------------------------------------ | --------------------------------------------------------------------------- |
+| `processPushNotification`          | EventGrid                            | Sends web-push notifications to offline users when a new message is created |
+| `processWebhook`                   | EventGrid                            | Delivers outgoing webhook payloads to registered endpoints                  |
+| `pushWebhook`                      | HTTP (`POST webhooks/{id}/{token}`)  | Accepts inbound webhook pushes, validating the token from the url           |
+| `processFriendRequestNotification` | EventGrid                            | Notifies users of incoming friend requests                                  |
+| `processThreadReplyNotification`   | EventGrid                            | Notifies thread followers of a reply, excluding the generic push recipients |
+| `processBlobDeletion`              | EventGrid                            | Deletes blobs durably once their owning row is gone                         |
+| `reconcileStorageBlob`             | EventGrid (storage system topic)     | Charges a user's storage counter the blob's real size on `BlobCreated`      |
+| `replayDeadLetterEvent`            | EventGrid                            | Replays dead-lettered events it can route, quarantining the rest            |
+| `processScheduledMessageJob`       | Service Bus (`ScheduledMessageJobs`) | Delivers `/schedule` and `/remind` messages at their due time               |
+| `sendTodoReminder`                 | Service Bus (`TodoReminders`)        | Sends web-push when a TodoList item comes due                               |
+| `purgeDeletedResources`            | Timer (daily, 03:00)                 | Purges recycle-bin resources past their retention window                    |
 
 ### Flow
+
+One flow of several — the message-created path. The Service Bus and timer triggers in the table above are entered on their own schedules, not from this chain.
 
 ```text
 App (createMessage) → Azure EventGrid → processPushNotification
                                       → processWebhook
-                                      → pushWebhook
 ```
 
 ### Dependencies

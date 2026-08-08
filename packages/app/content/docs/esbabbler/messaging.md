@@ -67,20 +67,22 @@ The stored poll body is parsed and re-serialized through `pollMessageContentSche
 
 ## Message types
 
-`MessageType` (in `@esposter/db-schema`) discriminates rendering and behaviour: `Message`, `Poll`, `Call` (call started / call-end duration system message), `EditRoom`, `PinMessage`, `System` (join/leave), and `Webhook`. Adding a type requires updating `MessageEntityMap` (type → entity class) and `MessageComponentMap` (type → Vue rendering component).
+`MessageType` (in `@esposter/db-schema`) discriminates rendering and behaviour: `Message`, `Poll`, `Call` (call started / call-end duration system message), `EditRoom`, `PinMessage`, `System` (join/leave), and `Webhook`. Adding a type requires updating `MessageEntityMap` (type → entity class), `MessageComponentMap` (type → Vue rendering component), and `MessageTypeOperationPermissionMap` (type → the operations it supports and who may perform each).
+
+`MessageTypeOperationPermissionMap` is the one source of truth for what may be done to a message, and it is declared `as const satisfies Record<MessageType, …>`, so it is exhaustive — a new type does not compile until it declares its operations. Presence answers whether the type supports the operation at all: `Call`, `EditRoom`, `PinMessage` and `System` messages are written by the server on the room's behalf and support none, so update, delete and pin on them are a `BAD_REQUEST` for every caller, including one holding `ManageMessages`. The value answers which of the callers who could perform it actually may — `Author` means the author _or_ a member with `ManageMessages`, `AnyMember` means the membership check already settled it, and `ManageMessages` means that permission alone. A webhook message has no user author, so all of its operations resolve to `ManageMessages`.
 
 Mentions are stored as HTML: the TipTap mention suggestion inserts `<span data-type="mention" data-id="...">` nodes, which the server later parses for notification targeting and the client resolves to display names (see [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)).
 
 ## Procedures
 
-The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Highlights:
+The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Every row marked _author_ below is a `getMessageProcedure` built on the operation it guards, so its real answer comes from `MessageTypeOperationPermissionMap` as described above — author or `ManageMessages` on a `Message`/`Poll`, `ManageMessages` on a `Webhook`, refused outright on the server-written types. Highlights:
 
 | Procedure                         | Auth   | Purpose                                             |
 | --------------------------------- | ------ | --------------------------------------------------- |
 | `createMessage`                   | member | Write message, emit, trigger push                   |
 | `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure) |
 | `forwardMessage`                  | member | Forward into another room                           |
-| `pinMessage` / `unpinMessage`     | member | Room-wide pins                                      |
+| `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)    |
 | `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write   |
 | `readMessages` / `readThread`     | member | Cursor pagination / thread view                     |
 | `searchMessages`                  | member | Filtered search via the Azure AI Search index       |
@@ -91,13 +93,14 @@ The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`
 
 ## Key files
 
-| File                                                        | Role                                                |
-| ----------------------------------------------------------- | --------------------------------------------------- |
-| `packages/app/server/trpc/routers/message/index.ts`         | Message router (procedures above)                   |
-| `packages/app/server/services/message/createUserMessage.ts` | Send pipeline: table write, emit, EventGrid publish |
-| `packages/db-schema/src/models/azure/table/AzureTable.ts`   | Table name enum (Messages, MessagesAscending, …)    |
-| `packages/db-schema/src/models/message/MessageType.ts`      | Message type discriminator                          |
-| `packages/app/server/services/message/events/`              | `messageEventEmitter` and friends                   |
+| File                                                                        | Role                                                |
+| --------------------------------------------------------------------------- | --------------------------------------------------- |
+| `packages/app/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                   |
+| `packages/app/server/services/message/createUserMessage.ts`                 | Send pipeline: table write, emit, EventGrid publish |
+| `packages/db-schema/src/models/azure/table/AzureTable.ts`                   | Table name enum (Messages, MessagesAscending, …)    |
+| `packages/db-schema/src/models/message/MessageType.ts`                      | Message type discriminator                          |
+| `packages/app/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom   |
+| `packages/app/server/services/message/events/`                              | `messageEventEmitter` and friends                   |
 
 ## Notes
 
