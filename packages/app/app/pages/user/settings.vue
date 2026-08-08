@@ -6,7 +6,10 @@ import { RoutePath } from "@esposter/shared";
 definePageMeta({ middleware: "auth" });
 
 const { smAndDown } = useVDisplay();
-const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General" }];
+const sections: SideBarItem[] = [
+  { href: RoutePath.UserSettings, title: "General" },
+  { href: `${RoutePath.UserSettings}#linked-accounts`, title: "Linked Accounts" },
+];
 </script>
 
 <template>
@@ -23,6 +26,7 @@ const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General
         </v-col>
         <v-col :cols="smAndDown ? 12 : 7">
           <UserProfileCard />
+          <UserLinkedAccountsCard />
         </v-col>
       </v-row>
     </v-container>

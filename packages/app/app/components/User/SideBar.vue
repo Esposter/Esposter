@@ -11,7 +11,7 @@ const { items } = defineProps<StyledSideBar>();
 <template>
   <StyledCard>
     <v-list px-2>
-      <v-list-item v-for="{ title, href } of items" :key="href" rd :active="$route.path === href" :to="href">
+      <v-list-item v-for="{ title, href } of items" :key="href" rd :active="$route.fullPath === href" :to="href">
         {{ title }}
       </v-list-item>
     </v-list>

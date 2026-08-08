@@ -19,10 +19,9 @@ Each product area's roadmap is the prioritized index over its proposals:
 
 posts, vue-phaserjs, clicker, dungeons, anime, and fluid-simulator have no roadmap and no open proposals.
 
-Infra and users have open area proposals right now; every other area's roadmap is clear.
+Only infra has an open area proposal right now; every other area's roadmap is clear.
 
 Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [Comment cleanup](/docs/proposals/refactors/comment-cleanup) — sweep ledger for keeping comments tight repo-wide.
 - [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
-- [Accessibility linting](/docs/proposals/refactors/accessibility-linting) — adopt `eslint-plugin-vuejs-accessibility` and stage the rollout across the existing markup.
