@@ -48,17 +48,17 @@ export default defineEventHandler(async (event) => {
     // Anonymous key depends on the address — bypassing both would leave every signed-in request unbudgeted on
     // A deployment whose ingress header never arrives
     const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.node.req);
-    if (!rateLimiterKey)
-      console.warn(
-        "[RateLimiter] Could not determine IP address for an anonymous request. Bypassing middleware... This is expected for local production builds.",
-      );
-    else
+    if (rateLimiterKey)
       await getResultAsync(() =>
         assetRateLimiter.consume(`${AzureContainer.ResourceAssets}${ID_SEPARATOR}${rateLimiterKey}`),
       ).match(noop, (error) => {
         if (getIsRateLimitExceeded(error)) throw createError({ statusCode: 429 });
         throw error;
       });
+    else
+      console.warn(
+        "[RateLimiter] Could not determine IP address for an anonymous request. Bypassing middleware... This is expected for local production builds.",
+      );
   }
 
   // Working-copy assets are only ever rendered inside the owner's editor (same-origin, cookies present), so an
