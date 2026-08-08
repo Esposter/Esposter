@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { CollapsibleNavItem } from "@/models/shared/CollapsibleNavItem";
+import type { NavItem } from "@/models/shared/NavItem";
 import type { LocalStorageKeyValue } from "@/services/shared/LocalStorageKey";
 
 import { takeOne } from "@esposter/shared";
 
 interface StyledCollapsibleNavProps {
   // Whole tooltip sentences rather than a noun this interpolates — a component that owns half a sentence
-  // makes every caller guess the other half
+  // Makes every caller guess the other half
   hideText: string;
-  items: CollapsibleNavItem[];
+  items: NavItem[];
   showText: string;
   storageKey: LocalStorageKeyValue;
 }

@@ -5,7 +5,6 @@ export const LocalStorageKey = {
   Draft: (roomId: string) => `draft:${roomId}`,
   DungeonsStore: "dungeons-store",
   IsResourceBladeNavCollapsed: "is-resource-blade-nav-collapsed",
-  IsResourceServiceMenuCollapsed: "is-resource-service-menu-collapsed",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,
   MessageDisplayMode: "message-display-mode",
   MessageLeftSideBarWidth: "message-left-side-bar-width",

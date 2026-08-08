@@ -41,9 +41,8 @@ The whole explorer is **client-only rendered**: `packages/app/configuration/rout
 
 ```mermaid
 flowchart LR
-  SMENU["ResourceServiceMenu<br/>standing rail — Home · All · Favorites · Recent · Tags · Recycle bin"]
   HOME["/resource-explorer (Home)<br/>search · quick-create tiles · recent resources"]
-  SMENU --> HOME
+  HOME -->|☰| SMENU["ResourceServiceMenu drawer<br/>Home · All · Favorites · Recent · Tags · Recycle bin"]
   SMENU --> ALL["/resource-explorer/all<br/>full list · search"]
   HOME -->|See all| ALL
   HOME -->|Create a resource| CREATE["/resource-explorer/create<br/>type gallery"]
@@ -84,7 +83,7 @@ Create is a **page per resource type**, mirroring the Azure marketplace + create
 
 Azure-portal-faithful and deliberately simple — no absolute overlay, no `z-index`: a full-width **header bar** (the `resource` layout's `StyledPageHeader` — the trail with the storage meter on its far end) on top, then `<ResourceExplorer>` — one `<v-sheet flex flex-1>` holding the blade and nothing beside it.
 
-This is the one route that passes `is-service-menu-hidden`: the blade nav is a rail of its own, and two rails on one screen spend width the blade itself uses better.
+Like every route but Home it does not pass `is-service-menu-shown`: the blade nav is the navigation on this page, and a second menu beside it would be two answers to "where am I".
 
 The header carries **no title on this route**: the blade header below already names the resource and the blade showing it, so the layout is passed no title and `StyledPageHeader` drops that row entirely — one row of vertical space returned to the content, and one name on screen instead of two.
 
@@ -102,8 +101,9 @@ The header carries **no title on this route**: the blade header below already na
 ```
 
 - **No list pane beside the blade.** One existed, shown when the trail ended at the list, and it was removed: it duplicated a way back that the breadcrumb and the header's close ✕ both already give, and it spent width the blade itself uses better. A resource fills the surface however the visitor reached it.
+- **The blade nav is a standing rail, not a drawer** — it is how a reader moves between the faces of the resource they are already in, used constantly rather than a few times a session, so it stays on screen. The [service menu](/docs/platform/resource-service-menu) is the opposite case and is a drawer for exactly that reason.
 - **Collapse caret on the blade nav (desktop)** — the caret sits at the end of the nav's own top row, the way the portal puts one beside its menu search. Clicking it hides the nav column outright rather than narrowing it to icons — a blade is the widest thing on the page and the nav is a handful of links — leaving a thin strip with `»` to restore it. The state is persisted (`LocalStorageKey.IsResourceBladeNavCollapsed`), because a reader who reclaimed the width wants it reclaimed on the next resource too.
-- **Mobile-native** — on `smAndDown` (`useVDisplay`) the blade nav collapses from the vertical rail into a dropdown (`v-menu`) whose activator shows the active blade; its caret (`mdi-chevron-up`) renders only while the menu is open. Desktop keeps the inline rail. Both behaviours live in `StyledCollapsibleNav`, shared with the service menu rather than written twice.
+- **Mobile-native** — on `smAndDown` (`useVDisplay`) the blade nav collapses from the vertical rail into a dropdown (`v-menu`) whose activator shows the active blade; its caret (`mdi-chevron-up`) renders only while the menu is open. Desktop keeps the inline rail. Both behaviours live in `StyledCollapsibleNav`.
 - **Borders drawn exactly once** — no component double-draws an edge. The blade box carries `b-t` under its header; the blade nav is borderless. Widths are explicit (`b-0 b-t-1`), never inherited from a global reset — see the `styling` skill.
 - **Nested close** — the ✕ peels back to whatever the trail says the visitor came through (`navigationTrail` store's `closeTo`), falling back to the hub on a direct arrival. Clicking it and clicking the last crumb are the same move, on the list page and the resource page alike.
 - **Single unified breadcrumb** — the `resource` layout owns the only breadcrumb; the blade box has none. Vuetify components with a plain destination take `:to`; an inline `@click="navigateTo(...)"` is for logic-then-navigate actions. Declarative links use `NuxtLink`/`NuxtInvisibleLink`. Raw `<a>` is never used — see [navigation](/docs/architecture/navigation).
@@ -168,28 +168,29 @@ stateDiagram-v2
 
 ## Key files
 
-| File                                                   | Role                                                                                                                |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| `app/pages/resource-explorer/[id]/[[blade]].vue`       | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>`                        |
-| `app/components/Resource/Explorer/Index.vue`           | the blade body — toolbar, collapsible nav rail and outlet on one surface                                            |
-| `app/components/Resource/List/View.vue`                | `StyledDataTableServer` over `resource.readResources` — the workbench, parameterised by `source`                    |
-| `app/components/Resource/ServiceMenu.vue`              | the area's standing left rail, mounted by the `resource` layout                                                     |
-| `app/components/Styled/CollapsibleNav.vue`             | the rail shell behind both the service menu and the blade nav                                                       |
-| `app/components/Resource/Blade/Actions.vue`            | command bar: one command list rendered as a labelled bar or the `…` overflow, plus the star and close ✕             |
-| `app/services/resource/getResourceBladeDefinitions.ts` | which blades a type has, in nav order — read by the nav, the route guard and the blade title                        |
-| `app/components/Resource/Blade/Nav.vue`                | blade menu from `ResourceBladeTypes` + type blades; desktop rail, mobile dropdown (`v-menu`, caret only while open) |
-| `app/components/Resource/Blade/Outlet.vue`             | Overview vs inline editor vs type blade on the active slug                                                          |
-| `app/components/Resource/Overview.vue`                 | generic Overview blade (Essentials + type summary slot)                                                             |
-| `app/services/resource/ResourceBladeDefinitionMap.ts`  | type → its own blade definitions                                                                                    |
-| `app/services/resource/ResourceEditorComponentMap.ts`  | type → inline Editor-blade component                                                                                |
-| `app/services/resource/PortableFormatMap.ts`           | portable type → formats (Import/Export)                                                                             |
-| `app/services/resource/ViewComponentMap.ts`            | publishable type → public view renderer                                                                             |
-| `app/composables/resource/useResource.ts`              | row + typed content + save/capability actions                                                                       |
+| File                                                   | Role                                                                                                    |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `app/pages/resource-explorer/[id]/[[blade]].vue`       | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>`            |
+| `app/components/Resource/Explorer/Index.vue`           | the blade body — toolbar, collapsible nav rail and outlet on one surface                                |
+| `app/components/Resource/List/View.vue`                | `StyledDataTableServer` over `resource.readResources` — the workbench, parameterised by `source`        |
+| `app/components/Resource/ServiceMenu.vue`              | the area's menu, opened from Home's `☰` as a drawer                                                    |
+| `app/components/Styled/NavDrawer.vue`                  | the drawer shell behind the service menu                                                                |
+| `app/components/Styled/CollapsibleNav.vue`             | the rail shell behind the blade nav                                                                     |
+| `app/components/Resource/Blade/Actions.vue`            | command bar: one command list rendered as a labelled bar or the `…` overflow, plus the star and close ✕ |
+| `app/services/resource/getResourceBladeDefinitions.ts` | which blades a type has, in nav order — read by the nav, the route guard and the blade title            |
+| `app/components/Resource/Blade/Nav.vue`                | blade rail from `getResourceBladeDefinitions`; desktop rail, mobile dropdown (`v-menu`)                 |
+| `app/components/Resource/Blade/Outlet.vue`             | Overview vs inline editor vs type blade on the active slug                                              |
+| `app/components/Resource/Overview.vue`                 | generic Overview blade (Essentials + type summary slot)                                                 |
+| `app/services/resource/ResourceBladeDefinitionMap.ts`  | type → its own blade definitions                                                                        |
+| `app/services/resource/ResourceEditorComponentMap.ts`  | type → inline Editor-blade component                                                                    |
+| `app/services/resource/PortableFormatMap.ts`           | portable type → formats (Import/Export)                                                                 |
+| `app/services/resource/ViewComponentMap.ts`            | publishable type → public view renderer                                                                 |
+| `app/composables/resource/useResource.ts`              | row + typed content + save/capability actions                                                           |
 
 ## Notes
 
 - The shell reuses the [shell cohesion](/docs/platform/shell-cohesion) primitives; styling follows the `styling`/`vuetify` skills.
-- **One list mechanism**: the explorer replaced `DocumentPicker`, the surveyer CRUD list, and the documents hub — no per-editor pickers survive. Home recents, `/all`, `/favorites` and `/recents` are all `resource.readResources` (different filter/sort/limit), not four data paths.
+- **One list mechanism**: the explorer replaced `DocumentPicker`, the surveyer CRUD list, and the documents hub — no per-editor pickers survive. Home recents, `/all`, `/favorites` and `/recents` are all `resource.readResources` (different filter/sort/limit), not four data paths. Home's Favorites card is the one endpoint of its own, `resource.readFavorites`, and it still builds its scope with the same `createResourcesWhere`.
 - **One create mechanism**: the gallery + per-type form replaced every per-editor "new" button and modal. Create is a page (marketplace parity), never a dialog.
 - **Editors are pure editors.** The resource lifecycle (create / select / rename / delete / publish) lives only in the Explorer + Overview blade — never in an editor's header. Editor headers keep only editing tools; editors save independently (autosave / edit-dialog).
 - **The layout's header bar is the only `StyledPageHeader` on the page.** A blade's own header is a plain `v-toolbar` (`Resource/Email/Editor.vue`, `Dashboard/Editor/Header.vue`) — a nested `StyledPageHeader` would render a second breadcrumb trail and a second storage meter.

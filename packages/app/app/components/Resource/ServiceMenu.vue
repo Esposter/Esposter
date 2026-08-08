@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import type { CollapsibleNavItem } from "@/models/shared/CollapsibleNavItem";
+import type { NavItem } from "@/models/shared/NavItem";
 
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { RoutePath } from "@esposter/shared";
 
+const isOpen = defineModel<boolean>({ required: true });
 const route = useRoute();
 // Navigation, not state: every entry is a real route, so the set a reader is looking at is deep-linkable,
 // Refresh-safe and back-button-safe, and the active entry is decided by the path rather than remembered.
 // Matched exactly — Home is a path prefix of every other entry, so a prefix match would leave it lit
-// everywhere. The list routes come from the source registry, so adding a source adds a menu entry
-const items = computed<CollapsibleNavItem[]>(() =>
+// Everywhere. The list routes come from the source registry, so adding a source adds a menu entry
+const items = computed<NavItem[]>(() =>
   [
     { icon: "mdi-home-outline", title: "Home", to: RoutePath.ResourceExplorer },
     ...Object.values(ResourceListSource).map((source) => {
@@ -20,17 +20,12 @@ const items = computed<CollapsibleNavItem[]>(() =>
     }),
     { icon: "mdi-tag-multiple-outline", title: "Tags", to: RoutePath.ResourceExplorerTags },
     { icon: "mdi-delete-outline", title: "Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
-  ].map((item) => ({ ...item, isActive: route.path === item.to })),
+  ].map(({ icon, title, to }) => ({ icon, isActive: route.path === to, title, to })),
 );
 </script>
 
-<!-- The standing left rail for the resource area. Every entry but Home and Tags opens the same list surface
-     pointed at a different set, which is what keeps filters, columns, grouping and bulk selection built once -->
+<!-- The resource area's own menu. Every entry but Home and Tags opens the same list surface pointed at a
+     different set, which is what keeps filters, columns, grouping and bulk selection built once -->
 <template>
-  <StyledCollapsibleNav
-    :items
-    hide-text="Hide resource menu"
-    show-text="Show resource menu"
-    :storage-key="LocalStorageKey.IsResourceServiceMenuCollapsed"
-  />
+  <StyledNavDrawer v-model="isOpen" :items />
 </template>

@@ -1,17 +1,17 @@
 ---
 title: Resource service menu
-description: The standing left rail for the resource area — All, Favorites, Recent, Tags and the recycle bin as sibling routes over one list surface.
+description: Home's hamburger drawer for the resource area — All, Favorites, Recent, Tags and the recycle bin as sibling routes over one list surface.
 ---
 
 # Resource service menu
 
-The portal this explorer follows does not put "everything you own" behind a single page. Resource Manager is a **service** with a standing left menu, and each entry opens the _same_ list surface pointed at a different set. Ours had one list page and surfaced the rest as cards on Home, which meant Recent and Favorites could never grow filters, columns, sorting or bulk selection without re-implementing what `/all` already had.
+The portal this explorer follows does not put "everything you own" behind a single page. Resource Manager is a **service** with a menu, and each entry opens the _same_ list surface pointed at a different set. Ours had one list page and surfaced the rest as cards on Home, which meant Recent and Favorites could never grow filters, columns, sorting or bulk selection without re-implementing what `/all` already had.
 
 The menu makes each entry a view over the existing list, so a capability built once appears everywhere.
 
 ```mermaid
 flowchart LR
-  MENU["ResourceServiceMenu<br/>standing left rail"] --> HOME["Home<br/>/resource-explorer"]
+  MENU["ResourceServiceMenu<br/>Home's ☰ drawer"] --> HOME["Home<br/>/resource-explorer"]
   MENU --> ALL["All<br/>/resource-explorer/all"]
   MENU --> FAV["Favorites<br/>/resource-explorer/favorites"]
   MENU --> REC["Recent<br/>/resource-explorer/recents"]
@@ -47,9 +47,11 @@ The Tags entry is the one genuinely new read — a grouped count over tag names,
 
 ## Where the menu renders
 
-Everywhere in the area except the resource page. `/resource-explorer/[id]/[[blade]]` passes `is-service-menu-hidden` because the blade brings a rail of its own, and two rails on one screen spend width the blade itself uses better.
+**Home only, as a drawer behind a hamburger.** The `resource` layout takes `is-service-menu-shown`, and `/resource-explorer` is the one route that passes it. Home is where a reader decides which set to open; every other route in the area is already inside an answer to that question, and the list pages in particular are the widest thing here — a rail standing open would take that width permanently to serve six links reached a few times a session.
 
-The rail is `StyledCollapsibleNav`, shared with the blade nav rather than reimplemented: a desktop column with a persisted collapse caret, folding into a `v-menu` dropdown on `smAndDown`. Active entries are matched **exactly** — Home is a path prefix of every other entry, so a prefix match would leave it lit on every page in the area.
+The `☰` sits beside the breadcrumb trail, on the same row as the storage meter, since both are the layout's own chrome rather than any page's. The drawer opens over the content with **no scrim**, so Home stays readable and clickable while it is open, and closes again on the entry that was picked. Nothing about it is persisted: navigation is the drawer's whole purpose, so it has no reason to outlive the trip.
+
+The drawer is `StyledNavDrawer` and behaves identically at every breakpoint — a hamburger is already the narrow-viewport shape, so there is no second behaviour to keep in step. It is deliberately **not** the blade nav's `StyledCollapsibleNav`: a blade rail is used constantly while reading one resource and stays on screen, which is a different rule and so a different shell. Active entries are matched **exactly** — Home is a path prefix of every other entry, so a prefix match would leave it lit on every page in the area.
 
 Home keeps its Recent and Favorites card. The card and the routes are the same two sets at two sizes, so both read their icon and empty-state copy from `ResourceListSourceDefinitionMap` through `ResourceHomeTabSourceMap` — a set is described identically wherever it renders.
 
@@ -59,11 +61,11 @@ Paths relative to `packages/app`.
 
 | File                                                            | Role                                                             |
 | --------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `app/components/Resource/ServiceMenu.vue`                       | the rail: entries, exact-path active matching                    |
-| `app/components/Styled/CollapsibleNav.vue`                      | the shared rail shell, also behind the blade nav                 |
-| `app/layouts/resource.vue`                                      | mounts the menu beside the page content                          |
+| `app/components/Resource/ServiceMenu.vue`                       | the entries and their exact-path active matching                 |
+| `app/components/Styled/NavDrawer.vue`                           | the drawer shell — slide-in, elevated, scrimless                 |
+| `app/layouts/resource.vue`                                      | owns the `☰`, the open state and where the drawer mounts        |
 | `app/components/Resource/List/View.vue`                         | the one list surface, parameterised by `source`                  |
 | `app/services/resource/list/ResourceListSourceDefinitionMap.ts` | what each source filters, sorts and pins                         |
 | `app/components/Resource/TagList.vue`                           | the Tags entry's list                                            |
-| `packages/db-schema/src/schema/resourceAccesses.ts`             | one row per user per resource, holding the last open             |
+| `../db-schema/src/schema/resourceAccesses.ts`                   | one row per user per resource, holding the last open             |
 | `server/trpc/routers/resource.ts`                               | `isFavorite`/`isAccessed` filters, `recordAccess`, `countsByTag` |

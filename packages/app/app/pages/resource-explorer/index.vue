@@ -4,7 +4,7 @@ useResourceKeyboardShortcuts();
 </script>
 
 <template>
-  <NuxtLayout name="resource" title="Resource Explorer">
+  <NuxtLayout name="resource" is-service-menu-shown title="Resource Explorer">
     <Head>
       <Title>Resource Explorer</Title>
     </Head>
