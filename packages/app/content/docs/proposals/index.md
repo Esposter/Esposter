@@ -24,4 +24,5 @@ Infra has open area proposals right now; every other area's roadmap is clear.
 Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [Comment cleanup](/docs/proposals/refactors/comment-cleanup) — sweep ledger for keeping comments tight repo-wide.
+- [Simplification sweep](/docs/proposals/refactors/simplification-sweep) — sweep ledger for applying the finishing-a-change cleanup pass area by area.
 - [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
