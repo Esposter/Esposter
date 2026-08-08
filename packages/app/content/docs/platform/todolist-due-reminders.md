@@ -42,8 +42,9 @@ None in Postgres. The TodoList item already carries `dueAt` (the Items and Calen
 | File                                                                      | Role                                                           |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | `packages/app/server/services/resource/todoList/scheduleTodoReminders.ts` | Post-save due-date diff and per-item enqueue                   |
-| `packages/app/server/trpc/routers/todoList.ts`                            | Wires the diff in as the `afterSaveResourceContent` hook       |
-| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | The generic `afterSaveResourceContent` hook on the save path   |
+| `packages/app/server/services/resource/ResourceAfterSaveContentMap.ts`    | Registers the diff as TodoList's after-save hook               |
+| `packages/app/server/services/resource/runAfterSaveResourceContent.ts`    | Fires the registered hook, fire-and-forget                     |
+| `packages/app/server/services/resource/saveResourceContent.ts`            | The one content write that runs the hook                       |
 | `packages/db/src/services/azure/serviceBus/enqueueTodoReminder.ts`        | Schedules the Service Bus message at `dueAt`                   |
 | `packages/db-schema/src/models/azure/queue/TodoReminderQueueMessage.ts`   | The `{ resourceId, itemId, dueAt }` message schema             |
 | `packages/azure-functions/src/functions/sendTodoReminder.ts`              | Queue-trigger registration for `SendTodoReminder`              |

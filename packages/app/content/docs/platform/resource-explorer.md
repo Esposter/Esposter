@@ -23,6 +23,7 @@ The single Azure-portal-like UI for every resource: one list, one resource page 
 | --------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | `/resources`                | `pages/resources/index.vue` (auth)          | Home — search + quick-create + recent resources                                                                    |
 | `/resources/all`            | `pages/resources/all.vue` (auth)            | full list (all types, search)                                                                                      |
+| `/resources/recycle-bin`    | `pages/resources/recycle-bin.vue` (auth)    | soft-deleted resources — restore or purge ([recycle bin](/docs/platform/recycle-bin))                              |
 | `/resources/create`         | `pages/resources/create/index.vue` (auth)   | create gallery — type picker (marketplace)                                                                         |
 | `/resources/create/[type]`  | `pages/resources/create/[type].vue` (auth)  | per-type create form (name + initial settings) → `/resources/[id]`                                                 |
 | `/resources/[id]/[[blade]]` | `pages/resources/[id]/[[blade]].vue` (auth) | resource page; omitted blade = Overview; blade validated in route middleware                                       |
@@ -47,7 +48,7 @@ flowchart LR
 
   subgraph bladepage [Resource page]
     MENU["Blade nav"] --> OV["Overview<br/>Essentials + command bar:<br/>rename · delete · publish* · import/export*"]
-    MENU --> TB["Type blades<br/>Sheet: Data · Settings<br/>Survey: Editor · Responses<br/>TodoList: Items · Calendar<br/>others: Editor (inline)"]
+    MENU --> TB["Type blades<br/>Sheet: Data · Settings<br/>Survey: Editor · Responses<br/>TodoList: Items · Calendar<br/>Program: Setup · Status<br/>others: Editor (inline)"]
   end
 
   RES --> bladepage
@@ -56,13 +57,13 @@ flowchart LR
 
 ## Home — `/resources`
 
-The Azure-portal landing. Not a table — a dashboard of entry points: the inline [global search](/docs/platform/global-search) mount (grouped as-you-type dropdown; Enter still routes to `/resources/all` pre-filtered), **quick-create tiles** from `ResourceDefinitionMap` (icon + title → `/resources/create/[type]`), a primary **Create a resource** button (→ gallery), and **Recent resources** (`resource.readResources` sorted by `updatedAt` desc, capped, with a **See all** link). Empty state is a `StyledEmptyState` with a Create action.
+The Azure-portal landing. Not a table — a dashboard of entry points: the inline [global search](/docs/platform/global-search) mount (grouped as-you-type dropdown; Enter still routes to `/resources/all` pre-filtered), **quick-create tiles** from `ResourceDefinitionMap` (icon + title → `/resources/create/[type]`), a primary **Create a resource** button (→ gallery), and a **Resources** card with **Recent** and **Favorites** tabs and a **See all** link ([favorites & recents](/docs/platform/favorites-and-recents)). Each tab's empty state is a `StyledEmptyState`.
 
 ## All resources — `/resources/all`
 
 `pages/resources/all.vue` renders the `resource` layout with `title="All"` above a `v-sheet flex-1` wrapping `ResourceListView` (`:close-to`; the blade list box passes `:is-searchable="false"` to strip the workbench) — `StyledDataTableServer` over `resource.readResources` (cross-type, owner, offset-paginated):
 
-- Columns: type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt — subject to the column chooser. Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
+- Columns: favorite (the star), type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt, and a trailing actions `⋮` — all but the name subject to the column chooser. Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
 - Toolbar (a fully-bordered `b-1` box, workbench only): search, group-by-type toggle, column chooser, Export CSV, Refresh, and a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
 - Filter-pill row, bulk select, context menu, URL-synced filter state, and the footer count are the list workbench — see [list filters & views](/docs/platform/list-filters-and-views).
 - Row click → `/resources/{id}` via `navigateTo` — the single affordance for opening a resource (the name cell is plain text, not a competing link).
@@ -108,17 +109,20 @@ flowchart LR
 
 ### Blades
 
-The blade nav's built-in slugs come from the `ResourceBladeTypes` set (enum order **Overview** first, then **Editor** — `sort-enums` disabled so the enum stays the single ordered source of truth), followed by the type's own blades from `ResourceBladeDefinitionMap`. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `BladeOutlet` renders it under `<ClientOnly><Suspense>` (VueFlow/GrapesJS can't SSR, and GrapesJS uses async setup). Blade-only types (Sheet, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
+The blade nav's built-in slugs come from the `ResourceBladeTypes` set (enum order **Overview** first, then **Editor** — `sort-enums` disabled so the enum stays the single ordered source of truth), followed by the type's own blades from `ResourceBladeDefinitionMap`. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `BladeOutlet` renders it under `<ClientOnly><Suspense>` (VueFlow/GrapesJS can't SSR, and GrapesJS uses async setup). Blade-only types (Program, Sheet, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
 
-| Type      | Blades after Overview                                        |
-| --------- | ------------------------------------------------------------ |
-| Sheet     | Data (grid editor), Settings (parse configuration form)      |
-| Survey    | Editor (SurveyJS creator, inline), Responses (dataset table) |
-| TodoList  | Items (todo table), Calendar (FullCalendar over this list)   |
-| Dashboard | Editor (canvas incl. bind-to-data, inline)                   |
-| Email     | Editor (GrapesJS, inline)                                    |
-| Webpage   | Editor (GrapesJS, inline)                                    |
-| Flowchart | Editor (VueFlow, inline)                                     |
+| Type      | Blades after Overview                                         |
+| --------- | ------------------------------------------------------------- |
+| Sheet     | Data (grid editor), Settings (parse configuration form)       |
+| Survey    | Editor (SurveyJS creator, inline), Responses (response table) |
+| TodoList  | Items (todo table), Calendar (FullCalendar over this list)    |
+| Program   | Setup, Status — no canvas, so no Editor                       |
+| Dashboard | Editor (canvas incl. bind-to-data, inline)                    |
+| Email     | Editor (GrapesJS, inline)                                     |
+| Webpage   | Editor (GrapesJS, inline)                                     |
+| Flowchart | Editor (VueFlow, inline)                                      |
+| Note      | Editor (Tiptap, inline)                                       |
+| Blueprint | Editor (inline)                                               |
 
 - **Overview blade**: Essentials panel (type, created/updated) plus a type-specific summary slot. **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource shows no status row at all.
 - **Command bar** (in the blade box header): Refresh + Rename + Delete + Duplicate always; Publish/Unpublish for `PublishableResourceType`; Import/Export for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, a self-contained async `export()` ⇒ Export); a trailing close ✕. Labeled buttons, group dividers, narrow-viewport `…` overflow, and the type-the-name delete guard are [resource page parity](/docs/platform/resource-page-parity).

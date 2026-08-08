@@ -1,11 +1,11 @@
 ---
 title: Email Web View
-description: Email is Publishable — a hosted, unpersonalized copy of the compiled email at /view/email/[id], the standard "view in browser" artifact.
+description: Email is Publishable — a hosted, unpersonalized copy of the compiled email at /view/Email/[id], the standard "view in browser" artifact.
 ---
 
 # Email Web View
 
-Email opts into the **Publishable** capability, so a compiled email has a public URL: `/view/email/[id]`. That is the industry-standard "view this email in your browser" artifact, a review link to hand a colleague before a send, and the natural merge target for a web-version link when [email sending](/docs/platform/deferred/email-sending) un-defers.
+Email opts into the **Publishable** capability, so a compiled email has a public URL: `/view/Email/[id]`. That is the industry-standard "view this email in your browser" artifact, a review link to hand a colleague before a send, and the natural merge target for a web-version link when [email sending](/docs/platform/deferred/email-sending) un-defers.
 
 The published copy is the **unpersonalized template**: merge-field tokens render as authored, which is exactly right for a browser or review copy — a per-recipient web version is deliberately out (see Notes).
 
@@ -17,7 +17,7 @@ The publish snapshot is taken server-side, but MJML compiles only in the client 
 flowchart LR
   SAVE["Editor blade autosave"] -->|"getEmailHtml(editor)<br/>content.html beside the project data"| BLOB[("{id}/content")]
   PUB["publishResource"] -->|standard snapshot copy| SNAP[("{id}/published/{n}")]
-  VIEW["/view/email/[id]<br/>ViewComponentMap[Email]"] -->|readPublishedResourceContent| RENDER["sandboxed iframe srcdoc<br/>(same posture as the Webpage view)"]
+  VIEW["/view/Email/[id]<br/>ViewComponentMap[Email]"] -->|readPublishedResourceContent| RENDER["sandboxed iframe srcdoc<br/>(same posture as the Webpage view)"]
 ```
 
 - **Content schema** — `EmailEditor` gains a compiled `html` string, written on every editor save. The class name stays frozen (it is registered in `JSONClassMap`, so renaming it would break superjson deserialization of persisted blobs).

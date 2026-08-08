@@ -13,7 +13,7 @@ Response identity is an explicit, server-enforced survey setting rather than an 
 
 ```mermaid
 flowchart LR
-  SET["survey settings<br/>responseMode: Anonymous or Identified"] --> VIEW["/view/survey/[id]"]
+  SET["survey settings<br/>responseMode: Anonymous or Identified"] --> VIEW["/view/Survey/[id]"]
   VIEW -->|Anonymous| OPEN["form renders for anyone<br/>?t ignored"]
   VIEW -->|"Identified — token present"| FORM["form renders"]
   VIEW -->|"Identified — no token"| GATE["token-required state"]
