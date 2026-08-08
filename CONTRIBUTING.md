@@ -98,12 +98,14 @@ Scope monorepo commits where helpful: `feat(db-schema): add createdAt to posts`.
 
 ## Pull Requests
 
-1. Create a branch from `main`: `git checkout -b my-feature`
+`develop` is the integration branch and `main` takes releases from it, so contributions target `develop` — a PR against `main` would bypass integration and sit alongside the long-lived release PR.
+
+1. Create a branch from `develop`: `git checkout -b my-feature develop`
 2. Make your changes and ensure all checks pass:
    ```bash
    pnpm lint:fix && pnpm typecheck && pnpm test
    ```
-3. Push and open a PR against `main`.
+3. Push and open a PR against `develop`.
 4. PR description should explain **what** changed and **why**.
 
 Pre-commit hooks run the formatter automatically via [nano-staged](https://github.com/usmanyunusov/nano-staged), so committed code is always formatted.
