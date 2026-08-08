@@ -16,9 +16,14 @@ export const auth = betterAuth({
       // Row carry a verified email, so one person signing in with a different button stays one person
       disableImplicitLinking: false,
       enabled: true,
-      // Deliberately empty: naming a provider here accepts its email claim as ownership proof without the
-      // Verified-email check, so anyone able to register that address at the provider inherits the local user
-      trustedProviders: [],
+      // Facebook only, and for a narrow reason: it verifies an address at registration but does not expose
+      // `email_verified` on the Graph profile better-auth reads, so its claim arrives unverified because the
+      // Field is absent rather than because the address is unproven. Without this the Link button on its row
+      // Could never succeed. The cost is that a Facebook account holding an address better-auth cannot check
+      // Would link into an already-verified local user — accepted, because the alternative is a provider that
+      // Can sign in and never join the account it belongs to. Google and GitHub report the claim, so they earn
+      // Nothing by being listed here
+      trustedProviders: ["facebook"],
       // The profile is user-owned and editable in settings, so linking a provider never overwrites it
       updateUserInfoOnLink: false,
     },

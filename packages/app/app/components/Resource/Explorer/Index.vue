@@ -55,7 +55,7 @@ const isListShown = computed(() => !smAndDown.value && trail.value.at(-1) === Na
     <!-- min-w-0 lets the blade box shrink below its content's intrinsic width so wide blades scroll internally.
          The blade box spans the whole shared edge, so it is the one element that draws the vertical divider
          (b-l) meeting the list toolbar's b-b at the corner — only when there is a list box on the other side -->
-    <div b-border b-solid flex flex-1 flex-col min-w-0 :class="{ 'b-l-1': isListShown }">
+    <div b-0 b-border b-solid flex flex-1 flex-col min-w-0 :class="{ 'b-l-1': isListShown }">
       <ResourceBladeToolbar
         :active-blade
         :duplicate
@@ -71,7 +71,7 @@ const isListShown = computed(() => !smAndDown.value && trail.value.at(-1) === Na
         :resource
         :unpublish
       />
-      <div b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
+      <div b-0 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">
         <ResourceBladeNav :active-blade :resource />
         <div flex-1 min-w-0 overflow-auto>
           <ResourceBladeOutlet :active-blade :is-loading :publication :resource :update-tags />

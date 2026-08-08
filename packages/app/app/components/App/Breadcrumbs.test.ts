@@ -3,9 +3,15 @@ import AppBreadcrumbs from "@/components/App/Breadcrumbs.vue";
 import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
-import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, test } from "vitest";
+import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
+import { describe, expect, test, vi } from "vitest";
 import { RouterLink } from "vue-router";
+
+// `mountSuspended`'s `route` reaches the router that resolves the links, not the `useRoute()` the guard against
+// Linking to the current page reads — so the path under test is set here
+const { currentRoute } = vi.hoisted(() => ({ currentRoute: { path: "" } }));
+
+mockNuxtImport("useRoute", () => () => currentRoute);
 
 const readCrumbs = (element: Element) =>
   [...element.querySelectorAll(".v-breadcrumbs-item")].map((crumb) => crumb.textContent?.trim());
@@ -15,6 +21,7 @@ describe("appBreadcrumbs", () => {
   const mountBreadcrumbs = (route: string, trail: NavigationTrailPage[]) => {
     const navigationTrailStore = useNavigationTrailStore();
     navigationTrailStore.setTrail(trail);
+    currentRoute.path = route;
     return mountSuspended(AppBreadcrumbs, { global: { components: { RouterLink } }, route });
   };
 
@@ -33,7 +40,13 @@ describe("appBreadcrumbs", () => {
 
     expect(readCrumbs(component.element)).toStrictEqual(["Resources"]);
   });
+
+  // The page you are on is the title, never a crumb — and the hub is the one crumb that could link to itself
+  test("renders nothing on the hub itself", async () => {
+    expect.hasAssertions();
+
+    const component = await mountBreadcrumbs(RoutePath.Resources, []);
+
+    expect(component.find(".v-breadcrumbs-item").exists()).toBe(false);
+  });
 });
-// The hub dropping its own crumb on `/resources` is not covered here: `mountSuspended`'s `route` reaches the
-// Router that resolves the links, not the `useRoute()` the guard reads, so the case can only be asserted by
-// Mocking that composable — which would pin the mock rather than the component (see the `run-app` skill)

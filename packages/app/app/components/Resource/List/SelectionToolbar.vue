@@ -24,7 +24,7 @@ const confirmName = computed(() =>
 </script>
 
 <template>
-  <div px-4 py-2 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
+  <div px-4 py-2 b-0 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
     <span op-medium-emphasis>{{ selectedResources.length }} selected</span>
     <StyledDeleteFormDialog
       :card-props="{ title: `Delete ${selectedLabel}` }"

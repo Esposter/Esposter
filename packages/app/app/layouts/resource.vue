@@ -18,7 +18,7 @@ const { isHeaderBordered, title } = defineProps<ResourceProps>();
 <template>
   <NuxtLayout>
     <div flex flex-col h-full>
-      <StyledPageHeader :class="{ 'b-b-1 b-border b-solid': isHeaderBordered }" :title>
+      <StyledPageHeader :class="{ 'b-0 b-b-1 b-border b-solid': isHeaderBordered }" :title>
         <template #status>
           <ResourceStorageMeter />
         </template>

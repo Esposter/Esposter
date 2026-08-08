@@ -10,7 +10,7 @@ const isListCollapsed = useLocalStorage(LocalStorageKey.IsResourceListCollapsed,
     <StyledTooltipIconButton icon="mdi-chevron-double-right" text="Show list" @click="isListCollapsed = false" />
   </div>
   <div v-else flex flex-col min-w-0>
-    <v-toolbar title="Resources" b-b-1 b-border b-solid>
+    <v-toolbar title="Resources" b-0 b-b-1 b-border b-solid>
       <template #prepend>
         <StyledTooltipIconButton icon="mdi-chevron-double-left" text="Hide list" @click="isListCollapsed = true" />
       </template>
