@@ -387,18 +387,16 @@ export const resourceRouter = router({
     }),
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
   // Compare. Owner-scoped, like every other resource write
-  recordAccess: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<void>(
-    async ({ ctx, input: { id } }) => {
-      const userId = ctx.getSessionPayload.user.id;
-      await ctx.db
-        .insert(resourceAccesses)
-        .values({ resourceId: id, userId })
-        .onConflictDoUpdate({
-          set: { accessedAt: new Date() },
-          target: [resourceAccesses.userId, resourceAccesses.resourceId],
-        });
-    },
-  ),
+  recordAccess: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation(async ({ ctx, input: { id } }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    await ctx.db
+      .insert(resourceAccesses)
+      .values({ resourceId: id, userId })
+      .onConflictDoUpdate({
+        set: { accessedAt: new Date() },
+        target: [resourceAccesses.userId, resourceAccesses.resourceId],
+      });
+  }),
   // Restore copies a snapshot's content into the working copy through saveResourceContent semantics
   // (contentVersion++). The publication is never re-pointed — a restore produces a Draft to review and
   // Re-publish, mirroring the recycle bin's restore-returns-a-Draft rule.

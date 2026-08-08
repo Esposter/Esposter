@@ -1,14 +1,12 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Column, SQL, TableRelationalConfig } from "drizzle-orm";
+import type { Column, SQL } from "drizzle-orm";
 import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { asc, desc } from "drizzle-orm";
 
-export function parseSortByToSql<TTable extends TableRelationalConfig>(
-  table: TTable,
-  sortBy: SortItem<keyof TTable & string>[],
-): SQL[];
+// A table indexes its own columns directly (`users.id` is the column), so both a table and a bare column map
+// Resolve a sort key the same way
 export function parseSortByToSql<TTable extends TableConfig>(
   table: PgTableWithColumns<TTable>,
   sortBy: SortItem<keyof TTable["columns"] & string>[],

@@ -10,7 +10,7 @@ interface ResourceListColumnChooserMenuProps {
 
 const { source } = defineProps<ResourceListColumnChooserMenuProps>();
 // Reads the same composable the table does rather than taking the column state as a model — one owner of
-// which columns exist, which are pinned, and which are hidden
+// Which columns exist, which are pinned, and which are hidden
 const { hiddenColumnKeys, toggleableHeaders, toggleColumn } = useResourceListColumns(source);
 </script>
 

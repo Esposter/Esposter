@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";

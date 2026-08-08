@@ -8,9 +8,9 @@ import { ResourceListSourceDefinitionMap } from "@/services/resource/list/Resour
 const RECENTS_KEY = "recents";
 
 // Recent means recently *opened*, and the set is the caller's own server-side access rows, so it follows them
-// between devices. Home's card and the search dropdown both want the same capped list and both mount on the
-// explorer home page, so the set is read once and two concurrent mounts share the in-flight query rather than
-// each issuing the same request.
+// Between devices. Home's card and the search dropdown both want the same capped list and both mount on the
+// Explorer home page, so the set is read once and two concurrent mounts share the in-flight query rather than
+// Each issuing the same request.
 export const useRecentStore = defineStore("resource/recent", () => {
   const { $trpc } = useNuxtApp();
   const { executeQuery, getIsPending } = useMutation();

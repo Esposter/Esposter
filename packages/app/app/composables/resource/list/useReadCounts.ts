@@ -1,6 +1,6 @@
 // The shared shape behind every grouped-count read the explorer does: one target, so a slower earlier read can
-// never overwrite the one the latest filter asked for, and a failure surfaces where the cards render rather
-// than as a toast. Callers supply only the query.
+// Never overwrite the one the latest filter asked for, and a failure surfaces where the cards render rather
+// Than as a toast. Callers supply only the query.
 export const useReadCounts = <TCount>(description: string, query: () => Promise<TCount[]>) => {
   const { executeQuery, isPending: isLoading } = useMutation();
   const counts = ref<TCount[]>([]) as Ref<TCount[]>;

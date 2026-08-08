@@ -6,6 +6,8 @@ import { isValidResourceBlade } from "@/services/resource/isValidResourceBlade";
 import { ResourceType, ResourceTypes } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
+const getSlugs = (type: ResourceType) => getResourceBladeDefinitions(type).map(({ slug }) => slug);
+
 describe(getResourceBladeDefinitions, () => {
   test("opens every type with Overview", () => {
     expect.hasAssertions();
@@ -18,8 +20,6 @@ describe(getResourceBladeDefinitions, () => {
   test("offers the Editor blade only to types with an inline editor", () => {
     expect.hasAssertions();
 
-    const getSlugs = (type: ResourceType) => getResourceBladeDefinitions(type).map(({ slug }) => slug);
-
     expect(getSlugs(ResourceType.Note)).toContain(ResourceBladeType.Editor);
     expect(getSlugs(ResourceType.Sheet)).not.toContain(ResourceBladeType.Editor);
   });
@@ -27,8 +27,6 @@ describe(getResourceBladeDefinitions, () => {
   // Only publishable types have snapshots, so only they get the history blade
   test("offers Publish history only to publishable types", () => {
     expect.hasAssertions();
-
-    const getSlugs = (type: ResourceType) => getResourceBladeDefinitions(type).map(({ slug }) => slug);
 
     expect(getSlugs(ResourceType.Survey)).toContain(ResourceBladeType.PublishHistory);
     expect(getSlugs(ResourceType.Blueprint)).not.toContain(ResourceBladeType.PublishHistory);

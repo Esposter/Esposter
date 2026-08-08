@@ -6,8 +6,8 @@ import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 
 // Owns what "pinned" means, so the table and the column chooser cannot disagree: the column a source is
-// ordered by is always rendered and never offered as a checkbox, because a sort key the reader can hide is an
-// order nobody can explain. Name is the row's identity and is pinned for every source.
+// Ordered by is always rendered and never offered as a checkbox, because a sort key the reader can hide is an
+// Order nobody can explain. Name is the row's identity and is pinned for every source.
 export const useResourceListColumns = (source: ResourceListSource) => {
   const { pinnedColumnKey } = ResourceListSourceDefinitionMap[source];
   const hiddenColumnKeys = useLocalStorage<string[]>(
