@@ -45,13 +45,15 @@ Migrations live in `server/db/migrations/` and are generated from `packages/db-s
 ```bash
 # From packages/db-schema/
 pnpm db:gen     # generate migration SQL from schema changes
-pnpm db:up      # apply pending migrations
+pnpm db:up      # upgrade snapshot metadata to a newer drizzle-kit format
 pnpm db:studio  # open Drizzle Studio UI
 ```
 
+Pending migrations are applied automatically at app startup by the Nitro plugin `server/plugins/migrate.ts` — there is no apply script.
+
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs) to level up.
 
 ### Tech Stack
 

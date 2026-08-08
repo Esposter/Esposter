@@ -13,7 +13,7 @@ Pulumi infrastructure-as-code for Esposter's Azure resources — manages all clo
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/_esposter_infra.html) to level up.
 
 This private package contains Esposter's Azure infrastructure-as-code project. It uses [Pulumi](https://github.com/pulumi/pulumi) with the Azure Native provider to manage Azure resources from TypeScript.
 
