@@ -7,6 +7,9 @@ export interface Item {
   color?: string;
   disabled?: boolean;
   icon: string;
+  // Opens a divider-separated group in renderings that draw them; a flat menu ignores it
+  isGroupStart?: boolean;
+  loading?: boolean;
   onClick?: (event: KeyboardEvent | MouseEvent) => Promisable<void>;
   shortTitle?: string;
   title: string;

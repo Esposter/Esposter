@@ -36,7 +36,7 @@ flowchart LR
 
 ## Notes
 
-- Export surfaces through the **Portable** capability (`PortableFormatMap[Email]` personalized-HTML `export()`), rendered by `PortableActions` in the resource command bar — the live GrapesJS editor is bridged onto the email store so the command-bar export can reach it.
+- Export surfaces through the **Portable** capability (`PortableFormatMap[Email]` personalized-HTML `export()`), rendered as Import/Export entries in the resource command bar — the live GrapesJS editor is bridged onto the email store so the command-bar export can reach it.
 - Merge-field and survey-invite block categories re-sync wholesale whenever their reactive source changes (bound dataset columns, published surveys) — no per-block bookkeeping.
 - Substituted values are HTML-escaped: merge fields personalize text, never inject markup. Tokens are inserted escaped and substitution matches both raw and escaped token forms, since the canvas entity-encodes special characters (e.g. a "P&L" column) on serialization.
 - Export is fully client-side; a zip dependency was rejected in favour of the File System Access directory picker.

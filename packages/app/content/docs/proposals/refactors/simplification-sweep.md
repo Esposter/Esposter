@@ -42,7 +42,7 @@ Ordered by expected payoff — the biggest surfaces with the most recent churn f
 ### Platform / resource explorer
 
 - [x] `Resource/List` + the list composables — done as part of the service-menu work
-- [ ] `Resource/Blade`, `Resource/Overview`, `Resource/Explorer` — the resource page shell
+- [x] `Resource/Blade`, `Resource/Overview`, `Resource/Explorer` — the resource page shell
 - [ ] `Resource/Sheet` — the sheet editor's data source, columns and command stack
 - [ ] `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`, `Resource/Flowchart` — the canvas editors
 - [ ] `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`
@@ -88,6 +88,15 @@ Ordered by expected payoff — the biggest surfaces with the most recent churn f
 - **One area per commit**, so a pass that turns out wrong reverts cleanly.
 - **Chunked for review** — an area that would exceed the review file budget is split at a sub-directory boundary and gets its own line here.
 - Findings deliberately skipped (with the reason) belong in the commit message; this ledger only tracks coverage.
+
+## Raised, not folded in
+
+Findings a pass surfaced whose fix is real work rather than cleanup. Each needs its own proposal before it is attempted:
+
+- **`useResource` as a blade-scoped store.** The resource page threads its whole state through page → Explorer → Actions/Outlet; the `pinia` and `vue-component-patterns` skills both point at a store instead, which would delete the drilling outright.
+- **`useResourceMutations` as a generic builder.** Ten hand-written per-type objects with no variation but which capability keys are present — a router-key map plus the capability flags already in `ResourceDefinitionMap` would replace them, and a mistyped router key would stop being a runtime-only failure.
+- **The publication on the generic resource read.** `readResource` then `readResourcePublication` is two round trips where the second re-resolves ownership; `resourcePublications` is one generic table, so the publication could ride the first response.
+- **Lazy portable-format loading.** The command bar statically pulls the xlsx read/write libraries into every resource page's chunk, including types that can never import or export.
 
 ## Done
 

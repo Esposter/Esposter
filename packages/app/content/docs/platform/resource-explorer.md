@@ -168,23 +168,23 @@ stateDiagram-v2
 
 ## Key files
 
-| File                                                  | Role                                                                                                                |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `app/pages/resource-explorer/[id]/[[blade]].vue`      | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>`                        |
-| `app/components/Resource/Explorer/Index.vue`          | the blade body — toolbar, collapsible nav rail and outlet on one surface                                            |
-| `app/components/Resource/List/View.vue`               | `StyledDataTableServer` over `resource.readResources` — the workbench, parameterised by `source`                    |
-| `app/components/Resource/ServiceMenu.vue`             | the area's standing left rail, mounted by the `resource` layout                                                     |
-| `app/components/Styled/CollapsibleNav.vue`            | the rail shell behind both the service menu and the blade nav                                                       |
-| `app/components/Resource/Blade/Toolbar.vue`           | blade box header composing `BladeTitle` + `BladeActions`                                                            |
-| `app/components/Resource/Blade/Actions.vue`           | command bar: refresh, rename, delete, duplicate, `PublishToggle`, `PortableActions`, `…` overflow, close ✕          |
-| `app/components/Resource/Blade/Nav.vue`               | blade menu from `ResourceBladeTypes` + type blades; desktop rail, mobile dropdown (`v-menu`, caret only while open) |
-| `app/components/Resource/Blade/Outlet.vue`            | Overview vs inline editor vs type blade on the active slug                                                          |
-| `app/components/Resource/Overview.vue`                | generic Overview blade (Essentials + type summary slot)                                                             |
-| `app/services/resource/ResourceBladeDefinitionMap.ts` | type → its own blade definitions                                                                                    |
-| `app/services/resource/ResourceEditorComponentMap.ts` | type → inline Editor-blade component                                                                                |
-| `app/services/resource/PortableFormatMap.ts`          | portable type → formats (Import/Export)                                                                             |
-| `app/services/resource/ViewComponentMap.ts`           | publishable type → public view renderer                                                                             |
-| `app/composables/resource/useResource.ts`             | row + typed content + save/capability actions                                                                       |
+| File                                                   | Role                                                                                                                |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `app/pages/resource-explorer/[id]/[[blade]].vue`       | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>`                        |
+| `app/components/Resource/Explorer/Index.vue`           | the blade body — toolbar, collapsible nav rail and outlet on one surface                                            |
+| `app/components/Resource/List/View.vue`                | `StyledDataTableServer` over `resource.readResources` — the workbench, parameterised by `source`                    |
+| `app/components/Resource/ServiceMenu.vue`              | the area's standing left rail, mounted by the `resource` layout                                                     |
+| `app/components/Styled/CollapsibleNav.vue`             | the rail shell behind both the service menu and the blade nav                                                       |
+| `app/components/Resource/Blade/Actions.vue`            | command bar: one command list rendered as a labelled bar or the `…` overflow, plus the star and close ✕             |
+| `app/services/resource/getResourceBladeDefinitions.ts` | which blades a type has, in nav order — read by the nav, the route guard and the blade title                        |
+| `app/components/Resource/Blade/Nav.vue`                | blade menu from `ResourceBladeTypes` + type blades; desktop rail, mobile dropdown (`v-menu`, caret only while open) |
+| `app/components/Resource/Blade/Outlet.vue`             | Overview vs inline editor vs type blade on the active slug                                                          |
+| `app/components/Resource/Overview.vue`                 | generic Overview blade (Essentials + type summary slot)                                                             |
+| `app/services/resource/ResourceBladeDefinitionMap.ts`  | type → its own blade definitions                                                                                    |
+| `app/services/resource/ResourceEditorComponentMap.ts`  | type → inline Editor-blade component                                                                                |
+| `app/services/resource/PortableFormatMap.ts`           | portable type → formats (Import/Export)                                                                             |
+| `app/services/resource/ViewComponentMap.ts`            | publishable type → public view renderer                                                                             |
+| `app/composables/resource/useResource.ts`              | row + typed content + save/capability actions                                                                       |
 
 ## Notes
 

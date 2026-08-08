@@ -20,7 +20,13 @@ const { activeBlade, isLoading, publication, resource, updateTags } = defineProp
 const bladeComponent = computed(
   () => ResourceBladeDefinitionMap[resource.type].find(({ slug }) => slug === activeBlade)?.component,
 );
-const editorComponent = computed(() => ResourceEditorComponentMap[resource.type]);
+// The type's own blade wins over its inline editor, and the two are mutually exclusive — one Suspense
+// Boundary renders whichever applies rather than two identical ones
+const contentComponent = computed(
+  () =>
+    bladeComponent.value ??
+    (activeBlade === ResourceBladeType.Editor ? ResourceEditorComponentMap[resource.type] : undefined),
+);
 // The type's own Overview wraps the generic one; without an entry the generic one renders as-is
 const overviewComponent = computed(() => ResourceOverviewComponentMap[resource.type] ?? ResourceOverview);
 </script>
@@ -45,14 +51,8 @@ const overviewComponent = computed(() => ResourceOverviewComponentMap[resource.t
       <StyledSkeleton />
     </template>
   </Suspense>
-  <Suspense v-else-if="bladeComponent">
-    <component :is="bladeComponent" :key="`${resource.id}-${activeBlade}`" />
-    <template #fallback>
-      <StyledSkeleton />
-    </template>
-  </Suspense>
-  <Suspense v-else-if="editorComponent">
-    <component :is="editorComponent" :key="resource.id" />
+  <Suspense v-else-if="contentComponent">
+    <component :is="contentComponent" :key="`${resource.id}-${activeBlade}`" />
     <template #fallback>
       <StyledSkeleton />
     </template>
