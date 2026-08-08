@@ -51,7 +51,7 @@ describe(getIsRateLimited, () => {
     expect.hasAssertions();
 
     const consume = vi.spyOn(RateLimiterMap[RateLimiterType.Standard], "consume");
-    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    vi.spyOn(console, "warn").mockReturnValue(undefined);
     mockNoSessionOnce();
 
     await caller.ping();
