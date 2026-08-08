@@ -9,7 +9,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 - `references/router-test-setup.md` — tRPC callers, mock sessions, seeded mock-DB rows, naming a router test.
 - `references/module-mocks.md` — what to mock; colocated doubles, `vi.mock` factories, the `db` getter, client tRPC calls, gating a double to prove a caller awaits it.
-- `references/nuxt-environment-and-mounting.md` — a DOM, the nuxt runtime, a mounted component, a dispatched event.
+- `references/nuxt-environment-and-mounting.md` — a DOM, the nuxt runtime, a mounted component, a routed link, a dispatched event.
 - `references/platform-and-bundle-tests.md` — skipping on some hosts, colorized CLI output, a built `dist` size.
 - `references/test-helper-files.md` — anything that isn't a plain suite: shared helpers, `constants.test.ts` fixtures, filesystem path names, a wrapper suite delegating its matrix, `.test-d.ts`.
 - `references/running-the-suite.md` — a failure or timeout only the full parallel run produces, and the Windows module allowlist.
@@ -18,7 +18,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 - **`test` not `it`** — always `test(...)`.
 - **`describe(functionRef, …)`** — the function reference itself; a string only when no importable reference exists. Flat — never a nested `describe` for sub-grouping.
-- **Shared test constants as `const` inside the `describe` callback.** Shared mutable state is a `let` there, initialized in `beforeEach`, so mount helpers take no arguments.
+- **Shared test constants as `const` inside the `describe` callback.** State that must be rebuilt per test (a mock DB, a wrapper to unmount, a store) is a `let` there, initialized in `beforeEach` — a helper reads it rather than taking it as an argument. That is scoped to rebuilt-per-test state: an input that simply **differs between tests** stays a parameter (`mountFoo(route, activeCategory)`), never a `let` assigned before each call, which would manufacture the shared mutable state the rule exists to contain.
 - **`expect.hasAssertions()`** — top of every test body.
 - **Assertions after all assignments** — `expect` calls follow that phase's operations and locals, separated by a blank line.
 - **A `void` return is never assigned or asserted at runtime** (`no-confusing-void-expression`, caught by the **root** `pnpm lint` alone since `packages/app`'s ESLint isn't type-aware; never disabled). For a `Promise<void>`: `await fn();` bare when another assertion follows, else `await expect(fn()).resolves.toBeUndefined();`. One resolving to a **real value** goes into a `const`; a sync `void` contract is asserted in a `.test-d.ts` (`references/test-helper-files.md`).
