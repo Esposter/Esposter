@@ -76,25 +76,26 @@ What goes in the default slot is the feature's own concern — a client-index re
 
 Three search shapes legitimately sit outside `useAutoSearch`, because there is no as-you-type server query to throttle/abort — or something else already owns fetch orchestration:
 
-| Exception              | Why it is out of scope                                                                                                | Example                                                            |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `v-data-table-server`  | The table owns fetch orchestration — its `search` prop triggers `@update:options`; feed it a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`                      |
-| Explicit-submit search | Enter-triggered with filters and search history; nothing fires per keystroke                                          | Message right-sidebar search (`useReadSearchedMessages`)           |
-| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state                                    | Docs search (MiniSearch), portal search (`useResourceSearchItems`) |
+| Exception              | Why it is out of scope                                                                                                | Example                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `v-data-table-server`  | The table owns fetch orchestration — its `search` prop triggers `@update:options`; feed it a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`            |
+| Explicit-submit search | Enter-triggered with filters and search history; nothing fires per keystroke                                          | Message right-sidebar search (`useReadSearchedMessages`) |
+| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state                                    | Docs search (MiniSearch)                                 |
 
 Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a separate concern from the palette `hotkey` prop — chords are sequences, not single hotkeys.
 
 ## Key files
 
-| File                                             | Role                                                                    |
-| ------------------------------------------------ | ----------------------------------------------------------------------- |
-| `app/composables/useAutoSearch.ts`               | Shared core — throttle, abort, normalized change detection, `isPending` |
-| `app/composables/useCursorSearcher.ts`           | Cursor-paginated search on top of `useAutoSearch`                       |
-| `app/components/Styled/SearchDialog.vue`         | Ctrl+K palette shell (`hotkey` via `useVHotkey`)                        |
-| `app/components/Docs/Search.vue`                 | Palette + client-index results (MiniSearch)                             |
-| `app/components/Message/Model/Room/Searcher.vue` | Palette + cursor-paginated results (`useSearchStore`)                   |
-| `app/components/Message/Friends/Search.vue`      | Inline (non-palette) `useAutoSearch` consumer                           |
-| `app/store/message/room/search.ts`               | Store returning `useCursorSearcher` for the room palette                |
+| File                                                        | Role                                                                                    |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                 |
+| `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                       |
+| `app/components/Styled/SearchDialog.vue`                    | Ctrl+K palette shell (`hotkey` via `useVHotkey`)                                        |
+| `app/components/Docs/Search.vue`                            | Palette + client-index results (MiniSearch)                                             |
+| `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useSearchStore`)                                   |
+| `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |
+| `app/composables/resource/search/useResourceSearchItems.ts` | Portal dropdown — `useAutoSearch` for the Resources group, client-side groups around it |
+| `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the room palette                                |
 
 ## Notes
 
