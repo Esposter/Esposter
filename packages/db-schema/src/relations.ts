@@ -10,6 +10,7 @@ import { invitesInMessageRelation } from "@/relations/invitesInMessageRelation";
 import { likesRelation } from "@/relations/likesRelation";
 import { postsRelation } from "@/relations/postsRelation";
 import { pushSubscriptionsInMessageRelation } from "@/relations/pushSubscriptionsInMessageRelation";
+import { resourceAccessesRelation } from "@/relations/resourceAccessesRelation";
 import { resourceFavoritesRelation } from "@/relations/resourceFavoritesRelation";
 import { resourcePublicationsRelation } from "@/relations/resourcePublicationsRelation";
 import { resourcesRelation } from "@/relations/resourcesRelation";
@@ -42,6 +43,7 @@ export const relations = {
   ...likesRelation,
   ...postsRelation,
   ...pushSubscriptionsInMessageRelation,
+  ...resourceAccessesRelation,
   ...resourceFavoritesRelation,
   ...resourcePublicationsRelation,
   ...resourcesRelation,

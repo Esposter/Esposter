@@ -1,5 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { SQL, TableRelationalConfig } from "drizzle-orm";
+import type { Column, SQL, TableRelationalConfig } from "drizzle-orm";
 import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -13,9 +13,20 @@ export function parseSortByToSql<TTable extends TableConfig>(
   table: PgTableWithColumns<TTable>,
   sortBy: SortItem<keyof TTable["columns"] & string>[],
 ): SQL[];
-export function parseSortByToSql<TTable extends TableConfig>(
-  table: PgTableWithColumns<TTable>,
-  sortBy: SortItem<keyof TTable["columns"] & string>[],
+// A selection rather than a table, for a list whose sort keys span a join — the resource list sorts by the
+// Caller's own last-access time, which lives on another table but is selected alongside the resource columns
+export function parseSortByToSql<TColumns extends Record<string, Column>>(
+  columns: TColumns,
+  sortBy: SortItem<keyof TColumns & string>[],
+): SQL[];
+export function parseSortByToSql<TColumns extends Record<string, Column>>(
+  columns: TColumns,
+  sortBy: SortItem<keyof TColumns & string>[],
 ): SQL[] {
-  return sortBy.map((sb) => (sb.order === SortOrder.Asc ? asc(table[sb.key]) : desc(table[sb.key])));
+  // A key naming no column is dropped rather than ordered by: the schemas that produce sortBy only ever name
+  // Real ones, and a deep link that outlived a rename must not fail the whole read
+  return sortBy.flatMap(({ key, order }) => {
+    const column = columns[key];
+    return column ? [order === SortOrder.Asc ? asc(column) : desc(column)] : [];
+  });
 }

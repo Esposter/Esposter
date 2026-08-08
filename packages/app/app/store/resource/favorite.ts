@@ -1,3 +1,4 @@
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { Resource } from "@esposter/db-schema";
 
 import { useNotificationStore } from "@/store/notification";
@@ -10,7 +11,7 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   const { $trpc } = useNuxtApp();
   const { executeMutation: executeToggleFavoriteMutation, executeQuery, getIsPending } = useMutation();
   const notificationStore = useNotificationStore();
-  const favorites = ref<Resource[]>([]);
+  const favorites = ref<ResourceListItem[]>([]);
   // Every row on /all asks "am I starred?", so the lookup is a Set rather than a scan per row
   const favoriteIds = computed(() => new Set(favorites.value.map(({ id }) => id)));
   const isLoading = computed(() => getIsPending(FAVORITES_KEY));
@@ -53,9 +54,11 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
       // Before the write ahead of it landed, and rolling back to it would leave the star reading a toggle stale
       applyOptimistic: () => {
         const snapshot = [...favorites.value];
+        // The star can be clicked from the blade, where the row is a bare resource — the optimistic entry
+        // Carries no last-access time of its own, and the next read replaces it with the joined one
         favorites.value = favoriteIds.value.has(resource.id)
           ? favorites.value.filter(({ id }) => id !== resource.id)
-          : [resource, ...favorites.value];
+          : [{ lastAccessedAt: null, ...resource }, ...favorites.value];
         return () => {
           favorites.value = snapshot;
         };
@@ -72,7 +75,7 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
         if (isFavorite === favoriteIds.value.has(resource.id)) return;
 
         favorites.value = isFavorite
-          ? [resource, ...favorites.value.filter(({ id }) => id !== resource.id)]
+          ? [{ lastAccessedAt: null, ...resource }, ...favorites.value.filter(({ id }) => id !== resource.id)]
           : favorites.value.filter(({ id }) => id !== resource.id);
       },
     });

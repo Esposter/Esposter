@@ -2,9 +2,16 @@
 import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { mergeProps } from "vue";
 
+interface ResourceListColumnChooserMenuProps {
+  pinnedColumnKey?: string;
+}
+
+const { pinnedColumnKey } = defineProps<ResourceListColumnChooserMenuProps>();
 const hiddenColumnKeys = defineModel<string[]>({ required: true });
-// Name is the identity column — it can never be hidden
-const toggleableHeaders = ResourceHeaders.filter(({ key }) => key !== "name");
+// Name is the identity column, and the pinned one is what the view is sorted by — neither can be hidden
+const toggleableHeaders = computed(() =>
+  ResourceHeaders.filter(({ key }) => key !== "name" && key !== pinnedColumnKey),
+);
 const toggleColumn = (key: string) => {
   hiddenColumnKeys.value = hiddenColumnKeys.value.includes(key)
     ? hiddenColumnKeys.value.filter((columnKey) => columnKey !== key)

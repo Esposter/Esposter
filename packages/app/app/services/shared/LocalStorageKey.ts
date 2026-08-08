@@ -5,6 +5,7 @@ export const LocalStorageKey = {
   Draft: (roomId: string) => `draft:${roomId}`,
   DungeonsStore: "dungeons-store",
   IsResourceBladeNavCollapsed: "is-resource-blade-nav-collapsed",
+  IsResourceServiceMenuCollapsed: "is-resource-service-menu-collapsed",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,
   MessageDisplayMode: "message-display-mode",
   MessageLeftSideBarWidth: "message-left-side-bar-width",
@@ -13,7 +14,6 @@ export const LocalStorageKey = {
   MessageSidebarRoomsCollapsed: "message-sidebar-rooms-collapsed",
   ResourceListHiddenColumns: "resource-list-hidden-columns",
   ResourceRecentSearches: "resource-recent-searches",
-  ResourceRecentViews: "resource-recent-views",
   // Scoped by participant token as well as survey: a shared browser must not resume a response that was
   // Started by a different participant
   SurveyResponseId: (surveyId: string, participantToken: string) =>

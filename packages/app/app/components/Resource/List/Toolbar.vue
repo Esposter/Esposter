@@ -4,6 +4,11 @@ import type { Item } from "@/models/shared/Item";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 
+interface ResourceListToolbarProps {
+  pinnedColumnKey?: string;
+}
+
+const { pinnedColumnKey } = defineProps<ResourceListToolbarProps>();
 const search = defineModel<string>("search", { required: true });
 const isSummaryView = defineModel<boolean>("isSummaryView", { required: true });
 const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true });
@@ -64,7 +69,7 @@ const toolbarItems = computed<Item[]>(() => [
       :button-props="{ active }"
       @click="onClick"
     />
-    <ResourceListColumnChooserMenu v-model="hiddenColumnKeys" />
+    <ResourceListColumnChooserMenu v-model="hiddenColumnKeys" :pinned-column-key />
     <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
     <StyledTooltipIconButton :to="closeTo" icon="mdi-close" text="Close" />
   </v-toolbar>

@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
-import type { Resource } from "@esposter/db-schema";
 
 import { useReadDeletedResources } from "@/composables/resource/useReadDeletedResources";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -9,8 +9,12 @@ import { describe, expect, test, vi } from "vitest";
 
 describe(useReadDeletedResources, () => {
   const server = setupMswTrpc();
-  const firstPage = [{ id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource];
-  const secondPage = [{ id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource];
+  const firstPage = [
+    { id: crypto.randomUUID(), lastAccessedAt: null, name: "name", type: ResourceType.Sheet } as ResourceListItem,
+  ];
+  const secondPage = [
+    { id: crypto.randomUUID(), lastAccessedAt: null, name: "name", type: ResourceType.Sheet } as ResourceListItem,
+  ];
   const firstOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 1, sortBy: [] };
   const secondOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 2, sortBy: [] };
 

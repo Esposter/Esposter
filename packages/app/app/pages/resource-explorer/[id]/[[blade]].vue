@@ -34,8 +34,9 @@ const {
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
 const activeBlade = computed(() => getRouteParamString(route.params.blade) || ResourceBladeType.Overview);
-// Opening a resource feeds Home's Recent tab and the search dropdown's "Recently viewed" group
-useRecordResourceView(resource);
+// Opening a resource is what Recent is a list of — the Recent route, Home's Recent tab and the search
+// Dropdown's "Recently opened" group all read the rows this writes
+useRecordResourceAccess(resource);
 const favoriteStore = useFavoriteStore();
 // The toolbar's star needs to know whether this resource is already starred
 onMounted(() => favoriteStore.readFavorites());
@@ -48,9 +49,10 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
 </script>
 
 <!-- No title on the layout: the blade toolbar below already names the resource and the blade it is showing, and
-     the header repeating the name only pushed the content down a row -->
+     the header repeating the name only pushed the content down a row. The one route without the service menu
+     too — the blade brings a rail of its own, and two on one screen spends width the blade uses better -->
 <template>
-  <NuxtLayout name="resource" is-header-bordered>
+  <NuxtLayout name="resource" is-header-bordered is-service-menu-hidden>
     <Head>
       <Title>{{ resource?.name ?? "Resource" }}</Title>
     </Head>

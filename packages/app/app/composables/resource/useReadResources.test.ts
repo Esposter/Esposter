@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
-import type { Resource } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
@@ -12,7 +12,9 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useReadResources, () => {
   const server = setupMswTrpc();
-  const items = [{ id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource];
+  const items = [
+    { id: crypto.randomUUID(), lastAccessedAt: null, name: "name", type: ResourceType.Sheet } as ResourceListItem,
+  ];
   const firstOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 1, sortBy: [] };
   const secondOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 2, sortBy: [] };
 

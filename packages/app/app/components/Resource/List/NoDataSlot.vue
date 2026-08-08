@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+
+import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+
 interface ResourceListNoDataSlotProps {
   error: string;
   hasActiveFilters: boolean;
+  source: ResourceListSource;
 }
 
-defineProps<ResourceListNoDataSlotProps>();
+const { error, hasActiveFilters, source } = defineProps<ResourceListNoDataSlotProps>();
 const emit = defineEmits<{ clear: []; refresh: [] }>();
 </script>
 
@@ -20,10 +25,6 @@ const emit = defineEmits<{ clear: []; refresh: [] }>();
   >
     <v-btn variant="tonal" @click="emit('clear')">Clear filters</v-btn>
   </StyledEmptyState>
-  <StyledEmptyState
-    v-else
-    icon="mdi-folder-multiple-outline"
-    title="No resources yet"
-    description="Create a resource and it will show up here."
-  />
+  <!-- An empty Favorites list is not an empty account, so the copy comes from the set the view is over -->
+  <StyledEmptyState v-else :="ResourceListSourceDefinitionMap[source].emptyState" />
 </template>

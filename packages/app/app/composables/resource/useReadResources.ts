@@ -5,22 +5,28 @@ import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdat
 import type { ResourceType } from "@esposter/db-schema";
 
 import { useReadResourcesPage } from "@/composables/resource/list/useReadResourcesPage";
+import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
 import { getResourceFilterKey } from "@/services/resource/list/getResourceFilterKey";
 
-export const useReadResources = ({
-  searchQuery = ref(""),
-  status = ref<"" | ResourceStatusFilter>(""),
-  tagName = ref(""),
-  tagValue = ref(""),
-  types = ref<ResourceType[]>([]),
-  updatedAfter = ref<Date>(),
-  updatedBefore = ref<Date>(),
-  updatedFilter = ref<"" | ResourceUpdatedFilter>(""),
-}: Partial<ResourceListFilters> = {}) => {
+export const useReadResources = (
+  {
+    searchQuery = ref(""),
+    status = ref<"" | ResourceStatusFilter>(""),
+    tagName = ref(""),
+    tagValue = ref(""),
+    types = ref<ResourceType[]>([]),
+    updatedAfter = ref<Date>(),
+    updatedBefore = ref<Date>(),
+    updatedFilter = ref<"" | ResourceUpdatedFilter>(""),
+  }: Partial<ResourceListFilters> = {},
+  // The route decides the set, so it is a value rather than a ref — a list never changes source in place
+  source = ResourceListSource.All,
+) => {
   const { $trpc } = useNuxtApp();
   const getFilterValues = (): ResourceFilterValues => ({
     searchQuery: searchQuery.value,
+    source,
     status: status.value,
     tagName: tagName.value,
     tagValue: tagValue.value,

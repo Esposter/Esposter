@@ -28,7 +28,10 @@ export const RoutePath: {
   readonly ResourceExplorerAll: "/resource-explorer/all";
   readonly ResourceExplorerCreate: "/resource-explorer/create";
   readonly ResourceExplorerCreateType: (type: string) => string;
+  readonly ResourceExplorerFavorites: "/resource-explorer/favorites";
+  readonly ResourceExplorerRecents: "/resource-explorer/recents";
   readonly ResourceExplorerRecycleBin: "/resource-explorer/recycle-bin";
+  readonly ResourceExplorerTags: "/resource-explorer/tags";
   readonly ResourceItems: (id: string) => string;
   readonly User: (id: string) => string;
   readonly UserSettings: "/user/settings";
@@ -61,7 +64,10 @@ export const RoutePath: {
   ResourceExplorerAll: "/resource-explorer/all",
   ResourceExplorerCreate: "/resource-explorer/create",
   ResourceExplorerCreateType: (type: string) => `/resource-explorer/create/${type}`,
+  ResourceExplorerFavorites: "/resource-explorer/favorites",
+  ResourceExplorerRecents: "/resource-explorer/recents",
   ResourceExplorerRecycleBin: "/resource-explorer/recycle-bin",
+  ResourceExplorerTags: "/resource-explorer/tags",
   ResourceItems: (id: string) => `/resource-explorer/${id}/items`,
   User: (id: string) => `/user/${id}`,
   UserSettings: "/user/settings",

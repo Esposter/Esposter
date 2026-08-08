@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ResourceHomeTab, ResourceHomeTabs } from "@/models/resource/ResourceHomeTab";
+import { ResourceHomeTabSourceMap } from "@/services/resource/ResourceHomeTabSourceMap";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 
@@ -21,6 +22,8 @@ onMounted(async () => {
 });
 </script>
 
+<!-- Home's preview of the two sets the service menu gives full list routes. Each tab is the top few rows;
+     See all opens the workbench where they can be filtered, sorted and acted on in bulk -->
 <template>
   <v-card>
     <v-card-item>
@@ -42,20 +45,16 @@ onMounted(async () => {
         </v-alert>
         <ResourceHomeList
           v-else
-          empty-description="Open a resource and it will show up here."
-          empty-icon="mdi-folder-multiple-outline"
-          empty-title="No recent resources"
           :is-loading="isLoadingRecent || !hasLoaded"
           :resources="recentResources"
+          :source="ResourceHomeTabSourceMap[ResourceHomeTab.Recent]"
         />
       </v-tabs-window-item>
       <v-tabs-window-item :value="ResourceHomeTab.Favorites">
         <ResourceHomeList
-          empty-description="Star a resource and it will show up here."
-          empty-icon="mdi-star-outline"
-          empty-title="No favorites yet"
           :is-loading="isLoadingFavorites || !hasLoaded"
           :resources="favorites"
+          :source="ResourceHomeTabSourceMap[ResourceHomeTab.Favorites]"
         />
       </v-tabs-window-item>
     </v-tabs-window>

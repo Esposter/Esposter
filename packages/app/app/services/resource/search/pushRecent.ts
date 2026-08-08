@@ -1,4 +1,4 @@
-// Shared most-recent-first list updater for recent searches and recently viewed resources
+// Most-recent-first list updater for the per-device recent searches
 export const pushRecent = <T>(
   entries: readonly T[],
   entry: T,

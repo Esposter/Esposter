@@ -1,6 +1,6 @@
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 // @vitest-environment nuxt
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
-import type { Resource } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { useReadResourcesPage } from "@/composables/resource/list/useReadResourcesPage";
@@ -9,13 +9,17 @@ import { describe, expect, test, vi } from "vitest";
 
 const createOptions = (
   readCount: () => Promise<number>,
-  readPage: (options: ReadResourcesOptions) => Promise<Resource[]>,
+  readPage: (options: ReadResourcesOptions) => Promise<ResourceListItem[]>,
   getFilterKey: () => string = () => "",
 ) => ({ getFilterInput: () => undefined, getFilterKey, readCount, readPage });
 
 describe(useReadResourcesPage, () => {
-  const firstPage = [{ id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource];
-  const secondPage = [{ id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource];
+  const firstPage = [
+    { id: crypto.randomUUID(), lastAccessedAt: null, name: "name", type: ResourceType.Sheet } as ResourceListItem,
+  ];
+  const secondPage = [
+    { id: crypto.randomUUID(), lastAccessedAt: null, name: "name", type: ResourceType.Sheet } as ResourceListItem,
+  ];
   const firstOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 1, sortBy: [] };
   const secondOptions: ReadResourcesOptions = { itemsPerPage: 1, page: 2, sortBy: [] };
 
@@ -25,13 +29,13 @@ describe(useReadResourcesPage, () => {
   test("drops a stale response instead of overwriting fresher rows", async () => {
     expect.hasAssertions();
 
-    let resolveFirstPage: ((resources: Resource[]) => void) | undefined;
+    let resolveFirstPage: ((resources: ResourceListItem[]) => void) | undefined;
     const { isLoading, items, read } = useReadResourcesPage(
       createOptions(
         () => Promise.resolve(0),
         ({ page }) =>
           page === firstOptions.page
-            ? new Promise<Resource[]>((resolve) => {
+            ? new Promise<ResourceListItem[]>((resolve) => {
                 resolveFirstPage = resolve;
               })
             : Promise.resolve(secondPage),
@@ -77,7 +81,7 @@ describe(useReadResourcesPage, () => {
 
     let resolveCount = 0;
     const readCount = vi.fn<(filterInput: number) => Promise<number>>(() => Promise.resolve(0));
-    const readPage = vi.fn<(options: ReadResourcesOptions, filterInput: number) => Promise<Resource[]>>(() =>
+    const readPage = vi.fn<(options: ReadResourcesOptions, filterInput: number) => Promise<ResourceListItem[]>>(() =>
       Promise.resolve(firstPage),
     );
     const { read } = useReadResourcesPage({

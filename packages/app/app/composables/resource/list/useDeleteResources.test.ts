@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { Resource } from "@esposter/db-schema";
 import type { Router } from "vue-router";
 
@@ -48,7 +49,7 @@ describe(useDeleteResources, () => {
   test("re-reads the favorites when a delete fails", async () => {
     expect.hasAssertions();
 
-    const readFavorites = vi.fn<() => Resource[]>(() => []);
+    const readFavorites = vi.fn<() => ResourceListItem[]>(() => []);
     server.use(
       trpcMsw.resource.deleteResources.mutation(() => {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });

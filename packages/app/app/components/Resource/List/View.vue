@@ -1,20 +1,29 @@
 <script setup lang="ts">
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
-import type { Resource } from "@esposter/db-schema";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
+import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import {
-  DEFAULT_RESOURCE_SORT_BY,
+  DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS,
   RESOURCE_LIST_ITEMS_PER_PAGE,
   RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS,
 } from "@/services/resource/constants";
+import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { RoutePath } from "@esposter/shared";
 
+interface ResourceListViewProps {
+  source?: ResourceListSource;
+}
+
+// Every menu entry renders this one surface pointed at a different set, so a capability built here — filters,
+// Columns, grouping, selection, export — appears on all of them at once
+const { source = ResourceListSource.All } = defineProps<ResourceListViewProps>();
+const { pinnedColumnKey, sortBy: defaultSortBy } = ResourceListSourceDefinitionMap[source];
 const { getActionItems } = useResourceListActionItems();
 const listDialogStore = useListDialogStore();
 const { deletingId, renamingId } = storeToRefs(listDialogStore);
@@ -35,23 +44,27 @@ const {
   updatedAfter,
   updatedBefore,
   updatedFilter,
-} = useResourceListFilters();
+} = useResourceListFilters(defaultSortBy);
 const { debounced: search, input: searchInput } = useDebouncedFilter(searchQuery);
-const { count, createResourcesPageReader, error, isLoading, items, readResources, refresh } = useReadResources({
-  searchQuery: search,
-  status,
-  tagName,
-  tagValue,
-  types,
-  updatedAfter,
-  updatedBefore,
-  updatedFilter,
-});
+const { count, createResourcesPageReader, error, isLoading, items, readResources, refresh } = useReadResources(
+  {
+    searchQuery: search,
+    status,
+    tagName,
+    tagValue,
+    types,
+    updatedAfter,
+    updatedBefore,
+    updatedFilter,
+  },
+  source,
+);
 const { exportAllResourcesCsv } = useExportResourcesCsv();
 // Vuetify resets to page 1 and refires update:options whenever `search` changes, so every filter funnels through it
 const filterKey = computed(() =>
   JSON.stringify({
     search: search.value,
+    source,
     status: status.value,
     tagName: tagName.value,
     tagValue: tagValue.value,
@@ -72,6 +85,7 @@ const {
   refresh: refreshTypeCounts,
 } = useReadResourceTypeCounts(() => ({
   searchQuery: search.value,
+  source,
   status: status.value,
   tagName: tagName.value,
   tagValue: tagValue.value,
@@ -83,8 +97,15 @@ const {
 watch([isSummaryView, filterKey], async ([newIsSummaryView]) => {
   if (newIsSummaryView) await refreshTypeCounts();
 });
-const hiddenColumnKeys = useLocalStorage<string[]>(LocalStorageKey.ResourceListHiddenColumns, []);
-const visibleHeaders = computed(() => ResourceHeaders.filter(({ key }) => !hiddenColumnKeys.value.includes(key)));
+const hiddenColumnKeys = useLocalStorage<string[]>(
+  LocalStorageKey.ResourceListHiddenColumns,
+  DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS,
+);
+// The pinned column outranks the stored preference: hiding the column a view is ordered by would leave the
+// Rows in an order with nothing on screen to explain it
+const visibleHeaders = computed(() =>
+  ResourceHeaders.filter(({ key }) => key === pinnedColumnKey || !hiddenColumnKeys.value.includes(key)),
+);
 const { clearSelection, selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
 const contextMenuId = ref("");
 const contextMenuPosition = ref<[number, number]>([0, 0]);
@@ -98,8 +119,9 @@ const { isOpen: isRenameOpen, item: renamingResource } = useSingletonDialog(rena
 const renameResource = useRenameResource(renamingResource, refresh);
 const deletingResource = computed(() => items.value.find(({ id }) => id === deletingId.value));
 const deleteResources = useDeleteResources(items, count, refresh);
-const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigateTo(RoutePath.Resource(item.id));
-const onContextMenuRow = (event: MouseEvent, { item }: ItemSlot<Resource>) => {
+const onClickRow = (_event: MouseEvent, { item }: ItemSlot<ResourceListItem>) =>
+  navigateTo(RoutePath.Resource(item.id));
+const onContextMenuRow = (event: MouseEvent, { item }: ItemSlot<ResourceListItem>) => {
   event.preventDefault();
   contextMenuPosition.value = [event.clientX, event.clientY];
   contextMenuId.value = item.id;
@@ -119,6 +141,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       v-model:is-summary-view="isSummaryView"
       v-model:is-grouped-by-type="isGroupedByType"
       v-model:hidden-column-keys="hiddenColumnKeys"
+      :pinned-column-key
       @export="exportAllResourcesCsv(createResourcesPageReader())"
       @refresh="isSummaryView ? refreshTypeCounts() : refresh()"
     />
@@ -206,7 +229,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         <StyledSkeleton type="table-row@10" />
       </template>
       <template #no-data>
-        <ResourceListNoDataSlot :error :has-active-filters @clear="clearFilters()" @refresh="refresh()" />
+        <ResourceListNoDataSlot :error :has-active-filters :source @clear="clearFilters()" @refresh="refresh()" />
       </template>
     </StyledDataTableServer>
     <ResourceListContextMenu

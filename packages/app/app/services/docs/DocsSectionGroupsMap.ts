@@ -56,6 +56,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
   platform: {
     "Explorer & shell": [
       "resource-explorer",
+      "resource-service-menu",
       "list-filters-and-views",
       "summary-view",
       "resource-page-parity",

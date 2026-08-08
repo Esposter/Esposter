@@ -9,11 +9,4 @@ Azure-portal parity program for the Resource Explorer: the [consolidation](/docs
 
 ## Next
 
-- [ ] [Resource manager service menu](/docs/proposals/platform/resource-manager-service-menu) — a standing left nav for the area, with Recent and Favorites promoted from hub cards to list views over the existing surface
-  - [ ] `ResourceServiceMenu` in the `resource` layout, active entry decided by the router
-  - [ ] `/resource-explorer/favorites` and `/resource-explorer/recents` as `ResourceListView` routes, replacing the hub cards
-  - [ ] `/resource-explorer/tags` — tag list with resource counts, linking into `/all` pre-filtered
-  - [ ] `Last accessed` column, default-off outside Recent
-  - [ ] Settle the two open questions on the spec first: whether recents move server-side, and what `/resource-explorer` is once its cards are routes
-
-Storage quotas shipped — see [storage quotas](/docs/platform/storage-quotas). New ideas start as a [proposal](/docs/proposals) and get a prioritized checkbox here.
+Nothing open. The service menu shipped — see [resource service menu](/docs/platform/resource-service-menu). New ideas start as a [proposal](/docs/proposals) and get a prioritized checkbox here.
