@@ -23,8 +23,8 @@ onMounted(() => storageStore.readStorageUsage());
 
 <!-- Mounted by the resource shell on every page in the area, reading the number the store already holds -->
 <template>
-  <!-- Also opens on click: the tooltip is the only place the tier and exact numbers appear, and a touch
-       device has no hover to reveal it with -->
+  <!-- Also opens on click: the tier appears nowhere else, and a touch device has no hover to reveal it with.
+       Focus alone already opens it — `openOnFocus` is unset here, and VOverlay reads that as `openOnHover` -->
   <v-tooltip v-if="storageUsage" location="bottom" open-on-click>
     <template #activator="{ props }">
       <!-- Focusable so the tooltip is reachable without a pointer -->

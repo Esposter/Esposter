@@ -70,7 +70,7 @@ A review takes an hour of wall-clock the working tree has no reason to spend idl
 
 The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's fixes plus the queued chunk exceed the budget, push the fixes with only part of the queue and hold the rest — never split a fix away from the finding it answers.
 
-A `develop` → `main` PR that has accumulated far more than the file cap before its first review is the one case needing `references/exclusions.md` — the cap governs that first review, and `.coderabbit.yaml` must be edited on `main`, the base.
+A `develop` → `main` PR that has accumulated past the file cap before its first review is skipped outright, and the fix is to shorten `develop` and drain the remainder one review window at a time — `references/release-pr-cutting.md`. **Not exclusions:** being over budget is never what earns one (see below), and reaching for them here is the standing temptation, because the base branch whose `.coderabbit.yaml` would have to change is `main`.
 
 The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items sharing a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land in separate PRs with a stated merge order.
 
