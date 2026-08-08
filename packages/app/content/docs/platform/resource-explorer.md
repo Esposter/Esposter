@@ -75,11 +75,12 @@ Create is a **page per resource type**, mirroring the Azure marketplace + create
 
 ## Resource page — `/resources/[id]/[[blade]]`
 
-Azure-portal-faithful **two flex boxes** on one surface (deliberately simple — no absolute overlay, no `z-index`): a full-width **header bar** (the `resource` layout's `StyledPageHeader` — trail, resource name, storage meter) on top, then `<ResourceExplorer>` — a single `<v-sheet flex flex-1>` holding the **list box** (`ResourceExplorerList`, collapsible) and the **blade box** (`flex-1`) side by side.
+Azure-portal-faithful **two flex boxes** on one surface (deliberately simple — no absolute overlay, no `z-index`): a full-width **header bar** (the `resource` layout's `StyledPageHeader` — the trail with the storage meter on its far end) on top, then `<ResourceExplorer>` — a single `<v-sheet flex flex-1>` holding the **list box** (`ResourceExplorerList`, collapsible) and the **blade box** (`flex-1`) side by side.
+
+The header carries **no title on this route**: the blade box header below already names the resource and the blade showing it, so the layout is passed no title and `StyledPageHeader` drops that row entirely — one row of vertical space returned to the content, and one name on screen instead of two.
 
 ```text
   Resources › All                     [▓▓▓░░ 3.2 GB of 10 GB used]  ← trail + storage meter
-  Q3 Report                                                         ← page title (never a crumb)
 ┌───────────────┬──────────────────────────────────────────────┐
 │ « Resources   │ 📄 Q3 Report | Overview   [Rename][Delete] [✕] │  ← blade box header (type + name)
 │ ───────────── ├───────────────┬──────────────────────────────┤
@@ -96,7 +97,7 @@ Azure-portal-faithful **two flex boxes** on one surface (deliberately simple —
 - **Borders drawn exactly once** — no component double-draws an edge. The **blade box** spans the whole shared edge, so it is the single element carrying the list↔blade divider (`b-l` on the box itself, conditional on the list box existing, plus `b-t` under its header); its header and content are borderless there, and the list box draws no right edge. The **list box header** owns its bottom separator (`b-b`); the **blade nav** is borderless. Both headers are the shared `v-toolbar` primitive (identical native height/padding, no bespoke sizing).
 - **Nested close** — the close ✕ peels back one layer: the blade box's ✕ → `/resources/all`; `/all`'s ✕ → Home. Each ✕ lives in its box's header, never on the breadcrumb's level.
 - **Single unified breadcrumb** — the `resource` layout owns the only breadcrumb; the blade box has none. Vuetify components with a plain destination take `:to`; an inline `@click="navigateTo(...)"` is for logic-then-navigate actions. Declarative links use `NuxtLink`/`NuxtInvisibleLink`. Raw `<a>` is never used — see [navigation](/docs/architecture/navigation).
-- **Blade box header** — type icon + `{name} | {active blade}` with the resource type as a caption line, plus the command bar and close ✕.
+- **Blade box header** — type icon + `{name} | {active blade}` at headline size with the resource type as a small line under it, plus the command bar and close ✕. Only the **name** is bold: the resource is what the page is about, the blade is which face of it is open, and giving both the same weight made the pair read as one long string. **Overview carries no suffix** — it is the resource itself rather than somewhere else in it, so naming it adds a word that says what the name already said.
 
 On a narrow viewport the two-box layout folds into a single full-width column with on-demand menus:
 

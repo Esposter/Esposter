@@ -11,11 +11,11 @@ One consistent chrome across every product: a shared page header, shared empty/l
 
 Shell primitives live in `app/components/Styled/` (design-system set) and `app/components/App/` (app-chrome), one export per file.
 
-- `Styled/PageHeader.vue` — the canonical page header. A `v-toolbar` (surface, `height="auto"`) laying out flex rows — the breadcrumb trail, then the page title beside a right-aligned `actions` slot, then an optional `filters` row — never inside `v-toolbar-title`.
+- `Styled/PageHeader.vue` — the canonical page header. A `v-toolbar` (surface, `height="auto"`) laying out flex rows — the breadcrumb trail with a right-aligned `status` slot for a standing readout, then the page title beside a right-aligned `actions` slot, then an optional `filters` row — never inside `v-toolbar-title`. The trail row is where a persistent number belongs: the trail rarely fills a line, so anything parked on the title row instead pays a row of its own for width already going spare. The title row renders only when there is a title or actions, so a page named by its own content ([resource explorer](/docs/platform/resource-explorer)) costs no empty row.
 - `Styled/EmptyState.vue` — icon + title + description + optional action slot, for "no resources yet" / "no rows" / "not bound to data" states.
 - `Styled/Skeleton.vue` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the single global `AppLoadingIndicator`).
 - `Styled/KeyboardShortcutsDialog.vue` — the shared shortcuts help dialog (category groups + `kbd` chips over a `KeyboardShortcutCategory[]` prop); bound to the messaging shortcuts dialog and the resource explorer's `Resource/ShortcutsOverlay`.
-- `App/Breadcrumbs.vue` — renders the pages the visitor actually came through, never the page they are on, and nothing at all on a direct arrival ([breadcrumb trail](/docs/platform/breadcrumb-trail)); rendered by `PageHeader`, not the global app bar, so it carries page context and never duplicates.
+- `App/Breadcrumbs.vue` — renders the area hub followed by the pages the visitor actually came through, never the page they are on, so a direct arrival still has its way out ([breadcrumb trail](/docs/platform/breadcrumb-trail)); rendered by `PageHeader`, not the global app bar, so it carries page context and never duplicates.
 - `App/Menu/LinkListItem.vue` — a single launcher leaf (extracted from `MenuLinkList` so leaves render identically at top level and inside a group).
 
 ## Navigation
@@ -28,7 +28,7 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 
 | File                                       | Role                                                                 |
 | ------------------------------------------ | -------------------------------------------------------------------- |
-| `app/components/Styled/PageHeader.vue`     | shared page header (title + breadcrumbs/controls/actions)            |
+| `app/components/Styled/PageHeader.vue`     | shared page header (breadcrumbs + status, title + actions, filters)  |
 | `app/components/Styled/EmptyState.vue`     | shared empty state                                                   |
 | `app/components/Styled/Skeleton.vue`       | shared skeleton loader                                               |
 | `app/components/App/Breadcrumbs.vue`       | navigation-derived breadcrumb trail rendered by `PageHeader`         |
