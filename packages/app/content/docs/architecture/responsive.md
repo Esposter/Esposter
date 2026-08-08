@@ -20,13 +20,13 @@ flowchart TD
   template --> values["the same layout with different values"]
 ```
 
-`vuetify.config.ts` passes `forVuetify` as `display.thresholds` alongside `mobileBreakpoint: "md"`, so Vuetify's `mobile` flag flips one step wider than `smAndDown`. `uno.config.ts` passes `forUnoCSS` as `theme.breakpoint`, which is what makes `sm:`/`md:`/`lg:`/`xl:` prefixes resolve to those same widths. That file also imports the Vuetify config directly for colours, so the two systems share a palette as well as a scale.
+`vuetify.config.ts` passes `forVuetify` as `display.thresholds` alongside `mobileBreakpoint: "md"`, which makes `mobile` true below the `md` threshold — the same width `smAndDown` covers, so the two flags agree by configuration rather than by coincidence. `uno.config.ts` passes `forUnoCSS` as `theme.breakpoint`, which is what makes `sm:`/`md:`/`lg:`/`xl:` prefixes resolve to those same widths. That file also imports the Vuetify config directly for colours, so the two systems share a palette as well as a scale.
 
 ## Choosing where to branch
 
 Both surfaces read the same widths, so the choice is about what changes, not about which library is nearer to hand.
 
-**Reach for `useVDisplay` in script** when a narrow viewport produces a _different_ layout: a control rail that becomes a dropdown, a command bar that collapses into an overflow menu, a panel that is removed rather than shrunk, or a default that must be seeded differently on first render. These decisions have to be expressed as reactive state because something other than CSS depends on them. The composable is auto-imported under its `useV` prefix by `vuetify-nuxt-module` — never import `useDisplay` from `vuetify` directly. `smAndDown` is the flag nearly every call site uses, because the codebase treats the question as "narrow or not" rather than as a ladder of sizes; `app/store/layout.ts` is the exception that reads `mobile`, and so is the one place `mobileBreakpoint: "md"` matters.
+**Reach for `useVDisplay` in script** when a narrow viewport produces a _different_ layout: a control rail that becomes a dropdown, a command bar that collapses into an overflow menu, a panel that is removed rather than shrunk, or a default that must be seeded differently on first render. These decisions have to be expressed as reactive state because something other than CSS depends on them. The composable is auto-imported under its `useV` prefix by `vuetify-nuxt-module` — never import `useDisplay` from `vuetify` directly. `smAndDown` is the flag nearly every call site uses, because the codebase treats the question as "narrow or not" rather than as a ladder of sizes; `app/store/layout.ts` is the exception that reads `mobile`, which resolves to the same width and is what Vuetify's own components (`v-navigation-drawer` and friends) branch on.
 
 **Reach for a UnoCSS prefix in the template** when the layout is unchanged and only a value moves — a grid's column count, a flex direction, a utility that applies above a width. It costs no reactivity and no script line, and it is the right tool precisely when there is nothing for script to decide.
 

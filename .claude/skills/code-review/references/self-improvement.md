@@ -30,4 +30,6 @@ Every pipeline change lands with a test, same as any fix. A `regression` or `reo
 
 ## When the pipeline is converged
 
-Same stop rule as the code: a round whose pipeline findings are all `minor`, with no degradation counted, no finding settled by hand and no escape, is converged. **A round that changes nothing about the workflow is a valid outcome** — inventing a pipeline edit to have made one is the failure this page exists to avoid.
+Whether to run another **review** round is the stop rule in `SKILL.md` and nothing here changes it. This section is narrower: it says when the **meta pass** is done for the round it belongs to. It is done once every row of the table above is either absent from the run or answered by a change — no degradation counted, nothing settled by hand, no escape — and the pipeline findings that remain are all `minor`.
+
+**A round that changes nothing about the workflow is a valid outcome** — inventing a pipeline edit to have made one is the failure this page exists to avoid.

@@ -70,7 +70,7 @@ The webhook surface is the **Integrations → Webhooks** tab of the [room settin
 
 ## Key files
 
-Paths relative to `packages/app` unless noted.
+Paths are relative to `packages/app`; an entry that begins with `packages/` is relative to the repository root instead.
 
 | File                                                                    | Role                                                        |
 | ----------------------------------------------------------------------- | ----------------------------------------------------------- |

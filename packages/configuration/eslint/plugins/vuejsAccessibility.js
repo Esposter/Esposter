@@ -16,9 +16,9 @@ export default defineConfig({
     // Pattern. Both also misfire on a Vue component nested inside `<svg>` (SVG namespace defeats their
     // `isCustomComponent` check) and on `role="separator"`, which is focusable but not an "interactive role".
     "vuejs-accessibility/click-events-have-key-events": "off",
-    // Every `<audio>`/`<video>` renders a user-uploaded file, which has no caption track to attach, and the
-    // Elements are single template roots that a disable comment would turn into fragments. Promote it when the
-    // App ships authored media that could carry captions.
+    // Every `<audio>`/`<video>` renders a user-uploaded file, which has no caption track to attach, so every
+    // Call site would carry a disable comment. Promote it when the app ships authored media that could carry
+    // Captions.
     "vuejs-accessibility/media-has-caption": "off",
     // Hover-reveal toolbars would have to reveal on `@focusin`/`@focusout` too. That is a visible behaviour
     // Change per surface, so promote it with the reveal work rather than ahead of it.

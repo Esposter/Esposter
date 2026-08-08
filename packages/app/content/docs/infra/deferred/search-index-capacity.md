@@ -7,7 +7,7 @@ description: Deferred — moving Azure AI Search off the Free SKU when the messa
 
 Azure AI Search is **already provisioned and in production** on the Free SKU (`prod-srch-esposter-001`, with a dev twin), serving esbabbler message search and the Sent tab through the single `messages-index` — see [Azure services](/docs/architecture/azure-services). The deferred item is not the service; it is paying for capacity once the Free SKU's ceiling is reached.
 
-The Free SKU allows **3 indexes, 3 indexers, 3 data sources, and 50 MB of storage in total**, on one shared partition with no SLA, and caps a single indexing invocation at 10,000 documents. Storage is the ceiling that matters — there is no separate per-index document quota to reach first. Today one index and one indexer are in use, so two slots are spare and the storage cap is the binding constraint — message documents carry the body text, attachment filenames, and sender name, so index growth tracks message volume directly.
+The Free SKU allows **3 indexes, 3 indexers, 3 data sources, and 50 MB of storage in total**, on shared infrastructure with no SLA and no scale-out — replicas and partitions are not configurable on this tier — and caps a single indexing invocation at 10,000 documents. Storage is the ceiling that matters — there is no separate per-index document quota to reach first. Today one index and one indexer are in use, so two slots are spare and the storage cap is the binding constraint — message documents carry the body text, attachment filenames, and sender name, so index growth tracks message volume directly.
 
 ## What happens at the ceiling
 

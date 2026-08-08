@@ -48,11 +48,12 @@ Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit)
 CodeRabbit caps this repo at **100 files per review** — the Open Source tier's file limit is popularity-scaled and can move, so treat the number as current-best-known; the bot's skip comment on an over-budget PR states the current one. Keep every chunk of work to **~80 changed files measured from the branch point** — work is committed and pushed continuously, so dirty-file counts see nothing:
 
 ```bash
-git diff --name-only "$(git merge-base <base-branch> HEAD)" | wc -l   # committed changes since branching
-git status --porcelain -uall | wc -l                                  # plus anything not yet committed
+# Committed since branching, plus anything not yet committed — as a set, since a file can be in both.
+{ git diff --name-only "$(git merge-base <base-branch> HEAD)"; git status --porcelain -uall | cut -c4-; } |
+  sort -u | wc -l
 ```
 
-Run both and sum before starting a sweep. When the budget is reached, cut the chunk — but do not stop working; see the pipeline below.
+Count the **union**, not the sum: a file with both committed and working-tree changes is one file to CodeRabbit, and summing it twice cuts the chunk early. Run this before starting a sweep. When the budget is reached, cut the chunk — but do not stop working; see the pipeline below.
 
 **Incremental reviews refresh the budget.** CodeRabbit reviews only the files changed _since its last completed review_ on the PR (the review body states it: "Reviewing files that changed … between `<sha1>` and `<sha2>`"), not the cumulative PR diff. So within one long-lived PR the ~80-file budget applies **per review cycle**: a retrigger or a new push only needs the _newly committed_ files to stay under it. Once a PR has been reviewed, measure the delta rather than the merge-base — `git diff --name-only <last-reviewed-sha>..HEAD | wc -l`. The merge-base count still governs the **first** review of a PR and any full re-review.
 

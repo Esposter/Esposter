@@ -137,8 +137,8 @@ beforeEach
   └─ caller.someProc(input)
 
 afterEach
-  └─ MockContainerDatabase.clear()
-  └─ MockTableDatabase.clear()
+  └─ <every mock store the suite writes to>.clear()   ← Container/Table, plus EventGrid,
+  │                                                     ServiceBus, Queue or Search when used
   └─ db.delete(affectedTable)
   └─ vi.restoreAllMocks()    ← restores spy implementations + clears call history
 ```
