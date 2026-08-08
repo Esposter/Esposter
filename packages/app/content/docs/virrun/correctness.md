@@ -46,6 +46,7 @@ Paths relative to `packages/virrun/src/`.
 | `services/exec/vfs/createVfsBackend.differential.test.ts`    | vfs backend × node corpus + the overlay fall-through case                                     |
 | `services/exec/snapshot/forkSnapshot.equivalence.test.ts`    | warm fork ≡ cold install                                                                      |
 | `services/exec/snapshot/persistRun.equivalence.test.ts`      | write-back host parity vs native                                                              |
+| `services/exec/cache/taskCache.equivalence.test.ts`          | cache replay ≡ a real re-run                                                                  |
 | `services/vfs/createPlatformaticFsProvider.property.test.ts` | fast-check FS sequences vs the node:fs oracle                                                 |
 | `services/exec/os/createOsBackend.property.test.ts`          | fast-check command sequences vs the isolation invariants                                      |
 
