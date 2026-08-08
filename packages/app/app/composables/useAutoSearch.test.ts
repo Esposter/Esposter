@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import { useAutoSearch } from "@/composables/useAutoSearch";
 import { AUTO_SEARCH_THROTTLE_MS } from "@/services/shared/constants";
+import { flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -37,7 +38,7 @@ describe(useAutoSearch, () => {
 
     const { searchedQueries, searchQuery } = setupAutoSearch();
     searchQuery.value = searchQueryValue;
-    await nextTick();
+    await flushPromises();
 
     expect(searchedQueries).toStrictEqual([searchQueryValue]);
   });
@@ -50,14 +51,14 @@ describe(useAutoSearch, () => {
 
     const { reset, searchedQueries, searchQuery } = setupAutoSearch();
     searchQuery.value = searchQueryValue;
-    await nextTick();
+    await flushPromises();
     searchQuery.value = "";
-    await nextTick();
+    await flushPromises();
 
     expect(reset).toHaveBeenCalledTimes(1);
 
     searchQuery.value = searchQueryValue;
-    await nextTick();
+    await flushPromises();
     await vi.advanceTimersByTimeAsync(AUTO_SEARCH_THROTTLE_MS);
 
     expect(searchedQueries).toStrictEqual([searchQueryValue, searchQueryValue]);
@@ -69,9 +70,9 @@ describe(useAutoSearch, () => {
 
     const { searchedQueries, searchQuery } = setupAutoSearch();
     searchQuery.value = searchQueryValue;
-    await nextTick();
+    await flushPromises();
     searchQuery.value = "";
-    await nextTick();
+    await flushPromises();
     await vi.advanceTimersByTimeAsync(AUTO_SEARCH_THROTTLE_MS);
 
     expect(searchedQueries).toStrictEqual([searchQueryValue]);
