@@ -16,7 +16,7 @@ const columnSummaries = computed(() => {
   for (const column of displayColumns.value) {
     if (column.type !== ColumnType.Number || !column.footerStatisticsKey) continue;
     const values = filteredRows.value.map((row) => takeOne(row.data, column.name));
-    const context = buildColumnStatisticsComputeContext(column, values);
+    const context = buildColumnStatisticsComputeContext(column.type, values);
     const definition = ColumnStatisticsDefinitionMap[column.footerStatisticsKey];
     const value = definition.compute(context);
     result.set(toColumnKey(column.name), `${definition.title} ${definition.format(value as never)}`);

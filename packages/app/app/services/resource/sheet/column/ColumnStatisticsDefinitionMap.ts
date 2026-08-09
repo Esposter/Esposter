@@ -3,6 +3,8 @@ import type { ColumnStatisticsDefinition } from "@/models/resource/sheet/column/
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { defineColumnStatistics } from "@/services/resource/sheet/column/defineColumnStatistics";
+import { getAverage } from "@/services/resource/sheet/column/getAverage";
+import { getSummation } from "@/services/resource/sheet/column/getSummation";
 import { formatOptional } from "@/util/text/formatOptional";
 
 export const ColumnStatisticsDefinitionMap = {
@@ -10,8 +12,7 @@ export const ColumnStatisticsDefinitionMap = {
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => {
       if (nonNullNumbers.length === 0) return undefined;
-      const raw = nonNullNumbers.reduce((summation, value) => summation + value, 0) / nonNullNumbers.length;
-      return Math.round(raw * 100) / 100;
+      return Math.round(getAverage(nonNullNumbers) * 100) / 100;
     },
     format: formatOptional,
     key: "average",
@@ -46,19 +47,16 @@ export const ColumnStatisticsDefinitionMap = {
   }),
   mostFrequentValue: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.String, ColumnType.Date],
-    compute: ({ nonNullStrings }) => {
-      if (nonNullStrings.length === 0) return undefined;
-      const countMap = new Map<string, number>();
-      for (const value of nonNullStrings) countMap.set(value, (countMap.get(value) ?? 0) + 1);
-      let mostFrequent: string | undefined = undefined;
-      let maxCount = 0;
-      for (const [value, count] of countMap)
-        if (count > maxCount) {
-          maxCount = count;
-          mostFrequent = value;
+    compute: ({ stringCountMap }) => {
+      let mostFrequentValue: string | undefined = undefined;
+      let maximumCount = 0;
+      for (const [value, count] of stringCountMap)
+        if (count > maximumCount) {
+          maximumCount = count;
+          mostFrequentValue = value;
         }
 
-      return mostFrequent;
+      return mostFrequentValue;
     },
     format: formatOptional,
     key: "mostFrequentValue",
@@ -85,9 +83,8 @@ export const ColumnStatisticsDefinitionMap = {
     compute: ({ nonNullNumbers }) => {
       if (nonNullNumbers.length === 0) return undefined;
       // Use raw (unrounded) mean to avoid rounding error accumulation in the variance sum
-      const rawAverage = nonNullNumbers.reduce((summation, value) => summation + value, 0) / nonNullNumbers.length;
-      const variance =
-        nonNullNumbers.reduce((summation, value) => summation + (value - rawAverage) ** 2, 0) / nonNullNumbers.length;
+      const rawAverage = getAverage(nonNullNumbers);
+      const variance = getAverage(nonNullNumbers.map((value) => (value - rawAverage) ** 2));
       return Math.round(Math.sqrt(variance) * 100) / 100;
     },
     format: formatOptional,
@@ -96,8 +93,7 @@ export const ColumnStatisticsDefinitionMap = {
   }),
   summation: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
-    compute: ({ nonNullNumbers }) =>
-      Math.round(nonNullNumbers.reduce((summation, value) => summation + value, 0) * 100) / 100,
+    compute: ({ nonNullNumbers }) => Math.round(getSummation(nonNullNumbers) * 100) / 100,
     format: formatOptional,
     key: "summation",
     title: "Sum",
@@ -111,8 +107,8 @@ export const ColumnStatisticsDefinitionMap = {
   }),
   uniqueCount: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number, ColumnType.String, ColumnType.Date],
-    compute: ({ column, nonNullNumbers, nonNullStrings }) =>
-      column.type === ColumnType.Number ? new Set(nonNullNumbers).size : new Set(nonNullStrings).size,
+    compute: ({ columnType, nonNullNumbers, nonNullStrings }) =>
+      columnType === ColumnType.Number ? new Set(nonNullNumbers).size : new Set(nonNullStrings).size,
     format: formatOptional,
     key: "uniqueCount",
     title: "Unique",

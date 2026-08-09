@@ -1,7 +1,9 @@
-import { BooleanColumn } from "#shared/models/resource/sheet/column/BooleanColumn";
+import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
+
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
-import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
+import { createBooleanColumn } from "@/composables/resource/sheet/commands/createBooleanColumn.test";
+import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createDateColumn } from "@/composables/resource/sheet/commands/createDateColumn.test";
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
@@ -11,6 +13,23 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(computeColumnStatistics, () => {
+  const baseStatistics: ColumnStatistics = {
+    average: undefined,
+    columnName: "",
+    columnType: ColumnType.Number,
+    falseCount: undefined,
+    maximum: undefined,
+    minimum: undefined,
+    mostFrequentValue: undefined,
+    nullCount: 0,
+    nullPercent: undefined,
+    standardDeviation: undefined,
+    summation: undefined,
+    topFrequencies: undefined,
+    trueCount: undefined,
+    uniqueCount: undefined,
+  };
+
   test(`number column computes minimum, maximum, average, standardDeviation, uniqueCount, nullCount`, () => {
     expect.hasAssertions();
 
@@ -20,19 +39,14 @@ describe(computeColumnStatistics, () => {
     );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      ...baseStatistics,
       average: 1.33,
-      columnName: "",
-      columnType: ColumnType.Number,
-      falseCount: undefined,
       maximum: 2,
       minimum: 0,
-      mostFrequentValue: undefined,
       nullCount: 1,
       nullPercent: 25,
       standardDeviation: 0.94,
       summation: 4,
-      topFrequencies: undefined,
-      trueCount: undefined,
       uniqueCount: 2,
     });
   });
@@ -48,19 +62,13 @@ describe(computeColumnStatistics, () => {
     );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      ...baseStatistics,
       average: 0.33,
-      columnName: "",
-      columnType: ColumnType.Number,
-      falseCount: undefined,
       maximum: 1,
       minimum: 0,
-      mostFrequentValue: undefined,
-      nullCount: 0,
       nullPercent: 0,
       standardDeviation: 0.47,
       summation: 1,
-      topFrequencies: undefined,
-      trueCount: undefined,
       uniqueCount: 2,
     });
   });
@@ -71,19 +79,13 @@ describe(computeColumnStatistics, () => {
     const dataSource = createDataSource([createNumberColumn("")], [createRow({ "": 1 })]);
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      ...baseStatistics,
       average: 1,
-      columnName: "",
-      columnType: ColumnType.Number,
-      falseCount: undefined,
       maximum: 1,
       minimum: 1,
-      mostFrequentValue: undefined,
-      nullCount: 0,
       nullPercent: 0,
       standardDeviation: 0,
       summation: 1,
-      topFrequencies: undefined,
-      trueCount: undefined,
       uniqueCount: 1,
     });
   });
@@ -92,25 +94,17 @@ describe(computeColumnStatistics, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource(
-      [new BooleanColumn({ name: "" })],
+      [createBooleanColumn("")],
       [createRow({ "": true }), createRow({ "": true }), createRow({ "": false }), createRow({ "": null })],
     );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      average: undefined,
-      columnName: "",
+      ...baseStatistics,
       columnType: ColumnType.Boolean,
       falseCount: 1,
-      maximum: undefined,
-      minimum: undefined,
-      mostFrequentValue: undefined,
       nullCount: 1,
       nullPercent: 25,
-      standardDeviation: undefined,
-      summation: undefined,
-      topFrequencies: undefined,
       trueCount: 2,
-      uniqueCount: undefined,
     });
   });
 
@@ -118,27 +112,20 @@ describe(computeColumnStatistics, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource(
-      [new StringColumn({ name: "" })],
+      [createColumn("")],
       [createRow({ "": "" }), createRow({ "": " " }), createRow({ "": "" }), createRow({ "": null })],
     );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      average: undefined,
-      columnName: "",
+      ...baseStatistics,
       columnType: ColumnType.String,
-      falseCount: undefined,
-      maximum: undefined,
-      minimum: undefined,
       mostFrequentValue: "",
       nullCount: 1,
       nullPercent: 25,
-      standardDeviation: undefined,
-      summation: undefined,
       topFrequencies: [
         ["", 2],
         [" ", 1],
       ],
-      trueCount: undefined,
       uniqueCount: 2,
     });
   });
@@ -157,19 +144,12 @@ describe(computeColumnStatistics, () => {
     );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      average: undefined,
-      columnName: "",
+      ...baseStatistics,
       columnType: ColumnType.Date,
-      falseCount: undefined,
-      maximum: undefined,
-      minimum: undefined,
       mostFrequentValue: "1970-01-01",
       nullCount: 1,
       nullPercent: 25,
-      standardDeviation: undefined,
-      summation: undefined,
       topFrequencies: [["1970-01", 3]],
-      trueCount: undefined,
       uniqueCount: 2,
     });
   });
@@ -180,19 +160,10 @@ describe(computeColumnStatistics, () => {
     const dataSource = createDataSource([createNumberColumn("")], [createRow({ "": null })]);
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      average: undefined,
-      columnName: "",
-      columnType: ColumnType.Number,
-      falseCount: undefined,
-      maximum: undefined,
-      minimum: undefined,
-      mostFrequentValue: undefined,
+      ...baseStatistics,
       nullCount: 1,
       nullPercent: 100,
-      standardDeviation: undefined,
       summation: 0,
-      topFrequencies: undefined,
-      trueCount: undefined,
       uniqueCount: 0,
     });
   });
@@ -200,22 +171,11 @@ describe(computeColumnStatistics, () => {
   test("empty rows returns zero counts and undefined statistics", () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource([createNumberColumn("")], []);
+    const dataSource = createDataSource([createNumberColumn("")]);
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      average: undefined,
-      columnName: "",
-      columnType: ColumnType.Number,
-      falseCount: undefined,
-      maximum: undefined,
-      minimum: undefined,
-      mostFrequentValue: undefined,
-      nullCount: 0,
-      nullPercent: undefined,
-      standardDeviation: undefined,
+      ...baseStatistics,
       summation: 0,
-      topFrequencies: undefined,
-      trueCount: undefined,
       uniqueCount: 0,
     });
   });
@@ -223,25 +183,14 @@ describe(computeColumnStatistics, () => {
   test("string column with all null values returns undefined mostFrequentValue and 100 nullPercent", () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource(
-      [new StringColumn({ name: "" })],
-      [createRow({ "": null }), createRow({ "": null })],
-    );
+    const dataSource = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": null })]);
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      average: undefined,
-      columnName: "",
+      ...baseStatistics,
       columnType: ColumnType.String,
-      falseCount: undefined,
-      maximum: undefined,
-      minimum: undefined,
-      mostFrequentValue: undefined,
       nullCount: 2,
       nullPercent: 100,
-      standardDeviation: undefined,
-      summation: undefined,
       topFrequencies: [],
-      trueCount: undefined,
       uniqueCount: 0,
     });
   });
@@ -250,10 +199,9 @@ describe(computeColumnStatistics, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource(
-      [new StringColumn({ name: "" })],
+      [createColumn("")],
       [createRow({ "": "a" }), createRow({ "": "b" }), createRow({ "": "c" })],
     );
-
     const result = takeOne(computeColumnStatistics(dataSource));
 
     expect(result.mostFrequentValue).toBe("a");

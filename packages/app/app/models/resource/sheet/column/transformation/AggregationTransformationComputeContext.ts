@@ -1,8 +1,6 @@
-import type { Row } from "#shared/models/resource/sheet/datasource/Row";
-
 export interface AggregationTransformationComputeContext {
-  getNumber: (row: Row) => null | number;
   nonNullValues: number[];
+  // Row-aligned with the filtered dataset, so a computer indexes it by rowIndex instead of walking the rows again
+  numbers: (null | number)[];
   rowIndex: number;
-  rows: Row[];
 }

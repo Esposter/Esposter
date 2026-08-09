@@ -16,6 +16,7 @@ describe(computeAggregationValue, () => {
   const findSource = (sourceColumnId: string) => dataSource.columns.find(({ id }) => id === sourceColumnId);
   const mixedRows = [createRow({ "": 10 }), createRow({ "": null }), createRow({ "": 20 })];
   const allNullRows = [createRow({ "": null })];
+  const tiedRows = [createRow({ "": 10 }), createRow({ "": 10 }), createRow({ "": 20 })];
 
   const createAggregationTransformation = (
     aggregationTransformationType: AggregationTransformationType,
@@ -59,6 +60,11 @@ describe(computeAggregationValue, () => {
 
     // 10 is rank 4
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(4);
+
+    // Tied values share the rank of the first occurrence
+    expect(computeAggregationValue(tiedRows, findSource, transformation, 0)).toBe(2);
+    expect(computeAggregationValue(tiedRows, findSource, transformation, 1)).toBe(2);
+    expect(computeAggregationValue(tiedRows, findSource, transformation, 2)).toBe(1);
   });
 
   test(`${AggregationTransformationType.RunningSummation} accumulates from row 0 to rowIndex`, () => {

@@ -2,6 +2,8 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { AggregationTransformationComputeContext } from "@/models/resource/sheet/column/transformation/AggregationTransformationComputeContext";
 
 import { AggregationTransformationType } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
+import { getAverage } from "@/services/resource/sheet/column/getAverage";
+import { getSummation } from "@/services/resource/sheet/column/getSummation";
 import { takeOne } from "@esposter/shared";
 
 type AggregationTransformationComputer = (context: AggregationTransformationComputeContext) => ColumnValue;
@@ -9,38 +11,29 @@ type AggregationTransformationComputer = (context: AggregationTransformationComp
 export const AggregationTransformationComputeMap = {
   [AggregationTransformationType.Average]: ({ nonNullValues }) => {
     if (nonNullValues.length === 0) return null;
-    return nonNullValues.reduce((sum, value) => sum + value, 0) / nonNullValues.length;
+    return getAverage(nonNullValues);
   },
-  [AggregationTransformationType.Count]: ({ getNumber, rows }) => rows.filter((row) => getNumber(row) !== null).length,
+  [AggregationTransformationType.Count]: ({ nonNullValues }) => nonNullValues.length,
   [AggregationTransformationType.Maximum]: ({ nonNullValues }) => {
     if (nonNullValues.length === 0) return null;
-    return Math.max(...nonNullValues);
+    // Reduce rather than Math.max(...values): a whole column spread as arguments throws past the engine's limit
+    return nonNullValues.reduce((maximum, value) => Math.max(maximum, value), -Infinity);
   },
   [AggregationTransformationType.Minimum]: ({ nonNullValues }) => {
     if (nonNullValues.length === 0) return null;
-    return Math.min(...nonNullValues);
+    return nonNullValues.reduce((minimum, value) => Math.min(minimum, value), Infinity);
   },
-  [AggregationTransformationType.PercentOfTotal]: ({ getNumber, rowIndex, rows }) => {
-    const currentValue = getNumber(takeOne(rows, rowIndex));
+  [AggregationTransformationType.PercentOfTotal]: ({ nonNullValues, numbers, rowIndex }) => {
+    const currentValue = takeOne(numbers, rowIndex);
     if (currentValue === null) return null;
-    const total = rows.reduce((sum, row) => {
-      const value = getNumber(row);
-      return value === null ? sum : sum + value;
-    }, 0);
+    const total = getSummation(nonNullValues);
     return total === 0 ? null : (currentValue / total) * 100;
   },
-  [AggregationTransformationType.Rank]: ({ getNumber, nonNullValues, rowIndex, rows }) => {
-    const currentValue = getNumber(takeOne(rows, rowIndex));
+  [AggregationTransformationType.Rank]: ({ nonNullValues, numbers, rowIndex }) => {
+    const currentValue = takeOne(numbers, rowIndex);
     if (currentValue === null) return null;
-    const sorted = nonNullValues.toSorted((a, b) => b - a);
-    return sorted.indexOf(currentValue) + 1;
+    return nonNullValues.filter((value) => value > currentValue).length + 1;
   },
-  [AggregationTransformationType.RunningSummation]: ({ getNumber, rowIndex, rows }) => {
-    let sum = 0;
-    for (let index = 0; index <= rowIndex; index++) {
-      const value = getNumber(takeOne(rows, index));
-      if (value !== null) sum += value;
-    }
-    return sum;
-  },
+  [AggregationTransformationType.RunningSummation]: ({ numbers, rowIndex }) =>
+    getSummation(numbers.slice(0, rowIndex + 1).filter((value) => value !== null)),
 } as const satisfies Record<AggregationTransformationType, AggregationTransformationComputer>;

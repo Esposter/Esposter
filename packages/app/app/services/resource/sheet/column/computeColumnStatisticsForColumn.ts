@@ -8,17 +8,13 @@ import { buildColumnStatisticsComputeContext } from "@/services/resource/sheet/c
 import { ColumnStatisticsDefinitions } from "@/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
 import { computeMonthFrequencies } from "@/services/resource/sheet/column/computeMonthFrequencies";
 import { computeTopFrequencies } from "@/services/resource/sheet/column/computeTopFrequencies";
-import { getComputedColumnEffectiveType } from "@/services/resource/sheet/column/getComputedColumnEffectiveType";
-import { takeOne, toRawDeep } from "@esposter/shared";
+import { getEffectiveColumnType } from "@/services/resource/sheet/column/getEffectiveColumnType";
+import { takeOne } from "@esposter/shared";
 
 export const computeColumnStatisticsForColumn = (dataSource: DataSource, column: Column): ColumnStatistics => {
-  const effectiveColumnType =
-    column.type === ColumnType.Computed ? getComputedColumnEffectiveType(column) : column.type;
+  const effectiveColumnType = getEffectiveColumnType(column);
   const values = dataSource.rows.map((row) => takeOne(row.data, column.name));
-  const context = buildColumnStatisticsComputeContext(
-    Object.assign(structuredClone(toRawDeep(column)), { type: effectiveColumnType }),
-    values,
-  );
+  const context = buildColumnStatisticsComputeContext(effectiveColumnType, values);
   const statisticsValues = Object.fromEntries(
     ColumnStatisticsDefinitions.map(({ applicableColumnTypes, compute, key }) => [
       key,
@@ -27,7 +23,7 @@ export const computeColumnStatisticsForColumn = (dataSource: DataSource, column:
   ) as Pick<ColumnStatistics, ColumnStatisticsKey>;
   const topFrequencies =
     effectiveColumnType === ColumnType.String
-      ? computeTopFrequencies(context.nonNullStrings)
+      ? computeTopFrequencies(context.stringCountMap)
       : effectiveColumnType === ColumnType.Date
         ? computeMonthFrequencies(context.nonNullStrings)
         : undefined;
