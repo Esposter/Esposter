@@ -19,7 +19,7 @@ export class MoveRowCommand extends ADataSourceCommand<CommandType.MoveRow> {
     this.#toIndex = toIndex;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     const rows = [...dataSource.rows];
     const [moved] = rows.splice(this.#fromIndex, 1);
     if (!moved) return;
@@ -27,7 +27,7 @@ export class MoveRowCommand extends ADataSourceCommand<CommandType.MoveRow> {
     dataSource.rows = rows;
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     const rows = [...dataSource.rows];
     const [moved] = rows.splice(this.#toIndex, 1);
     if (!moved) return;

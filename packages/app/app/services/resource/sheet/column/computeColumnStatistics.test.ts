@@ -2,8 +2,10 @@ import type { ColumnStatistics } from "#shared/models/resource/sheet/column/Colu
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
+import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { createBooleanColumn } from "@/composables/resource/sheet/commands/createBooleanColumn.test";
 import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
+import { createComputedColumn } from "@/composables/resource/sheet/commands/createComputedColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createDateColumn } from "@/composables/resource/sheet/commands/createDateColumn.test";
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
@@ -192,6 +194,36 @@ describe(computeColumnStatistics, () => {
       nullPercent: 100,
       topFrequencies: [],
       uniqueCount: 0,
+    });
+  });
+
+  // A computed column stores nothing in row.data, so its statistics only exist if they are read through the
+  // Same resolver the grid renders with — and they are reported under the type that resolver produces
+  test("computed column computes statistics from its resolved values", () => {
+    expect.hasAssertions();
+
+    const sourceColumn = createNumberColumn("");
+    const computedColumn = createComputedColumn(" ", sourceColumn.id, {
+      sourceColumnId: sourceColumn.id,
+      targetType: ColumnType.Number,
+      type: ColumnTransformationType.ConvertTo,
+    });
+    const dataSource = createDataSource(
+      [sourceColumn, computedColumn],
+      [createRow({ "": 0 }), createRow({ "": 2 }), createRow({ "": 2 }), createRow({ "": null })],
+    );
+
+    expect(takeOne(computeColumnStatistics(dataSource), 1)).toStrictEqual({
+      ...baseStatistics,
+      average: 1.33,
+      columnName: " ",
+      maximum: 2,
+      minimum: 0,
+      nullCount: 1,
+      nullPercent: 25,
+      standardDeviation: 0.94,
+      summation: 4,
+      uniqueCount: 2,
     });
   });
 

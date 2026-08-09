@@ -73,10 +73,10 @@ describe("undo/redo invariants", () => {
     createCase(`useNullStrategy: ${NullStrategy.DropRow} drops empty rows`, createNullInvariantDataSource(), () =>
       useNullStrategy()(NullStrategy.DropRow),
     ),
-    // Overwrite only: PasteRangeCommand builds its appended rows inside doExecute, so a redo of an
-    // Appending paste mints fresh row ids and cannot round-trip to the post-execute state
-    createCase("usePasteRange: overwrites a cell range", createInvariantDataSource(), () =>
-      usePasteRange()(0, 0, [[""], [""]], ["a", "b", "c"]),
+    // Three pasted rows over a two-row source, so the case covers the appended row as well as the overwritten
+    // Ones — an appended row only round-trips if the command minted it once instead of once per execute
+    createCase("usePasteRange: overwrites a range and appends past the last row", createInvariantDataSource(), () =>
+      usePasteRange()(0, 0, [[""], [""], [""]], ["a", "b", "c"]),
     ),
     createCase("useReorderColumns: moves a column two positions", createInvariantDataSource(), ({ columns }) =>
       useReorderColumns()([takeOne(columns, 1), takeOne(columns, 2), takeOne(columns)]),

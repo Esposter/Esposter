@@ -12,8 +12,24 @@ import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource
 import { deserializeXlsx } from "@/services/resource/sheet/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/resource/sheet/xlsx/serializeXlsx";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
+// Both codecs are reached statically from PortableFormatMap, so whether they pull their library into the
+// Importing module's graph is the fact under test — the seam records the first import instead of replacing it
+const { xlsxLibraries } = vi.hoisted(() => ({ xlsxLibraries: { isReaderLoaded: false, isWriterLoaded: false } }));
+
+vi.mock(import("read-excel-file/browser"), async (importOriginal) => {
+  xlsxLibraries.isReaderLoaded = true;
+  return await importOriginal();
+});
+
+vi.mock(import("write-excel-file/browser"), async (importOriginal) => {
+  xlsxLibraries.isWriterLoaded = true;
+  return await importOriginal();
+});
+
+// Read while this file is still evaluating, so the assertion holds whatever order the tests run in
+const librariesLoadedAtImport = { ...xlsxLibraries };
 const defaultSettings: XlsxFileSettings = { configuration: { sheetIndex: 0 }, type: DataSourceType.Xlsx };
 
 describe(deserializeXlsx, () => {
@@ -23,6 +39,15 @@ describe(deserializeXlsx, () => {
     const blob = await serializeXlsx(dataSource, defaultSettings, MIME_TYPE);
     return new File([blob], name, { type: MIME_TYPE });
   };
+
+  // Importing DataSourceConfigurationMap above is what every resource page does through the command bar, and
+  // Only a Sheet can ever reach an xlsx file — the libraries have to arrive with the workbook, not the page.
+  // That they still arrive is what the round trips below prove: neither can produce a workbook without them
+  test("leaves the xlsx libraries out of the importing module's graph", () => {
+    expect.hasAssertions();
+
+    expect(librariesLoadedAtImport).toStrictEqual({ isReaderLoaded: false, isWriterLoaded: false });
+  });
 
   test("parses columns and rows from xlsx", async () => {
     expect.hasAssertions();

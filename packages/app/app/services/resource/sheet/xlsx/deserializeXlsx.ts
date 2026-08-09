@@ -4,9 +4,12 @@ import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSet
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { deserializeToDataSource } from "@/services/resource/sheet/dataSource/deserializeToDataSource";
 import { getSourceColumnName } from "@/services/resource/sheet/dataSource/getSourceColumnName";
-import { readSheet } from "read-excel-file/browser";
 
 export const deserializeXlsx = async (file: File, settings: XlsxFileSettings): Promise<DataSource> => {
+  // The command bar renders on every resource page and reaches this codec through PortableFormatMap, while
+  // Xlsx is one format of the one portable type that has it — the eight types that can neither import nor
+  // Export would otherwise ship a workbook parser they can never run, so it is fetched when one is read
+  const { readSheet } = await import("read-excel-file/browser");
   const rawData = await readSheet(file, settings.configuration.sheetIndex + 1);
   const [headerCells, ...bodyCells] = rawData;
   const sourceNames = headerCells

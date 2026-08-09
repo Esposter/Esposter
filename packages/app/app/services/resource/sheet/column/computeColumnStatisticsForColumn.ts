@@ -8,12 +8,16 @@ import { buildColumnStatisticsComputeContext } from "@/services/resource/sheet/c
 import { ColumnStatisticsDefinitions } from "@/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
 import { computeMonthFrequencies } from "@/services/resource/sheet/column/computeMonthFrequencies";
 import { computeTopFrequencies } from "@/services/resource/sheet/column/computeTopFrequencies";
+import { computeValue } from "@/services/resource/sheet/column/computeValue";
 import { getEffectiveColumnType } from "@/services/resource/sheet/column/getEffectiveColumnType";
-import { takeOne } from "@esposter/shared";
 
 export const computeColumnStatisticsForColumn = (dataSource: DataSource, column: Column): ColumnStatistics => {
   const effectiveColumnType = getEffectiveColumnType(column);
-  const values = dataSource.rows.map((row) => takeOne(row.data, column.name));
+  // Through the resolver rather than the cells: a computed column never writes to `row.data`, so reading it
+  // Directly reports every one of its rows as absent — neither a value nor a null
+  const values = dataSource.rows.map((row, rowIndex) =>
+    computeValue(dataSource.rows, row, dataSource.columns, column, rowIndex),
+  );
   const context = buildColumnStatisticsComputeContext(effectiveColumnType, values);
   const statisticsValues = Object.fromEntries(
     ColumnStatisticsDefinitions.map(({ applicableColumnTypes, compute, key }) => [
@@ -27,5 +31,7 @@ export const computeColumnStatisticsForColumn = (dataSource: DataSource, column:
       : effectiveColumnType === ColumnType.Date
         ? computeMonthFrequencies(context.nonNullStrings)
         : undefined;
-  return { columnName: column.name, columnType: column.type, ...statisticsValues, topFrequencies };
+  // The effective type, because it is the type every statistic above was computed under — reporting the
+  // Declared `Computed` instead leaves the chart map with no arm for a column whose numbers it can plot
+  return { columnName: column.name, columnType: effectiveColumnType, ...statisticsValues, topFrequencies };
 };

@@ -1,8 +1,12 @@
+import type { Column } from "#shared/models/resource/sheet/column/Column";
+import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import type { SortItem } from "vuetify/lib/components/VDataTable/composables/sort.mjs";
 
+import { compareColumnValues } from "@/services/resource/sheet/column/compareColumnValues";
 import { computeValue } from "@/services/resource/sheet/column/computeValue";
+import { getDisplayText } from "@/services/resource/sheet/column/getDisplayText";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
 import { filterDataSourceRows } from "@/services/resource/sheet/dataSource/filterDataSourceRows";
 import { useSheetStore } from "@/store/resource/sheet";
@@ -23,15 +27,24 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   const selectedRowIds = ref<string[]>([]);
   const filteredRows = computed(() => filterDataSourceRows(sheetStore.dataSource.rows, filterStore.columnFilters));
   const rowIndexIdMap = computed(() => new Map(filteredRows.value.map((row, index) => [row.id, index])));
+  // A computed column keeps nothing in `row.data`, so every cell — displayed, searched or sorted — has to come
+  // Through `computeValue` rather than off the row
+  const getCellValue = (row: Row, column: Column): ColumnValue =>
+    computeValue(filteredRows.value, row, columnStore.columns, column, rowIndexIdMap.value.get(row.id));
+  const getCellText = (row: Row, column: Column): string => getDisplayText(getCellValue(row, column), column);
   const headers = computed<DataTableHeader<Row>[]>(() => [
     { key: "data-table-select", sortable: false, title: "" },
     { key: "drag", sortable: false, title: "" },
     { key: "#", sortable: false, title: "#" },
     ...columnStore.displayColumns.map((column) => ({
       key: toColumnKey(column.name),
+      // The data table sorts on the underlying value, the way a spreadsheet does — the currency column's 9 has to
+      // Land before its 10 instead of where the text "$10.00" would sort
+      sortRaw: (firstRow: Row, secondRow: Row) =>
+        compareColumnValues(getCellValue(firstRow, column), getCellValue(secondRow, column)),
       title: column.name,
-      value: (row: Row) =>
-        computeValue(filteredRows.value, row, columnStore.columns, column, rowIndexIdMap.value.get(row.id)),
+      // The column's value is the text the cell paints, so the table's global search matches what is on screen
+      value: (row: Row) => getCellText(row, column),
     })),
     { key: "actions", sortable: false, title: "Actions" },
   ]);
@@ -58,6 +71,7 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   return {
     copyIncludesHeaders,
     filteredRows,
+    getCellText,
     headers,
     itemsPerPage,
     page,

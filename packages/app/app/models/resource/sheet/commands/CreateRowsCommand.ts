@@ -22,7 +22,7 @@ export class CreateRowsCommand extends ADataSourceCommand<CommandType.CreateRows
     this.#rows = rows;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     for (const row of this.#rows)
       for (const column of dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
     dataSource.rows = [
@@ -32,7 +32,7 @@ export class CreateRowsCommand extends ADataSourceCommand<CommandType.CreateRows
     ];
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     for (const row of this.#rows)
       for (const column of dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
     dataSource.rows = [

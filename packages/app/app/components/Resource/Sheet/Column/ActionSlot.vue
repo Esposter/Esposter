@@ -2,6 +2,7 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
 import { ChartableColumnTypes } from "@/services/resource/sheet/column/computeColumnChartData";
+import { getEffectiveColumnType } from "@/services/resource/sheet/column/getEffectiveColumnType";
 import { getDeleteColumnDescription } from "@/services/resource/sheet/commands/getDeleteColumnDescription";
 import { getEditColumnDescription } from "@/services/resource/sheet/commands/getEditColumnDescription";
 import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
@@ -19,7 +20,7 @@ const { chartingColumnName, deletingColumnName, editingColumnName } = storeToRef
 <template>
   <div flex>
     <StyledTooltipIconButton
-      v-if="ChartableColumnTypes.has(column.type)"
+      v-if="ChartableColumnTypes.has(getEffectiveColumnType(column))"
       :button-props="DENSE_ICON_BUTTON_PROPS"
       icon="mdi-chart-bar"
       text="Column Chart"

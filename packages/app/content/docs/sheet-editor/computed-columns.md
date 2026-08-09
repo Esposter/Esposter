@@ -17,13 +17,14 @@ All reads go through one resolver, `computeValue(rows, row, columns, column, row
 - `findSource(sourceColumnId)` — looks up the source `Column` definition (used when the computer needs column metadata, e.g. a date column's format).
 - `rows` and `rowIndex` — the full filtered dataset and the current row's position, consumed only by aggregation transformations.
 
-The three read sites are: the row store's table headers (each header's `value` function calls `computeValue`, so Vuetify sorting and global search operate on computed values), the cell renderer (`Row/Field/Index.vue`), and export (`filterDataSourceColumns` materializes computed values into plain row data before the serializers run, so exported CSV/JSON includes them).
+The read sites are: the row store's table headers (each header's `value` function calls `computeValue`, so Vuetify sorting and global search operate on computed values), the cell renderer (`Row/Field/Index.vue`), export (`filterDataSourceColumns` materializes computed values into plain row data before the serializers run, so exported CSV/JSON includes them), and statistics (`computeColumnStatisticsForColumn`, plus the outlier store reading the same values back per cell).
 
 ```mermaid
 flowchart TD
   headers["Row store table headers<br/>(sort / global search)"] -->|value fn| CV[computeValue]
   cell["Row/Field/Index.vue<br/>(cell render)"] --> CV
   export["ExportDialog → filterDataSourceColumns<br/>(materialize before serialize)"] --> CV
+  stats["computeColumnStatisticsForColumn<br/>(stats · charts · outliers)"] --> CV
   CV -->|"type ≠ Computed"| raw["row.data[column.name]"]
   CV -->|"already visited (cycle)"| cyc["null"]
   CV -->|"type = Computed"| map["ColumnTransformationComputeMap[transformation.type]"]
@@ -38,7 +39,7 @@ flowchart TD
 
 Computed columns are created and edited through the same vjsf-driven column dialog as every other column type — `computedColumnFormSchema` renders the transformation as a form, with per-transformation Zod validation surfacing errors before save.
 
-Each transformation declares its output type via `getComputedColumnEffectiveType`: `Aggregation`, `DatePart`, and `Math` produce numbers; `RegexMatch`, `String`, `StringPattern`, and `StringSplit` produce strings; `ConvertTo` outputs its runtime `targetType`. The effective type drives filters, statistics, and charts for the computed column.
+Each transformation declares its output type via `getComputedColumnEffectiveType`: `Aggregation`, `DatePart`, and `Math` produce numbers; `RegexMatch`, `String`, `StringPattern`, and `StringSplit` produce strings; `ConvertTo` outputs its runtime `targetType`. The effective type drives filters, statistics, and charts for the computed column — `computeColumnStatisticsForColumn` reports it as the statistics row's `columnType`, which is what lets the chart map and the outlier sweep treat a number-producing computed column as a number column.
 
 ## Transformation categories
 
@@ -96,6 +97,7 @@ All paths relative to `packages/app`.
 | `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`               | Discriminated union of all transformation variants              |
 | `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`           | Discriminant enum                                               |
 | `app/services/resource/sheet/column/computeValue.ts`                                       | Lazy resolver with inline cycle guard                           |
+| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                   | Per-column statistics over the resolved values                  |
 | `app/services/resource/sheet/column/transformation/ColumnTransformationComputeMap.ts`      | Dispatch map: transformation type → computer                    |
 | `app/services/resource/sheet/column/computeAggregationValue.ts`                            | Aggregation entry point (source resolution + numeric filtering) |
 | `app/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type computers                                  |

@@ -17,6 +17,9 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
 
   readonly #anchorColumnIndex: number;
   readonly #anchorRowIndex: number;
+  // Minted once, so a redo restores the very rows the first execute appended. Newing them per execute hands
+  // The grid fresh ids for rows the user never re-created, orphaning selection and every keyed cell on them
+  readonly #appendedRows: Row[];
   readonly #originalRows: Row[];
   readonly #pastedValues: string[][];
   readonly #targetColumnNames: string[];
@@ -34,9 +37,10 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
     this.#pastedValues = pastedValues;
     this.#targetColumnNames = targetColumnNames;
     this.#originalRows = originalRows;
+    this.#appendedRows = Array.from({ length: pastedValues.length - originalRows.length }, () => new Row());
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     const { columns, rows } = dataSource;
     const targetNames = this.#targetColumnNames.slice(this.#anchorColumnIndex);
     const columnsByName = new Map(columns.map((column) => [column.name, column]));
@@ -54,25 +58,26 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
           row.data[columnName] = newValue;
         }
       } else {
-        const newRow = new Row({ data: Object.fromEntries(columns.map((c) => [c.name, null])) });
+        const appendedRow = takeOne(this.#appendedRows, rowOffset - this.#originalRows.length);
+        // Reset rather than fill, so a redo leaves the row holding exactly what the first execute wrote
+        appendedRow.data = Object.fromEntries(columns.map(({ name }) => [name, null]));
         for (const [columnOffset, value] of pastedRow.entries()) {
           if (columnOffset >= targetNames.length) break;
           const columnName = takeOne(targetNames, columnOffset);
           const column = columnsByName.get(columnName);
           if (!column) continue;
-          newRow.data[columnName] = coerceValue(value, column.type);
+          appendedRow.data[columnName] = coerceValue(value, column.type);
         }
-        for (const column of columns) column.size += getValueSize(newRow.data[column.name]);
-        rows.push(newRow);
+        for (const column of columns) column.size += getValueSize(appendedRow.data[column.name]);
+        rows.push(appendedRow);
       }
     }
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     const { columns, rows } = dataSource;
-    const appendedRowCount = this.#pastedValues.length - this.#originalRows.length;
-    if (appendedRowCount > 0) {
-      const removedRows = rows.splice(rows.length - appendedRowCount, appendedRowCount);
+    if (this.#appendedRows.length > 0) {
+      const removedRows = rows.splice(rows.length - this.#appendedRows.length, this.#appendedRows.length);
       for (const removedRow of removedRows)
         for (const column of columns) column.size -= getValueSize(removedRow.data[column.name]);
     }

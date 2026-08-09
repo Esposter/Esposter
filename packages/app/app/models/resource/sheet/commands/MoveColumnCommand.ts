@@ -24,11 +24,11 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     this.#toIndex = toIndex;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     this.#moveColumn(dataSource, this.#fromIndex, this.#toIndex);
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     this.#moveColumn(dataSource, this.#toIndex, this.#fromIndex);
   }
 

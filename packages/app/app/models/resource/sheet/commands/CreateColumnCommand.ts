@@ -21,7 +21,7 @@ export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateCo
     this.#newColumn = newColumn;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     this.#newColumn.size = dataSource.rows.length * getValueSize(null);
     dataSource.columns = [
       ...dataSource.columns.slice(0, this.#columnIndex),
@@ -31,7 +31,7 @@ export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateCo
     for (const { data } of dataSource.rows) data[this.#newColumn.name] = null;
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     dataSource.columns = dataSource.columns.filter((column) => column.name !== this.#newColumn.name);
     for (const { data } of dataSource.rows) delete data[this.#newColumn.name];
   }

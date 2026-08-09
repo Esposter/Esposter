@@ -21,14 +21,14 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
     this.#indexedRows = indexedRows.toSorted((a, b) => b.index - a.index);
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     const indexSet = new Set(this.#indexedRows.map(({ index }) => index));
     for (const { row } of this.#indexedRows)
       for (const column of dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
     dataSource.rows = dataSource.rows.filter((_, index) => !indexSet.has(index));
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     const ascendingRows = this.#indexedRows.toSorted((a, b) => a.index - b.index);
     for (const { row } of ascendingRows)
       for (const column of dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));

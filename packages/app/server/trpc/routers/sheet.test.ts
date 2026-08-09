@@ -44,7 +44,6 @@ describe("sheet", () => {
         columns: [],
         metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
         rows: [],
-        statistics: { columnCount: 0, rowCount: 0, size: 0 },
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
     };
@@ -72,7 +71,6 @@ describe("sheet", () => {
         columns: [column],
         metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
         rows: [row],
-        statistics: { columnCount: 1, rowCount: 1, size: 0 },
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
     };

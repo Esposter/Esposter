@@ -165,7 +165,6 @@ describe("dataset", () => {
         columns: [new StringColumn({ name: columnName, sourceName: columnName })],
         metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
         rows: [new Row({ data: { [columnName]: value } })],
-        statistics: { columnCount: 1, rowCount: 1, size: 0 },
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
     };
@@ -186,7 +185,6 @@ describe("dataset", () => {
         columns: [new StringColumn({ name: columnName, sourceName: columnName })],
         metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
         rows: Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
-        statistics: { columnCount: 1, rowCount: AZURE_MAX_PAGE_SIZE + 1, size: 0 },
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
     };

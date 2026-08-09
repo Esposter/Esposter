@@ -9,7 +9,6 @@ export const createDataSource = (columns: Column[] = [], rows: Row[] = []): Data
   columns,
   metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
   rows,
-  statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
 });
 
 describe.todo("createDataSource");

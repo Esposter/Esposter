@@ -10,7 +10,7 @@ import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn"
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { inferDateFormat } from "@/services/resource/sheet/column/inferDateFormat";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
-import { syncStatistics } from "@/services/resource/sheet/commands/syncStatistics";
+import { computeDataSourceStatistics } from "@/services/resource/sheet/dataSource/computeDataSourceStatistics";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const datasetToDataSource = (
@@ -43,9 +43,8 @@ export const datasetToDataSource = (
     columns,
     metadata: { dataSourceType, importedAt: new Date(), name, size: 0 },
     rows,
-    statistics: { columnCount: 0, rowCount: 0, size: 0 },
   };
-  syncStatistics(dataSource);
-  dataSource.metadata.size = size ?? dataSource.statistics.size;
+  // An import without a file behind it (a dataset, a paste) has no byte count of its own, so the cells stand in
+  dataSource.metadata.size = size ?? computeDataSourceStatistics(dataSource).size;
   return dataSource;
 };
