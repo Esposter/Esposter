@@ -2,13 +2,22 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+// AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
+// Spied on directly — mock the module and drive useSession through a hoisted mock instead. The participant store
+// Reads the synchronous ref form, which is what resolves the caller's own participant id
+const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => unknown>() }));
+
+vi.mock(import("@/services/auth/authClient"), () => ({
+  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
+}));
 
 const createCallParticipant = (name: string): CallParticipant => ({
   id: crypto.randomUUID(),
@@ -18,6 +27,43 @@ const createCallParticipant = (name: string): CallParticipant => ({
   isMuted: false,
   name,
   userId: crypto.randomUUID(),
+});
+
+beforeEach(() => {
+  useSessionMock.mockImplementation(() => ref({ data: getMockSession() }));
+});
+
+describe(useCallStore, () => {
+  const server = setupMswTrpc();
+  const callSessionId = crypto.randomUUID();
+  const imagePath = "/image.png";
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  // The camera flag is a participant row like any other, so the primitive unwinds and reports its rejection.
+  // Rethrowing made a rejected server write cancel the local work it was composed with — the picked background
+  // Never reached the camera that was in fact running, and the same throw inside joinCall tore down a live call
+  test("applies a virtual background when the camera write is rejected", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.callSession.setCamera.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const mediaStore = useMediaStore();
+    const { isCameraEnabled, selectedVirtualBackground } = storeToRefs(mediaStore);
+    const callStore = useCallStore();
+    const { selectVirtualBackground } = callStore;
+    const { activeCallSessionId } = storeToRefs(callStore);
+    activeCallSessionId.value = callSessionId;
+    await selectVirtualBackground(imagePath);
+
+    expect(selectedVirtualBackground.value).toBe(imagePath);
+    expect(isCameraEnabled.value).toBe(false);
+  });
 });
 
 describe(useParticipantStore, () => {

@@ -16,7 +16,11 @@ import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
+  // Camera, mute and hand each own a different field of the participant row, so they share the participant key
+  // Without contending — separate instances let a hand going up while the mic is unmuting land in either order
+  const { executeMutation: executeSetCameraMutation } = useMutation();
   const { executeMutation: executeSetHandRaisedMutation } = useMutation();
+  const { executeMutation: executeSetMuteMutation } = useMutation();
   const roomStore = useRoomStore();
   const knockerStore = useKnockerStore();
   const { resetKnockerState } = knockerStore;
@@ -87,38 +91,48 @@ export const useCallStore = defineStore("message/room/call", () => {
     const sessionIdValue = participantStore.sessionId;
     if (!callSessionId || !sessionIdValue) return;
 
-    const oldIsCameraEnabled = mediaStore.isCameraEnabled;
-    mediaStore.isCameraEnabled = newIsCameraEnabled;
-    setParticipantCamera(callSessionId, sessionIdValue, newIsCameraEnabled);
-
-    await getResultAsync(() =>
-      $trpc.callSession.setCamera.mutate({
-        callSessionId,
-        isCameraEnabled: newIsCameraEnabled,
-      }),
-    ).match(noop, (error) => {
-      mediaStore.isCameraEnabled = oldIsCameraEnabled;
-      setParticipantCamera(callSessionId, sessionIdValue, oldIsCameraEnabled);
-      throw error;
-    });
+    await executeSetCameraMutation(
+      () =>
+        $trpc.callSession.setCamera.mutate({
+          callSessionId,
+          isCameraEnabled: newIsCameraEnabled,
+        }),
+      {
+        applyOptimistic: () => {
+          const oldIsCameraEnabled = mediaStore.isCameraEnabled;
+          mediaStore.isCameraEnabled = newIsCameraEnabled;
+          setParticipantCamera(callSessionId, sessionIdValue, newIsCameraEnabled);
+          return () => {
+            mediaStore.isCameraEnabled = oldIsCameraEnabled;
+            setParticipantCamera(callSessionId, sessionIdValue, oldIsCameraEnabled);
+          };
+        },
+        key: sessionIdValue,
+      },
+    );
   };
   const setMuteEnabled = async (newIsMuted: boolean) => {
     const callSessionId = activeCallSessionId.value;
     const sessionIdValue = participantStore.sessionId;
     if (!callSessionId || !sessionIdValue) return;
 
-    const oldIsMuted = isMuted.value;
-    setMute(callSessionId, sessionIdValue, newIsMuted);
-
-    await getResultAsync(() =>
-      $trpc.callSession.setMute.mutate({
-        callSessionId,
-        isMuted: newIsMuted,
-      }),
-    ).match(noop, (error) => {
-      setMute(callSessionId, sessionIdValue, oldIsMuted);
-      throw error;
-    });
+    await executeSetMuteMutation(
+      () =>
+        $trpc.callSession.setMute.mutate({
+          callSessionId,
+          isMuted: newIsMuted,
+        }),
+      {
+        applyOptimistic: () => {
+          const oldIsMuted = isMuted.value;
+          setMute(callSessionId, sessionIdValue, newIsMuted);
+          return () => {
+            setMute(callSessionId, sessionIdValue, oldIsMuted);
+          };
+        },
+        key: sessionIdValue,
+      },
+    );
   };
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
     currentRoomCallSessionId.value = callSessionId;
@@ -154,6 +168,8 @@ export const useCallStore = defineStore("message/room/call", () => {
           joinedCallSessionId = callSessionId;
           isJoined = true;
           setParticipantMap(callSessionId, participantMap);
+          // The call is connected by here, so these only sync the participant row and report their own
+          // Failures — a rejected flag must not tear down a call that is already up
           if (!isMicrophoneEnabled) await setMuteEnabled(true);
           if (isCameraEnabled) {
             await setCamera(true);
@@ -225,6 +241,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
   const selectVirtualBackground = async (imagePath: string) => {
     if (imagePath && !mediaStore.isCameraEnabled) {
+      // Only the local device call decides whether to go on: a camera that never turned on has nothing to
+      // Composite a background onto, while the participant-row write reports and unwinds itself
       const isEnabled = await getResultAsync(async () => {
         await setCamera(true);
         await setCameraEnabled(true);

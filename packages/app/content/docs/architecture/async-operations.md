@@ -35,6 +35,17 @@ Two writes that share a key are two writes to the same thing, and they run one a
 
 Reads and writes never share a queue, even on one key: a read waits for nobody.
 
+## A key queues only within one `useMutation()` instance
+
+The queue is state on the instance, not on the key. Two instances keyed on the same target therefore run concurrently while their call sites read as if they serialised — the failure mode is silent, because the key is right and the ordering it promises simply never existed.
+
+So the instance count follows what the writes touch, not how many mutations there are:
+
+- **Writes that end the same row share one instance**, declared once at the store root and named for the target rather than for either write (`executeBlockMutation` for `blockUser`/`unblockUser`, one executor for cancelling and sending a scheduled message job). Sharing is what makes `key: id` mean what it says: the second write applies its optimistic change against what the first actually left, so its rollback cannot resurrect a row the first already removed.
+- **Writes that own different fields of one entity keep their own instances.** A call participant's camera, mute and hand-raise all key on the participant, and that is correct precisely because none of them replaces another — they merge, and queueing would only make each wait on writes it cannot conflict with. Same for the Attachments panel writing a room's maximum file size and its allowed types.
+
+The test is whether one write's rollback could undo another's landed change. If it could, they are the same target and share an executor; if it could not, they are independent and keep theirs.
+
 ## The state an operation writes back is bound where the key is
 
 The `key` is not the only thing an operation resolves when it is issued. **Every per-key slice an operation writes back is resolved at the same moment, never at the moment the response lands.** A store that keys state by the room, the tab or the post exposes that state twice: a current-key ref, which is what the rendered surface binds because it must track whatever is on screen, and a **binder** — `useDataMap`'s `getBoundData()` — which pins the key as it is right now and hands back a ref that keeps writing there. An operation takes the binder.

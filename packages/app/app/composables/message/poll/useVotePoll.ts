@@ -12,11 +12,15 @@ export const useVotePoll = async (
 ) => {
   const { $trpc } = useNuxtApp();
   // Single-flight per poll: a second vote while one is in flight is dropped rather than racing it
-  const { executeMutation, isPending: isVoting } = useMutation();
+  const { executeMutation, getIsPending } = useMutation();
   const { data: session } = await authClient.useSession(useFetch);
   const dataStore = useDataStore();
   const { storeUpdateMessage } = dataStore;
   const userId = computed(() => session.value?.user.id);
+  // Scoped to the poll bound right now rather than to anything this instance has in flight — `message` is a
+  // Getter, so the surface can re-point at another poll, and a whole-instance flag would disable a radio group
+  // Whose own vote landed long ago
+  const isVoting = computed(() => getIsPending(toValue(message).rowKey));
   // The option id is bound straight to v-radio-group's update:model-value, whose Vuetify emit type is `string | null`
   const vote = async (optionId: null | string) => {
     if (!userId.value || isPreview) return;

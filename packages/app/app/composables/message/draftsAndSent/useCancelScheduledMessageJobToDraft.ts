@@ -2,11 +2,13 @@ import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/mes
 
 import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
 import { useInputStore } from "@/store/message/input";
+import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 
 export const useCancelScheduledMessageJobToDraft = () => {
   const inputStore = useInputStore();
   const { storeDraft } = inputStore;
-  const cancelScheduledMessageJob = useCancelScheduledMessageJob();
+  const scheduledMessageJobStore = useScheduledMessageJobStore();
+  const { cancelScheduledMessageJob } = scheduledMessageJobStore;
   return async (scheduledMessageJob: ScheduledMessageJobInMessageWithRoom) => {
     await cancelScheduledMessageJob(scheduledMessageJob.id);
     storeDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));

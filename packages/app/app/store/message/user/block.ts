@@ -6,8 +6,11 @@ import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeBlockUserMutation } = useMutation();
-  const { executeMutation: executeUnblockUserMutation } = useMutation();
+  // One executor for both directions, because a queue lives on the instance and not on the key: on two instances
+  // The shared `key: userId` reads as if a block and an unblock of the same user serialised while they in fact
+  // Raced, and they write the same two lists — the unblock could put a row back that the block beside it had
+  // Just removed
+  const { executeMutation: executeBlockMutation } = useMutation();
   const friendStore = useFriendStore();
   const { storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequestStore = useFriendRequestStore();
@@ -15,10 +18,10 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const blockedUsers = ref<User[]>([]);
 
   const blockUser = async (userId: FriendUserIdInput) => {
-    await executeBlockUserMutation(() => $trpc.block.blockUser.mutate(userId), {
-      // Only the rows this write removes, not copies of both lists: blocks are keyed per user and never queue
-      // Against each other or against a removal, so reinstating the lists would resurrect a friend or a request
-      // Another write already dropped — and lose whatever a subscription delivered while this one was in flight
+    await executeBlockMutation(() => $trpc.block.blockUser.mutate(userId), {
+      // Only the rows this write removes, not copies of both lists: blocks of different users never queue against
+      // Each other, so reinstating the lists would resurrect a friend or a request another write already dropped
+      // — and lose whatever a subscription delivered while this one was in flight
       applyOptimistic: () => {
         const deletedFriend = friendStore.friends.find(({ id }) => id === userId);
         const deletedFriendRequests = getFriendRequestsByUser(userId);
@@ -38,10 +41,10 @@ export const useBlockStore = defineStore("message/user/block", () => {
   };
 
   const unblockUser = async (blockedUserId: FriendUserIdInput) => {
-    await executeUnblockUserMutation(() => $trpc.block.unblockUser.mutate(blockedUserId), {
-      // The one row this write removes, not a copy of the list: unblocks are keyed per user and never queue
-      // Against each other, so reinstating the list would resurrect a user another unblock already removed and
-      // Drop whoever a block added meanwhile. Back at the end rather than where it stood — a cosmetic loss
+    await executeBlockMutation(() => $trpc.block.unblockUser.mutate(blockedUserId), {
+      // The one row this write removes, not a copy of the list: unblocks of different users never queue against
+      // Each other, so reinstating the list would resurrect a user another unblock already removed and drop
+      // Whoever a block added meanwhile. Back at the end rather than where it stood — a cosmetic loss
       applyOptimistic: () => {
         const deletedBlockedUser = blockedUsers.value.find(({ id }) => id === blockedUserId);
         blockedUsers.value = blockedUsers.value.filter(({ id }) => id !== blockedUserId);

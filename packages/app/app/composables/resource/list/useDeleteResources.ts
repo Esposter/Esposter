@@ -37,7 +37,6 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
         applyOptimistic: () => {
           const deletedItems = items.value.filter(({ id }) => ids.includes(id));
           items.value = items.value.filter(({ id }) => !ids.includes(id));
-          count.value -= resources.length;
           return () => {
             // Only this write's own rows are put back. A refresh, a page turn or a delete running beside this one
             // Replaces `items` wholesale, so reinstating a copy of the list would undo it — and a mid-flight
@@ -45,8 +44,6 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
             // Missing come back, at the end rather than in their sorted place
             const missingItems = deletedItems.filter(({ id }) => !items.value.some((item) => item.id === id));
             items.value = [...items.value, ...missingItems];
-            // The total is the server's, not this page's, so it unwinds by exactly what the write took off it
-            count.value += resources.length;
           };
         },
         // A star or a recently-opened row only resolves while its resource is live
@@ -63,6 +60,11 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
           await refresh();
         },
         onSuccess: async () => {
+          // The total is the server's count over the whole filter, not this page's length, so it is only ever
+          // Written by a read: nudged by the rows this write removed it would land on top of a refresh that had
+          // Already re-counted, and the rollback would add back rows that count never held. The re-read also
+          // Refills the page the optimistic removal left short
+          await refresh();
           createNotification({
             // The undo toast: a single delete is one click away from coming back, no bin trip needed
             action:

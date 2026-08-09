@@ -61,8 +61,8 @@ export const useReadResourcesPage = <TFilterInput>({
           error.value = readError.message;
         },
         onSuccess: ({ newCount, newItems }) => {
-          // Left alone when the count was reused, so an optimistic adjustment made mid-flight (a delete drops the
-          // Rows and the total together) is not overwritten by the total this read started with
+          // A read that reused the previous count issued no count query, so it has nothing to write — the total
+          // Only ever moves when a read actually counted, which is what keeps it the server's number
           if (newCount !== undefined) count.value = newCount;
           countedFilterKey = filterKey;
           items.value = newItems;

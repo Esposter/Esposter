@@ -88,7 +88,27 @@ describe(useDeleteResources, () => {
     await Promise.all([deleteResources([resource]), deleteResources([otherResource])]);
 
     expect(items.value).toStrictEqual([resource]);
-    expect(count.value).toBe(1);
+    // Untouched by either write, failed or landed: the total belongs to whatever read last counted it
+    expect(count.value).toBe(2);
+  });
+
+  // The total is the server's count over the whole filter, so a delete that nudged it would land on top of a
+  // Refresh that had already re-counted, and its rollback would then add back rows that count never held
+  test("takes the total from a re-read rather than nudging it", async () => {
+    expect.hasAssertions();
+
+    router.currentRoute.value.params.id = "";
+    const items = ref([resource, otherResource]);
+    const count = ref(2);
+    // The rows on other pages are what makes the total more than this page's length
+    const refresh = vi.fn<() => Promise<void>>(() => {
+      count.value = 7;
+      return Promise.resolve();
+    });
+    await useDeleteResources(items, count, refresh)([resource]);
+
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(count.value).toBe(7);
   });
 
   test("stays put when the deleted resources are not the open one", async () => {

@@ -2,9 +2,9 @@
 import type { Router } from "vue-router";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
-import { createRoom } from "@/store/message/room/index.test";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";

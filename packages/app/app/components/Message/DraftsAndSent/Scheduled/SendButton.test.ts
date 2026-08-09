@@ -5,10 +5,8 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import MessageDraftsAndSentScheduledSendButton from "@/components/Message/DraftsAndSent/Scheduled/SendButton.vue";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
-import { MimeCategory, RoomType, ScheduledMessageJobType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
+import { createMessageEntity, MessageType, MimeCategory, RoomType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
@@ -47,46 +45,32 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
     userId,
   });
 
-  // A rejected send owes back the row it took off the page and nothing else — the page is also fed by reads and
-  // Pushes, so reinstating the copy this write was issued with drops whatever landed while it was in flight
-  test("restores only its own job when the send is rejected", async () => {
+  // What the send owes the page — the optimistic removal and the rollback that races the cancel of the same job
+  // — belongs to the store both surfaces write through, and is covered there. This is the wiring: the button
+  // Sends the job it was handed and no other
+  test("sends the job it is bound to", async () => {
     expect.hasAssertions();
 
-    let signalSendRequested = noop;
-    const sendRequested = new Promise<void>((resolve) => {
-      signalSendRequested = resolve;
-    });
-    let releaseSend = noop;
-    const sendReleased = new Promise<void>((resolve) => {
-      releaseSend = resolve;
-    });
     server.use(
-      trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(async () => {
-        signalSendRequested();
-        await sendReleased;
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "rejected" });
-      }),
+      trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() =>
+        createMessageEntity({ roomId: room.id, type: MessageType.Message, userId }),
+      ),
     );
     // The component mounts into the nuxt app's pinia, so seed the store it reads rather than a local one
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { count, items } = storeToRefs(scheduledMessageJobStore);
     const sentScheduledMessageJob = createScheduledMessageJob("sent");
-    items.value = [sentScheduledMessageJob];
-    count.value = 1;
+    const otherScheduledMessageJob = createScheduledMessageJob("other");
+    items.value = [sentScheduledMessageJob, otherScheduledMessageJob];
+    count.value = 2;
 
     const component = await mountSuspended(MessageDraftsAndSentScheduledSendButton, {
       props: { scheduledMessageJob: sentScheduledMessageJob },
     });
     await component.get(".v-btn").trigger("click");
-    await sendRequested;
-    // A job the page gained while the send was in flight
-    const arrivedScheduledMessageJob = createScheduledMessageJob("arrived");
-    items.value = [arrivedScheduledMessageJob];
-    count.value = 1;
-    releaseSend();
     await flushPromises();
 
-    expect(items.value.map(({ id }) => id)).toStrictEqual([arrivedScheduledMessageJob.id, sentScheduledMessageJob.id]);
-    expect(count.value).toBe(2);
+    expect(items.value.map(({ id }) => id)).toStrictEqual([otherScheduledMessageJob.id]);
+    expect(count.value).toBe(1);
   });
 });
