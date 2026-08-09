@@ -4,18 +4,24 @@ Read when a push has put a review window past the file limit and CodeRabbit skip
 
 The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged. The fix is to **shorten `develop` and park the rest on a queue branch**, then feed the queue back one window at a time.
 
-**`<base>` throughout is the baseline CodeRabbit measures from, which is not always the merge-base.** For a PR awaiting its first review it is `git merge-base main develop`. For one already reviewed it is the **last reviewed sha**, named in the most recent review body ("Reviewing files that changed between `<sha1>` and `<sha2>`" — take `<sha2>`):
+**Never force-push `develop` to make a window fit.** A rewind desynchronises CodeRabbit's incremental checkpoint from the branch, and the checkpoint does not recover on its own: the review after one such rewind anchored on the **start** of its own range rather than the end, so the next window was counted from a sha whose 65 files had already been reviewed and accepted, and a locally-measured 98-file window arrived as 153. Every later cycle inherits that inflated baseline. The cost of one rewind is therefore not one skipped review but a branch that cannot get under the cap again by any additive means.
+
+This is what makes **step 1 below a last resort rather than the routine tool.** The routine tool is not pushing over the cap in the first place (SKILL.md § Pipelining): commit locally, measure, and push while the window is still small.
+
+**Do not predict the baseline — read it.** The reliable number is the one in the bot's own skip comment ("This PR contains N files"), and that comment is **edited in place**, so its `created_at` is the first skip while its body is always the current count. Any local `git diff` is a lower bound, not the answer:
 
 ```bash
-gh api repos/:owner/:repo/pulls/<pr>/reviews --paginate --jq '.[] | select(.user.login=="coderabbitai[bot]") | .body' |
-  grep -oE 'between [`a-f0-9]+ and [`a-f0-9]+' | tail -1
+gh api repos/:owner/:repo/issues/<pr>/comments --paginate --jq '.[] | select(.user.login=="coderabbitai[bot]") |
+  select(.body|test("Too many files")) | .updated_at + " " + (.body | capture("contains (?<c>[0-9]+) files").c)' | tail -1
 ```
 
-Cutting an already-reviewed PR against the merge-base discards windows that were reviewed and accepted. The skip comment's own file count confirms which baseline is live: it matches the delta from the last reviewed sha, not the cumulative PR diff.
+When a local measure and that number disagree, the bot is right and the local baseline guess is wrong.
 
 Never open side PRs against `main` to slice it up. Each one spends a review slot on arrival, and the release PR is not the thing that needs splitting — its _review cycles_ are.
 
 **There are only ever two branches: `develop` and `queue/<scope>`. One PR: the release PR, which stays open the whole time.**
+
+**The queue branch stages content, never history.** Port its changes onto `develop` as fresh commits and delete the branch — do not merge it. A merge replays the queue's original commits and adds a merge commit, which is exactly the shape that leaves CodeRabbit's checkpoint ambiguous; a linear, purely additive `develop` is what it tracks reliably. Porting does not change the file count — the same files change either way — so this buys history hygiene, not headroom.
 
 ## 1. Cut
 
@@ -62,17 +68,19 @@ Cherry-pick doc and skill commits across the cut so the working tree keeps the c
 
 ## 2. Drain
 
-Merge one queue window into `develop`, trigger a review, wait for `Review completed`, fix findings, then merge the next. Reviews are incremental — each cycle reads only what changed since the last completed one (SKILL.md § PR File Budget) — so every window gets a full-budget review even though the PR's cumulative diff grows past the cap.
+Port one queue window onto `develop`, trigger a review, wait for `Review completed`, fix findings, then port the next. Reviews are incremental — each cycle reads only what changed since the last completed one (SKILL.md § PR File Budget) — so every window gets a full-budget review even though the PR's cumulative diff grows past the cap.
 
-Size each window off the queue the way the cut was sized, and **merge the window commit, never the branch** — `git merge queue/<scope>` takes the whole remainder and rebuilds the over-budget PR in a single push:
+Size each window off the queue the way the cut was sized, then **cherry-pick the window, never merge the branch.** `git merge queue/<scope>` takes the whole remainder and rebuilds the over-budget PR in a single push; even merging a single window commit adds a merge commit and replays the queue's shas, and `develop` is tracked most reliably when it only ever grows linearly:
 
 ```bash
 for commit in $(git rev-list --reverse develop..queue/<scope>); do
   printf '%4d  %s\n' "$(git diff --name-only -M "develop..$commit" | wc -l)" "$(git log -1 --oneline "$commit")"
 done
-git switch develop && git merge --no-ff <window> && git push origin develop
+git switch develop && git cherry-pick <first-of-window>^..<window> && git push origin develop
 git rev-list --count develop..queue/<scope>   # what the queue still owes
 ```
+
+Cherry-picking leaves the queue's own commits behind, so `develop..queue/<scope>` no longer shrinks on its own — track what is left by what you have ported, and delete the branch once the last window is on `develop` rather than waiting for that count to reach `0`.
 
 **Re-measure the window immediately before pushing, not when planning it.** The count that matters is the one after the review fixes, the merge and the format/lint pass have all landed, and it lands higher than the estimate: a lint pass fixes whatever the merged window dragged in, so it touches files no one attributed to the window. Planning at "89 plus the five files the findings name" is how a window arrives at the remote at 101.
 
