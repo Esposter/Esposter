@@ -16,8 +16,8 @@ const itemType = route.query[ITEM_TYPE_QUERY_PARAMETER_KEY];
 if (VisualTypes.has(itemType as VisualType)) visualType.value = itemType as VisualType;
 // The Suspense-wrapped blade awaits the content, so it opens on a populated store — the same shape Note uses
 await loadContent();
-// Layout drags and visual edits mutate the dashboard in place, so the watch has to be deep. The store seeds
-// The dirty check on load, which is what keeps the load echo from writing straight back
+// Layout drags and visual edits mutate the dashboard in place, so the watch has to be deep.
+// Seeding the dirty check from the loaded content is what keeps that load echoing straight back out as a save.
 watchAutosave(dashboard, saveDashboard);
 </script>
 

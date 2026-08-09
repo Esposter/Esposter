@@ -27,6 +27,10 @@ const createInvariantDataSource = () =>
   );
 const createNullInvariantDataSource = () =>
   createDataSource([createColumn("a")], [createRow({ a: null }), createRow({ a: " " })]);
+// Three rows, so the reorder case can move one across two positions. An adjacent swap is its own inverse, so
+// It passes whether undo reverses the move or simply re-applies it, which is the bug worth catching
+const createReorderInvariantDataSource = () =>
+  createDataSource([createColumn("a")], [createRow({ a: "0" }), createRow({ a: "1" }), createRow({ a: "2" })]);
 // The case calls its own composable rather than handing over an argument list — an array literal standing in
 // For a parameter tuple widens (`[[firstId, secondId]]` becomes `string[][]`) and stops matching the one-tuple
 const createCase = (name: string, dataSource: DataSource, invoke: (dataSource: DataSource) => Promise<void>) => ({
@@ -77,8 +81,8 @@ describe("undo/redo invariants", () => {
     createCase("useReorderColumns: moves a column two positions", createInvariantDataSource(), ({ columns }) =>
       useReorderColumns()([takeOne(columns, 1), takeOne(columns, 2), takeOne(columns)]),
     ),
-    createCase("useReorderRows: swaps two rows", createInvariantDataSource(), ({ rows }) =>
-      useReorderRows()([takeOne(rows, 1), takeOne(rows)]),
+    createCase("useReorderRows: moves a row two positions", createReorderInvariantDataSource(), ({ rows }) =>
+      useReorderRows()([takeOne(rows, 1), takeOne(rows, 2), takeOne(rows)]),
     ),
     createCase(
       `useStringTransformation: ${StringTransformationType.Trim} rewrites every string cell`,

@@ -46,7 +46,9 @@ gh pr checks --json name,state,description --jq '.[] | select(.name=="CodeRabbit
 | `SUCCESS` / `Review rate limited`              | never started, nothing running | **push**                      |
 | `SUCCESS` / skip comment says `Too many files` | never started                  | push, but fix the count first |
 
-**`Review rate limited` is not a wait state.** Nothing is running, so there is nothing to lose by pushing, and waiting on it stalls the working tree for an hour to protect a review that does not exist. Treat the review as an async thread: keep committing and keep pushing while it is parked, on the single condition that every push leaves the branch **within the file cap measured from where the review last stopped** (`references/release-pr-cutting.md`). The work never blocks on the reviewer; only the file count governs.
+**This table says when a push is _safe_, never when it is _authorised_.** The standing rule is unchanged and overrides everything here: commit the coherent change and **never push unless the user asks** — that covers rate-limited pushes, recovery pushes and force-pushes alike. Read the table only once you already have the ask, to decide whether this is the moment.
+
+**Given the ask, `Review rate limited` is not a wait state.** Nothing is running, so there is nothing to lose by pushing, and holding the branch stalls the working tree for an hour to protect a review that does not exist. Under a standing ask ("keep pushing while it's parked"), treat the review as an async thread: keep committing and keep pushing, on the single condition that every push leaves the branch **within the file cap measured from where the review last stopped** (`references/release-pr-cutting.md`). Without that ask, commit and stop — the reviewer's state never turns "not yet asked" into permission.
 
 This applies per push, not per work session — a second push minutes after the first lands while the first push's review is still running. Batch commits and push once when the work is coherent.
 
