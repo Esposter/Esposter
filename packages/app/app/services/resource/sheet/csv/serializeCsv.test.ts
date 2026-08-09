@@ -118,15 +118,14 @@ describe(serializeCsv, () => {
     expect(takeOne(rows).data).toStrictEqual({ a: "0,1", b: 'say "hi"', c: null });
   });
 
-  test("a cell containing a newline round trips as two rows", async () => {
+  test("a cell containing a newline round trips as one row", async () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: "0\n1" })]);
     const { rows } = await roundTrip(dataSource);
 
-    expect(rows).toHaveLength(2);
-    expect(takeOne(rows).data).toStrictEqual({ a: 0 });
-    expect(takeOne(rows, 1).data).toStrictEqual({ a: 1 });
+    expect(rows).toHaveLength(1);
+    expect(takeOne(rows).data).toStrictEqual({ a: "0\n1" });
   });
 
   test("a whitespace-only cell round trips as null", async () => {

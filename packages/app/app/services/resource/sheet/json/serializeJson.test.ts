@@ -60,12 +60,12 @@ describe(serializeJson, () => {
     expect(takeOne(rows).data).toStrictEqual({ a: "0,1", b: 'say "hi"', c: "0\n1" });
   });
 
-  test("a null cell round trips as the string null", async () => {
+  test("a null cell round trips as null", async () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: null })]);
     const { rows } = await roundTrip(dataSource);
 
-    expect(takeOne(rows).data).toStrictEqual({ a: "null" });
+    expect(takeOne(rows).data).toStrictEqual({ a: null });
   });
 });

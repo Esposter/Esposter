@@ -21,6 +21,8 @@ export const deserializeJson = async (file: File, _settings: JsonFileSettings): 
   );
   const [firstRow] = rows;
   const sourceNames = firstRow ? Object.keys(firstRow) : [];
-  const bodyRows = rows.map((row) => sourceNames.map((sourceName) => String(takeOne(row, sourceName))));
+  // ?? so a JSON null and an absent property both reach the dataset as an empty cell, which coerces
+  // back to null. String() alone would persist them as the text "null" and "undefined".
+  const bodyRows = rows.map((row) => sourceNames.map((sourceName) => String(takeOne(row, sourceName) ?? "")));
   return deserializeToDataSource(sourceNames, bodyRows, DataSourceType.Json, file);
 };

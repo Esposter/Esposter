@@ -12,19 +12,20 @@ import { createRow } from "@/composables/resource/sheet/commands/createRow.test"
 import { ColumnTransformationComputeMap } from "@/services/resource/sheet/column/transformation/ColumnTransformationComputeMap";
 import { describe, expect, test } from "vitest";
 
-describe("ColumnTransformationComputeMap", () => {
+const createContext = (
+  sourceValue: null | string,
+  sourceColumn: Column | undefined,
+  rows?: ColumnTransformationComputeContext["rows"],
+  rowIndex?: number,
+): ColumnTransformationComputeContext => ({
+  computeSource: () => sourceValue,
+  findSource: () => sourceColumn,
+  rowIndex,
+  rows,
+});
+
+describe("columnTransformationComputeMap", () => {
   const sourceColumnId = crypto.randomUUID();
-  const createContext = (
-    sourceValue: null | string,
-    sourceColumn: Column | undefined,
-    rows?: ColumnTransformationComputeContext["rows"],
-    rowIndex?: number,
-  ): ColumnTransformationComputeContext => ({
-    computeSource: () => sourceValue,
-    findSource: () => sourceColumn,
-    rowIndex,
-    rows,
-  });
 
   test(`${ColumnTransformationType.String} returns null for a null source value`, () => {
     expect.hasAssertions();
