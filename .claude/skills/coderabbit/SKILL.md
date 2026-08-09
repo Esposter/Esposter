@@ -1,6 +1,6 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree, never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review, the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, nitpicks live in the review body rather than inline comments, the coderabbitai[bot] login and reconciling against the stated counts, replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review, the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, nitpicks live in the review body rather than inline comments, the coderabbitai[bot] login and reconciling against the stated counts, replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
 ---
 
 # CodeRabbit Conventions
@@ -16,6 +16,16 @@ git show <base-branch>:.coderabbit.yaml | head -20     # the config CodeRabbit a
 
 - Commit config changes **directly to that base branch**, as a standalone commit separate from the work they cover. A config change on the head branch does nothing.
 - Editing the base branch does not mean checking it out over your work: `git worktree add <scratch-path> <base-branch>`, commit there, push, then `git worktree remove`. The working tree keeps whatever is in flight, which matters when agents are mid-edit in it. Rebase inside the worktree before pushing — the base branch moves under you (Renovate).
+- **On Windows the worktree can fail outright** — checking out this repo under a long scratch path trips `Filename too long` on the deepest `packages/infra` paths and aborts with `Could not reset index file`. For a one-file config edit, skip the checkout entirely and commit through the API, which is atomic and cannot disturb the working tree at all:
+
+  ```bash
+  sha=$(gh api "repos/:owner/:repo/contents/.coderabbit.yaml?ref=main" --jq .sha)
+  gh api -X PUT "repos/:owner/:repo/contents/.coderabbit.yaml" \
+    -f message="$(cat message.txt)" -f content="$(base64 -w0 new.yaml)" -f sha="$sha" -f branch=main
+  ```
+
+  Validate the yaml parses (§ Generating the list) _before_ the PUT — there is no local commit to amend afterwards.
+
 - The two branches diverging is expected: `develop` can carry a temporary exclusion block while `main` carries only the permanent entries, picking the block up on a release merge and losing it when the block is removed.
 
 CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)** — develop-base PRs are skipped with "Auto reviews are disabled on base/target branches other than the default branch". Trigger those manually by commenting `@coderabbitai review` on the PR.
@@ -86,11 +96,21 @@ The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's 
 
 When a push has already overshot, the recovery is to **shorten `develop`, park the remainder on a queue branch, and drain it one window at a time** — `references/release-pr-cutting.md`. Treat it as a last resort with a real cost, not the routine tool.
 
-**Not exclusions:** being over budget is never what earns one (see below), and reaching for them here is the standing temptation, because the base branch whose `.coderabbit.yaml` would have to change is `main`. The arithmetic also refuses: a real over-budget window is over budget in _substantive_ files, so the handful that legitimately qualify (pure renames, import-path-only edits) never close a gap of any size. Measure the qualifying set before proposing exclusions as the fix — it is routinely a couple of files against a hundred-file overshoot.
+**Rarely exclusions**, and only when the arithmetic actually closes. Reaching for them is the standing temptation, because the base branch whose `.coderabbit.yaml` would have to change is `main`, and a config commit feels cheaper than a rewind. It usually is not: a genuinely over-budget window is over budget in _substantive_ files, so the handful that qualify (pure renames, import-path-only edits) close nothing. **Measure the qualifying set before proposing exclusions** — against a hundred-file overshoot it is routinely a couple of files.
+
+**The exception is a small overshoot.** When the window is over by single digits _and_ the qualifying set covers the gap on its own, a temporary exclusion is the cheaper recovery, because the alternative is rewinding a shared branch. Prefer it outright when someone else is working on `develop`: a cut rewrites history under them, an exclusion touches only `main`. The bar on each file does not move — it must still carry no reviewable content (`references/exclusions.md` § When to exclude), and inventing headroom by excluding substantive files is the thing this rule exists to stop. The procedure:
+
+1. Read the skip comment for the real overshoot (`N files exceed the limit of M`); do not compute it from the merge-base.
+2. Classify the window and count what genuinely qualifies. If it does not cover the gap **with margin**, stop and cut instead — landing exactly on the cap leaves nothing for the next push.
+3. A change repeated verbatim across N files (one identical line deleted from five views) is reviewable **once**: keep one file as the representative, exclude its twins, and name the representative in the yaml comment so the next reader can check the claim.
+4. Commit the block to `main` with its revert subject, retrigger with `@coderabbitai review` — no push to `develop` is needed, and none should be made, since the config is read from the base branch and a push would only add files to the same window.
+5. Remove the block once that review completes. An exclusion left behind blinds the next review of those paths silently.
+
+Never exclude a file another session is actively editing, however trivial its committed diff looks: the filter is static and will swallow the real change when it lands.
 
 The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items sharing a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land in separate PRs with a stated merge order.
 
-**Being over budget is never a reason to exclude a file.** Over budget is a chunking problem: split the work, or land it in stages so each incremental cycle stays under the cap. Excluding substantive files buys a smaller review, not a better one — the diff still ships, just unread.
+**Being over budget is never a reason to exclude a _substantive_ file.** Over budget is a chunking problem: split the work, or land it in stages so each incremental cycle stays under the cap. Excluding a file that carries real content buys a smaller review, not a better one — the diff still ships, just unread. Excluding one that carries none costs nothing, which is why the small-overshoot exception above is bounded by what qualifies rather than by how badly the headroom is wanted.
 
 ## Reading and Answering Findings
 

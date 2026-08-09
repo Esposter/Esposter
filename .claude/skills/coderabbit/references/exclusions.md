@@ -6,15 +6,21 @@ Read when deciding whether a file may be excluded, generating the exclusion list
 
 Chunk at the budget where you can. A mechanical rename can't be chunked — it's one atomic commit — so exclude the files within it that carry no reviewable content.
 
+The other case is a **small overshoot on an already-pushed window** (SKILL.md § PR File Budget): the push is spent, the cap is exceeded by single digits, and the alternative is rewinding a branch someone else is working on. The bar per file is identical — what changes is only that the exclusion is worth doing at all.
+
 **Every exclusion is derived from an open PR's diff.** Enumerate what that PR actually changed, classify each file, and list the ones that qualify. Never write an exclusion for a file class the repo merely _could_ produce — a speculative glob block (generated artifacts, binaries, vendored assets) added outside a PR is unreviewed config change for no benefit, and it silently blinds every later PR that does touch those paths. A class earns a permanent entry only when a real PR puts it in a diff.
 
-Exclude only files with **no reviewable content change**. Three kinds qualify:
+Exclude only files with **no reviewable content change**. Four kinds qualify:
 
 - **Pure renames** — 100% similarity, zero content change (`R100`).
 - **Rename-token-only edits** — the file's only diff is the mechanical substitution itself (every `OldName` identifier → `NewName`). A temporary block covering both kinds says so in its header comment.
 - **Import-path-only edits** — a module moved (`@/` → `#shared`, say) and the file's entire diff is the same imports pointing at the new path. "Every changed line is an `import`" is _not_ the test: a new symbol, a new package, or an added side-effect import is a real change that passes it. The test is that the added and removed imports pair up with **only the quoted specifier differing** — same symbols, same shape, new module.
 
+- **Verbatim repetitions of one edit** — the same change applied identically across N files (one shared line deleted from five sibling views). The change is reviewable once, not N times, so **keep one file as the representative and exclude only its twins**. This is the one kind where the excluded files do carry a content change, which makes the representative load-bearing: name it in the yaml comment, so a reader can confirm the change was reviewed rather than take it on trust. Verify the diffs are genuinely identical instead of merely similar — a sibling that also renamed a variable is not a twin.
+
 A file that was renamed _and_ carries a real logic change still needs review. When in doubt, leave it in.
+
+**Never exclude a file another session is actively editing**, whatever its committed diff looks like. `path_filters` are static: a file whose diff is comment-only today will have its real change swallowed when the in-flight work lands, and nothing announces it.
 
 Never excludable, whatever the budget:
 
