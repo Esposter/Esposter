@@ -1,6 +1,6 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
+import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { useDashboardStore } from "@/store/dashboard";
@@ -55,8 +55,9 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   // Same write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual
   const deleteVisual = async (ids: { id: Visual["id"] }) => {
     // Same scoping, and the removed visual itself rather than a clone — a delete filters the list without
-    // Touching it. It returns at the end of the list, so the rejected delete costs it its place; dropping a
-    // Visual the user added while the delete was in flight would cost them the visual
+    // Touching it. It returns at the end, which costs it nothing: the grid places a visual by its own x/y,
+    // So array order is not where it sits. Restoring the whole list instead would drop a visual the user
+    // Added while the delete was in flight
     const deletedVisual = visuals.value.find(getIsEntityIdEqualComparator<Visual>(["id"], ids));
     storeDeleteVisual(ids);
     const isSuccessful = await saveDashboard();

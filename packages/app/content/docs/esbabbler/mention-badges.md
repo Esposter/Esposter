@@ -20,7 +20,7 @@ flowchart LR
   CM["createMessage"] -->|"incrementMentionCounts<br/>(one batched UPDATE, sender excluded)"| DB[("usersToRooms.mentionCount")]
   VIEW["room view<br/>(/messages/[id])"] -->|"clearMentionCount"| DB
   DB -->|"updateUserToRoom event"| SUB["onUpdateUserToRoom subscription"]
-  SUB --> STORE["useUserToRoomStore.myUserToRoomMap"]
+  SUB --> STORE["useUserToRoomStore.myUserToRoom"]
   STORE -->|"mentionCount > 0"| CHIP["room ListItem red chip"]
 ```
 

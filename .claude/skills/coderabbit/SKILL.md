@@ -19,10 +19,13 @@ git show <base-branch>:.coderabbit.yaml | head -20     # the config CodeRabbit a
 - **On Windows the worktree can fail outright** — checking out this repo under a long scratch path trips `Filename too long` on the deepest `packages/infra` paths and aborts with `Could not reset index file`. For a one-file config edit, skip the checkout entirely and commit through the API, which is atomic and cannot disturb the working tree at all:
 
   ```bash
-  sha=$(gh api "repos/:owner/:repo/contents/.coderabbit.yaml?ref=main" --jq .sha)
+  baseBranch=$(gh pr view <pr> --json baseRefName --jq .baseRefName)
+  sha=$(gh api "repos/:owner/:repo/contents/.coderabbit.yaml?ref=$baseBranch" --jq .sha)
   gh api -X PUT "repos/:owner/:repo/contents/.coderabbit.yaml" \
-    -f message="$(cat message.txt)" -f content="$(base64 -w0 new.yaml)" -f sha="$sha" -f branch=main
+    -f message="$(cat message.txt)" -f content="$(base64 -w0 new.yaml)" -f sha="$sha" -f branch="$baseBranch"
   ```
+
+  Both calls take the resolved base, never a hardcoded `main` — the read and the write have to name the same branch, or the PUT lands the edited config on a branch whose `sha` it was not read from and the API rejects it. On a `develop`-base PR a hardcoded pair would instead write config to `main` that the review never reads.
 
   Validate the yaml parses (§ Generating the list) _before_ the PUT — there is no local commit to amend afterwards.
 
@@ -102,7 +105,7 @@ When a push has already overshot, the recovery is to **shorten `develop`, park t
 
 1. Read the skip comment for the real overshoot (`N files exceed the limit of M`); do not compute it from the merge-base.
 2. Classify the window and count what genuinely qualifies. If it does not cover the gap **with margin**, stop and cut instead — landing exactly on the cap leaves nothing for the next push.
-3. A change repeated verbatim across N files (one identical line deleted from five views) is reviewable **once**: keep one file as the representative, exclude its twins, and name the representative in the yaml comment so the next reader can check the claim.
+3. A change repeated verbatim across N files (one identical line deleted from five views) is reviewable **once**: keep one file as the representative, exclude its twins, and name the representative in the yaml comment so the next reader can check the claim. Identical patch text is the entry condition, not the test — the twin qualifies only if the line _means_ the same thing there, same symbols resolving to the same modules and the same runtime effect (`references/exclusions.md` § When to exclude).
 4. Commit the block to `main` with its revert subject, retrigger with `@coderabbitai review` — no push to `develop` is needed, and none should be made, since the config is read from the base branch and a push would only add files to the same window.
 5. Remove the block once that review completes. An exclusion left behind blinds the next review of those paths silently.
 

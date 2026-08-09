@@ -11,6 +11,12 @@ import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
+const setupStore = async () => {
+  const todoListStore = useTodoListStore();
+  await todoListStore.loadContent();
+  return todoListStore;
+};
+
 describe(useTodoListStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
@@ -27,11 +33,6 @@ describe(useTodoListStore, () => {
     }) as Resource;
   let content: TodoListResource;
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
-  const setupStore = async () => {
-    const todoListStore = useTodoListStore();
-    await todoListStore.loadContent();
-    return todoListStore;
-  };
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -109,6 +110,27 @@ describe(useTodoListStore, () => {
     expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName]);
     expect(editFormDialog.value).toBe(true);
+  });
+
+  // The list is ordered by the user, so where an item sits is content of its own — a rejected delete that lands
+  // Its item back at the end has still lost something, and on a long list it reappears out of sight
+  test("puts a rejected delete back at the index it was removed from", async () => {
+    expect.hasAssertions();
+
+    content = { items: [new TodoListItem({ name: itemName }), new TodoListItem({ name: newItemName })] };
+    server.use(
+      trpcMsw.todoList.saveResourceContent.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const todoListStore = await setupStore();
+    const { editItem, saveItem } = todoListStore;
+    const { items } = storeToRefs(todoListStore);
+    await editItem({ id: takeOne(items.value).id });
+    const isSuccessful = await saveItem(true);
+
+    expect(isSuccessful).toBe(false);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
   });
 
   // Another device's save arrives with the content it wrote, so adopting it has to re-seed the dirty check

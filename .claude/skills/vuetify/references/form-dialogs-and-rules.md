@@ -58,8 +58,10 @@ Custom stateless/parameterized rules live in `app/rules.config.ts` (wired via `v
 
 ```ts
 minValue: (minimum, error) => (value: TextFieldValue) =>
-  !value || Number(value) >= minimum || error || `You must enter a value of at least ${minimum}`,
+  value === null || value === "" || Number(value) >= minimum || error || `You must enter a value of at least ${minimum}`,
 ```
+
+**Test emptiness by equality, not by falsiness.** `TextFieldValue` is `null | number | string` because a `type="number"` field binds a numeric model and Vuetify hands the rule whatever that model holds — so `!value` reads a numeric `0` as an empty field and passes it, which is the one value a `minValue(1)` is most likely there to reject. A rule that genuinely only applies to text (`isNotProfanity`) says so with `typeof value !== "string"` instead.
 
 Revisit when i18n lands: at that point the locale is being paid for anyway and these two aliases move into it.
 

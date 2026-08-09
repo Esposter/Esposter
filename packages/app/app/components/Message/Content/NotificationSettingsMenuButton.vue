@@ -10,13 +10,13 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
-const { myUserToRoomMap } = storeToRefs(userToRoomStore);
-const notificationType = computed(() => myUserToRoomMap.value?.notificationType ?? NotificationType.DirectMessage);
+const { myUserToRoom } = storeToRefs(userToRoomStore);
+const notificationType = computed(() => myUserToRoom.value?.notificationType ?? NotificationType.DirectMessage);
 const notificationTypeLabels = Object.entries(NotificationTypeLabelMap);
 const { executeMutation } = useMutation();
 const updateNotificationType = async (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
-  if (!roomId || !myUserToRoomMap.value) return;
+  if (!roomId || !myUserToRoom.value) return;
   await executeMutation(
     () => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }),
     {

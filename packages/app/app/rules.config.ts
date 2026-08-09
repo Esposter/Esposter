@@ -11,8 +11,15 @@ import { profanity } from "@2toad/profanity";
 export default {
   aliases: {
     isNotProfanity: (error) => (value: TextFieldValue) =>
-      !value || !profanity.exists(value) || error || "This field cannot contain profanity",
+      typeof value !== "string" || !profanity.exists(value) || error || "This field cannot contain profanity",
+    // Emptiness by equality rather than by falsiness: a numeric `0` is a value the field holds, and waving it
+    // Through as "nothing entered" is exactly the check `minValue` exists to make — `minValue(1)` on a slowmode
+    // Field would accept zero seconds
     minValue: (minimum, error) => (value: TextFieldValue) =>
-      !value || Number(value) >= minimum || error || `You must enter a value of at least ${minimum}`,
+      value === null ||
+      value === "" ||
+      Number(value) >= minimum ||
+      error ||
+      `You must enter a value of at least ${minimum}`,
   },
 } satisfies RulesOptions;

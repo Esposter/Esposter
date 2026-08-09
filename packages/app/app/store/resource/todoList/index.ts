@@ -3,15 +3,12 @@ import type { Resource, ResourceType } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { useResourceStore } from "@/store/resource";
 import { toRawDeep } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
-  const route = useRoute();
-  // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save, setPersistedContent } = useResource<ResourceType.TodoList>(() =>
-    getRouteParamString(route.params.id),
-  );
+  const resourceStore = useResourceStore();
+  const { readContent, readResource, saveContent, setPersistedContent, storeContentVersion } = resourceStore;
   const todoList = ref<TodoListResource>({ items: [] });
   const items = computed({
     get: () => todoList.value.items,
@@ -21,20 +18,20 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   });
   const searchQuery = ref("");
   const loadContent = async () => {
-    await load();
-    const data = await readContent();
+    await readResource();
+    const data = await readContent<ResourceType.TodoList>();
     // Content crosses the wire as plain JSON, so the loaded value carries the list's data shape rather than
     // Its class instances — the two differ only by the methods ToData strips. See the sweep ledger
     todoList.value = (data as TodoListResource | undefined) ?? { items: [] };
     // Seed the dirty check so a save that changed nothing compares equal instead of bumping contentVersion
     setPersistedContent(todoList.value);
   };
-  const saveTodoList = () => save(todoList.value);
+  const saveTodoList = () => saveContent(todoList.value);
   // Another device saved — adopt its content and contentVersion so this client renders live data
   // And its own next save is not rejected as stale; the adopted content is what is now persisted
   const storeSaveResourceContent = (content: TodoListResource, contentVersion: Resource["contentVersion"]) => {
     todoList.value = content;
-    if (resource.value) resource.value.contentVersion = contentVersion;
+    storeContentVersion(contentVersion);
     setPersistedContent(content);
   };
   const { createItem, deleteItem, updateItem } = createOperationData(items, ["id"], "Item");
@@ -53,6 +50,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     // Content along with the rejected edit. Cloned before the write because updateItem assigns onto the live
     // Item, and read before it because originalItem is a computed over items
     const previousItem = originalItem.value ? structuredClone(toRawDeep(originalItem.value)) : undefined;
+    // Where an item sits is content in a list the user ordered, so the unwind owes its index back too. Read
+    // Before the removal, and used through a re-created insert rather than createItem, which only appends
+    const previousIndex = items.value.findIndex((item) => item.id === id);
 
     // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from
     // The item in hand — a separately tracked index would still hold the previous edit's row when the dialog
@@ -64,9 +64,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     const isSuccessful = await saveTodoList();
     if (isSuccessful) editFormDialog.value = false;
     else if (!previousItem) deleteItem({ id });
-    // A rejected delete lands its item back at the end of the list, which costs it its place — cheaper than
-    // Discarding whatever the adopted content brought with it
-    else if (isDeleteAction) createItem(previousItem);
+    // Clamped to the current length because the list can be shorter by the time the save comes back —
+    // StoreSaveResourceContent adopts another device's content mid-flight, and that content is kept
+    else if (isDeleteAction) items.value.splice(Math.min(previousIndex, items.value.length), 0, previousItem);
     else updateItem(previousItem);
     return isSuccessful;
   };
