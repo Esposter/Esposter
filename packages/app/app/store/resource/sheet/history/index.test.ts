@@ -6,15 +6,15 @@ import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const setupWithDeletedRow = async (index = 0) => {
+  const { dataSource } = setupWithDataSource();
+  const deleteRow = useDeleteRow();
+  await deleteRow(takeOne(dataSource.rows, index).id);
+  return { dataSource, deleteRow };
+};
+
 describe(useSheetHistoryStore, () => {
   setupCommandTest();
-
-  const setupWithDeletedRow = async (index = 0) => {
-    const { dataSource } = setupWithDataSource();
-    const deleteRow = useDeleteRow();
-    await deleteRow(takeOne(dataSource.rows, index).id);
-    return { dataSource, deleteRow };
-  };
 
   test("becomes undoable after an operation", async () => {
     expect.hasAssertions();

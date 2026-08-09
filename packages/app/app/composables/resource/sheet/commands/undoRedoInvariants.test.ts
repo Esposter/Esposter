@@ -98,27 +98,26 @@ describe("undo/redo invariants", () => {
 
   setupCommandTest();
 
-  for (const { dataSource: initialDataSource, invoke, name } of cases)
-    test(name, async () => {
-      expect.hasAssertions();
+  test.each(cases)("$name", async ({ dataSource: initialDataSource, invoke }) => {
+    expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(initialDataSource);
-      const sheetHistoryStore = useSheetHistoryStore();
-      const { redo, undo } = sheetHistoryStore;
-      const { undoDescription } = storeToRefs(sheetHistoryStore);
-      const beforeExecute = structuredClone(toRawDeep(dataSource));
-      await invoke();
-      const afterExecute = structuredClone(toRawDeep(dataSource));
+    const { dataSource } = setupWithDataSource(initialDataSource);
+    const sheetHistoryStore = useSheetHistoryStore();
+    const { redo, undo } = sheetHistoryStore;
+    const { undoDescription } = storeToRefs(sheetHistoryStore);
+    const beforeExecute = structuredClone(toRawDeep(dataSource));
+    await invoke();
+    const afterExecute = structuredClone(toRawDeep(dataSource));
 
-      expect(afterExecute).not.toStrictEqual(beforeExecute);
-      expect(undoDescription.value).not.toBe("");
+    expect(afterExecute).not.toStrictEqual(beforeExecute);
+    expect(undoDescription.value).not.toBe("");
 
-      undo(dataSource);
+    undo(dataSource);
 
-      expect(structuredClone(toRawDeep(dataSource))).toStrictEqual(beforeExecute);
+    expect(structuredClone(toRawDeep(dataSource))).toStrictEqual(beforeExecute);
 
-      redo(dataSource);
+    redo(dataSource);
 
-      expect(structuredClone(toRawDeep(dataSource))).toStrictEqual(afterExecute);
-    });
+    expect(structuredClone(toRawDeep(dataSource))).toStrictEqual(afterExecute);
+  });
 });
