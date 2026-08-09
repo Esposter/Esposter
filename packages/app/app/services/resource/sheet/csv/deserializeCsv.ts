@@ -11,7 +11,9 @@ export const deserializeCsv = async (file: File, settings: CsvFileSettings): Pro
   const text = await file.text();
   const { delimiter } = settings.configuration;
   const [headerLine, ...bodyLines] = splitCsvRecords(text);
-  const sourceNames = headerLine ? deserializeCsvLine(headerLine, delimiter).map(getSourceColumnName) : [];
+  const sourceNames = headerLine
+    ? deserializeCsvLine(headerLine, delimiter).map((field, index) => getSourceColumnName(field, index))
+    : [];
   const bodyRows = bodyLines.map((line) => deserializeCsvLine(line, delimiter));
   return deserializeToDataSource(sourceNames, bodyRows, DataSourceType.Csv, file);
 };

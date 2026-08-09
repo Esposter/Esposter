@@ -10,6 +10,6 @@ export const serializeToTsv = (
   cellTextRows = getCellTextRows(dataSource.columns, dataSource.rows),
 ): string => {
   const headerRow = dataSource.columns.map((column) => sanitizeTsvField(column.name)).join("\t");
-  const dataRows = cellTextRows.map((cellTexts) => cellTexts.map(sanitizeTsvField).join("\t"));
+  const dataRows = cellTextRows.map((cellTexts) => cellTexts.map((cellText) => sanitizeTsvField(cellText)).join("\t"));
   return includeHeaders ? [headerRow, ...dataRows].join("\n") : dataRows.join("\n");
 };

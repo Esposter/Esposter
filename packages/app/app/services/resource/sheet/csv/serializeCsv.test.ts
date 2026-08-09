@@ -34,7 +34,7 @@ describe(serializeCsv, () => {
       [createRow({ a: 0, b: 1 }), createRow({ a: 2, b: 3 })],
     );
 
-    expect(await serializeText(dataSource)).toBe("a,b\n0,1\n2,3");
+    await expect(serializeText(dataSource)).resolves.toBe("a,b\n0,1\n2,3");
   });
 
   test("uses specified delimiter", async () => {
@@ -46,7 +46,7 @@ describe(serializeCsv, () => {
       type: DataSourceType.Csv,
     } satisfies CsvFileSettings;
 
-    expect(await serializeText(dataSource, item)).toBe("a;b\n0;1");
+    await expect(serializeText(dataSource, item)).resolves.toBe("a;b\n0;1");
   });
 
   test("escapes cells containing the delimiter", async () => {
@@ -54,7 +54,7 @@ describe(serializeCsv, () => {
 
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: "0,1" })]);
 
-    expect(await serializeText(dataSource)).toBe('a\n"0,1"');
+    await expect(serializeText(dataSource)).resolves.toBe('a\n"0,1"');
   });
 
   test("escapes cells containing double quotes", async () => {
@@ -62,7 +62,7 @@ describe(serializeCsv, () => {
 
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: 'say "hi"' })]);
 
-    expect(await serializeText(dataSource)).toBe('a\n"say ""hi"""');
+    await expect(serializeText(dataSource)).resolves.toBe('a\n"say ""hi"""');
   });
 
   test("escapes cells containing newlines", async () => {
@@ -70,7 +70,7 @@ describe(serializeCsv, () => {
 
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: "0\n1" })]);
 
-    expect(await serializeText(dataSource)).toBe('a\n"0\n1"');
+    await expect(serializeText(dataSource)).resolves.toBe('a\n"0\n1"');
   });
 
   test("escapes cells containing carriage returns", async () => {
@@ -78,7 +78,7 @@ describe(serializeCsv, () => {
 
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: "0\r1" })]);
 
-    expect(await serializeText(dataSource)).toBe('a\n"0\r1"');
+    await expect(serializeText(dataSource)).resolves.toBe('a\n"0\r1"');
   });
 
   test("writes an empty field for a null or missing cell", async () => {
@@ -86,7 +86,7 @@ describe(serializeCsv, () => {
 
     const dataSource = createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: null })]);
 
-    expect(await serializeText(dataSource)).toBe("a,b\n,");
+    await expect(serializeText(dataSource)).resolves.toBe("a,b\n,");
   });
 
   test("returns blob with correct mime type", async () => {
@@ -102,7 +102,7 @@ describe(serializeCsv, () => {
 
     const dataSource = createDataSource([createColumn("a")]);
 
-    expect(await serializeText(dataSource)).toBe("a");
+    await expect(serializeText(dataSource)).resolves.toBe("a");
   });
 
   test("round trips cells containing the delimiter, a double quote and a null", async () => {

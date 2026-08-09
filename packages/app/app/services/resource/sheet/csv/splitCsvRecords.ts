@@ -1,7 +1,7 @@
 import { normalizeString } from "@esposter/shared";
 
 // A quoted field may contain the record separator itself, so splitting on newlines is only correct
-// outside quotes. Quotes are kept in the output for deserializeCsvLine to strip.
+// Outside quotes. Quotes are kept in the output for deserializeCsvLine to strip.
 export const splitCsvRecords = (text: string): string[] => {
   const records: string[] = [];
   let current = "";

@@ -6,13 +6,13 @@ import { DatePartType } from "#shared/models/resource/sheet/column/transformatio
 import { computeDatePartTransformation } from "@/services/resource/sheet/column/transformation/computeDatePartTransformation";
 import { describe, expect, test } from "vitest";
 
-describe(computeDatePartTransformation, () => {
-  const createTransformation = (part: DatePartType): DatePartTransformation => ({
-    part,
-    sourceColumnId: "",
-    type: ColumnTransformationType.DatePart,
-  });
+const createTransformation = (part: DatePartType): DatePartTransformation => ({
+  part,
+  sourceColumnId: "",
+  type: ColumnTransformationType.DatePart,
+});
 
+describe(computeDatePartTransformation, () => {
   test("extracts each date part from its source format", () => {
     expect.hasAssertions();
 

@@ -8,6 +8,16 @@ import { z } from "zod";
 
 const jsonRowsSchema = z.array(z.record(z.string(), z.unknown()));
 
+// A JSON null and an absent property both become an empty cell, which coerces back to null the way
+// The CSV path already does. String() alone would persist them as the text "null" and "undefined",
+// And a container as "[object Object]" - each branch narrows so only a real primitive is stringified.
+const getCellText = (value: unknown): string => {
+  if (value === null || value === undefined) return "";
+  else if (typeof value === "string") return value;
+  else if (typeof value === "boolean" || typeof value === "number") return String(value);
+  else return JSON.stringify(value);
+};
+
 export const deserializeJson = async (file: File, _settings: JsonFileSettings): Promise<DataSource> => {
   const text = await file.text();
   // Plain JSON.parse preserves an imported ISO-datetime cell as its original string instead of
@@ -21,8 +31,6 @@ export const deserializeJson = async (file: File, _settings: JsonFileSettings): 
   );
   const [firstRow] = rows;
   const sourceNames = firstRow ? Object.keys(firstRow) : [];
-  // ?? so a JSON null and an absent property both reach the dataset as an empty cell, which coerces
-  // back to null. String() alone would persist them as the text "null" and "undefined".
-  const bodyRows = rows.map((row) => sourceNames.map((sourceName) => String(takeOne(row, sourceName) ?? "")));
+  const bodyRows = rows.map((row) => sourceNames.map((sourceName) => getCellText(takeOne(row, sourceName))));
   return deserializeToDataSource(sourceNames, bodyRows, DataSourceType.Json, file);
 };

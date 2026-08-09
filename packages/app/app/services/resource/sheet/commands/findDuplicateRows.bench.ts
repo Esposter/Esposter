@@ -46,12 +46,11 @@ const keepDuplicateModes = [KeepDuplicateMode.First, KeepDuplicateMode.Last];
 // Comparable and `vs base` isolates the shape×mode sensitivity (0% / 50% / 100% duplicates × First/Last)
 // Against the all-unique-First baseline, instead of conflating shape with scale.
 describe(findDuplicateRows, () => {
-  for (const { shapes, title } of benchRowCountGroups)
-    describe(title, () => {
-      for (const [shapeTitle, dataSource] of shapes)
-        for (const keepMode of keepDuplicateModes)
-          bench(`${shapeTitle} — ${keepMode} mode`, () => {
-            findDuplicateRows(dataSource, keepMode);
-          });
-    });
+  describe.each(benchRowCountGroups)("$title", ({ shapes }) => {
+    for (const [shapeTitle, dataSource] of shapes)
+      for (const keepMode of keepDuplicateModes)
+        bench(`${shapeTitle} — ${keepMode} mode`, () => {
+          findDuplicateRows(dataSource, keepMode);
+        });
+  });
 });
