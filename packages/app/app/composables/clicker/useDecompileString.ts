@@ -1,4 +1,4 @@
-import { decompileVariables } from "#shared/services/compiler/decompileVariables";
+import { decompileVariables } from "@/services/compiler/decompileVariables";
 import { useClickerStore } from "@/store/clicker";
 
 export const useDecompileString = (string: string) => {

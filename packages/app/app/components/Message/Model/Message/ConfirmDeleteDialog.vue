@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
+import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";

@@ -2,11 +2,11 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { columnFormSchema, ColumnTypeFormSchemaMap } from "#shared/models/resource/sheet/column/ColumnForm";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { extractSchemaFields } from "#shared/services/zod/extractSchemaFields";
+import { columnFormSchema, ColumnTypeFormSchemaMap } from "@/models/resource/sheet/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeCreateMap } from "@/services/resource/sheet/column/ColumnTypeCreateMap";
+import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
 import { Vjsf } from "@koumoul/vjsf";
 
 interface CreateDialogButtonProps {

@@ -2,12 +2,12 @@
 import type { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { SettingsCategories, SettingsCategory } from "@/models/message/room/SettingsCategory";
 import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategoryMap";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
+import { hasPermission } from "@/services/room/rbac/hasPermission";
 import { useRoleStore } from "@/store/message/room/role";
 
 interface LeftSideBarProps {

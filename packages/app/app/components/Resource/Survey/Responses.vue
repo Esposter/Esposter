@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 
-import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
+import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { getResultAsync } from "@esposter/shared";

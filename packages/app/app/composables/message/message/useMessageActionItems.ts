@@ -5,7 +5,7 @@ import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { dayjs } from "#shared/services/dayjs";
 import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
-import { hasPermission } from "#shared/services/room/rbac/hasPermission";
+import { hasPermission } from "@/services/room/rbac/hasPermission";
 import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useForwardStore } from "@/store/message/input/forward";

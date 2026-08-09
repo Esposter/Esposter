@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
 
-import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
+import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { useDataStore } from "@/store/message/data";
 import { noop } from "@esposter/shared";
 

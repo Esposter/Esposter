@@ -1,6 +1,6 @@
 import type { Item } from "@/models/shared/Item";
 
-import { hasPermission } from "#shared/services/room/rbac/hasPermission";
+import { hasPermission } from "@/services/room/rbac/hasPermission";
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useRoleStore } from "@/store/message/room/role";

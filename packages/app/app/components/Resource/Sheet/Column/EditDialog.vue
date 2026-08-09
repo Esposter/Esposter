@@ -2,10 +2,10 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { columnFormSchema, ColumnTypeFormSchemaMap } from "#shared/models/resource/sheet/column/ColumnForm";
-import { extractSchemaFields } from "#shared/services/zod/extractSchemaFields";
+import { columnFormSchema, ColumnTypeFormSchemaMap } from "@/models/resource/sheet/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { getEditColumnDescription } from "@/services/resource/sheet/commands/getEditColumnDescription";
+import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";

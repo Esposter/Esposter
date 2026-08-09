@@ -2,7 +2,7 @@
 import type { User } from "@esposter/db-schema";
 
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { hasPermission } from "#shared/services/room/rbac/hasPermission";
+import { hasPermission } from "@/services/room/rbac/hasPermission";
 import { useRoleStore } from "@/store/message/room/role";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 

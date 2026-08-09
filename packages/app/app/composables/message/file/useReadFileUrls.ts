@@ -2,7 +2,7 @@ import type { ReadFileUrl } from "@/models/message/file/ReadFileUrl";
 import type { FileEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
-import { getHasThumbnail } from "#shared/services/message/file/getHasThumbnail";
+import { getHasThumbnail } from "@/services/message/file/getHasThumbnail";
 import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getResultAsync, takeOne } from "@esposter/shared";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
+import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
 const MAX_RECENT_ACHIEVEMENTS = 4;
 

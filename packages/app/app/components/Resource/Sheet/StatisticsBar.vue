@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSourceStatistics } from "#shared/models/resource/sheet/datasource/DataSourceStatistics";
+import type { DataSourceStatistics } from "@/models/resource/sheet/dataSource/DataSourceStatistics";
 
 import { getFileSize } from "@/services/file/getFileSize";
 

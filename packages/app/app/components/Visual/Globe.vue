@@ -2,12 +2,12 @@
 import type ThreeGlobe from "three-globe";
 
 import { dayjs } from "#shared/services/dayjs";
-import { createRandomInteger } from "#shared/util/math/random/createRandomInteger";
 import countries from "@/assets/about/countries.json";
 import data from "@/assets/about/data.json";
 import { features } from "@/assets/about/globe.json";
 import { ARC_STROKES, COLORS } from "@/services/visual/constants";
 import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
+import { createRandomInteger } from "@/util/math/random/createRandomInteger";
 import { getRandomValues } from "@/util/math/random/getRandomValues";
 import { takeOne } from "@esposter/shared";
 import {

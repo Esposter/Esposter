@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 import type { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
+import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
 import { getCategoryColor } from "@/services/achievement/getCategoryColor";
 import { prettify } from "@/util/text/prettify";

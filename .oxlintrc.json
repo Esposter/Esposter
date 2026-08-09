@@ -30,6 +30,29 @@
       "rules": {
         "persist-then-notify/no-unhandled-effect-after-emit": "error"
       }
+    },
+    {
+      "files": ["packages/app/shared/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "importNames": ["randomUUID"],
+                "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+                "name": "node:crypto"
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/**", "~/**"],
+                "message": "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`."
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "plugins": ["import", "oxc", "typescript", "unicorn", "vitest", "vue"],
@@ -163,6 +186,7 @@
     "vitest/no-large-snapshots": "off",
     "vitest/prefer-called-once": "off",
     "vitest/prefer-describe-function-title": "off",
+    "vitest/prefer-each": "off",
     "vitest/prefer-to-be-falsy": "off",
     "vitest/prefer-to-be-truthy": "off",
     "vitest/require-hook": "off",

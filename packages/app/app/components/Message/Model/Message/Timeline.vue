@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { dayjs } from "#shared/services/dayjs";
-import { getTimelineDateLabel } from "#shared/services/dayjs/getTimelineDateLabel";
+import { getTimelineDateLabel } from "@/services/dayjs/getTimelineDateLabel";
 
 interface MessageTimelineProps {
   messageDate: Date;
