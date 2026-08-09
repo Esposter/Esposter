@@ -33,6 +33,11 @@ const vitestConfig = await defineVitestProject({
     // Constructors the `idb` library needs (the nuxt env's indexedDb mock only sets `indexedDB`); it's
     // Cheap and harmless for node tests, so it stays global.
     setupFiles: ["fake-indexeddb/auto", "./shared/test/setup.ts"],
+    // A `mountSuspended` in the nuxt environment costs a few seconds on its own, so a component test sits close
+    // To Vitest's 5s default before the run is even parallel — and with sixteen workers sharing a machine the
+    // Slowest of them tips over it. The failure reads as a flaky component rather than as a test that was
+    // Always near the line, so give every test the headroom the environment actually needs
+    testTimeout: dayjs.duration(30, "seconds").asMilliseconds(),
   },
 });
 // `defineVitestProject` is `resolveConfig` (all the nuxt wiring: plugins, aliases, runtime entry setup
