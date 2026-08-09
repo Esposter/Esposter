@@ -1,4 +1,4 @@
-import type { MessageMetadataEntityMap } from "#shared/models/db/message/metadata/MessageMetadataEntityMap";
+import type { MessageMetadataEntityMap } from "@/models/db/message/metadata/MessageMetadataEntityMap";
 import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/AzureMetadataOperationDataKey";
 import type { MessageMetadataType } from "@esposter/db-schema";
 

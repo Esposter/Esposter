@@ -45,9 +45,9 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 | File                                                                    | Role                                                    |
 | ----------------------------------------------------------------------- | ------------------------------------------------------- |
 | `shared/models/dataset/Dataset.ts`                                      | the `totalRows` field                                   |
-| `shared/services/dataset/getDatasetTruncation.ts`                       | the one truncation check every consumer shares          |
-| `shared/services/dataset/getDatasetTruncationText.ts`                   | the one "Showing N of M rows" phrasing                  |
-| `shared/services/dataset/formatTruncationCount.ts`                      | renders a bound-hitting count as "M+"                   |
+| `app/services/dataset/getDatasetTruncation.ts`                          | the one truncation check every consumer shares          |
+| `app/services/dataset/getDatasetTruncationText.ts`                      | the one "Showing N of M rows" phrasing                  |
+| `app/services/dataset/formatTruncationCount.ts`                         | renders a bound-hitting count as "M+"                   |
 | `app/components/Dataset/TruncationAlert.vue`                            | banner form (Survey Responses)                          |
 | `app/components/Dataset/TruncationFootnote.vue`                         | footnote form (Dashboard visual)                        |
 | `app/components/Resource/Email/ExportTruncationDialog.vue`              | the pre-export confirm                                  |

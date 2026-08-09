@@ -47,7 +47,7 @@ All paths relative to `packages/app`.
 | `app/services/resource/sheet/column/compareColumnValues.ts` | Underlying-value comparator behind `sortRaw`                        |
 | `app/store/resource/sheet/row.ts`                           | `getCellText` plus the headers that carry `value` and `sortRaw`     |
 | `app/components/Resource/Sheet/Row/Field/Index.vue`         | Renders the displayed text with the outlier and find/replace layers |
-| `shared/models/resource/sheet/column/ColumnFormat.ts`       | Union of the boolean, date and number format enums                  |
+| `app/models/resource/sheet/column/ColumnFormat.ts`          | Union of the boolean, date and number format enums                  |
 
 ## Notes
 

@@ -1,8 +1,8 @@
-import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
+import type { EntityIdKeys } from "@/models/entity/EntityIdKeys";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import type { EntityTypeKey } from "@esposter/db-schema";
 
-import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
+import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { Operation, takeOne, uncapitalize } from "@esposter/shared";
 
 export const createOperationData = <

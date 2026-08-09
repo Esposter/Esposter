@@ -1,8 +1,8 @@
-import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 import type {
   AchievementDefinitionMap,
   achievementDefinitions as baseAchievementDefinitions,
 } from "#shared/services/achievement/achievementDefinitions";
+import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 import type { AchievementName, UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";

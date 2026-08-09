@@ -1,9 +1,9 @@
 import type { AEntity } from "#shared/models/entity/AEntity";
-import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
+import type { EntityIdKeys } from "@/models/entity/EntityIdKeys";
 import type { ToData } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
 
-import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
+import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { toRawDeep } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
