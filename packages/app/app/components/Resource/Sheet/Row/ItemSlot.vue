@@ -7,13 +7,11 @@ import { useCellStore } from "@/store/resource/sheet/cell";
 
 interface ItemSlotProps {
   column: Column;
-  columns: Column[];
   item: Row;
   rowIndex: number;
-  rows: Row[];
 }
 
-const { column, columns, item, rowIndex, rows } = defineProps<ItemSlotProps>();
+const { column, item, rowIndex } = defineProps<ItemSlotProps>();
 const cellStore = useCellStore();
 const { isEditingCell } = cellStore;
 const editableColumn = computed(() => (checkIsEditableColumnValue(column) ? column : undefined));
@@ -23,10 +21,8 @@ const editableColumn = computed(() => (checkIsEditableColumnValue(column) ? colu
   <ResourceSheetRowFieldEditable
     v-if="isEditingCell(rowIndex, column.name) && editableColumn"
     :column="editableColumn"
-    :columns
     :item
     :row-index
-    :rows
   />
-  <ResourceSheetRowField v-else :column :columns :item :row-index :rows />
+  <ResourceSheetRowField v-else :column :item :row-index />
 </template>

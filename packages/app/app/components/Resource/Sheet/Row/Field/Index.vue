@@ -7,18 +7,22 @@ import { computeValue } from "@/services/resource/sheet/column/computeValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/resource/sheet/constants";
 import { getItemId } from "@/services/resource/sheet/getItemId";
 import { useCellStore } from "@/store/resource/sheet/cell";
+import { useColumnStore } from "@/store/resource/sheet/column";
 import { useFindReplaceStore } from "@/store/resource/sheet/findReplace";
 import { useOutlierStore } from "@/store/resource/sheet/outlier";
+import { useRowStore } from "@/store/resource/sheet/row";
 
 interface FieldProps {
   column: Column;
-  columns: Column[];
   item: Row;
   rowIndex: number;
-  rows: Row[];
 }
 
-const { column, columns, item, rowIndex, rows } = defineProps<FieldProps>();
+const { column, item, rowIndex } = defineProps<FieldProps>();
+const columnStore = useColumnStore();
+const { columns } = storeToRefs(columnStore);
+const rowStore = useRowStore();
+const { filteredRows } = storeToRefs(rowStore);
 const findReplaceStore = useFindReplaceStore();
 const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findReplaceStore);
 const outlierStore = useOutlierStore();
@@ -27,7 +31,7 @@ const cellStore = useCellStore();
 const { requestFocus } = cellStore;
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
-  const value = computeValue(rows, item, columns, column, rowIndex);
+  const value = computeValue(filteredRows.value, item, columns.value, column, rowIndex);
   return value === null ? "" : String(value);
 });
 const isCurrentOccurrence = computed(

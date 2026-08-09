@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useRowStore } from "@/store/resource/sheet/row";
 
 const rowStore = useRowStore();
@@ -7,7 +8,7 @@ const { copyIncludesHeaders } = storeToRefs(rowStore);
 
 <template>
   <StyledTooltipIconButton
-    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+    :button-props="DENSE_ICON_BUTTON_PROPS"
     :icon="copyIncludesHeaders ? 'mdi-table-headers-eye' : 'mdi-table-headers-eye-off'"
     :text="copyIncludesHeaders ? 'Headers included in copy' : 'Headers excluded from copy'"
     @click="copyIncludesHeaders = !copyIncludesHeaders"

@@ -3,6 +3,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 
 import { rowSchema } from "#shared/models/resource/sheet/datasource/Row";
 import { getRowFormColumns } from "@/services/resource/sheet/column/getRowFormColumns";
+import { getEditRowDescription } from "@/services/resource/sheet/commands/getEditRowDescription";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
@@ -18,7 +19,7 @@ const { editingId } = storeToRefs(rowDialogStore);
 const { isOpen } = useSingletonDialog(editingId);
 const rowFormColumns = computed(() => getRowFormColumns(columns));
 const updateRow = useUpdateRow();
-const title = computed(() => `Edit Row ${index + 1}`);
+const title = computed(() => getEditRowDescription(index));
 const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
   clone: (source) => structuredClone(toRawDeep(source)),
   deep: true,

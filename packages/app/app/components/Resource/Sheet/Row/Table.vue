@@ -150,7 +150,7 @@ onKeyStroke("Escape", () => {
 <template>
   <v-card flat>
     <template #text>
-      <ResourceSheetRowTextSlot :data-source />
+      <ResourceSheetRowTextSlot />
     </template>
     <VueDraggable v-model="dragRows" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
       <StyledDataTable
@@ -204,13 +204,7 @@ onKeyStroke("Escape", () => {
           <ResourceSheetRowHeaderSlot :column :get-sort-icon :header-column :is-sorted :toggle-sort />
         </template>
         <template v-for="column of displayColumns" :key="column.id" #[`item.${toColumnKey(column.name)}`]="{ item }">
-          <ResourceSheetRowItemSlot
-            :column
-            :columns="dataSource.columns"
-            :item
-            :row-index="rowIndexIdMap.get(item.id) ?? -1"
-            :rows="filteredRows"
-          />
+          <ResourceSheetRowItemSlot :column :item :row-index="rowIndexIdMap.get(item.id) ?? -1" />
         </template>
         <template #tfoot>
           <ResourceSheetRowFooterSlot />

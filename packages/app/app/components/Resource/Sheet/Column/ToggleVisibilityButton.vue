@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getToggleColumnVisibilityDescription } from "@/services/resource/sheet/commands/getToggleColumnVisibilityDescription";
+import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 
 interface ToggleVisibilityButtonProps {
   columnId: string;
@@ -13,7 +14,7 @@ const toggleColumnVisibility = useToggleColumnVisibility();
 
 <template>
   <StyledTooltipIconButton
-    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+    :button-props="DENSE_ICON_BUTTON_PROPS"
     :icon="hidden ? 'mdi-eye-off' : 'mdi-eye'"
     :text="getToggleColumnVisibilityDescription(columnName, hidden)"
     @click="toggleColumnVisibility(columnId)"

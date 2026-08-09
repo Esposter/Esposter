@@ -7,7 +7,5 @@ const deleteRows = useDeleteRows();
 </script>
 
 <template>
-  <ResourceSheetSelectionToolbar v-model="selectedRowIds" label="row" @delete="deleteRows">
-    <ResourceSheetRowCopyToClipboardButton :row-ids="selectedRowIds" />
-  </ResourceSheetSelectionToolbar>
+  <ResourceSheetSelectionToolbar v-model="selectedRowIds" label="row" @delete="deleteRows" />
 </template>

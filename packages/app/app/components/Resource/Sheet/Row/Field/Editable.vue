@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { EditableColumnValue } from "#shared/models/resource/sheet/column/EditableColumnValue";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
@@ -7,22 +6,26 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
 import { useCellStore } from "@/store/resource/sheet/cell";
+import { useColumnStore } from "@/store/resource/sheet/column";
+import { useRowStore } from "@/store/resource/sheet/row";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface EditableProps {
   column: EditableColumnValue;
-  columns: Column[];
   item: Row;
   rowIndex: number;
-  rows: Row[];
 }
 
-const { column, columns, item, rowIndex, rows } = defineProps<EditableProps>();
+const { column, item, rowIndex } = defineProps<EditableProps>();
 const updateRow = useUpdateRow();
+const columnStore = useColumnStore();
+const { columns } = storeToRefs(columnStore);
+const rowStore = useRowStore();
+const { filteredRows } = storeToRefs(rowStore);
 const cellStore = useCellStore();
 const { clearFocus, requestFocus } = cellStore;
 const editableColumns = computed(() =>
-  columns.filter((candidateColumn) => checkIsEditableColumnValue(candidateColumn)),
+  columns.value.filter((candidateColumn) => checkIsEditableColumnValue(candidateColumn)),
 );
 const localValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
 let isSubmitted = false;
@@ -48,7 +51,7 @@ const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
 <template>
   <div
     @blur.capture="submitEdit()"
-    @keydown.arrow-down.stop="rowIndex + 1 < rows.length && navigateTo(rowIndex + 1, column.name)"
+    @keydown.arrow-down.stop="rowIndex + 1 < filteredRows.length && navigateTo(rowIndex + 1, column.name)"
     @keydown.arrow-up.stop="rowIndex - 1 >= 0 && navigateTo(rowIndex - 1, column.name)"
     @keydown.enter.stop="!$event.isComposing && submitEdit()"
     @keydown.esc.stop="clearFocus()"

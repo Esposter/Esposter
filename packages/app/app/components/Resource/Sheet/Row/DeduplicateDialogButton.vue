@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 
+import { pluralize } from "#shared/util/text/pluralize";
 import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicateMode";
 import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
+import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useSheetStore } from "@/store/resource/sheet";
 import { takeOne } from "@esposter/shared";
 
@@ -29,7 +31,7 @@ const duplicateHeaders = computed(() => [
 
 <template>
   <StyledTooltipIconButton
-    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+    :button-props="DENSE_ICON_BUTTON_PROPS"
     icon="mdi-table-row-remove"
     text="Remove Duplicate Rows"
     @click.stop="isOpen = true"
@@ -37,7 +39,7 @@ const duplicateHeaders = computed(() => [
   <ResourceSheetDialog v-model="isOpen" close-button-text="Cancel" title="Duplicate Rows">
     <span v-if="duplicateCount === 0">No duplicate rows found.</span>
     <template v-else>
-      <span>{{ duplicateCount }} duplicate row{{ duplicateCount === 1 ? "" : "s" }} will be deleted.</span>
+      <span>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</span>
       <v-btn-toggle v-model="keepMode" density="compact" mandatory mt-4>
         <v-btn :value="KeepDuplicateMode.First">Keep First</v-btn>
         <v-btn :value="KeepDuplicateMode.Last">Keep Last</v-btn>

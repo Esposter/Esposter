@@ -36,7 +36,6 @@ const resetForm = () => {
     :edited-value="extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.type], editedColumn)"
     :schema="columnFormSchema"
     :value="extractSchemaFields(ColumnTypeFormSchemaMap[defaultColumn.type], defaultColumn)"
-    is-create
     @reset="resetForm()"
     @submit="
       (onComplete) => {

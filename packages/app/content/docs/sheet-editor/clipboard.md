@@ -67,7 +67,8 @@ All paths relative to `packages/app/app`.
 | `services/resource/sheet/commands/parseClipboardValuesByPosition.ts` | TSV → `string[][]` (no header row)                                                                                                                 |
 | `services/resource/sheet/commands/copyToClipboard.ts`                | TSV + HTML `ClipboardItem` write with `writeText` fallback                                                                                         |
 | `composables/resource/sheet/useCopyRangeToClipboard.ts`              | Slices the selected range and writes it to the clipboard                                                                                           |
-| `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `PasteRangeCommand` or `CreateRowsCommand`                                                                                       |
+| `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `usePasteRange` or `useCreateRows`                                                                                               |
+| `composables/resource/sheet/commands/usePasteRange.ts`               | The overwrite paste as a `useSheetCommand`, so both modes share one execute/push/save tail                                                         |
 | `components/Resource/Sheet/Row/Table.vue`                            | Keyboard handlers; maps `shiftKey` → `PasteMode`                                                                                                   |
 | `store/resource/sheet/cell.ts`                                       | Anchor/focus selection state, keyboard navigation, and the `selectedCellRange` computed (normalized `rowStart`/`rowEnd`/`columnStart`/`columnEnd`) |
 
@@ -75,4 +76,4 @@ All paths relative to `packages/app/app`.
 
 - Copy materializes computed values through the same `filterDataSourceColumns` path export uses, so [computed columns](/docs/sheet-editor/computed-columns) copy their displayed value ([copy computed values](/docs/sheet-editor/copy-computed-values)).
 - Paste target columns are pre-indexed by name to avoid repeated linear scans over wide tables.
-- The dedicated copy/paste buttons were removed from the cell text slot when keyboard range copy/paste shipped; row-level copy of checkbox-selected rows remains in the toolbar, alongside the `copyIncludesHeaders` toggle.
+- Copying is keyboard-only — the toolbar carries no copy button, just the `copyIncludesHeaders` toggle deciding whether a copied range leads with its header row.

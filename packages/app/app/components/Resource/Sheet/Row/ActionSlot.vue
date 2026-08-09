@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
+import { getDeleteRowDescription } from "@/services/resource/sheet/commands/getDeleteRowDescription";
+import { getEditRowDescription } from "@/services/resource/sheet/commands/getEditRowDescription";
+import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 
 interface ActionSlotProps {
@@ -11,23 +14,20 @@ interface ActionSlotProps {
 const { index, row } = defineProps<ActionSlotProps>();
 const rowDialogStore = useRowDialogStore();
 const { deletingId, editingId } = storeToRefs(rowDialogStore);
-const editTitle = computed(() => `Edit Row ${index + 1}`);
-const deleteTitle = computed(() => `Delete Row ${index + 1}`);
 </script>
 
 <template>
   <div flex>
-    <ResourceSheetRowCopyToClipboardButton :row-ids="[row.id]" />
     <StyledTooltipIconButton
-      :button-props="{ class: 'm-0', size: 'small', tile: true }"
+      :button-props="DENSE_ICON_BUTTON_PROPS"
       icon="mdi-pencil"
-      :text="editTitle"
+      :text="getEditRowDescription(index)"
       @click.stop="editingId = row.id"
     />
     <StyledTooltipIconButton
-      :button-props="{ class: 'm-0', size: 'small', tile: true }"
+      :button-props="DENSE_ICON_BUTTON_PROPS"
       icon="mdi-delete"
-      :text="deleteTitle"
+      :text="getDeleteRowDescription(index)"
       @click.stop="deletingId = row.id"
     />
   </div>

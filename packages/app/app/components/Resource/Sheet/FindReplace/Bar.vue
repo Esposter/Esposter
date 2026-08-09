@@ -6,15 +6,10 @@ const { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, repla
   storeToRefs(findReplaceStore);
 const findReplace = useFindReplace();
 
-const goToPrevious = () => {
+const goTo = (delta: number) => {
   if (occurrences.value.length === 0) return;
   currentOccurrenceIndex.value =
-    (currentOccurrenceIndex.value - 1 + occurrences.value.length) % occurrences.value.length;
-};
-
-const goToNext = () => {
-  if (occurrences.value.length === 0) return;
-  currentOccurrenceIndex.value = (currentOccurrenceIndex.value + 1) % occurrences.value.length;
+    (currentOccurrenceIndex.value + delta + occurrences.value.length) % occurrences.value.length;
 };
 </script>
 
@@ -34,8 +29,8 @@ const goToNext = () => {
             (event: KeyboardEvent) => {
               if (event.key === 'Enter') {
                 event.preventDefault();
-                if (event.shiftKey) goToPrevious();
-                else goToNext();
+                if (event.shiftKey) goTo(-1);
+                else goTo(1);
               } else if (event.key === 'Escape') isFindReplaceOpen = false;
             }
           "
@@ -51,13 +46,13 @@ const goToNext = () => {
           :button-props="{ disabled: occurrences.length === 0, size: 'small', variant: 'text' }"
           icon="mdi-chevron-up"
           text="Previous (Shift+Enter)"
-          @click="goToPrevious()"
+          @click="goTo(-1)"
         />
         <StyledTooltipIconButton
           :button-props="{ disabled: occurrences.length === 0, size: 'small', variant: 'text' }"
           icon="mdi-chevron-down"
           text="Next (Enter)"
-          @click="goToNext()"
+          @click="goTo(1)"
         />
         <v-btn
           :disabled="occurrences.length === 0"

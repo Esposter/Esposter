@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
-import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { ChartableColumnTypes } from "@/services/resource/sheet/column/computeColumnChartData";
+import { getDeleteColumnDescription } from "@/services/resource/sheet/commands/getDeleteColumnDescription";
+import { getEditColumnDescription } from "@/services/resource/sheet/commands/getEditColumnDescription";
+import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 
 interface ActionSlotProps {
@@ -11,15 +14,13 @@ interface ActionSlotProps {
 const { column } = defineProps<ActionSlotProps>();
 const columnDialogStore = useColumnDialogStore();
 const { chartingColumnName, deletingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
-const editTitle = computed(() => `Edit "${column.name}" Column`);
-const deleteTitle = computed(() => `Delete "${column.name}" Column`);
 </script>
 
 <template>
   <div flex>
     <StyledTooltipIconButton
-      v-if="column.type === ColumnType.Number || column.type === ColumnType.Boolean"
-      :button-props="{ class: 'm-0', size: 'small', tile: true }"
+      v-if="ChartableColumnTypes.has(column.type)"
+      :button-props="DENSE_ICON_BUTTON_PROPS"
       icon="mdi-chart-bar"
       text="Column Chart"
       @click.stop="chartingColumnName = column.name"
@@ -30,15 +31,15 @@ const deleteTitle = computed(() => `Delete "${column.name}" Column`);
       :hidden="column.hidden"
     />
     <StyledTooltipIconButton
-      :button-props="{ class: 'm-0', size: 'small', tile: true }"
+      :button-props="DENSE_ICON_BUTTON_PROPS"
       icon="mdi-pencil"
-      :text="editTitle"
+      :text="getEditColumnDescription(column.name)"
       @click.stop="editingColumnName = column.name"
     />
     <StyledTooltipIconButton
-      :button-props="{ class: 'm-0', size: 'small', tile: true }"
+      :button-props="DENSE_ICON_BUTTON_PROPS"
       icon="mdi-delete"
-      :text="deleteTitle"
+      :text="getDeleteColumnDescription(column.name)"
       @click.stop="deletingColumnName = column.name"
     />
   </div>

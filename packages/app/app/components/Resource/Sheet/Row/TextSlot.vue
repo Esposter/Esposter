@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-
 import { useRowStore } from "@/store/resource/sheet/row";
 
-interface TextSlotProps {
-  dataSource: DataSource;
-}
-
-const { dataSource } = defineProps<TextSlotProps>();
 const rowStore = useRowStore();
 const { search } = storeToRefs(rowStore);
 </script>
@@ -25,7 +18,7 @@ const { search } = storeToRefs(rowStore);
     <ResourceSheetRowStringTransformationDialogButton />
     <ResourceSheetRowNullStrategyDialogButton />
     <ResourceSheetRowDeduplicateDialogButton />
-    <ResourceSheetRowCreateDialogButton :data-source />
+    <ResourceSheetRowCreateDialogButton />
     <ResourceSheetRowCopyIncludesHeadersButton />
   </div>
 </template>

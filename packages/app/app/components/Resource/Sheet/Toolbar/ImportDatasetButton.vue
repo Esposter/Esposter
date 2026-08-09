@@ -8,24 +8,29 @@ import { getDatasetTruncationText } from "#shared/services/dataset/getDatasetTru
 import { authClient } from "@/services/auth/authClient";
 import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync, MAX_READ_LIMIT, noop, withFinalizerAsync } from "@esposter/shared";
+import { MAX_READ_LIMIT, withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const setDataSource = useSetDataSource();
+const { executeMutation, executeQuery } = useMutation();
 const dialog = ref(false);
 const surveys = ref<Resource[]>([]);
-const selectedSurveyId = ref<string>();
+const selectedSurveyId = ref("");
 const getImportTruncationMessage = (truncation: DatasetTruncation) =>
   `${getDatasetTruncationText(truncation)} — the remaining ${truncation.hiddenRows} were not imported`;
 
 watch(dialog, async (newDialog) => {
   if (!newDialog) return;
-  await getResultAsync(async () => {
-    ({ items: surveys.value } = await $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }));
-  }).match(noop, (error) => createAlert(error.message, "error"));
+  await executeQuery(() => $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }), {
+    isExclusive: true,
+    key: "survey/readResources",
+    onSuccess: ({ items }) => {
+      surveys.value = items;
+    },
+  });
 });
 </script>
 
@@ -40,18 +45,21 @@ watch(dialog, async (newDialog) => {
         (onComplete) =>
           withFinalizerAsync(
             () =>
-              getResultAsync(async () => {
-                const survey = surveys.find(({ id }) => id === selectedSurveyId);
-                if (!survey) return;
-                const dataset = await $trpc.dataset.readDataset.query({
-                  id: survey.id,
-                  type: DatasetProviderType.SurveyResponses,
-                });
-                await setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
-                // The sheet now looks like the whole survey, so a capped copy has to say so on the way in
-                const truncation = getDatasetTruncation(dataset);
-                if (truncation) createAlert(getImportTruncationMessage(truncation), 'warning');
-              }).match(noop, (error) => createAlert(error.message, 'error')),
+              executeMutation(
+                async () => {
+                  const survey = surveys.find(({ id }) => id === selectedSurveyId);
+                  if (!survey) return;
+                  const dataset = await $trpc.dataset.readDataset.query({
+                    id: survey.id,
+                    type: DatasetProviderType.SurveyResponses,
+                  });
+                  await setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
+                  // The sheet now looks like the whole survey, so a capped copy has to say so on the way in
+                  const truncation = getDatasetTruncation(dataset);
+                  if (truncation) createAlert(getImportTruncationMessage(truncation), 'warning');
+                },
+                { key: selectedSurveyId },
+              ),
             () => onComplete(),
           )
       "
