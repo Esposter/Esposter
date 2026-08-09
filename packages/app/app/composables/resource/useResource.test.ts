@@ -3,6 +3,7 @@ import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 import { EMPTY_NOTE_DOC } from "#shared/models/resource/note/NoteResource";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";
@@ -14,10 +15,8 @@ describe(useResource, () => {
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
   const resourceId = crypto.randomUUID();
   const otherResourceId = crypto.randomUUID();
-  const name = "name";
   // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
-  const createResource = (id: string, type = ResourceType.Sheet) =>
-    ({ contentVersion: 0, id, name, type, updatedAt: new Date(0) }) as Resource;
+  const createResource = (id: string, type = ResourceType.Sheet) => createResourceListItem({ id, type });
   const publication = {
     publishedAt: new Date(0),
     publishVersion: 1,

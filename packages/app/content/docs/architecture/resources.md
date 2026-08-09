@@ -132,7 +132,7 @@ flowchart TB
   DEF --> BLADES
 ```
 
-Component wiring cannot live in shared code, so exactly three thin client satellite maps exist: `ResourceBladeDefinitionMap` (type-specific blades), `PortableFormatMap` (import/export formats), and `ViewComponentMap` (public view renderers). Server-side hooks (publish transform, read transform) are passed at router construction because they import server code.
+Component wiring cannot live in shared code, so the client keeps one thin satellite map per surface a type can hand a component to: `ResourceBladeDefinitionMap` (type-specific blades), `ResourceEditorComponentMap` (the inline Editor blade), `ResourceOverviewComponentMap` (an Overview blade richer than the generic one), `PortableFormatMap` (import/export formats) and `ViewComponentMap` (public view renderers). **A map is for components only** — anything procedural reaches a type through its own router name (`useResourceRouter`), so a create, a rename or a publish never needs an entry anywhere. Server-side hooks (publish transform, read transform) are passed at router construction because they import server code.
 
 ## Procedures
 

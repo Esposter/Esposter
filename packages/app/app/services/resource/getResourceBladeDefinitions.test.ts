@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 // The editor component map reaches GrapesJS, which touches `window` at import time
+import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
 import { isValidResourceBlade } from "@/services/resource/isValidResourceBlade";
@@ -30,6 +31,16 @@ describe(getResourceBladeDefinitions, () => {
 
     expect(getSlugs(ResourceType.Survey)).toContain(ResourceBladeType.PublishHistory);
     expect(getSlugs(ResourceType.Blueprint)).not.toContain(ResourceBladeType.PublishHistory);
+  });
+
+  // Editor is the one built-in blade that declares no icon of its own: it renders the type's own editor, so the
+  // Rail entry has to be the type's own icon rather than a generic pencil shared by every editable type
+  test("gives the Editor blade the type's own icon", () => {
+    expect.hasAssertions();
+
+    expect(
+      getResourceBladeDefinitions(ResourceType.Note).find(({ slug }) => slug === ResourceBladeType.Editor)?.icon,
+    ).toBe(ResourceDefinitionMap[ResourceType.Note].icon);
   });
 
   test("titles and icons every blade it offers", () => {

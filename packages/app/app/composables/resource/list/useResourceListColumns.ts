@@ -1,5 +1,6 @@
 import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 
+import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS } from "@/services/resource/constants";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
@@ -14,7 +15,7 @@ export const useResourceListColumns = (source: ResourceListSource) => {
     LocalStorageKey.ResourceListHiddenColumns,
     DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS,
   );
-  const checkIsPinned = (key: string) => key === "name" || key === pinnedColumnKey;
+  const checkIsPinned = (key: string) => key === ResourceListItemPropertyNames.name || key === pinnedColumnKey;
   const visibleHeaders = computed(() =>
     ResourceHeaders.filter(({ key }) => checkIsPinned(key) || !hiddenColumnKeys.value.includes(key)),
   );

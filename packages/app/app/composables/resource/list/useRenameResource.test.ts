@@ -2,8 +2,8 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { useRenameResource } from "@/composables/resource/list/useRenameResource";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
-import { ResourceType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -12,8 +12,7 @@ describe(useRenameResource, () => {
   const server = setupMswTrpc();
   const name = "a";
   const newName = "b";
-  const createResource = () =>
-    ref({ contentVersion: 0, id: crypto.randomUUID(), name, type: ResourceType.Sheet } as Resource);
+  const createResource = () => ref<Resource>(createResourceListItem({ name }));
 
   beforeEach(() => {
     setActivePinia(createPinia());

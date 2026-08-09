@@ -26,6 +26,12 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
   const isLoading = ref(false);
+  // Every write reconciles only the fields it owns. By the time a rollback or a server row lands the ref may
+  // Have absorbed another concurrent edit — an autosave's contentVersion, a rename, a tag edit — so replacing
+  // It wholesale would clobber that edit; the fallback covers a ref that holds nothing to merge into
+  const mergeResource = (fields: Partial<Resource>, fallback: Resource) => {
+    resource.value = resource.value ? { ...resource.value, ...fields } : fallback;
+  };
   const load = async () => {
     // Resolved per call so a persisted store's loader always reads the current route id
     const idValue = toValue(id);
@@ -118,11 +124,7 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
           } else createErrorNotification(error);
         },
         onSuccess: (newResource) => {
-          // The save only bumps contentVersion, so only its fields are merged — replacing the whole ref
-          // With this row snapshot would clobber a concurrently in-flight optimistic rename/tag edit
-          resource.value = resource.value
-            ? { ...resource.value, contentVersion: newResource.contentVersion, updatedAt: newResource.updatedAt }
-            : newResource;
+          mergeResource({ contentVersion: newResource.contentVersion, updatedAt: newResource.updatedAt }, newResource);
           persistedContentJson = contentJson;
           isSuccessful = true;
         },
@@ -134,20 +136,16 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     const current = resource.value;
     if (!current) return;
     await executeRenameMutation(() => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name }), {
-      // Apply, rollback and success all touch only the name — the ref may have absorbed other
-      // Concurrent edits (autosave contentVersion, tags) by the time they run
       applyOptimistic: () => {
         resource.value = { ...current, name };
         return () => {
-          resource.value = resource.value ? { ...resource.value, name: current.name } : current;
+          mergeResource({ name: current.name }, current);
         };
       },
       key: current.id,
       onError: createErrorNotification,
       onSuccess: (newResource) => {
-        resource.value = resource.value
-          ? { ...resource.value, name: newResource.name, updatedAt: newResource.updatedAt }
-          : newResource;
+        mergeResource({ name: newResource.name, updatedAt: newResource.updatedAt }, newResource);
       },
     });
   };
@@ -158,20 +156,16 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     await executeUpdateTagsMutation(
       () => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name: current.name, tags }),
       {
-        // Apply, rollback and success all touch only the tags — the ref may have absorbed other
-        // Concurrent edits (autosave contentVersion, rename) by the time they run
         applyOptimistic: () => {
           resource.value = { ...current, tags };
           return () => {
-            resource.value = resource.value ? { ...resource.value, tags: current.tags } : current;
+            mergeResource({ tags: current.tags }, current);
           };
         },
         key: current.id,
         onError: createErrorNotification,
         onSuccess: (newResource) => {
-          resource.value = resource.value
-            ? { ...resource.value, tags: newResource.tags, updatedAt: newResource.updatedAt }
-            : newResource;
+          mergeResource({ tags: newResource.tags, updatedAt: newResource.updatedAt }, newResource);
         },
       },
     );

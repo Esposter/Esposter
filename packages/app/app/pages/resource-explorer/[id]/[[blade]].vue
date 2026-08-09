@@ -38,8 +38,9 @@ const activeBlade = computed(() => getRouteParamString(route.params.blade) || Re
 // Dropdown's "Recently opened" group all read the rows this writes
 useRecordResourceAccess(resource);
 const favoriteStore = useFavoriteStore();
+const { readFavorites } = favoriteStore;
 // The toolbar's star needs to know whether this resource is already starred
-onMounted(() => favoriteStore.readFavorites());
+onMounted(readFavorites);
 
 // Blade switches reuse this page instance, so the guard watches instead of running once in setup
 watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {

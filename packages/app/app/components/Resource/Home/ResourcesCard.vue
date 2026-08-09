@@ -8,13 +8,15 @@ import { RoutePath } from "@esposter/shared";
 const tab = useEnumRouteQuery("tab", ResourceHomeTabs, ResourceHomeTab.Recent);
 const recentStore = useRecentStore();
 const { error: recentError, isLoading: isLoadingRecent, recents } = storeToRefs(recentStore);
+const { readRecents } = recentStore;
 const favoriteStore = useFavoriteStore();
 const { favorites, isLoading: isLoadingFavorites } = storeToRefs(favoriteStore);
+const { readFavorites } = favoriteStore;
 // Fetched after mount (not awaited in setup) so the card shows its skeleton instead of blocking navigation
 const hasLoaded = ref(false);
 
 onMounted(async () => {
-  await Promise.all([recentStore.readRecents(), favoriteStore.readFavorites()]);
+  await Promise.all([readRecents(), readFavorites()]);
   hasLoaded.value = true;
 });
 </script>
@@ -37,7 +39,7 @@ onMounted(async () => {
       <v-tabs-window-item :value="ResourceHomeTab.Recent">
         <v-alert v-if="recentError" ma-4 density="compact" type="error" :text="recentError">
           <template #append>
-            <v-btn size="small" variant="text" @click="recentStore.readRecents()">Retry</v-btn>
+            <v-btn size="small" variant="text" @click="readRecents()">Retry</v-btn>
           </template>
         </v-alert>
         <ResourceHomeList

@@ -10,6 +10,7 @@ interface ResourceFavoriteToggleProps {
 const { resource } = defineProps<ResourceFavoriteToggleProps>();
 const favoriteStore = useFavoriteStore();
 const { favoriteIds } = storeToRefs(favoriteStore);
+const { toggleFavorite } = favoriteStore;
 const isFavorite = computed(() => favoriteIds.value.has(resource.id));
 </script>
 
@@ -18,6 +19,6 @@ const isFavorite = computed(() => favoriteIds.value.has(resource.id));
     :icon="isFavorite ? 'mdi-star' : 'mdi-star-outline'"
     :text="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
     :button-props="{ color: isFavorite ? 'warning' : undefined, variant: 'text' }"
-    @click="favoriteStore.toggleFavorite(resource)"
+    @click="toggleFavorite(resource)"
   />
 </template>

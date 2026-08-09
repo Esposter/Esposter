@@ -12,8 +12,8 @@ export const ResourceHeaders: DataTableHeader<ResourceListItem>[] = [
   // Cannot find is a star you do not use. Titled like every other column because the column chooser lists
   // Headers by title — a blank one is a checkbox with no way to tell what it toggles
   { key: "favorite", sortable: false, title: "Favorite" },
-  { key: "type", title: "Type" },
-  { key: "name", title: "Name" },
+  { key: ResourceListItemPropertyNames.type, title: "Type" },
+  { key: ResourceListItemPropertyNames.name, title: "Name" },
   {
     key: ItemMetadataPropertyNames.createdAt,
     title: "Created At",
