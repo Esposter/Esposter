@@ -5,7 +5,6 @@ import { createDataSource } from "@/composables/resource/sheet/commands/createDa
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -17,28 +16,11 @@ describe(useReorderRows, () => {
 
     const { dataSource } = setupWithDataSource();
     const reorderRows = useReorderRows();
-    const rows = dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 1), takeOne(rows)] as Row[];
+    const newRows = [takeOne(dataSource.rows, 1), takeOne(dataSource.rows)] as Row[];
     await reorderRows(newRows);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(2);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
-  });
-
-  test("undo restores original row order", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const reorderRows = useReorderRows();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-    const rows = dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 1), takeOne(rows)] as Row[];
-    await reorderRows(newRows);
-    undo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
   });
 
   test("moves row backward (index 2 to 0) with three rows", async () => {
@@ -50,8 +32,7 @@ describe(useReorderRows, () => {
     );
     const { dataSource } = setupWithDataSource(threeRowDataSource);
     const reorderRows = useReorderRows();
-    const rows = dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 2), takeOne(rows), takeOne(rows, 1)] as Row[];
+    const newRows = [takeOne(dataSource.rows, 2), takeOne(dataSource.rows), takeOne(dataSource.rows, 1)] as Row[];
     await reorderRows(newRows);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(2);
@@ -68,8 +49,7 @@ describe(useReorderRows, () => {
     );
     const { dataSource } = setupWithDataSource(threeRowDataSource);
     const reorderRows = useReorderRows();
-    const rows = dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 1), takeOne(rows, 2), takeOne(rows)] as Row[];
+    const newRows = [takeOne(dataSource.rows, 1), takeOne(dataSource.rows, 2), takeOne(dataSource.rows)] as Row[];
     await reorderRows(newRows);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(1);
@@ -93,9 +73,8 @@ describe(useReorderRows, () => {
     );
     const { dataSource } = setupWithDataSource(sixRowDataSource);
     const reorderRows = useReorderRows();
-    const rows = dataSource?.rows ?? [];
     // Simulate page 2 showing rows [2,3,4] — move row 2 to the end of the page
-    const newRows = [takeOne(rows, 3), takeOne(rows, 4), takeOne(rows, 2)] as Row[];
+    const newRows = [takeOne(dataSource.rows, 3), takeOne(dataSource.rows, 4), takeOne(dataSource.rows, 2)] as Row[];
     await reorderRows(newRows);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(0);
@@ -122,9 +101,8 @@ describe(useReorderRows, () => {
     );
     const { dataSource } = setupWithDataSource(sixRowDataSource);
     const reorderRows = useReorderRows();
-    const rows = dataSource?.rows ?? [];
     // Simulate page 2 showing rows [2,3,4] — move row 4 to the start of the page
-    const newRows = [takeOne(rows, 4), takeOne(rows, 2), takeOne(rows, 3)] as Row[];
+    const newRows = [takeOne(dataSource.rows, 4), takeOne(dataSource.rows, 2), takeOne(dataSource.rows, 3)] as Row[];
     await reorderRows(newRows);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(0);

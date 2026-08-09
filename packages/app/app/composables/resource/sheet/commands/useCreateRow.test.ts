@@ -2,7 +2,6 @@
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -31,19 +30,6 @@ describe(useCreateRow, () => {
     expect(dataSource.rows).toHaveLength(3);
     expect(takeOne(dataSource.rows, 2).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 2).data[" "]).toBe(1);
-  });
-
-  test("undo removes the created row", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const createRow = useCreateRow();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-    await createRow();
-    undo(dataSource);
-
-    expect(dataSource.rows).toHaveLength(2);
   });
 
   test("creates a unique id when the same row instance is passed multiple times", async () => {

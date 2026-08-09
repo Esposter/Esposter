@@ -1,28 +1,24 @@
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
-import { PasteRangeCommand } from "@/models/resource/sheet/commands/PasteRangeCommand";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { parseClipboardValuesByPosition } from "@/services/resource/sheet/commands/parseClipboardValuesByPosition";
 import { useAlertStore } from "@/store/alert";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
-import { exhaustiveGuard, getResultAsync, noop, takeOne, toRawDeep } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, noop, takeOne } from "@esposter/shared";
 
 export const usePasteRangeFromClipboard = () => {
   const sheetStore = useSheetStore();
-  const { saveSheet } = sheetStore;
   const { dataSource } = storeToRefs(sheetStore);
   const columnStore = useColumnStore();
   const { displayColumns } = storeToRefs(columnStore);
   const cellStore = useCellStore();
   const { selectedCellRange } = storeToRefs(cellStore);
-  const sheetHistoryStore = useSheetHistoryStore();
-  const { push } = sheetHistoryStore;
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const createRows = useCreateRows();
+  const pasteRange = usePasteRange();
   return async (pasteMode = PasteMode.Overwrite) => {
     const dataSourceValue = dataSource.value;
     await getResultAsync(async () => {
@@ -34,19 +30,7 @@ export const usePasteRangeFromClipboard = () => {
       const targetColumnNames = displayColumns.value.map((column) => column.name);
       switch (pasteMode) {
         case PasteMode.Overwrite: {
-          const originalRows = dataSourceValue.rows
-            .slice(anchorRowIndex, anchorRowIndex + pastedValues.length)
-            .map((row) => structuredClone(toRawDeep(row)));
-          const command = new PasteRangeCommand(
-            anchorRowIndex,
-            anchorColumnIndex,
-            pastedValues,
-            targetColumnNames,
-            originalRows,
-          );
-          command.execute(dataSourceValue);
-          push(command);
-          await saveSheet();
+          await pasteRange(anchorRowIndex, anchorColumnIndex, pastedValues, targetColumnNames);
           break;
         }
         case PasteMode.ShiftDown: {

@@ -21,7 +21,13 @@ export const useColumnFormOptions = (
     currentName,
   );
   return computed<VjsfOptions<ColumnFormVjsfContext>>(() => {
-    const dataSourceValue = toValue(dataSource);
+    const columnItems: SelectItemCategoryDefinition<Column["id"]>[] = [];
+    const columnItemsByType: Partial<Record<ColumnType, SelectItemCategoryDefinition<Column["id"]>[]>> = {};
+    for (const column of toValue(dataSource).columns) {
+      const item = mapColumnToSelectItemCategoryDefinition(column);
+      columnItems.push(item);
+      (columnItemsByType[column.type] ??= []).push(item);
+    }
     return {
       ajvOptions: {
         keywords: [
@@ -32,22 +38,10 @@ export const useColumnFormOptions = (
         ],
       },
       context: {
-        booleanColumnItems: dataSourceValue.columns
-          .filter(({ type }) => type === ColumnType.Boolean)
-          .map((column) => mapColumnToSelectItemCategoryDefinition(column)),
-        columnItems: dataSourceValue.columns.map((column) => mapColumnToSelectItemCategoryDefinition(column)),
-        computedColumnItems: dataSourceValue.columns
-          .filter(({ type }) => type === ColumnType.Computed)
-          .map((column) => mapColumnToSelectItemCategoryDefinition(column)),
-        dateColumnItems: dataSourceValue.columns
-          .filter(({ type }) => type === ColumnType.Date)
-          .map((column) => mapColumnToSelectItemCategoryDefinition(column)),
-        numberColumnItems: dataSourceValue.columns
-          .filter(({ type }) => type === ColumnType.Number)
-          .map((column) => mapColumnToSelectItemCategoryDefinition(column)),
-        stringColumnItems: dataSourceValue.columns
-          .filter(({ type }) => type === ColumnType.String)
-          .map((column) => mapColumnToSelectItemCategoryDefinition(column)),
+        columnItems,
+        dateColumnItems: columnItemsByType[ColumnType.Date] ?? [],
+        numberColumnItems: columnItemsByType[ColumnType.Number] ?? [],
+        stringColumnItems: columnItemsByType[ColumnType.String] ?? [],
       },
     };
   });
