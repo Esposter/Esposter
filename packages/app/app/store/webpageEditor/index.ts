@@ -2,6 +2,7 @@ import type { ResourceType } from "@esposter/db-schema";
 import type { ProjectData } from "grapesjs";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { getItemMetadata } from "#shared/services/entity/getItemMetadata";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
@@ -9,19 +10,20 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const { load, readContent, resource, save } = useResource<ResourceType.Webpage>(() =>
     getRouteParamString(route.params.id),
   );
-  // Cast avoids the excessively deep UnwrapRef instantiation on the nested GrapesJS project types
-  const content = ref(new WebpageEditor()) as Ref<WebpageEditor>;
+  // GrapesJS owns the live project once it has loaded, so the content is held plainly rather than reactively —
+  // Nothing outside the two adapter callbacks reads it
+  let content = new WebpageEditor();
   // GrapesJS storage adapter load: serve the selected resource's content
   const readWebpageEditor = async () => {
     await load();
-    const data = await readContent();
-    content.value = new WebpageEditor(data ?? undefined);
-    return content.value;
+    content = new WebpageEditor(await readContent());
+    return content;
   };
-  // The standalone render (css/html) is captured at save time so the published webpage serves without GrapesJS
+  // The standalone render (css/html) is captured at save time so the published webpage serves without GrapesJS,
+  // And the loaded content's own metadata is carried across so a save doesn't mint a fresh content identity
   const saveWebpageEditor = async (projectData: ProjectData, { css, html }: Pick<WebpageEditor, "css" | "html">) => {
-    content.value = new WebpageEditor({ ...projectData, css, html });
-    await save(content.value);
+    content = new WebpageEditor({ ...projectData, ...getItemMetadata(content), css, html });
+    await save(content);
   };
-  return { content, readWebpageEditor, resource, saveWebpageEditor };
+  return { readWebpageEditor, resource, saveWebpageEditor };
 });

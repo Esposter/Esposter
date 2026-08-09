@@ -1,15 +1,11 @@
+import type { VisualType } from "#shared/models/dashboard/data/VisualType";
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
-import type { Except } from "type-fest";
 
-import { VisualType, VisualTypes } from "#shared/models/dashboard/data/VisualType";
-import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
+import { VisualTypes } from "#shared/models/dashboard/data/VisualType";
 import { prettify } from "@/util/text/prettify";
 
-const VisualTypeItemCategoryDefinitionMap = Object.fromEntries(
-  Array.from(VisualTypes, (visualType) => [visualType, {}]),
-) as Record<VisualType, Except<SelectItemCategoryDefinition<VisualType>, "title" | "value">>;
-
-export const visualTypeItemCategoryDefinitions: SelectItemCategoryDefinition<VisualType>[] = parseDictionaryToArray(
-  VisualTypeItemCategoryDefinitionMap,
-  "value",
-).map((d) => Object.assign(d, { title: prettify(d.value) }));
+// Every visual type is offered and none overrides its title, so the enum itself is the item list
+export const VisualTypeItemCategoryDefinitions: SelectItemCategoryDefinition<VisualType>[] = Array.from(
+  VisualTypes,
+  (visualType) => ({ title: prettify(visualType), value: visualType }),
+);

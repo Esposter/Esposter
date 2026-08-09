@@ -36,6 +36,7 @@ const {
 } = defineProps<RichTextEditorProps>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
+// UseEditor tears the editor down in its own onBeforeUnmount — nothing here has to
 const editor = useEditor({
   autofocus,
   content: modelValue.value,
@@ -65,8 +66,6 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
 
   editor.value.setOptions();
 });
-
-onUnmounted(() => editor.value?.destroy());
 </script>
 
 <template>

@@ -2,12 +2,11 @@
 import { authClient } from "@/services/auth/authClient";
 import { MERGE_FIELD_BLOCK_CATEGORY } from "@/services/emailEditor/constants";
 import { createEmailSurveyInviteBlocks } from "@/services/emailEditor/createEmailSurveyInviteBlocks";
-import { toMergeField } from "@/services/emailEditor/toMergeField";
-import { GRAPES_JS_EDITOR_CONTAINER_ID, SURVEY_INVITE_BLOCK_CATEGORY } from "@/services/grapesjs/constants";
+import { createMergeFieldBlocks } from "@/services/emailEditor/createMergeFieldBlocks";
+import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { setBlocks } from "@/services/grapesjs/setBlocks";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
-import { escapeHtml } from "@/util/text/escapeHtml";
 import { ResourceType } from "@esposter/db-schema";
 import grapesJSMJML from "grapesjs-mjml";
 import "grapesjs/dist/css/grapes.min.css";
@@ -40,24 +39,13 @@ onUnmounted(() => {
 const { dataset } = useDataset(() => datasetReference.value);
 const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name) ?? []);
 const { publishedSurveys } = useReadPublishedSurveys();
-
+// A session-driven editor re-init drops every registered block, so both categories re-sync off the editor too
 watch([editor, columnNames], ([newEditor, newColumnNames]) => {
   if (!newEditor) return;
-  setBlocks(
-    newEditor,
-    MERGE_FIELD_BLOCK_CATEGORY,
-    newColumnNames.map((columnName) => ({
-      content: `<mj-text>${escapeHtml(toMergeField(columnName))}</mj-text>`,
-      id: `merge-field-${columnName}`,
-      label: escapeHtml(columnName),
-    })),
-  );
+  setBlocks(newEditor, MERGE_FIELD_BLOCK_CATEGORY, createMergeFieldBlocks(newColumnNames));
 });
 
-watch([editor, publishedSurveys], ([newEditor, newPublishedSurveys]) => {
-  if (!newEditor) return;
-  setBlocks(newEditor, SURVEY_INVITE_BLOCK_CATEGORY, createEmailSurveyInviteBlocks(newPublishedSurveys));
-});
+useSurveyInviteBlocks(editor, publishedSurveys, createEmailSurveyInviteBlocks);
 </script>
 
 <template>

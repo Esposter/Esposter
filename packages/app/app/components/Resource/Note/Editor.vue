@@ -10,7 +10,8 @@ const { note } = storeToRefs(noteStore);
 await loadContent();
 // Tiptap onUpdate fires per keystroke, so writes coalesce on the shared autosave cadence like the other editors
 const debouncedSave = useAutosaveFn(saveNote);
-// UseEditor constructs the editor in onMounted (client-only), so the doc is already loaded by then
+// UseEditor constructs the editor in onMounted (client-only), so the doc is already loaded by then, and
+// Tears it down in its own onBeforeUnmount — nothing here has to
 const editor = useEditor({
   content: note.value.doc,
   extensions: getNoteExtensions(),
@@ -19,8 +20,6 @@ const editor = useEditor({
     debouncedSave();
   },
 });
-
-onUnmounted(() => editor.value?.destroy());
 </script>
 
 <template>

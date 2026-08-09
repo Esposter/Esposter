@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { GRAPES_JS_EDITOR_CONTAINER_ID, SURVEY_INVITE_BLOCK_CATEGORY } from "@/services/grapesjs/constants";
-import { setBlocks } from "@/services/grapesjs/setBlocks";
+import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { createWebpageSurveyInviteBlocks } from "@/services/webpageEditor/createWebpageSurveyInviteBlocks";
 import { WebpageEditorPlugins } from "@/services/webpageEditor/WebpageEditorPlugins";
 import { WebpageEditorStyleManager } from "@/services/webpageEditor/WebpageEditorStyleManager";
@@ -26,10 +25,7 @@ const { editor } = await useGrapesJsEditor(
   { upload: uploadFile },
 );
 
-watch([editor, publishedSurveys], ([newEditor, newPublishedSurveys]) => {
-  if (!newEditor) return;
-  setBlocks(newEditor, SURVEY_INVITE_BLOCK_CATEGORY, createWebpageSurveyInviteBlocks(newPublishedSurveys));
-});
+useSurveyInviteBlocks(editor, publishedSurveys, createWebpageSurveyInviteBlocks);
 </script>
 
 <template>

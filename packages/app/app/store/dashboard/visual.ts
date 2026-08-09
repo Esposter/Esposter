@@ -37,12 +37,17 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     ["id"],
   );
   const { editFormDialog } = editFormData;
+  // One write path: apply the edit locally, persist the dashboard, revert on failure. The dialog closes only
+  // On success so a rejected write keeps the user's draft open for retry instead of losing it
   const save = async (editedVisual: Visual) => {
+    const snapshot = structuredClone(toRawDeep(visuals.value));
     updateVisual(editedVisual);
-    await saveDashboard();
-    editFormDialog.value = false;
+    const isSuccessful = await saveDashboard();
+    if (isSuccessful) editFormDialog.value = false;
+    else visuals.value = snapshot;
+    return isSuccessful;
   };
-  // One write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual
+  // Same write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual
   const deleteVisual = async (ids: { id: Visual["id"] }) => {
     const snapshot = structuredClone(toRawDeep(visuals.value));
     storeDeleteVisual(ids);

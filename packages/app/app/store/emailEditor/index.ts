@@ -3,6 +3,7 @@ import type { ResourceType } from "@esposter/db-schema";
 import type { Editor, ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { getItemMetadata } from "#shared/services/entity/getItemMetadata";
 import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { getResult } from "@esposter/shared";
@@ -21,18 +22,24 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   const readEmailEditor = async () => {
     await load();
     const data = await readContent();
-    content.value = new EmailEditor(data ?? undefined);
+    content.value = new EmailEditor(data);
     return content.value;
   };
-  // GrapesJS project data doesn't know about the dataset binding, so saves carry it over; the compiled
-  // MJML is captured alongside it because only the client editor can compile it for the published web view.
-  // A failed compile must not drop the save, so the last captured html rides along instead
+  // GrapesJS project data doesn't know about the dataset binding or the loaded content's own metadata, so
+  // Saves carry both over; the compiled MJML is captured alongside them because only the client editor can
+  // Compile it for the published web view. A failed compile must not drop the save, so the last captured
+  // Html rides along instead
   const saveEmailEditor = async (projectData: ProjectData, editorInstance: Editor) => {
     const html = getResult(() => getEmailHtml(editorInstance)).match(
       (newHtml) => newHtml,
       () => content.value.html,
     );
-    content.value = new EmailEditor({ ...projectData, datasetReference: datasetReference.value, html });
+    content.value = new EmailEditor({
+      ...projectData,
+      ...getItemMetadata(content.value),
+      datasetReference: datasetReference.value,
+      html,
+    });
     await save(content.value);
   };
   const saveDatasetReference = async (newDatasetReference: DatasetReference | undefined) => {
@@ -41,5 +48,5 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     content.value = emailEditor;
     await save(content.value);
   };
-  return { content, datasetReference, editor, readEmailEditor, resource, saveDatasetReference, saveEmailEditor };
+  return { datasetReference, editor, readEmailEditor, resource, saveDatasetReference, saveEmailEditor };
 });

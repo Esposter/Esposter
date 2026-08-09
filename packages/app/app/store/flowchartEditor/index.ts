@@ -13,7 +13,7 @@ export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
   const loadContent = async () => {
     await load();
     const data = await readContent();
-    flowchartEditor.value = new FlowchartEditor(data ?? undefined);
+    flowchartEditor.value = new FlowchartEditor(data);
   };
   const saveFlowchartEditor = () => {
     saveItemMetadata(flowchartEditor.value);
