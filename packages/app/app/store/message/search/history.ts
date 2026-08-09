@@ -33,9 +33,11 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
     });
   };
   const updateSearchHistory = async (input: UpdateSearchHistoryInput) => {
-    const snapshot = items.value.map((searchHistory) => ({ ...searchHistory }));
     await executeUpdateSearchHistoryMutation(() => $trpc.searchHistory.updateSearchHistory.mutate(input), {
+      // Snapshotted inside, not at call time: a write queued behind another must unwind to what the write ahead
+      // Of it stored, never to the state the user was looking at when they clicked
       applyOptimistic: () => {
+        const snapshot = items.value.map((searchHistory) => ({ ...searchHistory }));
         baseUpdateSearchHistory(input);
         return () => {
           items.value = snapshot;
@@ -49,9 +51,10 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
     });
   };
   const deleteSearchHistory = async (input: DeleteSearchHistoryInput) => {
-    const snapshot = [...items.value];
     await executeDeleteSearchHistoryMutation(() => $trpc.searchHistory.deleteSearchHistory.mutate(input), {
+      // Snapshotted inside, not at call time — see `updateSearchHistory`
       applyOptimistic: () => {
+        const snapshot = [...items.value];
         baseDeleteSearchHistory({ id: input });
         return () => {
           items.value = snapshot;

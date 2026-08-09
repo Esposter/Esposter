@@ -311,6 +311,7 @@ describe(useDataStore, () => {
     useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
     const dataStore = useDataStore();
     const threadFollowStore = useThreadFollowStore();
+    const { checkIsFollowing } = threadFollowStore;
     const { createMessage } = dataStore;
     const replyRowKey = crypto.randomUUID();
     server.use(
@@ -321,7 +322,31 @@ describe(useDataStore, () => {
     const isCreated = await createMessage({ files: [], message, replyRowKey, roomId, type: MessageType.Message });
 
     expect(isCreated).toBe(true);
-    expect(threadFollowStore.checkIsFollowing(roomId, replyRowKey)).toBe(true);
+    expect(checkIsFollowing(roomId, replyRowKey)).toBe(true);
+  });
+
+  // The newer-cursor pages the room-keyed list, so it is keyed the same way. Held globally it survives the room
+  // Switch, and the next room renders a "load newer" waypoint it never earned, then pages in a window cut from
+  // The previous room's timestamps
+  test("keeps the newer-message cursor with the room it was read for", () => {
+    expect.hasAssertions();
+
+    const otherRoomId = crypto.randomUUID();
+    const dataStore = useDataStore();
+    const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
+    hasMoreNewer.value = true;
+    nextCursorNewer.value = message;
+    // Replaced rather than mutated in place: the route is a shallow ref, so only a new value re-runs the
+    // Computed the room-keyed slices resolve their key through
+    router.currentRoute.value = { ...router.currentRoute.value, params: { id: otherRoomId } };
+
+    expect(hasMoreNewer.value).toBe(false);
+    expect(nextCursorNewer.value).toBe("");
+
+    router.currentRoute.value = { ...router.currentRoute.value, params: { id: roomId } };
+
+    expect(hasMoreNewer.value).toBe(true);
+    expect(nextCursorNewer.value).toBe(message);
   });
 
   // Only the sender's own message renders ahead of its hooks — it has a loading bubble to keep responsive and a

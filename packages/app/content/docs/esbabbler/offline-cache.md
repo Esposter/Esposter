@@ -54,6 +54,8 @@ That flag only means anything while **the store's list cannot outlive its partit
 
 A store whose partition key can change while it is alive therefore uses `useCursorPaginationDataMap(() => currentKey)` / `useOffsetPaginationDataMap` — messages and members both key on `currentRoomId`. The unkeyed `useCursorPaginationData` is correct only where the key cannot change under the store: the room list partitions on the signed-in user, and signing out reloads the page, so that list is recreated with its partition rather than outliving it.
 
+**Every field describing that partition is keyed, not only the rows.** A cursor is the clearest case: the message list pages in both directions, and a deep link into an older message opens the room around it and leaves a _newer_ cursor to page forward from. Held in a plain `ref` beside a room-keyed list, that cursor and its `hasMoreNewer` flag survive the room switch the rows do not — the next room renders a "load newer" waypoint it never earned, then pages in a window cut from the previous room's timestamps. Anything that answers for one room goes through `useDataMap(() => currentRoomId, …)` like the rows do.
+
 ## Patterns
 
 Feature cache composables wrap the generic one — `getWriteItems` only for feature-specific filtering, `onHydrate` only for side effects not represented by the paginated store itself (member counts, companion user maps):

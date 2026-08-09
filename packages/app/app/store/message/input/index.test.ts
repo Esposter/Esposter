@@ -54,6 +54,8 @@ describe(useInputStore, () => {
     const { drafts } = storeToRefs(inputStore);
 
     expect(drafts.value.has(roomId1)).toBe(false);
+    // And drops the key rather than leaving it to be re-scanned on every boot
+    expect(getDraft(roomId1)).toBeUndefined();
   });
 
   test("ignores unparseable draft content", () => {
@@ -212,6 +214,25 @@ describe(useInputStore, () => {
 
     expect(getDraft(roomId1)).toBeUndefined();
     expect(drafts.value.has(roomId1)).toBe(false);
+  });
+
+  // The editor holds what the user typed and the store persists the sanitized form of it. The autosave writing
+  // That sanitized text back into `input` would rewrite the composer under a user who is still typing in it —
+  // Which is the one thing the three draft writers disagree on, and so the one thing worth pinning
+  test("keeps the raw editor text in input while persisting the sanitized draft", async () => {
+    expect.hasAssertions();
+
+    const unsafeContent = `${draftContent}<script>alert(1)</script>`;
+    const inputStore = useInputStore();
+    const { drafts, input } = storeToRefs(inputStore);
+    input.value = unsafeContent;
+    await nextTick();
+    vi.advanceTimersByTime(debounceMs);
+    await nextTick();
+
+    expect(input.value).toBe(unsafeContent);
+    expect(drafts.value.get(roomId1)?.content).toBe(draftContent);
+    expect(getDraft(roomId1)?.content).toBe(draftContent);
   });
 
   test("does not save before debounce delay elapses", async () => {

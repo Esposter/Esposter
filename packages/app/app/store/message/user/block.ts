@@ -1,7 +1,6 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { User } from "@esposter/db-schema";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
@@ -16,10 +15,12 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const blockedUsers = ref<User[]>([]);
 
   const blockUser = async (userId: FriendUserIdInput) => {
-    const previousFriends = [...friendStore.friends];
-    const previousFriendRequests = [...friendRequestStore.friendRequests];
     await executeBlockUserMutation(() => $trpc.block.blockUser.mutate(userId), {
+      // Snapshotted when the write is sent rather than when it was issued, so a failed block restores the friend
+      // And request lists as the writes ahead of it left them instead of resurrecting what they removed
       applyOptimistic: () => {
+        const previousFriends = [...friendStore.friends];
+        const previousFriendRequests = [...friendRequestStore.friendRequests];
         storeDeleteFriend(userId);
         storeDeleteFriendRequestsByUser(userId);
         return () => {
@@ -36,9 +37,11 @@ export const useBlockStore = defineStore("message/user/block", () => {
   };
 
   const unblockUser = async (blockedUserId: FriendUserIdInput) => {
-    const previousBlockedUsers = blockedUsers.value;
     await executeUnblockUserMutation(() => $trpc.block.unblockUser.mutate(blockedUserId), {
+      // Snapshotted when the write is sent rather than when it was issued: unblocks share one list, so a failed
+      // One must restore it as the unblocks ahead of it left it rather than resurrecting the users they removed
       applyOptimistic: () => {
+        const previousBlockedUsers = blockedUsers.value;
         blockedUsers.value = blockedUsers.value.filter(({ id }) => id !== blockedUserId);
         return () => {
           blockedUsers.value = previousBlockedUsers;

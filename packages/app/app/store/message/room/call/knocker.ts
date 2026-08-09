@@ -3,13 +3,14 @@ import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions
 
 import { useMutation } from "@/composables/shared/useMutation";
 
+// A fresh object per call — the pre-join sheet edits it in place, so a shared one would carry the previous
+// Call's choices into the next lobby
+const getDefaultJoinCallOptions = (): JoinCallOptions => ({ isCameraEnabled: false, isMicrophoneEnabled: true });
+
 export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { $trpc } = useNuxtApp();
   const knockingCallSessionId = ref("");
-  const joinCallOptions = ref<JoinCallOptions>({
-    isCameraEnabled: false,
-    isMicrophoneEnabled: true,
-  });
+  const joinCallOptions = ref<JoinCallOptions>(getDefaultJoinCallOptions());
   const knockers = ref<CallParticipant[]>([]);
 
   // Knocking targets one call session at a time, so a shared executor correctly lets the latest call supersede
@@ -37,44 +38,39 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const deleteKnocker = (knockerId: string) => {
     knockers.value = knockers.value.filter((knocker) => knocker.id !== knockerId);
   };
+  // Admitting and dismissing differ only in the write they send: both take one knocker out of the lobby, and
+  // Both put back that one knocker where it stood if the write is rejected. Reinstating a whole-list snapshot
+  // Would drop every knocker the live subscription delivered while the write was in flight
+  const getResolveKnockerOptions = (sessionId: string) => ({
+    applyOptimistic: () => {
+      const removedIndex = knockers.value.findIndex(({ id }) => id === sessionId);
+      const removedKnocker = knockers.value[removedIndex];
+      deleteKnocker(sessionId);
+      return () => {
+        if (!removedKnocker || knockers.value.some(({ id }) => id === removedKnocker.id)) return;
+
+        knockers.value = knockers.value.toSpliced(Math.min(removedIndex, knockers.value.length), 0, removedKnocker);
+      };
+    },
+    key: sessionId,
+  });
   const { executeMutation: executeAdmitKnockerMutation } = useMutation();
   const admitKnocker = async (callSessionId: string, sessionId: string) => {
-    const previousKnockers = knockers.value;
     await executeAdmitKnockerMutation(
       () => $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, sessionId }),
-      {
-        applyOptimistic: () => {
-          deleteKnocker(sessionId);
-          return () => {
-            knockers.value = previousKnockers;
-          };
-        },
-        key: sessionId,
-      },
+      getResolveKnockerOptions(sessionId),
     );
   };
   const { executeMutation: executeDismissKnockerMutation } = useMutation();
   const dismissKnocker = async (callSessionId: string, sessionId: string) => {
-    const previousKnockers = knockers.value;
     await executeDismissKnockerMutation(
       () => $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, sessionId }),
-      {
-        applyOptimistic: () => {
-          deleteKnocker(sessionId);
-          return () => {
-            knockers.value = previousKnockers;
-          };
-        },
-        key: sessionId,
-      },
+      getResolveKnockerOptions(sessionId),
     );
   };
   const resetKnockerState = () => {
     knockingCallSessionId.value = "";
-    joinCallOptions.value = {
-      isCameraEnabled: false,
-      isMicrophoneEnabled: true,
-    };
+    joinCallOptions.value = getDefaultJoinCallOptions();
     knockers.value = [];
   };
 

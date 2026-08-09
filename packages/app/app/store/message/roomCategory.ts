@@ -57,9 +57,11 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   };
 
   const deleteRoomCategory = async (id: DeleteRoomCategoryInput) => {
-    const snapshot = [...categories.value];
     await executeDeleteRoomCategoryMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
       applyOptimistic: () => {
+        // Snapshotted as this write is sent, not when it was queued — a delete that waited behind another write
+        // Must come back to what that write left, never to the list the user was looking at when they clicked
+        const snapshot = [...categories.value];
         storeDeleteRoomCategory({ id });
         return () => {
           categories.value = snapshot;
@@ -70,12 +72,16 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   };
 
   const updateRoomCategory = async (input: UpdateRoomCategoryInput) => {
-    const snapshot = categories.value.map((category) => ({ ...category }));
     await executeUpdateRoomCategoryMutation(() => $trpc.room.category.updateRoomCategory.mutate(input), {
       applyOptimistic: () => {
+        // Only the fields this write overwrites, on the one row it touches, and read as the write is sent:
+        // A whole-list snapshot restored by reassignment would also undo whatever landed while this was queued
+        // And swap every row for a copy, stranding the create placeholder its own onSuccess writes onto
+        const previousCategory = categories.value.find(({ id }) => id === input.id);
+        const rollbackCategory = previousCategory && { ...previousCategory };
         storeUpdateRoomCategory(input);
         return () => {
-          categories.value = snapshot;
+          if (rollbackCategory) storeUpdateRoomCategory(rollbackCategory);
         };
       },
       key: input.id,
@@ -106,9 +112,6 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     createRoomCategory,
     deleteRoomCategory,
     reorderRoomCategories,
-    storeCreateRoomCategory,
-    storeDeleteRoomCategory,
-    storeUpdateRoomCategory,
     updateRoomCategory,
   };
 });

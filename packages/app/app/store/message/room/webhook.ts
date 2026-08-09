@@ -40,12 +40,14 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const updateWebhook = async (roomId: RoomInMessage["id"], input: Except<UpdateWebhookInput, "roomId">) => {
     await executeUpdateWebhookMutation(() => $trpc.webhook.updateWebhook.mutate({ ...input, roomId }), {
       // Snapshot when the write is sent rather than when it was issued: a row's name field and its active
-      // Switch write different fields of the same webhook, so the second must roll back to what the first stored
+      // Switch write different fields of the same webhook, so the second must roll back to what the first stored.
+      // Only this row is captured — a whole-list snapshot would also undo every other row's edits and deletions
       applyOptimistic: () => {
-        const snapshot = items.value.map((webhook) => ({ ...webhook }));
+        const previousWebhook = items.value.find(({ id }) => id === input.id);
+        const previousValues = previousWebhook ? { ...previousWebhook } : undefined;
         storeUpdateWebhook({ ...input, roomId });
         return () => {
-          items.value = snapshot;
+          if (previousValues) storeUpdateWebhook(previousValues);
         };
       },
       // Keyed per webhook so writes to one row queue while different webhooks stay independent
@@ -66,12 +68,17 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     });
   };
   const deleteWebhook = async (roomId: RoomInMessage["id"], input: Except<DeleteWebhookInput, "roomId">) => {
-    const snapshot = [...items.value];
     await executeDeleteWebhookMutation(() => $trpc.webhook.deleteWebhook.mutate({ ...input, roomId }), {
+      // Put back only this row, at the position it held. Reinstating a whole-list snapshot would resurrect a
+      // Webhook another deletion already removed and undo every edit made while this write was in flight
       applyOptimistic: () => {
+        const deletedIndex = items.value.findIndex(({ id }) => id === input.id);
+        const deletedWebhook = items.value[deletedIndex];
         storeDeleteWebhook({ id: input.id });
         return () => {
-          items.value = snapshot;
+          if (!deletedWebhook) return;
+
+          items.value = items.value.toSpliced(Math.min(deletedIndex, items.value.length), 0, deletedWebhook);
         };
       },
       // Keyed per webhook so concurrent operations on different webhooks run independently instead of queueing behind each other

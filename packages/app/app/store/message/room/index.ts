@@ -22,19 +22,25 @@ export const useRoomStore = defineStore("message/room", () => {
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
   const rooms = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
-  const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
-    const [{ id }] = args;
-    baseStoreDeleteRoom(...args);
-    if (currentRoomId.value !== id) return;
-    await navigateTo(rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex, {
-      replace: true,
-    });
-  };
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : "";
   });
+  // Every way a room leaves the list — deleted here, left here, or removed by a subscription — hands the user
+  // To the next room when it was the one on screen. Read at the moment the removal lands, so the replacement
+  // Is whatever is still there rather than what was there when the write was issued
+  const navigateFromRemovedRoom = async (roomId: string) => {
+    if (currentRoomId.value !== roomId) return;
+    await navigateTo(rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex, {
+      replace: true,
+    });
+  };
+  const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
+    const [{ id }] = args;
+    baseStoreDeleteRoom(...args);
+    await navigateFromRemovedRoom(id);
+  };
   const currentRoom = computed(() => {
     if (!currentRoomId.value) return undefined;
     return rooms.value.find(({ id }) => id === currentRoomId.value);
@@ -60,25 +66,22 @@ export const useRoomStore = defineStore("message/room", () => {
   // Rooms are deleted independently, so each deletion is keyed by its room id — an unkeyed executor would
   // Treat an earlier in-flight deletion as stale and swallow both its rollback and its active-room navigation
   const deleteRoom = async (input: DeleteRoomInput) => {
-    const snapshot = [...items.value];
     let isSuccessful = false;
     await executeDeleteRoomMutation(() => $trpc.room.deleteRoom.mutate(input), {
+      // Restore only this room. Reinstating a whole-list snapshot would re-add a room another removal already
+      // Took out and drop whatever arrived while this write was in flight — and the list is sorted for display,
+      // So where the restored room lands in it is not observable
       applyOptimistic: () => {
+        const removedRoom = items.value.find(({ id }) => id === input);
         baseStoreDeleteRoom({ id: input });
         return () => {
-          items.value = snapshot;
+          if (removedRoom) storeCreateRoom(removedRoom);
         };
       },
       key: input,
       onSuccess: async () => {
         isSuccessful = true;
-        if (currentRoomId.value !== input) return;
-        await navigateTo(
-          rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
-          {
-            replace: true,
-          },
-        );
+        await navigateFromRemovedRoom(input);
       },
     });
     return isSuccessful;
@@ -94,26 +97,20 @@ export const useRoomStore = defineStore("message/room", () => {
     });
   };
   const leaveRoom = async (input: LeaveRoomInput) => {
-    const snapshot = [...items.value];
     let isSuccessful = false;
     await executeLeaveRoomMutation(() => $trpc.room.leaveRoom.mutate(input), {
       applyOptimistic: () => {
+        const removedRoom = items.value.find(({ id }) => id === input);
         baseStoreDeleteRoom({ id: input });
         return () => {
-          items.value = snapshot;
+          if (removedRoom) storeCreateRoom(removedRoom);
         };
       },
       // Keyed per room so leaving one room never queues behind another in-flight leave
       key: input,
       onSuccess: async () => {
         isSuccessful = true;
-        if (currentRoomId.value !== input) return;
-        await navigateTo(
-          rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
-          {
-            replace: true,
-          },
-        );
+        await navigateFromRemovedRoom(input);
       },
     });
     return isSuccessful;

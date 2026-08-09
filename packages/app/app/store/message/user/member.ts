@@ -63,11 +63,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
       else if (delta > 0) countsByTopRole.value.push({ count: delta, roleId });
     }
   });
-  const {
-    createMember: baseStoreCreateMember,
-    deleteMember: baseStoreDeleteMember,
-    ...restOperationData
-  } = createOperationData(
+  const { createMember: baseStoreCreateMember, deleteMember: baseStoreDeleteMember } = createOperationData(
     computed({
       get: () => members.value,
       set: (newMembers) => {
@@ -107,6 +103,5 @@ export const useMemberStore = defineStore("message/user/member", () => {
     ...restData,
     storeCreateMember,
     storeDeleteMember,
-    ...restOperationData,
   };
 });

@@ -49,7 +49,7 @@ On the existing `user` router:
 | `readUserSettings`   | authed | —                                                                      | the user's row, or defaults if none yet |
 | `updateUserSettings` | authed | partial settings (`updateUserSettingsInputSchema`, `refineAtLeastOne`) | upsert; returns the full row            |
 
-The client store (`store/message/user/settings/index.ts`) applies updates optimistically and reverts + alerts on failure.
+The client store (`store/message/user/settings/index.ts`) applies updates optimistically and reverts + alerts on failure. The read is one record for the whole session, so it goes through [`useCachedRead`](/docs/architecture/caching) — every surface that raises the dialog asks for it, the concurrent asks join one request, and no write invalidates it because `updateUserSettings` stores the row it is answered with.
 
 ## Navigation / scrollspy
 

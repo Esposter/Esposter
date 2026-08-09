@@ -54,9 +54,17 @@ Ordered by expected payoff — the biggest surfaces with the most recent churn f
 
 ### Messaging
 
-- [ ] `app/components/Message` — the largest component tree in the repo
-- [ ] `app/composables/message` + `app/services/message`
-- [ ] `app/store/message` + the call/voice stores
+Split at sub-directory boundaries — `app/components/Message` alone is larger than every resource-explorer area put together, and `Model/` is two thirds of it.
+
+- [x] `store/message` — the stores, against the `pinia` skill
+- [ ] `Message/Model/Message` — the message row and its parts
+- [ ] `Message/Model/Room` — the room shell
+- [ ] `Message/Model/User` — profile, presence, the member surfaces
+- [ ] `Message/Model` — `FileRenderer`, `Member`, `RoomCategory`, `Settings`, `Status`
+- [ ] `Message/Content` — the composer and the message list
+- [ ] `Message/DraftsAndSent`, `Message/RightSideBar`, `Message/LeftSideBar`, `Message/Friends`
+- [ ] `app/composables/message` — `room/` and `subscribables/` are half of it
+- [ ] `app/services/message`
 
 ### Server
 
@@ -67,6 +75,7 @@ Ordered by expected payoff — the biggest surfaces with the most recent churn f
 
 ### Shared and cross-cutting
 
+- [ ] **Optimistic snapshots taken at issue time.** The messaging-store pass found six writes capturing `const previous = [...list]` _outside_ `applyOptimistic`. `useMutation` runs that callback inside `settle` — when the write is actually sent — so a rollback restored the list as it looked before the write ahead of it applied, resurrecting rows the server had already dropped. Around forty files call `applyOptimistic`; the six fixed were only the ones in that slice. Audit the rest, and state the rule in the `pinia` skill's mutation-actions reference so the shape stops being written.
 - [ ] `app/components/Styled` — the primitives everything else composes
 - [ ] `shared/models` + `shared/services`
 - [ ] `packages/shared` and `packages/shared-node`

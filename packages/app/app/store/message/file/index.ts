@@ -43,11 +43,14 @@ export const useDownloadFileStore = defineStore("message/file", () => {
       for (const [id, fileUrl] of newFileUrlMap) roomFileUrlMap.set(id, fileUrl);
     setData(roomId, roomFileUrlMap);
   };
-  MessageHookMap[Operation.Create].register(async (message) => {
-    const roomId = roomStore.currentRoomId;
-    if (!roomId || message.files.length === 0) return;
+  // The room the message was sent to, never the current one: a subscription handler is queued behind the ones
+  // Before it, so a message that arrives just before a room switch is handled after `currentRoomId` has already
+  // Moved on. Read against the wrong room the SAS query names file ids that room does not own, so it rejects
+  // And every attachment on that message renders broken.
+  MessageHookMap[Operation.Create].register(async ({ files, partitionKey }) => {
+    if (files.length === 0) return;
 
-    await storeReadFileUrls(roomId, message.files);
+    await storeReadFileUrls(partitionKey, files);
   });
   MessageHookMap[Operation.Delete].register((input) => {
     const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);

@@ -2,14 +2,17 @@ import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/mes
 import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
 export const useScheduledMessageJobStore = defineStore("message/scheduledMessageJob", () => {
-  const { hasMore, items, ...restData } = useOffsetPaginationData<ScheduledMessageJobInMessageWithRoom>();
+  const { items, ...restOffsetPaginationData } = useOffsetPaginationData<ScheduledMessageJobInMessageWithRoom>();
   const count = ref(0);
   const isPending = ref(true);
   const removeScheduledMessageJob = (id: ScheduledMessageJobInMessage["id"]) => {
-    if (!items.value.some((scheduledMessageJob) => scheduledMessageJob.id === id)) return;
+    const remainingScheduledMessageJobs = items.value.filter((scheduledMessageJob) => scheduledMessageJob.id !== id);
+    // The badge counts every scheduled job, not just the loaded page, so it only moves when this page really
+    // Lost a row — a cancel of something not on screen would otherwise decrement it for nothing
+    if (remainingScheduledMessageJobs.length === items.value.length) return;
 
-    items.value = items.value.filter((scheduledMessageJob) => scheduledMessageJob.id !== id);
+    items.value = remainingScheduledMessageJobs;
     count.value = Math.max(0, count.value - 1);
   };
-  return { count, hasMore, isPending, items, removeScheduledMessageJob, ...restData };
+  return { count, isPending, items, removeScheduledMessageJob, ...restOffsetPaginationData };
 });

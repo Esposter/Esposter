@@ -16,7 +16,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
   const { data: focusedIndex } = useDataMap(() => roomStore.currentRoomId, 0);
   const { data: selectedHiddenIndex } = useDataMap(() => roomStore.currentRoomId, 0);
-  const { data: lastAddedParameterName } = useDataMap<string | undefined>(() => roomStore.currentRoomId, undefined);
+  const { data: lastAddedParameterName } = useDataMap(() => roomStore.currentRoomId, "");
   const activeParameters = computed(
     () => pendingSlashCommand.value?.parameters.filter(({ name }) => activeParameterNames.value.includes(name)) ?? [],
   );
@@ -29,9 +29,9 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   });
 
   const setErrors = (id: string, messages: string[]) => {
-    const index = errors.value.findIndex((e) => e.id === id);
+    const index = errors.value.findIndex((error) => error.id === id);
     if (index === -1) errors.value = [...errors.value, { id, messages }];
-    else errors.value = errors.value.map((e) => (e.id === id ? { ...e, messages } : e));
+    else errors.value = errors.value.map((error) => (error.id === id ? { ...error, messages } : error));
   };
 
   const createParameter = (name: string) => {
@@ -40,7 +40,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   };
 
   const deleteParameter = (name: string) => {
-    activeParameterNames.value = activeParameterNames.value.filter((paramName) => paramName !== name);
+    activeParameterNames.value = activeParameterNames.value.filter((parameterName) => parameterName !== name);
     parameterValues.value[name] = "";
     setErrors(name, []);
   };
@@ -73,7 +73,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     activeParameterNames.value = parameters.map(({ name }) => name);
     errors.value = [];
     focusedIndex.value = 0;
-    lastAddedParameterName.value = undefined;
+    lastAddedParameterName.value = "";
   };
 
   const buildText = (): string => {
@@ -97,7 +97,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     errors.value = [];
     trailingMessage.value = "";
     focusedIndex.value = 0;
-    lastAddedParameterName.value = undefined;
+    lastAddedParameterName.value = "";
   };
 
   const collapseToText = () => {
@@ -108,7 +108,6 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   return {
     activeParameterNames,
     activeParameters,
-    buildText,
     clearPendingSlashCommand,
     collapseToText,
     createParameter,

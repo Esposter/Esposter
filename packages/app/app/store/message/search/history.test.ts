@@ -1,0 +1,85 @@
+// @vitest-environment nuxt
+import type { SearchHistoryInMessage } from "@esposter/db-schema";
+import type { Router } from "vue-router";
+
+import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useSearchHistoryStore } from "@/store/message/search/history";
+import { takeOne } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+
+describe(useSearchHistoryStore, () => {
+  const server = setupMswTrpc();
+  let router: Router;
+  const roomId = crypto.randomUUID();
+  const id = crypto.randomUUID();
+  const userId = crypto.randomUUID();
+  const originalQuery = "original";
+  const acceptedQuery = "accepted";
+  const rejectedQuery = "rejected";
+  const createSearchHistory = (query: string): SearchHistoryInMessage => ({
+    createdAt: new Date(),
+    deletedAt: null,
+    filters: [],
+    id,
+    query,
+    roomId,
+    updatedAt: new Date(),
+    userId,
+  });
+
+  beforeAll(() => {
+    router = useRouter();
+  });
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    router.currentRoute.value.params.id = roomId;
+  });
+
+  // Both edits name the same row, so the second runs behind the first and applies on top of what the first
+  // Stored. A snapshot captured when the caller invoked it — before the write ahead of it had even been sent —
+  // Unwinds the row past that write, back to a query the user replaced two edits ago
+  test("rolls a queued update back to what the write ahead of it stored", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.searchHistory.updateSearchHistory.mutation(({ input }) => {
+        if (input.query === rejectedQuery) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        return createSearchHistory(input.query);
+      }),
+    );
+    const searchHistoryStore = useSearchHistoryStore();
+    const { items } = storeToRefs(searchHistoryStore);
+    const { updateSearchHistory } = searchHistoryStore;
+    items.value = [createSearchHistory(originalQuery)];
+    await Promise.all([
+      updateSearchHistory({ id, query: acceptedQuery }),
+      updateSearchHistory({ id, query: rejectedQuery }),
+    ]);
+
+    expect(takeOne(items.value, 0).query).toBe(acceptedQuery);
+  });
+
+  // Same rule for a removal: the row the failed delete restores is the list the delete ahead of it left behind,
+  // Never the one the user was looking at before either ran
+  test("rolls a queued delete back to the list the delete ahead of it left", async () => {
+    expect.hasAssertions();
+
+    const otherId = crypto.randomUUID();
+    server.use(
+      trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
+        if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        return { ...createSearchHistory(originalQuery), id: input };
+      }),
+    );
+    const searchHistoryStore = useSearchHistoryStore();
+    const { items } = storeToRefs(searchHistoryStore);
+    const { deleteSearchHistory } = searchHistoryStore;
+    items.value = [createSearchHistory(originalQuery), { ...createSearchHistory(originalQuery), id: otherId }];
+    await Promise.all([deleteSearchHistory(otherId), deleteSearchHistory(id)]);
+
+    expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
+  });
+});

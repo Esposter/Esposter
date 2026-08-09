@@ -1,16 +1,20 @@
 import type { UpdateUserSettingsInput } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { noop } from "@esposter/shared";
 
 export const useUserSettingsStore = defineStore("message/user/settings", () => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
   const userSettings = ref<UserSettingsInMessage>();
-  const readUserSettings = async () => {
-    userSettings.value = await $trpc.user.readUserSettings.query();
-  };
+  // One record for the whole session, opened from a dialog every surface can raise — so the reads its mounts
+  // Issue collapse into one, and a failed one leaves the entry open for the next open to retry. Untagged:
+  // The only write that changes this record is updateUserSettings, which stores the row it is answered with
+  const { read: readUserSettings } = useCachedRead(() => $trpc.user.readUserSettings.query(), {
+    onSuccess: (newUserSettings) => {
+      userSettings.value = newUserSettings;
+    },
+  });
   const updateUserSettings = async (input: UpdateUserSettingsInput) => {
     if (!userSettings.value) return;
     await executeMutation(() => $trpc.user.updateUserSettings.mutate(input), {

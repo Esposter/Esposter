@@ -29,6 +29,22 @@ Scheduled rows come from `message.scheduledMessageJob.readMyScheduledJobs` (see 
 - **Draft rows** — hover action bar: delete draft, edit draft, schedule message, send message. Delete opens the shared delete confirmation dialog.
 - **Scheduled rows** — hover action bar: edit scheduled message, reschedule message, send message, more (cancel schedule, save to drafts, delete message).
 
-## Notes
+## Draft persistence and restore
 
 Drafts themselves are held in the message input store as a reactive `Map<roomId, Draft>` with localStorage as persistence only — the store is the source of truth for reactivity.
+
+Three things write a draft — the composer's debounced autosave, an explicit `storeDraft`/`clearDraft`, and the boot scan that restores what localStorage kept — and all three go through one writer, so sanitization and the "content that sanitizes to nothing removes the draft rather than storing an empty one" rule hold by construction rather than being restated per call site. An empty draft left stored would otherwise show up as a draft in the room list and in the Drafts tab.
+
+```mermaid
+flowchart TD
+  EDITOR["Composer input, per room"] -- "debounced autosave" --> SYNC
+  ACTION["storeDraft / clearDraft"] --> SYNC
+  RESTORE["Boot scan of stored draft keys"] --> SYNC
+  SYNC["Sanitize the content"] -- "text survives" --> KEEP["Set the room's draft and persist it"]
+  SYNC -- "sanitizes to nothing" --> DROP["Delete the room's draft and its stored key"]
+  KEEP --> STORE["Reactive drafts map, keyed by room"]
+  DROP --> STORE
+  STORE --> UI["Room list pencil indicator and the Drafts tab"]
+```
+
+Only the writers that own the composer's text follow the sanitized result back into the input — the debounced autosave deliberately does not, or it would rewrite the composer under a user who is still typing in it.

@@ -4,7 +4,8 @@ import type { User } from "@esposter/db-schema";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { StorageTier } from "@esposter/db-schema";
+import { createRoom } from "@/store/message/room/index.test";
+import { RoomType, StorageTier } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -72,5 +73,26 @@ describe(useDirectMessageStore, () => {
 
     expect(directMessageParticipantsMap.value.get(roomId)).toStrictEqual([first, third]);
     expect(alertStore.alerts).toHaveLength(0);
+  });
+
+  // Each conversation is its own target, so hiding two in quick succession overlaps: the rejected one has to put
+  // Back its own conversation only, or it un-hides the one the successful write already took off the list
+  test("restores only the conversation whose hide was rejected", async () => {
+    expect.hasAssertions();
+
+    const firstDirectMessage = createRoom("", RoomType.DirectMessage);
+    const secondDirectMessage = createRoom("", RoomType.DirectMessage);
+    server.use(
+      trpcMsw.room.directMessage.hideDirectMessage.mutation(({ input }) => {
+        if (input === firstDirectMessage.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const directMessageStore = useDirectMessageStore();
+    const { hideDirectMessage, pushDirectMessages } = directMessageStore;
+    const { directMessages } = storeToRefs(directMessageStore);
+    pushDirectMessages(firstDirectMessage, secondDirectMessage);
+    await Promise.all([hideDirectMessage(firstDirectMessage.id), hideDirectMessage(secondDirectMessage.id)]);
+
+    expect(directMessages.value).toStrictEqual([firstDirectMessage]);
   });
 });

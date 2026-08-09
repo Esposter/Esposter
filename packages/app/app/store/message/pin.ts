@@ -20,10 +20,9 @@ export const usePinStore = defineStore("message/pin", () => {
     if (!("isPinned" in input)) return;
 
     if (input.isPinned) {
-      const message = dataStore.items.find((i) =>
-        getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input)(i),
-      );
+      const message = dataStore.items.find(getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input));
       if (!message) return;
+
       createMessage(message);
     } else deleteMessage(input);
   });

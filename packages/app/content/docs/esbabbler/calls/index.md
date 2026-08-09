@@ -56,6 +56,21 @@ The LiveKit webhook (`server/api/webhooks/livekit.post.ts`, validated with `Webh
 
 Every `/calls/[id]` visitor sees prejoin (verify mic/camera) first. The creator (persisted `callSessionsInMessage.userId`) gets **Join now**; non-creators get **Request to join** → `knockCall` puts them in `callKnockerMap`, the creator admits (`admitKnocker` → one-time entry in `callAdmittedParticipantMap`) or dismisses, and only then does `joinCall({ id })` succeed.
 
+```mermaid
+flowchart TD
+  VISIT["visitor opens the call link"] --> ISCREATOR{"session creator?"}
+  ISCREATOR -- yes --> JOIN["joinCall — LiveKit connection data"]
+  ISCREATOR -- no --> KNOCK["knockCall — added to callKnockerMap"]
+  KNOCK --> NOTIFY["onKnockCall — the creator's lobby list"]
+  NOTIFY --> DECIDE{"creator decides"}
+  DECIDE -- admit --> ADMITTED["admitKnocker — one-time callAdmittedParticipantMap entry"]
+  DECIDE -- dismiss --> DISMISSED["dismissKnocker — dropped from callKnockerMap"]
+  ADMITTED --> JOIN
+  DISMISSED --> WAIT["stays on prejoin"]
+```
+
+The creator's lobby list is optimistic: admitting or dismissing removes that knocker at once, and each knocker is its own write target so a host can work down the queue without the writes queueing. A rejected one therefore puts back **only** its own knocker — reinstating the list as it stood would resurrect one already admitted beside it and drop whoever `onKnockCall` delivered meanwhile.
+
 ## Procedures
 
 All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the waiting-room procedures live in `server/trpc/routers/call/knocker.ts` and merge in under a `knocker` key:

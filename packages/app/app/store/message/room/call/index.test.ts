@@ -1,11 +1,24 @@
 // @vitest-environment nuxt
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
+import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { getMockSession } from "@@/server/trpc/context.test";
+import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
+
+const createCallParticipant = (name: string): CallParticipant => ({
+  id: crypto.randomUUID(),
+  image: "",
+  isCameraEnabled: false,
+  isHandRaised: false,
+  isMuted: false,
+  name,
+  userId: crypto.randomUUID(),
+});
 
 describe(useParticipantStore, () => {
   const callSessionId = crypto.randomUUID();
@@ -240,5 +253,56 @@ describe(useMediaStore, () => {
 
       expect(participantVolumePercentageMap.value.size).toBe(0);
     });
+  });
+});
+
+describe(useKnockerStore, () => {
+  const server = setupMswTrpc();
+  const callSessionId = crypto.randomUUID();
+  const first = createCallParticipant("first");
+  const second = createCallParticipant("second");
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  // Each knocker is its own target, so a host working down the lobby has several writes in flight at once. A
+  // Rejected one that reinstated the lobby as it stood would put back the knocker already admitted beside it —
+  // And drop whichever knockers the live subscription delivered meanwhile
+  test("puts back only the knocker whose admission was rejected, where they stood", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.callSession.knocker.admitKnocker.mutation(({ input: { sessionId } }) => {
+        if (sessionId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const knockerStore = useKnockerStore();
+    const { admitKnocker, createKnocker } = knockerStore;
+    const { knockers } = storeToRefs(knockerStore);
+    createKnocker(first);
+    createKnocker(second);
+    await Promise.all([admitKnocker(callSessionId, first.id), admitKnocker(callSessionId, second.id)]);
+
+    expect(knockers.value).toStrictEqual([first]);
+  });
+
+  test("keeps a knocker that arrived while a dismissal was in flight", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.callSession.knocker.dismissKnocker.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const knockerStore = useKnockerStore();
+    const { createKnocker, dismissKnocker } = knockerStore;
+    const { knockers } = storeToRefs(knockerStore);
+    createKnocker(first);
+    const dismissal = dismissKnocker(callSessionId, first.id);
+    createKnocker(second);
+    await dismissal;
+
+    expect(knockers.value).toStrictEqual([first, second]);
   });
 });

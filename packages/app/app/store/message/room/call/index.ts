@@ -1,7 +1,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { useMutation } from "@/composables/shared/useMutation";
-import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { useRoomStore } from "@/store/message/room";
@@ -17,9 +16,8 @@ import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation } = useMutation();
+  const { executeMutation: executeSetHandRaisedMutation } = useMutation();
   const roomStore = useRoomStore();
-  const session = authClient.useSession();
   const knockerStore = useKnockerStore();
   const { resetKnockerState } = knockerStore;
   const mediaStore = useMediaStore();
@@ -44,12 +42,13 @@ export const useCallStore = defineStore("message/room/call", () => {
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
-  const sessionId = computed(() => session.value.data?.session.id);
   const callParticipantMap = computed(
     () =>
       participantStore.callSessionParticipantsMap.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
   );
-  const selfParticipant = computed(() => (sessionId.value ? callParticipantMap.value.get(sessionId.value) : undefined));
+  const selfParticipant = computed(() =>
+    participantStore.sessionId ? callParticipantMap.value.get(participantStore.sessionId) : undefined,
+  );
   const isInCall = computed(() => Boolean(selfParticipant.value));
   // Hosted here (not a component) so hold-to-talk survives navigation, like the call itself
   usePushToTalk(isInCall);
@@ -57,11 +56,11 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
   const setHandRaisedEnabled = async (newIsHandRaised: boolean, targetSessionId?: string) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionIdValue = sessionId.value;
+    const sessionIdValue = participantStore.sessionId;
     const participantSessionId = targetSessionId ?? sessionIdValue;
     if (!callSessionId || !sessionIdValue || !participantSessionId) return;
 
-    await executeMutation(
+    await executeSetHandRaisedMutation(
       () =>
         $trpc.callSession.setHandRaised.mutate({
           callSessionId,
@@ -85,7 +84,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
   const setCameraEnabled = async (newIsCameraEnabled: boolean) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionIdValue = sessionId.value;
+    const sessionIdValue = participantStore.sessionId;
     if (!callSessionId || !sessionIdValue) return;
 
     const oldIsCameraEnabled = mediaStore.isCameraEnabled;
@@ -105,7 +104,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
   const setMuteEnabled = async (newIsMuted: boolean) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionIdValue = sessionId.value;
+    const sessionIdValue = participantStore.sessionId;
     if (!callSessionId || !sessionIdValue) return;
 
     const oldIsMuted = isMuted.value;
@@ -209,7 +208,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     if (!callSessionId) return;
     await withFinalizerAsync(
       async () => {
-        if (sessionId.value) deleteCallParticipant(callSessionId, sessionId.value);
+        if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
         await $trpc.callSession.leaveCall.mutate({ callSessionId });
       },
       async () => {
@@ -277,13 +276,13 @@ export const useCallStore = defineStore("message/room/call", () => {
     if (callRoomId.value === roomId) await leaveCall();
   });
   AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
-    if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, true);
+    if (participantStore.sessionId) setMute(currentRoomCallSessionId.value, participantStore.sessionId, true);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
   AdminActionHookMap[AdminActionType.ForceUnmute].register(async (roomId) => {
-    if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, false);
+    if (participantStore.sessionId) setMute(currentRoomCallSessionId.value, participantStore.sessionId, false);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(true);
     mediaStore.isForceMuted = false;

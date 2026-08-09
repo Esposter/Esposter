@@ -5,7 +5,7 @@ description: One cached-read primitive owns read-once-per-session, and a write i
 
 # Caching
 
-A handful of reads are the same for the whole session: the favourite set every row's star checks against, the recently-opened list Home previews, the storage number the meter renders, one room's thread-follow state. Every surface that shows one asks for it on mount, and asking the server again on each mount is a round trip for an answer that cannot have changed.
+A handful of reads are the same for the whole session: the favourite set every row's star checks against, the recently-opened list Home previews, the storage number the meter renders, the message settings record the fullscreen dialog edits, one room's thread-follow state. Every surface that shows one asks for it on mount, and asking the server again on each mount is a round trip for an answer that cannot have changed.
 
 `useCachedRead` (`packages/app/app/composables/shared/useCachedRead.ts`) is the only thing that caches such a read, and `CacheTag` plus the cache registry are the only way one is invalidated. **No store keeps a read-once flag of its own**, and no composable holds a list of which caches a mutation affects.
 
@@ -62,7 +62,7 @@ Three consequences worth knowing:
 
 - **A cache that was never constructed is never invalidated**, and that is correct — it holds nothing stale. Registration happens when the store is first used.
 - **Adding a cached set is one `tags` entry.** Nothing central enumerates caches, so nothing central has to be found and edited.
-- **Untagged is a decision, and it gets written down.** `storage` carries no tags because its counter only moves when Azure's `BlobCreated` event lands seconds after the PUT — there is no moment a write could invalidate it and read a different number. `threadFollow` carries none because no resource write changes who follows which thread.
+- **Untagged is a decision, and it gets written down.** `storage` carries no tags because its counter only moves when Azure's `BlobCreated` event lands seconds after the PUT — there is no moment a write could invalidate it and read a different number. `threadFollow` carries none because no resource write changes who follows which thread. `userSettings` carries none because the only write that touches the record is `updateUserSettings`, which is answered with the row it just persisted.
 
 ## Why an invalidated cache is re-read, not edited
 
@@ -82,6 +82,7 @@ An invalidated cache either re-reads at once or drops and waits for whatever rea
 | `recent`       | no            | you are on the resource or the workbench — nothing showing Recent is mounted |
 | `storage`      | n/a           | untagged                                                                     |
 | `threadFollow` | no            | untagged                                                                     |
+| `userSettings` | n/a           | untagged                                                                     |
 
 A refetching cache re-reads **from cold** as well, even if nothing has read it yet: the surface that mounts next must find the new set rather than be the thing that discovers it changed. That is a session-scoped shape — a keyed cache re-reads only the keys it actually holds, and none opts in.
 

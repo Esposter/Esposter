@@ -53,7 +53,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   };
   const deleteEmoji = async (input: DeleteEmojiInput) => {
     const emojis = getEmojis(input.messageRowKey);
-    const deletedEmoji = emojis.find((emoji) => getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji));
+    const deletedEmoji = emojis.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
     await executeDeleteEmojiMutation(() => $trpc.message.emoji.deleteEmoji.mutate(input), {
       applyOptimistic: () => {
         storeDeleteEmoji(input);
@@ -73,7 +73,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   };
   const storeUpdateEmoji = (input: UpdateEmojiInput) => {
     const emojis = getEmojis(input.messageRowKey);
-    const index = emojis.findIndex((e) => getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(e));
+    const index = emojis.findIndex(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
     if (index === -1) return;
 
     Object.assign(takeOne(emojis, index), input);
@@ -83,7 +83,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     const emojis = getEmojis(input.messageRowKey);
     setEmojis(
       input.messageRowKey,
-      emojis.filter((e) => !getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(e)),
+      emojis.filter((emoji) => !getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji)),
     );
   };
 

@@ -1,7 +1,7 @@
-import { authClient } from "@/services/auth/authClient";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 
 export const useMediaStore = defineStore("message/room/call/media", () => {
-  const session = authClient.useSession();
+  const participantStore = useParticipantStore();
   const isCameraEnabled = ref(false);
   const isDeafened = ref(false);
   const isForceMuted = ref(false);
@@ -16,31 +16,34 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   const localVideoStream = ref<MediaStream | undefined>();
   const remoteScreenShareStreams = ref(new Map<string, MediaStream>());
   const remoteVideoStreams = ref(new Map<string, MediaStream>());
-  const sessionId = computed(() => session.value.data?.session.id);
   const hasScreenShare = computed(
     () => Boolean(localScreenShareStream.value) || remoteScreenShareStreams.value.size > 0,
   );
   const activeScreenShareParticipantId = computed(
     () =>
       pinnedParticipantId.value ||
-      (localScreenShareStream.value ? sessionId.value : undefined) ||
+      (localScreenShareStream.value ? participantStore.sessionId : undefined) ||
       screenSharingParticipantIds.value[0],
   );
   const activeScreenShareStream = computed(() => {
     if (!activeScreenShareParticipantId.value) return undefined;
-    if (activeScreenShareParticipantId.value === sessionId.value) return localScreenShareStream.value;
+    if (activeScreenShareParticipantId.value === participantStore.sessionId) return localScreenShareStream.value;
     return remoteScreenShareStreams.value.get(activeScreenShareParticipantId.value);
   });
+  // One presenter list, maintained the same way for the local share and every remote one — and the pin follows,
+  // Since a pinned participant who has stopped sharing has nothing left to show
+  const setScreenSharingParticipantId = (participantId: string, isParticipantScreenSharing: boolean) => {
+    screenSharingParticipantIds.value = [
+      ...screenSharingParticipantIds.value.filter((id) => id !== participantId),
+      ...(isParticipantScreenSharing ? [participantId] : []),
+    ];
+    if (!isParticipantScreenSharing && pinnedParticipantId.value === participantId) pinnedParticipantId.value = "";
+  };
   const setLocalScreenShareStream = (stream: MediaStream | undefined) => {
     localScreenShareStream.value = stream;
-    const id = sessionId.value;
-    if (!id) return;
-    if (stream)
-      screenSharingParticipantIds.value = [id, ...screenSharingParticipantIds.value.filter((value) => value !== id)];
-    else {
-      screenSharingParticipantIds.value = screenSharingParticipantIds.value.filter((value) => value !== id);
-      if (pinnedParticipantId.value === id) pinnedParticipantId.value = "";
-    }
+    if (!participantStore.sessionId) return;
+
+    setScreenSharingParticipantId(participantStore.sessionId, Boolean(stream));
   };
   const setParticipantVolumePercentage = (participantId: string, volumePercentage: number) => {
     participantVolumePercentageMap.value.set(participantId, volumePercentage);
@@ -53,20 +56,9 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
     else remoteVideoStreams.value.delete(identity);
   };
   const setRemoteScreenShareStream = (identity: string, stream: MediaStream | undefined) => {
-    if (stream) {
-      remoteScreenShareStreams.value.set(identity, stream);
-      screenSharingParticipantIds.value = [
-        ...screenSharingParticipantIds.value.filter((participantId) => participantId !== identity),
-        identity,
-      ];
-      return;
-    }
-
-    remoteScreenShareStreams.value.delete(identity);
-    screenSharingParticipantIds.value = screenSharingParticipantIds.value.filter(
-      (participantId) => participantId !== identity,
-    );
-    if (pinnedParticipantId.value === identity) pinnedParticipantId.value = "";
+    if (stream) remoteScreenShareStreams.value.set(identity, stream);
+    else remoteScreenShareStreams.value.delete(identity);
+    setScreenSharingParticipantId(identity, Boolean(stream));
   };
   const resetCallMedia = () => {
     isCameraEnabled.value = false;

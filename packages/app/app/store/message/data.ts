@@ -30,6 +30,7 @@ export const useDataStore = defineStore("message/data", () => {
   const { createAlert } = alertStore;
   const roomStore = useRoomStore();
   const threadFollowStore = useThreadFollowStore();
+  const { storeFollowThread } = threadFollowStore;
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
@@ -38,8 +39,11 @@ export const useDataStore = defineStore("message/data", () => {
     ...restOperationData
   } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
   const files = computed(() => items.value.flatMap(({ files: messageFiles }) => messageFiles));
-  const hasMoreNewer = ref(false);
-  const nextCursorNewer = ref("");
+  // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
+  // And a global one would still be pointing at that room's window after the switch — so the next room renders
+  // A "load newer" waypoint it never earned and pages in a window cut from another room's timestamps
+  const { data: hasMoreNewer } = useDataMap(() => roomStore.currentRoomId, false);
+  const { data: nextCursorNewer } = useDataMap(() => roomStore.currentRoomId, "");
   const typings = ref<CreateTypingInput[]>([]);
 
   // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
@@ -90,7 +94,7 @@ export const useDataStore = defineStore("message/data", () => {
         // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
         // Added here is best-effort, never a rollback — the message already exists on the server
         const { replyRowKey } = input;
-        if (replyRowKey) threadFollowStore.storeFollowThread(input.roomId, replyRowKey);
+        if (replyRowKey) storeFollowThread(input.roomId, replyRowKey);
         return true;
       },
       async (error) => {
