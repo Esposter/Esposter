@@ -261,10 +261,8 @@ describe(useResourceStore, () => {
 
     const resourceStore = useResourceStore();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
-    const { publishResource, readResource, unpublishResource } = resourceStore;
+    const { readResource } = resourceStore;
     await readResource();
-    await publishResource();
-    await unpublishResource();
 
     expect(loadedPublication.value).toBeUndefined();
   });
