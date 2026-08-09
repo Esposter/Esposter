@@ -91,7 +91,29 @@ describe("resource", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     const readResource = await caller.readResource({ id: dashboardResource.id });
 
-    expect(readResource).toStrictEqual(dashboardResource);
+    expect(readResource).toStrictEqual({ ...dashboardResource, publication: null });
+  });
+
+  // Opening a resource is one round trip: the publication rides the row, so no surface has to follow the read
+  // With a second request that re-resolves the same ownership
+  test("reads a resource with its publication", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await webpageCaller.saveResourceContent({
+      content: webpageEditor,
+      contentVersion: webpageResource.contentVersion,
+      id: webpageResource.id,
+    });
+    const draftResource = await caller.readResource({ id: webpageResource.id });
+
+    // Null is the answer "this resource is not published", which is a resolved state rather than a missing one
+    expect(draftResource.publication).toBeNull();
+
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    const publishedResource = await caller.readResource({ id: webpageResource.id });
+
+    expect(publishedResource.publication?.publishVersion).toBe(1);
   });
 
   test("reads resources across every type", async () => {

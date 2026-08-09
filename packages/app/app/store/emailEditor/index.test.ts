@@ -38,7 +38,7 @@ describe(useEmailEditorStore, () => {
     savedContentIds = [];
     saveResourceContent = vi.fn<() => Resource>(() => createResource(1));
     server.use(
-      trpcMsw.resource.readResource.query(() => createResource()),
+      trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null })),
       trpcMsw.email.readResourceContent.query(() => content),
       trpcMsw.email.readResourcePublication.query(() => undefined),
       trpcMsw.email.saveResourceContent.mutation(({ input }) => {

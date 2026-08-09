@@ -47,6 +47,8 @@ sequenceDiagram
 | `readPublishedVersionContent`  | owner                | serve a **retained** snapshot by version number            |
 | `readResourceViewCount`        | owner                | total public views of the resource                         |
 
+Publish state is also carried by the cross-type `resource.readResource`, whose `publication` field is the row or `null` — `resource_publications` is one table for every type, so the generic read resolves it whatever the resource turns out to be, and the ownership a separate publication read would resolve is the ownership that request already resolved. `null` is the answer "not published" rather than a missing one, so a surface opening a resource learns its publish state from that one response instead of following it with a second round trip. `readResourcePublication` remains the targeted re-read for a caller that wants publish state on its own.
+
 `readPublishedVersionContent` is what the view route's `version` query param reads: an anonymous visitor always gets the latest publish from the public procedure, while the owner can open any snapshot the `{id}/published/` prefix still holds ([publish history](/docs/platform/publish-history)).
 
 Two hooks on `createResourceProcedures` support publishing needs:

@@ -37,7 +37,7 @@ describe(useSurveyStore, () => {
     content = { model, settings: surveySettingsSchema.parse({}) };
     saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => Resource>(() => createResource(1));
     server.use(
-      trpcMsw.resource.readResource.query(() => createResource()),
+      trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null })),
       trpcMsw.survey.readResourcePublication.query(() => undefined),
       trpcMsw.survey.readResourceContent.query(() => content),
       trpcMsw.survey.saveResourceContent.mutation(saveResourceContent),

@@ -44,7 +44,7 @@ describe(useVisualStore, () => {
     useRouter().currentRoute.value.params.id = resourceId;
     content = new Dashboard({ visuals: [new Visual({ type: VisualType.Area })] });
     server.use(
-      trpcMsw.resource.readResource.query(() => createResource()),
+      trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null })),
       trpcMsw.dashboard.readResourceContent.query(() => content),
       trpcMsw.dashboard.readResourcePublication.query(() => undefined),
       trpcMsw.dashboard.saveResourceContent.mutation(() => createResource(1)),

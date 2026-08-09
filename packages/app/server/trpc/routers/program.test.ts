@@ -30,7 +30,7 @@ import {
   ResourceType,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -295,6 +295,28 @@ describe("program", () => {
       { isResponded: true, keyValue: respondedParticipant.keyValue },
       { isResponded: false, keyValue: unrespondedParticipant.keyValue },
     ]);
+  });
+
+  test("reads status without the participant credentials", async () => {
+    expect.hasAssertions();
+
+    const survey = await setupIdentifiedSurvey();
+    // A distinctive key value so the token needle below cannot match something incidental
+    const program = await createBoundProgram({
+      keyValues: [keyValue],
+      name,
+      programCaller: caller,
+      sheetCaller,
+      surveyId: survey.id,
+    });
+    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const participant = takeOne(participants);
+    const statusRows = await caller.readProgramStatus({ id: program.id });
+
+    // The blade renders these three and nothing else. The token is the credential that responds on the
+    // Participant's behalf and publicId is the dataset's identity, so a browser is handed neither
+    expect(Object.keys(takeOne(statusRows)).toSorted()).toStrictEqual(["addedAt", "isResponded", "keyValue"]);
+    expect(JSON.stringify(statusRows)).not.toContain(participant.token);
   });
 
   test("reads status with an anonymous-era responder", async () => {

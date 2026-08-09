@@ -3,6 +3,7 @@ import type { PublishHistoryVersion } from "#shared/models/resource/PublishHisto
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
+import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 import type { Context } from "@@/server/trpc/context";
 import type { Clause, Resource } from "@esposter/db-schema";
 
@@ -359,7 +360,16 @@ export const resourceRouter = router({
       return readPublishHistory(ctx.resource.id, publication?.publishVersion);
     },
   ),
-  readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query(({ ctx }) => ctx.resource),
+  // Publish state rides the row rather than answering a second request: `resource_publications` is one table
+  // For every type, so this cross-type read resolves it whatever the resource turns out to be, and the
+  // Ownership that second request would re-resolve is the ownership this one already resolved
+  readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<ResourceWithPublication>(
+    async ({ ctx }) => ({
+      ...ctx.resource,
+      publication:
+        (await ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })) ?? null,
+    }),
+  ),
   readResources: standardAuthedProcedure
     .input(readResourcesInputSchema.prefault({}))
     .query(async ({ ctx, input: { limit, offset, sortBy, ...filter } }) => {

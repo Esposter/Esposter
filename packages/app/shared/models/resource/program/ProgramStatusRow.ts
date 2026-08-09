@@ -1,11 +1,10 @@
 // The owner-only Status blade shape — keyValue answers "who hasn't answered yet".
-// The ProgramStatus dataset drops both keyValue and token for publicId, because a dataset flows into
-// Dashboards and a dashboard is publishable: keyValue is the participant list and token is the
-// Credential that responds on their behalf, so neither can be the published identity
+// Neither the participant's token nor their publicId is on it: the blade renders neither, and the token is the
+// Credential that responds on their behalf, so a read whose whole audience is a browser has no reason to carry
+// It. The ProgramStatus dataset trades keyValue for publicId instead, because a dataset flows into Dashboards
+// And a dashboard is publishable, so the participant list cannot be the published identity
 export interface ProgramStatusRow {
   addedAt: Date;
   isResponded: boolean;
   keyValue: string;
-  publicId: string;
-  token: string;
 }

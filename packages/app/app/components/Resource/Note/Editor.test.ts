@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 
 import { EMPTY_NOTE_DOC } from "#shared/models/resource/note/NoteResource";
 import ResourceNoteEditor from "@/components/Resource/Note/Editor.vue";
@@ -24,9 +24,10 @@ describe("resourceNoteEditor", () => {
             contentVersion: 0,
             id: resourceId,
             name: "name",
+            publication: null,
             type: ResourceType.Note,
             updatedAt: new Date(0),
-          }) as Resource,
+          }) as ResourceWithPublication,
       ),
       trpcMsw.note.readResourceContent.query(() => ({ doc: EMPTY_NOTE_DOC })),
       trpcMsw.note.readResourcePublication.query(() => undefined),

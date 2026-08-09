@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
-import type { Resource } from "@esposter/db-schema";
+import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -15,13 +15,7 @@ describe("resourceProgramStatus", () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const keyValue = "participant";
-  const statusRow: ProgramStatusRow = {
-    addedAt: new Date(0),
-    isResponded: true,
-    keyValue,
-    publicId: crypto.randomUUID(),
-    token: "token",
-  };
+  const statusRow: ProgramStatusRow = { addedAt: new Date(0), isResponded: true, keyValue };
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -33,9 +27,10 @@ describe("resourceProgramStatus", () => {
             contentVersion: 0,
             id: resourceId,
             name: "name",
+            publication: null,
             type: ResourceType.Program,
             updatedAt: new Date(0),
-          }) as Resource,
+          }) as ResourceWithPublication,
       ),
       trpcMsw.program.readResourceContent.query(() => undefined),
       trpcMsw.program.readProgramStatus.query(() => [statusRow]),

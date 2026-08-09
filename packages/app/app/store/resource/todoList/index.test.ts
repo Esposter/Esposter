@@ -39,7 +39,7 @@ describe(useTodoListStore, () => {
     content = { items: [new TodoListItem({ name: itemName })] };
     saveResourceContent = vi.fn<() => Resource>(() => createResource(1));
     server.use(
-      trpcMsw.resource.readResource.query(() => createResource()),
+      trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null })),
       trpcMsw.todoList.readResourceContent.query(() => content),
       trpcMsw.todoList.saveResourceContent.mutation(saveResourceContent),
     );

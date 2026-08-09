@@ -28,7 +28,10 @@ describe(useResource, () => {
   // A Note loads its publication on the way in, so the unpublished answer is the baseline a test overrides
   const useNoteResource = () => {
     server.use(
-      trpcMsw.resource.readResource.query(({ input }) => createResource(input.id, ResourceType.Note)),
+      trpcMsw.resource.readResource.query(({ input }) => ({
+        ...createResource(input.id, ResourceType.Note),
+        publication: null,
+      })),
       trpcMsw.note.readResourcePublication.query(() => undefined),
     );
     return useResource<ResourceType.Note>(ref(resourceId));
@@ -38,7 +41,7 @@ describe(useResource, () => {
     setActivePinia(createPinia());
     saveResourceContent = vi.fn<() => Resource>(() => ({ ...createResource(resourceId), contentVersion: 1 }));
     server.use(
-      trpcMsw.resource.readResource.query(({ input }) => createResource(input.id)),
+      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(input.id), publication: null })),
       trpcMsw.sheet.readResourceContent.query(() => createDefaultSheetResource()),
       trpcMsw.sheet.saveResourceContent.mutation(saveResourceContent),
     );
@@ -159,21 +162,29 @@ describe(useResource, () => {
 
   // The capability is what makes readResourcePublication reachable, so a publishable type that never loads its
   // Publication renders an unpublish button as a publish one, and the public link is lost
-  test("loads the publication for a publishable type", async () => {
+  // The publication rides the resource read, so loading one is a single round trip — the targeted re-read is
+  // Still there for publish and unpublish, and calling it here would only re-resolve ownership already resolved
+  test("takes the publication from the resource read rather than a second call", async () => {
     expect.hasAssertions();
 
     const readResourcePublication = vi.fn<() => ResourcePublication>(() => publication);
     const { load, publication: loadedPublication } = useNoteResource();
-    server.use(trpcMsw.note.readResourcePublication.query(readResourcePublication));
+    server.use(
+      trpcMsw.resource.readResource.query(({ input }) => ({
+        ...createResource(input.id, ResourceType.Note),
+        publication,
+      })),
+      trpcMsw.note.readResourcePublication.query(readResourcePublication),
+    );
     await load();
 
-    expect(readResourcePublication).toHaveBeenCalledTimes(1);
+    expect(readResourcePublication).not.toHaveBeenCalled();
     expect(loadedPublication.value).toStrictEqual(publication);
   });
 
-  // A type with no publish procedures has nothing to read, and the guard is the only thing standing between
-  // The loader and a call to `undefined` — dropping it throws out of `load()` for over half the types
-  test("leaves the publication unread for a type without the capability", async () => {
+  // `null` is the read's answer for a resource that has no publication — an unpublished one, or a type that
+  // Cannot publish at all. It becomes `undefined` here, which is the ref's own "nothing loaded"
+  test("reads an absent publication as undefined", async () => {
     expect.hasAssertions();
 
     const { load, publication: loadedPublication, publish, unpublish } = useResource(ref(resourceId));

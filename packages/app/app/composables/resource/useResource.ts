@@ -38,13 +38,14 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     isLoading.value = true;
     await withFinalizerAsync(
       async () => {
-        resource.value = await $trpc.resource.readResource.query({ id: idValue });
-        const { type } = resource.value;
-        // Only a publishable type has a publication to read, and the capability is what makes the procedure
-        // Reachable — so the guard and the availability are one fact rather than two that can disagree
-        publication.value = hasCapability(type, "publishable")
-          ? await getResourceRouter(type).readResourcePublication.query({ id: idValue })
-          : undefined;
+        // The publication rides the resource read rather than following it: a second round trip only re-resolved
+        // The ownership this one already did. `null` is the read's answer for a resource that has none — an
+        // Unpublished one, or a type that cannot publish at all — where `undefined` here still means unread
+        const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({
+          id: idValue,
+        });
+        resource.value = newResource;
+        publication.value = newPublication ?? undefined;
         // A fresh read carries the current contentVersion, so saving is meaningful again
         isContentStale = false;
       },

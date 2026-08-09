@@ -1,4 +1,4 @@
-import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
+import type { ProgramStatusParticipantRow } from "@@/server/models/program/ProgramStatusParticipantRow";
 import type { Clause, Resource } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
@@ -16,7 +16,7 @@ import {
 
 // The canonical participants × responses join, purpose-built rather than routed through a generic join engine.
 // A response with no matching participant (an anonymous-era row) carries nobody, so it never appears here
-export const readProgramStatusRows = async (programId: Resource["id"]): Promise<ProgramStatusRow[]> => {
+export const readProgramStatusRows = async (programId: Resource["id"]): Promise<ProgramStatusParticipantRow[]> => {
   const participantClauses: Clause<ProgramParticipantEntity>[] = [
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: programId },
   ];
@@ -32,11 +32,12 @@ export const readProgramStatusRows = async (programId: Resource["id"]): Promise<
     const { surveyResponses } = await readSurveyResponseEntities(content.surveyId);
     for (const { participantToken } of surveyResponses) if (participantToken) respondedTokens.add(participantToken);
   }
+  // The token is what the join matches on, never something it carries out — no consumer of this row has any
+  // Use for the credential itself
   return participants.map(({ createdAt, keyValue, publicId, token }) => ({
     addedAt: createdAt,
     isResponded: respondedTokens.has(token),
     keyValue,
     publicId,
-    token,
   }));
 };

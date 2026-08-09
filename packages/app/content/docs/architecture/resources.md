@@ -162,6 +162,8 @@ The type's after-save hook is registered in `ResourceAfterSaveContentMap`, keyed
 
 The factory also accepts two optional content-transform hooks, `transformPublishedContent` and `transformPublicReadContent` — see [/docs/architecture/publishing](/docs/architecture/publishing).
 
+`resource.readResource` answers with the row plus its `publication` (the `resource_publications` row, or `null` when there is none) — see [/docs/architecture/publishing](/docs/architecture/publishing).
+
 Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey, isDeletedOnly = false)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`. `isDeletedOnly` inverts which rows resolve, so the [recycle bin](/docs/platform/recycle-bin) procedures (`purgeResource`, `restoreResource`) reach only soft-deleted resources and every other procedure only live ones.
 
 ### Router topology
@@ -182,6 +184,7 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 
 - **Explorer** (`/resource-explorer`) is an Azure-portal-style shell: a Home landing (search + quick-create tiles + recent resources), a full list at `/resource-explorer/all`, and a route-driven create flow (`/resource-explorer/create` gallery → `/resource-explorer/create/[type]` form). Home and `/resource-explorer/all` read through the shared `useReadResources` composable (`resource.count` + `resource.readResources`, different sort/limit/filter per surface). Resource pages live at `/resource-explorer/[id]/[[blade]]`.
 - **`useResource(id)`** (`app/composables/resource/useResource.ts`) loads the row (`resource.readResource`) + typed content (`{type}.readResourceContent`) and exposes `save` (optimistic `contentVersion`), `rename`, `remove`, and capability actions (`publish`/`unpublish`, no-ops for non-publishable types).
+- **`save` skips content identical to what was last persisted**, compared as JSON, so an editor whose autosave fires per frame does not bump `contentVersion` for a document nobody changed. Every content store seeds that comparison with `setPersistedContent` after hydrating, and nothing may stamp the content on the way in — a store that refreshed the content's own `updatedAt` before saving would make every comparison differ, and the modified time the explorer reads is the `resources` row's, which the server bumps per accepted write.
 - Resource pages are auth-gated. There is no unauthenticated/localStorage editing path — one persistence mechanism, not two.
 
 ## Key files

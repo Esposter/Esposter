@@ -36,7 +36,7 @@ describe(useWebpageEditorStore, () => {
     savedContentIds = [];
     saveResourceContent = vi.fn<() => Resource>(() => createResource(1));
     server.use(
-      trpcMsw.resource.readResource.query(() => createResource()),
+      trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null })),
       trpcMsw.webpage.readResourceContent.query(() => content),
       trpcMsw.webpage.readResourcePublication.query(() => undefined),
       trpcMsw.webpage.saveResourceContent.mutation(({ input }) => {
