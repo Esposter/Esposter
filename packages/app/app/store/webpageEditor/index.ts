@@ -21,7 +21,7 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   };
   // The standalone render (css/html) is captured at save time so the published webpage serves without GrapesJS,
   // And the loaded content's own metadata is carried across so a save doesn't mint a fresh content identity
-  const saveWebpageEditor = async (projectData: ProjectData, { css, html }: Pick<WebpageEditor, "css" | "html">) => {
+  const saveWebpageEditor = (projectData: ProjectData, { css, html }: Pick<WebpageEditor, "css" | "html">) => {
     content = new WebpageEditor({ ...projectData, ...getItemMetadata(content), css, html });
     // The save status is handed back rather than swallowed, the same as every other content store. It is not
     // Turned into a throw: GrapesJS only reads a rejection as a failed store, and the writes that answer false

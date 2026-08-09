@@ -29,7 +29,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   // Saves carry both over; the compiled MJML is captured alongside them because only the client editor can
   // Compile it for the published web view. A failed compile must not drop the save, so the last captured
   // Html rides along instead
-  const saveEmailEditor = async (projectData: ProjectData, editorInstance: Editor) => {
+  const saveEmailEditor = (projectData: ProjectData, editorInstance: Editor) => {
     const html = getResult(() => getEmailHtml(editorInstance)).match(
       (newHtml) => newHtml,
       () => content.value.html,

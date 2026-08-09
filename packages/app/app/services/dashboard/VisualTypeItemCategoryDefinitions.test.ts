@@ -6,7 +6,7 @@ describe("VisualTypeItemCategoryDefinitions", () => {
   test("offers every visual type", () => {
     expect.hasAssertions();
 
-    expect(VisualTypeItemCategoryDefinitions.map(({ value }) => value)).toStrictEqual(Array.from(VisualTypes));
+    expect(VisualTypeItemCategoryDefinitions.map(({ value }) => value)).toStrictEqual([...VisualTypes]);
   });
 
   test("titles a multi-word type at its word boundaries", () => {
