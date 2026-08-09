@@ -1,5 +1,5 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
-import type { DatasetTruncation } from "#shared/models/dataset/DatasetTruncation";
+import type { DatasetTruncation } from "@/models/dataset/DatasetTruncation";
 
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 

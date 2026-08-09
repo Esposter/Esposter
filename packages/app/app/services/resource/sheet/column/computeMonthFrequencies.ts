@@ -1,5 +1,5 @@
 import { dayjs } from "#shared/services/dayjs";
-import { countOccurrences } from "#shared/util/array/countOccurrences";
+import { countOccurrences } from "@/util/array/countOccurrences";
 
 export const computeMonthFrequencies = (dates: string[]): readonly (readonly [string, number])[] => {
   const months = dates

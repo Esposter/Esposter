@@ -1,4 +1,4 @@
-import { createRandomNumber } from "#shared/util/math/random/createRandomNumber";
+import { createRandomNumber } from "@/util/math/random/createRandomNumber";
 
 // The saturating power / (power + defense) factor lets defense meaningfully reduce damage without ever granting immunity
 export const calculateDamage = (attack: number, power: number, defense: number) => {

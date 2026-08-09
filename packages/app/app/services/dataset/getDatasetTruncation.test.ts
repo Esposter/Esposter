@@ -3,7 +3,7 @@ import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
-import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
+import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { describe, expect, test } from "vitest";
 
 describe(getDatasetTruncation, () => {

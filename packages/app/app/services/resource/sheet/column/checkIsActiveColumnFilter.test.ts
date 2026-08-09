@@ -1,5 +1,5 @@
-import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
 import { checkIsActiveColumnFilter } from "@/services/resource/sheet/column/checkIsActiveColumnFilter";
 import { describe, expect, test } from "vitest";
 

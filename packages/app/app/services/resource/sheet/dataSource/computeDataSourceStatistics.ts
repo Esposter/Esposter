@@ -1,5 +1,5 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { DataSourceStatistics } from "#shared/models/resource/sheet/datasource/DataSourceStatistics";
+import type { DataSourceStatistics } from "@/models/resource/sheet/dataSource/DataSourceStatistics";
 
 export const computeDataSourceStatistics = ({ columns, rows }: DataSource): DataSourceStatistics => ({
   columnCount: columns.length,

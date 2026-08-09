@@ -1,9 +1,9 @@
 import type { DatasetColumnType } from "#shared/models/dataset/DatasetColumnType";
 
-import { BooleanValue, BooleanValues } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { dayjs } from "#shared/services/dayjs";
+import { BooleanValue, BooleanValues } from "@/models/resource/sheet/column/BooleanValue";
 import { normalizeString } from "@esposter/shared";
 
 export const inferColumnType = (values: string[]): DatasetColumnType => {

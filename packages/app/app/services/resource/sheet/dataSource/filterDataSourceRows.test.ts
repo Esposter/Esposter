@@ -1,10 +1,10 @@
-import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { createBooleanColumn } from "@/composables/resource/sheet/commands/createBooleanColumn.test";
 import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
 import { NULL_BOOLEAN_FILTER_VALUE } from "@/services/resource/sheet/constants";
 import { filterDataSourceRows } from "@/services/resource/sheet/dataSource/filterDataSourceRows";
 import { takeOne } from "@esposter/shared";

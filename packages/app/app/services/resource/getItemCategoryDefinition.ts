@@ -1,4 +1,4 @@
-import type { Item } from "#shared/models/entity/NamedItem";
+import type { Item } from "@/models/entity/NamedItem";
 import type { ItemCategoryDefinition } from "@/models/resource/ItemCategoryDefinition";
 
 import { ItemEntityTypePropertyNames } from "@esposter/shared";

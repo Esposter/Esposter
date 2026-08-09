@@ -1,6 +1,6 @@
 import type { DraftsAndSentSection } from "@/models/message/draftsAndSent/DraftsAndSentSection";
 
-import { getTimelineDateLabel } from "#shared/services/dayjs/getTimelineDateLabel";
+import { getTimelineDateLabel } from "@/services/dayjs/getTimelineDateLabel";
 
 export const getTimelineSections = <TItem>(
   items: TItem[],

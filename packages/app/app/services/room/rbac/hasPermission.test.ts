@@ -1,4 +1,4 @@
-import { hasPermission } from "#shared/services/room/rbac/hasPermission";
+import { hasPermission } from "@/services/room/rbac/hasPermission";
 import { RoomPermission } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

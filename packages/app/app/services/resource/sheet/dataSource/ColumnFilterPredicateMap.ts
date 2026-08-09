@@ -2,8 +2,8 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
 import type { StringColumnFilter } from "@/models/resource/sheet/column/StringColumnFilter";
 
-import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
 import { NULL_BOOLEAN_FILTER_VALUE } from "@/services/resource/sheet/constants";
 
 // A filter variant may answer to more than one ColumnType (one string filter covers Date and String), so the

@@ -1,4 +1,4 @@
-import { decompileVariables } from "#shared/services/compiler/decompileVariables";
+import { decompileVariables } from "@/services/compiler/decompileVariables";
 import { describe, expect, test } from "vitest";
 
 describe(decompileVariables, () => {
