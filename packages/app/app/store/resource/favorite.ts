@@ -1,52 +1,33 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { Resource } from "@esposter/db-schema";
 
+import { CacheTag } from "@/models/cache/CacheTag";
 import { useNotificationStore } from "@/store/notification";
-
-// One target, so every read of it supersedes the one before — the primitive's latest-wins, not a flag here
-const FAVORITES_KEY = "favorites";
 
 // Favorites are server-side from day one — a star that vanishes on another device reads as data loss
 export const useFavoriteStore = defineStore("resource/favorite", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeToggleFavoriteMutation, executeQuery, getIsPending } = useMutation();
+  const { executeMutation: executeToggleFavoriteMutation } = useMutation();
   const notificationStore = useNotificationStore();
+  const { createErrorNotification } = notificationStore;
   const favorites = ref<ResourceListItem[]>([]);
   // Every row on /all asks "am I starred?", so the lookup is a Set rather than a scan per row
   const favoriteIds = computed(() => new Set(favorites.value.map(({ id }) => id)));
-  const isLoading = computed(() => getIsPending(FAVORITES_KEY));
-  // Read-once-per-session, which single-flight cannot cover: a settled read is no longer in flight to join.
-  // A failed read leaves this false so the next mount retries instead of caching the failure
-  let isLoaded = false;
-  const queryFavorites = async ({ isExclusive }: { isExclusive?: true } = {}) => {
-    await executeQuery(() => $trpc.resource.readFavorites.query(), {
-      isExclusive,
-      key: FAVORITES_KEY,
-      onError: (error) => {
-        notificationStore.createNotification({ severity: "error", title: error.message });
-      },
-      onSuccess: (newFavorites) => {
-        favorites.value = newFavorites;
-        isLoaded = true;
-      },
-    });
-  };
   // The workbench list, the blade page and Home all want the same MAX_READ_LIMIT joined rows, and the list
   // Mounts inside the blade — so the set is read once and two concurrent mounts share the in-flight query
-  // Rather than every navigation re-running it. Anything that changes which stars resolve invalidates it
-  const readFavorites = async () => {
-    if (isLoaded) return;
-
-    await queryFavorites({ isExclusive: true });
-  };
-  // A delete or a restore changes which stars still point at a live resource, and only the server knows the
-  // Resulting set. This re-reads rather than setting a dirty flag: issuing the read is what supersedes one
-  // Already in flight, so the primitive drops the older response instead of this store tracking which is
-  // Current. It never joins one either — the answer in flight is the one the invalidation just invalidated
-  const refreshFavorites = async () => {
-    isLoaded = false;
-    await queryFavorites();
-  };
+  // Rather than every navigation re-running it
+  const { isPending: isLoading, read: readFavorites } = useCachedRead(() => $trpc.resource.readFavorites.query(), {
+    // The one cache that cannot wait for its next mount: the stars are rendered in the very table a delete is
+    // Issued from, so the set has to be correct on screen the moment the write lands
+    isRefetchOnInvalidate: true,
+    onError: createErrorNotification,
+    onSuccess: (newFavorites) => {
+      favorites.value = newFavorites;
+    },
+    // A delete, restore or purge changes which stars still point at a live resource, and the list is capped at
+    // MAX_READ_LIMIT — only the server knows which row backfills the one that left, so it is re-read, not edited
+    tags: [CacheTag.Resources],
+  });
   const toggleFavorite = async (resource: Resource) => {
     await executeToggleFavoriteMutation(() => $trpc.resource.toggleFavorite.mutate({ id: resource.id }), {
       // The snapshot is taken here rather than at click time, because this runs when the write is sent: a
@@ -64,9 +45,7 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
         };
       },
       key: resource.id,
-      onError: (error) => {
-        notificationStore.createNotification({ severity: "error", title: error.message });
-      },
+      onError: createErrorNotification,
       // The toggle is a delete-then-insert against the row the server actually finds, so its answer is the
       // True post-toggle state. A list that went stale (another tab starred this first) flips the wrong way
       // Optimistically and nothing else reconciles it — the star would read starred here while being
@@ -74,11 +53,12 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
       onSuccess: (isFavorite) => {
         if (isFavorite === favoriteIds.value.has(resource.id)) return;
 
+        const remainingFavorites = favorites.value.filter(({ id }) => id !== resource.id);
         favorites.value = isFavorite
-          ? [{ lastAccessedAt: null, ...resource }, ...favorites.value.filter(({ id }) => id !== resource.id)]
-          : favorites.value.filter(({ id }) => id !== resource.id);
+          ? [{ lastAccessedAt: null, ...resource }, ...remainingFavorites]
+          : remainingFavorites;
       },
     });
   };
-  return { favoriteIds, favorites, isLoading, readFavorites, refreshFavorites, toggleFavorite };
+  return { favoriteIds, favorites, isLoading, readFavorites, toggleFavorite };
 });

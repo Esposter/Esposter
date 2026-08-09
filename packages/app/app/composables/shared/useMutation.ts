@@ -1,12 +1,18 @@
+import type { CacheTag } from "@/models/cache/CacheTag";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
+import { useCacheStore } from "@/store/cache";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> extends QueryOptions<TResult> {
   applyOptimistic?: () => Promisable<() => void>;
+  // The cached reads this write makes stale, named by tag so the write never learns which caches exist.
+  // Dropped once the write has landed: a rejected or rolled-back write changed nothing, so it invalidates
+  // Nothing. Writes only — a read has no reason to invalidate anything, which is why this is not on QueryOptions
+  invalidates?: CacheTag[];
   // Latest-wins instead of queueing, for a control that fires per keystroke or per drag frame where the
   // Earlier call's value is already replaced on screen by the later one, so losing it costs nothing
   isSupersede?: true;
@@ -47,6 +53,8 @@ interface QueryOptions<TResult> {
 export const useMutation = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
+  const cacheStore = useCacheStore();
+  const { invalidateTags } = cacheStore;
   // Which call is the latest for a target. Only supersede-mode operations take a number here — every read,
   // And the writes that opt in; a queued write is the latest for its target by the time it runs
   const callIds = new Map<PropertyKey, number>();
@@ -158,13 +166,23 @@ export const useMutation = () => {
   // Default — a caller opts into latest-wins with isSupersede where dropping the earlier call is the intent
   const executeMutation = <TResult>(
     mutate: (checkIsStale: () => boolean) => Promise<TResult>,
-    { applyOptimistic, isExclusive, isSupersede, key, onError, onSuccess }: MutationOptions<TResult>,
+    { applyOptimistic, invalidates, isExclusive, isSupersede, key, onError, onSuccess }: MutationOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
     if (isExclusive && pendingCounts.value.has(key)) return Promise.resolve({ status: MutationStatus.Dropped });
 
     const checkIsStale = isSupersede ? getCheckIsStale(key) : () => false;
     claimKey(key);
-    const run = () => settle(mutate, { applyOptimistic, checkIsStale, isSilentWhenStale: false, onError, onSuccess });
+    // Composed onto this write's own success callback rather than handled inside settle, which the read path
+    // Shares: a read carries no invalidates and so cannot reach this at all. It runs after the write landed
+    // And after the caller applied its result, so a cache re-reading here reads the post-write world
+    const onSettled = invalidates
+      ? async (result: TResult) => {
+          await onSuccess?.(result);
+          await invalidateTags(invalidates);
+        }
+      : onSuccess;
+    const run = () =>
+      settle(mutate, { applyOptimistic, checkIsStale, isSilentWhenStale: false, onError, onSuccess: onSettled });
     // The finalizer guarantees pending and queue bookkeeping unwind even when applyOptimistic or a callback
     // Throws, so a thrown callback can never strand the key as permanently pending or wedge its queue
     return withFinalizerAsync(

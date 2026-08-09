@@ -57,8 +57,8 @@ A joined read is never `Dropped`. Dropping is right for a write, whose caller wa
 
 Two things `isExclusive` deliberately does **not** do:
 
-- **It does not cache.** Only a read still in flight can be joined, so read-once-per-session or read-once-per-room stays a flag at the call site (`isLoaded`, a `loadedRoomIds` set) guarding whether to call at all. That is a caching concern, not a concurrency one.
-- **It does not apply to an invalidating re-read.** A read issued _because_ something changed must not join the answer that the change just invalidated, so `refreshFavorites` re-reads without it and wins on latest-wins instead.
+- **It does not cache.** Only a read still in flight can be joined, so read-once-per-session and read-once-per-room are a caching concern, not a concurrency one — they belong to `useCachedRead`, which layers its gate on top of this rather than replacing it. See [caching](/docs/architecture/caching).
+- **It does not apply to an invalidating re-read.** A read issued _because_ something changed must not join the answer that the change just invalidated, so a cache's `refetch` re-reads without it and wins on latest-wins instead.
 
 `isPending` doubles as the loading flag for a read composable — `useQuery` hands it back alongside `data` — so no composable keeps its own `isLoading` ref.
 

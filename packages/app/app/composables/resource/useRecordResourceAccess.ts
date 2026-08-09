@@ -1,5 +1,6 @@
 import type { Resource } from "@esposter/db-schema";
 
+import { CacheTag } from "@/models/cache/CacheTag";
 import { noop } from "@esposter/shared";
 
 // Feeds the Recent list route, Home's Recent tab and the search dropdown's Recently opened group.
@@ -17,7 +18,13 @@ export const useRecordResourceAccess = (resource: Ref<Resource | undefined>) => 
 
       // Silent on failure: this is a record of the visit, and the visit itself succeeded. An alert here would
       // Report a problem on a page that opened perfectly well
-      await executeMutation(() => $trpc.resource.recordAccess.mutate({ id }), { key: id, onError: noop });
+      await executeMutation(() => $trpc.resource.recordAccess.mutate({ id }), {
+        // The row this writes is the one Recent is ordered by, so every cache of that ordering now predates
+        // This visit
+        invalidates: [CacheTag.Recents],
+        key: id,
+        onError: noop,
+      });
     },
   );
 };

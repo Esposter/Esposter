@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { Resource } from "@esposter/db-schema";
 import type { Router } from "vue-router";
 
 import { useDeleteResources } from "@/composables/resource/list/useDeleteResources";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
-import { ResourceType } from "@esposter/db-schema";
+import { useFavoriteStore } from "@/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
@@ -14,8 +14,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 describe(useDeleteResources, () => {
   const server = setupMswTrpc();
   let router: Router;
-  const resource = { id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource;
-  const otherResource = { id: crypto.randomUUID(), name: "name", type: ResourceType.Sheet } as Resource;
+  const resource = createResourceListItem();
+  const otherResource = createResourceListItem();
 
   beforeAll(() => {
     router = useRouter();
@@ -44,9 +44,10 @@ describe(useDeleteResources, () => {
   });
 
   // The ids go out chunk-by-chunk and each chunk commits independently, so a failure still leaves earlier
-  // Chunks deleted server-side. The favorite set is read once per session, so nothing else drops the stars
-  // Those rows held — Home would keep listing resources whose blade rejects every read until a reload
-  test("re-reads the favorites when a delete fails", async () => {
+  // Chunks deleted server-side — the one write that has to invalidate even though it reports as failed. The
+  // Favorite set is read once per session, so nothing else drops the stars those rows held and Home would
+  // Keep listing resources whose blade rejects every read until a reload
+  test("invalidates the resources tag when a delete fails", async () => {
     expect.hasAssertions();
 
     const readFavorites = vi.fn<() => ResourceListItem[]>(() => []);
@@ -56,10 +57,15 @@ describe(useDeleteResources, () => {
       }),
       trpcMsw.resource.readFavorites.query(readFavorites),
     );
+    // The table the delete is issued from renders the stars, so the favorites cache is loaded by this point —
+    // A cache that was never constructed holds nothing stale and is nothing to invalidate
+    const favoriteStore = useFavoriteStore();
+    const { readFavorites: readCachedFavorites } = favoriteStore;
+    await readCachedFavorites();
     const refresh = vi.fn<() => Promise<void>>(() => Promise.resolve());
     await useDeleteResources(ref([resource]), ref(1), refresh)([resource]);
 
-    expect(readFavorites).toHaveBeenCalledTimes(1);
+    expect(readFavorites).toHaveBeenCalledTimes(2);
     expect(refresh).toHaveBeenCalledTimes(1);
   });
 

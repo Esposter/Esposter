@@ -47,10 +47,10 @@ Ordered by expected payoff — the biggest surfaces with the most recent churn f
 - [x] `composables/resource/sheet` — the command/history layer
 - [x] `services/resource/sheet` — column inference, transformations, (de)serialization
 - [x] `store/resource/sheet` + `shared/models/resource/sheet`
-- [ ] `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`, `Resource/Flowchart` — the canvas editors
-- [ ] `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`
-- [ ] `app/composables/resource` + `app/services/resource` — what the sweep above leaves behind
-- [ ] `app/store/resource` — store shapes against the `pinia` skill
+- [x] `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`, `Resource/Flowchart` — the canvas editors
+- [x] `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`, `Resource/Note`
+- [x] `app/composables/resource` + `app/services/resource` — what the sweep above leaves behind
+- [x] `app/store/resource` — store shapes against the `pinia` skill
 
 ### Messaging
 
@@ -104,6 +104,8 @@ Findings a pass surfaced whose fix is real work rather than cleanup. Each needs 
 - **`shared/` reaches into app-only client code.** Nine files under `shared/models/resource/sheet/column/` import from `@/` — vjsf select-items context and an Ajv keyword — and they are the only such imports in the whole shared tree. The cause is that transformations have no form twin, so presentation meta is baked into `columnTransformationSchema`, which is inside the schema the _server_ parses. The cheap fix moves two files into `shared/`; the principled one gives transformations `*TransformationForm` twins.
 - **`DataSourceStatistics` is persisted derived state.** All three fields are recomputed from `columns` and `rows` by `syncStatistics`, which every command calls on both execute and undo, so the stored copy can never legitimately differ. Dropping it from the blob is behaviour-changing (and needs the fixtures that restate it updated), which is why it was not folded in.
 - **An appending paste is not redo-stable.** `PasteRangeCommand.doExecute` constructs the appended `Row` inside execute rather than in its constructor, so undo-then-redo of a paste that appended rows mints fresh row ids. The undo/redo invariant matrix found this; its paste case is narrowed to a pure overwrite until the row construction moves into the constructor.
+- **The flowchart editor's dirty check is defeated.** `saveFlowchartEditor` calls `saveItemMetadata`, bumping `updatedAt` before every save, so `useResource.save`'s `JSON.stringify` comparison can never match — while `useSave.getSnapshotJson` deliberately excludes `updatedAt` for exactly this reason. VueFlow emits `update:nodes` per drag frame, so the blade issues a real `contentVersion`-bumping write per debounce tick whether or not anything changed. The fix is either dropping `saveItemMetadata` here or teaching `useResource.save` the same exclusion; both change what is written and how often.
+- **`readProgramStatus` ships every participant's `token` to the browser.** The Status blade never renders it, and `ProgramStatusRow`'s own comment calls the token "the credential that responds on their behalf". Not an authorization hole — the owner is entitled to those tokens — but the status read has no reason to carry them, and dropping the field is a server plus shared-model change. `publicId` is likewise unread by the client.
 - **Statistics read cells behind `computeValue`'s back.** `computeColumnStatisticsForColumn` reads `row.data` directly, and a computed column never writes there — so every computed column reports empty statistics and a zero null count, while the index lists computed-column stats as shipped. Routing it through `computeValue` fixes that and starts populating stats, outliers and charts for those columns, which is a visible change.
 
 ## Done

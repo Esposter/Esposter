@@ -10,6 +10,10 @@ Every user-facing tRPC call on the client goes through one of two symmetric prim
 - **`useQuery`** — reads. Fetches without blocking setup, populates reactive data, surfaces errors.
 - **`useMutation`** — writes. Applies optimistically, rolls back on failure, surfaces errors.
 
+A third primitive sits beside them for the reads that are the same all session:
+
+- **`useCachedRead`** — a store's shared read, cached until a write invalidates its tag. Covered in [caching](/docs/architecture/caching).
+
 Both share the same error stack (`getResultAsync` → `createAlert`) and the same concurrency model — reads latest-wins per target, writes queued per target **by default**, with a write opting into latest-wins via `isSupersede` where dropping the earlier call is the intent, described in [Async operations](/docs/architecture/async-operations) — so no call site re-implements loading, error handling, or race protection.
 
 ## useQuery
@@ -32,6 +36,8 @@ const { data, refresh } = useQuery(() => $trpc.room.readMyInvite.query({ roomId 
 - `onSuccess` — rare; for seeding local state from the loaded result.
 
 On failure the real `Error.message` is raised as an alert and `data` stays `undefined`, so the component falls back to its empty state. A superseded fetch (a newer `refresh`, a remounted component) can never overwrite a newer result.
+
+`useQuery`'s data is **per instance**, so two components calling it fetch twice. A read that several surfaces share, and that should be read once per session, is `useCachedRead` on a store instead — see [caching](/docs/architecture/caching).
 
 ## useMutation
 

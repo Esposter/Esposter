@@ -1,8 +1,10 @@
 // @vitest-environment nuxt
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
+import { CacheTag } from "@/models/cache/CacheTag";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
+import { useCacheStore } from "@/store/cache";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
@@ -10,7 +12,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useFavoriteStore, () => {
   const server = setupMswTrpc();
-  const resource = createResourceListItem({ contentVersion: 0 });
+  const resource = createResourceListItem();
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -84,18 +86,25 @@ describe(useFavoriteStore, () => {
     expect(favorites.value).toStrictEqual([resource]);
   });
 
-  // A delete or a restore changes which stars still resolve to a live resource, so the cached set is dropped
-  test("re-reads the favorites after an invalidation", async () => {
+  // A delete or a restore changes which stars still resolve to a live resource, and the stars are rendered in
+  // The very table the delete is issued from — so this is the one cache that re-reads at once rather than
+  // Dropping and waiting for its next mount
+  test("re-reads the favorites the moment the resources tag is invalidated", async () => {
     expect.hasAssertions();
 
     const handler = vi.fn<() => ResourceListItem[]>(() => [resource]);
     server.use(trpcMsw.resource.readFavorites.query(handler));
+    const cacheStore = useCacheStore();
+    const { invalidateTags } = cacheStore;
     const favoriteStore = useFavoriteStore();
-    const { readFavorites, refreshFavorites } = favoriteStore;
+    const { readFavorites } = favoriteStore;
     await readFavorites();
-    await refreshFavorites();
+    await invalidateTags([CacheTag.Resources]);
+    const callCountAfterInvalidation = handler.mock.calls.length;
     await readFavorites();
 
+    expect(callCountAfterInvalidation).toBe(2);
+    // The re-read re-cached the set, so the next mount reads nothing
     expect(handler).toHaveBeenCalledTimes(2);
   });
 });

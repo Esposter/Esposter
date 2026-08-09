@@ -1,6 +1,8 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
+import { CacheTag } from "@/models/cache/CacheTag";
+import { useCacheStore } from "@/store/cache";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
@@ -8,11 +10,12 @@ import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, refresh: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
   const router = useRouter();
+  const cacheStore = useCacheStore();
+  const { invalidateTags } = cacheStore;
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const { executeMutation: executeDeleteResourcesMutation } = useMutation();
   const { restoreResource } = useRestoreResource(refresh);
-  const { refreshFavorites, refreshResources } = useRefreshResources(refresh);
   // Owned here because the row leaves `items` optimistically, which unmounts the v-if-gated delete dialog mid-flight
   const deleteResources = async (resources: Resource[]) => {
     const ids = resources.map(({ id }) => id);
@@ -46,18 +49,20 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
             count.value = snapshotCount;
           };
         },
+        // A star or a recently-opened row only resolves while its resource is live
+        invalidates: [CacheTag.Resources],
         // A batch delete spans an arbitrary selection with no single entity id, so each gets a per-call symbol
         key: Symbol("deleteResources"),
         onError: async (error) => {
           createErrorNotification(error);
           // The ids are deleted chunk-by-chunk, each committing independently, so a later chunk's failure
-          // Still leaves earlier chunks deleted server-side. The rollback restores every row, so re-read to
-          // Reconcile the list — and the stars with it, since an earlier chunk's rows are gone for good
-          await refreshResources();
+          // Still leaves earlier chunks deleted server-side — the one write that has to invalidate even
+          // Though it failed. The rollback restores every row, so re-read to reconcile the list, and the
+          // Stars with it, since an earlier chunk's rows are gone for good
+          await invalidateTags([CacheTag.Resources]);
+          await refresh();
         },
         onSuccess: async () => {
-          // A star only resolves while its resource is live, so the set the next surface mounts with is re-read
-          await refreshFavorites();
           createNotification({
             // The undo toast: a single delete is one click away from coming back, no bin trip needed
             action:
