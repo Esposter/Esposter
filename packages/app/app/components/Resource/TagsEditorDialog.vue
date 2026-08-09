@@ -47,9 +47,14 @@ const canAddRow = computed(() => rows.value.length < MAX_TAGS_COUNT);
         />
         <StyledTooltipIconButton icon="mdi-delete" text="Remove tag" @click="rows.splice(index, 1)" />
       </div>
-      <v-btn v-if="canAddRow" prepend-icon="mdi-plus" variant="text" w-fit @click="rows.push({ name: '', value: '' })">
-        Add tag
-      </v-btn>
+      <!-- Same reason as the Edit button that opens this dialog: transparent, it reads as a caption rather
+           than as the control that adds a row -->
+      <StyledButton
+        v-if="canAddRow"
+        :button-props="{ prependIcon: 'mdi-plus', size: 'small', text: 'Add tag' }"
+        w-fit
+        @click="rows.push({ name: '', value: '' })"
+      />
       <span v-else text-caption op-medium-emphasis>A resource can have at most {{ MAX_TAGS_COUNT }} tags.</span>
     </div>
   </StyledFormDialog>
