@@ -19,13 +19,21 @@ Never open side PRs against `main` to slice it up. Each one spends a review slot
 
 ## 1. Cut
 
-Cut by commit window, not by file. The loop prints the cumulative file count at **every** commit in the range, because a topical cluster does not always land as a merge — the count jumps at the merges, each jump is one cluster, so prefer the merge boundary nearest the budget and fall back to a plain commit when none sits there. Any prefix is coherent history by construction, so either is a valid cut:
+Cut by commit window, not by file. The loop prints the cumulative file count at **every** commit in the range, because a topical cluster does not always land as a merge — the count jumps at the merges, each jump is one cluster, so prefer the merge boundary nearest the budget and fall back to a plain commit when none sits there:
 
 ```bash
 for commit in $(git rev-list --reverse <base>..develop); do
   printf '%4d  %s\n' "$(git diff --name-only -M "<base>..$commit" | wc -l)" "$(git log -1 --oneline "$commit")"
 done
 ```
+
+**A prefix is coherent history but not necessarily a working tree — the cut has to land where CI is green.** Local commits are pushed in batches, so a commit that moves a module and the one that repoints its importers can be several apart; every commit between them typecheck-fails, and nothing complains until a cut stops there. The file count says nothing about this. Before settling on a boundary, check that the candidate builds — and if it doesn't, walk **forward** to the commit that repairs it rather than back, since the breakage is only fixed above:
+
+```bash
+git stash -u && git switch --detach <candidate> && (cd packages/app && pnpm typecheck)
+```
+
+A cut that lands mid-breakage is not a lost-work problem — the repair is safe on the queue branch — but it publishes a red `develop` and burns the review cycle on a window whose CI never passes.
 
 Take the boundary nearest ~80 files. The next three commands discard and rewrite published history, so they are the one place in this repo that needs a gate first — **get explicit approval for this cut**, and check all three of: the worktree is clean (`git status --porcelain -uall` empty — a `reset --hard` eats uncommitted work), you are on `develop` and not a worktree branch, and the local tip matches `origin/develop` (`git rev-parse develop origin/develop`) so no other session's push is about to be overwritten. `--force-with-lease` refuses the push if the remote moved, but nothing catches a dirty tree or the wrong branch.
 
@@ -65,6 +73,14 @@ done
 git switch develop && git merge --no-ff <window> && git push origin develop
 git rev-list --count develop..queue/<scope>   # what the queue still owes
 ```
+
+**Re-measure the window immediately before pushing, not when planning it.** The count that matters is the one after the review fixes, the merge and the format/lint pass have all landed, and it lands higher than the estimate: a lint pass fixes whatever the merged window dragged in, so it touches files no one attributed to the window. Planning at "89 plus the five files the findings name" is how a window arrives at the remote at 101.
+
+```bash
+git diff --name-only -M <last-reviewed-sha>..HEAD | wc -l   # after every commit, before the push
+```
+
+Over budget at that point is cheap to fix precisely because nothing is pushed: drop the tail commit back to the queue (`git reset --hard <fixes>`, re-merge the smaller window, cherry-pick the work that sat above it), and the queue simply owes one more commit. Prefer dropping a whole trailing commit to hunting individual files — the boundary stays a commit boundary, and the next window is already sized.
 
 `--no-ff` rather than `--ff-only`: the fixes for one window's findings land on `develop`, so from the second window on the queue is no longer a descendant of `develop` and a fast-forward is refused. The queue branch itself is never moved — `develop..queue/<scope>` shrinks on its own as windows merge, and it is empty (count `0`) when the branch can be deleted.
 
