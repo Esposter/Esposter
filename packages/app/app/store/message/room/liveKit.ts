@@ -33,6 +33,24 @@ const VoiceDeviceSettingsKeyMap = {
   audiooutput: "outputDeviceId",
   videoinput: "cameraDeviceId",
 } as const satisfies Record<MediaDeviceKind, string>;
+// `Object.keys` widens to `string`, and every kind here is handed straight to LiveKit's device API, which takes
+// A `MediaDeviceKind`
+const VoiceDeviceKinds = Object.keys(VoiceDeviceSettingsKeyMap) as MediaDeviceKind[];
+// Camera and screen share arrive on the same two events and differ only in the source they answer to and the
+// Stream they set, so one factory declares both directions for each
+const getRemoteStreamHandlers = (
+  source: Track.Source,
+  setStream: (identity: string, stream: MediaStream | undefined) => void,
+) => ({
+  attach: (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
+    if (publication.source !== source || !track.mediaStream) return;
+    setStream(participant.identity, track.mediaStream);
+  },
+  detach: (_track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
+    if (publication.source !== source) return;
+    setStream(participant.identity, undefined);
+  },
+});
 // Presentation-quality capture: full HD, at a frame rate that keeps slides and code legible without saturating
 // The uplink, and never offering the tab doing the sharing as a surface to share
 const SCREEN_SHARE_CAPTURE_OPTIONS = {
@@ -143,21 +161,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     for (const element of track.detach()) element.remove();
     remoteAudioElements.delete(`${participant.identity}:${publication.source}`);
   };
-  // Camera and screen share arrive on the same two events and differ only in the source they answer to and the
-  // Stream they set, so one factory declares both directions for each
-  const getRemoteStreamHandlers = (
-    source: Track.Source,
-    setStream: (identity: string, stream: MediaStream | undefined) => void,
-  ) => ({
-    attach: (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-      if (publication.source !== source || !track.mediaStream) return;
-      setStream(participant.identity, track.mediaStream);
-    },
-    detach: (_track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-      if (publication.source !== source) return;
-      setStream(participant.identity, undefined);
-    },
-  });
   const { attach: attachRemoteCamera, detach: detachRemoteCamera } = getRemoteStreamHandlers(
     Track.Source.Camera,
     setRemoteVideoStream,
@@ -267,15 +270,15 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     if (!activeRoom || !deviceId || activeRoom.getActiveDevice(kind) === deviceId) return;
     await activeRoom.switchActiveDevice(kind, deviceId);
   });
-  for (const [kind, settingsKey] of Object.entries(VoiceDeviceSettingsKeyMap))
+  for (const kind of VoiceDeviceKinds)
     watch(
-      () => voiceDeviceSettingsStore[settingsKey],
+      () => voiceDeviceSettingsStore[VoiceDeviceSettingsKeyMap[kind]],
       (deviceId) => {
         syncDeviceToRoom(kind, deviceId);
       },
     );
   const syncActiveDevices = (room: Room) => {
-    for (const [kind] of Object.entries(VoiceDeviceSettingsKeyMap)) {
+    for (const kind of VoiceDeviceKinds) {
       const deviceId = room.getActiveDevice(kind);
       if (deviceId) setActiveDevice(kind, deviceId);
     }

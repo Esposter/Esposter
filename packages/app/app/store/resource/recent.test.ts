@@ -38,16 +38,16 @@ describe(useRecentStore, () => {
     await Promise.all([readRecents(), readRecents()]);
     await readRecents();
 
-    expect(handler).toHaveBeenCalledOnce();
+    expect(handler).toHaveBeenCalledTimes(1);
     expect(recents.value).toStrictEqual([resource]);
   });
 
   // Opening a resource is what the set is ordered by, and a delete or restore changes which of its rows still
   // Resolve — without this the set is read once and Home keeps listing resources that are in the recycle bin.
   // Nothing showing the list is mounted at either moment, so it drops and Home's card re-reads on next mount
-  const invalidatingTagCases = [CacheTag.Recents, CacheTag.Resources];
-  for (const tag of invalidatingTagCases)
-    test(`re-reads the recents on the next mount after ${tag} is invalidated`, async () => {
+  test.each([CacheTag.Recents, CacheTag.Resources])(
+    "re-reads the recents on the next mount after %s is invalidated",
+    async (tag) => {
       expect.hasAssertions();
 
       const handler = createReadRecentsHandler();
@@ -63,7 +63,8 @@ describe(useRecentStore, () => {
 
       expect(callCountAfterInvalidation).toBe(1);
       expect(handler).toHaveBeenCalledTimes(2);
-    });
+    },
+  );
 
   // A failure must not be cached as "loaded", or the card's Retry would render the same error forever
   test("reissues the read after a failure and clears the error once it lands", async () => {

@@ -1,32 +1,10 @@
 // @vitest-environment nuxt
-import type { RoomInMessage } from "@esposter/db-schema";
-
+import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
-import { MimeCategory, RoomType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-
-// A direct message is a room row too, so the direct message store's tests build their fixtures from here rather
-// Than restating every column of the same table
-export const createRoom = (name: string, type = RoomType.Room): RoomInMessage => ({
-  allowedMimeCategories: [MimeCategory.Image],
-  categoryId: null,
-  createdAt: new Date("1970-01-01"),
-  deletedAt: null,
-  id: crypto.randomUUID(),
-  image: "",
-  isReadOnly: false,
-  maxFileSizeBytes: null,
-  name,
-  participantKey: type === RoomType.DirectMessage ? crypto.randomUUID() : null,
-  slowmodeMs: null,
-  topic: "",
-  type,
-  updatedAt: new Date("1970-01-01"),
-  userId: crypto.randomUUID(),
-});
 
 describe(useRoomStore, () => {
   const server = setupMswTrpc();
@@ -38,39 +16,52 @@ describe(useRoomStore, () => {
   });
 
   // Every room is its own target, so removals overlap: the rejected one has to put back its own room only.
-  // Reinstating the list as it stood would re-add the room the successful removal took out
+  // Reinstating the list as it stood would re-add the room the successful removal took out.
+  // The rejection is held until the successful removal has settled in the store — issued together, the reject
+  // Can land first and roll back against a list nothing has shortened yet, which passes either implementation
   test("restores only the room whose deletion was rejected", async () => {
     expect.hasAssertions();
 
+    const { promise: isSecondDeleted, resolve: onSecondDeleted } = Promise.withResolvers<true>();
     server.use(
-      trpcMsw.room.deleteRoom.mutation(({ input }) => {
-        if (input === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
-        return second;
+      trpcMsw.room.deleteRoom.mutation(async ({ input }) => {
+        if (input !== first.id) return second;
+        await isSecondDeleted;
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
       }),
     );
     const roomStore = useRoomStore();
     const { deleteRoom, pushRooms } = roomStore;
     const { rooms } = storeToRefs(roomStore);
     pushRooms(first, second);
-    await Promise.all([deleteRoom(first.id), deleteRoom(second.id)]);
+    const rejectedDeleteRoom = deleteRoom(first.id);
+    await deleteRoom(second.id);
+    onSecondDeleted(true);
+    await rejectedDeleteRoom;
 
     expect(rooms.value).toStrictEqual([first]);
   });
 
+  // Held the same way as the deletion above
   test("restores only the room whose leave was rejected", async () => {
     expect.hasAssertions();
 
+    const { promise: isSecondLeft, resolve: onSecondLeft } = Promise.withResolvers<true>();
     server.use(
-      trpcMsw.room.leaveRoom.mutation(({ input }) => {
-        if (input === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
-        return second.id;
+      trpcMsw.room.leaveRoom.mutation(async ({ input }) => {
+        if (input !== first.id) return second.id;
+        await isSecondLeft;
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
       }),
     );
     const roomStore = useRoomStore();
     const { leaveRoom, pushRooms } = roomStore;
     const { rooms } = storeToRefs(roomStore);
     pushRooms(first, second);
-    await Promise.all([leaveRoom(first.id), leaveRoom(second.id)]);
+    const rejectedLeaveRoom = leaveRoom(first.id);
+    await leaveRoom(second.id);
+    onSecondLeft(true);
+    await rejectedLeaveRoom;
 
     expect(rooms.value).toStrictEqual([first]);
   });

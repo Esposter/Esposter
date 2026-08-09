@@ -11,6 +11,10 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
+// The store reaches the layout store, which resolves Vuetify's display — a composable that needs a component
+// Instance. Shallow because only the store wiring is under test here, not the drawer's own markup
+const mountThreadDrawer = () => mountSuspended(MessageRightSideBarThreadIndex, { shallow: true });
+
 describe(useThreadStore, () => {
   const server = setupMswTrpc();
   const roomId = crypto.randomUUID();
@@ -18,9 +22,6 @@ describe(useThreadStore, () => {
   const message = "message";
   const rootRowKey = "rootRowKey";
   const createReply = () => createMessageEntity({ message, roomId, type: MessageType.Message, userId });
-  // The store reaches the layout store, which resolves Vuetify's display — a composable that needs a component
-  // Instance. Shallow because only the store wiring is under test here, not the drawer's own markup
-  const mountThreadDrawer = () => mountSuspended(MessageRightSideBarThreadIndex, { shallow: true });
 
   beforeEach(() => {
     setActivePinia(createPinia());

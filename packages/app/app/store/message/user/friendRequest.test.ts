@@ -11,7 +11,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
 // Spied on directly — mock the module and drive useSession through a hoisted mock instead. The store reads only
-// session.value.data.user.id, so the mock returns just that slice of the session ref.
+// Session.value.data.user.id, so the mock returns just that slice of the session ref.
 interface MockSessionValue {
   data?: { user: { id: string } };
 }

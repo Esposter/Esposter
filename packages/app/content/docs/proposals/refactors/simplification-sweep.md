@@ -17,7 +17,7 @@ flowchart LR
   REVIEW --> APPLY["apply the fixes<br/>behaviour-preserving only"]
   APPLY --> TESTS["ground it<br/>regression tests + dedupe fixtures"]
   TESTS --> DOCS["carry docs + skills"]
-  DOCS --> CHECK["format · typecheck · lint · tests"]
+  DOCS --> CHECK["format · typecheck · lint:fix · tests"]
   CHECK --> TICK["tick the box, commit"]
   TICK --> SCOPE
 ```
@@ -123,4 +123,4 @@ Findings a pass surfaced whose fix is real work rather than cleanup. Each needs 
 
 ## Done
 
-Delete this page once every box is ticked — the ritual it applies lives in `AGENTS.md`, and the conventions it enforces live in the skills. Nothing here is worth keeping as a record.
+Delete this page once every box is ticked and every finding under _Raised, not folded in_ has become its own proposal — the ledger is the only place those live, so deleting it while one is unwritten loses it outright. The ritual it applies lives in `AGENTS.md`, and the conventions it enforces live in the skills. Nothing else here is worth keeping as a record.
