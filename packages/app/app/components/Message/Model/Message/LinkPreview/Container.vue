@@ -4,6 +4,7 @@ import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
 import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { useDataStore } from "@/store/message/data";
+import { noop } from "@esposter/shared";
 
 interface ContainerProps {
   linkPreviewResponse: LinkPreviewResponse;
@@ -18,15 +19,18 @@ const { items } = storeToRefs(dataStore);
 const isActive = ref(false);
 const { executeMutation } = useMutation();
 const deleteLinkPreviewResponse = async (onComplete: () => void) => {
-  const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }));
-  const previousLinkPreviewResponse = message?.linkPreviewResponse;
   await executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }), {
-    // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success.
+    // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. The row and
+    // Its embeds are read as the write is sent, so a rejected removal restores what the write ahead of it stored
+    // Rather than what was on screen when the user confirmed
     applyOptimistic: () => {
-      if (message) message.linkPreviewResponse = null;
+      const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }));
+      if (!message) return noop;
+
+      const previousLinkPreviewResponse = message.linkPreviewResponse;
+      message.linkPreviewResponse = null;
       return () => {
-        if (message && previousLinkPreviewResponse !== undefined)
-          message.linkPreviewResponse = previousLinkPreviewResponse;
+        message.linkPreviewResponse = previousLinkPreviewResponse;
       };
     },
     key: rowKey,

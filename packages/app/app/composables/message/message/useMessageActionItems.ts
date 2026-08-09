@@ -15,7 +15,7 @@ import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useThreadStore } from "@/store/message/thread";
 import { MessageType, RoomPermission } from "@esposter/db-schema";
-import { exhaustiveGuard, normalizeString, RoutePath } from "@esposter/shared";
+import { exhaustiveGuard, noop, normalizeString, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
@@ -97,10 +97,14 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
             await executeUnpinMessageMutation(
               () => $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
               {
+                // Read as the write is sent rather than assumed: a pin that landed — or was itself rolled back —
+                // Between the click and this write decides what unpinning owes back, and a hard-coded true would
+                // Re-pin a message the server never pinned
                 applyOptimistic: () => {
+                  const previousIsPinned = message.isPinned;
                   delete message.isPinned;
                   return () => {
-                    message.isPinned = true;
+                    if (previousIsPinned) message.isPinned = previousIsPinned;
                   };
                 },
                 key: message.rowKey,
@@ -138,12 +142,21 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     onClick: async () => {
       const lastMessageAt = dayjs(message.createdAt).subtract(1, "millisecond").toDate();
       const roomId = message.partitionKey;
-      const previousUserToRoom = getMyUserToRoom(roomId);
       await executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastMessageAt, roomId }), {
+        // Read as the write is sent, so a rejected mark-unread restores the marker the write ahead of it stored
+        // Rather than the one on screen when the user clicked
         applyOptimistic: () => {
-          if (previousUserToRoom) setMyUserToRoom(roomId, { ...previousUserToRoom, lastMessageAt });
+          const previousUserToRoom = getMyUserToRoom(roomId);
+          if (!previousUserToRoom) return noop;
+
+          const { lastMessageAt: previousLastMessageAt } = previousUserToRoom;
+          setMyUserToRoom(roomId, { ...previousUserToRoom, lastMessageAt });
           return () => {
-            if (previousUserToRoom) setMyUserToRoom(roomId, previousUserToRoom);
+            // Only the field this write moved, against the record as it stands — reinstating the row as a whole
+            // Would undo everything else that landed on it while this write was in flight
+            const currentUserToRoom = getMyUserToRoom(roomId);
+            if (currentUserToRoom)
+              setMyUserToRoom(roomId, { ...currentUserToRoom, lastMessageAt: previousLastMessageAt });
           };
         },
         key: roomId,

@@ -4,6 +4,7 @@ import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useDialogStore } from "@/store/message/room/dialog";
 import { MessageType, ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const { smAndDown } = useVDisplay();
@@ -11,7 +12,7 @@ const layoutStore = useLayoutStore();
 const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
 const { storeUpdateRoom } = roomStore;
-const { currentRoom, isCreator } = storeToRefs(roomStore);
+const { currentRoom, isCreator, rooms } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const dialogStore = useDialogStore();
@@ -22,14 +23,22 @@ const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");
 const { executeMutation } = useMutation();
 const updateRoom = async (name: string) => {
   if (!currentRoom.value) return;
-  const { id, image: oldImage, name: oldName } = currentRoom.value;
+  const { id, name: currentName } = currentRoom.value;
   const image = editedImage.value;
-  const isNameChanged = name !== oldName;
+  const isNameChanged = name !== currentName;
   await executeMutation(() => $trpc.room.updateRoom.mutate({ id, image, name }), {
+    // Read as the write is sent, so a rejected edit restores what the edit ahead of it stored rather than what
+    // Was on screen when the dialog was submitted
     applyOptimistic: () => {
+      const room = rooms.value.find(({ id: roomId }) => roomId === id);
+      if (!room) return noop;
+
+      const { image: previousImage, name: previousName } = room;
       storeUpdateRoom({ id, image, name });
       return () => {
-        storeUpdateRoom({ id, image: oldImage, name: oldName });
+        // Only the two fields this write moved — the update is a partial, so everything else that landed on the
+        // Room while this write was in flight stays
+        storeUpdateRoom({ id, image: previousImage, name: previousName });
       };
     },
     key: id,

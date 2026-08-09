@@ -10,13 +10,17 @@ export const useCancelScheduledMessageJob = () => {
   const { count, items } = storeToRefs(scheduledMessageJobStore);
   return async (id: ScheduledMessageJobInMessage["id"]) => {
     await executeMutation(() => $trpc.message.scheduledMessageJob.cancelScheduledJob.mutate({ id }), {
+      // The one row this write cancels, not a copy of the page: reinstating the page would resurrect a job
+      // Another cancel already took off it and drop whatever the page gained while this write was in flight
       applyOptimistic: () => {
-        const itemsSnapshot = items.value;
-        const countSnapshot = count.value;
+        const cancelledScheduledMessageJob = items.value.find((scheduledMessageJob) => scheduledMessageJob.id === id);
         removeScheduledMessageJob(id);
         return () => {
-          items.value = itemsSnapshot;
-          count.value = countSnapshot;
+          if (!cancelledScheduledMessageJob) return;
+
+          // Back at the end of the page rather than where it stood — a cosmetic loss, taken over dropping a row
+          items.value = [...items.value, cancelledScheduledMessageJob];
+          count.value += 1;
         };
       },
       key: id,

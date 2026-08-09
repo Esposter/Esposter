@@ -5,6 +5,7 @@ import { authClient } from "@/services/auth/authClient";
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
 import { useStatusStore } from "@/store/message/user/status";
 import { STATUS_MESSAGE_MAX_LENGTH, UserStatus } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 
 defineSlots<{ activator: (props: { menuProps: Record<string, unknown> }) => VNode }>();
 const { $trpc } = useNuxtApp();
@@ -20,29 +21,39 @@ const menu = ref(false);
 const { executeMutation } = useMutation();
 const save = async () => {
   menu.value = false;
-  const previousStatus = statusMap.value.get(userId.value);
-  const onSuccess = (upsertedStatus: Awaited<ReturnType<typeof $trpc.user.upsertStatus.mutate>>) => {
-    const { userId: upsertedUserId, ...rest } = upsertedStatus;
-    statusMap.value.set(upsertedUserId, rest);
-  };
   await executeMutation(
     () => $trpc.user.upsertStatus.mutate({ message: statusMessage.value, status: selectedStatus.value }),
-    previousStatus
-      ? {
-          applyOptimistic: () => {
+    {
+      // Read as the write is sent, so a rejected save restores what the save ahead of it stored rather than the
+      // Status on screen when the user clicked. Nothing is applied when there is no record yet — the row carries
+      // Fields only the server can fill in, so it is left to onSuccess
+      applyOptimistic: () => {
+        const previousStatus = statusMap.value.get(userId.value);
+        if (!previousStatus) return noop;
+
+        const { message: previousMessage, status: previousUserStatus } = previousStatus;
+        statusMap.value.set(userId.value, {
+          ...previousStatus,
+          message: statusMessage.value,
+          status: selectedStatus.value,
+        });
+        return () => {
+          // Only the two fields this write moved, against the record as it stands — reinstating the row as a
+          // Whole would undo the connection state a presence push landed while this write was in flight
+          const currentStatus = statusMap.value.get(userId.value);
+          if (currentStatus)
             statusMap.value.set(userId.value, {
-              ...previousStatus,
-              message: statusMessage.value,
-              status: selectedStatus.value,
+              ...currentStatus,
+              message: previousMessage,
+              status: previousUserStatus,
             });
-            return () => {
-              statusMap.value.set(userId.value, previousStatus);
-            };
-          },
-          key: userId.value,
-          onSuccess,
-        }
-      : { key: userId.value, onSuccess },
+        };
+      },
+      key: userId.value,
+      onSuccess: ({ userId: upsertedUserId, ...rest }) => {
+        statusMap.value.set(upsertedUserId, rest);
+      },
+    },
   );
 };
 </script>

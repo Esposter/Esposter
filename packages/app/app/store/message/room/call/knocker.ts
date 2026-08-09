@@ -13,18 +13,21 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const joinCallOptions = ref<JoinCallOptions>(getDefaultJoinCallOptions());
   const knockers = ref<CallParticipant[]>([]);
 
-  // Knocking targets one call session at a time, so a shared executor correctly lets the latest call supersede
+  // Knocking targets one call session at a time, so every knock shares one executor and one target
   const { executeMutation: executeKnockCallMutation } = useMutation();
   const knockCall = async (callId: string) => {
-    const previousKnockingCallSessionId = knockingCallSessionId.value;
     await executeKnockCallMutation(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId }), {
+      // Read as the write is sent: knocks share one target and queue, so a rejected one must unwind to the
+      // Session the knock ahead of it stored rather than to the one held when the user clicked
       applyOptimistic: () => {
+        const previousKnockingCallSessionId = knockingCallSessionId.value;
         knockingCallSessionId.value = callId;
         return () => {
           knockingCallSessionId.value = previousKnockingCallSessionId;
         };
       },
-      // A stable key so the latest knock supersedes any previous one, since only one knock is active at a time
+      // Only one knock is active at a time, so it is a singleton target: a stable key, and knocks run one after
+      // The other against it
       key: "knockCall",
     });
   };

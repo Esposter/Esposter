@@ -8,17 +8,22 @@ export const useBanStore = defineStore("message/user/ban", () => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
   const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<BanInMessageWithRelations>();
-  const { deleteBan: storeDeleteBan } = createOperationData(items, ["roomId", "userId"], DatabaseEntityType.Ban);
+  const { createBan: storeCreateBan, deleteBan: storeDeleteBan } = createOperationData(
+    items,
+    ["roomId", "userId"],
+    DatabaseEntityType.Ban,
+  );
 
   const deleteBan = async (input: DeleteBanInput) => {
     await executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
-      // Snapshotted when the write is sent rather than when it was issued: unbans run against one shared list,
-      // So a failed one must restore the list as the unbans ahead of it left it, not resurrect the bans they lifted
+      // The one row this write lifts, not a copy of the list: unbans are keyed per ban and never queue against
+      // Each other, so reinstating the list would resurrect a ban another unban already lifted — and drop the
+      // Bans the moderation subscription delivered while this write was in flight
       applyOptimistic: () => {
-        const snapshot = [...items.value];
+        const deletedBan = items.value.find(({ roomId, userId }) => roomId === input.roomId && userId === input.userId);
         storeDeleteBan(input);
         return () => {
-          items.value = snapshot;
+          if (deletedBan) storeCreateBan(deletedBan);
         };
       },
       // Keyed per room-user pair so concurrent unbans across bans run independently instead of queueing behind each other

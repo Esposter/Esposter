@@ -9,23 +9,24 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const { executeMutation: executeBlockUserMutation } = useMutation();
   const { executeMutation: executeUnblockUserMutation } = useMutation();
   const friendStore = useFriendStore();
-  const { storeDeleteFriend } = friendStore;
+  const { storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequestStore = useFriendRequestStore();
-  const { storeDeleteFriendRequestsByUser } = friendRequestStore;
+  const { getFriendRequestsByUser, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
   const blockedUsers = ref<User[]>([]);
 
   const blockUser = async (userId: FriendUserIdInput) => {
     await executeBlockUserMutation(() => $trpc.block.blockUser.mutate(userId), {
-      // Snapshotted when the write is sent rather than when it was issued, so a failed block restores the friend
-      // And request lists as the writes ahead of it left them instead of resurrecting what they removed
+      // Only the rows this write removes, not copies of both lists: blocks are keyed per user and never queue
+      // Against each other or against a removal, so reinstating the lists would resurrect a friend or a request
+      // Another write already dropped — and lose whatever a subscription delivered while this one was in flight
       applyOptimistic: () => {
-        const previousFriends = [...friendStore.friends];
-        const previousFriendRequests = [...friendRequestStore.friendRequests];
+        const deletedFriend = friendStore.friends.find(({ id }) => id === userId);
+        const deletedFriendRequests = getFriendRequestsByUser(userId);
         storeDeleteFriend(userId);
         storeDeleteFriendRequestsByUser(userId);
         return () => {
-          friendStore.friends = previousFriends;
-          friendRequestStore.friendRequests = previousFriendRequests;
+          if (deletedFriend) storeCreateFriend(deletedFriend);
+          for (const deletedFriendRequest of deletedFriendRequests) storeCreateFriendRequest(deletedFriendRequest);
         };
       },
       key: userId,
@@ -38,13 +39,14 @@ export const useBlockStore = defineStore("message/user/block", () => {
 
   const unblockUser = async (blockedUserId: FriendUserIdInput) => {
     await executeUnblockUserMutation(() => $trpc.block.unblockUser.mutate(blockedUserId), {
-      // Snapshotted when the write is sent rather than when it was issued: unblocks share one list, so a failed
-      // One must restore it as the unblocks ahead of it left it rather than resurrecting the users they removed
+      // The one row this write removes, not a copy of the list: unblocks are keyed per user and never queue
+      // Against each other, so reinstating the list would resurrect a user another unblock already removed and
+      // Drop whoever a block added meanwhile. Back at the end rather than where it stood — a cosmetic loss
       applyOptimistic: () => {
-        const previousBlockedUsers = blockedUsers.value;
+        const deletedBlockedUser = blockedUsers.value.find(({ id }) => id === blockedUserId);
         blockedUsers.value = blockedUsers.value.filter(({ id }) => id !== blockedUserId);
         return () => {
-          blockedUsers.value = previousBlockedUsers;
+          if (deletedBlockedUser) blockedUsers.value = [...blockedUsers.value, deletedBlockedUser];
         };
       },
       key: blockedUserId,

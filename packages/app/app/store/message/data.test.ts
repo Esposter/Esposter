@@ -375,6 +375,77 @@ describe(useDataStore, () => {
     expect(items.value).toHaveLength(1);
   });
 
+  // Both edits name the same message, so the second runs behind the first and applies on top of what it stored.
+  // A body captured when the caller invoked it — before the write ahead of it had even been sent — unwinds the
+  // Bubble past that write, back to text the user replaced two edits ago
+  test("rolls a queued edit back to the body the edit ahead of it stored", async () => {
+    expect.hasAssertions();
+
+    const rejectedMessage = "rejectedMessage";
+    server.use(
+      trpcMsw.message.updateMessage.mutation(({ input }) => {
+        if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+      }),
+    );
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { updateMessage } = dataStore;
+    const newMessage = createMessageEntity({
+      message,
+      roomId,
+      type: MessageType.Message,
+      userId: getMockSession().user.id,
+    });
+    items.value = [newMessage];
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    await Promise.all([
+      updateMessage({ ...compositeKey, message: updatedMessage }),
+      updateMessage({ ...compositeKey, message: rejectedMessage }),
+    ]);
+
+    expect(takeOne(items.value).message).toBe(updatedMessage);
+  });
+
+  // Each attachment is its own target, so two removals from one message overlap. Reading the list the call was
+  // Issued with makes the second removal write back the file the first one took off, and its rollback reinstate
+  // Both — the message renders attachments the server no longer has
+  test("removes and restores one attachment at a time", async () => {
+    expect.hasAssertions();
+
+    const rejectedFileId = crypto.randomUUID();
+    const acceptedFileId = crypto.randomUUID();
+    const keptFileId = crypto.randomUUID();
+    server.use(
+      trpcMsw.message.deleteFile.mutation(({ input }) => {
+        if (input.id === rejectedFileId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+      }),
+    );
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { deleteFile } = dataStore;
+    const newMessage = createMessageEntity({
+      files: [acceptedFileId, rejectedFileId, keptFileId].map((id) => ({
+        filename,
+        hasThumbnail: false,
+        id,
+        mimetype,
+        size,
+      })),
+      message,
+      roomId,
+      type: MessageType.Message,
+      userId: getMockSession().user.id,
+    });
+    items.value = [newMessage];
+    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    await Promise.all([
+      deleteFile({ ...compositeKey, id: acceptedFileId }),
+      deleteFile({ ...compositeKey, id: rejectedFileId }),
+    ]);
+
+    expect(takeOne(items.value).files.map(({ id }) => id)).toStrictEqual([keptFileId, rejectedFileId]);
+  });
+
   test("storeUpdateMessage is idempotent", async () => {
     expect.hasAssertions();
 

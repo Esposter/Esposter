@@ -14,6 +14,7 @@ import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 describe(useTodoListStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
+  const adoptedItemName = "adoptedItem";
   const itemName = "item";
   const newItemName = "newItem";
   const createResource = (contentVersion = 0) =>
@@ -124,5 +125,26 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
     expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
+  });
+
+  // That adoption can land while this client's own save is still in flight. The rollback owes back the item it
+  // Added and nothing else — restoring the blob it captured throws the adopted list away with the failed edit
+  test("keeps content adopted while the save was in flight when that save fails", async () => {
+    expect.hasAssertions();
+
+    const todoListStore = await setupStore();
+    const { saveItem, storeSaveResourceContent } = todoListStore;
+    const { editedItem, items } = storeToRefs(todoListStore);
+    server.use(
+      trpcMsw.todoList.saveResourceContent.mutation(() => {
+        storeSaveResourceContent({ items: [new TodoListItem({ name: adoptedItemName })] }, 1);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    editedItem.value = new TodoListItem({ name: newItemName });
+    const isSuccessful = await saveItem();
+
+    expect(isSuccessful).toBe(false);
+    expect(items.value.map(({ name }) => name)).toStrictEqual([adoptedItemName]);
   });
 });

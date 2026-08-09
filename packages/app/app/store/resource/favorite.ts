@@ -30,18 +30,24 @@ export const useFavoriteStore = defineStore("resource/favorite", () => {
   });
   const toggleFavorite = async (resource: Resource) => {
     await executeToggleFavoriteMutation(() => $trpc.resource.toggleFavorite.mutate({ id: resource.id }), {
-      // The snapshot is taken here rather than at click time, because this runs when the write is sent: a
-      // Second click on one star queues behind the first, so a list captured at click time is the state from
-      // Before the write ahead of it landed, and rolling back to it would leave the star reading a toggle stale
+      // The entry is read here rather than at click time, because this runs when the write is sent: a second
+      // Click on one star queues behind the first, so a state captured at click time is the one from before the
+      // Write ahead of it landed, and rolling back to it would leave the star reading a toggle stale
       applyOptimistic: () => {
-        const snapshot = [...favorites.value];
+        const previousFavorite = favorites.value.find(({ id }) => id === resource.id);
         // The star can be clicked from the blade, where the row is a bare resource — the optimistic entry
         // Carries no last-access time of its own, and the next read replaces it with the joined one
-        favorites.value = favoriteIds.value.has(resource.id)
+        favorites.value = previousFavorite
           ? favorites.value.filter(({ id }) => id !== resource.id)
           : [{ lastAccessedAt: null, ...resource }, ...favorites.value];
         return () => {
-          favorites.value = snapshot;
+          // Only this resource's own entry is unwound. Stars of different resources do not queue against each
+          // Other and the cached read replaces the list wholesale, so reinstating a copy of it would undo a
+          // Toggle running beside this one and drop whatever that read delivered mid-flight. A restored entry
+          // Returning to the front rather than its read order is the cosmetic price
+          favorites.value = previousFavorite
+            ? [previousFavorite, ...favorites.value.filter(({ id }) => id !== resource.id)]
+            : favorites.value.filter(({ id }) => id !== resource.id);
         };
       },
       key: resource.id,

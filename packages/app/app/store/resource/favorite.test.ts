@@ -13,6 +13,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 describe(useFavoriteStore, () => {
   const server = setupMswTrpc();
   const resource = createResourceListItem();
+  const otherResource = createResourceListItem();
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -69,6 +70,37 @@ describe(useFavoriteStore, () => {
     await Promise.all([toggleFavorite(resource), toggleFavorite(resource)]);
 
     expect(favorites.value).toStrictEqual([resource]);
+  });
+
+  // This list is replaced wholesale by its own cached read, which refetches the moment a delete elsewhere
+  // Invalidates the resources tag — so a rollback to a copy of the list drops every star that read delivered,
+  // And nothing re-reads them until a reload
+  test("rolls a failed toggle back without dropping stars a re-read delivered", async () => {
+    expect.hasAssertions();
+
+    const cacheStore = useCacheStore();
+    const { invalidateTags } = cacheStore;
+    let isRead = false;
+    server.use(
+      trpcMsw.resource.readFavorites.query(() => {
+        if (isRead) return [otherResource];
+
+        isRead = true;
+        return [];
+      }),
+      trpcMsw.resource.toggleFavorite.mutation(async () => {
+        // The re-read lands while the toggle is still in flight
+        await invalidateTags([CacheTag.Resources]);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const favoriteStore = useFavoriteStore();
+    const { favorites } = storeToRefs(favoriteStore);
+    const { readFavorites, toggleFavorite } = favoriteStore;
+    await readFavorites();
+    await toggleFavorite(resource);
+
+    expect(favorites.value).toStrictEqual([otherResource]);
   });
 
   test("reads the favorites once for repeat and concurrent mounts", async () => {

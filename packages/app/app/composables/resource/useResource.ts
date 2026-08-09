@@ -136,10 +136,15 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     const current = resource.value;
     if (!current) return;
     await executeRenameMutation(() => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name }), {
+      // Read when the write is sent rather than when it was issued: renames of one resource queue, so a
+      // Rejection has to restore the name the rename ahead of it stored, not the one on screen at issue time.
+      // Merged rather than replaced for the same reason every other write here merges — the issue-time row has
+      // No contentVersion an autosave bumped meanwhile, and no tags a tag edit wrote
       applyOptimistic: () => {
-        resource.value = { ...current, name };
+        const previous = resource.value ?? current;
+        mergeResource({ name }, { ...previous, name });
         return () => {
-          mergeResource({ name: current.name }, current);
+          mergeResource({ name: previous.name }, previous);
         };
       },
       key: current.id,
@@ -156,10 +161,13 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     await executeUpdateTagsMutation(
       () => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name: current.name, tags }),
       {
+        // Same as the rename above: the row is read when the write is sent and only the tags are merged, so a
+        // Rejection restores the tags the tag edit ahead of it stored and no other field is dragged back with them
         applyOptimistic: () => {
-          resource.value = { ...current, tags };
+          const previous = resource.value ?? current;
+          mergeResource({ tags }, { ...previous, tags });
           return () => {
-            mergeResource({ tags: current.tags }, current);
+            mergeResource({ tags: previous.tags }, previous);
           };
         },
         key: current.id,
@@ -227,9 +235,12 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     if (!current || !hasCapability(current.type, "publishable")) return;
 
     const { unpublishResource } = getResourceRouter(current.type);
-    const currentPublication = publication.value;
     await executeUnpublishMutation(() => unpublishResource.mutate({ id: current.id }), {
+      // Read when the write is sent rather than when it was issued: a second unpublish queues behind the first
+      // And finds nothing left to withdraw, so a rejection restores that — captured at click time it would put
+      // The publication the first unpublish already removed back on screen, complete with its public link
       applyOptimistic: () => {
+        const currentPublication = publication.value;
         publication.value = undefined;
         return () => {
           publication.value = currentPublication;

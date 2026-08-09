@@ -69,6 +69,28 @@ describe(useDeleteResources, () => {
     expect(refresh).toHaveBeenCalledTimes(1);
   });
 
+  // A batch delete spans an arbitrary selection with no shared key, so two of them run beside each other —
+  // Restoring the page as this delete found it undoes the rows the delete next to it already removed server-side
+  test("rolls a failed delete back without dropping rows a delete beside it removed", async () => {
+    expect.hasAssertions();
+
+    router.currentRoute.value.params.id = "";
+    server.use(
+      trpcMsw.resource.deleteResources.mutation(({ input }) => {
+        if (input.ids.includes(resource.id)) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+
+        return [];
+      }),
+    );
+    const items = ref([resource, otherResource]);
+    const count = ref(2);
+    const deleteResources = useDeleteResources(items, count, () => Promise.resolve());
+    await Promise.all([deleteResources([resource]), deleteResources([otherResource])]);
+
+    expect(items.value).toStrictEqual([resource]);
+    expect(count.value).toBe(1);
+  });
+
   test("stays put when the deleted resources are not the open one", async () => {
     expect.hasAssertions();
 

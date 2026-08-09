@@ -32,21 +32,21 @@ export const useDeleteResources = (items: Ref<Resource[]>, count: Ref<number>, r
           await $trpc.resource.deleteResources.mutate({ ids: ids.slice(offset, offset + MAX_READ_LIMIT) });
       },
       {
-        // Snapshotted here rather than at call time, since this runs when the write is sent: a rollback built
-        // From the rows the screen held when the user clicked would undo whatever landed in between
+        // Read here rather than at call time, since this runs when the write is sent: rows captured when the
+        // User clicked are the ones from before whatever landed in between
         applyOptimistic: () => {
-          const snapshot = [...items.value];
-          const snapshotCount = count.value;
-          const optimisticItems = items.value.filter(({ id }) => !ids.includes(id));
-          items.value = optimisticItems;
+          const deletedItems = items.value.filter(({ id }) => ids.includes(id));
+          items.value = items.value.filter(({ id }) => !ids.includes(id));
           count.value -= resources.length;
           return () => {
-            // A refresh, page turn or filter change mid-flight replaces `items` wholesale, so anything but our own
-            // Optimistic array means the snapshot is stale and restoring it would undo the newer read
-            if (items.value !== optimisticItems) return;
-
-            items.value = snapshot;
-            count.value = snapshotCount;
+            // Only this write's own rows are put back. A refresh, a page turn or a delete running beside this one
+            // Replaces `items` wholesale, so reinstating a copy of the list would undo it — and a mid-flight
+            // Refresh has already re-read the rows this failed delete never removed, so only the ones still
+            // Missing come back, at the end rather than in their sorted place
+            const missingItems = deletedItems.filter(({ id }) => !items.value.some((item) => item.id === id));
+            items.value = [...items.value, ...missingItems];
+            // The total is the server's, not this page's, so it unwinds by exactly what the write took off it
+            count.value += resources.length;
           };
         },
         // A star or a recently-opened row only resolves while its resource is live

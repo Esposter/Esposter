@@ -19,13 +19,17 @@ const sendScheduledMessageNow = async () => {
   await executeMutation(
     () => $trpc.message.scheduledMessageJob.sendScheduledMessageNow.mutate({ id: scheduledMessageJob.id }),
     {
+      // The one row this write sends, not a copy of the page: reinstating the page would resurrect a job another
+      // Cancel already took off it and drop whatever the page gained while this write was in flight
       applyOptimistic: () => {
-        const itemsSnapshot = items.value;
-        const countSnapshot = count.value;
+        const sentScheduledMessageJob = items.value.find(({ id }) => id === scheduledMessageJob.id);
         removeScheduledMessageJob(scheduledMessageJob.id);
         return () => {
-          items.value = itemsSnapshot;
-          count.value = countSnapshot;
+          if (!sentScheduledMessageJob) return;
+
+          // Back at the end of the page rather than where it stood — a cosmetic loss, taken over dropping a row
+          items.value = [...items.value, sentScheduledMessageJob];
+          count.value += 1;
         };
       },
       key: scheduledMessageJob.id,

@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
+import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";
+import { noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
@@ -17,14 +20,25 @@ const creator = useCreator(message);
 const { executeMutation } = useMutation();
 const pinMessage = async (onComplete: () => void) => {
   if (!message.value) return;
-  const target = message.value;
-  const { partitionKey, rowKey } = target;
+  const { partitionKey, rowKey } = message.value;
   onComplete();
   await executeMutation(() => $trpc.message.pinMessage.mutate({ partitionKey, rowKey }), {
+    // Resolved as the write is sent rather than at the click — the dialog has already closed and cleared its
+    // Target by then, so the row is read off the timeline instead of the dialog's own item
     applyOptimistic: () => {
-      target.isPinned = true;
+      const pinnedMessage = items.value.find(
+        getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),
+      );
+      if (!pinnedMessage) return noop;
+
+      // Read as the write is sent rather than assumed: an unpin that landed — or was itself rolled back — between
+      // The click and this write decides what pinning owes back, and a hard-coded delete would unpin a message
+      // The server still has pinned
+      const previousIsPinned = pinnedMessage.isPinned;
+      pinnedMessage.isPinned = true;
       return () => {
-        delete target.isPinned;
+        if (previousIsPinned) pinnedMessage.isPinned = previousIsPinned;
+        else delete pinnedMessage.isPinned;
       };
     },
     key: rowKey,

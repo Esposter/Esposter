@@ -58,13 +58,15 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
 
   const deleteRoomCategory = async (id: DeleteRoomCategoryInput) => {
     await executeDeleteRoomCategoryMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
+      // The one row this write removes, not a copy of the list: deletes are keyed per category and never queue
+      // Against each other, so reinstating the list would resurrect a category another delete already took out
+      // And drop the ones created while this write was in flight. Position drives the rendered order, so where
+      // The restored row lands in the array is not observable
       applyOptimistic: () => {
-        // Snapshotted as this write is sent, not when it was queued — a delete that waited behind another write
-        // Must come back to what that write left, never to the list the user was looking at when they clicked
-        const snapshot = [...categories.value];
+        const deletedCategory = categories.value.find((category) => category.id === id);
         storeDeleteRoomCategory({ id });
         return () => {
-          categories.value = snapshot;
+          if (deletedCategory) storeCreateRoomCategory(deletedCategory);
         };
       },
       key: id,
@@ -95,14 +97,20 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     const updates = getCategoryPositionUpdates(newCategories);
     if (updates.length === 0) return;
     await executeReorderRoomCategoriesMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
+      // Only the position of each row this write moves: restoring the list would swap every row for a copy —
+      // Stranding the placeholder a concurrent create's onSuccess writes onto — and undo whatever else landed
+      // While the reorder was in flight
       applyOptimistic: () => {
-        const snapshot = categories.value.map((category) => ({ ...category }));
+        const previousPositions = updates
+          .map(({ id }) => categories.value.find((category) => category.id === id))
+          .filter((category) => category !== undefined)
+          .map(({ id, position }) => ({ id, position }));
         for (const update of updates) storeUpdateRoomCategory(update);
         return () => {
-          categories.value = snapshot;
+          for (const previousPosition of previousPositions) storeUpdateRoomCategory(previousPosition);
         };
       },
-      // A stable key so the latest whole-list reorder supersedes any in-flight one
+      // The whole list is the target, so a stable key: reorders run one after the other against it
       key: "reorderRoomCategories",
     });
   };

@@ -18,13 +18,14 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   };
   const deleteFriend = async (friendId: User["id"]) => {
     await executeMutation(() => $trpc.friend.deleteFriend.mutate(friendId), {
-      // Snapshotted when the write is sent rather than when it was issued: every removal writes the same list,
-      // So a failed one must restore it as the removals ahead of it left it instead of resurrecting them
+      // The one row this write removes, not a copy of the list: removals are keyed per friend and never queue
+      // Against each other, so reinstating the list would resurrect a friend another removal already dropped —
+      // And lose whoever the accept echo delivered while this write was in flight
       applyOptimistic: () => {
-        const previousFriends = [...friends.value];
+        const deletedFriend = friends.value.find(({ id }) => id === friendId);
         storeDeleteFriend(friendId);
         return () => {
-          friends.value = previousFriends;
+          if (deletedFriend) storeCreateFriend(deletedFriend);
         };
       },
       key: friendId,

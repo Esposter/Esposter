@@ -7,6 +7,7 @@ import { createResourceListItem } from "@/services/resource/list/createResourceL
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";
+import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -15,6 +16,8 @@ describe(useResource, () => {
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
   const resourceId = crypto.randomUUID();
   const otherResourceId = crypto.randomUUID();
+  const newName = "newName";
+  const failingName = "failingName";
   // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
   const createResource = (id: string, type = ResourceType.Sheet) => createResourceListItem({ id, type });
   const publication = {
@@ -94,6 +97,49 @@ describe(useResource, () => {
     await Promise.all([save(createDefaultSheetResource()), save(createDefaultSheetResource())]);
 
     expect(contentVersions).toStrictEqual([0, 1]);
+  });
+
+  // Renames of one resource queue, so the second's rollback has to restore the name the rename ahead of it
+  // Stored — the name it read when it was issued predates that one, and leaves a name the server never accepted
+  // On the blade until the next load
+  test("rolls a failed rename back to the rename ahead of it", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.sheet.updateResource.mutation(({ input }) => {
+        if (input.name === failingName) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+
+        return { ...createResource(resourceId), name: input.name };
+      }),
+    );
+    const { load, rename, resource } = useResource(ref(resourceId));
+    await load();
+    await Promise.all([rename(newName), rename(failingName)]);
+
+    expect(resource.value?.name).toBe(newName);
+  });
+
+  // A second unpublish queues behind the first and finds nothing left to withdraw, so its rejection restores
+  // Nothing — the publication it read when it was issued is the one the first unpublish already removed, and
+  // Putting it back offers a public link the server no longer serves
+  test("rolls a failed unpublish back to the unpublish ahead of it", async () => {
+    expect.hasAssertions();
+
+    let isFailing = false;
+    const { load, publication: loadedPublication, unpublish } = useNoteResource();
+    server.use(
+      trpcMsw.note.readResourcePublication.query(() => publication),
+      trpcMsw.note.unpublishResource.mutation(() => {
+        if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+
+        isFailing = true;
+        return createResource(resourceId, ResourceType.Note);
+      }),
+    );
+    await load();
+    await Promise.all([unpublish(), unpublish()]);
+
+    expect(loadedPublication.value).toBeUndefined();
   });
 
   // The dispatch is the loaded row's own type, so the content read has to follow the type the route named

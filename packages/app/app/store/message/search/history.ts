@@ -34,13 +34,15 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   };
   const updateSearchHistory = async (input: UpdateSearchHistoryInput) => {
     await executeUpdateSearchHistoryMutation(() => $trpc.searchHistory.updateSearchHistory.mutate(input), {
-      // Snapshotted inside, not at call time: a write queued behind another must unwind to what the write ahead
-      // Of it stored, never to the state the user was looking at when they clicked
+      // Only the fields this write overwrites, on the one row it touches, and read as the write is sent: rows are
+      // Keyed per history entry and never queue against each other, so reinstating the list would undo another
+      // Row's edit or deletion and drop whatever the list gained while this write was in flight
       applyOptimistic: () => {
-        const snapshot = items.value.map((searchHistory) => ({ ...searchHistory }));
+        const previousSearchHistory = items.value.find(({ id }) => id === input.id);
+        const rollbackSearchHistory = previousSearchHistory && { ...previousSearchHistory };
         baseUpdateSearchHistory(input);
         return () => {
-          items.value = snapshot;
+          if (rollbackSearchHistory) baseUpdateSearchHistory(rollbackSearchHistory);
         };
       },
       // Keyed per history row so concurrent operations on different rows run independently instead of queueing behind each other
@@ -52,12 +54,13 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   };
   const deleteSearchHistory = async (input: DeleteSearchHistoryInput) => {
     await executeDeleteSearchHistoryMutation(() => $trpc.searchHistory.deleteSearchHistory.mutate(input), {
-      // Snapshotted inside, not at call time — see `updateSearchHistory`
+      // Only the one row this write removes — see `updateSearchHistory`. It comes back at the end of the list
+      // Rather than where it stood, a cosmetic loss taken over dropping a row
       applyOptimistic: () => {
-        const snapshot = [...items.value];
+        const deletedSearchHistory = items.value.find(({ id }) => id === input);
         baseDeleteSearchHistory({ id: input });
         return () => {
-          items.value = snapshot;
+          if (deletedSearchHistory) baseCreateSearchHistory(deletedSearchHistory);
         };
       },
       // Keyed per history row so concurrent operations on different rows run independently instead of queueing behind each other

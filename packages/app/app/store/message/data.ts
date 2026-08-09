@@ -119,12 +119,12 @@ export const useDataStore = defineStore("message/data", () => {
     );
   };
   const updateMessage = async (input: UpdateMessageInput) => {
-    const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
-    const previousMessage = message?.message;
     await executeMutation(() => $trpc.message.updateMessage.mutate(input), {
       // Apply only the raw reactive field change — the subscription echo re-runs MessageHookMap on success,
-      // So calling storeUpdateMessage here would double-fire the update hooks.
+      // So calling storeUpdateMessage here would double-fire the update hooks. Read as the write is sent, so a
+      // Rejected edit restores the body the edit ahead of it stored rather than the one on screen at the click
       applyOptimistic: () => {
+        const previousMessage = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input))?.message;
         baseStoreUpdateMessage(input);
         return () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
@@ -138,13 +138,17 @@ export const useDataStore = defineStore("message/data", () => {
     const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, compositeKey));
     if (!message) return;
 
-    const previousFiles = message.files;
     await executeMutation(() => $trpc.message.deleteFile.mutate({ id, ...compositeKey }), {
-      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success.
+      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. Read as the
+      // Write is sent and unwound one attachment at a time: reinstating the list this call was issued with would
+      // Resurrect a file a concurrent deletion already removed and drop whatever arrived while it was in flight
       applyOptimistic: () => {
-        baseStoreUpdateMessage({ ...compositeKey, files: previousFiles.filter((file) => file.id !== id) });
+        const deletedFile = message.files.find((file) => file.id === id);
+        baseStoreUpdateMessage({ ...compositeKey, files: message.files.filter((file) => file.id !== id) });
         return () => {
-          baseStoreUpdateMessage({ ...compositeKey, files: previousFiles });
+          if (!deletedFile) return;
+
+          baseStoreUpdateMessage({ ...compositeKey, files: [...message.files, deletedFile] });
         };
       },
       // Keyed per file so concurrent deletions never swallow each other's rollbacks

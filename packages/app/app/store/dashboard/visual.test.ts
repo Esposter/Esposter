@@ -85,4 +85,46 @@ describe(useVisualStore, () => {
     expect(editFormDialog.value).toBe(true);
     expect(isSuccessful).toBe(false);
   });
+
+  // A save is not instant, so the user can add a visual while one is in flight. The rollback owes back the edit
+  // It made and nothing else — reinstating the list as it was when the write went out deletes that visual
+  test("keeps a visual added while the edit was in flight when the save fails", async () => {
+    expect.hasAssertions();
+
+    const visualStore = await setupStore();
+    const { createVisual, save } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    server.use(
+      trpcMsw.dashboard.saveResourceContent.mutation(() => {
+        createVisual();
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
+
+    expect(isSuccessful).toBe(false);
+    expect(visuals.value).toHaveLength(2);
+    expect(takeOne(visuals.value).type).toBe(VisualType.Area);
+  });
+
+  // Same for the delete path, which unwinds by putting its own visual back rather than by restoring the list
+  test("keeps a visual added while the delete was in flight when the save fails", async () => {
+    expect.hasAssertions();
+
+    const visualStore = await setupStore();
+    const { createVisual, deleteVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const { id } = takeOne(visuals.value);
+    server.use(
+      trpcMsw.dashboard.saveResourceContent.mutation(() => {
+        createVisual();
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const isSuccessful = await deleteVisual({ id });
+
+    expect(isSuccessful).toBe(false);
+    expect(visuals.value).toHaveLength(2);
+    expect(visuals.value.some((visual) => visual.id === id)).toBe(true);
+  });
 });

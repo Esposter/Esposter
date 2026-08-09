@@ -47,18 +47,27 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   const saveItem = async (isDeleteAction?: true) => {
     if (!editedItem.value) return false;
 
-    const snapshot = structuredClone(toRawDeep(todoList.value));
+    const { id } = editedItem.value;
+    // The unwind is this write's own item rather than a copy of the whole blob: another device's save is
+    // Adopted mid-flight through storeSaveResourceContent, and a blob-wide restore would drop that adopted
+    // Content along with the rejected edit. Cloned before the write because updateItem assigns onto the live
+    // Item, and read before it because originalItem is a computed over items
+    const previousItem = originalItem.value ? structuredClone(toRawDeep(originalItem.value)) : undefined;
 
     // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from
     // The item in hand — a separately tracked index would still hold the previous edit's row when the dialog
     // Opens straight from the add button, routing that add into an update
-    if (isDeleteAction) deleteItem({ id: editedItem.value.id });
-    else if (originalItem.value) updateItem(editedItem.value);
+    if (isDeleteAction) deleteItem({ id });
+    else if (previousItem) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
     const isSuccessful = await saveTodoList();
     if (isSuccessful) editFormDialog.value = false;
-    else todoList.value = snapshot;
+    else if (!previousItem) deleteItem({ id });
+    // A rejected delete lands its item back at the end of the list, which costs it its place — cheaper than
+    // Discarding whatever the adopted content brought with it
+    else if (isDeleteAction) createItem(previousItem);
+    else updateItem(previousItem);
     return isSuccessful;
   };
   return {

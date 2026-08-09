@@ -81,4 +81,49 @@ describe(useRoomCategoryStore, () => {
 
     expect(categories.value.map(({ id: categoryId }) => categoryId)).toStrictEqual([otherId]);
   });
+
+  // Each category is its own target, so two deletions overlap on one list. The failing one must put back only the
+  // Row it removed — reinstating the list resurrects the category the deletion beside it already took out
+  test("puts back only the category whose deletion was rejected", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.room.category.deleteRoomCategory.mutation(({ input }) => {
+        if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
+        return createCategory(input);
+      }),
+    );
+    const roomCategoryStore = useRoomCategoryStore();
+    const { categories } = storeToRefs(roomCategoryStore);
+    const { deleteRoomCategory } = roomCategoryStore;
+    categories.value = [createCategory(id), createCategory(otherId)];
+    await Promise.all([deleteRoomCategory(id), deleteRoomCategory(otherId)]);
+
+    expect(categories.value.map(({ id: categoryId }) => categoryId)).toStrictEqual([id]);
+  });
+
+  // A reorder moves positions, so that is all its rollback owes back. Reinstating the list drops whatever landed
+  // While the drag was in flight — here a category created meanwhile, delivered from inside the request so it
+  // Lands after the reorder applied and before its rejection unwinds
+  test("restores only the positions the rejected reorder moved", async () => {
+    expect.hasAssertions();
+
+    const thirdId = crypto.randomUUID();
+    const roomCategoryStore = useRoomCategoryStore();
+    const { categories } = storeToRefs(roomCategoryStore);
+    const { reorderRoomCategories } = roomCategoryStore;
+    server.use(
+      trpcMsw.room.category.reorderRoomCategories.mutation(() => {
+        categories.value = [...categories.value, { ...createCategory(thirdId), position: 2 }];
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
+      }),
+    );
+    const first = { ...createCategory(id), position: 0 };
+    const second = { ...createCategory(otherId), position: 1 };
+    categories.value = [first, second];
+    await reorderRoomCategories([second, first]);
+
+    expect(categories.value.map(({ id: categoryId }) => categoryId)).toStrictEqual([id, otherId, thirdId]);
+    expect(categories.value.map(({ position }) => position)).toStrictEqual([0, 1, 2]);
+  });
 });

@@ -99,4 +99,46 @@ describe(useFriendRequestStore, () => {
     expect(friendRequests.value).toStrictEqual([secondFriendRequest]);
     expect(alertStore.alerts).toHaveLength(1);
   });
+
+  // The failing answer is the one that applied first, so its rollback lands after the other has persisted:
+  // Putting back the list it was sent against resurrects the request that answer resolved
+  test("puts back only the request whose decline was rejected", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.friendRequest.declineFriendRequest.mutation(({ input: senderId }) => {
+        if (senderId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+    );
+    const friendRequestStore = useFriendRequestStore();
+    const { friendRequests } = storeToRefs(friendRequestStore);
+    const { declineFriendRequest } = friendRequestStore;
+    friendRequests.value = [firstFriendRequest, secondFriendRequest];
+    await Promise.all([declineFriendRequest(first.id), declineFriendRequest(second.id)]);
+
+    expect(friendRequests.value).toStrictEqual([firstFriendRequest]);
+  });
+
+  // An accept and a decline answer different senders, so neither queues behind the other and both write the one
+  // List — a rejected accept that reinstates it puts back the request the decline beside it already resolved
+  test("puts back only the request whose accept was rejected", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+      trpcMsw.friendRequest.declineFriendRequest.mutation(() => {}),
+    );
+    const friendStore = useFriendStore();
+    const { friends } = storeToRefs(friendStore);
+    const friendRequestStore = useFriendRequestStore();
+    const { friendRequests } = storeToRefs(friendRequestStore);
+    const { acceptFriendRequest, declineFriendRequest } = friendRequestStore;
+    friendRequests.value = [firstFriendRequest, secondFriendRequest];
+    await Promise.all([acceptFriendRequest(first), declineFriendRequest(second.id)]);
+
+    expect(friendRequests.value).toStrictEqual([firstFriendRequest]);
+    expect(friends.value).toStrictEqual([]);
+  });
 });

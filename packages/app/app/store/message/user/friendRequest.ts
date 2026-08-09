@@ -32,6 +32,8 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   // One other party. The list only ever holds requests the app user is a party to — the read filters on it and
   // The subscription only yields those — so naming the other party identifies the pair on its own, and the
   // Removal never has to wait on a session that has not resolved yet
+  const getFriendRequestsByUser = (targetUserId: User["id"]) =>
+    friendRequests.value.filter(({ receiverId, senderId }) => [receiverId, senderId].includes(targetUserId));
   const storeDeleteFriendRequestsByUser = (targetUserId: User["id"]) => {
     friendRequests.value = friendRequests.value.filter(
       ({ receiverId, senderId }) => ![receiverId, senderId].includes(targetUserId),
@@ -61,14 +63,15 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   };
   const acceptFriendRequest = async (sender: User) => {
     await executeAcceptFriendRequestMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
-      // Snapshotted when the write is sent rather than when it was issued: every accept and decline writes the
-      // Same list, so a failed one must restore it as the writes ahead of it left it rather than undoing them
+      // Only the requests this write resolves, not a copy of the list: accepts and declines are keyed per party
+      // And never queue against each other, so reinstating the list would resurrect a request another one already
+      // Resolved — and drop whatever the friend-request subscription delivered while this write was in flight
       applyOptimistic: () => {
-        const previousFriendRequests = [...friendRequests.value];
+        const resolvedFriendRequests = getFriendRequestsByUser(sender.id);
         storeAcceptFriendRequest(sender);
         return () => {
-          friendRequests.value = previousFriendRequests;
           storeDeleteFriend(sender.id);
+          for (const resolvedFriendRequest of resolvedFriendRequests) storeCreateFriendRequest(resolvedFriendRequest);
         };
       },
       key: sender.id,
@@ -76,11 +79,12 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   };
   const declineFriendRequest = async (senderId: User["id"]) => {
     await executeDeclineFriendRequestMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
+      // Only the requests this write resolves — see `acceptFriendRequest`
       applyOptimistic: () => {
-        const previousFriendRequests = [...friendRequests.value];
+        const resolvedFriendRequests = getFriendRequestsByUser(senderId);
         storeDeclineFriendRequest(senderId);
         return () => {
-          friendRequests.value = previousFriendRequests;
+          for (const resolvedFriendRequest of resolvedFriendRequests) storeCreateFriendRequest(resolvedFriendRequest);
         };
       },
       key: senderId,
@@ -91,6 +95,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     acceptFriendRequest,
     declineFriendRequest,
     friendRequests,
+    getFriendRequestsByUser,
     receivedFriendRequests,
     sendFriendRequest,
     sentFriendRequests,

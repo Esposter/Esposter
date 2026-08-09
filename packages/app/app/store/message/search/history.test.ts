@@ -82,4 +82,50 @@ describe(useSearchHistoryStore, () => {
 
     expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
   });
+
+  // Rows are keyed per entry, so an edit and another row's removal never queue against each other. The rejected
+  // Edit owes back only the fields it wrote — reinstating the list resurrects the row the removal took out
+  test("restores only the row whose edit was rejected", async () => {
+    expect.hasAssertions();
+
+    const otherId = crypto.randomUUID();
+    server.use(
+      trpcMsw.searchHistory.updateSearchHistory.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+      }),
+      trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => ({
+        ...createSearchHistory(originalQuery),
+        id: input,
+      })),
+    );
+    const searchHistoryStore = useSearchHistoryStore();
+    const { items } = storeToRefs(searchHistoryStore);
+    const { deleteSearchHistory, updateSearchHistory } = searchHistoryStore;
+    items.value = [createSearchHistory(originalQuery), { ...createSearchHistory(originalQuery), id: otherId }];
+    await Promise.all([updateSearchHistory({ id, query: rejectedQuery }), deleteSearchHistory(otherId)]);
+
+    expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
+    expect(takeOne(items.value).query).toBe(originalQuery);
+  });
+
+  // The failing removal is the one that applied first, so its rollback lands after the other has persisted:
+  // Putting back the list it was sent against resurrects the row that removal dropped
+  test("puts back only the row whose removal was rejected", async () => {
+    expect.hasAssertions();
+
+    const otherId = crypto.randomUUID();
+    server.use(
+      trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
+        if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        return { ...createSearchHistory(originalQuery), id: input };
+      }),
+    );
+    const searchHistoryStore = useSearchHistoryStore();
+    const { items } = storeToRefs(searchHistoryStore);
+    const { deleteSearchHistory } = searchHistoryStore;
+    items.value = [createSearchHistory(originalQuery), { ...createSearchHistory(originalQuery), id: otherId }];
+    await Promise.all([deleteSearchHistory(id), deleteSearchHistory(otherId)]);
+
+    expect(items.value.map((searchHistory) => searchHistory.id)).toStrictEqual([id]);
+  });
 });

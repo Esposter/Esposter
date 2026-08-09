@@ -1,5 +1,6 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { useDashboardStore } from "@/store/dashboard";
@@ -40,19 +41,26 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   // One write path: apply the edit locally, persist the dashboard, revert on failure. The dialog closes only
   // On success so a rejected write keeps the user's draft open for retry instead of losing it
   const save = async (editedVisual: Visual) => {
-    const snapshot = structuredClone(toRawDeep(visuals.value));
+    // The unwind is this write's own visual rather than a copy of the list: a save is not instant, so a visual
+    // Added or removed while this one is in flight is already on screen by the time it fails, and a list-wide
+    // Restore would delete it. Cloned because updateVisual assigns onto the live visual
+    const previousVisual = visuals.value.find(getIsEntityIdEqualComparator<Visual>(["id"], editedVisual));
+    const snapshot = previousVisual ? structuredClone(toRawDeep(previousVisual)) : undefined;
     updateVisual(editedVisual);
     const isSuccessful = await saveDashboard();
     if (isSuccessful) editFormDialog.value = false;
-    else visuals.value = snapshot;
+    else if (snapshot) updateVisual(snapshot);
     return isSuccessful;
   };
   // Same write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual
   const deleteVisual = async (ids: { id: Visual["id"] }) => {
-    const snapshot = structuredClone(toRawDeep(visuals.value));
+    // Same scoping, and the removed visual itself rather than a clone — a delete filters the list without
+    // Touching it. It returns at the end of the list, so the rejected delete costs it its place; dropping a
+    // Visual the user added while the delete was in flight would cost them the visual
+    const deletedVisual = visuals.value.find(getIsEntityIdEqualComparator<Visual>(["id"], ids));
     storeDeleteVisual(ids);
     const isSuccessful = await saveDashboard();
-    if (!isSuccessful) visuals.value = snapshot;
+    if (!isSuccessful && deletedVisual) storeCreateVisual(deletedVisual);
     return isSuccessful;
   };
   return {

@@ -39,12 +39,20 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   };
   const updateEmoji = async (input: Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput) => {
     if (!session.value.data) return;
-    const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, session.value.data.user.id) };
+    const { id: userId } = session.value.data.user;
+    const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, userId) };
     await executeUpdateEmojiMutation(() => $trpc.message.emoji.updateEmoji.mutate(updatedInput), {
       applyOptimistic: () => {
         storeUpdateEmoji(updatedInput);
         return () => {
-          storeUpdateEmoji(input);
+          // Toggle this user back out of the reaction as it stands, rather than reinstating the ids this write
+          // Was issued with — that copy would drop every other reaction delivered while the write was in flight
+          const currentEmoji = getEmojis(input.messageRowKey).find(
+            getIsEntityIdEqualComparator(CompositeAzureKeyPath, input),
+          );
+          if (!currentEmoji) return;
+
+          storeUpdateEmoji({ ...input, userIds: getUpdatedUserIds(currentEmoji.userIds, userId) });
         };
       },
       // Keyed per emoji entity so concurrent operations on different emojis run independently instead of queueing behind each other
@@ -52,10 +60,12 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     });
   };
   const deleteEmoji = async (input: DeleteEmojiInput) => {
-    const emojis = getEmojis(input.messageRowKey);
-    const deletedEmoji = emojis.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
     await executeDeleteEmojiMutation(() => $trpc.message.emoji.deleteEmoji.mutate(input), {
+      // Read as the write is sent, so a rejected removal puts back the reaction as the write ahead of it left it
       applyOptimistic: () => {
+        const deletedEmoji = getEmojis(input.messageRowKey).find(
+          getIsEntityIdEqualComparator(CompositeAzureKeyPath, input),
+        );
         storeDeleteEmoji(input);
         return () => {
           if (deletedEmoji) storeCreateEmoji(deletedEmoji);
@@ -71,7 +81,9 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     emojis.push(newEmoji);
     setEmojis(newEmoji.messageRowKey, emojis);
   };
-  const storeUpdateEmoji = (input: UpdateEmojiInput) => {
+  // The fields written ride along with the identity — every caller updates `userIds`, which the identity alone
+  // Cannot name, and the assign below is what applies them
+  const storeUpdateEmoji = (input: Partial<MessageEmojiMetadataEntity> & UpdateEmojiInput) => {
     const emojis = getEmojis(input.messageRowKey);
     const index = emojis.findIndex(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
     if (index === -1) return;
