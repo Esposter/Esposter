@@ -36,8 +36,13 @@ done
 **A prefix is coherent history but not necessarily a working tree — the cut has to land where CI is green.** Local commits are pushed in batches, so a commit that moves a module and the one that repoints its importers can be several apart; every commit between them typecheck-fails, and nothing complains until a cut stops there. The file count says nothing about this. Before settling on a boundary, check that the candidate builds — and if it doesn't, walk **forward** to the commit that repairs it rather than back, since the breakage is only fixed above:
 
 ```bash
-git stash -u && git switch --detach <candidate> && (cd packages/app && pnpm typecheck)
+start=$(git rev-parse --abbrev-ref HEAD)
+git switch --detach <candidate>
+(cd packages/app && pnpm typecheck); isGreen=$?
+git switch "$start"   # unconditional: a red candidate is the expected result, not an abort
 ```
+
+Never `&&`-chain the return hop behind the check. A failing typecheck is the outcome this is looking for, so chaining strands the clone on a detached `HEAD`. There is no `git stash` here either — the cut already requires a clean worktree, and a `stash push` on a clean tree creates nothing, so the paired `stash pop` would restore an unrelated older entry.
 
 A cut that lands mid-breakage is not a lost-work problem — the repair is safe on the queue branch — but it publishes a red `develop` and burns the review cycle on a window whose CI never passes.
 
@@ -54,17 +59,9 @@ git reset --hard <cut> && git push --force-with-lease origin develop
 
 The park has to be pushed **before** the reset, not after. Until `queue/<scope>` exists on the remote the cut commits live only in this clone, and a `reset --hard` that lands with the push unmade is unrecoverable from anywhere else.
 
-Re-basing the park onto the cut is **only needed if you put something on `develop` after the reset** — the cherry-picks below are the usual reason. Otherwise it is a no-op: `queue/<scope>` was branched from the old tip, so once `develop` is `<cut>`, `develop..queue/<scope>` is already exactly the remainder. When you do need it:
+**The queue branch is never rebased, moved, or force-pushed.** Because windows are cherry-picked onto `develop` rather than merged, the queue is an immutable record of what still has to be ported; rewriting it invalidates the cursor the drain step counts with, and re-dirties shas that `develop` already carries copies of. Push it once, here, and leave it until it is deleted.
 
-```bash
-git rebase --rebase-merges --onto develop <cut> queue/<scope> && git push --force-with-lease origin queue/<scope>
-```
-
-`--rebase-merges` because the cut lands on a merge boundary and the remainder above it normally holds several more — a plain `--onto` flattens them, taking with them the boundaries the next window is sized at.
-
-Cherry-picked doc commits replay as no-ops, or conflict if reworded since — `git rebase --skip` those, `develop`'s version is newer. Read the commit's **patch**, `git show <commit>`, before skipping: `--skip` drops the whole commit rather than the conflicting hunk, so one that also carried unrelated work loses it, and `--stat` shows only which files it touched, not whether their content is the cherry-pick. Verify the same way before force-pushing the queue — `git diff <old-queue-head> queue/<scope>`, patch not `--stat`, should show only rewordings you recognise.
-
-Cherry-pick doc and skill commits across the cut so the working tree keeps the conventions it is being asked to follow.
+Cherry-pick doc and skill commits across the cut so the working tree keeps the conventions it is being asked to follow. One already on `develop` replays as a no-op, or conflicts if it was reworded since — read the commit's **patch**, `git show <commit>`, before resolving, never `--stat`, which shows which files it touched but not whether their content is the copy. Dropping a conflicting commit wholesale loses any unrelated work it also carried.
 
 ## 2. Drain
 
@@ -73,22 +70,23 @@ Port one queue window onto `develop`, trigger a review, wait for `Review complet
 Size each window off the queue the way the cut was sized, then **cherry-pick the window, never merge the branch.** `git merge queue/<scope>` takes the whole remainder and rebuilds the over-budget PR in a single push; even merging a single window commit adds a merge commit and replays the queue's shas, and `develop` is tracked most reliably when it only ever grows linearly:
 
 ```bash
-for commit in $(git rev-list --reverse develop..queue/<scope>); do
-  printf '%4d  %s\n' "$(git diff --name-only -M "develop..$commit" | wc -l)" "$(git log -1 --oneline "$commit")"
+cursor=<last-ported-queue-commit>   # the cut itself, for the first window
+for commit in $(git rev-list --reverse "$cursor"..queue/<scope>); do
+  printf '%4d  %s\n' "$(git diff --name-only -M "$cursor..$commit" | wc -l)" "$(git log -1 --oneline "$commit")"
 done
-git switch develop && git cherry-pick <first-of-window>^..<window> && git push origin develop
-git rev-list --count develop..queue/<scope>   # what the queue still owes
+git switch develop && git cherry-pick "$cursor"..<window> && git push origin develop
+git rev-list --count <window>..queue/<scope>   # what the queue still owes; <window> is the new cursor
 ```
 
-Cherry-picking leaves the queue's own commits behind, so `develop..queue/<scope>` no longer shrinks on its own — track what is left by what you have ported, and delete the branch once the last window is on `develop` rather than waiting for that count to reach `0`.
+**Count the remainder from a cursor, never from `develop`.** Cherry-picking copies the queue's commits rather than making `develop` a descendant of them, so `develop..queue/<scope>` never shrinks — it keeps reporting windows already ported and would re-offer them for sizing. The cursor is the last queue commit ported; it advances to `<window>` after each push, and the branch is deleted when it reaches the tip.
 
-**Re-measure the window immediately before pushing, not when planning it.** The count that matters is the one after the review fixes, the merge and the format/lint pass have all landed, and it lands higher than the estimate: a lint pass fixes whatever the merged window dragged in, so it touches files no one attributed to the window. Planning at "89 plus the five files the findings name" is how a window arrives at the remote at 101.
+**Re-measure the window immediately before pushing, not when planning it.** The count that matters is the one after the review fixes, the port and the format/lint pass have all landed, and it lands higher than the estimate: a lint pass fixes whatever the ported window dragged in, so it touches files no one attributed to the window. Planning at "89 plus the five files the findings name" is how a window arrives at the remote at 101.
 
 ```bash
 git diff --name-only -M <last-reviewed-sha>..HEAD | wc -l   # after every commit, before the push
 ```
 
-Over budget at that point is cheap to fix precisely because nothing is pushed: drop the tail commit back to the queue (`git reset --hard <fixes>`, re-merge the smaller window, cherry-pick the work that sat above it), and the queue simply owes one more commit. Prefer dropping a whole trailing commit to hunting individual files — the boundary stays a commit boundary, and the next window is already sized.
+Over budget at that point is cheap to fix precisely because nothing is pushed: `git reset --hard` to the last commit that belongs on `develop`, cherry-pick a **shorter prefix** of the window, and re-apply whatever work sat above it. The cursor moves back with the prefix, so the queue simply owes one more window. Prefer dropping a whole trailing commit to hunting individual files — the boundary stays a commit boundary, and the next window is already sized.
 
 `--no-ff` rather than `--ff-only`: the fixes for one window's findings land on `develop`, so from the second window on the queue is no longer a descendant of `develop` and a fast-forward is refused. The queue branch itself is never moved — `develop..queue/<scope>` shrinks on its own as windows merge, and it is empty (count `0`) when the branch can be deleted.
 
