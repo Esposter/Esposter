@@ -37,7 +37,7 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   ]);
   const tableHeaders = computed(() => headers.value.filter(({ key }) => key !== "data-table-select"));
 
-  watchDeep(
+  watch(
     () => filterStore.columnFilters,
     () => {
       page.value = 1;

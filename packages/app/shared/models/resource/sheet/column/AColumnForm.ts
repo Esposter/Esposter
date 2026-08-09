@@ -19,6 +19,6 @@ export const createAColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSch
       [uniqueColumnNameKeywordDefinition.keyword]: true,
     }),
     sourceName: aColumnSchema.shape.sourceName.meta({ title: "Source Column" }),
-    type: typeSchema,
+    type: aColumnSchema.shape.type,
   });
 };

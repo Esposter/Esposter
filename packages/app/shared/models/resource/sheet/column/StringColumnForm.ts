@@ -6,6 +6,6 @@ import { z } from "zod";
 
 export interface StringColumnForm extends AColumnForm<ColumnType.String> {}
 
-export const stringColumnFormSchema = createAColumnFormSchema(z.literal(ColumnType.String).readonly()).meta({
+export const stringColumnFormSchema = createAColumnFormSchema(z.literal(ColumnType.String)).meta({
   title: ColumnType.String,
 }) satisfies z.ZodType<StringColumnForm>;

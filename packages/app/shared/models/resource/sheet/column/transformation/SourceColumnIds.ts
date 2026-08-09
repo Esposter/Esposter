@@ -6,7 +6,9 @@ export interface SourceColumnIds {
   sourceColumnIds: string[];
 }
 
-export const createSourceColumnIdsSchema = (getItems = ColumnFormVjsfContextPropertyNames["context.columnItems"]) =>
-  z.object({
-    sourceColumnIds: createUniqueArraySchema(z.string()).meta({ layout: { getItems }, title: "Source Columns" }),
-  }) satisfies z.ZodType<SourceColumnIds>;
+export const sourceColumnIdsSchema = z.object({
+  sourceColumnIds: createUniqueArraySchema(z.string()).meta({
+    layout: { getItems: ColumnFormVjsfContextPropertyNames["context.columnItems"] },
+    title: "Source Columns",
+  }),
+}) satisfies z.ZodType<SourceColumnIds>;

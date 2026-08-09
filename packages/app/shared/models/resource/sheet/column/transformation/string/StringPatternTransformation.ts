@@ -4,7 +4,7 @@ import type { ItemEntityType } from "@esposter/shared";
 import { Delimiter } from "#shared/models/compiler/Delimiter";
 import { DelimiterRegexMap } from "#shared/models/compiler/DelimiterRegexMap";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { createSourceColumnIdsSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnIds";
+import { sourceColumnIdsSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnIds";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -16,7 +16,7 @@ export interface StringPatternTransformation
 export const stringPatternTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.StringPattern).readonly()).shape,
-    ...createSourceColumnIdsSchema().shape,
+    ...sourceColumnIdsSchema.shape,
     pattern: z.string(),
   })
   .superRefine(({ pattern, sourceColumnIds }, ctx) => {

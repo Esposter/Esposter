@@ -1,8 +1,14 @@
-import { columnFormSchema } from "#shared/models/resource/sheet/column/ColumnForm";
+import { columnFormSchema, ColumnTypeFormSchemaMap } from "#shared/models/resource/sheet/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";
 
 describe("columnFormSchema", () => {
+  test("has an arm for every column type", () => {
+    expect.hasAssertions();
+
+    expect(columnFormSchema.options).toStrictEqual(Object.values(ColumnTypeFormSchemaMap));
+  });
+
   test("matches inline snapshot", () => {
     expect.hasAssertions();
 
