@@ -1,8 +1,17 @@
 # Cutting a release PR back to the review budget
 
-Read when a PR has grown past the file limit and CodeRabbit skips it outright ("Review skipped: N files exceed the limit of 100").
+Read when a push has put a review window past the file limit and CodeRabbit skips it outright ("Review skipped: N files exceed the limit of 100"). This is the recovery for **any** overshoot, not just a PR too big for its first review — an already-reviewed PR trips it the ordinary way, by accumulating past ~80 files locally between pushes.
 
 The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged. The fix is to **shorten `develop` and park the rest on a queue branch**, then feed the queue back one window at a time.
+
+**`<base>` throughout is the baseline CodeRabbit measures from, which is not always the merge-base.** For a PR awaiting its first review it is `git merge-base main develop`. For one already reviewed it is the **last reviewed sha**, named in the most recent review body ("Reviewing files that changed between `<sha1>` and `<sha2>`" — take `<sha2>`):
+
+```bash
+gh api repos/:owner/:repo/pulls/<pr>/reviews --paginate --jq '.[] | select(.user.login=="coderabbitai[bot]") | .body' |
+  grep -oE 'between [`a-f0-9]+ and [`a-f0-9]+' | tail -1
+```
+
+Cutting an already-reviewed PR against the merge-base discards windows that were reviewed and accepted. The skip comment's own file count confirms which baseline is live: it matches the delta from the last reviewed sha, not the cumulative PR diff.
 
 Never open side PRs against `main` to slice it up. Each one spends a review slot on arrival, and the release PR is not the thing that needs splitting — its _review cycles_ are.
 
@@ -20,15 +29,24 @@ done
 
 Take the boundary nearest ~80 files. The next three commands discard and rewrite published history, so they are the one place in this repo that needs a gate first — **get explicit approval for this cut**, and check all three of: the worktree is clean (`git status --porcelain -uall` empty — a `reset --hard` eats uncommitted work), you are on `develop` and not a worktree branch, and the local tip matches `origin/develop` (`git rev-parse develop origin/develop`) so no other session's push is about to be overwritten. `--force-with-lease` refuses the push if the remote moved, but nothing catches a dirty tree or the wrong branch.
 
-Then park, cut, and re-base the park onto the cut:
+Then park and cut:
 
 ```bash
 git branch queue/<scope> develop && git push origin queue/<scope>   # nothing lost yet
 git reset --hard <cut> && git push --force-with-lease origin develop
+```
+
+**Reset straight to `<cut>` — the first window stays on `develop`.** Resetting all the way back to `<base>` and then merging the window in is the same end state by a worse route: it is two pushes, and the first reviews a zero-file diff, so it spends a review slot to say nothing. One push, one slot, one window.
+
+The park has to be pushed **before** the reset, not after. Until `queue/<scope>` exists on the remote the cut commits live only in this clone, and a `reset --hard` that lands with the push unmade is unrecoverable from anywhere else.
+
+Re-basing the park onto the cut is **only needed if you put something on `develop` after the reset** — the cherry-picks below are the usual reason. Otherwise it is a no-op: `queue/<scope>` was branched from the old tip, so once `develop` is `<cut>`, `develop..queue/<scope>` is already exactly the remainder. When you do need it:
+
+```bash
 git rebase --rebase-merges --onto develop <cut> queue/<scope> && git push --force-with-lease origin queue/<scope>
 ```
 
-The rebase is what makes it two branches instead of three: without it the queue is a copy of `develop` plus the remainder. `--rebase-merges` because the cut lands on a merge boundary and the remainder above it normally holds several more — a plain `--onto` flattens them, taking with them the boundaries the next window is sized at.
+`--rebase-merges` because the cut lands on a merge boundary and the remainder above it normally holds several more — a plain `--onto` flattens them, taking with them the boundaries the next window is sized at.
 
 Cherry-picked doc commits replay as no-ops, or conflict if reworded since — `git rebase --skip` those, `develop`'s version is newer. Read the commit's **patch**, `git show <commit>`, before skipping: `--skip` drops the whole commit rather than the conflicting hunk, so one that also carried unrelated work loses it, and `--stat` shows only which files it touched, not whether their content is the cherry-pick. Verify the same way before force-pushing the queue — `git diff <old-queue-head> queue/<scope>`, patch not `--stat`, should show only rewordings you recognise.
 
