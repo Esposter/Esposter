@@ -110,7 +110,7 @@ A custom dialog/menu button that exposes an `#activator` slot **merges its own t
 - Name a form validity ref `isEditFormValid`, bind it via `v-model` on `<v-form>`, and init `ref(true)` (optimistic). Prevent invalid submission through validation rules so state stays consistent, rather than catching in the submit handler (see the `error-handling` skill).
 - **`StyledFormDialog` consumers never pass `!isEditFormValid`** — it merges form validity, `isSubmitting`, `type="submit"`, `form` and `loading` into the confirm button internally, so `confirmButtonAttrs` carries only the consumer's own extra condition. **`StyledEditFormDialog` has no `confirmButtonAttrs` at all.**
 - Use the auto-imported `useVRules()` — declare `const rules = useVRules();` at the top of `<script setup>` with the other composables, then reference builders: `:rules="[rules.required(), rules.maxLength(100)]"`. One-off inline arrow rules in the template are fine; extract to script only when shared or unwieldy.
-- Built-in aliases (`required`, `maxLength`, `minLength`, `email`, `pattern`, …) come from Vuetify — don't reimplement them or their messages. The `required` HTML attribute is not a Vuetify prop; use `:rules="[rules.required()]"`.
+- **A built-in alias first, always** (`required`, `maxLength`, `minLength`, `email`, `pattern`, `notEmpty`, …) — never reimplement one or its message, including as a rule that surfaces a server Zod schema's issue text. A custom alias is earned only where no built-in covers the check, and then it is named and worded in Vuetify's own voice (`minValue` beside `minLength`) as a literal — routing it through the locale is what forces the whole `en` locale to be merged eagerly, which the app has no use for while i18n is deferred. The `required` HTML attribute is not a Vuetify prop; use `:rules="[rules.required()]"`.
 - Rules validate **what is submitted, not what was typed** — when the sent value is composed from the field (markup wrapper, appended link/suffix), the rule checks the composed value's constraint, even though `counter` still tracks the raw input.
 - Rules depending on reactive component state (uniqueness against a live list) are **not** global aliases — they belong in a composable, or an Ajv keyword when the form is Vjsf. See the `vue-composable-patterns` skill's "Validation Rules — Pick the Right Layer".
 
@@ -148,7 +148,7 @@ A button and its keyboard shortcut are one component — see the **vue-page-comp
 
 ## Deep Dives
 
-- `references/form-dialogs-and-rules.md` — when wiring a form dialog or inline form's validity/error icon, or adding a custom global validation rule.
+- `references/form-dialogs-and-rules.md` — when wiring a form dialog or inline form's validity/error icon, choosing between a built-in rule and a custom one, or adding a custom global validation rule and wording its message.
 - `references/select-item-construction.md` — when building the items constant for a select, list or menu from an enum or map.
 - `references/css-custom-properties.md` — when a component genuinely needs a `<style>` block and a shared value in it.
 - `references/scrollspy-sub-nav.md` — when a sidebar must track which section is scrolled into view.

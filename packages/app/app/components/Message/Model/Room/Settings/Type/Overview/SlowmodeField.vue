@@ -9,7 +9,7 @@ const rules = useVRules();
     <div font-semibold>Slowmode</div>
     <v-text-field
       :model-value="modelValue != null ? modelValue / 1000 : ''"
-      :rules="[rules.requireAtLeastN(1)]"
+      :rules="[rules.minValue(1)]"
       density="compact"
       hide-details="auto"
       placeholder="Disabled"

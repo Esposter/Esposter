@@ -2,7 +2,6 @@
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { CreatableResourceType } from "@/services/resource/CreatableResourceTypes";
 
-import { resourceNameRules } from "@/services/resource/resourceNameRules";
 import { useNotificationStore } from "@/store/notification";
 import { RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
@@ -12,6 +11,7 @@ interface ResourceCreateFormProps {
 }
 
 const { type } = defineProps<ResourceCreateFormProps>();
+const rules = useVRules();
 const { $trpc } = useNuxtApp();
 const createResource = useCreateResource();
 const { executeMutation } = useMutation();
@@ -87,7 +87,7 @@ const submit = async () => {
             autofocus
             :counter="RESOURCE_NAME_MAX_LENGTH"
             label="Name"
-            :rules="resourceNameRules"
+            :rules="[rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]"
           />
           <ResourceCreateSheetFile
             v-if="type === ResourceType.Sheet"

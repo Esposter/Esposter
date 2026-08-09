@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { MAX_BLUEPRINT_ENTRIES } from "#shared/services/resource/blueprint/constants";
 import { pluralize } from "#shared/util/text/pluralize";
-import { resourceNameRules } from "@/services/resource/resourceNameRules";
 import { useNotificationStore } from "@/store/notification";
 import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
+import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
+const rules = useVRules();
 const { $trpc } = useNuxtApp();
 const { executeMutation } = useMutation();
 const captureDialogStore = useBlueprintCaptureDialogStore();
@@ -67,6 +68,11 @@ onUnmounted(() => {
       A blueprint holds at most {{ MAX_BLUEPRINT_ENTRIES }} resources — deselect {{ overLimitCount }}
       {{ pluralize("resource", overLimitCount) }} to continue.
     </v-alert>
-    <v-text-field v-model="name" autofocus label="Blueprint name" :rules="resourceNameRules" />
+    <v-text-field
+      v-model="name"
+      autofocus
+      label="Blueprint name"
+      :rules="[rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]"
+    />
   </StyledFormDialog>
 </template>
