@@ -16,15 +16,21 @@ const userId = computed(() => session.value.data?.user.id ?? "");
 const statusStore = useStatusStore();
 const { statusMap } = storeToRefs(statusStore);
 const { getStatusEnum, getStatusMessage } = statusStore;
-// The stored row owns both values and this is only a draft of them, so it re-seeds whenever the row moves.
-// The menu closes the instant a save is submitted, which is what makes the draft disposable: the user has no
-// Screen left to correct it on, and the next open sits beside a status bar reading the row
-const { cloned: editedStatus, sync: syncEditedStatus } = useCloned(() => ({
-  message: getStatusMessage(userId.value),
-  status: getStatusEnum(userId.value),
-}));
+// A manual draft, seeded once per open: the menu unmounts its content on close, so every open builds this form
+// Again against the row as it then stands. Automatic sync would re-seed on any write to the status map, and the
+// Map carries more than these two fields — a presence push landing while the user is mid-sentence would clear
+// What they had typed, having changed only the connection state
+const { cloned: editedStatus, sync: syncEditedStatus } = useCloned(
+  () => ({ message: getStatusMessage(userId.value), status: getStatusEnum(userId.value) }),
+  { manual: true },
+);
 const { executeMutation } = useMutation();
 const save = async () => {
+  // Every piece of bookkeeping below is keyed by the user: the queue key, the optimistic read, the row the
+  // Rollback restores. Without a session there is no key to write under, and the mutation would only be
+  // Refused anyway — so the save is not attempted rather than filed against `""`
+  if (!userId.value) return;
+
   emit("save");
   const input = { ...editedStatus.value };
   const { status } = await executeMutation(() => $trpc.user.upsertStatus.mutate(input), {

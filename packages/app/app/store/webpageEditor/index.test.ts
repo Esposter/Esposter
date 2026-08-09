@@ -56,6 +56,20 @@ describe(useWebpageEditorStore, () => {
     expect(takeOne(savedContentIds)).toBe(content.id);
   });
 
+  // GrapesJS stores as soon as it has finished loading, so the first save of a session is an echo of what was
+  // Just read. Unless the load seeds the dirty check, that echo counts as a change: it bumps contentVersion for
+  // Content nobody edited, and every other client holding the page open is told its version is stale
+  test("skips the store echo that follows the load", async () => {
+    expect.hasAssertions();
+
+    content = new WebpageEditor({ ...projectData, ...render });
+    const { readWebpageEditor, saveWebpageEditor } = useWebpageEditorStore();
+    await readWebpageEditor();
+    await saveWebpageEditor(projectData, render);
+
+    expect(saveResourceContent).not.toHaveBeenCalled();
+  });
+
   test("skips a save that changed nothing since the last one", async () => {
     expect.hasAssertions();
 

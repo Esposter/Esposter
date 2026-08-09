@@ -7,7 +7,7 @@ import { useResourceStore } from "@/store/resource";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const resourceStore = useResourceStore();
-  const { readContent, readResource, saveContent } = resourceStore;
+  const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
   // GrapesJS owns the live project once it has loaded, so the content is held plainly rather than reactively —
   // Nothing outside the two adapter callbacks reads it
   let content = new WebpageEditor();
@@ -15,6 +15,10 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const readWebpageEditor = async () => {
     await readResource();
     content = new WebpageEditor(await readContent<ResourceType.Webpage>());
+    // Seed the dirty check, the same as every other content store. GrapesJS stores once on load, so without
+    // This the echo of what was just read counts as a change and bumps contentVersion for nothing — which then
+    // Reads as a stale version to whichever other client is holding the page open
+    setPersistedContent(content);
     return content;
   };
   // The standalone render (css/html) is captured at save time so the published webpage serves without GrapesJS,

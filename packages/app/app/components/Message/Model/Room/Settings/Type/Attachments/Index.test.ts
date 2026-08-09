@@ -8,11 +8,11 @@ import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { MimeCategory } from "@esposter/db-schema";
-import { noop, takeOne } from "@esposter/shared";
+import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 import { VSelect, VTextField } from "vuetify/components";
 
 describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
@@ -86,7 +86,13 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
     const { rooms } = storeToRefs(roomStore);
     const { pushRooms } = roomStore;
     pushRooms({ ...room });
-    const storedRoom = takeOne(rooms.value);
+    // Read back by id rather than by position: the list belongs to the nuxt app rather than to this test, so
+    // Taking the first room returns whatever an earlier test left there and the assertions below would be
+    // Watching a row this test never wrote to
+    const storedRoom = rooms.value.find(({ id }) => id === room.id);
+
+    assert.exists(storedRoom);
+
     const component = await mountSuspended(MessageModelRoomSettingsTypeAttachmentsIndex, {
       props: { room: storedRoom },
     });
