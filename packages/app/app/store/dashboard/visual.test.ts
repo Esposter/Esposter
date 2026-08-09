@@ -13,6 +13,20 @@ import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
+// The visual store reads its visuals straight off the dashboard store's content, so the dashboard has to be
+// Loaded before there is anything to edit — and before a save has a resource to write to
+const setupStore = async () => {
+  const dashboardStore = useDashboardStore();
+  await dashboardStore.loadContent();
+  return useVisualStore();
+};
+// The dialog hands `save` a clone of the visual, the way createEditFormData stages every edit
+const createEditedVisual = (visual: Visual, type: VisualType) => {
+  const editedVisual = structuredClone(toRawDeep(visual));
+  editedVisual.type = type;
+  return editedVisual;
+};
+
 describe(useVisualStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
@@ -25,19 +39,6 @@ describe(useVisualStore, () => {
       updatedAt: new Date(0),
     }) as Resource;
   let content: Dashboard;
-  // The visual store reads its visuals straight off the dashboard store's content, so the dashboard has to be
-  // Loaded before there is anything to edit — and before a save has a resource to write to
-  const setupStore = async () => {
-    const dashboardStore = useDashboardStore();
-    await dashboardStore.loadContent();
-    return useVisualStore();
-  };
-  // The dialog hands `save` a clone of the visual, the way createEditFormData stages every edit
-  const createEditedVisual = (visual: Visual, type: VisualType) => {
-    const editedVisual = structuredClone(toRawDeep(visual));
-    editedVisual.type = type;
-    return editedVisual;
-  };
 
   beforeEach(() => {
     setActivePinia(createPinia());

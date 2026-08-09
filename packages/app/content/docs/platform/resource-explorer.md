@@ -137,7 +137,7 @@ The blade nav's built-in slugs come from the `ResourceBladeTypes` set (enum orde
 
 - **Overview blade**: Essentials panel (type, created/updated) plus a type-specific summary slot. **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource shows no status row at all.
 - **Command bar** (in the blade box header): Refresh + Rename + Delete + Duplicate always; Publish/Unpublish for `PublishableResourceType`; Import/Export for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, a self-contained async `export()` ⇒ Export); a trailing close ✕. Labeled buttons, group dividers, narrow-viewport `…` overflow, and the type-the-name delete guard are [resource page parity](/docs/platform/resource-page-parity).
-- State via `useResource(id)` ([/docs/architecture/resources](/docs/architecture/resources)).
+- State via `useResourceStore` ([/docs/architecture/resources](/docs/architecture/resources)).
 
 ## Resource lifecycle
 
@@ -170,7 +170,7 @@ stateDiagram-v2
 
 | File                                                   | Role                                                                                                    |
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| `app/pages/resource-explorer/[id]/[[blade]].vue`       | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>`            |
+| `app/pages/resource-explorer/[id]/[[blade]].vue`       | resource page shell: loads `useResourceStore`, 404-guards id + blade, clears the store on unmount       |
 | `app/components/Resource/Explorer/Index.vue`           | the blade body — toolbar, collapsible nav rail and outlet on one surface                                |
 | `app/components/Resource/List/View.vue`                | `StyledDataTableServer` over `resource.readResources` — the workbench, parameterised by `source`        |
 | `app/components/Resource/ServiceMenu.vue`              | the area's menu, opened from Home's `☰` as a drawer                                                    |
@@ -185,7 +185,7 @@ stateDiagram-v2
 | `app/services/resource/ResourceEditorComponentMap.ts`  | type → inline Editor-blade component                                                                    |
 | `app/services/resource/PortableFormatMap.ts`           | portable type → formats (Import/Export)                                                                 |
 | `app/services/resource/ViewComponentMap.ts`            | publishable type → public view renderer                                                                 |
-| `app/composables/resource/useResource.ts`              | row + typed content + save/capability actions                                                           |
+| `app/store/resource/index.ts`                          | the blade's own state — row + publication + typed content + save/capability actions                     |
 | `app/composables/resource/useResourceRouter.ts`        | a type to its own procedures, through its name — the whole client dispatch                              |
 
 ## Notes

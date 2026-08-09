@@ -5,6 +5,7 @@ import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
+import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { ResourceType } from "@esposter/db-schema";
 import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/shared";
@@ -13,11 +14,13 @@ import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 
 export const useSurveyCreator = () => {
   const validateFile = useValidateFile();
+  const resourceStore = useResourceStore();
+  const { resource } = storeToRefs(resourceStore);
   const surveyStore = useSurveyStore();
   const { loadContent, saveModel } = surveyStore;
   const importJsonFile = useImportJsonFile();
   const exportJsonFile = useExportJsonFile();
-  const getResourceId = () => surveyStore.resource?.id ?? "";
+  const getResourceId = () => resource.value?.id ?? "";
   const deleteFile = useDeleteResourceFile(ResourceType.Survey, getResourceId);
   const uploadFile = useUploadResourceFile(ResourceType.Survey, getResourceId);
   const isDark = useIsDark();
@@ -29,7 +32,7 @@ export const useSurveyCreator = () => {
   onMounted(async () => {
     await loadContent();
     const newCreator = new SurveyCreatorModel({ autoSaveEnabled: true, showThemeTab: true, showTranslationTab: true });
-    const actions = getActions(newCreator, () => surveyStore.resource?.name ?? "", importJsonFile, exportJsonFile);
+    const actions = getActions(newCreator, () => resource.value?.name ?? "", importJsonFile, exportJsonFile);
 
     for (const action of actions) {
       newCreator.toolbar.actions.push(action);

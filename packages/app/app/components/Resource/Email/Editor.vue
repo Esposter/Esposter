@@ -7,6 +7,7 @@ import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { setBlocks } from "@/services/grapesjs/setBlocks";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
+import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import grapesJSMJML from "grapesjs-mjml";
 import "grapesjs/dist/css/grapes.min.css";
@@ -15,7 +16,9 @@ const session = authClient.useSession();
 const emailEditorStore = useEmailEditorStore();
 const { readEmailEditor, saveDatasetReference, saveEmailEditor } = emailEditorStore;
 const { datasetReference, editor: storeEditor } = storeToRefs(emailEditorStore);
-const uploadFile = useUploadResourceFile(ResourceType.Email, () => emailEditorStore.resource?.id ?? "");
+const resourceStore = useResourceStore();
+const { resource } = storeToRefs(resourceStore);
+const uploadFile = useUploadResourceFile(ResourceType.Email, () => resource.value?.id ?? "");
 const { editor } = await useGrapesJsEditor(
   {
     load: () => readEmailEditor(),

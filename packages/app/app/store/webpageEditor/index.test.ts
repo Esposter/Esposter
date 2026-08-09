@@ -64,6 +64,6 @@ describe(useWebpageEditorStore, () => {
     await saveWebpageEditor(projectData, render);
     await saveWebpageEditor(projectData, render);
 
-    expect(saveResourceContent).toHaveBeenCalledOnce();
+    expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 });

@@ -20,6 +20,9 @@ await readRoomCategories();
 
 const roomCategoryStore = useRoomCategoryStore();
 const { categories } = storeToRefs(roomCategoryStore);
+// Owned by the form, not by the row: a rejected save rolls the row back and deliberately leaves what the user
+// Entered in the controls, with isDirty still true, so the next save retries it. The settings panel is still on
+// Screen beside the alert, which is what makes the draft worth keeping — never clone the row here
 const selectedCategoryId = ref(room.categoryId);
 const isReadOnly = ref(room.isReadOnly);
 const slowmodeMs = ref(room.slowmodeMs);

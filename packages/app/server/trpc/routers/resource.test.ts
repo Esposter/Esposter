@@ -832,16 +832,20 @@ describe("resource", () => {
     expect(renamedActivity?.rowKey.localeCompare(createdActivity?.rowKey ?? "")).toBeLessThan(0);
   });
 
+  // A tag edit carries nothing but the tags, so it can neither trip the rename trail nor overwrite the name a
+  // Concurrent rename just wrote
   test("does not record an activity for a tags-only update", async () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.updateResource({ id: dashboardResource.id, name, tags: { env: "prod" } });
+    await dashboardCaller.updateResource({ id: dashboardResource.id, tags: { env: "prod" } });
     // The Created write is fire-and-forget off createResource, so drain it before reading the trail
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
+    const updatedResource = await caller.readResource({ id: dashboardResource.id });
 
     expect(items.map(({ activityType }) => activityType)).toStrictEqual([ResourceActivityType.Created]);
+    expect(updatedResource.name).toBe(name);
   });
 
   test("coalesces repeated content saves by the same user within the hour", async () => {

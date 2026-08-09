@@ -19,7 +19,7 @@ export const useCacheStore = defineStore("cache", () => {
   const invalidateTags = async (tags: CacheTag[]) => {
     // A cache carrying two of the invalidated tags is dropped once, so it issues one re-read rather than two
     const invalidators = new Set(tags.flatMap((tag) => [...(invalidatorMap.get(tag) ?? [])]));
-    await Promise.all([...invalidators].map((invalidate) => invalidate()));
+    await Promise.all([...invalidators].map((invalidate) => Promise.resolve(invalidate())));
   };
   return { invalidateTags, registerCache };
 });

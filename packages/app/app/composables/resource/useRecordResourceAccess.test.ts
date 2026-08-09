@@ -27,7 +27,7 @@ describe(useRecordResourceAccess, () => {
     // Owns — which tags it drops — and not the recent store's own re-read policy, which is its own test.
     // Recording a visit reorders the recents and nothing else: dropping Resources here would re-read the
     // Favorites on every navigation, since that cache re-reads the moment it is invalidated
-    const { promise: invalidated, resolve: onInvalidated } = Promise.withResolvers<void>();
+    const { promise: invalidated, resolve: onInvalidated }: PromiseWithResolvers<void> = Promise.withResolvers();
     const invalidatedTags: CacheTag[] = [];
     const cacheStore = useCacheStore();
     const { registerCache } = cacheStore;

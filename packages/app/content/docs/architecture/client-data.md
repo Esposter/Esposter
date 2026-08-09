@@ -10,7 +10,7 @@ Every user-facing tRPC call on the client goes through one of two symmetric prim
 - **`useQuery`** — reads. Fetches without blocking setup, populates reactive data, surfaces errors.
 - **`useMutation`** — writes. Applies optimistically, rolls back on failure, surfaces errors.
 
-A third primitive sits beside them for the reads that are the same all session:
+A third primitive sits beside them for the reads many stores share:
 
 - **`useCachedRead`** — a store's shared read, cached until a write invalidates its tag. Covered in [caching](/docs/architecture/caching).
 
@@ -70,6 +70,8 @@ await executeMutation(mutate, {
 - `applyOptimistic` — the normal path. Apply the local change and return its rollback closure. It runs when the write is sent, so a queued write snapshots the state its predecessor stored. On failure the rollback runs. Where the entity has a subscription, the confirming server state also arrives through it and idempotently re-applies the same value — but not every mutation has one, so the rollback is what the correctness rests on, never the echo.
 - `onSuccess` — the rare path, for mutations whose result the client can't predict (server-generated ids/tokens like `createInvite`). Omit `applyOptimistic` and take the server result here.
 - `onError` — replaces the default alert, only for surfaces that own a different error channel: the platform resource operations route failures into the [notifications bell](/docs/platform/notifications), including the stale-`contentVersion` warning with its Refresh action. Everything else omits it and gets the alert.
+
+**A rollback restores the store row, never the control the value was typed into.** Whether the form's own copy follows it back is a separate decision, and it is made by asking whether the surface holding that copy is still on screen when the rejection lands. A settings panel is: it keeps the entered value, stays dirty, and the next save retries it. A menu or dialog that closed on submit is not, so its draft re-seeds from the row — otherwise it reopens showing a value the server refused, beside a readout of the row that never took it. The `vue` skill's watch decision tree owns the mechanics.
 
 The optimistic apply and the server's own broadcast coexist — the write lands locally at once, and the echo re-applies the same value when it arrives:
 

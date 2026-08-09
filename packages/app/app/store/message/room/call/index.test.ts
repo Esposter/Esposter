@@ -19,7 +19,7 @@ vi.mock(import("@/services/auth/authClient"), () => ({
   authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
 }));
 
-const createCallParticipant = (name: string): CallParticipant => ({
+const createParticipant = (name: string): CallParticipant => ({
   id: crypto.randomUUID(),
   image: "",
   isCameraEnabled: false,
@@ -30,7 +30,7 @@ const createCallParticipant = (name: string): CallParticipant => ({
 });
 
 beforeEach(() => {
-  useSessionMock.mockImplementation(() => ref({ data: getMockSession() }));
+  useSessionMock.mockReturnValue(ref({ data: getMockSession() }));
 });
 
 describe(useCallStore, () => {
@@ -305,8 +305,8 @@ describe(useMediaStore, () => {
 describe(useKnockerStore, () => {
   const server = setupMswTrpc();
   const callSessionId = crypto.randomUUID();
-  const first = createCallParticipant("first");
-  const second = createCallParticipant("second");
+  const first = createParticipant("first");
+  const second = createParticipant("second");
 
   beforeEach(() => {
     setActivePinia(createPinia());

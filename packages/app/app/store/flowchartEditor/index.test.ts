@@ -10,6 +10,25 @@ import { ResourceType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+const createNode = (): GraphNode => ({
+  computedPosition: { x: 0, y: 0, z: 0 },
+  data: {},
+  dimensions: { height: 0, width: 0 },
+  dragging: false,
+  handleBounds: { source: null, target: null },
+  id: crypto.randomUUID(),
+  isParent: false,
+  position: { x: 0, y: 0 },
+  resizing: false,
+  selected: false,
+  type: GeneralNodeType.Rectangle,
+});
+const setupStore = async () => {
+  const flowchartEditorStore = useFlowchartEditorStore();
+  await flowchartEditorStore.loadContent();
+  return flowchartEditorStore;
+};
+
 describe(useFlowchartEditorStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
@@ -21,26 +40,8 @@ describe(useFlowchartEditorStore, () => {
       type: ResourceType.Flowchart,
       updatedAt: new Date(0),
     }) as Resource;
-  const createNode = (): GraphNode => ({
-    computedPosition: { x: 0, y: 0, z: 0 },
-    data: {},
-    dimensions: { height: 0, width: 0 },
-    dragging: false,
-    handleBounds: { source: null, target: null },
-    id: crypto.randomUUID(),
-    isParent: false,
-    position: { x: 0, y: 0 },
-    resizing: false,
-    selected: false,
-    type: GeneralNodeType.Rectangle,
-  });
   let content: FlowchartEditor;
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
-  const setupStore = async () => {
-    const flowchartEditorStore = useFlowchartEditorStore();
-    await flowchartEditorStore.loadContent();
-    return flowchartEditorStore;
-  };
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -77,6 +78,6 @@ describe(useFlowchartEditorStore, () => {
     await saveFlowchartEditor();
 
     expect(flowchartEditor.value.nodes).toHaveLength(2);
-    expect(saveResourceContent).toHaveBeenCalledOnce();
+    expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 });

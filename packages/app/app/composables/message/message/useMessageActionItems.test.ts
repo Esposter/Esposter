@@ -11,6 +11,24 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 
+// The menu is built per mounted message, so a message on screen in both the timeline and the pinned panel has
+// Two of them over the one entity — each with its own write, neither queueing behind the other. It reaches
+// Vuetify's display composable through the layout store, so it only builds inside a mounted component
+const mountActionItem = async (messageEntity: MessageEntity, title: string) => {
+  let item: Item | undefined;
+  await mountSuspended(
+    defineComponent({
+      setup() {
+        const { actionMessageItems } = useMessageActionItems(messageEntity, ref(false), ref(true));
+        item = actionMessageItems.value.find((actionMessageItem) => actionMessageItem.title === title);
+        return () => h("div");
+      },
+    }),
+  );
+  assert.exists(item);
+  return item;
+};
+
 describe(useMessageActionItems, () => {
   const server = setupMswTrpc();
   const roomId = crypto.randomUUID();
@@ -39,24 +57,6 @@ describe(useMessageActionItems, () => {
     messageEntity.isPinned = true;
     return messageEntity;
   };
-  // The menu is built per mounted message, so a message on screen in both the timeline and the pinned panel has
-  // Two of them over the one entity — each with its own write, neither queueing behind the other. It reaches
-  // Vuetify's display composable through the layout store, so it only builds inside a mounted component
-  const mountActionItem = async (messageEntity: MessageEntity, title: string) => {
-    let item: Item | undefined;
-    await mountSuspended(
-      defineComponent({
-        setup() {
-          const { actionMessageItems } = useMessageActionItems(messageEntity, ref(false), ref(true));
-          item = actionMessageItems.value.find((actionMessageItem) => actionMessageItem.title === title);
-          return () => h("div");
-        },
-      }),
-    );
-    assert.exists(item);
-    return item;
-  };
-
   beforeAll(() => {
     // The menu reads the room off the route, so a room is only current once the route names it — and through
     // TriggerRef, because currentRoute is a shallowRef

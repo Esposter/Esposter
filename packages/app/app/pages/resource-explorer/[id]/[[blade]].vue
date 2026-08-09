@@ -2,6 +2,7 @@
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { isValidResourceBlade } from "@/services/resource/isValidResourceBlade";
 import { validate } from "@/services/router/validate";
+import { useResourceStore } from "@/store/resource";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 
@@ -16,22 +17,10 @@ definePageMeta({
 const route = useRoute();
 // Id is stable for this page instance (keyed by id), so a one-time read is safe; only blade changes without a remount
 const id = getRouteParamString(route.params.id);
-const {
-  duplicate,
-  isDuplicatePending,
-  isLoading,
-  isPublishPending,
-  isUnpublishPending,
-  load,
-  publication,
-  publish,
-  remove,
-  rename,
-  resource,
-  unpublish,
-  updateTags,
-} = useResource(id);
-await load();
+const resourceStore = useResourceStore();
+const { resource } = storeToRefs(resourceStore);
+const { clearResource, readResource } = resourceStore;
+await readResource();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
 const activeBlade = computed(() => getRouteParamString(route.params.blade) || ResourceBladeType.Overview);
 // Opening a resource is what Recent is a list of — the Recent route, Home's Recent tab and the search
@@ -41,6 +30,11 @@ const favoriteStore = useFavoriteStore();
 const { readFavorites } = favoriteStore;
 // The toolbar's star needs to know whether this resource is already starred
 onMounted(readFavorites);
+// The store is app-lifetime and this state is the blade's, so the page that opened the resource takes it down
+// Again. Keyed by the id it opened, because a page swap mounts the next resource's page first
+onUnmounted(() => {
+  clearResource(id);
+});
 
 // Blade switches reuse this page instance, so the guard watches instead of running once in setup
 watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
@@ -57,22 +51,7 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
       <Title>{{ resource?.name ?? "Resource" }}</Title>
     </Head>
     <template v-if="resource">
-      <ResourceExplorer
-        :active-blade
-        :duplicate
-        :is-duplicate-pending
-        :is-loading
-        :is-publish-pending
-        :is-unpublish-pending
-        :publication
-        :publish
-        :refresh="load"
-        :remove
-        :rename
-        :resource
-        :unpublish
-        :update-tags
-      />
+      <ResourceExplorer :active-blade :resource />
     </template>
   </NuxtLayout>
 </template>

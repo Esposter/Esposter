@@ -3,10 +3,12 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MEGABYTE } from "#shared/services/app/constants";
 import MessageModelRoomSettingsTypeAttachmentsIndex from "@/components/Message/Model/Room/Settings/Type/Attachments/Index.vue";
+import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
-import { MimeCategory, RoomType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
+import { useRoomStore } from "@/store/message/room";
+import { MimeCategory } from "@esposter/db-schema";
+import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -15,24 +17,11 @@ import { VSelect, VTextField } from "vuetify/components";
 
 describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
   const server = setupMswTrpc();
-  const name = "name";
   const maxFileSizeBytes = MEGABYTE;
   const room: RoomInMessage = {
+    ...createRoom("name"),
     allowedMimeCategories: [MimeCategory.Audio, MimeCategory.Document, MimeCategory.Image, MimeCategory.Video],
-    categoryId: null,
-    createdAt: new Date("1970-01-01"),
-    deletedAt: null,
-    id: crypto.randomUUID(),
-    image: "",
-    isReadOnly: false,
     maxFileSizeBytes,
-    name,
-    participantKey: null,
-    slowmodeMs: null,
-    topic: "",
-    type: RoomType.Room,
-    updatedAt: new Date("1970-01-01"),
-    userId: crypto.randomUUID(),
   };
 
   // Both fields save the whole form through one mutation key, so overlapping saves mark the earlier call
@@ -66,5 +55,55 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
     await flushPromises();
 
     expect(alerts.value.map(({ text }) => text)).toStrictEqual(["1", "2"]);
+  });
+
+  // The controls are the form's draft and the row is only what is saved, so a rejection unwinds the row and
+  // Leaves the entered value standing — the panel is still open beside the alert, and the retry is one blur
+  // Away. Converging the controls onto the row would discard what the user typed without ever saying so
+  test("keeps the entered value after a rejected save so the next one retries it", async () => {
+    expect.hasAssertions();
+
+    let signalFirstSave = noop;
+    const firstSaveRequested = new Promise<void>((resolve) => {
+      signalFirstSave = resolve;
+    });
+    let signalSecondSave = noop;
+    const secondSaveRequested = new Promise<void>((resolve) => {
+      signalSecondSave = resolve;
+    });
+    let saveCount = 0;
+    server.use(
+      trpcMsw.room.updateRoom.mutation(() => {
+        saveCount += 1;
+        if (saveCount === 1) signalFirstSave();
+        else signalSecondSave();
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(saveCount) });
+      }),
+    );
+    // The settings dialog hands down the row out of the store, so the optimistic write and its rollback both
+    // Reach the prop — a detached copy would never move under the form at all
+    const roomStore = useRoomStore();
+    const { rooms } = storeToRefs(roomStore);
+    const { pushRooms } = roomStore;
+    pushRooms({ ...room });
+    const storedRoom = takeOne(rooms.value);
+    const component = await mountSuspended(MessageModelRoomSettingsTypeAttachmentsIndex, {
+      props: { room: storedRoom },
+    });
+    const enteredMegabytes = maxFileSizeBytes / MEGABYTE + 1;
+    const textField = component.getComponent(VTextField);
+    textField.vm.$emit("update:model-value", String(enteredMegabytes));
+    textField.vm.$emit("blur");
+    await firstSaveRequested;
+    await flushPromises();
+
+    expect(storedRoom.maxFileSizeBytes).toBe(maxFileSizeBytes);
+    expect(textField.props("modelValue")).toBe(enteredMegabytes);
+
+    textField.vm.$emit("blur");
+    await secondSaveRequested;
+    await flushPromises();
+
+    expect(saveCount).toBe(2);
   });
 });

@@ -34,6 +34,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [No polling](/docs/architecture/no-polling)                                               | Polling banned repo-wide — every wait is event-driven or awaits a completion handle      |
 | [No manual recovery](/docs/architecture/no-manual-recovery)                               | Failed async work retries itself on an event, with an attempt cap and a quarantine       |
 | [Null vs undefined](/docs/architecture/null-vs-undefined)                                 | One absent-value sentinel in app-owned code — null survives only in boundary shapes      |
+| [Module boundaries](/docs/architecture/module-boundaries)                                 | The app's three import zones — shared/ may never reach into the client-only app tree     |
 | [Search](/docs/architecture/search)                                                       | One search stack — StyledSearchDialog palettes + useAutoSearch/useCursorSearcher         |
 | [Rate limiting](/docs/architecture/rate-limiting)                                         | Postgres-backed budgets shared across instances, enforced in the authed middleware       |
 | [Security posture](/docs/architecture/security-posture)                                   | The app's nuxt-security configuration — CSP, permissions policy, and what is off and why |

@@ -5,24 +5,29 @@ import { staleContentVersionErrorMessage } from "#shared/services/resource/const
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useNotificationStore } from "@/store/notification";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
-// Blade-scoped state for one resource (metadata + content + publication).
-// A store that owns one type's content declares it as `useResource<ResourceType.Sheet>`, and its content is
-// Typed as that type's own shape throughout — the metadata half is identical for every type, so the resource
-// Page, which opens whatever the route names, declares nothing and simply leaves the content half alone
-export const useResource = <TType extends ResourceType = ResourceType>(id: MaybeRefOrGetter<string>) => {
+// The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
+// One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
+// Drives all read the same state here instead of the page threading it down through every component between
+// Them. Blade-scoped: the store is app-lifetime, this state is not, so the page clears it on unmount
+export const useResourceStore = defineStore("resource", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeSaveMutation } = useMutation();
+  const { executeMutation: executeSaveContentMutation } = useMutation();
   const { executeMutation: executeRenameMutation } = useMutation();
   const { executeMutation: executeUpdateTagsMutation } = useMutation();
-  const { executeMutation: executeRemoveMutation } = useMutation();
+  const { executeMutation: executeDeleteMutation } = useMutation();
   const { executeMutation: executeDuplicateMutation, isPending: isDuplicatePending } = useMutation();
-  const { executeMutation: executePublishMutation, isPending: isPublishPending } = useMutation();
-  const { executeMutation: executeUnpublishMutation, isPending: isUnpublishPending } = useMutation();
+  // Publishing and unpublishing are the two writes that end the same publication row, so they share one
+  // Executor rather than each holding its own: on separate instances one key promises an ordering that never
+  // Existed, and an unpublish overlapping a publish rolls back to the publication the publish had not created
+  // Yet — leaving a resource the server has published showing as a draft
+  const { executeMutation: executePublicationMutation, isPending: isPublicationPending } = useMutation();
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const getResourceRouter = useResourceRouter();
+  const route = useRoute();
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
   const isLoading = ref(false);
@@ -32,18 +37,29 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
   const mergeResource = (fields: Partial<Resource>, fallback: Resource) => {
     resource.value = resource.value ? { ...resource.value, ...fields } : fallback;
   };
-  const load = async () => {
-    // Resolved per call so a persisted store's loader always reads the current route id
-    const idValue = toValue(id);
+  // The resource the in-memory content belongs to. A content store fills its own ref from readContent, so that
+  // Read is the moment the content in hand becomes this resource's — and it stays the previous resource's for
+  // The whole of readResource() plus the await that follows it
+  let contentResourceId: string | undefined;
+  // The last content shape known to be persisted — saveContent() skips the write when nothing changed, so a
+  // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
+  // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
+  let persistedContentJson: string | undefined;
+  // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
+  // Retry is a guaranteed rejection — the flag turns saveContent() into a no-op (and the warning into a
+  // One-shot) until the next readResource() reads a fresh version
+  let isContentStale = false;
+  const readResource = async () => {
+    // Resolved per call rather than captured: the store outlives the page, so the loader always reads whichever
+    // Resource the route names now
+    const id = getRouteParamString(route.params.id);
     isLoading.value = true;
     await withFinalizerAsync(
       async () => {
         // The publication rides the resource read rather than following it: a second round trip only re-resolved
         // The ownership this one already did. `null` is the read's answer for a resource that has none — an
         // Unpublished one, or a type that cannot publish at all — where `undefined` here still means unread
-        const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({
-          id: idValue,
-        });
+        const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({ id });
         resource.value = newResource;
         publication.value = newPublication ?? undefined;
         // A fresh read carries the current contentVersion, so saving is meaningful again
@@ -54,43 +70,48 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
       },
     );
   };
-  // The resource the caller's in-memory content belongs to. A store fills its content ref from readContent,
-  // So that read is the moment the content in hand becomes this resource's — and it stays the previous
-  // Resource's for the whole of `load()` plus the await that follows it
-  let contentResourceId: string | undefined;
+  // The page that opened this resource takes its state back down when it closes. A keyed page swap mounts the
+  // Next resource's page before this one unmounts, so the teardown fires only while the state is still the one
+  // The caller loaded — otherwise closing A would blank the B the swap has already loaded
+  const clearResource = (id: string) => {
+    if (resource.value && resource.value.id !== id) return;
+
+    resource.value = undefined;
+    publication.value = undefined;
+    contentResourceId = undefined;
+    persistedContentJson = undefined;
+    isContentStale = false;
+  };
   // The blob is written on first save, so a freshly created resource returns undefined content.
   // The dispatch reads the loaded row's own type, so the procedure resolves to the union of every type's
-  // Content read — narrowing it to TType is the caller's claim about which resources it opens, which is the
-  // Same claim the blade route guard enforces. Made once here rather than restated at every call site
-  const readContent = async () => {
+  // Content read — narrowing it to TType is the calling content store's claim about which resources it opens,
+  // Which is the same claim the blade route guard enforces
+  const readContent = async <TType extends ResourceType = ResourceType>() => {
     const current = resource.value;
     if (!current) return undefined;
     const content = await getResourceRouter(current.type).readResourceContent.query({ id: current.id });
     contentResourceId = current.id;
     return content as ResourceContent<TType> | undefined;
   };
-  // The last content shape known to be persisted — save() skips the write when nothing changed, so a
-  // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
-  // Stores seed it after hydrating so the first debounced watch tick has something to compare against
-  let persistedContentJson: string | undefined;
-  const setPersistedContent = (content: ResourceContent<TType>) => {
+  const setPersistedContent = (content: ResourceContent<ResourceType>) => {
     persistedContentJson = JSON.stringify(content);
   };
-  // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
-  // Retry is a guaranteed rejection — the flag turns save() into a no-op (and the warning into a
-  // One-shot) until the next load() reads a fresh version
-  let isContentStale = false;
-  const save = async (content: ResourceContent<TType>) => {
+  // Another device saved this resource's content — adopting its contentVersion is what keeps this client's own
+  // Next save from being rejected as stale
+  const storeContentVersion = (contentVersion: Resource["contentVersion"]) => {
+    if (resource.value) resource.value.contentVersion = contentVersion;
+  };
+  const saveContent = async (content: ResourceContent<ResourceType>) => {
     const current = resource.value;
-    // A debounced autosave can fire after `load()` swapped in another resource but before the store has
-    // Re-seeded its content ref, and the content in hand is then still the previous resource's — writing it
-    // Would replace this resource's document with another one's, under this one's id and contentVersion
+    // A debounced autosave can fire after readResource() swapped in another resource but before the content
+    // Store has re-seeded its content ref, and the content in hand is then still the previous resource's —
+    // Writing it would replace this resource's document with another one's, under this one's id and version
     if (!current || isContentStale || (contentResourceId !== undefined && contentResourceId !== current.id))
       return false;
     const contentJson = JSON.stringify(content);
     if (contentJson === persistedContentJson) return true;
     let isSuccessful = false;
-    await executeSaveMutation(
+    await executeSaveContentMutation(
       () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another must
         // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
@@ -133,7 +154,7 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     );
     return isSuccessful;
   };
-  const rename = async (name: string) => {
+  const renameResource = async (name: string) => {
     const current = resource.value;
     if (!current) return;
     await executeRenameMutation(() => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name }), {
@@ -156,11 +177,14 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     });
   };
   // Whole-record replace, which is Azure's own tag update semantics — the dialog always sends every tag
-  const updateTags = async (tags: ResourceTags) => {
+  const updateResourceTags = async (tags: ResourceTags) => {
     const current = resource.value;
     if (!current) return;
+    // A tag edit keeps its own executor rather than queueing behind a rename because the two own disjoint
+    // Fields — which is only true if the write carries nothing but the tags. Sending the name alongside them
+    // Would make a tag edit that overlaps a rename put the pre-rename name back on the server
     await executeUpdateTagsMutation(
-      () => getResourceRouter(current.type).updateResource.mutate({ id: current.id, name: current.name, tags }),
+      () => getResourceRouter(current.type).updateResource.mutate({ id: current.id, tags }),
       {
         // Same as the rename above: the row is read when the write is sent and only the tags are merged, so a
         // Rejection restores the tags the tag edit ahead of it stored and no other field is dragged back with them
@@ -179,11 +203,11 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
       },
     );
   };
-  const remove = async () => {
+  const deleteResource = async () => {
     const current = resource.value;
     if (!current) return false;
     let isSuccessful = false;
-    await executeRemoveMutation(() => getResourceRouter(current.type).deleteResource.mutate({ id: current.id }), {
+    await executeDeleteMutation(() => getResourceRouter(current.type).deleteResource.mutate({ id: current.id }), {
       key: current.id,
       onError: createErrorNotification,
       onSuccess: () => {
@@ -193,7 +217,7 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     });
     return isSuccessful;
   };
-  const duplicate = async () => {
+  const duplicateResource = async () => {
     const current = resource.value;
     if (!current) return;
     await executeDuplicateMutation(() => $trpc.resource.duplicateResource.mutate({ id: current.id }), {
@@ -210,12 +234,12 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
       },
     });
   };
-  const publish = async () => {
+  const publishResource = async () => {
     const current = resource.value;
     if (!current || !hasCapability(current.type, "publishable")) return;
 
-    const { publishResource } = getResourceRouter(current.type);
-    await executePublishMutation(() => publishResource.mutate({ id: current.id }), {
+    const resourceRouter = getResourceRouter(current.type);
+    await executePublicationMutation(() => resourceRouter.publishResource.mutate({ id: current.id }), {
       key: current.id,
       onError: createErrorNotification,
       onSuccess: (newPublication) => {
@@ -231,12 +255,12 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
       },
     });
   };
-  const unpublish = async () => {
+  const unpublishResource = async () => {
     const current = resource.value;
     if (!current || !hasCapability(current.type, "publishable")) return;
 
-    const { unpublishResource } = getResourceRouter(current.type);
-    await executeUnpublishMutation(() => unpublishResource.mutate({ id: current.id }), {
+    const resourceRouter = getResourceRouter(current.type);
+    await executePublicationMutation(() => resourceRouter.unpublishResource.mutate({ id: current.id }), {
       // Read when the write is sent rather than when it was issued: a second unpublish queues behind the first
       // And finds nothing left to withdraw, so a rejection restores that — captured at click time it would put
       // The publication the first unpublish already removed back on screen, complete with its public link
@@ -255,21 +279,22 @@ export const useResource = <TType extends ResourceType = ResourceType>(id: Maybe
     });
   };
   return {
-    duplicate,
+    clearResource,
+    deleteResource,
+    duplicateResource,
     isDuplicatePending,
     isLoading,
-    isPublishPending,
-    isUnpublishPending,
-    load,
+    isPublicationPending,
     publication,
-    publish,
+    publishResource,
     readContent,
-    remove,
-    rename,
+    readResource,
+    renameResource,
     resource,
-    save,
+    saveContent,
     setPersistedContent,
-    unpublish,
-    updateTags,
+    storeContentVersion,
+    unpublishResource,
+    updateResourceTags,
   };
-};
+});

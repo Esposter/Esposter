@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { useSurveyStore } from "@/store/survey";
 import { getResultAsync, RoutePath } from "@esposter/shared";
 
 interface ResourceSurveyOverviewProps {
-  isLoading?: boolean;
-  publication?: ResourcePublication;
   resource: Resource;
 }
 
-const { isLoading, publication, resource } = defineProps<ResourceSurveyOverviewProps>();
+const { resource } = defineProps<ResourceSurveyOverviewProps>();
 const { $trpc } = useNuxtApp();
 const surveyStore = useSurveyStore();
 const { loadContent } = surveyStore;
@@ -37,7 +35,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ResourceOverview :is-loading :publication :resource>
+  <ResourceOverview :resource>
     <template #essentials>
       <template v-if="responseCount">
         <span op-medium-emphasis>Responses</span>

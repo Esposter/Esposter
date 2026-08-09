@@ -138,17 +138,17 @@ Component wiring cannot live in shared code, so the client keeps one thin satell
 
 One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/resource/createResourceProcedures.ts`), spread into each type's router. Content schema and container come from `ResourceDefinitionMap[type]` — callers never pass them. Publish procedures are spread **conditionally with a conditional return type** (guarded by `hasCapability(type, "publishable")` at runtime), so a non-publishable type's router has no publish endpoints at the type level — a compile error on the client `$trpc` type, a 404 on the wire. The options argument itself is a conditional tuple: publish hooks are only accepted when `TType extends PublishableResourceType`.
 
-| Procedure                                     | Auth                                                               | Purpose                                                        |
-| --------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
-| `createResource`                              | authed                                                             | metadata row; content blob written on first save               |
-| `readResources`                               | authed                                                             | per-type offset-paginated list, publication state joined along |
-| `updateResource`                              | owner                                                              | metadata edit — `{ id, name, tags? }`                          |
-| `deleteResource`                              | owner                                                              | soft delete — stamps `deletedAt`, blobs survive until purge    |
-| `readResourceContent` / `saveResourceContent` | owner                                                              | blob read/write with `contentVersion` check                    |
-| `onSaveResourceContent`                       | owner                                                              | subscription — streams each save's content to other devices    |
-| the publish set                               | see [/docs/architecture/publishing](/docs/architecture/publishing) | Publishable types only                                         |
+| Procedure                                     | Auth                                                               | Purpose                                                         |
+| --------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `createResource`                              | authed                                                             | metadata row; content blob written on first save                |
+| `readResources`                               | authed                                                             | per-type offset-paginated list, publication state joined along  |
+| `updateResource`                              | owner                                                              | metadata edit — `{ id, name?, tags? }`, at least one of the two |
+| `deleteResource`                              | owner                                                              | soft delete — stamps `deletedAt`, blobs survive until purge     |
+| `readResourceContent` / `saveResourceContent` | owner                                                              | blob read/write with `contentVersion` check                     |
+| `onSaveResourceContent`                       | owner                                                              | subscription — streams each save's content to other devices     |
+| the publish set                               | see [/docs/architecture/publishing](/docs/architecture/publishing) | Publishable types only                                          |
 
-`updateResource` replaces the whole `tags` record rather than merging it (Azure's own tag update semantics), and only a changed `name` writes a `Renamed` [activity](/docs/platform/activity-log) entry — a tags-only edit is not a rename, so it leaves no trail entry.
+`updateResource` replaces the whole `tags` record rather than merging it (Azure's own tag update semantics), and only a changed `name` writes a `Renamed` [activity](/docs/platform/activity-log) entry — a tags-only edit is not a rename, so it leaves no trail entry. Both editable fields are optional (at least one is required) so a caller writes only the field it owns: a rename and a tag edit are independent writes to one row, and a tag edit that had to restate the name would put the pre-rename name back whenever the two overlap.
 
 `saveResourceContent` bumps `contentVersion` and writes the blob in one transaction — the version check is part of the `UPDATE`'s `WHERE`, so concurrent saves cannot both pass and silently lose a write, and a failed blob upload rolls the version back.
 
@@ -183,7 +183,8 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 ## Client
 
 - **Explorer** (`/resource-explorer`) is an Azure-portal-style shell: a Home landing (search + quick-create tiles + recent resources), a full list at `/resource-explorer/all`, and a route-driven create flow (`/resource-explorer/create` gallery → `/resource-explorer/create/[type]` form). Home and `/resource-explorer/all` read through the shared `useReadResources` composable (`resource.count` + `resource.readResources`, different sort/limit/filter per surface). Resource pages live at `/resource-explorer/[id]/[[blade]]`.
-- **`useResource(id)`** (`app/composables/resource/useResource.ts`) loads the row (`resource.readResource`) + typed content (`{type}.readResourceContent`) and exposes `save` (optimistic `contentVersion`), `rename`, `remove`, and capability actions (`publish`/`unpublish`, no-ops for non-publishable types).
+- **`useResourceStore`** (`app/app/store/resource/index.ts`) is the open resource: it loads the row (`resource.readResource`) with its publication, reads typed content (`{type}.readResourceContent`), and owns every write against that resource — `saveContent` (optimistic `contentVersion`), `renameResource`, `updateResourceTags`, `deleteResource`, `duplicateResource` and the capability actions (`publishResource`/`unpublishResource`, no-ops for non-publishable types). It is **blade-scoped**: the store is app-lifetime, this state is one open resource's, so the page clears it on unmount, keyed by the id it opened because a keyed page swap mounts the next resource's page first.
+- **A type's content store composes the resource store rather than loading its own copy** — `useSheetStore`, `useNoteStore`, `useDashboardStore` and the rest hold only their own parsed content and reach the row through `readResource`/`readContent`/`saveContent`. The store cannot be generic over `ResourceType`, so the type parameter moved to `readContent<ResourceType.Sheet>()`, the one member whose return shape depends on it; everything else about a resource row is identical for every type. One row, one publication, one loading flag, so a rename in the toolbar is the name the editor sees.
 - **`save` skips content identical to what was last persisted**, compared as JSON, so an editor whose autosave fires per frame does not bump `contentVersion` for a document nobody changed. Every content store seeds that comparison with `setPersistedContent` after hydrating, and nothing may stamp the content on the way in — a store that refreshed the content's own `updatedAt` before saving would make every comparison differ, and the modified time the explorer reads is the `resources` row's, which the server bumps per accepted write.
 - Resource pages are auth-gated. There is no unauthenticated/localStorage editing path — one persistence mechanism, not two.
 
@@ -199,7 +200,7 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 | `packages/app/shared/services/resource/hasCapability.ts`                  | runtime capability guard                   |
 | `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | the procedure factory                      |
 | `packages/app/server/trpc/procedure/resource/getOwnerProcedure.ts`        | ownership middleware                       |
-| `packages/app/app/composables/resource/useResource.ts`                    | client resource lifecycle composable       |
+| `packages/app/app/store/resource/index.ts`                                | the open resource — state and every write  |
 | `packages/app/app/services/resource/ResourceBladeDefinitionMap.ts`        | type-specific blades                       |
 | `packages/app/app/services/resource/ViewComponentMap.ts`                  | public view renderers (Publishable)        |
 | `packages/app/app/services/resource/PortableFormatMap.ts`                 | import/export formats (Portable)           |

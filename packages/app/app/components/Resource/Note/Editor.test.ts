@@ -42,6 +42,6 @@ describe("resourceNoteEditor", () => {
     const component = await mountSuspended(ResourceNoteEditor);
     component.unmount();
 
-    expect(destroy).toHaveBeenCalledOnce();
+    expect(destroy).toHaveBeenCalledTimes(1);
   });
 });

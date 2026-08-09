@@ -66,6 +66,6 @@ describe(useEmailEditorStore, () => {
     await saveEmailEditor(projectData, editor);
     await saveEmailEditor(projectData, editor);
 
-    expect(saveResourceContent).toHaveBeenCalledOnce();
+    expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 });

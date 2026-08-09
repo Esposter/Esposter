@@ -1,22 +1,19 @@
 import type { ResourceType } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { useResourceStore } from "@/store/resource";
 
 export const useProgramStore = defineStore("program", () => {
-  const route = useRoute();
-  // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save, setPersistedContent } = useResource<ResourceType.Program>(() =>
-    getRouteParamString(route.params.id),
-  );
+  const resourceStore = useResourceStore();
+  const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
   const programResource = ref(programResourceSchema.parse({}));
   const loadContent = async () => {
-    await load();
-    const data = await readContent();
+    await readResource();
+    const data = await readContent<ResourceType.Program>();
     programResource.value = data ?? programResourceSchema.parse({});
     // Seed the dirty check so the watcher's load echo compares equal instead of writing back
     setPersistedContent(programResource.value);
   };
-  const saveProgram = () => save(programResource.value);
-  return { loadContent, programResource, resource, saveProgram };
+  const saveProgram = () => saveContent(programResource.value);
+  return { loadContent, programResource, saveProgram };
 });

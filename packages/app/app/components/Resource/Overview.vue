@@ -1,29 +1,30 @@
 <script setup lang="ts">
-import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
+import { useResourceStore } from "@/store/resource";
 import { getResultAsync, RoutePath } from "@esposter/shared";
 
 interface ResourceOverviewProps {
-  isLoading?: boolean;
-  publication?: ResourcePublication;
   resource: Resource;
-  updateTags?: (tags: ResourceTags) => Promise<void>;
 }
 
-const { isLoading, publication, resource, updateTags } = defineProps<ResourceOverviewProps>();
+const { resource } = defineProps<ResourceOverviewProps>();
 // Essentials takes extra rows from the type (the grid owns the two columns, so a slot renders
 // A label/value pair); summary takes whole cards below the card
 defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
 const getResourceRouter = useResourceRouter();
+const resourceStore = useResourceStore();
+const { isLoading, publication } = storeToRefs(resourceStore);
+const { updateResourceTags } = resourceStore;
 const isTagsEditorOpen = ref(false);
 const tagRows = computed(() => Object.entries(resource.tags));
 const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
-const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, resource.id) : undefined));
+const publicUrl = computed(() => (publication.value ? RoutePath.View(resource.type, resource.id) : undefined));
 // Best-effort telemetry, so a failed count leaves the row out rather than erroring the whole blade
 // The page is keyed by resource id, so this instance only ever describes one resource — the count is
 // Read once on mount rather than watching an id that cannot change underneath it
@@ -33,7 +34,7 @@ onMounted(async () => {
   // A round trip on a number nothing displays. The capability is what makes the procedure reachable, so the
   // Guard and the availability are one fact
   const { type } = resource;
-  if (!publication || !hasCapability(type, "publishable")) return;
+  if (!publication.value || !hasCapability(type, "publishable")) return;
 
   const { readResourceViewCount } = getResourceRouter(type);
   viewCount.value = await getResultAsync(() => readResourceViewCount.query({ id: resource.id })).unwrapOr(undefined);
@@ -84,26 +85,24 @@ onMounted(async () => {
               />
             </div>
           </template>
-          <template v-if="updateTags">
-            <span op-medium-emphasis>Tags</span>
-            <div flex flex-wrap gap-2 items-center>
-              <v-chip v-for="[tagName, tagValue] of tagRows" :key="tagName" size="small">
-                {{ tagValue ? `${tagName}: ${tagValue}` : tagName }}
-              </v-chip>
-              <span v-if="tagRows.length === 0" op-medium-emphasis>None</span>
-              <v-btn size="small" variant="text" @click="isTagsEditorOpen = true">Edit</v-btn>
-            </div>
-          </template>
+          <span op-medium-emphasis>Tags</span>
+          <div flex flex-wrap gap-2 items-center>
+            <v-chip v-for="[tagName, tagValue] of tagRows" :key="tagName" size="small">
+              {{ tagValue ? `${tagName}: ${tagValue}` : tagName }}
+            </v-chip>
+            <span v-if="tagRows.length === 0" op-medium-emphasis>None</span>
+            <v-btn size="small" variant="text" @click="isTagsEditorOpen = true">Edit</v-btn>
+          </div>
           <slot name="essentials" />
         </div>
       </v-card-text>
     </v-card>
     <slot name="summary" />
     <ResourceTagsEditorDialog
-      v-if="updateTags && isTagsEditorOpen"
+      v-if="isTagsEditorOpen"
       v-model="isTagsEditorOpen"
       :tags="resource.tags"
-      :update-tags
+      :update-tags="updateResourceTags"
     />
   </div>
 </template>

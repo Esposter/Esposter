@@ -38,7 +38,7 @@ describe(useVotePoll, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    useSessionMock.mockImplementation(() => ({ data: ref({ user: { id: userId } }) }));
+    useSessionMock.mockReturnValue({ data: ref({ user: { id: userId } }) });
   });
 
   // The poll is a getter, so one instance answers for whatever the surface points it at. Read off the whole

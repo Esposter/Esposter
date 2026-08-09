@@ -9,6 +9,12 @@ import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+const setupStore = async () => {
+  const surveyStore = useSurveyStore();
+  await surveyStore.loadContent();
+  return surveyStore;
+};
+
 describe(useSurveyStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
@@ -25,11 +31,6 @@ describe(useSurveyStore, () => {
   let content: SurveyResource;
   // Typed with the input the handler receives, so a test can assert what a save actually wrote
   let saveResourceContent: ReturnType<typeof vi.fn<(options: { input: { content: unknown } }) => Resource>>;
-  const setupStore = async () => {
-    const surveyStore = useSurveyStore();
-    await surveyStore.loadContent();
-    return surveyStore;
-  };
 
   beforeEach(() => {
     setActivePinia(createPinia());

@@ -6,27 +6,28 @@ import { useActivityStore } from "@/store/resource/activity";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
+const createActivity = (rowKey: string) => ({ rowKey }) as ResourceActivityEntity;
+const createReader =
+  (...rowKeys: string[]) =>
+  () =>
+    Promise.resolve(
+      Object.assign(new CursorPaginationData<ResourceActivityEntity>(), {
+        hasMore: true,
+        items: rowKeys.map((rowKey) => createActivity(rowKey)),
+        nextCursor: "cursor",
+      }),
+    );
+// Set on the route rather than navigated to: the blade's page is auth-guarded, so a real push never resolves.
+// Through triggerRef because currentRoute is a shallowRef
+const openActivityBlade = (id: string) => {
+  const router = useRouter();
+  router.currentRoute.value.params.id = id;
+  triggerRef(router.currentRoute);
+};
+
 describe(useActivityStore, () => {
   const firstResourceId = crypto.randomUUID();
   const secondResourceId = crypto.randomUUID();
-  const createActivity = (rowKey: string) => ({ rowKey }) as ResourceActivityEntity;
-  const createReader =
-    (...rowKeys: string[]) =>
-    () =>
-      Promise.resolve(
-        Object.assign(new CursorPaginationData<ResourceActivityEntity>(), {
-          hasMore: true,
-          items: rowKeys.map(createActivity),
-          nextCursor: "cursor",
-        }),
-      );
-  // Set on the route rather than navigated to: the blade's page is auth-guarded, so a real push never resolves.
-  // Through triggerRef because currentRoute is a shallowRef
-  const openActivityBlade = (id: string) => {
-    const router = useRouter();
-    router.currentRoute.value.params.id = id;
-    triggerRef(router.currentRoute);
-  };
 
   beforeEach(() => {
     setActivePinia(createPinia());

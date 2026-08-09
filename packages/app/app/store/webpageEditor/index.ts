@@ -2,21 +2,19 @@ import type { ResourceType } from "@esposter/db-schema";
 import type { ProjectData } from "grapesjs";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { getItemMetadata } from "#shared/services/entity/getItemMetadata";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
+import { getItemMetadata } from "@/services/entity/getItemMetadata";
+import { useResourceStore } from "@/store/resource";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
-  const route = useRoute();
-  const { load, readContent, resource, save } = useResource<ResourceType.Webpage>(() =>
-    getRouteParamString(route.params.id),
-  );
+  const resourceStore = useResourceStore();
+  const { readContent, readResource, saveContent } = resourceStore;
   // GrapesJS owns the live project once it has loaded, so the content is held plainly rather than reactively —
   // Nothing outside the two adapter callbacks reads it
   let content = new WebpageEditor();
   // GrapesJS storage adapter load: serve the selected resource's content
   const readWebpageEditor = async () => {
-    await load();
-    content = new WebpageEditor(await readContent());
+    await readResource();
+    content = new WebpageEditor(await readContent<ResourceType.Webpage>());
     return content;
   };
   // The standalone render (css/html) is captured at save time so the published webpage serves without GrapesJS,
@@ -27,7 +25,7 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
     // Turned into a throw: GrapesJS only reads a rejection as a failed store, and the writes that answer false
     // Are mostly benign skips (nothing loaded, a resource swapped mid-save) whose one real case, a stale
     // Version, already raises its own refresh notification
-    return save(content);
+    return saveContent(content);
   };
-  return { readWebpageEditor, resource, saveWebpageEditor };
+  return { readWebpageEditor, saveWebpageEditor };
 });

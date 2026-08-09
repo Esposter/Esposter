@@ -18,7 +18,7 @@ describe("resourceHeaders", () => {
   test("has a column for every key configured against it", () => {
     expect.hasAssertions();
 
-    const columnKeys: string[] = ResourceHeaders.map(({ key }) => key);
+    const columnKeys = new Set<string>(ResourceHeaders.map(({ key }) => key));
     const configuredKeys = [
       ...DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS,
       ...Object.values(ResourceListSourceDefinitionMap).flatMap(({ pinnedColumnKey }) =>
@@ -26,6 +26,6 @@ describe("resourceHeaders", () => {
       ),
     ];
 
-    expect(configuredKeys.filter((key) => !columnKeys.includes(key))).toStrictEqual([]);
+    expect(configuredKeys.filter((key) => !columnKeys.has(key))).toStrictEqual([]);
   });
 });

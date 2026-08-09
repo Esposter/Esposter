@@ -2,15 +2,12 @@ import type { SheetResource } from "#shared/models/resource/sheet/SheetResource"
 import type { ResourceType } from "@esposter/db-schema";
 
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
+import { useResourceStore } from "@/store/resource";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
-import { getRouteParamString } from "@/util/router/getRouteParamString";
 
 export const useSheetStore = defineStore("resource/sheet", () => {
-  const route = useRoute();
-  // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save, setPersistedContent } = useResource<ResourceType.Sheet>(() =>
-    getRouteParamString(route.params.id),
-  );
+  const resourceStore = useResourceStore();
+  const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
   const sheetHistoryStore = useSheetHistoryStore();
   const { clear } = sheetHistoryStore;
   const sheetResource = ref<SheetResource>(createDefaultSheetResource());
@@ -18,8 +15,8 @@ export const useSheetStore = defineStore("resource/sheet", () => {
   const dataSource = computed(() => sheetResource.value.data);
   const settings = computed(() => sheetResource.value.settings);
   const loadContent = async () => {
-    await load();
-    const data = await readContent();
+    await readResource();
+    const data = await readContent<ResourceType.Sheet>();
     // Content crosses the wire as plain JSON, so the loaded value carries the sheet's data shape rather than
     // Its class instances — the two differ only by the methods ToData strips. See the sweep ledger
     sheetResource.value = (data as SheetResource | undefined) ?? createDefaultSheetResource();
@@ -28,6 +25,6 @@ export const useSheetStore = defineStore("resource/sheet", () => {
     // Another resource's commands must not be undoable onto this one
     clear();
   };
-  const saveSheet = () => save(sheetResource.value);
-  return { dataSource, loadContent, resource, saveSheet, settings, sheetResource };
+  const saveSheet = () => saveContent(sheetResource.value);
+  return { dataSource, loadContent, saveSheet, settings, sheetResource };
 });

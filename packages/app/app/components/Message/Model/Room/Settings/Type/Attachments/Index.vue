@@ -15,6 +15,9 @@ const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { storeUpdateRoom } = roomStore;
 const { executeMutation } = useMutation();
+// Owned by the form, not by the row: a rejected save rolls the row back and deliberately leaves what the user
+// Entered in the controls, with isDirty still true, so the next blur retries it. The settings panel is still on
+// Screen beside the alert, which is what makes the draft worth keeping — never clone the row here
 const maxFileSizeBytes = ref(room.maxFileSizeBytes);
 const allowedMimeCategories = ref([...room.allowedMimeCategories]);
 const maxFileSizeMegabytes = MAX_FILE_REQUEST_SIZE / MEGABYTE;
