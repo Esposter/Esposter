@@ -19,7 +19,7 @@ const columnSummaries = computed(() => {
     const context = buildColumnStatisticsComputeContext(column.type, values);
     const definition = ColumnStatisticsDefinitionMap[column.footerStatisticsKey];
     const value = definition.compute(context);
-    result.set(toColumnKey(column.name), `${definition.title} ${definition.format(value as never)}`);
+    result.set(toColumnKey(column.name), `${definition.title} ${definition.format(value as never, column)}`);
   }
   return result;
 });

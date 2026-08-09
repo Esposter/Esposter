@@ -2,7 +2,7 @@ import { VisualType, VisualTypes } from "#shared/models/dashboard/data/VisualTyp
 import { VisualTypeItemCategoryDefinitions } from "@/services/dashboard/VisualTypeItemCategoryDefinitions";
 import { describe, expect, test } from "vitest";
 
-describe("VisualTypeItemCategoryDefinitions", () => {
+describe("visualTypeItemCategoryDefinitions", () => {
   test("offers every visual type", () => {
     expect.hasAssertions();
 

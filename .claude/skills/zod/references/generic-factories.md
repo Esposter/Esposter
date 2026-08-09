@@ -46,7 +46,9 @@ When many payloads share one wrapper and differ only in an inner field, declare 
 
 ## Opt-in shared field schemas for union members
 
-When _some_ (not all) members of a discriminated union share a field, give it its own interface + `create*Schema` factory file that members opt into by spreading its `.shape` (`createSourceColumnIdSchema`); never force the field onto every member via the base schema. Members that don't need it use `z.object({...})` directly. Naming (`SourceColumnId`, not `WithSourceColumnId`) is the naming skill's rule.
+When _some_ (not all) members of a discriminated union share a field, give it its own interface + schema file that members opt into by spreading its `.shape` (`sourceColumnIdSchema`); never force the field onto every member via the base schema. Members that don't need it use `z.object({...})` directly. Naming (`SourceColumnId`, not `WithSourceColumnId`) is the naming skill's rule.
+
+Make it a plain schema, not a `create*Schema` factory, unless members genuinely need **different validation**. A factory whose only parameter varies presentation — which picker feeds the field, what label it renders under — is a sign the presentation belongs on the other side of a boundary: the shared schema then takes no parameter at all, and the form twin re-metas the field it derives (`file-organization`, "`shared/` may never import `@/`").
 
 ## Maintaining `createUniqueArraySchema`
 

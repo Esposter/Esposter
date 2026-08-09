@@ -12,7 +12,13 @@ Oxlint resolves a bare rule name to the plugin rule of that name, so a bare entr
 
 A dead entry looks exactly like a passing one, so audit it empirically: copy `.oxlintrc.json`, delete the suspect `"off"` entries, run `oxlint -c <probe> --format=json`, and count diagnostics per `code`. A rule reporting hits under the probe while the real config is green was never enforcing anything. Rules with **zero** hits are free to enable — delete the `"off"` line — but first plant a violation and confirm the rule fires, since a stale or unimplemented rule name also scores zero.
 
-Path-glob options (`allow`, `ignorePatterns`) match the **whole import specifier**, and `*` does not cross `/`: `*.css` never matches `grapesjs/dist/css/grapes.min.css`. Always write `**/*.css`.
+Path-glob options (`allow`, `ignorePatterns`, `no-restricted-imports`'s `patterns[].group`) match the **whole import specifier**, and `*` does not cross `/`: `*.css` never matches `grapesjs/dist/css/grapes.min.css`, and an alias ban written `@/*` matches nothing at all. Always write the double star — `**/*.css`, `@/**`.
+
+## An `overrides` entry **replaces** a rule's options
+
+Scoping a rule to a path with an `overrides` entry does not merge its options with the top-level entry — it substitutes them wholesale, so every option the repo-wide entry carried silently stops applying inside that scope. A rule that takes a list of bans (`no-restricted-imports`, `no-restricted-syntax`) therefore has to **restate the repo-wide entries** alongside the scoped ones, and the duplication is load-bearing rather than sloppy. There is no comment syntax in `.oxlintrc.json` to say so, so the reason belongs in the docs page the ban serves.
+
+Verify substitution empirically rather than by reading — plant a file in the scope that violates the _top-level_ option, then run `oxlint -c <probe> --format=json <file>` and confirm both diagnostics appear.
 
 ## `vitest/` rules run under oxlint
 
@@ -20,6 +26,7 @@ The vitest rules come from oxlint's `vitest` plugin (`@vitest/eslint-plugin` is 
 
 - **Configured, not enabled** — `consistent-test-it` (`fn: "test"`; the default demands `it` inside `describe`) and `valid-title` (`ignoreTypeOfDescribeName`/`ignoreTypeOfTestName` allow the repo's `describe(functionRef)` convention). The rules are already on via categories; the entries exist only to pass options.
 - **Pair rules** — oxlint ships both sides of style pairs; exactly one must be off or they fight: `prefer-called-once` is off because `prefer-called-times` matches the repo's `toHaveBeenCalledTimes(1)`; `no-importing-vitest-globals` is off because the repo imports vitest APIs explicitly (its counterpart `prefer-importing-vitest-globals` stays on).
+- **`prefer-each` is off** — its only remedy is `test.each`/`it.each`, which the `testing` skill bans outright. A matrix over an enum is written as a `for...of` over the values wrapping one `test(...)` per value, which the rule reads as a manual loop; folding those into one test to satisfy it would trade a named case per enum value for a single opaque failure. A rule whose sole fix is a banned construct enforces nothing here.
 - **`prefer-describe-function-title` is off** — its fixer only checks that an identifier matching the title is in scope, not that it's a function; for arrays, Zod schemas, routers, or plugin objects the fix produces a `[object Object]` suite title.
 - **`warn-todo`/`require-test-timeout`/`require-top-level-describe` are off** — `describe.todo` placeholders and hook-registering `setup*`/test-setup files are conventions here, and per-test timeouts are not used.
 

@@ -15,8 +15,10 @@ const deleteFoo = async (input: DeleteFooInput) => {
   await executeMutation(() => $trpc.foo.deleteFoo.mutate(input), {
     applyOptimistic: () => {
       // The one row this write removes, not a copy of the list: a rejected delete must not undo the
-      // Delete running beside it under another key, nor drop a row a subscription delivered meanwhile
-      const deletedFoo = items.value.find(getIsEntityIdEqualComparator<Foo>(FooKeyPath, input));
+      // Delete running beside it under another key, nor drop a row a subscription delivered meanwhile.
+      // The comparator is called from an arrow taking the element alone — passed as a bare reference it
+      // Would also receive the index and the array, which `unicorn/no-array-callback-reference` reports
+      const deletedFoo = items.value.find((foo) => getIsEntityIdEqualComparator<Foo>(FooKeyPath, input)(foo));
       storeDeleteFoo(input);
       return () => {
         if (deletedFoo) storeCreateFoo(deletedFoo);

@@ -3,6 +3,7 @@ import type { ColumnStatisticsDefinition } from "@/models/resource/sheet/column/
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { defineColumnStatistics } from "@/services/resource/sheet/column/defineColumnStatistics";
+import { formatOptionalColumnValue } from "@/services/resource/sheet/column/formatOptionalColumnValue";
 import { getAverage } from "@/services/resource/sheet/column/getAverage";
 import { getSummation } from "@/services/resource/sheet/column/getSummation";
 import { formatOptional } from "@/util/text/formatOptional";
@@ -14,7 +15,7 @@ export const ColumnStatisticsDefinitionMap = {
       if (nonNullNumbers.length === 0) return undefined;
       return Math.round(getAverage(nonNullNumbers) * 100) / 100;
     },
-    format: formatOptional,
+    format: formatOptionalColumnValue,
     key: "average",
     title: "Average",
   }),
@@ -31,7 +32,7 @@ export const ColumnStatisticsDefinitionMap = {
       nonNullNumbers.length > 0
         ? nonNullNumbers.reduce((maximum, value) => Math.max(maximum, value), -Infinity)
         : undefined,
-    format: formatOptional,
+    format: formatOptionalColumnValue,
     key: "maximum",
     title: "Maximum",
   }),
@@ -41,7 +42,7 @@ export const ColumnStatisticsDefinitionMap = {
       nonNullNumbers.length > 0
         ? nonNullNumbers.reduce((minimum, value) => Math.min(minimum, value), Infinity)
         : undefined,
-    format: formatOptional,
+    format: formatOptionalColumnValue,
     key: "minimum",
     title: "Minimum",
   }),
@@ -87,14 +88,14 @@ export const ColumnStatisticsDefinitionMap = {
       const variance = getAverage(nonNullNumbers.map((value) => (value - rawAverage) ** 2));
       return Math.round(Math.sqrt(variance) * 100) / 100;
     },
-    format: formatOptional,
+    format: formatOptionalColumnValue,
     key: "standardDeviation",
     title: "Standard Deviation",
   }),
   summation: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => Math.round(getSummation(nonNullNumbers) * 100) / 100,
-    format: formatOptional,
+    format: formatOptionalColumnValue,
     key: "summation",
     title: "Sum",
   }),

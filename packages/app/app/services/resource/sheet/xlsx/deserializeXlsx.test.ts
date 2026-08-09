@@ -18,14 +18,14 @@ import { describe, expect, test, vi } from "vitest";
 // Importing module's graph is the fact under test — the seam records the first import instead of replacing it
 const { xlsxLibraries } = vi.hoisted(() => ({ xlsxLibraries: { isReaderLoaded: false, isWriterLoaded: false } }));
 
-vi.mock(import("read-excel-file/browser"), async (importOriginal) => {
+vi.mock(import("read-excel-file/browser"), (importOriginal) => {
   xlsxLibraries.isReaderLoaded = true;
-  return await importOriginal();
+  return importOriginal();
 });
 
-vi.mock(import("write-excel-file/browser"), async (importOriginal) => {
+vi.mock(import("write-excel-file/browser"), (importOriginal) => {
   xlsxLibraries.isWriterLoaded = true;
-  return await importOriginal();
+  return importOriginal();
 });
 
 // Read while this file is still evaluating, so the assertion holds whatever order the tests run in

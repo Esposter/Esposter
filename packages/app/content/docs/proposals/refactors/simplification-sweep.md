@@ -105,11 +105,7 @@ Split at sub-directory boundaries — `app/components/Message` alone is larger t
 
 Findings a pass surfaced whose fix is real work rather than cleanup. Each needs its own proposal before it is attempted:
 
-- **A shared `key` across two `useMutation()` instances does not queue** — still open for the seven instances in `useResource`, which key on the same resource while running concurrently. The rule that settled the other pairs (`blockUser`/`unblockUser`, sending and cancelling a scheduled message job) is in [async operations](/docs/architecture/async-operations): writes that end the same row share one executor, writes that own different fields of one entity keep theirs.
-- **Components mirror store rows they also write.** `Status/PickerMenuButton` keeps `selectedStatus`/`statusMessage` as local refs seeded from the store; a rejected save reverts the store and leaves the menu showing the rejected value. `Overview/Index` and `Attachments/Index` share the shape, where it reads as deliberate (the draft survives for retry). Deciding which it is means deciding who owns the field.
-- **`useResource` as a blade-scoped store.** The resource page threads its whole state through page → Explorer → Actions/Outlet; the `pinia` and `vue-component-patterns` skills both point at a store instead, which would delete the drilling outright.
 - **Content classes are not what the wire delivers.** A content schema is declared `satisfies z.ZodType<ToData<T>>` and `readContentBlob` parses plain JSON with it, so the client receives the data shape — never the class instances the Sheet, Dashboard and TodoList stores type their refs as. Those three casts are all that is left of the gap; the honest fix is for a store to revive its content the way `Dashboard` already does, or to hold the `ToData` shape it is actually given.
-- **`shared/` reaches into app-only client code.** Nine files under `shared/models/resource/sheet/column/` import from `@/` — vjsf select-items context and an Ajv keyword — and they are the only such imports in the whole shared tree. The cause is that transformations have no form twin, so presentation meta is baked into `columnTransformationSchema`, which is inside the schema the _server_ parses. The cheap fix moves two files into `shared/`; the principled one gives transformations `*TransformationForm` twins.
 
 ## Done
 

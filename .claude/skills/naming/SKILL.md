@@ -53,7 +53,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 
 ## TypeScript & Interfaces
 
-- **No `With` prefix on mixin interfaces** — name after the capability: `SourceColumnId`, not `WithSourceColumnId`. Schema factories follow: `createSourceColumnIdSchema` not `createWithSourceColumnIdSchema`
+- **No `With` prefix on mixin interfaces** — name after the capability: `SourceColumnId`, not `WithSourceColumnId`. Schemas and their factories follow: `sourceColumnIdSchema` / `create<Capability>Schema`, never `createWith<Capability>Schema`
 - **`A` prefix for abstract classes only** — never on interfaces. `AColumn` (abstract class) ✓, `SlashCommand` (interface) ✓, `ASlashCommand` ✗
 - **Interface fields use full type name** — `aggregationType: AggregationTransformationType` not `transform`, `mode`, or `type`. Never abbreviate enum field names
 - **Constant arrays/maps use PascalCase, and the file name matches the export** — `FooMap.ts` → `export const FooMap = { ... }`. (Any camelCase-named file holding such a constant is a legacy outlier — don't copy it.)

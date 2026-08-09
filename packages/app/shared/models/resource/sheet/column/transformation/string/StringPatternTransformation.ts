@@ -29,7 +29,4 @@ export const stringPatternTransformationSchema = z
           path: ["pattern"],
         });
     }
-  })
-  .meta({
-    title: ColumnTransformationType.StringPattern,
   }) satisfies z.ZodType<StringPatternTransformation>;

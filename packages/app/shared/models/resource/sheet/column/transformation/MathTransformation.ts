@@ -26,5 +26,4 @@ export const mathTransformationSchema = z
         path: ["expression"],
       });
     });
-  })
-  .meta({ title: ColumnTransformationType.Math }) satisfies z.ZodType<MathTransformation>;
+  }) satisfies z.ZodType<MathTransformation>;

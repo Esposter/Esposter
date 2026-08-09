@@ -39,6 +39,10 @@ Some store refs are populated _by a component_ so code outside its subtree can r
 
 Symmetry rule: whatever a component bridges onto a store in setup/`watchImmediate`, its `onUnmounted` un-bridges.
 
+**A teardown on a keyed route takes an id and checks it first.** A page keyed by an entity id is destroyed and recreated when that id changes, and the successor is mounted — and has already loaded its own state — before the predecessor unmounts. An unconditional `onUnmounted` teardown therefore blanks the state the next page just loaded. Pass the id the component owned (`clearFoo(id)`) and make the action a no-op when the store no longer holds it.
+
+**A store cannot be generic, so a type parameter shared by only part of the state is not a reason to keep the whole thing a composable.** Split it: the members whose shape genuinely depends on the parameter take it themselves (a generic _method_, `readContent<ResourceType.Sheet>()`, survives `defineStore` unchanged), and everything identical across parameters becomes plain store state that every surface reads.
+
 ## Never Redirect Store Functions — Use Them Directly
 
 A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never insert a layer that only forwards to it:

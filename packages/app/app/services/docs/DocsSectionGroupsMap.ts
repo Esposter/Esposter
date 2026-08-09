@@ -22,6 +22,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "no-polling",
       "no-manual-recovery",
       "null-vs-undefined",
+      "module-boundaries",
       "singleton-dialogs",
       "navigation",
       "search",

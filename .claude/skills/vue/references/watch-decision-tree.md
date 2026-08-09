@@ -44,25 +44,22 @@ const { cloned: selectedBarId } = useCloned(() => foo.value?.barId ?? "");
 
 Where the initialising value comes from — a prop from an adjacent parent vs a store read in the leaf — is a decomposition question owned by the `vue-component-patterns` skill.
 
-## 3. Reset form state on dialog/menu open → only if data changes externally
+## 3. A draft of a row the same surface writes → who owns the field decides
 
-Ask: **can the underlying data change between opens from an external source** (WebSocket, another tab/user)?
+Never `watch` an open boolean to reset a draft — `useCloned` re-clones whenever the row moves, open or not. The real question is what the draft does when a save is **rejected**: the optimistic write unwinds the row, and the two shapes below are indistinguishable in code until one of them says which it is.
 
-- **Yes** → `watch` the open boolean and reset on open.
-- **No** → initialize the `ref` once at setup; the watch is ceremony.
+- **The surface stays open and shows the draft as unsaved** — a settings panel whose controls are still there beside the alert, guarded by an `isDirty` computed. The **form** owns the draft: `ref(source)`, no resync, so the refused value stays on screen and the next save retries it instead of the user silently losing what they entered. Comment it, because the next reader will otherwise "fix" it into the bug below.
+- **The surface closes on submit** — a menu or dialog. The **row** owns the value: `useCloned` so the rollback flows back into the draft, plus an explicit `sync()` when the write fails. A first write that is refused leaves no row to roll back and so never moves the clone's source, which is the one case following the row cannot cover:
 
-```typescript
-// ONLY justified if status can change externally (e.g. WebSocket)
-watch(menu, (isOpen) => {
-  if (!isOpen) return;
-  selectedStatus.value = status.value;
-  statusMessage.value = message.value;
-});
-// If this is the only mutation path, skip the watch:
-const selectedStatus = ref(status.value);
-```
+  ```typescript
+  const { cloned: editedFoo, sync: syncEditedFoo } = useCloned(() => ({ bar: getBar(id.value) }));
+  const { status } = await executeMutation(/* … */);
+  if (status === MutationStatus.Failed) syncEditedFoo();
+  ```
 
-If the user opens → changes → closes without saving → reopens, they see their unsaved selection — usually acceptable (it indicates intent). Watch-to-reset forces a reset on every open, which can feel punishing.
+  Without it the surface reopens showing a value the server refused, beside a readout of the row that never took it.
+
+A draft cloned as one object over every field the write sends doubles as the write's input, so the submitted payload and the resynced draft cannot drift apart.
 
 ## 4. Async read of a source the instance can't outlive → `onMounted`, not `watch`
 

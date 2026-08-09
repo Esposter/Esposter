@@ -6,21 +6,39 @@ import { ChartableColumnTypes } from "@/services/resource/sheet/column/computeCo
 
 const isOpen = defineModel<boolean>();
 const columnStatistics = useColumnStatistics();
+type ColumnStatisticsRow = (typeof columnStatistics.value)[number];
 const isChartOpen = ref(false);
 const selectedStatistics = ref<ColumnStatistics | undefined>();
+// A row is the column paired with its statistics, so every column reads through an accessor rather than through
+// A key naming a top-level field
 const headers = [
   { key: "chart", sortable: false, title: "" },
-  { key: "columnName", sortable: false, title: "Column" },
-  { key: "columnType", sortable: false, title: "Type" },
-  ...ColumnStatisticsDefinitions.map(({ key, sortable, title }) => ({ key, sortable, title })),
+  { key: "columnName", sortable: false, title: "Column", value: ({ column }: ColumnStatisticsRow) => column.name },
+  {
+    key: "columnType",
+    sortable: false,
+    title: "Type",
+    value: ({ statistics }: ColumnStatisticsRow) => statistics.columnType,
+  },
+  ...ColumnStatisticsDefinitions.map(({ key, sortable, title }) => ({
+    key,
+    sortable,
+    title,
+    value: ({ statistics }: ColumnStatisticsRow) => statistics[key],
+  })),
 ];
 </script>
 
 <template>
   <ResourceSheetDialog v-model="isOpen" title="Column Statistics">
-    <v-data-table density="compact" item-value="columnName" :headers :items="columnStatistics">
+    <v-data-table
+      density="compact"
+      :headers
+      :item-value="({ column }: ColumnStatisticsRow) => column.name"
+      :items="columnStatistics"
+    >
       <template #[`item.chart`]="{ item }">
-        <v-tooltip v-if="ChartableColumnTypes.has(item.columnType)" text="View Chart">
+        <v-tooltip v-if="ChartableColumnTypes.has(item.statistics.columnType)" text="View Chart">
           <template #activator="{ props }">
             <v-btn
               density="compact"
@@ -29,7 +47,7 @@ const headers = [
               :="props"
               @click.stop="
                 () => {
-                  selectedStatistics = item;
+                  selectedStatistics = item.statistics;
                   isChartOpen = true;
                 }
               "
@@ -38,7 +56,7 @@ const headers = [
         </v-tooltip>
       </template>
       <template v-for="{ key, format } of ColumnStatisticsDefinitions" :key #[`item.${key}`]="{ item }">
-        {{ format(item[key] as never) }}
+        {{ format(item.statistics[key] as never, item.column) }}
       </template>
     </v-data-table>
   </ResourceSheetDialog>
