@@ -5,8 +5,6 @@ import { VisualTypes } from "#shared/models/dashboard/data/VisualType";
 import { ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
-import deepEqual from "fast-deep-equal";
-import { omitDeep } from "lodash-omitdeep";
 
 const route = useRoute();
 const dashboardStore = useDashboardStore();
@@ -14,30 +12,17 @@ const { loadContent, saveDashboard } = dashboardStore;
 const { dashboard } = storeToRefs(dashboardStore);
 const visualStore = useVisualStore();
 const { visualType } = storeToRefs(visualStore);
-const isLoading = ref(true);
 const itemType = route.query[ITEM_TYPE_QUERY_PARAMETER_KEY];
 if (VisualTypes.has(itemType as VisualType)) visualType.value = itemType as VisualType;
-const virtualDashboard = computed((oldVirtualDashboard) => {
-  const newVirtualDashboard = omitDeep(dashboard.value);
-  return oldVirtualDashboard && deepEqual(newVirtualDashboard, oldVirtualDashboard)
-    ? oldVirtualDashboard
-    : newVirtualDashboard;
-});
-// Autosave every content change; guarded so the initial load populating the store doesn't immediately write back
-watch(virtualDashboard, async () => {
-  if (isLoading.value) return;
-  await saveDashboard();
-});
-
-onMounted(async () => {
-  await loadContent();
-  isLoading.value = false;
-});
+// The Suspense-wrapped blade awaits the content, so it opens on a populated store — the same shape Note uses
+await loadContent();
+// Layout drags and visual edits mutate the dashboard in place, so the watch has to be deep. The store seeds
+// The dirty check on load, which is what keeps the load echo from writing straight back
+watchAutosave(dashboard, saveDashboard);
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
-  <v-container v-else fluid h-full>
+  <v-container fluid h-full>
     <StyledCard flex flex-col size-full>
       <DashboardEditorHeader />
       <DashboardEditorContent />

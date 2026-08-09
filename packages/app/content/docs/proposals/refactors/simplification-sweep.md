@@ -43,10 +43,10 @@ Ordered by expected payoff — the biggest surfaces with the most recent churn f
 
 - [x] `Resource/List` + the list composables — done as part of the service-menu work
 - [x] `Resource/Blade`, `Resource/Overview`, `Resource/Explorer` — the resource page shell
-- [ ] `Resource/Sheet` components — the grid, its slots and dialogs
-- [ ] `composables/resource/sheet` — the command/history layer
-- [ ] `services/resource/sheet` — column inference, transformations, (de)serialization
-- [ ] `store/resource/sheet` + `shared/models/resource/sheet`
+- [x] `Resource/Sheet` components — the grid, its slots and dialogs
+- [x] `composables/resource/sheet` — the command/history layer
+- [x] `services/resource/sheet` — column inference, transformations, (de)serialization
+- [x] `store/resource/sheet` + `shared/models/resource/sheet`
 - [ ] `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`, `Resource/Flowchart` — the canvas editors
 - [ ] `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`
 - [ ] `app/composables/resource` + `app/services/resource` — what the sweep above leaves behind
@@ -100,6 +100,11 @@ Findings a pass surfaced whose fix is real work rather than cleanup. Each needs 
 - **Content classes are not what the wire delivers.** A content schema is declared `satisfies z.ZodType<ToData<T>>` and `readContentBlob` parses plain JSON with it, so the client receives the data shape — never the class instances the Sheet, Dashboard and TodoList stores type their refs as. Those three casts are all that is left of the gap; the honest fix is for a store to revive its content the way `Dashboard` already does, or to hold the `ToData` shape it is actually given.
 - **The publication on the generic resource read.** `readResource` then `readResourcePublication` is two round trips where the second re-resolves ownership; `resourcePublications` is one generic table, so the publication could ride the first response.
 - **Lazy portable-format loading.** The command bar statically pulls the xlsx read/write libraries into every resource page's chunk, including types that can never import or export.
+- **Column formatting is built but never called.** `formatValue` and its `formatBoolean`/`formatNumber` helpers have no caller — the cell renderer does `String(value)` — yet the sheet editor's index lists number/boolean/date format options as shipped. Either wire it into the renderer (and then sorting and search, which read `String(value)`, diverge from what is displayed) or delete the cluster and cascade to `BooleanFormats`, `NumberFormats` and the three `Intl` formatters. Leaving it is not an option: unused exports are banned.
+- **`shared/` reaches into app-only client code.** Nine files under `shared/models/resource/sheet/column/` import from `@/` — vjsf select-items context and an Ajv keyword — and they are the only such imports in the whole shared tree. The cause is that transformations have no form twin, so presentation meta is baked into `columnTransformationSchema`, which is inside the schema the _server_ parses. The cheap fix moves two files into `shared/`; the principled one gives transformations `*TransformationForm` twins.
+- **`DataSourceStatistics` is persisted derived state.** All three fields are recomputed from `columns` and `rows` by `syncStatistics`, which every command calls on both execute and undo, so the stored copy can never legitimately differ. Dropping it from the blob is behaviour-changing (and needs the fixtures that restate it updated), which is why it was not folded in.
+- **An appending paste is not redo-stable.** `PasteRangeCommand.doExecute` constructs the appended `Row` inside execute rather than in its constructor, so undo-then-redo of a paste that appended rows mints fresh row ids. The undo/redo invariant matrix found this; its paste case is narrowed to a pure overwrite until the row construction moves into the constructor.
+- **Statistics read cells behind `computeValue`'s back.** `computeColumnStatisticsForColumn` reads `row.data` directly, and a computed column never writes there — so every computed column reports empty statistics and a zero null count, while the index lists computed-column stats as shipped. Routing it through `computeValue` fixes that and starts populating stats, outliers and charts for those columns, which is a visible change.
 
 ## Done
 
