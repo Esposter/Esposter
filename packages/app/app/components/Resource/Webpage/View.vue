@@ -19,7 +19,6 @@ const { content, name } = await useReadPublishedResourceContent(
 );
 // The standalone render is captured at save time, so the published webpage serves without GrapesJS
 const srcdoc = `<style>${content.css ?? ""}</style>${content.html ?? ""}`;
-useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>
 
 <template>

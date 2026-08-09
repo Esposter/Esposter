@@ -3,8 +3,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { getResourceActivityDetail } from "@/services/resource/activity/getResourceActivityDetail";
-import { ResourceActivityIconMap } from "@/services/resource/activity/ResourceActivityIconMap";
-import { ResourceActivityTitleMap } from "@/services/resource/activity/ResourceActivityTitleMap";
+import { ResourceActivityDefinitionMap } from "@/services/resource/activity/ResourceActivityDefinitionMap";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { useAlertStore } from "@/store/alert";
 import { useActivityStore } from "@/store/resource/activity";
@@ -46,8 +45,8 @@ onMounted(async () => {
         <v-list-item
           v-for="activity of items"
           :key="activity.rowKey"
-          :prepend-icon="ResourceActivityIconMap[activity.activityType]"
-          :title="ResourceActivityTitleMap[activity.activityType]"
+          :prepend-icon="ResourceActivityDefinitionMap[activity.activityType].icon"
+          :title="ResourceActivityDefinitionMap[activity.activityType].title"
         >
           <template #subtitle>
             <span v-if="getResourceActivityDetail(activity)">{{ getResourceActivityDetail(activity) }} · </span>

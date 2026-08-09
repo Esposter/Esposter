@@ -1,16 +1,9 @@
 import type { Item } from "#shared/models/entity/NamedItem";
 import type { ItemCategoryDefinition } from "@/models/resource/ItemCategoryDefinition";
-import type { ItemEntityType } from "@esposter/shared";
 
-import { ANamedItemEntity } from "#shared/models/entity/ANamedItemEntity";
 import { ItemEntityTypePropertyNames } from "@esposter/shared";
 
-class NullItem extends ANamedItemEntity implements ItemEntityType<"None"> {
-  type = "None" as const;
-}
-
-const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<NullItem> = {
-  create: () => new NullItem(),
+const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition = {
   icon: "mdi-help",
   targetTypeKey: ItemEntityTypePropertyNames.type,
   title: "None",

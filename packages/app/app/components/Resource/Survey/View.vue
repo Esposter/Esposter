@@ -47,7 +47,6 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
     showSaveSuccess();
   } else showSaveError("We could not submit your answers. Please try again.");
 });
-useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 
 const isLoading = ref(true);
 

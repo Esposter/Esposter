@@ -65,13 +65,14 @@ Two hooks on `createResourceProcedures` support publishing needs:
 
 ## Route
 
-One dynamic public page, `pages/view/[type]/[id].vue`, dispatches through `ViewComponentMap: Record<PublishableResourceType, Component>` — a missing renderer is a compile error. The survey respondent experience is simply Survey's published view (an interactive renderer that writes responses); Email and Webpage serve their save-time captured HTML through a sandboxed iframe, and Flowchart a read-only VueFlow render. View pages set OG meta tags (`ogTitle`, `ogUrl`) so a published URL unfurls when shared. A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally.
+One dynamic public page, `pages/view/[type]/[id].vue`, dispatches through `ViewComponentMap: Record<PublishableResourceType, Component>` — a missing renderer is a compile error. The survey respondent experience is simply Survey's published view (an interactive renderer that writes responses); Email and Webpage serve their save-time captured HTML through a sandboxed iframe, and Flowchart a read-only VueFlow render. OG meta tags (`ogTitle`, `ogUrl`) are set by `useReadPublishedResourceContent` — the shared fetch-or-404 every view reads through — off the resource name it just read, so a published URL unfurls when shared and no view restates the derivation. A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally.
 
 ## Key files
 
-| File                                                                      | Role                                            |
-| ------------------------------------------------------------------------- | ----------------------------------------------- |
-| `packages/db-schema/src/schema/resourcePublications.ts`                   | publish state table                             |
-| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts` | publish procedures + transform hooks            |
-| `packages/app/app/pages/view/[type]/[id].vue`                             | public view route                               |
-| `packages/app/app/services/resource/ViewComponentMap.ts`                  | `PublishableResourceType` → view page component |
+| File                                                                       | Role                                             |
+| -------------------------------------------------------------------------- | ------------------------------------------------ |
+| `packages/db-schema/src/schema/resourcePublications.ts`                    | publish state table                              |
+| `packages/app/server/trpc/procedure/resource/createResourceProcedures.ts`  | publish procedures + transform hooks             |
+| `packages/app/app/pages/view/[type]/[id].vue`                              | public view route                                |
+| `packages/app/app/composables/resource/useReadPublishedResourceContent.ts` | shared view read — fetch-or-404 plus the og meta |
+| `packages/app/app/services/resource/ViewComponentMap.ts`                   | `PublishableResourceType` → view page component  |

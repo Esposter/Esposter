@@ -20,7 +20,6 @@ const { content, name } = await useReadPublishedResourceContent(
   version,
 );
 const dashboard = new DashboardModel(content as never);
-useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>
 
 <template>

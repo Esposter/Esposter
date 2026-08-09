@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { tagNameRules } from "@/services/resource/tag/tagNameRules";
-import { tagValueRules } from "@/services/resource/tag/tagValueRules";
+import { MAX_TAG_NAME_LENGTH, MAX_TAG_VALUE_LENGTH } from "@esposter/db-schema";
 
 const tagName = defineModel<string>("tagName", { required: true });
 const tagValue = defineModel<string>("tagValue", { required: true });
 const emit = defineEmits<{ remove: [] }>();
+const rules = useVRules();
 // Both fields write query params the data table treats as its `search`, so they debounce like the search box
 const { input: tagNameInput } = useDebouncedFilter(tagName);
 const { input: tagValueInput } = useDebouncedFilter(tagValue);
@@ -25,14 +25,20 @@ const label = computed(() => {
     <v-card min-w-72>
       <v-card-text>
         <div flex flex-col gap-2>
-          <v-text-field v-model="tagNameInput" autofocus density="comfortable" label="Name" :rules="tagNameRules" />
+          <v-text-field
+            v-model="tagNameInput"
+            autofocus
+            density="comfortable"
+            label="Name"
+            :rules="[rules.maxLength(MAX_TAG_NAME_LENGTH)]"
+          />
           <v-text-field
             v-model="tagValueInput"
             density="comfortable"
             hint="Leave empty to match any value"
             label="Value"
             persistent-hint
-            :rules="tagValueRules"
+            :rules="[rules.maxLength(MAX_TAG_VALUE_LENGTH)]"
           />
         </div>
       </v-card-text>
