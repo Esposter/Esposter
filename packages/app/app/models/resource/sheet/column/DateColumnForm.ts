@@ -1,9 +1,9 @@
-import type { AColumnForm } from "#shared/models/resource/sheet/column/AColumnForm";
 import type { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
+import type { AColumnForm } from "@/models/resource/sheet/column/AColumnForm";
 
-import { createAColumnFormSchema } from "#shared/models/resource/sheet/column/AColumnForm";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { dateColumnSchema } from "#shared/models/resource/sheet/column/DateColumn";
+import { createAColumnFormSchema } from "@/models/resource/sheet/column/AColumnForm";
 import { z } from "zod";
 
 export interface DateColumnForm extends AColumnForm<ColumnType.Date>, Pick<DateColumn, "format"> {}

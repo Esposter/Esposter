@@ -1,7 +1,7 @@
-import type { AColumnForm } from "#shared/models/resource/sheet/column/AColumnForm";
+import type { AColumnForm } from "@/models/resource/sheet/column/AColumnForm";
 
-import { createAColumnFormSchema } from "#shared/models/resource/sheet/column/AColumnForm";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { createAColumnFormSchema } from "@/models/resource/sheet/column/AColumnForm";
 import { z } from "zod";
 
 export interface StringColumnForm extends AColumnForm<ColumnType.String> {}

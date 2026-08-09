@@ -1,4 +1,4 @@
-import { columnFormSchema, ColumnTypeFormSchemaMap } from "#shared/models/resource/sheet/column/ColumnForm";
+import { columnFormSchema, ColumnTypeFormSchemaMap } from "@/models/resource/sheet/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";
 

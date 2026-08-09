@@ -1,9 +1,9 @@
-import type { AColumnForm } from "#shared/models/resource/sheet/column/AColumnForm";
 import type { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
+import type { AColumnForm } from "@/models/resource/sheet/column/AColumnForm";
 
-import { createAColumnFormSchema } from "#shared/models/resource/sheet/column/AColumnForm";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { numberColumnSchema } from "#shared/models/resource/sheet/column/NumberColumn";
+import { createAColumnFormSchema } from "@/models/resource/sheet/column/AColumnForm";
 import { z } from "zod";
 
 export interface NumberColumnForm
