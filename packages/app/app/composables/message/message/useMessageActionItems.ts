@@ -5,7 +5,6 @@ import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { dayjs } from "#shared/services/dayjs";
 import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
-import { hasPermission } from "@/services/room/rbac/hasPermission";
 import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useForwardStore } from "@/store/message/input/forward";
@@ -14,7 +13,7 @@ import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useThreadStore } from "@/store/message/thread";
-import { MessageType, RoomPermission } from "@esposter/db-schema";
+import { hasPermission, MessageType, RoomPermission } from "@esposter/db-schema";
 import { exhaustiveGuard, noop, normalizeString, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 

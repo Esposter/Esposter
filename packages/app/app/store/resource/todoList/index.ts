@@ -20,8 +20,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   const loadContent = async () => {
     await readResource();
     const data = await readContent<ResourceType.TodoList>();
-    // Content crosses the wire as plain JSON, so the loaded value carries the list's data shape rather than
-    // Its class instances — the two differ only by the methods ToData strips. See the sweep ledger
+    // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the list's data
+    // Shape rather than its class instances. The cast is sound because `toJSON` is the only method these
+    // Classes have — pinned by ResourceContent.test-d.ts, which fails the day a second one is added
     todoList.value = (data as TodoListResource | undefined) ?? { items: [] };
     // Seed the dirty check so a save that changed nothing compares equal instead of bumping contentVersion
     setPersistedContent(todoList.value);

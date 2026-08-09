@@ -17,8 +17,11 @@ export const useSheetStore = defineStore("resource/sheet", () => {
   const loadContent = async () => {
     await readResource();
     const data = await readContent<ResourceType.Sheet>();
-    // Content crosses the wire as plain JSON, so the loaded value carries the sheet's data shape rather than
-    // Its class instances — the two differ only by the methods ToData strips. See the sweep ledger
+    // Content is parsed from the blob with plain JSON.parse, so the loaded value carries the sheet's data
+    // Shape rather than its class instances. Reviving them the way the dashboard does would mean walking
+    // Every row and column of a sheet on open, and buys nothing: `toJSON` is the only method these classes
+    // Have, and it returns what `JSON.stringify` produces without it. ResourceContent.test-d.ts holds that
+    // Invariant, so the cast stops compiling if a second method is ever added
     sheetResource.value = (data as SheetResource | undefined) ?? createDefaultSheetResource();
     // Seed the dirty check so the watcher's load echo compares equal instead of writing back
     setPersistedContent(sheetResource.value);

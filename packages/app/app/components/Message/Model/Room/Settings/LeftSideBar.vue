@@ -7,8 +7,8 @@ import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategoryMap";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
-import { hasPermission } from "@/services/room/rbac/hasPermission";
 import { useRoleStore } from "@/store/message/room/role";
+import { hasPermission } from "@esposter/db-schema";
 
 interface LeftSideBarProps {
   room: RoomInMessage;

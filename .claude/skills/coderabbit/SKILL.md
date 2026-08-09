@@ -59,6 +59,19 @@ gh pr checks --json name,state,description --jq '.[] | select(.name=="CodeRabbit
 | `SUCCESS` / `Review rate limited`              | never started, nothing running | **push**                      |
 | `SUCCESS` / skip comment says `Too many files` | never started                  | push, but fix the count first |
 
+**The check answers "is one running", never "has the last push been reviewed".** `Review completed` is the status of whichever review ran most recently, which may have covered a range two pushes back — the check does not name a range at all, so reading it as clearance for the current head is a category error. It is the state's own answer to a different question, and it looks exactly like the answer you wanted.
+
+Reconcile against the range before treating a push as reviewed. Every review body states its own (`Reviewing files that changed … between <sha1> and <sha2>`), so the last reviewed sha is a fact you can read rather than infer:
+
+```bash
+gh api "repos/:owner/:repo/pulls/<pr>/reviews?per_page=100" --paginate \
+  --jq '.[] | select(.user.login=="coderabbitai[bot]") | select((.body|length) > 0)
+        | "\(.submitted_at)  \(.body | capture("between (?<a>[0-9a-f]{40}) and (?<b>[0-9a-f]{40})") | "\(.a[0:9])..\(.b[0:9])")"' | tail -3
+git diff --name-only <last-reviewed-sha>..origin/<branch> | wc -l   # the real backlog
+```
+
+This matters because the budget is measured **from that sha, not from the last push**. A window that was pushed but never reviewed does not clear — it accumulates, and the next push adds to it. Two pushes of 35 and 80 that each looked compliant are one 115-file window to CodeRabbit, over the cap, and the review is skipped outright rather than truncated. Measure the backlog from the last reviewed sha before every push, and if a previous window is still unreviewed, that is a reason to wait rather than to add to it.
+
 **This table says when a push is _safe_, never when it is _authorised_.** The standing rule is unchanged and overrides everything here: commit the coherent change and **never push unless the user asks** — that covers rate-limited pushes, recovery pushes and force-pushes alike. Read the table only once you already have the ask, to decide whether this is the moment.
 
 **Given the ask, `Review rate limited` is not a wait state.** Nothing is running, so there is nothing to lose by pushing, and holding the branch stalls the working tree for an hour to protect a review that does not exist. Under a standing ask ("keep pushing while it's parked"), treat the review as an async thread: keep committing and keep pushing, on the single condition that every push leaves the branch **within the file cap measured from where the review last stopped** (`references/release-pr-cutting.md`). Without that ask, commit and stop — the reviewer's state never turns "not yet asked" into permission.

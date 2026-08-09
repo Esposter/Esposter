@@ -16,9 +16,10 @@ const deleteFoo = async (input: DeleteFooInput) => {
     applyOptimistic: () => {
       // The one row this write removes, not a copy of the list: a rejected delete must not undo the
       // Delete running beside it under another key, nor drop a row a subscription delivered meanwhile.
-      // The comparator is called from an arrow taking the element alone — passed as a bare reference it
-      // Would also receive the index and the array, which `unicorn/no-array-callback-reference` reports
-      const deletedFoo = items.value.find((foo) => getIsEntityIdEqualComparator<Foo>(FooKeyPath, input)(foo));
+      // Built once and then searched with. Constructing it inside the callback rebuilds the same predicate
+      // For every row, and `unicorn/no-array-callback-reference` reports the inline call as a bare reference
+      const getIsDeletedFoo = getIsEntityIdEqualComparator<Foo>(FooKeyPath, input);
+      const deletedFoo = items.value.find(getIsDeletedFoo);
       storeDeleteFoo(input);
       return () => {
         if (deletedFoo) storeCreateFoo(deletedFoo);

@@ -105,7 +105,13 @@ Split at sub-directory boundaries — `app/components/Message` alone is larger t
 
 Findings a pass surfaced whose fix is real work rather than cleanup. Each needs its own proposal before it is attempted:
 
-- **Content classes are not what the wire delivers.** A content schema is declared `satisfies z.ZodType<ToData<T>>` and `readContentBlob` parses plain JSON with it, so the client receives the data shape — never the class instances the Sheet, Dashboard and TodoList stores type their refs as. Those three casts are all that is left of the gap; the honest fix is for a store to revive its content the way `Dashboard` already does, or to hold the `ToData` shape it is actually given.
+_(None outstanding.)_
+
+**Closed: content classes are not what the wire delivers.** A content schema is declared `satisfies z.ZodType<ToData<T>>` and `readContentBlob` parses plain JSON with it, so the client receives the data shape — never the class instances the Sheet and TodoList stores type their refs as (`Dashboard` already revives).
+
+Investigating it before writing the proposal collapsed it. `ToData<T>` is `DeepOptionalUndefined<DeepOmit<T, "toJSON">>`, and `toJSON` is the **only** method these classes carry — `Serializable` declares it and nothing else, and it returns `structuredClone(toRawDeep(this))`, which is what `JSON.stringify` produces without it. So the gap is real in the types and unobservable at runtime, and reviving would mean walking every row and column of a sheet on open to buy nothing.
+
+What made it worth raising is that the casts are sound only while that stays true: a second method would survive into the data shape as a property callers may reach for and the parsed object does not have. That invariant is now pinned by `shared/models/resource/ResourceContent.test-d.ts` — it fails on the day a method is added, which is the day the casts become a lie — and each cast states the reasoning instead of pointing here.
 
 ## Done
 

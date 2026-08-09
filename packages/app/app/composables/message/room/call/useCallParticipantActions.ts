@@ -1,10 +1,9 @@
 import type { Item } from "@/models/shared/Item";
 
-import { hasPermission } from "@/services/room/rbac/hasPermission";
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useRoleStore } from "@/store/message/room/role";
-import { AdminActionType, RoomPermission } from "@esposter/db-schema";
+import { AdminActionType, hasPermission, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();

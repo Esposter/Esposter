@@ -29,9 +29,10 @@ export const createOperationData = <
     else items.value.push(newItem);
   };
   const updateItem = (updatedItem: Partial<TItem>) => {
-    const index = items.value.findIndex((i) =>
-      getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], updatedItem)(i),
-    );
+    // Built once and then searched with, rather than inside the callback: the comparator closes over the
+    // Target, so constructing it per element rebuilds the same predicate for every row in the list
+    const getIsUpdatedItem = getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], updatedItem);
+    const index = items.value.findIndex(getIsUpdatedItem);
     if (index === -1) return;
 
     Object.assign(takeOne(items.value, index), updatedItem);
