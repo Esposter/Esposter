@@ -75,7 +75,7 @@ Split at sub-directory boundaries — `app/components/Message` alone is larger t
 
 ### Shared and cross-cutting
 
-- [ ] **Optimistic snapshots taken at issue time.** The messaging-store pass found six writes capturing `const previous = [...list]` _outside_ `applyOptimistic`. `useMutation` runs that callback inside `settle` — when the write is actually sent — so a rollback restored the list as it looked before the write ahead of it applied, resurrecting rows the server had already dropped. Around forty files call `applyOptimistic`; the six fixed were only the ones in that slice. Audit the rest, and state the rule in the `pinia` skill's mutation-actions reference so the shape stops being written.
+- [ ] **Optimistic snapshots taken at issue time.** The messaging-store pass found six writes capturing `const previous = [...list]` _outside_ `applyOptimistic`. `useMutation` runs that callback inside `settle` — when the write is actually sent — so a rollback restored the list as it looked before the write ahead of it applied, resurrecting rows the server had already dropped. Sixteen sites were fixed across the four messaging-store slices; around forty files call `applyOptimistic`, so the post stores, the resource stores and every component and composable that writes optimistically are still unaudited. The rule is now stated in the `pinia` skill — including the half its own canonical example got wrong, which is that a rollback undoes its own write and never reinstates the list.
 - [ ] `app/components/Styled` — the primitives everything else composes
 - [ ] `shared/models` + `shared/services`
 - [ ] `packages/shared` and `packages/shared-node`

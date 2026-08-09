@@ -1,6 +1,6 @@
 # Writing a store mutation action
 
-Read when a store action calls a tRPC mutation, or when picking its `useMutation` `key`. The rules — when an action is justified at all, root-declared instances, one per mutation, snapshot inside `applyOptimistic`, no hand-rolled ordering — are in `SKILL.md`.
+Read when a store action calls a tRPC mutation, or when picking its `useMutation` `key`. The rules — when an action is justified at all, root-declared instances, one per mutation, snapshot inside `applyOptimistic` and scoped to the one entity written, no hand-rolled ordering — are in `SKILL.md`.
 
 ## Shape
 
@@ -14,10 +14,12 @@ await $trpc.foo.deleteFoo.mutate(id);
 const deleteFoo = async (input: DeleteFooInput) => {
   await executeMutation(() => $trpc.foo.deleteFoo.mutate(input), {
     applyOptimistic: () => {
-      const snapshot = [...items.value];
+      // The one row this write removes, not a copy of the list: a rejected delete must not undo the
+      // Delete running beside it under another key, nor drop a row a subscription delivered meanwhile
+      const deletedFoo = items.value.find(getIsEntityIdEqualComparator<Foo>(FooKeyPath, input));
       storeDeleteFoo(input);
       return () => {
-        items.value = snapshot;
+        if (deletedFoo) storeCreateFoo(deletedFoo);
       };
     },
     // A foo is identified by the parent-and-child pair, so that composite is the target — there is no `id`
