@@ -37,7 +37,16 @@ gh pr checks --json name,state,description --jq '.[] | select(.name=="CodeRabbit
 # {"description":"Review completed","name":"CodeRabbit","state":"SUCCESS"}
 ```
 
-Push only on `SUCCESS` / `Review completed`. Anything else (`PENDING`, a review-in-progress description) means **wait** — poll until it settles, then push. With no open PR for the branch there is no review to interrupt; push freely.
+**Only an actually-running review blocks a push, and the state names which is which.** `PENDING`, or a description reading `Review in progress`, is the one case that waits — that is a live review a push would cancel. Every terminal state is clear to push on:
+
+| state / description                            | meaning                        | push?                         |
+| :--------------------------------------------- | :----------------------------- | :---------------------------- |
+| `PENDING` / `Review in progress`               | live review, a push cancels it | **wait**                      |
+| `SUCCESS` / `Review completed`                 | finished                       | push                          |
+| `SUCCESS` / `Review rate limited`              | never started, nothing running | **push**                      |
+| `SUCCESS` / skip comment says `Too many files` | never started                  | push, but fix the count first |
+
+**`Review rate limited` is not a wait state.** Nothing is running, so there is nothing to lose by pushing, and waiting on it stalls the working tree for an hour to protect a review that does not exist. Treat the review as an async thread: keep committing and keep pushing while it is parked, on the single condition that every push leaves the branch **within the file cap measured from where the review last stopped** (`references/release-pr-cutting.md`). The work never blocks on the reviewer; only the file count governs.
 
 This applies per push, not per work session — a second push minutes after the first lands while the first push's review is still running. Batch commits and push once when the work is coherent.
 
