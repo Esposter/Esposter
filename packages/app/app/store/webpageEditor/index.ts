@@ -23,7 +23,11 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   // And the loaded content's own metadata is carried across so a save doesn't mint a fresh content identity
   const saveWebpageEditor = async (projectData: ProjectData, { css, html }: Pick<WebpageEditor, "css" | "html">) => {
     content = new WebpageEditor({ ...projectData, ...getItemMetadata(content), css, html });
-    await save(content);
+    // The save status is handed back rather than swallowed, the same as every other content store. It is not
+    // Turned into a throw: GrapesJS only reads a rejection as a failed store, and the writes that answer false
+    // Are mostly benign skips (nothing loaded, a resource swapped mid-save) whose one real case, a stale
+    // Version, already raises its own refresh notification
+    return save(content);
   };
   return { readWebpageEditor, resource, saveWebpageEditor };
 });

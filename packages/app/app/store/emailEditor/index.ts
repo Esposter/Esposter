@@ -40,7 +40,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
       datasetReference: datasetReference.value,
       html,
     });
-    await save(content.value);
+    return save(content.value);
   };
   const saveDatasetReference = async (newDatasetReference: DatasetReference | undefined) => {
     const emailEditor = new EmailEditor(content.value);

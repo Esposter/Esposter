@@ -23,7 +23,8 @@ describe(useSurveyStore, () => {
       updatedAt: new Date(0),
     }) as Resource;
   let content: SurveyResource;
-  let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
+  // Typed with the input the handler receives, so a test can assert what a save actually wrote
+  let saveResourceContent: ReturnType<typeof vi.fn<(options: { input: { content: unknown } }) => Resource>>;
   const setupStore = async () => {
     const surveyStore = useSurveyStore();
     await surveyStore.loadContent();
@@ -34,7 +35,7 @@ describe(useSurveyStore, () => {
     setActivePinia(createPinia());
     useRouter().currentRoute.value.params.id = resourceId;
     content = { model, settings: surveySettingsSchema.parse({}) };
-    saveResourceContent = vi.fn<() => Resource>(() => createResource(1));
+    saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => Resource>(() => createResource(1));
     server.use(
       trpcMsw.resource.readResource.query(() => createResource()),
       trpcMsw.survey.readResourcePublication.query(() => undefined),
@@ -81,5 +82,11 @@ describe(useSurveyStore, () => {
 
     expect(settings.value.responseMode).toBe(SurveyResponseMode.Identified);
     expect(saveResourceContent).toHaveBeenCalledTimes(2);
+    // The count alone passes on a settings save that wrote the model back as it was loaded, which is the
+    // Regression this test is named for — so the payload itself has to say newModel
+    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual({
+      model: newModel,
+      settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
+    });
   });
 });

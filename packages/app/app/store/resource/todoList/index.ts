@@ -50,7 +50,8 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     const snapshot = structuredClone(toRawDeep(todoList.value));
 
     // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from
-    // The item in hand — a separately tracked index survives a dialog opened straight from the add button
+    // The item in hand — a separately tracked index would still hold the previous edit's row when the dialog
+    // Opens straight from the add button, routing that add into an update
     if (isDeleteAction) deleteItem({ id: editedItem.value.id });
     else if (originalItem.value) updateItem(editedItem.value);
     else createItem(editedItem.value);
