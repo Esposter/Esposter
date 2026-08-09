@@ -10,19 +10,15 @@ import { useTodoListStore } from "@/store/resource/todoList";
 const todoListStore = useTodoListStore();
 const { editItem, loadContent } = todoListStore;
 const { items, searchQuery } = storeToRefs(todoListStore);
-const isLoading = ref(true);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<TodoListItem>) => editItem({ id: item.id });
 useTodoListSubscribables();
-
-onMounted(async () => {
-  await loadContent();
-  isLoading.value = false;
-});
+// The Suspense-wrapped blade awaits the content, so it opens on a populated store and the shell's
+// Skeleton covers the wait — no per-blade loading flag
+await loadContent();
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
-  <v-container v-else fluid flex flex-col h-full>
+  <v-container fluid flex flex-col h-full>
     <StyledDataTable
       flex
       flex-1

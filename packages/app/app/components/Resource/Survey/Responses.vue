@@ -3,6 +3,7 @@ import type { SurveyResponseRecords } from "#shared/models/resource/survey/Surve
 
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
+import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { getResultAsync } from "@esposter/shared";
 
 const route = useRoute();
@@ -10,7 +11,7 @@ const { $trpc } = useNuxtApp();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();
 const { deletingRowKey, detailRowKey } = storeToRefs(surveyResponseDialogStore);
 // The blade is keyed by resource id and suspended, so this instance only ever serves one survey
-const id = route.params.id as string;
+const id = getRouteParamString(route.params.id);
 const records = ref<SurveyResponseRecords>();
 const error = ref<string>();
 // Rows arrive already carrying their keys from one server read, so a response submitted or deleted

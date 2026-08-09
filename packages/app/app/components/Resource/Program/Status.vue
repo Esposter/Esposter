@@ -17,7 +17,6 @@ const { createErrorNotification, createNotification } = notificationStore;
 const { executeMutation: executeGenerateMutation, isPending: isGeneratePending } = useMutation();
 const id = computed(() => getRouteParamString(route.params.id));
 const statusRows = ref<ProgramStatusRow[]>([]);
-const isLoading = ref(true);
 const respondedCount = computed(() => statusRows.value.filter(({ isResponded }) => isResponded).length);
 const headers = [
   { key: "keyValue", title: "Participant" },
@@ -39,17 +38,14 @@ const generateParticipants = async () => {
     },
   });
 };
-
-onMounted(async () => {
-  await loadContent();
-  await readStatus();
-  isLoading.value = false;
-});
+// The Suspense-wrapped blade awaits the content and the rows it renders, so it opens populated and the
+// Shell's skeleton covers the wait — no per-blade loading flag
+await loadContent();
+await readStatus();
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
-  <div v-else p-6 flex flex-col gap-4>
+  <div p-6 flex flex-col gap-4>
     <div flex flex-wrap gap-4 items-center>
       <span text-h6>Status</span>
       <v-spacer />

@@ -2,6 +2,7 @@
 import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
+import { pluralize } from "#shared/util/text/pluralize";
 import { useSurveyStore } from "@/store/survey";
 import { getResultAsync, RoutePath } from "@esposter/shared";
 
@@ -20,8 +21,7 @@ const responseCount = ref<CountSurveyResponsesOutput>();
 const responseLabel = computed(() => {
   if (!responseCount.value) return "";
   const { count, isCapped } = responseCount.value;
-  const noun = count === 1 && !isCapped ? "response" : "responses";
-  return `${count}${isCapped ? "+" : ""} ${noun}`;
+  return `${count}${isCapped ? "+" : ""} ${pluralize("response", count)}`;
 });
 
 // The page is keyed by resource id, so this instance only ever describes one survey — both reads run

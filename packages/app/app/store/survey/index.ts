@@ -8,7 +8,7 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 export const useSurveyStore = defineStore("survey", () => {
   const route = useRoute();
   // The store outlives the page, so the id is read from the route per call rather than captured once
-  const { load, readContent, resource, save } = useResource<ResourceType.Survey>(() =>
+  const { load, readContent, resource, save, setPersistedContent } = useResource<ResourceType.Survey>(() =>
     getRouteParamString(route.params.id),
   );
   // The SurveyJS creator owns editor/preview state; the resource layer only sees model JSON in/out
@@ -21,6 +21,9 @@ export const useSurveyStore = defineStore("survey", () => {
     const data = await readContent();
     model.value = data?.model ?? "";
     settings.value = data?.settings ?? surveySettingsSchema.parse({});
+    // Seed the dirty check so the creator's autosave, which fires on every editor change, only writes when
+    // The content actually differs — the same seed every other content store does after hydrating
+    setPersistedContent({ model: model.value, settings: settings.value });
   };
   const saveModel = async (newModel: string) => {
     const isSuccessful = await save({ model: newModel, settings: settings.value } satisfies SurveyResource);

@@ -15,7 +15,6 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const editFormDialog = ref(false);
   const editForm = ref<InstanceType<typeof VForm>>();
   const editedItem = ref<TItem>();
-  const editedIndex = ref(-1);
   const originalItem = computed(() => {
     const editedItemValue = editedItem.value;
     return editedItemValue
@@ -49,13 +48,11 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
     if (!item) return;
 
     editedItem.value = structuredClone(toRawDeep(item));
-    editedIndex.value = items.value.findIndex((i) => isEntityIdEqualComparator(i));
     editFormDialog.value = true;
     await router.replace({ query: { ...router.currentRoute.value.query, ...ids } });
   };
   const resetItem = async () => {
     editedItem.value = undefined;
-    editedIndex.value = -1;
     await router.replace({
       query: { ...router.currentRoute.value.query, ...Object.fromEntries(idKeys.map((key) => [key, undefined])) },
     });
@@ -76,7 +73,6 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   );
 
   return {
-    editedIndex,
     editedItem,
     editForm,
     editFormDialog,

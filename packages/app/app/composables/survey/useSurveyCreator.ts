@@ -39,14 +39,10 @@ export const useSurveyCreator = () => {
     const { [THEME_KEY]: theme, ...model } = parseSurveyModel(surveyStore.model);
     newCreator.JSON = model;
     if (theme) newCreator.theme = theme;
+    // The creator autosaves on every editor change; the store's own dirty check is what drops the ones that
+    // Changed nothing, so this reports whatever the shared save path answers rather than pre-filtering
     const save = async (saveNo: number, callback: (saveNo: number, isSuccessful: boolean) => void) => {
-      const newModel = JSON.stringify({ ...newCreator.JSON, [THEME_KEY]: newCreator.theme });
-      if (newModel === surveyStore.model) {
-        callback(saveNo, true);
-        return;
-      }
-
-      callback(saveNo, await saveModel(newModel));
+      callback(saveNo, await saveModel(JSON.stringify({ ...newCreator.JSON, [THEME_KEY]: newCreator.theme })));
     };
     newCreator.saveSurveyFunc = save;
     newCreator.saveThemeFunc = save;

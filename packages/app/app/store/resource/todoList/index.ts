@@ -26,6 +26,8 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     // Content crosses the wire as plain JSON, so the loaded value carries the list's data shape rather than
     // Its class instances — the two differ only by the methods ToData strips. See the sweep ledger
     todoList.value = (data as TodoListResource | undefined) ?? { items: [] };
+    // Seed the dirty check so a save that changed nothing compares equal instead of bumping contentVersion
+    setPersistedContent(todoList.value);
   };
   const saveTodoList = () => save(todoList.value);
   // Another device saved — adopt its content and contentVersion so this client renders live data
@@ -36,7 +38,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     setPersistedContent(content);
   };
   const { createItem, deleteItem, updateItem } = createOperationData(items, ["id"], "Item");
-  const { editedIndex, editedItem, editFormDialog, ...restEditFormData } = createEditFormData(
+  const { editedItem, editFormDialog, originalItem, ...restEditFormData } = createEditFormData(
     computed(() => items.value),
     ["id"],
   );
@@ -47,8 +49,10 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
 
     const snapshot = structuredClone(toRawDeep(todoList.value));
 
+    // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from
+    // The item in hand — a separately tracked index survives a dialog opened straight from the add button
     if (isDeleteAction) deleteItem({ id: editedItem.value.id });
-    else if (editedIndex.value > -1) updateItem(editedItem.value);
+    else if (originalItem.value) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
     const isSuccessful = await saveTodoList();
@@ -57,11 +61,11 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     return isSuccessful;
   };
   return {
-    editedIndex,
     editedItem,
     editFormDialog,
     items,
     loadContent,
+    originalItem,
     ...restEditFormData,
     saveItem,
     saveTodoList,

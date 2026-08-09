@@ -6,7 +6,9 @@ import { getResult, takeOne } from "@esposter/shared";
 const blueprintStore = useBlueprintStore();
 const { loadContent, saveBlueprint } = blueprintStore;
 const { blueprint } = storeToRefs(blueprintStore);
-const isLoading = ref(true);
+// The Suspense-wrapped blade awaits the content, so it opens on a populated store and the shell's
+// Skeleton covers the wait — no per-blade loading flag
+await loadContent();
 // The manifest is edited as schema-validated JSON — the escape hatch, since capture is the primary
 // Authoring path. A local clone follows the store's content and carries the user's edits until save
 const { cloned: manifestJson } = useCloned(() => JSON.stringify(blueprint.value, null, 2));
@@ -30,16 +32,10 @@ const save = async () => {
   }
   await saveBlueprint(result.data);
 };
-
-onMounted(async () => {
-  await loadContent();
-  isLoading.value = false;
-});
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
-  <v-container v-else fluid flex flex-col gap-4 h-full>
+  <v-container fluid flex flex-col gap-4 h-full>
     <div flex flex-wrap gap-2 items-center>
       <span text-h6>Manifest</span>
       <v-spacer />
