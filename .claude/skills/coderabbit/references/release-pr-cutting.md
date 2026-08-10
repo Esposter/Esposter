@@ -1,6 +1,6 @@
 # Cutting a release PR back to the review budget
 
-Read when a push has put a review window past the file limit and CodeRabbit skips it outright ("Review skipped: N files exceed the limit of 100"). This is the recovery for **any** overshoot, not just a PR too big for its first review — an already-reviewed PR trips it the ordinary way, by accumulating past ~80 files locally between pushes.
+Read when a push has put a review window past the file limit and CodeRabbit skips it outright ("Review skipped: N files exceed the limit of 100"). This is the recovery for **any** overshoot, not just a PR too big for its first review — an already-reviewed PR trips it the ordinary way, by accumulating past the cap locally between pushes.
 
 The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged. The fix is to **shorten `develop` and park the rest on a queue branch**, then feed the queue back one window at a time.
 
@@ -46,7 +46,7 @@ Never `&&`-chain the return hop behind the check. A failing typecheck is the out
 
 A cut that lands mid-breakage is not a lost-work problem — the repair is safe on the queue branch — but it publishes a red `develop` and burns the review cycle on a window whose CI never passes.
 
-Take the boundary nearest ~80 files. The next three commands discard and rewrite published history, so they are the one place in this repo that needs a gate first — **get explicit approval for this cut**, and check all three of: the worktree is clean (`git status --porcelain -uall` empty — a `reset --hard` eats uncommitted work), you are on `develop` and not a worktree branch, and the local tip matches `origin/develop` (`git rev-parse develop origin/develop`) so no other session's push is about to be overwritten. `--force-with-lease` refuses the push if the remote moved, but nothing catches a dirty tree or the wrong branch.
+Take the boundary nearest ~90 files. The next three commands discard and rewrite published history, so they are the one place in this repo that needs a gate first — **get explicit approval for this cut**, and check all three of: the worktree is clean (`git status --porcelain -uall` empty — a `reset --hard` eats uncommitted work), you are on `develop` and not a worktree branch, and the local tip matches `origin/develop` (`git rev-parse develop origin/develop`) so no other session's push is about to be overwritten. `--force-with-lease` refuses the push if the remote moved, but nothing catches a dirty tree or the wrong branch.
 
 Then park and cut:
 

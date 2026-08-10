@@ -1,6 +1,6 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review with the wait decided by the check's bucket rather than its state string (unknown means wait), the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, a window being a prefix of the unpushed range so a later-authored fix is prepended rather than left at the tip, nitpicks live in the review body rather than inline comments, the four gates that decide a push (open findings drained, nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, draining a completed review's findings before composing a window so they lead it rather than expiring behind fresh work, a rate-limited status not proving the checkpoint stalled with the @coderabbitai review retrigger answering "Already reviewed" as the probe, the bot login differing per API (coderabbitai[bot] on REST, coderabbitai on GraphQL) so a wrong filter reports a false zero, reconciling against the stated counts (inline comments can fail to post outright), replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when choosing which commits a push should carry, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review with the wait decided by the check's bucket rather than its state string (unknown means wait), the ~90-file window against a 100-file cap that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, a window being a prefix of the unpushed range so a later-authored fix is prepended rather than left at the tip, nitpicks live in the review body rather than inline comments, the four gates that decide a push (open findings drained, nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, draining a completed review's findings before composing a window so they lead it rather than expiring behind fresh work, a rate-limited status not proving the checkpoint stalled with the @coderabbitai review retrigger answering "Already reviewed" as the probe, the bot login differing per API (coderabbitai[bot] on REST, coderabbitai on GraphQL) so a wrong filter reports a false zero, reconciling against the stated counts (inline comments can fail to post outright), replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when choosing which commits a push should carry, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
 ---
 
 # CodeRabbit Conventions
@@ -87,12 +87,20 @@ flowchart TD
 This is a gate on **what the window contains**, not merely an ordering preference. Fixes ride at the front (`§ Composing the window` for the reorder), and a window that would exceed the cap drops queued work to keep them in rather than deferring them to the next cycle. Count what is actually open before deciding it is drained — and read `§ Reading and Answering Findings` for why an empty result is usually a wrong filter:
 
 ```bash
-gh api graphql -f query='
-query { repository(owner: "<owner>", name: "<repo>") { pullRequest(number: <pr>) {
-  reviewThreads(first: 100) { nodes { isResolved isOutdated path line
-    comments(first: 1) { nodes { author { login } body } } } } } } }' \
-  --jq '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved==false)] | length'
+gh api graphql --paginate -f query='
+query($endCursor: String) {
+  repository(owner: "<owner>", name: "<repo>") {
+    pullRequest(number: <pr>) {
+      reviewThreads(first: 100, after: $endCursor) {
+        pageInfo { hasNextPage endCursor }
+        nodes { isResolved isOutdated path line comments(first: 1) { nodes { author { login } body } } }
+      }
+    }
+  }
+}' --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false) | .path' | wc -l
 ```
+
+**`--paginate` and `pageInfo` are both load-bearing**, and the failure is silent in the direction that matters. A long-lived release PR accumulates threads for its whole life — this one is already past 90 — so `reviewThreads(first: 100)` alone starts dropping the newest page exactly when the PR is busiest, and reports the backlog as drained. `gh` only follows the cursor when the query declares `$endCursor` and selects `pageInfo`; omit either and it returns page one and exits 0. Count with `| wc -l` over one line per thread rather than `| length`, which would otherwise report a per-page length once per page.
 
 Unresolved threads are the inline half only. Reconcile them against each review body's `Actionable comments posted: N` and `🧹 Nitpick comments (M)`, since nitpicks never exist as threads and inline comments can fail to post outright.
 
@@ -123,7 +131,7 @@ Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit)
 
 ## PR File Budget
 
-CodeRabbit caps this repo at **100 files per review** — the Open Source tier's file limit is popularity-scaled and can move, so treat the number as current-best-known; the bot's skip comment on an over-budget PR states the current one. Keep every chunk of work to **~80 changed files measured from the branch point** — work is committed and pushed continuously, so dirty-file counts see nothing:
+CodeRabbit caps this repo at **100 files per review** — the Open Source tier's file limit is popularity-scaled and can move, so treat the number as current-best-known; the bot's skip comment on an over-budget PR states the current one. Aim each window at **~90 changed files measured from the branch point**, close enough to fill the slot without risking it — work is committed and pushed continuously, so dirty-file counts see nothing:
 
 ```bash
 # Committed since branching, plus anything not yet committed — as a set, since a file can be in both.
@@ -133,7 +141,7 @@ CodeRabbit caps this repo at **100 files per review** — the Open Source tier's
 
 Count the **union**, not the sum: a file with both committed and working-tree changes is one file to CodeRabbit, and summing it twice cuts the chunk early. Run this before starting a sweep. When the budget is reached, cut the chunk — but do not stop working; see the pipeline below.
 
-**Incremental reviews refresh the budget.** CodeRabbit reviews only the files changed _since its last completed review_ on the PR (the review body states it: "Reviewing files that changed … between `<sha1>` and `<sha2>`"), not the cumulative PR diff. So within one long-lived PR the ~80-file budget applies **per review cycle**: a retrigger or a new push only needs the _newly committed_ files to stay under it. Once a PR has been reviewed, measure the delta rather than the merge-base — `git diff --name-only <last-reviewed-sha>..HEAD | wc -l`. The merge-base count still governs the **first** review of a PR and any full re-review.
+**Incremental reviews refresh the budget.** CodeRabbit reviews only the files changed _since its last completed review_ on the PR (the review body states it: "Reviewing files that changed … between `<sha1>` and `<sha2>`"), not the cumulative PR diff. So within one long-lived PR the budget applies **per review cycle**: a retrigger or a new push only needs the _newly committed_ files to stay under it. Once a PR has been reviewed, measure the delta rather than the merge-base — `git diff --name-only <last-reviewed-sha>..HEAD | wc -l`. The merge-base count still governs the **first** review of a PR and any full re-review.
 
 ### Pipelining — work lands on `develop`, review runs against the `develop` → `main` PR
 
@@ -141,7 +149,7 @@ Count the **union**, not the sum: a file with both committed and working-tree ch
 
 A review takes an hour of wall-clock the working tree has no reason to spend idle. Reviews are incremental and the budget refreshes per cycle, so that one PR absorbs an arbitrarily large body of work as a series of chunks, with local work running ahead of the reviewed frontier:
 
-1. Commit continuously on `develop`. When the delta since the last reviewed sha approaches ~80 files, that chunk is ready.
+1. Commit continuously on `develop`. When the delta since the last reviewed sha approaches ~90 files, that chunk is ready.
 2. Push it. The push starts a review.
 3. **Keep working locally while it runs.** Commits are free; only pushes trigger reviews. Never push into a running review (see above) — the local commit queue is what absorbs the wait.
 4. When the review completes, address its findings, reply to every one, commit the fixes, and push them **together with** the next queued chunk. That single push starts the next cycle.
@@ -187,7 +195,7 @@ When a push has already overshot, the recovery is to **shorten `develop`, park t
 
 **Exclusions are rarely the answer, and never for a substantive file.** Over budget is a chunking problem: split the work, or land it in stages so each cycle stays under the cap. Excluding a file that carries real content buys a smaller review, not a better one — the diff still ships, just unread. When to reach for one anyway, and the procedure, live in `references/exclusions.md`.
 
-The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items sharing a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land in separate PRs with a stated merge order.
+The budget is a **target to fill, not only a cap**. A review slot costs an hour of wall-clock whether it reads 12 files or 90, so an under-filled window is the most expensive kind — it spends the whole slot and leaves the rest of the work waiting a full cycle. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~90 files, grouping by what they touch so the coupling stays inside one review: items sharing a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land in separate PRs with a stated merge order.
 
 ## Reading and Answering Findings
 
@@ -196,9 +204,14 @@ The budget is a **target to fill, not only a cap**. A single roadmap item is typ
 - **The login differs by API, so a filter that works on one silently matches nothing on the other.** REST (`/pulls/<pr>/comments`, `/reviews`, `/issues/<pr>/comments`) reports `user.login` as **`coderabbitai[bot]`**; GraphQL (`reviewThreads`) reports `author.login` as **`coderabbitai`**, with the `[bot]` suffix stripped. Neither is "the" login. Write the filter for the endpoint in hand:
 
   ```bash
-  gh api "repos/:owner/:repo/pulls/<pr>/comments" --jq '.[] | select(.user.login=="coderabbitai[bot]")'   # REST
-  gh api graphql -f query='...' --jq '.[] | select(.author.login=="coderabbitai")'                        # GraphQL
+  # REST — the payload is the array, and the author sits on `user`
+  gh api "repos/:owner/:repo/pulls/<pr>/comments" --jq '.[] | select(.user.login == "coderabbitai[bot]")'
+  # GraphQL — the payload is an object, and the author sits on `author`, one level per connection
+  gh api graphql -f query='...' --jq '.data.repository.pullRequest.reviewThreads.nodes[]
+    | select(.comments.nodes[0].author.login == "coderabbitai")'
   ```
+
+  The shapes differ as much as the logins do: REST hands back a bare array, so the filter starts at `.[]`, while every GraphQL read starts at `.data` and walks a `nodes[]` for each connection it crossed. A `.[]` against the GraphQL payload iterates the top-level object's values, so it neither errors nor matches.
 
   A `--jq` filter on the wrong login returns empty and **exits 0**, so empty output from a filtered query means _"my filter was wrong"_ until proven otherwise — never read it as "there are none". Prove it by re-running without the author filter: if the unfiltered count is non-zero, the filter was the bug. Do that before reporting zero, every time — this has been got wrong repeatedly, in both directions, and a false zero reads exactly like a clean PR.
 
