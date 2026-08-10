@@ -11,7 +11,7 @@ Read when deciding whether a file may be excluded, generating the exclusion list
 1. Read the skip comment for the real overshoot (`N files exceed the limit of M`); do not compute it from the merge-base.
 2. Classify the window and count what genuinely qualifies. If it does not cover the gap **with margin**, stop and cut instead — landing exactly on the cap leaves nothing for the next push.
 3. A change repeated verbatim across N files (one identical line deleted from five views) is reviewable **once**: keep one file as the representative, exclude its twins, and name the representative in the yaml comment so the next reader can check the claim. Identical patch text is the entry condition, not the test — the twin qualifies only if the line _means_ the same thing there, same symbols resolving to the same modules and the same runtime effect (§ When to exclude below).
-4. Commit the block to `main` with its revert subject, retrigger with `@coderabbitai review` — no push to `develop` is needed, and none should be made, since the config is read from the base branch and a push would only add files to the same window.
+4. Commit the block to the PR's resolved base branch (`gh pr view <pr> --json baseRefName --jq .baseRefName`) with its revert subject, retrigger with `@coderabbitai review` — no push to the head branch is needed, and none should be made, since the config is read from the base branch and a push would only add files to the same window.
 5. Remove the block once that review completes. An exclusion left behind blinds the next review of those paths silently.
 
 ## When to exclude

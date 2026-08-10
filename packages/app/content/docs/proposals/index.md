@@ -25,4 +25,4 @@ Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
 
-Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state, one file per sweep, in `.claude/ledgers/`.
+Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state in `.claude/ledgers/`, one ledger file per sweep — or one coverage folder, once a sweep outgrows a single file.

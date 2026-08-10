@@ -64,7 +64,7 @@ Anything else — what the convention says, why it matters, how a pass is run �
 - **Standing** — the convention applies to code written after the sweep too, so the file carries a date instead of an end. Sweep only what changed since, then bump the date in the same commit:
 
   ```bash
-  git log --since=<Last swept date> --name-only --pretty=format: -- '*.ts' '*.vue' | sort -u
+  git log --since=<Last swept date> --name-only --pretty=format: -- <the globs this sweep declares> | sort -u
   ```
 
   Everything outside that list was swept at the last pass — skip it rather than re-reading it.
