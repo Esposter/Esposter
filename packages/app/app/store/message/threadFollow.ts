@@ -1,4 +1,4 @@
-import type { StandardMessageEntity } from "@esposter/db-schema";
+import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 
@@ -9,7 +9,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     data: followedThreads,
     getData: getFollowedThreads,
     setData: setFollowedThreads,
-  } = useDataMap<StandardMessageEntity[]>(
+  } = useDataMap<MessageEntity[]>(
     () => roomStore.currentRoomId,
     () => [],
   );

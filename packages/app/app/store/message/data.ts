@@ -167,7 +167,7 @@ export const useDataStore = defineStore("message/data", () => {
       baseStoreCreateMessage(message, true);
     }
   };
-  const storeUpdateMessage = async (input: MessageEvents["updateMessage"][number]) => {
+  const storeUpdateMessage = async (input: MessageEvents["updateMessage"][0][0]) => {
     await MessageHookMap[Operation.Update].run(input);
     baseStoreUpdateMessage(input);
   };

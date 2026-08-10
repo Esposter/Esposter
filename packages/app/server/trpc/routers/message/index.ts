@@ -1,6 +1,5 @@
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
-import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
 import type { ReadFollowedThreadsOutput } from "#shared/models/message/thread/ReadFollowedThreadsOutput";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
@@ -45,9 +44,9 @@ import { createUserMessage } from "@@/server/services/message/createUserMessage"
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { createUploadFileToken } from "@@/server/services/message/file/createUploadFileToken";
 import { getIsUploadFileTokenValid } from "@@/server/services/message/file/getIsUploadFileTokenValid";
-import { isRoomId } from "@@/server/services/message/isRoomId";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { readMessages } from "@@/server/services/message/readMessages";
+import { readMessagesByRowKeys } from "@@/server/services/message/readMessagesByRowKeys";
 import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { createThreadFollow } from "@@/server/services/message/thread/createThreadFollow";
@@ -60,6 +59,7 @@ import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
@@ -117,7 +117,10 @@ export const baseMessageRouter = router({
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query, not mutation: emitting has no ordering/concurrency concerns.
     .query<void>(({ ctx, input }) => {
-      messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.getSessionPayload.session.id });
+      messageEventEmitter.emit("createTyping", [
+        input,
+        { sessionId: ctx.getSessionPayload.session.id, userId: input.userId },
+      ]);
     }),
   // Removing one file rewrites the whole files array, so the write is conditional on the version the procedure
   // Read: two files deleted at once otherwise both compute the survivors from the same version, and the later
@@ -149,7 +152,7 @@ export const baseMessageRouter = router({
         },
         writeEntity: (entity, etag) => updateMessage(messageClient, entity, undefined, { etag }),
       });
-      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+      messageEventEmitter.emit("updateMessage", [updatedMessageEntity]);
       // A dropped publish leaves an orphaned blob, never the file the user asked to remove
       await publishBlobDeletion(
         `${partitionKey}/${rowKey}`,
@@ -173,13 +176,13 @@ export const baseMessageRouter = router({
       });
       // The subscription carries the cleared field rather than the replaced body, so a client merges one property
       // Instead of adopting a whole message it may hold newer state for
-      messageEventEmitter.emit("updateMessage", { linkPreviewResponse: null, partitionKey, rowKey });
+      messageEventEmitter.emit("updateMessage", [{ linkPreviewResponse: null, partitionKey, rowKey }]);
     },
   ),
   deleteMessage: getMessageProcedure(deleteMessageInputSchema, MessageOperation.Delete).mutation<void>(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
-      messageEventEmitter.emit("deleteMessage", input);
+      messageEventEmitter.emit("deleteMessage", [input]);
       // A dropped publish leaves orphaned attachment blobs, never the delete the user asked for
       await publishBlobDeletion(
         `${messageEntity.partitionKey}/${messageEntity.rowKey}`,
@@ -376,35 +379,20 @@ export const baseMessageRouter = router({
     for await (const [[data, { isSendToSelf, sessionId }]] of createdMessages) {
       const dataToYield = data.filter(
         (newMessage) =>
-          isRoomId(newMessage.partitionKey, roomId) &&
+          newMessage.partitionKey === roomId &&
           (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.getSessionPayload)),
       );
       if (dataToYield.length > 0) yield tracked(takeOne(dataToYield, dataToYield.length - 1).rowKey, dataToYield);
     }
   }),
-  onCreateTyping: getMemberProcedure(roomIdSchema, "roomId").subscription<
-    AsyncGenerator<MessageEvents["createTyping"][0], void, unknown>
-  >(async function* ({ ctx, input, signal }) {
-    for await (const [data] of on(messageEventEmitter, "createTyping", { signal }))
-      if (data.roomId === input.roomId && !getIsSameDevice(data, ctx.getSessionPayload)) yield data;
-  }),
-  onDeleteMessage: getMemberProcedure(roomIdSchema, "roomId").subscription<
-    AsyncGenerator<MessageEvents["deleteMessage"][0], void, unknown>
-  >(async function* ({ input, signal }) {
-    for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId)) yield data;
-  }),
-  onUpdateMessage: getMemberProcedure(roomIdSchema, "roomId").subscription<
-    AsyncGenerator<MessageEvents["updateMessage"][0], void, unknown>
-  >(async function* ({ input, signal }) {
-    for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId)) yield data;
-  }),
+  onCreateTyping: getRoomEventSubscription(messageEventEmitter, "createTyping", ({ roomId }) => roomId),
+  onDeleteMessage: getRoomEventSubscription(messageEventEmitter, "deleteMessage", ({ partitionKey }) => partitionKey),
+  onUpdateMessage: getRoomEventSubscription(messageEventEmitter, "updateMessage", ({ partitionKey }) => partitionKey),
   pinMessage: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Pin).mutation<void>(
     async ({ ctx: { getSessionPayload, messageClient }, input }) => {
       const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
       await updateEntity(messageClient, updatedMessageEntity);
-      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+      messageEventEmitter.emit("updateMessage", [updatedMessageEntity]);
       // The pin line is worded by the message it points at rather than by text of its own, and it is best-effort
       // Like every other system message — a failure leaves the pin in place without its line, never costs the pin
       await createSystemRoomMessage(input.partitionKey, getSessionPayload.user.id, "", getSessionPayload.session.id, {
@@ -421,41 +409,16 @@ export const baseMessageRouter = router({
     async ({ ctx, input: { roomId } }) => {
       const threadRootRowKeys = await readFollowedThreadRootRowKeys(ctx.db, roomId, ctx.getSessionPayload.user.id);
       if (threadRootRowKeys.length === 0) return { threadRootRowKeys, threads: [] };
-
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const rootMessages = await Promise.all(
-        threadRootRowKeys.map((threadRootRowKey) =>
-          getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),
-        ),
-      );
-      return {
-        threadRootRowKeys,
-        threads: rootMessages.filter(
-          (rootMessage): rootMessage is StandardMessageEntity => rootMessage !== null && !rootMessage.deletedAt,
-        ),
-      };
+      // Every root in one scan, which also drops the deleted ones — so the drawer lists them newest-root-first
+      // Rather than in the order the follows were recorded
+      return { threadRootRowKeys, threads: await readMessagesByRowKeys(roomId, threadRootRowKeys) };
     },
   ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query<CursorPaginationData<MessageEntity>>(
     ({ input }) => readMessages(input),
   ),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query<MessageEntity[]>(
-    async ({ input: { roomId, rowKeys } }) => {
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const clauses: Clause<StandardMessageEntity>[] = [
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-        getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-      ];
-      for (const rowKey of rowKeys)
-        clauses.push({
-          key: CompositeKeyPropertyNames.rowKey,
-          operator: BinaryOperator.eq,
-          value: rowKey,
-        });
-      return getTopNEntitiesByType(messageClient, rowKeys.length, MessageEntityMap, {
-        filter: serializeClauses(clauses),
-      });
-    },
+    ({ input: { roomId, rowKeys } }) => readMessagesByRowKeys(roomId, rowKeys),
   ),
   readMySentMessages: standardAuthedProcedure
     .input(readMySentMessagesInputSchema)
@@ -511,13 +474,13 @@ export const baseMessageRouter = router({
         // A pin is not an edit of the message, so this writes through updateEntity rather than updateMessage
         writeEntity: (entity, etag) => updateEntity(messageClient, entity, "Replace", { etag }),
       });
-      messageEventEmitter.emit("updateMessage", { ...input, isPinned: undefined });
+      messageEventEmitter.emit("updateMessage", [{ ...input, isPinned: undefined }]);
     },
   ),
   updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update).mutation<void>(
     async ({ ctx: { messageClient }, input }) => {
       await updateMessage(messageClient, input);
-      messageEventEmitter.emit("updateMessage", input);
+      messageEventEmitter.emit("updateMessage", [input]);
     },
   ),
   // Casting a vote is not editing the poll: any member may vote, while editing or deleting the poll stays with
@@ -567,7 +530,7 @@ export const baseMessageRouter = router({
         // The updateMessage service stamps the entity as edited, and a vote is not an edit of the poll
         writeEntity: (entity, etag) => updateEntity(messageClient, entity, "Merge", { etag }),
       });
-      messageEventEmitter.emit("updateMessage", votedMessageEntity);
+      messageEventEmitter.emit("updateMessage", [votedMessageEntity]);
     },
   ),
 });

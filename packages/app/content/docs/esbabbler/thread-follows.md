@@ -43,7 +43,7 @@ Auto-follow and the follower notification both sit in the reply's best-effort ta
 
 ## Data model
 
-Postgres table `threadFollowsInMessage`: `userId`, `roomId`, and `threadRootRowKey` (the root message's Azure Table rowKey), with a composite primary key over all three so a follow is idempotent, plus `isUnfollowed` — the member's recorded decision to stop, which is why a row outlives an unfollow. Room deletion cascades the follows away. The drawer resolves each followed root back to its message from Azure Table and drops any root that was deleted, so it never lists a dangling follow.
+Postgres table `threadFollowsInMessage`: `userId`, `roomId`, and `threadRootRowKey` (the root message's Azure Table rowKey), with a composite primary key over all three so a follow is idempotent, plus `isUnfollowed` — the member's recorded decision to stop, which is why a row outlives an unfollow. Room deletion cascades the follows away. The drawer resolves the followed roots back to their messages in one batched Azure Table read (`readMessagesByRowKeys`, shared with the procedure of the same name) whose filter drops any root that was deleted, so it never lists a dangling follow. That read is a partition scan, so the drawer lists the roots newest-message-first rather than in the order the follows were recorded, and it returns whichever entity each root actually is — a webhook message can be a thread root like any other.
 
 ## Procedures
 
