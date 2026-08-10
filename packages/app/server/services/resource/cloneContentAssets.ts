@@ -1,7 +1,6 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 import type { ContainerClient } from "@azure/storage-blob";
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import {
   FILES_DIRECTORY_SEGMENT,
@@ -38,7 +37,7 @@ const cloneAsset = async (
 // Asset never lands under the destination's own published prefix, which unpublishing wipes — which is also
 // Why the rewrite is a per-url map, never a prefix replace
 export const cloneContentAssets = async <TContent>(
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   userId: string,
   content: TContent,
   destinationDirectoryName: string,

@@ -1,5 +1,4 @@
-import type { FriendRequestNotificationEventGridData, relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database, FriendRequestNotificationEventGridData } from "@esposter/db-schema";
 
 import { processFriendRequestNotificationHandler } from "@/handlers/processFriendRequestNotificationHandler";
 import { InvocationContext } from "@azure/functions";
@@ -7,7 +6,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { users } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {

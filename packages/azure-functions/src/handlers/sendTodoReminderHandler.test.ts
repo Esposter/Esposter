@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { sendTodoReminderHandler } from "@/handlers/sendTodoReminderHandler";
 import { InvocationContext } from "@azure/functions";
@@ -9,7 +8,7 @@ import { AzureContainer, resources, ResourceType, users } from "@esposter/db-sch
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 const { sendTodoReminderNotificationMock } = vi.hoisted(() => ({
   sendTodoReminderNotificationMock:

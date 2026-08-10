@@ -1,5 +1,4 @@
-import type { relations, ScheduledMessageJobPayload } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database, ScheduledMessageJobPayload } from "@esposter/db-schema";
 
 import { processScheduledMessageJobHandler } from "@/handlers/processScheduledMessageJobHandler";
 import { sendPushNotification } from "@/services/sendPushNotification";
@@ -23,7 +22,7 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {

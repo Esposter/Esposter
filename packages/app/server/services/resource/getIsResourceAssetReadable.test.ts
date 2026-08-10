@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
 import { describe, expect, test, vi } from "vitest";
@@ -22,7 +21,7 @@ describe(getIsResourceAssetReadable, () => {
           resourcePublications: { findFirst: findFirstPublication },
           resources: { findFirst: findFirstResource },
         },
-      } as unknown as PostgresJsDatabase<typeof relations>,
+      } as unknown as Database,
       findFirstPublication,
       findFirstResource,
     };

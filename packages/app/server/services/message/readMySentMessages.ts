@@ -1,8 +1,7 @@
 import type { ReadMySentMessagesInput } from "#shared/models/db/message/ReadMySentMessagesInput";
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SelectFields } from "@azure/search-documents";
-import type { Clause, MessageEntity, relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Clause, Database, MessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { readMessageSearchDocuments } from "@@/server/services/message/readMessageSearchDocuments";
@@ -13,7 +12,7 @@ import { inArray } from "drizzle-orm";
 
 export const readMySentMessages = async (
   { limit, offset }: ReadMySentMessagesInput,
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   userId: string,
 ): Promise<ReadMySentMessagesResult> => {
   const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
