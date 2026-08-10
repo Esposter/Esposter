@@ -111,7 +111,9 @@ describe("moderation", () => {
 
     // These three land on the call pipeline rather than the database, so the mutation itself only has to record
     // The action and resolve
-    test.each([AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall])(
+    // `as const` keeps the rows as their own literals — a plain array widens to `AdminActionType`, which the
+    // Discriminated input union rejects
+    test.each([AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall] as const)(
       "%s: owner applies it to a member — succeeds with no error",
       async (type) => {
         expect.hasAssertions();
