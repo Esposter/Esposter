@@ -19,17 +19,15 @@ await loadContent();
 
 <template>
   <v-container fluid flex flex-col h-full>
-    <StyledDataTable
+    <v-data-table
       flex
       flex-1
       flex-col
-      :data-table-props="{
-        height: '100%',
-        headers: TodoListHeaders,
-        items,
-        search: searchQuery,
-        sortBy: [{ key: 'name', order: 'asc' }],
-      }"
+      height="100%"
+      :headers="TodoListHeaders"
+      :items
+      :search="searchQuery"
+      :sort-by="[{ key: 'name', order: 'asc' }]"
       @click:row="onClickRow"
     >
       <template #top>
@@ -44,7 +42,7 @@ await loadContent();
       <template #[`item.notes`]="{ item }">
         <div class="rich-text-content" v-html="item.notes" />
       </template>
-    </StyledDataTable>
+    </v-data-table>
     <ResourceTodoListEditDialog />
   </v-container>
 </template>

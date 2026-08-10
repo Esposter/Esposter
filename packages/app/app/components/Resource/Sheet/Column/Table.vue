@@ -43,23 +43,15 @@ const dragColumns = computed({
       <ResourceSheetColumnTextSlot />
     </template>
     <VueDraggable v-model="dragColumns" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
-      <StyledDataTable
-        :data-table-props="{
-          density: 'compact',
-          headers: ColumnHeaders,
-          hideDefaultFooter: true,
-          items: dataSource.columns,
-          modelValue: selectedColumnIds,
-          search,
-          showSelect: true,
-          sortBy,
-          'onUpdate:modelValue': (newSelectedColumnIds) => {
-            selectedColumnIds = newSelectedColumnIds as string[];
-          },
-          'onUpdate:sortBy': (newSortBy) => {
-            sortBy = newSortBy;
-          },
-        }"
+      <v-data-table
+        v-model="selectedColumnIds"
+        v-model:sort-by="sortBy"
+        density="compact"
+        hide-default-footer
+        show-select
+        :headers="ColumnHeaders"
+        :items="dataSource.columns"
+        :search
       >
         <template v-if="selectedColumnIds.length > 0" #top>
           <ResourceSheetColumnTopSlot />
@@ -76,7 +68,7 @@ const dragColumns = computed({
         <template #[`item.actions`]="{ item: column }">
           <ResourceSheetColumnActionSlot :column />
         </template>
-      </StyledDataTable>
+      </v-data-table>
     </VueDraggable>
     <ResourceSheetColumnChartDialog v-model="isChartOpen" :column-statistics="chartingColumnStatistics" />
     <ResourceSheetColumnEditDialog v-if="editingColumn" :key="editingColumn.id" :column="editingColumn" :data-source />

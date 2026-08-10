@@ -160,26 +160,24 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         }
       "
     />
-    <StyledDataTableServer
+    <v-data-table-server
       v-else
+      height="100%"
+      item-value="id"
+      show-select
       flex
       flex-1
       flex-col
-      :data-table-server-props="{
-        groupBy: isGroupedByType ? [{ key: 'type' }] : [],
-        headers: visibleHeaders,
-        height: '100%',
-        items,
-        itemsLength: count,
-        itemsPerPageOptions: RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS,
-        itemValue: 'id',
-        loading: isLoading,
-        modelValue: selectedIds,
-        page,
-        search: filterKey,
-        showSelect: true,
-        sortBy,
-      }"
+      :group-by="isGroupedByType ? [{ key: 'type' }] : []"
+      :headers="visibleHeaders"
+      :items
+      :items-length="count"
+      :items-per-page-options="RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS"
+      :loading="isLoading"
+      :model-value="selectedIds"
+      :page
+      :search="filterKey"
+      :sort-by
       @click:row="onClickRow"
       @contextmenu:row="onContextMenuRow"
       @update:model-value="updateSelection"
@@ -208,7 +206,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       <template #no-data>
         <ResourceListNoDataSlot :error :has-active-filters :source @clear="clearFilters()" @refresh="refresh()" />
       </template>
-    </StyledDataTableServer>
+    </v-data-table-server>
     <ResourceListContextMenu
       v-if="contextMenuResource"
       v-model="isContextMenuOpen"

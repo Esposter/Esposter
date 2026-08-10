@@ -18,6 +18,9 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
+// On the draggable rather than the table itself: it wraps the table and nothing else, so the click-outside
+// Region is identical, and `VDataTable`'s instance type is large enough that resolving it against vueuse's
+// Element union produces a "union type too complex" error
 const table = useTemplateRef("table");
 const columnStore = useColumnStore();
 const { displayColumns } = storeToRefs(columnStore);
@@ -152,37 +155,28 @@ onKeyStroke("Escape", () => {
     <template #text>
       <ResourceSheetRowTextSlot />
     </template>
-    <VueDraggable v-model="dragRows" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
-      <StyledDataTable
-        ref="table"
+    <VueDraggable
+      ref="table"
+      v-model="dragRows"
+      target="tbody"
+      :disabled="!isDraggable"
+      :handle="`.${DRAG_HANDLE_CLASS}`"
+    >
+      <v-data-table
+        v-model="selectedRowIds"
+        v-model:items-per-page="itemsPerPage"
+        v-model:page="page"
+        v-model:sort-by="sortBy"
+        density="compact"
+        multi-sort
+        show-select
         flex
         flex-1
         flex-col
-        :data-table-props="{
-          cellProps,
-          density: 'compact',
-          headers: tableHeaders,
-          itemsPerPage,
-          items: filteredRows,
-          modelValue: selectedRowIds,
-          multiSort: true,
-          page,
-          search,
-          showSelect: true,
-          sortBy,
-          'onUpdate:itemsPerPage': (newItemsPerPage) => {
-            itemsPerPage = newItemsPerPage;
-          },
-          'onUpdate:modelValue': (newModelValue) => {
-            selectedRowIds = newModelValue as string[];
-          },
-          'onUpdate:page': (newPage) => {
-            page = newPage;
-          },
-          'onUpdate:sortBy': (newSortBy) => {
-            sortBy = newSortBy;
-          },
-        }"
+        :cell-props
+        :headers="tableHeaders"
+        :items="filteredRows"
+        :search
       >
         <template v-if="selectedRowIds.length > 0" #top>
           <ResourceSheetRowTopSlot />
@@ -209,7 +203,7 @@ onKeyStroke("Escape", () => {
         <template #tfoot>
           <ResourceSheetRowFooterSlot />
         </template>
-      </StyledDataTable>
+      </v-data-table>
     </VueDraggable>
     <ResourceSheetRowEditDialog
       v-if="editingRow"
