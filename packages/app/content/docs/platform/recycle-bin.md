@@ -41,12 +41,12 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 
 ## Procedures
 
-| Procedure                                                 | Auth                  | Input      | Purpose                                      |
-| --------------------------------------------------------- | --------------------- | ---------- | -------------------------------------------- |
-| `<type>.deleteResource` / `resource.deleteResources`      | owner                 | unchanged  | Set `deletedAt`, delete the publication row  |
-| `resource.readDeletedResources` / `countDeletedResources` | authed                | pagination | The caller's own bin list                    |
-| `resource.restoreResource`                                | owner (`deletedOnly`) | `{ id }`   | Clear `deletedAt`, append a `Restored` entry |
-| `resource.purgeResource`                                  | owner (`deletedOnly`) | `{ id }`   | Hard delete blob dir, activity, then the row |
+| Procedure                                                 | Auth                    | Input      | Purpose                                      |
+| --------------------------------------------------------- | ----------------------- | ---------- | -------------------------------------------- |
+| `<type>.deleteResource` / `resource.deleteResources`      | owner                   | unchanged  | Set `deletedAt`, delete the publication row  |
+| `resource.readDeletedResources` / `countDeletedResources` | authed                  | pagination | The caller's own bin list                    |
+| `resource.restoreResource`                                | owner (`isDeletedOnly`) | `{ id }`   | Clear `deletedAt`, append a `Restored` entry |
+| `resource.purgeResource`                                  | owner (`isDeletedOnly`) | `{ id }`   | Hard delete blob dir, activity, then the row |
 
 ## Key files
 

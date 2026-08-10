@@ -152,10 +152,10 @@ All cleanup — Azure mock stores and DB rows — lives in `afterEach`, never `b
 | `packages/db-mock/src/createMockDb.ts`                                                | PGlite setup + snapshot loading                                          |
 | `packages/azure-mock/src/`                                                            | `MockTableClient`, `MockContainerClient`, `MockEventGridPublisherClient` |
 | `packages/app/server/trpc/context.test.ts`                                            | `createMockContext`, session helpers, `vi.mock` wiring                   |
-| `packages/app/server/composables/azure/table/useTableClient.test.ts`                  | `useTableClientMock` export                                              |
-| `packages/app/server/composables/azure/container/useContainerClient.test.ts`          | `useContainerClientMock` export                                          |
-| `packages/app/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | `useEventGridPublisherClientMock` export                                 |
-| `packages/app/server/composables/azure/serviceBus/useServiceBusSender.test.ts`        | `useServiceBusSender` mock export                                        |
+| `packages/app/server/composables/azure/table/useTableClient.test.ts`                  | module double — re-exports `useTableClient` over `MockTableClient`       |
+| `packages/app/server/composables/azure/container/useContainerClient.test.ts`          | module double — re-exports `useContainerClient`                          |
+| `packages/app/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | module double — re-exports `useEventGridPublisherClient`                 |
+| `packages/app/server/composables/azure/serviceBus/useServiceBusSender.test.ts`        | module double — re-exports `useServiceBusSender`                         |
 
 ## Adding a new router test
 

@@ -76,6 +76,6 @@ Open work: [roadmap](/docs/virrun/roadmap). Decided ideas: [deferred](/docs/virr
 - **Cross-process probe caches** — os-backend capability probe and win32 WSL environment probes persisted across processes.
 - **Concurrency-safe cache** — pid-tagged temps, pid-liveness reaping, and per-run leases so concurrent runs never delete each other's files.
 - **`virrun doctor`** — probes each `os`-backend prerequisite and prints an aligned per-check report.
-- **Native-on-Linux CI** — the platform-branched config resolves `native` on Linux CI runners; the former warm-snapshot CI pipeline was removed.
+- **Native-on-Linux CI** — the platform-branched config resolves `native` on Linux CI runners, so CI needs no snapshot pipeline of its own.
 - **Bench-truth** — corrected the speed story: no install bench group (the os install feeds the fork snapshot, not host disk), honest win32 numbers.
 - **Task-cache eviction** — age-prune of the unbounded `tasks/` dir beside the temp reap, touch-on-hit recency so age reflects use, and payload size in `cache ls`.

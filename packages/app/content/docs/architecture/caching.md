@@ -74,7 +74,7 @@ Favourites and Recent are **capped** lists (`MAX_READ_LIMIT`, `RECENT_RESOURCES_
 
 ## `isRefetchOnInvalidate` — declared per cache, not judged per call site
 
-An invalidated cache either re-reads at once or drops and waits for whatever reads it next. That choice used to be made at every call site that invalidated something, by an author who had to know which surfaces were mounted; it is now one flag on the cache, decided once:
+An invalidated cache either re-reads at once or drops and waits for whatever reads it next. That is one flag on the cache, decided once — never a judgement at each call site that invalidates something, which would ask every author to know which surfaces are mounted:
 
 | Cache          | Refetches now | Why                                                                          |
 | -------------- | ------------- | ---------------------------------------------------------------------------- |

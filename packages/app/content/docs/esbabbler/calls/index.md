@@ -121,7 +121,7 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 
 ## Notes
 
-- v1 was mesh WebRTC (≤ 8 users, audio only, N² upload); LiveKit replaced it because video/screenshare make mesh bandwidth unsustainable and LiveKit removes all signaling procedures (`sendSignal`/`onSendSignal` deleted).
+- **An SFU rather than a mesh.** Mesh WebRTC costs each participant an upload per peer, which video and screenshare make unsustainable past a handful of people; routing through LiveKit also means the app owns no signaling procedures of its own.
 - Hosting: LiveKit Cloud free tier (5,000 participant-minutes/month) now; self-hosted LiveKit on Azure Container Apps (~$5–15/month, scales to zero) when usage exceeds ~10,000 participant-minutes/month.
 - Empty-string sentinel: `readCallSessionId` returns `""` when the room has no session, never `null`.
 - Virtual backgrounds: starter image presets via `@livekit/track-processors`; selecting a preset turns the camera on, and camera-off resets the processor.

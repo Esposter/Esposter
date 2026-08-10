@@ -36,7 +36,7 @@ interface DatasetReference extends ItemEntityType<DatasetProviderType> {
 }
 ```
 
-A reference is just a resource id — a Sheet resource _is_ the dataset (no sub-item selector; the old table document's `itemId` died with the multi-item document). `DatasetProviderType` (server-resolvable references) is a different axis from `DataSourceType` (Csv/Json/Xlsx — file formats parsed client-side). Do not merge them: one describes _where data lives_, the other _how a file is encoded_.
+A reference is just a resource id — a Sheet resource _is_ the dataset, so a reference carries no sub-item selector. `DatasetProviderType` (server-resolvable references) is a different axis from `DataSourceType` (Csv/Json/Xlsx — file formats parsed client-side). Do not merge them: one describes _where data lives_, the other _how a file is encoded_.
 
 ## Serving
 

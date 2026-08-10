@@ -53,7 +53,7 @@ The `☰` sits beside the breadcrumb trail, on the same row as the storage meter
 
 The drawer is `StyledNavDrawer` and behaves identically at every breakpoint — a hamburger is already the narrow-viewport shape, so there is no second behaviour to keep in step. It is deliberately **not** the blade nav's `StyledCollapsibleNav`: a blade rail is used constantly while reading one resource and stays on screen, which is a different rule and so a different shell. Active entries are matched **exactly** — Home is a path prefix of every other entry, so a prefix match would leave it lit on every page in the area.
 
-Home keeps its Recent and Favorites card. The card and the routes are the same two sets at two sizes, so both read their icon and empty-state copy from `ResourceListSourceDefinitionMap` through `ResourceHomeTabSourceMap` — a set is described identically wherever it renders.
+Home keeps its Recent and Favorites card. The card and the routes are the same two sets at two sizes, so both take a `source` and read that source's icon and empty-state copy from `ResourceListSourceDefinitionMap` — a set is described identically wherever it renders.
 
 ## Key files
 

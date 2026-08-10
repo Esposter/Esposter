@@ -96,6 +96,6 @@ Nothing in a fetch composable touches the cache: hydration is a watcher's job, f
 
 ## Notes
 
-- `ReadItemsCacheOptions` was removed — do not reintroduce cache parameters to pagination helpers.
+- **Pagination helpers take no cache options.** The cache is wired at the composable layer, so a read helper never learns whether one exists — threading cache parameters back through them would give the same question two answers.
 - Neither half of the cache alerts. `readIndexedDb` / `writeIndexedDb` report a refused operation to their caller rather than swallowing it, and `usePaginationCache` declares the one `onError` both halves use — the user never asked for the cache, so a browser that refuses it (quota reached, private mode, a database another tab has blocked) is logged and nothing more. A second error channel inside the services is a channel that can disagree with that one.
 - Tests: the generic composable owns the whole cache lifecycle (persist on change, clear on empty, hydrate on mount/switch/offline, readiness and partition-key guards), tested once for both pagination variants. A feature cache tests only what is its own — its `getWriteItems` filter, its `onHydrate` side effects, and one end-to-end wiring pass over its partition-key source and store hook. Awaiting landed cache state is `waitForSynchronizedFunctions()`; the composables return nothing. `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.

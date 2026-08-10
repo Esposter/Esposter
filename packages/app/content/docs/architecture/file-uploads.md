@@ -71,4 +71,3 @@ export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE; // SAS max blob size (file u
 ## Notes
 
 - **Naming**: both the user and room upload procedures are named `generateProfileImageUploadUrl`; the router context (`user.` vs `room.`) disambiguates — consistent with procedures being named by action, not by the entity they touch.
-- **`octetInputParser` removed**: `user.uploadProfileImage` previously used it. It could not accept input alongside the binary body (no way to scope to a `roomId`), shared the 2 MB tRPC limit with all requests, and could only enforce size client-side. The SAS pattern resolves all three issues.
