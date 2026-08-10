@@ -106,6 +106,8 @@ Skip step 1 only for a genuinely one-line change. When a step finds nothing, say
 
 Carrying one settled convention across code that predates this ritual is a **sweep**: one file per sweep in `.claude/ledgers/`, tracked as repo state rather than as a proposal, and run per the `sweeps` skill.
 
+A sweep is not only a job someone schedules. **When the change edits a file inside a unit an open ledger still lists as unswept, sweep those files first, in their own commit ahead of the behaviour change** — the ledger drains as a by-product of ordinary work instead of waiting for a sitting. Scope it to the files being touched, keep the two commits apart, and leave the row alone: the coverage table tracks whole units, and there is no partially-swept state (`sweeps` skill).
+
 ## Architecture
 
 ### Data Storage Split
