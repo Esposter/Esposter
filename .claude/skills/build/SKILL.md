@@ -1,6 +1,6 @@
 ---
 name: build
-description: Esposter rolldown build conventions — shared rolldown configs, external list rules, and self-contained bundle packages. Apply when adding packages or editing rolldown configs.
+description: Esposter rolldown build conventions — shared rolldown configs, external list rules, self-contained bundle packages, and why a declare-module augmentation never travels through a bundled .d.ts to a consuming package. Apply when adding packages, editing rolldown configs, or wrapping a library whose types are augmented by a plugin.
 ---
 
 # Build Conventions (Rolldown)
@@ -78,6 +78,12 @@ external: ["unconfig"],                                    // virrun — vendors
 - **virrun** externalizes only `unconfig`: its synchronous TS loading does `createRequire(import.meta.url)("jiti")` relative to its own installed file, so vendoring it would rebase that resolution into the bundle and break config loading in consumer repos. Everything else — including the vue peers and `@platformatic/vfs` (a devDep) — is vendored.
 - **Never spread the full `external` list here** — `/@esposter\//u` would externalize `@esposter/shared`/`@esposter/db`, re-introducing peer deps.
 - An `INVALID_ANNOTATION` warning is never our code — it comes from a bundled third-party `dist` (`@vueuse/core`). **Do not "fix" it by externalizing that dep**: virrun's config comment records that trade-off as rejected — zero peer deps for consumers is worth the harmless warning. Never edit the third-party comments either.
+
+## Module Augmentations Do Not Cross a Package Boundary
+
+A `declare module "x"` augmentation — a dayjs plugin, a Zod extension, a Vuetify labs type — is resolved **per TypeScript program** against that module's identity. It is not a value, so it cannot be re-exported, and it does not travel inside a bundled `.d.ts`. Neither `import type {} from "dayjs/plugin/duration"` nor a `/// <reference types="…" />` in the source survives the bundle, and externalizing the dependency changes nothing: the consumer's own program still has to contain the plugin's declarations before the augmented member resolves.
+
+So a package that wraps an augmented library exports the **value** and lets each consumer register the augmentation itself — `packages/db-schema`'s `dayjs` re-export calls `baseDayjs.extend(duration)` so the runtime works everywhere, and every package that types a `.duration(...)` call still imports the plugin in its own graph. Don't chase this with a barrel re-export or a reference directive; both look like they work until a downstream `pnpm typecheck` reports the member missing.
 
 ## Dependency Installs & Workspace Graph
 

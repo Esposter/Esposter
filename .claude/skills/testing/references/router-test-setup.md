@@ -23,12 +23,15 @@ The default mock session is always the **base user** (inserted by `createMockCon
 - **`getMockSession()`** — returns the base user session (stable `user.id`, new `session.id` each call). Assign before use: `const owner = getMockSession().user`.
 - **Default session is owner** — API calls with no queued `mockSessionOnce` run as the base owner. Never call `mockSessionOnce(db, owner)` before owner operations; use it only to consume a queued non-owner session.
 - **`mockSessionOnce(db)`** — creates a new user in the DB AND queues their session for the next API call. After that call, the default owner resumes.
-- **Consume pattern** — use `getMockSession()` to consume a queued session slot without making an API call:
+- **`createMockUser(db)`** — a second user for the test to _act on_ rather than _act as_. It is the consume pattern already named, so write it instead of the two-step: `mockSessionOnce` creates the user but also queues their session, and `createMockUser` spends that queued slot on the caller's behalf so setup carries on as the default owner.
+
   ```ts
-  await mockSessionOnce(mockContext.db);  // create user, queue session
-  const { user } = getMockSession();       // consume slot, get user
-  await roomCaller.createMembers(...);     // runs as default owner
+  const member = await createMockUser(mockContext.db); // not: await mockSessionOnce(db); const { user } = getMockSession();
+  await roomCaller.createMembers({ roomId, userIds: [member.id] }); // still the owner
   ```
+
+  Reach for the raw pair only when the test needs the whole `GetSessionPayload` (a `replayMockSession` that turns on `session.id`) rather than the user.
+
 - **`mockSessionOnce(db, existingUser)`** — requeues an existing user's session without re-inserting. Use for non-owner member operations.
 - **Target: 1 `mockSessionOnce` per test** — one for non-owner user creation; all owner operations use the default.
 - **`replayMockSession`** — only when the exact same session payload must be reused across multiple calls, especially when `session.id` is part of the behavior under test. If only the same user matters, prefer `mockSessionOnce(db, user)` so the test does not couple itself to session identity. If the payload comes from a newly created `mockSessionOnce(db)` user and setup should continue as the default owner, first consume the queued slot with `getMockSession()`.

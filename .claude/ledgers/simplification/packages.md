@@ -15,5 +15,4 @@ Grouped so each row is one review-sized commit.
 
 ## Open findings
 
-- **`azure-mock` throws `new Error("Method not implemented.")` at 82 unimplemented-stub sites**, against the `typescript` skill's ban on bare `Error`. Decision: carve an exemption for the unreachable stub (recommended — a stub has no operation and no resource to name, and nothing catches or logs it) or route all 82 through one `getNotImplementedError()`.
-- **`Database` is adopted in `packages/db` and `packages/db-mock` only.** `PostgresJsDatabase<typeof relations>` is still spelled out at ~25 sites in `packages/app` and in `packages/azure-functions`, whose row is already swept. The type is exported and building, so both are a find-and-replace outside this ledger's units.
+None. Two closed on 2026-08-11: the unimplemented-stub `new Error` is now an explicit exemption in the `typescript` skill rather than 82 violations, and `Database` replaced the last spelled-out `PostgresJsDatabase<typeof relations>` across `packages/app` and `packages/azure-functions`.

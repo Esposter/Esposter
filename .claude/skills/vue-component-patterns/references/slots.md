@@ -25,6 +25,18 @@ When a wrapper forwards an optional slot into a library component that falls bac
 
 Canonical: `Styled/Tooltip/IconButton.vue`. An unconditional `<slot />` directly inside a library component has the same always-registered problem — only safe when the wrapped component has no prop fallback for that slot.
 
+## Fallback content is replaced whole — pass the state it read as a slot prop
+
+`<slot>` fallback content is an all-or-nothing default: the moment a consumer supplies the slot, the fallback is gone, including any internal state its `v-if` depended on. So a fallback that reads private state (`<slot><v-progress-circular v-if="isLoading" /></slot>`) silently hands the consumer a **less capable** slot than the default it replaced — their content renders whenever the slot renders, with no way to ask "is it loading?".
+
+Declare that state as a scoped slot prop whenever the fallback branches on it, so both paths see the same thing:
+
+```ts
+defineSlots<{ default?: (props: { isLoading: boolean }) => VNode }>();
+```
+
+Where the component deliberately keeps the state private, say so at the declaration and in the skill that owns the component — an always-visible placeholder is a reasonable contract, but only if it is a documented one rather than a surprise (`Styled/Waypoint.vue`, and the `pagination` skill).
+
 ## Slot extraction (complex components)
 
 When a component has many named slots with non-trivial content, extract each slot's content into its own component, named after the slot it fills (`#tfoot` → `FooterSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).

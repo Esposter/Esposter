@@ -65,6 +65,8 @@ Any page describing a flow, lifecycle, or interaction between 3+ parts (componen
 
 Exemptions: `index.md` pages, `deferred/`/`rejected/` pages, `roadmap.md`, and static inventories (key-file tables, component lists). Never add a diagram as decoration.
 
+**The exemption is about the page's shape, not its length.** A short page describing one small flow still owes a diagram; a long page that is a list of rules owes none. When auditing an area, the question to ask each page is "does the prose name three parts and say what passes between them?" — if it does, a missing diagram is a finding, however tidy the page reads. Pages that only _feel_ exempt are the ones this survey keeps rediscovering, so record the verdict per page rather than per area.
+
 Every diagram is parse-validated by `packages/app/content/docs.test.ts` (`mermaid.parse` over all ` ```mermaid ` blocks), so a syntax error fails `pnpm test`. Gotcha: `;` is a mermaid statement separator even inside message/note text — never use a semicolon in labels or notes (use `—` or a comma).
 
 ## Standards vs feature pages

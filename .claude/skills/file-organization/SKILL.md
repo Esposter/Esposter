@@ -103,6 +103,8 @@ Read it when adding a package under `packages/`, adding a `bin` entrypoint (no s
 
 When renaming a file (`createFoo.ts` → `createBar.ts`), **delete the old file** — never leave a re-export alias (`export { createBar as createFoo } from "./createBar"`). Update all import sites to the new path/name directly, and the barrel (`index.ts`) if it exported the old name. The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's canonical, and the rename never fully propagates.
 
+The same applies to a function that **moves into a shared package**: consumers import it from `@esposter/db` (or whichever package now owns it) directly. Never leave a local `server/services/<feature>/fn.ts` whose whole body is `export { fn } from "@esposter/db"` — it gives one function two importable paths, so a grep for its call sites finds the wrong half, and the next reader has to open the wrapper to learn it isn't one. A package barrel (`index.ts`) is the one file allowed to re-export, because publishing the package is its entire job.
+
 ## Shared Schemas
 
 When multiple models share a field (e.g. `bar`), define a single named interface + schema (`Bar` / `barSchema`) in `shared/models/entity/` and spread the schema's `.shape` into each model schema. No `With` prefix. Don't add `.default(...)` to the shared schema — each implementing class declares its own default as a class field and adds it at the schema call site.

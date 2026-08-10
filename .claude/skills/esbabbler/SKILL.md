@@ -25,13 +25,14 @@ All member name display goes through `getDisplayName(user, roomId)` from `useUse
 
 When you only have a member **id** (an actor/target id from a moderation log or note, possibly no longer in the loaded member list), use `getMemberName(userId)` from `useMemberStore` — it finds the member, resolves through `getDisplayName` (current room), and falls back to the raw id. Never rebuild a local `computed(() => new Map(members.value.map(({ id, name }) => [id, name])))` + `?? userId` lookup — that plain-`name` map both duplicates this primitive and bypasses nickname resolution.
 
-Where the nickname is applied:
+The rule has **no room-scoped exceptions** — a surface that renders a member's name inside a room resolves it, including ones that read like a global profile. The profile card is the standing example: it opens over a room, so `Message/Model/User/ProfileCard/Index.vue` resolves through `getDisplayName(user, currentRoomId.value)` and the card shows the nickname, matching the message header that opened it. A surface that genuinely has no room (account settings, the global user menu) reads `user.name` directly.
+
+Where the plumbing is not obvious:
 
 | Location                       | How                                                                                                                                                                             |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Mention labels in message body | `useMessageWithMentions(message, roomId)` — pass `() => message.partitionKey` as second arg                                                                                     |
-| Member list sidebar            | `Message/Model/Member/ListItem.vue` — `displayName = computed(() => getDisplayName(member, room.id))`                                                                           |
-| Room settings member list      | `Message/Model/Room/Settings/Type/Member/ListItem.vue` — `computed(() => getDisplayName(member, roomId))`                                                                       |
+| Profile card                   | `Message/Model/User/ProfileCard/Index.vue` — `computed(() => getDisplayName(user, currentRoomId.value))`, the room coming from the route rather than a prop                     |
 | Push notification title        | `server/trpc/routers/message/index.ts` queries `usersToRoomsInMessage.nickname` for the sender before publishing the EventGrid event, and passes it as the notification `title` |
 
 ### `||` not `??` for nickname fallback

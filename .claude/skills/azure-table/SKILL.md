@@ -1,6 +1,6 @@
 ---
 name: azure-table
-description: Esposter Azure Table Storage patterns — the AZURE_MAX_PAGE_SIZE / AZURE_MAX_BATCH_SIZE constants, partition and row key design, reverse-ticked timestamps and the ascending mirror table, batching writes that share a partitionKey instead of one round trip per row, reading through getEntityWithEtag and writing conditionally, serializeClauses filters, counting only after a capped read and bounding the walk, optional-init entity constructors, and soft-delete, plus deep dives on the submitTransactionBatches write path and conflict replay, the updateEntityConditionally retry loop, and observing or intercepting table writes in tests. Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code.
+description: Esposter Azure Table Storage patterns — the AZURE_MAX_PAGE_SIZE / AZURE_MAX_BATCH_SIZE constants, partition and row key design, reverse-ticked timestamps and the ascending mirror table, batching writes that share a partitionKey instead of one round trip per row, reading through getEntityWithEtag and writing conditionally, serializeClauses filters and the shared getPartitionKeyFilter, counting only after a capped read and bounding the walk, optional-init entity constructors, and soft-delete, plus deep dives on the submitTransactionBatches write path and conflict replay, the updateEntityConditionally retry loop, and observing or intercepting table writes in tests. Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code.
 ---
 
 # Azure Table Storage Patterns
@@ -58,6 +58,8 @@ const filter = serializeClauses([
   getTableNullClause(ItemMetadataPropertyNames.deletedAt),
 ] as Clause<StandardMessageEntity>[]);
 ```
+
+**"Everything under this partition" is `getPartitionKeyFilter(id)`** (`@esposter/db`), never a hand-built one-clause `serializeClauses` call and never a template literal. Every table partitions on its owning entity's id, so a read, a count and a purge of the same entity all start from that one filter — writing it once is what keeps the three from disagreeing after a key-shape change. A feature that also filters on its own columns drops back to the clause array above; a feature that only re-labels the partition filter for its domain (`getSurveyResponseFilter`) is a one-line named wrapper over it, not a second implementation.
 
 ## Counting — Only After a Capped Read, and Bounded
 

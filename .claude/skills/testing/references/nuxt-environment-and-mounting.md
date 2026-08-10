@@ -41,6 +41,18 @@ await mountSuspended(Foo, { global: { components: { RouterLink } }, props, route
 
 The `route` option resolves against the app's real routes, so route matching (params, catch-alls) behaves exactly as it does in the browser.
 
+## A room-scoped store has no state until a room is current — `setCurrentRoomId`
+
+Every room-scoped store keys its state by the room id in the route, so before one is set the store's maps are empty and any assertion against them passes vacuously. Two things make the obvious assignment silently do nothing, which is why this is a shared helper (`app/services/message/room/setCurrentRoomId.test.ts`) rather than a line each test writes:
+
+- **Mounting resets the route**, so the id has to be set _after_ `mountSuspended`, not in a `beforeEach` above it.
+- **`router.currentRoute` is a `shallowRef`**, so writing `params.id` into the existing params object mutates a value nothing is tracking. The helper's `triggerRef` is what makes the computed re-read.
+
+```ts
+const wrapper = await mountSuspended(Foo);
+setCurrentRoomId(roomId); // after the mount, and never a bare `currentRoute.value.params.id = roomId`
+```
+
 ## A dispatched event whose handler is async leaves a promise nobody holds
 
 `element.dispatchEvent(e)` returns a `boolean`, so an `async` handler behind it — a template `@click` that awaits `navigateTo`, a mutation, any `await` at all — settles after the environment is torn down, and the run dies as a `statusCode: 500` attributed to whichever file was unlucky. Assertions on the event itself (`defaultPrevented`) are set synchronously during bubbling, so nothing you assert on depends on that promise — the only question is where it lands.
