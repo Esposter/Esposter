@@ -20,6 +20,24 @@ const updatedFoo = requireMutation(
 );
 ```
 
+## Asserting a rejection with no nullable result to guard
+
+The guards above cover a DB result that may be missing. When the router decides the rejection itself, reach for the constructors the guards are built on rather than assembling a `TRPCError` around an error message:
+
+```typescript
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
+
+// BAD_REQUEST by default; pass a code only where the rejection genuinely is not one
+throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Foo, input.fooId);
+throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Foo, input.fooId, "CONFLICT");
+
+// Takes no code — a missing entity is always NOT_FOUND, so it is not the caller's to choose
+throw getNotFoundError(DatabaseEntityType.Foo, input.fooId);
+```
+
+`new TRPCError({ code, message: new InvalidOperationError(...).message })` written out at a throw site is the anti-pattern: it re-decides the code per site, and drifts from the guards' text the moment either changes. Where one feature throws the same rejection from several places, give it a named constructor that calls these (`createInvalidBlueprintError`, `danglingProgramBindingError`) so the arguments are stated once too.
+
 ## A `cause` without a `message` rewrites what the client is told
 
 `TRPCError` falls back to `cause.message` when no `message` is passed, so attaching the underlying failure to an otherwise-bare error (`new TRPCError({ cause: writeError, code: "CONFLICT" })`) replaces the code-shaped message the client renders with the raw upstream text — a `CONFLICT` starts reporting itself as `412`. Attach a `cause` only alongside an explicit `message`, and only when it carries something the code does not already say: where the code is definitionally the diagnosis (every retry lost the same race), the cause is noise bought at the price of the client-facing message. An inline snapshot over the thrown error catches this — the message is what it renders.

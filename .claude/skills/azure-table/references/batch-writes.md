@@ -25,17 +25,21 @@ for await (const page of tableClient
 A transaction is **all-or-nothing**: one rejected action (a `create` whose row already exists → `409`) rolls the whole batch back, and the error names no row you can trust to attribute. So a write that needs per-row conflict handling batches optimistically and replays the batch one insert at a time only when the batch is rejected — the fast path costs one call per 100 rows, and only a genuine collision pays the per-row cost:
 
 ```typescript
-const isBatchCreated = await getResultAsync(() =>
-  tableClient.submitTransaction(batch.map((entity) => ["create", serializeEntity(entity)])),
-).match(
-  () => true,
-  (error) => {
-    if (getIsConflict(error)) return false;
-    throw error;
-  },
-);
-// isBatchCreated === false → replay `batch` insert by insert, applying the per-row 409 handling there
+for (const batch of chunk(entities, AZURE_MAX_BATCH_SIZE)) {
+  const isBatchCreated = await getResultAsync(() =>
+    tableClient.submitTransaction(batch.map((entity) => ["create", serializeEntity(entity)])),
+  ).match(
+    () => true,
+    (error) => {
+      if (getIsConflict(error)) return false;
+      throw error;
+    },
+  );
+  // isBatchCreated === false → replay `batch` insert by insert, applying the per-row 409 handling there
+}
 ```
+
+`submitTransactionBatches` cannot own the chunking here — it has no per-batch hook to catch the rejection and replay, so this path chunks itself with `chunk` (`@esposter/shared`). That is the one exception to `SKILL.md`'s rule, and it is still not a hand-rolled slice loop: an index-stepping `for` with `.slice()` is wrong in both paths.
 
 Only a `409` may fall back — any other failure is a real fault and must propagate, or a transient error silently degrades into a per-row storm that fails anyway. `getIsConflict` and `serializeEntity` both come from `@esposter/db` — never re-test `statusCode === 409` inline (`getIsConflict` covers a blob's conditional create too). `submitTransaction` takes raw entities, so unlike `createEntity` it does not serialize for you.
 

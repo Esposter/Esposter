@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, who alerts a tRPC rejection (errorLink ownership, getIsAlertedByErrorLink, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, the tRPC backend guards, plus deep dives on the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
+description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, who alerts a tRPC rejection (errorLink ownership, getIsAlertedByErrorLink, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, the tRPC backend guards and the getInvalidOperationError/getNotFoundError constructors a router asserts its own rejections with, plus deep dives on the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
 ---
 
 # Error Handling Conventions
@@ -62,7 +62,11 @@ Both live in `@esposter/shared`. Both run the finalizer regardless of success/fa
 
 ## tRPC Backend Guards
 
-Located in `server/trpc/guards/`. Test once, use everywhere — routers don't repeat null checks by hand: `requireEntity` turns a `findFirst` that may be `null` into a `TRPCError` `NOT_FOUND`, and `requireMutation` turns a `.returning()[0]` that may be `undefined` into a `BAD_REQUEST`. Signatures, and the rule for attaching a `cause` to a `TRPCError`, are in `references/server-guards.md`.
+Located in `server/trpc/guards/`. Test once, use everywhere — routers don't repeat null checks by hand: `requireEntity` turns a `findFirst` that may be `null` into a `TRPCError` `NOT_FOUND`, and `requireMutation` turns a `.returning()[0]` that may be `undefined` into a `BAD_REQUEST`.
+
+**Asserting the rejection yourself uses the same pair.** Where no nullable result is being guarded — a validation that fails, a state machine refusing a transition — build the error with `getInvalidOperationError` / `getNotFoundError` from the same folder, never `new TRPCError({ code, message: new InvalidOperationError(...).message })` by hand. The point is that a rejection reads identically whether a guard produced it or a router asserted it, and that the code paired with each error type is decided once: `getNotFoundError` does not even take a code, because a missing entity is always `NOT_FOUND`. A feature whose error is thrown from more than one place wraps this in its own named constructor (`createInvalidBlueprintError`) rather than repeating the arguments.
+
+Signatures, and the rule for attaching a `cause` to a `TRPCError`, are in `references/server-guards.md`.
 
 ## Client Reads/Writes — Don't Hand-Roll the Chain
 

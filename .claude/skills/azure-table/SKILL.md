@@ -37,7 +37,7 @@ Always import from `@esposter/db-schema`, never redefine locally.
 
 **Never spend a round trip per entity when the entities share a `partitionKey`** — chunk them into `submitTransaction` instead. This is the Azure-side twin of the drizzle skill's batch-insert rule: a loop of `createEntity`/`updateEntity` awaits is one network latency per row, so an unremarkable 1000-row write becomes 1000 sequential calls on a request a user is waiting on. Partition-per-owner designs (`partitionKey = roomId`, `= programId`) mean the writes usually already qualify — check whether they do before reaching for `Promise.all`, which still issues a request per row.
 
-Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`, and let `submitTransactionBatches` (`@esposter/db`) own the chunking — never hand-roll the slice loop.
+Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`, and let `submitTransactionBatches` (`@esposter/db`) own the chunking — never hand-roll the slice loop. A write needing **per-batch** conflict handling is the one case `submitTransactionBatches` can't serve; it chunks with `chunk` (`@esposter/shared`), still never an index-stepping `for` with `.slice()`.
 
 ## Read-Modify-Write Is Conditional
 

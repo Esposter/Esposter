@@ -27,14 +27,22 @@ const readFoosInputSchema = z
 const readBarsInputSchema = createOffsetPaginationParamsSchema(selectBarSchema.keyof()).prefault({});
 ```
 
-Server-side, wire the cursor into `getCursorWhereAzureTable` (Azure Table) or `getCursorWhere` (Postgres), fetch `limit + 1` rows, and return `getCursorPaginationData(items, limit, sortBy)`:
+Server-side on **Azure Table**, the whole pipeline — cursor clause, `limit + 1` read, page split — is `readCursorPaginationDataAzureTable`. Build only the clauses that are yours and hand it the client and the entity class; never re-write the pipeline inline:
 
 ```ts
-const sortBy: SortItem<keyof FooEntity>[] = [FOO_ROWKEY_SORT_ITEM];
-if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-const items = await getTopNEntities(client, limit + 1, FooEntity, { filter: serializeClauses(clauses) });
-return getCursorPaginationData(items, limit, sortBy);
+const clauses: Clause<FooEntity>[] = [
+  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+];
+const fooClient = await useTableClient(AzureTable.Foo);
+return readCursorPaginationDataAzureTable(fooClient, FooEntity, {
+  clauses,
+  cursor,
+  limit,
+  sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
+});
 ```
+
+On **Postgres** there is no such composite: wire the cursor into `getCursorWhere`, `.limit(limit + 1)`, and return `getCursorPaginationData(rows, limit, sortBy)`.
 
 ## Read endpoints must accept arrays (no N+1)
 

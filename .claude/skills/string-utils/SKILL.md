@@ -1,6 +1,6 @@
 ---
 name: string-utils
-description: Esposter string normalization and HTML sanitization conventions — normalizeString is the default trim in app code and in base Zod schemas (never in Vue — the vue skill owns that); sanitizeTextHtml is declared at the Zod boundary in base db-schema schemas (never manual frontend calls). Exceptions — user-facing transformation actions, standalone packages, and localStorage drafts. Also covers matching or rewriting a token inside authored content (urls, merge fields, blueprint aliases) — opener-anchored matching over negated charsets, walking string leaves instead of the serialized form, one pass keyed by a Map, and widening the reader instead of backfilling.
+description: Esposter string normalization and HTML sanitization conventions — pluralize over a hand-rolled count ternary; normalizeString is the default trim in app code and in base Zod schemas (never in Vue — the vue skill owns that); sanitizeTextHtml is declared at the Zod boundary in base db-schema schemas (never manual frontend calls). Exceptions — user-facing transformation actions, standalone packages, and localStorage drafts. Also covers matching or rewriting a token inside authored content (urls, merge fields, blueprint aliases) — opener-anchored matching over negated charsets, walking string leaves instead of the serialized form, one pass keyed by a Map, and widening the reader instead of backfilling.
 ---
 
 # String Normalization
@@ -15,6 +15,15 @@ import { normalizeString } from "@esposter/shared";
 normalizeString("  hello  "); // → "hello"
 normalizeString(null); // → ""
 normalizeString(undefined); // → ""
+```
+
+## `pluralize`
+
+`${count} ${pluralize("result", count)}` — never a hand-rolled `${count === 1 ? "" : "s"}` in a template. It lives in `#shared/util/text/pluralize` and selects through `EN_US_PLURAL_RULES` (`Intl.PluralRules`), so the ternary is not even equivalent: the rules object is what decides, and it is the seam a non-English locale changes. The inline ternary also gets written per surface and drifts — the same count is "1 result" here and "1 results" there.
+
+```ts
+pluralize("result"); // → "results" (count defaults to 2)
+pluralize("result", count);
 ```
 
 ## Convention: `string` not `string | null`
