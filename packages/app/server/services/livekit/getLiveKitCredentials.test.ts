@@ -7,7 +7,7 @@ import { describe, expect, test, vi } from "vitest";
 // What a test has to answer — the global the resolved import never reads would leave the real one throwing
 const { livekit } = vi.hoisted(() => ({ livekit: {} as { current: RuntimeConfig["livekit"] } }));
 
-// Specified as a path rather than an `import()`, because `#app/nuxt` carries no types under the server tsconfig
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- the server tsconfig maps no `#app/*`, so `import()` would not resolve
 vi.mock("#app/nuxt", () => ({ useRuntimeConfig: () => ({ livekit: livekit.current }) as RuntimeConfig }));
 
 describe(getLiveKitCredentials, () => {

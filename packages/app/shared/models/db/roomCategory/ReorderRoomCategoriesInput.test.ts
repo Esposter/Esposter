@@ -2,9 +2,9 @@ import { reorderRoomCategoriesInputSchema } from "#shared/models/db/roomCategory
 import { MAX_READ_LIMIT } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-describe("reorderRoomCategoriesInputSchema", () => {
-  const createUpdate = (position: number) => ({ id: crypto.randomUUID(), position });
+const createUpdate = (position: number) => ({ id: crypto.randomUUID(), position });
 
+describe("reorderRoomCategoriesInputSchema", () => {
   test("parses the position updates one drag produces", () => {
     expect.hasAssertions();
 

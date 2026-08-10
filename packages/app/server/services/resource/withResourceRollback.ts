@@ -6,7 +6,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Every path that creates resource rows before writing their content owes the same compensation: a failure
 // Anywhere after the row exists must not leave a row whose content never landed. `createdIds` is read when
 // The rollback runs rather than when the call is made, so a loop may keep pushing into the array it passed
-export const withResourceRollback = async (
+export const withResourceRollback = (
   ctx: AuthedContext,
   createdIds: string[],
   operation: () => Promise<void>,

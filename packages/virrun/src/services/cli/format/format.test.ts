@@ -1,14 +1,17 @@
+import { Color } from "@/models/cli/Color";
 import { BackendType } from "@/models/virrun/BackendType";
+import { colorize } from "@/services/cli/color/colorize";
 import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
 import { formatVirrunBanner } from "@/services/cli/format/formatVirrunBanner";
 import { formatVirrunCacheHit } from "@/services/cli/format/formatVirrunCacheHit";
 import { formatVirrunDebug } from "@/services/cli/format/formatVirrunDebug";
 import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
+import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 import { formatVirrunNetworkHint } from "@/services/cli/format/formatVirrunNetworkHint";
 import { formatVirrunPrepare } from "@/services/cli/format/formatVirrunPrepare";
 import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/format/formatVirrunResult";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 // Every CLI line builder is a pure template-string over the shared formatVirrunLine tag, so each one's whole
 // Observable surface is a single color-stripped string — they share one file rather than one 1-test file each.
 // The `[virrun] ` tag formatVirrunLine contributes is asserted inside every full-string expectation below.
@@ -54,6 +57,24 @@ describe(formatVirrunError, () => {
     expect.hasAssertions();
 
     expect(stripAnsi(formatVirrunError("no pnpm-lock.yaml found"))).toBe("[virrun] no pnpm-lock.yaml found");
+  });
+
+  // The only line whose color carries meaning a stripped assertion cannot see: `colorize` is a no-op under vitest,
+  // So every assertion above passes with the palette role swapped or dropped. Forcing color on is what makes the
+  // Failure role assertable at all — the SGR pair itself stays owned by colorize's own test
+  test("paints the message body in the failure role", () => {
+    expect.hasAssertions();
+
+    vi.stubEnv("FORCE_COLOR", "true");
+
+    expect(formatVirrunError("no pnpm-lock.yaml found")).toBe(
+      formatVirrunLine(colorize("no pnpm-lock.yaml found", Color.Red)),
+    );
+    expect(formatVirrunError("no pnpm-lock.yaml found")).not.toBe(
+      formatVirrunLine(colorize("no pnpm-lock.yaml found", Color.Green)),
+    );
+
+    vi.unstubAllEnvs();
   });
 });
 

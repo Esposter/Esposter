@@ -50,7 +50,10 @@ export const useInitializeGameObjectSetters = <
               updater();
             }, sceneKey);
         },
-        { deep: typeof value === "object" },
+        // Deep unconditionally rather than by the initial value's type: a property that starts `undefined` and is
+        // Later given an object would otherwise be watched shallowly forever, so the game object would track the
+        // Replacement and then silently stop tracking its nested edits. Deep on a primitive traverses nothing
+        { deep: true },
       ),
     );
   }

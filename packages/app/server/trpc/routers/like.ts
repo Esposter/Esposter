@@ -16,12 +16,19 @@ import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 // The three vote writes all read the same slice of the post and all rewrite the same pair of columns, so the
-// Projection and the recount live once — a ranking input added here can never reach only two of them
-const readLikedPost = (tx: Transaction, postId: string) =>
-  tx.query.posts.findFirst({
-    columns: { createdAt: true, id: true, noLikes: true },
-    where: { id: { eq: postId } },
-  });
+// Projection and the recount live once — a ranking input added here can never reach only two of them.
+// Every one of them is a read-modify-write of `noLikes`, so the row is locked for the rest of the transaction:
+// Two votes landing together would otherwise both read the pre-vote count and the later write would replace
+// Rather than add, losing a vote and leaving `ranking` derived from a count that never existed. The lock is what
+// Lets `getPostRanking` stay the one ranking formula — a SQL-side increment would need a second copy of it
+const readLikedPost = async (tx: Transaction, postId: string) =>
+  (
+    await tx
+      .select({ createdAt: posts.createdAt, id: posts.id, noLikes: posts.noLikes })
+      .from(posts)
+      .where(eq(posts.id, postId))
+      .for("update")
+  )[0];
 
 const updateLikeCount = (tx: Transaction, post: { createdAt: Date; id: string }, noLikes: number) =>
   tx
