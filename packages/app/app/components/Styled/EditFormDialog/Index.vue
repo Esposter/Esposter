@@ -9,7 +9,6 @@ interface EditFormDialogProps<T> {
   editedItem: T;
   isDirty: boolean;
   isEditFormValid: boolean;
-  isFullScreenDialog: boolean;
   isSavable: boolean;
   name: string;
   originalItem?: T;
@@ -18,14 +17,14 @@ interface EditFormDialogProps<T> {
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-form"?: () => VNode }>();
 const dialog = defineModel<boolean>({ required: true });
-const { editedItem, isDirty, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
+const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
+const { editedItem, isDirty, isEditFormValid, isSavable, name, originalItem, schema } =
   defineProps<EditFormDialogProps<T>>();
 const emit = defineEmits<{
   close: [];
   delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
   "update:edit-form": [value: InstanceType<typeof VForm>];
-  "update:fullscreen-dialog": [value: boolean];
 }>();
 const editForm = ref<InstanceType<typeof VForm>>();
 const confirmCloseDialog = ref(false);
@@ -68,6 +67,7 @@ watch(editForm, (newEditForm) => {
     <StyledCard>
       <StyledEditFormDialogHeader
         v-model:confirm-close-dialog="confirmCloseDialog"
+        v-model:is-full-screen-dialog="isFullScreenDialog"
         :name
         :edited-item
         :original-item
@@ -76,10 +76,8 @@ watch(editForm, (newEditForm) => {
         :is-dirty
         :is-edit-form-valid
         :schema
-        :is-full-screen-dialog
         :is-savable
         @update:edit-form-dialog="dialog = $event"
-        @update:fullscreen-dialog="emit('update:fullscreen-dialog', $event)"
         @save="emit('save')"
         @delete="emit('delete', $event)"
       >

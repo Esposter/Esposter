@@ -14,7 +14,7 @@ const { list } = defineProps<StyledKeyboardShortcutsDialogProps>();
 
 <template>
   <v-dialog v-model="modelValue" max-width="480">
-    <v-card>
+    <StyledCard>
       <v-card-title flex gap-2 items-center>
         <v-icon icon="mdi-keyboard" />
         Keyboard Shortcuts
@@ -41,6 +41,6 @@ const { list } = defineProps<StyledKeyboardShortcutsDialogProps>();
           </div>
         </div>
       </v-card-text>
-    </v-card>
+    </StyledCard>
   </v-dialog>
 </template>

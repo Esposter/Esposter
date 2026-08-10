@@ -45,7 +45,7 @@ const confirm = () => {
       padded, scrollable body slot → divider → actions. Consumers pass bare body content; the shell owns the layout. -->
     <StyledCard :card-props>
       <template #append>
-        <StyledToggleFullScreenDialogButton :is-full-screen-dialog="isFullScreen" @click="isFullScreen = $event" />
+        <StyledToggleFullScreenDialogButton v-model="isFullScreen" />
       </template>
       <template v-if="$slots.default">
         <v-divider />

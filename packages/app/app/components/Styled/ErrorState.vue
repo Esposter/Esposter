@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type { VBtn } from "vuetify/components";
+
+const RETRY_BUTTON_PROPS: VBtn["$props"] = { prependIcon: "mdi-refresh", text: "Retry" };
+
 interface StyledErrorStateProps {
   error: string;
 }
@@ -11,6 +15,6 @@ const emit = defineEmits<{ retry: [] }>();
      A surface that renders its own copy of this drifts from the rest the first time the wording changes -->
 <template>
   <StyledEmptyState icon="mdi-alert-circle-outline" title="Something went wrong" :description="error">
-    <v-btn prepend-icon="mdi-refresh" variant="tonal" @click="emit('retry')">Retry</v-btn>
+    <StyledButton :button-props="RETRY_BUTTON_PROPS" @click="emit('retry')" />
   </StyledEmptyState>
 </template>

@@ -23,7 +23,7 @@ useVHotkey(hotkey, () => {
 <template>
   <slot name="activator" :is-open :update-is-open="(value) => (isOpen = value)" />
   <v-dialog v-model="isOpen" width="600">
-    <v-card>
+    <StyledCard>
       <v-text-field
         v-model="searchQuery"
         :placeholder
@@ -35,6 +35,6 @@ useVHotkey(hotkey, () => {
         @click:clear="searchQuery = ''"
       />
       <slot />
-    </v-card>
+    </StyledCard>
   </v-dialog>
 </template>

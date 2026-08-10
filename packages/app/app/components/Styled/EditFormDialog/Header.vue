@@ -11,7 +11,6 @@ interface HeaderProps<T> {
   formId: string;
   isDirty: boolean;
   isEditFormValid: boolean;
-  isFullScreenDialog: boolean;
   isSavable: boolean;
   name: string;
   originalItem?: T;
@@ -20,25 +19,15 @@ interface HeaderProps<T> {
 
 defineSlots<{ "prepend-actions": () => VNode }>();
 const confirmCloseDialog = defineModel<boolean>("confirmCloseDialog", { required: true });
-const {
-  editedItem,
-  editForm,
-  formId,
-  isDirty,
-  isEditFormValid,
-  isFullScreenDialog,
-  isSavable,
-  name,
-  originalItem,
-  schema,
-} = defineProps<HeaderProps<T>>();
+const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
+const { editedItem, editForm, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema } =
+  defineProps<HeaderProps<T>>();
 const errorIcon = useTemplateRef("errorIcon");
 const isValid = computed(() => errorIcon.value?.isValid ?? true);
 const emit = defineEmits<{
   delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
   "update:edit-form-dialog": [value: false];
-  "update:fullscreen-dialog": [value: boolean];
 }>();
 </script>
 
@@ -50,7 +39,7 @@ const emit = defineEmits<{
     <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && isValid" />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
     <v-divider thickness="2" vertical inset mx-2 />
-    <StyledToggleFullScreenDialogButton :is-full-screen-dialog @click="emit('update:fullscreen-dialog', $event)" />
+    <StyledToggleFullScreenDialogButton v-model="isFullScreenDialog" />
     <StyledEditFormDialogConfirmCloseDialogButton
       v-model="confirmCloseDialog"
       :edited-item

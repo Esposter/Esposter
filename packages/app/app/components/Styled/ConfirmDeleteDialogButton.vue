@@ -2,7 +2,7 @@
 import type { StyledDeleteFormDialogProps } from "@/components/Styled/DeleteFormDialog.vue";
 import type { VBtn } from "vuetify/components";
 
-const DELETE_BUTTON_PROPS: VBtn["$props"] = { class: "m-0", size: "small", tile: true };
+const DELETE_BUTTON_PROPS: VBtn["$props"] = { size: "small", tile: true };
 
 defineSlots<{ default?: () => VNode }>();
 const { cardProps } = defineProps<Pick<StyledDeleteFormDialogProps, "cardProps">>();

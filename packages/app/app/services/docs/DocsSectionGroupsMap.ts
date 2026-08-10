@@ -15,6 +15,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "caching",
       "persisted-data-latest-shape-only",
       "content-token-rewriting",
+      "dialog-shell",
       "destructive-confirmation",
       "persist-then-notify",
       "conditional-writes",
@@ -74,7 +75,6 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "publish-history",
       "shell-cohesion",
       "breadcrumb-trail",
-      "resource-consolidation",
     ],
     Resources: [
       "sheet-resource",
