@@ -1,11 +1,12 @@
 # Shared
 
-| Unit                                      | Swept      | Notes                                                                                             |
-| ----------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------- |
-| optimistic rollbacks                      | 2026-08-09 | `applyOptimistic` sites + hand-rolled ones; two bugs → `pinia` skill                              |
-| `app/components/Styled`                   | 2026-08-10 | `StyledNavList` extracted (pinned by its own test); effect-scope rule → `vue-composable-patterns` |
-| `shared/models` + `shared/services`       | —          |                                                                                                   |
-| `packages/shared`, `packages/shared-node` | —          |                                                                                                   |
+| Unit                                          | Swept      | Notes                                                                                             |
+| --------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------- |
+| optimistic rollbacks                          | 2026-08-09 | `applyOptimistic` sites + hand-rolled ones; two bugs → `pinia` skill                              |
+| `app/components/Styled`                       | 2026-08-10 | `StyledNavList` extracted (pinned by its own test); effect-scope rule → `vue-composable-patterns` |
+| `shared/models/db` + `shared/models/resource` | —          | the two largest model trees                                                                       |
+| rest of `shared/models` + `shared/services`   | —          |                                                                                                   |
+| `packages/shared`, `packages/shared-node`     | —          |                                                                                                   |
 
 ## Open findings
 
