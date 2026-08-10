@@ -24,7 +24,6 @@ const createSourceColumnIdFormShape = (getItems: keyof typeof ColumnFormVjsfCont
     title: "Source Column",
   }),
 });
-
 // `safeExtend` layers presentation onto the schema the server validates rather than restating it, so a field,
 // Constraint or refinement added to a shared transformation reaches the form without being copied here.
 const aggregationTransformationFormSchema = aggregationTransformationSchema
@@ -72,7 +71,6 @@ const stringSplitTransformationFormSchema = stringSplitTransformationSchema
 const stringTransformationFormSchema = stringTransformationSchema
   .safeExtend(createSourceColumnIdFormShape(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]))
   .meta({ title: ColumnTransformationType.String });
-
 // Typing the form union as the shared `ColumnTransformation` is what keeps the two halves from drifting: an
 // Arm that stops matching the schema the server parses stops compiling here.
 export const columnTransformationFormSchema = z.discriminatedUnion("type", [

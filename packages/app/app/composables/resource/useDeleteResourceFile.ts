@@ -16,7 +16,6 @@ export const useDeleteResourceFile = (type: FileAssetsResourceType, id: MaybeRef
     // Anything outside this resource's files directory is not ours to delete, so it is ignored rather than sent
     const filesDirectoryPrefix = `${RESOURCE_ASSETS_URL_PREFIX}/${getFilesDirectoryName(idValue)}/`;
     if (!url.startsWith(filesDirectoryPrefix)) return;
-
     // What counts as a segment this resource owns is the server's definition, imported rather than restated —
     // A local copy that accepts one more form than the server does turns a suppressed affordance into a request
     // The server rejects, and drifts the moment either side is tightened

@@ -11,7 +11,6 @@ export const useIsCreator = async (message: MaybeRefOrGetter<MessageEntity | und
   return computed(() => {
     const messageValue = toValue(message);
     if (!messageValue) return false;
-
     // Authorship is asked of the same helper getMessageProcedure asks, so the menu offers exactly the
     // Operations the procedure accepts — a type this composable answered "no" for was a type whose
     // Author-permitted operations were unreachable to the person who authored it

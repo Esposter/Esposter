@@ -22,12 +22,10 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     deleteRoomCategory: storeDeleteRoomCategory,
     updateRoomCategory: storeUpdateRoomCategory,
   } = createOperationData(categories, ["id"], DatabaseEntityType.RoomCategory);
-
   // The server only adds userId and the appended position, so the client can build the
   // Row faithfully — insert a temp-id placeholder now and reconcile the server row onto it in onSuccess.
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
     if (!session.value.data) return;
-
     // Reactive so the onSuccess Object.assign onto this same object triggers the list re-render
     const newCategory = reactive<RoomCategoryInMessage>({
       createdAt: new Date(),

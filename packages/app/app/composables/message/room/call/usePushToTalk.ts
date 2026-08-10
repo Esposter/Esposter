@@ -19,7 +19,6 @@ export const usePushToTalk = (isInCall: MaybeRefOrGetter<boolean>, target?: Mayb
       Boolean(pushToTalkKeybind.value) &&
       userSettingsStore.userSettings?.voiceInputMode === VoiceInputMode.PushToTalk,
   );
-
   // Casts (not instanceof) — PiP window events come from another realm with its own KeyboardEvent
   useEventListener(listenerTarget, "keydown", (event) => {
     const keyboardEvent = event as KeyboardEvent;

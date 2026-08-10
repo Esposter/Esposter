@@ -50,7 +50,6 @@ export const errorLink: TRPCLink<TRPCRouter> =
               // Caller cannot prevent that by swallowing — this runs inside the link chain, before the rejection
               // Reaches it. It still alerts above, because a failure the user's own action caused is theirs to see
               if (op.context.isBackground) break;
-
               // Subscribed inside a scope this link owns and then stops. `useStore` registers its unsubscribe
               // Through `onScopeDispose`, which it only reaches when a scope is active — and this runs inside a
               // Promise, where none is. Called bare, every rejection would leave another listener on the

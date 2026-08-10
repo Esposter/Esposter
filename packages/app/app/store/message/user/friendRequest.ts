@@ -27,7 +27,6 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     ["id"],
     DatabaseEntityType.FriendRequest,
   );
-
   // Accepting, declining and blocking all resolve the same thing: the pending requests between the app user and
   // One other party. The list only ever holds requests the app user is a party to — the read filters on it and
   // The subscription only yields those — so naming the other party identifies the pair on its own, and the
@@ -46,7 +45,6 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const storeDeclineFriendRequest = (friendUserId: User["id"]) => {
     storeDeleteFriendRequestsByUser(friendUserId);
   };
-
   // Non-optimistic: the row carries the sender/receiver user graph the client can't faithfully fabricate, and a
   // Temp-id placeholder would race the echo's server-id row into a transient duplicate.
   const sendFriendRequest = async (receiverId: User["id"]) => {

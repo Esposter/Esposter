@@ -59,7 +59,6 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
           );
           return () => {
             if (!removedParticipant) return;
-
             // Restore only this participant, ahead of the first one that still follows it. Reinstating a
             // Whole-list snapshot would re-add anyone a removal that overlapped this one had already taken out
             const participantsNow = [...(directMessageParticipantsMap.value.get(roomId) ?? [])];

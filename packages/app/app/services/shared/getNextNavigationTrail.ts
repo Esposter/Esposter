@@ -13,7 +13,6 @@ const getPage = (path: string) => NAVIGATION_TRAIL_PAGE_ENTRIES.find(([, crumb])
 // A page and its own sub-views (a resource and its blades) share these leading segments, which is what tells
 // Moving around inside one page apart from leaving it for another
 const getPageKey = (path: string) => path.split("/").slice(0, 3).join("/");
-
 // Where a navigation leaves the trail — the whole model, as one pure function, so it is testable without a
 // Browser and the plugin only has to decide when to ask. See /docs/platform/breadcrumb-trail
 export const getNextNavigationTrail = (

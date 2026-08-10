@@ -17,7 +17,7 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 </script>
-<!-- We only want to show the inner scrollbar inside the chat content -->
+
 <template>
   <NuxtLayout
     :footer-style="{ paddingBottom: 0 }"

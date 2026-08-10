@@ -68,7 +68,6 @@ export const useCommentStore = defineStore("post/comment", () => {
     await executeDeleteCommentMutation(() => $trpc.post.deleteComment.mutate(input), {
       applyOptimistic: () => {
         if (!currentPost.value) return noop;
-
         // The one row this write removes, read when the write is sent: deletes of different comments do not
         // Queue against each other, so restoring a copy of the list would resurrect one deleted beside this
         const deletedComment = items.value.find(({ id }) => id === input);

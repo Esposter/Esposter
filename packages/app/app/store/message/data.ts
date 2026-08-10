@@ -45,7 +45,6 @@ export const useDataStore = defineStore("message/data", () => {
   const { data: hasMoreNewer } = useDataMap(() => roomStore.currentRoomId, false);
   const { data: nextCursorNewer } = useDataMap(() => roomStore.currentRoomId, "");
   const typings = ref<CreateTypingInput[]>([]);
-
   // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
   // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
   // They typed once the editor is cleared. It is handed the attachments this send took, so the composer stops
@@ -55,7 +54,6 @@ export const useDataStore = defineStore("message/data", () => {
     onOptimisticCreate?: (sentFileIds: string[]) => Promise<void>,
   ) => {
     if (!session.value.data) return false;
-
     // `input.files` is the composer's own live array, and the composer keeps accepting uploads for the whole
     // Round trip — so the attachments are snapshotted once, here, and that one snapshot is what the bubble
     // Carries, what goes on the wire, and what the hooks are handed. Reading the live array in any of those

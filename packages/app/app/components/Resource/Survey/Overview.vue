@@ -21,7 +21,6 @@ const responseLabel = computed(() => {
   const { count, isCapped } = responseCount.value;
   return `${count}${isCapped ? "+" : ""} ${pluralize("response", count)}`;
 });
-
 // The page is keyed by resource id, so this instance only ever describes one survey — both reads run
 // Once, in parallel. The Collection card edits the same content blob the editor writes, so it needs
 // The loaded settings

@@ -35,7 +35,6 @@ onMounted(readFavorites);
 onUnmounted(() => {
   clearResource(id);
 });
-
 // Blade switches reuse this page instance, so the guard watches instead of running once in setup
 watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
   if (newResource && !isValidResourceBlade(newResource.type, newActiveBlade))

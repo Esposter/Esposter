@@ -9,7 +9,6 @@ export interface HookRegistry<THook extends AnyHook> {
 }
 
 type AnyHook = (...args: never[]) => Promisable<void>;
-
 // The single owner of cross-store hook plumbing — module-scoped registries outlive per-request SSR
 // Store factories, so register is a client-only no-op (hooks only fire from client-side interactions)
 export const createHookRegistry = <THook extends AnyHook>(): HookRegistry<THook> => {

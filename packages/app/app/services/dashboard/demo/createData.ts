@@ -1,14 +1,4 @@
-/*
-  Create output in this format:
-  Every array in data is of the format [x, y, z] where x (timestamp) and y are the two axes coordinates,
-  z is the third coordinate, which you can interpret as the size of the bubble formed too.
-  data = [
-     [timestamp, 23, 10],
-     [timestamp, 33, 11],
-     [timestamp, 12, 8]
-      ...
-  ]
-  */
+// A bubble-chart demo series: x and y are the axis coordinates, z the bubble size.
 export const createData = (count: number, { maximum, minimum }: { maximum: number; minimum: number }) => {
   const series: [number, number, number][] = [];
   for (let i = 0; i < count; i++) {

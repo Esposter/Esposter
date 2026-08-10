@@ -15,7 +15,6 @@ interface ReadResourcesPageOptions<TFilterInput> {
   readCount: (filterInput: TFilterInput) => Promise<number>;
   readPage: (options: ReadResourcesOptions, filterInput: TFilterInput) => Promise<ResourceListItem[]>;
 }
-
 // The one reader behind every server-paged resource table (the workbench list and the Recycle bin). Both page
 // A server-side offset query and count it once per filter, and both can fire overlapping reads — debounced
 // Search, filter pills, Refresh, Retry, a restore or a purge — so a stale response must neither overwrite

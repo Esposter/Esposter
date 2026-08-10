@@ -17,7 +17,6 @@ interface MutationOptions<TResult> extends QueryOptions<TResult> {
   // Earlier call's value is already replaced on screen by the later one, so losing it costs nothing
   isSupersede?: true;
 }
-
 // The four ways a call can end, so a caller can tell a persisted write from one that was dropped as a duplicate,
 // Superseded by a newer call, or rejected — the operation's own rejection never escapes, so this is the only
 // Signal it did not land. A throwing callback does escape: the promise an entry point returns is rejected by a throw
@@ -117,7 +116,6 @@ export const useMutation = () => {
       async (error) => {
         // A read that lost its race is silent — nothing was applied, so nothing is owed to the user
         if (isSilentWhenStale && checkIsStale()) return { status: MutationStatus.Stale };
-
         // A write always unwinds and reports, superseded or not: its rollback and its error are the only
         // Record that the value the user is looking at was never persisted
         rollback?.();

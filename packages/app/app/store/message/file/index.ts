@@ -21,8 +21,7 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     setData,
   } = useDataMap(() => roomStore.currentRoomId, new Map<string, ReadFileUrl>());
   // The only place read urls are minted and written, so the two rules that make a write correct hold by
-  // Construction for every caller instead of once per call site — the invariant was previously restated at
-  // Three of them and half-applied at the third.
+  // Construction for every caller instead of once per call site.
   // Keyed by the room the files were read FOR, never `fileUrlMap.value`: that resolves to whichever room is
   // Current at the moment it is read, and every caller awaits a network round trip first. A user who switches
   // Rooms during that await would have one room's urls written into another room's map — the room they landed
@@ -57,7 +56,6 @@ export const useDownloadFileStore = defineStore("message/file", () => {
     if (!message) return;
     for (const { id } of message.files) fileUrlMap.value.delete(id);
   });
-
   // Read SAS urls expire, and the only other thing that mints them is a page read — which skips every file it
   // Already holds a url for. A room left open past the SAS duration would therefore render every attachment
   // Broken and fail every download until reload. Sweeping re-mints only the entries inside the refresh margin;

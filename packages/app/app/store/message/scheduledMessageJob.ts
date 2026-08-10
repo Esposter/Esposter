@@ -26,7 +26,6 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
     removeScheduledMessageJob(id);
     return () => {
       if (!removedScheduledMessageJob) return;
-
       // Back at the end of the page rather than where it stood — a cosmetic loss, taken over dropping a row
       items.value = [...items.value, removedScheduledMessageJob];
       count.value += 1;

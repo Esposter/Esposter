@@ -80,7 +80,6 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
             createAlert("Dataset has no rows to export", "warning");
             return;
           }
-
           // Silently mailing a truncated audience is the one failure the sender can never take back,
           // So a capped read hands the decision to the Editor blade's confirm instead of exporting
           if (getDatasetTruncation(dataset)) pendingDataset.value = dataset;

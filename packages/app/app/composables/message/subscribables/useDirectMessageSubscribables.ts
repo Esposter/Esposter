@@ -22,8 +22,7 @@ export const useDirectMessageSubscribables = () => {
           storeUpdateDirectMessage(updatedDirectMessage);
         },
       });
-      // One subscription over every direct message, because the event carries the room it happened in — a
-      // Subscription per room existed only to recover a room id the payload used to drop
+      // One subscription over every direct message, because the event carries the room it happened in
       const joinRoomUnsubscribable = $trpc.room.onJoinRoom.subscribe(roomIds, {
         onData: ({ roomId, user }) => {
           const participants = directMessageParticipantsMap.value.get(roomId) ?? [];

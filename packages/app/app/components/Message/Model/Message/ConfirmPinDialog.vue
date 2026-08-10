@@ -30,7 +30,6 @@ const pinMessage = async (onComplete: () => void) => {
         getIsEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),
       );
       if (!pinnedMessage) return noop;
-
       // Read as the write is sent rather than assumed: an unpin that landed — or was itself rolled back — between
       // The click and this write decides what pinning owes back, and a hard-coded delete would unpin a message
       // The server still has pinned

@@ -29,7 +29,6 @@ const editableColumns = computed(() =>
 );
 const localValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
 let isSubmitted = false;
-
 // Fire-and-forget: navigateTo focuses the next cell straight after this, and awaiting the row save
 // Would stall focus behind the network round-trip on every keyboard move.
 const submitEdit = getSynchronizedFunction(async () => {

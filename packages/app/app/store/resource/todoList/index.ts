@@ -54,7 +54,6 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     // Where an item sits is content in a list the user ordered, so the unwind owes its index back too. Read
     // Before the removal, and used through a re-created insert rather than createItem, which only appends
     const previousIndex = items.value.findIndex((item) => item.id === id);
-
     // Whether this is an edit or an add is the list's own answer to "is that item already here?", read from
     // The item in hand — a separately tracked index would still hold the previous edit's row when the dialog
     // Opens straight from the add button, routing that add into an update

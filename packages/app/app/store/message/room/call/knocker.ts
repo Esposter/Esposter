@@ -12,7 +12,6 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const knockingCallSessionId = ref("");
   const joinCallOptions = ref<JoinCallOptions>(getDefaultJoinCallOptions());
   const knockers = ref<CallParticipant[]>([]);
-
   // Knocking targets one call session at a time, so every knock shares one executor and one target
   const { executeMutation: executeKnockCallMutation } = useMutation();
   const knockCall = async (callId: string) => {

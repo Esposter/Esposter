@@ -30,7 +30,7 @@ useSettingsScrollSpy();
         </v-tooltip>
       </v-sheet>
     </template>
-    <!-- pb-8 gives the scroll area its bottom breathing room, which the panels used to each carry as a mb-8 -->
+    <!-- The scroll area owns its bottom breathing room, so no panel carries a trailing margin of its own -->
     <div pb-8>
       <!-- Timeout 0 shows the skeleton on every tab switch instead of keeping the stale panel -->
       <Suspense v-if="component" :timeout="0">

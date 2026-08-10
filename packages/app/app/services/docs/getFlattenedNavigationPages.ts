@@ -9,7 +9,6 @@ const flattenItems = (items: ContentNavigationItem[]): ContentNavigationItem[] =
     if (children.length === 0) return [item];
     return item.page === false ? children : [item, ...children];
   });
-
 // Flattens sections into the exact sidebar display order — section overview leads,
 // Then its groups in getNavigationGroups order — so surround links walk the sidebar
 export const getFlattenedNavigationPages = (sections: ContentNavigationItem[]): ContentNavigationItem[] =>

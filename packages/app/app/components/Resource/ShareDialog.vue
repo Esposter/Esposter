@@ -35,7 +35,6 @@ onMounted(async () => {
 const share = async () => {
   const room = roomItems.value.find(({ value }) => value === roomId.value);
   if (!room) return;
-
   // The caller's own message in their own room — RBAC, rate limits and the message pipeline apply unchanged
   await executeMutation(
     () => $trpc.message.createMessage.mutate({ message: shareMessage.value, roomId: roomId.value }),

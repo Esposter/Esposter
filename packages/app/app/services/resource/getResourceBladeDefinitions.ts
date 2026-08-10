@@ -16,7 +16,6 @@ const BuiltInBladeDefinitionMap = {
   [ResourceBladeType.Overview]: { icon: "mdi-information-outline", title: "Overview" },
   [ResourceBladeType.PublishHistory]: { icon: "mdi-cloud-clock-outline", title: "Publish history" },
 } as const satisfies Record<ResourceBladeType, { icon?: string; title: string }>;
-
 // Which blades a type has, in nav order — the one answer to that question. The built-ins render through the
 // Outlet's own branches rather than a component here, so the shape is the definition minus its component.
 // Overview and Activity are unconditional; Editor exists only for types with an inline editor, and Publish

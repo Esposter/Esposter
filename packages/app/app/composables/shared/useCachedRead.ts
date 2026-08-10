@@ -18,7 +18,6 @@ interface CachedReadOptions<TResult> {
   onSuccess: (result: TResult, key: string) => void;
   tags?: CacheTag[];
 }
-
 // Read-once-per-session (or per key), which single-flight cannot cover: a settled read is no longer in flight
 // To join. This is the caching layer on top of `executeQuery`, never a replacement for it — the gate decides
 // Whether to call at all, and `isExclusive` still collapses the concurrent first callers into one request.
@@ -63,7 +62,6 @@ export const useCachedRead = <TResult>(
       const invalidatedKeys = [...loadedKeys];
       loadedKeys.clear();
       if (!isRefetchOnInvalidate) return;
-
       // A session-scoped cache's one entry exists whether or not anything has read it, so it re-reads from
       // Cold too: the surface mounting next must find the new set rather than be the thing that discovers it
       await Promise.all(

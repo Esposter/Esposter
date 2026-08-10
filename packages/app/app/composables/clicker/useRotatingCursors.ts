@@ -24,7 +24,6 @@ export const useRotatingCursors = () => {
       const rotatingDivId = takeOne(rotatingDivIds.value, i);
       const rotatingDiv = window.document.getElementById(rotatingDivId);
       if (!rotatingDiv) continue;
-
       // Nodes are reused now, so clear any prior infinite animation before adding the new one
       for (const animation of rotatingDiv.getAnimations()) animation.cancel();
       rotatingDiv.animate(
