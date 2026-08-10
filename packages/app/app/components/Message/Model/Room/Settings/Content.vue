@@ -21,11 +21,12 @@ const component = computed(() => SettingsContentMap[settingsType]);
         <StyledTooltipIconButton v-if="smAndDown" icon="mdi-menu" text="Show menu" @click="emit('open:drawer')" />
         <div font-bold text-headline-medium>{{ settingsType }}</div>
       </div>
-      <v-tooltip text="Close">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :="tooltipProps" icon="mdi-close" variant="text" @click="emit('close')" />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        icon="mdi-close"
+        text="Close"
+        :button-props="{ variant: 'text' }"
+        @click="emit('close')"
+      />
     </v-sheet>
     <!-- Timeout 0 shows the skeleton on every tab switch instead of keeping the stale panel -->
     <Suspense v-if="component" :timeout="0">
