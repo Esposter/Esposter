@@ -11,7 +11,7 @@ Grouped so each row is one review-sized commit.
 | `packages/virrun`                                                | —          |                                                                                                                                                                                                                                                         |
 | `packages/vue-phaserjs`, `packages/parse-tmx`, `packages/xml2js` | —          |                                                                                                                                                                                                                                                         |
 | `packages/infra`                                                 | —          |                                                                                                                                                                                                                                                         |
-| `packages/configuration`                                         | —          |                                                                                                                                                                                                                                                         |
+| `packages/configuration`                                         | 2026-08-10 | Nothing found — every source file read, no duplication, no dead abstraction, no work repeated per call.                                                                                                                                                 |
 
 ## Open findings
 
