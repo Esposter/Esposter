@@ -3,38 +3,29 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
-import { roleRouter } from "@@/server/trpc/routers/role";
-import { roomRouter } from "@@/server/trpc/routers/room";
+import { mockSessionOnce } from "@@/server/trpc/context.test";
+import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { RoomPermission, roomsInMessage, WordFilterAction } from "@esposter/db-schema";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { RoomPermission, WordFilterAction } from "@esposter/db-schema";
+import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("room/filter", () => {
+  const { createMember, getMockContext, getRoomId, setupMemberWithRole } = setupRoomSuite();
   let mockContext: Context;
   let roomFilterCaller: DecorateRouterRecord<TRPCRouter["room"]["filter"]>;
-  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomId: string;
-  const name = "name";
   const words = ["word"];
   const updatedWords = ["word", "updatedword"];
   const timeoutDurationMs = 1;
+  const position = 5;
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
+  beforeAll(() => {
+    mockContext = getMockContext();
     roomFilterCaller = createCallerFactory(filterRouter)(mockContext);
-    roomCaller = createCallerFactory(roomRouter)(mockContext);
-    roleCaller = createCallerFactory(roleRouter)(mockContext);
   });
 
-  beforeEach(async () => {
-    const room = await roomCaller.createRoom({ name });
-    roomId = room.id;
-  });
-
-  afterEach(async () => {
-    await mockContext.db.delete(roomsInMessage);
+  beforeEach(() => {
+    roomId = getRoomId();
   });
 
   describe("readRoomFilter", () => {
@@ -93,10 +84,8 @@ describe("room/filter", () => {
     test(`member without ${RoomPermission.ManageRoom} permission cannot upsertRoomFilter — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
 
-      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
-      const { user } = await mockSessionOnce(mockContext.db);
-      await roomCaller.joinRoom(invite.id);
-      await mockSessionOnce(mockContext.db, user);
+      const member = await createMember();
+      await mockSessionOnce(mockContext.db, member);
 
       await expect(roomFilterCaller.upsertRoomFilter({ roomId, words })).rejects.toThrowErrorMatchingInlineSnapshot(
         `[TRPCError: UNAUTHORIZED]`,
@@ -106,17 +95,8 @@ describe("room/filter", () => {
     test(`member with ${RoomPermission.ManageRoom} permission can upsertRoomFilter`, async () => {
       expect.hasAssertions();
 
-      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
-      const { user } = await mockSessionOnce(mockContext.db);
-      await roomCaller.joinRoom(invite.id);
-      const role = await roleCaller.createRole({
-        name: crypto.randomUUID(),
-        permissions: RoomPermission.ManageRoom,
-        position: 5,
-        roomId,
-      });
-      await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
-      await mockSessionOnce(mockContext.db, user);
+      const { member } = await setupMemberWithRole(RoomPermission.ManageRoom, position);
+      await mockSessionOnce(mockContext.db, member);
 
       const result = await roomFilterCaller.upsertRoomFilter({ roomId, words });
 

@@ -66,6 +66,14 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   return getSessionPayload;
 };
 
+// A second user for the test to act on rather than act as — the session `mockSessionOnce` queues for it is
+// Consumed here, so the caller stays on the session it already had
+export const createMockUser = async (db: Context["db"]) => {
+  const { user } = await mockSessionOnce(db);
+  getMockSession();
+  return user;
+};
+
 export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
   mocks.getSession.mockReturnValueOnce(getSessionPayload);
 };

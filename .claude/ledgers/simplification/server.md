@@ -1,11 +1,11 @@
 # Server
 
-| Unit                          | Swept      | Notes                                                                          |
-| ----------------------------- | ---------- | ------------------------------------------------------------------------------ |
-| `server/trpc/routers/message` | 2026-08-10 | `getDevice` in `services/auth`; `holdFirstWrite` owns the interleaving fixture |
-| `server/trpc/routers/room`    | —          | same shape, same size                                                          |
-| the remaining routers         | —          |                                                                                |
-| `server/services`             | —          | helpers the routers share                                                      |
+| Unit                          | Swept      | Notes                                                                               |
+| ----------------------------- | ---------- | ----------------------------------------------------------------------------------- |
+| `server/trpc/routers/message` | 2026-08-10 | `getDevice` in `services/auth`; `holdFirstWrite` owns the interleaving fixture      |
+| `server/trpc/routers/room`    | 2026-08-10 | `createRoomMember`/`createFriends`/`createDirectMessageWithFriend` own the fixtures |
+| the remaining routers         | —          |                                                                                     |
+| `server/services`             | —          | helpers the routers share                                                           |
 
 ## Open findings
 
@@ -28,5 +28,5 @@
   `@esposter/db`, which needs a barrel regen.
 - `{ key: createdAt, order: Desc }` is declared six times across the router and the `ReadBans`/`ReadModerationLog`/
   `ReadModerationNotes`/`ReadMySentMessages` input schemas.
-- `index.test.ts`, `emoji.test.ts` and `scheduledMessageJob.test.ts` re-implement `setupRoomSuite` — 59 inline
-  `createRoom` calls and 14 copies of the invite/join member dance in `index.test.ts` alone.
+- `routers/message/index.test.ts` (69 inline `createRoom`, 20 invite/join dances) and `emoji.test.ts` (9 and 2)
+  still hand-roll what `setupRoomSuite` and the extracted `createRoomMember` now own.

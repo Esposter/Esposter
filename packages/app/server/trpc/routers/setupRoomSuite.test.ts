@@ -3,7 +3,8 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext } from "@@/server/trpc/context.test";
+import { createRoomMember } from "@@/server/trpc/routers/createRoomMember.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { roomsInMessage } from "@esposter/db-schema";
@@ -34,12 +35,7 @@ export const setupRoomSuite = () => {
     await mockContext.db.delete(roomsInMessage);
   });
 
-  const createMember = async () => {
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(invite.id);
-    return user;
-  };
+  const createMember = () => createRoomMember(mockContext, roomId);
 
   const setupMemberWithRole = async (permissions: bigint, position: number) => {
     const member = await createMember();
