@@ -95,7 +95,7 @@ const forwardMessage = async () => {
         <v-list py-0>
           <MessageModelMessageForwardRoomListItem v-for="room of itemsSearched" :key="room.id" :room />
           <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">
-            <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+            <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
           </StyledWaypoint>
         </v-list>
       </v-card-text>

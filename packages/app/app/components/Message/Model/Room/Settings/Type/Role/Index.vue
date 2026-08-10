@@ -23,8 +23,6 @@ const roles = computed(() => getRoles(room.id).toSorted((a, b) => (a.isEveryone 
     <v-col v-if="selectedRole">
       <MessageModelRoomSettingsTypeRoleEditor :key="selectedRole.id" :role="selectedRole" :room-id="room.id" />
     </v-col>
-    <v-col v-else py-12 flex items-center justify-center op-medium-emphasis
-      >Select a role to edit its permissions.</v-col
-    >
+    <MessageModelRoomSettingsTypeDetailPlaceholder v-else text="Select a role to edit its permissions." />
   </v-row>
 </template>

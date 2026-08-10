@@ -1,41 +1,44 @@
 import type { Promisable } from "type-fest";
 
 import { dayjs } from "#shared/services/dayjs";
+import { pluralize } from "#shared/util/text/pluralize";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
+import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType, AdminActionTypes } from "@esposter/db-schema";
 
 type Action = (roomId: string, durationMs?: number) => Promisable<void>;
 
 export const useAdminActionMap = () => {
-  const { notify } = useAdminActionNotification();
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const roomStore = useRoomStore();
   const { storeDeleteRoom } = roomStore;
   const adminActionMap: Partial<Record<AdminActionType, Action>> = {
     [AdminActionType.CreateBan]: async (roomId: string) => {
       await storeDeleteRoom({ id: roomId });
-      notify("You have been banned from this room.");
+      createAlert("You have been banned from this room.", "error");
     },
     [AdminActionType.KickFromCall]: () => {
-      notify("You have been kicked from the call.");
+      createAlert("You have been kicked from the call.", "error");
     },
     [AdminActionType.KickFromRoom]: async (roomId: string) => {
       await storeDeleteRoom({ id: roomId });
-      notify("You have been kicked from this room.");
+      createAlert("You have been kicked from this room.", "error");
     },
     [AdminActionType.SoftBan]: async (roomId: string) => {
       await storeDeleteRoom({ id: roomId });
-      notify("You have been soft-banned from this room.");
+      createAlert("You have been soft-banned from this room.", "error");
     },
     [AdminActionType.StopScreenShare]: () => {
-      notify("Your screen share has been stopped by a moderator.");
+      createAlert("Your screen share has been stopped by a moderator.", "error");
     },
     [AdminActionType.TimeoutUser]: (_roomId: string, durationMs?: number) => {
       const minutes = durationMs ? Math.max(1, Math.ceil(dayjs.duration(durationMs).asMinutes())) : 0;
-      notify(`You have been timed out for ${minutes} minute${minutes === 1 ? "" : "s"}.`);
+      createAlert(`You have been timed out for ${minutes} ${pluralize("minute", minutes)}.`, "error");
     },
     [AdminActionType.Warn]: () => {
-      notify("You have been warned.");
+      createAlert("You have been warned.", "error");
     },
   };
   return Object.fromEntries(

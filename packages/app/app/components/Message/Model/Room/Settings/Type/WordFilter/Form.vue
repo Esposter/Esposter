@@ -3,6 +3,7 @@ import type { RoomFilterInMessage } from "@esposter/db-schema";
 
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 import { WordFilterAction } from "@esposter/db-schema";
+import { toRawDeep } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
 interface WordFilterFormData {
@@ -46,7 +47,7 @@ const saveFilter = async () => {
     {
       applyOptimistic: () => {
         const previousBaseline = baseline.value;
-        baseline.value = structuredClone(toRaw(formData.value));
+        baseline.value = structuredClone(toRawDeep(formData.value));
         return () => {
           baseline.value = previousBaseline;
         };

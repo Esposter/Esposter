@@ -24,7 +24,7 @@ const { hasMore, items } = storeToRefs(searchStore);
       </v-list-item>
     </NuxtInvisibleLink>
     <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">
-      <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </StyledWaypoint>
   </v-list>
 </template>

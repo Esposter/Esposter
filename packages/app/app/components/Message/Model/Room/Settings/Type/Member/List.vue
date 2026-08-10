@@ -22,7 +22,7 @@ const { isPending } = await readMembers();
 <template>
   <v-list density="compact" rd>
     <template v-if="isPending">
-      <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
     <template v-else>
       <MessageModelRoomSettingsTypeMemberListItem
@@ -34,7 +34,7 @@ const { isPending } = await readMembers();
         @click="selectMember(member.id)"
       />
       <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
-        <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+        <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>
     </template>
   </v-list>

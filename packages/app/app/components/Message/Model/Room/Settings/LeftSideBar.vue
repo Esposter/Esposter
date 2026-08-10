@@ -20,12 +20,12 @@ const isDrawerOpen = defineModel<boolean>("open", { default: false });
 const emit = defineEmits<{ "open:delete": [] }>();
 const roleStore = useRoleStore();
 const { getMyPermissions } = roleStore;
+const myPermissions = computed(() => getMyPermissions(room.id));
 const checkIsVisible = (settingsType: SettingsType) => {
   const permission = SettingsPermissionMap[settingsType];
   if (!permission) return true;
-  const myPermissions = getMyPermissions(room.id);
-  if (!myPermissions) return false;
-  return hasPermission(myPermissions.permissions, permission, myPermissions.isRoomOwner);
+  if (!myPermissions.value) return false;
+  return hasPermission(myPermissions.value.permissions, permission, myPermissions.value.isRoomOwner);
 };
 const visibleCategories = computed(() =>
   Object.entries(SettingsCategoryMap)

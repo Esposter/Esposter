@@ -6,8 +6,10 @@ const emit = defineEmits<{ save: [] }>();
 </script>
 
 <template>
-  <div flex flex-col gap-2>
-    <div font-semibold>Nickname</div>
+  <MessageModelRoomSettingsField
+    hint="Overrides your global username within this room. Leave blank to use your global username."
+    title="Nickname"
+  >
     <v-text-field
       v-model="modelValue"
       density="compact"
@@ -17,6 +19,5 @@ const emit = defineEmits<{ save: [] }>();
       @blur="emit('save')"
       @keydown.enter.prevent="emit('save')"
     />
-    <span text-hint> Overrides your global username within this room. Leave blank to use your global username. </span>
-  </div>
+  </MessageModelRoomSettingsField>
 </template>

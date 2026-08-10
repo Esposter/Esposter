@@ -64,8 +64,10 @@ const save = async () => {
     </v-row>
     <v-row>
       <v-col cols="12" md="6" sm="8">
-        <div flex flex-col gap-2>
-          <div font-semibold>Maximum file size</div>
+        <MessageModelRoomSettingsField
+          :hint="`Leave empty to use the platform limit of ${maxFileSizeMegabytes} MB.`"
+          title="Maximum file size"
+        >
           <v-text-field
             :model-value="maxFileSizeBytes != null ? maxFileSizeBytes / MEGABYTE : ''"
             :max="maxFileSizeMegabytes"
@@ -79,14 +81,15 @@ const save = async () => {
             @blur="save()"
             @keydown.enter.prevent="save()"
           />
-          <span text-hint>Leave empty to use the platform limit of {{ maxFileSizeMegabytes }} MB.</span>
-        </div>
+        </MessageModelRoomSettingsField>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12" md="6" sm="8">
-        <div flex flex-col gap-2>
-          <div font-semibold>Allowed attachment types</div>
+        <MessageModelRoomSettingsField
+          hint="Members can only upload the selected categories."
+          title="Allowed attachment types"
+        >
           <v-select
             v-model="allowedMimeCategories"
             :items="categoryItems"
@@ -95,8 +98,7 @@ const save = async () => {
             multiple
             @update:model-value="save()"
           />
-          <span text-hint>Members can only upload the selected categories.</span>
-        </div>
+        </MessageModelRoomSettingsField>
       </v-col>
     </v-row>
   </v-container>

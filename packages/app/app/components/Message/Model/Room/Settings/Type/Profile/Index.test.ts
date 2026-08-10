@@ -1,10 +1,11 @@
 // @vitest-environment nuxt
-import type { RoomInMessage, UserToRoomInMessage } from "@esposter/db-schema";
+import type { UserToRoomInMessage } from "@esposter/db-schema";
 
 import MessageModelRoomSettingsTypeProfileIndex from "@/components/Message/Model/Room/Settings/Type/Profile/Index.vue";
+import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { MimeCategory, NotificationType, RoomType } from "@esposter/db-schema";
+import { NotificationType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -12,26 +13,9 @@ import { VTextField } from "vuetify/components";
 
 describe("messageModelRoomSettingsTypeProfileIndex", () => {
   const server = setupMswTrpc();
-  const userId = crypto.randomUUID();
-  const room: RoomInMessage = {
-    allowedMimeCategories: [MimeCategory.Audio, MimeCategory.Document, MimeCategory.Image, MimeCategory.Video],
-    categoryId: null,
-    createdAt: new Date("1970-01-01"),
-    deletedAt: null,
-    id: crypto.randomUUID(),
-    image: "",
-    isReadOnly: false,
-    maxFileSizeBytes: null,
-    name: "name",
-    participantKey: null,
-    slowmodeMs: null,
-    topic: "",
-    type: RoomType.Room,
-    updatedAt: new Date("1970-01-01"),
-    userId,
-  };
+  const room = createRoom("name");
   const userToRoom: UserToRoomInMessage = {
-    createdAt: new Date("1970-01-01"),
+    createdAt: new Date(0),
     deletedAt: null,
     isHidden: false,
     lastMessageAt: null,
@@ -40,8 +24,8 @@ describe("messageModelRoomSettingsTypeProfileIndex", () => {
     notificationType: NotificationType.DirectMessage,
     roomId: room.id,
     timeoutUntil: null,
-    updatedAt: new Date("1970-01-01"),
-    userId,
+    updatedAt: new Date(0),
+    userId: room.userId,
   };
 
   // The field emits save from blur and from Enter, so a nickname committed with Enter and then blurred writes

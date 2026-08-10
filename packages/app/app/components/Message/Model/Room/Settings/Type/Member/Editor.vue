@@ -14,11 +14,11 @@ const roleStore = useRoleStore();
 const { assignRole, getMemberRoles, getMyPermissions, getRoles, readMemberRoles, revokeRole } = roleStore;
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
 const memberRoles = computed(() => getMemberRoles(roomId, member.id));
+const myPermissions = computed(() => getMyPermissions(roomId));
 const hasRole = (roleId: string) => memberRoles.value.some(({ id }) => id === roleId);
-const isRoleManageable = (role: RoomRoleInMessage) => {
-  const myPermissions = getMyPermissions(roomId);
-  if (!myPermissions) return false;
-  return checkIsManageable(myPermissions.topRolePosition, role.position, myPermissions.isRoomOwner);
+const checkIsRoleManageable = ({ position }: RoomRoleInMessage) => {
+  if (!myPermissions.value) return false;
+  return checkIsManageable(myPermissions.value.topRolePosition, position, myPermissions.value.isRoomOwner);
 };
 
 await readMemberRoles({ roomId, userIds: [member.id] });
@@ -38,7 +38,7 @@ await readMemberRoles({ roomId, userIds: [member.id] });
         </template>
         <template #append>
           <v-switch
-            :disabled="!isRoleManageable(role)"
+            :disabled="!checkIsRoleManageable(role)"
             :model-value="hasRole(role.id)"
             color="primary"
             density="compact"

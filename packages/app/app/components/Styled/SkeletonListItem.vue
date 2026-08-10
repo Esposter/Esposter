@@ -3,6 +3,7 @@
 </template>
 
 <style scoped>
+/* Matches StyledAvatar's footprint so a list does not resize as its skeletons are replaced by real rows. */
 :deep(.v-skeleton-loader__avatar) {
   min-width: var(--avatar-width);
   min-height: var(--avatar-width);

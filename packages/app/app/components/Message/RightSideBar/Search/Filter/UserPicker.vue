@@ -21,7 +21,7 @@ const { currentRoom } = storeToRefs(roomStore);
     @read-more="readMoreMembers"
   >
     <template #skeleton>
-      <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
     <template v-if="currentRoom">
       <MessageModelMemberListItem
