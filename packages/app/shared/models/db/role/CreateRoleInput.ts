@@ -5,7 +5,7 @@ export const createRoleInputSchema = z.object({
   ...roomIdSchema.shape,
   color: selectRoomRoleInMessageSchema.shape.color.optional(),
   name: selectRoomRoleInMessageSchema.shape.name,
-  permissions: selectRoomRoleInMessageSchema.shape.permissions.optional().default(0n),
-  position: selectRoomRoleInMessageSchema.shape.position.optional().default(0),
+  permissions: selectRoomRoleInMessageSchema.shape.permissions.default(0n),
+  position: selectRoomRoleInMessageSchema.shape.position.default(0),
 });
 export type CreateRoleInput = z.infer<typeof createRoleInputSchema>;

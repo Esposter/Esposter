@@ -1,8 +1,10 @@
+import { messageCompositeKeySchema } from "#shared/models/db/message/MessageCompositeKey";
 import { roomIdsSchema, standardMessageEntitySchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const forwardMessageInputSchema = z.object({
-  ...standardMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
+  ...messageCompositeKeySchema.shape,
+  message: standardMessageEntitySchema.shape.message,
   roomIds: roomIdsSchema.shape.roomIds.min(1),
 });
 export type ForwardMessageInput = z.infer<typeof forwardMessageInputSchema>;

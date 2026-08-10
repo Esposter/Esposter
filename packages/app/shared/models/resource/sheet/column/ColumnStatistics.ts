@@ -38,4 +38,4 @@ export const columnStatisticsSchema = z.object({
     .optional(),
   trueCount: z.int().nonnegative().optional(),
   uniqueCount: z.int().nonnegative().optional(),
-});
+}) satisfies z.ZodType<ColumnStatistics>;

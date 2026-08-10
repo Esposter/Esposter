@@ -1,8 +1,7 @@
 import type { ToData } from "@esposter/shared";
 
 import { MAX_BLUEPRINT_KEY_LENGTH } from "#shared/services/resource/blueprint/constants";
-import { ResourceType, resourceTypeSchema, selectResourceSchema } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
+import { createNameSchema, ResourceType, resourceTypeSchema, selectResourceSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 // One resource-to-be: `key` is the local alias (unique within the manifest), `name` becomes the created
@@ -18,7 +17,7 @@ export interface BlueprintEntry {
 
 export const blueprintEntrySchema = z.object({
   content: z.unknown().optional(),
-  key: z.string().transform(normalizeString).pipe(z.string().min(1).max(MAX_BLUEPRINT_KEY_LENGTH)),
+  key: createNameSchema(MAX_BLUEPRINT_KEY_LENGTH),
   name: selectResourceSchema.shape.name,
   type: resourceTypeSchema,
 }) satisfies z.ZodType<ToData<BlueprintEntry>>;

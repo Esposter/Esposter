@@ -3,7 +3,7 @@ import type { ToData } from "@esposter/shared";
 
 import { MAX_CLOSED_MESSAGE_LENGTH } from "#shared/services/resource/survey/constants";
 import { SurveyResponseMode as SurveyResponseModeEnum, surveyResponseModeSchema } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
+import { createNormalizedStringSchema } from "@esposter/shared";
 import { z } from "zod";
 
 // Live collection settings — deliberately in the working content blob, never the publish snapshot,
@@ -15,7 +15,7 @@ export class SurveySettings {
 }
 
 export const surveySettingsSchema = z.object({
-  closedMessage: z.string().transform(normalizeString).pipe(z.string().max(MAX_CLOSED_MESSAGE_LENGTH)).default(""),
+  closedMessage: createNormalizedStringSchema(MAX_CLOSED_MESSAGE_LENGTH).default(""),
   isAcceptingResponses: z.boolean().default(true),
   responseMode: surveyResponseModeSchema.default(SurveyResponseModeEnum.Anonymous),
 }) satisfies z.ZodType<ToData<SurveySettings>>;
