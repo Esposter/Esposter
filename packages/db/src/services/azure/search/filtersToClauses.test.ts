@@ -38,18 +38,17 @@ describe(filtersToClauses, () => {
 
   // Every media filter must offer exactly the content types the uploader would categorise the same way, so the
   // Expectation is derived from getMimeCategory rather than restating a prefix filter of its own
-  test("matches every content type of the mime category the media filter names", () => {
+  test.each([
+    [FilterTypeHas.Image, MimeCategory.Image],
+    [FilterTypeHas.Sound, MimeCategory.Audio],
+    [FilterTypeHas.Video, MimeCategory.Video],
+  ] as const)("%s matches every content type of the %s mime category", (filterTypeHas, mimeCategory) => {
     expect.hasAssertions();
 
-    for (const [filterTypeHas, mimeCategory] of [
-      [FilterTypeHas.Image, MimeCategory.Image],
-      [FilterTypeHas.Sound, MimeCategory.Audio],
-      [FilterTypeHas.Video, MimeCategory.Video],
-    ] as const)
-      expect(takeOne(filtersToClauses([{ type: FilterType.Has, value: filterTypeHas }]), 0)).toStrictEqual({
-        key: mimetypeKey,
-        operator: SearchOperator.arrayContains,
-        value: [...ContentTypes].filter((contentType) => getMimeCategory(contentType) === mimeCategory),
-      });
+    expect(takeOne(filtersToClauses([{ type: FilterType.Has, value: filterTypeHas }]), 0)).toStrictEqual({
+      key: mimetypeKey,
+      operator: SearchOperator.arrayContains,
+      value: [...ContentTypes].filter((contentType) => getMimeCategory(contentType) === mimeCategory),
+    });
   });
 });

@@ -11,7 +11,10 @@ export default {
       // A loop registers its cases under one name, so the reporter shows the last one only and `-t` cannot
       // Select a single case. `.each` names each row, and a failing row says which input produced it.
       message: "Use `test.each` / `it.each` for a table of cases instead of looping around `test`.",
-      selector: ":matches(ForOfStatement, ForInStatement, ForStatement):has(CallExpression[callee.name=/^(it|test)$/])",
+      // The modifier forms register their cases the same way, so `test.skip` and `it.concurrent` are matched
+      // Alongside the bare call — `.each` included, since a loop around it names every row once per iteration
+      selector:
+        ":matches(ForOfStatement, ForInStatement, ForStatement):has(CallExpression:matches([callee.name=/^(it|test)$/], [callee.object.name=/^(it|test)$/]))",
     },
     {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",

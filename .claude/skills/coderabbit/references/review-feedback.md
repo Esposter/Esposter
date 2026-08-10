@@ -45,19 +45,21 @@ crLatest() {  # the bot's most recently touched issue comment: "<id> <updated_at
       console.log(comment ? `${comment.id} ${comment.updated_at}` : "0 none");'
 }
 
-before=$(crLatest)
-gh pr comment <pr> --body "@coderabbitai review"
+before=$(crLatest) || exit 1
+gh pr comment <pr> --body "@coderabbitai review" || exit 1
 deadline=$((SECONDS + 600))
-until [ "$(crLatest)" != "$before" ]; do
+while :; do
   test "$SECONDS" -lt "$deadline" || { echo "no reply in 10m — read the PR before assuming anything" >&2; exit 1; }
+  latest=$(crLatest) || { sleep 10; continue; }   # a failed read is not a new checkpoint
+  test "$latest" != "$before" && break
   sleep 10
 done
-crLatest   # then read that comment's body: "Already reviewed" -> the checkpoint already covers the head
+echo "$latest"   # then read that comment's body: "Already reviewed" -> the checkpoint already covers the head
 ```
 
 **Sort by `updated_at`, not by `id`.** The answer often arrives as an **in-place edit** of the walkthrough, which keeps its original id — so the newest id can be a comment that has not moved while the one that did sorts below it. `id` stays only as the tie-breaker for two comments written in the same second. For the same reason the compared value is `id` plus `updated_at` rather than the first body line: an edit that leaves the first line intact is invisible to a body comparison, and `updated_at` moves whatever the edit touched.
 
-**The loop needs a deadline.** A bot that never posts and a failed API call look identical to an `until` loop, and both make it sleep forever. Bound it and fail loudly — an unanswered probe is a thing to go look at, not a thing to keep waiting on.
+**The loop needs a deadline, and a failed read must not end it.** A bot that never posts and a failed API call look identical to an `until` loop, and both make it sleep forever. Bound it and fail loudly — an unanswered probe is a thing to go look at, not a thing to keep waiting on. Command substitution discards exit status, so a `crLatest` that errors returns an empty string, which differs from `$before` and reads as the reply arriving: capture the status separately and compare only a read that succeeded.
 
 The `--slurp`-then-`node` aggregation is required for the same reason as above: a `last` inside `--jq` would describe one page.
 
