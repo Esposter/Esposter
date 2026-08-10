@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives, ~150-line budget, trigger-named index lines), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, magnitudes over incident numbers, and declaration layout. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
+description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives, ~150-line budget, trigger-named index lines), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, and magnitudes over incident numbers. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
 ---
 
 # Skill Authoring
@@ -58,10 +58,6 @@ Code examples use `Foo`/`Bar`/`baz`, `external-pkg`, `@/models/Bar`. **Never pas
 Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine — they describe a class of import, not a specific symbol. A concrete path is fine when the path **is** the rule (a registry file every consumer must edit).
 
 The same applies to numbers: keep only the magnitudes the rule operates on (a limit, a budget), and drop the evidence numbers from the incident that prompted it — PR numbers, dates, counts from one occurrence, quoted error text with baked-in values. If the operative number may drift, state where to re-check it rather than freezing today's reading.
-
-## Declaration layout
-
-- **Interfaces/types at the top** — within a `.vue` `<script setup>` or `.ts` module, group all local `interface`/`type` declarations together at the top of the block (after imports), before the runtime `const`/logic. Don't interleave a stray interface between logic blocks.
 
 ## SKILL.md is the always-on layer; `references/` holds the rest
 

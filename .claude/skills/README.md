@@ -21,7 +21,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 
 ### Meta
 
-- `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, declaration layout.
+- `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, the two-tier layout.
 - `docs` — `packages/app/content/docs` conventions: the Mermaid mandate, location-carries-status, page templates, area lifecycle.
 - `readme-standards` — package `README.md` template, badges, published-vs-private split.
 
@@ -65,6 +65,7 @@ The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-
 - `git` — commit format, safety rules, branch hygiene.
 - `code-review` — the one entry point for every review: the workflow script, its two modes, what a run costs and bounds it, confidence and provenance on findings, closing a finding (`fixing-findings.md`), and the stop rule.
 - `coderabbit` — review config: PR file budget, `.coderabbit.yaml` exclusions, exclude/re-enable commit pair.
+- `sweeps` — repo-wide mechanical passes and the `.claude/ledgers/` tree that tracks them: when one earns a file, its metadata/coverage tables, standing vs one-shot, shrinking a sweep into an enforcer. The convention a sweep carries stays owned by its own skill.
 - `oxlint` — lint rule exceptions and disable directives.
 - `package-scripts` — which `pnpm` script to run, and from where.
 - `context-efficiency` — how the main session spends its own context/turns: delegating wide reads, batching verification, polling vs sleeping, baselining before chasing an error.

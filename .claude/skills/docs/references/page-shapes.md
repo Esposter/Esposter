@@ -22,7 +22,7 @@ packages/app/content/docs/
     roadmap.md                ← open work only (omit for mature areas with none)
   proposals/
     <area>/<name>.md          ← unimplemented design spec, one folder per area
-    refactors/<name>.md       ← cross-area one-time sweeps (not an area — no index/roadmap/deferred)
+    refactors/<name>.md       ← cross-area refactor plans (not an area — no index/roadmap/deferred). A mechanical sweep is not one: it designs no behaviour and lives in `.claude/ledgers/` (`sweeps` skill)
 ```
 
 ## Sidebar grouping
