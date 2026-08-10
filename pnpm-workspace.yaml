@@ -216,7 +216,7 @@ catalog:
   three: ^0.185.1
   three-globe: ^2.45.2
   trpc-nuxt: ^2.1.1
-  tsx: ^4.23.11
+  tsx: ^4.23.12
   type-fest: ^5.8.0
   typedoc: ^0.28.20
   typescript: 6.0.3
