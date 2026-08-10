@@ -11,15 +11,29 @@ import {
   FileEntityPropertyNames,
   FilterType,
   FilterTypeHas,
+  getMimeCategory,
+  MimeCategory,
   SearchOperator,
   serializeValue,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 
-const IMAGE_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("image/"));
-const VIDEO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("video/"));
-const AUDIO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("audio/"));
+// The one categorisation of a mimetype, so a category the uploader recognises is a category search can filter by
+const ContentTypesByMimeCategory = Object.groupBy([...ContentTypes], getMimeCategory);
+// Each media filter asks for one mime category; the clause it builds is the same either way
+const FilterTypeHasMimeCategoryMap = {
+  [FilterTypeHas.Image]: MimeCategory.Image,
+  [FilterTypeHas.Sound]: MimeCategory.Audio,
+  [FilterTypeHas.Video]: MimeCategory.Video,
+} as const satisfies Partial<Record<FilterTypeHas, MimeCategory>>;
+// Every remaining filter narrows one field with one operator, so only the pair varies
+const FilterTypeClauseMap = {
+  [FilterType.After]: { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.gt },
+  [FilterType.Before]: { key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.lt },
+  [FilterType.From]: { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq },
+  [FilterType.In]: { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq },
+} as const satisfies Partial<Record<FilterType, { key: string; operator: BinaryOperator }>>;
 
 export const filtersToClauses = (
   filters: Filter[],
@@ -28,21 +42,11 @@ export const filtersToClauses = (
 
   for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type: filterType }) => filterType)))
     switch (type) {
+      case FilterType.After:
+      case FilterType.Before:
       case FilterType.From:
-        for (const { value } of filtersByType)
-          clauses.push({
-            key: StandardMessageEntityPropertyNames.userId,
-            operator: BinaryOperator.eq,
-            value,
-          });
-        break;
       case FilterType.In:
-        for (const { value } of filtersByType)
-          clauses.push({
-            key: CompositeKeyPropertyNames.partitionKey,
-            operator: BinaryOperator.eq,
-            value,
-          });
+        for (const { value } of filtersByType) clauses.push({ ...FilterTypeClauseMap[type], value });
         break;
       case FilterType.Mentions: {
         clauses.push({
@@ -61,24 +65,12 @@ export const filtersToClauses = (
               clauses.push(getSearchNonNullClause(StandardMessageEntityPropertyNames.linkPreviewResponse));
               break;
             case FilterTypeHas.Image:
-              clauses.push({
-                key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
-                operator: SearchOperator.arrayContains,
-                value: IMAGE_CONTENT_TYPES,
-              });
-              break;
             case FilterTypeHas.Video:
-              clauses.push({
-                key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
-                operator: SearchOperator.arrayContains,
-                value: VIDEO_CONTENT_TYPES,
-              });
-              break;
             case FilterTypeHas.Sound:
               clauses.push({
                 key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: AUDIO_CONTENT_TYPES,
+                value: ContentTypesByMimeCategory[FilterTypeHasMimeCategoryMap[value]] ?? [],
               });
               break;
             case FilterTypeHas.Forward:
@@ -91,16 +83,6 @@ export const filtersToClauses = (
             default:
               throw new NotFoundError(filtersToClauses.name, serializeValue(value));
           }
-        break;
-      }
-      case FilterType.Before: {
-        for (const { value } of filtersByType)
-          clauses.push({ key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.lt, value });
-        break;
-      }
-      case FilterType.After: {
-        for (const { value } of filtersByType)
-          clauses.push({ key: StandardMessageEntityPropertyNames.createdAt, operator: BinaryOperator.gt, value });
         break;
       }
       case FilterType.During: {

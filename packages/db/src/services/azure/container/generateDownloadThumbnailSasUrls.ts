@@ -9,13 +9,10 @@ export const generateDownloadThumbnailSasUrls = (
   containerClient: ContainerClient,
   files: Pick<FileEntity, "id">[],
   prefix = "",
-) => {
-  if (files.length === 0) return [] as string[];
-  else
-    return Promise.all(
-      files.map(({ id }) => {
-        const blockBlobClient = containerClient.getBlockBlobClient(getThumbnailBlobName(prefix, id));
-        return generateReadSasUrl(blockBlobClient, { contentType: THUMBNAIL_CONTENT_TYPE });
-      }),
-    );
-};
+) =>
+  Promise.all(
+    files.map(({ id }) => {
+      const blockBlobClient = containerClient.getBlockBlobClient(getThumbnailBlobName(prefix, id));
+      return generateReadSasUrl(blockBlobClient, { contentType: THUMBNAIL_CONTENT_TYPE });
+    }),
+  );
