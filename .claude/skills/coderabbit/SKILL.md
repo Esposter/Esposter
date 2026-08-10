@@ -1,6 +1,6 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review, the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, nitpicks live in the review body rather than inline comments, the three gates that decide a push (nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, the coderabbitai[bot] login and reconciling against the stated counts (inline comments can fail to post outright), replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review with the wait decided by the check's bucket rather than its state string (unknown means wait), the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, nitpicks live in the review body rather than inline comments, the three gates that decide a push (nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, the coderabbitai[bot] login and reconciling against the stated counts (inline comments can fail to post outright), replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
 ---
 
 # CodeRabbit Conventions
@@ -14,7 +14,7 @@ gh pr view <pr> --json baseRefName --jq .baseRefName   # the branch whose config
 git show <base-branch>:.coderabbit.yaml | head -20     # the config CodeRabbit actually applies
 ```
 
-- Commit config changes **directly to that base branch**, as a standalone commit separate from the work they cover. A config change on the head branch does nothing.
+- Commit config changes **directly to that base branch**, as a standalone commit separate from the work they cover. A config change on the head branch does nothing. Landing anything on a shared branch — by worktree push or by the API call below, which does not look like a push but is one — needs the same explicit go-ahead every push does.
 - Editing the base branch does not mean checking it out over your work: `git worktree add <scratch-path> <base-branch>`, commit there, push, then `git worktree remove`. The working tree keeps whatever is in flight, which matters when agents are mid-edit in it. Rebase inside the worktree before pushing — the base branch moves under you (Renovate).
 - **On Windows the worktree can fail outright** — checking out this repo under a long scratch path trips `Filename too long` on the deepest `packages/infra` paths and aborts with `Could not reset index file`. For a one-file config edit, skip the checkout entirely and commit through the API, which is atomic and cannot disturb the working tree at all:
 
@@ -46,18 +46,21 @@ So ask first, every time. Agreement on the goal ("get this reviewed") is not per
 **Check CodeRabbit's state before every push to a branch with an open PR.** Pushing while a review is running cancels it and retriggers a fresh one, which costs a rate-limit slot and loses the in-progress review's findings. CodeRabbit is an **incremental** system — it does not re-review commits it has already reviewed — so a cancelled review's comments do not reliably come back on the next run. They are simply gone.
 
 ```bash
-gh pr checks --json name,state,description --jq '.[] | select(.name=="CodeRabbit")'
-# {"description":"Review completed","name":"CodeRabbit","state":"SUCCESS"}
+gh pr checks --json name,state,bucket,description --jq '.[] | select(.name=="CodeRabbit")'
+# {"bucket":"pass","description":"Review rate limited","name":"CodeRabbit","state":"SUCCESS"}
 ```
 
-**Only an actually-running review blocks a push, and the state names which is which.** `PENDING`, or a description reading `Review in progress`, is the one case that waits — that is a live review a push would cancel. Every terminal state is clear to push on:
+**Read `bucket` first, then `description`.** `bucket` is gh's normalization across both representations a check can take, so `pending` means a live review whatever CodeRabbit reports underneath — it posts a **commit status** (states limited to `pending`/`success`/`failure`/`error`), while GitHub Actions entries on the same PR are check runs reporting `IN_PROGRESS`/`QUEUED`. Keying on the state string alone means a representation change reads as terminal. `description` then separates a review that finished from one that never started:
 
-| state / description                            | meaning                        | push?                         |
-| :--------------------------------------------- | :----------------------------- | :---------------------------- |
-| `PENDING` / `Review in progress`               | live review, a push cancels it | **wait**                      |
-| `SUCCESS` / `Review completed`                 | finished                       | push                          |
-| `SUCCESS` / `Review rate limited`              | never started, nothing running | **push**                      |
-| `SUCCESS` / skip comment says `Too many files` | never started                  | push, but fix the count first |
+| bucket / description                          | meaning                        | push?                         |
+| :-------------------------------------------- | :----------------------------- | :---------------------------- |
+| `pending` (any description)                   | live review, a push cancels it | **wait**                      |
+| `pass` / `Review completed`                   | finished                       | push                          |
+| `pass` / `Review rate limited`                | never started, nothing running | **push**                      |
+| `pass` / skip comment says `Too many files`   | never started                  | push, but fix the count first |
+| `fail`, missing row, or anything unrecognised | unknown                        | **wait**, then look           |
+
+The last row is the default, not an edge case: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute.
 
 Three gates decide a push, and they are not interchangeable — the first is about cancelling a review, the second about accumulating an unreviewed window, the third about overflowing the cap:
 

@@ -41,13 +41,7 @@ After committing, verify with `git log -1 --format='%B'` before pushing.
 
 - **Never `git add -A` without reading `git status` first.** The tree can already be dirty with someone else's work — a leftover snapshot refresh, an unfinished edit — and `-A` sweeps it into your commit, where it ships under a message that does not describe it. Stage the paths you touched, or check the status and confirm every extra file belongs. If one already landed in the commit, `git reset --soft HEAD~1` then `git restore --staged <paths>` puts it back in the working tree with its content intact.
 - **Never use `git stash`** — a failed/forgotten pop loses in-progress changes. To inspect prior committed state, use `git show HEAD:path/to/file` or `git diff HEAD`. To set work aside, make a WIP commit.
-- **Never push into a running CodeRabbit review** — if the branch has an open PR, check the review state first; pushing mid-review cancels it, burns a rate-limit slot, and loses the in-progress findings for good (CodeRabbit won't re-review commits it has already seen):
-
-  ```bash
-  gh pr checks --json name,state,description --jq '.[] | select(.name=="CodeRabbit")'
-  ```
-
-  Push only on `SUCCESS`; otherwise wait for it to settle. Full rationale and symptoms in the **coderabbit** skill.
+- **Never push into a running CodeRabbit review** — if the branch has an open PR, check the review state first; pushing mid-review cancels it, burns a rate-limit slot, and loses the in-progress findings for good (CodeRabbit won't re-review commits it has already seen). The command, the states that mean "running", and the three gates that decide the push are the `coderabbit` skill's — a second copy of that table here is how one of them goes stale.
 
 ## Pushing
 
