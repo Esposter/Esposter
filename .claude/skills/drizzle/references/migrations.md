@@ -15,6 +15,29 @@ pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format — NOT
 - **Rename the generated codename folder** descriptively, keeping drizzle's timestamp prefix, then rerun `db:gen` — it must report `No schema changes, nothing to migrate`.
 - Generation surfaces real drift a hand-written chain silently missed — e.g. enum values present in schema + code but never migrated. Verify against the live DB (`select enum_range(null::my_enum)`) before assuming a surprising diff is wrong.
 
+## Renames — hint them, never hand-patch the drop
+
+A rename is indistinguishable from a delete-plus-create in a schema diff, so drizzle-kit refuses to guess: it exits 2 and prints, per ambiguous entity, the two hint objects it would accept. Answer with `rename` and it emits `ALTER … RENAME`, which is metadata-only and keeps the data. This is strictly better than letting it generate a drop/recreate and rewriting the SQL afterwards — the SQL is right the first time and `snapshot.json` needs no thought.
+
+```bash
+pnpm db:gen --hints-file <path>.json    # a JSON array; --hints '<inline>' blows the Windows 8191-char limit
+```
+
+Each entry is `{ "type": "rename", "kind": "table" | "enum" | "check" | "index" | "unique", "from": [...], "to": [...] }`. `from` names the **previous** snapshot's identifier, `to` the new one — `[schema, name]` for a table or enum, `[schema, table, name]` for anything living on a table.
+
+Two things that cost a cycle each if unknown:
+
+- **Resolve in rounds.** A constraint or index on a table that is _also_ being renamed is not prompted until the table's own rename is known, so a second `db:gen` surfaces a fresh batch. Re-run until it writes the migration.
+- **For those second-round entries, `from` takes the _new_ table name** with the _old_ constraint name. The table rename is applied first, so a `from` naming the old table matches nothing and fails with `doesn't match any deleted <kind>`.
+
+Verify the result is what you asked for before renaming the folder — for a pure rename migration, every statement should be an `ALTER`, with no `DROP`, `TRUNCATE` or `DELETE` anywhere:
+
+```bash
+grep -cE "DROP|TRUNCATE|DELETE FROM" <migration>.sql   # expect 0
+```
+
+Renaming schema identifiers invalidates two derived artifacts that fail confusingly later: `packages/db-mock`'s pre-migrated PGlite snapshot (`pnpm snapshot:gen`, then `pnpm build`, or every test reports `relation "x" does not exist`) and the bundle/type-size snapshots. Refresh size snapshots **after** the rebuild, or they capture the pre-build file.
+
 ## Fixing up the generated SQL
 
 Editing the generated **`migration.sql`** by hand is allowed and expected — but only the SQL, and only before it's applied. The migrator's bookkeeping hash is `sha256(migration.sql)`, computed at apply time, so an un-applied `migration.sql` is free to edit; leave `snapshot.json` exactly as generated.

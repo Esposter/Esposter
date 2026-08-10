@@ -4,7 +4,7 @@ import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { bigint, check, index, pgEnum, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 
-export const azureContainerEnum = pgEnum("azure_container", AzureContainer);
+export const azureContainerEnum = pgEnum("azureContainer", AzureContainer);
 // The per-blob ledger behind `users.storageBytesUsed`: one row per write target this user was handed, holding
 // Exactly the bytes the counter is carrying on its behalf. Every increment of the counter writes a row in the
 // Same transaction, so a crash can never leave bytes held with nothing left to give them back, and every
@@ -17,7 +17,7 @@ export const azureContainerEnum = pgEnum("azure_container", AzureContainer);
 // Stops counting. The row itself outlives that, because a `BlobCreated` for a blob that did land can still be
 // Inside the delivery window — a later reserve by that user drops it only once no such event can still arrive.
 export const storageBlobs = pgTable(
-  "storage_blobs",
+  "storageBlobs",
   {
     blobName: text().notNull(),
     containerName: azureContainerEnum().notNull(),
@@ -35,11 +35,11 @@ export const storageBlobs = pgTable(
   {
     extraConfig: ({ blobName, containerName, countedBytes, declaredBytes, reconciledAt, userId }) => [
       primaryKey({ columns: [containerName, blobName] }),
-      check("storage_blobs_declared_bytes_check", sql`${declaredBytes} >= 0`),
-      check("storage_blobs_counted_bytes_check", sql`${countedBytes} >= 0`),
+      check("storageBlobs_declaredBytes_check", sql`${declaredBytes} >= 0`),
+      check("storageBlobs_countedBytes_check", sql`${countedBytes} >= 0`),
       // Backs the outstanding-reservation cap and the expired-hold collection, both of which lead with the
       // User on every reserve. No index leads with `reconciledAt`: nothing scans the ledger account-wide
-      index("storage_blobs_userId_reconciledAt_index").on(userId, reconciledAt),
+      index("storageBlobs_userId_reconciledAt_index").on(userId, reconciledAt),
     ],
   },
 );

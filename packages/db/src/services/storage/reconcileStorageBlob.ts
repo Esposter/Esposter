@@ -1,5 +1,4 @@
-import type { AzureContainer, relations, StorageBlob } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { AzureContainer, Database, StorageBlob } from "@esposter/db-schema";
 
 import { storageBlobs, users } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
@@ -11,7 +10,7 @@ import { and, eq, sql } from "drizzle-orm";
 // SAS outlives one PUT) corrects the counter rather than stranding the old size on it.
 // Returns whether a ledger row matched, so a caller holding an ambiguous blob name can try its other form.
 export const reconcileStorageBlob = (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   containerName: AzureContainer,
   blobName: StorageBlob["blobName"],
   actualBytes: number,

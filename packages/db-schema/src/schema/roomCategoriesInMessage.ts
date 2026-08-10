@@ -20,8 +20,8 @@ export const roomCategoriesInMessage = pgTable(
   },
   {
     extraConfig: ({ name, position }) => [
-      check("room_categories_name_length_check", createNameCheckSql(name, ROOM_CATEGORY_NAME_MAX_LENGTH)),
-      check("room_categories_position_check", sql`${position} >= 0`),
+      check("roomCategories_name_length_check", createNameCheckSql(name, ROOM_CATEGORY_NAME_MAX_LENGTH)),
+      check("roomCategories_position_check", sql`${position} >= 0`),
     ],
     schema: messageSchema,
   },

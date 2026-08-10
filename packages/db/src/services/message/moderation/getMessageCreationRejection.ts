@@ -1,5 +1,4 @@
-import type { relations, RoomFilterInMessage } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database, RoomFilterInMessage } from "@esposter/db-schema";
 
 import { hasPermission } from "@/services/room/rbac/hasPermission";
 import { MessageCreationRejectionType, RoomPermission } from "@esposter/db-schema";
@@ -24,7 +23,7 @@ export type MessageCreationRejection =
 // Applying it, because a caller may need to re-run the decision for a message it has already stored — and an
 // Automod action applied twice for one message is two timeouts and two audit rows.
 export const getMessageCreationRejection = async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   userId: string,
   roomId: string,
   message?: string,

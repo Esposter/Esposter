@@ -19,7 +19,7 @@ export enum WordFilterAction {
 
 export const wordFilterActionSchema = z.enum(WordFilterAction) satisfies z.ZodType<WordFilterAction>;
 
-export const wordFilterActionEnum = pgEnum("word_filter_action", WordFilterAction);
+export const wordFilterActionEnum = pgEnum("wordFilterAction", WordFilterAction);
 
 export const roomFiltersInMessage = pgTable(
   "roomFilters",
@@ -34,12 +34,12 @@ export const roomFiltersInMessage = pgTable(
   {
     extraConfig: ({ action, timeoutDurationMs, words }) => [
       check(
-        "room_filters_words_size_check",
+        "roomFilters_words_size_check",
         sql`cardinality(${words}) <= ${sql.raw(FILTER_WORDS_MAX_LENGTH.toString())}`,
       ),
       // A Timeout action requires a positive duration — every other action requires the duration unset.
       check(
-        "room_filters_timeout_duration_check",
+        "roomFilters_action_timeoutDurationMs_check",
         sql`(${action} = 'Timeout' AND ${timeoutDurationMs} IS NOT NULL AND ${timeoutDurationMs} > 0) OR (${action} <> 'Timeout' AND ${timeoutDurationMs} IS NULL)`,
       ),
     ],

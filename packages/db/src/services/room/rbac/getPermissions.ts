@@ -1,16 +1,15 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { roomRolesInMessage, usersToRoomRolesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, or } from "drizzle-orm";
 
 export interface GetPermissions {
-  (db: PostgresJsDatabase<typeof relations>, userId: string, roomId: string): Promise<bigint>;
-  (db: PostgresJsDatabase<typeof relations>, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
+  (db: Database, userId: string, roomId: string): Promise<bigint>;
+  (db: Database, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
 }
 
 export const getPermissions: GetPermissions = (async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   userId: string,
   roomIds: string | string[],
 ): Promise<bigint | Map<string, bigint>> => {

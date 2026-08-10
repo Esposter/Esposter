@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { getPushSubscriptionsForMessage } from "@/services/message/getPushSubscriptionsForMessage";
 import { createMockDb } from "@esposter/db-mock";
@@ -27,7 +26,7 @@ const getMentionMessage = (id: string) =>
   `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}" />`;
 
 describe(getPushSubscriptionsForMessage, () => {
-  let db: PostgresJsDatabase<typeof relations>;
+  let db: Database;
   const name = "name";
   const roomId = crypto.randomUUID();
   const allOnlineUserId = crypto.randomUUID();

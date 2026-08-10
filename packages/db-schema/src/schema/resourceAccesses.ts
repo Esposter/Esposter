@@ -11,7 +11,7 @@ import { createSelectSchema } from "drizzle-orm/zod";
 // While this records the owner opening their own. One row per user per resource, rewritten on every open,
 // So the table stays bounded by what exists rather than growing with traffic.
 export const resourceAccesses = pgTable(
-  "resource_accesses",
+  "resourceAccesses",
   {
     accessedAt: timestamp().notNull().defaultNow(),
     resourceId: uuid()
@@ -26,7 +26,7 @@ export const resourceAccesses = pgTable(
       primaryKey({ columns: [userId, resourceId] }),
       // Recent is "this user's rows, newest first", and the primary key orders by resourceId — without this
       // The sort re-reads and re-sorts every resource the user has ever opened
-      index("resource_accesses_userId_accessedAt_index").on(userId, accessedAt),
+      index("resourceAccesses_userId_accessedAt_index").on(userId, accessedAt),
     ],
   },
 );

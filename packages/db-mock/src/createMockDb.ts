@@ -1,4 +1,4 @@
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { SNAPSHOT_FILENAME } from "@/constants";
 import { PGlite } from "@electric-sql/pglite";
@@ -14,7 +14,7 @@ import { join } from "node:path";
 // The snapshot is immutable, so the read is shared across every call in a worker instead of hitting disk per database
 let snapshotPromise: ReturnType<typeof readFile> | undefined;
 
-export const createMockDb = async (): Promise<PostgresJsDatabase<typeof relations>> => {
+export const createMockDb = async (): Promise<Database> => {
   snapshotPromise ??= readFile(join(import.meta.dirname, SNAPSHOT_FILENAME));
   const loadDataDir = new Blob([await snapshotPromise]);
   // The snapshot was dumped with pg_trgm installed, so the extension must be loaded here too —
@@ -24,5 +24,5 @@ export const createMockDb = async (): Promise<PostgresJsDatabase<typeof relation
   // Boot cost and blow past the per-test timeout. Await readiness here so it lands in `beforeAll`.
   await client.waitReady;
   const db = drizzle({ client, relations });
-  return db as unknown as PostgresJsDatabase<typeof relations>;
+  return db as unknown as Database;
 };

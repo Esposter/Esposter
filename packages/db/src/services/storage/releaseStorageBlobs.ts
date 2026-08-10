@@ -1,5 +1,4 @@
-import type { AzureContainer, relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { AzureContainer, Database } from "@esposter/db-schema";
 
 import { releaseStorageBlobsWhere } from "@/services/storage/releaseStorageBlobsWhere";
 import { storageBlobs } from "@esposter/db-schema";
@@ -8,7 +7,7 @@ import { and, eq, inArray } from "drizzle-orm";
 // Give a named set of blobs' bytes back. One statement per set, so the set is what bounds the bind parameters
 // It expands to — deleteStorageBlobs, the only caller, hands it one deletion wave at a time.
 export const releaseStorageBlobs = (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   containerName: AzureContainer,
   blobNames: string[],
 ): Promise<void> => {

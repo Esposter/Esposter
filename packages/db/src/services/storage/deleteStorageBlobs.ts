@@ -1,6 +1,5 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { AzureContainer, relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { AzureContainer, Database } from "@esposter/db-schema";
 
 import { releaseStorageBlobs } from "@/services/storage/releaseStorageBlobs";
 import { MAX_CONCURRENT_BLOB_DELETIONS } from "@esposter/db-schema";
@@ -16,7 +15,7 @@ import { chunk, getResultAsync, takeOne } from "@esposter/shared";
 // Removed — not the set it was asked for — so a wave that throws leaves nothing stranded behind it: the names
 // It did remove are already out of the ledger, and the redelivered event re-resolves a smaller set.
 export const deleteStorageBlobs = async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   containerClient: ContainerClient,
   containerName: AzureContainer,
   blobNames: string[],

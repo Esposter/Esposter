@@ -23,7 +23,7 @@ isHidden: boolean().notNull().default(false),
 ## Table Definition
 
 - Use the `pgTable` wrapper from `@/pgTable` (not raw `drizzle-orm/pg-core`) for all tables, including join tables. Pass composite PKs via `extraConfig`.
-- Table name strings stay snake_case plural (`"room_categories"`, `"push_subscriptions"`) — only columns are camelCase.
+- **Every DB identifier is camelCase** — table names, enum names, constraint and index names alike (`pgTable("roomCategories")`, `pgEnum("resourceType")`). The name string is the literal DDL identifier: the wrapper's `camelCase` casing applies to **columns**, and passes the table name through untouched, so nothing normalises it for you and nothing catches a snake_case one at compile time. `schema.test.ts` asserts each table's name equals its exported const, which is what keeps this from drifting again — it drifted once already, into five snake_case tables and eleven snake_case enums, because the rule lived only in this sentence and the sentence was wrong.
 - Pass `schema: messageSchema` for message-feature tables to group them under the `message` Postgres schema. Tables shared beyond the messaging feature (`friends`, `users`, `posts`, `blocks`) take no `schema` and land in the default schema.
 
 ```typescript

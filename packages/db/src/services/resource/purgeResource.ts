@@ -1,6 +1,5 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { CompositeKey, CustomTableClient, relations, Resource } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { CompositeKey, CustomTableClient, Database, Resource } from "@esposter/db-schema";
 
 import { deleteDirectory } from "@/services/azure/container/deleteDirectory";
 import { deleteTablePartitionEntities } from "@/services/resource/deleteTablePartitionEntities";
@@ -15,7 +14,7 @@ import { eq } from "drizzle-orm";
 // View counters, and whatever its type owns (see ResourceOwnedTablesMap) — because a partition left
 // Behind here is unreachable the moment the row goes
 export const purgeResource = async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   containerClient: ContainerClient,
   tableClients: CustomTableClient<CompositeKey>[],
   resourceId: Resource["id"],

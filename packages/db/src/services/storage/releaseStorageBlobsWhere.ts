@@ -1,6 +1,5 @@
-import type { relations } from "@esposter/db-schema";
+import type { Database } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { storageBlobs, users } from "@esposter/db-schema";
 import { eq, sql } from "drizzle-orm";
@@ -12,7 +11,7 @@ import { eq, sql } from "drizzle-orm";
 // Clamped at zero because drift can only ever be corrected downwards, and a negative total would read back as
 // A user who has more allowance than their tier grants.
 export const releaseStorageBlobsWhere = (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   // Undefined is what `and()` collapses to when every operand is, and an unfiltered delete here would empty
   // The ledger for every user — so it is a no-op rather than a filter drizzle would happily drop
   where: SQL | undefined,

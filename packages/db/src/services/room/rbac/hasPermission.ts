@@ -1,11 +1,10 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { getPermissions } from "@/services/room/rbac/getPermissions";
 import { hasPermission as getHasPermission, RoomPermission } from "@esposter/db-schema";
 
 export const hasPermission = async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   userId: string,
   roomId: string,
   permission: RoomPermission,

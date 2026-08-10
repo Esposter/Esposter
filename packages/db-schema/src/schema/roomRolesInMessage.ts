@@ -1,3 +1,4 @@
+import { createMaxLengthCheckSql } from "@/models/shared/Check";
 import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
@@ -50,14 +51,11 @@ export const roomRolesInMessage = pgTable(
   },
   {
     extraConfig: (table) => [
-      check(
-        "room_roles_color_length_check",
-        sql`LENGTH(${table.color}) <= ${sql.raw(ROOM_ROLE_COLOR_MAX_LENGTH.toString())}`,
-      ),
-      check("room_roles_name_length_check", createNameCheckSql(table.name, ROOM_ROLE_NAME_MAX_LENGTH)),
-      check("room_roles_position_check", sql`${table.position} >= 0`),
-      index("room_roles_roomId_position_index").on(table.roomId, table.position),
-      uniqueIndex("room_roles_everyone_unique")
+      check("roomRoles_color_length_check", createMaxLengthCheckSql(table.color, ROOM_ROLE_COLOR_MAX_LENGTH)),
+      check("roomRoles_name_length_check", createNameCheckSql(table.name, ROOM_ROLE_NAME_MAX_LENGTH)),
+      check("roomRoles_position_check", sql`${table.position} >= 0`),
+      index("roomRoles_roomId_position_index").on(table.roomId, table.position),
+      uniqueIndex("roomRoles_roomId_isEveryone_unique")
         .on(table.roomId)
         .where(sql`${table.isEveryone} = TRUE`),
     ],

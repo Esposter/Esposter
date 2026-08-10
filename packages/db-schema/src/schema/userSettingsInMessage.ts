@@ -1,7 +1,7 @@
+import { createBetweenCheckSql } from "@/models/shared/Check";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { users } from "@/schema/users";
-import { sql } from "drizzle-orm";
 import { boolean, check, integer, pgEnum, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
@@ -13,7 +13,7 @@ export enum VoiceInputMode {
 
 const voiceInputModeSchema = z.enum(VoiceInputMode) satisfies z.ZodType<VoiceInputMode>;
 
-export const voiceInputModeEnum = pgEnum("voice_input_mode", VoiceInputMode);
+export const voiceInputModeEnum = pgEnum("voiceInputMode", VoiceInputMode);
 
 export const VoiceInputModes: readonly VoiceInputMode[] = Object.values(VoiceInputMode);
 
@@ -25,7 +25,7 @@ export enum NoiseSuppressionMode {
 
 const noiseSuppressionModeSchema = z.enum(NoiseSuppressionMode) satisfies z.ZodType<NoiseSuppressionMode>;
 
-export const noiseSuppressionModeEnum = pgEnum("noise_suppression_mode", NoiseSuppressionMode);
+export const noiseSuppressionModeEnum = pgEnum("noiseSuppressionMode", NoiseSuppressionMode);
 
 export const MIN_INPUT_SENSITIVITY_DECIBELS = -100;
 export const MAX_INPUT_SENSITIVITY_DECIBELS = 0;
@@ -66,24 +66,28 @@ export const userSettingsInMessage = pgTable(
       speakerVolumePercentage,
     }) => [
       check(
-        "user_settings_input_sensitivity_decibels_check",
-        sql`${inputSensitivityDecibels} BETWEEN ${sql.raw(MIN_INPUT_SENSITIVITY_DECIBELS.toString())} AND ${sql.raw(MAX_INPUT_SENSITIVITY_DECIBELS.toString())}`,
+        "userSettings_inputSensitivityDecibels_check",
+        createBetweenCheckSql(inputSensitivityDecibels, MIN_INPUT_SENSITIVITY_DECIBELS, MAX_INPUT_SENSITIVITY_DECIBELS),
       ),
       check(
-        "user_settings_microphone_volume_percentage_check",
-        sql`${microphoneVolumePercentage} BETWEEN 0 AND ${sql.raw(MAX_USER_VOLUME_PERCENTAGE.toString())}`,
+        "userSettings_microphoneVolumePercentage_check",
+        createBetweenCheckSql(microphoneVolumePercentage, 0, MAX_USER_VOLUME_PERCENTAGE),
       ),
       check(
-        "user_settings_speaker_volume_percentage_check",
-        sql`${speakerVolumePercentage} BETWEEN 0 AND ${sql.raw(MAX_USER_VOLUME_PERCENTAGE.toString())}`,
+        "userSettings_speakerVolumePercentage_check",
+        createBetweenCheckSql(speakerVolumePercentage, 0, MAX_USER_VOLUME_PERCENTAGE),
       ),
       check(
-        "user_settings_auto_idle_threshold_ms_check",
-        sql`${autoIdleThresholdMs} BETWEEN ${sql.raw(MIN_AUTO_IDLE_THRESHOLD_MS.toString())} AND ${sql.raw(MAX_AUTO_IDLE_THRESHOLD_MS.toString())}`,
+        "userSettings_autoIdleThresholdMs_check",
+        createBetweenCheckSql(autoIdleThresholdMs, MIN_AUTO_IDLE_THRESHOLD_MS, MAX_AUTO_IDLE_THRESHOLD_MS),
       ),
       check(
-        "user_settings_push_to_talk_release_delay_ms_check",
-        sql`${pushToTalkReleaseDelayMs} BETWEEN ${sql.raw(MIN_PUSH_TO_TALK_RELEASE_DELAY_MS.toString())} AND ${sql.raw(MAX_PUSH_TO_TALK_RELEASE_DELAY_MS.toString())}`,
+        "userSettings_pushToTalkReleaseDelayMs_check",
+        createBetweenCheckSql(
+          pushToTalkReleaseDelayMs,
+          MIN_PUSH_TO_TALK_RELEASE_DELAY_MS,
+          MAX_PUSH_TO_TALK_RELEASE_DELAY_MS,
+        ),
       ),
     ],
     schema: messageSchema,

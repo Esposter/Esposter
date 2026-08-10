@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { SNAPSHOT_FILENAME } from "@/constants";
 import { createMockDb } from "@/createMockDb";
@@ -21,7 +20,7 @@ const introspectQuery = `
 const introspect = async (client: PGlite) => (await client.query(introspectQuery)).rows;
 
 describe(createMockDb, () => {
-  let db: PostgresJsDatabase<typeof relations>;
+  let db: Database;
 
   beforeAll(async () => {
     db = await createMockDb();

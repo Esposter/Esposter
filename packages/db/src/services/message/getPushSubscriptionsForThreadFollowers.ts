@@ -1,5 +1,4 @@
-import type { relations, ThreadFollowInMessage } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database, ThreadFollowInMessage } from "@esposter/db-schema";
 
 import { PUSH_SUBSCRIPTION_COLUMNS } from "@/services/pushNotification/constants";
 import {
@@ -15,7 +14,7 @@ import { and, eq, ne, notInArray } from "drizzle-orm";
 // (excludedUserIds) so a single reply never delivers two notifications to the same recipient.
 // Mirrors getPushSubscriptionsForMessage's join shape.
 export const getPushSubscriptionsForThreadFollowers = (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   {
     excludedUserIds,
     roomId,

@@ -1,6 +1,5 @@
 import type { ExecutedAutomodAction } from "@/models/message/moderation/ExecutedAutomodAction";
-import type { CustomTableClient, ModerationLogEntity, relations, RoomFilterInMessage } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { CustomTableClient, Database, ModerationLogEntity, RoomFilterInMessage } from "@esposter/db-schema";
 
 import { writeModerationLogEntry } from "@/services/message/moderation/writeModerationLogEntry";
 import { AdminActionType, AUTOMOD_USER_ID, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
@@ -11,7 +10,7 @@ import { and, eq, sql } from "drizzle-orm";
 // Every path that blocks a message (live send, forward, scheduled delivery) applies the same consequence.
 // Returns what it did so an in-process caller can fan the action out to its subscriptions.
 export const executeAutomodAction = async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   // Resolved lazily so a Reject filter — the common case, which has no follow-up action — never builds a client
   getModerationLogClient: () => Promise<CustomTableClient<ModerationLogEntity>>,
   {

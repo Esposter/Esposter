@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { incrementMentionCounts } from "@/services/message/incrementMentionCounts";
 import { createMockDb } from "@esposter/db-mock";
@@ -33,7 +32,7 @@ const getMentionedUserIds = (updatedUsersToRooms: { userId: string }[]) =>
   new Set(updatedUsersToRooms.map(({ userId }) => userId));
 
 describe(incrementMentionCounts, () => {
-  let db: PostgresJsDatabase<typeof relations>;
+  let db: Database;
   const name = "name";
   const roomId = crypto.randomUUID();
   const roleId = crypto.randomUUID();

@@ -1,9 +1,9 @@
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
+import { createMaxLengthCheckSql } from "@/models/shared/Check";
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
 import { sanitizeTextHtml } from "@esposter/shared";
-import { sql } from "drizzle-orm";
 import { check, doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
@@ -29,11 +29,8 @@ export const posts = pgTable(
   {
     extraConfig: ({ description, title }) => [
       // We don't check if title is min(1) here because posts can be comments that have no title
-      check("posts_title_length_check", sql`LENGTH(${title}) <= ${sql.raw(POST_TITLE_MAX_LENGTH.toString())}`),
-      check(
-        "posts_description_length_check",
-        sql`LENGTH(${description}) <= ${sql.raw(POST_DESCRIPTION_MAX_LENGTH.toString())}`,
-      ),
+      check("posts_title_length_check", createMaxLengthCheckSql(title, POST_TITLE_MAX_LENGTH)),
+      check("posts_description_length_check", createMaxLengthCheckSql(description, POST_DESCRIPTION_MAX_LENGTH)),
     ],
   },
 );
