@@ -20,6 +20,7 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
+import { getDevice } from "@@/server/services/auth/getDevice";
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
@@ -155,35 +156,24 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
   ...roomIdSchema.shape,
 });
 
-const deleteLinkPreviewResponseInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
+// The key every single-message procedure addresses its target by
+const messageCompositeKeySchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 
-const onstandardCreateMessageInputSchema = z.object({
+const onCreateMessageInputSchema = z.object({
   lastEventId: z.string().nullish(),
   ...roomIdSchema.shape,
 });
 
-const onUpdateMessageInputSchema = roomIdSchema;
-
-const onCreateTypingInputSchema = roomIdSchema;
-
-const onDeleteMessageInputSchema = roomIdSchema;
-
-export const forwardMessageInputSchema = z.object({
+const forwardMessageInputSchema = z.object({
   ...standardMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
   roomIds: roomIdsSchema.shape.roomIds.min(1),
 });
 
-export const pinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
-
-export const unpinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
-
 const votePollInputSchema = z.object({
   // "" withdraws the caller's vote — the radio group emits no selection rather than an option id
   optionId: z.union([z.literal(""), z.uuid()]),
-  ...standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
+  ...messageCompositeKeySchema.shape,
 });
-
-const getWebPubSubClientAccessUrlInputSchema = roomIdSchema;
 
 export const baseMessageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
@@ -236,22 +226,21 @@ export const baseMessageRouter = router({
   // Clearing the preview needs a Replace — Merge cannot unset a property — so the write carries the whole message
   // Body and is conditional on the version the procedure read. Replaying the body this procedure first read would
   // Revert every concurrent change to the message, not only the preview it clears
-  deleteLinkPreviewResponse: getMessageProcedure(
-    deleteLinkPreviewResponseInputSchema,
-    MessageOperation.Update,
-  ).mutation(async ({ ctx: { messageClient, messageEntity, messageEtag } }) => {
-    const { partitionKey, rowKey } = messageEntity;
-    await updateEntityConditionally(messageClient, StandardMessageEntity, {
-      entityType: AzureEntityType.Message,
-      entityWithEtag: { entity: messageEntity, etag: messageEtag },
-      // oxlint-disable-next-line typescript/no-misused-spread
-      getUpdateEntity: (entity) => ({ ...entity, linkPreviewResponse: null }),
-      writeEntity: (entity, etag) => updateMessage(messageClient, entity, "Replace", { etag }),
-    });
-    // The subscription carries the cleared field rather than the replaced body, so a client merges one property
-    // Instead of adopting a whole message it may hold newer state for
-    messageEventEmitter.emit("updateMessage", { linkPreviewResponse: null, partitionKey, rowKey });
-  }),
+  deleteLinkPreviewResponse: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Update).mutation(
+    async ({ ctx: { messageClient, messageEntity, messageEtag } }) => {
+      const { partitionKey, rowKey } = messageEntity;
+      await updateEntityConditionally(messageClient, StandardMessageEntity, {
+        entityType: AzureEntityType.Message,
+        entityWithEtag: { entity: messageEntity, etag: messageEtag },
+        // oxlint-disable-next-line typescript/no-misused-spread
+        getUpdateEntity: (entity) => ({ ...entity, linkPreviewResponse: null }),
+        writeEntity: (entity, etag) => updateMessage(messageClient, entity, "Replace", { etag }),
+      });
+      // The subscription carries the cleared field rather than the replaced body, so a client merges one property
+      // Instead of adopting a whole message it may hold newer state for
+      messageEventEmitter.emit("updateMessage", { linkPreviewResponse: null, partitionKey, rowKey });
+    },
+  ),
   deleteMessage: getMessageProcedure(deleteMessageInputSchema, MessageOperation.Delete).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
@@ -294,26 +283,29 @@ export const baseMessageRouter = router({
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await isMember(ctx.db, ctx.getSessionPayload, roomIds);
-      const messageClient = await useTableClient(AzureTable.Messages);
+      // Every client provisions its own table/container, so acquiring them together costs one round trip
+      // Instead of three
+      const [messageClient, messageAscendingClient, containerClient] = await Promise.all([
+        useTableClient(AzureTable.Messages),
+        useTableClient(AzureTable.MessagesAscending),
+        useContainerClient(AzureContainer.MessageAssets),
+      ]);
       const messageEntity = await requireEntity(
         getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey),
         AzureEntityType.Message,
         JSON.stringify({ partitionKey, rowKey }),
       );
-
-      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+      // The filter has to see the text this forward WRITES. The forwarded body is what lands in the destination
+      // Room, so checking only the accompanying note lets any filtered word through by forwarding it in from a
+      // Room that does not filter it. Both texts go in one call because a single send attempt may spend at most
+      // One automod consequence.
+      const forwardedMessage = message ? `${messageEntity.message}\n${message}` : messageEntity.message;
       // Couple each room's word-filter check to its own creation attempt (single-send semantics per room): a
       // Room whose filter blocks times the sender out for THAT room only and posts nothing there, while every
       // Other room still receives the forward. allSettled lets the unblocked rooms finish writing before the
       // First per-room block is surfaced — never an all-rooms pre-flight that times out and then posts nothing.
       const results = await Promise.allSettled(
         roomIds.map(async (roomId) => {
-          // The filter has to see the text this forward WRITES. The forwarded body is what lands in the
-          // Destination room, so checking only the accompanying note lets any filtered word through by
-          // Forwarding it in from a room that does not filter it. Both texts go in one call because a single
-          // Send attempt may spend at most one automod consequence.
-          const forwardedMessage = message ? `${messageEntity.message}\n${message}` : messageEntity.message;
           await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, forwardedMessage);
           // A forward is a send like any other, so it advances the slowmode clock it was just checked against —
           // With the guards, before the write, so it can never fail open behind an already-persisted forward
@@ -339,15 +331,15 @@ export const baseMessageRouter = router({
           });
           const messages = [forward];
 
-          if (message) {
-            const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
-              message,
-              roomId,
-              type: MessageType.Message,
-              userId: ctx.getSessionPayload.user.id,
-            });
-            messages.push(newMessageEntity);
-          }
+          if (message)
+            messages.push(
+              await createMessage(messageClient, messageAscendingClient, {
+                message,
+                roomId,
+                type: MessageType.Message,
+                userId: ctx.getSessionPayload.user.id,
+              }),
+            );
           // Forwarding needs no isLoading effect, so let the subscription auto-add the message.
           messageEventEmitter.emit("createMessage", [
             messages,
@@ -370,17 +362,14 @@ export const baseMessageRouter = router({
     },
   ),
   generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
-    async ({ input: { files, roomId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-      return generateDownloadFileSasUrls(containerClient, files, roomId);
-    },
+    async ({ input: { files, roomId } }) =>
+      generateDownloadFileSasUrls(await useContainerClient(AzureContainer.MessageAssets), files, roomId),
   ),
   generateDownloadThumbnailSasUrls: getMemberProcedure(generateDownloadThumbnailSasUrlsInputSchema, "roomId").query<
     string[]
-  >(async ({ input: { files, roomId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-    return generateDownloadThumbnailSasUrls(containerClient, files, roomId);
-  }),
+  >(async ({ input: { files, roomId } }) =>
+    generateDownloadThumbnailSasUrls(await useContainerClient(AzureContainer.MessageAssets), files, roomId),
+  ),
   generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").query<
     MessageFileSasEntity[]
   >(async ({ ctx, input: { files, roomId } }) => {
@@ -418,19 +407,19 @@ export const baseMessageRouter = router({
       }),
     );
   }),
-  getWebPubSubClientAccessUrl: getMemberProcedure(getWebPubSubClientAccessUrlInputSchema, "roomId").query(
+  getWebPubSubClientAccessUrl: getMemberProcedure(roomIdSchema, "roomId").query(
     async ({ ctx, input: { roomId }, signal }) => {
       const webPubSubServiceClient = useWebPubSubServiceClient(AzureWebPubSubHub.Messages);
       const { url } = await webPubSubServiceClient.getClientAccessToken({
         abortSignal: signal,
         groups: [roomId],
         roles: [`webPubSub.joinLeaveGroup.${roomId}`],
-        userId: getDeviceId({ sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id }),
+        userId: getDeviceId(getDevice(ctx.getSessionPayload)),
       });
       return url;
     },
   ),
-  onCreateMessage: getMemberProcedure(onstandardCreateMessageInputSchema, "roomId").subscription(async function* ({
+  onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
     ctx,
     input: { lastEventId, roomId },
     signal,
@@ -454,51 +443,31 @@ export const baseMessageRouter = router({
         hasMore = newHasMore;
       }
 
-      if (messages.length > 0) {
-        const newestMessage = takeOne(messages, messages.length - 1);
-        yield tracked(newestMessage.rowKey, messages);
-      }
+      if (messages.length > 0) yield tracked(takeOne(messages, messages.length - 1).rowKey, messages);
     }
 
     for await (const [[data, { isSendToSelf, sessionId }]] of createdMessages) {
-      const dataToYield: StandardMessageEntity[] = [];
-
-      for (const newMessage of data)
-        if (
+      const dataToYield = data.filter(
+        (newMessage) =>
           isRoomId(newMessage.partitionKey, roomId) &&
-          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.getSessionPayload))
-        )
-          dataToYield.push(newMessage);
-
-      if (dataToYield.length > 0) {
-        const newestMessage = takeOne(dataToYield, dataToYield.length - 1);
-        yield tracked(newestMessage.rowKey, dataToYield);
-      }
+          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.getSessionPayload)),
+      );
+      if (dataToYield.length > 0) yield tracked(takeOne(dataToYield, dataToYield.length - 1).rowKey, dataToYield);
     }
   }),
-  onCreateTyping: getMemberProcedure(onCreateTypingInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
+  onCreateTyping: getMemberProcedure(roomIdSchema, "roomId").subscription(async function* ({ ctx, input, signal }) {
     for await (const [data] of on(messageEventEmitter, "createTyping", { signal }))
       if (data.roomId === input.roomId && !getIsSameDevice(data, ctx.getSessionPayload)) yield data;
   }),
-  onDeleteMessage: getMemberProcedure(onDeleteMessageInputSchema, "roomId").subscription(async function* ({
-    input,
-    signal,
-  }) {
+  onDeleteMessage: getMemberProcedure(roomIdSchema, "roomId").subscription(async function* ({ input, signal }) {
     for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal }))
       if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
-  onUpdateMessage: getMemberProcedure(onUpdateMessageInputSchema, "roomId").subscription(async function* ({
-    input,
-    signal,
-  }) {
+  onUpdateMessage: getMemberProcedure(roomIdSchema, "roomId").subscription(async function* ({ input, signal }) {
     for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
       if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
-  pinMessage: getMessageProcedure(pinMessageInputSchema, MessageOperation.Pin).mutation(
+  pinMessage: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Pin).mutation(
     async ({ ctx: { getSessionPayload, messageClient }, input }) => {
       const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
       await updateEntity(messageClient, updatedMessageEntity);
@@ -567,29 +536,30 @@ export const baseMessageRouter = router({
     .query(({ ctx, input }) => readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id)),
   readThread: getMemberProcedure(readThreadInputSchema, "roomId").query(async ({ input: { roomId, rootRowKey } }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    const [rootMessage, replyClauses] = await Promise.all([
+    const replyClauses: Clause<StandardMessageEntity>[] = [
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+      { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: rootRowKey },
+      getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+    ];
+    // The root and its replies are independent reads, so neither waits on the other
+    const [rootMessage, replies] = await Promise.all([
       getEntity(messageClient, StandardMessageEntity, roomId, rootRowKey),
-      Promise.resolve([
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-        { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: rootRowKey },
-        getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-      ] as Clause<StandardMessageEntity>[]),
+      getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
+        filter: serializeClauses(replyClauses),
+      }),
     ]);
-    const replies = await getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
-      filter: serializeClauses(replyClauses),
-    });
-    if (rootMessage?.deletedAt) return replies;
-    return rootMessage ? [rootMessage, ...replies] : replies;
+    if (!rootMessage || rootMessage.deletedAt) return replies;
+    return [rootMessage, ...replies];
   }),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(async ({ ctx, input }) => {
     const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
-    if (inFilterRoomIds.some((value) => typeof value !== "string"))
+    if (!inFilterRoomIds.every((value) => typeof value === "string"))
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds))
           .message,
       });
-    else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds as string[]);
+    else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
     return searchMessages(input);
   }),
   unfollowThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation(
@@ -599,7 +569,7 @@ export const baseMessageRouter = router({
   ),
   // Unpinning needs a Replace — Merge cannot unset a property — so the same conditional write as
   // DeleteLinkPreviewResponse applies: a full body replayed from a stale read reverts concurrent edits
-  unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin).mutation(
+  unpinMessage: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Pin).mutation(
     async ({ ctx: { messageClient, messageEntity, messageEtag }, input }) => {
       await updateEntityConditionally(messageClient, StandardMessageEntity, {
         entityType: AzureEntityType.Message,

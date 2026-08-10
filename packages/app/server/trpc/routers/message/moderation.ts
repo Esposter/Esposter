@@ -1,4 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { Context } from "@@/server/trpc/context";
 import type { BanInMessage, BanInMessageWithRelations, Clause } from "@esposter/db-schema";
 
 import { countModerationNotesInputSchema } from "#shared/models/db/moderation/CountModerationNotesInput";
@@ -54,7 +55,18 @@ import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
-const onAdminActionInputSchema = roomIdSchema;
+// The membership row an admin action removes, times out, or replaces
+const getRoomMembership = (roomId: string, userId: string) =>
+  and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, roomId));
+// A ban revokes membership and records the ban in one commit — both the ban and the soft ban start here
+const banRoomMember = (db: Context["db"], actorUserId: string, roomId: string, targetUserId: string) =>
+  db.transaction(async (tx) => {
+    await tx.delete(usersToRoomsInMessage).where(getRoomMembership(roomId, targetUserId));
+    await tx
+      .insert(bansInMessage)
+      .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
+      .onConflictDoNothing();
+  });
 
 export const moderationRouter = router({
   countModerationNotes: getPermissionsProcedure(
@@ -71,9 +83,12 @@ export const moderationRouter = router({
     "roomId",
   ).mutation<ModerationNoteEntity>(async ({ ctx, input: { note, roomId, targetUserId } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
-    await assertIsManageable(ctx.db, actorUserId, targetUserId, roomId);
+    // Provisioning the table is independent of the hierarchy check, so neither waits on the other
+    const [moderationNotesClient] = await Promise.all([
+      useTableClient(AzureTable.ModerationNotes),
+      assertIsManageable(ctx.db, actorUserId, targetUserId, roomId),
+    ]);
 
-    const moderationNotesClient = await useTableClient(AzureTable.ModerationNotes);
     const moderationNoteEntity = new ModerationNoteEntity({
       actorUserId,
       note,
@@ -111,35 +126,17 @@ export const moderationRouter = router({
 
       switch (input.type) {
         case AdminActionType.CreateBan:
-          await ctx.db.transaction(async (tx) => {
-            await tx
-              .delete(usersToRoomsInMessage)
-              .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
-            await tx
-              .insert(bansInMessage)
-              .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
-              .onConflictDoNothing();
-          });
+          await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
           break;
         case AdminActionType.ForceMute:
         case AdminActionType.ForceUnmute:
         case AdminActionType.KickFromCall:
           break;
         case AdminActionType.KickFromRoom:
-          await ctx.db
-            .delete(usersToRoomsInMessage)
-            .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
+          await ctx.db.delete(usersToRoomsInMessage).where(getRoomMembership(roomId, targetUserId));
           break;
         case AdminActionType.SoftBan: {
-          await ctx.db.transaction(async (tx) => {
-            await tx
-              .delete(usersToRoomsInMessage)
-              .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
-            await tx
-              .insert(bansInMessage)
-              .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
-              .onConflictDoNothing();
-          });
+          await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
           // Best-effort after the ban commits: the ban is the effect that must not be lost, and rethrowing here
           // Would fail a mutation whose row already landed. Nothing re-runs the purge — re-issuing the ban hits
           // `onConflictDoNothing`, and there is no sweeper or retry queue — so a partial failure leaves some of
@@ -160,7 +157,7 @@ export const moderationRouter = router({
           await ctx.db
             .update(usersToRoomsInMessage)
             .set({ timeoutUntil: new Date(Date.now() + input.durationMs) })
-            .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
+            .where(getRoomMembership(roomId, targetUserId));
           break;
         case AdminActionType.Warn:
           break;
@@ -175,7 +172,7 @@ export const moderationRouter = router({
         type: input.type,
       });
     }),
-  onAdminAction: getMemberProcedure(onAdminActionInputSchema, "roomId").subscription(async function* ({
+  onAdminAction: getMemberProcedure(roomIdSchema, "roomId").subscription(async function* ({
     ctx,
     input: { roomId },
     signal,
@@ -247,7 +244,11 @@ export const moderationRouter = router({
     readModerationNotesInputSchema,
     "roomId",
   ).query(async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
-    await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
+    // Provisioning the table is independent of the hierarchy check, so neither waits on the other
+    const [moderationNotesClient] = await Promise.all([
+      useTableClient(AzureTable.ModerationNotes),
+      assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId),
+    ]);
 
     const sortBy: SortItem<keyof ModerationNoteEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
     const clauses: Clause<ModerationNoteEntity>[] = [
@@ -257,7 +258,6 @@ export const moderationRouter = router({
     ];
     if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
 
-    const moderationNotesClient = await useTableClient(AzureTable.ModerationNotes);
     const entries = await getTopNEntities(moderationNotesClient, limit + 1, ModerationNoteEntity, {
       filter: serializeClauses(clauses),
     });

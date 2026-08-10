@@ -95,6 +95,20 @@ describe("message", () => {
   let beforeUpdateEntity: (tableClient: MockTableClient) => Promise<unknown>;
   let consoleErrorSpy: MockInstance<typeof console.error>;
   let updateEntitySpy: MockInstance<MockTableClient["updateEntity"]>;
+  // Holds the first conditional write open until the second has landed — the interleaving a real deployment
+  // Produces on its own
+  const holdFirstWrite = () => {
+    const { promise: isSecondWritten, resolve: resolveSecondWritten } = Promise.withResolvers<string>();
+    const { promise: isFirstWriting, resolve: resolveFirstWriting } = Promise.withResolvers<string>();
+    let isFirstWrite = true;
+    beforeUpdateEntity = async () => {
+      if (!isFirstWrite) return;
+      isFirstWrite = false;
+      resolveFirstWriting("");
+      await isSecondWritten;
+    };
+    return { isFirstWriting, resolveSecondWritten };
+  };
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -437,22 +451,14 @@ describe("message", () => {
     const { user: member } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
     const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
-    const { promise: isSecondVoteWritten, resolve: resolveSecondVoteWritten } = Promise.withResolvers<string>();
-    const { promise: isFirstVoteWriting, resolve: resolveFirstVoteWriting } = Promise.withResolvers<string>();
-    let isFirstWrite = true;
-    beforeUpdateEntity = async () => {
-      if (!isFirstWrite) return;
-      isFirstWrite = false;
-      resolveFirstVoteWriting("");
-      await isSecondVoteWritten;
-    };
+    const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
     // Only one session is queued, so the two votes run as the member and the owner — both picking the same
     // Option, so the assertion never depends on which of them ran first
     await mockSessionOnce(mockContext.db, member);
     const firstVote = messageCaller.votePoll({ ...compositeKey, optionId: pollOptionId });
-    await isFirstVoteWriting;
+    await isFirstWriting;
     await messageCaller.votePoll({ ...compositeKey, optionId: pollOptionId });
-    resolveSecondVoteWritten("");
+    resolveSecondWritten("");
     await firstVote;
     const votedMessage = takeOne(
       await messageCaller.readMessagesByRowKeys({ roomId: newRoom.id, rowKeys: [newMessage.rowKey] }),
@@ -1093,19 +1099,11 @@ describe("message", () => {
       roomId: newRoom.id,
     });
     const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
-    const { promise: isSecondDeleteWritten, resolve: resolveSecondDeleteWritten } = Promise.withResolvers<string>();
-    const { promise: isFirstDeleteWriting, resolve: resolveFirstDeleteWriting } = Promise.withResolvers<string>();
-    let isFirstWrite = true;
-    beforeUpdateEntity = async () => {
-      if (!isFirstWrite) return;
-      isFirstWrite = false;
-      resolveFirstDeleteWriting("");
-      await isSecondDeleteWritten;
-    };
+    const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
     const firstDelete = messageCaller.deleteFile({ ...compositeKey, id: firstId });
-    await isFirstDeleteWriting;
+    await isFirstWriting;
     await messageCaller.deleteFile({ ...compositeKey, id: secondId });
-    resolveSecondDeleteWritten("");
+    resolveSecondWritten("");
     await firstDelete;
 
     const updatedMessages = await messageCaller.readMessagesByRowKeys({
@@ -1275,19 +1273,11 @@ describe("message", () => {
     const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
-    const { promise: isEditWritten, resolve: resolveEditWritten } = Promise.withResolvers<string>();
-    const { promise: isClearWriting, resolve: resolveClearWriting } = Promise.withResolvers<string>();
-    let isFirstWrite = true;
-    beforeUpdateEntity = async () => {
-      if (!isFirstWrite) return;
-      isFirstWrite = false;
-      resolveClearWriting("");
-      await isEditWritten;
-    };
+    const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
     const clearLinkPreviewResponse = messageCaller.deleteLinkPreviewResponse(compositeKey);
-    await isClearWriting;
+    await isFirstWriting;
     await messageCaller.updateMessage({ ...compositeKey, message: updatedMessage });
-    resolveEditWritten("");
+    resolveSecondWritten("");
     await clearLinkPreviewResponse;
 
     const updatedMessages = await messageCaller.readMessagesByRowKeys({
@@ -1349,19 +1339,11 @@ describe("message", () => {
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
     await messageCaller.pinMessage(compositeKey);
-    const { promise: isEditWritten, resolve: resolveEditWritten } = Promise.withResolvers<string>();
-    const { promise: isUnpinWriting, resolve: resolveUnpinWriting } = Promise.withResolvers<string>();
-    let isFirstWrite = true;
-    beforeUpdateEntity = async () => {
-      if (!isFirstWrite) return;
-      isFirstWrite = false;
-      resolveUnpinWriting("");
-      await isEditWritten;
-    };
+    const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
     const unpin = messageCaller.unpinMessage(compositeKey);
-    await isUnpinWriting;
+    await isFirstWriting;
     await messageCaller.updateMessage({ ...compositeKey, message: updatedMessage });
-    resolveEditWritten("");
+    resolveSecondWritten("");
     await unpin;
 
     const updatedMessages = await messageCaller.readMessagesByRowKeys({

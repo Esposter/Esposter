@@ -27,6 +27,16 @@ describe("moderation", () => {
   let roomId: string;
   const durationMs = 1;
   const note = "note";
+  const readBanRows = (userId: string) =>
+    mockContext.db
+      .select()
+      .from(bansInMessage)
+      .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)));
+  const readMembershipRows = (userId: string) =>
+    mockContext.db
+      .select()
+      .from(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
   beforeAll(() => {
     mockContext = getMockContext();
@@ -56,14 +66,8 @@ describe("moderation", () => {
         type: AdminActionType.CreateBan,
       });
 
-      const banRows = await mockContext.db
-        .select()
-        .from(bansInMessage)
-        .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, member.id)));
-      const membershipRows = await mockContext.db
-        .select()
-        .from(usersToRoomsInMessage)
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+      const banRows = await readBanRows(member.id);
+      const membershipRows = await readMembershipRows(member.id);
 
       expect(banRows).toHaveLength(1);
       expect(takeOne(banRows).userId).toBe(member.id);
@@ -79,10 +83,7 @@ describe("moderation", () => {
         targetUserId: member.id,
         type: AdminActionType.KickFromRoom,
       });
-      const membershipRows = await mockContext.db
-        .select()
-        .from(usersToRoomsInMessage)
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+      const membershipRows = await readMembershipRows(member.id);
 
       expect(membershipRows).toHaveLength(0);
     });
@@ -98,10 +99,7 @@ describe("moderation", () => {
         type: AdminActionType.TimeoutUser,
       });
 
-      const membershipRows = await mockContext.db
-        .select()
-        .from(usersToRoomsInMessage)
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+      const membershipRows = await readMembershipRows(member.id);
 
       expect(membershipRows).toHaveLength(1);
 
@@ -111,47 +109,18 @@ describe("moderation", () => {
       expect(timeoutUntil.getTime()).toBe(durationMs);
     });
 
-    test(`${AdminActionType.ForceMute}: owner mutes member — succeeds with no error`, async () => {
-      expect.hasAssertions();
+    // These three land on the call pipeline rather than the database, so the mutation itself only has to record
+    // The action and resolve
+    for (const type of [AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall])
+      test(`${type}: owner applies it to a member — succeeds with no error`, async () => {
+        expect.hasAssertions();
 
-      const member = await createMember();
+        const member = await createMember();
 
-      await expect(
-        moderationCaller.executeAdminAction({
-          roomId,
-          targetUserId: member.id,
-          type: AdminActionType.ForceMute,
-        }),
-      ).resolves.toBeUndefined();
-    });
-
-    test(`${AdminActionType.ForceUnmute}: owner unmutes member — succeeds with no error`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-
-      await expect(
-        moderationCaller.executeAdminAction({
-          roomId,
-          targetUserId: member.id,
-          type: AdminActionType.ForceUnmute,
-        }),
-      ).resolves.toBeUndefined();
-    });
-
-    test(`${AdminActionType.KickFromCall}: owner kicks member from the call — succeeds with no error`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-
-      await expect(
-        moderationCaller.executeAdminAction({
-          roomId,
-          targetUserId: member.id,
-          type: AdminActionType.KickFromCall,
-        }),
-      ).resolves.toBeUndefined();
-    });
+        await expect(
+          moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type }),
+        ).resolves.toBeUndefined();
+      });
 
     test(`member without ${RoomPermission.BanMembers} permission cannot ban — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
@@ -194,14 +163,8 @@ describe("moderation", () => {
         targetUserId: member.id,
         type: AdminActionType.SoftBan,
       });
-      const banRows = await mockContext.db
-        .select()
-        .from(bansInMessage)
-        .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, member.id)));
-      const membershipRows = await mockContext.db
-        .select()
-        .from(usersToRoomsInMessage)
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+      const banRows = await readBanRows(member.id);
+      const membershipRows = await readMembershipRows(member.id);
 
       expect(banRows).toHaveLength(1);
       expect(takeOne(banRows).userId).toBe(member.id);
@@ -219,9 +182,7 @@ describe("moderation", () => {
       });
 
       const messagesClient = await useTableClient(AzureTable.Messages);
-      const memberMessages: StandardMessageEntity[] = [];
-      for await (const page of messagesClient.listEntities<StandardMessageEntity>().byPage())
-        memberMessages.push(...page);
+      const memberMessages = await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>());
 
       expect(memberMessages).toHaveLength(1);
       expect(memberMessages.every(({ deletedAt }) => deletedAt)).toBe(true);

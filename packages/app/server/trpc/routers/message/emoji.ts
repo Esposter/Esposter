@@ -11,6 +11,7 @@ import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataI
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { getDevice } from "@@/server/services/auth/getDevice";
 import { emojiEventEmitter } from "@@/server/services/message/events/emojiEventEmitter";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -27,23 +28,21 @@ import {
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
+// The MessagesMetadata table holds every metadata type, so every read here narrows it to the emoji rows
+const useMessageEmojiMetadataClient = async () =>
+  (await useTableClient(AzureTable.MessagesMetadata)) as CustomTableClient<MessageEmojiMetadataEntity>;
+// The "emoji rows of this room" predicate every query in this router starts from
+const getEmojiMetadataClauses = (partitionKey: string): Clause<MessageEmojiMetadataEntity>[] => [
+  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },
+  { key: MessageEmojiMetadataEntityPropertyNames.type, operator: BinaryOperator.eq, value: MessageMetadataType.Emoji },
+];
+
 export const emojiRouter = router({
   createEmoji: getMemberProcedure(createEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
     async ({ ctx, input }) => {
-      const messagesMetadataClient = (await useTableClient(
-        AzureTable.MessagesMetadata,
-      )) as CustomTableClient<MessageEmojiMetadataEntity>;
+      const messagesMetadataClient = await useMessageEmojiMetadataClient();
       const clauses: Clause<MessageEmojiMetadataEntity>[] = [
-        {
-          key: CompositeKeyPropertyNames.partitionKey,
-          operator: BinaryOperator.eq,
-          value: input.partitionKey,
-        },
-        {
-          key: MessageEmojiMetadataEntityPropertyNames.type,
-          operator: BinaryOperator.eq,
-          value: MessageMetadataType.Emoji,
-        },
+        ...getEmojiMetadataClauses(input.partitionKey),
         {
           key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
           operator: BinaryOperator.eq,
@@ -69,10 +68,7 @@ export const emojiRouter = router({
 
       const newEmoji = createMessageEmojiMetadataEntity({ ...input, userIds: [ctx.getSessionPayload.user.id] });
       await createEntity(messagesMetadataClient, newEmoji);
-      emojiEventEmitter.emit("createEmoji", [
-        newEmoji,
-        { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
-      ]);
+      emojiEventEmitter.emit("createEmoji", [newEmoji, getDevice(ctx.getSessionPayload)]);
       return newEmoji;
     },
   ),
@@ -80,10 +76,7 @@ export const emojiRouter = router({
     async ({ ctx, input }) => {
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       await deleteEntity(messagesMetadataClient, input.partitionKey, input.rowKey);
-      emojiEventEmitter.emit("deleteEmoji", [
-        input,
-        { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
-      ]);
+      emojiEventEmitter.emit("deleteEmoji", [input, getDevice(ctx.getSessionPayload)]);
     },
   ),
   onCreateEmoji: getRoomEventSubscription(emojiEventEmitter, "createEmoji", ({ partitionKey }) => partitionKey),
@@ -91,21 +84,8 @@ export const emojiRouter = router({
   onUpdateEmoji: getRoomEventSubscription(emojiEventEmitter, "updateEmoji", ({ partitionKey }) => partitionKey),
   readEmojis: getMemberProcedure(readMetadataInputSchema, "roomId").query(
     async ({ input: { messageRowKeys, roomId } }) => {
-      const messagesMetadataClient = (await useTableClient(
-        AzureTable.MessagesMetadata,
-      )) as CustomTableClient<MessageEmojiMetadataEntity>;
-      const clauses: Clause<MessageEmojiMetadataEntity>[] = [
-        {
-          key: CompositeKeyPropertyNames.partitionKey,
-          operator: BinaryOperator.eq,
-          value: roomId,
-        },
-        {
-          key: MessageEmojiMetadataEntityPropertyNames.type,
-          operator: BinaryOperator.eq,
-          value: MessageMetadataType.Emoji,
-        },
-      ];
+      const messagesMetadataClient = await useMessageEmojiMetadataClient();
+      const clauses = getEmojiMetadataClauses(roomId);
       for (const messageRowKey of messageRowKeys)
         clauses.push({
           key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
@@ -119,9 +99,7 @@ export const emojiRouter = router({
   ),
   updateEmoji: getMemberProcedure(updateEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
     async ({ ctx, input }) => {
-      const messagesMetadataClient = (await useTableClient(
-        AzureTable.MessagesMetadata,
-      )) as CustomTableClient<MessageEmojiMetadataEntity>;
+      const messagesMetadataClient = await useMessageEmojiMetadataClient();
       const readEmoji = await requireEntity(
         getEntity(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
         MessageMetadataType.Emoji,
@@ -136,10 +114,7 @@ export const emojiRouter = router({
 
       const updatedEmoji = { ...input, userIds: getUpdatedUserIds(readEmoji.userIds, ctx.getSessionPayload.user.id) };
       await updateEntity(messagesMetadataClient, updatedEmoji);
-      emojiEventEmitter.emit("updateEmoji", [
-        updatedEmoji,
-        { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
-      ]);
+      emojiEventEmitter.emit("updateEmoji", [updatedEmoji, getDevice(ctx.getSessionPayload)]);
     },
   ),
 });
