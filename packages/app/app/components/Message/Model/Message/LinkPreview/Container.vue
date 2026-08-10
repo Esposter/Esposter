@@ -49,13 +49,11 @@ const deleteLinkPreviewResponse = async (onComplete: () => void) => {
     >
       This will remove all embeds on this message for everyone.
       <template #activator="{ updateIsOpen }">
-        <v-btn
+        <StyledTooltipIconButton
           :class="isActive ? undefined : 'invisible'"
-          density="comfortable"
           icon="mdi-close"
-          size="small"
-          variant="plain"
-          :ripple="false"
+          text="Close"
+          :button-props="{ density: 'comfortable', ripple: false, size: 'small', variant: 'plain' }"
           @click="updateIsOpen(true)"
         />
       </template>

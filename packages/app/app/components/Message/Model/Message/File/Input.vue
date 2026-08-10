@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
-import type { Item } from "@/models/shared/Item";
 import type { FileEntity } from "@esposter/db-schema";
 
 interface FileInputProps {
@@ -12,16 +11,6 @@ interface FileInputProps {
 const { file, index, uploadFileUrl = { progress: 1, url: "" } } = defineProps<FileInputProps>();
 const emit = defineEmits<{ delete: [number] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
-const menuItems: Item[] = [
-  {
-    color: "error",
-    icon: "mdi-delete",
-    onClick: () => {
-      emit("delete", index);
-    },
-    title: "Delete Attachment",
-  },
-];
 </script>
 
 <template>
@@ -29,15 +18,12 @@ const menuItems: Item[] = [
     <StyledCard flex flex-col h-full>
       <v-card-title p-0 flex justify-end>
         <div b-1>
-          <v-tooltip
-            v-for="{ icon, shortTitle, title, onClick, color } of menuItems"
-            :key="title"
-            :text="shortTitle ?? title"
-          >
-            <template #activator="{ props }">
-              <v-btn :color :icon size="small" tile m-0 variant="text" :="props" @click="onClick?.($event)" />
-            </template>
-          </v-tooltip>
+          <StyledTooltipIconButton
+            :button-props="{ class: 'm-0', color: 'error', size: 'small', tile: true, variant: 'text' }"
+            icon="mdi-delete"
+            text="Delete Attachment"
+            @click="emit('delete', index)"
+          />
         </div>
       </v-card-title>
       <v-card-text pb-0 h-full>

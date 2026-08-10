@@ -2,6 +2,7 @@
 import MessageModelMessageConfirmDeleteDialog from "@/components/Message/Model/Message/ConfirmDeleteDialog.vue";
 import StyledDeleteFormDialog from "@/components/Styled/DeleteFormDialog.vue";
 import { createUser } from "@/services/message/user/createUser.test";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";
@@ -28,11 +29,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     // Shallow because the reconciliation under test lives in setup, and happy-dom has no visualViewport for
     // The real Vuetify overlay to position itself against
     await mountSuspended(MessageModelMessageConfirmDeleteDialog, { shallow: true });
-    // The message list is keyed by the room in the route, so a list only exists once one is current. Set after
-    // Mounting, which resets the route, and through triggerRef because currentRoute is a shallowRef
-    const router = useRouter();
-    router.currentRoute.value.params.id = roomId;
-    triggerRef(router.currentRoute);
+    setCurrentRoomId(roomId);
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const messageDialogStore = useMessageDialogStore();
@@ -68,9 +65,7 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
       }),
     );
     const component = await mountSuspended(MessageModelMessageConfirmDeleteDialog, { shallow: true });
-    const router = useRouter();
-    router.currentRoute.value.params.id = roomId;
-    triggerRef(router.currentRoute);
+    setCurrentRoomId(roomId);
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const userStore = useUserStore();

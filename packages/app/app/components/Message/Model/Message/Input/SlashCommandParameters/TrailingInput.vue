@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pluralize } from "#shared/util/text/pluralize";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { getIsCaretAtStart } from "@/util/dom/getIsCaretAtStart";
 
@@ -23,7 +24,7 @@ const { activeParameters, hiddenParameters, selectedHiddenIndex, trailingMessage
 const { selectNextHiddenParameter, selectPreviousHiddenParameter } = slashCommandStore;
 const input = useTemplateRef("input");
 const optionsLabel = computed(
-  () => `+${hiddenParameters.value.length} ${hiddenParameters.value.length === 1 ? "option" : "options"}`,
+  () => `+${hiddenParameters.value.length} ${pluralize("option", hiddenParameters.value.length)}`,
 );
 
 watch(

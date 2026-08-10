@@ -5,15 +5,13 @@ import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
 import type { User } from "@esposter/db-schema";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
+import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { MentionType, takeOne } from "@esposter/shared";
 
 const { command, items, query } =
   defineProps<SuggestionProps<BroadcastMentionItem | RoleMentionItem | User, MentionNodeAttributes>>();
-const title = computed(() => {
-  const baseTitle = "MEMBERS";
-  return query ? `${baseTitle} MATCHING ${SuggestionTrigger.Mention}${query}` : baseTitle;
-});
+const title = computed(() => getSuggestionListTitle("MEMBERS", SuggestionTrigger.Mention, query));
 const isRoleMentionItem = (item: BroadcastMentionItem | RoleMentionItem | User): item is RoleMentionItem =>
   "type" in item && item.type === MentionType.Role;
 const selectItem = (index: number) => {

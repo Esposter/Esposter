@@ -1,45 +1,18 @@
 <script setup lang="ts">
 import type { EmojiItem } from "@/models/message/EmojiItem";
-import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
+import type { SuggestionProps } from "@tiptap/suggestion";
 
+import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { takeOne } from "@esposter/shared";
 
 const { command, items, query } = defineProps<Pick<SuggestionProps<EmojiItem>, "command" | "items" | "query">>();
-const title = computed(() => {
-  const baseTitle = "EMOJI";
-  return query ? `${baseTitle} MATCHING ${SuggestionTrigger.Emoji}${query}` : baseTitle;
-});
-const selectedIndex = ref(0);
+const title = computed(() => getSuggestionListTitle("EMOJI", SuggestionTrigger.Emoji, query));
 const selectItem = (index: number) => {
   const emojiItem = takeOne(items, index);
   command(emojiItem);
 };
-const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
-  switch (event.key) {
-    case "ArrowDown":
-      event.preventDefault();
-      selectedIndex.value = (selectedIndex.value + 1) % items.length;
-      return true;
-    case "ArrowUp":
-      event.preventDefault();
-      selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
-      return true;
-    case "Enter":
-      event.preventDefault();
-      selectItem(selectedIndex.value);
-      return true;
-    default:
-      return false;
-  }
-};
-
-watch(
-  () => items,
-  () => {
-    selectedIndex.value = 0;
-  },
-);
+const { onKeyDown, selectedIndex } = useSuggestionListNavigation(() => items, selectItem);
 
 defineExpose({ onKeyDown });
 </script>

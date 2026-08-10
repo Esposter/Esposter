@@ -15,15 +15,9 @@ const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
 const { resetForward } = forwardStore;
 const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
-const forward = computed(() => items.value.find((m) => m.rowKey === rowKey.value));
+const forward = computed(() => items.value.find((message) => message.rowKey === rowKey.value));
 const creator = useCreator(forward);
-const dialog = computed({
-  get: () => Boolean(rowKey.value),
-  set: (newDialog) => {
-    if (newDialog) return;
-    rowKey.value = "";
-  },
-});
+const { isOpen } = useSingletonDialog(rowKey);
 const {
   hasMore,
   items: itemsSearched,
@@ -76,12 +70,17 @@ const forwardMessage = async () => {
 </script>
 
 <template>
-  <v-dialog v-if="forward && creator" v-model="dialog">
+  <v-dialog v-if="forward && creator" v-model="isOpen">
     <StyledCard>
       <v-card-title flex flex-col>
         <div flex items-center justify-between>
           Forward To
-          <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
+          <StyledTooltipIconButton
+            icon="mdi-close"
+            text="Close"
+            :button-props="{ density: 'comfortable' }"
+            @click="isOpen = false"
+          />
         </div>
         <div text-gray pb-2 text-title-small>Select where you want to share this message.</div>
         <v-text-field
@@ -101,7 +100,7 @@ const forwardMessage = async () => {
         </v-list>
       </v-card-text>
       <v-divider />
-      <component :is="MessageComponentMap[forward.type]" v-if="forward" :creator :message="forward" is-preview />
+      <component :is="MessageComponentMap[forward.type]" :creator :message="forward" is-preview />
       <v-divider />
       <v-card-actions flex-col gap-0>
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />

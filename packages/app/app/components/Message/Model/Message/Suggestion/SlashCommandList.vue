@@ -2,14 +2,21 @@
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 
+import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
 import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { takeOne } from "@esposter/shared";
 
 const { command, items, query } = defineProps<Pick<SuggestionProps<SlashCommand>, "command" | "items" | "query">>();
-const title = computed(() => {
-  const baseTitle = "COMMANDS";
-  return query ? `${baseTitle} MATCHING ${SuggestionTrigger.SlashCommand}${query}` : baseTitle;
-});
+const title = computed(() => getSuggestionListTitle("COMMANDS", SuggestionTrigger.SlashCommand, query));
+// The required/optional split drives three template positions per row, so it is partitioned once per item
+// Rather than re-filtered inside the v-for on every keystroke that refilters the list
+const commandItems = computed(() =>
+  items.map(({ parameters, ...slashCommand }) => ({
+    ...slashCommand,
+    optionalParameterCount: parameters.filter(({ isRequired }) => !isRequired).length,
+    requiredParameters: parameters.filter(({ isRequired }) => isRequired),
+  })),
+);
 const selectItem = (index: number) => {
   const slashCommand = takeOne(items, index);
   command(slashCommand);
@@ -38,7 +45,9 @@ defineExpose({ onKeyDown });
     <v-card-title font-bold text-title-small>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <v-list-item
-        v-for="({ description, icon, parameters, title: commandTitle, type }, index) of items"
+        v-for="(
+          { description, icon, optionalParameterCount, requiredParameters, title: commandTitle, type }, index
+        ) of commandItems"
         :key="type"
         :active="selectedIndex === index"
         :ripple="false"
@@ -49,21 +58,11 @@ defineExpose({ onKeyDown });
         </template>
         <v-list-item-title font-semibold flex gap-1 items-center>
           {{ commandTitle }}
-          <v-chip
-            v-for="{ name } of parameters.filter(({ isRequired }) => isRequired)"
-            :key="name"
-            size="x-small"
-            label
-          >
+          <v-chip v-for="{ name } of requiredParameters" :key="name" size="x-small" label>
             {{ name }}
           </v-chip>
-          <v-chip
-            v-if="parameters.filter(({ isRequired }) => !isRequired).length > 0"
-            size="x-small"
-            label
-            variant="outlined"
-          >
-            +{{ parameters.filter(({ isRequired }) => !isRequired).length }} optional
+          <v-chip v-if="optionalParameterCount > 0" size="x-small" label variant="outlined">
+            +{{ optionalParameterCount }} optional
           </v-chip>
         </v-list-item-title>
         <v-list-item-subtitle>{{ description }}</v-list-item-subtitle>

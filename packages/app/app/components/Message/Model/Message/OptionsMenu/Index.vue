@@ -15,11 +15,11 @@ const { hoverProps, isHovering, message } = defineProps<MessageOptionsMenuProps>
 const emit = defineEmits<{ "update:menu": [value: boolean] }>();
 const isCreator = await useIsCreator(() => message);
 const isEditable = computed(() => isCreator.value && !message.isForward);
-const {
-  actionMessageItems,
-  deleteMessageItem,
-  updateMessageMenuItems: updateMessageItems,
-} = useMessageActionItems(message, isEditable, isCreator);
+const { actionMessageItems, deleteMessageItem, updateMessageItems, updateMessageMenuItems } = useMessageActionItems(
+  message,
+  isEditable,
+  isCreator,
+);
 const selectEmoji = await useSelectEmoji(message);
 </script>
 
@@ -42,12 +42,12 @@ const selectEmoji = await useSelectEmoji(message);
         @update:menu="emit('update:menu', $event)"
         @select="selectEmoji"
       />
-      <MessageModelMessageOptionsMenuItems :message />
+      <MessageModelMessageOptionsMenuItems :items="updateMessageItems" />
       <MessageModelMessageOptionsMenuMore
         :row-key="message.rowKey"
         :action-message-items
         :delete-message-item
-        :update-message-items
+        :update-message-menu-items
         @update:menu="emit('update:menu', $event)"
         @update:select-emoji="selectEmoji"
       />

@@ -5,27 +5,28 @@ import { EmojiMoreMenuItems } from "@/services/message/emoji/EmojiMoreMenuItems"
 import { unemojify } from "@/services/message/emoji/unemojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useMessageStore } from "@/store/message";
-import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
   actionMessageItems: Item[];
   deleteMessageItem?: Item;
   rowKey: string;
-  updateMessageItems: Item[];
+  updateMessageMenuItems: Item[];
 }
 
-const { actionMessageItems, deleteMessageItem, rowKey, updateMessageItems } = defineProps<MessageOptionsMenuProps>();
+const { actionMessageItems, deleteMessageItem, rowKey, updateMessageMenuItems } =
+  defineProps<MessageOptionsMenuProps>();
 const emit = defineEmits<{ "update:menu": [value: boolean]; "update:select-emoji": [emoji: string] }>();
 const messageStore = useMessageStore();
 const { optionsMenu } = storeToRefs(messageStore);
 </script>
 
 <template>
-  <v-menu
+  <StyledTooltipMenuIconButton
     :model-value="optionsMenu?.rowKey === rowKey"
-    transition="none"
-    location="left"
-    :target="optionsMenu?.target"
+    icon="mdi-dots-horizontal"
+    text="More"
+    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+    :menu-props="{ location: 'left', target: optionsMenu?.target, transition: 'none' }"
     @update:model-value="
       (value) => {
         // We just need to set a placeholder so that the menu will appear
@@ -35,13 +36,6 @@ const { optionsMenu } = storeToRefs(messageStore);
       }
     "
   >
-    <template #activator="{ props: menuProps }">
-      <v-tooltip text="More">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-dots-horizontal" size="small" tile m-0 :="mergeProps(menuProps, tooltipProps)" />
-        </template>
-      </v-tooltip>
-    </template>
     <v-list density="compact" text-body-medium>
       <v-list-item>
         <div flex gap-x-2>
@@ -79,9 +73,9 @@ const { optionsMenu } = storeToRefs(messageStore);
           </v-list-item>
         </template>
       </StyledEmojiPicker>
-      <MessageModelMessageOptionsMenuSection :items="updateMessageItems" />
+      <MessageModelMessageOptionsMenuSection :items="updateMessageMenuItems" />
       <MessageModelMessageOptionsMenuSection :items="actionMessageItems" />
       <MessageModelMessageOptionsMenuSection :items="deleteMessageItem ? [deleteMessageItem] : []" />
     </v-list>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
 </template>
