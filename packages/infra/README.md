@@ -58,6 +58,8 @@ pulumi stack select prod
 - `Pulumi.prod.yaml` holds stack-specific configuration.
 - `docs/` contains architecture, naming, security, and roadmap notes.
 - `src/azure/resources/` contains Pulumi resource declarations grouped by Azure ARM provider namespace and resource type.
+- `src/azure/constants/` holds values shared by more than one resource file — locations, tags, role definition IDs, and settings that must stay identical across stacks.
+- `src/azure/services/` holds the factories that build a repeated block of resource arguments from the few things that differ per resource.
 
 ### Commands
 
