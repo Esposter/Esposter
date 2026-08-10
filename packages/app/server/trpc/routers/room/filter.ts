@@ -21,24 +21,19 @@ export const filterRouter = router({
     async ({ ctx, input: { action, roomId, timeoutDurationMs, words } }) => {
       // A duration only belongs to a Timeout action — clear it for every other action so a stale value
       // Can never re-arm a timeout after the action is switched back.
-      const resolvedTimeoutDurationMs = action === WordFilterAction.Timeout ? timeoutDurationMs : null;
-      const values = { action, roomId, timeoutDurationMs: resolvedTimeoutDurationMs, words };
-      const updatedFilter = requireMutation(
+      const set = { action, timeoutDurationMs: action === WordFilterAction.Timeout ? timeoutDurationMs : null, words };
+      return requireMutation(
         (
           await ctx.db
             .insert(roomFiltersInMessage)
-            .values(values)
-            .onConflictDoUpdate({
-              set: { action, timeoutDurationMs: resolvedTimeoutDurationMs, words },
-              target: roomFiltersInMessage.roomId,
-            })
+            .values({ ...set, roomId })
+            .onConflictDoUpdate({ set, target: roomFiltersInMessage.roomId })
             .returning()
         )[0],
         Operation.Update,
         DatabaseEntityType.RoomFilter,
         roomId,
       );
-      return updatedFilter;
     },
   ),
 });
