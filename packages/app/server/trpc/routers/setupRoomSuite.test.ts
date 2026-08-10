@@ -9,7 +9,7 @@ import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { roomsInMessage } from "@esposter/db-schema";
 import { MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, beforeEach, describe } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe } from "vitest";
 
 // Room-suite fixture: owns the mock context, room/role callers, a fresh room per test, and the
 // Standard cleanup. Suite-specific hooks compose — before-hooks run after these, after-hooks before.
@@ -37,6 +37,15 @@ export const setupRoomSuite = () => {
 
   const createMember = () => createRoomMember(mockContext, roomId);
 
+  // Every member holds @everyone, so this is how a suite gives one to everybody at once — and the role itself is
+  // Created by the room rather than the test, so it has to be found before it can be granted anything
+  const updateEveryoneRole = async (permissions: bigint) => {
+    const roles = await roleCaller.readRoles({ roomIds: [roomId] });
+    const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
+    assert.exists(everyoneRole);
+    return roleCaller.updateRole({ id: everyoneRole.id, permissions, roomId });
+  };
+
   const setupMemberWithRole = async (permissions: bigint, position: number) => {
     const member = await createMember();
     const role = await roleCaller.createRole({ name: crypto.randomUUID(), permissions, position, roomId });
@@ -51,6 +60,7 @@ export const setupRoomSuite = () => {
     getRoomCaller: () => roomCaller,
     getRoomId: () => roomId,
     setupMemberWithRole,
+    updateEveryoneRole,
   };
 };
 

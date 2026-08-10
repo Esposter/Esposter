@@ -14,9 +14,9 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getNotBlockedWhere } from "@@/server/services/post/getNotBlockedWhere";
+import { getPostRanking } from "@@/server/services/post/getPostRanking";
 import { getPostWithViewerLike } from "@@/server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "@@/server/services/post/getViewerPostRelations";
-import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -78,7 +78,7 @@ export const postRouter = router({
                 ...input,
                 createdAt,
                 depth: parentPost.depth + 1,
-                ranking: ranking(0, createdAt),
+                ranking: getPostRanking(0, createdAt),
                 userId: ctx.getSessionPayload.user.id,
               })
               .returning({ id: posts.id })
@@ -120,7 +120,7 @@ export const postRouter = router({
               .values({
                 ...input,
                 createdAt,
-                ranking: ranking(0, createdAt),
+                ranking: getPostRanking(0, createdAt),
                 userId: ctx.getSessionPayload.user.id,
               })
               .returning({ id: posts.id })

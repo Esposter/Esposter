@@ -12,9 +12,9 @@ export const checkAchievementCondition = (
 ): boolean => {
   switch (condition.type) {
     case AchievementConditionType.And:
-      return condition.conditions.every((c) => checkAchievementCondition(c, data));
+      return condition.conditions.every((childCondition) => checkAchievementCondition(childCondition, data));
     case AchievementConditionType.Or:
-      return condition.conditions.some((c) => checkAchievementCondition(c, data));
+      return condition.conditions.some((childCondition) => checkAchievementCondition(childCondition, data));
     case AchievementConditionType.Property: {
       // @ts-expect-error achievementDefinitions is well-typed at its definition site
       const value = condition.path.split(".").reduce((property, key) => property?.[key], data);

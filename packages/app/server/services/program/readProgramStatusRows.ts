@@ -1,28 +1,20 @@
 import type { ProgramStatusParticipantRow } from "@@/server/models/program/ProgramStatusParticipantRow";
-import type { Clause, Resource } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { getProgramParticipantFilter } from "@@/server/services/program/getProgramParticipantFilter";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readSurveyResponseEntities } from "@@/server/services/survey/readSurveyResponseEntities";
-import { getTopNEntities, serializeClauses } from "@esposter/db";
-import {
-  AZURE_MAX_PAGE_SIZE,
-  AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  ProgramParticipantEntity,
-} from "@esposter/db-schema";
+import { getTopNEntities } from "@esposter/db";
+import { AZURE_MAX_PAGE_SIZE, AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
 
 // The canonical participants × responses join, purpose-built rather than routed through a generic join engine.
 // A response with no matching participant (an anonymous-era row) carries nobody, so it never appears here
 export const readProgramStatusRows = async (programId: Resource["id"]): Promise<ProgramStatusParticipantRow[]> => {
-  const participantClauses: Clause<ProgramParticipantEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: programId },
-  ];
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   const participants = await getTopNEntities(programParticipantClient, AZURE_MAX_PAGE_SIZE, ProgramParticipantEntity, {
-    filter: serializeClauses(participantClauses),
+    filter: getProgramParticipantFilter(programId),
   });
   // A deleted or unbound survey leaves the participants readable with nothing responded — the same
   // Fail-soft posture as every dangling reference

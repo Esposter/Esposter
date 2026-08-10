@@ -1,11 +1,7 @@
-import { db } from "@@/server/db";
-import { rateLimiterFlexible } from "@esposter/db-schema";
-import { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";
+import { RATE_LIMITER_DURATION_SECONDS } from "@@/server/services/rateLimiter/constants";
+import { createRateLimiter } from "@@/server/services/rateLimiter/createRateLimiter";
 
-export const webhookRateLimiter: RateLimiterDrizzleNonAtomic = new RateLimiterDrizzleNonAtomic({
-  blockDuration: 60,
-  duration: 60,
+export const webhookRateLimiter = createRateLimiter({
+  blockDuration: RATE_LIMITER_DURATION_SECONDS,
   points: 30,
-  schema: rateLimiterFlexible,
-  storeClient: db,
 });

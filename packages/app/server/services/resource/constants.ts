@@ -16,3 +16,6 @@ export const RESOURCE_ASSET_SAS_DURATION = dayjs.duration(15, "minutes");
 export const RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS = RESOURCE_ASSET_SAS_DURATION.subtract(
   dayjs.duration(1, "minute"),
 ).asSeconds();
+
+// Bounded so a hot resource's concurrent increments cannot spin the read path; on exhaustion the count drops
+export const MAX_VIEW_COUNT_ETAG_RETRIES = 3;

@@ -4,8 +4,9 @@ import type { Resource, SurveyResponseEntity } from "@esposter/db-schema";
 import { closedSurveyErrorReason } from "@@/server/services/survey/constants";
 import { readSurveySettings } from "@@/server/services/survey/readSurveySettings";
 import { SurveyResponseModeValidatorMap } from "@@/server/services/survey/SurveyResponseModeValidatorMap";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { AzureEntityType, ResourceType } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 // The single write boundary for both response mutations — client state can never bypass it.
@@ -24,10 +25,11 @@ export const resolveSurveyResponseWrite = async (
 
   const { isAcceptingResponses, responseMode } = await readSurveySettings(surveyId);
   if (!isAcceptingResponses)
-    throw new TRPCError({
-      code: "CONFLICT",
-      message: new InvalidOperationError(Operation.Create, AzureEntityType.SurveyResponse, closedSurveyErrorReason)
-        .message,
-    });
+    throw getInvalidOperationError(
+      Operation.Create,
+      AzureEntityType.SurveyResponse,
+      closedSurveyErrorReason,
+      "CONFLICT",
+    );
   return SurveyResponseModeValidatorMap[responseMode](db, surveyId, participantToken);
 };

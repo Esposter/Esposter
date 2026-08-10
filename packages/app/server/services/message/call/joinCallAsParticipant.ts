@@ -19,7 +19,7 @@ export const joinCallAsParticipant = async (
 ) => {
   const isFirstJoiner = !callSessionParticipantMap.has(callSessionId);
   const participant = { ...callParticipant, isCameraEnabled: false };
-  createCallParticipant(callSessionId, participant);
+  const participantMap = createCallParticipant(callSessionId, participant);
   callEventEmitter.emit("joinCall", { callSessionId, participant, sessionId });
 
   if (isFirstJoiner) {
@@ -39,5 +39,5 @@ export const joinCallAsParticipant = async (
       }).match(noop, console.error);
   }
 
-  return { callSessionId, participantMap: callSessionParticipantMap.get(callSessionId) ?? new Map() };
+  return { callSessionId, participantMap };
 };

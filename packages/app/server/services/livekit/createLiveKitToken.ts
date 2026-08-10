@@ -1,12 +1,13 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
+import { getLiveKitCredentials } from "@@/server/services/livekit/getLiveKitCredentials";
 import { AccessToken, TrackSource } from "livekit-server-sdk";
 
 export const createLiveKitToken = async (callSessionId: string, participant: CallParticipant) => {
-  const { livekit } = useRuntimeConfig();
-  if (!livekit?.url || !livekit.apiKey || !livekit.apiSecret) return { livekitToken: "", livekitUrl: "" };
+  const credentials = getLiveKitCredentials();
+  if (!credentials) return { livekitToken: "", livekitUrl: "" };
 
-  const token = new AccessToken(livekit.apiKey, livekit.apiSecret, {
+  const token = new AccessToken(credentials.apiKey, credentials.apiSecret, {
     identity: participant.id,
     metadata: JSON.stringify({ userId: participant.userId }),
     name: participant.name,
@@ -23,5 +24,5 @@ export const createLiveKitToken = async (callSessionId: string, participant: Cal
     room: callSessionId,
     roomJoin: true,
   });
-  return { livekitToken: await token.toJwt(), livekitUrl: livekit.url };
+  return { livekitToken: await token.toJwt(), livekitUrl: credentials.url };
 };

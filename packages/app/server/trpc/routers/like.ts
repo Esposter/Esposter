@@ -3,7 +3,7 @@ import type { Like } from "@esposter/db-schema";
 import { createLikeInputSchema } from "#shared/models/db/post/CreateLikeInput";
 import { deleteLikeInputSchema } from "#shared/models/db/post/DeleteLikeInput";
 import { updateLikeInputSchema } from "#shared/models/db/post/UpdateLikeInput";
-import { ranking } from "@@/server/services/post/ranking";
+import { getPostRanking } from "@@/server/services/post/getPostRanking";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -69,7 +69,7 @@ export const likeRouter = router({
         .update(posts)
         .set({
           noLikes: noLikesNew,
-          ranking: ranking(noLikesNew, post.createdAt),
+          ranking: getPostRanking(noLikesNew, post.createdAt),
         })
         .where(eq(posts.id, post.id));
       return newLike;
@@ -110,7 +110,7 @@ export const likeRouter = router({
         .update(posts)
         .set({
           noLikes: noLikesNew,
-          ranking: ranking(noLikesNew, post.createdAt),
+          ranking: getPostRanking(noLikesNew, post.createdAt),
         })
         .where(eq(posts.id, input));
       return deletedLike;
@@ -179,7 +179,7 @@ export const likeRouter = router({
         .update(posts)
         .set({
           noLikes: noLikesNew,
-          ranking: ranking(noLikesNew, post.createdAt),
+          ranking: getPostRanking(noLikesNew, post.createdAt),
         })
         .where(eq(posts.id, postId));
       return updatedLike;
