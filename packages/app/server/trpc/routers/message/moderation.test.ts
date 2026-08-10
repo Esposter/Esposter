@@ -12,11 +12,12 @@ import {
   AdminActionType,
   AzureTable,
   bansInMessage,
+  DatabaseEntityType,
   RoomPermission,
   StandardMessageEntity,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -332,6 +333,18 @@ describe("moderation", () => {
       const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(0);
+    });
+
+    test("owner deletes a ban that was never created — the delete itself reports nothing was removed", async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+
+      await expect(
+        moderationCaller.deleteBan({ roomId, userId: member.id }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Ban, member.id).message}]`,
+      );
     });
 
     test(`member without ${RoomPermission.BanMembers} permission cannot delete ban — throws UNAUTHORIZED`, async () => {

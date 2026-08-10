@@ -1,4 +1,3 @@
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { PublishHistoryVersion } from "#shared/models/resource/PublishHistoryVersion";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
@@ -16,8 +15,7 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { escapeLike } from "@@/server/services/db/escapeLike";
-import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
+import { readCursorPaginationDataAzureTable } from "@@/server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
@@ -35,7 +33,7 @@ import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { getTopNEntities, purgeResource, serializeClauses } from "@esposter/db";
+import { purgeResource } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,
@@ -305,17 +303,16 @@ export const resourceRouter = router({
   ),
   readActivities: getOwnerProcedure(undefined, readActivitiesInputSchema, "id").query(
     async ({ input: { cursor, id, limit } }) => {
-      const sortBy: SortItem<keyof ResourceActivityEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
       const clauses: Clause<ResourceActivityEntity>[] = [
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: id },
       ];
-      if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-
       const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
-      const entries = await getTopNEntities(resourceActivityClient, limit + 1, ResourceActivityEntity, {
-        filter: serializeClauses(clauses),
+      return readCursorPaginationDataAzureTable(resourceActivityClient, ResourceActivityEntity, {
+        clauses,
+        cursor,
+        limit,
+        sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
       });
-      return getCursorPaginationData(entries, limit, sortBy);
     },
   ),
   readDeletedResources: standardAuthedProcedure

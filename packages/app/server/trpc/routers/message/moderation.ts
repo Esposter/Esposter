@@ -23,16 +23,16 @@ import { countModerationNotes } from "@@/server/services/message/moderation/coun
 import { softDeleteRoomMessagesByUser } from "@@/server/services/message/moderation/softDeleteRoomMessagesByUser";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
-import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
+import { readCursorPaginationDataAzureTable } from "@@/server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsManageable } from "@@/server/services/room/rbac/assertIsManageable";
 import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { router } from "@@/server/trpc";
-import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { createEntity, getTableNullClause, getTopNEntities, serializeClauses } from "@esposter/db";
+import { createEntity, getTableNullClause } from "@esposter/db";
 import {
   AdminActionType,
   AzureTable,
@@ -50,7 +50,7 @@ import {
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { exhaustiveGuard, getResultAsync, ItemMetadataPropertyNames, noop } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, ItemMetadataPropertyNames, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -99,17 +99,21 @@ export const moderationRouter = router({
     await createEntity(moderationNotesClient, moderationNoteEntity);
     return moderationNoteEntity;
   }),
+  // The delete's own returning() reports whether the ban existed, so there is no separate existence read to
+  // Race against a concurrent unban
   deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation(
     async ({ ctx, input: { roomId, userId } }) => {
-      await requireEntity(
-        ctx.db.query.bansInMessage.findFirst({
-          columns: { userId: true },
-          where: { roomId: { eq: roomId }, userId: { eq: userId } },
-        }),
+      requireMutation(
+        (
+          await ctx.db
+            .delete(bansInMessage)
+            .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)))
+            .returning()
+        )[0],
+        Operation.Delete,
         DatabaseEntityType.Ban,
         userId,
       );
-      await ctx.db.delete(bansInMessage).where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)));
     },
   ),
   // oxlint-disable-next-line prefer-spread
@@ -212,7 +216,6 @@ export const moderationRouter = router({
   }),
   readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query(
     async ({ input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
-      const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
       const clauses: Clause<ModerationLogEntity>[] = [
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
@@ -230,13 +233,14 @@ export const moderationRouter = router({
           value: targetUserId,
         });
       if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.eq, value: type });
-      if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
 
       const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
-      const entries = await getTopNEntities(moderationLogClient, limit + 1, ModerationLogEntity, {
-        filter: serializeClauses(clauses),
+      return readCursorPaginationDataAzureTable(moderationLogClient, ModerationLogEntity, {
+        clauses,
+        cursor,
+        limit,
+        sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
       });
-      return getCursorPaginationData(entries, limit, sortBy);
     },
   ),
   readModerationNotes: getPermissionsProcedure(
@@ -250,17 +254,16 @@ export const moderationRouter = router({
       assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId),
     ]);
 
-    const sortBy: SortItem<keyof ModerationNoteEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
     const clauses: Clause<ModerationNoteEntity>[] = [
       { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
       { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
       getTableNullClause(ItemMetadataPropertyNames.deletedAt),
     ];
-    if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-
-    const entries = await getTopNEntities(moderationNotesClient, limit + 1, ModerationNoteEntity, {
-      filter: serializeClauses(clauses),
+    return readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
+      clauses,
+      cursor,
+      limit,
+      sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
     });
-    return getCursorPaginationData(entries, limit, sortBy);
   }),
 });
