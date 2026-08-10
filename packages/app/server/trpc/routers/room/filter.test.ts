@@ -4,8 +4,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
-import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
+import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { RoomPermission, WordFilterAction } from "@esposter/db-schema";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 

@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import MessageModelMessageConfirmDeleteDialog from "@/components/Message/Model/Message/ConfirmDeleteDialog.vue";
 import StyledDeleteFormDialog from "@/components/Styled/DeleteFormDialog.vue";
-import { createUser } from "@/services/message/user/createUser.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
+import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";

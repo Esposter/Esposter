@@ -2,8 +2,8 @@
 import type { SubmitEventPromise } from "vuetify";
 
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
-import { useDataStore } from "@/store/message/data";
 import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "@/services/message/poll/constants";
+import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";

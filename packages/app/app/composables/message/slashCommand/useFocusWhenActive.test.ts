@@ -3,8 +3,8 @@ import type { Ref } from "vue";
 
 import { useFocusWhenActive } from "@/composables/message/slashCommand/useFocusWhenActive";
 import { mount } from "@vue/test-utils";
-import { defineComponent, h } from "vue";
 import { describe, expect, test } from "vitest";
+import { defineComponent, h } from "vue";
 
 const createInputComponent = (isActive: Ref<boolean>) =>
   defineComponent({
