@@ -1,18 +1,32 @@
+import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
+import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
+import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
 import type { ReadFollowedThreadsOutput } from "#shared/models/message/thread/ReadFollowedThreadsOutput";
+import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { AzureUpdateEntity, Clause, MessageEntity } from "@esposter/db-schema";
+import type { TrackedEnvelope } from "@trpc/server";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteFileInputSchema } from "#shared/models/db/message/DeleteFileInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import { deleteUploadFilesInputSchema } from "#shared/models/db/message/DeleteUploadFilesInput";
 import { followThreadInputSchema } from "#shared/models/db/message/FollowThreadInput";
+import { forwardMessageInputSchema } from "#shared/models/db/message/ForwardMessageInput";
+import { generateDownloadFileSasUrlsInputSchema } from "#shared/models/db/message/GenerateDownloadFileSasUrlsInput";
+import { generateDownloadThumbnailSasUrlsInputSchema } from "#shared/models/db/message/GenerateDownloadThumbnailSasUrlsInput";
+import { generateUploadFileSasEntitiesInputSchema } from "#shared/models/db/message/GenerateUploadFileSasEntitiesInput";
+import { messageCompositeKeySchema } from "#shared/models/db/message/MessageCompositeKey";
+import { onCreateMessageInputSchema } from "#shared/models/db/message/OnCreateMessageInput";
+import { readMessagesByRowKeysInputSchema } from "#shared/models/db/message/ReadMessagesByRowKeysInput";
+import { readMessagesInputSchema } from "#shared/models/db/message/ReadMessagesInput";
 import { readMySentMessagesInputSchema } from "#shared/models/db/message/ReadMySentMessagesInput";
 import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
+import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -26,6 +40,7 @@ import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { updateEntityConditionally } from "@@/server/services/azure/table/updateEntityConditionally";
 import { on } from "@@/server/services/events/on";
+import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { createUploadFileToken } from "@@/server/services/message/file/createUploadFileToken";
@@ -57,6 +72,7 @@ import {
   generateUploadFileSasEntities,
   getEntity,
   getFileBlobNames,
+  getFilesBlobNames,
   getTableNullClause,
   getTopNEntitiesByType,
   serializeClauses,
@@ -71,109 +87,28 @@ import {
   CompositeKeyPropertyNames,
   DatabaseEntityType,
   FileEntity,
-  fileEntitySchema,
   FilterType,
   getMimeCategory,
   getReverseTickedTimestamp,
   MessageEntityMap,
   MessageType,
   roomIdSchema,
-  roomIdsSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
-  standardMessageEntitySchema,
 } from "@esposter/db-schema";
 import {
-  createUniqueArraySchema,
   getResult,
-  getResultAsync,
   InvalidOperationError,
   ItemMetadataPropertyNames,
   jsonDateParse,
   MAX_READ_LIMIT,
-  noop,
   NotFoundError,
   Operation,
   takeOne,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { z } from "zod";
-// Azure Table Storage has no real sorting; messages are insert-sorted via a reverse-ticked timestamp rowKey.
-// We still pass a dummy default sortBy because cursor pagination always requires one.
-const readMessagesInputSchema = z
-  .object({
-    ...createCursorPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
-      { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
-    ]).shape,
-    filter: standardMessageEntitySchema.pick({ isPinned: true }).optional(),
-    isIncludeValue: z.literal(true).optional(),
-    order: z.literal(SortOrder.Asc).optional(),
-    ...roomIdSchema.shape,
-  })
-  .omit({ sortBy: true });
-export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
-
-const readMessagesByRowKeysInputSchema = z.object({
-  ...roomIdSchema.shape,
-  rowKeys: createUniqueArraySchema(standardMessageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
-});
-const generateUploadFileSasEntitiesInputSchema = z.object({
-  // Deliberately not a unique array: every write target is minted under its own fresh id (see getFileBlobNames),
-  // So two files a user genuinely named the same collide nowhere, and rejecting the drop over the shared name
-  // Would fail the whole selection for something the storage layout already keeps apart. The sibling delete and
-  // Download schemas key on the id because by then the id exists; here the client has no id to send yet.
-  files: fileEntitySchema.pick({ filename: true, mimetype: true, size: true }).array().min(1).max(MAX_READ_LIMIT),
-  ...roomIdSchema.shape,
-});
-
-const deleteUploadFilesInputSchema = z.object({
-  files: createUniqueArraySchema(
-    z.object({
-      ...fileEntitySchema.pick({ filename: true, id: true }).shape,
-      // The grant this member was handed when the write SAS was minted — see createUploadFileToken
-      token: z.string().min(1),
-    }),
-    "id",
-  )
-    .min(1)
-    .max(MAX_READ_LIMIT),
-  ...roomIdSchema.shape,
-});
-
-const generateDownloadThumbnailSasUrlsInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ id: true }), "id")
-    .min(1)
-    .max(MAX_READ_LIMIT),
-  ...roomIdSchema.shape,
-});
-
-const generateDownloadFileSasUrlsInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true, mimetype: true }), "id")
-    .min(1)
-    .max(MAX_READ_LIMIT),
-  ...roomIdSchema.shape,
-});
-
-// The key every single-message procedure addresses its target by
-const messageCompositeKeySchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
-
-const onCreateMessageInputSchema = z.object({
-  lastEventId: z.string().nullish(),
-  ...roomIdSchema.shape,
-});
-
-const forwardMessageInputSchema = z.object({
-  ...standardMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
-  roomIds: roomIdsSchema.shape.roomIds.min(1),
-});
-
-const votePollInputSchema = z.object({
-  // "" withdraws the caller's vote — the radio group emits no selection rather than an option id
-  optionId: z.union([z.literal(""), z.uuid()]),
-  ...messageCompositeKeySchema.shape,
-});
 
 export const baseMessageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
@@ -181,14 +116,14 @@ export const baseMessageRouter = router({
   ),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query, not mutation: emitting has no ordering/concurrency concerns.
-    .query(({ ctx, input }) => {
+    .query<void>(({ ctx, input }) => {
       messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.getSessionPayload.session.id });
     }),
   // Removing one file rewrites the whole files array, so the write is conditional on the version the procedure
   // Read: two files deleted at once otherwise both compute the survivors from the same version, and the later
   // Write reinstates the file the earlier one removed — whose blob is already gone, leaving a message holding a
   // Broken attachment. The loser re-reads and drops its file from the survivors the winner stored
-  deleteFile: getMessageProcedure(deleteFileInputSchema, MessageOperation.Update).mutation(
+  deleteFile: getMessageProcedure(deleteFileInputSchema, MessageOperation.Update).mutation<void>(
     async ({ ctx: { messageClient, messageEntity, messageEtag }, input: { id, partitionKey, rowKey } }) => {
       if (messageEntity.isForward || messageEntity.files.length === 0)
         throw new TRPCError({
@@ -226,7 +161,7 @@ export const baseMessageRouter = router({
   // Clearing the preview needs a Replace — Merge cannot unset a property — so the write carries the whole message
   // Body and is conditional on the version the procedure read. Replaying the body this procedure first read would
   // Revert every concurrent change to the message, not only the preview it clears
-  deleteLinkPreviewResponse: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Update).mutation(
+  deleteLinkPreviewResponse: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Update).mutation<void>(
     async ({ ctx: { messageClient, messageEntity, messageEtag } }) => {
       const { partitionKey, rowKey } = messageEntity;
       await updateEntityConditionally(messageClient, StandardMessageEntity, {
@@ -241,7 +176,7 @@ export const baseMessageRouter = router({
       messageEventEmitter.emit("updateMessage", { linkPreviewResponse: null, partitionKey, rowKey });
     },
   ),
-  deleteMessage: getMessageProcedure(deleteMessageInputSchema, MessageOperation.Delete).mutation(
+  deleteMessage: getMessageProcedure(deleteMessageInputSchema, MessageOperation.Delete).mutation<void>(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
       messageEventEmitter.emit("deleteMessage", input);
@@ -249,9 +184,7 @@ export const baseMessageRouter = router({
       await publishBlobDeletion(
         `${messageEntity.partitionKey}/${messageEntity.rowKey}`,
         AzureContainer.MessageAssets,
-        messageEntity.files.flatMap(({ filename, id }) =>
-          Object.values(getFileBlobNames(messageEntity.partitionKey, id, filename)),
-        ),
+        getFilesBlobNames(messageEntity.partitionKey, messageEntity.files),
       );
     },
   ),
@@ -261,26 +194,22 @@ export const baseMessageRouter = router({
   // Whole room is deleted. Membership cannot be the check: an unreferenced upload and a posted attachment share
   // One room-scoped namespace, and every member reads every attachment's id off the wire, so a name-only delete
   // Destroys anyone's posted attachment. The caller presents the grant it was handed when the SAS was minted
-  deleteUploadFiles: getMemberProcedure(deleteUploadFilesInputSchema, "roomId").mutation(
+  deleteUploadFiles: getMemberProcedure(deleteUploadFilesInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { files, roomId } }) => {
       for (const { id, token } of files)
         if (!getIsUploadFileTokenValid(ctx.getSessionPayload.user.id, roomId, id, token))
           throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      await publishBlobDeletion(
-        roomId,
-        AzureContainer.MessageAssets,
-        files.flatMap(({ filename, id }) => Object.values(getFileBlobNames(roomId, id, filename))),
-      );
+      await publishBlobDeletion(roomId, AzureContainer.MessageAssets, getFilesBlobNames(roomId, files));
     },
   ),
-  followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation(
+  followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { roomId, threadRootRowKey } }) => {
       // The bell is the member's own decision, so it clears any unfollow they recorded earlier
       await createThreadFollow(ctx.db, { roomId, threadRootRowKey, userId: ctx.getSessionPayload.user.id }, true);
     },
   ),
-  forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
+  forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation<void>(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await isMember(ctx.db, ctx.getSessionPayload, roomIds);
       // Every client provisions its own table/container, so acquiring them together costs one round trip
@@ -407,7 +336,7 @@ export const baseMessageRouter = router({
       }),
     );
   }),
-  getWebPubSubClientAccessUrl: getMemberProcedure(roomIdSchema, "roomId").query(
+  getWebPubSubClientAccessUrl: getMemberProcedure(roomIdSchema, "roomId").query<string>(
     async ({ ctx, input: { roomId }, signal }) => {
       const webPubSubServiceClient = useWebPubSubServiceClient(AzureWebPubSubHub.Messages);
       const { url } = await webPubSubServiceClient.getClientAccessToken({
@@ -419,11 +348,9 @@ export const baseMessageRouter = router({
       return url;
     },
   ),
-  onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input: { lastEventId, roomId },
-    signal,
-  }) {
+  onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription<
+    AsyncGenerator<TrackedEnvelope<MessageEntity[]>, void, unknown>
+  >(async function* ({ ctx, input: { lastEventId, roomId }, signal }) {
     // Listening starts BEFORE the catch-up, and the two overlap by design. `on` attaches its listener when it is
     // Called and queues what it receives until this loop consumes it, so a message committed while the catch-up
     // Is still paging is held rather than missed — the catch-up reads MessagesAscending, whose index row lands
@@ -455,38 +382,35 @@ export const baseMessageRouter = router({
       if (dataToYield.length > 0) yield tracked(takeOne(dataToYield, dataToYield.length - 1).rowKey, dataToYield);
     }
   }),
-  onCreateTyping: getMemberProcedure(roomIdSchema, "roomId").subscription(async function* ({ ctx, input, signal }) {
+  onCreateTyping: getMemberProcedure(roomIdSchema, "roomId").subscription<
+    AsyncGenerator<MessageEvents["createTyping"][0], void, unknown>
+  >(async function* ({ ctx, input, signal }) {
     for await (const [data] of on(messageEventEmitter, "createTyping", { signal }))
       if (data.roomId === input.roomId && !getIsSameDevice(data, ctx.getSessionPayload)) yield data;
   }),
-  onDeleteMessage: getMemberProcedure(roomIdSchema, "roomId").subscription(async function* ({ input, signal }) {
+  onDeleteMessage: getMemberProcedure(roomIdSchema, "roomId").subscription<
+    AsyncGenerator<MessageEvents["deleteMessage"][0], void, unknown>
+  >(async function* ({ input, signal }) {
     for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal }))
       if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
-  onUpdateMessage: getMemberProcedure(roomIdSchema, "roomId").subscription(async function* ({ input, signal }) {
+  onUpdateMessage: getMemberProcedure(roomIdSchema, "roomId").subscription<
+    AsyncGenerator<MessageEvents["updateMessage"][0], void, unknown>
+  >(async function* ({ input, signal }) {
     for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
       if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
-  pinMessage: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Pin).mutation(
+  pinMessage: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Pin).mutation<void>(
     async ({ ctx: { getSessionPayload, messageClient }, input }) => {
       const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
       await updateEntity(messageClient, updatedMessageEntity);
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
-      // Best-effort after the pin write — a failure leaves the pin in place without its system message, never
-      // Costs the pin itself
-      await getResultAsync(async () => {
-        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-          replyRowKey: input.rowKey,
-          roomId: input.partitionKey,
-          type: MessageType.PinMessage,
-          userId: getSessionPayload.user.id,
-        });
-        messageEventEmitter.emit("createMessage", [
-          [systemMessage],
-          { isSendToSelf: true, sessionId: getSessionPayload.session.id },
-        ]);
-      }).match(noop, console.error);
+      // The pin line is worded by the message it points at rather than by text of its own, and it is best-effort
+      // Like every other system message — a failure leaves the pin in place without its line, never costs the pin
+      await createSystemRoomMessage(input.partitionKey, getSessionPayload.user.id, "", getSessionPayload.session.id, {
+        replyRowKey: input.rowKey,
+        type: MessageType.PinMessage,
+      });
     },
   ),
   // One read for both shapes the client needs, since the display list is derived from the follow state:
@@ -512,8 +436,10 @@ export const baseMessageRouter = router({
       };
     },
   ),
-  readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
-  readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
+  readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query<CursorPaginationData<MessageEntity>>(
+    ({ input }) => readMessages(input),
+  ),
+  readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query<MessageEntity[]>(
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const clauses: Clause<StandardMessageEntity>[] = [
@@ -533,43 +459,49 @@ export const baseMessageRouter = router({
   ),
   readMySentMessages: standardAuthedProcedure
     .input(readMySentMessagesInputSchema)
-    .query(({ ctx, input }) => readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id)),
-  readThread: getMemberProcedure(readThreadInputSchema, "roomId").query(async ({ input: { roomId, rootRowKey } }) => {
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const replyClauses: Clause<StandardMessageEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-      { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: rootRowKey },
-      getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-    ];
-    // The root and its replies are independent reads, so neither waits on the other
-    const [rootMessage, replies] = await Promise.all([
-      getEntity(messageClient, StandardMessageEntity, roomId, rootRowKey),
-      getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
-        filter: serializeClauses(replyClauses),
-      }),
-    ]);
-    if (!rootMessage || rootMessage.deletedAt) return replies;
-    return [rootMessage, ...replies];
-  }),
-  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(async ({ ctx, input }) => {
-    const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
-    if (!inFilterRoomIds.every((value) => typeof value === "string"))
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds))
-          .message,
-      });
-    else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
-    return searchMessages(input);
-  }),
-  unfollowThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation(
+    .query<ReadMySentMessagesResult>(({ ctx, input }) =>
+      readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id),
+    ),
+  readThread: getMemberProcedure(readThreadInputSchema, "roomId").query<MessageEntity[]>(
+    async ({ input: { roomId, rootRowKey } }) => {
+      const messageClient = await useTableClient(AzureTable.Messages);
+      const replyClauses: Clause<StandardMessageEntity>[] = [
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+        { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: rootRowKey },
+        getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+      ];
+      // The root and its replies are independent reads, so neither waits on the other
+      const [rootMessage, replies] = await Promise.all([
+        getEntity(messageClient, StandardMessageEntity, roomId, rootRowKey),
+        getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
+          filter: serializeClauses(replyClauses),
+        }),
+      ]);
+      if (!rootMessage || rootMessage.deletedAt) return replies;
+      return [rootMessage, ...replies];
+    },
+  ),
+  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query<SearchMessagesResult>(
+    async ({ ctx, input }) => {
+      const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
+      if (!inFilterRoomIds.every((value) => typeof value === "string"))
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds))
+            .message,
+        });
+      else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
+      return searchMessages(input);
+    },
+  ),
+  unfollowThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { roomId, threadRootRowKey } }) => {
       await createThreadUnfollow(ctx.db, { roomId, threadRootRowKey, userId: ctx.getSessionPayload.user.id });
     },
   ),
   // Unpinning needs a Replace — Merge cannot unset a property — so the same conditional write as
   // DeleteLinkPreviewResponse applies: a full body replayed from a stale read reverts concurrent edits
-  unpinMessage: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Pin).mutation(
+  unpinMessage: getMessageProcedure(messageCompositeKeySchema, MessageOperation.Pin).mutation<void>(
     async ({ ctx: { messageClient, messageEntity, messageEtag }, input }) => {
       await updateEntityConditionally(messageClient, StandardMessageEntity, {
         entityType: AzureEntityType.Message,
@@ -582,7 +514,7 @@ export const baseMessageRouter = router({
       messageEventEmitter.emit("updateMessage", { ...input, isPinned: undefined });
     },
   ),
-  updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update).mutation(
+  updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update).mutation<void>(
     async ({ ctx: { messageClient }, input }) => {
       await updateMessage(messageClient, input);
       messageEventEmitter.emit("updateMessage", input);
@@ -597,7 +529,7 @@ export const baseMessageRouter = router({
   // The later write echoes back a body that never saw the earlier vote, erasing it with nothing surfaced to
   // Either voter. The loser of the race re-applies its vote to the version it re-reads, because the vote is
   // Still valid — only the body it was computed against is stale
-  votePoll: getMessageProcedure(votePollInputSchema, MessageOperation.Vote).mutation(
+  votePoll: getMessageProcedure(votePollInputSchema, MessageOperation.Vote).mutation<void>(
     async ({
       ctx: { getSessionPayload, messageClient, messageEntity, messageEtag },
       input: { optionId, partitionKey, rowKey },

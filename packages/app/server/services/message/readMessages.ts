@@ -1,5 +1,5 @@
+import type { ReadMessagesInput } from "#shared/models/db/message/ReadMessagesInput";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { ReadMessagesInput } from "@@/server/trpc/routers/message";
 import type { Clause, MessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
 

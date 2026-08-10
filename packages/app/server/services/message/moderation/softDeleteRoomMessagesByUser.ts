@@ -5,7 +5,7 @@ import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishB
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import {
   deserializeEntity,
-  getFileBlobNames,
+  getFilesBlobNames,
   getTableNullClause,
   serializeClauses,
   serializeEntity,
@@ -54,9 +54,7 @@ export const softDeleteRoomMessagesByUser = async (roomId: string, targetUserId:
         await publishBlobDeletion(
           roomId,
           AzureContainer.MessageAssets,
-          batch.flatMap(({ files }) =>
-            files.flatMap(({ filename, id }) => Object.values(getFileBlobNames(roomId, id, filename))),
-          ),
+          batch.flatMap(({ files }) => getFilesBlobNames(roomId, files)),
         );
       },
     );
