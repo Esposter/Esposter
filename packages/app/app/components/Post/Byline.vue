@@ -23,6 +23,6 @@ const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
       {{ post.user.name }}
     </NuxtInvisibleLink>
     <span v-else font-bold>{{ post.user.name }}</span>
-    <span text-gray>{{ createdAtTimeAgo }}</span>
+    <span op-medium-emphasis>{{ createdAtTimeAgo }}</span>
   </div>
 </template>

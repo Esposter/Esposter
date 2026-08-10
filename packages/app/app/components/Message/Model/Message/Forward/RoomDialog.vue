@@ -15,9 +15,10 @@ const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
 const { resetForward } = forwardStore;
 const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
-const forward = computed(() => items.value.find((message) => message.rowKey === rowKey.value));
+const { isOpen, item: forward } = useSingletonDialog(rowKey, () =>
+  items.value.find((message) => message.rowKey === rowKey.value),
+);
 const creator = useCreator(forward);
-const { isOpen } = useSingletonDialog(rowKey);
 const {
   hasMore,
   items: itemsSearched,
@@ -82,7 +83,7 @@ const forwardMessage = async () => {
             @click="isOpen = false"
           />
         </div>
-        <div text-gray pb-2 text-title-small>Select where you want to share this message.</div>
+        <div pb-2 op-medium-emphasis text-title-small>Select where you want to share this message.</div>
         <v-text-field
           v-model="searchQuery"
           append-inner-icon="mdi-magnify"

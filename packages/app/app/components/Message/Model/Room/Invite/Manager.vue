@@ -90,7 +90,7 @@ const isCopied = ref(false);
         <StyledClipboardButton w-20 :source="inviteLink" @update:copied="isCopied = $event" @create="onCreateInvite" />
       </template>
     </v-text-field>
-    <div v-if="inviteStateText" text-gray pt-2 text-title-small>{{ inviteStateText }}</div>
+    <div v-if="inviteStateText" pt-2 op-medium-emphasis text-title-small>{{ inviteStateText }}</div>
   </div>
 </template>
 

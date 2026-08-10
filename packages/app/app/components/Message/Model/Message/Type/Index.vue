@@ -2,7 +2,6 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 
 import { dayjs } from "#shared/services/dayjs";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
 
 defineSlots<{ default?: () => VNode }>();
@@ -37,42 +36,29 @@ const messageHtml = useMessageWithMentions(
         <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" pl-2 />
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
-      <span v-else :op="active ? undefined : 0" text-gray text-center text-body-small>
+      <span v-else :op="active ? undefined : 0" text-center text-hint>
         {{ displayCreatedAtShort }}
       </span>
     </template>
     <MessageModelMessageReplyTitle v-if="message.replyRowKey || !isSameBatch" :creator :message />
+    <!-- A forward only adds the quote rail and its label — the body underneath is the same one every other
+      message renders, so the edited marker and the inline editor survive being forwarded -->
     <div v-if="message.isForward" flex gap-x-2>
       <div rd bg-border h-inherit w-1 />
-      <div flex flex-col gap-y-1>
-        <v-list-item-subtitle>
-          <span italic>
-            <v-icon icon="mdi-share" />
-            Forwarded
-          </span>
-        </v-list-item-subtitle>
-        <v-list-item-subtitle
-          v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
-          class="rich-text-content"
-          op-100
-          v-html="messageHtml"
-        />
-        <MessageModelMessageTypeTrailing :is-preview :message />
-      </div>
+      <MessageModelMessageTypeBody :is-preview :message :message-html>
+        <template #prepend>
+          <v-list-item-subtitle>
+            <span italic>
+              <v-icon icon="mdi-share" />
+              Forwarded
+            </span>
+          </v-list-item-subtitle>
+        </template>
+        <template v-if="$slots.default" #default><slot /></template>
+      </MessageModelMessageTypeBody>
     </div>
-    <div v-else flex flex-col gap-y-1>
-      <slot>
-        <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.isEdited" flex gap-x-1 items-end>
-          <v-list-item-subtitle
-            v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
-            class="rich-text-content"
-            op-100
-            v-html="messageHtml"
-          />
-          <span v-if="message.isEdited" text-2.4 text-gray line-height-3.2>(edited)</span>
-        </div>
-      </slot>
-      <MessageModelMessageTypeTrailing :is-preview :message />
-    </div>
+    <MessageModelMessageTypeBody v-else :is-preview :message :message-html>
+      <template v-if="$slots.default" #default><slot /></template>
+    </MessageModelMessageTypeBody>
   </MessageModelMessageTypeListItem>
 </template>
