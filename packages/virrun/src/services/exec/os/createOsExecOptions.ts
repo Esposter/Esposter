@@ -33,8 +33,9 @@ import { join } from "node:path";
 // Snapshot lower = current platform) so the Linux binary wins. Only on win32 (wslLoginPath is non-empty): native Linux
 // Overlays at cwd, so its PATH already resolves the correct binary and needs no prepend.
 export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions => {
-  const sharedPackageStoreOptions = createSharedPackageStoreOptions(cwd, getOsCacheRoot(cwd));
-  const corepackHome = join(getOsCacheRoot(cwd), VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
+  const osCacheRoot = getOsCacheRoot(cwd);
+  const sharedPackageStoreOptions = createSharedPackageStoreOptions(cwd, osCacheRoot);
+  const corepackHome = join(osCacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
   mkdirSync(corepackHome, { recursive: true });
   const wslLoginPath = process.platform === "win32" ? readWslLoginEnvironment().path : "";
   // On win32 the os backend REQUIRES the login-shell capture to place a Linux node on PATH; the support probe already

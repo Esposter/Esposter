@@ -3,6 +3,7 @@ import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
 import { formatVirrunBanner } from "@/services/cli/format/formatVirrunBanner";
 import { formatVirrunCacheHit } from "@/services/cli/format/formatVirrunCacheHit";
 import { formatVirrunDebug } from "@/services/cli/format/formatVirrunDebug";
+import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
 import { formatVirrunNetworkHint } from "@/services/cli/format/formatVirrunNetworkHint";
 import { formatVirrunPrepare } from "@/services/cli/format/formatVirrunPrepare";
 import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
@@ -45,6 +46,14 @@ describe(formatVirrunDebug, () => {
     expect.hasAssertions();
 
     expect(stripAnsi(formatVirrunDebug("task cache off"))).toBe("[virrun] debug — task cache off");
+  });
+});
+
+describe(formatVirrunError, () => {
+  test("prefixes the message with the virrun tag", () => {
+    expect.hasAssertions();
+
+    expect(stripAnsi(formatVirrunError("no pnpm-lock.yaml found"))).toBe("[virrun] no pnpm-lock.yaml found");
   });
 });
 

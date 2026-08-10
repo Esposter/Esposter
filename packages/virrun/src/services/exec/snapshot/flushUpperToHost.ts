@@ -9,4 +9,6 @@ export const flushUpperToHost = (
   hostDir: string,
   snapshotUpperDir: string,
   maskedPaths: readonly string[] = [],
-): void =>{  applyFlushPlan(upperDir, hostDir, buildHostFlushPlan(upperDir, snapshotUpperDir, maskedPaths)); };
+): void => {
+  applyFlushPlan(upperDir, hostDir, buildHostFlushPlan(upperDir, snapshotUpperDir, maskedPaths));
+};

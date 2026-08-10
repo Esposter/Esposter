@@ -12,6 +12,7 @@ import {
 } from "@/services/exec/wsl/constants";
 import { createSourceMirrorArchive } from "@/services/exec/wsl/createSourceMirrorArchive";
 import { diffSourceMirrorManifests } from "@/services/exec/wsl/diffSourceMirrorManifests";
+import { getChangedExcludes } from "@/services/exec/wsl/getChangedExcludes";
 import { getWslSourceMirrorEntryPath } from "@/services/exec/wsl/getWslSourceMirrorEntryPath";
 import { getWslSourceMirrorEntryUnc } from "@/services/exec/wsl/getWslSourceMirrorEntryUnc";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
@@ -20,19 +21,14 @@ import { publishSourceMirrorOrigin } from "@/services/exec/wsl/publishSourceMirr
 import { readSourceMirrorPublication } from "@/services/exec/wsl/readSourceMirrorPublication";
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
-import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
+import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 // Whether the two exclude sets disagree on a bare name — the one exclude shape a delete list can't target, since it
-// Matches that segment at any depth rather than one path. Membership only: resolveMirrorExcludes builds the set by
-// Appending discovered entries to the base patterns, so a reordering must never read as a change.
-const getHasBareNameExcludeChange = (previous: readonly string[], current: readonly string[]): boolean => {
-  const previousExcludes = new Set(previous);
-  const currentExcludes = new Set(current);
-  return [...previous, ...current].some(
-    (exclude) => getIsBareNameExclude(exclude) && previousExcludes.has(exclude) !== currentExcludes.has(exclude),
-  );
-};
+// Matches that segment at any depth rather than one path. The changed set itself comes from getChangedExcludes, the
+// Same derivation diffSourceMirrorManifests turns into deletes, so the two can never disagree on what changed.
+const getHasBareNameExcludeChange = (previous: readonly string[], current: readonly string[]): boolean =>
+  getChangedExcludes(previous, current).some((exclude) => getIsBareNameExclude(exclude));
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
 // CreateWslOsBackend folds into the run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
@@ -171,7 +167,7 @@ export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string
   }).match(
     (script) => ({ lockPath, mirrorPath, script }),
     (error) => {
-      throw new InvalidOperationError(Operation.Create, createWslSourceMirrorSync.name, toAppError(error).message);
+      throw new InvalidOperationError(Operation.Create, createWslSourceMirrorSync.name, error.message);
     },
   );
 };

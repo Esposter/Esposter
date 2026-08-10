@@ -1,9 +1,7 @@
-import { Color } from "@/models/cli/Color";
 import { BackendType } from "@/models/virrun/BackendType";
 import { ExecutionMode } from "@/models/virrun/ExecutionMode";
-import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunBanner } from "@/services/cli/format/formatVirrunBanner";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
+import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
 import { formatVirrunPrepare } from "@/services/cli/format/formatVirrunPrepare";
 import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/format/formatVirrunResult";
@@ -15,7 +13,7 @@ import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareL
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
 import { createVirrun } from "@/services/virrun/createVirrun";
-import { exhaustiveGuard, getResult, getResultAsync, noop, toAppError, withFinalizerAsync } from "@esposter/shared";
+import { exhaustiveGuard, getResult, getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { performance } from "node:perf_hooks";
 // Shared orchestration behind the passthrough commands: resolve config/backend, construct the sandbox, bracket the
 // Run with a banner + result line, propagate the child's exit code. All outcomes converge on the single
@@ -74,13 +72,12 @@ export const runVirrunCommand = async (
   });
   const exitCode = result.match(
     ({ exitCode: resolvedExitCode }) => resolvedExitCode,
-    (error) => {
-      const message = toAppError(error).message;
+    ({ message }) => {
       // A bare package-script name (e.g. `virrun run typecheck`) reaches the backend as a missing executable; swap
       // The raw sandbox-setup error for a hint that points at the working `virrun -- pnpm <script>` form. The hint is
       // Already tagged + colored; the raw-message fallback gets the same [virrun] tag and a red body.
       process.stderr.write(
-        `${getCommandNotFoundHint(command, message, process.cwd()) ?? formatVirrunLine(colorize(message, Color.Red))}\n`,
+        `${getCommandNotFoundHint(command, message, process.cwd()) ?? formatVirrunError(message)}\n`,
       );
       return 1;
     },
