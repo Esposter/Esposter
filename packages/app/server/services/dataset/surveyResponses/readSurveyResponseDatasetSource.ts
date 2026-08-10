@@ -5,7 +5,7 @@ import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResou
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { getSurveyModelDatasetColumns } from "@@/server/services/dataset/surveyResponses/getSurveyModelDatasetColumns";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { countSurveyResponseEntities } from "@@/server/services/survey/countSurveyResponseEntities";
+import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
 import { readSurveyResponseEntities } from "@@/server/services/survey/readSurveyResponseEntities";
 
 // The one read behind both the dataset and the Responses blade, so a row and its key always come from
@@ -19,7 +19,8 @@ export const readSurveyResponseDatasetSource = async (
   const columns = getSurveyModelDatasetColumns(parseSurveyModel(content?.model ?? ""));
   const { hasMore, surveyResponses } = await readSurveyResponseEntities(surveyId);
   // Counting is a bounded partition scan, so only a read that saw rows past the cap pays for it —
-  // The one case where the caller needs to know what it is missing
-  const totalRows = hasMore ? await countSurveyResponseEntities(surveyId) : surveyResponses.length;
+  // The one case where the caller needs to know what it is missing. `isCapped` is dropped here because
+  // getDatasetTruncation re-derives it from the total against the same ceiling
+  const totalRows = hasMore ? (await countSurveyResponses(surveyId)).count : surveyResponses.length;
   return { columns, surveyResponses, totalRows };
 };
