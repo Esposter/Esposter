@@ -33,6 +33,7 @@ export const devEvgsEsposterAe007: azure_native.eventgrid.SystemTopicEventSubscr
       eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
       eventSubscriptionName,
       filter: {
+        enableAdvancedFilteringOnArrays: true,
         includedEventTypes: ["Microsoft.Storage.BlobCreated"],
         subjectBeginsWith: getBlobSubjectPrefix(AzureContainer.ResourceAssets),
         subjectEndsWith: "",

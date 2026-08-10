@@ -2,8 +2,10 @@ import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAppServiceManagedApiId from "@/azure/constants/AzureAppServiceManagedApiId";
 import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
 import AzureLogicAppEndpointsConfiguration from "@/azure/constants/AzureLogicAppEndpointsConfiguration";
+import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
 import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devApicEsposterAe002 } from "@/azure/resources/Microsoft.Web/connections/devApicEsposterAe002";
+import { devFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
 import { getWorkflowConnectionParameters } from "@/azure/services/getWorkflowConnectionParameters";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
@@ -25,7 +27,7 @@ export const devLogicEsposterAe002: azure_native.logic.Workflow = new azure_nati
               },
             },
             method: "post",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('dev-rg-esposter-ae-001')}/providers/Microsoft.Web/sites/@{encodeURIComponent('dev-func-esposter-001')}/start",
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/Microsoft.Web/sites/@{encodeURIComponent('${devFuncEsposter001.name}')}/start`,
             queries: {
               "api-version": "2019-08-01",
             },
