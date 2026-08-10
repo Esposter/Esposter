@@ -219,7 +219,7 @@ describe("user", () => {
         (iterator) => iterator.next(),
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, userRouter.onUpsertStatus.name).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, JSON.stringify([userId])).message}]`,
     );
   });
 

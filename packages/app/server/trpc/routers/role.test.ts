@@ -7,10 +7,11 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("role", () => {
-  const { createMember, getMockContext, getRoleCaller, getRoomId, setupMemberWithRole } = setupRoomSuite();
+  const { createMember, getEveryoneRole, getMockContext, getRoleCaller, getRoomId, setupMemberWithRole } =
+    setupRoomSuite();
   let mockContext: Context;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomId: string;
@@ -85,9 +86,7 @@ describe("role", () => {
   test("cannot delete @everyone role", async () => {
     expect.hasAssertions();
 
-    const roles = await roleCaller.readRoles({ roomIds: [roomId] });
-    const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
-    assert.exists(everyoneRole);
+    const everyoneRole = await getEveryoneRole();
 
     await expect(roleCaller.deleteRole({ id: everyoneRole.id, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, everyoneRole.id).message}]`,
@@ -145,9 +144,7 @@ describe("role", () => {
   test("cannot assign @everyone role explicitly", async () => {
     expect.hasAssertions();
 
-    const roles = await roleCaller.readRoles({ roomIds: [roomId] });
-    const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
-    assert.exists(everyoneRole);
+    const everyoneRole = await getEveryoneRole();
     const targetMember = await createMember();
 
     await expect(

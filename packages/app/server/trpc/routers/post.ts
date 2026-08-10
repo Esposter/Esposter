@@ -18,6 +18,7 @@ import { getPostRanking } from "@@/server/services/post/getPostRanking";
 import { getPostWithViewerLike } from "@@/server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "@@/server/services/post/getViewerPostRelations";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
@@ -31,7 +32,6 @@ import {
   selectPostSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
@@ -160,11 +160,7 @@ export const postRouter = router({
         input,
       );
       const { parentId: postId } = deletedComment;
-      if (!postId)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input).message,
-        });
+      if (!postId) throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input);
 
       const post = await requireEntity(
         tx.query.posts.findFirst({

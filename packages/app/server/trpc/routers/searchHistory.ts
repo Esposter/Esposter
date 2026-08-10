@@ -59,8 +59,11 @@ export const searchHistoryRouter = router({
     }),
   readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
+      // A search history is the caller's own, exactly as `ownedBy` scopes every write to it — membership only
+      // Says which room's searches may be read, never whose
       const where: RelationsFilter<(typeof relations)["searchHistoriesInMessage"], typeof relations> = {
         roomId: { eq: roomId },
+        userId: { eq: ctx.getSessionPayload.user.id },
       };
       if (cursor) where.RAW = (searchHistory) => getCursorWhere(searchHistory, cursor, sortBy);
       const resultSearchHistories = await ctx.db.query.searchHistoriesInMessage.findMany({

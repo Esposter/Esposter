@@ -1,3 +1,4 @@
+import type { Context } from "@@/server/trpc/context";
 import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
 
 import { assignRoleInputSchema } from "#shared/models/db/role/AssignRoleInput";
@@ -14,6 +15,7 @@ import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
@@ -28,9 +30,39 @@ import {
   usersToRoomRolesInMessage,
   UserToRoomRoleInMessageRelations,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
+
+// A role may never carry a permission its author does not already hold — otherwise ManageRoles alone is a
+// Path to every other permission. The room owner and an Administrator are the two who are already above it
+const assertCanGrantPermissions = async (
+  db: Context["db"],
+  actorUserId: string,
+  roomId: string,
+  permissions: bigint,
+  isOwner: boolean,
+) => {
+  if (isOwner) return;
+  const actorPermissions = await getPermissions(db, actorUserId, roomId);
+  const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
+  if (!hasAdmin && (permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
+};
+// Granting and revoking are both two hierarchy checks, never one: the role has to be below the actor, and so
+// Does the member it is being moved on or off, or a peer could be stripped through a role they outrank
+const assertCanManageMemberRole = async (
+  db: Context["db"],
+  { actorTopPosition, isOwner }: Awaited<ReturnType<typeof getActorContext>>,
+  rolePosition: number,
+  roomId: string,
+  userId: string,
+) => {
+  if (!checkIsManageable(actorTopPosition, rolePosition, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+  const targetTopRolePosition = await getTopRolePosition(db, userId, roomId);
+  if (!checkIsManageable(actorTopPosition, targetTopRolePosition, isOwner))
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+};
 
 export const roleRouter = router({
   assignRole: getPermissionsProcedure(
@@ -58,18 +90,9 @@ export const roleRouter = router({
       ),
     ]);
 
-    if (role.isEveryone)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, roleId).message,
-      });
+    if (role.isEveryone) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, roleId);
 
-    const { actorTopPosition, isOwner } = actorContext;
-    if (!checkIsManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    const targetTopRolePosition = await getTopRolePosition(ctx.db, userId, roomId);
-    if (!checkIsManageable(actorTopPosition, targetTopRolePosition, isOwner))
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+    await assertCanManageMemberRole(ctx.db, actorContext, role.position, roomId, userId);
 
     const device = { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId };
     const [userToRoomRole] = await ctx.db
@@ -90,11 +113,7 @@ export const roleRouter = router({
 
     if (!checkIsManageable(actorTopPosition, position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    if (!isOwner) {
-      const actorPermissions = await getPermissions(ctx.db, actorUserId, roomId);
-      const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
-      if (!hasAdmin && (permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
+    await assertCanGrantPermissions(ctx.db, actorUserId, roomId, permissions, isOwner);
 
     const createdRole = requireMutation(
       (await ctx.db.insert(roomRolesInMessage).values({ color, name, permissions, position, roomId }).returning())[0],
@@ -127,11 +146,7 @@ export const roleRouter = router({
       getActorContext(ctx.db, actorUserId, roomId),
     ]);
 
-    if (role.isEveryone)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, id).message,
-      });
+    if (role.isEveryone) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, id);
 
     const { actorTopPosition, isOwner } = actorContext;
     if (!checkIsManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -196,7 +211,7 @@ export const roleRouter = router({
         where: { roomId: { in: roomIds } },
       });
     }),
-  revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation(
+  revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
       const actorUserId = ctx.getSessionPayload.user.id;
       const [role, actorContext] = await Promise.all([
@@ -211,12 +226,7 @@ export const roleRouter = router({
         getActorContext(ctx.db, actorUserId, roomId),
       ]);
 
-      const { actorTopPosition, isOwner } = actorContext;
-      if (!checkIsManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      const targetTopRolePosition = await getTopRolePosition(ctx.db, userId, roomId);
-      if (!checkIsManageable(actorTopPosition, targetTopRolePosition, isOwner))
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+      await assertCanManageMemberRole(ctx.db, actorContext, role.position, roomId, userId);
 
       await ctx.db
         .delete(usersToRoomRolesInMessage)
@@ -257,11 +267,8 @@ export const roleRouter = router({
       (rest.position !== undefined && !checkIsManageable(actorTopPosition, rest.position, isOwner))
     )
       throw new TRPCError({ code: "UNAUTHORIZED" });
-    else if (rest.permissions !== undefined && !isOwner) {
-      const actorPermissions = await getPermissions(ctx.db, actorUserId, roomId);
-      const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
-      if (!hasAdmin && (rest.permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
+    else if (rest.permissions !== undefined)
+      await assertCanGrantPermissions(ctx.db, actorUserId, roomId, rest.permissions, isOwner);
 
     const updatedRole = requireMutation(
       (

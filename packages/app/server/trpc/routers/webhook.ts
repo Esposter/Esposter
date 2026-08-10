@@ -1,4 +1,4 @@
-import type { WebhookInMessage } from "@esposter/db-schema";
+import type { AppUserInMessage, WebhookInMessage } from "@esposter/db-schema";
 
 import { createWebhookInputSchema } from "#shared/models/db/webhook/CreateWebhookInput";
 import { deleteWebhookInputSchema } from "#shared/models/db/webhook/DeleteWebhookInput";
@@ -8,6 +8,9 @@ import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { generateToken } from "@@/server/services/auth/generateToken";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import {
@@ -19,15 +22,7 @@ import {
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
-import {
-  createUniqueArraySchema,
-  InvalidOperationError,
-  MAX_READ_LIMIT,
-  NotFoundError,
-  Operation,
-  takeOne,
-} from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { createUniqueArraySchema, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import { and, count, eq, getColumns, inArray } from "drizzle-orm";
 import { z } from "zod";
 
@@ -37,6 +32,10 @@ const readAppUsersByIdsInputSchema = z.object({
   ...roomIdSchema.shape,
   ids: createUniqueArraySchema(selectAppUserInMessageSchema.shape.id).min(1).max(MAX_READ_LIMIT),
 });
+// A webhook is addressed by both keys so the room the permission was checked against is the room the row
+// Must belong to — an id alone would let a moderator of one room rewrite another's
+const webhookRoomWhere = (id: string, roomId: string) =>
+  and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId));
 
 export const webhookRouter = router({
   createWebhook: getPermissionsProcedure(
@@ -50,47 +49,33 @@ export const webhookRouter = router({
         await tx.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId)),
       ).count;
       if (webhookCount >= WEBHOOK_MAX_LENGTH)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Create,
-            DatabaseEntityType.Webhook,
-            JSON.stringify({ name, roomId }),
-          ).message,
-        });
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Webhook, JSON.stringify({ name, roomId }));
 
-      const newAppUser = (await tx.insert(appUsersInMessage).values({ name }).returning())[0];
-      if (!newAppUser)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.AppUser, JSON.stringify({ name }))
-            .message,
-        });
-
+      const newAppUser = requireMutation(
+        (await tx.insert(appUsersInMessage).values({ name }).returning())[0],
+        Operation.Create,
+        DatabaseEntityType.AppUser,
+        JSON.stringify({ name }),
+      );
       const token = generateToken();
-      const newWebhook = (
-        await tx
-          .insert(webhooksInMessage)
-          .values({
-            creatorId: ctx.getSessionPayload.user.id,
-            isActive: true,
-            name,
-            roomId,
-            token,
-            userId: newAppUser.id,
-          })
-          .returning()
-      )[0];
-      if (!newWebhook)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Create,
-            DatabaseEntityType.Webhook,
-            JSON.stringify({ name, roomId }),
-          ).message,
-        });
-      return newWebhook;
+      return requireMutation(
+        (
+          await tx
+            .insert(webhooksInMessage)
+            .values({
+              creatorId: ctx.getSessionPayload.user.id,
+              isActive: true,
+              name,
+              roomId,
+              token,
+              userId: newAppUser.id,
+            })
+            .returning()
+        )[0],
+        Operation.Create,
+        DatabaseEntityType.Webhook,
+        JSON.stringify({ name, roomId }),
+      );
     }),
   ),
   deleteWebhook: getPermissionsProcedure(
@@ -98,26 +83,21 @@ export const webhookRouter = router({
     deleteWebhookInputSchema,
     "roomId",
   ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
-    const webhook = await ctx.db.query.webhooksInMessage.findFirst({
-      where: { id: { eq: id }, roomId: { eq: roomId } },
-    });
-    if (!webhook)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.Webhook, id).message,
-      });
-
-    const deletedAppUser = (
-      await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning()
-    ).find(Boolean);
-    if (!deletedAppUser)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.AppUser, webhook.userId).message,
-      });
+    const webhook = await requireEntity(
+      ctx.db.query.webhooksInMessage.findFirst({ where: { id: { eq: id }, roomId: { eq: roomId } } }),
+      DatabaseEntityType.Webhook,
+      id,
+    );
+    // The webhook row is cascade-deleted with the app user it posts as, so the app user is the one delete
+    requireMutation(
+      (await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning())[0],
+      Operation.Delete,
+      DatabaseEntityType.AppUser,
+      webhook.userId,
+    );
     return webhook;
   }),
-  readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query(
+  readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query<AppUserInMessage[]>(
     ({ ctx, input: { ids, roomId } }) =>
       ctx.db
         .select(getColumns(appUsersInMessage))
@@ -137,39 +117,30 @@ export const webhookRouter = router({
     RoomPermission.ManageWebhooks,
     rotateTokenInputSchema,
     "roomId",
-  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
-    const token = generateToken();
-    const updatedWebhook = (
-      await ctx.db
-        .update(webhooksInMessage)
-        .set({ token })
-        .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
-        .returning()
-    )[0];
-    if (!updatedWebhook)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Webhook, id).message,
-      });
-    return updatedWebhook;
-  }),
+  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId } }) =>
+    requireMutation(
+      (
+        await ctx.db
+          .update(webhooksInMessage)
+          .set({ token: generateToken() })
+          .where(webhookRoomWhere(id, roomId))
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.Webhook,
+      id,
+    ),
+  ),
   updateWebhook: getPermissionsProcedure(
     RoomPermission.ManageWebhooks,
     updateWebhookInputSchema,
     "roomId",
-  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) => {
-    const updatedWebhook = (
-      await ctx.db
-        .update(webhooksInMessage)
-        .set(rest)
-        .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
-        .returning()
-    )[0];
-    if (!updatedWebhook)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Webhook, id).message,
-      });
-    return updatedWebhook;
-  }),
+  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) =>
+    requireMutation(
+      (await ctx.db.update(webhooksInMessage).set(rest).where(webhookRoomWhere(id, roomId)).returning())[0],
+      Operation.Update,
+      DatabaseEntityType.Webhook,
+      id,
+    ),
+  ),
 });

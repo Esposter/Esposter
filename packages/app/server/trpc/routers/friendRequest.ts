@@ -1,4 +1,4 @@
-import type { FriendRequestNotificationEventGridData, FriendRequestWithRelations } from "@esposter/db-schema";
+import type { FriendRequestNotificationEventGridData, FriendRequestWithRelations, User } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
@@ -7,6 +7,7 @@ import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { readUserPair } from "@@/server/services/friend/readUserPair";
 import { friendEventEmitter } from "@@/server/services/message/events/friendEventEmitter";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { getPushSubscriptionsForUser } from "@esposter/db";
@@ -18,14 +19,13 @@ import {
   friendRequests,
   friends,
 } from "@esposter/db-schema";
-import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
-    .mutation(async ({ ctx, input: senderId }) => {
+    .mutation<User>(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
       const friendshipId = getFriendshipId(senderId, userId);
       // The sender is both the emit payload and the return value, so nothing fallible sits between the write and
@@ -57,13 +57,10 @@ export const friendRequestRouter = router({
     }),
   declineFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
-    .mutation(async ({ ctx, input: senderId }) => {
+    .mutation<void>(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
       if (userId === senderId)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, userId).message,
-        });
+        throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, userId);
 
       const friendshipId = getFriendshipId(senderId, userId);
       requireMutation(
@@ -114,13 +111,9 @@ export const friendRequestRouter = router({
   }),
   sendFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
-    .mutation(async ({ ctx, input: receiverId }) => {
+    .mutation<FriendRequestWithRelations>(async ({ ctx, input: receiverId }) => {
       const userId = ctx.getSessionPayload.user.id;
-      if (userId === receiverId)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message,
-        });
+      if (userId === receiverId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId);
       const [receiverUser, senderUser] = await readUserPair(ctx.db, receiverId, userId);
       const friendshipId = getFriendshipId(userId, receiverId);
       const [newRequest] = await ctx.db.transaction(async (tx) => {
@@ -132,20 +125,12 @@ export const friendRequestRouter = router({
             ],
           },
         });
-        if (existingBlock)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message,
-          });
+        if (existingBlock) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId);
         const existingFriend = await tx.query.friends.findFirst({
           where: { id: { eq: friendshipId } },
         });
         if (existingFriend)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId)
-              .message,
-          });
+          throw getInvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId);
         return tx
           .insert(friendRequests)
           .values({ id: friendshipId, receiverId, senderId: userId })
@@ -158,11 +143,7 @@ export const friendRequestRouter = router({
           with: FriendRequestRelations,
         });
         if (existingRequest?.senderId !== userId)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId)
-              .message,
-          });
+          throw getInvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId);
         return existingRequest;
       }
       const friendRequest: FriendRequestWithRelations = {

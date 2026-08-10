@@ -1,5 +1,5 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Context } from "@@/server/trpc/context";
+import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Resource, ResourceActivityType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -25,7 +25,7 @@ interface SaveResourceContentInput {
   resource: Resource;
   // Bumps `contentVersion` inside the same transaction as the blob write, and returns the updated row.
   // Omitted for a resource's first content write, where there is no version any client caches yet
-  updateContentVersion?: (tx: Parameters<Parameters<Context["db"]["transaction"]>[0]>[0]) => Promise<Resource>;
+  updateContentVersion?: (tx: Transaction) => Promise<Resource>;
 }
 // The durable write and everything that must follow it, as one unit — the save event that keeps the owner's
 // Other devices live, the activity entry, and the type's registered after-save hook. The editor's save,

@@ -37,14 +37,18 @@ export const setupRoomSuite = () => {
 
   const createMember = () => createRoomMember(mockContext, roomId);
 
-  // Every member holds @everyone, so this is how a suite gives one to everybody at once — and the role itself is
-  // Created by the room rather than the test, so it has to be found before it can be granted anything
-  const updateEveryoneRole = async (permissions: bigint) => {
+  // The role is created by the room rather than the test, so it has to be found before anything can be said
+  // About it — whether that is granting it a permission or asserting what may not be done to it
+  const getEveryoneRole = async () => {
     const roles = await roleCaller.readRoles({ roomIds: [roomId] });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     assert.exists(everyoneRole);
-    return roleCaller.updateRole({ id: everyoneRole.id, permissions, roomId });
+    return everyoneRole;
   };
+
+  // Every member holds @everyone, so this is how a suite gives one to everybody at once
+  const updateEveryoneRole = async (permissions: bigint) =>
+    roleCaller.updateRole({ id: (await getEveryoneRole()).id, permissions, roomId });
 
   const setupMemberWithRole = async (permissions: bigint, position: number) => {
     const member = await createMember();
@@ -55,6 +59,7 @@ export const setupRoomSuite = () => {
 
   return {
     createMember,
+    getEveryoneRole,
     getMockContext: () => mockContext,
     getRoleCaller: () => roleCaller,
     getRoomCaller: () => roomCaller,

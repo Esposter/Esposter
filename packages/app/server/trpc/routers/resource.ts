@@ -21,15 +21,16 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
-import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readPublishHistory } from "@@/server/services/resource/readPublishHistory";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
+import { withResourceRollback } from "@@/server/services/resource/withResourceRollback";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { router } from "@@/server/trpc";
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
@@ -52,16 +53,7 @@ import {
   resourceTypeSchema,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import {
-  createUniqueArraySchema,
-  getResultAsync,
-  MAX_READ_LIMIT,
-  noop,
-  NotFoundError,
-  Operation,
-  takeOne,
-} from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { createUniqueArraySchema, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import {
   and,
   asc,
@@ -272,7 +264,8 @@ export const resourceRouter = router({
     // Its editor can delete its files, and deleting or unpublishing the original never strands it. Content
     // Taken from somewhere else is never written without that clone — a copy that kept the source's urls is
     // Broken by anything the source does later, and only surfaces once a reader opens a page whose images 404
-    await getResultAsync(async () => {
+    // Never leave a content-less orphan copy behind when the content clone fails
+    await withResourceRollback(ctx, [newResource.id], async () => {
       const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
       // The blob is written on first save, so missing content just means there is nothing to copy yet
       if (content === undefined) return;
@@ -283,10 +276,6 @@ export const resourceRouter = router({
       // No activityType: createResourceRow has already opened the copy's trail with its Duplicated entry, and
       // A ContentSaved beside it would claim the owner edited a copy they have not opened yet
       await saveResourceContent(ctx, { content: clonedContent, resource: newResource });
-    }).match(noop, async (error) => {
-      // Never leave a content-less orphan copy behind when the content clone fails
-      await deleteCreatedResources(ctx, [newResource.id]);
-      throw error;
     });
     return newResource;
   }),
@@ -417,11 +406,7 @@ export const resourceRouter = router({
         ResourceDefinitionMap[ctx.resource.type].contentSchema,
         getPublishedContentBlobName(id, version),
       );
-      if (publishedContent === undefined)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Resource, `${id}/${version}`).message,
-        });
+      if (publishedContent === undefined) throw getNotFoundError(DatabaseEntityType.Resource, `${id}/${version}`);
       // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
       // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
       // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy
