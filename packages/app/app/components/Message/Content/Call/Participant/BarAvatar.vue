@@ -56,7 +56,7 @@ const avatarProps = computed(() => ({
       rd-full
       pointer-events-none
       absolute
-      shadow="[0_0_0_2px_rgb(var(--v-theme-primary)),0_0_8px_4px_rgba(var(--v-theme-primary),0.4)]"
+      shadow="[0_0_0_0.125rem_rgb(var(--v-theme-primary)),0_0_0.5rem_0.25rem_rgba(var(--v-theme-primary),0.4)]"
     />
   </div>
 </template>

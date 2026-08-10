@@ -38,7 +38,7 @@ onMounted(() => {
 
 .call-pip-tooltip-wrapper :deep(.v-overlay__content) {
   position: absolute !important;
-  inset: auto auto calc(100% + 4px) 50% !important;
+  inset: auto auto calc(100% + 0.25rem) 50% !important;
   transform: translateX(-50%) !important;
 }
 </style>

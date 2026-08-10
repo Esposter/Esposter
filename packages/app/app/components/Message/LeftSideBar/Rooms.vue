@@ -91,7 +91,7 @@ const moveCategory = async (category: RoomCategoryInMessage, direction: -1 | 1) 
 <style scoped>
 /* Drop indicator — the ghost placeholder marks where the dragged category will land */
 .room-category-ghost {
-  border-top: 2px solid rgb(var(--v-theme-primary));
+  border-top: 0.125rem solid rgb(var(--v-theme-primary));
   opacity: 0.5;
 }
 </style>

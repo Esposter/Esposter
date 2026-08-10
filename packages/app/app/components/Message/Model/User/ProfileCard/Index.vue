@@ -31,7 +31,7 @@ const statusEnum = computed(() => getStatusEnum(user.id));
 </script>
 
 <template>
-  <v-card min-w="260px">
+  <v-card min-w="16.25rem">
     <MessageModelUserProfileCardHeader :display-name :is-self :user>
       <template v-if="!isSelf" #actions>
         <MessageModelUserProfileCardAddFriendButton :user />

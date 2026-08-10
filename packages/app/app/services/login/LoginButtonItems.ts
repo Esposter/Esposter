@@ -5,7 +5,7 @@ export const LoginButtonItems: LoginButtonProps[] = [
     logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`))),
     logoStyle: {
       backgroundColor: "#fff",
-      borderRadius: "4px 0 0 4px",
+      borderRadius: "var(--border-radius) 0 0 var(--border-radius)",
       height: "3rem",
       padding: ".625rem",
       width: "3rem",

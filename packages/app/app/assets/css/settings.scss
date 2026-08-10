@@ -20,6 +20,9 @@
       ),
     ),
   ),
+  // The one place px outlives the rem rule: Vuetify reads the same thresholds from JS as bare numbers
+  // (`useDisplay().thresholds`), so the SCSS media queries and the composable have to agree numerically.
+  // Rem here would leave the two disagreeing the moment a user scales their root font size.
   $grid-breakpoints: (
     "xs": 0,
     "sm": 600px,

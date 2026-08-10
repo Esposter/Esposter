@@ -17,7 +17,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     :card-props="{ ripple: false }"
     :class="
       isSpeaking
-        ? 'shadow-[0_0_0_2px_rgb(var(--v-theme-primary)),0_0_16px_6px_rgba(var(--v-theme-primary),0.4)]!'
+        ? 'shadow-[0_0_0_0.125rem_rgb(var(--v-theme-primary)),0_0_1rem_0.375rem_rgba(var(--v-theme-primary),0.4)]!'
         : undefined
     "
   >
