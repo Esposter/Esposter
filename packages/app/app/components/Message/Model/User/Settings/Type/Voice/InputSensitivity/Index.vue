@@ -25,6 +25,7 @@ const hasInputDevice = computed(() => permissionGranted.value && audioInputs.val
       tabindex="0"
       @click="ensurePermissions()"
       @keydown.enter.prevent="ensurePermissions()"
+      @keydown.space.prevent="ensurePermissions()"
     >
       grant {{ MESSAGE_DISPLAY_NAME }} access to your microphone
     </span>

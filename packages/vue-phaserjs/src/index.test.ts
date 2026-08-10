@@ -8,7 +8,7 @@ const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
 describe("vue-phaserjs", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 32.40 KB (33174 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 32.38 KB (33156 bytes)"`);
   });
 
   test("types size", () => {

@@ -11,7 +11,7 @@ import { formatVirrunNetworkHint } from "@/services/cli/format/formatVirrunNetwo
 import { formatVirrunPrepare } from "@/services/cli/format/formatVirrunPrepare";
 import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/format/formatVirrunResult";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 // Every CLI line builder is a pure template-string over the shared formatVirrunLine tag, so each one's whole
 // Observable surface is a single color-stripped string — they share one file rather than one 1-test file each.
 // The `[virrun] ` tag formatVirrunLine contributes is asserted inside every full-string expectation below.
@@ -53,6 +53,12 @@ describe(formatVirrunDebug, () => {
 });
 
 describe(formatVirrunError, () => {
+  // Registered rather than called at the end of the colour test: a failing assertion returns before the
+  // Teardown line, leaving FORCE_COLOR set for every case after it
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   test("prefixes the message with the virrun tag", () => {
     expect.hasAssertions();
 
@@ -73,8 +79,6 @@ describe(formatVirrunError, () => {
     expect(formatVirrunError("no pnpm-lock.yaml found")).not.toBe(
       formatVirrunLine(colorize("no pnpm-lock.yaml found", Color.Green)),
     );
-
-    vi.unstubAllEnvs();
   });
 });
 
