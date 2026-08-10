@@ -8,6 +8,9 @@ import { stripBOM } from "@/stripBOM";
 import { takeOne } from "@esposter/shared";
 import { parser } from "sax";
 
+const BLANK_REGEX = /^\s*$/u;
+const WHITESPACE_RUN_REGEX = /\s{2,}/gu;
+
 export class Parser {
   get xmlnsKey(): string {
     return `${this.#options.attrkey}ns`;
@@ -75,16 +78,18 @@ export class Parser {
       let emptyString = "";
       // Remove the '#' key altogether if it's blank
       const char = object[this.#options.charkey] as string;
-      if (/^\s*$/u.exec(char) && !cdata) {
+      if (BLANK_REGEX.test(char) && !cdata) {
         emptyString = char;
         delete object[this.#options.charkey];
       } else {
-        if (this.#options.trim) object[this.#options.charkey] = char.trim();
-        if (this.#options.normalize) object[this.#options.charkey] = char.replaceAll(/\s{2,}/gu, " ").trim();
+        // Each step reads the previous step's output, so trim, normalize and the value processors compose
+        let charValue = char;
+        if (this.#options.trim) charValue = charValue.trim();
+        if (this.#options.normalize) charValue = charValue.replaceAll(WHITESPACE_RUN_REGEX, " ").trim();
 
         object[this.#options.charkey] = this.#options.valueProcessors
-          ? processItem(this.#options.valueProcessors, char, nodeName)
-          : char;
+          ? processItem(this.#options.valueProcessors, charValue, nodeName)
+          : charValue;
         // Do away with '#' key altogether, if there's no subkeys
         if (Object.keys(object).length === 1 && this.#options.charkey in object)
           object = object[this.#options.charkey] as Record<string, unknown>;
@@ -151,7 +156,7 @@ export class Parser {
         this.#options.explicitChildren &&
         this.#options.preserveChildrenOrder &&
         this.#options.charsAsChildren &&
-        (this.#options.includeWhiteChars || Boolean(text.replaceAll(String.raw`\\n`, "").trim()))
+        (this.#options.includeWhiteChars || Boolean(text.replaceAll(String.raw`\n`, "").trim()))
       ) {
         object[this.#options.childkey] ??= [];
         const charChild: Record<string, string> = {
@@ -160,7 +165,7 @@ export class Parser {
         };
         if (this.#options.normalize)
           charChild[this.#options.charkey] = takeOne(charChild, this.#options.charkey)
-            .replaceAll(/\s{2,}/gu, " ")
+            .replaceAll(WHITESPACE_RUN_REGEX, " ")
             .trim();
 
         (object[this.#options.childkey] as Record<string, string>[]).push(charChild);

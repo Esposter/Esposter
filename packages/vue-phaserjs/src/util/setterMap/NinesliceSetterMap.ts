@@ -5,6 +5,7 @@ import type { GameObjects } from "phaser";
 
 import { AlphaSingleSetterMap } from "@/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/util/setterMap/components/BlendModeSetterMap";
+import { ComputedSizeSetterMap } from "@/util/setterMap/components/ComputedSizeSetterMap";
 import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
 import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
 import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
@@ -17,14 +18,8 @@ import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
 
 export const NinesliceSetterMap: SetterMap<NinesliceConfiguration, GameObjects.NineSlice, NinesliceEventEmitsOptions> =
   {
-    height: (gameObject) => (value) => {
-      if (value === undefined) return;
-      gameObject.setSize(gameObject.width, value);
-    },
-    width: (gameObject) => (value) => {
-      if (value === undefined) return;
-      gameObject.setSize(value, gameObject.height);
-    },
+    height: ComputedSizeSetterMap.height,
+    width: ComputedSizeSetterMap.width,
     ...AlphaSingleSetterMap,
     ...BlendModeSetterMap,
     ...DepthSetterMap,
