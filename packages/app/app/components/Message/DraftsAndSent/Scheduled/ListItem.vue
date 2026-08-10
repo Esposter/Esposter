@@ -2,8 +2,8 @@
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
 
 import { getDisplayTime } from "@/services/message/draftsAndSent/getDisplayTime";
-import { getScheduledMessageJobIcon } from "@/services/message/draftsAndSent/getScheduledMessageJobIcon";
 import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
+import { ScheduledMessageJobIconMap } from "@/services/message/draftsAndSent/ScheduledMessageJobIconMap";
 
 interface MessageDraftsAndSentScheduledListItemProps {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
@@ -21,7 +21,7 @@ const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledListIte
   >
     <template #prepend>
       <v-avatar bg-background>
-        <v-icon :icon="getScheduledMessageJobIcon(scheduledMessageJob)" />
+        <v-icon :icon="ScheduledMessageJobIconMap[scheduledMessageJob.payload.type]" />
       </v-avatar>
     </template>
     <MessageDraftsAndSentScheduledEditButton :scheduled-message-job />

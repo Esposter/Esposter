@@ -39,7 +39,7 @@ const { isVoting, vote } = await useVotePoll(
       <v-icon icon="mdi-poll" size="small" />
     </template>
     <span font-bold>{{ creator.name }}</span>
-    <span text-gray> created a poll </span>
+    <span op-medium-emphasis> created a poll </span>
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     <v-card variant="outlined" mt-2 w-full>
       <v-card-title>{{ pollContent.question }}</v-card-title>

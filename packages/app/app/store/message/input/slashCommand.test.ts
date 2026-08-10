@@ -1,24 +1,18 @@
 // @vitest-environment nuxt
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
-import type { Router } from "vue-router";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useSlashCommandStore, () => {
-  let router: Router;
-
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
-    router.currentRoute.value.params.id = crypto.randomUUID();
+    setCurrentRoomId(crypto.randomUUID());
   });
 
   const description = "description";

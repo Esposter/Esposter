@@ -1,3 +1,4 @@
+import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { PublishHistoryVersion } from "#shared/models/resource/PublishHistoryVersion";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
@@ -306,7 +307,7 @@ export const resourceRouter = router({
   ),
   readDeletedResources: standardAuthedProcedure
     .input(readDeletedResourcesInputSchema)
-    .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
+    .query<OffsetPaginationData<ResourceListItem>>(async ({ ctx, input: { limit, offset, sortBy } }) => {
       const userId = ctx.getSessionPayload.user.id;
       // The bin reads the same row shape as the workbench, so one sort space serves both and neither list can
       // Be handed a key its query cannot order by
@@ -346,7 +347,7 @@ export const resourceRouter = router({
       return readPublishHistory(ctx.resource.id, publication?.publishVersion);
     },
   ),
-  // Publish state rides the row rather than answering a second request: `resource_publications` is one table
+  // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
   // For every type, so this cross-type read resolves it whatever the resource turns out to be, and the
   // Ownership that second request would re-resolve is the ownership this one already resolved
   readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query<ResourceWithPublication>(
@@ -358,7 +359,7 @@ export const resourceRouter = router({
   ),
   readResources: standardAuthedProcedure
     .input(readResourcesInputSchema.prefault({}))
-    .query(async ({ ctx, input: { limit, offset, sortBy, ...filter } }) => {
+    .query<OffsetPaginationData<ResourceListItem>>(async ({ ctx, input: { limit, offset, sortBy, ...filter } }) => {
       const userId = ctx.getSessionPayload.user.id;
       const resultResources = await ctx.db
         .select(resourceListSelection)

@@ -1,19 +1,18 @@
 // @vitest-environment nuxt
-import type { Router } from "vue-router";
 
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useDownloadFileStore } from "@/store/message/file";
 import { createMessageEntity, MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useDownloadFileStore, () => {
   const server = setupMswTrpc();
-  let router: Router;
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
   const fileId = crypto.randomUUID();
@@ -21,13 +20,9 @@ describe(useDownloadFileStore, () => {
   const staleUrl = "https://sas.url/stale";
   const freshUrl = "https://sas.url/fresh";
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
-    router.currentRoute.value.params.id = roomId;
+    setCurrentRoomId(roomId);
   });
 
   afterEach(() => {

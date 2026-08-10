@@ -53,6 +53,12 @@ Three exceptions are deliberate, and are recorded here so an audit does not keep
 - **`shared/generated/phaser/**`** — currently has no consumer at all. It is retained deliberately: the generator was ported ahead of the code that will read it, and deleting the output without deleting the generator only recreates it.
 - **`shared/types/crossws.d.ts`** — a server-only ambient augmentation. Both `tsconfig.app.json` and `tsconfig.server.json` include `../shared/**/*.d.ts`, so it resolves from where it is.
 
+## A workspace package is imported where it lives
+
+The zones above are about direction. The fourth import kind — a workspace package such as `@esposter/db` or `@esposter/shared` — has no direction question, and gets no local shim: a file under `server/services/` whose whole body re-exports one name from a package is deleted and its callers import the package. The shim reads like an abstraction seam but is not one. Nothing can be swapped behind it, since the package is where the function is defined and the Azure Functions handlers reach it directly anyway, and it leaves the same function reachable under two names — so a grep for callers answers half, and two files disagree about which import path is idiomatic.
+
+The seam that is worth keeping is the opposite shape: a local function that _wraps_ package behaviour with something of its own, like `getSurveyResponseFilter` naming what "this survey's responses" means on top of `getPartitionKeyFilter`. The test is whether deleting the file would lose a decision.
+
 ## Key files
 
 | File                                                                                       | Role                                                     |

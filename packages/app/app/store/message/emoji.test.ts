@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import type { Router } from "vue-router";
 
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
 import { getMockSession } from "@@/server/trpc/context.test";
@@ -9,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { MockContainerDatabase } from "azure-mock";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
 // Spied on directly — mock the module and drive useSession through a hoisted mock instead. The store reads only
 // Session.value.data.user.id, so the mock returns just that slice of the session ref.
@@ -24,18 +24,13 @@ vi.mock(import("@/services/auth/authClient"), () => ({
 
 describe(useEmojiStore, () => {
   const server = setupMswTrpc();
-  let router: Router;
   const partitionKey = "partitionKey";
   const rowKey = "rowKey";
   const messageRowKey = "messageRowKey";
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
-    router.currentRoute.value.params.id = crypto.randomUUID();
+    setCurrentRoomId(crypto.randomUUID());
     useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 

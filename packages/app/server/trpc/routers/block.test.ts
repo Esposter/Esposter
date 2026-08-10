@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, createMockUser, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
@@ -41,8 +41,7 @@ describe("block", () => {
   test("blocks user", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    const user = await createMockUser(mockContext.db);
     const blockedUser = await blockCaller.blockUser(user.id);
 
     expect(blockedUser.id).toBe(user.id);
@@ -81,8 +80,7 @@ describe("block", () => {
   test("blocks user twice (idempotent)", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    const user = await createMockUser(mockContext.db);
     await blockCaller.blockUser(user.id);
     const blockedUser = await blockCaller.blockUser(user.id);
 
@@ -92,8 +90,7 @@ describe("block", () => {
   test("reads blocked users", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    const user = await createMockUser(mockContext.db);
     await blockCaller.blockUser(user.id);
     const blockedUsers = await blockCaller.readBlockedUsers();
 
@@ -104,8 +101,7 @@ describe("block", () => {
   test("unblocks user", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    const user = await createMockUser(mockContext.db);
     await blockCaller.blockUser(user.id);
     await blockCaller.unblockUser(user.id);
     const blockedUsers = await blockCaller.readBlockedUsers();
@@ -136,8 +132,7 @@ describe("block", () => {
   test("search excludes blocked users", async () => {
     expect.hasAssertions();
 
-    const { user: blockedUser } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    const blockedUser = await createMockUser(mockContext.db);
     await blockCaller.blockUser(blockedUser.id);
     const searchedUsers = await friendCaller.searchUsers(blockedUser.name);
 

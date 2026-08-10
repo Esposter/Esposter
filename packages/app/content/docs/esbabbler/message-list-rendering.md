@@ -28,6 +28,31 @@ flowchart TD
     E --> X[emojiIndex - module-scope EmojiIndex singleton]
 ```
 
+## The message component family
+
+`MessageComponentMap` picks a component per `MessageType`, and those components are deliberately thin: each one writes only the sentence or body that is unique to its type and inherits everything else from a shared shell. There are two shells, and a new message type joins one of them rather than assembling `Type/ListItem` again.
+
+`Type/Body.vue` is the body of an authored message — the rendered rich text, the `(edited)` marker beside it, the attachment/link-preview/reaction trailing row, and the default slot the inline editor arrives through. `Type/Index.vue` renders it for both an ordinary and a forwarded message: a forward adds only the quote rail and its **Forwarded** label, then hands the same body component the parent's slot. Re-implementing the body inside the forward branch is what silently drops the edited marker and makes a forwarded message uneditable, so the branch owns the rail and nothing else.
+
+`Type/SystemLine.vue` is the shell for the message types nobody authored as prose — call, room edit, pin and system notices. It owns the leading icon, the timestamp and the reaction row, leaving each type one slot of sentence. Secondary text in those sentences uses `op-medium-emphasis`, which dims the inherited colour by the Vuetify emphasis variable and therefore follows the theme; a fixed grey does not, because the palette UnoCSS is configured with holds only the theme colours.
+
+```mermaid
+flowchart TD
+  Map["MessageComponentMap[message.type]"] --> Authored{"authored prose?"}
+  Authored -->|"Message, Webhook"| Index["Type/Index.vue — avatar, batch header, reply spine"]
+  Authored -->|"Call, EditRoom, PinMessage, System"| Line["Type/SystemLine.vue — icon, timestamp, reactions"]
+  Authored -->|"Poll"| PollType["Type/Poll.vue — its own card"]
+  Index --> Forward{"message.isForward?"}
+  Forward -->|"yes"| Rail["quote rail plus Forwarded label"]
+  Rail --> Body["Type/Body.vue"]
+  Forward -->|"no"| Body
+  Body --> Slot{"parent passed the inline editor?"}
+  Slot -->|"yes"| Editor["MessageModelMessageEditor"]
+  Slot -->|"no"| Text["rich text plus (edited) marker"]
+  Body --> Trailing["Type/Trailing.vue — files, link preview, reactions"]
+  Line --> Sentence["the type's own sentence"]
+```
+
 `emojiIndex` is a module-scope singleton service: `EmojiIndex` builds a search index over the full `emoji-mart-vue-fast` dataset (hundreds of kilobytes of JSON) in its constructor, so it is constructed once for the whole app, never per picker instance.
 
 ## Key files
@@ -35,6 +60,8 @@ flowchart TD
 | File                                                                        | Role                                                          |
 | --------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | `packages/app/app/components/Message/Model/Message/List/Item.vue`           | Hover wrapper, lazy options menu mount, context-menu handling |
+| `packages/app/app/components/Message/Model/Message/Type/Body.vue`           | Shared authored-message body, edited marker, editor slot      |
+| `packages/app/app/components/Message/Model/Message/Type/SystemLine.vue`     | Shared shell for the unauthored message lines                 |
 | `packages/app/app/components/Message/Model/Message/OptionsMenu/Index.vue`   | Options toolbar (reactions, picker, items, More menu)         |
 | `packages/app/app/components/Message/Model/Message/ConfirmDeleteDialog.vue` | Store-driven delete dialog singleton                          |
 | `packages/app/app/components/Message/Model/Message/ConfirmPinDialog.vue`    | Store-driven pin dialog singleton                             |

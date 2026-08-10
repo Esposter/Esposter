@@ -70,10 +70,3 @@ const scrollToSection = async (section: SettingsSection) => {
     </v-list>
   </MessageModelSettingsLeftSideBar>
 </template>
-
-<style scoped>
-/* Positioning context for the StyledSlideIndicator rail. */
-:deep(.v-list-group__items) {
-  position: relative;
-}
-</style>

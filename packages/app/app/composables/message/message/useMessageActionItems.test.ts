@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity, UserToRoomInMessage } from "@esposter/db-schema";
-import type { Router } from "vue-router";
 
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { getMockSession } from "@@/server/trpc/context.test";
@@ -58,11 +58,7 @@ describe(useMessageActionItems, () => {
     return messageEntity;
   };
   beforeAll(() => {
-    // The menu reads the room off the route, so a room is only current once the route names it — and through
-    // TriggerRef, because currentRoute is a shallowRef
-    const router: Router = useRouter();
-    router.currentRoute.value.params.id = roomId;
-    triggerRef(router.currentRoute);
+    setCurrentRoomId(roomId);
   });
 
   // A rejected unpin owes back the pin state the write beside it left, which is not necessarily pinned: the

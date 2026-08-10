@@ -53,14 +53,12 @@ const moveCategory = async (category: RoomCategoryInMessage, direction: -1 | 1) 
 <template>
   <MessageModelRoomBaseList :has-more :is-collapsed :is-pending @load-more="readMoreRooms">
     <template #prepend>
-      <v-list-item font-bold @click="isCollapsed = !isCollapsed">
-        Rooms
+      <MessageLeftSideBarCollapsibleHeader v-model:collapsed="isCollapsed" title="Rooms">
         <template #append>
-          <v-icon :icon="isCollapsed ? 'mdi-chevron-right' : 'mdi-chevron-down'" size="small" />
           <MessageModelRoomCategoryCreateDialogButton />
           <MessageModelRoomCreateButton />
         </template>
-      </v-list-item>
+      </MessageLeftSideBarCollapsibleHeader>
     </template>
     <StyledEmptyState
       v-if="rooms.length === 0"

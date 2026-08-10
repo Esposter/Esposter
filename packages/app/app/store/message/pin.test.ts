@@ -1,28 +1,23 @@
 // @vitest-environment nuxt
-import type { Router } from "vue-router";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useDataStore } from "@/store/message/data";
 import { usePinStore } from "@/store/message/pin";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe(usePinStore, () => {
-  let router: Router;
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const message = "message";
   const createMessage = () => createMessageEntity({ message, roomId, type: MessageType.Message, userId });
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
-    router.currentRoute.value.params.id = roomId;
+    setCurrentRoomId(roomId);
   });
 
   // The pinned list is maintained off the same update the message list gets, so the entity it lists is the one

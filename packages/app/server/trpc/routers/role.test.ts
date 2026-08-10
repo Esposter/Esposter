@@ -2,7 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockUser, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
@@ -119,8 +119,7 @@ describe("role", () => {
     expect.hasAssertions();
 
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    const user = await createMockUser(mockContext.db);
 
     await expect(
       roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id }),
@@ -190,6 +189,17 @@ describe("role", () => {
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
     expect(memberRoles.some(({ roleId }) => roleId === role.id)).toBe(false);
+  });
+
+  test("revokes a role the member never held", async () => {
+    expect.hasAssertions();
+
+    // Revoke names an end state rather than a row, so it never rejects for reaching it — two moderators
+    // Clicking the same revoke, or one clicking against a stale list, both get the state they asked for
+    const targetMember = await createMember();
+    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+
+    await expect(roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id })).resolves.toBeUndefined();
   });
 
   test("cannot revoke role at or above own top position", async () => {

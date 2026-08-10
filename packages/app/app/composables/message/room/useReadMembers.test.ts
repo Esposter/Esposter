@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { VueWrapper } from "@vue/test-utils";
-import type { Router } from "vue-router";
 
 import { useReadMembers } from "@/composables/message/room/useReadMembers";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useMemberStore } from "@/store/message/user/member";
 import { noop } from "@esposter/shared";
@@ -14,7 +14,6 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 describe(useReadMembers, () => {
   const server = setupMswTrpc();
   let wrapper: VueWrapper;
-  let router: Router;
   let count: Ref<number>;
   let countsByTopRole: Ref<MemberCountByTopRole[]>;
   let readMembers: ReturnType<typeof useReadMembers>["readMembers"];
@@ -23,17 +22,12 @@ describe(useReadMembers, () => {
   const roleId = crypto.randomUUID();
   const newCount = 5;
 
-  const setRouteId = (id: string) => {
-    router.currentRoute.value.params.id = id;
-    triggerRef(router.currentRoute);
-  };
   const mountRead = async () => {
     wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          router = useRouter();
-          setRouteId(roomId);
+          setCurrentRoomId(roomId);
           const memberStore = useMemberStore();
           ({ count, countsByTopRole } = storeToRefs(memberStore));
           ({ readMembers } = useReadMembers());
@@ -76,14 +70,14 @@ describe(useReadMembers, () => {
     // The reads are issued a microtask after the call, so let them go out before the room moves
     await flushPromises();
     // The user switches rooms while the three reads are still in flight
-    setRouteId(otherRoomId);
+    setCurrentRoomId(otherRoomId);
     releaseReads();
     await pendingRead;
 
     expect(count.value).toBe(0);
     expect(countsByTopRole.value).toStrictEqual([]);
 
-    setRouteId(roomId);
+    setCurrentRoomId(roomId);
 
     expect(count.value).toBe(newCount);
     expect(countsByTopRole.value).toStrictEqual([{ count: newCount, roleId }]);

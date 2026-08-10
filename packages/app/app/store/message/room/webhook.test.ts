@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { WebhookInMessage } from "@esposter/db-schema";
 
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useWebhookStore } from "@/store/message/room/webhook";
@@ -30,11 +31,7 @@ describe(useWebhookStore, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    // The webhook list is keyed by the room in the route, so a list only exists once one is current — and
-    // Through triggerRef, because currentRoute is a shallowRef
-    const router = useRouter();
-    router.currentRoute.value.params.id = roomId;
-    triggerRef(router.currentRoute);
+    setCurrentRoomId(roomId);
   });
 
   // A row's name field and its active switch write different fields of one webhook through one target, so an

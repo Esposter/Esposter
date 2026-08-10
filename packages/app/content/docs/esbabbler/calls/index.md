@@ -71,6 +71,29 @@ flowchart TD
 
 The creator's lobby list is optimistic: admitting or dismissing removes that knocker at once, and each knocker is its own write target so a host can work down the queue without the writes queueing. A rejected one therefore puts back **only** its own knocker — reinstating the list as it stood would resurrect one already admitted beside it and drop whoever `onKnockCall` delivered meanwhile.
 
+## Ephemeral server state
+
+Everything about a live call except its anchor row lives in module-level maps under `server/services/message/call/`, each keyed by `callSessionId` and each lost on restart — which is correct, since a restarted process has no LiveKit connections left to describe either. There are four of them rather than one record per session, and the split is load-bearing rather than incidental:
+
+- `callSessionParticipantMap` — the participants, keyed by auth session id. Created by the first join and deleted when the last participant leaves, so its presence _is_ what "this call is live" means, and `requireJoinedCallSession` reads nothing else.
+- `callKnockerMap` and `callAdmittedParticipantMap` — the standalone waiting room. They are torn down with the participant map, because a call nobody is in has nobody left to admit anyone.
+- `callStartTimeMap` — set by the first joiner and read by the **last leaver, after the other three are already gone**, to word the call-duration system message. It outlives the teardown on purpose, which is exactly why it cannot be a field of a record deleted as a unit.
+
+```mermaid
+flowchart TD
+  JOIN["first join — joinCallAsParticipant"] --> CREATE["callSessionParticipantMap entry plus callStartTimeMap entry"]
+  CREATE --> KNOCK["knockCall and admitKnocker fill callKnockerMap and callAdmittedParticipantMap"]
+  CREATE --> LEAVE["leaveCallAsParticipant — deleteCallParticipant"]
+  KNOCK --> LEAVE
+  LEAVE --> LAST{"was that the last participant?"}
+  LAST -->|"no"| KEEP["every map stays — the call is still live"]
+  LAST -->|"yes"| TEARDOWN["participants, knockers and admitted dropped together — knockerDismissed emitted to each"]
+  TEARDOWN --> DURATION["callStartTimeMap read for the duration, then dropped"]
+  DURATION --> SUMMARY["MessageType.Call system message carrying the duration"]
+```
+
+Every teardown path funnels through `leaveCallAsParticipant` — the explicit leave, the LiveKit `participant_left` webhook and the moderation actions alike — so the start time is never orphaned by a call that ended some other way.
+
 ## Procedures
 
 All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the waiting-room procedures live in `server/trpc/routers/call/knocker.ts` and merge in under a `knocker` key:

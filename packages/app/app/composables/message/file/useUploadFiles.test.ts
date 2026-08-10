@@ -1,14 +1,14 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { inferProcedureInput } from "@trpc/server";
 // @vitest-environment nuxt
-import type { Router } from "vue-router";
 
 import { useUploadFiles } from "@/composables/message/file/useUploadFiles";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { noop, takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { uploadBlocksMock } = vi.hoisted(() => ({
   uploadBlocksMock: vi.fn<(blob: Blob, sasUrl: string) => Promise<void>>(),
@@ -26,22 +26,17 @@ type DeleteUploadFilesInput = inferProcedureInput<TRPCRouter["message"]["deleteU
 
 describe(useUploadFiles, () => {
   const server = setupMswTrpc();
-  let router: Router;
   const roomId = crypto.randomUUID();
   const filename = "a";
   const fileId = crypto.randomUUID();
   // The grant the server mints beside each write target — the composer hands it back to reclaim the upload
   const token = "token";
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
     // The room store reads the current room off the route; an unlisted room falls back to the platform cap,
     // Which is all this composable needs from it.
-    router.currentRoute.value.params.id = roomId;
+    setCurrentRoomId(roomId);
     server.use(
       trpcMsw.message.generateUploadFileSasEntities.query(() => [
         { id: fileId, sasUrl: "https://sas.url/original", thumbnailSasUrl: "https://sas.url/thumbnail", token },
@@ -106,7 +101,7 @@ describe(useUploadFiles, () => {
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
     uploadBlocksMock.mockImplementation(() => {
-      router.currentRoute.value.params.id = otherRoomId;
+      setCurrentRoomId(otherRoomId);
       return Promise.reject(new Error(filename));
     });
     await useUploadFiles()([createFile()]);
@@ -114,7 +109,7 @@ describe(useUploadFiles, () => {
     expect(deleteUploadFiles).toHaveBeenCalledWith({ input: { files: [{ filename, id: fileId, token }], roomId } });
     expect(files.value).toHaveLength(0);
 
-    router.currentRoute.value.params.id = roomId;
+    setCurrentRoomId(roomId);
 
     expect(files.value).toHaveLength(0);
   });

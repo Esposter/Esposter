@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pluralize } from "#shared/util/text/pluralize";
 import { useSearchMessageStore } from "@/store/message/search";
 
 const searchMessageStore = useSearchMessageStore();
@@ -19,7 +20,7 @@ const { count, isSearching } = storeToRefs(searchMessageStore);
           </div>
         </template>
         <template v-else>
-          {{ count }} result{{ count === 1 ? "" : "s" }}
+          {{ count }} {{ pluralize("result", count) }}
           <v-spacer />
           <StyledHelpTooltip text="New messages may take up to 5 minutes to appear." />
         </template>

@@ -26,33 +26,30 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <StyledCard v-show="items.length > 0" overflow-y-auto :card-props="{ maxHeight: 250, width: 400 }" :elevation="1">
-    <v-card-title font-bold text-title-small>{{ title }}</v-card-title>
-    <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
-      <v-list-item
-        v-for="(item, index) of items"
-        :key="item.id"
-        :active="selectedIndex === index"
-        :ripple="false"
-        @click="selectItem(index)"
-      >
-        <template #prepend>
-          <v-avatar v-if="isRoleMentionItem(item)" size="x-small">
-            <v-icon :color="item.color || undefined">mdi-circle</v-icon>
-          </v-avatar>
-          <MessageModelMemberStatusAvatar
-            v-else-if="'image' in item && item.image"
-            :id="item.id"
-            :image="item.image"
-            :name="item.name"
-            :avatar-props="{ size: 'x-small' }"
-          />
-          <v-avatar v-else size="x-small">
-            <v-icon>mdi-at</v-icon>
-          </v-avatar>
-        </template>
-        <v-list-item-title font-semibold>{{ item.name }}</v-list-item-title>
-      </v-list-item>
-    </StyledList>
-  </StyledCard>
+  <MessageModelMessageSuggestionList w-100 :is-visible="items.length > 0" :selected-index :title>
+    <v-list-item
+      v-for="(item, index) of items"
+      :key="item.id"
+      :active="selectedIndex === index"
+      :ripple="false"
+      @click="selectItem(index)"
+    >
+      <template #prepend>
+        <v-avatar v-if="isRoleMentionItem(item)" size="x-small">
+          <v-icon :color="item.color || undefined">mdi-circle</v-icon>
+        </v-avatar>
+        <MessageModelMemberStatusAvatar
+          v-else-if="'image' in item && item.image"
+          :id="item.id"
+          :image="item.image"
+          :name="item.name"
+          :avatar-props="{ size: 'x-small' }"
+        />
+        <v-avatar v-else size="x-small">
+          <v-icon>mdi-at</v-icon>
+        </v-avatar>
+      </template>
+      <v-list-item-title font-semibold>{{ item.name }}</v-list-item-title>
+    </v-list-item>
+  </MessageModelMessageSuggestionList>
 </template>

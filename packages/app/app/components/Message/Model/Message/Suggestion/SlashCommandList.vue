@@ -41,32 +41,29 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <v-sheet v-show="items.length > 0" b-1 rd flex flex-col max-h-64 max-w-100 overflow-y-auto elevation-1>
-    <v-card-title font-bold text-title-small>{{ title }}</v-card-title>
-    <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
-      <v-list-item
-        v-for="(
-          { description, icon, optionalParameterCount, requiredParameters, title: commandTitle, type }, index
-        ) of commandItems"
-        :key="type"
-        :active="selectedIndex === index"
-        :ripple="false"
-        @click="selectItem(index)"
-      >
-        <template #prepend>
-          <v-icon :icon size="small" mr-2 />
-        </template>
-        <v-list-item-title font-semibold flex gap-1 items-center>
-          {{ commandTitle }}
-          <v-chip v-for="{ name } of requiredParameters" :key="name" size="x-small" label>
-            {{ name }}
-          </v-chip>
-          <v-chip v-if="optionalParameterCount > 0" size="x-small" label variant="outlined">
-            +{{ optionalParameterCount }} optional
-          </v-chip>
-        </v-list-item-title>
-        <v-list-item-subtitle>{{ description }}</v-list-item-subtitle>
-      </v-list-item>
-    </StyledList>
-  </v-sheet>
+  <MessageModelMessageSuggestionList max-w-100 :is-visible="items.length > 0" :selected-index :title>
+    <v-list-item
+      v-for="(
+        { description, icon, optionalParameterCount, requiredParameters, title: commandTitle, type }, index
+      ) of commandItems"
+      :key="type"
+      :active="selectedIndex === index"
+      :ripple="false"
+      @click="selectItem(index)"
+    >
+      <template #prepend>
+        <v-icon :icon size="small" mr-2 />
+      </template>
+      <v-list-item-title font-semibold flex gap-1 items-center>
+        {{ commandTitle }}
+        <v-chip v-for="{ name } of requiredParameters" :key="name" size="x-small" label>
+          {{ name }}
+        </v-chip>
+        <v-chip v-if="optionalParameterCount > 0" size="x-small" label variant="outlined">
+          +{{ optionalParameterCount }} optional
+        </v-chip>
+      </v-list-item-title>
+      <v-list-item-subtitle>{{ description }}</v-list-item-subtitle>
+    </v-list-item>
+  </MessageModelMessageSuggestionList>
 </template>

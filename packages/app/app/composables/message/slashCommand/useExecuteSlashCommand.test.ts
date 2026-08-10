@@ -1,31 +1,22 @@
 // @vitest-environment nuxt
-import type { Router } from "vue-router";
-
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { createRoom } from "@/services/message/room/createRoom.test";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useExecuteSlashCommand, () => {
   const server = setupMswTrpc();
-  let router: Router;
   const room = createRoom("name");
   const acceptedTopic = "acceptedTopic";
   const rejectedTopic = "rejectedTopic";
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
-    // The command reads the room off the route, so a room is only current once the route names it — and through
-    // TriggerRef, because currentRoute is a shallowRef
-    router.currentRoute.value.params.id = room.id;
-    triggerRef(router.currentRoute);
+    setCurrentRoomId(room.id);
   });
 
   // Both commands write the topic of one room, so the second runs behind the first and applies on top of what it

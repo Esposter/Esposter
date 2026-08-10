@@ -10,3 +10,10 @@ const isOpen = defineModel<boolean>("open", { default: false });
     <slot />
   </v-navigation-drawer>
 </template>
+
+<style scoped>
+/* Positioning context for the StyledSlideIndicator rail every settings sidebar hangs off its list groups. */
+:deep(.v-list-group__items) {
+  position: relative;
+}
+</style>

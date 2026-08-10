@@ -1,34 +1,29 @@
 // @vitest-environment nuxt
-import type { Router } from "vue-router";
 
 import { dayjs } from "#shared/services/dayjs";
 import { getDraft } from "@/services/message/draft/getDraft";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useInputStore } from "@/store/message/input";
 import { marked } from "marked";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const setStoredDraft = (roomId: string, content: string) => {
   localStorage.setItem(LocalStorageKey.Draft(roomId), JSON.stringify({ content, updatedAt: new Date() }));
 };
 
 describe(useInputStore, () => {
-  let router: Router;
   const roomId1 = crypto.randomUUID();
   const roomId2 = crypto.randomUUID();
   const draftContent = marked.parse("draftContent", { async: false });
   const debounceMs = dayjs.duration(0.3, "seconds").asMilliseconds();
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     // Frozen rather than merely faked, so a draft's `updatedAt` is an exact value instead of "some Date"
     vi.useFakeTimers({ now: 0 });
     setActivePinia(createPinia());
-    router.currentRoute.value.params.id = roomId1;
+    setCurrentRoomId(roomId1);
   });
 
   afterEach(() => {

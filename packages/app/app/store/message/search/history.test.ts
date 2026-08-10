@@ -1,17 +1,16 @@
 // @vitest-environment nuxt
 import type { SearchHistoryInMessage } from "@esposter/db-schema";
-import type { Router } from "vue-router";
 
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useSearchHistoryStore } from "@/store/message/search/history";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useSearchHistoryStore, () => {
   const server = setupMswTrpc();
-  let router: Router;
   const roomId = crypto.randomUUID();
   const id = crypto.randomUUID();
   const userId = crypto.randomUUID();
@@ -29,13 +28,9 @@ describe(useSearchHistoryStore, () => {
     userId,
   });
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
-    router.currentRoute.value.params.id = roomId;
+    setCurrentRoomId(roomId);
   });
 
   // Both edits name the same row, so the second runs behind the first and applies on top of what the first

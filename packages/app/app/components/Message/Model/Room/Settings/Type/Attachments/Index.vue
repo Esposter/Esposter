@@ -3,7 +3,6 @@ import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCa
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
-import { useRoomStore } from "@/store/message/room";
 import { MimeCategory } from "@esposter/db-schema";
 
 interface AttachmentsProps {
@@ -11,10 +10,7 @@ interface AttachmentsProps {
 }
 
 const { room } = defineProps<AttachmentsProps>();
-const { $trpc } = useNuxtApp();
-const roomStore = useRoomStore();
-const { storeUpdateRoom } = roomStore;
-const { executeMutation } = useMutation();
+const saveRoom = useSaveRoom(() => room);
 // Owned by the form, not by the row: a rejected save rolls the row back and deliberately leaves what the user
 // Entered in the controls, with isDirty still true, so the next blur retries it. The settings panel is still on
 // Screen beside the alert, which is what makes the draft worth keeping — never clone the row here
@@ -33,24 +29,9 @@ const isDirty = computed(
 const save = async () => {
   if (!isDirty.value) return;
 
-  const input = {
+  await saveRoom({
     allowedMimeCategories: allowedMimeCategories.value,
-    id: room.id,
     maxFileSizeBytes: maxFileSizeBytes.value,
-  };
-  await executeMutation(() => $trpc.room.updateRoom.mutate(input), {
-    applyOptimistic: () => {
-      const snapshot = {
-        allowedMimeCategories: room.allowedMimeCategories,
-        id: room.id,
-        maxFileSizeBytes: room.maxFileSizeBytes,
-      };
-      storeUpdateRoom(input);
-      return () => {
-        storeUpdateRoom(snapshot);
-      };
-    },
-    key: room.id,
   });
 };
 </script>

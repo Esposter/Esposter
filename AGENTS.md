@@ -159,7 +159,7 @@ Three RBAC-aware procedure builders in `server/trpc/procedure/room/`:
 
 Permissions stored as a bigint bitfield on `roomRoles` (Postgres). Key service functions:
 
-- `hasPermission(db, userId, roomId, permission)` — single permission check; room owners and Administrators bypass all checks. Lives in `@esposter/db` (`packages/db/src/services/room/rbac/`); `server/services/room/rbac/hasPermission.ts` is a re-export. Same for `getPermissions`.
+- `hasPermission(db, userId, roomId, permission)` — single permission check; room owners and Administrators bypass all checks. Lives in `@esposter/db` (`packages/db/src/services/room/rbac/`), so the app imports it from `@esposter/db` directly — a shared function never gets a local re-export file, which only adds a second name to grep for. Same for `getPermissions`.
 - `checkIsManageable(actorTopPosition, targetPosition, isRoomOwner)` — hierarchy check; prevents lower-role members from acting on higher-role members. Room owners always pass. Lives in `packages/app/shared/services/room/rbac/checkIsManageable.ts` (shared — used by both `server/trpc/routers/` and the client `role` store).
 - `getTopRolePosition(db, userId, roomId)` — the actor's highest role position, `-1` if none. Overloaded: pass a `roomId[]` to get a `Map<string, number>` instead. In `server/services/room/rbac/`.
 - `getActorContext(db, actorUserId, roomId)` — bundles `{ actorTopPosition, isOwner }`, the usual input to `checkIsManageable`. In `server/services/room/rbac/`.

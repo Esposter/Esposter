@@ -2,7 +2,6 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { User } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
-import type { Router } from "vue-router";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
@@ -10,6 +9,7 @@ import { goOffline } from "@/composables/shared/network.test";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useMemberStore } from "@/store/message/user/member";
 import { StorageTier } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -17,7 +17,6 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMemberCache, () => {
-  let router: Router;
   let wrapper: VueWrapper;
   let count: Ref<number>;
   let countsByTopRole: Ref<MemberCountByTopRole[]>;
@@ -38,18 +37,12 @@ describe(useMemberCache, () => {
     storageTier: StorageTier.Free,
     updatedAt: new Date(),
   } satisfies User;
-  const setRouteId = (id: string) => {
-    router.currentRoute.value.params.id = id;
-    triggerRef(router.currentRoute);
-  };
   const mountCache = async (initialRouteId: string = partitionKey) => {
     wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          router = useRouter();
-          router.currentRoute.value.params.id = initialRouteId;
-          triggerRef(router.currentRoute);
+          setCurrentRoomId(initialRouteId);
           const memberStore = useMemberStore();
           ({ count, countsByTopRole, members } = storeToRefs(memberStore));
           ({ initializeCursorPaginationData } = memberStore);
@@ -87,7 +80,7 @@ describe(useMemberCache, () => {
     // Refetched offline, and the room being switched into must not inherit either
     count.value = 5;
     countsByTopRole.value = [{ count: 5, roleId: crypto.randomUUID() }];
-    setRouteId(secondPartitionKey);
+    setCurrentRoomId(secondPartitionKey);
     await flushCache();
 
     expect(members.value).toHaveLength(1);

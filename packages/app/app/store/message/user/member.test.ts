@@ -1,15 +1,14 @@
 // @vitest-environment nuxt
 import type { RoomRoleInMessage, User } from "@esposter/db-schema";
-import type { Router } from "vue-router";
 
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 import { StorageTier } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useMemberStore, () => {
-  let router: Router;
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
   const name = "name";
@@ -39,19 +38,9 @@ describe(useMemberStore, () => {
     updatedAt: new Date("1970-01-01"),
   };
 
-  // The route is a shallowRef, so mutating a param in place is invisible to everything deriving the room from it
-  const setRouteId = (id: string) => {
-    router.currentRoute.value.params.id = id;
-    triggerRef(router.currentRoute);
-  };
-
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
-    setRouteId(roomId);
+    setCurrentRoomId(roomId);
   });
 
   test("deletes a roled member out of their role group", () => {
@@ -117,7 +106,7 @@ describe(useMemberStore, () => {
 
     expect(members.value).toStrictEqual([member]);
 
-    setRouteId(crypto.randomUUID());
+    setCurrentRoomId(crypto.randomUUID());
 
     expect(members.value).toStrictEqual([]);
   });

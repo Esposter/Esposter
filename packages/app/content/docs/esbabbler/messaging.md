@@ -73,6 +73,8 @@ The stored poll body is parsed and re-serialized through `pollMessageContentSche
 
 Mentions are stored as HTML: the TipTap mention suggestion inserts `<span data-type="mention" data-id="...">` nodes, which the server later parses for notification targeting and the client resolves to display names (see [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)).
 
+All three composer suggestion popovers — mentions, emoji and [slash commands](/docs/esbabbler/slash-commands) — render through one `Suggestion/List.vue` surface, so the composer's chrome is the same whichever trigger opened it. It owns the card, the group title from `getSuggestionListTitle`, and the keyboard-navigated `StyledList`; each popover supplies its own rows and its own width as a passthrough attribute, and nothing else.
+
 ## Procedures
 
 The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Every row marked _author_ below is a `getMessageProcedure` built on the operation it guards, so its real answer comes from `MessageTypeOperationPermissionMap` as described above — author or `ManageMessages` on a `Message`/`Poll`, `ManageMessages` on a `Webhook`, refused outright on the server-written types. Highlights:
