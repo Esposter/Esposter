@@ -2,6 +2,18 @@
 
 Read when deciding whether a file may be excluded, generating the exclusion list, or removing the exclusions. Exclusions go in `path_filters` in `.coderabbit.yaml` on the PR's base branch (SKILL.md § Config Is Read From the PR Base Branch) and are always temporary.
 
+## Deciding whether to exclude at all
+
+**Rarely**, and only when the arithmetic actually closes. Reaching for exclusions is the standing temptation, because the base branch whose `.coderabbit.yaml` would have to change is the default one, and a config commit feels cheaper than a rewind. It usually is not: a genuinely over-budget window is over budget in _substantive_ files, so the handful that qualify (pure renames, import-path-only edits) close nothing. **Measure the qualifying set before proposing exclusions** — against a hundred-file overshoot it is routinely a couple of files.
+
+**The exception is a small overshoot.** When the window is over by single digits _and_ the qualifying set covers the gap on its own, a temporary exclusion is the cheaper recovery, because the alternative is rewinding a shared branch. Prefer it outright when someone else is working on that branch: a cut rewrites history under them, an exclusion touches only the base. The bar on each file does not move (§ When to exclude below), and inventing headroom by excluding substantive files is the thing this rule exists to stop. The procedure:
+
+1. Read the skip comment for the real overshoot (`N files exceed the limit of M`); do not compute it from the merge-base.
+2. Classify the window and count what genuinely qualifies. If it does not cover the gap **with margin**, stop and cut instead — landing exactly on the cap leaves nothing for the next push.
+3. A change repeated verbatim across N files (one identical line deleted from five views) is reviewable **once**: keep one file as the representative, exclude its twins, and name the representative in the yaml comment so the next reader can check the claim. Identical patch text is the entry condition, not the test — the twin qualifies only if the line _means_ the same thing there, same symbols resolving to the same modules and the same runtime effect (§ When to exclude below).
+4. Commit the block to `main` with its revert subject, retrigger with `@coderabbitai review` — no push to `develop` is needed, and none should be made, since the config is read from the base branch and a push would only add files to the same window.
+5. Remove the block once that review completes. An exclusion left behind blinds the next review of those paths silently.
+
 ## When to exclude
 
 Chunk at the budget where you can. A mechanical rename can't be chunked — it's one atomic commit — so exclude the files within it that carry no reviewable content.

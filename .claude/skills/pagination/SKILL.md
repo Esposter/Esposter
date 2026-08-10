@@ -1,6 +1,6 @@
 ---
 name: pagination
-description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), infinite scroll instead of a Load-more button, server search-as-you-type via useAutoSearch/useCursorSearcher (hand-rolling banned) and its sanctioned exceptions, bundling ancillary reads into the primary read, and the offline IndexedDB pagination cache. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
+description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed read binding to its key when issued, infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type, bundling ancillary reads into the primary read, and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions and on the feature cache composables. Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
 ---
 
 # Pagination, Search & Offline List Cache
@@ -93,47 +93,9 @@ Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" butto
 </StyledWaypoint>
 ```
 
-## Server Search-as-You-Type — `useAutoSearch` / `useCursorSearcher` (hand-rolling BANNED)
+## Server Search-as-You-Type — hand-rolling BANNED
 
-Hand-rolling search-as-you-type around a `$trpc` search query is **banned** — no per-component `useThrottle`/`refDebounced` + `watch` + `AbortController` + `isSearching` wiring, and no `@input` handlers firing queries. That stack exists exactly once, in `useAutoSearch` (`app/composables/useAutoSearch.ts`): 1s throttle, in-flight request abort, normalized-query change detection, reset-on-empty, an `isPending` ref, and the shared `getResultAsync` → `createAlert` error surfacing from the client-data conventions (superseded/aborted requests stay silent — no consumer writes error handling).
-
-Pick the layer by result shape:
-
-- **Cursor-paginated results** → `useCursorSearcher(query, isAutoSearch?, isIncludeEmptySearchQuery?)` — wraps `useAutoSearch` + `useCursorPaginationData`; the query callback receives `(searchQuery, cursor, opts)` and must forward `opts` (carries the abort signal) to the tRPC call. Both flags are literal `true`-only (never `false`): the 2nd opts into auto-search, and the 3rd makes an empty query list everything (e.g. room pickers) — it only has an effect alongside the 2nd. Returns `{ hasMore, items, readItemsSearched, readMoreItemsSearched, searchQuery }`.
-- **Plain array results** → `useAutoSearch(searchQuery, { reset, search })` directly; `search` receives the sanitized query and the `AbortSignal` to forward as `{ signal }`.
-- **Ctrl+K palette UI** → wrap in `StyledSearchDialog` (see the `vue-component-patterns` skill).
-
-```ts
-// stores/dialogs with cursor pagination
-export const useSearchStore = defineStore("<feature>/foo/search", () => {
-  const { $trpc } = useNuxtApp();
-  return useCursorSearcher((searchQuery, cursor, opts) => {
-    const normalizedSearchQuery = normalizeString(searchQuery);
-    return $trpc.foo.readFoos.query(
-      { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined },
-      opts,
-    );
-  }, true);
-});
-
-// plain array results
-const { isPending } = useAutoSearch(searchQuery, {
-  reset: () => {
-    searchResults.value = [];
-  },
-  search: async (sanitizedSearchQuery, signal) => {
-    searchResults.value = await $trpc.foo.searchFoos.query(sanitizedSearchQuery, { signal });
-  },
-});
-```
-
-The only sanctioned exceptions (documented in `docs/architecture/search.md`):
-
-- **`v-data-table-server` lists** — the table owns fetch orchestration via its `search` prop + `@update:options`; feed it a `refDebounced(searchQuery, …)`.
-- **Explicit-submit search** — Enter-triggered with filters and search history; no as-you-type querying to throttle.
-- **Client-index search** — MiniSearch/computed over already-loaded data; no server call, so a plain `computed` (optionally `refDebounced`) suffices.
-
-Anything else that looks like a new exception should be refactored onto `useAutoSearch` instead.
+Hand-rolling search-as-you-type around a `$trpc` search query is **banned**: no per-component `useThrottle`/`refDebounced` + `watch` + `AbortController` + `isSearching` wiring, and no `@input` handler firing a query. That stack exists exactly once, in `useAutoSearch` — reach for it, or for `useCursorSearcher` when the results are cursor-paginated.
 
 ## Bundle Ancillary Reads with the Primary Read
 
@@ -154,39 +116,11 @@ const readFoos = () =>
 
 Follow the `useReadBars` shape for batch ancillary reads — a composable taking an **array** of ids, early-returning when it is empty, and issuing one batched query rather than N per-id calls.
 
-## Offline IndexedDB Cache via Pagination Cache Composables
+## Offline IndexedDB Cache — self-contained
 
-Offline cache mirrors Pinia state, and it is **entirely self-contained**: `usePaginationCache` owns both directions via two watchers — items change → write IndexedDB; partition key changes **while offline** → read IndexedDB and hydrate the store. Nothing else touches the cache.
+The offline cache mirrors Pinia state and owns both directions itself, so **nothing outside `usePaginationCache` touches it**. Never call `useOnline`, `readIndexedDb` or `writeIndexedDb` from a feature read composable, and never add cache options to `readItems`/`readMoreItems` — hydration is already automatic, and a read that reaches for the cache is a second source of truth for what is loaded.
 
-Consequences that keep this boundary intact:
+## Deep Dives
 
-- **`readItems`/`readMoreItems` know nothing about IndexedDB** — they are plain pagination helpers. Never add cache options to them or push cache behaviour deeper into pagination.
-- **Read composables know nothing about the cache either** — there is no read-side cache composable to call. Never call `useOnline`, `readIndexedDb`, or `writeIndexedDb` from a feature read composable; hydration is already automatic.
-- `readIndexedDb` / `writeIndexedDb` (`app/services/cache/indexedDb/`) are called **only** from `usePaginationCache`.
-
-**Generic cache composables** (`app/composables/cache/indexedDb/`) — each takes one options object and returns nothing. Both of its operations are fired from watchers through `getSynchronizedFunction`, so the completion signal is the repo-wide drain, `waitForSynchronizedFunctions()`; never give the cache (or the `useMutation` instance under it) a `flush` of its own for a test to await.
-
-- `usePaginationCache` — the base; takes `initializeItems`
-- `useCursorPaginationCache` / `useOffsetPaginationCache` — wrap it, taking `initializeCursorPaginationData` / the offset equivalent instead
-
-**Feature cache composable pattern** — a thin wrapper reading store refs and calling the generic composable:
-
-```ts
-export const useFooCache = () => {
-  const fooStore = useFooStore();
-  const { foos } = storeToRefs(fooStore);
-  const { initializeCursorPaginationData } = fooStore;
-  useCursorPaginationCache({
-    configuration: FooIndexedDbStoreConfiguration,
-    initializeCursorPaginationData,
-    items: foos,
-    partitionKey: () => session.value.data?.user.id ?? "",
-  });
-};
-```
-
-- `configuration` — one per file, `as const satisfies IndexedDbStoreConfiguration` (a key path, plus an optional `limit`)
-- `getWriteItems` — feature-specific filtering before persisting
-- `onHydrate` — companion state updates after an offline hydrate (member counts, user maps)
-
-`useMessageCache`, `useMemberCache`, `useRoomCache` are the reference shapes. Architecture doc: `packages/app/content/docs/esbabbler/offline-cache.md`.
+- `references/search-as-you-type.md` — when wiring a search input that queries the server as the user types, or changing one that already does.
+- `references/offline-cache.md` — when a list must survive going offline, or when adding or altering a feature cache composable.

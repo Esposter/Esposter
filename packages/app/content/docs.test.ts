@@ -31,6 +31,16 @@ const pagePaths = (await Array.fromAsync(glob("**/*.md", { cwd: docsDirectory })
 const pages = await Promise.all(
   pagePaths.map(async (page) => ({ markdown: await readFile(join(docsDirectory, page), "utf8"), page })),
 );
+const skillsDirectory = join(repositoryDirectory, ".claude", "skills");
+const skillPagePaths = (await Array.fromAsync(glob("**/*.md", { cwd: skillsDirectory }))).map((pagePath) =>
+  pagePath.replaceAll("\\", "/"),
+);
+const skillPages = await Promise.all(
+  skillPagePaths.map(async (page) => ({
+    markdown: await readFile(join(skillsDirectory, page), "utf8"),
+    page: `.claude/skills/${page}`,
+  })),
+);
 // A token is a path when its first segment names something at the repo root or it carries an app-relative
 // Prefix — which keeps the hundreds of identifier tokens in the same tables (`useQuery`, `--no-cache`,
 // `/all`) out of the check. `scripts/` lives under both roots, so a path is resolved against either.
@@ -43,7 +53,10 @@ const getIsPage = (slugPath: string) =>
   existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
 
 describe(mermaid.parse, () => {
-  const diagrams = pages.flatMap(({ markdown, page }) =>
+  // Skills are checked here too, rather than in a test of their own: a skill diagram has no renderer to fail
+  // In front of anyone — nothing loads a skill and draws it — so an unparseable one is invisible until an
+  // Agent reads a broken picture as the process. This is the only place the parser is already wired up
+  const diagrams = [...pages, ...skillPages].flatMap(({ markdown, page }) =>
     [...markdown.matchAll(MERMAID_REGEX)].map((match, index) => ({
       code: match.groups?.code ?? "",
       ordinal: index + 1,

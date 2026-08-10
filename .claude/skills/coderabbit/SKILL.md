@@ -1,6 +1,6 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review, the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, nitpicks live in the review body rather than inline comments, the coderabbitai[bot] login and reconciling against the stated counts, replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review, the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, nitpicks live in the review body rather than inline comments, the three gates that decide a push (nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, the coderabbitai[bot] login and reconciling against the stated counts (inline comments can fail to post outright), replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
 ---
 
 # CodeRabbit Conventions
@@ -59,6 +59,23 @@ gh pr checks --json name,state,description --jq '.[] | select(.name=="CodeRabbit
 | `SUCCESS` / `Review rate limited`              | never started, nothing running | **push**                      |
 | `SUCCESS` / skip comment says `Too many files` | never started                  | push, but fix the count first |
 
+Three gates decide a push, and they are not interchangeable — the first is about cancelling a review, the second about accumulating an unreviewed window, the third about overflowing the cap:
+
+```mermaid
+flowchart TD
+  C[Commit locally] --> M[Measure backlog from the last reviewed sha]
+  M --> R{Is a review running}
+  R -->|yes| W1[Wait - a push cancels it and loses its findings]
+  R -->|no| P{Was the previous window reviewed}
+  P -->|no| W2[Wait - unreviewed windows accumulate into one]
+  P -->|yes| B{Is the backlog under the cap}
+  B -->|no| H[Hold the overflow locally and push a smaller window]
+  B -->|yes| PU[Push]
+  PU --> RV[Review runs against the new range]
+  RV --> F[Fix findings then reply with the pushed sha]
+  F --> C
+```
+
 **The check answers "is one running", never "has the last push been reviewed".** `Review completed` is the status of whichever review ran most recently, which may have covered a range two pushes back — the check does not name a range at all, so reading it as clearance for the current head is a category error. It is the state's own answer to a different question, and it looks exactly like the answer you wanted.
 
 Reconcile against the range before treating a push as reviewed. Every review body states its own (`Reviewing files that changed … between <sha1> and <sha2>`), so the last reviewed sha is a fact you can read rather than infer:
@@ -108,29 +125,18 @@ A review takes an hour of wall-clock the working tree has no reason to spend idl
 
 The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's fixes plus the queued chunk exceed the budget, push the fixes with only part of the queue and hold the rest — never split a fix away from the finding it answers.
 
-**The cap is a hard gate on the push itself, not a target to recover from afterwards.** Measure before every push and hold the overflow locally; a push that overshoots is not a setback that costs one review cycle, it is one that can cost every cycle after it. The only way to shrink an over-budget branch is to rewind it, and a force-push desynchronises CodeRabbit's incremental checkpoint from the branch — after one rewind here, a window measuring 98 files locally was counted as 153, from a sha whose files had already been reviewed, and that inflated baseline is inherited by every later push. Keeping each push under the cap is therefore the whole discipline: it is what makes the checkpoint advance cleanly and keeps the branch recoverable.
+**The cap is a hard gate on the push itself, not a target to recover from afterwards.** Measure before every push and hold the overflow locally; a push that overshoots is not a setback that costs one review cycle, it is one that can cost every cycle after it. The only way to shrink an over-budget branch is to rewind it, and a force-push desynchronises CodeRabbit's incremental checkpoint from the branch: after a rewind it can measure the next window from a sha whose files it has already reviewed, inflating the count well past the local one, and every later push inherits that baseline. Keeping each push under the cap is therefore the whole discipline: it is what makes the checkpoint advance cleanly and keeps the branch recoverable.
 
 When a push has already overshot, the recovery is to **shorten `develop`, park the remainder on a queue branch, and drain it one window at a time** — `references/release-pr-cutting.md`. Treat it as a last resort with a real cost, not the routine tool.
 
-**Rarely exclusions**, and only when the arithmetic actually closes. Reaching for them is the standing temptation, because the base branch whose `.coderabbit.yaml` would have to change is `main`, and a config commit feels cheaper than a rewind. It usually is not: a genuinely over-budget window is over budget in _substantive_ files, so the handful that qualify (pure renames, import-path-only edits) close nothing. **Measure the qualifying set before proposing exclusions** — against a hundred-file overshoot it is routinely a couple of files.
-
-**The exception is a small overshoot.** When the window is over by single digits _and_ the qualifying set covers the gap on its own, a temporary exclusion is the cheaper recovery, because the alternative is rewinding a shared branch. Prefer it outright when someone else is working on `develop`: a cut rewrites history under them, an exclusion touches only `main`. The bar on each file does not move — it must still carry no reviewable content (`references/exclusions.md` § When to exclude), and inventing headroom by excluding substantive files is the thing this rule exists to stop. The procedure:
-
-1. Read the skip comment for the real overshoot (`N files exceed the limit of M`); do not compute it from the merge-base.
-2. Classify the window and count what genuinely qualifies. If it does not cover the gap **with margin**, stop and cut instead — landing exactly on the cap leaves nothing for the next push.
-3. A change repeated verbatim across N files (one identical line deleted from five views) is reviewable **once**: keep one file as the representative, exclude its twins, and name the representative in the yaml comment so the next reader can check the claim. Identical patch text is the entry condition, not the test — the twin qualifies only if the line _means_ the same thing there, same symbols resolving to the same modules and the same runtime effect (`references/exclusions.md` § When to exclude).
-4. Commit the block to `main` with its revert subject, retrigger with `@coderabbitai review` — no push to `develop` is needed, and none should be made, since the config is read from the base branch and a push would only add files to the same window.
-5. Remove the block once that review completes. An exclusion left behind blinds the next review of those paths silently.
-
-Never exclude a file another session is actively editing, however trivial its committed diff looks: the filter is static and will swallow the real change when it lands.
+**Exclusions are rarely the answer, and never for a substantive file.** Over budget is a chunking problem: split the work, or land it in stages so each cycle stays under the cap. Excluding a file that carries real content buys a smaller review, not a better one — the diff still ships, just unread. When to reach for one anyway, and the procedure, live in `references/exclusions.md`.
 
 The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~80 files, grouping by what they touch so the coupling stays inside one review: items sharing a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land in separate PRs with a stated merge order.
-
-**Being over budget is never a reason to exclude a _substantive_ file.** Over budget is a chunking problem: split the work, or land it in stages so each incremental cycle stays under the cap. Excluding a file that carries real content buys a smaller review, not a better one — the diff still ships, just unread. Excluding one that carries none costs nothing, which is why the small-overshoot exception above is bounded by what qualifies rather than by how badly the headroom is wanted.
 
 ## Reading and Answering Findings
 
 - **Nitpicks live only in the review body**, inside the collapsed `🧹 Nitpick comments (M)` block — they are never inline comments. Fetching only the inline endpoint loses them silently.
+- **Inline comments can fail to post at all**, and the review says so with a `> [!CAUTION] Inline review comments failed to post` block in its body. The findings are still listed there, in the body's own agent-prompt block, so a run that posted fewer threads than it claims is not a run with fewer findings. This is why the counts below are the ground truth and the thread list never is.
 - **The bot's login is `coderabbitai[bot]`, not `coderabbitai`.** A `--jq` filter on the wrong login returns empty and exits 0, so empty output from a filtered query means _"my filter was wrong"_ until proven otherwise — never read it as "there are none".
 - **Reconcile before concluding.** Each review body states `Actionable comments posted: N` and `🧹 Nitpick comments (M)`. Both counts are ground truth: fewer inline comments or nitpicks in hand than that means you are missing some — go find them rather than reporting what you happened to fetch.
 - **Reply to every finding, including rejected ones** — a silent skip is indistinguishable from an oversight. State the verdict in the first line (`Agreed, fixed in <sha>` / `Not a real issue, no change`) and give the evidence; these threads are the record of why the code looks the way it does.
