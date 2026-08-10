@@ -5,7 +5,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { ResourceTypeListItems } from "@/services/resource/list/ResourceTypeListItems";
 
 const modelValue = defineModel<ResourceType[]>({ required: true });
-const label = computed(() =>
+const selectedTypesText = computed(() =>
   modelValue.value.length > 0 ? modelValue.value.map((type) => ResourceDefinitionMap[type].title).join(", ") : "all",
 );
 const toggleType = (type: ResourceType) => {
@@ -16,10 +16,7 @@ const toggleType = (type: ResourceType) => {
 </script>
 
 <template>
-  <v-menu :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <v-chip :="menuProps">Type == {{ label }}</v-chip>
-    </template>
+  <ResourceListFilterPill label="Type" :value="selectedTypesText">
     <v-list density="compact">
       <v-list-item
         v-for="{ icon, title, value } of ResourceTypeListItems"
@@ -33,5 +30,5 @@ const toggleType = (type: ResourceType) => {
         </template>
       </v-list-item>
     </v-list>
-  </v-menu>
+  </ResourceListFilterPill>
 </template>

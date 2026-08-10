@@ -2,7 +2,7 @@
 
 | Unit                                                                                              | Swept      | Notes                                                     |
 | ------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------- |
-| `Resource/List` + list composables                                                                | 2026-08-08 | with the service-menu work                                |
+| `Resource/List` + list composables                                                                | 2026-08-10 | `FilterPill` owns the four pills' menu, chip and label    |
 | `Resource/Blade`, `Resource/Overview`, `Resource/Explorer`                                        | 2026-08-08 |                                                           |
 | `Resource/Sheet` components                                                                       | 2026-08-09 |                                                           |
 | `composables/resource/sheet`                                                                      | 2026-08-09 |                                                           |

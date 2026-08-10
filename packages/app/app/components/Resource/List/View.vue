@@ -186,7 +186,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       @update:options="onUpdateOptions"
     >
       <template #[`item.favorite`]="{ item }">
-        <!-- stop keeps the row's navigateTo from firing when the star is clicked -->
+        <!-- Every control nested in a row stops the click, so the row's own navigateTo does not fire behind it -->
         <div @click.stop>
           <ResourceFavoriteToggle :resource="item" />
         </div>
@@ -195,7 +195,6 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         <ResourceListTypeCell :type="item.type" />
       </template>
       <template #[`item.actions`]="{ item }">
-        <!-- stop keeps the row's navigateTo from firing when the menu is opened -->
         <div @click.stop>
           <StyledOverflowMenu :items="getActionItems(item)" />
         </div>
