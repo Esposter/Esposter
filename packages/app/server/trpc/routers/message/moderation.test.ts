@@ -111,8 +111,9 @@ describe("moderation", () => {
 
     // These three land on the call pipeline rather than the database, so the mutation itself only has to record
     // The action and resolve
-    for (const type of [AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall])
-      test(`${type}: owner applies it to a member — succeeds with no error`, async () => {
+    test.each([AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall])(
+      "%s: owner applies it to a member — succeeds with no error",
+      async (type) => {
         expect.hasAssertions();
 
         const member = await createMember();
@@ -120,7 +121,8 @@ describe("moderation", () => {
         await expect(
           moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type }),
         ).resolves.toBeUndefined();
-      });
+      },
+    );
 
     test(`member without ${RoomPermission.BanMembers} permission cannot ban — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();

@@ -23,7 +23,13 @@ interface StyledCalendarProps {
 }
 
 const { calendarOptions } = defineProps<StyledCalendarProps>();
-const options = computed<CalendarOptions>(() => ({ ...calendarOptions, ...CALENDAR_OPTIONS }));
+// Defaults first so a caller can override them, but the wrapper's own plugins are what make its
+// Toolbars and theme resolve at all, so those are appended to rather than replaced
+const options = computed<CalendarOptions>(() => ({
+  ...CALENDAR_OPTIONS,
+  ...calendarOptions,
+  plugins: [...CALENDAR_OPTIONS.plugins, ...(calendarOptions?.plugins ?? [])],
+}));
 </script>
 
 <template>

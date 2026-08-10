@@ -31,51 +31,46 @@ const getResourceRouterProcedureNames = (type: ResourceType) => {
 // Asserted against the server registry, not the client: the tRPC client is a lazy proxy that answers to every
 // Key, so it can say nothing about which procedures a type actually has
 describe(useResourceRouter, () => {
-  for (const type of ResourceTypes)
-    // A multi-word type's key is not simply its lowercased name, so this is also what pins `todoList` over `todolist`
-    test(`${type}: registers a router named after the type`, () => {
-      expect.hasAssertions();
+  // A multi-word type's key is not simply its lowercased name, so this is also what pins `todoList` over `todolist`
+  test.each(ResourceTypes)("%s: registers a router named after the type", (type) => {
+    expect.hasAssertions();
 
-      expect(getResourceRouterProcedureNames(type)).not.toStrictEqual([]);
-    });
+    expect(getResourceRouterProcedureNames(type)).not.toStrictEqual([]);
+  });
 
-  for (const type of ResourceTypes)
-    test(`${type}: exposes the base procedures`, () => {
-      expect.hasAssertions();
+  test.each(ResourceTypes)("%s: exposes the base procedures", (type) => {
+    expect.hasAssertions();
 
-      expect(getResourceRouterProcedureNames(type)).toStrictEqual(expect.arrayContaining(BASE_PROCEDURE_NAMES));
-    });
+    expect(getResourceRouterProcedureNames(type)).toStrictEqual(expect.arrayContaining(BASE_PROCEDURE_NAMES));
+  });
 
   // UseCreateResource dispatches a create the same way, so a gallery entry whose router cannot create it would
   // Otherwise only fail at the click that submits the create form
-  for (const type of CreatableResourceTypes)
-    test(`${type}: exposes createResource for a type the gallery offers`, () => {
-      expect.hasAssertions();
+  test.each(CreatableResourceTypes)("%s: exposes createResource for a type the gallery offers", (type) => {
+    expect.hasAssertions();
 
-      expect(getResourceRouterProcedureNames(type)).toContain("createResource");
-    });
+    expect(getResourceRouterProcedureNames(type)).toContain("createResource");
+  });
 
   // The capability is what makes the procedure reachable, so a type declaring one without the other leaves
   // Either a publish button that 404s or a publishable resource with no way to publish it
-  for (const type of ResourceTypes)
-    test(`${type}: exposes the publish procedures exactly where the capability is declared`, () => {
-      expect.hasAssertions();
+  test.each(ResourceTypes)("%s: exposes the publish procedures exactly where the capability is declared", (type) => {
+    expect.hasAssertions();
 
-      const procedureNames = getResourceRouterProcedureNames(type);
+    const procedureNames = getResourceRouterProcedureNames(type);
 
-      expect(PUBLISH_PROCEDURE_NAMES.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
-        hasCapability(type, "publishable") ? PUBLISH_PROCEDURE_NAMES : [],
-      );
-    });
+    expect(PUBLISH_PROCEDURE_NAMES.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
+      hasCapability(type, "publishable") ? PUBLISH_PROCEDURE_NAMES : [],
+    );
+  });
 
-  for (const type of ResourceTypes)
-    test(`${type}: exposes the file procedures exactly where the capability is declared`, () => {
-      expect.hasAssertions();
+  test.each(ResourceTypes)("%s: exposes the file procedures exactly where the capability is declared", (type) => {
+    expect.hasAssertions();
 
-      const procedureNames = getResourceRouterProcedureNames(type);
+    const procedureNames = getResourceRouterProcedureNames(type);
 
-      expect(FILE_PROCEDURE_NAMES.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
-        hasCapability(type, "fileAssets") ? FILE_PROCEDURE_NAMES : [],
-      );
-    });
+    expect(FILE_PROCEDURE_NAMES.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
+      hasCapability(type, "fileAssets") ? FILE_PROCEDURE_NAMES : [],
+    );
+  });
 });

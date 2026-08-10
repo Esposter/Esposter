@@ -149,7 +149,14 @@ test -z "$(git status --porcelain -uall)" || exit 1   # a dirty tree loses work 
 git reset --hard origin/<branch>          # the reviewed frontier
 # cherry-pick errors on an empty commit set rather than skipping it, and either range is empty when
 # The fix was authored first or last — which is the common case — so each is counted before it replays.
-pick() { test -z "$(git rev-list "$1")" || git cherry-pick "$1"; }
+# A range git cannot resolve also lists nothing, so the count is separated from the failure: treating an
+# Unresolvable range as empty would silently drop those commits, and the reset has already moved the tip.
+pick() {
+  local commits
+  commits=$(git rev-list "$1") || return 1
+  test -n "$commits" || return 0
+  git cherry-pick "$1"
+}
 git cherry-pick "$FIX"                    # the fix goes first
 pick "origin/<branch>..$FIX^"             # the work it was authored on top of
 pick "$FIX..$OLD"                         # anything after it

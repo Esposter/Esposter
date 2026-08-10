@@ -6,16 +6,16 @@ import { mount } from "@vue/test-utils";
 import { defineComponent, h } from "vue";
 import { describe, expect, test } from "vitest";
 
-describe(useFocusWhenActive, () => {
-  const createInputComponent = (isActive: Ref<boolean>) =>
-    defineComponent({
-      setup() {
-        const input = useTemplateRef<HTMLInputElement>("input");
-        useFocusWhenActive(input, isActive);
-        return () => h("input", { ref: "input" });
-      },
-    });
+const createInputComponent = (isActive: Ref<boolean>) =>
+  defineComponent({
+    setup() {
+      const input = useTemplateRef<HTMLInputElement>("input");
+      useFocusWhenActive(input, isActive);
+      return () => h("input", { ref: "input" });
+    },
+  });
 
+describe(useFocusWhenActive, () => {
   test("focuses the input that is already active when it mounts", () => {
     expect.hasAssertions();
 

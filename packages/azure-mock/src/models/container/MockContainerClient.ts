@@ -165,7 +165,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     const blobHierarchyItemIterator = this.#getBlobHierarchyItemIterator(delimiter, options);
     return {
       byPage: () =>
-        async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobFlatSegmentResponse> {
+        async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobHierarchySegmentResponse> {
           // For a simple mock, we'll return all entities in a single page
           // A more complex mock could implement maxPageSize and continuationTokens
           const allBlobItems: BlobItem[] = [];
@@ -186,7 +186,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
               getListBlobsSegmentResponse(
                 this.containerName,
                 options?.prefix ?? "",
-                allBlobItems,
+                { blobItems: allBlobItems, blobPrefixes: allBlobPrefixes },
                 `${allBlobItemXml.join("")}${allBlobPrefixXml.join("")}`,
               ),
             );
@@ -219,7 +219,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
               getListBlobsSegmentResponse(
                 this.containerName,
                 options?.prefix ?? "",
-                allBlobItems,
+                { blobItems: allBlobItems },
                 allBlobItemXml.join(""),
               ),
             );
@@ -285,13 +285,6 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
-  async *#getBlobItemIterator(options?: ContainerListBlobsOptions): AsyncGenerator<BlobItem> {
-    const prefix = options?.prefix ?? "";
-    for (const [name, buffer] of this.container.entries()) {
-      if (!name.startsWith(prefix)) continue;
-      yield await Promise.resolve(this.#getBlobItem(name, buffer));
-    }
-  }
   // Both listings report the same blob the same way, so the properties are described in exactly one place
   #getBlobItem(name: string, buffer: Buffer): BlobItem {
     return {
@@ -311,5 +304,12 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
       },
       snapshot: "",
     };
+  }
+  async *#getBlobItemIterator(options?: ContainerListBlobsOptions): AsyncGenerator<BlobItem> {
+    const prefix = options?.prefix ?? "";
+    for (const [name, buffer] of this.container.entries()) {
+      if (!name.startsWith(prefix)) continue;
+      yield await Promise.resolve(this.#getBlobItem(name, buffer));
+    }
   }
 }

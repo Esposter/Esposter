@@ -37,21 +37,29 @@ The walkthrough issue-comment is **edited in place** across reviews, so its `cre
 Posting `@coderabbitai review` and reading straight back races the bot: the reply does not exist yet, so the read returns the previous bot comment — which is a real CodeRabbit remark and reads exactly like an answer. Wait for the newest bot comment to _change_, then read that one.
 
 ```bash
-crLatest() {  # the bot's newest issue comment: "<id> <first line>"
+crLatest() {  # the bot's most recently touched issue comment: "<id> <updated_at>"
   gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate --slurp |
     node -e 'const [comment] = JSON.parse(require("fs").readFileSync(0, "utf8")).flat()
       .filter(({ user }) => user.login === "coderabbitai[bot]")
-      .sort((a, b) => b.id - a.id);
-      console.log(comment ? `${comment.id} ${comment.body.split("\n")[0]}` : "0 none");'
+      .sort((a, b) => b.updated_at.localeCompare(a.updated_at) || b.id - a.id);
+      console.log(comment ? `${comment.id} ${comment.updated_at}` : "0 none");'
 }
 
 before=$(crLatest)
 gh pr comment <pr> --body "@coderabbitai review"
-until [ "$(crLatest)" != "$before" ]; do sleep 10; done
-crLatest   # "Already reviewed" -> the checkpoint already covers the head
+deadline=$((SECONDS + 600))
+until [ "$(crLatest)" != "$before" ]; do
+  test "$SECONDS" -lt "$deadline" || { echo "no reply in 10m — read the PR before assuming anything" >&2; exit 1; }
+  sleep 10
+done
+crLatest   # then read that comment's body: "Already reviewed" -> the checkpoint already covers the head
 ```
 
-Comparing the whole `"<id> <first line>"` line rather than the id alone also catches the walkthrough being **edited in place** into the answer. The `--slurp`-then-`node` aggregation is required for the same reason as above: a `last` inside `--jq` would describe one page.
+**Sort by `updated_at`, not by `id`.** The answer often arrives as an **in-place edit** of the walkthrough, which keeps its original id — so the newest id can be a comment that has not moved while the one that did sorts below it. `id` stays only as the tie-breaker for two comments written in the same second. For the same reason the compared value is `id` plus `updated_at` rather than the first body line: an edit that leaves the first line intact is invisible to a body comparison, and `updated_at` moves whatever the edit touched.
+
+**The loop needs a deadline.** A bot that never posts and a failed API call look identical to an `until` loop, and both make it sleep forever. Bound it and fail loudly — an unanswered probe is a thing to go look at, not a thing to keep waiting on.
+
+The `--slurp`-then-`node` aggregation is required for the same reason as above: a `last` inside `--jq` would describe one page.
 
 ## Replying to a review comment
 

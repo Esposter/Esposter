@@ -10,21 +10,21 @@ import { describe, expect, test } from "vitest";
 
 // A filter type owns more than the one model its pill is named after, so removing its pill has to clear all of
 // Them — a partial reset leaves a value filtering the list with no pill left to show it
-describe("resourceListFilterBar", () => {
-  const mountFilterBar = async () =>
-    mountSuspended(ResourceListFilterBar, {
-      props: {
-        hasActiveFilters: true,
-        status: ResourceStatusFilter.Published,
-        tagName: "environment",
-        tagValue: "production",
-        types: [],
-        updatedAfter: new Date(0),
-        updatedBefore: new Date(0),
-        updatedFilter: ResourceUpdatedFilter.Custom,
-      },
-    });
+const mountFilterBar = () =>
+  mountSuspended(ResourceListFilterBar, {
+    props: {
+      hasActiveFilters: true,
+      status: ResourceStatusFilter.Published,
+      tagName: "environment",
+      tagValue: "production",
+      types: [],
+      updatedAfter: new Date(0),
+      updatedBefore: new Date(0),
+      updatedFilter: ResourceUpdatedFilter.Custom,
+    },
+  });
 
+describe("resourceListFilterBar", () => {
   test("removing the status pill clears the status", async () => {
     expect.hasAssertions();
 
