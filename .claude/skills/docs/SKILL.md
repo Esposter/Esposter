@@ -57,6 +57,7 @@ Write for a new engineer reading in the browser, not for an agent grepping a rep
 - Keep the **Key Files** table on feature pages — path + one-line role. It's the bridge from docs to code.
 - Nothing is frozen: trim, rename, and split freely as understanding improves — but never merge files (see single-responsibility rule).
 - **No deprecated or stale content, ever.** When something is superseded, delete it and fix every reference in the same change — no deprecation stubs, no "moved to X" notices. Why-not rationale lives only in `deferred/`/`rejected/` pages, and only when genuinely needed.
+- **Invert a tombstone, don't just delete it.** Most stale passages are not dead weight — they are a live rule stated as the history of what it replaced ("X used to be per-call-site; it is now a flag", "the explorer replaced DocumentPicker", "v1 was mesh WebRTC"). Deleting the sentence takes the reasoning with it, which is why these survive pass after pass and get re-added. Keep the reasoning, drop the past tense and the dead identifier: state the rule in the present, with the why the history was carrying. A "Deleted routes:" list or a bare "Y was removed — do not reintroduce" has no reasoning to save and is simply deleted.
 
 ## Diagram mandate
 

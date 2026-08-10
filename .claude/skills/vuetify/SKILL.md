@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — StyledButton for primary actions, button backgrounds (colourless-flat transparency rule, container-provided variant="text" answered with StyledButton/StyledTooltipIconButton rather than variant="elevated"), the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, tooltips on icon-only buttons, router-link-driven highlighting on linked buttons and tabs (exact links, catch-all params, the explicit :active escape hatch), mergeProps for nested activators, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, StyledList, StyledAvatar, no SASS variables in component styles, plus deep dives on form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
+description: Esposter Vuetify 4 conventions — StyledButton for primary actions, button backgrounds (colourless-flat transparency rule, container-provided variant="text" answered with StyledButton/StyledTooltipIconButton rather than variant="elevated"), the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, tooltips on icon-only buttons, router-link-driven highlighting on linked buttons and tabs (exact links, catch-all params, the explicit :active escape hatch), StyledTooltipIconButton/StyledTooltipMenuIconButton over a hand-rolled activator chain with mergeProps left for the stacks they don't cover, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, StyledList, StyledAvatar, no SASS variables in component styles, plus deep dives on form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
 ---
 
 # Vuetify Conventions
@@ -77,22 +77,32 @@ Once a `v-btn`/`v-tab` carries `to`, Vuetify derives its highlight from the rout
 
 `v-list-item` is immune because every call site passes an explicit `:active` (`props.active !== false` wins over the link), which is also the escape hatch when a linked control's highlight must be computed rather than matched.
 
-## Nested Activators — `mergeProps`, Never Stacked `v-bind`
+## Nested Activators — the Primitive First, `mergeProps` Only Beyond It
 
-When one button is the activator for **multiple** overlays (a `v-menu`/`v-dialog`/`v-hover` _and_ a `v-tooltip`), combine each overlay's slot props with `mergeProps(...)` from `vue` on a single `:=`. **Never stack two `:=` binds** — a second `v-bind` of the same key silently overrides the first, dropping the loser's `onClick`/`onMouseenter`/`class`; `mergeProps` chains handlers and concatenates `class`/`style`.
+**The two common stacks already have a component; reach for it before writing an activator chain at all.**
 
-**Order: structural/outer activator(s) first, tooltip last** — `mergeProps(menuProps, tooltipProps)`, `mergeProps(dialogProps, tooltipProps)`, or three-way `mergeProps(tooltipActivatorProps, hoverProps, buttonProps)`.
+| Stack                            | Use                           |
+| -------------------------------- | ----------------------------- |
+| `v-tooltip` + `v-btn`            | `StyledTooltipIconButton`     |
+| `v-menu` + `v-tooltip` + `v-btn` | `StyledTooltipMenuIconButton` |
+
+Hand-rolling either is the single most repeated finding in this area — the chain looks like plumbing rather than a component, so it gets rewritten instead of imported. The rules below are for the cases the two primitives do **not** cover (a `v-dialog` or `v-hover` in the stack, a non-icon activator, three-way nesting).
+
+When one button is the activator for **multiple** overlays, combine each overlay's slot props with `mergeProps(...)` from `vue` on a single `:=`. **Never stack two `:=` binds** — a second `v-bind` of the same key silently overrides the first, dropping the loser's `onClick`/`onMouseenter`/`class`; `mergeProps` chains handlers and concatenates `class`/`style`.
+
+**Order: structural/outer activator(s) first, tooltip last** — `mergeProps(dialogProps, tooltipProps)`, or three-way `mergeProps(tooltipActivatorProps, hoverProps, buttonProps)`.
 
 ```vue
-<v-menu>
-  <template #activator="{ props: menuProps }">
+<!-- A dialog in the stack, so no primitive covers it -->
+<v-dialog>
+  <template #activator="{ props: dialogProps }">
     <v-tooltip text="Options">
       <template #activator="{ props: tooltipProps }">
-        <v-btn icon="mdi-dots-vertical" :="mergeProps(menuProps, tooltipProps)" />
+        <v-btn icon="mdi-dots-vertical" :="mergeProps(dialogProps, tooltipProps)" />
       </template>
     </v-tooltip>
   </template>
-</v-menu>
+</v-dialog>
 ```
 
 A custom dialog/menu button that exposes an `#activator` slot **merges its own tooltip into the slot props** (`<slot name="activator" :="mergeProps(dialogProps, tooltipProps)" />`) so consumers just bind the scope (`:="activatorProps"`) — and consumers must **not** wrap such an activator in a second `v-tooltip`; it already has one.

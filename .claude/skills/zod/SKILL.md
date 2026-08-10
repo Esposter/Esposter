@@ -20,7 +20,16 @@ description: Esposter Zod schema conventions — z namespace imports and the exp
 
 ## String Normalization — Always `.transform().pipe()`
 
-When normalizing a string (trim, lowercase, etc.) before further validation, use `.transform(fn).pipe(refinedSchema)`. Never `.overwrite()` — inconsistent with the codebase. Use the shared helpers for standard name/text fields: `createNormalizedStringSchema(maxLength)` from `@esposter/shared` and `createNameSchema(maxLength)` from `@esposter/db-schema`.
+When normalizing a string (trim, lowercase, etc.) before further validation, use `.transform(fn).pipe(refinedSchema)`. Never `.overwrite()` — inconsistent with the codebase.
+
+**Reach for a shared helper before writing the chain by hand**, and the choice between the two is only whether the field may be empty:
+
+| Helper                                    | From                  | Emits                               | Use for                                    |
+| ----------------------------------------- | --------------------- | ----------------------------------- | ------------------------------------------ |
+| `createNameSchema(maxLength)`             | `@esposter/db-schema` | `.min(1).max(maxLength)` after trim | a field that must carry something — a name |
+| `createNormalizedStringSchema(maxLength)` | `@esposter/shared`    | `.max(maxLength)` after trim        | optional prose — a topic, a reason, a note |
+
+Which is which is the whole decision, and it is why hand-rolled copies keep appearing: someone who cannot recall whether the helper forces `min(1)` writes the pipe out instead. If the field has an empty-string default or is `.optional()`, it is the second one.
 
 ```typescript
 z.string().transform(normalizeString).pipe(z.string().min(1).max(MAX));
