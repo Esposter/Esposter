@@ -2,6 +2,7 @@
 import type { SettingsSection } from "@/models/message/user/settings/SettingsSection";
 import type { UserSettingsType } from "@/models/message/user/UserSettingsType";
 
+import { UserSettingsTypes } from "@/models/message/user/UserSettingsType";
 import { SETTINGS_CONTENT_ID } from "@/services/message/settings/constants";
 import { UserSettingsListItemMap } from "@/services/message/user/settings/UserSettingsListItemMap";
 import { UserSettingsSectionMap } from "@/services/message/user/settings/UserSettingsSectionMap";
@@ -17,7 +18,6 @@ const onSelectType = (settingsType: UserSettingsType) => {
   isDrawerOpen.value = false;
 };
 const goTo = useVGoTo();
-const userSettingsListItems = Object.entries(UserSettingsListItemMap);
 // Highlight every visible section (docs table-of-contents behaviour) — the slide indicator stretches
 // Across them. While a sidebar click scrolls programmatically, pin the highlight to the target.
 const activeSectionIds = computed<string[]>(() => {
@@ -27,7 +27,7 @@ const activeSectionIds = computed<string[]>(() => {
 });
 const scrollToSection = async (section: SettingsSection) => {
   activeSectionId.value = section;
-  const element = document.getElementById(section);
+  const element = window.document.getElementById(section);
   if (!element) return;
   isScrollingToSection.value = true;
   await withFinalizerAsync(
@@ -44,22 +44,18 @@ const scrollToSection = async (section: SettingsSection) => {
 <template>
   <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
     <v-list :opened="[modelValue]">
-      <v-list-group v-for="[settingsType, { icon }] of userSettingsListItems" :key="settingsType" :value="settingsType">
+      <v-list-group v-for="settingsType of UserSettingsTypes" :key="settingsType" :value="settingsType">
         <template #activator="{ props }">
-          <v-list-item
-            :="props"
-            :active="settingsType === modelValue"
-            @click="onSelectType(settingsType as UserSettingsType)"
-          >
+          <v-list-item :="props" :active="settingsType === modelValue" @click="onSelectType(settingsType)">
             <template #prepend>
-              <v-icon :icon />
+              <v-icon :icon="UserSettingsListItemMap[settingsType].icon" />
             </template>
             <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
           </v-list-item>
         </template>
         <StyledSlideIndicator v-if="settingsType === modelValue" :active-keys="activeSectionIds" />
         <v-list-item
-          v-for="section of UserSettingsSectionMap[settingsType as UserSettingsType]"
+          v-for="section of UserSettingsSectionMap[settingsType]"
           :key="section"
           :active="activeSectionIds.includes(section)"
           :data-slide-indicator-key="section"

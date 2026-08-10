@@ -15,5 +15,19 @@ const hasInputDevice = computed(() => permissionGranted.value && audioInputs.val
 <template>
   <div mb-3 text-hint>Controls how much sound {{ MESSAGE_DISPLAY_NAME }} transmits from your mic.</div>
   <MessageModelUserSettingsTypeVoiceInputSensitivityThresholdSlider v-if="hasInputDevice" :user-settings />
-  <MessageModelUserSettingsTypeVoiceInputSensitivityNoDeviceWarning v-else @grant="ensurePermissions()" />
+  <v-alert v-else density="compact" type="warning" variant="tonal">
+    You do not have any input devices enabled. You must
+    <span
+      text-info
+      underline
+      cursor-pointer
+      role="button"
+      tabindex="0"
+      @click="ensurePermissions()"
+      @keydown.enter.prevent="ensurePermissions()"
+    >
+      grant {{ MESSAGE_DISPLAY_NAME }} access to your microphone
+    </span>
+    in order to observe input sensitivity.
+  </v-alert>
 </template>

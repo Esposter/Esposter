@@ -9,11 +9,12 @@ import { useMemberStore } from "@/store/message/user/member";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface NotesDialogProps {
+  displayName: string;
   roomId: string;
-  user: Pick<User, "id" | "name">;
+  user: Pick<User, "id">;
 }
 
-const { roomId, user } = defineProps<NotesDialogProps>();
+const { displayName, roomId, user } = defineProps<NotesDialogProps>();
 const { $trpc } = useNuxtApp();
 const rules = useVRules();
 const alertStore = useAlertStore();
@@ -57,7 +58,7 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
 
 <template>
   <StyledFormDialog
-    :card-props="{ prependIcon: 'mdi-note-text-outline', title: `Notes for ${user.name}` }"
+    :card-props="{ prependIcon: 'mdi-note-text-outline', title: `Notes for ${displayName}` }"
     :confirm-button-props="{ disabled: !isNoteValid, text: 'Add note' }"
     @submit="(_event, onComplete) => createNote(onComplete)"
   >

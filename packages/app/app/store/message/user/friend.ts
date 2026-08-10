@@ -16,6 +16,10 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   const storeDeleteFriend = (friendId: User["id"]) => {
     baseStoreDeleteFriend({ id: friendId });
   };
+  // Single source of truth for "is this user already a friend" — every surface offering the add-friend
+  // Affordance asks it, and each one deriving its own predicate is how the profile card and the search
+  // Results end up disagreeing about the same pair
+  const getIsFriend = (userId: User["id"]) => friends.value.some(({ id }) => id === userId);
   const deleteFriend = async (friendId: User["id"]) => {
     await executeMutation(() => $trpc.friend.deleteFriend.mutate(friendId), {
       // The one row this write removes, not a copy of the list: removals are keyed per friend and never queue
@@ -34,6 +38,7 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   return {
     deleteFriend,
     friends,
+    getIsFriend,
     storeCreateFriend,
     storeDeleteFriend,
   };

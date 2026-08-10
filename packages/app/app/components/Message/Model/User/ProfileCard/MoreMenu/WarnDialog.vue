@@ -5,17 +5,18 @@ import { AdminActionListItemPropsMap } from "@/services/message/moderation/Admin
 import { AdminActionType } from "@esposter/db-schema";
 
 interface WarnDialogProps {
-  user: Pick<User, "id" | "name">;
+  displayName: string;
+  user: Pick<User, "id">;
 }
 
-const { user } = defineProps<WarnDialogProps>();
+const { displayName, user } = defineProps<WarnDialogProps>();
 const executeAdminAction = useExecuteAdminAction();
 const reason = ref("");
 </script>
 
 <template>
   <StyledFormDialog
-    :card-props="{ title: `Warn ${user.name}` }"
+    :card-props="{ title: `Warn ${displayName}` }"
     :confirm-button-props="{ color: 'warning', text: 'Warn' }"
     @submit="
       (_event, onComplete) =>

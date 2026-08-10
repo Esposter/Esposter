@@ -23,11 +23,12 @@ useSettingsScrollSpy();
           <StyledTooltipIconButton v-if="smAndDown" icon="mdi-menu" text="Show menu" @click="isDrawerOpen = true" />
           <div font-bold text-headline-medium>{{ settingsType }}</div>
         </div>
-        <v-tooltip text="Close">
-          <template #activator="{ props: tooltipProps }">
-            <v-btn :="tooltipProps" icon="mdi-close" variant="text" @click="isVisible = false" />
-          </template>
-        </v-tooltip>
+        <StyledTooltipIconButton
+          :button-props="{ variant: 'text' }"
+          icon="mdi-close"
+          text="Close"
+          @click="isVisible = false"
+        />
       </v-sheet>
     </template>
     <!-- The scroll area owns its bottom breathing room, so no panel carries a trailing margin of its own -->

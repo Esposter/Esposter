@@ -1,20 +1,35 @@
 <script setup lang="ts">
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+
 interface DevicesProps {
   userSettings: UserSettingsInMessage;
 }
 
 const { userSettings } = defineProps<DevicesProps>();
+const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
+const { cameraDeviceId, inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
+// One enumeration feeds all three pickers — a call per picker re-enumerates the same device list and
+// Registers a devicechange listener of its own for it
+const { audioInputs, audioOutputs, videoInputs } = useDevicesList();
 </script>
 
 <template>
   <v-row>
     <v-col cols="6">
-      <MessageModelUserSettingsTypeVoiceDevicesMicrophoneSelect />
+      <MessageModelUserSettingsTypeVoiceDevicesDeviceSelect
+        v-model="inputDeviceId"
+        :devices="audioInputs"
+        label="Microphone"
+      />
     </v-col>
     <v-col cols="6">
-      <MessageModelUserSettingsTypeVoiceDevicesSpeakerSelect />
+      <MessageModelUserSettingsTypeVoiceDevicesDeviceSelect
+        v-model="outputDeviceId"
+        :devices="audioOutputs"
+        label="Speaker"
+      />
     </v-col>
   </v-row>
   <v-row>
@@ -33,6 +48,11 @@ const { userSettings } = defineProps<DevicesProps>();
       />
     </v-col>
   </v-row>
-  <MessageModelUserSettingsTypeVoiceDevicesCameraSelect mt-2 />
+  <MessageModelUserSettingsTypeVoiceDevicesDeviceSelect
+    v-model="cameraDeviceId"
+    mt-2
+    :devices="videoInputs"
+    label="Camera"
+  />
   <MessageModelUserSettingsTypeVoiceMicTest />
 </template>

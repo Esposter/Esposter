@@ -10,20 +10,19 @@ interface ProfileCardAddFriendButtonProps {
 
 const { user } = defineProps<ProfileCardAddFriendButtonProps>();
 const friendStore = useFriendStore();
-const { friends } = storeToRefs(friendStore);
+const { getIsFriend } = friendStore;
 const friendRequestStore = useFriendRequestStore();
-const { sendFriendRequest } = friendRequestStore;
-const { sentFriendRequests } = storeToRefs(friendRequestStore);
-const isFriend = computed(() => friends.value.some(({ id }) => id === user.id));
-const hasSentRequest = computed(() => sentFriendRequests.value.some(({ receiverId }) => receiverId === user.id));
+const { getHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
+const isAddable = computed(() => !getIsFriend(user.id) && !getHasSentFriendRequest(user.id));
 </script>
 
 <template>
-  <v-tooltip v-if="!isFriend && !hasSentRequest" text="Add Friend">
-    <template #activator="{ props }">
-      <v-avatar color="surface">
-        <v-btn :="props" icon="mdi-account-plus" size="small" @click="sendFriendRequest(user.id)" />
-      </v-avatar>
-    </template>
-  </v-tooltip>
+  <v-avatar v-if="isAddable" color="surface">
+    <StyledTooltipIconButton
+      :button-props="{ size: 'small' }"
+      icon="mdi-account-plus"
+      text="Add Friend"
+      @click="sendFriendRequest(user.id)"
+    />
+  </v-avatar>
 </template>

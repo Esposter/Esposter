@@ -66,6 +66,24 @@ describe(useFriendRequestStore, () => {
     expect(friends.value).toStrictEqual([first]);
   });
 
+  // The predicate hides the add-friend affordance wherever a user is offered, so counting a request the app user
+  // Received as one it sent would hide the button on exactly the person waiting to be added back
+  test("counts only the requests the app user sent", () => {
+    expect.hasAssertions();
+
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
+    const friendRequestStore = useFriendRequestStore();
+    const { friendRequests } = storeToRefs(friendRequestStore);
+    const { getHasSentFriendRequest } = friendRequestStore;
+    friendRequests.value = [
+      firstFriendRequest,
+      { ...firstFriendRequest, receiver: second, receiverId: second.id, sender: appUser, senderId: appUser.id },
+    ];
+
+    expect(getHasSentFriendRequest(second.id)).toBe(true);
+    expect(getHasSentFriendRequest(first.id)).toBe(false);
+  });
+
   test("declines a request without waiting on the session", () => {
     expect.hasAssertions();
 

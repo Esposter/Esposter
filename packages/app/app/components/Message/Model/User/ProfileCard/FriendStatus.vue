@@ -9,14 +9,12 @@ interface ProfileCardFriendStatusProps {
 }
 
 const { user } = defineProps<ProfileCardFriendStatusProps>();
-
 const friendStore = useFriendStore();
-const { friends } = storeToRefs(friendStore);
+const { getIsFriend } = friendStore;
 const friendRequestStore = useFriendRequestStore();
-const { sentFriendRequests } = storeToRefs(friendRequestStore);
-
-const isFriend = computed(() => friends.value.some(({ id }) => id === user.id));
-const hasSentRequest = computed(() => sentFriendRequests.value.some(({ receiverId }) => receiverId === user.id));
+const { getHasSentFriendRequest } = friendRequestStore;
+const isFriend = computed(() => getIsFriend(user.id));
+const hasSentRequest = computed(() => getHasSentFriendRequest(user.id));
 </script>
 
 <template>
