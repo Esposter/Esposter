@@ -32,7 +32,6 @@ const {
   originalItem,
   schema,
 } = defineProps<HeaderProps<T>>();
-const itemType = computed(() => prettify(editedItem.type));
 const errorIcon = useTemplateRef("errorIcon");
 const isValid = computed(() => errorIcon.value?.isValid ?? true);
 const emit = defineEmits<{
@@ -44,7 +43,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <v-toolbar flex-none :title="`Configuration - ${itemType}`">
+  <v-toolbar flex-none :title="`Configuration - ${prettify(editedItem.type)}`">
     <v-spacer />
     <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value="editedItem" />
     <slot name="prepend-actions" />

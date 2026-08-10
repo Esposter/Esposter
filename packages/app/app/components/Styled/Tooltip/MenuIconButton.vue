@@ -12,7 +12,7 @@ interface StyledTooltipMenuIconButtonProps {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { buttonProps, icon, menuProps, text, tooltipProps } = defineProps<StyledTooltipMenuIconButtonProps>();
+const { buttonProps = {}, icon, menuProps, text, tooltipProps } = defineProps<StyledTooltipMenuIconButtonProps>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
 const isOpen = defineModel<boolean>({ default: false });
 </script>
@@ -24,7 +24,7 @@ const isOpen = defineModel<boolean>({ default: false });
         <template #activator="{ props: tooltipActivatorProps }">
           <v-btn
             :icon
-            :="mergeProps(menuActivatorProps, tooltipActivatorProps, buttonProps ?? {})"
+            :="mergeProps(menuActivatorProps, tooltipActivatorProps, buttonProps)"
             @click="emit('click', $event)"
           />
         </template>

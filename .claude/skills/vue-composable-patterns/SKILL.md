@@ -19,6 +19,7 @@ description: Esposter Vue 3 composable patterns — no pass-through composables 
 - **Single-function composables return the function directly** — `return async (...) => { ... }`. Callers use `const fn = useX()` not `const { fn } = useX()`.
 - **`Promise.resolve(value)` for sync-to-async** — when a sync expression must satisfy a `Promise<T>` return type, never `async () => value`.
 - **Don't annotate composable return types** — let TypeScript infer. Only annotate if inference fails or a contract must be enforced.
+- **Call a composable at setup, never inside a callback.** A composable invoked from a `watch` handler, an event handler or a `.then` runs outside the component's effect scope, so its `tryOnScopeDispose` cleanup never registers — the timer, listener or observer outlives unmount and fires into a destroyed component, and a fresh one leaks on every invocation. Instantiate once at setup with the composable's own defer option (`useTimeoutFn(fn, ms, { immediate: false })`) and call the returned `start`/`resume` from the callback.
 
 ## MaybeRefOrGetter vs Function Argument
 

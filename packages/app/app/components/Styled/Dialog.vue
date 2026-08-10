@@ -17,9 +17,9 @@ interface StyledDialogProps {
 }
 
 defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps) => VNode;
-  default: () => VNode;
-  "prepend-actions": () => VNode;
+  activator?: (props: StyledDialogActivatorSlotProps) => VNode;
+  default?: () => VNode;
+  "prepend-actions"?: () => VNode;
 }>();
 const modelValue = defineModel<boolean>({ default: false });
 const {
@@ -30,6 +30,10 @@ const {
 } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const isFullScreen = ref(false);
+const mergedConfirmButtonProps = computed(() => mergeProps(confirmButtonProps, confirmButtonAttrs));
+const confirm = () => {
+  emit("confirm", () => (modelValue.value = false));
+};
 </script>
 
 <template>
@@ -62,15 +66,10 @@ const isFullScreen = ref(false);
           v-if="confirmButtonProps.color"
           text-3
           variant="outlined"
-          :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
-          @click="emit('confirm', () => (modelValue = false))"
+          :="mergedConfirmButtonProps"
+          @click="confirm"
         />
-        <StyledButton
-          v-else
-          text-3
-          :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
-          @click="emit('confirm', () => (modelValue = false))"
-        />
+        <StyledButton v-else text-3 :="mergedConfirmButtonProps" @click="confirm" />
       </v-card-actions>
     </StyledCard>
   </v-dialog>

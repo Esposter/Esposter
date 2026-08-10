@@ -20,17 +20,7 @@ const isOpen = defineModel<boolean>({ required: true });
 <template>
   <v-slide-x-transition>
     <v-sheet v-if="isOpen" elevation="16" inset-y-0 left-0 absolute z-2 overflow-y-auto :width="LEFT_DRAWER_WIDTH">
-      <v-list nav>
-        <v-list-item
-          v-for="item in items"
-          :key="item.to"
-          :active="item.isActive"
-          :prepend-icon="item.icon"
-          :title="item.title"
-          :to="item.to"
-          @click="isOpen = false"
-        />
-      </v-list>
+      <StyledNavList :items @select="isOpen = false" />
     </v-sheet>
   </v-slide-x-transition>
 </template>

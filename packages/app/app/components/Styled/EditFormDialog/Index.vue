@@ -16,7 +16,7 @@ interface EditFormDialogProps<T> {
   schema: z.ZodType;
 }
 
-const slots = defineSlots<{ default: () => VNode; "prepend-actions": () => VNode; "prepend-form": () => VNode }>();
+defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-form"?: () => VNode }>();
 const dialog = defineModel<boolean>({ required: true });
 const { editedItem, isDirty, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
   defineProps<EditFormDialogProps<T>>();
@@ -30,13 +30,20 @@ const emit = defineEmits<{
 const editForm = ref<InstanceType<typeof VForm>>();
 const confirmCloseDialog = ref(false);
 const formId = useId();
+// Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the
+// Component's effect scope, so its timer outlives unmount and emits into a destroyed component
+const { start: startClose } = useTimeoutFn(
+  () => {
+    emit("close");
+  },
+  dayjs.duration(0.3, "seconds").asMilliseconds(),
+  { immediate: false },
+);
 useConfirmBeforeNavigation(() => isDirty);
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;
-  useTimeoutFn(() => {
-    emit("close");
-  }, dayjs.duration(0.3, "seconds").asMilliseconds());
+  startClose();
 });
 
 watch(editForm, (newEditForm) => {

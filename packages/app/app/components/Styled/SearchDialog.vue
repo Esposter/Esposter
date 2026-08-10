@@ -3,9 +3,8 @@ import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.
 
 export interface StyledSearchDialogProps {
   // Registered with useVHotkey to toggle the dialog, e.g. "ctrl+k"
-  hotkey?: string;
+  hotkey: string;
   placeholder: string;
-  width?: number | string;
 }
 
 defineSlots<{
@@ -14,17 +13,16 @@ defineSlots<{
 }>();
 const isOpen = defineModel<boolean>({ default: false });
 const searchQuery = defineModel<string>("searchQuery", { required: true });
-const { hotkey = "", placeholder, width = 600 } = defineProps<StyledSearchDialogProps>();
+const { hotkey, placeholder } = defineProps<StyledSearchDialogProps>();
 
-if (hotkey)
-  useVHotkey(hotkey, () => {
-    isOpen.value = !isOpen.value;
-  });
+useVHotkey(hotkey, () => {
+  isOpen.value = !isOpen.value;
+});
 </script>
 
 <template>
   <slot name="activator" :is-open :update-is-open="(value) => (isOpen = value)" />
-  <v-dialog v-model="isOpen" :width>
+  <v-dialog v-model="isOpen" width="600">
     <v-card>
       <v-text-field
         v-model="searchQuery"

@@ -5,14 +5,15 @@ interface StyledClipboardIconButtonProps {
 }
 
 const { source, text } = defineProps<StyledClipboardIconButtonProps>();
-const { copied, copy } = useClipboard({ source });
+const { copied, copy } = useClipboard();
 </script>
 
 <template>
-  <v-tooltip :text="text ?? 'Copy'">
-    <template #activator="{ props }">
-      <v-btn :="props" icon="mdi-clipboard" size="small" @click="copy(source)" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ size: 'small' }"
+    icon="mdi-clipboard"
+    :text="text ?? 'Copy'"
+    @click="copy(source)"
+  />
   <StyledClipboardSnackbar v-model="copied" :source />
 </template>

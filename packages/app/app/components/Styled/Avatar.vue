@@ -12,11 +12,12 @@ interface StyledAvatarProps {
 }
 
 const { avatarAttrs = {}, avatarProps = {}, image, name } = defineProps<StyledAvatarProps>();
+const mergedAvatarProps = computed(() => mergeProps(avatarAttrs, avatarProps));
 </script>
 
 <template>
-  <v-avatar v-if="image" :="mergeProps(avatarAttrs, avatarProps)">
+  <v-avatar v-if="image" :="mergedAvatarProps">
     <v-img :src="image" :alt="name" />
   </v-avatar>
-  <StyledDefaultAvatar v-else :="mergeProps(avatarAttrs, avatarProps)" />
+  <StyledDefaultAvatar v-else :="mergedAvatarProps" />
 </template>

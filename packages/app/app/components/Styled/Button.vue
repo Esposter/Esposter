@@ -5,12 +5,14 @@ interface StyledButtonProps {
   buttonProps?: VBtn["$props"];
 }
 
+const BUTTON_STYLE = { backgroundImage: "var(--midnight-bloom)" };
+
 const slots = defineSlots<Record<keyof VBtn["$slots"], () => VNode>>();
 const { buttonProps } = defineProps<StyledButtonProps>();
 </script>
 
 <template>
-  <v-btn :style="{ backgroundImage: 'var(--midnight-bloom)' }" color-white :="buttonProps">
+  <v-btn :style="BUTTON_STYLE" color-white :="buttonProps">
     <template v-for="(_slot, name) of slots" #[name]>
       <slot :name />
     </template>

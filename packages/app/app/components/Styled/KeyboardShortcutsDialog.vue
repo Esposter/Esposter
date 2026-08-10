@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { KeyboardShortcutCategory } from "@/models/shared/KeyboardShortcutCategory";
+import type { VBtn } from "vuetify/components";
+
+const CLOSE_BUTTON_PROPS: VBtn["$props"] = { size: "small", variant: "text" };
 
 interface StyledKeyboardShortcutsDialogProps {
   list: readonly KeyboardShortcutCategory[];
@@ -17,7 +20,7 @@ const { list } = defineProps<StyledKeyboardShortcutsDialogProps>();
         Keyboard Shortcuts
         <v-spacer />
         <StyledTooltipIconButton
-          :button-props="{ size: 'small', variant: 'text' }"
+          :button-props="CLOSE_BUTTON_PROPS"
           icon="mdi-close"
           text="Close"
           @click="modelValue = false"

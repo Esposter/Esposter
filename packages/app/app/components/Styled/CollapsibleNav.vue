@@ -35,16 +35,7 @@ const activeItem = computed(() => items.find(({ isActive }) => isActive) ?? take
         </v-list-item>
       </v-list>
     </template>
-    <v-list nav>
-      <v-list-item
-        v-for="item in items"
-        :key="item.to"
-        :active="item.isActive"
-        :prepend-icon="item.icon"
-        :title="item.title"
-        :to="item.to"
-      />
-    </v-list>
+    <StyledNavList :items />
   </v-menu>
   <div v-else-if="isCollapsed" px-1 pt-2>
     <StyledTooltipIconButton icon="mdi-chevron-double-right" :text="showText" @click="isCollapsed = false" />
@@ -54,15 +45,6 @@ const activeItem = computed(() => items.find(({ isActive }) => isActive) ?? take
     <div px-1 pt-2 flex justify-end>
       <StyledTooltipIconButton icon="mdi-chevron-double-left" :text="hideText" @click="isCollapsed = true" />
     </div>
-    <v-list nav>
-      <v-list-item
-        v-for="item in items"
-        :key="item.to"
-        :active="item.isActive"
-        :prepend-icon="item.icon"
-        :title="item.title"
-        :to="item.to"
-      />
-    </v-list>
+    <StyledNavList :items />
   </div>
 </template>

@@ -15,7 +15,7 @@ const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore
 <template>
   <v-data-table :="dataTableProps">
     <template v-for="(_slot, name) of slots" #[name]="scope">
-      <slot :name :="{ ...scope }" />
+      <slot :name :="scope" />
     </template>
   </v-data-table>
 </template>

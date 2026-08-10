@@ -11,28 +11,23 @@ import "@fullcalendar/vue3/skeleton.css";
 import "@fullcalendar/vue3/themes/monarch/palettes/green.css";
 import "@fullcalendar/vue3/themes/monarch/theme.css";
 
+const CALENDAR_OPTIONS = {
+  editable: true,
+  footerToolbar: { right: "dayGridMonth,timeGridWeek,timeGridDay" },
+  headerToolbar: { left: "title", right: "prevYear,prev,next,nextYear today" },
+  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, monarchThemePlugin],
+} satisfies CalendarOptions;
+
 interface StyledCalendarProps {
   calendarOptions?: CalendarOptions;
 }
 
 const { calendarOptions } = defineProps<StyledCalendarProps>();
+const options = computed<CalendarOptions>(() => ({ ...calendarOptions, ...CALENDAR_OPTIONS }));
 </script>
 
 <template>
-  <FullCalendar
-    :options="{
-      ...calendarOptions,
-      plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, monarchThemePlugin],
-      headerToolbar: {
-        left: 'title',
-        right: 'prevYear,prev,next,nextYear today',
-      },
-      footerToolbar: {
-        right: 'dayGridMonth,timeGridWeek,timeGridDay',
-      },
-      editable: true,
-    }"
-  >
+  <FullCalendar :options>
     <template #eventContent="{ event, timeText }">
       <v-tooltip>
         <template #activator="{ props }">

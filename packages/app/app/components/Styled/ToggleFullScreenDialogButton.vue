@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface ToggleFullScreenDialogButtonProps {
+interface StyledToggleFullScreenDialogButtonProps {
   isFullScreenDialog: boolean;
 }
 
-const { isFullScreenDialog } = defineProps<ToggleFullScreenDialogButtonProps>();
+const { isFullScreenDialog } = defineProps<StyledToggleFullScreenDialogButtonProps>();
 const emit = defineEmits<{ click: [value: boolean] }>();
 </script>
 
