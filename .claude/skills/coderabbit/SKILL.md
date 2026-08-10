@@ -1,6 +1,6 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review with the wait decided by the check's bucket rather than its state string (unknown means wait), the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, nitpicks live in the review body rather than inline comments, the three gates that decide a push (nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, the coderabbitai[bot] login and reconciling against the stated counts (inline comments can fail to post outright), replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review with the wait decided by the check's bucket rather than its state string (unknown means wait), the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, a window being a prefix of the unpushed range so a later-authored fix is prepended rather than left at the tip, nitpicks live in the review body rather than inline comments, the three gates that decide a push (nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, the coderabbitai[bot] login and reconciling against the stated counts (inline comments can fail to post outright), replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when choosing which commits a push should carry, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
 ---
 
 # CodeRabbit Conventions
@@ -127,6 +127,27 @@ A review takes an hour of wall-clock the working tree has no reason to spend idl
 5. Repeat. Each cycle reviews the fix commits plus one fresh chunk, so review effort tracks the work instead of gating it.
 
 The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's fixes plus the queued chunk exceed the budget, push the fixes with only part of the queue and hold the rest — never split a fix away from the finding it answers.
+
+### Composing the window
+
+A window is a **prefix of the unpushed range**, so what rides in it is decided by commit order, not by authoring order. Push a prefix and hold the rest by naming the cut sha:
+
+```bash
+git push origin <cut-sha>:<branch>      # everything after <cut-sha> stays local
+```
+
+That makes commit order load-bearing: work authored last but wanted first — review fixes, a config change, anything gating the next cycle — is **prepended to the unpushed range** rather than left at the tip, where it would wait a whole cycle behind the queued chunk. Reordering unpushed commits is free; they exist nowhere else:
+
+```bash
+FIX=$(git rev-parse <fix-sha>)
+OLD=$(git rev-parse HEAD)
+git reset --hard origin/<branch>        # the reviewed frontier
+git cherry-pick "$FIX"                  # the fix goes first
+git cherry-pick "origin/<branch>..$FIX^"  # the work it was authored on top of
+git cherry-pick "$FIX..$OLD"            # anything after it
+```
+
+Only when the fix is **independent of the commits it jumps**. One that edits a file a jumped commit rewrote conflicts on replay, and resolving it means rewriting the fix against the older text — there it belongs where it was authored. Cherry-pick cannot replay a merge commit either: drop the merge from the range and redo it at the end.
 
 **The cap is a hard gate on the push itself, not a target to recover from afterwards.** Measure before every push and hold the overflow locally; a push that overshoots is not a setback that costs one review cycle, it is one that can cost every cycle after it. The only way to shrink an over-budget branch is to rewind it, and a force-push desynchronises CodeRabbit's incremental checkpoint from the branch: after a rewind it can measure the next window from a sha whose files it has already reviewed, inflating the count well past the local one, and every later push inherits that baseline. Keeping each push under the cap is therefore the whole discipline: it is what makes the checkpoint advance cleanly and keeps the branch recoverable.
 
