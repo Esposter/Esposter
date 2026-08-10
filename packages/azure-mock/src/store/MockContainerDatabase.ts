@@ -8,6 +8,5 @@ class MockContainerDatabaseMap extends Map<string, Map<string, Buffer>> {
     MockContainerCreatedOnDatabase.clear();
   }
 }
-
 // Map<container, Map<name, blob>>
 export const MockContainerDatabase: Map<string, Map<string, Buffer>> = new MockContainerDatabaseMap();

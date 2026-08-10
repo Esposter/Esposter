@@ -124,7 +124,6 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   setAccessPolicy(): Promise<TableSetAccessPolicyHeaders> {
     throw new Error("Method not implemented.");
   }
-
   // The service applies a transaction atomically, so the actions land through the synchronous appliers rather
   // Than the promise-returning methods: awaiting between two actions would let a concurrent caller interleave
   // Its own writes, and the rollback below would then restore a snapshot predating them — silently dropping
@@ -223,7 +222,6 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   #getCompositeKey(partitionKey: string, rowKey: string): string {
     return `${partitionKey}${ID_SEPARATOR}${rowKey}`;
   }
-
   // Random rather than timestamped: two writes can land within one clock tick, and equal etags across
   // Versions would make a stale conditional update falsely match
   #getEtag(): string {

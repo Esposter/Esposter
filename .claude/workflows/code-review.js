@@ -1280,8 +1280,8 @@ const seamsWithoutBoundary = () =>
   );
 // The safety net, seam mode only. A seam split is the Scope agent's guess, and a wrong guess leaves territory
 // With no reader and no trace of that in the output. One finder over the whole territory makes an unassigned
-// Subsystem still reachable, and restores some of the independent-confirmation signal the lens finders used to
-// Give by converging. Built lazily, like AREA_LENS_FINDERS: its preamble interpolates the seam names, which are
+// Subsystem still reachable, and recovers some of the independent-confirmation signal lens finders give by
+// Converging. Built lazily, like AREA_LENS_FINDERS: its preamble interpolates the seam names, which are
 // Empty on a lens-mode run.
 const WHOLE_TERRITORY_FINDER = () => ({
   label: IS_AREA ? "whole-area" : "whole-diff",

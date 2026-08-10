@@ -9,7 +9,6 @@ import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
 const eventSubscriptionName = "dev-evgs-esposter-ae-007";
-
 // Storage reports how many bytes actually landed, which is the only authority on it — the client PUTs straight
 // To Azure, so nothing of ours is in the data path. This is what settles a storage quota hold into a real
 // Charge against a user's allowance (/docs/platform/storage-quotas).

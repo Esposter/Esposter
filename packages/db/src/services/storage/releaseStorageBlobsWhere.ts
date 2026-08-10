@@ -25,13 +25,11 @@ export const releaseStorageBlobsWhere = (
       .where(where)
       .returning({ countedBytes: storageBlobs.countedBytes, userId: storageBlobs.userId });
     if (releasedStorageBlobs.length === 0) return;
-
     // One statement per owner rather than per blob: a prefix release covers a whole directory, and a
     // Deletion event carries hundreds of names, so decrementing row by row is that many round trips
     const releasedBytesMap = new Map<string, number>();
     for (const { countedBytes, userId } of releasedStorageBlobs)
       releasedBytesMap.set(userId, (releasedBytesMap.get(userId) ?? 0) + countedBytes);
-
     // Sorted because `DELETE ... RETURNING` fixes no row order: two releases over an overlapping set of owners
     // Would otherwise take their `users` locks in opposite orders and deadlock
     for (const [userId, releasedBytes] of [...releasedBytesMap].toSorted(([a], [b]) => a.localeCompare(b)))

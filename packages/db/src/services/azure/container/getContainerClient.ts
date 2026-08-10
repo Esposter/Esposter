@@ -14,7 +14,6 @@ const provisionContainerClient = async (connectionString: string, azureContainer
   await syncProperties(containerClient, containerCreateOptions);
   return containerClient;
 };
-
 // Provisioning is one-time setup for a fixed resource, but every storage-touching request pays for it: a
 // Container create plus an access-policy read before the operation the caller actually wanted. On the asset
 // Endpoint that is once per embedded image, so a published page with dozens of assets issues dozens of each

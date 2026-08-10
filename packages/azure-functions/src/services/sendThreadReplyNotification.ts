@@ -22,7 +22,6 @@ export const sendThreadReplyNotification = async (
     url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, threadRootRowKey)}`,
   });
   if (!payload) return;
-
   // Recompute the generic message push recipients so thread followers already reached by ProcessPushNotification
   // Are excluded here — otherwise a follower with room NotificationType.All would get two pushes for one reply.
   const messagePushSubscriptions = await getPushSubscriptionsForMessage(db, { message, partitionKey, userId });

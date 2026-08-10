@@ -58,7 +58,6 @@ export class Builder {
 
     return element;
   }
-
   // A string second argument to `ele` is xmlbuilder2's namespace overload, not the element's text, so scalars are
   // Written onto the element the caller already created.
   #renderText(element: XMLBuilder, text: unknown): XMLBuilder {

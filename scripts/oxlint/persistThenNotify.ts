@@ -9,7 +9,6 @@ import { definePlugin, defineRule } from "@oxlint/plugins";
 //
 // Scoped to packages/app/server in the root .oxlintrc.json: only there does an emitter carry the
 // Persist-then-notify meaning. Client emitters (e.g. the Phaser game bus) are a different concept.
-
 // Calls that never reject: the neverthrow wrappers, plus helpers that wrap their own effect
 // Best-effort internally (so awaiting them never rejects). `withFinalizer`/`withFinalizerAsync` are deliberately
 // NOT here — both unwrap the original result and rethrow on Err (see error-handling/SKILL.md, Finalizers), so
@@ -153,7 +152,6 @@ const isSafeAwait = (argument: ESTree.Expression): boolean => {
   }
   return false;
 };
-
 // The name a function is bound to, when it is bound to one rather than passed straight to a call: a closure holding
 // An emit notifies nothing until that name is invoked, so the name is what carries the notify forward.
 const getBoundFunctionName = (node: ESTree.Node): string | undefined => {
@@ -240,7 +238,6 @@ const rule = defineRule({
           armStart = parent.start;
           continue;
         }
-
         // Marked on the binding itself, by identity — the name is only how a later call finds its way back here
         const notifyingBinding = functionBindings.find(({ node }) => node === frame.node);
         if (notifyingBinding) notifyingBinding.isNotifying = true;

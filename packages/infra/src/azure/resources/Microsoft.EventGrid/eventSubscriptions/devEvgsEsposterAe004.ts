@@ -12,7 +12,6 @@ import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
 const eventSubscriptionName = "dev-evgs-esposter-ae-004";
-
 // Carries no deadLetterDestination on purpose: dead-lettering the replay subscription would write a new
 // Blob into the very container it watches, and the replay would drive itself in a loop.
 export const devEvgsEsposterAe004: azure_native.eventgrid.SystemTopicEventSubscription =

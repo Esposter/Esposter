@@ -50,7 +50,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       await enqueueScheduledMessageJob(getServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
       return;
     }
-
     // Parsed BEFORE the claim, and it is the last thing that may fail before it: a payload the current schema
     // Rejects (a shape an older deploy wrote, column drift) throws here while the row is still untouched, so the
     // Redelivery finds it claimable. Parsed after the claim, that same throw strands the job — the claim is
@@ -143,7 +142,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         partitionKey: newMessage.partitionKey,
         rowKey: newMessage.rowKey,
       });
-
       // Best-effort after the message write ([persist then notify](/docs/architecture/persist-then-notify)). A
       // Rethrow here cannot retry these steps anyway — the claim above is single-shot, so the redelivery it asks
       // For is skipped — it would only leave the job stuck mid-delivery with `completedAt` never stamped
@@ -161,7 +159,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
               title: userToRoom.nickname || userToRoom.user.name,
             }),
           );
-
         // A room-list sort order, not a guard input — so unlike the slowmode clock above this one stays here,
         // Where a failure leaves the room list one send behind until the next one lands
         await db

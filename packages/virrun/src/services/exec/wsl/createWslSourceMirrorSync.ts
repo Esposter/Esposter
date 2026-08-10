@@ -45,12 +45,12 @@ const getHasBareNameExcludeChange = (previous: readonly string[], current: reado
 //   The walk runs unconditionally and synchronously by design: it IS the change detector (the skip decision needs the
 //   Current side of the diff, and every sync path publishes that same manifest), and virrun is a one-shot CLI whose
 //   Event loop has nothing else to run during planning — off-threading it would add IPC without cutting wall time.
-//   Measured sub-second warm on NTFS vs the >10s 9p stat-walk it replaced.
+//   Sub-second warm on NTFS, against a 9p stat-walk an order of magnitude slower.
 // - A delta stages pid-tagged temps in the entry dir (over the UNC): the next manifest, the null-delimited delete
 //   List, and a tar archive of the copied paths built host-side (createSourceMirrorArchive — native NTFS reads, one
 //   Sequential 9p write). The script applies them under the mirror lock: `xargs -0 rm -rf` for removals, then a local
 //   Ext4 `tar -x` into `tree/` — no source file ever crosses v9fs individually. `chmod -R 777` after the extract
-//   Restores the drvfs-parity modes the old rsync propagated (bsdtar records NTFS entries mode-less as 644/755, which
+//   Restores the drvfs-parity modes the sandbox expects (bsdtar records NTFS entries mode-less as 644/755, which
 //   Would strip the exec bits repo scripts rely on inside the sandbox). Symlinks ship preserved (their relative
 //   Targets are mirrored too, so they resolve at extract) and a path the archive couldn't capture — Windows-locked, or
 //   Vanished since the walk — is skipped and pruned from the published manifest rather than fatal
@@ -59,8 +59,8 @@ const getHasBareNameExcludeChange = (previous: readonly string[], current: reado
 //   Different exclude set than the one in force now materializes from scratch: the
 //   Archive carries the whole manifest file set and the script clears `tree/` before extracting, which also
 //   Self-heals any mirror-vs-manifest drift — including the copies a since-added exclude orphaned, which no delta
-//   Could ever delete; the fresh manifest is published either way. The old whole-tree
-//   `rsync -a --delete` here read every source file across v9fs — a cold materialize could blow past the 5-minute
+//   Could ever delete; the fresh manifest is published either way. A whole-tree
+//   `rsync -a --delete` here would read every source file across v9fs, so a cold materialize could blow past the
 //   Timeout; the archive does it in seconds.
 //
 // The publish is the last step inside the flock, via atomic `mv` of the staged temps, so the manifest never claims a

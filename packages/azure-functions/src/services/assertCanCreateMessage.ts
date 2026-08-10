@@ -24,7 +24,6 @@ export const assertCanCreateMessage = async (
     roomId,
   );
   if (rejection.type !== MessageCreationRejectionType.WordFilter) throw invalidOperationError;
-
   // A scheduled send that trips the filter carries the same consequence a live one does — the configured
   // Warn/Timeout is applied and audited here, since this is where the message is rejected.
   await executeAutomodAction(
