@@ -550,8 +550,8 @@ catalogs:
       specifier: ^11.2.0
       version: 11.2.0
     read-excel-file:
-      specifier: ^9.3.9
-      version: 9.3.9
+      specifier: ^9.3.10
+      version: 9.3.10
     rolldown:
       specifier: ^1.2.3
       version: 1.2.3
@@ -1087,7 +1087,7 @@ importers:
         version: 11.2.0
       read-excel-file:
         specifier: 'catalog:'
-        version: 9.3.9
+        version: 9.3.10
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12740,8 +12740,8 @@ packages:
     resolution: {integrity: sha512-1zM5HuOfagXCBWMN83fuFI/x+T/UhZ7k+KIzhrHXcQoeX5+7gmaDYjELQHmmzIodumBHeByBJT4QYS7ufAgs7A==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  read-excel-file@9.3.9:
-    resolution: {integrity: sha512-b4bB8rnZg0g+UI4xR8Ntr84UGKfMOEpT66tX2XMsMloWMCB/jVBsH7EquLG/1c+TuC8+1BuIiFJJghTCLLjZdA==}
+  read-excel-file@9.3.10:
+    resolution: {integrity: sha512-zFcBdzunLCGBmLRT4Q3mLPJnhKPAXXfGAZ83feODlEqX2aRUbgF1h/n2oY0UF7I8tVwnJNRas6fTRD5veDUs+g==}
     engines: {node: '>=18'}
 
   readable-stream@2.3.8:
@@ -27967,7 +27967,7 @@ snapshots:
 
   read-cmd-shim@6.0.0: {}
 
-  read-excel-file@9.3.9:
+  read-excel-file@9.3.10:
     dependencies:
       fflate: 0.8.3
       saxen: 11.1.1
