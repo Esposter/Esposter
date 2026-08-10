@@ -94,15 +94,7 @@ This matters because the budget is measured **from that sha, not from the last p
 
 **A rate-limited status does not prove the frontier stalled.** CodeRabbit advances its incremental checkpoint over commits it never posted a review body for: the commit status still reads `Review rate limited`, no range names them, and they count as reviewed anyway. Reading that as an unreviewed window inflates the next backlog by everything it silently covered and stalls pushes to protect a review that is never going to run. The reviewed range is evidence the checkpoint moved, never evidence it did not.
 
-The probe that answers it is the retrigger itself — `@coderabbitai review` replies `Already reviewed` when the checkpoint already covers the head, and starts a review when it does not:
-
-```bash
-gh pr comment <pr> --body "@coderabbitai review"
-gh api "repos/:owner/:repo/issues/<pr>/comments?per_page=100" --paginate \
-  --jq '[.[] | select(.user.login=="coderabbitai[bot]")] | last | .body' | head -20
-```
-
-A decline costs nothing, which makes this cheaper than waiting out an hour on an inferred backlog.
+The probe that answers it is the retrigger itself — `@coderabbitai review` replies `Already reviewed` when the checkpoint already covers the head, and starts a review when it does not. Read **the reply to the probe**, never whichever bot comment happens to be newest: the answer does not exist at the moment the probe is posted, so a read that races it returns the comment from before and reads exactly like an answer (`references/review-feedback.md` for the call). A decline costs nothing, which makes this cheaper than waiting out an hour on an inferred backlog.
 
 **This table says when a push is _safe_, never when it is _authorised_.** The standing rule is unchanged and overrides everything here: commit the coherent change and **never push unless the user asks** — that covers rate-limited pushes, recovery pushes and force-pushes alike. Read the table only once you already have the ask, to decide whether this is the moment.
 
@@ -152,11 +144,15 @@ That makes commit order load-bearing: work authored last but wanted first — re
 
 ```bash
 FIX=$(git rev-parse <fix-sha>)
-OLD=$(git rev-parse HEAD)
-git reset --hard origin/<branch>        # the reviewed frontier
-git cherry-pick "$FIX"                  # the fix goes first
-git cherry-pick "origin/<branch>..$FIX^"  # the work it was authored on top of
-git cherry-pick "$FIX..$OLD"            # anything after it
+OLD=$(git rev-parse HEAD)                 # the old tip, so the reset below is recoverable
+test -z "$(git status --porcelain -uall)" || exit 1   # a dirty tree loses work the reset cannot restore
+git reset --hard origin/<branch>          # the reviewed frontier
+# cherry-pick errors on an empty commit set rather than skipping it, and either range is empty when
+# The fix was authored first or last — which is the common case — so each is counted before it replays.
+pick() { test -z "$(git rev-list "$1")" || git cherry-pick "$1"; }
+git cherry-pick "$FIX"                    # the fix goes first
+pick "origin/<branch>..$FIX^"             # the work it was authored on top of
+pick "$FIX..$OLD"                         # anything after it
 ```
 
 Only when the fix is **independent of the commits it jumps**. One that edits a file a jumped commit rewrote conflicts on replay, and resolving it means rewriting the fix against the older text — there it belongs where it was authored. Cherry-pick cannot replay a merge commit either: drop the merge from the range and redo it at the end.

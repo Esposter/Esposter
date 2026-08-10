@@ -32,6 +32,27 @@ The walkthrough issue-comment is **edited in place** across reviews, so its `cre
 
 `--slurp` emits an **array of pages**, hence the `.flat()`. It cannot be combined with `--jq` or `--template` (gh rejects the pair), so the aggregation runs in a second process — `node -e`, not `jq`, because the repo's toolchain guarantees node and this machine has no standalone `jq` on `PATH`.
 
+## Probing whether the checkpoint covers the head
+
+Posting `@coderabbitai review` and reading straight back races the bot: the reply does not exist yet, so the read returns the previous bot comment — which is a real CodeRabbit remark and reads exactly like an answer. Wait for the newest bot comment to _change_, then read that one.
+
+```bash
+crLatest() {  # the bot's newest issue comment: "<id> <first line>"
+  gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate --slurp |
+    node -e 'const [comment] = JSON.parse(require("fs").readFileSync(0, "utf8")).flat()
+      .filter(({ user }) => user.login === "coderabbitai[bot]")
+      .sort((a, b) => b.id - a.id);
+      console.log(comment ? `${comment.id} ${comment.body.split("\n")[0]}` : "0 none");'
+}
+
+before=$(crLatest)
+gh pr comment <pr> --body "@coderabbitai review"
+until [ "$(crLatest)" != "$before" ]; do sleep 10; done
+crLatest   # "Already reviewed" -> the checkpoint already covers the head
+```
+
+Comparing the whole `"<id> <first line>"` line rather than the id alone also catches the walkthrough being **edited in place** into the answer. The `--slurp`-then-`node` aggregation is required for the same reason as above: a `last` inside `--jq` would describe one page.
+
 ## Replying to a review comment
 
 ```bash
