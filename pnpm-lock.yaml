@@ -550,7 +550,7 @@ catalogs:
       specifier: ^11.2.0
       version: 11.2.0
     read-excel-file:
-      specifier: ^9.3.8
+      specifier: ^9.3.9
       version: 9.3.9
     rolldown:
       specifier: ^1.2.3
