@@ -32,8 +32,8 @@ import type { Except } from "type-fest";
 import { MOCK_QUEUE_BASE_URL } from "@/constants";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
+import { getMockQueueMessageItem } from "@/services/queue/getMockQueueMessageItem";
 import { MockQueueDatabase } from "@/store/MockQueueDatabase";
-import { MAX_QUEUE_VISIBILITY_TIMEOUT_MS } from "@esposter/db";
 import { getOrCreate } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure QueueClient.
@@ -123,10 +123,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   peekMessages(_options?: QueuePeekMessagesOptions): Promise<QueuePeekMessagesResponse> {
     const peekedMessageItems: PeekedMessageItem[] = this.queue.map((text) => ({
       dequeueCount: 0,
-      expiresOn: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS),
-      insertedOn: new Date(),
-      messageId: crypto.randomUUID(),
-      messageText: text,
+      ...getMockQueueMessageItem(text),
     }));
     return Promise.resolve({
       _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: peekedMessageItems },
@@ -137,10 +134,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   receiveMessages(_options?: QueueReceiveMessageOptions): Promise<QueueReceiveMessageResponse> {
     const receivedMessageItems: DequeuedMessageItem[] = this.queue.splice(0).map((text) => ({
       dequeueCount: 1,
-      expiresOn: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS),
-      insertedOn: new Date(),
-      messageId: crypto.randomUUID(),
-      messageText: text,
+      ...getMockQueueMessageItem(text),
       nextVisibleOn: new Date(),
       popReceipt: crypto.randomUUID(),
     }));
@@ -152,11 +146,8 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
 
   sendMessage(messageText: string, _options?: QueueSendMessageOptions): Promise<QueueSendMessageResponse> {
     this.queue.push(messageText);
-    const now = new Date();
-    const expiresOn = new Date(now.getTime() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS);
-    const insertedOn = now;
-    const messageId = crypto.randomUUID();
-    const nextVisibleOn = now;
+    const { expiresOn, insertedOn, messageId } = getMockQueueMessageItem(messageText);
+    const nextVisibleOn = insertedOn;
     const popReceipt = crypto.randomUUID();
     const enqueuedMessages: EnqueuedMessage[] = [
       {

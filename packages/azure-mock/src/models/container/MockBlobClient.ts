@@ -29,15 +29,17 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
+import { BLOB_NOT_FOUND_MESSAGE } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { getBlobUrl } from "@/services/container/getBlobUrl";
 import { getBlobUrlParts } from "@/services/container/getBlobUrlParts";
+import { getMockContainer } from "@/services/container/getMockContainer";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
 import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
-import { getOrCreate, noop } from "@esposter/shared";
+import { noop } from "@esposter/shared";
 import { Readable } from "node:stream";
 
 export class MockBlobClient implements Except<BlobClient, "accountName"> {
@@ -48,7 +50,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   url: string;
 
   get container(): MapValue<typeof MockContainerDatabase> {
-    return getOrCreate(MockContainerDatabase, this.containerName, () => new Map());
+    return getMockContainer(this.containerName);
   }
 
   constructor(connectionString: string, containerName: string, blobName: string) {
@@ -98,7 +100,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   delete(): Promise<BlobDeleteResponse> {
-    if (!this.container.has(this.name)) throw new MockRestError("The specified blob does not exist.", 404);
+    if (!this.container.has(this.name)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     this.container.delete(this.name);
     MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, this.name));
     return Promise.resolve({ _response: createMockResponse(200) });
@@ -127,7 +129,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
 
   downloadToBuffer(): Promise<Buffer> {
     const data = this.container.get(this.name);
-    if (!data) throw new MockRestError("The specified blob does not exist.", 404);
+    if (!data) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     return Promise.resolve(Buffer.from(data));
   }
 

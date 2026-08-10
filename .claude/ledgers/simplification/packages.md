@@ -2,11 +2,13 @@
 
 Grouped so each row is one review-sized commit.
 
-| Unit                                                                           | Swept | Notes |
-| ------------------------------------------------------------------------------ | ----- | ----- |
-| `packages/db`, `packages/db-schema`, `packages/db-mock`, `packages/azure-mock` | —     |       |
-| `packages/azure-functions`                                                     | —     |       |
-| `packages/virrun`                                                              | —     |       |
-| `packages/vue-phaserjs`, `packages/parse-tmx`, `packages/xml2js`               | —     |       |
-| `packages/infra`                                                               | —     |       |
-| `packages/configuration`                                                       | —     |       |
+| Unit                                                             | Swept      | Notes                                                                                                                                                                                                           |
+| ---------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/azure-mock`, `packages/db-mock`                        | 2026-08-10 | Blob item, listing envelope, batch sub-response, queue message item and container accessor each own one home; filter clauses and orderBy parsed once per predicate rather than per row; snapshot read memoised. |
+| `packages/db`                                                    | —          |                                                                                                                                                                                                                 |
+| `packages/db-schema`                                             | —          |                                                                                                                                                                                                                 |
+| `packages/azure-functions`                                       | —          |                                                                                                                                                                                                                 |
+| `packages/virrun`                                                | —          |                                                                                                                                                                                                                 |
+| `packages/vue-phaserjs`, `packages/parse-tmx`, `packages/xml2js` | —          |                                                                                                                                                                                                                 |
+| `packages/infra`                                                 | —          |                                                                                                                                                                                                                 |
+| `packages/configuration`                                         | —          |                                                                                                                                                                                                                 |

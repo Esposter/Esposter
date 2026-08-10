@@ -30,17 +30,18 @@ const db = await createMockDb();
 
 `createMockDb()` does the following on each call:
 
-1. Creates a new PGlite in-memory client.
-2. Wraps it with a Drizzle ORM instance using the full `relations` config from `@esposter/db-schema`.
-3. Generates migration SQL from the current schema snapshot (via `drizzle-kit/api-postgres`).
-4. Applies all generated statements so the schema is up to date.
+1. Loads the committed `snapshot.tar.gz` — a data directory already migrated to the current schema — as the PGlite client's `loadDataDir`, with the `pg_trgm` extension the snapshot was dumped with.
+2. Awaits `client.waitReady`, so the boot cost lands in `beforeAll` rather than in the first query.
+3. Wraps it with a Drizzle ORM instance using the full `relations` config from `@esposter/db-schema`.
 
-Each test gets a fresh, isolated database — no cleanup required.
+Loading a pre-migrated directory skips PGlite's `initdb` and runtime migration generation. Each test gets a fresh, isolated database — no cleanup required.
+
+**A schema change needs the snapshot regenerated**: build `@esposter/db-schema`, then run `pnpm snapshot:gen` here. `createMockDb.test.ts` fails when the committed snapshot has drifted from the schema.
 
 ### Peer Dependencies
 
 ```bash
-pnpm i -D @esposter/db-mock @electric-sql/pglite drizzle-kit drizzle-orm @esposter/db-schema
+pnpm i -D @esposter/db-mock @electric-sql/pglite @esposter/db-schema drizzle-orm
 ```
 
 ### Commands
@@ -49,6 +50,8 @@ Run from `packages/db-mock/`:
 
 ```bash
 pnpm build        # compile to dist/
+pnpm snapshot:gen # regenerate snapshot.tar.gz from the current schema
+pnpm test         # vitest watch mode
 pnpm lint:fix     # auto-fix lint
 pnpm typecheck    # type check
 ```

@@ -8,17 +8,26 @@ export const createFilterPredicate = (filter: string): ((document: Record<string
   // Preserve spacing when stripping parentheses so patterns like not(<clause>) still match
   const normalizedFilter = filter.replaceAll(String.raw`(`, " ").replaceAll(String.raw`)`, "");
   const andGroups = normalizedFilter.split(/\s+and\s+/iu).filter(Boolean);
-  const orGroups = andGroups.map((group) => group.split(/\s+or\s+/iu).filter(Boolean));
+  // Deserialized once at construction rather than per document per clause — the predicate is applied across
+  // Every row of a table or index, so parsing inside it multiplies the regex work by the row count
+  const orGroups = andGroups.map((group) =>
+    group
+      .split(/\s+or\s+/iu)
+      .filter(Boolean)
+      .map((clauseString) => {
+        const clause = deserializeClause(clauseString);
+        return { clause, isNull: isNullClause(clause) };
+      }),
+  );
   return (document) => {
     for (const orGroup of orGroups) {
       let isGroupMatched = false;
 
-      for (const group of orGroup) {
-        const clause = deserializeClause(group);
+      for (const { clause, isNull } of orGroup) {
         const value = takeOne(document, clause.key);
         let isMatched: boolean;
 
-        if (isNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);
+        if (isNull) isMatched = compare(BinaryOperator.eq, value, null);
         else {
           const comparisonResult = compare(
             clause.operator,

@@ -11,8 +11,12 @@ import { join } from "node:path";
 // This skips PGlite's `initdb` boot + migration generation, cutting ~2.3s per call down to ~0.9s.
 // Regenerate the snapshot with `pnpm snapshot:gen` whenever the schema changes.
 // The createMockDb.test.ts verification fails if the committed snapshot drifts from the schema.
+// The snapshot is immutable, so the read is shared across every call in a worker instead of hitting disk per database
+let snapshotPromise: ReturnType<typeof readFile> | undefined;
+
 export const createMockDb = async (): Promise<PostgresJsDatabase<typeof relations>> => {
-  const loadDataDir = new Blob([await readFile(join(import.meta.dirname, SNAPSHOT_FILENAME))]);
+  snapshotPromise ??= readFile(join(import.meta.dirname, SNAPSHOT_FILENAME));
+  const loadDataDir = new Blob([await snapshotPromise]);
   // The snapshot was dumped with pg_trgm installed, so the extension must be loaded here too —
   // Otherwise the resources trigram index and similarity() ranking resolve against nothing.
   const client = new PGlite({ extensions: { pg_trgm }, loadDataDir });
