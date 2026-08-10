@@ -82,6 +82,7 @@ await tx
 1. **Wrap the first element in `requireMutation`** — never hand-roll the undefined guard, never fall back to `?? []` / `?? null`. See the error-handling skill (tRPC Backend Guards).
 2. **Return the full entity** — never a subset of fields. Let callers destructure what they need.
 3. **Add `DatabaseEntityType` if missing** — to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then `pnpm build` in `packages/db-schema/` to rebuild dist.
+4. **`[0]`, not `takeOne`, when a guard consumes the result.** `takeOne` is a type-level assertion that erases `undefined` from the element type, so it is for access whose absence would be a bug. A row that may legitimately be absent keeps `[0]`: `undefined` is precisely what `requireMutation`, `requireEntity` and a `!row` branch exist to read. Putting `takeOne` in front of a guard types the absent case out of existence and leaves the guard unreachable — the same applies to a locked `SELECT … FOR UPDATE` standing in for `findFirst`, whose whole contract is `T | undefined`.
 
 ## Empty-Sentinel Columns — the DB Schema Is the Source of Truth
 

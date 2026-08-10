@@ -1,6 +1,6 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review with the wait decided by the check's bucket rather than its state string (unknown means wait), the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, a window being a prefix of the unpushed range so a later-authored fix is prepended rather than left at the tip, nitpicks live in the review body rather than inline comments, the three gates that decide a push (nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, a rate-limited status not proving the checkpoint stalled with the @coderabbitai review retrigger answering "Already reviewed" as the probe, the coderabbitai[bot] login and reconciling against the stated counts (inline comments can fail to post outright), replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when choosing which commits a push should carry, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — .coderabbit.yaml is read from the PR base branch and edited there in a worktree (or through the contents API when the worktree fails on Windows path lengths), never add reviews.auto_review.base_branches (develop-base PRs are triggered manually with @coderabbitai review), opening or pushing to a default-branch PR spends a review slot, never push into a running review with the wait decided by the check's bucket rather than its state string (unknown means wait), the ~80-file budget that refreshes per incremental review cycle and the pipeline that keeps local work running ahead of the reviewed frontier instead of blocking on it, a window being a prefix of the unpushed range so a later-authored fix is prepended rather than left at the tip, nitpicks live in the review body rather than inline comments, the four gates that decide a push (open findings drained, nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, draining a completed review's findings before composing a window so they lead it rather than expiring behind fresh work, a rate-limited status not proving the checkpoint stalled with the @coderabbitai review retrigger answering "Already reviewed" as the probe, the bot login differing per API (coderabbitai[bot] on REST, coderabbitai on GraphQL) so a wrong filter reports a false zero, reconciling against the stated counts (inline comments can fail to post outright), replying to every finding, plus deep dives on retrieving feedback across all three endpoints, cutting an over-budget release PR onto a queue branch, which files may be excluded and how to generate the list, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when choosing which commits a push should carry, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
 ---
 
 # CodeRabbit Conventions
@@ -62,11 +62,14 @@ gh pr checks --json name,state,bucket,description --jq '.[] | select(.name=="Cod
 
 The last row is the default, not an edge case: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute.
 
-Three gates decide a push, and they are not interchangeable — the first is about cancelling a review, the second about accumulating an unreviewed window, the third about overflowing the cap:
+Four gates decide a push, and they are not interchangeable — the first is about leaving findings unanswered, the second about cancelling a review, the third about accumulating an unreviewed window, the fourth about overflowing the cap:
 
 ```mermaid
 flowchart TD
-  C[Commit locally] --> M[Measure backlog from the last reviewed sha]
+  C[Commit locally] --> D{Any unresolved findings from a completed review}
+  D -->|yes| DR[Drain them first - they lead the next window]
+  DR --> M[Measure backlog from the last reviewed sha]
+  D -->|no| M
   M --> R{Is a review running}
   R -->|yes| W1[Wait - a push cancels it and loses its findings]
   R -->|no| P{Was the previous window reviewed}
@@ -78,6 +81,20 @@ flowchart TD
   RV --> F[Fix findings then reply with the pushed sha]
   F --> C
 ```
+
+**Drain the open findings before composing a window — they are the window's first commits, not its last.** A completed review's findings are the only work with an expiry date on it: threads go stale as the code under them moves, a finding answered three windows later is answered against code the reviewer never saw, and the reviewer re-raises what looks unaddressed. Fresh work has no such clock, so it always yields.
+
+This is a gate on **what the window contains**, not merely an ordering preference. Fixes ride at the front (`§ Composing the window` for the reorder), and a window that would exceed the cap drops queued work to keep them in rather than deferring them to the next cycle. Count what is actually open before deciding it is drained — and read `§ Reading and Answering Findings` for why an empty result is usually a wrong filter:
+
+```bash
+gh api graphql -f query='
+query { repository(owner: "<owner>", name: "<repo>") { pullRequest(number: <pr>) {
+  reviewThreads(first: 100) { nodes { isResolved isOutdated path line
+    comments(first: 1) { nodes { author { login } body } } } } } } }' \
+  --jq '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved==false)] | length'
+```
+
+Unresolved threads are the inline half only. Reconcile them against each review body's `Actionable comments posted: N` and `🧹 Nitpick comments (M)`, since nitpicks never exist as threads and inline comments can fail to post outright.
 
 **The check answers "is one running", never "has the last push been reviewed".** `Review completed` is the status of whichever review ran most recently, which may have covered a range two pushes back — the check does not name a range at all, so reading it as clearance for the current head is a category error. It is the state's own answer to a different question, and it looks exactly like the answer you wanted.
 
@@ -176,7 +193,15 @@ The budget is a **target to fill, not only a cap**. A single roadmap item is typ
 
 - **Nitpicks live only in the review body**, inside the collapsed `🧹 Nitpick comments (M)` block — they are never inline comments. Fetching only the inline endpoint loses them silently.
 - **Inline comments can fail to post at all**, and the review says so with a `> [!CAUTION] Inline review comments failed to post` block in its body. The findings are still listed there, in the body's own agent-prompt block, so a run that posted fewer threads than it claims is not a run with fewer findings. This is why the counts below are the ground truth and the thread list never is.
-- **The bot's login is `coderabbitai[bot]`, not `coderabbitai`.** A `--jq` filter on the wrong login returns empty and exits 0, so empty output from a filtered query means _"my filter was wrong"_ until proven otherwise — never read it as "there are none".
+- **The login differs by API, so a filter that works on one silently matches nothing on the other.** REST (`/pulls/<pr>/comments`, `/reviews`, `/issues/<pr>/comments`) reports `user.login` as **`coderabbitai[bot]`**; GraphQL (`reviewThreads`) reports `author.login` as **`coderabbitai`**, with the `[bot]` suffix stripped. Neither is "the" login. Write the filter for the endpoint in hand:
+
+  ```bash
+  gh api "repos/:owner/:repo/pulls/<pr>/comments" --jq '.[] | select(.user.login=="coderabbitai[bot]")'   # REST
+  gh api graphql -f query='...' --jq '.[] | select(.author.login=="coderabbitai")'                        # GraphQL
+  ```
+
+  A `--jq` filter on the wrong login returns empty and **exits 0**, so empty output from a filtered query means _"my filter was wrong"_ until proven otherwise — never read it as "there are none". Prove it by re-running without the author filter: if the unfiltered count is non-zero, the filter was the bug. Do that before reporting zero, every time — this has been got wrong repeatedly, in both directions, and a false zero reads exactly like a clean PR.
+
 - **Reconcile before concluding.** Each review body states `Actionable comments posted: N` and `🧹 Nitpick comments (M)`. Both counts are ground truth: fewer inline comments or nitpicks in hand than that means you are missing some — go find them rather than reporting what you happened to fetch.
 - **Reply to every finding, including rejected ones** — a silent skip is indistinguishable from an oversight. State the verdict in the first line (`Agreed, fixed in <sha>` / `Not a real issue, no change`) and give the evidence; these threads are the record of why the code looks the way it does.
 - **Push the fix commits first, then reply.** A reply citing a sha the remote does not have yet is one CodeRabbit cannot resolve — it answers that it can't find the commit, and the thread's evidence is worthless from then on. Order is: commit → check the review has settled → push → reply with the pushed sha.

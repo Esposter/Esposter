@@ -50,6 +50,16 @@ flowchart LR
 - **Next enforceable** — the part of the convention a lint rule or test could take over.
 - **Open findings** — only while one is genuinely open. A closed finding is deleted: its rule is in a skill, its invariant is in a test, and git holds the argument.
 
+**"The current shape is already right" closes a finding — by documenting it, never by leaving it.** A finding that survives several passes is usually not unresolved; it is resolved and unrecorded. Someone keeps rediscovering the same duplication or asymmetry, reasoning about it, concluding the existing shape is correct, and writing that conclusion nowhere — so the ledger keeps it open and the next pass pays for the reasoning again. Three outcomes, and a finding must reach one of them:
+
+| Verdict                            | Where it goes                                                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| The code is wrong                  | Fix it; delete the finding                                                                                         |
+| The code is right                  | Write the **why** into the owning docs page or skill (a diagram if it is an ordered mechanism); delete the finding |
+| Genuinely undecided — needs a call | Stays, with the decision named and the options stated                                                              |
+
+Deleting a "code is right" finding without recording the rationale is the same failure as deleting a docs tombstone: the reasoning dies and the finding gets re-raised. The ledger holds coverage, so the rationale never stays there — it moves to whatever owns the topic.
+
 Anything else — what the convention says, why it matters, how a pass is run — belongs to the owning skill and is not repeated here.
 
 **State lives at the leaf.** The index row never restates how far a sweep has got: no tick counts, no per-area status column. A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to a file other passes are also writing.
