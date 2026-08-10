@@ -1272,8 +1272,9 @@ describe("message", () => {
   });
 
   describe("slowmode guard", () => {
+    // Only Date, so the message row keys still come from a real `process.hrtime` tick — see the `azure-table` skill
     beforeEach(() => {
-      vi.useFakeTimers({ now: 0 });
+      vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     });
 
     afterEach(() => {
@@ -1389,9 +1390,10 @@ describe("message", () => {
   });
 
   describe("createMessage timeout guard", () => {
-    // The clock is pinned so "timed out until 1ms from now" is still true by the time the message lands
+    // The clock is pinned so "timed out until 1ms from now" is still true by the time the message lands — Date
+    // Only, so the message row keys still come from a real `process.hrtime` tick
     beforeEach(() => {
-      vi.useFakeTimers({ now: 0 });
+      vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     });
 
     afterEach(() => {

@@ -32,6 +32,8 @@ Always import from `@esposter/db-schema`, never redefine locally.
 
 - **It is its own inverse** — `getReverseTickedTimestamp(rowKey)` maps a stored `rowKey` back to the real timestamp, and vice versa. That's how cursors and the ascending-table mirror are built; never hand-roll the subtraction.
 - Never generate a `rowKey` with `Date.now()` or an ISO string — millisecond resolution collides under load, and lexical ISO sorts oldest-first.
+- **Nanosecond resolution is what makes the bare timestamp a sufficient key**, so don't "harden" it with a random suffix or a retry loop. `now()` reads `process.hrtime`, which is monotonic and advances between two consecutive calls in the same process, so two writes to one partition cannot land on one key — and the key staying exactly the timestamp is what lets cursors and the ascending mirror decode it back.
+- **A test that fakes timers breaks that guarantee**, and the failure looks like a production bug. Vitest's default `toFake` set includes `process.hrtime`, so `vi.useFakeTimers()` freezes the tick: every row a test writes to one partition gets an identical `rowKey`, the second is rejected `409`, and a best-effort writer swallows it into stderr. Fake only what the test asserts on — `vi.useFakeTimers({ now: 0, toFake: ["Date"] })` keeps `unlockedAt`/`createdAt` exactly assertable while leaving the tick real.
 
 ## Batch Writes
 

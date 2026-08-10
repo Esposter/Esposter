@@ -32,17 +32,19 @@ describe("achievement", () => {
     caller = createCallerFactory(trpcRouter)(mockContext);
   });
 
-  // `unlockedAt` is stamped from `new Date()`, so a frozen clock makes it exactly assertable
+  // `unlockedAt` is stamped from `new Date()`, so a frozen clock makes it exactly assertable. Only `Date` is
+  // Faked: vitest's default set includes `process.hrtime`, which is what `now()` reads for the nanosecond tick
+  // Every Azure Table row key is built from — freeze that and every row a test writes to one partition lands on
+  // The same key, so the second is rejected `409` and swallowed by the best-effort activity writer
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
 
   afterEach(async () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
     // The message a test sends to earn an achievement lands in Azure Table, so it is cleaned here like every
-    // Other row the test wrote — the clock is frozen at one instant for the whole file, so rows left behind
-    // Would collide on their timestamp-derived row key rather than merely accumulate
+    // Other row the test wrote
     MockTableDatabase.clear();
     await mockContext.db.delete(resources);
     await mockContext.db.delete(roomsInMessage);
