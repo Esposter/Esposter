@@ -2,6 +2,7 @@
 import type { WebhookInMessage } from "@esposter/db-schema";
 
 import MessageModelRoomSettingsTypeWebhookConfirmDeleteDialog from "@/components/Message/Model/Room/Settings/Type/Webhook/ConfirmDeleteDialog.vue";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -34,17 +35,12 @@ describe("messageModelRoomSettingsTypeWebhookConfirmDeleteDialog", () => {
   test("drops the target when its webhook leaves the list", async () => {
     expect.hasAssertions();
 
-    // Shallow because the reconciliation under test lives in setup, and happy-dom has no visualViewport for
-    // The real Vuetify overlay to position itself against
+    // Shallow because the reconciliation under test lives in setup — the overlay DOM has no bearing on it
     await mountSuspended(MessageModelRoomSettingsTypeWebhookConfirmDeleteDialog, {
       props: { roomId },
       shallow: true,
     });
-    // The webhook list is keyed by the room in the route, so a list only exists once one is current. Set after
-    // Mounting, which resets the route, and through triggerRef because currentRoute is a shallowRef
-    const router = useRouter();
-    router.currentRoute.value.params.id = roomId;
-    triggerRef(router.currentRoute);
+    setCurrentRoomId(roomId);
     const webhookStore = useWebhookStore();
     const { items } = storeToRefs(webhookStore);
     const webhookDialogStore = useWebhookDialogStore();

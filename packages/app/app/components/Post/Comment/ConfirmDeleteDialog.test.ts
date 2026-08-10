@@ -49,8 +49,7 @@ describe("postCommentConfirmDeleteDialog", () => {
   test("drops the target when its comment leaves the list", async () => {
     expect.hasAssertions();
 
-    // Shallow because the reconciliation under test lives in setup, and happy-dom has no visualViewport for
-    // The real Vuetify overlay to position itself against
+    // Shallow because the reconciliation under test lives in setup — the overlay DOM has no bearing on it
     await mountSuspended(PostCommentConfirmDeleteDialog, { shallow: true });
     // The comment store keys its list by the post in the route, so a list only exists once one is current
     await navigateTo(RoutePath.Post(postId));

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VBtn, VCard } from "vuetify/components";
+import type { VBtn, VCard, VDialog } from "vuetify/components";
 
 import { mergeProps } from "vue";
 
@@ -11,42 +11,69 @@ export interface StyledDialogActivatorSlotProps {
 interface StyledDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];
-  confirmButtonProps: VBtn["$props"];
+  // Absent when the dialog has nothing to confirm — a search palette, a reference sheet. The whole actions row
+  // Goes with it, cancel included: there is no pending change for cancel to abandon, so a dialog that only reads
+  // Would otherwise have to re-roll the shell to get rid of one button it never wanted.
+  confirmButtonProps?: VBtn["$props"];
+  dialogProps?: VDialog["$props"];
   // Informational dialogs only acknowledge — cancelling is meaningless when nothing is pending
   hideCancelButton?: boolean;
 }
 
-defineSlots<{
-  activator?: (props: StyledDialogActivatorSlotProps) => VNode;
-  default?: () => VNode;
-  "prepend-actions"?: () => VNode;
-}>();
+const CLOSE_BUTTON_PROPS: VBtn["$props"] = { density: "comfortable", variant: "text" };
+
 const modelValue = defineModel<boolean>({ default: false });
 const {
   cardProps = {},
   confirmButtonAttrs = {},
   confirmButtonProps,
+  dialogProps = {},
   hideCancelButton,
 } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
+const slots = defineSlots<{
+  activator?: (props: StyledDialogActivatorSlotProps) => VNode;
+  default?: () => VNode;
+  header?: () => VNode;
+  "prepend-actions"?: () => VNode;
+}>();
 const isFullScreen = ref(false);
-const mergedConfirmButtonProps = computed(() => mergeProps(confirmButtonProps, confirmButtonAttrs));
+const hasActions = computed(() => Boolean(confirmButtonProps ?? slots["prepend-actions"]));
+const mergedConfirmButtonProps = computed(() => mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs));
+// `primary` is StyledButton's own colour, so it is not a request for a plain button — reading any colour as
+// One is what silently dropped the gradient from every dialog that spelled the default out.
+const hasCustomConfirmColor = computed(
+  () => Boolean(confirmButtonProps?.color) && confirmButtonProps?.color !== "primary",
+);
 const confirm = () => {
   emit("confirm", () => (modelValue.value = false));
 };
 </script>
 
 <template>
-  <v-dialog v-model="modelValue" :fullscreen="isFullScreen">
+  <v-dialog v-model="modelValue" :fullscreen="isFullScreen" :="dialogProps">
     <template #activator>
       <slot name="activator" :is-open="modelValue" :update-is-open="(value) => (modelValue = value)" />
     </template>
-    <!-- Single shell for every dialog: header (title/subtitle/prependIcon via cardProps) → divider →
-      padded, scrollable body slot → divider → actions. Consumers pass bare body content; the shell owns the layout. -->
+    <!-- Single shell for every dialog: header (title/subtitle/prependIcon via cardProps) → optional pinned
+      header slot → divider → padded, scrollable body slot → divider → actions. Consumers pass bare body
+      content; the shell owns the layout. -->
     <StyledCard :card-props>
       <template #append>
         <StyledToggleFullScreenDialogButton v-model="isFullScreen" />
+        <!-- Every dialog offers exactly one explicit dismissal: Cancel when there is an actions row, this when
+          there is not. Without it a read-only dialog could only be left by clicking outside it. -->
+        <StyledTooltipIconButton
+          v-if="!hasActions"
+          :button-props="CLOSE_BUTTON_PROPS"
+          icon="mdi-close"
+          text="Close"
+          @click="modelValue = false"
+        />
       </template>
+      <!-- Pinned above the scroll region — a search field, a filter row. Rendered bare so the consumer owns its
+        own padding: the things that go here are usually full-bleed inputs. -->
+      <slot name="header" />
       <template v-if="$slots.default">
         <v-divider />
         <v-card-text flex-1 overflow-y-auto>
@@ -57,20 +84,16 @@ const confirm = () => {
           </div>
         </v-card-text>
       </template>
-      <v-divider />
-      <v-card-actions>
-        <slot name="prepend-actions" />
-        <v-spacer />
-        <v-btn v-if="!hideCancelButton" text-3 text="Cancel" variant="outlined" @click="modelValue = false" />
-        <v-btn
-          v-if="confirmButtonProps.color"
-          text-3
-          variant="outlined"
-          :="mergedConfirmButtonProps"
-          @click="confirm"
-        />
-        <StyledButton v-else text-3 :="mergedConfirmButtonProps" @click="confirm" />
-      </v-card-actions>
+      <template v-if="hasActions">
+        <v-divider />
+        <v-card-actions>
+          <slot name="prepend-actions" />
+          <v-spacer />
+          <v-btn v-if="!hideCancelButton" text-3 text="Cancel" variant="outlined" @click="modelValue = false" />
+          <v-btn v-if="hasCustomConfirmColor" text-3 variant="outlined" :="mergedConfirmButtonProps" @click="confirm" />
+          <StyledButton v-else-if="confirmButtonProps" text-3 :="mergedConfirmButtonProps" @click="confirm" />
+        </v-card-actions>
+      </template>
     </StyledCard>
   </v-dialog>
 </template>

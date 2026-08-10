@@ -26,8 +26,7 @@ describe("messageModelMessageConfirmPinDialog", () => {
   test("drops the target when its message leaves the timeline", async () => {
     expect.hasAssertions();
 
-    // Shallow because the reconciliation under test lives in setup, and happy-dom has no visualViewport for
-    // The real Vuetify overlay to position itself against
+    // Shallow because the reconciliation under test lives in setup — the overlay DOM has no bearing on it
     await mountSuspended(MessageModelMessageConfirmPinDialog, { shallow: true });
     setCurrentRoomId(roomId);
     const dataStore = useDataStore();

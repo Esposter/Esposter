@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { VDialog } from "vuetify/components";
 
 export interface StyledSearchDialogProps {
   // Registered with useVHotkey to toggle the dialog, e.g. "ctrl+k"
   hotkey: string;
   placeholder: string;
 }
+
+const DIALOG_PROPS: VDialog["$props"] = { width: 600 };
 
 defineSlots<{
   activator?: (props: StyledDialogActivatorSlotProps) => VNode;
@@ -21,9 +24,12 @@ useVHotkey(hotkey, () => {
 </script>
 
 <template>
-  <slot name="activator" :is-open :update-is-open="(value) => (isOpen = value)" />
-  <v-dialog v-model="isOpen" width="600">
-    <StyledCard>
+  <!-- The field is the dialog's `header` rather than body content: results scroll, the thing you type in does not -->
+  <StyledDialog v-model="isOpen" :dialog-props="DIALOG_PROPS">
+    <template #activator="activatorProps">
+      <slot name="activator" :="activatorProps" />
+    </template>
+    <template #header>
       <v-text-field
         v-model="searchQuery"
         :placeholder
@@ -34,7 +40,7 @@ useVHotkey(hotkey, () => {
         variant="solo"
         @click:clear="searchQuery = ''"
       />
-      <slot />
-    </StyledCard>
-  </v-dialog>
+    </template>
+    <slot />
+  </StyledDialog>
 </template>

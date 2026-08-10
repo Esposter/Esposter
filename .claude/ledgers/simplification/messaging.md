@@ -20,8 +20,9 @@
   `User/Settings/Content.vue` uses the shared shell's `#header` slot outside it. Unifying is a decision between
   two scroll behaviours, not a cleanup — the recommendation is that Room adopts the `#header` slot the shell
   already declares, after which a shared `Message/Model/Settings/Header.vue` is trivial.
-- **Decision: does `StyledDialog` grow a pinned-header slot?** `Forward/RoomDialog` needs its search field
-  pinned above the scroll region, and `StyledDialog`'s body is a single scroll block, so the dialog builds its
-  own `v-dialog` + `StyledCard` shell today. The same contract question is open in `shared.md` for the actions
-  row; answering both at once is what lets this shell go. Until then the bespoke shell stays — it is the
-  consequence of the open decision, not a file anyone forgot to sweep.
+- `Forward/RoomDialog` keeps its own `v-dialog` + `StyledCard` shell, and that is now settled rather than
+  pending. `StyledDialog` grew the `#header` slot it was waiting on, but the pinned region this dialog needs
+  is a **footer** — a message preview and a rich-text editor stacked full-width above a full-width send
+  button, between the scroll block and the actions row. Nothing else in the app wants one, and a slot that
+  earns its existence from a single consumer is the flag the `file-organization` skill rules out. Revisit if
+  a second dialog needs the same region.

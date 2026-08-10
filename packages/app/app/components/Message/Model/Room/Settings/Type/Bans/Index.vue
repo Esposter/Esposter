@@ -34,7 +34,7 @@ await readBans();
         <template #append>
           <StyledDeleteFormDialog
             :card-props="{ title: 'Unban User' }"
-            :confirm-button-props="{ color: 'primary', text: 'Unban' }"
+            :confirm-button-props="{ text: 'Unban' }"
             @delete="
               async (onComplete) => {
                 await withFinalizerAsync(() => deleteBan({ roomId: room.id, userId }), onComplete);
