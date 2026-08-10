@@ -6,11 +6,11 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
 import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
+import { getContentBlobName } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 

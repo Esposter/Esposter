@@ -15,7 +15,7 @@ import {
 import { getIsResourceAssetReadable } from "@@/server/services/resource/getIsResourceAssetReadable";
 import { generateReadSasUrl } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
-import { getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { lookup } from "mime-types";
 import { extname } from "node:path";
 
@@ -39,19 +39,15 @@ export default defineEventHandler(async (event) => {
 
   const getSessionPayload = await auth.api.getSession({ headers: event.headers });
   if (IS_PRODUCTION) {
-    // Its own limiter, and its own namespace within it: a signed-in viewer's key was the bare user id, the
-    // Same key every tRPC call consumes, so opening one published page full of images spent that page's
-    // Asset requests out of the budget for the user's actual API calls and 429'd the app around them. One
-    // Rendered page is many asset requests by construction, and anonymous viewers of it share an egress
-    // Address — so neither the key nor the procedure budget describes this traffic (see assetRateLimiter).
-    // An authed viewer is keyed on its user id, which is available whether or not an address is, so only the
-    // Anonymous key depends on the address — bypassing both would leave every signed-in request unbudgeted on
-    // A deployment whose ingress header never arrives
+    // Its own limiter, whose keyPrefix supplies the namespace: a signed-in viewer's key is the bare user id,
+    // The same key every tRPC call consumes, so without the prefix opening one published page full of images
+    // Spends that page's asset requests out of the budget for the user's actual API calls and 429s the app
+    // Around them (see assetRateLimiter). An authed viewer is keyed on its user id, which is available whether
+    // Or not an address is, so only the anonymous key depends on the address — bypassing both would leave
+    // Every signed-in request unbudgeted on a deployment whose ingress header never arrives
     const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.node.req);
     if (rateLimiterKey)
-      await getResultAsync(() =>
-        assetRateLimiter.consume(`${AzureContainer.ResourceAssets}${ID_SEPARATOR}${rateLimiterKey}`),
-      ).match(noop, (error) => {
+      await getResultAsync(() => assetRateLimiter.consume(rateLimiterKey)).match(noop, (error) => {
         if (getIsRateLimitExceeded(error)) throw createError({ statusCode: 429 });
         throw error;
       });

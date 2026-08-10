@@ -3,8 +3,8 @@ import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod";
 
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
-import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { AuthedProcedureMap } from "@@/server/trpc/procedure/AuthedProcedureMap";
+import { hasPermission } from "@esposter/db";
 import { uuidValidateV4 } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 

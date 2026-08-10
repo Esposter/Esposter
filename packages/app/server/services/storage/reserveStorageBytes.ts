@@ -46,7 +46,7 @@ export const reserveStorageBytes = async (
     .subtract(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS, "ms")
     .toDate();
   await db.transaction(async (tx) => {
-    // `storage_blobs` before `users`, the order every path that touches both takes — a release and a reconcile
+    // `storageBlobs` before `users`, the order every path that touches both takes — a release and a reconcile
     // Lock the ledger row first and move the counter second, so a reserve that took the user row first would
     // Close a lock cycle with them and deadlock. See /docs/platform/storage-quotas
     //

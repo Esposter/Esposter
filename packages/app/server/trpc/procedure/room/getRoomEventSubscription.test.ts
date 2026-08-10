@@ -4,7 +4,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
-import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
+import { roleEventEmitter } from "@@/server/services/role/events/roleEventEmitter";
 import { createCallerFactory } from "@@/server/trpc";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";

@@ -8,8 +8,8 @@ import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/Up
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
-import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
+import { userEventEmitter } from "@@/server/services/user/events/userEventEmitter";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";

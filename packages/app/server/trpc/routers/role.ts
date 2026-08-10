@@ -10,9 +10,8 @@ import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
+import { roleEventEmitter } from "@@/server/services/role/events/roleEventEmitter";
 import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
-import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
@@ -23,6 +22,7 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { getPermissions } from "@esposter/db";
 import {
   DatabaseEntityType,
   RoomPermission,
@@ -228,6 +228,10 @@ export const roleRouter = router({
 
       await assertCanManageMemberRole(ctx.db, actorContext, role.position, roomId, userId);
 
+      // No requireMutation, unlike deleteRole: this asks for an end state — the member does not hold the role
+      // — rather than for a row, and it returns nothing to be missing. Two moderators revoking at once, or one
+      // Revoking against a member list that has already moved on, would otherwise be refused for arriving at
+      // Exactly what they asked for. deleteRole guards because it returns the row it deleted
       await ctx.db
         .delete(usersToRoomRolesInMessage)
         .where(

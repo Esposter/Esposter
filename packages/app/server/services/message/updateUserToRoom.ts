@@ -3,7 +3,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
 
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
-import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
+import { hasPermission } from "@esposter/db";
 import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";

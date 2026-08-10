@@ -1,6 +1,6 @@
-import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { hasPermission } from "@esposter/db";
 import { RoomPermission } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

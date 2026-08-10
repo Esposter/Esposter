@@ -3,9 +3,9 @@ import type { FriendRequestNotificationEventGridData, FriendRequestWithRelations
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { on } from "@@/server/services/events/on";
+import { friendEventEmitter } from "@@/server/services/friend/events/friendEventEmitter";
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { readUserPair } from "@@/server/services/friend/readUserPair";
-import { friendEventEmitter } from "@@/server/services/message/events/friendEventEmitter";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";

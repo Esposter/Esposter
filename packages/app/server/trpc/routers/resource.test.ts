@@ -13,7 +13,6 @@ import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchroni
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
 import { createPublishedAssetsDirectoryName } from "@@/server/services/resource/createPublishedAssetsDirectoryName";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
@@ -21,6 +20,7 @@ import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
+import { getContentBlobName } from "@esposter/db";
 import {
   AzureContainer,
   AzureQueue,

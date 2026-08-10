@@ -14,13 +14,13 @@ import { requireCallSession } from "@@/server/services/message/call/requireCallS
 import { requireJoinedCallSession } from "@@/server/services/message/call/requireJoinedCallSession";
 import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
-import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { router } from "@@/server/trpc";
 import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
+import { hasPermission } from "@esposter/db";
 import {
   callSessionIdSchema,
   DatabaseEntityType,

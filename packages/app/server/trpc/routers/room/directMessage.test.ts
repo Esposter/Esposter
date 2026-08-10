@@ -221,7 +221,7 @@ describe("directMessage", () => {
     const newRoom = await roomCaller.createRoom({ name });
 
     await expect(directMessageCaller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, newRoom.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, newRoom.id).message}]`,
     );
   });
 

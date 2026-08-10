@@ -26,13 +26,12 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { readCursorPaginationDataAzureTable } from "@@/server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsManageable } from "@@/server/services/room/rbac/assertIsManageable";
-import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { createEntity, getTableNullClause } from "@esposter/db";
+import { createEntity, getTableNullClause, hasPermission } from "@esposter/db";
 import {
   AdminActionType,
   AzureTable,
