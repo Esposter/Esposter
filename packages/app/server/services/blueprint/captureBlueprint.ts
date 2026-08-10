@@ -27,12 +27,10 @@ export const captureBlueprint = async (ctx: AuthedContext, ids: Resource["id"][]
     .where(and(inArray(resources.id, ids), eq(resources.userId, ctx.getSessionPayload.user.id)));
   // Every id must be the caller's own resource — otherwise capture would read content across accounts
   if (ownedResources.length !== ids.length) throw new TRPCError({ code: "UNAUTHORIZED" });
-
   // A binned resource is still the caller's own, so it is bad input rather than an authorization failure:
   // The fix is restoring it, which a blanket UNAUTHORIZED would never tell them
   const deletedResource = ownedResources.find(({ deletedAt }) => deletedAt !== null);
   if (deletedResource) throw createInvalidBlueprintError(`cannot capture deleted resource ${deletedResource.name}`);
-
   // The caller's selection order drives key derivation, so a given selection always captures identically
   const resourceById = new Map(ownedResources.map((resource) => [resource.id, resource]));
   const orderedResources = ids.map((id) => {

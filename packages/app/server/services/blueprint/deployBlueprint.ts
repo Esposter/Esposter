@@ -46,7 +46,6 @@ export const deployBlueprint = async (
       // An entry captured from a resource whose content was never written deploys to that same state — the
       // Content blob is written on first save, so a freshly created resource simply has none
       if (entry.content === undefined) continue;
-
       // Real ids are known only after every dependency is created, so the content is bound here rather than up front
       const content = mapBlueprintEntryContentStrings(entry, (value) =>
         substituteBlueprintEntryAliasTokens(value, aliasToId),

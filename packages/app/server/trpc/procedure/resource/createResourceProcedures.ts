@@ -417,7 +417,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
         .delete(resourcePublications)
         .where(eq(resourcePublications.resourceId, id))
         .returning();
-
       // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
       // Still holding a cached short-lived SAS, and unpublished snapshots must not linger regardless — cleanup
       // Goes through the one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)

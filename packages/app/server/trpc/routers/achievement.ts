@@ -10,7 +10,6 @@ import { TRPCError } from "@trpc/server";
 import { count, eq, isNotNull, sql } from "drizzle-orm";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
-
 // Points live in the definition map, not the DB, so the summation injects them as a CASE over the
 // Achievement name — keeping the aggregation in SQL bounds the result set to one row per user.
 const achievementPointsSum = sql<number>`sum(case ${achievements.name} ${sql.join(

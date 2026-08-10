@@ -171,7 +171,6 @@ export const friendRequestRouter = router({
         sender: senderUser,
       };
       friendEventEmitter.emit("sendFriendRequest", { friendRequest, receiverId, senderId: userId });
-
       // Best-effort after the insert — a failed read skips this request's pushes, never the friend request that
       // Already landed.
       const readPushSubscriptions = await getResultAsync(() => getPushSubscriptionsForUser(ctx.db, receiverId))

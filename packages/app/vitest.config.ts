@@ -19,7 +19,7 @@ const vitestConfig = await defineVitestProject({
     // Would otherwise be a forgeable token in production and nothing at all in a test.
     env: { BETTER_AUTH_SECRET: "mock-auth-secret" },
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
-    // App don't resolve) — required now that the run is driven by the root `projects` config.
+    // App don't resolve) — the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
     // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.

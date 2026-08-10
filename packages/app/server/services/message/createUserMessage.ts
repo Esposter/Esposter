@@ -49,14 +49,12 @@ export const createUserMessage = async (
     userId: user.id,
   });
   messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: session.id }]);
-
   // Best-effort after the Table write — a failed increment loses one badge count, never a message.
   const mentionedUsersToRooms = await getResultAsync(() => incrementMentionCounts(db, newMessageEntity))
     .orTee(console.error)
     .unwrapOr([]);
   for (const mentionedUserToRoom of mentionedUsersToRooms)
     userToRoomEventEmitter.emit("updateUserToRoom", mentionedUserToRoom);
-
   // Best-effort after the Table write — a failed read skips this send's push notifications, never the message.
   const readPushSubscriptions = await getResultAsync(() => getPushSubscriptionsForMessage(db, newMessageEntity))
     .orTee(console.error)
@@ -107,7 +105,6 @@ export const createUserMessage = async (
       ]),
     ).match(noop, console.error);
   }
-
   // A reply auto-follows its thread (Discord behaviour) and notifies existing followers. Both run post-persist
   // And best-effort — a follow/notify failure must never fail the reply that already landed. Anyone already
   // Reached by the generic message push above is excluded so a single reply never double-notifies a recipient.
@@ -137,7 +134,6 @@ export const createUserMessage = async (
       notifyThreadReplyFollowers(db, newMessageEntity, notificationOptions, excludedUserIds),
     ).match(noop, console.error);
   }
-
   // Best-effort after the Table write — a failed touch leaves the room list sorted one send behind until the
   // Next one lands, never costs the message that already landed
   const updatedRoom = await getResultAsync(

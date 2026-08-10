@@ -205,7 +205,6 @@ export const baseMessageRouter = router({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message,
         });
-
       // The blob names come from the version actually written, so a retry deletes the blobs of the file it
       // Removed from the survivors the winning write stored
       let deletedFilename = "";
@@ -406,7 +405,6 @@ export const baseMessageRouter = router({
           message: new InvalidOperationError(Operation.Create, AzureEntityType.File, JSON.stringify({ mimetype, size }))
             .message,
         });
-
     // Room attachments are outside the personal storage quota, which counts what a user keeps in their own
     // Resources — a room's files belong to the room. See /docs/platform/storage-quotas
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
@@ -505,7 +503,6 @@ export const baseMessageRouter = router({
       const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
       await updateEntity(messageClient, updatedMessageEntity);
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
-
       // Best-effort after the pin write — a failure leaves the pin in place without its system message, never
       // Costs the pin itself
       await getResultAsync(async () => {

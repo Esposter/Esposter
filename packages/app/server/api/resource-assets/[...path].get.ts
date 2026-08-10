@@ -60,7 +60,6 @@ export default defineEventHandler(async (event) => {
         "[RateLimiter] Could not determine IP address for an anonymous request. Bypassing middleware... This is expected for local production builds.",
       );
   }
-
   // Working-copy assets are only ever rendered inside the owner's editor (same-origin, cookies present), so an
   // Anonymous request for one is a missing credential rather than a missing asset. A published url has no such
   // Distinction — it is anonymous-capable while a publication row exists, and a 401 would leak that the row is
@@ -74,7 +73,6 @@ export default defineEventHandler(async (event) => {
   if (!isPublished && !getSessionPayload) throw createError({ statusCode: 401 });
   if (!(await getIsResourceAssetReadable(db, resourceAssetPath, getSessionPayload?.user.id)))
     throw createError({ statusCode: 404 });
-
   // No existence probe — Azure itself 404s a missing blob when the redirect is followed
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const sasUrl = await generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {

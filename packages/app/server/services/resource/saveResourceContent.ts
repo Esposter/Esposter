@@ -27,7 +27,6 @@ interface SaveResourceContentInput {
   // Omitted for a resource's first content write, where there is no version any client caches yet
   updateContentVersion?: (tx: Parameters<Parameters<Context["db"]["transaction"]>[0]>[0]) => Promise<Resource>;
 }
-
 // The durable write and everything that must follow it, as one unit — the save event that keeps the owner's
 // Other devices live, the activity entry, and the type's registered after-save hook. The editor's save,
 // Blueprint deploy, duplicate and restore all write their content through here, so none of them can write

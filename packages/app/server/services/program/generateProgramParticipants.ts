@@ -36,7 +36,6 @@ export const generateProgramParticipants = async (
 ): Promise<ProgramParticipant[]> => {
   const content = await readResourceContent(programResourceSchema, programId);
   if (!content?.audience || !content.keyColumn) throw danglingProgramBindingError();
-
   // A deleted audience makes its provider throw UNAUTHORIZED — surfaced as the program's own
   // Dangling-binding error rather than thrown through as if the owner had lost access to their program.
   // Every other failure is a real fault and propagates, so a transient storage or parse error is never
@@ -103,7 +102,6 @@ export const generateProgramParticipants = async (
       for (const { keyValue, token } of batch) participantsByKeyValue.set(keyValue, { keyValue, token });
       continue;
     }
-
     // A transaction is all-or-nothing, so one recipient a concurrent run already claimed rolls back the
     // Whole batch — replay it insert by insert, which lands everyone this run is still the first to reach
     for (const participant of batch) {
@@ -119,7 +117,6 @@ export const generateProgramParticipants = async (
         participantsByKeyValue.set(keyValue, { keyValue, token });
         continue;
       }
-
       // Someone else got there first, so their token is the one that may already be sitting in an inbox —
       // This run adopts it and drops the token it just minted, which was never stored and never sent
       const existingParticipant = await getEntity(

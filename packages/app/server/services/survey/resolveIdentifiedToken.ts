@@ -23,7 +23,6 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
     where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
   });
   if (!survey) throw invalidParticipantTokenError();
-
   // Only the survey's owner can bind it to a program, so their programs are the whole candidate set.
   // A recycle-binned program stays in the set: its token links were already distributed to participants,
   // And only an actual purge — not a recoverable soft-delete — should invalidate them.

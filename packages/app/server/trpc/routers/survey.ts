@@ -144,7 +144,6 @@ export const surveyRouter = router({
             "cannot update survey response model with old model version",
           ).message,
         });
-
       // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write.
       // An empty resolution keeps the identity the response was created with, so a live switch to
       // Anonymous never erases who answered from the program funnel
