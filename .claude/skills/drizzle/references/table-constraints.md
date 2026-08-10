@@ -26,13 +26,13 @@ Renaming any of these is a metadata-only migration (`ALTER TABLE … RENAME CONS
 
   ```ts
   // CORRECT
-  check("name", sql`LENGTH(${name}) <= ${sql.raw(NAME_MAX_LENGTH.toString())}`);
+  check("users_name_length_check", sql`LENGTH(${name}) <= ${sql.raw(NAME_MAX_LENGTH.toString())}`);
   // WRONG — becomes LENGTH("name") <= $1 in DDL
-  check("name", sql`LENGTH(${name}) <= ${NAME_MAX_LENGTH}`);
+  check("users_name_length_check", sql`LENGTH(${name}) <= ${NAME_MAX_LENGTH}`);
   ```
 
 - Use `BETWEEN` when a column has both a lower and upper bound:
 
   ```ts
-  check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(NAME_MAX_LENGTH.toString())}`);
+  check("users_name_length_check", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(NAME_MAX_LENGTH.toString())}`);
   ```

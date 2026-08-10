@@ -97,10 +97,14 @@ query($endCursor: String) {
       }
     }
   }
-}' --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false) | .path' | wc -l
+}' --jq '.data.repository.pullRequest.reviewThreads.nodes[]
+  | select(.isResolved == false)
+  | select(.comments.nodes[0].author.login == "coderabbitai") | .path' | wc -l
 ```
 
 **`--paginate` and `pageInfo` are both load-bearing**, and the failure is silent in the direction that matters. A long-lived release PR accumulates threads for its whole life — this one is already past 90 — so `reviewThreads(first: 100)` alone starts dropping the newest page exactly when the PR is busiest, and reports the backlog as drained. `gh` only follows the cursor when the query declares `$endCursor` and selects `pageInfo`; omit either and it returns page one and exits 0. Count with `| wc -l` over one line per thread rather than `| length`, which would otherwise report a per-page length once per page.
+
+**The author filter is load-bearing in the other direction.** Unfiltered, the count is every unresolved thread on the PR — a human review comment or another bot's thread then holds the drain gate shut against findings that were never CodeRabbit's, and the number stops reconciling against the review bodies' `Actionable comments posted: N`. Note the login here is the GraphQL spelling `coderabbitai`, not the REST `coderabbitai[bot]`; getting that wrong reports zero. Because both mistakes are silent and point opposite ways, run the query once unfiltered too and read the gap as the human threads it is.
 
 Unresolved threads are the inline half only. Reconcile them against each review body's `Actionable comments posted: N` and `🧹 Nitpick comments (M)`, since nitpicks never exist as threads and inline comments can fail to post outright.
 
@@ -112,8 +116,11 @@ Reconcile against the range before treating a push as reviewed. Every review bod
 gh api "repos/:owner/:repo/pulls/<pr>/reviews?per_page=100" --paginate \
   --jq '.[] | select(.user.login=="coderabbitai[bot]") | select((.body|length) > 0)
         | "\(.submitted_at)  \(.body | capture("between (?<a>[0-9a-f]{40}) and (?<b>[0-9a-f]{40})") | "\(.a[0:9])..\(.b[0:9])")"' | tail -3
-git diff --name-only <last-reviewed-sha>..origin/<branch> | wc -l   # the real backlog
+git diff --name-only <last-reviewed-sha>..origin/<branch> | wc -l   # what is already pushed and unreviewed
+git diff --name-only <last-reviewed-sha>..HEAD | wc -l              # what the next push would put in the window
 ```
+
+**Take the second number before a push, not the first.** The pipeline deliberately keeps local commits ahead of the reviewed frontier, so `..origin/<branch>` measures the pushed backlog only and omits exactly the commits the push is about to add. It can read comfortably under the cap while the push itself lands well over it — and an over-budget push is the one mistake this whole section exists to prevent. Use `..origin/<branch>` only to answer "is a previous window still unreviewed"; use `..HEAD` (or `..<cut-sha>` when holding a tail back) to size the window.
 
 This matters because the budget is measured **from that sha, not from the last push**. A window that was pushed but never reviewed does not clear — it accumulates, and the next push adds to it. Two pushes of 35 and 80 that each looked compliant are one 115-file window to CodeRabbit, over the cap, and the review is skipped outright rather than truncated. Measure the backlog from the last reviewed sha before every push, and if a previous window is still unreviewed, that is a reason to wait rather than to add to it.
 

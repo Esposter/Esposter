@@ -1,6 +1,6 @@
 import { schema } from "@/schema";
 import { is } from "drizzle-orm";
-import { getTableConfig, PgDialect, PgTable } from "drizzle-orm/pg-core";
+import { getTableConfig, isPgEnum, PgDialect, PgTable } from "drizzle-orm/pg-core";
 import { describe, expect, test } from "vitest";
 
 const dialect = new PgDialect();
@@ -13,16 +13,21 @@ const getRenderedChecks = () =>
     .join("\n");
 
 describe("schema", () => {
-  // The `pgTable` wrapper's camelCase casing applies to columns and passes the table name through verbatim, so
-  // Nothing normalises the name and nothing else would catch a snake_case one. That is exactly how five tables and
-  // Eleven enums drifted while the stated rule said the opposite — this is the rule, rather than a sentence about it.
-  // The `InMessage` suffix disambiguates the export, not the table: the `message` schema already qualifies the name.
-  test("every table name is its exported const name without the schema suffix", () => {
+  // The `pgTable` wrapper's camelCase casing applies to columns and passes the table name through verbatim, and
+  // `pgEnum` is not wrapped at all — so nothing normalises either name and nothing else would catch a snake_case
+  // One. That is exactly how five tables and eleven enums drifted while the stated rule said the opposite; this is
+  // The rule, rather than a sentence about it. Both kinds are checked in one pass so a declaration cannot be added
+  // Under a kind the invariant forgot to look at. The suffixes disambiguate the export rather than the identifier:
+  // The `message` schema already qualifies a table name, and an enum shares its name with the TS enum it is built from
+  test("every table and enum name is its exported const name without the suffix", () => {
     expect.hasAssertions();
 
     const mismatched = Object.entries(schema)
-      .filter(([, value]) => is(value, PgTable))
-      .map(([exportName, table]) => [exportName.replace(/InMessage$/u, ""), getTableConfig(table).name] as const)
+      .flatMap(([exportName, value]) => {
+        if (is(value, PgTable)) return [[exportName.replace(/InMessage$/u, ""), getTableConfig(value).name] as const];
+        else if (isPgEnum(value)) return [[exportName.replace(/Enum$/u, ""), value.enumName] as const];
+        else return [];
+      })
       .filter(([expected, name]) => name !== expected)
       .map(([expected, name]) => `${name} should be ${expected}`);
 
