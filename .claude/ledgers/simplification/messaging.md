@@ -1,16 +1,16 @@
 # Messaging
 
-| Unit                                                                                      | Swept      | Notes                                                                                                |
-| ----------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------- |
-| `store/message`                                                                           | 2026-08-09 |                                                                                                      |
-| `Message/Model/Message`                                                                   | 2026-08-10 | `getSuggestionListTitle`, `getFileCornerStyle`, `useFocusWhenActive`, `setCurrentRoomId` test helper |
-| `Message/Model/Room`                                                                      | —          |                                                                                                      |
-| `Message/Model/User`                                                                      | —          | profile, presence, member surfaces                                                                   |
-| `Message/Model`                                                                           | —          | `FileRenderer`, `Member`, `RoomCategory`, `Settings`, `Status`                                       |
-| `Message/Content`                                                                         | —          | composer + message list                                                                              |
-| `Message/DraftsAndSent`, `Message/RightSideBar`, `Message/LeftSideBar`, `Message/Friends` | —          |                                                                                                      |
-| `app/composables/message`                                                                 | —          | `room/` and `subscribables/` are half of it                                                          |
-| `app/services/message`                                                                    | —          |                                                                                                      |
+| Unit                                                                                      | Swept      | Notes                                                                                                            |
+| ----------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| `store/message`                                                                           | 2026-08-09 |                                                                                                                  |
+| `Message/Model/Message`                                                                   | 2026-08-10 | `getSuggestionListTitle`, `getFileCornerStyle`, `useFocusWhenActive`, `setCurrentRoomId` test helper             |
+| `Message/Model/Room`                                                                      | 2026-08-10 | `Styled/SkeletonListItem`, `Room/BaseListItem`, `Settings/Field`, `DetailPlaceholder`; two behaviour fixes below |
+| `Message/Model/User`                                                                      | —          | profile, presence, member surfaces                                                                               |
+| `Message/Model`                                                                           | —          | `FileRenderer`, `Member`, `RoomCategory`, `Settings`, `Status`                                                   |
+| `Message/Content`                                                                         | —          | composer + message list                                                                                          |
+| `Message/DraftsAndSent`, `Message/RightSideBar`, `Message/LeftSideBar`, `Message/Friends` | —          |                                                                                                                  |
+| `app/composables/message`                                                                 | —          | `room/` and `subscribables/` are half of it                                                                      |
+| `app/services/message`                                                                    | —          |                                                                                                                  |
 
 `Message/Model` is two thirds of `app/components/Message`, so the units split at its sub-directories.
 
@@ -21,7 +21,15 @@
   `useCreator`, outside this unit.
 - `Forward/RoomDialog` resolves its target with its own computed rather than passing it to `useSingletonDialog`, so a
   forward target whose message leaves the timeline keeps `forwardStore.rowKey` set and re-opens when a later read
-  brings it back — the bug the primitive's reconciliation exists to prevent. Adopting it changes behaviour.
+  brings it back — the bug the primitive's reconciliation exists to prevent. Adopting it changes behaviour. The
+  second occurrence (`Room/Settings/Dialog`) was fixed in the `Message/Model/Room` pass and the rule now lives in
+  `vue-page-composition/references/singleton-dialogs.md`, so this is the last known site rather than a class.
+- `Room/Settings/Type/Overview/Index` and `Attachments/Index` duplicate the whole optimistic room-save block
+  (`executeMutation` + a hand-built snapshot of exactly the written keys + `storeUpdateRoom`). Every extraction shape
+  tried needs key-level casts to rebuild the snapshot generically; it wants a typed `pickKeys` primitive first.
+- `Message/LeftSideBar/Rooms` and `DirectMessages` duplicate the collapsible sidebar header `v-list-item` verbatim.
+- `Message/RightSideBar/Search/Header` still hand-rolls `result{{ count === 1 ? "" : "s" }}`; `pluralize` is now the
+  rule (`string-utils`).
 - `Type/Index` re-implements the message body inside its `isForward` branch, so a forwarded message silently loses the
   `(edited)` marker and the slot that carries the inline editor. Sharing one body component changes what renders.
 - `Type/Call`, `Type/EditRoom`, `Type/PinMessage` and `Type/System` are four copies of one system-line shell that have
