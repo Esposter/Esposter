@@ -18,9 +18,6 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
-// On the draggable rather than the table itself: it wraps the table and nothing else, so the click-outside
-// Region is identical, and `VDataTable`'s instance type is large enough that resolving it against vueuse's
-// Element union produces a "union type too complex" error
 const table = useTemplateRef("table");
 const columnStore = useColumnStore();
 const { displayColumns } = storeToRefs(columnStore);
@@ -140,6 +137,7 @@ onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
   else startCellSelection(newRowIndex, newColumnIndex);
 });
 
+// @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.
 onClickOutside(table, () => {
   clearCellSelection();
 });
@@ -155,14 +153,9 @@ onKeyStroke("Escape", () => {
     <template #text>
       <ResourceSheetRowTextSlot />
     </template>
-    <VueDraggable
-      ref="table"
-      v-model="dragRows"
-      target="tbody"
-      :disabled="!isDraggable"
-      :handle="`.${DRAG_HANDLE_CLASS}`"
-    >
+    <VueDraggable v-model="dragRows" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
       <v-data-table
+        ref="table"
         v-model="selectedRowIds"
         v-model:items-per-page="itemsPerPage"
         v-model:page="page"
