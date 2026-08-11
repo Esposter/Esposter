@@ -186,7 +186,7 @@ catalog:
   node-html-parser: ^9.0.1
   nuxt: ^4.5.2
   nuxt-security: ^2.6.0
-  oxfmt: ^0.62.0
+  oxfmt: ^0.63.0
   oxlint: ^1.77.0
   oxlint-tsgolint: ^7.0.2001
   p-progress: ^1.0.0
