@@ -65,15 +65,13 @@ Temporary overrides that force a transitive dep to a safe version (currently `cr
 ## Tracked issues (update normally, but watch these)
 
 - **`oxlint`** — has `^`; open issue https://github.com/oxc-project/oxc/issues/13204.
-- **`oxlint-tsgolint` / `@typescript/native-preview`** — oxlint's type-aware pass (`options.typeAware: true` in `.oxlintrc.json`) runs `tsgolint`, which drives the experimental tsgo (`@typescript/native-preview`). tsgo **infinite-loops** building the type graph for files that import the giant recursive `three/webgpu` + `three/tsl` (TSL) types — currently only `packages/app/app/composables/visual/useFluidSimulator.ts`, which is why that file is in `.oxlintrc.json` `ignorePatterns`. **Do not remove that exclusion** or the whole `oxlint` step hangs forever (every other file lints in seconds; bisect a suspected new hang per-dir, then per-file). Symptom in CI: the Lint job (no `timeout-minutes`, `CI.yaml` `cancel-in-progress: true`) runs until the next push cancels the run → `ELIFECYCLE exit 129` (SIGHUP), **not** a heap/OOM (that would be 134 + `heap out of memory`). typescript-eslint does **not** hang on the same file — it uses the mature `typescript` compiler (via `projectService`), not tsgo. oxlint has no per-file type-aware toggle (`overrides` can't set `options.typeAware`), so `ignorePatterns` is the only lever. Recheck whether a newer `oxlint-tsgolint`/tsgo fixes the TSL hang before assuming the exclusion is still needed.
+- **`oxlint-tsgolint` / `@typescript/native-preview`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are the `oxlint` skill's (`references/lint-configuration.md`).
 - **`ajv`, `ajv-errors`, `ajv-formats`, `ajv-i18n`, `debug`** — required by `@koumoul/vjsf`; tracked at https://github.com/json-layout/json-layout/issues/5.
 - **`db:run` script** — workaround for https://github.com/drizzle-team/drizzle-orm/issues/1228.
 
 ## Dependency placement (deps vs peerDeps)
 
-A `peerDependencies` entry covers everything — keep the dep there and **nowhere else**. Never duplicate a peer in `dependencies` or `devDependencies`. pnpm's `auto-install-peers` (default true) installs peers into the workspace, so they resolve for the package's own build/test as well as for consumers. Listing the same package again is dead weight and risks version drift.
-
-Evidence: `db-schema`/`db`/`db-mock` declare `drizzle-orm` as a peer only (no dev copy), yet import it in source + tests and build fine. If a package is in `peerDependencies`, strip it from `dependencies`/`devDependencies`.
+**A `peerDependencies` entry covers everything — keep the dep there and nowhere else.** pnpm's `auto-install-peers` installs peers into the workspace, so they resolve for the package's own build and tests as well as for consumers; a second listing is dead weight that drifts. Which imports have to be peers in the first place is the `build` skill's external-list rule.
 
 ## Caret rules
 
