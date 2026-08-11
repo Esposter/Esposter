@@ -51,7 +51,7 @@ The math, all in small pure services under `services/dungeons/monster/` and `ser
 - **Capture** — ball items roll `0.5 + (1 − hp/maxHp) × 0.2` against a uniform random: success joins the party, a near miss (within 0.1) gets its own dialog, otherwise failure — so weakening the enemy first genuinely helps.
 - **Flee** — a random escape attempt; failure forfeits the turn.
 
-Attack visuals are Vue components (`Battle/Attack/Slash.vue`, `IceShard.vue`) selected by `AttackComponentMap` and animated with spritesheet tweens; monster HP/EXP bars are the shared `UI/Bar` components.
+Attack visuals are Vue components (`DungeonsBattleAttackSlash`, `DungeonsBattleAttackIceShard`) selected by `AttackComponentMap` and animated with spritesheet tweens; monster HP/EXP bars are the shared `UI/Bar` components.
 
 ## Key files
 

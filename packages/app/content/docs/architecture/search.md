@@ -59,7 +59,7 @@ export const useSearchStore = defineStore("message/room/search", () => {
 
 ### `StyledSearchDialog` — the palette shell
 
-`app/components/Styled/SearchDialog.vue` is the one Ctrl+K palette: a `v-dialog` wrapping a solo, autofocused, clearable `mdi-magnify` text field. It exposes `v-model` (open state), `v-model:search-query`, an `activator` slot receiving `updateIsOpen`, and results in the default slot. Its `hotkey` prop registers through Vuetify's `useVHotkey` — the **only** sanctioned hotkey mechanism for dialog search; never re-roll `onKeyStroke` or `useEventListener` listeners per feature.
+`StyledSearchDialog` is the one Ctrl+K palette: a `v-dialog` wrapping a solo, autofocused, clearable `mdi-magnify` text field. It exposes `v-model` (open state), `v-model:search-query`, an `activator` slot receiving `updateIsOpen`, and results in the default slot. Its `hotkey` prop registers through Vuetify's `useVHotkey` — the **only** sanctioned hotkey mechanism for dialog search; never re-roll `onKeyStroke` or `useEventListener` listeners per feature.
 
 ```vue
 <StyledSearchDialog v-model="isOpen" v-model:search-query="query" hotkey="ctrl+k" placeholder="Search docs">
@@ -90,7 +90,7 @@ Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a 
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                 |
 | `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                       |
-| `app/components/Styled/SearchDialog.vue`                    | Ctrl+K palette shell (`hotkey` via `useVHotkey`)                                        |
+| `StyledSearchDialog`                                        | Ctrl+K palette shell (`hotkey` via `useVHotkey`)                                        |
 | `app/components/Docs/Search.vue`                            | Palette + client-index results (MiniSearch)                                             |
 | `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useSearchStore`)                                   |
 | `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |

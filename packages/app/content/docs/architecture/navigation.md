@@ -25,7 +25,7 @@ flowchart TD
 
 ## NuxtInvisibleLink
 
-`app/components/Nuxt/InvisibleLink.vue` is a `defineNuxtLink({ componentName: "NuxtInvisibleLink" })` clone — a full `NuxtLink` (all its props: `to`, `external`, `target`, `replace`, hash locations) whose only addition is stripping the default link colour/underline (`a { color: inherit; text-decoration: none }`). Use it as the base link primitive wherever a link should inherit surrounding styling.
+`NuxtInvisibleLink` is a `defineNuxtLink({ componentName: "NuxtInvisibleLink" })` clone — a full `NuxtLink` (all its props: `to`, `external`, `target`, `replace`, hash locations) whose only addition is stripping the default link colour/underline (`a { color: inherit; text-decoration: none }`). Use it as the base link primitive wherever a link should inherit surrounding styling.
 
 A link-styled affordance that has no destination (it only emits/handles an event) is not a link — render a `<span text-info underline cursor-pointer @click="…">`, not an anchor.
 
@@ -51,7 +51,7 @@ The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between
 
 | File                                                  | Role                                                                 |
 | ----------------------------------------------------- | -------------------------------------------------------------------- |
-| `app/components/Nuxt/InvisibleLink.vue`               | base link primitive — `NuxtLink` clone with default styling stripped |
+| `NuxtInvisibleLink`                                   | base link primitive — `NuxtLink` clone with default styling stripped |
 | `packages/configuration/eslint/overrides/vueRules.js` | bans the raw `a` element and `router.push` in templates              |
 | `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`) |
 | `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                 |

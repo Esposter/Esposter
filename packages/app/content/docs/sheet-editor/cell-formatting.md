@@ -17,7 +17,7 @@ The rule holds for everything that only _reads_ a cell. Find and replace writes 
 
 The row store wraps it as `getCellText`, and both consumers of "the displayed value" go through that one function rather than each formatting for themselves:
 
-- **The cell renderer.** `Row/Field/Index.vue` renders `getCellText`, so the outlier and find-and-replace highlight layers wrap the formatted text. They wrap it; they do not decide it — what find and replace _matches_ is the underlying value, for the reason in the Notes below.
+- **The cell renderer.** `ResourceSheetRowField` renders `getCellText`, so the outlier and find-and-replace highlight layers wrap the formatted text. They wrap it; they do not decide it — what find and replace _matches_ is the underlying value, for the reason in the Notes below.
 - **The data table's `value`.** A column header's `value` resolves to the same text. Vuetify's global search filters on each column's `value`, so making it the display text is what routes search through the format — there is no second global search path to keep in step.
 
 **Global search and find-and-replace are two different searches, and only the first follows the format.** Global search filters rows and changes nothing, so matching what the reader can see is free. Find and replace writes back into the cell, so it has to match what it can write: a hit against `$1,234.00` has no coherent value to store for the separators and the symbol. Both are pinned by tests — `Row/Table.test.ts` for the formatted global search, `findMatchingCells.test.ts` for the raw find-and-replace — because "make them consistent" is the obvious-looking change that would break the one that writes.

@@ -1,6 +1,6 @@
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getContainerClient, getContentBlobName, getIsNotFound } from "@esposter/db";
-import { AzureContainer, relations, ResourceType, resources } from "@esposter/db-schema";
+import { AzureContainer, relations, resources, ResourceType } from "@esposter/db-schema";
 import { getResultAsync, streamToText } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -34,6 +34,9 @@ for (const { id } of unprojectedPrograms) {
   const content = await getResultAsync(async () => {
     const { readableStreamBody } = await containerClient.getBlobClient(getContentBlobName(id)).download();
     if (!readableStreamBody) return undefined;
+    // Parsed the way `readContentBlob` parses it, so the script reads a binding exactly as the server wrote it.
+    // Blanket date revival would be wrong here anyway: `keyColumn` names a column in the owner's own spreadsheet
+    // eslint-disable-next-line no-restricted-syntax -- the content schema owns coercion, as in readContentBlob
     return programResourceSchema.parse(JSON.parse(await streamToText(readableStreamBody)));
   }).match(
     (parsedContent) => parsedContent,

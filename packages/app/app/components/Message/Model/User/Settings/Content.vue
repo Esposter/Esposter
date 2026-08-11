@@ -10,7 +10,6 @@ interface UserSettingsContentProps {
 const { settingsType } = defineProps<UserSettingsContentProps>();
 const userSettingsDialogStore = useUserSettingsDialogStore();
 const { isDrawerOpen, isVisible } = storeToRefs(userSettingsDialogStore);
-const { smAndDown } = useVDisplay();
 const component = computed(() => UserSettingsContentMap[settingsType]);
 useSettingsScrollSpy();
 </script>
@@ -18,18 +17,7 @@ useSettingsScrollSpy();
 <template>
   <MessageModelSettingsContent>
     <template #header>
-      <v-sheet tag="header" px-4 py-4 flex items-center justify-between>
-        <div flex gap-2 items-center>
-          <StyledTooltipIconButton v-if="smAndDown" icon="mdi-menu" text="Show menu" @click="isDrawerOpen = true" />
-          <div font-bold text-headline-medium>{{ settingsType }}</div>
-        </div>
-        <StyledTooltipIconButton
-          :button-props="{ variant: 'text' }"
-          icon="mdi-close"
-          text="Close"
-          @click="isVisible = false"
-        />
-      </v-sheet>
+      <MessageModelSettingsHeader :title="settingsType" @close="isVisible = false" @open:drawer="isDrawerOpen = true" />
     </template>
     <!-- The scroll area owns its bottom breathing room, so no panel carries a trailing margin of its own -->
     <div pb-8>

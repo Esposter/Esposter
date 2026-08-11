@@ -15,7 +15,7 @@ A Discord-style fullscreen settings dialog for **message/communication** prefere
 | Global route `/user/settings` | Account · Profile                                     | `users` (`UserIntroductionCard` + `UserProfileCard` + SAS avatar upload)         |
 | Theme                         | top-right toggle, not a panel                         | cookie (`THEME_COOKIE_NAME`) — hard SSR constraint (flash-free first paint)      |
 
-The dialog is opened by the gear in `Message/LeftSideBar/StatusBar.vue` and mirrors the [room settings](/docs/esbabbler/room-settings) pattern (`SettingsType` enum → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
+The dialog is opened by the gear in `MessageLeftSideBarStatusBar` and mirrors the [room settings](/docs/esbabbler/room-settings) pattern (`SettingsType` enum → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
 
 Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings mutation is **optimistic** (apply to the store immediately, mutate in the background, roll back + surface the error on failure — [`useMutation`](/docs/architecture/client-data)); and the sidebar section rail is `StyledSlideIndicator` stretched across **all** visible sections, pinned to the target while a click-scroll runs.
 
@@ -55,9 +55,9 @@ The client store (`store/message/user/settings/index.ts`) applies updates optimi
 
 The dialog uses a Discord-style two-level nav: a `v-list-group` per `UserSettingsListItemMap` category whose sections come from `UserSettingsSectionMap` (per-panel subsection enums whose values double as section title **and** DOM id).
 
-- **Scroll tracking is visibility-driven, not `v-intersect`.** Each `Section.vue` reports visibility via `useElementVisibility` into `visibleSectionIds`; `useSettingsScrollSpy` sets `activeSectionId` to the topmost visible section in map order. `v-intersect` was dropped because `IntersectionObserver` re-fires on any layout reflow — clicking a button inside a panel spuriously moved the sidebar highlight.
+- **Scroll tracking is visibility-driven, not `v-intersect`.** Each `MessageModelUserSettingsSection` reports visibility via `useElementVisibility` into `visibleSectionIds`; `useSettingsScrollSpy` sets `activeSectionId` to the topmost visible section in map order. `v-intersect` was dropped because `IntersectionObserver` re-fires on any layout reflow — clicking a button inside a panel spuriously moved the sidebar highlight.
 - **The panel header sits outside the scroll container** (the shared shell's fixed `#header` slot above the `flex-1` scroll div). That structural choice keeps the scrollspy simple: a section clipped above the scroll area is genuinely not visible, and `useVGoTo` lands a section title just below the header with no offset math. `scrollToSection` sets `activeSectionId` immediately and guards with `isScrollingToSection` so the highlight doesn't flicker through intermediate sections during the animated scroll.
-- The active sub-item rail is the generic `StyledSlideIndicator` (`components/Styled/SlideIndicator.vue`) — measures the active item and slides to it via `translateY`, reusable for any vertical nav.
+- The active sub-item rail is the generic `StyledSlideIndicator` — measures the active item and slides to it via `translateY`, reusable for any vertical nav.
 
 ## Key files
 

@@ -13,8 +13,8 @@ import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfte
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { getContentBlobName } from "@esposter/db";
 import { AzureContainer, resources } from "@esposter/db-schema";
-import { eq } from "drizzle-orm";
 import { getResultAsync } from "@esposter/shared";
+import { eq } from "drizzle-orm";
 
 interface SaveResourceContentInput {
   // What the trail records for this write. Omitted only where `createResourceRow` has already opened the trail

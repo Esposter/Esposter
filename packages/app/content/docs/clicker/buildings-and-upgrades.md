@@ -9,7 +9,7 @@ Buildings are the passive producers (19 tiers, Cursor → Idleverse, each with a
 
 ## How it works
 
-The store list (`Clicker/Model/Store/List.vue`) fetches `BuildingMap` and `UpgradeMap` through the clicker router on setup and hands them to the building/upgrade stores. Buildings are always visible; upgrades appear only when **unlocked** and disappear once bought, sorted by price.
+The store list (`ClickerModelStoreList`) fetches `BuildingMap` and `UpgradeMap` through the clicker router on setup and hands them to the building/upgrade stores. Buildings are always visible; upgrades appear only when **unlocked** and disappear once bought, sorted by price.
 
 - **Unlock conditions** — every upgrade carries `UnlockCondition[]`: own at least N of a building (`Target.Building` + amount), or own another upgrade (`Target.Upgrade`). `unlockedUpgrades` in the upgrade store evaluates all conditions against the save.
 - **Price scaling** — buildings cost `trunc(basePrice * 1.15 ** owned)` (`PRICE_GROWTH` in `services/clicker/constants.ts`), the idle-game-standard exponential curve Cookie Clicker's `basePrice` tiers were designed for, recomputed from the owned count; upgrades have fixed prices. Selling does not exist.

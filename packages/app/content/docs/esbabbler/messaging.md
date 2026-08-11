@@ -63,7 +63,7 @@ sequenceDiagram
 
 A rejected write means the vote is still valid and only the version it was computed against is stale, so it is re-read and re-applied rather than surfaced. `votePoll` does not own that loop: it hands `getUpdateEntity` and `writeEntity` to the shared `updateEntityConditionally` helper ([conditional writes](/docs/architecture/conditional-writes)), which owns the re-read, the retry and the bound. The bound is private to the helper and shared by every conditional write in the repo, so there is no poll-specific retry budget to raise — changing it changes `deleteFile`, `deleteLinkPreviewResponse` and `unpinMessage` with it. A vote that still cannot land is refused with `CONFLICT` so the voter sends it again instead of being shown a vote that never counted, and a failed write whose re-read finds the version unchanged was never a lost race, so that error propagates as itself rather than being retried into a `CONFLICT`.
 
-The stored poll body is parsed and re-serialized through `pollMessageContentSchema` (`shared/models/message/poll/`) — the one schema that owns a poll's shape, and the same one `Poll.vue` reads it back with. A vote sends only the option id, so nothing else in the body may change across it: a narrower server-side copy of that schema strips every field it does not name, and the first vote on a poll would take its option labels with it.
+The stored poll body is parsed and re-serialized through `pollMessageContentSchema` (`shared/models/message/poll/`) — the one schema that owns a poll's shape, and the same one `MessageModelMessageTypePoll` reads it back with. A vote sends only the option id, so nothing else in the body may change across it: a narrower server-side copy of that schema strips every field it does not name, and the first vote on a poll would take its option labels with it.
 
 ## Message types
 
@@ -73,7 +73,7 @@ The stored poll body is parsed and re-serialized through `pollMessageContentSche
 
 Mentions are stored as HTML: the TipTap mention suggestion inserts `<span data-type="mention" data-id="...">` nodes, which the server later parses for notification targeting and the client resolves to display names (see [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)).
 
-All three composer suggestion popovers — mentions, emoji and [slash commands](/docs/esbabbler/slash-commands) — render through one `Suggestion/List.vue` surface, so the composer's chrome is the same whichever trigger opened it. It owns the card, the group title from `getSuggestionListTitle`, and the keyboard-navigated `StyledList`; each popover supplies its own rows and its own width as a passthrough attribute, and nothing else.
+All three composer suggestion popovers — mentions, emoji and [slash commands](/docs/esbabbler/slash-commands) — render through one `MessageModelMessageSuggestionList` surface, so the composer's chrome is the same whichever trigger opened it. It owns the card, the group title from `getSuggestionListTitle`, and the keyboard-navigated `StyledList`; each popover supplies its own rows and its own width as a passthrough attribute, and nothing else.
 
 ## Procedures
 

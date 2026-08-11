@@ -7,11 +7,30 @@ description: The self-referencing post model, CRUD procedures, rich-text editing
 
 One `posts` table carries both: a post is a root row (required title, `parentId = null`), a comment is a child row (`parentId` set, `depth = parent + 1`, no title). Deleting a post cascades to its comments.
 
+`parentId` is the whole distinction — every rule on this page follows from which side of it a row falls on:
+
+```mermaid
+flowchart TD
+  ROW["a posts row"] --> PARENT{"parentId"}
+  PARENT -->|"null"| POST["post — title required, depth 0"]
+  PARENT -->|"set"| COMMENT["comment — description only, depth parent plus 1"]
+  POST --> POSTPROCS["createPost, updatePost, deletePost"]
+  COMMENT --> COMMENTPROCS["createComment, updateComment, deleteComment"]
+  POSTPROCS --> GUARD["ownedBy plus a parentId IS NULL check"]
+  COMMENTPROCS --> GUARDC["ownedBy plus a parentId IS NOT NULL check"]
+  COMMENTPROCS --> COUNT["same transaction bumps the parent's noComments"]
+  POSTPROCS --> CASCADE["deleting a post cascades to its comments"]
+  POST --> SHARED["one table, so likes, ranking and profanity filtering reach both"]
+  COMMENT --> SHARED
+```
+
+The two guards are why a post procedure cannot touch a comment and vice versa, even though both address the same table by id.
+
 ## How it works
 
 **Model** — `posts(id, userId, title, description, parentId, depth, noComments, noLikes, ranking)` with DB-level length checks (`title ≤ 300`, `description ≤ 1000`); `selectPostSchema` vs `selectCommentSchema` differ only in which text field is required. Rows relate to their author via `PostRelations` and carry the viewer's own like as `viewerLike` (see [likes](/docs/posts/likes)).
 
-**Creating** — `/post/create` hosts the post form (`Post/UpsertForm.vue`); descriptions are Tiptap rich text (`DescriptionRichTextEditor`). Comments are created inline on the post page (`Comment/CreateRichTextEditor`). Both mutations run through the profanity-filter procedure, which censors the configured text fields in middleware, and compute the initial [ranking](/docs/posts/feed-and-ranking) from zero likes.
+**Creating** — `/post/create` hosts the post form (`PostUpsertForm`); descriptions are Tiptap rich text (`DescriptionRichTextEditor`). Comments are created inline on the post page (`Comment/CreateRichTextEditor`). Both mutations run through the profanity-filter procedure, which censors the configured text fields in middleware, and compute the initial [ranking](/docs/posts/feed-and-ranking) from zero likes.
 
 **Comment bookkeeping** — `createComment`/`deleteComment` run in a transaction that also increments/decrements the parent's `noComments`, so counts never drift from the rows.
 

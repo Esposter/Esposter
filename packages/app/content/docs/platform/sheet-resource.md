@@ -13,6 +13,23 @@ Each imported file (CSV/JSON/XLSX) is its own resource, and the three concerns i
 | Settings (`DataSourceType` + configuration) | `settings` section of the content blob |
 | Data (columns/rows/metadata)                | `data` section of the content blob     |
 
+The split is not three storage systems — it is one row and one blob, with the blob sectioned so the two blades never write the same keys:
+
+```mermaid
+flowchart TD
+  IMPORT["import a CSV, JSON or XLSX file"] --> PARSE["client-side parse, five-row preview"]
+  PARSE --> DATA["content.data — columns, rows, metadata"]
+  ROW["resources row — name and id only"]
+  SETTINGSFORM["Settings blade"] --> SETTINGS["content.settings — the per-format parse configuration"]
+  GRID["Data blade — the grid editor"] --> DATA
+  DATA --> BLOB["one content blob"]
+  SETTINGS --> BLOB
+  BLOB --> SAVE["one saveResourceContent, one contentVersion"]
+  SAVE --> ROW
+  DATA --> DATASET["readSheetDataset — a DatasetReference is the resource id"]
+  SETTINGS -.->|"applies on the next import, never rewrites data in place"| PARSE
+```
+
 ## Data model
 
 ```ts
