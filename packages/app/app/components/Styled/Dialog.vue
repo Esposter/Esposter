@@ -54,7 +54,7 @@ const confirm = () => {
 </script>
 
 <template>
-  <v-dialog :="dialogProps" v-model="modelValue" :fullscreen="isFullScreen">
+  <v-dialog v-model="modelValue" :="dialogProps" :fullscreen="isFullScreen">
     <template #activator>
       <slot name="activator" :is-open="modelValue" :update-is-open="(value) => (modelValue = value)" />
     </template>
