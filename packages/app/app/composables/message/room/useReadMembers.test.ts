@@ -6,7 +6,6 @@ import { useReadMembers } from "@/composables/message/room/useReadMembers";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useMemberStore } from "@/store/message/user/member";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -47,10 +46,8 @@ describe(useReadMembers, () => {
   test("files the member totals under the room they were read for", async () => {
     expect.hasAssertions();
 
-    let releaseReads = noop;
-    const readGate = new Promise<void>((resolve) => {
-      releaseReads = resolve;
-    });
+    const { promise: readsPromise, resolve: releaseReads } = Promise.withResolvers<void>();
+    const readGate = readsPromise;
     server.use(
       trpcMsw.room.countMembers.query(async () => {
         await readGate;

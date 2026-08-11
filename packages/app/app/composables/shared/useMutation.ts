@@ -5,7 +5,7 @@ import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
 import { useCacheStore } from "@/store/cache";
-import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> extends QueryOptions<TResult> {
   applyOptimistic?: () => Promisable<() => void>;
@@ -88,13 +88,8 @@ export const useMutation = () => {
   // Calls behind it
   const enqueue = <TResult>(key: PropertyKey, run: () => Promise<TResult>) => {
     const previous = queues.get(key) ?? Promise.resolve();
-    let release = noop;
-    queues.set(
-      key,
-      new Promise<void>((resolve) => {
-        release = resolve;
-      }),
-    );
+    const { promise, resolve: release } = Promise.withResolvers<void>();
+    queues.set(key, promise);
     return withFinalizerAsync(async () => {
       await previous;
       return run();

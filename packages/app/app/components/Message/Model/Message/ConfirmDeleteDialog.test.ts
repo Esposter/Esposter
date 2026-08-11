@@ -48,14 +48,8 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
   test("restores only its own message when the delete is rejected", async () => {
     expect.hasAssertions();
 
-    let signalDeleteRequested = noop;
-    const deleteRequested = new Promise<void>((resolve) => {
-      signalDeleteRequested = resolve;
-    });
-    let releaseDelete = noop;
-    const deleteReleased = new Promise<void>((resolve) => {
-      releaseDelete = resolve;
-    });
+    const { promise: deleteRequested, resolve: signalDeleteRequested } = Promise.withResolvers<void>();
+    const { promise: deleteReleased, resolve: releaseDelete } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.message.deleteMessage.mutation(async () => {
         signalDeleteRequested();

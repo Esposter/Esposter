@@ -69,13 +69,12 @@ describe(useMutation, () => {
 
     const startOrder: string[] = [];
     const { executeMutation } = useMutation();
-    let resolveFirst: () => void = noop;
+    const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
     const first = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          startOrder.push("first");
-          resolveFirst = resolve;
-        }),
+      () => {
+        startOrder.push("first");
+        return firstPromise;
+      },
       { key },
     );
     const second = executeMutation(
@@ -100,14 +99,8 @@ describe(useMutation, () => {
     const firstOnSuccess = vi.fn<() => void>();
     const secondOnSuccess = vi.fn<() => void>();
     const { executeMutation } = useMutation();
-    let resolveFirst: () => void = noop;
-    const first = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveFirst = resolve;
-        }),
-      { key, onSuccess: firstOnSuccess },
-    );
+    const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
+    const first = executeMutation(() => firstPromise, { key, onSuccess: firstOnSuccess });
     const second = executeMutation(() => Promise.resolve(), { key, onSuccess: secondOnSuccess });
     await flushPromises();
     resolveFirst();
@@ -124,14 +117,8 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    let resolveFirst: () => void = noop;
-    const first = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveFirst = resolve;
-        }),
-      { key },
-    );
+    const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
+    const first = executeMutation(() => firstPromise, { key });
     const second = executeMutation(() => Promise.reject(new Error("error")), {
       applyOptimistic: () => rollback,
       key,
@@ -149,14 +136,8 @@ describe(useMutation, () => {
 
     const mutate = vi.fn<() => Promise<void>>(() => Promise.resolve());
     const { executeMutation } = useMutation();
-    let rejectFirst: (reason: unknown) => void = noop;
-    const first = executeMutation(
-      () =>
-        new Promise<void>((_resolve, reject) => {
-          rejectFirst = reject;
-        }),
-      { key, onError: noop },
-    );
+    const { promise: firstPromise, reject: rejectFirst } = Promise.withResolvers<void>();
+    const first = executeMutation(() => firstPromise, { key, onError: noop });
     const second = executeMutation(mutate, { key });
     await flushPromises();
     const isSecondStartedWhileFirstInFlight = mutate.mock.calls.length > 0;
@@ -172,13 +153,12 @@ describe(useMutation, () => {
 
     const startOrder: string[] = [];
     const { executeMutation } = useMutation();
-    let resolveFirst: () => void = noop;
+    const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
     const first = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          startOrder.push("first");
-          resolveFirst = resolve;
-        }),
+      () => {
+        startOrder.push("first");
+        return firstPromise;
+      },
       { key },
     );
     const second = executeMutation(
@@ -203,14 +183,12 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    let rejectSuperseded: (reason: unknown) => void = noop;
-    const supersededWrite = executeMutation(
-      () =>
-        new Promise<void>((_resolve, reject) => {
-          rejectSuperseded = reject;
-        }),
-      { applyOptimistic: () => rollback, isSupersede: true, key },
-    );
+    const { promise: supersededPromise, reject: rejectSuperseded } = Promise.withResolvers<void>();
+    const supersededWrite = executeMutation(() => supersededPromise, {
+      applyOptimistic: () => rollback,
+      isSupersede: true,
+      key,
+    });
     await executeMutation(() => Promise.resolve(), { isSupersede: true, key });
     rejectSuperseded(new Error("error"));
     await supersededWrite;
@@ -223,14 +201,8 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation } = useMutation();
-    let resolveSuperseded: () => void = noop;
-    const supersededWrite = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveSuperseded = resolve;
-        }),
-      { isSupersede: true, key },
-    );
+    const { promise: supersededPromise, resolve: resolveSuperseded } = Promise.withResolvers<void>();
+    const supersededWrite = executeMutation(() => supersededPromise, { isSupersede: true, key });
     await executeMutation(() => Promise.resolve(), { isSupersede: true, key });
     resolveSuperseded();
 
@@ -243,14 +215,12 @@ describe(useMutation, () => {
     const supersededOnSuccess = vi.fn<() => void>();
     const freshOnSuccess = vi.fn<() => void>();
     const { executeMutation } = useMutation();
-    let resolveSuperseded: () => void = noop;
-    const supersededWrite = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveSuperseded = resolve;
-        }),
-      { isSupersede: true, key, onSuccess: supersededOnSuccess },
-    );
+    const { promise: supersededPromise, resolve: resolveSuperseded } = Promise.withResolvers<void>();
+    const supersededWrite = executeMutation(() => supersededPromise, {
+      isSupersede: true,
+      key,
+      onSuccess: supersededOnSuccess,
+    });
     await executeMutation(() => Promise.resolve(), { isSupersede: true, key, onSuccess: freshOnSuccess });
     resolveSuperseded();
     await supersededWrite;
@@ -265,14 +235,8 @@ describe(useMutation, () => {
     const supersededOnSuccess = vi.fn<() => void>();
     const freshOnSuccess = vi.fn<() => void>();
     const { executeQuery } = useMutation();
-    let resolveSuperseded: () => void = noop;
-    const supersededRead = executeQuery(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveSuperseded = resolve;
-        }),
-      { key, onSuccess: supersededOnSuccess },
-    );
+    const { promise: supersededPromise, resolve: resolveSuperseded } = Promise.withResolvers<void>();
+    const supersededRead = executeQuery(() => supersededPromise, { key, onSuccess: supersededOnSuccess });
     await executeQuery(() => Promise.resolve(), { key, onSuccess: freshOnSuccess });
     resolveSuperseded();
 
@@ -287,14 +251,8 @@ describe(useMutation, () => {
     const { executeQuery } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    let rejectSuperseded: (reason: unknown) => void = noop;
-    const supersededRead = executeQuery(
-      () =>
-        new Promise<void>((_resolve, reject) => {
-          rejectSuperseded = reject;
-        }),
-      { key },
-    );
+    const { promise: supersededPromise, reject: rejectSuperseded } = Promise.withResolvers<void>();
+    const supersededRead = executeQuery(() => supersededPromise, { key });
     await executeQuery(() => Promise.resolve(), { key });
     rejectSuperseded(new Error("error"));
 
@@ -309,13 +267,8 @@ describe(useMutation, () => {
     const joinedOnSuccess = vi.fn<(result: string) => void>();
     const query = vi.fn<() => Promise<string>>();
     const { executeQuery } = useMutation();
-    let resolveQuery: (result: string) => void = noop;
-    query.mockImplementationOnce(
-      () =>
-        new Promise<string>((resolve) => {
-          resolveQuery = resolve;
-        }),
-    );
+    const { promise: queryPromise, resolve: resolveQuery } = Promise.withResolvers<string>();
+    query.mockReturnValueOnce(queryPromise);
     const inFlightRead = executeQuery(query, { isExclusive: true, key, onSuccess });
     const joinedRead = executeQuery(query, { isExclusive: true, key, onSuccess: joinedOnSuccess });
     await flushPromises();
@@ -333,14 +286,8 @@ describe(useMutation, () => {
 
     const { executeQuery } = useMutation();
     const error = new Error("error");
-    let rejectQuery: (reason: unknown) => void = noop;
-    const inFlightRead = executeQuery(
-      () =>
-        new Promise<void>((_resolve, reject) => {
-          rejectQuery = reject;
-        }),
-      { isExclusive: true, key, onError: noop },
-    );
+    const { promise: queryPromise, reject: rejectQuery } = Promise.withResolvers<void>();
+    const inFlightRead = executeQuery(() => queryPromise, { isExclusive: true, key, onError: noop });
     const joinedRead = executeQuery(() => Promise.resolve(), { isExclusive: true, key, onError: noop });
     await flushPromises();
     rejectQuery(error);
@@ -356,14 +303,8 @@ describe(useMutation, () => {
 
     const onSuccess = vi.fn<(result: string) => void>();
     const { executeQuery } = useMutation();
-    let resolveExclusive: (result: string) => void = noop;
-    const exclusiveRead = executeQuery(
-      () =>
-        new Promise<string>((resolve) => {
-          resolveExclusive = resolve;
-        }),
-      { isExclusive: true, key, onSuccess },
-    );
+    const { promise: exclusivePromise, resolve: resolveExclusive } = Promise.withResolvers<string>();
+    const exclusiveRead = executeQuery(() => exclusivePromise, { isExclusive: true, key, onSuccess });
     await executeQuery(() => Promise.resolve("replacement"), { key, onSuccess });
     const joinedRead = executeQuery(() => Promise.resolve("joined"), { isExclusive: true, key, onSuccess });
     resolveExclusive("exclusive");
@@ -380,23 +321,11 @@ describe(useMutation, () => {
 
     const duplicateQuery = vi.fn<() => Promise<string>>(() => Promise.resolve("duplicate"));
     const { executeQuery } = useMutation();
-    let resolveSupersededQuery: (result: string) => void = noop;
-    let resolveNewerQuery: (result: string) => void = noop;
-    const supersededRead = executeQuery(
-      () =>
-        new Promise<string>((resolve) => {
-          resolveSupersededQuery = resolve;
-        }),
-      { isExclusive: true, key },
-    );
+    const { promise: supersededQueryPromise, resolve: resolveSupersededQuery } = Promise.withResolvers<string>();
+    const { promise: newerQueryPromise, resolve: resolveNewerQuery } = Promise.withResolvers<string>();
+    const supersededRead = executeQuery(() => supersededQueryPromise, { isExclusive: true, key });
     await executeQuery(() => Promise.resolve("replacement"), { key });
-    const newerRead = executeQuery(
-      () =>
-        new Promise<string>((resolve) => {
-          resolveNewerQuery = resolve;
-        }),
-      { isExclusive: true, key },
-    );
+    const newerRead = executeQuery(() => newerQueryPromise, { isExclusive: true, key });
     await flushPromises();
     resolveSupersededQuery("superseded");
     await supersededRead;
@@ -435,14 +364,8 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation, isPending } = useMutation();
-    let resolveMutate: () => void = noop;
-    const pendingWrite = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveMutate = resolve;
-        }),
-      { key },
-    );
+    const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<void>();
+    const pendingWrite = executeMutation(() => mutatePromise, { key });
     const isPendingWhileInFlight = isPending.value;
     await flushPromises();
     resolveMutate();
@@ -456,14 +379,8 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation, getIsPending, isPending } = useMutation();
-    let resolveMutate: () => void = noop;
-    const pendingWrite = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveMutate = resolve;
-        }),
-      { key },
-    );
+    const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<void>();
+    const pendingWrite = executeMutation(() => mutatePromise, { key });
     const isKeyPendingWhileInFlight = getIsPending(key);
     const isOtherKeyPendingWhileInFlight = getIsPending(otherKey);
     await flushPromises();
@@ -572,14 +489,8 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation } = useMutation();
-    let resolveFirst: () => void = noop;
-    const first = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveFirst = resolve;
-        }),
-      { isExclusive: true, key },
-    );
+    const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
+    const first = executeMutation(() => firstPromise, { isExclusive: true, key });
     await flushPromises();
     const outcome = await executeMutation(() => Promise.resolve(), { isExclusive: true, key });
     resolveFirst();
@@ -592,14 +503,9 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation } = useMutation();
-    let resolveFirst: () => void = noop;
+    const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
     const mutate = vi.fn<() => Promise<void>>();
-    mutate.mockImplementationOnce(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveFirst = resolve;
-        }),
-    );
+    mutate.mockReturnValueOnce(firstPromise);
     const first = executeMutation(mutate, { isExclusive: true, key });
     await executeMutation(mutate, { isExclusive: true, key });
     await flushPromises();
@@ -615,14 +521,8 @@ describe(useMutation, () => {
     const firstOnSuccess = vi.fn<() => void>();
     const secondOnSuccess = vi.fn<() => void>();
     const { executeMutation } = useMutation();
-    let resolveFirst: () => void = noop;
-    const first = executeMutation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveFirst = resolve;
-        }),
-      { key, onSuccess: firstOnSuccess },
-    );
+    const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
+    const first = executeMutation(() => firstPromise, { key, onSuccess: firstOnSuccess });
     await executeMutation(() => Promise.resolve(), { key: otherKey, onSuccess: secondOnSuccess });
     resolveFirst();
     await first;

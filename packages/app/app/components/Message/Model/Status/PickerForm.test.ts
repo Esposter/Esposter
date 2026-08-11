@@ -4,7 +4,6 @@ import StyledButton from "@/components/Styled/Button.vue";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useStatusStore } from "@/store/message/user/status";
 import { UserStatus } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -27,10 +26,8 @@ describe("messageModelStatusPickerForm", () => {
   // Drives the picker the way the menu does — type a message, hit Save — against a server that refuses the
   // Write, and settles it, so each test only has to say what the row held going in
   const submitRejectedMessage = async () => {
-    let signalSaveRequested = noop;
-    const saveRequested = new Promise<void>((resolve) => {
-      signalSaveRequested = resolve;
-    });
+    const { promise: saveRequestedPromise, resolve: signalSaveRequested } = Promise.withResolvers<void>();
+    const saveRequested = saveRequestedPromise;
     server.use(
       trpcMsw.user.upsertStatus.mutation(() => {
         signalSaveRequested();

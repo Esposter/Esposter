@@ -7,7 +7,6 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -57,10 +56,8 @@ describe(useReadSearchedMessages, () => {
   test("files a search's totals, page and history under the tab it was issued for", async () => {
     expect.hasAssertions();
 
-    let releaseSearch = noop;
-    const searchGate = new Promise<void>((resolve) => {
-      releaseSearch = resolve;
-    });
+    const { promise: searchPromise, resolve: releaseSearch } = Promise.withResolvers<void>();
+    const searchGate = searchPromise;
     server.use(
       trpcMsw.message.searchMessages.query(async () => {
         await searchGate;

@@ -8,14 +8,10 @@ import { mount } from "@vue/test-utils";
 import { Cameras } from "phaser";
 import { afterEach, describe, expect, test } from "vitest";
 
-// The component's own props rather than `ComponentMountingOptions["props"]`, which is a union wide enough to
-// Include an array-shaped declaration — spreading that reads as an iterable spread rather than an object one
-type SceneMountingProps = InstanceType<typeof Scene>["$props"];
-
 const sceneKey = "sceneKey";
 let wrapper: ReturnType<typeof mount<typeof Scene>> | undefined;
 
-const mountScene = (props?: Partial<SceneMountingProps>) => {
+const mountScene = (props?: Partial<InstanceType<typeof Scene>["$props"]>) => {
   wrapper = mount(Scene, {
     global: { plugins: [getTestPinia()] },
     props: { sceneKey, ...props },

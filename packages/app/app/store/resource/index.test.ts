@@ -8,7 +8,6 @@ import { createDefaultSheetResource } from "@/services/resource/sheet/createDefa
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -189,10 +188,8 @@ describe(useResourceStore, () => {
   test("queues an unpublish behind the publish it shares an executor with", async () => {
     expect.hasAssertions();
 
-    let resolveIsPublished = noop;
-    const isPublished = new Promise<void>((resolve) => {
-      resolveIsPublished = resolve;
-    });
+    const { promise: isPublishedPromise, resolve: resolveIsPublished } = Promise.withResolvers<void>();
+    const isPublished = isPublishedPromise;
     const resourceStore = setupNoteResource();
     const { publication: loadedPublication } = storeToRefs(resourceStore);
     const { publishResource, readResource, unpublishResource } = resourceStore;

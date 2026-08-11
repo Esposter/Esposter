@@ -8,7 +8,6 @@ import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { MimeCategory } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -30,10 +29,7 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
   test("surfaces a rejected save even when the next control saves straight after", async () => {
     expect.hasAssertions();
 
-    let resolveSecondSave = noop;
-    const secondSave = new Promise<void>((resolve) => {
-      resolveSecondSave = resolve;
-    });
+    const { promise: secondSave, resolve: resolveSecondSave } = Promise.withResolvers<void>();
     let saveCount = 0;
     server.use(
       trpcMsw.room.updateRoom.mutation(() => {
@@ -63,14 +59,8 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
   test("keeps the entered value after a rejected save so the next one retries it", async () => {
     expect.hasAssertions();
 
-    let signalFirstSave = noop;
-    const firstSaveRequested = new Promise<void>((resolve) => {
-      signalFirstSave = resolve;
-    });
-    let signalSecondSave = noop;
-    const secondSaveRequested = new Promise<void>((resolve) => {
-      signalSecondSave = resolve;
-    });
+    const { promise: firstSaveRequested, resolve: signalFirstSave } = Promise.withResolvers<void>();
+    const { promise: secondSaveRequested, resolve: signalSecondSave } = Promise.withResolvers<void>();
     let saveCount = 0;
     server.use(
       trpcMsw.room.updateRoom.mutation(() => {

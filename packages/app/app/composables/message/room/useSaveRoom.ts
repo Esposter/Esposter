@@ -1,6 +1,6 @@
 import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
-import type { Except } from "type-fest";
 import type { RoomInMessage } from "@esposter/db-schema";
+import type { Except } from "type-fest";
 
 import { useRoomStore } from "@/store/message/room";
 

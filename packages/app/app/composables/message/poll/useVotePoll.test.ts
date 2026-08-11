@@ -4,7 +4,6 @@ import type { PollMessageContent } from "#shared/models/message/poll/PollMessage
 import { useVotePoll } from "@/composables/message/poll/useVotePoll";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { MessageType, StandardMessageEntity } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 // AuthClient is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
@@ -49,10 +48,8 @@ describe(useVotePoll, () => {
 
     const message = createPollMessage("first");
     const otherMessage = createPollMessage("second");
-    let releaseVote = noop;
-    const voteReleased = new Promise<void>((resolve) => {
-      releaseVote = resolve;
-    });
+    const { promise: votePromise, resolve: releaseVote } = Promise.withResolvers<void>();
+    const voteReleased = votePromise;
     server.use(
       trpcMsw.message.votePoll.mutation(async () => {
         await voteReleased;

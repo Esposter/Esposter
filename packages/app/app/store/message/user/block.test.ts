@@ -3,7 +3,6 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
-import { noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
@@ -65,10 +64,8 @@ describe(useBlockStore, () => {
   test("does not list a user twice when a rejected unblock overlaps a block", async () => {
     expect.hasAssertions();
 
-    let releaseUnblock = noop;
-    const unblockReleased = new Promise<void>((resolve) => {
-      releaseUnblock = resolve;
-    });
+    const { promise: unblockPromise, resolve: releaseUnblock } = Promise.withResolvers<void>();
+    const unblockReleased = unblockPromise;
     server.use(
       trpcMsw.block.blockUser.mutation(() => first),
       trpcMsw.block.unblockUser.mutation(async () => {
