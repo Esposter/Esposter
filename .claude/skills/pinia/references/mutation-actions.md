@@ -1,6 +1,12 @@
 # Writing a store mutation action
 
-Read when a store action calls a tRPC mutation, or when picking its `useMutation` `key`. The rules — when an action is justified at all, root-declared instances, one per mutation, snapshot inside `applyOptimistic` and scoped to the one entity written, no hand-rolled ordering — are in `SKILL.md`.
+Read when a store action calls a tRPC mutation, or when picking its `useMutation` `key`. The rules — when an action is justified at all, root-declared instances, one per mutation, no hand-rolled ordering — are in `SKILL.md`.
+
+## Where the snapshot is taken, and what it covers
+
+**`applyOptimistic` runs when the write is _sent_, so take the snapshot inside the callback.** A queued write must roll back to what the write ahead of it stored, not to the state the user saw when they clicked. For the same reason, anything else the payload reads from live state — a version token, a create-or-update branch — is read inside the `mutate` callback rather than before the call.
+
+**A rollback undoes its own write, never the list.** Snapshot the one entity the write touched and unwind that; `items.value = snapshot` is wrong even when taken at send time. Writes keyed per entity do not queue against each other, and the same lists also receive subscription pushes, so reinstating a whole-list copy resurrects rows a concurrent delete removed and drops rows that arrived mid-flight. Restore through the store's own `store*` CRUD helper rather than by index: a rejected delete that lands its row back at the end of an ordered list is a cosmetic loss, a dropped subscription row is a correctness one.
 
 ## Shape
 
