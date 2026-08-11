@@ -90,7 +90,7 @@ Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a 
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                 |
 | `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                       |
-| `StyledSearchDialog`                                        | Ctrl+K palette shell (`hotkey` via `useVHotkey`)                                        |
+| `app/components/Styled/SearchDialog.vue`                    | `StyledSearchDialog` — Ctrl+K palette shell (`hotkey` via `useVHotkey`)                 |
 | `app/components/Docs/Search.vue`                            | Palette + client-index results (MiniSearch)                                             |
 | `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useSearchStore`)                                   |
 | `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |

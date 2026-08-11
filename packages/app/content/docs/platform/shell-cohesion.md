@@ -15,7 +15,7 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 - `StyledEmptyState` — icon + title + description + optional action slot, for "no resources yet" / "no rows" / "not bound to data" states.
 - `StyledSkeleton` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the single global `AppLoadingIndicator`).
 - `StyledKeyboardShortcutsDialog` — the shared shortcuts help dialog (category groups + `kbd` chips over a `KeyboardShortcutCategory[]` prop); bound to the messaging shortcuts dialog and the resource explorer's `Resource/ShortcutsOverlay`.
-- `AppBreadcrumbs` — renders the area hub followed by the pages the visitor actually came through, never the page they are on, so a direct arrival still has its way out ([breadcrumb trail](/docs/platform/breadcrumb-trail)); rendered by `PageHeader`, not the global app bar, so it carries page context and never duplicates.
+- `AppBreadcrumbs` — renders the area hub followed by the pages the visitor actually came through, never the page they are on, so a direct arrival still has its way out ([breadcrumb trail](/docs/platform/breadcrumb-trail)); rendered by `StyledPageHeader`, not the global app bar, so it carries page context and never duplicates.
 - `AppMenuLinkListItem` — a single launcher leaf (extracted from `MenuLinkList` so leaves render identically at top level and inside a group).
 
 ## Navigation

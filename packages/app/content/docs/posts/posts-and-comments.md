@@ -14,12 +14,16 @@ flowchart TD
   ROW["a posts row"] --> PARENT{"parentId"}
   PARENT -->|"null"| POST["post — title required, depth 0"]
   PARENT -->|"set"| COMMENT["comment — description only, depth parent plus 1"]
-  POST --> POSTPROCS["createPost, updatePost, deletePost"]
-  COMMENT --> COMMENTPROCS["createComment, updateComment, deleteComment"]
-  POSTPROCS --> GUARD["ownedBy plus a parentId IS NULL check"]
-  COMMENTPROCS --> GUARDC["ownedBy plus a parentId IS NOT NULL check"]
-  COMMENTPROCS --> COUNT["same transaction bumps the parent's noComments"]
-  POSTPROCS --> CASCADE["deleting a post cascades to its comments"]
+  POST --> POSTCREATE["createPost — nothing to own yet"]
+  POST --> POSTWRITE["updatePost, deletePost"]
+  COMMENT --> COMMENTCREATE["createComment — nothing to own yet"]
+  COMMENT --> COMMENTWRITE["updateComment, deleteComment"]
+  POSTWRITE --> GUARD["ownedBy plus a parentId IS NULL check"]
+  COMMENTWRITE --> GUARDC["ownedBy plus a parentId IS NOT NULL check"]
+  POSTCREATE --> COUNT
+  COMMENTCREATE --> COUNT["createComment and deleteComment bump the parent's noComments in the same transaction"]
+  COMMENTWRITE --> COUNT
+  POSTWRITE --> CASCADE["deleting a post cascades to its comments"]
   POST --> SHARED["one table, so likes, ranking and profanity filtering reach both"]
   COMMENT --> SHARED
 ```

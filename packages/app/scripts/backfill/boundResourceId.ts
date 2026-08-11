@@ -22,13 +22,13 @@ const containerClient = await getContainerClient(
   AzureContainer.ResourceAssets,
 );
 const unprojectedPrograms = await db
-  .select({ id: resources.id })
+  .select({ contentVersion: resources.contentVersion, id: resources.id })
   .from(resources)
   .where(and(eq(resources.type, ResourceType.Program), isNull(resources.boundResourceId)));
 console.log(`${unprojectedPrograms.length} programs to inspect`);
 let boundCount = 0;
 
-for (const { id } of unprojectedPrograms) {
+for (const { contentVersion, id } of unprojectedPrograms) {
   // Sequential on purpose — this runs once, against every Program in the database, and a burst of parallel blob
   // Reads is the one thing a maintenance script should not do to a live storage account
   const content = await getResultAsync(async () => {
@@ -49,8 +49,17 @@ for (const { id } of unprojectedPrograms) {
   );
   if (!content?.surveyId) continue;
 
-  await db.update(resources).set({ boundResourceId: content.surveyId }).where(eq(resources.id, id));
-  boundCount += 1;
+  // Compare-and-set against the version the blob was read under, not a bare id. The owner can save or unbind a
+  // Program while this runs, and losing that race the naive way writes a binding read from a blob that no longer
+  // Exists — which `resolveIdentifiedToken` then trusts, keeping tokens valid for a survey already unbound.
+  // Still requiring null keeps it idempotent: a re-run never overwrites a projection some other writer has set
+  const [updated] = await db
+    .update(resources)
+    .set({ boundResourceId: content.surveyId })
+    .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion), isNull(resources.boundResourceId)))
+    .returning({ id: resources.id });
+  if (updated) boundCount += 1;
+  else console.log(`skipped ${id}: saved while the backfill was reading it, so its own save owns the binding`);
 }
 
 console.log(`${boundCount} bound, ${unprojectedPrograms.length - boundCount} left unbound`);

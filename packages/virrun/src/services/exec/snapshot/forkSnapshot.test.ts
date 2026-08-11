@@ -4,7 +4,12 @@ import { createRecordingBackend } from "@/services/exec/test/createRecordingBack
 import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
-import { beforeEach, describe, expect, test } from "vitest";
+import {beforeEach, describe, expect, test, vi} from "vitest";
+
+vi.mock(
+  import("@/services/exec/util/getSandboxNodeVersion"),
+  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+);
 
 describe(forkSnapshot, () => {
   const { create, createWorkspace } = setupTemporaryCacheHome();

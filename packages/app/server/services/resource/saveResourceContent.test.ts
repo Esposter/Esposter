@@ -30,6 +30,7 @@ describe(saveResourceContent, () => {
   let ctx: AuthedContext;
   let resource: Resource;
   const name = "name";
+  const surveyId = crypto.randomUUID();
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
   const item = new TodoListItem({ dueAt, name });
@@ -141,6 +142,33 @@ describe(saveResourceContent, () => {
     await waitForSynchronizedFunctions();
 
     expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
+  });
+
+  // The blob is not transactional, so a transaction that fails after the upload cannot be rolled back to match it.
+  // For a Program that means the row can outlive the content it describes — and an unbind is the fail-open
+  // Direction, because `resolveIdentifiedToken` reads the column and would keep accepting tokens the owner just
+  // Revoked. Clearing to null first makes the failure window read "ask the blob" instead of a stale yes
+  test("leaves no stale binding when the save fails after the content is written", async () => {
+    expect.hasAssertions();
+
+    const program = takeOne(
+      await ctx.db
+        .insert(resources)
+        .values({ boundResourceId: surveyId, name, type: ResourceType.Program, userId: ctx.getSessionPayload.user.id })
+        .returning(),
+    );
+
+    await expect(
+      saveResourceContent(ctx, {
+        content: { audience: null, emailId: "", keyColumn: "", surveyId: "" },
+        resource: program,
+        updateContentVersion: () => Promise.reject(new Error("rejected")),
+      }),
+    ).rejects.toThrow("rejected");
+
+    const savedProgram = await ctx.db.query.resources.findFirst({ where: { id: { eq: program.id } } });
+
+    expect(savedProgram?.boundResourceId).toBeNull();
   });
 
   // The one step a caller may opt out of, and only where `createResourceRow` has already opened the trail

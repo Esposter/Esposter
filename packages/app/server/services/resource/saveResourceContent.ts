@@ -71,19 +71,26 @@ export const saveResourceContent = async (
   // Only when it moved: most saves to a bound type leave the binding alone, and an unbound type has no
   // Projector at all, so neither pays for a write
   const hasBoundResourceIdChanged = Boolean(projectBoundResourceId) && boundResourceId !== resource.boundResourceId;
-  const writeBoundResourceId = async (tx: Transaction) =>
-    (await tx.update(resources).set({ boundResourceId }).where(eq(resources.id, id)).returning())[0];
+  const writeBoundResourceId = async (value: null | string) =>
+    (await ctx.db.update(resources).set({ boundResourceId: value }).where(eq(resources.id, id)).returning())[0];
+  // Cleared before the blob write and set after it, never inside the transaction with it. The blob is not
+  // Transactional, so a transaction failing after the upload would leave the row describing content that is no
+  // Longer there — and for an unbind that is fail-open, since the resolver would keep accepting tokens the owner
+  // Just revoked. Null is the one value that can never be wrong here: the resolver reads it as "ask the blob",
+  // So the window between the two writes degrades to the pre-column behaviour instead of a stale yes
+  if (hasBoundResourceIdChanged) await writeBoundResourceId(null);
   // The bump and the write stay in one transaction so a failed write rolls the bump back — a write that did
   // Not land must never advance the version every client caches against. A first write has no version to
   // Protect, and wrapping it would only hold a pooled connection across a storage round trip
   let savedResource = resource;
-  if (updateContentVersion || hasBoundResourceIdChanged)
+  if (updateContentVersion)
     savedResource = await ctx.db.transaction(async (tx) => {
-      const updatedResource = (await updateContentVersion?.(tx)) ?? resource;
+      const updatedResource = await updateContentVersion(tx);
       await writeContentBlob();
-      return hasBoundResourceIdChanged ? ((await writeBoundResourceId(tx)) ?? updatedResource) : updatedResource;
+      return updatedResource;
     });
   else await writeContentBlob();
+  if (hasBoundResourceIdChanged) savedResource = (await writeBoundResourceId(boundResourceId)) ?? savedResource;
 
   resourceEventEmitter.emit("saveResourceContent", [
     { content: parsedContent, contentVersion: savedResource.contentVersion, id },

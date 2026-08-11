@@ -11,9 +11,14 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import {describe, expect, test, vi} from "vitest";
 
 const step: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [NUXT_OUTPUT_DIRECTORY] };
+
+vi.mock(
+  import("@/services/exec/util/getSandboxNodeVersion"),
+  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+);
 
 describe(resolvePrepareLocation, () => {
   const { createWorkspace, getCacheHome } = setupTemporaryCacheHome();

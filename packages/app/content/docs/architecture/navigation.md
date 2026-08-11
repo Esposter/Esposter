@@ -49,13 +49,13 @@ The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between
 
 ## Key files
 
-| File                                                  | Role                                                                 |
-| ----------------------------------------------------- | -------------------------------------------------------------------- |
-| `NuxtInvisibleLink`                                   | base link primitive — `NuxtLink` clone with default styling stripped |
-| `packages/configuration/eslint/overrides/vueRules.js` | bans the raw `a` element and `router.push` in templates              |
-| `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`) |
-| `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                 |
-| `app/components/Docs/TableOfContents/Item.vue`        | in-page hash anchor via `NuxtInvisibleLink` + custom smooth scroll   |
+| File                                                  | Role                                                                                        |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `app/components/Nuxt/InvisibleLink.vue`               | `NuxtInvisibleLink` — base link primitive, a `NuxtLink` clone with default styling stripped |
+| `packages/configuration/eslint/overrides/vueRules.js` | bans the raw `a` element and `router.push` in templates                                     |
+| `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`)                        |
+| `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                                        |
+| `app/components/Docs/TableOfContents/Item.vue`        | in-page hash anchor via `NuxtInvisibleLink` + custom smooth scroll                          |
 
 ## Notes
 

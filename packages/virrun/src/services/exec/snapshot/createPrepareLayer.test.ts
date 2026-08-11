@@ -17,7 +17,7 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test } from "vitest";
+import {beforeEach, describe, expect, test, vi} from "vitest";
 
 // A two-segment output dir (`a/a`) the fake prepare command populates, alongside a node_modules tree it churns.
 const OUTPUT = `${TEST_FILENAME}/${TEST_FILENAME}`;
@@ -32,6 +32,11 @@ const createFakeBackend = (exitCode: number): ExecBackend & ReturnType<typeof cr
       seedFile(join(upperDir, NODE_MODULES_DIRECTORY, TEST_FILENAME));
     }
   });
+
+vi.mock(
+  import("@/services/exec/util/getSandboxNodeVersion"),
+  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+);
 
 describe(createPrepareLayer, () => {
   const { createWorkspace } = setupTemporaryCacheHome();
