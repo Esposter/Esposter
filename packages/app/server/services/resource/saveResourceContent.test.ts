@@ -218,6 +218,32 @@ describe(saveResourceContent, () => {
     await expect(readBoundResourceId(program.id)).resolves.toBe(surveyId);
   });
 
+  // The binding is stored after the transaction that bumped the version, so a save that commits first can still
+  // Reach that write last and flatten a newer save's binding. The version this save established guards it.
+  // Stood in for rather than raced: the callback bumps the row the way a save that beat this one would have,
+  // And returns the row this save wrote — which is exactly the pair of facts the losing save holds
+  test("leaves a newer save's binding alone when its own version has been superseded", async () => {
+    expect.hasAssertions();
+
+    const program = await createBoundProgram();
+    const otherSurveyId = crypto.randomUUID();
+
+    await saveResourceContent(ctx, {
+      content: { ...unboundProgramContent, surveyId: otherSurveyId },
+      resource: program,
+      updateContentVersion: async (tx) => {
+        const supersededResource = takeOne(
+          await tx.update(resources).set({ contentVersion: 1 }).where(eq(resources.id, program.id)).returning(),
+        );
+        await tx.update(resources).set({ contentVersion: 2 }).where(eq(resources.id, program.id));
+        return supersededResource;
+      },
+    });
+
+    // Null, not `otherSurveyId`: the clear inside the transaction stands, and the store after it finds no row
+    await expect(readBoundResourceId(program.id)).resolves.toBeNull();
+  });
+
   // The one step a caller may opt out of, and only where `createResourceRow` has already opened the trail
   test("records no activity without an activityType", async () => {
     expect.hasAssertions();

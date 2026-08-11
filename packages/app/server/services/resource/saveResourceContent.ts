@@ -15,7 +15,7 @@ import { writeResourceActivity } from "@@/server/services/resource/writeResource
 import { getContentBlobName } from "@esposter/db";
 import { AzureContainer, resources } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 interface SaveResourceContentInput {
   // What the trail records for this write. Omitted only where `createResourceRow` has already opened the trail
@@ -79,8 +79,24 @@ export const saveResourceContent = async (
   // Only when it moved: most saves to a bound type leave the binding alone, and an unbound type has no
   // Projector at all, so neither pays for a write
   const hasBoundResourceIdChanged = Boolean(projectBoundResourceId) && boundResourceId !== resource.boundResourceId;
-  const writeBoundResourceId = async (db: Context["db"] | Transaction, value: null | string) =>
-    (await db.update(resources).set({ boundResourceId: value }).where(eq(resources.id, id)).returning())[0];
+  // `expectedContentVersion` makes the write lose to a newer save the way the version bump itself does. The
+  // Clears pass none: null is the value that can never be wrong, so a clear is safe to apply unconditionally
+  const writeBoundResourceId = async (
+    db: Context["db"] | Transaction,
+    value: null | string,
+    expectedContentVersion?: number,
+  ) =>
+    (
+      await db
+        .update(resources)
+        .set({ boundResourceId: value })
+        .where(
+          expectedContentVersion === undefined
+            ? eq(resources.id, id)
+            : and(eq(resources.id, id), eq(resources.contentVersion, expectedContentVersion)),
+        )
+        .returning()
+    )[0];
   // The binding is cleared inside the transaction and set after it commits, and never holds a value the blob does
   // Not back. `resolveIdentifiedToken` reads null as "ask the blob", so null is the one value that can never be
   // Wrong — which makes it what every partial outcome has to land on:
@@ -114,7 +130,12 @@ export const saveResourceContent = async (
     if (hasBoundResourceIdChanged) await writeBoundResourceId(ctx.db, null);
     await writeContentBlob();
   }
-  if (hasBoundResourceIdChanged) savedResource = (await writeBoundResourceId(ctx.db, boundResourceId)) ?? savedResource;
+  // Guarded on the version this save established: the bump is what orders two saves, and this write lands after
+  // The transaction that made it, so without the guard a save that committed first can still overwrite the
+  // Binding of one that committed after it. No row back means superseded — the newer binding stands
+  if (hasBoundResourceIdChanged)
+    savedResource =
+      (await writeBoundResourceId(ctx.db, boundResourceId, savedResource.contentVersion)) ?? savedResource;
 
   resourceEventEmitter.emit("saveResourceContent", [
     { content: parsedContent, contentVersion: savedResource.contentVersion, id },
