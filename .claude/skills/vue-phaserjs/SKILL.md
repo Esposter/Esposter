@@ -1,13 +1,13 @@
 ---
 name: vue-phaserjs
-description: Esposter vue-phaserjs integration patterns — component inventory, markRaw for Phaser objects in Pinia stores, configuration Pick pattern, all-configuration-keys-present-at-setup. Apply when writing Phaser game objects, stores, or vue-phaserjs components.
+description: Esposter vue-phaserjs integration patterns — the four files every game object component takes and what is deliberately absent, markRaw for Phaser objects in Pinia stores, configuration Pick pattern, all-configuration-keys-present-at-setup. Apply when writing Phaser game objects, stores, or vue-phaserjs components.
 ---
 
 # vue-phaserjs Conventions
 
-## Implemented Components (v1 complete)
+## Components
 
-All game object components follow the same 4-file pattern, split across four trees:
+Every game object component follows the same 4-file pattern, split across four trees — which is the whole inventory rule: what exists is whatever `src/components/` holds, and adding one means adding all four files.
 
 | File                         | Path                                              |
 | ---------------------------- | ------------------------------------------------- |
@@ -16,19 +16,9 @@ All game object components follow the same 4-file pattern, split across four tre
 | `{Name}EventEmitsOptions.ts` | `packages/vue-phaserjs/src/models/emit/`          |
 | `{Name}SetterMap.ts`         | `packages/vue-phaserjs/src/util/setterMap/`       |
 
-**Root**: `<Game>` (mounts the Phaser game; hosts `<Scene>`)
+`<Game>` mounts the Phaser game and hosts `<Scene>`; every shape component extends `ShapeConfiguration`. One naming trap: the component is `<Nineslice>` with a lowercase `s` — `<NineSlice>` resolves to nothing.
 
-**Sprites / Images**: `<Sprite>`, `<Image>`, `<Nineslice>` (lowercase `s` — `NineSlice` resolves to nothing), `<TileSprite>`, `<PathFollower>`
-
-**Text**: `<Text>`, `<BitmapText>`
-
-**Shapes** (all extend `ShapeConfiguration`): `<Arc>`, `<Circle>`, `<Rectangle>`, `<Ellipse>`, `<Line>`, `<Triangle>`, `<Polygon>`, `<Star>`, `<Curve>`, `<IsoBox>`, `<IsoTriangle>`
-
-**Effects / Rendering**: `<Graphics>`, `<RenderTexture>`, `<Particles>`, `<Video>`
-
-**Structure**: `<Container>`, `<Zone>`, `<Tilemap>`, `<Scene>`
-
-**Not implemented**: `<Group>` (use `v-for`), `<Layer>` (incompatible with `useInitializeGameObject`), input composables (use `onUpdate` directly), `useTimeline`/physics/camera/tilemap-layer components.
+**Deliberately absent, so don't add them to fill a gap**: `<Group>` (use `v-for`), `<Layer>` (incompatible with `useInitializeGameObject`), input composables (use `onUpdate` directly), and `useTimeline` / physics / camera / tilemap-layer components.
 
 ## Configuration Interfaces — `Pick` from Game Object Types
 

@@ -70,7 +70,7 @@ So a skill is two tiers:
 
 Move a section out when it is a **procedure** (ordered steps run occasionally), when it fires only for one narrow sub-task, or when it runs past ~40 lines of examples. Keep it in `SKILL.md` when violating it is the **default behaviour** — a rule that fires only if someone thought to look it up does not fire.
 
-**The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — `references/mock-cleanup.md` — _when a test creates spies, fake timers or global stubs_. An index line that reads "see X for more detail" guarantees the page is never opened.
+**The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — as `testing` indexes `references/timers-and-hand-resolved-promises.md` _when a test installs fake timers or holds a call in flight_. An index line that reads "see X for more detail" guarantees the page is never opened.
 
 Never split to hit a number. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page.
 
