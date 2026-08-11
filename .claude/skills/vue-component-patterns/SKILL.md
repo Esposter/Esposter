@@ -5,6 +5,8 @@ description: Esposter Vue 3 component authoring — the shared Styled/App shell 
 
 # Vue Component Patterns (Esposter)
 
+How an individual component is written, typed and named. Assembling a page or list _from_ components — decomposition, `v-for` items, action items, singleton dialogs — is the `vue-page-composition` skill's.
+
 ## Deep dives
 
 - `references/props-and-generics.md` — when a prop or model type depends on an enum/discriminant key, when one component is absorbing several data variants, or when a boolean prop has a default.
@@ -17,7 +19,7 @@ Cross-product chrome is a small set of shared components in `components/Styled/`
 
 - `StyledPageHeader` — the canonical editor/page header: a breadcrumb row carrying a right-aligned `status` slot (a standing readout — the storage meter), then the title beside an `actions` slot, then a `filters` row. Every editor header mounts document picker / selects / search through it; controls never go inside `v-toolbar-title`. The title row is skipped when there is neither title nor actions, so a page whose own content names it passes no title rather than repeating one. **One per route** — it renders `AppBreadcrumbs` itself, so a second one nested under a page that already has one renders a second trail and a second status readout. A toolbar _inside_ a page — a resource blade, a card header — is a plain `v-toolbar` (`px-4 py-2 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center`, `v-spacer` before the trailing actions).
 - `StyledEmptyState` — icon + title + description + action slot for empty lists/states.
-- `StyledSkeleton` — bordered `v-skeleton-loader` for per-region loading. **A component whose parent already renders it as a `<Suspense>` fallback (every resource blade) `await`s the data its first render needs in setup instead of keeping its own `isLoading` ref and skeleton branch** — two loading indicators for one wait, one of which is dead. The rule is about data that gates the initial render, so data that only fills a detail in once it lands stays out of setup: a resource Overview keyed by `resource.id` reads its one-off counts in `onMounted` and `v-if`s the row until they arrive, holding nothing back and spinning nothing twice. Own the flag only where nothing suspends the component, or where what the template guards on is built by an imperative library in `onMounted` rather than awaited.
+- `StyledSkeleton` — bordered `v-skeleton-loader` for per-region loading. **A component whose parent already renders it as a `<Suspense>` fallback `await`s the data its first render needs in setup**, rather than keeping its own `isLoading` ref and skeleton branch — that is two indicators for one wait, one of them dead. Only data gating the _initial_ render belongs in setup: a value that fills in a detail later is read in `onMounted` and `v-if`ed until it arrives. Own the flag where nothing suspends the component, or where the template guards on something an imperative library builds in `onMounted`.
 - `StyledSearchDialog` — the canonical Ctrl+K search palette (dialog + solo autofocus search field + `hotkey` prop registered via `useVHotkey`, `activator` slot, results in the default slot). Every dialog-style search UI mounts through it — never re-roll a `v-dialog` + `v-text-field` + hotkey listener (`onKeyStroke`/`useEventListener`) per feature. See `docs/architecture/search.md`.
 - `AppBreadcrumbs` — route→product trail (matched against `ProductListLinkItems`), rendered by `StyledPageHeader`.
 
@@ -73,9 +75,7 @@ const bar = ref(foo.bar);
 
 **When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data, where the store can be empty at component creation time.
 
-## Local Copies of Reactive Sources
-
-A local editable copy of a reactive source is always VueUse `useCloned`, never `ref` + `watch` — see the `vue` skill's Watch Decision Tree, which owns the rule and the `sync`/`clone` options.
+A local editable copy of a reactive source is always VueUse `useCloned`, never `ref` + `watch` — the `vue` skill's watch decision tree owns that rule and its `sync`/`clone` options.
 
 ## Boolean Props — `is` Prefix + Default-Aware Literal Typing
 
@@ -99,7 +99,3 @@ Line-count target and exceptions — see the `file-organization` skill. Componen
 ## Slots
 
 **Every component that renders a `<slot>` declares `defineSlots`** — typed slot contracts, same as props (`defineSlots<{ default: () => VNode }>()`; `?:` when the consumer may omit it). Forwarding an _optional_ slot into a library component that falls back to a prop needs `#default` + `v-if` on the same template, and extracting a non-trivial slot's content into its own component follows a naming convention — both in `references/slots.md`.
-
-## Page & List Composition
-
-Decomposing a page into components, rendering repeated list items from an array, sharing a list-item shell, permission-filtered action items, one affordance per action, and singleton dialogs are the `vue-page-composition` skill's.

@@ -116,7 +116,7 @@ Clear local form input **before** `await`-ing the store action so the field empt
 
 ## Session Auth in Stores
 
-Never expose `sessionId` or any raw session identifier as a store state field. Read the session via `authClient.useSession()` — in a setup store the **synchronous** form (`const session = authClient.useSession()`, accessed as `session.value.data`), since the setup function can't `await`. The awaited `await authClient.useSession(useFetch)` form is for async, SSR-relevant contexts only — see the `vue` skill's Auth Session section.
+Never expose `sessionId` or any raw session identifier as a store state field. A setup store can't `await`, so it always takes the **synchronous** form: `const session = authClient.useSession()`, accessed as `session.value.data`. Both forms and when each applies: the `vue` skill (`references/auth-session.md`).
 
 ## Deep Dives
 

@@ -97,7 +97,3 @@ A composable never decides **how** concurrency is handled. It declares **what th
 - **`useQuery(query, { onSuccess })`** — `executeQuery` + `shallowRef` data + auto-fetch on setup + error alert. Reach for it before writing a bespoke read composable; write a custom one only when the state shape genuinely differs (its own cursor, an inline error panel), and build it on `executeQuery` even then.
 - **Neither entry point is tRPC-only** — both take a plain `() => Promise<T>`, so IndexedDB writes and other local async work order through the same keys.
 - The `isExclusive` / `isSupersede` opt-ins, the pending flag, `getSynchronizedFunction` pairing and mid-flight `checkIsStale` are in `references/async-sequencing.md`. Full model: `packages/app/content/docs/architecture/async-operations.md`.
-
-## Routing
-
-Route reads, route-synced tabs (`useEnumRouteQuery`), and `definePageMeta` `validate`/`key` for optional segments live in the **routing** skill.
