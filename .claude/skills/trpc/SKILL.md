@@ -1,6 +1,6 @@
 ---
 name: trpc
-description: Esposter tRPC conventions — return-type generics on the method, async only when there is an await, where input schemas, server event emitters and server/shared/@esposter-db helpers live, useQuery/useMutation for every client read and write, calling conventions for all-optional and UUID inputs, router structure mirroring the file path, Function.prototype router-key collisions, procedure and result naming, base*Router composition with mergeRouters, the three room RBAC procedure builders, ownedBy ownership guards, one router and store per DB table, BAD_REQUEST messages, Azure Table Clause typing, plus deep dives on router tests, subscription procedures, read/pagination endpoints, and mutations that write blobs. Apply when writing tRPC routers, procedures, or router tests.
+description: Esposter tRPC conventions — return-type generics on the method, async only when there is an await, where input schemas, server event emitters and server/shared/@esposter-db helpers live, useQuery/useMutation for every client read and write, calling conventions for all-optional and UUID inputs, router structure mirroring the file path, Function.prototype router-key collisions, procedure and result naming, base*Router composition with mergeRouters, the three room RBAC procedure builders, ownedBy ownership guards, one router and store per DB table, BAD_REQUEST messages, plus deep dives on router tests, subscription procedures, read/pagination endpoints, and mutations that write blobs. Apply when writing tRPC routers, procedures, or router tests.
 ---
 
 # tRPC Conventions
@@ -15,7 +15,7 @@ description: Esposter tRPC conventions — return-type generics on the method, a
 ## Procedures
 
 - **Return type generic on the method, not as a callback return annotation** — `readFoos: standardAuthedProcedure.query<Foo[]>(async ({ ctx }) => { ... })`. Same for `.mutation<T>(...)`.
-  - **A procedure that returns nothing still writes `<void>`.** The generic pins a public API surface, so a handler that later grows a `return` is a compile error rather than a silently widened response every client can now read. `typescript/no-invalid-void-type` is `off` in `.oxlintrc.json` for exactly this: a generic type argument is a position upstream typescript-eslint allows by default (`allowInGenericTypeArguments`), and oxlint does not implement that option — so the rule cannot express the exception, and the config yields rather than 24 correct call sites. ESLint defers to oxlint through `eslint-plugin-oxlint`, so there is no second copy of the rule still covering the misuse it does catch.
+  - **A procedure that returns nothing still writes `<void>`.** The generic pins a public API surface, so a handler that later grows a `return` is a compile error rather than a silently widened response every client can now read. `typescript/no-invalid-void-type` is off for exactly this: a generic type argument is a position upstream allows by default, oxlint does not implement that option, and the config yields rather than the correct call sites.
 - **Omit `async` when there is no `await`** — e.g. a body that only `return`s a Drizzle query chain.
 
 ## Where the Pieces Live
@@ -85,10 +85,3 @@ Three builders in `server/trpc/procedure/room/`:
 
 - **`BAD_REQUEST` always includes a `message`** — never a bare `new TRPCError({ code: "BAD_REQUEST" })`. Use `message: new InvalidOperationError(Operation.X, EntityType, name).message`, picking the `Operation` matching the procedure (`Operation.Read` for a query; `Create`/`Update`/`Delete` for mutations), the entity type, and a `name` identifying the invalid value (`JSON.stringify(input)`, the relevant ID).
 - The `typescript` skill's `if/else if` chain rule applies inside procedure bodies: an early-exit `if` that throws is followed by `else if`, even when the conditions are logically independent.
-
-## Azure Table Clause Typing
-
-- **`Clause<T extends Record<string, unknown>>` has no default** — type the array with the entity being queried (`const clauses: Clause<FooEntity>[] = [...]`). Never bare `Clause[]`.
-- **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never string literals: `{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }`.
-- **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(...)`. `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
-- **Entity-specific fields stay on their own `PropertyNames` constant** — `FooEntityPropertyNames.bar`; `ItemMetadataPropertyNames.deletedAt` for metadata.
