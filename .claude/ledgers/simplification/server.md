@@ -9,12 +9,7 @@
 
 ## Open findings
 
-- `readProgramStatusRows` caps participants and responses independently, so `isResponded` is silently wrong
-  past the cap. Decision: surface `hasMore` and warn like the dataset surfaces (recommended), walk every
-  response page, or paginate the join.
 - `resolveIdentifiedToken` reads every one of the owner's Program blobs per identified submission, because
   the survey binding lives in blob content. Decision: a `resources` column plus migration and backfill
-  (recommended, when a migration is in flight anyway), a token index table, or leave it.
-- `readWebhooks` and `post.ts`'s `readPost`/`readPosts` both wait on a type that does not exist yet
-  (`WebhookInMessageWithRelations`, a `readPosts` return type). Both are one-line additions in
-  `packages/db-schema`, outside this ledger's unit.
+  (recommended, when a migration is in flight anyway), a token index table, or leave it. **Waiting on a
+  migration run** — `db:gen` is never an unprompted side effect, so this one is the user's call to start.

@@ -13,7 +13,7 @@ import { AZURE_MAX_PAGE_SIZE, ResourceType } from "@esposter/db-schema";
 export const readProgramStatusDataset: DatasetProvider = async (ctx, reference) => {
   const resource = await requireOwnedResource(ctx, reference.id, ResourceType.Program);
 
-  const statusRows = await readProgramStatusRows(resource.id);
+  const { rows: statusRows } = await readProgramStatusRows(resource.id);
   // A read that fit under the cap answers for itself; only a read that filled it pays for the count
   const totalRows =
     statusRows.length < AZURE_MAX_PAGE_SIZE ? statusRows.length : await countProgramParticipantEntities(resource.id);

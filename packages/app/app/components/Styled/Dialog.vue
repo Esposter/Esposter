@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Except } from "type-fest";
 import type { VBtn, VCard, VDialog } from "vuetify/components";
 
 import { mergeProps } from "vue";
@@ -15,7 +16,9 @@ interface StyledDialogProps {
   // Goes with it, cancel included: there is no pending change for cancel to abandon, so a dialog that only reads
   // Would otherwise have to re-roll the shell to get rid of one button it never wanted.
   confirmButtonProps?: VBtn["$props"];
-  dialogProps?: VDialog["$props"];
+  // The two props the shell drives itself are excluded rather than merely bound first: the close button and the
+  // Fullscreen toggle write them, so a caller passing either would take over a control it does not own
+  dialogProps?: Except<VDialog["$props"], "fullscreen" | "modelValue">;
   // Informational dialogs only acknowledge — cancelling is meaningless when nothing is pending
   hideCancelButton?: boolean;
 }
@@ -51,7 +54,7 @@ const confirm = () => {
 </script>
 
 <template>
-  <v-dialog v-model="modelValue" :fullscreen="isFullScreen" :="dialogProps">
+  <v-dialog :="dialogProps" v-model="modelValue" :fullscreen="isFullScreen">
     <template #activator>
       <slot name="activator" :is-open="modelValue" :update-is-open="(value) => (modelValue = value)" />
     </template>

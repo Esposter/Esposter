@@ -287,7 +287,7 @@ describe("program", () => {
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
-    const statusRows = await caller.readProgramStatus({ id: program.id });
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     expect(
       statusRows.map(({ isResponded, keyValue: statusKeyValue }) => ({ isResponded, keyValue: statusKeyValue })),
@@ -311,7 +311,7 @@ describe("program", () => {
     });
     const participants = await caller.generateProgramParticipants({ id: program.id });
     const participant = takeOne(participants);
-    const statusRows = await caller.readProgramStatus({ id: program.id });
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     // The blade renders these three and nothing else. The token is the credential that responds on the
     // Participant's behalf and publicId is the dataset's identity, so a browser is handed neither
@@ -343,7 +343,7 @@ describe("program", () => {
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
-    const statusRows = await caller.readProgramStatus({ id: program.id });
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
   });
@@ -361,7 +361,7 @@ describe("program", () => {
     });
     await caller.generateProgramParticipants({ id: program.id });
     await surveyCaller.deleteResource({ id: survey.id });
-    const statusRows = await caller.readProgramStatus({ id: program.id });
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     // Participants persist and stay readable with responses gone — the fail-soft posture for dangling links
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);

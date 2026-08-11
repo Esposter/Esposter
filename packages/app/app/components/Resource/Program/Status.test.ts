@@ -33,16 +33,32 @@ describe("resourceProgramStatus", () => {
           }) as ResourceWithPublication,
       ),
       trpcMsw.program.readResourceContent.query(() => undefined),
-      trpcMsw.program.readProgramStatus.query(() => [statusRow]),
     );
   });
+
+  const setStatus = (isRespondedPartial: boolean) => {
+    server.use(trpcMsw.program.readProgramStatus.query(() => ({ isRespondedPartial, rows: [statusRow] })));
+  };
 
   test("opens on the loaded status rows", async () => {
     expect.hasAssertions();
 
+    setStatus(false);
     const component = await mountSuspended(ResourceProgramStatus);
 
     expect(component.text()).toContain(keyValue);
     expect(component.text()).toContain("1 of 1 responded");
+  });
+
+  // `isResponded` comes from a capped response scan, so past that cap a responder reads as awaiting. The count
+  // Is the claim that breaks first — stated flat it is simply wrong, and the table beside it agrees with it
+  test("says the responded count is a floor when the response read was capped", async () => {
+    expect.hasAssertions();
+
+    setStatus(true);
+    const component = await mountSuspended(ResourceProgramStatus);
+
+    expect(component.text()).toContain("at least 1 of 1 responded");
+    expect(component.text()).toContain("may have already responded");
   });
 });

@@ -1,3 +1,4 @@
+import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { Post, PostWithRelations, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
@@ -235,44 +236,46 @@ export const postRouter = router({
   }),
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
-    .query(async ({ ctx, input: { cursor, limit, parentId, sortBy, userId: authorId } }) => {
-      const userId = ctx.getSessionPayload?.user.id;
-      const where: RelationsFilter<(typeof relations)["posts"], typeof relations> = parentId
-        ? { parentId: { eq: parentId } }
-        : { parentId: { isNull: true } };
-      // Profile feeds scope to a single author — composes with the parentId and cursor clauses
-      if (authorId) where.userId = { eq: authorId };
-      if (cursor || userId)
-        where.RAW = (post) => {
-          const rawWhere = and(
-            cursor ? getCursorWhere(post, cursor, sortBy) : undefined,
-            // Only feeds filter blocked users — `readPost` stays readable since navigating
-            // Directly to a blocked user's post is an intentional act
-            userId ? getNotBlockedWhere(post, ctx.db, userId) : undefined,
-          );
-          if (!rawWhere)
-            throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
-          return rawWhere;
-        };
-      const resultPosts = userId
-        ? await ctx.db.query.posts.findMany({
-            limit: limit + 1,
-            orderBy: (post) => parseSortByToSql(post, sortBy),
-            where,
-            with: getViewerPostRelations(userId),
-          })
-        : await ctx.db.query.posts.findMany({
-            limit: limit + 1,
-            orderBy: (post) => parseSortByToSql(post, sortBy),
-            where,
-            with: PostRelations,
-          });
-      return getCursorPaginationData(
-        resultPosts.map((post) => getPostWithViewerLike(post)),
-        limit,
-        sortBy,
-      );
-    }),
+    .query<CursorPaginationData<PostWithRelations>>(
+      async ({ ctx, input: { cursor, limit, parentId, sortBy, userId: authorId } }) => {
+        const userId = ctx.getSessionPayload?.user.id;
+        const where: RelationsFilter<(typeof relations)["posts"], typeof relations> = parentId
+          ? { parentId: { eq: parentId } }
+          : { parentId: { isNull: true } };
+        // Profile feeds scope to a single author — composes with the parentId and cursor clauses
+        if (authorId) where.userId = { eq: authorId };
+        if (cursor || userId)
+          where.RAW = (post) => {
+            const rawWhere = and(
+              cursor ? getCursorWhere(post, cursor, sortBy) : undefined,
+              // Only feeds filter blocked users — `readPost` stays readable since navigating
+              // Directly to a blocked user's post is an intentional act
+              userId ? getNotBlockedWhere(post, ctx.db, userId) : undefined,
+            );
+            if (!rawWhere)
+              throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
+            return rawWhere;
+          };
+        const resultPosts = userId
+          ? await ctx.db.query.posts.findMany({
+              limit: limit + 1,
+              orderBy: (post) => parseSortByToSql(post, sortBy),
+              where,
+              with: getViewerPostRelations(userId),
+            })
+          : await ctx.db.query.posts.findMany({
+              limit: limit + 1,
+              orderBy: (post) => parseSortByToSql(post, sortBy),
+              where,
+              with: PostRelations,
+            });
+        return getCursorPaginationData(
+          resultPosts.map((post) => getPostWithViewerLike(post)),
+          limit,
+          sortBy,
+        );
+      },
+    ),
   updateComment: getProfanityFilterProcedure(updateCommentInputSchema, ["description"]).mutation<PostWithRelations>(
     ({ ctx, input: { id, ...rest } }) =>
       ctx.db.transaction(async (tx) => {

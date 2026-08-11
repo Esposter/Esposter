@@ -73,7 +73,7 @@ The creator's lobby list is optimistic: admitting or dismissing removes that kno
 
 ## Ephemeral server state
 
-Everything about a live call except its anchor row lives in module-level maps under `server/services/message/call/`, each keyed by `callSessionId` and each lost on restart — which is correct, since a restarted process has no LiveKit connections left to describe either. There are four of them rather than one record per session, and the split is load-bearing rather than incidental:
+Everything about a live call except its anchor row lives in module-level maps under `server/services/message/call/`, each keyed by `callSessionId` and each lost on restart. There are four of them rather than one record per session, and the split is load-bearing rather than incidental:
 
 - `callSessionParticipantMap` — the participants, keyed by auth session id. Created by the first join and deleted when the last participant leaves, so its presence _is_ what "this call is live" means, and `requireJoinedCallSession` reads nothing else.
 - `callKnockerMap` and `callAdmittedParticipantMap` — the standalone waiting room. They are torn down with the participant map, because a call nobody is in has nobody left to admit anyone.
@@ -93,6 +93,16 @@ flowchart TD
 ```
 
 Every teardown path funnels through `leaveCallAsParticipant` — the explicit leave, the LiveKit `participant_left` webhook and the moderation actions alike — so the start time is never orphaned by a call that ended some other way.
+
+### A restart does not end the calls
+
+Losing these maps is survivable, not correct. LiveKit is an external SFU reached over `LIVEKIT_URL`; this process mints tokens and receives webhooks but holds no media connection, so a call in progress is entirely unaffected by the process going away and its participants stay connected to the SFU throughout. What the restart destroys is only this side's picture of them, and three things follow from that:
+
+- `requireJoinedCallSession` reads the participant map and nothing else, so every pre-restart participant is locked out of the call procedures until they rejoin, while still being in the call.
+- Their eventual `participant_left` webhook finds no map entry, `deleteCallParticipant` returns `false`, and `leaveCallAsParticipant` returns early — no `leaveCall` event, no duration message.
+- The next join reads `isFirstJoiner` from that same empty map and re-stamps `callStartTimeMap`, so the duration the call finally reports is measured from the restart rather than from the call.
+
+**Undecided: whether to reconcile.** The fix is to ask LiveKit who is actually in the room and rebuild the maps from the answer, or to close the rooms on boot and make the clients rejoin. The first needs a trigger, and a poll is the wrong one — there is a `RoomServiceClient` listing to call, but nothing native that fires on "this process just lost its state", which is what the `no-scheduled-jobs` rule is about. The second is a visible interruption for something that only happens on deploy. Nothing here is load-bearing until calls outlive deploys often enough to notice, so it is written down rather than built.
 
 ## Procedures
 

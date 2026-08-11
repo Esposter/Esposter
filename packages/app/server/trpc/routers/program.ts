@@ -1,5 +1,5 @@
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
-import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
+import type { ProgramStatus } from "#shared/models/resource/program/ProgramStatusRow";
 
 import { generateProgramParticipants } from "@@/server/services/program/generateProgramParticipants";
 import { readProgramStatusRows } from "@@/server/services/program/readProgramStatusRows";
@@ -19,12 +19,13 @@ export const programRouter = router({
   // Which is blade work, not chart work.
   // Projected down to what the blade renders: the join's publicId is the dataset's identity and nothing on
   // This surface reads it, so the response carries no participant identifier the owner is not being shown
-  readProgramStatus: getOwnerProcedure(ResourceType.Program, programIdInputSchema, "id").query<ProgramStatusRow[]>(
-    async ({ ctx }) =>
-      (await readProgramStatusRows(ctx.resource.id)).map(({ addedAt, isResponded, keyValue }) => ({
-        addedAt,
-        isResponded,
-        keyValue,
-      })),
+  readProgramStatus: getOwnerProcedure(ResourceType.Program, programIdInputSchema, "id").query<ProgramStatus>(
+    async ({ ctx }) => {
+      const { isRespondedPartial, rows } = await readProgramStatusRows(ctx.resource.id);
+      return {
+        isRespondedPartial,
+        rows: rows.map(({ addedAt, isResponded, keyValue }) => ({ addedAt, isResponded, keyValue })),
+      };
+    },
   ),
 });

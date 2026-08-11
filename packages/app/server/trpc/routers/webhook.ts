@@ -1,4 +1,4 @@
-import type { AppUserInMessage, WebhookInMessage } from "@esposter/db-schema";
+import type { AppUserInMessage, WebhookInMessage, WebhookInMessageWithRelations } from "@esposter/db-schema";
 
 import { createWebhookInputSchema } from "#shared/models/db/webhook/CreateWebhookInput";
 import { deleteWebhookInputSchema } from "#shared/models/db/webhook/DeleteWebhookInput";
@@ -108,13 +108,14 @@ export const webhookRouter = router({
         .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
         .where(and(eq(webhooksInMessage.roomId, roomId), inArray(appUsersInMessage.id, ids))),
   ),
-  readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, readWebhooksInputSchema, "roomId").query(
-    ({ ctx, input: { roomId } }) =>
-      ctx.db.query.webhooksInMessage.findMany({
-        orderBy: { createdAt: "desc" },
-        where: { roomId: { eq: roomId } },
-        with: WebhookInMessageRelations,
-      }),
+  readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, readWebhooksInputSchema, "roomId").query<
+    WebhookInMessageWithRelations[]
+  >(({ ctx, input: { roomId } }) =>
+    ctx.db.query.webhooksInMessage.findMany({
+      orderBy: { createdAt: "desc" },
+      where: { roomId: { eq: roomId } },
+      with: WebhookInMessageRelations,
+    }),
   ),
   rotateToken: getPermissionsProcedure(
     RoomPermission.ManageWebhooks,
