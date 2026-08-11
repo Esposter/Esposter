@@ -6,13 +6,13 @@ import { withFinalizerAsync } from "@esposter/shared";
 const rules = useVRules();
 const roomCategoryStore = useRoomCategoryStore();
 const { createRoomCategory } = roomCategoryStore;
-const dialog = ref(false);
+const isOpen = ref(false);
 const name = ref("");
 </script>
 
 <template>
   <StyledFormDialog
-    v-model="dialog"
+    v-model="isOpen"
     :card-props="{ title: 'New Category' }"
     :confirm-button-props="{ text: 'Create Category' }"
     @submit="

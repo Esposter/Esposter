@@ -16,13 +16,13 @@ const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const setDataSource = useSetDataSource();
 const { executeMutation, executeQuery } = useMutation();
-const dialog = ref(false);
+const isOpen = ref(false);
 const surveys = ref<Resource[]>([]);
 const selectedSurveyId = ref("");
 const getImportTruncationMessage = (truncation: DatasetTruncation) =>
   `${getDatasetTruncationText(truncation)} — the remaining ${truncation.hiddenRows} were not imported`;
 
-watch(dialog, async (newDialog) => {
+watch(isOpen, async (newDialog) => {
   if (!newDialog) return;
   await executeQuery(() => $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }), {
     isExclusive: true,
@@ -36,9 +36,9 @@ watch(dialog, async (newDialog) => {
 
 <template>
   <template v-if="session.data">
-    <StyledTooltipIconButton icon="mdi-poll" text="Import survey responses" @click="dialog = true" />
+    <StyledTooltipIconButton icon="mdi-poll" text="Import survey responses" @click="isOpen = true" />
     <StyledDialog
-      v-model="dialog"
+      v-model="isOpen"
       :card-props="{ title: 'Import survey responses' }"
       :confirm-button-props="{ disabled: !selectedSurveyId, text: 'Import' }"
       @confirm="

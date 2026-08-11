@@ -5,11 +5,11 @@ import { mergeProps } from "vue";
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
-const dialog = ref(false);
+const isOpen = ref(false);
 </script>
 
 <template>
-  <v-dialog v-model="dialog">
+  <v-dialog v-model="isOpen">
     <template #activator="{ props: dialogProps }">
       <v-tooltip location="bottom" text="Add Friends to Room">
         <template #activator="{ props: tooltipProps }">
