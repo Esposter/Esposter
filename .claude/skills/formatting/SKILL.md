@@ -58,7 +58,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 
   Keep comments for genuinely non-obvious _why_: a workaround for a specific external bug/quirk, a subtle ordering/race constraint, an overlayfs/kernel/platform footgun, a security boundary. When in doubt, prefer deleting — a wrong-but-confident comment is worse than none.
 
-- **CRITICAL — comments describe the present, never the history.** A comment states what the code does and why it does it _now_ — never how it used to work, what it replaced, or what a prior approach did. The diff/git history is the changelog; a comment is not. Delete any clause that only makes sense as a before/after story — it rots the moment the "before" is forgotten and adds nothing to a reader who only sees the current code. Strip phrases like `equivalent to the old X`, `replaces the former Y`, `now that Z, the old reason is moot`, `used to …`, `previously made …`, `no longer needed since …`. Rewrite to assert the current behaviour directly. This includes **migration/roadmap state**: never reference roadmap phases, "until X lands/renames", "folds in later", or transitional wiring in code comments — once a migration ships, those comments are stale history; sweep them in the same change that completes the migration (the roadmap/spec doc is where phase history lives). Mention a rejected **alternative** only when the reader needs it to not "fix" the code back to it — one clause on why it wasn't adopted, nothing more.
+- **CRITICAL — comments describe the present, never the history.** A comment states what the code does and why it does it _now_, never how it used to work or what it replaced; git is the changelog. Delete any clause that only makes sense as a before/after story — `equivalent to the old X`, `replaces the former Y`, `now that Z the old reason is moot`, `used to …`, `no longer needed since …` — and rewrite it to assert the current behaviour. **Migration state is history too**: no roadmap phases, no "until X lands", no transitional wiring in a code comment; sweep those in the change that completes the migration, since the roadmap doc is where phase history lives. Mention a rejected **alternative** only where the reader needs it to not "fix" the code back to it, in one clause.
 
   ```ts
   // WRONG — narrates removed behaviour
@@ -72,12 +72,10 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 
   Two narrow exceptions survive because they still help the _current_ reader: (1) a comment quoting the **actual external error/warning text** a workaround addresses (it's how the next person greps the cause — see below); (2) a **regression guard** in a test may name the failure mode it defends against, phrased as a present hazard (`coupling both to one check flips this assertion`), not as a past state (`a regression to the old gate`).
 
-- **Avoid unnecessary comments** — prefer descriptive names. Keep comments that explain _why_ (non-obvious decisions, disable reasons, workarounds).
 - **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence. If an example helps, show only the minimal fragment. Applies to `//`, `/* */`, and Vue `<!-- -->` alike.
 - **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Trim it to the minimal identifying fragment; drop surrounding example values.
 - **Don't fight the comment-capitalization hook** — a hook capitalizes the first letter of every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine. Only avoid starting a wrapped line with a case-sensitive code identifier the hook would corrupt — reword those.
 
-## Related
+## Line Endings
 
-- Writing skill docs themselves (enforcer rule, generic placeholders, two-tier layout) — see the `skill-authoring` skill.
-- **Line endings** are enforced by `.gitattributes` (`text eol=lf` for `.ts`/`.vue`/`.js`/`.json`/`.md`/`.yaml`/`.sh`; `.bat`/`.cmd`/`.ps1` are deliberately `crlf`) and settled by `oxfmt` (`pnpm format`). Never hand-convert line endings.
+- Enforced by `.gitattributes` (`text eol=lf` for `.ts`/`.vue`/`.js`/`.json`/`.md`/`.yaml`/`.sh`; `.bat`/`.cmd`/`.ps1` are deliberately `crlf`) and settled by `oxfmt` (`pnpm format`). Never hand-convert line endings.
