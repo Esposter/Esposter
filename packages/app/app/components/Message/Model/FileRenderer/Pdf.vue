@@ -10,8 +10,8 @@ import "vue-pdf-embed/dist/styles/textLayer.css";
 
 const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
 const isDark = useIsDark();
-const dialog = ref(false);
-const { cloned: darkMode } = useCloned(isDark);
+const isOpen = ref(false);
+const { cloned: isDarkMode } = useCloned(isDark);
 </script>
 
 <template>
@@ -21,26 +21,25 @@ const { cloned: darkMode } = useCloned(isDark);
     :source="{ url }"
     annotation-layer
     text-layer
-    @="
-      isPreview
-        ? {}
-        : {
-            click: () => {
-              dialog = true;
-            },
-          }
+    @click="
+      () => {
+        if (!isPreview) isOpen = true;
+      }
     "
   />
-  <v-dialog v-if="!isPreview" v-model="dialog" width="64rem" height="48rem">
-    <StyledCard>
-      <v-card-title font-bold>{{ file.filename }}</v-card-title>
-      <VPdfViewer
-        v-model:dark-mode="darkMode"
-        :character-map="{ url: '/cmaps/' }"
-        :download-filename="file.filename"
-        :src="url"
-        :worker-url="PdfWorker"
-      />
-    </StyledCard>
-  </v-dialog>
+  <!-- Nothing to confirm, so the shell serves it without an actions row and owns the close button -->
+  <StyledDialog
+    v-if="!isPreview"
+    v-model="isOpen"
+    :card-props="{ title: file.filename }"
+    :dialog-props="{ height: '48rem', width: '64rem' }"
+  >
+    <VPdfViewer
+      v-model:dark-mode="isDarkMode"
+      :character-map="{ url: '/cmaps/' }"
+      :download-filename="file.filename"
+      :src="url"
+      :worker-url="PdfWorker"
+    />
+  </StyledDialog>
 </template>

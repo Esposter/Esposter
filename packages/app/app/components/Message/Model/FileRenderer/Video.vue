@@ -5,7 +5,7 @@ const { isPreview, url } = defineProps<FileRendererComponentProps>();
 </script>
 
 <template>
-  <video controls size-full :object-cover="isPreview ? '' : undefined" :object-contain="isPreview ? undefined : ''">
+  <video controls size-full :class="isPreview ? 'object-cover' : 'object-contain'">
     <source :src="url" />
   </video>
 </template>

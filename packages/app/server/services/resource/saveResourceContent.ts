@@ -1,4 +1,5 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { Context } from "@@/server/trpc/context";
 import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Resource, ResourceActivityType } from "@esposter/db-schema";
 
@@ -59,8 +60,15 @@ export const saveResourceContent = async (
         () => undefined,
       )
     : undefined;
-  const writeContentBlob = () =>
-    useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(parsedContent));
+  // Whether the upload was *attempted*, which is what decides how a failed save unwinds. Not whether it resolved:
+  // An upload that rejects may still have landed the blob (a response lost after the write), and the two mistakes
+  // Are not equal — clearing a binding whose upload never landed costs one fallback blob read, while leaving one
+  // Whose upload did land is the fail-open case this whole dance exists to prevent
+  let isContentBlobWriteAttempted = false;
+  const writeContentBlob = async () => {
+    isContentBlobWriteAttempted = true;
+    await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(parsedContent));
+  };
   // Projected here rather than in an after-save hook, and written in the same transaction as the blob. Every
   // Hook in `ResourceAfterSaveContentMap` is best-effort by contract, and this column is read by
   // `resolveIdentifiedToken` to decide whether a participant token was issued for the survey being answered —
@@ -71,26 +79,42 @@ export const saveResourceContent = async (
   // Only when it moved: most saves to a bound type leave the binding alone, and an unbound type has no
   // Projector at all, so neither pays for a write
   const hasBoundResourceIdChanged = Boolean(projectBoundResourceId) && boundResourceId !== resource.boundResourceId;
-  const writeBoundResourceId = async (value: null | string) =>
-    (await ctx.db.update(resources).set({ boundResourceId: value }).where(eq(resources.id, id)).returning())[0];
-  // Cleared before the blob write and set after it, never inside the transaction with it. The blob is not
-  // Transactional, so a transaction failing after the upload would leave the row describing content that is no
-  // Longer there — and for an unbind that is fail-open, since the resolver would keep accepting tokens the owner
-  // Just revoked. Null is the one value that can never be wrong here: the resolver reads it as "ask the blob",
-  // So the window between the two writes degrades to the pre-column behaviour instead of a stale yes
-  if (hasBoundResourceIdChanged) await writeBoundResourceId(null);
-  // The bump and the write stay in one transaction so a failed write rolls the bump back — a write that did
-  // Not land must never advance the version every client caches against. A first write has no version to
-  // Protect, and wrapping it would only hold a pooled connection across a storage round trip
+  const writeBoundResourceId = async (db: Context["db"] | Transaction, value: null | string) =>
+    (await db.update(resources).set({ boundResourceId: value }).where(eq(resources.id, id)).returning())[0];
+  // The binding is cleared inside the transaction and set after it commits, and never holds a value the blob does
+  // Not back. `resolveIdentifiedToken` reads null as "ask the blob", so null is the one value that can never be
+  // Wrong — which makes it what every partial outcome has to land on:
+  //
+  // - the version check loses to a concurrent save: the clear rolls back with it, so the winner's binding stands
+  //   Rather than being flattened by the save that lost
+  // - the transaction fails after the upload: the rollback restores a binding describing content that is already
+  //   Gone, which for an unbind is fail-open — so the clear is reapplied outside the transaction
+  // - it commits: the new binding is written after, once the content it describes is durable
+  //
+  // The bump and the blob stay in one transaction so a failed write rolls the bump back — a write that did not
+  // Land must never advance the version every client caches against. A first write has no version to protect,
+  // And wrapping it would only hold a pooled connection across a storage round trip
   let savedResource = resource;
   if (updateContentVersion)
-    savedResource = await ctx.db.transaction(async (tx) => {
-      const updatedResource = await updateContentVersion(tx);
-      await writeContentBlob();
-      return updatedResource;
-    });
-  else await writeContentBlob();
-  if (hasBoundResourceIdChanged) savedResource = (await writeBoundResourceId(boundResourceId)) ?? savedResource;
+    savedResource = await getResultAsync(() =>
+      ctx.db.transaction(async (tx) => {
+        const updatedResource = await updateContentVersion(tx);
+        if (hasBoundResourceIdChanged) await writeBoundResourceId(tx, null);
+        await writeContentBlob();
+        return updatedResource;
+      }),
+    ).match(
+      (updatedResource) => updatedResource,
+      async (error) => {
+        if (hasBoundResourceIdChanged && isContentBlobWriteAttempted) await writeBoundResourceId(ctx.db, null);
+        throw error;
+      },
+    );
+  else {
+    if (hasBoundResourceIdChanged) await writeBoundResourceId(ctx.db, null);
+    await writeContentBlob();
+  }
+  if (hasBoundResourceIdChanged) savedResource = (await writeBoundResourceId(ctx.db, boundResourceId)) ?? savedResource;
 
   resourceEventEmitter.emit("saveResourceContent", [
     { content: parsedContent, contentVersion: savedResource.contentVersion, id },
