@@ -1,6 +1,6 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Context } from "@@/server/trpc/context";
 import type { Transaction } from "@@/server/models/db/Transaction";
+import type { Context } from "@@/server/trpc/context";
 import type { Resource, ResourceActivityType } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";

@@ -1,7 +1,7 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { Context } from "@@/server/trpc/context";
 import type { Transaction } from "@@/server/models/db/Transaction";
+import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";

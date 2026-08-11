@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { FileEntity } from "@esposter/db-schema";
 
-import MessageModelFileRendererPdf from "@/components/Message/Model/FileRenderer/Pdf.vue";
 import { MimeType } from "#shared/models/file/MimeType";
+import MessageModelFileRendererPdf from "@/components/Message/Model/FileRenderer/Pdf.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
