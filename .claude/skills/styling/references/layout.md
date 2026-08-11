@@ -44,3 +44,15 @@ A Vuetify input's root (`.v-input`) is `flex: 1 1 auto`. Drop it straight into a
 In multi-box layouts (side-by-side panels, nav + content), each edge must be drawn by **one** component — no two adjacent components both border the shared edge. Give each divider a single owner: the container that spans the whole edge owns it. E.g. a full-height column owns the vertical divider (`b-e`) for the whole row; a header owns its own bottom separator (`b-b`); the box below it stays borderless (no redundant `b-t`).
 
 Prefer keeping shared primitives borderless and letting the consumer supply the border — `StyledDataTableServer` takes only `dataTableServerProps`, so a border comes from the consumer rather than being hard-coded and then opted out of.
+
+## Never restore preset-wind4's border reset
+
+`uno.config.ts` disables it wholesale, and neither half comes back.
+
+A `border-width: 0` matching `*, ::before, ::after` also matches `.v-field__outline__start` and the notch pseudo-elements, where an outlined field's border actually lives — every text field and textarea in the app renders borderless, and layer order does not rescue it however `layers.css` reads. Restoring the `border-style: solid` half instead makes every element that takes a width from a later layer render a border it never declared, Vuetify's loaders and skeletons included. Both have been tried and reverted; the second looks like a tidy way to delete `b-solid` repo-wide and is a regression across the component library.
+
+So **when a Vuetify border looks missing, suspect a global rule reaching into the component before the component.** Variants are already repo-wide in `vuetify.config.ts` — never re-pass `variant="outlined"` at a call site to chase one; it changes nothing (`vuetify` skill, never repeat a global default).
+
+## State-dependent border colour
+
+When error and focus-within are mutually exclusive, put both colours in the `:class` conditional so only the active state's colour class is present — `:class="isError ? ['b-error'] : ['b-border', 'focus-within:b-info']"` — and keep the theme colour as a `b-*` utility rather than a raw rgba arbitrary value.

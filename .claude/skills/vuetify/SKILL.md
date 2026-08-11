@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — StyledButton for primary actions, button backgrounds (colourless-flat transparency rule, container-provided variant="text" answered with StyledButton/StyledTooltipIconButton rather than variant="elevated"), the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, tooltips on icon-only buttons, router-link-driven highlighting on linked buttons and tabs (exact links, catch-all params, the explicit :active escape hatch), StyledTooltipIconButton/StyledTooltipMenuIconButton over a hand-rolled activator chain with mergeProps left for the stacks they don't cover, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, StyledList, StyledAvatar, no SASS variables in component styles, plus deep dives on form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, and scrollspy sub-nav. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
+description: Esposter Vuetify 4 conventions — StyledButton for primary actions, button backgrounds (colourless-flat transparency rule, container-provided variant="text" answered with StyledButton/StyledTooltipIconButton rather than variant="elevated"), the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated, tooltips on icon-only buttons, router-link-driven highlighting on linked buttons and tabs (exact links, catch-all params, the explicit :active escape hatch), StyledTooltipIconButton/StyledTooltipMenuIconButton over a hand-rolled activator chain with mergeProps left for the stacks they don't cover, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, StyledList, StyledAvatar, no SASS variables in component styles, plus deep dives on form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, scrollspy sub-nav, and mergeProps activator stacks. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
 ---
 
 # Vuetify Conventions
@@ -86,26 +86,7 @@ Once a `v-btn`/`v-tab` carries `to`, Vuetify derives its highlight from the rout
 | `v-tooltip` + `v-btn`            | `StyledTooltipIconButton`     |
 | `v-menu` + `v-tooltip` + `v-btn` | `StyledTooltipMenuIconButton` |
 
-Hand-rolling either is the single most repeated finding in this area — the chain looks like plumbing rather than a component, so it gets rewritten instead of imported. The rules below are for the cases the two primitives do **not** cover (a `v-dialog` or `v-hover` in the stack, a non-icon activator, three-way nesting).
-
-When one button is the activator for **multiple** overlays, combine each overlay's slot props with `mergeProps(...)` from `vue` on a single `:=`. **Never stack two `:=` binds** — a second `v-bind` of the same key silently overrides the first, dropping the loser's `onClick`/`onMouseenter`/`class`; `mergeProps` chains handlers and concatenates `class`/`style`.
-
-**Order: structural/outer activator(s) first, tooltip last** — `mergeProps(dialogProps, tooltipProps)`, or three-way `mergeProps(tooltipActivatorProps, hoverProps, buttonProps)`.
-
-```vue
-<!-- A dialog in the stack, so no primitive covers it -->
-<v-dialog>
-  <template #activator="{ props: dialogProps }">
-    <v-tooltip text="Options">
-      <template #activator="{ props: tooltipProps }">
-        <v-btn icon="mdi-dots-vertical" :="mergeProps(dialogProps, tooltipProps)" />
-      </template>
-    </v-tooltip>
-  </template>
-</v-dialog>
-```
-
-A custom dialog/menu button that exposes an `#activator` slot **merges its own tooltip into the slot props** (`<slot name="activator" :="mergeProps(dialogProps, tooltipProps)" />`) so consumers just bind the scope (`:="activatorProps"`) — and consumers must **not** wrap such an activator in a second `v-tooltip`; it already has one.
+Hand-rolling either is the single most repeated finding in this area — the chain looks like plumbing rather than a component, so it gets rewritten instead of imported. Anything the two primitives do not cover (a `v-dialog` or `v-hover` in the stack, a non-icon activator, three-way nesting) binds one `mergeProps(...)` and never two `:=` binds — `references/nested-activators.md`.
 
 ## Selects and List Items
 
@@ -120,7 +101,7 @@ A custom dialog/menu button that exposes an `#activator` slot **merges its own t
 - Name a form validity ref `isEditFormValid`, bind it via `v-model` on `<v-form>`, and init `ref(true)` (optimistic). Prevent invalid submission through validation rules so state stays consistent, rather than catching in the submit handler (see the `error-handling` skill).
 - **`StyledFormDialog` consumers never pass `!isEditFormValid`** — it merges form validity, `isSubmitting`, `type="submit"`, `form` and `loading` into the confirm button internally, so `confirmButtonAttrs` carries only the consumer's own extra condition. **`StyledEditFormDialog` has no `confirmButtonAttrs` at all.**
 - Use the auto-imported `useVRules()` — declare `const rules = useVRules();` at the top of `<script setup>` with the other composables, then reference builders: `:rules="[rules.required(), rules.maxLength(100)]"`. One-off inline arrow rules in the template are fine; extract to script only when shared or unwieldy.
-- **A built-in alias first, always** (`required`, `maxLength`, `minLength`, `email`, `pattern`, `notEmpty`, …) — never reimplement one or its message, including as a rule that surfaces a server Zod schema's issue text. A custom alias is earned only where no built-in covers the check, and then it is named and worded in Vuetify's own voice (`minValue` beside `minLength`) as a literal — routing it through the locale is what forces the whole `en` locale to be merged eagerly, which the app has no use for while i18n is deferred. The `required` HTML attribute is not a Vuetify prop; use `:rules="[rules.required()]"`.
+- **A built-in alias first, always** (`required`, `maxLength`, `minLength`, `email`, `pattern`, `notEmpty`, …) — never reimplement one or its message, including as a rule that surfaces a server Zod schema's issue text. A custom alias is earned only where no built-in covers the check, and is then named and worded in Vuetify's own voice (`minValue` beside `minLength`) as a literal: routing it through the locale forces the whole `en` locale to be merged eagerly, which the app has no use for while i18n is deferred. The `required` HTML attribute is not a Vuetify prop — use `:rules="[rules.required()]"`.
 - Rules validate **what is submitted, not what was typed** — when the sent value is composed from the field (markup wrapper, appended link/suffix), the rule checks the composed value's constraint, even though `counter` still tracks the raw input.
 - Rules depending on reactive component state (uniqueness against a live list) are **not** global aliases — they belong in a composable, or an Ajv keyword when the form is Vjsf. See the `vue-composable-patterns` skill's "Validation Rules — Pick the Right Layer".
 
@@ -150,11 +131,7 @@ Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navi
 
 **Never use Vuetify SASS variables (`$border-width-root` etc.) in component `<style>` blocks** — they are build-time variables requiring `additionalData` injection, which conflicts with Vuetify's compilation pipeline. Shared values are CSS custom properties in the `:root` block in `globals.scss`; use `var(--name)`.
 
-The goal is always attributify: prefer inline UnoCSS utilities and delete the style block (`<div b-1 b-border top="[var(--app-bar-height)]" />`). The `var(...)` form is only acceptable when a style block is genuinely required (`:deep()` selectors, `@keyframes`, element selectors), and `lang="scss"` only for SCSS-specific features (`@mixin`/`@include`, `#{...}` interpolation) — simple styles with `v-bind()` and `:deep()` don't need it.
-
-## Keyboard Shortcut Components
-
-A button and its keyboard shortcut are one component — see the **vue-page-composition** skill (Maximal Component Granularity).
+The goal is always attributify: prefer inline UnoCSS utilities and delete the style block (`<div b-1 b-border top="[var(--app-bar-height)]" />`). The `var(...)` form is for the cases where a block is genuinely required — which ones those are, and when `lang="scss"` is earned, is the `styling` skill's.
 
 ## Deep Dives
 
@@ -162,3 +139,4 @@ A button and its keyboard shortcut are one component — see the **vue-page-comp
 - `references/select-item-construction.md` — when building the items constant for a select, list or menu from an enum or map.
 - `references/css-custom-properties.md` — when a component genuinely needs a `<style>` block and a shared value in it.
 - `references/scrollspy-sub-nav.md` — when a sidebar must track which section is scrolled into view.
+- `references/nested-activators.md` — when one control activates two or more overlays and no primitive covers the stack.

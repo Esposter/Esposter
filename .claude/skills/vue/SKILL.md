@@ -5,7 +5,7 @@ description: Esposter Vue 3 SFC conventions — macro ordering, script-setup dec
 
 # Vue Conventions
 
-- `<script setup lang="ts">` at the top of every SFC. Prefer attributify over `<style>` blocks; when a block is genuinely needed use `<style scoped>`, and only add `lang="scss"` for Sass features (nesting, `&`, `//` comments, `@mixin`/`@include`). See the `styling` skill.
+- `<script setup lang="ts">` at the top of every SFC. Prefer attributify over `<style>` blocks; when a block is genuinely needed, the `styling` skill owns its rules (`scoped`, `lang="scss"`, library CSS).
 - Self-closing tags for empty components/elements: `<Component />`.
 - Blank-line placement (templates, consts, returns, blocks) and comment attachment — see the `formatting` skill.
 - Links, `:to`, `navigateTo`, reactive route reads, route validation, page keys and route-synced tabs — see the `routing` skill. All Vuetify-specific conventions — see the `vuetify` skill.
