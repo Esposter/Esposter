@@ -1,6 +1,6 @@
 # Retrieving and answering CodeRabbit feedback
 
-Read when pulling a PR's review feedback or replying to a comment. The rules about what the output means — nitpick location, the `coderabbitai[bot]` login, reconciling against the stated counts, replying to every finding — are in `SKILL.md`; this page is the calls.
+Read when pulling a PR's review feedback, counting what is still open, or replying to a comment. What the output means — where nitpicks live, reconciling against the stated counts, replying to every finding — is in `SKILL.md`; this page is the calls and the ways they lie.
 
 ## All three endpoints
 
@@ -31,6 +31,46 @@ The walkthrough issue-comment is **edited in place** across reviews, so its `cre
 **Anything that must see the whole result set goes downstream of `--paginate --slurp`, never in `--jq`.** `gh` runs `--jq` once per page, so a `sort_by`, a `.[-1]`, a `.[-N:]` or a `length` computed there describes one page rather than the PR — silently, and only once a PR passes 100 comments, which is exactly when the answer matters. Per-element work (`select`, string building) is unaffected and stays in `--jq`, which is why calls 1 and 2 above still use it.
 
 `--slurp` emits an **array of pages**, hence the `.flat()`. It cannot be combined with `--jq` or `--template` (gh rejects the pair), so the aggregation runs in a second process — `node -e`, not `jq`, because the repo's toolchain guarantees node and this machine has no standalone `jq` on `PATH`.
+
+## The login differs by API, and so does the shape
+
+REST (`/pulls/<pr>/comments`, `/reviews`, `/issues/<pr>/comments`) reports `user.login` as **`coderabbitai[bot]`**; GraphQL (`reviewThreads`) reports `author.login` as **`coderabbitai`**, with the `[bot]` suffix stripped. Neither is "the" login — write the filter for the endpoint in hand:
+
+```bash
+# REST — the payload is a bare array, and the author sits on `user`
+gh api "repos/:owner/:repo/pulls/<pr>/comments" --jq '.[] | select(.user.login == "coderabbitai[bot]")'
+# GraphQL — the payload is an object, and the author sits on `author`, one `nodes[]` per connection
+gh api graphql -f query='...' --jq '.data.repository.pullRequest.reviewThreads.nodes[]
+  | select(.comments.nodes[0].author.login == "coderabbitai")'
+```
+
+A `.[]` against the GraphQL payload iterates the top-level object's values, so it neither errors nor matches.
+
+**A `--jq` filter on the wrong login returns empty and exits 0.** Empty output from a filtered query means _"my filter was wrong"_ until proven otherwise — never "there are none". Prove it by re-running without the author filter: a non-zero unfiltered count means the filter was the bug. Do that before reporting zero, every time; a false zero reads exactly like a clean PR.
+
+## Counting open findings
+
+```bash
+gh api graphql --paginate -f query='
+query($endCursor: String) {
+  repository(owner: "<owner>", name: "<repo>") {
+    pullRequest(number: <pr>) {
+      reviewThreads(first: 100, after: $endCursor) {
+        pageInfo { hasNextPage endCursor }
+        nodes { isResolved isOutdated path line comments(first: 1) { nodes { author { login } body } } }
+      }
+    }
+  }
+}' --jq '.data.repository.pullRequest.reviewThreads.nodes[]
+  | select(.isResolved == false)
+  | select(.comments.nodes[0].author.login == "coderabbitai") | .path' | wc -l
+```
+
+**`--paginate` and `pageInfo` are both load-bearing**, and the failure is silent in the direction that matters. A long-lived release PR accumulates threads for its whole life, so `reviewThreads(first: 100)` alone starts dropping the newest page exactly when the PR is busiest, and reports the backlog as drained. `gh` follows the cursor only when the query declares `$endCursor` and selects `pageInfo`; omit either and it returns page one and exits 0. Count with `| wc -l` over one line per thread rather than `| length`, which reports a per-page length once per page.
+
+**The author filter is load-bearing in the other direction.** Unfiltered, the count is every unresolved thread on the PR — a human comment or another bot's thread then holds the drain gate shut against findings that were never CodeRabbit's, and the number stops reconciling against the review bodies' `Actionable comments posted: N`. Because the two mistakes are silent and point opposite ways, run it unfiltered too and read the gap as the human threads it is.
+
+Unresolved threads are the inline half only — reconcile against the stated counts (`SKILL.md`), since nitpicks never exist as threads and inline comments can fail to post outright.
 
 ## Probing whether the checkpoint covers the head
 
