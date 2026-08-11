@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
@@ -14,6 +15,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type = ResourceType.Sheet) => createResourceListItem({ id, type });
+// The unpublished answer the read carries, which is what a publishable type's test overrides
+type ReadResourceOutput = ResourceListItem & { publication: null };
 // The route is what the store loads from, so switching resources in a test is switching the route
 const setRouteId = (id: string) => {
   useRouter().currentRoute.value.params.id = id;
@@ -21,6 +24,8 @@ const setRouteId = (id: string) => {
 
 describe(useResourceStore, () => {
   const server = setupMswTrpc();
+  // Held as a spy rather than an inline resolver, so a test can assert the read was never issued at all
+  let readResourceQuery: ReturnType<typeof vi.fn<(options: { input: { id: string } }) => ReadResourceOutput>>;
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
   const resourceId = crypto.randomUUID();
   const otherResourceId = crypto.randomUUID();
@@ -47,9 +52,13 @@ describe(useResourceStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     setRouteId(resourceId);
+    readResourceQuery = vi.fn<(options: { input: { id: string } }) => ReadResourceOutput>(({ input }) => ({
+      ...createResource(input.id),
+      publication: null,
+    }));
     saveResourceContent = vi.fn<() => Resource>(() => ({ ...createResource(resourceId), contentVersion: 1 }));
     server.use(
-      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(input.id), publication: null })),
+      trpcMsw.resource.readResource.query(readResourceQuery),
       trpcMsw.sheet.readResourceContent.query(() => createDefaultSheetResource()),
       trpcMsw.sheet.saveResourceContent.mutation(saveResourceContent),
     );
@@ -326,11 +335,6 @@ describe(useResourceStore, () => {
   test("issues no read when the route names no resource", async () => {
     expect.hasAssertions();
 
-    const readResourceQuery = vi.fn(({ input }: { input: { id: string } }) => ({
-      ...createResource(input.id),
-      publication: null,
-    }));
-    server.use(trpcMsw.resource.readResource.query(readResourceQuery));
     const resourceStore = useResourceStore();
     const { isLoading, resource } = storeToRefs(resourceStore);
     const { readResource } = resourceStore;
