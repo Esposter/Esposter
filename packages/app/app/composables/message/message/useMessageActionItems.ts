@@ -5,6 +5,7 @@ import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { dayjs } from "#shared/services/dayjs";
 import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
+import { useClipboardStore } from "@/store/clipboard";
 import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useForwardStore } from "@/store/message/input/forward";
@@ -21,8 +22,9 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const { $trpc } = useNuxtApp();
   const { executeMutation: executeUnpinMessageMutation } = useMutation();
   const { executeMutation: executeMarkUnreadMutation } = useMutation();
+  const clipboardStore = useClipboardStore();
+  const { copy } = clipboardStore;
   const messageStore = useMessageStore();
-  const { copy } = messageStore;
   const { editingRowKey } = storeToRefs(messageStore);
   const messageDialogStore = useMessageDialogStore();
   const { deletingRowKey, pinningRowKey } = storeToRefs(messageDialogStore);

@@ -121,14 +121,13 @@ When adding a new feature, use Postgres for anything relational/queryable and Az
 
 ### Schema → Migration Workflow
 
-1. Edit schema file in `packages/db-schema/src/schema/` (use `pgTable` wrapper, not raw drizzle `pgTable`)
-2. Generate the migration with `pnpm db:gen` from `packages/db-schema/` — this is the **only** sanctioned way to produce `snapshot.json`. Inject the URL from the app env (`export DATABASE_URL="$(grep '^DATABASE_URL=' ../app/.env | cut -d= -f2-)"`); `db:gen` only reads it for config validation — the diff is schema-vs-snapshot and never touches the DB. Then rename the random codename folder descriptively (`20260714000000_file_to_sheet_rename`), keeping the timestamp prefix.
-3. If adding new exported types/functions, run `pnpm export:gen` in `packages/db-schema/`
-4. Migrations apply on next app startup (see the migrate plugin above) — there is no apply script to run
+Edit the schema in `packages/db-schema/src/schema/` (the `pgTable` wrapper, not raw drizzle), register every
+export — tables **and** `pgEnum`s — in `packages/db-schema/src/schema.ts`, then `pnpm db:gen` from that package.
+Nothing applies migrations from the CLI; they run at app startup via `server/plugins/migrate.ts`.
 
-**Never hand-clone `snapshot.json`.** Copying a previous snapshot and bumping `id`/`prevIds` by hand forks the migration chain the instant two migrations descend from the same parent, and the next `db:gen` fails with `Non-commutative migrations detected`. `snapshot.json` is machine state — always let `db:gen` produce it. Don't run `db:gen` as an unprompted side effect of a schema edit; note the pending migration and let the user decide when to run it (see the `drizzle` skill).
-
-**Fixing up the generated `migration.sql` by hand is allowed and expected — but only the SQL, and only before it's applied.** The migrator's bookkeeping hash is `sha256(migration.sql)`, computed at apply time, so an un-applied `migration.sql` is free to edit; `snapshot.json` stays exactly as generated. Where drizzle-kit's diff is destructive, rewrite the SQL to preserve data — e.g. replace a generated drop/recreate with `ALTER TYPE "public"."resource_type" RENAME VALUE 'File' TO 'Sheet';`. Report to the user that a migration is pending; it applies when they next start the app.
+`db:gen` is the only sanctioned way to produce `snapshot.json`, and it is never an unprompted side effect of a
+schema edit — note the pending migration and let the user choose when to run it. Everything else about running
+it, hand-editing the generated SQL, and recovering a forked chain is in the `drizzle` skill.
 
 ### tRPC Router Organization
 
@@ -138,33 +137,7 @@ Most feature routers are registered as top-level keys (`message`, `room`, `role`
 
 `achievement` is the one merge-time exception: it's merged onto `trpcRouterWithoutAchievements` via `mergeRouters` to avoid a circular dependency with the routers that fire achievement events.
 
-To add a new router:
-
-1. Create `server/trpc/routers/myFeature.ts` exporting `myFeatureRouter`
-2. Import and register it in `server/trpc/routers/index.ts`
-
-See `.claude/skills/trpc/SKILL.md` for full conventions (structure, naming, test patterns, procedure helpers).
-
-### tRPC Procedure Helpers
-
-Three RBAC-aware procedure builders in `server/trpc/procedure/room/`:
-
-- `getMemberProcedure` — verifies the caller is a member of the room; use for standard message/room operations
-- `getPermissionsProcedure(permission, schema, roomIdKey)` — verifies the caller has a specific `RoomPermission`; use for moderation/admin actions
-- `getOwnerProcedure` — verifies the caller owns the room; use for destructive room operations
-
-`getPermissionsProcedure` is the most common for moderation features — it accepts a `RoomPermission` enum value and a Zod input schema, and handles the RBAC check as middleware.
-
-### RBAC System
-
-Permissions stored as a bigint bitfield on `roomRoles` (Postgres). Key service functions:
-
-- `hasPermission(db, userId, roomId, permission)` — single permission check; room owners and Administrators bypass all checks. Lives in `@esposter/db` (`packages/db/src/services/room/rbac/`), so the app imports it from `@esposter/db` directly — a shared function never gets a local re-export file, which only adds a second name to grep for. Same for `getPermissions`.
-- `checkIsManageable(actorTopPosition, targetPosition, isRoomOwner)` — hierarchy check; prevents lower-role members from acting on higher-role members. Room owners always pass. Lives in `packages/app/shared/services/room/rbac/checkIsManageable.ts` (shared — used by both `server/trpc/routers/` and the client `role` store).
-- `getTopRolePosition(db, userId, roomId)` — the actor's highest role position, `-1` if none. Overloaded: pass a `roomId[]` to get a `Map<string, number>` instead. In `server/services/room/rbac/`.
-- `getActorContext(db, actorUserId, roomId)` — bundles `{ actorTopPosition, isOwner }`, the usual input to `checkIsManageable`. In `server/services/room/rbac/`.
-
-`RoomPermission` enum and `roomRoles` schema live in `packages/db-schema`.
+Structure, naming, the RBAC-aware procedure builders and test patterns: the `trpc` skill.
 
 ### Real-time Architecture
 
@@ -175,27 +148,19 @@ Two parallel real-time systems:
 
 When a message is created: `createMessage` → Azure Table write → `messageEventEmitter.emit` → tRPC subscription delivers to connected clients → `getPushSubscriptionsForMessage` → EventGrid → `ProcessPushNotification` Azure Function → web-push to offline users.
 
-### Slash Command Registry
+### Where the feature detail lives
 
-To add a new slash command:
+Per-feature registries and the steps for extending them are **not** here — a recipe restated in two places drifts,
+and this file is the one that goes stale first. Each of these owns its own subject in full:
 
-1. Add the new value to `SlashCommandType` enum (`app/models/message/slashCommands/SlashCommandType.ts`)
-2. Add the definition to `SlashCommandDefinitionMap` (`app/services/message/slashCommands/SlashCommandDefinitionMap.ts`) — object with `icon`, `title`, `description`, `parameters[]`, `type`
-3. Add execution logic to `useExecuteSlashCommand` composable (`app/composables/message/slashCommand/useExecuteSlashCommand.ts`)
-
-### AdminActionType / Moderation
-
-`AdminActionType` enum lives in `packages/db-schema/src/models/message/AdminActionType.ts`. Adding a new action type requires:
-
-1. Add enum value to `AdminActionType`
-2. Add arm to the discriminated union in `ExecuteAdminActionInput` (`app/shared/models/db/moderation/ExecuteAdminActionInput.ts`)
-3. Add permission mapping in `AdminActionPermissionMap` (`server/services/message/moderation/AdminActionPermissionMap.ts`)
-4. Add client-side handler in `useAdminActionMap` (`app/composables/message/moderation/useAdminActionMap.ts`)
-5. Add icon/color/label maps in `app/services/message/moderation/`
-
-### MessageType Enum
-
-`MessageType` lives in `packages/db-schema/src/models/message/MessageType.ts`. Adding a new type also requires updating `MessageEntityMap` (maps type → entity class) and `MessageComponentMap` in the app (maps type → Vue component for rendering).
+| Subject                                                       | Owner                                      |
+| :------------------------------------------------------------ | :----------------------------------------- |
+| RBAC — permission bitfield, hierarchy, the service functions  | `docs/esbabbler/rbac.md`                   |
+| Moderation — `AdminActionType` and the five places it touches | `docs/esbabbler/moderation.md`             |
+| Slash commands — the registry and adding one                  | `slash-commands` skill                     |
+| Message types — `MessageComponentMap` and the shared shells   | `docs/esbabbler/message-list-rendering.md` |
+| tRPC — procedure builders, structure, naming, tests           | `trpc` skill                               |
+| Migrations — `db:gen`, SQL fixups, chain recovery             | `drizzle` skill                            |
 
 ### Azure Functions
 

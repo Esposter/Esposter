@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { useClipboardStore } from "@/store/clipboard";
+
 interface StyledClipboardIconButtonProps {
   source: string;
   text?: string;
 }
 
 const { source, text } = defineProps<StyledClipboardIconButtonProps>();
-const { copied, copy } = useClipboard();
+const clipboardStore = useClipboardStore();
+const { copy } = clipboardStore;
 </script>
 
 <template>
@@ -15,5 +18,4 @@ const { copied, copy } = useClipboard();
     :text="text ?? 'Copy'"
     @click="copy(source)"
   />
-  <StyledClipboardSnackbar v-model="copied" :source />
 </template>
