@@ -15,6 +15,7 @@ description: Esposter tRPC conventions — return-type generics on the method, a
 ## Procedures
 
 - **Return type generic on the method, not as a callback return annotation** — `readFoos: standardAuthedProcedure.query<Foo[]>(async ({ ctx }) => { ... })`. Same for `.mutation<T>(...)`.
+  - **A procedure that returns nothing still writes `<void>`.** The generic pins a public API surface, so a handler that later grows a `return` is a compile error rather than a silently widened response every client can now read. `typescript/no-invalid-void-type` is `off` in `.oxlintrc.json` for exactly this: a generic type argument is a position upstream typescript-eslint allows by default (`allowInGenericTypeArguments`), and oxlint does not implement that option — so the rule cannot express the exception, and the config yields rather than 24 correct call sites. ESLint defers to oxlint through `eslint-plugin-oxlint`, so there is no second copy of the rule still covering the misuse it does catch.
 - **Omit `async` when there is no `await`** — e.g. a body that only `return`s a Drizzle query chain.
 
 ## Where the Pieces Live

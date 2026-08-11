@@ -1,5 +1,4 @@
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
-import type { ComponentMountingOptions } from "@vue/test-utils";
 
 import Scene from "@/components/Scene.vue";
 import { useCameraStore } from "@/store/camera";
@@ -9,7 +8,9 @@ import { mount } from "@vue/test-utils";
 import { Cameras } from "phaser";
 import { afterEach, describe, expect, test } from "vitest";
 
-type SceneMountingProps = NonNullable<ComponentMountingOptions<typeof Scene>["props"]>;
+// The component's own props rather than `ComponentMountingOptions["props"]`, which is a union wide enough to
+// Include an array-shaped declaration — spreading that reads as an iterable spread rather than an object one
+type SceneMountingProps = InstanceType<typeof Scene>["$props"];
 
 const sceneKey = "sceneKey";
 let wrapper: ReturnType<typeof mount<typeof Scene>> | undefined;
@@ -17,7 +18,7 @@ let wrapper: ReturnType<typeof mount<typeof Scene>> | undefined;
 const mountScene = (props?: Partial<SceneMountingProps>) => {
   wrapper = mount(Scene, {
     global: { plugins: [getTestPinia()] },
-    props: { sceneKey, ...props } as SceneMountingProps,
+    props: { sceneKey, ...props },
   });
   return wrapper;
 };

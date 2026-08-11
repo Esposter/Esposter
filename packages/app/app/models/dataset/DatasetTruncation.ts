@@ -3,6 +3,8 @@
 export interface DatasetTruncation {
   hiddenRows: number;
   isCountCapped: boolean;
+  // Empty for a read that only lost rows; naming a column means its values are a floor, not a total
+  partialColumns: string[];
   shownRows: number;
   totalRows: number;
 }

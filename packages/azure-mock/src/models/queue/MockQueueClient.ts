@@ -132,12 +132,13 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   }
 
   receiveMessages(_options?: QueueReceiveMessageOptions): Promise<QueueReceiveMessageResponse> {
-    const receivedMessageItems: DequeuedMessageItem[] = this.queue.splice(0).map((text) => ({
-      dequeueCount: 1,
-      ...getMockQueueMessageItem(text),
-      nextVisibleOn: new Date(),
-      popReceipt: crypto.randomUUID(),
-    }));
+    const receivedMessageItems: DequeuedMessageItem[] = this.queue.splice(0).map((text) =>
+      Object.assign(getMockQueueMessageItem(text), {
+        dequeueCount: 1,
+        nextVisibleOn: new Date(),
+        popReceipt: crypto.randomUUID(),
+      }),
+    );
     return Promise.resolve({
       _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: receivedMessageItems },
       receivedMessageItems,

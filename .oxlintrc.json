@@ -40,14 +40,14 @@
             "paths": [
               {
                 "importNames": ["randomUUID"],
-                "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+                "message": "Use the global `crypto.randomUUID()` \u2014 it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
                 "name": "node:crypto"
               }
             ],
             "patterns": [
               {
                 "group": ["@/**", "~/**"],
-                "message": "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`."
+                "message": "`shared/` is parsed by the server too, so it may not reach into the client-only app tree \u2014 see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`."
               }
             ]
           }
@@ -75,7 +75,9 @@
     "import/no-relative-parent-imports": "off",
     "import/no-unassigned-import": [
       "error",
-      { "allow": ["**/*.css", "**/*.d.ts", "**/*.i18n", "crossws", "nuxt/schema", "phaser", "vue-phaserjs"] }
+      {
+        "allow": ["**/*.css", "**/*.d.ts", "**/*.i18n", "crossws", "nuxt/schema", "phaser", "vue-phaserjs"]
+      }
     ],
     "import/prefer-default-export": "off",
     "import/unambiguous": "off",
@@ -107,7 +109,7 @@
         "paths": [
           {
             "importNames": ["randomUUID"],
-            "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+            "message": "Use the global `crypto.randomUUID()` \u2014 it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
             "name": "node:crypto"
           }
         ]
@@ -115,8 +117,19 @@
     ],
     "no-ternary": "off",
     "no-undefined": "off",
-    "no-underscore-dangle": ["error", { "allow": ["_def"] }],
-    "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }],
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": ["_def"]
+      }
+    ],
+    "no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true,
+        "allowTernary": true
+      }
+    ],
     "no-use-before-define": "off",
     "no-useless-return": "off",
     "oxc/no-optional-chaining": "off",
@@ -129,17 +142,23 @@
     "typescript/ban-types": "off",
     "typescript/consistent-type-imports": "off",
     "typescript/explicit-function-return-type": "off",
-    "typescript/explicit-member-accessibility": ["error", { "accessibility": "no-public" }],
+    "typescript/explicit-member-accessibility": [
+      "error",
+      {
+        "accessibility": "no-public"
+      }
+    ],
     "typescript/explicit-module-boundary-types": "off",
     "typescript/no-dynamic-delete": "off",
     "typescript/no-empty-interface": "off",
     "typescript/no-empty-object-type": "off",
+    "typescript/no-invalid-void-type": "off",
     "typescript/no-redundant-type-constituents": "off",
     "typescript/no-restricted-types": [
       "error",
       {
         "types": {
-          "Omit": "Use `Except` from `type-fest` instead of `Omit` — `Except` errors when a key is absent from the source type, catching the typos `Omit` silently ignores."
+          "Omit": "Use `Except` from `type-fest` instead of `Omit` \u2014 `Except` errors when a key is absent from the source type, catching the typos `Omit` silently ignores."
         }
       }
     ],
@@ -157,7 +176,12 @@
     "typescript/promise-function-async": "off",
     "typescript/restrict-plus-operands": "off",
     "typescript/strict-boolean-expressions": "off",
-    "typescript/switch-exhaustiveness-check": ["error", { "considerDefaultExhaustiveForUnions": true }],
+    "typescript/switch-exhaustiveness-check": [
+      "error",
+      {
+        "considerDefaultExhaustiveForUnions": true
+      }
+    ],
     "typescript/unbound-method": "off",
     "unicorn/filename-case": "off",
     "unicorn/import-style": "off",
@@ -169,7 +193,12 @@
     "unicorn/no-process-exit": "off",
     "unicorn/no-useless-undefined": "off",
     "unicorn/number-literal-case": "off",
-    "unicorn/numeric-separators-style": ["error", { "onlyIfContainsSeparator": true }],
+    "unicorn/numeric-separators-style": [
+      "error",
+      {
+        "onlyIfContainsSeparator": true
+      }
+    ],
     "unicorn/prefer-dom-node-append": "off",
     "unicorn/prefer-event-target": "off",
     "unicorn/prefer-export-from": "off",
@@ -177,7 +206,12 @@
     "unicorn/prefer-ternary": "off",
     "unicorn/require-module-specifiers": "off",
     "unicorn/switch-case-braces": "off",
-    "vitest/consistent-test-it": ["error", { "fn": "test" }],
+    "vitest/consistent-test-it": [
+      "error",
+      {
+        "fn": "test"
+      }
+    ],
     "vitest/max-expects": "off",
     "vitest/no-conditional-in-test": "off",
     "vitest/no-hooks": "off",
@@ -192,7 +226,13 @@
     "vitest/require-hook": "off",
     "vitest/require-test-timeout": "off",
     "vitest/require-top-level-describe": "off",
-    "vitest/valid-title": ["error", { "ignoreTypeOfDescribeName": true, "ignoreTypeOfTestName": true }],
+    "vitest/valid-title": [
+      "error",
+      {
+        "ignoreTypeOfDescribeName": true,
+        "ignoreTypeOfTestName": true
+      }
+    ],
     "vitest/warn-todo": "off",
     "vue/define-props-destructuring": "off",
     "vue/max-props": "off",

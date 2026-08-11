@@ -1,4 +1,5 @@
 import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
+import type { Except } from "type-fest";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
@@ -11,7 +12,7 @@ export const useSaveRoom = (room: MaybeRefOrGetter<RoomInMessage>) => {
   const roomStore = useRoomStore();
   const { storeUpdateRoom } = roomStore;
   const { executeMutation } = useMutation();
-  return async (fields: Omit<UpdateRoomInput, "id">) => {
+  return async (fields: Except<UpdateRoomInput, "id">) => {
     const { id } = toValue(room);
     const input = { ...fields, id };
     await executeMutation(() => $trpc.room.updateRoom.mutate(input), {

@@ -20,7 +20,7 @@ export const readSurveyResponseDatasetSource = async (
   const { hasMore, surveyResponses } = await readSurveyResponseEntities(surveyId);
   // Counting is a bounded partition scan, so only a read that saw rows past the cap pays for it —
   // The one case where the caller needs to know what it is missing. `isCapped` is dropped here because
-  // getDatasetTruncation re-derives it from the total against the same ceiling
+  // The truncation helper re-derives it from the total against the same ceiling
   const totalRows = hasMore ? (await countSurveyResponses(surveyId)).count : surveyResponses.length;
   return { columns, surveyResponses, totalRows };
 };

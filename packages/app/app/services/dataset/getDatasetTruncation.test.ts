@@ -9,8 +9,9 @@ import { describe, expect, test } from "vitest";
 describe(getDatasetTruncation, () => {
   const columnName = "columnName";
   const columns: DatasetColumn[] = [{ name: columnName, type: ColumnType.String }];
-  const createDataset = (rowCount: number, totalRows?: number): Dataset => ({
+  const createDataset = (rowCount: number, totalRows?: number, partialColumns?: string[]): Dataset => ({
     columns,
+    partialColumns,
     rows: Array.from({ length: rowCount }, () => ({ [columnName]: "value" })),
     totalRows,
   });
@@ -39,6 +40,7 @@ describe(getDatasetTruncation, () => {
     expect(getDatasetTruncation(createDataset(1, 3))).toStrictEqual({
       hiddenRows: 2,
       isCountCapped: false,
+      partialColumns: [],
       shownRows: 1,
       totalRows: 3,
     });
@@ -50,7 +52,22 @@ describe(getDatasetTruncation, () => {
     expect(getDatasetTruncation(createDataset(0, 2))).toStrictEqual({
       hiddenRows: 2,
       isCountCapped: false,
+      partialColumns: [],
       shownRows: 0,
+      totalRows: 2,
+    });
+  });
+
+  // A partial column is the shortfall rows cannot show: every row is present, so a row count agrees with the
+  // Provider and the warning is the only thing that says the column under-reports
+  test("reports a partial column when no rows are hidden at all", () => {
+    expect.hasAssertions();
+
+    expect(getDatasetTruncation(createDataset(2, 2, ["responded"]))).toStrictEqual({
+      hiddenRows: 0,
+      isCountCapped: false,
+      partialColumns: ["responded"],
+      shownRows: 2,
       totalRows: 2,
     });
   });
@@ -61,6 +78,7 @@ describe(getDatasetTruncation, () => {
     expect(getDatasetTruncation(createDataset(1, DATASET_MAX_COUNTED_ROWS))).toStrictEqual({
       hiddenRows: DATASET_MAX_COUNTED_ROWS - 1,
       isCountCapped: true,
+      partialColumns: [],
       shownRows: 1,
       totalRows: DATASET_MAX_COUNTED_ROWS,
     });

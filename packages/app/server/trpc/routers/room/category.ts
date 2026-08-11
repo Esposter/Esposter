@@ -45,8 +45,8 @@ export const categoryRouter = router({
     }),
   deleteRoomCategory: standardAuthedProcedure
     .input(deleteRoomCategoryInputSchema)
-    .mutation<RoomCategoryInMessage>(async ({ ctx, input }) => {
-      return requireRoomCategory(
+    .mutation<RoomCategoryInMessage>(async ({ ctx, input }) =>
+      requireRoomCategory(
         (
           await ctx.db
             .delete(roomCategoriesInMessage)
@@ -56,8 +56,8 @@ export const categoryRouter = router({
         Operation.Delete,
         input,
         "NOT_FOUND",
-      );
-    }),
+      ),
+    ),
   readRoomCategories: standardAuthedProcedure.query<RoomCategoryInMessage[]>(({ ctx }) =>
     ctx.db.query.roomCategoriesInMessage.findMany({
       // Drag-reorder assigns positions, so position must take precedence over the name tiebreaker
@@ -92,8 +92,8 @@ export const categoryRouter = router({
     ),
   updateRoomCategory: standardAuthedProcedure
     .input(updateRoomCategoryInputSchema)
-    .mutation<RoomCategoryInMessage>(async ({ ctx, input: { id, ...rest } }) => {
-      return requireRoomCategory(
+    .mutation<RoomCategoryInMessage>(async ({ ctx, input: { id, ...rest } }) =>
+      requireRoomCategory(
         (
           await ctx.db
             .update(roomCategoriesInMessage)
@@ -104,6 +104,6 @@ export const categoryRouter = router({
         Operation.Update,
         id,
         "NOT_FOUND",
-      );
-    }),
+      ),
+    ),
 });

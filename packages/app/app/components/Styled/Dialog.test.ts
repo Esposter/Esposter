@@ -16,6 +16,15 @@ const mountOpenDialog = async (props: InstanceType<typeof StyledDialog>["$props"
   return document.body;
 };
 
+// `primary` is StyledButton's own colour, so naming it explicitly must not opt out of the gradient — the
+// Previous gate read any colour at all as "the caller wants a plain button"
+// StyledButton is a v-btn carrying the gradient as an inline background-image, so that style is what
+// Distinguishes it from the plain button in the rendered output
+const getGradientButtons = (body: HTMLElement) =>
+  [...body.querySelectorAll<HTMLElement>(".v-card-actions .v-btn")].filter(({ style }) =>
+    style.backgroundImage.includes("--midnight-bloom"),
+  );
+
 describe("styledDialog", () => {
   const text = "Confirm";
 
@@ -45,15 +54,6 @@ describe("styledDialog", () => {
     expect(body.querySelector(".v-card-actions")).not.toBeNull();
     expect(body.textContent).toContain("Cancel");
   });
-
-  // `primary` is StyledButton's own colour, so naming it explicitly must not opt out of the gradient — the
-  // Previous gate read any colour at all as "the caller wants a plain button"
-  // StyledButton is a v-btn carrying the gradient as an inline background-image, so that style is what
-  // Distinguishes it from the plain button in the rendered output
-  const getGradientButtons = (body: HTMLElement) =>
-    [...body.querySelectorAll<HTMLElement>(".v-card-actions .v-btn")].filter(({ style }) =>
-      style.backgroundImage.includes("--midnight-bloom"),
-    );
 
   test("keeps the styled confirm button when the caller spells out the primary colour", async () => {
     expect.hasAssertions();

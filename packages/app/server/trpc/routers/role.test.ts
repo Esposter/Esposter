@@ -2,7 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { createMockUser, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockUser, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";

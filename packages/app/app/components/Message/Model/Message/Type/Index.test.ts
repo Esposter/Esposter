@@ -9,7 +9,7 @@ describe("messageModelMessageTypeIndex", () => {
   const roomId = crypto.randomUUID();
   const creator = createUser();
   const editor = "editor";
-  // isForward is a literal-true optional column, so the unforwarded arm leaves it unset rather than false
+  // The `isForward` column is a literal-true optional, so the unforwarded arm leaves it unset rather than false
   const createMessage = (isForward: boolean) => {
     const message = createMessageEntity({
       message: "<p>message</p>",

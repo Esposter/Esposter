@@ -17,7 +17,7 @@ interface ParseSortByToSql {
   <TColumns extends Record<string, Column>>(columns: TColumns, sortBy: SortItem<keyof TColumns & string>[]): SQL[];
 }
 
-export const parseSortByToSql: ParseSortByToSql = (<TColumns extends Record<string, Column>>(
+export const parseSortByToSql: ParseSortByToSql = <TColumns extends Record<string, Column>>(
   columns: TColumns,
   sortBy: SortItem<keyof TColumns & string>[],
 ): SQL[] =>
@@ -26,4 +26,4 @@ export const parseSortByToSql: ParseSortByToSql = (<TColumns extends Record<stri
   sortBy.flatMap(({ key, order }) => {
     const column = columns[key];
     return column ? [order === SortOrder.Asc ? asc(column) : desc(column)] : [];
-  })) as ParseSortByToSql;
+  });
