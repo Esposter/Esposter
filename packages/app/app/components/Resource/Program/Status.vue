@@ -8,14 +8,14 @@ import { useProgramStore } from "@/store/resource/program";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { getResultAsync } from "@esposter/shared";
 
-const route = useRoute();
+const { currentRoute } = useRouter();
 const { $trpc } = useNuxtApp();
 const programStore = useProgramStore();
 const { loadContent } = programStore;
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const { executeMutation: executeGenerateMutation, isPending: isGeneratePending } = useMutation();
-const id = computed(() => getRouteParamString(route.params.id));
+const id = computed(() => getRouteParamString(currentRoute.value.params.id));
 const statusRows = ref<ProgramStatusRow[]>([]);
 // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
 const isRespondedPartial = ref(false);

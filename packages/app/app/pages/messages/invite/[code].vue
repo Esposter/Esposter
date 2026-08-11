@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
+import { requireRouteParam } from "@/util/router/requireRouteParam";
 import { DatabaseEntityType, selectInviteInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
@@ -14,8 +15,8 @@ definePageMeta({
 });
 
 const { $trpc } = useNuxtApp();
-const route = useRoute();
-const code = route.params.code as string;
+const { currentRoute } = useRouter();
+const code = requireRouteParam(currentRoute.value.params, "code");
 const invite = await $trpc.room.readInvite.query(code);
 if (!invite)
   throw createError({

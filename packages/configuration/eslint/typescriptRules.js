@@ -48,6 +48,15 @@ export default {
       selector:
         ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
     },
+    {
+      // `useRoute()` resolves through the page's *injected* route, which is pinned to that page instance and
+      // Freezes to its last value once the page is swapped out. Anything outliving the page it was created
+      // Under — a Pinia store above all, cached for the app's lifetime — then answers for a route the user has
+      // Already left, and a route naming no segment yields the `""` sentinel a uuid input rejects.
+      message:
+        "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+      selector: "CallExpression[callee.name='useRoute']",
+    },
   ],
   // Kept for later: enable via oxlint (`typescript/naming-convention`) once it supports the rule.
   // Computationally expensive under typescript-eslint, which is why it never shipped here.

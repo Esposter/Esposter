@@ -3,8 +3,8 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useReadPostFromRoute = async () => {
   const { $trpc } = useNuxtApp();
-  const route = useRoute();
-  const postId = route.params.id as string;
+  const { currentRoute } = useRouter();
+  const postId = currentRoute.value.params.id as string;
   const post = await $trpc.post.readPost.query(postId);
 
   if (post.parentId)

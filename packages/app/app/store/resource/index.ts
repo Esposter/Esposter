@@ -6,7 +6,7 @@ import { hasCapability } from "#shared/services/resource/hasCapability";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
-import { RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { RoutePath, uuidValidateV4, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -27,7 +27,7 @@ export const useResourceStore = defineStore("resource", () => {
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const getResourceRouter = useResourceRouter();
-  const route = useRoute();
+  const { currentRoute } = useRouter();
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
   const isLoading = ref(false);
@@ -52,7 +52,11 @@ export const useResourceStore = defineStore("resource", () => {
   const readResource = async () => {
     // Resolved per call rather than captured: the store outlives the page, so the loader always reads whichever
     // Resource the route names now
-    const id = getRouteParamString(route.params.id);
+    const id = getRouteParamString(currentRoute.value.params.id);
+    // A route with no resource segment — a list view, or one this read raced a navigation to — names nothing to
+    // Read, and the empty sentinel would reach the server as a uuid that fails validation
+    if (!uuidValidateV4(id)) return;
+
     isLoading.value = true;
     await withFinalizerAsync(
       async () => {

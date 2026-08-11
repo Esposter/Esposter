@@ -14,9 +14,9 @@ interface ResourceSurveyViewProps {
 
 const { id, version } = defineProps<ResourceSurveyViewProps>();
 const { $trpc } = useNuxtApp();
-const route = useRoute();
+const { currentRoute } = useRouter();
 // Read once on load and threaded through every write — the URL carries an opaque token or nothing
-const participantToken = getRouteParamString(route.query.t);
+const participantToken = getRouteParamString(currentRoute.value.query.t);
 const { clearSurveyResponseId, resumeSurveyResponse, saveSurveyResponse } = useSurveyResponse(id, participantToken);
 const { content, name } = await useReadPublishedResourceContent(
   ResourceType.Survey,

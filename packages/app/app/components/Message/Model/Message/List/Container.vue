@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useDataStore } from "@/store/message/data";
 
-const route = useRoute();
+const { currentRoute } = useRouter();
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
-const roomId = route.params.id as string;
-const rowKey = route.params.rowKey as string;
+const roomId = currentRoute.value.params.id as string;
+const rowKey = currentRoute.value.params.rowKey as string;
 
 if (rowKey) {
   const scrollToMessage = useScrollToMessage();

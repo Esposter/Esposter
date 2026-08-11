@@ -6,7 +6,7 @@ import { ResourceListSourceDefinitionMap } from "@/services/resource/list/Resour
 import { RoutePath } from "@esposter/shared";
 
 const isOpen = defineModel<boolean>({ required: true });
-const route = useRoute();
+const { currentRoute } = useRouter();
 // Navigation, not state: every entry is a real route, so the set a reader is looking at is deep-linkable,
 // Refresh-safe and back-button-safe, and the active entry is decided by the path rather than remembered.
 // Matched exactly — Home is a path prefix of every other entry, so a prefix match would leave it lit
@@ -20,7 +20,7 @@ const items = computed<NavItem[]>(() =>
     }),
     { icon: "mdi-tag-multiple-outline", title: "Tags", to: RoutePath.ResourceExplorerTags },
     { icon: "mdi-delete-outline", title: "Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
-  ].map(({ icon, title, to }) => ({ icon, isActive: route.path === to, title, to })),
+  ].map(({ icon, title, to }) => ({ icon, isActive: currentRoute.value.path === to, title, to })),
 );
 </script>
 

@@ -14,15 +14,15 @@ definePageMeta({
   middleware: "auth",
   validate: (route) => validate(route) && (!route.params.blade || typeof route.params.blade === "string"),
 });
-const route = useRoute();
+const { currentRoute } = useRouter();
 // Id is stable for this page instance (keyed by id), so a one-time read is safe; only blade changes without a remount
-const id = getRouteParamString(route.params.id);
+const id = getRouteParamString(currentRoute.value.params.id);
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);
 const { clearResource, readResource } = resourceStore;
 await readResource();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
-const activeBlade = computed(() => getRouteParamString(route.params.blade) || ResourceBladeType.Overview);
+const activeBlade = computed(() => getRouteParamString(currentRoute.value.params.blade) || ResourceBladeType.Overview);
 // Opening a resource is what Recent is a list of — the Recent route, Home's Recent tab and the search
 // Dropdown's "Recently opened" group all read the rows this writes
 useRecordResourceAccess(resource);

@@ -1,6 +1,6 @@
 ---
 name: routing
-description: Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or Vuetify :to (raw <a> lint-banned), navigateTo for imperative navigation (always awaited or returned — never a floating statement), useRouter for reactive route reads, where navigation state lives (url for what the page shows, history-entry state for how the visitor got here, localStorage for preferences — written once in a router.afterEach hook, never per link), route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
+description: Esposter routing conventions — declarative links via NuxtLink/NuxtInvisibleLink or Vuetify :to (raw <a> lint-banned), navigateTo for imperative navigation (always awaited or returned — never a floating statement), useRoute() lint-banned in favour of useRouter().currentRoute (and why the ban is total, not just for reactive reads), where navigation state lives (url for what the page shows, history-entry state for how the visitor got here, localStorage for preferences — written once in a router.afterEach hook, never per link), route-synced tabs with useEnumRouteQuery, and definePageMeta validate + key for optional/nested segments. Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments.
 ---
 
 # Routing
@@ -29,12 +29,24 @@ The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRul
 - Middleware → `return navigateTo(...)`.
 - A **single-expression** inline handler (`@click="navigateTo(...)"`, `@click="cond && navigateTo(...)"`, one-expression arrow) is already compliant — the expression's promise is implicitly returned into Vue's `callWithAsyncErrorHandling`, which is the sanctioned "or return" form. Do not churn these into `async () => await ...`.
 
-## Reactive Route Reads — `useRouter()`, Not `useRoute()`
+## Route Reads — `useRouter().currentRoute`, never `useRoute()`
 
-- **`useRouter()` for reactive reads** — route data inside a `computed`/`watch` (`router.currentRoute.value.params.id`).
-- **`useRoute()` for plain reads** — params/query outside a reactive context (a page's `<script setup>`, a regular function, an async handler).
+**`useRoute()` is banned** (`no-restricted-syntax`), pages included. One form everywhere:
 
-> This inverts the usual Vue Router split deliberately: `useRoute()` returns a stale, non-reactive snapshot when called outside a component setup (composables, stores, middleware, async handlers), whereas `useRouter().currentRoute` stays reactive everywhere. Route reads often live in composables, so standardizing on `useRouter()` for reactive reads avoids that footgun.
+```ts
+const { currentRoute } = useRouter(); // script: currentRoute.value.params.id — template: currentRoute.params.id
+```
+
+Destructured, because a ref reached through `router.` does not auto-unwrap in a template while `currentRoute` does.
+
+The message states the fix; what it can't say is why the ban is total rather than "reactive reads only". `useRoute()` resolves through the page's _injected_ route, which is pinned to that page instance and freezes to its last value once the page is swapped out. Anything outliving the page that created it — a Pinia store above all, cached for the app's lifetime — then answers for a route the user has already left, and a route naming no segment yields the `""` sentinel that reaches the server as a uuid and is rejected.
+
+- **A segment the page cannot exist without is read through `requireRouteParam(params, name)`**, never an `as string` cast: params are `string | string[] | undefined`, and a cast hands the empty case to a query that fails at the server instead of here. `getRouteParamString` stays for a genuinely optional segment.
+- **Guard before spending a request** (`uuidValidateV4(id)`) where a read can race a navigation — it resolves the route after the user has left the page that named it, and the lint rule cannot see that.
+- A `definePageMeta` `validate`/`key` callback receives its own `route` argument. That is not a `useRoute()` call and none of the above applies to it.
+- Tests do not catch the staleness on their own — with no page component in the tree there is no injection to pin, so both forms are the same object there and both pass.
+- **The one earned exception is a component test that must drive the route.** `mockNuxtImport("useRoute")` is supported; `mockNuxtImport("useRouter")` replaces the router Nuxt's own plugins call (`router.beforeResolve`) and takes the whole environment down. A component that reads the route _only_ to render, holds nothing past its page, and needs that mock takes an `eslint-disable-next-line` carrying this reason.
+- Typed routes do not help and are deliberately off. Both `experimental.typedPages` and `nuxt-typed-router` type `params` as a union across every route, narrowed only by naming the route at the call site — and the generic readers (`validate`, the `use*FromRoute` composables) run under several routes, so for them the union is the correct type and no narrowing exists.
 
 ## Where Navigation State Lives — URL vs History Entry vs Storage
 

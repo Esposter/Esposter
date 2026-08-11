@@ -10,7 +10,7 @@ import { RoutePath } from "@esposter/shared";
 const VIEWING_OLDER_MESSAGES_SCROLL_OFFSET = -2000;
 
 export const useScrollStore = defineStore("message/ui/scroll", () => {
-  const route = useRoute();
+  const { currentRoute } = useRouter();
   const messageContainer = ref<InstanceType<typeof VList> | null>(null);
   const messageContainerElement = computed(() => messageContainer.value?.$el as HTMLDivElement | null);
   const { isScrolling, y } = useScroll(messageContainerElement);
@@ -26,7 +26,7 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
   );
   const jumpToPresent = async () => {
     if (!roomStore.currentRoomId) return;
-    else if (route.params.rowKey) await navigateTo(RoutePath.Messages(roomStore.currentRoomId));
+    else if (currentRoute.value.params.rowKey) await navigateTo(RoutePath.Messages(roomStore.currentRoomId));
     else if (messageContainerElement.value) messageContainerElement.value.scrollTop = 0;
   };
   const setActiveRowKey = (rowKey: string) => {

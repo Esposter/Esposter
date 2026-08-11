@@ -11,16 +11,16 @@ import { getRouteParamString } from "@/util/router/getRouteParamString";
 // Re-seeds its content ref, so an unbound late save uploads the previous resource's content under this one's
 // Id and contentVersion. Cancellation alone only shortens that window; the id closes it
 export const useAutosaveFn = (save: () => Promisable<unknown>) => {
-  const route = useRoute();
+  const { currentRoute } = useRouter();
   const { start } = useTimeoutFn(
     getSynchronizedFunction(async (scheduledResourceId: string) => {
-      if (getRouteParamString(route.params.id) !== scheduledResourceId) return;
+      if (getRouteParamString(currentRoute.value.params.id) !== scheduledResourceId) return;
       await save();
     }),
     RESOURCE_AUTOSAVE_DEBOUNCE_MS,
     { immediate: false },
   );
   return () => {
-    start(getRouteParamString(route.params.id));
+    start(getRouteParamString(currentRoute.value.params.id));
   };
 };

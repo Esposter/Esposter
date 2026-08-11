@@ -320,4 +320,25 @@ describe(useResourceStore, () => {
 
     expect(resource.value?.id).toBe(otherResourceId);
   });
+
+  // A list view names no resource, and a read racing the navigation onto one resolves the route after it has
+  // Left the blade — the empty sentinel would reach the server as a uuid input that fails validation
+  test("issues no read when the route names no resource", async () => {
+    expect.hasAssertions();
+
+    const readResourceQuery = vi.fn(({ input }: { input: { id: string } }) => ({
+      ...createResource(input.id),
+      publication: null,
+    }));
+    server.use(trpcMsw.resource.readResource.query(readResourceQuery));
+    const resourceStore = useResourceStore();
+    const { isLoading, resource } = storeToRefs(resourceStore);
+    const { readResource } = resourceStore;
+    setRouteId("");
+    await readResource();
+
+    expect(readResourceQuery).not.toHaveBeenCalled();
+    expect(resource.value).toBeUndefined();
+    expect(isLoading.value).toBe(false);
+  });
 });

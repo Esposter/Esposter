@@ -2,6 +2,10 @@
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 
+// Safe here: this renders inside the page whose route it reads and holds nothing past it, and the test has to
+// Drive that route — `mockNuxtImport("useRouter")` replaces the router Nuxt's own plugins call and takes the
+// Environment down, while mocking `useRoute` is supported
+// eslint-disable-next-line no-restricted-syntax -- the route mock a component test needs
 const route = useRoute();
 const navigationTrailStore = useNavigationTrailStore();
 const { crumbs } = storeToRefs(navigationTrailStore);

@@ -6,13 +6,13 @@ import { ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
 
-const route = useRoute();
+const { currentRoute } = useRouter();
 const dashboardStore = useDashboardStore();
 const { loadContent, saveDashboard } = dashboardStore;
 const { dashboard } = storeToRefs(dashboardStore);
 const visualStore = useVisualStore();
 const { visualType } = storeToRefs(visualStore);
-const itemType = route.query[ITEM_TYPE_QUERY_PARAMETER_KEY];
+const itemType = currentRoute.value.query[ITEM_TYPE_QUERY_PARAMETER_KEY];
 if (VisualTypes.has(itemType as VisualType)) visualType.value = itemType as VisualType;
 // The Suspense-wrapped blade awaits the content, so it opens on a populated store — the same shape Note uses
 await loadContent();
