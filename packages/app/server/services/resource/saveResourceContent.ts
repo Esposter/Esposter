@@ -8,10 +8,12 @@ import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
+import { ResourceBoundResourceIdMap } from "@@/server/services/resource/ResourceBoundResourceIdMap";
 import { runAfterSaveResourceContent } from "@@/server/services/resource/runAfterSaveResourceContent";
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { getContentBlobName } from "@esposter/db";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, resources } from "@esposter/db-schema";
+import { eq } from "drizzle-orm";
 import { getResultAsync } from "@esposter/shared";
 
 interface SaveResourceContentInput {
@@ -59,15 +61,27 @@ export const saveResourceContent = async (
     : undefined;
   const writeContentBlob = () =>
     useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(parsedContent));
+  // Projected here rather than in an after-save hook, and written in the same transaction as the blob. Every
+  // Hook in `ResourceAfterSaveContentMap` is best-effort by contract, and this column is read by
+  // `resolveIdentifiedToken` to decide whether a participant token was issued for the survey being answered —
+  // A binding that lags its blob is an authorization answer computed from content that is no longer there,
+  // And one still naming an unbound survey answers yes to a token the owner has already revoked
+  const projectBoundResourceId = ResourceBoundResourceIdMap[resource.type];
+  const boundResourceId = projectBoundResourceId?.(parsedContent as never) ?? null;
+  // Only when it moved: most saves to a bound type leave the binding alone, and an unbound type has no
+  // Projector at all, so neither pays for a write
+  const hasBoundResourceIdChanged = Boolean(projectBoundResourceId) && boundResourceId !== resource.boundResourceId;
+  const writeBoundResourceId = async (tx: Transaction) =>
+    (await tx.update(resources).set({ boundResourceId }).where(eq(resources.id, id)).returning())[0];
   // The bump and the write stay in one transaction so a failed write rolls the bump back — a write that did
   // Not land must never advance the version every client caches against. A first write has no version to
   // Protect, and wrapping it would only hold a pooled connection across a storage round trip
   let savedResource = resource;
-  if (updateContentVersion)
+  if (updateContentVersion || hasBoundResourceIdChanged)
     savedResource = await ctx.db.transaction(async (tx) => {
-      const updatedResource = await updateContentVersion(tx);
+      const updatedResource = (await updateContentVersion?.(tx)) ?? resource;
       await writeContentBlob();
-      return updatedResource;
+      return hasBoundResourceIdChanged ? ((await writeBoundResourceId(tx)) ?? updatedResource) : updatedResource;
     });
   else await writeContentBlob();
 

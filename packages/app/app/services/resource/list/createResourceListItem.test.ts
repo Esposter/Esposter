@@ -10,6 +10,7 @@ import { describe } from "vitest";
 // Spelled out in full rather than asserted, so a new required field fails to compile here instead of reaching
 // A list test as a missing column.
 export const createResourceListItem = (overrides: Partial<ResourceListItem> = {}): ResourceListItem => ({
+  boundResourceId: null,
   contentVersion: 0,
   createdAt: new Date(0),
   deletedAt: null,

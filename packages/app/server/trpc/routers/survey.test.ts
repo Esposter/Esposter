@@ -1,3 +1,4 @@
+import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
@@ -14,6 +15,7 @@ import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { AzureEntityType, AzureTable, resources, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { eq } from "drizzle-orm";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -357,6 +359,48 @@ describe("survey", () => {
         rowKey: crypto.randomUUID(),
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
+  });
+
+  // The binding is a column now, so unbinding has to clear it — the whole hazard of caching an authorization
+  // Input is that a stale copy keeps answering yes after the owner has said no
+  test(`${SurveyResponseMode.Identified}: rejects a token once the program is unbound from the survey`, async () => {
+    expect.hasAssertions();
+
+    const { program, survey, token } = await setupIdentifiedSurvey();
+    // The save inside `createBoundProgram` already bumped the version, so the row is the version of record
+    const unboundProgram = await mockContext.db.query.resources.findFirst({ where: { id: { eq: program.id } } });
+    assert.exists(unboundProgram);
+    await programCaller.saveResourceContent({
+      content: { audience: null, emailId: "", keyColumn: "", surveyId: "" } satisfies ProgramResource,
+      contentVersion: unboundProgram.contentVersion,
+      id: program.id,
+    });
+
+    await expect(
+      caller.createSurveyResponse({
+        model: { satisfaction: 0 },
+        participantToken: token,
+        partitionKey: survey.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
+  });
+
+  // A program whose content predates the column reads null, and its already-issued tokens have to keep working
+  // Whether or not the backfill has run — so the resolver still falls back to the blob for exactly those rows
+  test(`${SurveyResponseMode.Identified}: accepts a token from a program whose binding was never projected`, async () => {
+    expect.hasAssertions();
+
+    const { program, survey, token } = await setupIdentifiedSurvey();
+    await mockContext.db.update(resources).set({ boundResourceId: null }).where(eq(resources.id, program.id));
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      participantToken: token,
+      partitionKey: survey.id,
+      rowKey: crypto.randomUUID(),
+    });
+
+    expect(newSurveyResponse.participantToken).toBe(token);
   });
 
   test(`fails create with forged token in ${SurveyResponseMode.Identified} mode`, async () => {

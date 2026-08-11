@@ -17,6 +17,12 @@ export const resourceTypeEnum = pgEnum("resourceType", ResourceType);
 export const resources = pgTable(
   "resources",
   {
+    // The one cross-resource link promoted out of blob content into a column, because it is the only one read
+    // On an unauthenticated path: `resolveIdentifiedToken` has to know which Programs are bound to a Survey
+    // Before it can decide whether a participant token was issued for it, and answering that from blobs means
+    // Reading every one of the owner's Programs on every submission. No foreign key — a binding is a bare id
+    // Re-resolved on read, so a deleted target fails soft rather than stranding the row
+    boundResourceId: uuid(),
     contentVersion: integer().notNull().default(0),
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),
@@ -27,8 +33,14 @@ export const resources = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, tags }) => [
+    extraConfig: ({ boundResourceId, name, tags, type, userId }) => [
       check("resources_name_length_check", createNameCheckSql(name, RESOURCE_NAME_MAX_LENGTH)),
+      // The exact shape resolveIdentifiedToken asks for — the owner's resources of one type bound to one
+      // Target. Partial, because only a bound resource is ever looked up this way and the column is null
+      // For every resource type that has no binding at all
+      index("resources_bound_resource_index")
+        .on(userId, type, boundResourceId)
+        .where(sql`${boundResourceId} is not null`),
       // GIN backs the `tags @> input` containment filter behind the /all Tag pill
       index("resources_tags_index").using("gin", tags),
       // Trigram GIN backs similarity() ranking in global search, so a typo still finds the resource.

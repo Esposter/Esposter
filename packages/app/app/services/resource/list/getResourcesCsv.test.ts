@@ -9,6 +9,7 @@ describe(getResourcesCsv, () => {
   // Local-time construction keeps the formatted output deterministic across machine timezones
   const epochDate = new Date(1970, 0, 1);
   const createResource = (name: string): Resource => ({
+    boundResourceId: null,
     contentVersion: 0,
     createdAt: epochDate,
     deletedAt: null,

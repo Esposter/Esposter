@@ -1,0 +1,54 @@
+import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
+import { getContainerClient, getContentBlobName, getIsNotFound } from "@esposter/db";
+import { AzureContainer, relations, ResourceType, resources } from "@esposter/db-schema";
+import { getResultAsync, streamToText } from "@esposter/shared";
+import { and, eq, isNull } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+
+// One-off, idempotent, safe to re-run: fills `resources.boundResourceId` for Programs whose content was written
+// Before the column existed. Every save projects it from then on, so this only ever has the pre-migration
+// Backlog to clear and converges to a no-op.
+//
+// `resolveIdentifiedToken` reads the blob for any Program still holding null, which is exactly what it did
+// Before the column — so this script is an optimization, never a correctness prerequisite. Nothing breaks if it
+// Is not run; those Programs simply keep paying the old cost until their owner saves them.
+//
+// Run with: pnpm backfill:bound-resource-id
+const client = postgres(process.env.DATABASE_URL);
+const db = drizzle({ client, relations });
+const containerClient = await getContainerClient(
+  process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
+  AzureContainer.ResourceAssets,
+);
+const unprojectedPrograms = await db
+  .select({ id: resources.id })
+  .from(resources)
+  .where(and(eq(resources.type, ResourceType.Program), isNull(resources.boundResourceId)));
+console.log(`${unprojectedPrograms.length} programs to inspect`);
+let boundCount = 0;
+
+for (const { id } of unprojectedPrograms) {
+  // Sequential on purpose — this runs once, against every Program in the database, and a burst of parallel blob
+  // Reads is the one thing a maintenance script should not do to a live storage account
+  const content = await getResultAsync(async () => {
+    const { readableStreamBody } = await containerClient.getBlobClient(getContentBlobName(id)).download();
+    if (!readableStreamBody) return undefined;
+    return programResourceSchema.parse(JSON.parse(await streamToText(readableStreamBody)));
+  }).match(
+    (parsedContent) => parsedContent,
+    (error) => {
+      // A Program created but never saved has no blob at all, which is not a failure — it is simply unbound.
+      // Anything else is reported and skipped, so one unreadable blob cannot strand the rest of the backlog
+      if (!getIsNotFound(error)) console.error(`skipped ${id}:`, error);
+      return undefined;
+    },
+  );
+  if (!content?.surveyId) continue;
+
+  await db.update(resources).set({ boundResourceId: content.surveyId }).where(eq(resources.id, id));
+  boundCount += 1;
+}
+
+console.log(`${boundCount} bound, ${unprojectedPrograms.length - boundCount} left unbound`);
+await client.end();
