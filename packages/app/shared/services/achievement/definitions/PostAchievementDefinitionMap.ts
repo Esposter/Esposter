@@ -1,12 +1,12 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { BinaryOperator, PostAchievementName } from "@esposter/db-schema";
 
-export const PostAchievementDefinitionMap = {
+export const PostAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Post, {
   [PostAchievementName.BriefComment]: defineAchievementDefinition({
     amount: 50,
-    category: AchievementCategory.Post,
     condition: {
       operator: BinaryOperator.lt,
       path: "description.length",
@@ -20,7 +20,6 @@ export const PostAchievementDefinitionMap = {
   }),
   [PostAchievementName.Commentator]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Post,
     description: "Comment on a post",
     icon: "mdi-comment-plus",
     points: 10,
@@ -28,7 +27,6 @@ export const PostAchievementDefinitionMap = {
   }),
   [PostAchievementName.CommentDeleter]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Post,
     description: "Delete a comment",
     icon: "mdi-comment-remove",
     points: 5,
@@ -36,7 +34,6 @@ export const PostAchievementDefinitionMap = {
   }),
   [PostAchievementName.CommentEditor]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Post,
     description: "Edit a comment",
     icon: "mdi-comment-edit",
     points: 5,
@@ -44,7 +41,6 @@ export const PostAchievementDefinitionMap = {
   }),
   [PostAchievementName.DetailedPost]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Post,
     condition: {
       operator: BinaryOperator.ge,
       path: "description.length",
@@ -58,7 +54,6 @@ export const PostAchievementDefinitionMap = {
   }),
   [PostAchievementName.Novelist]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Post,
     condition: {
       operator: BinaryOperator.ge,
       path: "description.length",
@@ -72,7 +67,6 @@ export const PostAchievementDefinitionMap = {
   }),
   [PostAchievementName.PostDeleter]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Post,
     description: "Delete a post",
     icon: "mdi-delete-circle",
     points: 5,
@@ -80,7 +74,6 @@ export const PostAchievementDefinitionMap = {
   }),
   [PostAchievementName.PostEditor]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Post,
     description: "Edit a post",
     icon: "mdi-file-document-edit",
     points: 5,
@@ -88,7 +81,6 @@ export const PostAchievementDefinitionMap = {
   }),
   [PostAchievementName.PosterChild]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Post,
     description: "Create a post",
     icon: "mdi-post",
     points: 10,
@@ -96,10 +88,9 @@ export const PostAchievementDefinitionMap = {
   }),
   [PostAchievementName.ProlificPoster]: defineAchievementDefinition({
     amount: 25,
-    category: AchievementCategory.Post,
     description: "Create 25 posts",
     icon: "mdi-magnify",
     points: 35,
     triggerPath: "post.createPost" as const,
   }),
-};
+});

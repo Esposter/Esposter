@@ -2,13 +2,13 @@ import { AchievementCategory } from "#shared/models/achievement/AchievementCateg
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { countEmojis } from "#shared/util/text/countEmojis";
 import { BinaryOperator, MessageAchievementName } from "@esposter/db-schema";
 
-export const MessageAchievementDefinitionMap = {
+export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Message, {
   [MessageAchievementName.CenturyClub]: defineAchievementDefinition({
     amount: 100,
-    category: AchievementCategory.Message,
     description: "Send 100 messages",
     icon: "mdi-message",
     points: 100,
@@ -16,7 +16,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.Chatterbox]: defineAchievementDefinition({
     amount: 500,
-    category: AchievementCategory.Message,
     description: "Send 500 messages",
     icon: "mdi-message-processing",
     points: 250,
@@ -24,7 +23,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.ConversationKeeper]: defineAchievementDefinition({
     amount: 50,
-    category: AchievementCategory.Message,
     condition: {
       operator: BinaryOperator.ne,
       path: "replyRowKey",
@@ -37,7 +35,6 @@ export const MessageAchievementDefinitionMap = {
     triggerPath: "message.createMessage" as const,
   }),
   [MessageAchievementName.EarlyBird]: defineAchievementDefinition({
-    category: AchievementCategory.Message,
     condition: {
       maximum: 7,
       minimum: 5,
@@ -52,7 +49,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.EmojiMaster]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Message,
     condition: {
       operation: (value) => (value ? countEmojis(value) >= 1 : false),
       operator: AchievementOperator.Operation,
@@ -65,7 +61,6 @@ export const MessageAchievementDefinitionMap = {
     triggerPath: "message.createMessage" as const,
   }),
   [MessageAchievementName.EssayWriter]: defineAchievementDefinition({
-    category: AchievementCategory.Message,
     condition: {
       operator: BinaryOperator.ge,
       path: "message.length",
@@ -79,7 +74,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.FileSharer]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Message,
     condition: {
       operator: BinaryOperator.gt,
       path: "files.length",
@@ -93,7 +87,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.FirstMessage]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Message,
     description: "Send your first message",
     icon: "mdi-message-text",
     points: 10,
@@ -101,7 +94,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.Gossip]: defineAchievementDefinition({
     amount: 50,
-    category: AchievementCategory.Message,
     description: "Forward 50 messages",
     icon: "mdi-share-variant",
     points: 100,
@@ -109,7 +101,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.LinkSharer]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Message,
     condition: {
       operator: AchievementOperator.Contains,
       path: "message",
@@ -123,7 +114,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.MessageEditor]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Message,
     description: "Edit a message",
     icon: "mdi-message-draw",
     points: 5,
@@ -131,7 +121,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.MessageForwarder]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Message,
     description: "Forward a message to another room",
     icon: "mdi-share",
     points: 15,
@@ -139,14 +128,12 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.MessageMaster]: defineAchievementDefinition({
     amount: 1000,
-    category: AchievementCategory.Message,
     description: "Send 1,000 messages",
     icon: "mdi-message-star",
     points: 500,
     triggerPath: "message.createMessage" as const,
   }),
   [MessageAchievementName.NightOwl]: defineAchievementDefinition({
-    category: AchievementCategory.Message,
     condition: {
       maximum: 5,
       minimum: 0,
@@ -161,7 +148,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.PinCollector]: defineAchievementDefinition({
     amount: 10,
-    category: AchievementCategory.Message,
     description: "Pin 10 important messages",
     icon: "mdi-pin",
     points: 50,
@@ -169,7 +155,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.SecondThoughts]: defineAchievementDefinition({
     amount: 10,
-    category: AchievementCategory.Message,
     description: "Delete 10 of your own messages",
     icon: "mdi-delete",
     points: 20,
@@ -177,7 +162,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.ShortAndSweet]: defineAchievementDefinition({
     amount: 100,
-    category: AchievementCategory.Message,
     condition: {
       operator: BinaryOperator.lt,
       path: "message.length",
@@ -191,7 +175,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.Typist]: defineAchievementDefinition({
     amount: 100,
-    category: AchievementCategory.Message,
     description: "Start typing 100 times",
     icon: "mdi-keyboard",
     points: 10,
@@ -199,7 +182,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.Unpinner]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Message,
     description: "Unpin a message",
     icon: "mdi-pin-off",
     points: 5,
@@ -207,7 +189,6 @@ export const MessageAchievementDefinitionMap = {
   }),
   [MessageAchievementName.Verbose]: defineAchievementDefinition({
     amount: 50,
-    category: AchievementCategory.Message,
     condition: {
       operator: BinaryOperator.ge,
       path: "message.length",
@@ -219,4 +200,4 @@ export const MessageAchievementDefinitionMap = {
     points: 75,
     triggerPath: "message.createMessage" as const,
   }),
-};
+});

@@ -1,12 +1,12 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { BinaryOperator, TableAchievementName } from "@esposter/db-schema";
 
-export const SheetAchievementDefinitionMap = {
+export const SheetAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Table, {
   [TableAchievementName.DataAnalyst]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Table,
     description: "Save a file",
     icon: "mdi-table",
     points: 20,
@@ -14,7 +14,6 @@ export const SheetAchievementDefinitionMap = {
   }),
   [TableAchievementName.MathWhiz]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Table,
     condition: {
       operator: BinaryOperator.ge,
       path: "content.data.rows.length" as const,
@@ -26,4 +25,4 @@ export const SheetAchievementDefinitionMap = {
     points: 25,
     triggerPath: "sheet.saveResourceContent" as const,
   }),
-};
+});

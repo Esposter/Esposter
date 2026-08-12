@@ -1,12 +1,12 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { BinaryOperator, FlowchartAchievementName } from "@esposter/db-schema";
 
-export const FlowchartAchievementDefinitionMap = {
+export const FlowchartAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Flowchart, {
   [FlowchartAchievementName.ComplexFlow]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Flowchart,
     condition: {
       operator: BinaryOperator.gt,
       path: "content.edges.length",
@@ -20,7 +20,6 @@ export const FlowchartAchievementDefinitionMap = {
   }),
   [FlowchartAchievementName.Flowcharter]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Flowchart,
     description: "Save a flowchart",
     icon: "mdi-chart-timeline-variant",
     points: 20,
@@ -28,7 +27,6 @@ export const FlowchartAchievementDefinitionMap = {
   }),
   [FlowchartAchievementName.SystemArchitect]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Flowchart,
     condition: {
       operator: BinaryOperator.gt,
       path: "content.nodes.length",
@@ -40,4 +38,4 @@ export const FlowchartAchievementDefinitionMap = {
     points: 30,
     triggerPath: "flowchart.saveResourceContent" as const,
   }),
-};
+});

@@ -3,7 +3,7 @@ import type { AchievementConditionType } from "#shared/models/achievement/type/A
 import type { TRPCPaths } from "#shared/models/trpc/TRPCPaths";
 import type { TRPCRouterInputs } from "#shared/models/trpc/TRPCRouterInputs";
 import type { BinaryOperator } from "@esposter/db-schema";
-import type { GetProperties } from "@esposter/shared";
+import type { GetProperties, ItemEntityType } from "@esposter/shared";
 import type { Get } from "type-fest";
 
 export type PropertyCondition<TPath extends TRPCPaths> =
@@ -30,9 +30,9 @@ export type PropertyCondition<TPath extends TRPCPaths> =
               operator: BinaryOperator;
               value: Value;
             }
-        ) & {
-          path: Path;
-          type: AchievementConditionType.Property;
-        }
+        ) &
+          ItemEntityType<AchievementConditionType.Property> & {
+            path: Path;
+          }
       : never
     : never;
