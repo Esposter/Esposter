@@ -70,10 +70,10 @@ const blur = () => {
         if (!value && !menu) return;
         if (value) menu = true;
 
-        if (value[value.length - 1] === ':') {
+        if (value.endsWith(':')) {
           const normalizedValue = normalizeString(value);
           const filterType = FilterTypes.find(
-            (type) => type.toLowerCase() === normalizedValue.slice(0, normalizedValue.length - 1).toLowerCase(),
+            (type) => type.toLowerCase() === normalizedValue.slice(0, -1).toLowerCase(),
           );
           if (filterType) {
             createFilter(filterType);

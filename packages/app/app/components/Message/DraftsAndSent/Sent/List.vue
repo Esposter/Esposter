@@ -22,5 +22,5 @@ const sections = computed(() => getTimelineSections(items.value, ({ message }) =
       <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
     </div>
   </div>
-  <MessageDraftsAndSentEmptyState v-else-if="!isPending" icon="mdi-send-outline" title="No sent messages" />
+  <StyledEmptyState v-else-if="!isPending" h-full icon="mdi-send-outline" title="No sent messages" />
 </template>

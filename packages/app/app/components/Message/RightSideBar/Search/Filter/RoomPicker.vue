@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/db-schema";
 
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
@@ -13,9 +12,6 @@ const { hasMore, rooms } = storeToRefs(roomStore);
 
 <template>
   <MessageRightSideBarSearchFilterPickerList :has-more :is-pending @read-more="readMoreRooms">
-    <template #skeleton>
-      <v-skeleton-loader v-for="i in DEFAULT_READ_LIMIT" :key="i" type="list-item-avatar" />
-    </template>
     <v-hover v-for="room of rooms" :key="room.id" #default="{ isHovering, props: hoverProps }">
       <v-list-item :="hoverProps" @click="emit('select', room.id)">
         <template #prepend>
@@ -23,7 +19,7 @@ const { hasMore, rooms } = storeToRefs(roomStore);
         </template>
         <v-list-item-title>{{ room.name }}</v-list-item-title>
         <template #append>
-          <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
+          <MessageRightSideBarSearchAddIcon :is-hovering="isHovering ?? false" />
         </template>
       </v-list-item>
     </v-hover>

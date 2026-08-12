@@ -13,7 +13,7 @@ const { image, name } = defineProps<MessageFriendsUserListItemProps>();
 <template>
   <v-list-item :title="name">
     <template #prepend>
-      <StyledAvatar mr-3 :image :name :avatar-props="{ size: 36 }" />
+      <StyledAvatar mr-3 :image :name :avatar-props="{ size: '2.25rem' }" />
     </template>
     <template #append>
       <slot name="append" />

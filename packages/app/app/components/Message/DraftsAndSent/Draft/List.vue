@@ -11,5 +11,5 @@ const sections = computed(() => getTimelineSections(draftItems.value, ({ updated
       <MessageDraftsAndSentDraftListItem v-for="draftItem of section.items" :key="draftItem.room.id" :draft-item />
     </MessageDraftsAndSentSection>
   </div>
-  <MessageDraftsAndSentEmptyState v-else icon="mdi-pencil" title="No drafts" />
+  <StyledEmptyState v-else h-full icon="mdi-pencil" title="No drafts" />
 </template>

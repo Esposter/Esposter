@@ -4,6 +4,7 @@ import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 
 const layoutStore = useLayoutStore();
+const { isRightDrawerOpen } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const threadFollowStore = useThreadFollowStore();
@@ -15,7 +16,12 @@ useQuery(() => (currentRoomId.value ? readFollowedThreads(currentRoomId.value) :
 <template>
   <div px-4 py-3 flex items-center justify-between>
     <span font-semibold>Followed Threads</span>
-    <v-btn icon="mdi-close" size="small" variant="text" @click="layoutStore.isRightDrawerOpen = false" />
+    <StyledTooltipIconButton
+      :button-props="{ size: 'small', variant: 'text' }"
+      icon="mdi-close"
+      text="Close followed threads"
+      @click="isRightDrawerOpen = false"
+    />
   </div>
   <v-divider />
   <div v-if="followedThreads.length > 0" flex-1 overflow-y-auto>

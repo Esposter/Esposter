@@ -21,9 +21,7 @@ const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
     <StyledCard p-2>
       <component
         :is="SearchFilterComponentMap[activeSelectedFilter.type]"
-        v-if="
-          activeSelectedFilter && !activeSelectedFilter.value && SearchFilterComponentMap[activeSelectedFilter.type]
-        "
+        v-if="activeSelectedFilter && !activeSelectedFilter.value"
         @select="
           (value) => {
             if (!activeSelectedFilter) return;

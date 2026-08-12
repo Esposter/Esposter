@@ -19,5 +19,5 @@ const sections = computed(() => getTimelineSections(items.value, ({ runAt }) => 
     </MessageDraftsAndSentSection>
     <StyledWaypoint :is-active="hasMore" @change="readMoreScheduledMessageJobs" />
   </div>
-  <MessageDraftsAndSentEmptyState v-else-if="!isPending" icon="mdi-clock-outline" title="No scheduled messages" />
+  <StyledEmptyState v-else-if="!isPending" h-full icon="mdi-clock-outline" title="No scheduled messages" />
 </template>

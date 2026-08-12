@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/db-schema";
 
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useMemberStore } from "@/store/message/user/member";
 
@@ -20,9 +19,6 @@ const { currentRoom } = storeToRefs(roomStore);
     :is-pending
     @read-more="readMoreMembers"
   >
-    <template #skeleton>
-      <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </template>
     <template v-if="currentRoom">
       <MessageModelMemberListItem
         v-for="member of members"
@@ -32,7 +28,7 @@ const { currentRoom } = storeToRefs(roomStore);
         @click="emit('select', member.id)"
       >
         <template #append="{ hoverProps: { isHovering } }">
-          <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
+          <MessageRightSideBarSearchAddIcon :is-hovering="isHovering ?? false" />
         </template>
       </MessageModelMemberListItem>
     </template>

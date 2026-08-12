@@ -15,7 +15,12 @@ const { activeRoomId, activeRootRowKey, threadMessages } = storeToRefs(threadSto
         :room-id="activeRoomId"
         :thread-root-row-key="activeRootRowKey"
       />
-      <v-btn icon="mdi-close" size="small" variant="text" @click="closeThread()" />
+      <StyledTooltipIconButton
+        :button-props="{ size: 'small', variant: 'text' }"
+        icon="mdi-close"
+        text="Close thread"
+        @click="closeThread()"
+      />
     </div>
   </div>
   <v-divider />

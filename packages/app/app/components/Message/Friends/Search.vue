@@ -21,7 +21,7 @@ const { isPending } = useAutoSearch(searchQuery, {
     searchResults.value = await $trpc.friend.searchUsers.query(sanitizedSearchQuery, { signal });
   },
 });
-const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id === userId);
+const checkIsBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id === userId);
 </script>
 
 <template>
@@ -42,19 +42,19 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
           <div flex gap-x-2>
             <v-btn
               v-if="!getIsFriend(id) && !getHasSentFriendRequest(id)"
+              size="small"
               text="Send Request"
               variant="tonal"
-              size="small"
               @click="sendFriendRequest(id)"
             />
-            <v-chip v-else-if="getHasSentFriendRequest(id)" text="Request Sent" size="small" />
-            <v-chip v-else text="Friends" size="small" color="success" />
+            <v-chip v-else-if="getHasSentFriendRequest(id)" size="small" text="Request Sent" />
+            <v-chip v-else color="success" size="small" text="Friends" />
             <v-btn
-              v-if="!isBlocked(id)"
-              text="Block"
-              variant="tonal"
+              v-if="!checkIsBlocked(id)"
               color="error"
               size="small"
+              text="Block"
+              variant="tonal"
               @click="blockUser(id)"
             />
           </div>

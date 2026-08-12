@@ -21,7 +21,9 @@ const tab = computed({
     <v-tab value="files" text="Files in this room" />
   </v-tabs>
   <v-divider />
-  <MessageRightSideBarSearchHeader v-if="!hasFiles" />
-  <v-divider v-if="!hasFiles" />
+  <template v-if="!hasFiles">
+    <MessageRightSideBarSearchHeader />
+    <v-divider />
+  </template>
   <MessageRightSideBarSearchMessageList v-if="!isSearching" />
 </template>

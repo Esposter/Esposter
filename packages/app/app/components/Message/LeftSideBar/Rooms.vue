@@ -5,10 +5,10 @@ import {
   ROOM_CATEGORY_DRAG_HANDLE_CLASS,
   ROOM_CATEGORY_TOUCH_DRAG_DELAY_MS,
 } from "@/services/message/roomCategory/constants";
+import { getReorderedRoomCategories } from "@/services/message/roomCategory/getReorderedRoomCategories";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
-import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarRoomsCollapsed, false);
@@ -30,23 +30,19 @@ const roomsByCategoryId = computed(() => {
   return map;
 });
 const uncategorizedRooms = computed(() => roomsByCategoryId.value.get(null) ?? []);
-const sortedCategories = computed(() =>
+const displayCategories = computed(() =>
   categories.value.toSorted((a, b) => a.position - b.position || a.name.localeCompare(b.name)),
 );
 const roomsByCategory = computed(() =>
-  sortedCategories.value.map((category) => ({
+  displayCategories.value.map((category) => ({
     category,
     rooms: roomsByCategoryId.value.get(category.id) ?? [],
   })),
 );
-const moveCategory = async (category: RoomCategoryInMessage, direction: -1 | 1) => {
-  const fromIndex = sortedCategories.value.findIndex(({ id }) => id === category.id);
-  const toIndex = fromIndex + direction;
-  if (toIndex < 0 || toIndex >= sortedCategories.value.length) return;
-  const newCategories = [...sortedCategories.value];
-  const movedCategory = takeOne(newCategories.splice(fromIndex, 1));
-  newCategories.splice(toIndex, 0, movedCategory);
-  await reorderRoomCategories(newCategories);
+// Undefined means the move cannot happen — already at the edge it is moving towards — so nothing is persisted
+const moveCategory = async (categoryId: RoomCategoryInMessage["id"], direction: -1 | 1) => {
+  const reorderedCategories = getReorderedRoomCategories(displayCategories.value, categoryId, direction);
+  if (reorderedCategories) await reorderRoomCategories(reorderedCategories);
 };
 </script>
 
@@ -72,7 +68,7 @@ const moveCategory = async (category: RoomCategoryInMessage, direction: -1 | 1) 
       delay-on-touch-only
       ghost-class="room-category-ghost"
       :handle="`.${ROOM_CATEGORY_DRAG_HANDLE_CLASS}`"
-      :model-value="sortedCategories"
+      :model-value="displayCategories"
       @update:model-value="reorderRoomCategories"
     >
       <MessageModelRoomCategoryRoomGroup
@@ -80,7 +76,7 @@ const moveCategory = async (category: RoomCategoryInMessage, direction: -1 | 1) 
         :key="category.id"
         :category
         :rooms="categoryRooms"
-        @move="moveCategory(category, $event)"
+        @move="moveCategory(category.id, $event)"
       />
     </VueDraggable>
   </MessageModelRoomBaseList>

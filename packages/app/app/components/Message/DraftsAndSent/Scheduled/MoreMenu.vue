@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
 
+import { DRAFTS_AND_SENT_ACTION_BUTTON_PROPS } from "@/services/message/draftsAndSent/constants";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -16,7 +17,7 @@ const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 
 <template>
   <StyledTooltipMenuIconButton
-    :button-props="{ density: 'comfortable', size: 'small', variant: 'text' }"
+    :button-props="DRAFTS_AND_SENT_ACTION_BUTTON_PROPS"
     icon="mdi-dots-vertical"
     :menu-props="{ location: 'bottom end' }"
     text="More"
