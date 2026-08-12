@@ -2,9 +2,11 @@
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { RoutePath } from "@esposter/shared";
 
-// Safe here: this renders inside the page whose route it reads and holds nothing past it, and the test has to
-// Drive that route — `mockNuxtImport("useRouter")` replaces the router Nuxt's own plugins call and takes the
-// Environment down, while mocking `useRoute` is supported
+// Safe here: the only read is `route.path` inside the computed below, this renders inside the page whose route
+// It reads, and it holds nothing past that page. The exception is for the test: `Breadcrumbs.test.ts` has to
+// Drive the current path to prove the trail drops the crumb for the page it is on, and it does that with
+// `mockNuxtImport("useRoute")` — mocking `useRouter` instead replaces the router Nuxt's own plugins call
+// (`router.beforeResolve`) and takes the environment down
 // eslint-disable-next-line no-restricted-syntax -- the route mock a component test needs
 const route = useRoute();
 const navigationTrailStore = useNavigationTrailStore();

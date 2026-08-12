@@ -65,7 +65,7 @@ Temporary overrides that force a transitive dep to a safe version (currently `cr
 ## Tracked issues (update normally, but watch these)
 
 - **`oxlint`** — has `^`; open issue https://github.com/oxc-project/oxc/issues/13204.
-- **`oxlint-tsgolint` / `@typescript/native-preview`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are the `oxlint` skill's (`references/lint-configuration.md`).
+- **`oxlint-tsgolint` / `@typescript/native-preview`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are documented in the `oxlint` skill's `references/lint-configuration.md`.
 - **`ajv`, `ajv-errors`, `ajv-formats`, `ajv-i18n`, `debug`** — required by `@koumoul/vjsf`; tracked at https://github.com/json-layout/json-layout/issues/5.
 - **`db:run` script** — workaround for https://github.com/drizzle-team/drizzle-orm/issues/1228.
 

@@ -9,7 +9,7 @@ description: Esposter git workflow conventions — commit message format, safety
 
 Conventional-commits format and the type list are in `~/.claude/rules/git-workflow.md`.
 
-**Commit attribution is enabled.** `~/.claude/settings.json` sets no `includeCoAuthoredBy` key, so it defaults on — recent commits carry the `Co-Authored-By` trailer. Expect it; don't strip it. (The global rules file claims attribution is disabled — it is not.)
+**Commit attribution is enabled** — commits carry the `Co-Authored-By` trailer, because `includeCoAuthoredBy` is unset and defaults on. Expect it; don't strip it, and don't add it by hand either.
 
 ## Multi-line Commit Messages — Tool-Specific Syntax
 
