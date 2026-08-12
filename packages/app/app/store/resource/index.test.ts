@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
@@ -16,7 +15,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides
-type ReadResourceOutput = ResourceListItem & { publication: null };
+type ReadResourceOutput = ReturnType<typeof createResource> & { publication: null };
 // The route is what the store loads from, so switching resources in a test is switching the route
 const setRouteId = (id: string) => {
   useRouter().currentRoute.value.params.id = id;
