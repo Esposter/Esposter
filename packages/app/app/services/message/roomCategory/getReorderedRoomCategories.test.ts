@@ -1,19 +1,8 @@
-import type { RoomCategoryInMessage } from "@esposter/db-schema";
-
+import { createRoomCategory } from "@/services/message/roomCategory/createRoomCategory.test";
 import { getReorderedRoomCategories } from "@/services/message/roomCategory/getReorderedRoomCategories";
 import { describe, expect, test } from "vitest";
 
 describe(getReorderedRoomCategories, () => {
-  const userId = crypto.randomUUID();
-  const createRoomCategory = (): RoomCategoryInMessage => ({
-    createdAt: new Date("1970-01-01"),
-    deletedAt: null,
-    id: crypto.randomUUID(),
-    name: "name",
-    position: 0,
-    updatedAt: new Date("1970-01-01"),
-    userId,
-  });
   const firstCategory = createRoomCategory();
   const secondCategory = createRoomCategory();
   const thirdCategory = createRoomCategory();

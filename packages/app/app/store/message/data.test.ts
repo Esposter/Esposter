@@ -28,6 +28,7 @@ describe(useDataStore, () => {
   const server = setupMswTrpc();
   let router: Router;
   const roomId = crypto.randomUUID();
+  const userId = getMockSession().user.id;
   const message = "message";
   const updatedMessage = "updatedMessage";
   const filename = "filename";
@@ -38,6 +39,11 @@ describe(useDataStore, () => {
   beforeAll(() => {
     router = useRouter();
   });
+
+  // The store reads only `session.value.data.user.id`, so signing in is that slice of the session ref
+  const signIn = () => {
+    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+  };
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -52,9 +58,7 @@ describe(useDataStore, () => {
   test("createMessage rolls back the optimistic message when the Create hook rejects", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    // CreateMessage reads only session.value.data.user.id off the reactive session
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { createMessage } = dataStore;
@@ -73,8 +77,7 @@ describe(useDataStore, () => {
   test("createMessage keeps the optimistic message when the mutation rejects", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { createMessage } = dataStore;
@@ -94,8 +97,7 @@ describe(useDataStore, () => {
   test("storeSendMessage resets the composer only once the optimistic message is in the list", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { storeSendMessage } = dataStore;
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockRejectedValueOnce(new Error(message));
@@ -110,8 +112,7 @@ describe(useDataStore, () => {
   test("storeSendMessage resets the composer of the room the send was for", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { storeSendMessage } = dataStore;
     server.use(
@@ -131,8 +132,7 @@ describe(useDataStore, () => {
   test("holds the attachments a send took out of the composer until the server answers", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
     const { files } = storeToRefs(uploadFileStore);
@@ -164,8 +164,7 @@ describe(useDataStore, () => {
   test("hands the composer's attachments back when the server rejects the send", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
     const { files } = storeToRefs(uploadFileStore);
@@ -196,8 +195,7 @@ describe(useDataStore, () => {
   test("createMessage releases the composer's attachments only once the server accepts", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { createMessage } = dataStore;
     server.use(
@@ -214,8 +212,7 @@ describe(useDataStore, () => {
   test("createMessage releases the composer's attachments for the room the send was for", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const { createMessage } = dataStore;
     server.use(
@@ -235,8 +232,7 @@ describe(useDataStore, () => {
   test("createMessage releases only the attachments the accepted message persisted", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
     const { files } = storeToRefs(uploadFileStore);
@@ -272,8 +268,7 @@ describe(useDataStore, () => {
   test("sends only the attachments the composer held when the send started", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const uploadFileStore = useUploadFileStore();
     const { createMessage } = dataStore;
@@ -307,8 +302,7 @@ describe(useDataStore, () => {
   test("createMessage mirrors the thread auto-follow of a reply", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    signIn();
     const dataStore = useDataStore();
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing } = threadFollowStore;

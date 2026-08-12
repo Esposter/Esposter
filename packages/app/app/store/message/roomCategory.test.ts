@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
-import type { RoomCategoryInMessage } from "@esposter/db-schema";
-
+import { createRoomCategory } from "@/services/message/roomCategory/createRoomCategory.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { takeOne } from "@esposter/shared";
@@ -10,23 +9,11 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useRoomCategoryStore, () => {
   const server = setupMswTrpc();
-  const createdAt = new Date(0);
   const id = crypto.randomUUID();
   const otherId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
   const rejectedName = "rejectedName";
-  const createCategory = (categoryId: string): RoomCategoryInMessage => ({
-    createdAt,
-    deletedAt: null,
-    id: categoryId,
-    name,
-    position: 0,
-    updatedAt: createdAt,
-    userId,
-  });
-
   beforeEach(() => {
     setActivePinia(createPinia());
   });
@@ -43,13 +30,13 @@ describe(useRoomCategoryStore, () => {
         if (isFailing) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
 
         isFailing = true;
-        return { ...createCategory(id), ...input };
+        return { ...createRoomCategory({ id }), ...input };
       }),
     );
     const roomCategoryStore = useRoomCategoryStore();
     const { categories } = storeToRefs(roomCategoryStore);
     const { updateRoomCategory } = roomCategoryStore;
-    categories.value = [createCategory(id)];
+    categories.value = [createRoomCategory({ id })];
     const storedCategory = takeOne(categories.value);
     await Promise.all([updateRoomCategory({ id, name: updatedName }), updateRoomCategory({ id, name: rejectedName })]);
 
@@ -70,13 +57,13 @@ describe(useRoomCategoryStore, () => {
         if (isFailing) throw new TRPCError({ code: "NOT_FOUND", message: name });
 
         isFailing = true;
-        return createCategory(id);
+        return createRoomCategory({ id });
       }),
     );
     const roomCategoryStore = useRoomCategoryStore();
     const { categories } = storeToRefs(roomCategoryStore);
     const { deleteRoomCategory } = roomCategoryStore;
-    categories.value = [createCategory(id), createCategory(otherId)];
+    categories.value = [createRoomCategory({ id }), createRoomCategory({ id: otherId })];
     await Promise.all([deleteRoomCategory(id), deleteRoomCategory(id)]);
 
     expect(categories.value.map(({ id: categoryId }) => categoryId)).toStrictEqual([otherId]);
@@ -90,13 +77,13 @@ describe(useRoomCategoryStore, () => {
     server.use(
       trpcMsw.room.category.deleteRoomCategory.mutation(({ input }) => {
         if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
-        return createCategory(input);
+        return createRoomCategory({ id: input });
       }),
     );
     const roomCategoryStore = useRoomCategoryStore();
     const { categories } = storeToRefs(roomCategoryStore);
     const { deleteRoomCategory } = roomCategoryStore;
-    categories.value = [createCategory(id), createCategory(otherId)];
+    categories.value = [createRoomCategory({ id }), createRoomCategory({ id: otherId })];
     await Promise.all([deleteRoomCategory(id), deleteRoomCategory(otherId)]);
 
     expect(categories.value.map(({ id: categoryId }) => categoryId)).toStrictEqual([id]);
@@ -114,12 +101,12 @@ describe(useRoomCategoryStore, () => {
     const { reorderRoomCategories } = roomCategoryStore;
     server.use(
       trpcMsw.room.category.reorderRoomCategories.mutation(() => {
-        categories.value = [...categories.value, { ...createCategory(thirdId), position: 2 }];
+        categories.value = [...categories.value, { ...createRoomCategory({ id: thirdId }), position: 2 }];
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
       }),
     );
-    const first = { ...createCategory(id), position: 0 };
-    const second = { ...createCategory(otherId), position: 1 };
+    const first = { ...createRoomCategory({ id }), position: 0 };
+    const second = { ...createRoomCategory({ id: otherId }), position: 1 };
     categories.value = [first, second];
     await reorderRoomCategories([second, first]);
 

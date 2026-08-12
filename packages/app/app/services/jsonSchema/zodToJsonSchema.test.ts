@@ -87,6 +87,60 @@ describe(zodToJsonSchema, () => {
       expect(result).not.toHaveProperty("properties");
     });
 
+    // The column form nests one under `transformation`, and vjsf only renders the sub-form it offers if the
+    // Discriminator and the titles survive the descent as well as they do at the root
+    test("carries the discriminator and the generated titles into a nested union", () => {
+      expect.hasAssertions();
+
+      const result = zodToJsonSchema(
+        z.object({
+          sourceName: z.string().meta({ readOnly: true }).default(""),
+          transformation: z.discriminatedUnion("type", [
+            z.object({ sourceColumnId: z.string(), type: z.literal("a") }).meta({ title: "A" }),
+          ]),
+        }),
+      );
+
+      expect(result.properties?.transformation).toMatchInlineSnapshot(`
+        {
+          "discriminator": {
+            "propertyName": "type",
+          },
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "sourceColumnId": {
+                  "title": "Source Column Id",
+                  "type": "string",
+                },
+                "type": {
+                  "const": "a",
+                  "title": "Type",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "sourceColumnId",
+                "type",
+              ],
+              "title": "A",
+              "type": "object",
+            },
+          ],
+          "title": "Transformation",
+        }
+      `);
+      expect(result.properties?.sourceName).toMatchInlineSnapshot(`
+        {
+          "default": "",
+          "readOnly": true,
+          "title": "Source Name",
+          "type": "string",
+        }
+      `);
+    });
+
     test("prettifies enum-style variant root title", () => {
       expect.hasAssertions();
 

@@ -3,6 +3,7 @@ import type { Resource } from "@esposter/db-schema";
 import type { Editor, ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { ResourceType } from "@esposter/db-schema";
@@ -20,13 +21,7 @@ describe(useEmailEditorStore, () => {
   // Only the MJML compile command is reached, and a failed compile is its own (already covered) fallback path
   const editor = { runCommand: () => ({ html }) } as unknown as Editor;
   const createResource = (contentVersion = 0) =>
-    ({
-      contentVersion,
-      id: resourceId,
-      name: "name",
-      type: ResourceType.Email,
-      updatedAt: new Date(0),
-    }) as Resource;
+    createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Email });
   let content: EmailEditor;
   let savedContentIds: string[];
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;

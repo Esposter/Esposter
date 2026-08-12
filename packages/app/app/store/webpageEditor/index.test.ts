@@ -3,6 +3,7 @@ import type { Resource } from "@esposter/db-schema";
 import type { ProjectData } from "grapesjs";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
@@ -18,13 +19,7 @@ describe(useWebpageEditorStore, () => {
   const projectData: ProjectData = { pages: [{ component: "<div>page</div>" }] };
   const render = { css: ".page {}", html: "<div>page</div>" };
   const createResource = (contentVersion = 0) =>
-    ({
-      contentVersion,
-      id: resourceId,
-      name: "name",
-      type: ResourceType.Webpage,
-      updatedAt: new Date(0),
-    }) as Resource;
+    createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Webpage });
   let content: WebpageEditor;
   let savedContentIds: string[];
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;

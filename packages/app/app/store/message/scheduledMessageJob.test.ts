@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
-import type { RoomInMessage } from "@esposter/db-schema";
 
+import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
-import { createMessageEntity, MessageType, MimeCategory, RoomType, ScheduledMessageJobType } from "@esposter/db-schema";
+import { createMessageEntity, MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -16,23 +16,7 @@ describe(useScheduledMessageJobStore, () => {
   const otherId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const message = "message";
-  const room: RoomInMessage = {
-    allowedMimeCategories: [MimeCategory.Audio, MimeCategory.Document, MimeCategory.Image, MimeCategory.Video],
-    categoryId: null,
-    createdAt,
-    deletedAt: null,
-    id: crypto.randomUUID(),
-    image: "",
-    isReadOnly: false,
-    maxFileSizeBytes: null,
-    name: "name",
-    participantKey: null,
-    slowmodeMs: null,
-    topic: "",
-    type: RoomType.Room,
-    updatedAt: createdAt,
-    userId,
-  };
+  const room = createRoom("name");
   const createScheduledMessageJob = (jobId: string): ScheduledMessageJobInMessageWithRoom => ({
     cancelledAt: null,
     completedAt: null,

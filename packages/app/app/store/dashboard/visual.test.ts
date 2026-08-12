@@ -1,9 +1,8 @@
 // @vitest-environment nuxt
-import type { Resource } from "@esposter/db-schema";
-
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
@@ -31,13 +30,7 @@ describe(useVisualStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const createResource = (contentVersion = 0) =>
-    ({
-      contentVersion,
-      id: resourceId,
-      name: "name",
-      type: ResourceType.Dashboard,
-      updatedAt: new Date(0),
-    }) as Resource;
+    createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Dashboard });
   let content: Dashboard;
 
   beforeEach(() => {

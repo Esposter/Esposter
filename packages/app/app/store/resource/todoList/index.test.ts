@@ -3,6 +3,7 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 import type { Resource } from "@esposter/db-schema";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useTodoListStore } from "@/store/resource/todoList";
 import { ResourceType } from "@esposter/db-schema";
@@ -24,13 +25,7 @@ describe(useTodoListStore, () => {
   const itemName = "item";
   const newItemName = "newItem";
   const createResource = (contentVersion = 0) =>
-    ({
-      contentVersion,
-      id: resourceId,
-      name: "name",
-      type: ResourceType.TodoList,
-      updatedAt: new Date(0),
-    }) as Resource;
+    createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.TodoList });
   let content: TodoListResource;
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
 

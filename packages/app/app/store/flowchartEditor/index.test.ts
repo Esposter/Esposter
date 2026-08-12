@@ -4,6 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { ResourceType } from "@esposter/db-schema";
@@ -33,13 +34,7 @@ describe(useFlowchartEditorStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const createResource = (contentVersion = 0) =>
-    ({
-      contentVersion,
-      id: resourceId,
-      name: "name",
-      type: ResourceType.Flowchart,
-      updatedAt: new Date(0),
-    }) as Resource;
+    createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Flowchart });
   let content: FlowchartEditor;
   let saveResourceContent: ReturnType<typeof vi.fn<() => Resource>>;
 
