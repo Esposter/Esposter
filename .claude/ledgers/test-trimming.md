@@ -11,7 +11,8 @@ Tests that cannot fail for a reason anyone cares about, and fixtures written mor
 | `app/server/services`, `app/server/trpc/procedure` | 2026-08-12 | 41                                                                               |
 | `app/server/trpc/routers`                          | —          | 53; split off when a pass could not read `app/server` whole                      |
 | `app/shared`                                       | 2026-08-12 | 24; the schema suites test composed refinements, not Zod                         |
-| `virrun`                                           | —          | 155, split further if a pass cannot read it                                      |
+| `virrun/src/services/exec`                         | —          | 106; split off when a pass could not read `virrun` whole                         |
+| `virrun`, rest                                     | 2026-08-12 | 49; already on shared helpers and tables, nothing to trim                        |
 | `azure-functions`, `azure-mock`, `db*`             | 2026-08-12 | 68; the EventGrid handler matrix now sits on its factory                         |
 | `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-12 | plus `shared`, `shared-node`, `configuration`, `infra`; `createMention` hoisted  |
 
