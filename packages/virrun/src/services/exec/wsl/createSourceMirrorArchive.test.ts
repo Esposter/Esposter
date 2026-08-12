@@ -9,6 +9,7 @@ import {
 } from "@/services/exec/wsl/constants";
 import { createSourceMirrorArchive } from "@/services/exec/wsl/createSourceMirrorArchive";
 import { readSourceMirrorArchiveMembers } from "@/services/exec/wsl/readSourceMirrorArchiveMembers";
+import { getResult } from "@esposter/shared";
 import { lstatSync, mkdirSync, readdirSync, readlinkSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -124,7 +125,16 @@ describe(createSourceMirrorArchive, () => {
 
     // An unusable `-C` root is a whole-spawn failure (`Cannot chdir`), not a report tar archived past — the archive
     // Holds nothing trustworthy, so the plan must abort loudly instead of pruning the entire manifest.
-    expect(() => createSourceMirrorArchive(join(cwd, "missing"), entryUnc, [TEST_FILENAME], TAG)).toThrow(Error);
+    // The message names absolute temp paths and a pid, and the two host tars word it differently — nothing
+    // Reconstructable, so the abort is observed rather than snapshotted
+    const isAborted = getResult(() =>
+      createSourceMirrorArchive(join(cwd, "missing"), entryUnc, [TEST_FILENAME], TAG),
+    ).match(
+      () => false,
+      () => true,
+    );
+
+    expect(isAborted).toBe(true);
     // Aborting is no reason to strand the list: tar is done with it either way, so it never reaches the reaper.
     expect(readdirSync(entryUnc)).not.toContain(`${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${TAG}`);
   });

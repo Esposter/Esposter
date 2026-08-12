@@ -44,13 +44,12 @@ describe(getWslSourceMirrorEntryPath, () => {
 });
 
 describe(getWslSourceMirrorPath, () => {
-  test("addresses the mirror tree under sources/<sha256(hostCwd)>/tree so distinct repos never collide", () => {
+  // The key scheme itself is pinned once, against the entry resolver above; what this adds is the tree segment
+  test("addresses the mirror tree under the entry dir so distinct repos never collide", () => {
     expect.hasAssertions();
 
-    const key = createHash("sha256").update(TEST_REPO_ROOT_WIN).digest("hex");
-
     expect(getWslSourceMirrorPath(TEST_REPO_ROOT_WIN)).toBe(
-      `${cacheRootLinux}/${VIRRUN_SOURCES_DIRECTORY_NAME}/${key}/${VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME}`,
+      `${cacheRootLinux}/${VIRRUN_SOURCES_DIRECTORY_NAME}/${getSourceMirrorKey(TEST_REPO_ROOT_WIN)}/${VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME}`,
     );
   });
 });

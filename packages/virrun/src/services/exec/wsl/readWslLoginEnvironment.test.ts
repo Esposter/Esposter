@@ -3,6 +3,7 @@ import type { execFileSync as baseExecFileSync } from "node:child_process";
 import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
 import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
+import { TEST_WSL_LOGIN_ENVIRONMENT } from "@/services/exec/wsl/constants.test";
 import {
   VIRRUN_LOGIN_NODE_BEGIN_MARKER,
   VIRRUN_LOGIN_NODE_END_MARKER,
@@ -22,9 +23,10 @@ vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unk
 describe("readWslLoginEnvironment", () => {
   // The shared cache-home fixture isolates the persisted cross-process cache per test.
   const { getCacheHome } = setupTemporaryCacheHome();
-  const path = "/usr/local/bin:/usr/bin";
-  const nodeVersion = "v26.5.0";
-  const environment = { nodeVersion, path };
+  // The capture every suite mocking `readWslLoginEnvironment` hands back — asserted here against the real parse, so
+  // The two never drift into describing different login environments
+  const environment = TEST_WSL_LOGIN_ENVIRONMENT;
+  const { nodeVersion, path } = environment;
 
   beforeEach(() => {
     // Reset the module so its memoized capture does not leak between cases, and seed the default capture output.
