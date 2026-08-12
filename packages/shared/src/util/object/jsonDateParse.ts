@@ -8,19 +8,12 @@ const MS_AJAX_DATE_REGEX = /^\/Date\((?<timestamp>-?\d+(?:[-+]\d+)?)\)[/\\]$/u;
 export const jsonDateParse = <T = any>(text: string): T =>
   // eslint-disable-next-line no-restricted-syntax -- the reviver every other caller is pointed at is built here
   JSON.parse(text, (_key, value) => {
-    let parsedValue = value;
+    if (typeof value !== "string") return value;
+    else if (ISO_DATE_REGEX.test(value)) return new Date(value);
 
-    if (typeof value === "string") {
-      if (ISO_DATE_REGEX.test(value)) parsedValue = new Date(value);
-      else {
-        const msAjaxDateMatch = MS_AJAX_DATE_REGEX.exec(value);
+    const msAjaxDateMatch = MS_AJAX_DATE_REGEX.exec(value);
+    if (!msAjaxDateMatch) return value;
 
-        if (msAjaxDateMatch) {
-          const timestampParts = takeOne(msAjaxDateMatch, 1).split(/[-+,.]/u);
-          parsedValue = new Date(timestampParts[0] ? Number(timestampParts[0]) : 0 - Number(timestampParts[1]));
-        }
-      }
-    }
-
-    return parsedValue;
+    const timestampParts = takeOne(msAjaxDateMatch, 1).split(/[-+,.]/u);
+    return new Date(timestampParts[0] ? Number(timestampParts[0]) : 0 - Number(timestampParts[1]));
   });
