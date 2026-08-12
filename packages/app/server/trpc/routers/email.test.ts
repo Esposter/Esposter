@@ -7,8 +7,8 @@ import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { emailRouter } from "@@/server/trpc/routers/email";
-import { resources, ResourceType } from "@esposter/db-schema";
-import { jsonDateParse } from "@esposter/shared";
+import { DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
+import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -63,8 +63,8 @@ describe("email", () => {
       id: newResource.id,
     });
 
-    await expect(caller.publishResource({ id: newResource.id })).rejects.toThrow(
-      "cannot publish email without compiled html",
+    await expect(caller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Resource, "cannot publish email without compiled html").message}]`,
     );
   });
 

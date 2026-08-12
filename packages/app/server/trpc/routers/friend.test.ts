@@ -5,8 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
+import { createFriendship } from "@@/server/trpc/routers/createFriendship.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
-import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -15,12 +15,10 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe("friend", () => {
   let mockContext: Context;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
-  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     friendCaller = createCallerFactory(friendRouter)(mockContext);
-    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -29,19 +27,10 @@ describe("friend", () => {
     await mockContext.db.delete(friendRequests);
   });
 
-  // Helper: establish an accepted friendship between the default user and a new user.
-  const setupFriendship = async () => {
-    const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(userId);
-    await friendRequestCaller.acceptFriendRequest(user.id);
-    return { user, userId };
-  };
-
   test("reads friends as sender", async () => {
     expect.hasAssertions();
 
-    const { user } = await setupFriendship();
+    const { user } = await createFriendship(mockContext);
     const fetchedFriends = await friendCaller.readFriends();
 
     expect(fetchedFriends).toHaveLength(1);
@@ -51,7 +40,7 @@ describe("friend", () => {
   test("reads friends as receiver", async () => {
     expect.hasAssertions();
 
-    const { user, userId } = await setupFriendship();
+    const { user, userId } = await createFriendship(mockContext);
     await mockSessionOnce(mockContext.db, user);
     const fetchedFriends = await friendCaller.readFriends();
 
@@ -62,7 +51,7 @@ describe("friend", () => {
   test("deletes friend", async () => {
     expect.hasAssertions();
 
-    const { user } = await setupFriendship();
+    const { user } = await createFriendship(mockContext);
     await friendCaller.deleteFriend(user.id);
 
     const fetchedFriends = await friendCaller.readFriends();
@@ -115,7 +104,7 @@ describe("friend", () => {
   test("on delete friend notifies the other party", async () => {
     expect.hasAssertions();
 
-    const { user: receiverUser, userId } = await setupFriendship();
+    const { user: receiverUser, userId } = await createFriendship(mockContext);
     const onDeleteFriend = await friendCaller.onDeleteFriend();
     await mockSessionOnce(mockContext.db, receiverUser);
     const data = await getFirstEmit(
@@ -129,7 +118,7 @@ describe("friend", () => {
   test("on delete friend notifies caller", async () => {
     expect.hasAssertions();
 
-    const { user: receiverUser, userId } = await setupFriendship();
+    const { user: receiverUser, userId } = await createFriendship(mockContext);
     const receiverPayload = await mockSessionOnce(mockContext.db, receiverUser);
     const onDeleteFriend = await friendCaller.onDeleteFriend();
     replayMockSession(receiverPayload);

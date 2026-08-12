@@ -54,6 +54,15 @@ describe("resource", () => {
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
 
+  // Every webpage fixture is the same write against the resource it just created, so the version rides the row
+  // Rather than being restated — only a test writing a second time has to say which version it is claiming
+  const saveWebpageContent = (webpageResource: Resource, content: WebpageEditor, contentVersionOffset = 0) =>
+    webpageCaller.saveResourceContent({
+      content,
+      contentVersion: webpageResource.contentVersion + contentVersionOffset,
+      id: webpageResource.id,
+    });
+
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(resourceRouter)(mockContext);
@@ -102,11 +111,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     const draftResource = await caller.readResource({ id: webpageResource.id });
 
     // Null is the answer "this resource is not published", which is a resolved state rather than a missing one
@@ -262,11 +267,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     const draftResource = await dashboardCaller.createResource({ name });
     const { items: publishedItems } = await caller.readResources({ isPublished: true });
@@ -322,11 +323,10 @@ describe("resource", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+    );
     await webpageCaller.publishResource({ id: webpageResource.id });
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
@@ -361,11 +361,10 @@ describe("resource", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const publishedBlobName = `${createPublishedAssetsDirectoryName(webpageResource.id)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[publishedBlobName, Buffer.alloc(1)]]));
-    await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` }),
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` }),
+    );
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     assert.exists(content);
@@ -417,11 +416,10 @@ describe("resource", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+    );
     await webpageCaller.publishResource({ id: webpageResource.id });
     await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
@@ -442,11 +440,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
     const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
     assert(container);
@@ -616,11 +610,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await caller.deleteResources({ ids: [webpageResource.id] });
     await caller.restoreResource({ id: webpageResource.id });
@@ -658,11 +648,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await webpageCaller.publishResource({ id: webpageResource.id });
     const versions = await caller.readPublishHistory({ id: webpageResource.id });
@@ -689,17 +675,9 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
-    await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "b", html: "b" }),
-      contentVersion: webpageResource.contentVersion + 1,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, new WebpageEditor({ css: "b", html: "b" }), 1);
     const restoredResource = await caller.restorePublishedVersion({ id: webpageResource.id, version: 1 });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     const publication = await webpageCaller.readResourcePublication({ id: webpageResource.id });
@@ -721,11 +699,7 @@ describe("resource", () => {
     // The rowKey is the write's own reverse-ticked timestamp, so the pinned clock has to move between the
     // Mutations for their entries to land on distinct keys instead of colliding in the partition
     vi.advanceTimersByTime(1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
     await webpageCaller.publishResource({ id: webpageResource.id });
@@ -855,20 +829,12 @@ describe("resource", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     vi.advanceTimersByTime(1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     // The activity write is fire-and-forget off the save path, so drain it before the next save's
     // Coalescing scan can even see it
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion + 1,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor, 1);
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
 
@@ -886,20 +852,12 @@ describe("resource", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     vi.advanceTimersByTime(1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor);
     // The activity write is fire-and-forget off the save path, so drain it before the next save's
     // Coalescing scan can even see it
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(CONTENT_SAVED_COALESCE_WINDOW_MS + 1);
-    await webpageCaller.saveResourceContent({
-      content: webpageEditor,
-      contentVersion: webpageResource.contentVersion + 1,
-      id: webpageResource.id,
-    });
+    await saveWebpageContent(webpageResource, webpageEditor, 1);
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
 

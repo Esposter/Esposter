@@ -9,7 +9,8 @@ Tests that cannot fail for a reason anyone cares about, and fixtures written mor
 | `app/app/store`, `app/app/models`                  | 2026-08-12 | 46; the column form's whole-schema snapshot became a nested-union converter test |
 | `app/app/components`, `app/app/util`               | 2026-08-12 | 50; webhook, userToRoom and scheduled-job rows now have shared factories         |
 | `app/server/services`, `app/server/trpc/procedure` | 2026-08-12 | 41                                                                               |
-| `app/server/trpc/routers`                          | —          | 53; split off when a pass could not read `app/server` whole                      |
+| `app/server/trpc/routers`, rest                    | 2026-08-12 | 42; mention-message and friendship fixtures shared, request envelopes folded     |
+| `app/server/trpc/routers/message`, `room`, `call`  | —          | 11; split off when a pass could not read `routers` whole                         |
 | `app/shared`                                       | 2026-08-12 | 24; the schema suites test composed refinements, not Zod                         |
 | `virrun/src/services/exec`                         | —          | 106; split off when a pass could not read `virrun` whole                         |
 | `virrun`, rest                                     | 2026-08-12 | 49; already on shared helpers and tables, nothing to trim                        |

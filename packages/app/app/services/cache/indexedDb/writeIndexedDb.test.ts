@@ -2,8 +2,8 @@ import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/c
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
-import { createRoom } from "@/services/message/room/createRoom.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
+import { createRoom } from "@/services/message/room/createRoom.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";

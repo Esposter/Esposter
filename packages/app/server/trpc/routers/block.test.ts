@@ -5,8 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, createMockUser, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { blockRouter } from "@@/server/trpc/routers/block";
+import { createFriendship } from "@@/server/trpc/routers/createFriendship.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
-import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -15,13 +15,11 @@ describe("block", () => {
   let mockContext: Context;
   let blockCaller: DecorateRouterRecord<TRPCRouter["block"]>;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
-  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     blockCaller = createCallerFactory(blockRouter)(mockContext);
     friendCaller = createCallerFactory(friendRouter)(mockContext);
-    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -29,14 +27,6 @@ describe("block", () => {
     await mockContext.db.delete(friends);
     await mockContext.db.delete(friendRequests);
   });
-
-  const setupFriendship = async () => {
-    const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(userId);
-    await friendRequestCaller.acceptFriendRequest(user.id);
-    return { user, userId };
-  };
 
   test("blocks user", async () => {
     expect.hasAssertions();
@@ -50,7 +40,7 @@ describe("block", () => {
   test("blocks user and removes friendship", async () => {
     expect.hasAssertions();
 
-    const { user } = await setupFriendship();
+    const { user } = await createFriendship(mockContext);
     await blockCaller.blockUser(user.id);
     const friendList = await friendCaller.readFriends();
 

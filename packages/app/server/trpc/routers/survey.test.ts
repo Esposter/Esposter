@@ -45,14 +45,36 @@ describe("survey", () => {
     AzureEntityType.SurveyResponse,
     closedSurveyErrorReason,
   ).message;
+  // Settings are live working state rather than snapshot state, so most tests reach the behaviour they are after
+  // By writing content at a known version — the version is what the caller varies, never the envelope
+  const saveSurveyContent = (id: string, contentVersion: number, content: SurveyResource) =>
+    caller.saveResourceContent({ content, contentVersion, id });
+  // A response is always the same envelope — one answer under a fresh row key — and the token is the only part
+  // An Anonymous survey leaves empty, so it defaults to what the mode that does not use it sends
+  const createSurveyResponse = (partitionKey: string, satisfaction: number, participantToken = "") =>
+    caller.createSurveyResponse({
+      model: { satisfaction },
+      participantToken,
+      partitionKey,
+      rowKey: crypto.randomUUID(),
+    });
+  // An edit addresses the response it is editing, so the row identifies itself rather than being restated
+  const updateSurveyResponse = (
+    surveyResponse: Awaited<ReturnType<typeof createSurveyResponse>>,
+    satisfaction: number,
+    participantToken = "",
+  ) =>
+    caller.updateSurveyResponse({
+      model: { satisfaction },
+      modelVersion: surveyResponse.modelVersion,
+      participantToken,
+      partitionKey: surveyResponse.partitionKey,
+      rowKey: surveyResponse.rowKey,
+    });
   // An Identified survey plus a program bound to it, returning the survey and its one valid token
   const setupIdentifiedSurvey = async () => {
     const survey = await caller.createResource({ name });
-    await caller.saveResourceContent({
-      content: { model, settings: identifiedSettings } satisfies SurveyResource,
-      contentVersion: survey.contentVersion,
-      id: survey.id,
-    });
+    await saveSurveyContent(survey.id, survey.contentVersion, { model, settings: identifiedSettings });
     const program = await createBoundProgram({
       keyValues: [keyValue],
       name,
@@ -86,11 +108,7 @@ describe("survey", () => {
 
     expect(newResource.type).toBe(ResourceType.Survey);
 
-    await caller.saveResourceContent({
-      content: { model, settings },
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
     const content = await caller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual({ model, settings });
@@ -100,17 +118,8 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    await caller.saveResourceContent({
-      content: { model, settings },
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
-    await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    await createSurveyResponse(newResource.id, 0);
 
     // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
     await caller.deleteResource({ id: newResource.id });
@@ -137,17 +146,9 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    await caller.saveResourceContent({
-      content: { model, settings },
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
     await caller.publishResource({ id: newResource.id });
-    await caller.saveResourceContent({
-      content: { model: updatedModel, settings },
-      contentVersion: newResource.contentVersion + 1,
-      id: newResource.id,
-    });
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { model: updatedModel, settings });
     const { content } = await caller.readPublishedResourceContent(newResource.id);
 
     expect(content.model).toBe(model);
@@ -157,12 +158,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 1 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 1);
     const readSurveyResponse = await caller.readSurveyResponse({
       partitionKey: newSurveyResponse.partitionKey,
       rowKey: newSurveyResponse.rowKey,
@@ -187,19 +183,8 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
-    const updatedSurveyResponse = await caller.updateSurveyResponse({
-      model: { satisfaction: 1 },
-      modelVersion: newSurveyResponse.modelVersion,
-      participantToken: "",
-      partitionKey: newSurveyResponse.partitionKey,
-      rowKey: newSurveyResponse.rowKey,
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1);
 
     expect(updatedSurveyResponse.model).toStrictEqual({ satisfaction: 1 });
     expect(updatedSurveyResponse.modelVersion).toBe(newSurveyResponse.modelVersion + 1);
@@ -209,12 +194,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
 
     await expect(
       caller.updateSurveyResponse({
@@ -284,29 +264,10 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
-    await caller.updateSurveyResponse({
-      model: { satisfaction: 1 },
-      modelVersion: newSurveyResponse.modelVersion,
-      participantToken: "",
-      partitionKey: newSurveyResponse.partitionKey,
-      rowKey: newSurveyResponse.rowKey,
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    await updateSurveyResponse(newSurveyResponse, 1);
 
-    await expect(
-      caller.updateSurveyResponse({
-        model: { satisfaction: 2 },
-        modelVersion: newSurveyResponse.modelVersion,
-        participantToken: "",
-        partitionKey: newSurveyResponse.partitionKey,
-        rowKey: newSurveyResponse.rowKey,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(updateSurveyResponse(newSurveyResponse, 2)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${
         new InvalidOperationError(
           Operation.Update,
@@ -322,12 +283,7 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     // A stale participant link into an anonymous survey still works, it just carries nothing
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: crypto.randomUUID(),
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0, crypto.randomUUID());
 
     expect(newSurveyResponse.participantToken).toBe("");
   });
@@ -336,12 +292,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const { survey, token } = await setupIdentifiedSurvey();
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
 
     expect(newSurveyResponse.participantToken).toBe(token);
   });
@@ -351,14 +302,9 @@ describe("survey", () => {
 
     const { survey } = await setupIdentifiedSurvey();
 
-    await expect(
-      caller.createSurveyResponse({
-        model: { satisfaction: 0 },
-        participantToken: "",
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
+    await expect(createSurveyResponse(survey.id, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
+    );
   });
 
   // The binding is a column now, so unbinding has to clear it — the whole hazard of caching an authorization
@@ -376,14 +322,9 @@ describe("survey", () => {
       id: program.id,
     });
 
-    await expect(
-      caller.createSurveyResponse({
-        model: { satisfaction: 0 },
-        participantToken: token,
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
+    await expect(createSurveyResponse(survey.id, 0, token)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
+    );
   });
 
   // A program whose content predates the column reads null, and its already-issued tokens have to keep working
@@ -393,12 +334,7 @@ describe("survey", () => {
 
     const { program, survey, token } = await setupIdentifiedSurvey();
     await mockContext.db.update(resources).set({ boundResourceId: null }).where(eq(resources.id, program.id));
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
 
     expect(newSurveyResponse.participantToken).toBe(token);
   });
@@ -408,14 +344,9 @@ describe("survey", () => {
 
     const { survey } = await setupIdentifiedSurvey();
 
-    await expect(
-      caller.createSurveyResponse({
-        model: { satisfaction: 0 },
-        participantToken: crypto.randomUUID(),
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
+    await expect(createSurveyResponse(survey.id, 0, crypto.randomUUID())).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
+    );
   });
 
   test(`fails create with another survey's token in ${SurveyResponseMode.Identified} mode`, async () => {
@@ -425,14 +356,9 @@ describe("survey", () => {
     // A token issued by a program bound to a different survey is as good as a forgery
     const { token: otherToken } = await setupIdentifiedSurvey();
 
-    await expect(
-      caller.createSurveyResponse({
-        model: { satisfaction: 0 },
-        participantToken: otherToken,
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
+    await expect(createSurveyResponse(survey.id, 0, otherToken)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
+    );
   });
 
   test(`${SurveyResponseMode.Identified}: a recycle-binned program still resolves its token`, async () => {
@@ -441,12 +367,7 @@ describe("survey", () => {
     const { program, survey, token } = await setupIdentifiedSurvey();
     // Soft-deleting the program must not invalidate token links already distributed to participants
     await programCaller.deleteResource({ id: program.id });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
 
     expect(newSurveyResponse.participantToken).toBe(token);
   });
@@ -455,19 +376,8 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const { survey, token } = await setupIdentifiedSurvey();
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
-    });
-    const updatedSurveyResponse = await caller.updateSurveyResponse({
-      model: { satisfaction: 1 },
-      modelVersion: newSurveyResponse.modelVersion,
-      participantToken: token,
-      partitionKey: survey.id,
-      rowKey: newSurveyResponse.rowKey,
-    });
+    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
+    const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1, token);
 
     expect(updatedSurveyResponse.participantToken).toBe(token);
   });
@@ -476,11 +386,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const survey = await caller.createResource({ name });
-    await caller.saveResourceContent({
-      content: { model, settings: identifiedSettings } satisfies SurveyResource,
-      contentVersion: survey.contentVersion,
-      id: survey.id,
-    });
+    await saveSurveyContent(survey.id, survey.contentVersion, { model, settings: identifiedSettings });
     // Two recipients of the same program: both tokens are valid, but a response belongs to exactly one
     const program = await createBoundProgram({
       keyValues: [keyValue, `${keyValue} `],
@@ -493,21 +399,10 @@ describe("survey", () => {
     const [firstParticipant, secondParticipant] = participants;
     assert.exists(firstParticipant);
     assert.exists(secondParticipant);
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: firstParticipant.token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(survey.id, 0, firstParticipant.token);
 
     await expect(
-      caller.updateSurveyResponse({
-        model: { satisfaction: 1 },
-        modelVersion: newSurveyResponse.modelVersion,
-        participantToken: secondParticipant.token,
-        partitionKey: survey.id,
-        rowKey: newSurveyResponse.rowKey,
-      }),
+      updateSurveyResponse(newSurveyResponse, 1, secondParticipant.token),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${invalidParticipantTokenErrorMessage}]`);
   });
 
@@ -515,24 +410,10 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const { survey, token } = await setupIdentifiedSurvey();
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
     // Settings are live working state, so no re-publish is involved in the switch
-    await caller.saveResourceContent({
-      content: { model, settings } satisfies SurveyResource,
-      contentVersion: survey.contentVersion + 1,
-      id: survey.id,
-    });
-    const anonymousSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 1 },
-      participantToken: "",
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
-    });
+    await saveSurveyContent(survey.id, survey.contentVersion + 1, { model, settings });
+    const anonymousSurveyResponse = await createSurveyResponse(survey.id, 1);
     const existingSurveyResponse = await caller.readSurveyResponse({
       partitionKey: survey.id,
       rowKey: newSurveyResponse.rowKey,
@@ -547,24 +428,9 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const { survey, token } = await setupIdentifiedSurvey();
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
-    });
-    await caller.saveResourceContent({
-      content: { model, settings } satisfies SurveyResource,
-      contentVersion: survey.contentVersion + 1,
-      id: survey.id,
-    });
-    const updatedSurveyResponse = await caller.updateSurveyResponse({
-      model: { satisfaction: 1 },
-      modelVersion: newSurveyResponse.modelVersion,
-      participantToken: "",
-      partitionKey: survey.id,
-      rowKey: newSurveyResponse.rowKey,
-    });
+    const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
+    await saveSurveyContent(survey.id, survey.contentVersion + 1, { model, settings });
+    const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1);
 
     // The funnel joins participants × responses by token, so an Anonymous-mode edit must not erase who answered
     expect(updatedSurveyResponse.participantToken).toBe(token);
@@ -574,20 +440,11 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    await caller.saveResourceContent({
-      content: { model, settings: closedSettings } satisfies SurveyResource,
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings: closedSettings });
 
-    await expect(
-      caller.createSurveyResponse({
-        model: { satisfaction: 0 },
-        participantToken: "",
-        partitionKey: newResource.id,
-        rowKey: crypto.randomUUID(),
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${closedSurveyErrorMessage}]`);
+    await expect(createSurveyResponse(newResource.id, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${closedSurveyErrorMessage}]`,
+    );
   });
 
   test("fails create for a recycle-binned survey", async () => {
@@ -596,58 +453,33 @@ describe("survey", () => {
     const newResource = await caller.createResource({ name });
     await caller.deleteResource({ id: newResource.id });
 
-    await expect(
-      caller.createSurveyResponse({
-        model: { satisfaction: 0 },
-        participantToken: "",
-        partitionKey: newResource.id,
-        rowKey: crypto.randomUUID(),
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    await expect(createSurveyResponse(newResource.id, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: NOT_FOUND]`,
+    );
   });
 
   test("fails update with closed survey", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     // An in-flight respondent — form open when the survey closed — gets the rejection on submit
-    await caller.saveResourceContent({
-      content: { model, settings: closedSettings } satisfies SurveyResource,
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings: closedSettings });
 
-    await expect(
-      caller.updateSurveyResponse({
-        model: { satisfaction: 1 },
-        modelVersion: newSurveyResponse.modelVersion,
-        participantToken: "",
-        partitionKey: newResource.id,
-        rowKey: newSurveyResponse.rowKey,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${closedSurveyErrorMessage}]`);
+    await expect(updateSurveyResponse(newSurveyResponse, 1)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${closedSurveyErrorMessage}]`,
+    );
   });
 
   test("serves the live closed flag over the published snapshot", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    await caller.saveResourceContent({
-      content: { model, settings } satisfies SurveyResource,
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
     await caller.publishResource({ id: newResource.id });
-    await caller.saveResourceContent({
-      content: { model: updatedModel, settings: closedSettings } satisfies SurveyResource,
-      contentVersion: newResource.contentVersion + 1,
-      id: newResource.id,
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
+      model: updatedModel,
+      settings: closedSettings,
     });
     const { content } = await caller.readPublishedResourceContent(newResource.id);
 
@@ -660,23 +492,10 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    await caller.saveResourceContent({
-      content: { model, settings: closedSettings } satisfies SurveyResource,
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings: closedSettings });
     // No re-publish involved — the toggle alone reopens collection
-    await caller.saveResourceContent({
-      content: { model, settings } satisfies SurveyResource,
-      contentVersion: newResource.contentVersion + 1,
-      id: newResource.id,
-    });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { model, settings });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
 
     expect(newSurveyResponse.partitionKey).toBe(newResource.id);
   });
@@ -685,18 +504,8 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
-    await caller.createSurveyResponse({
-      model: { satisfaction: 1 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    await createSurveyResponse(newResource.id, 1);
     await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
     const responseCount = await caller.countSurveyResponses({ id: newResource.id });
 
@@ -710,12 +519,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
 
     await expect(
@@ -729,12 +533,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await mockSessionOnce(mockContext.db);
 
     await expect(
@@ -747,12 +546,7 @@ describe("survey", () => {
 
     const newResource = await caller.createResource({ name });
     const otherResource = await caller.createResource({ name });
-    const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
 
     // The partition key is derived from the owner-checked id, so another survey's id cannot reach this row
     await expect(
@@ -770,12 +564,7 @@ describe("survey", () => {
 
     expect(emptyCount).toStrictEqual({ count: 0, isCapped: false });
 
-    await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
-      participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
+    await createSurveyResponse(newResource.id, 0);
     const responseCount = await caller.countSurveyResponses({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
