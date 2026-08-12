@@ -3,6 +3,7 @@
     <MessageContentHeader />
     <v-divider />
     <MessageContentCallPanel />
-    <MessageContentMessages />
+    <MessageModelMessageList />
+    <MessageModelMessageJumpToPresentSnackbar />
   </v-sheet>
 </template>
