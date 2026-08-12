@@ -14,7 +14,7 @@
     "**/auto-imports.d.ts",
     "**/composables/visual/useFluidSimulator.ts"
   ],
-  "jsPlugins": ["./scripts/oxlint/persistThenNotify.ts"],
+  "jsPlugins": ["./scripts/oxlint/passThroughHelper.ts", "./scripts/oxlint/persistThenNotify.ts"],
   "options": {
     "typeAware": true
   },
@@ -40,18 +40,24 @@
             "paths": [
               {
                 "importNames": ["randomUUID"],
-                "message": "Use the global `crypto.randomUUID()` \u2014 it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+                "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
                 "name": "node:crypto"
               }
             ],
             "patterns": [
               {
                 "group": ["@/**", "~/**"],
-                "message": "`shared/` is parsed by the server too, so it may not reach into the client-only app tree \u2014 see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`."
+                "message": "`shared/` is parsed by the server too, so it may not reach into the client-only app tree — see /docs/architecture/module-boundaries. Move the code to `shared/`, or give the client concern its own twin under `app/`."
               }
             ]
           }
         ]
+      }
+    },
+    {
+      "files": ["**/*.bench.ts", "**/*.test.ts"],
+      "rules": {
+        "pass-through-helper/no-forwarding-wrapper": "off"
       }
     }
   ],
@@ -109,7 +115,7 @@
         "paths": [
           {
             "importNames": ["randomUUID"],
-            "message": "Use the global `crypto.randomUUID()` \u2014 it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+            "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
             "name": "node:crypto"
           }
         ]
@@ -158,7 +164,7 @@
       "error",
       {
         "types": {
-          "Omit": "Use `Except` from `type-fest` instead of `Omit` \u2014 `Except` errors when a key is absent from the source type, catching the typos `Omit` silently ignores."
+          "Omit": "Use `Except` from `type-fest` instead of `Omit` — `Except` errors when a key is absent from the source type, catching the typos `Omit` silently ignores."
         }
       }
     ],
@@ -237,6 +243,7 @@
     "vue/define-props-destructuring": "off",
     "vue/max-props": "off",
     "vue/require-default-prop": "off",
-    "yoda": ["error", "never"]
+    "yoda": ["error", "never"],
+    "pass-through-helper/no-forwarding-wrapper": "error"
   }
 }
