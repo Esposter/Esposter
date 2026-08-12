@@ -32,8 +32,8 @@ describe(countSurveyResponses, () => {
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
   });
 
-  // The ceiling is the dataset's, not a page's — a survey between the two used to read "1000+" here and its
-  // Real total on the Responses blade
+  // The ceiling is the dataset's, not a page's — reading it off a page shows a survey between the two as
+  // "1000+" here while the Responses blade shows its real total
   test("counts exactly at the dataset ceiling uncapped", async () => {
     expect.hasAssertions();
 

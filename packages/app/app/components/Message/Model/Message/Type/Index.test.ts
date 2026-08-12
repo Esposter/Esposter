@@ -22,9 +22,8 @@ describe("messageModelMessageTypeIndex", () => {
     return message;
   };
 
-  // The forward branch used to re-implement the body, so forwarding a message silently dropped both the edited
-  // Marker and the slot the inline editor arrives through — matrixed over the flag because one branch is the
-  // Only thing that differs
+  // Both branches render the one body, so a forward that re-implements it drops the edited marker and the slot
+  // The inline editor arrives through — matrixed over the flag because that branch is the only thing differing
   test.each([false, true])("marks an edited message as edited with isForward %s", async (isForward) => {
     expect.hasAssertions();
 

@@ -43,7 +43,8 @@ describe(getReorderedRoomCategories, () => {
     expect(getReorderedRoomCategories(categories, category.id, direction)).toBeUndefined();
   });
 
-  // A findIndex miss used to fall through to splice(-1, 1), silently moving the last category instead
+  // A findIndex miss reads as -1, which splice takes as the last index — so falling through moves the last
+  // Category instead of refusing
   test("is undefined when the category is not in the list", () => {
     expect.hasAssertions();
 

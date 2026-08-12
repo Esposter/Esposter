@@ -8,26 +8,45 @@ import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
+// What each bit grants, which the shift alone cannot say. Bit order is the wire format and is fixed by
+// `docs/esbabbler/rbac.md`; the sort is disabled because that order, not the alphabet, is the contract.
+// Text channel:
+// - ReadMessages — see message history / view channel
+// - SendMessages — post messages
+// - ManageMessages — delete/pin others' messages
+// - MentionEveryone — use @here / @everyone
+//
+// General:
+// - ManageRoom — edit room name, image, settings
+// - ManageRoles — create/edit/delete roles below own top position
+// - ManageInvites — create/delete invite codes
+//
+// Moderation:
+// - KickMembers — remove a member from room
+// - BanMembers — permanent ban
+// - MuteMembers — force-mute/unmute in call
+// - MoveMembers — kick from call
+// - ManageNicknames — set per-room nicknames for other members
+//
+// Advanced:
+// - ManageWebhooks — create/edit/delete webhooks
+// - Administrator — all permissions; bypasses hierarchy checks
 /* eslint-disable perfectionist/sort-objects */
 export const RoomPermission = {
-  // Text channel
-  ReadMessages: 1n << 0n, // 1    — see message history / view channel
-  SendMessages: 1n << 1n, // 2    — post messages
-  ManageMessages: 1n << 2n, // 4    — delete/pin others' messages
-  MentionEveryone: 1n << 3n, // 8    — use @here / @everyone
-  // General
-  ManageRoom: 1n << 4n, // 16   — edit room name, image, settings
-  ManageRoles: 1n << 5n, // 32   — create/edit/delete roles below own top position
-  ManageInvites: 1n << 6n, // 64   — create/delete invite codes
-  // Moderation
-  KickMembers: 1n << 7n, // 128  — remove a member from room
-  BanMembers: 1n << 8n, // 256  — permanent ban
-  MuteMembers: 1n << 9n, // 512  — force-mute/unmute in call
-  MoveMembers: 1n << 10n, // 1024 — kick from call
-  ManageNicknames: 1n << 11n, // 2048 — set per-room nicknames for other members
-  // Advanced
-  ManageWebhooks: 1n << 12n, // 4096 — create/edit/delete webhooks
-  Administrator: 1n << 13n, // 8192 — all permissions; bypasses hierarchy checks; always the highest bit
+  ReadMessages: 1n << 0n,
+  SendMessages: 1n << 1n,
+  ManageMessages: 1n << 2n,
+  MentionEveryone: 1n << 3n,
+  ManageRoom: 1n << 4n,
+  ManageRoles: 1n << 5n,
+  ManageInvites: 1n << 6n,
+  KickMembers: 1n << 7n,
+  BanMembers: 1n << 8n,
+  MuteMembers: 1n << 9n,
+  MoveMembers: 1n << 10n,
+  ManageNicknames: 1n << 11n,
+  ManageWebhooks: 1n << 12n,
+  Administrator: 1n << 13n,
 } as const;
 /* eslint-enable perfectionist/sort-objects */
 

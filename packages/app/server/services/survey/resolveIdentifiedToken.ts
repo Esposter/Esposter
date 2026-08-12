@@ -28,8 +28,8 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
   // And only an actual purge — not a recoverable soft-delete — should invalidate them.
   //
   // The binding is a column, written in the same transaction as the content it is projected from, so the whole
-  // Candidate set is one indexed lookup. It used to be read out of blob content, which meant opening every
-  // Program the owner has on every submission to an identified survey — by an unauthenticated caller, at that.
+  // Candidate set is one indexed lookup. Reading it out of blob content instead opens every Program the owner
+  // Has on every submission to an identified survey — by an unauthenticated caller, at that.
   const boundPrograms = await db.query.resources.findMany({
     where: {
       boundResourceId: { eq: surveyId },

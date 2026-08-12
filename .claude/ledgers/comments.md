@@ -2,18 +2,18 @@
 
 | Unit                                                    | Swept      | Notes                                                     |
 | ------------------------------------------------------- | ---------- | --------------------------------------------------------- |
-| `packages/app`                                          | 2026-08-10 | components, composables, stores, services, server, shared |
-| `packages/azure-functions`                              | 2026-08-10 |                                                           |
-| `packages/azure-mock`                                   | 2026-08-10 | filter/search/container mocks                             |
-| `packages/configuration`                                | 2026-08-10 | external lists, `global.d.ts`                             |
-| `packages/db`, `packages/db-mock`, `packages/db-schema` | 2026-08-10 | schema + models                                           |
-| `packages/infra`                                        | 2026-08-10 | event subscriptions, GitHub rulesets                      |
-| `packages/parse-tmx`                                    | 2026-08-10 | `TMXNode.ts`                                              |
-| `packages/shared`, `packages/shared-node`               | 2026-08-10 | `takeOne`                                                 |
-| `packages/virrun`                                       | 2026-08-10 | the WSL mirror prose is the bulk of it                    |
-| `packages/vue-phaserjs`                                 | 2026-08-10 | composables, store, models, test setup                    |
-| `packages/xml2js`                                       | 2026-08-10 | `Parser.ts`                                               |
-| repo root — `scripts/`, `.claude/`, root `*.config.ts`  | 2026-08-10 | workflow scripts and their tests                          |
+| `packages/app`                                          | 2026-08-12 | components, composables, stores, services, server, shared |
+| `packages/azure-functions`                              | 2026-08-12 |                                                           |
+| `packages/azure-mock`                                   | 2026-08-12 | filter/search/container mocks                             |
+| `packages/configuration`                                | 2026-08-12 | external lists, `global.d.ts`                             |
+| `packages/db`, `packages/db-mock`, `packages/db-schema` | 2026-08-12 | schema + models                                           |
+| `packages/infra`                                        | 2026-08-12 | event subscriptions, GitHub rulesets                      |
+| `packages/parse-tmx`                                    | 2026-08-12 | `TMXNode.ts`                                              |
+| `packages/shared`, `packages/shared-node`               | 2026-08-12 | `takeOne`                                                 |
+| `packages/virrun`                                       | 2026-08-12 | the WSL mirror prose is the bulk of it                    |
+| `packages/vue-phaserjs`                                 | 2026-08-12 | composables, store, models, test setup                    |
+| `packages/xml2js`                                       | 2026-08-12 | `Parser.ts`                                               |
+| repo root — `scripts/`, `.claude/`, root `*.config.ts`  | 2026-08-12 | workflow scripts and their tests                          |
 
 Each pass re-checks only files changed since its unit's date, then bumps it. Greps:
 

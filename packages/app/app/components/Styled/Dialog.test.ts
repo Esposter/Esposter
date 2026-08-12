@@ -34,8 +34,8 @@ describe("styledDialog", () => {
     document.body.innerHTML = "";
   });
 
-  // Every dialog is meant to reach for this shell, so the two things that used to force a consumer to re-roll it
-  // Are what these pin: a dialog with nothing to confirm, and a confirm button that spells out the default colour
+  // Every dialog is meant to reach for this shell, so what these pin are the two shapes whose absence forces a
+  // Consumer to re-roll it: a dialog with nothing to confirm, and a confirm button spelling out the default colour
   test("renders no actions row when there is nothing to confirm", async () => {
     expect.hasAssertions();
 
