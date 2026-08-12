@@ -10,6 +10,7 @@ import { callEventEmitter } from "@@/server/services/message/events/callEventEmi
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { callRouter } from "@@/server/trpc/routers/call";
+import { setCallParticipant } from "@@/server/trpc/routers/call/setCallParticipant.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { callSessionsInMessage, roomsInMessage } from "@esposter/db-schema";
 import { ForbiddenError } from "@esposter/shared";
@@ -92,23 +93,7 @@ describe("call", () => {
     const getSessionPayload = getMockSession();
     replayMockSession(getSessionPayload);
     const { callSessionId } = await callCaller.createCall();
-    callSessionParticipantMap.set(
-      callSessionId,
-      new Map([
-        [
-          getSessionPayload.session.id,
-          {
-            id: getSessionPayload.session.id,
-            image: getSessionPayload.user.image,
-            isCameraEnabled: false,
-            isHandRaised: false,
-            isMuted: false,
-            name: getSessionPayload.user.name,
-            userId: getSessionPayload.user.id,
-          },
-        ],
-      ]),
-    );
+    setCallParticipant(callSessionId, getSessionPayload);
     const emitSpy = vi.spyOn(callEventEmitter, "emit");
     replayMockSession(getSessionPayload);
     await callCaller.setHandRaised({

@@ -6,13 +6,13 @@ import { createId } from "#shared/util/math/random/createId";
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
-import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { deleteCallParticipant } from "@@/server/services/message/call/deleteCallParticipant";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { callRouter } from "@@/server/trpc/routers/call";
 import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
+import { setCallParticipant } from "@@/server/trpc/routers/call/setCallParticipant.test";
 import { CALL_ID_LENGTH, callSessionsInMessage, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -81,10 +81,7 @@ describe("call/knocker", () => {
       const { callSessionId } = await callSessionCaller.createCall();
       await mockSessionOnce(mockContext.db);
       await knockerCaller.knockCall({ id: callSessionId });
-      callSessionParticipantMap.set(
-        callSessionId,
-        new Map([[owner.session.id, createParticipant(owner.session, owner.user)]]),
-      );
+      setCallParticipant(callSessionId, owner);
       const emitSpy = vi.spyOn(callEventEmitter, "emit");
 
       deleteCallParticipant(callSessionId, owner.session.id);
@@ -102,10 +99,7 @@ describe("call/knocker", () => {
       const { callSessionId } = await callSessionCaller.createCall();
       const { session: knockerSession } = await mockSessionOnce(mockContext.db);
       await knockerCaller.knockCall({ id: callSessionId });
-      callSessionParticipantMap.set(
-        callSessionId,
-        new Map([[creatorPayload.session.id, createParticipant(creatorPayload.session, creatorPayload.user)]]),
-      );
+      setCallParticipant(callSessionId, creatorPayload);
       const emitSpy = vi.spyOn(callEventEmitter, "emit");
       replayMockSession(creatorPayload);
 
@@ -138,10 +132,7 @@ describe("call/knocker", () => {
       const { session: knockerSession } = await mockSessionOnce(mockContext.db);
       await knockerCaller.knockCall({ id: callSessionId });
       const nonCreatorPayload = await mockSessionOnce(mockContext.db);
-      callSessionParticipantMap.set(
-        callSessionId,
-        new Map([[nonCreatorPayload.session.id, createParticipant(nonCreatorPayload.session, nonCreatorPayload.user)]]),
-      );
+      setCallParticipant(callSessionId, nonCreatorPayload);
 
       await expect(
         knockerCaller.admitKnocker({ callSessionId, sessionId: knockerSession.id }),
@@ -154,10 +145,7 @@ describe("call/knocker", () => {
       expect.hasAssertions();
 
       const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-      callSessionParticipantMap.set(
-        nonExistentCallSessionId,
-        new Map([[sessionPayload.session.id, createParticipant(sessionPayload.session, sessionPayload.user)]]),
-      );
+      setCallParticipant(nonExistentCallSessionId, sessionPayload);
 
       await expect(
         knockerCaller.admitKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
@@ -167,6 +155,8 @@ describe("call/knocker", () => {
     });
   });
 
+  // The same three gates as admitKnocker, written out rather than shared with it: every one of them refuses by
+  // Naming the operation, and an inline snapshot belongs to its call site — a `test.each` row cannot carry one
   describe("dismissKnocker", () => {
     test("call creator dismisses knocker — removes knocker and emits event", async () => {
       expect.hasAssertions();
@@ -175,10 +165,7 @@ describe("call/knocker", () => {
       const { callSessionId } = await callSessionCaller.createCall();
       const { session: knockerSession } = await mockSessionOnce(mockContext.db);
       await knockerCaller.knockCall({ id: callSessionId });
-      callSessionParticipantMap.set(
-        callSessionId,
-        new Map([[creatorPayload.session.id, createParticipant(creatorPayload.session, creatorPayload.user)]]),
-      );
+      setCallParticipant(callSessionId, creatorPayload);
       const emitSpy = vi.spyOn(callEventEmitter, "emit");
       replayMockSession(creatorPayload);
 
@@ -210,10 +197,7 @@ describe("call/knocker", () => {
       const { session: knockerSession } = await mockSessionOnce(mockContext.db);
       await knockerCaller.knockCall({ id: callSessionId });
       const nonCreatorPayload = await mockSessionOnce(mockContext.db);
-      callSessionParticipantMap.set(
-        callSessionId,
-        new Map([[nonCreatorPayload.session.id, createParticipant(nonCreatorPayload.session, nonCreatorPayload.user)]]),
-      );
+      setCallParticipant(callSessionId, nonCreatorPayload);
 
       await expect(
         knockerCaller.dismissKnocker({ callSessionId, sessionId: knockerSession.id }),
@@ -226,10 +210,7 @@ describe("call/knocker", () => {
       expect.hasAssertions();
 
       const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-      callSessionParticipantMap.set(
-        nonExistentCallSessionId,
-        new Map([[sessionPayload.session.id, createParticipant(sessionPayload.session, sessionPayload.user)]]),
-      );
+      setCallParticipant(nonExistentCallSessionId, sessionPayload);
 
       await expect(
         knockerCaller.dismissKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),

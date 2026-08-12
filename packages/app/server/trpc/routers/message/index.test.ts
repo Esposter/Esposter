@@ -49,6 +49,14 @@ vi.mock(import("@@/server/services/message/readMessages"), async (importOriginal
   return { readMessages: readMessagesMock };
 });
 
+// Every message posted here mentions whoever is sending it, which is what makes the stored row carry something
+// Worth asserting — so the body follows the session rather than being restated by each test
+const createOwnMentionMessage = () => createMentionMessage(getMockSession().user.id);
+
+// A message addresses itself by the pair its own entity carries, so every write against one is keyed off the row
+// Rather than rebuilding the pair at each call site
+const getCompositeKey = ({ partitionKey, rowKey }: MessageEntity) => ({ partitionKey, rowKey });
+
 describe("message", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId } = setupRoomSuite();
   let mockContext: Context;
@@ -95,6 +103,17 @@ describe("message", () => {
     return { isFirstWriting, resolveSecondWritten };
   };
 
+  // The blob an attachment points at, which only the tests that assert a deletion have to actually put there
+  const setMessageAssetBlob = (id: string) => {
+    MockContainerDatabase.set(
+      AzureContainer.MessageAssets,
+      new Map([[getBlobName(`${roomId}/${id}`, filename), Buffer.alloc(size)]]),
+    );
+  };
+  // A room's automod list, blocking the one word the message wrapper cannot contain on its own
+  const insertWordFilter = (filterRoomId = roomId) =>
+    mockContext.db.insert(roomFiltersInMessage).values({ roomId: filterRoomId, words: [filteredWord] });
+
   beforeAll(() => {
     mockContext = getMockContext();
     messageCaller = createCallerFactory(messageRouter)(mockContext);
@@ -135,8 +154,7 @@ describe("message", () => {
   test("reads", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const readMessages = await messageCaller.readMessages({ roomId });
 
@@ -199,8 +217,7 @@ describe("message", () => {
   test("reads with cursor and includes value", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     const cursor = serialize({ rowKey: secondMessage.rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]);
@@ -224,8 +241,7 @@ describe("message", () => {
   test("reads in ascending order with cursor and includes value", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     // Limit 1 should return oldest first
@@ -262,7 +278,7 @@ describe("message", () => {
   test("advances an ascending page past an index row whose message entity is missing", async () => {
     expect.hasAssertions();
 
-    const message = createMentionMessage(getMockSession().user.id);
+    const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     // The state between createMessage's two table writes
@@ -288,7 +304,7 @@ describe("message", () => {
   test("serves the messages after one deleted moments earlier", async () => {
     expect.hasAssertions();
 
-    const message = createMentionMessage(getMockSession().user.id);
+    const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     await messageCaller.deleteMessage({ partitionKey: roomId, rowKey: firstMessage.rowKey });
@@ -313,8 +329,7 @@ describe("message", () => {
   test("reads by row keys", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const readMessages = await messageCaller.readMessagesByRowKeys({
       roomId,
@@ -330,7 +345,7 @@ describe("message", () => {
   test("reads by row keys newest-first regardless of the requested order", async () => {
     expect.hasAssertions();
 
-    const message = createMentionMessage(getMockSession().user.id);
+    const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     const readMessages = await messageCaller.readMessagesByRowKeys({
@@ -396,7 +411,7 @@ describe("message", () => {
       type: MessageType.Poll,
     });
     const member = await createMember();
-    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const compositeKey = getCompositeKey(newMessage);
     // Joining posts a system message of its own, so the poll is read back by its own key rather than by position
     const rowKeys = [newMessage.rowKey];
     await mockSessionOnce(mockContext.db, member);
@@ -433,7 +448,7 @@ describe("message", () => {
     });
     const member = await createMember();
     const ownerUserId = getMockSession().user.id;
-    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const compositeKey = getCompositeKey(newMessage);
     const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
     // Only one session is queued, so the two votes run as the member and the owner — both picking the same
     // Option, so the assertion never depends on which of them ran first
@@ -517,8 +532,7 @@ describe("message", () => {
   test("on creates replays missed messages in ascending order", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     const thirdMessage = await messageCaller.createMessage({ message, roomId });
@@ -551,7 +565,7 @@ describe("message", () => {
 
     const member = await createMember();
     const ownerMessage = await messageCaller.createMessage({
-      message: createMentionMessage(getMockSession().user.id),
+      message: createOwnMentionMessage(),
       roomId,
     });
     const onCreateMessage = await messageCaller.onCreateMessage({
@@ -603,8 +617,7 @@ describe("message", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({
       files: [{ filename, id: crypto.randomUUID(), mimetype, size }],
       message,
@@ -629,7 +642,7 @@ describe("message", () => {
   test("fails update with a member who is not the author", async () => {
     expect.hasAssertions();
 
-    const message = createMentionMessage(getMockSession().user.id);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
@@ -646,8 +659,7 @@ describe("message", () => {
   test("on updates", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const onUpdateMessage = await messageCaller.onUpdateMessage({ roomId });
     const data = await getFirstEmit(
@@ -666,10 +678,9 @@ describe("message", () => {
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    await messageCaller.deleteMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    await messageCaller.deleteMessage(getCompositeKey(newMessage));
 
     const readMessages = await messageCaller.readMessages({ roomId });
 
@@ -679,17 +690,12 @@ describe("message", () => {
   test("on deletes", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId });
     const data = await getFirstEmit(
       () => onDeleteMessage,
-      () =>
-        messageCaller.deleteMessage({
-          partitionKey: newMessage.partitionKey,
-          rowKey: newMessage.rowKey,
-        }),
+      () => messageCaller.deleteMessage(getCompositeKey(newMessage)),
     );
 
     expect(data.partitionKey).toBe(newMessage.partitionKey);
@@ -699,8 +705,7 @@ describe("message", () => {
   test("forwards message", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const forwardedRoom = await roomCaller.createRoom({ name });
 
@@ -719,8 +724,7 @@ describe("message", () => {
   test("forwards message with optional message", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const forwardedRoom = await roomCaller.createRoom({ name });
 
@@ -743,7 +747,7 @@ describe("message", () => {
     expect.hasAssertions();
 
     const source = await messageCaller.createMessage({
-      message: createMentionMessage(getMockSession().user.id),
+      message: createOwnMentionMessage(),
       roomId,
     });
     const filteredRoom = await roomCaller.createRoom({ name });
@@ -819,7 +823,7 @@ describe("message", () => {
     // Checked together, so a clean note alongside a filtered body does not buy the forward a pass either.
     const source = await messageCaller.createMessage({ message: filteredMessage, roomId });
     const filteredRoom = await roomCaller.createRoom({ name });
-    await mockContext.db.insert(roomFiltersInMessage).values({ roomId: filteredRoom.id, words: [filteredWord] });
+    await insertWordFilter(filteredRoom.id);
     const member = await createMember();
     await createRoomMember(mockContext, filteredRoom.id, member);
     await mockSessionOnce(mockContext.db, member);
@@ -985,10 +989,7 @@ describe("message", () => {
       files: [{ filename, id, mimetype, size }],
       roomId,
     });
-    MockContainerDatabase.set(
-      AzureContainer.MessageAssets,
-      new Map([[getBlobName(`${roomId}/${id}`, filename), Buffer.alloc(size)]]),
-    );
+    setMessageAssetBlob(id);
 
     await messageCaller.deleteFile({ id, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
 
@@ -1016,7 +1017,7 @@ describe("message", () => {
       ],
       roomId,
     });
-    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const compositeKey = getCompositeKey(newMessage);
     const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
     const firstDelete = messageCaller.deleteFile({ ...compositeKey, id: firstId });
     await isFirstWriting;
@@ -1062,7 +1063,7 @@ describe("message", () => {
       roomId,
     });
 
-    await messageCaller.deleteMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    await messageCaller.deleteMessage(getCompositeKey(newMessage));
 
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert(blobDeletionEvents);
@@ -1083,10 +1084,7 @@ describe("message", () => {
       files: [{ filename, id: newFileId, mimetype, size }],
       roomId,
     });
-    MockContainerDatabase.set(
-      AzureContainer.MessageAssets,
-      new Map([[getBlobName(`${roomId}/${newFileId}`, filename), Buffer.alloc(size)]]),
-    );
+    setMessageAssetBlob(newFileId);
 
     await expect(
       messageCaller.deleteFile({ id: deleteFileId, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
@@ -1099,17 +1097,13 @@ describe("message", () => {
     expect.hasAssertions();
 
     const id = crypto.randomUUID();
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({
       files: [{ filename, id, mimetype, size }],
       message,
       roomId,
     });
-    MockContainerDatabase.set(
-      AzureContainer.MessageAssets,
-      new Map([[getBlobName(`${roomId}/${id}`, filename), Buffer.alloc(size)]]),
-    );
+    setMessageAssetBlob(id);
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId });
     const trackedData = await getFirstEmit(
       () => onCreateMessage,
@@ -1138,8 +1132,7 @@ describe("message", () => {
   test("fails delete file with message without files", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
 
     const id = crypto.randomUUID();
@@ -1158,14 +1151,10 @@ describe("message", () => {
   test("deletes link preview response", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
 
-    await messageCaller.deleteLinkPreviewResponse({
-      partitionKey: newMessage.partitionKey,
-      rowKey: newMessage.rowKey,
-    });
+    await messageCaller.deleteLinkPreviewResponse(getCompositeKey(newMessage));
 
     const updatedMessages = await messageCaller.readMessagesByRowKeys({
       roomId,
@@ -1181,9 +1170,9 @@ describe("message", () => {
   test("deletes link preview response without reverting a concurrent edit", async () => {
     expect.hasAssertions();
 
-    const message = createMentionMessage(getMockSession().user.id);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const compositeKey = getCompositeKey(newMessage);
     const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
     const clearLinkPreviewResponse = messageCaller.deleteLinkPreviewResponse(compositeKey);
     await isFirstWriting;
@@ -1203,11 +1192,10 @@ describe("message", () => {
   test("pins message and creates system message", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
 
-    await messageCaller.pinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    await messageCaller.pinMessage(getCompositeKey(newMessage));
 
     const readMessages = await messageCaller.readMessages({ roomId });
 
@@ -1223,12 +1211,11 @@ describe("message", () => {
   test("unpins message", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
 
-    await messageCaller.pinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
-    await messageCaller.unpinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    await messageCaller.pinMessage(getCompositeKey(newMessage));
+    await messageCaller.unpinMessage(getCompositeKey(newMessage));
 
     const readMessages = await messageCaller.readMessages({ roomId });
 
@@ -1243,9 +1230,9 @@ describe("message", () => {
   test("unpins message without reverting a concurrent edit", async () => {
     expect.hasAssertions();
 
-    const message = createMentionMessage(getMockSession().user.id);
+    const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const compositeKey = getCompositeKey(newMessage);
     await messageCaller.pinMessage(compositeKey);
     const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
     const unpin = messageCaller.unpinMessage(compositeKey);
@@ -1315,7 +1302,7 @@ describe("message", () => {
       // A forward is a send, so it advances the same clock it was checked against — otherwise the stale
       // LastMessageAt keeps passing and forwarding floods a room slowmode is supposed to throttle
       const source = await messageCaller.createMessage({
-        message: createMentionMessage(getMockSession().user.id),
+        message: createOwnMentionMessage(),
         roomId,
       });
       await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
@@ -1342,8 +1329,7 @@ describe("message", () => {
 
       // Slowmode throttles the room, not its moderators — the owner sends as fast as they like
       await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
-      const userId = getMockSession().user.id;
-      const message = createMentionMessage(userId);
+      const message = createOwnMentionMessage();
       vi.advanceTimersByTime(1);
       await messageCaller.createMessage({ message, roomId });
       vi.advanceTimersByTime(1);
@@ -1373,9 +1359,8 @@ describe("message", () => {
 
       // Read-only silences the room, not its moderators — the owner always may
       await roomCaller.updateRoom({ id: roomId, isReadOnly: true });
-      const userId = getMockSession().user.id;
 
-      const createdMessage = await messageCaller.createMessage({ message: createMentionMessage(userId), roomId });
+      const createdMessage = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
 
       expect(createdMessage).toBeDefined();
     });
@@ -1419,7 +1404,7 @@ describe("message", () => {
         .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
       await expect(
-        messageCaller.createMessage({ message: createMentionMessage(userId), roomId }),
+        messageCaller.createMessage({ message: createOwnMentionMessage(), roomId }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
     });
   });
@@ -1429,7 +1414,7 @@ describe("message", () => {
       expect.hasAssertions();
 
       // The filter is a moderation tool, so it never fires on the moderator wielding it
-      await mockContext.db.insert(roomFiltersInMessage).values({ roomId, words: [filteredWord] });
+      await insertWordFilter();
 
       const createdMessage = await messageCaller.createMessage({
         message: filteredMessage,
@@ -1442,7 +1427,7 @@ describe("message", () => {
     test("message with blocked word throws FORBIDDEN", async () => {
       expect.hasAssertions();
 
-      await mockContext.db.insert(roomFiltersInMessage).values({ roomId, words: [filteredWord] });
+      await insertWordFilter();
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
@@ -1454,9 +1439,8 @@ describe("message", () => {
     test("message without blocked word succeeds", async () => {
       expect.hasAssertions();
 
-      await mockContext.db.insert(roomFiltersInMessage).values({ roomId, words: [filteredWord] });
-      const userId = getMockSession().user.id;
-      const message = createMentionMessage(userId);
+      await insertWordFilter();
+      const message = createOwnMentionMessage();
 
       const createdMessage = await messageCaller.createMessage({ message, roomId });
 
@@ -1491,8 +1475,7 @@ describe("message", () => {
     test("followThread then readFollowedThreads returns the thread root", async () => {
       expect.hasAssertions();
 
-      const userId = getMockSession().user.id;
-      const root = await messageCaller.createMessage({ message: createMentionMessage(userId), roomId });
+      const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
       await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
 
       const { threads } = await messageCaller.readFollowedThreads({ roomId });
@@ -1506,8 +1489,7 @@ describe("message", () => {
     test("readFollowedThreads returns the roots newest-first", async () => {
       expect.hasAssertions();
 
-      const userId = getMockSession().user.id;
-      const message = createMentionMessage(userId);
+      const message = createOwnMentionMessage();
       const firstRoot = await messageCaller.createMessage({ message, roomId });
       const secondRoot = await messageCaller.createMessage({ message, roomId });
       // Followed oldest-root-last, so a list that merely echoed the follow order would come back reversed
@@ -1522,8 +1504,7 @@ describe("message", () => {
     test("unfollowThread removes the follow", async () => {
       expect.hasAssertions();
 
-      const userId = getMockSession().user.id;
-      const root = await messageCaller.createMessage({ message: createMentionMessage(userId), roomId });
+      const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
       await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
       await messageCaller.unfollowThread({ roomId, threadRootRowKey: root.rowKey });
 
@@ -1535,10 +1516,9 @@ describe("message", () => {
     test("readFollowedThreads keeps a follow whose root was deleted while the display list drops it", async () => {
       expect.hasAssertions();
 
-      const userId = getMockSession().user.id;
-      const root = await messageCaller.createMessage({ message: createMentionMessage(userId), roomId });
+      const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
       await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
-      await messageCaller.deleteMessage({ partitionKey: root.partitionKey, rowKey: root.rowKey });
+      await messageCaller.deleteMessage(getCompositeKey(root));
 
       const { threadRootRowKeys, threads } = await messageCaller.readFollowedThreads({ roomId });
 

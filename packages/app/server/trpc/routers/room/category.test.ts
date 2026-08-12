@@ -112,7 +112,9 @@ describe("room/category", () => {
         { id: newRoomCategory.id, position: 1 },
         { id: missingId, position: 0 },
       ]),
-    ).rejects.toThrow(new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomCategory, missingId).message);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomCategory, missingId).message}]`,
+    );
 
     const readRoomCategories = await roomCategoryCaller.readRoomCategories();
 

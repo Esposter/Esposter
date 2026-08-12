@@ -28,6 +28,8 @@ describe("moderation", () => {
   let roomId: string;
   const durationMs = 1;
   const note = "note";
+  const position = 5;
+  const emptyFilters = { actorUserId: "", targetUserId: "", type: "" } as const;
   const readBanRows = (userId: string) =>
     mockContext.db
       .select()
@@ -127,38 +129,6 @@ describe("moderation", () => {
       },
     );
 
-    test(`member without ${RoomPermission.BanMembers} permission cannot ban — throws UNAUTHORIZED`, async () => {
-      expect.hasAssertions();
-
-      const target = await createMember();
-      const { member: actor } = await setupMemberWithRole(RoomPermission.KickMembers, 5);
-      await mockSessionOnce(mockContext.db, actor);
-
-      await expect(
-        moderationCaller.executeAdminAction({
-          roomId,
-          targetUserId: target.id,
-          type: AdminActionType.CreateBan,
-        }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-    });
-
-    test("isManageable: member cannot ban another member at equal position — throws UNAUTHORIZED", async () => {
-      expect.hasAssertions();
-
-      const { member: actor } = await setupMemberWithRole(RoomPermission.BanMembers, 5);
-      const { member: target } = await setupMemberWithRole(0n, 5);
-      await mockSessionOnce(mockContext.db, actor);
-
-      await expect(
-        moderationCaller.executeAdminAction({
-          roomId,
-          targetUserId: target.id,
-          type: AdminActionType.CreateBan,
-        }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-    });
-
     test(`${AdminActionType.SoftBan}: owner soft-bans member — ban row inserted, usersToRoomsInMessage row deleted`, async () => {
       expect.hasAssertions();
 
@@ -218,33 +188,9 @@ describe("moderation", () => {
       expect(result.items).toHaveLength(1);
       expect(takeOne(result.items).userId).toBe(member.id);
     });
-
-    test(`member without ${RoomPermission.BanMembers} permission cannot readBans — throws UNAUTHORIZED`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(moderationCaller.readBans({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: UNAUTHORIZED]`,
-      );
-    });
   });
 
   describe("readModerationLog", () => {
-    const emptyFilters = { actorUserId: "", targetUserId: "", type: "" } as const;
-
-    test(`member without ${RoomPermission.ManageRoom} permission cannot readModerationLog — throws UNAUTHORIZED`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(
-        moderationCaller.readModerationLog({ ...emptyFilters, roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-    });
-
     test("filters by type", async () => {
       expect.hasAssertions();
 
@@ -346,17 +292,6 @@ describe("moderation", () => {
         `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Ban, member.id).message}]`,
       );
     });
-
-    test(`member without ${RoomPermission.BanMembers} permission cannot delete ban — throws UNAUTHORIZED`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(
-        moderationCaller.deleteBan({ roomId, userId: crypto.randomUUID() }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-    });
   });
 
   describe("createModerationNote", () => {
@@ -371,29 +306,6 @@ describe("moderation", () => {
       expect(result.items).toHaveLength(1);
       expect(takeOne(result.items).note).toBe(note);
       expect(takeOne(result.items).targetUserId).toBe(member.id);
-    });
-
-    test(`member without ${RoomPermission.KickMembers} permission cannot createModerationNote — throws UNAUTHORIZED`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(
-        moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-    });
-
-    test("isManageable: member cannot createModerationNote on another member at equal position — throws UNAUTHORIZED", async () => {
-      expect.hasAssertions();
-
-      const { member: actor } = await setupMemberWithRole(RoomPermission.KickMembers, 5);
-      const { member: target } = await setupMemberWithRole(0n, 5);
-      await mockSessionOnce(mockContext.db, actor);
-
-      await expect(
-        moderationCaller.createModerationNote({ note, roomId, targetUserId: target.id }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
   });
 
@@ -410,29 +322,6 @@ describe("moderation", () => {
 
       expect(result.items).toHaveLength(1);
       expect(takeOne(result.items).targetUserId).toBe(secondMember.id);
-    });
-
-    test(`member without ${RoomPermission.KickMembers} permission cannot readModerationNotes — throws UNAUTHORIZED`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
-
-      await expect(
-        moderationCaller.readModerationNotes({ roomId, targetUserId: member.id }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-    });
-
-    test("isManageable: member cannot readModerationNotes of another member at equal position — throws UNAUTHORIZED", async () => {
-      expect.hasAssertions();
-
-      const { member: actor } = await setupMemberWithRole(RoomPermission.KickMembers, 5);
-      const { member: target } = await setupMemberWithRole(0n, 5);
-      await mockSessionOnce(mockContext.db, actor);
-
-      await expect(
-        moderationCaller.readModerationNotes({ roomId, targetUserId: target.id }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
   });
 
@@ -477,4 +366,75 @@ describe("moderation", () => {
       expect(data.durationMs).toBeUndefined();
     });
   });
+
+  // Every procedure here is permission-gated and a plain member holds none of them. The guard is one guard, so
+  // What earns a line is that each procedure is actually behind it — not how any one of them refuses
+  test.each([
+    [RoomPermission.BanMembers, "readBans", () => moderationCaller.readBans({ roomId })],
+    [
+      RoomPermission.BanMembers,
+      "executeAdminAction",
+      (targetUserId: string) =>
+        moderationCaller.executeAdminAction({ roomId, targetUserId, type: AdminActionType.CreateBan }),
+    ],
+    [
+      RoomPermission.BanMembers,
+      "deleteBan",
+      (targetUserId: string) => moderationCaller.deleteBan({ roomId, userId: targetUserId }),
+    ],
+    [
+      RoomPermission.ManageRoom,
+      "readModerationLog",
+      () => moderationCaller.readModerationLog({ ...emptyFilters, roomId }),
+    ],
+    [
+      RoomPermission.KickMembers,
+      "createModerationNote",
+      (targetUserId: string) => moderationCaller.createModerationNote({ note, roomId, targetUserId }),
+    ],
+    [
+      RoomPermission.KickMembers,
+      "readModerationNotes",
+      (targetUserId: string) => moderationCaller.readModerationNotes({ roomId, targetUserId }),
+    ],
+  ])("member without %s permission cannot %s — throws UNAUTHORIZED", async (_permission, _procedureName, moderate) => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(moderate(member.id)).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  // Holding the permission is not enough: the target has to sit below the actor, and equal is not below. Each row
+  // Reaches `isManageable` down a different procedure's path, which is the part that is not shared
+  test.each([
+    [
+      RoomPermission.BanMembers,
+      "executeAdminAction",
+      (targetUserId: string) =>
+        moderationCaller.executeAdminAction({ roomId, targetUserId, type: AdminActionType.CreateBan }),
+    ],
+    [
+      RoomPermission.KickMembers,
+      "createModerationNote",
+      (targetUserId: string) => moderationCaller.createModerationNote({ note, roomId, targetUserId }),
+    ],
+    [
+      RoomPermission.KickMembers,
+      "readModerationNotes",
+      (targetUserId: string) => moderationCaller.readModerationNotes({ roomId, targetUserId }),
+    ],
+  ])(
+    "isManageable: %s cannot %s against a member at equal position — throws UNAUTHORIZED",
+    async (permission, _procedureName, moderate) => {
+      expect.hasAssertions();
+
+      const { member: actor } = await setupMemberWithRole(permission, position);
+      const { member: target } = await setupMemberWithRole(0n, position);
+      await mockSessionOnce(mockContext.db, actor);
+
+      await expect(moderate(target.id)).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    },
+  );
 });

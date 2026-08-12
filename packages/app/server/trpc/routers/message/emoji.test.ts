@@ -21,6 +21,23 @@ describe("emoji", () => {
   const message = "message";
   const emojiTag = "emojiTag";
 
+  // Every emoji hangs off a message the test has to post first, and every write against one addresses it by the
+  // Same three keys — so the pair is set up once and the keys ride the emoji rather than being restated
+  const setupEmoji = async () => {
+    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newEmoji = await emojiCaller.createEmoji({
+      emojiTag,
+      messageRowKey: newMessage.rowKey,
+      partitionKey: roomId,
+    });
+    const emojiKey = {
+      messageRowKey: newEmoji.messageRowKey,
+      partitionKey: newEmoji.partitionKey,
+      rowKey: newEmoji.rowKey,
+    };
+    return { emojiKey, newEmoji, newMessage };
+  };
+
   beforeAll(() => {
     mockContext = getMockContext();
     emojiCaller = createCallerFactory(emojiRouter)(mockContext);
@@ -43,12 +60,7 @@ describe("emoji", () => {
   test("reads emojis", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({ message, roomId });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: roomId,
-    });
+    const { newEmoji, newMessage } = await setupEmoji();
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
 
     expect(readEmojis).toHaveLength(1);
@@ -58,12 +70,7 @@ describe("emoji", () => {
   test("creates", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({ message, roomId });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: roomId,
-    });
+    const { newEmoji, newMessage } = await setupEmoji();
     const userId = getMockSession().user.id;
 
     expect(newEmoji.emojiTag).toBe(emojiTag);
@@ -76,12 +83,7 @@ describe("emoji", () => {
   test("fails create with duplicate emoji", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({ message, roomId });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: roomId,
-    });
+    const { newEmoji, newMessage } = await setupEmoji();
 
     await expect(
       emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: roomId }),
@@ -108,19 +110,10 @@ describe("emoji", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({ message, roomId });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: roomId,
-    });
+    const { emojiKey, newMessage } = await setupEmoji();
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
-    await emojiCaller.updateEmoji({
-      messageRowKey: newEmoji.messageRowKey,
-      partitionKey: newEmoji.partitionKey,
-      rowKey: newEmoji.rowKey,
-    });
+    await emojiCaller.updateEmoji(emojiKey);
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
     const userId = getMockSession().user.id;
 
@@ -131,22 +124,12 @@ describe("emoji", () => {
   test("updates twice removes user id", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({ message, roomId });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: roomId,
-    });
+    const { emojiKey, newMessage } = await setupEmoji();
     const member = await createMember();
-    const updateEmojiInput = {
-      messageRowKey: newEmoji.messageRowKey,
-      partitionKey: newEmoji.partitionKey,
-      rowKey: newEmoji.rowKey,
-    };
     await mockSessionOnce(mockContext.db, member);
-    await emojiCaller.updateEmoji(updateEmojiInput);
+    await emojiCaller.updateEmoji(emojiKey);
     await mockSessionOnce(mockContext.db, member);
-    await emojiCaller.updateEmoji(updateEmojiInput);
+    await emojiCaller.updateEmoji(emojiKey);
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
     const userId = getMockSession().user.id;
 
@@ -167,18 +150,9 @@ describe("emoji", () => {
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({ message, roomId });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: roomId,
-    });
+    const { emojiKey, newMessage } = await setupEmoji();
 
-    await emojiCaller.deleteEmoji({
-      messageRowKey: newEmoji.messageRowKey,
-      partitionKey: newEmoji.partitionKey,
-      rowKey: newEmoji.rowKey,
-    });
+    await emojiCaller.deleteEmoji(emojiKey);
 
     const readEmojis = await emojiCaller.readEmojis({
       messageRowKeys: [newMessage.rowKey],
