@@ -1,7 +1,7 @@
 import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
 import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
 import { execFileSync } from "node:child_process";
 import { afterEach, describe, expect, test } from "vitest";
