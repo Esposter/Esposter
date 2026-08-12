@@ -5,7 +5,7 @@ import type { Stats } from "#shared/models/dungeons/monster/Stats";
 import type { Status } from "#shared/models/dungeons/monster/Status";
 
 import { assetSchema } from "#shared/models/dungeons/Asset";
-import { attackSchema } from "#shared/models/dungeons/attack/Attack";
+import { attackIdSchema } from "#shared/models/dungeons/attack/AttackId";
 import { monsterKeySchema } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { statsSchema } from "#shared/models/dungeons/monster/Stats";
 import { statusSchema } from "#shared/models/dungeons/monster/Status";
@@ -28,7 +28,7 @@ export class Monster {
 
 export const monsterSchema = z.object({
   asset: assetSchema,
-  attackIds: createUniqueArraySchema(attackSchema.shape.id),
+  attackIds: createUniqueArraySchema(attackIdSchema),
   id: z.uuid(),
   key: monsterKeySchema,
   stats: statsSchema,

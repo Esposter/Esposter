@@ -18,7 +18,6 @@ export class Dungeons extends AItemEntity {
 
 export const dungeonsSchema = z.object({
   ...aItemEntitySchema.shape,
-  id: z.uuid(),
   save: saveSchema.optional(),
   settings: settingsSchema,
 }) satisfies z.ZodType<ToData<Dungeons>>;
