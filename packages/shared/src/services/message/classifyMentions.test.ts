@@ -3,17 +3,17 @@ import { classifyMentions } from "@/services/message/classifyMentions";
 import {
   MENTION_EVERYONE_ID,
   MENTION_HERE_ID,
-  MENTION_ID_ATTRIBUTE,
-  MENTION_ITEM_TYPE_ATTRIBUTE,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
 } from "@/services/message/constants";
+import { createMention } from "@/services/message/createMention.test";
 import { describe, expect, test } from "vitest";
 
-const createMention = (id: string, type?: MentionType) =>
-  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}"${type ? ` ${MENTION_ITEM_TYPE_ATTRIBUTE}="${type}"` : ""}></span>`;
-
 describe(classifyMentions, () => {
+  const userId = crypto.randomUUID();
+  const otherUserId = crypto.randomUUID();
+  const roleId = crypto.randomUUID();
+
   test("empty string", () => {
     expect.hasAssertions();
 
@@ -30,16 +30,16 @@ describe(classifyMentions, () => {
     const message = [
       createMention(MENTION_EVERYONE_ID),
       createMention(MENTION_HERE_ID),
-      createMention("user-1", MentionType.User),
-      createMention("user-2", MentionType.User),
-      createMention("role-1", MentionType.Role),
+      createMention(userId, MentionType.User),
+      createMention(otherUserId, MentionType.User),
+      createMention(roleId, MentionType.Role),
     ].join("");
 
     const result = classifyMentions(message);
 
     expect(result.broadcastIds).toStrictEqual([MENTION_EVERYONE_ID, MENTION_HERE_ID]);
-    expect(result.regularUserIds).toStrictEqual(["user-1", "user-2"]);
-    expect(result.roleIds).toStrictEqual(["role-1"]);
+    expect(result.regularUserIds).toStrictEqual([userId, otherUserId]);
+    expect(result.roleIds).toStrictEqual([roleId]);
   });
 
   test("mention without data-id is ignored", () => {

@@ -5,6 +5,7 @@ import {
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
 } from "@/services/message/constants";
+import { createMention } from "@/services/message/createMention.test";
 import { getMentions } from "@/services/message/getMentions";
 import { sanitizeTextHtml } from "@/services/sanitizeHtml/sanitizeTextHtml";
 import { takeOne } from "@/util/array/takeOne";
@@ -15,8 +16,7 @@ describe(sanitizeTextHtml, () => {
     expect.hasAssertions();
 
     const roleId = crypto.randomUUID();
-    const html = `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${roleId}" ${MENTION_ITEM_TYPE_ATTRIBUTE}="${MentionType.Role}"></span>`;
-    const result = sanitizeTextHtml(html);
+    const result = sanitizeTextHtml(createMention(roleId, MentionType.Role));
     const mention = takeOne(getMentions(result));
 
     expect(mention.getAttribute(MENTION_ID_ATTRIBUTE)).toStrictEqual(roleId);
