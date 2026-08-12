@@ -47,4 +47,10 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 - **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.
 - **Vuetify** — a few Vuetify props are typed `T | null`; use `null` only where the prop type requires it, with a comment explaining why.
 
+**Domain values — `null` where the domain already spends `""`:**
+
+`null` is also permitted, outside any boundary, where it is a **value of the domain rather than an absence** — which happens when `""` is separately meaningful, so the `""` sentinel is already taken. The spreadsheet cell is the case: `ColumnValue` is `boolean | null | number | string`, where `null` is the empty cell and `""` is a cell holding the empty string. They sort differently, filter differently (`NULL_BOOLEAN_FILTER_VALUE`), and `nullCount` counts one and not the other, so collapsing them loses data the user entered. Nor can it be an absent key: rows are `Record<string, ColumnValue>` serialized to JSON, and a dropped key is not a readable empty cell.
+
+Such a value is `null` throughout, including `?? null` to fill a hole from a missing key — the ban on `?? null` is about a fallback that only re-spells absence, not about landing on the domain's own empty. New cases are rare and each needs a comment on the type saying which real value `""` is already carrying.
+
 When checking `null` at a boundary, use `=== null` (strict equality).
