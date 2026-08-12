@@ -17,7 +17,7 @@ import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
-import { createEntity, deleteEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
+import { createEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
 import {
   AZURE_MAX_PAGE_SIZE,
   AzureTable,
@@ -75,7 +75,7 @@ export const emojiRouter = router({
   deleteEmoji: getMemberProcedure(deleteEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
     async ({ ctx, input }) => {
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
-      await deleteEntity(messagesMetadataClient, input.partitionKey, input.rowKey);
+      await messagesMetadataClient.deleteEntity(input.partitionKey, input.rowKey);
       emojiEventEmitter.emit("deleteEmoji", [input, getDevice(ctx.getSessionPayload)]);
     },
   ),

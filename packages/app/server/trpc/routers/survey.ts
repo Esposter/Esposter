@@ -15,7 +15,7 @@ import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { createEntity, deleteEntity, getEntity, updateEntity } from "@esposter/db";
+import { createEntity, getEntity, updateEntity } from "@esposter/db";
 import {
   AzureEntityType,
   AzureTable,
@@ -86,7 +86,7 @@ export const surveyRouter = router({
         AzureEntityType.SurveyResponse,
         JSON.stringify({ partitionKey: ctx.resource.id, rowKey }),
       );
-      await deleteEntity(surveyResponseClient, ctx.resource.id, rowKey);
+      await surveyResponseClient.deleteEntity(ctx.resource.id, rowKey);
     },
   ),
   readSurveyResponse: standardRateLimitedProcedure
