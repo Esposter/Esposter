@@ -138,8 +138,10 @@
     ],
     "no-use-before-define": "off",
     "no-useless-return": "off",
+    "one-var": "off",
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
+    "pass-through-helper/no-forwarding-wrapper": "error",
     "prefer-add-event-listener": "off",
     "prefer-destructuring": "off",
     "prefer-global-this": "off",
@@ -243,7 +245,6 @@
     "vue/define-props-destructuring": "off",
     "vue/max-props": "off",
     "vue/require-default-prop": "off",
-    "yoda": ["error", "never"],
-    "pass-through-helper/no-forwarding-wrapper": "error"
+    "yoda": ["error", "never"]
   }
 }
