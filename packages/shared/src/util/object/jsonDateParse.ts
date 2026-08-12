@@ -11,15 +11,13 @@ export const jsonDateParse = <T = any>(text: string): T =>
     let parsedValue = value;
 
     if (typeof value === "string") {
-      let a = ISO_DATE_REGEX.exec(value);
-
-      if (a) parsedValue = new Date(value);
+      if (ISO_DATE_REGEX.test(value)) parsedValue = new Date(value);
       else {
-        a = MS_AJAX_DATE_REGEX.exec(value);
+        const msAjaxDateMatch = MS_AJAX_DATE_REGEX.exec(value);
 
-        if (a) {
-          const b = takeOne(a, 1).split(/[-+,.]/u);
-          parsedValue = new Date(b[0] ? Number(b[0]) : 0 - Number(b[1]));
+        if (msAjaxDateMatch) {
+          const timestampParts = takeOne(msAjaxDateMatch, 1).split(/[-+,.]/u);
+          parsedValue = new Date(timestampParts[0] ? Number(timestampParts[0]) : 0 - Number(timestampParts[1]));
         }
       }
     }
