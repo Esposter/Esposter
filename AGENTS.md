@@ -94,10 +94,10 @@ Use plain `pnpm i` for dependency installs. See `packages/app/content/docs/archi
 Working is not finished. Once the change does what it should — a feature, a fix, a refactor, a docs pass, anything — run this before saying it is done:
 
 1. **`/simplify`** — the cleanup pass: reuse (`file-organization`), simplification (`typescript`, `vue-composable-patterns`), efficiency (`pinia`, `pagination`), altitude (the area's own skill). A first draft of anything non-trivial leaves duplicated copy, a constant restated in two files, a twin of an existing helper, or a special case that belonged in the shared mechanism. That gets found and fixed here, not in review.
-2. **Ground the result in tests.** Every simplification is a behaviour claim, so it needs something that fails when the claim breaks:
-   - **Add the regression test** for anything the pass exposed — a bug found, an invariant that was only ever true by accident, a shared helper that now has more callers than the one it was written for.
-   - **Trim and dedupe the tests themselves.** Repeated fixtures become one `create*` helper; twin test files become a behaviour matrix plus a thin wiring test (`testing` skill). Tests bloat exactly like code does.
-   - Skip only when the change genuinely cannot regress — a comment, a rename the compiler proves, a docs edit.
+2. **Ground the result in tests — only where a test earns its line.** This step deletes at least as often as it adds. A test is worth writing when it fails on a change someone would care about and nothing cheaper already catches that; the full criterion, and the list of tests to delete on sight, is the `testing` skill's "What to Test".
+   - **Add the regression test for what the pass exposed** — a bug found, an invariant that was only ever true by accident, a shared helper that now has more callers than the one it was written for.
+   - **Add nothing another enforcer already owns.** No test for what typecheck proves (a mechanical schema rewrite, a rename, a tightened type), for a Zod constraint, or for behaviour an existing test already covers. Such a test cannot fail honestly — it only pins the current implementation and breaks on the next real refactor.
+   - **Trim and dedupe the tests themselves.** Repeated fixtures become one `create*` helper; twin test files become a behaviour matrix plus a thin wiring test. Tests bloat exactly like code does, and removing one a change made redundant is part of that change.
 3. **Carry the docs and skills with it.** A shipped decision updates its owning docs page and, if it is a reusable convention, its owning skill (`docs`, `skill-authoring`) — in the same change, never "later".
 4. **`pnpm format` → `typecheck` → `lint:fix` → tests**, batched once at the end (`context-efficiency`, `package-scripts`).
 5. **Commit** the coherent chunk. Never push unless asked.

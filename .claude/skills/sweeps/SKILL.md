@@ -37,7 +37,7 @@ flowchart LR
 - **Behaviour-preserving only.** A finding whose fix would change behaviour is raised, never folded in — the pass has to stay revertible as a unit.
 - **One unit per commit**, so a pass that turns out wrong reverts cleanly, and the commit message names the unit.
 - **Chunked for review** — a unit that would exceed the PR file budget is split at a directory boundary and gets its own coverage line (`coderabbit` skill for the budget).
-- **Tests are part of the pass**, not a follow-up: anything the pass exposes gets the regression test it was missing, and repeated fixtures collapse (`testing` skill).
+- **Tests are part of the pass**, not a follow-up: anything the pass exposes gets the regression test it was missing, and repeated fixtures collapse (`testing` skill). A pass that only rewrote what typecheck already proves adds none — that is a result, not a gap.
 - **Verification batches once at the end** of the unit, not per file (`package-scripts`).
 - **Skipped findings, with the reason, go in the commit message.** The sweep file tracks coverage, not decisions.
 
