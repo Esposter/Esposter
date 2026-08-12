@@ -5,6 +5,8 @@ import { getFinding } from "./getFinding.test";
 import { runReview } from "./runReview.test";
 import { stubFor } from "./stubFor.test";
 
+const createCandidate = (index: number, severity: string) => ({ ...CANDIDATE, file: `f${index}.ts`, severity });
+
 // Ingest and verification. The rule underneath all of it: a candidate nobody ruled on is dropped, never
 // Reported as a verdict no agent gave.
 describe("code-review verify", () => {
@@ -27,6 +29,36 @@ describe("code-review verify", () => {
 
     expect(run.logs).toContainEqual(expect.stringContaining("dropped 3 at cap 6 — coverage truncated"));
     expect(run.result.stats?.candidates).toBe(6);
+  });
+
+  test("caps the verifier fan-out worst-first and says what it left unjudged", async () => {
+    expect.hasAssertions();
+
+    // Grouping by file bounds nothing on its own: one candidate per file is the normal shape of a wide diff, and it
+    // Degrades the phase holding most of a run's agents to one verifier per candidate. Ten one-candidate files
+    // Against `low`'s cap of eight, with the two lowest-ranked last, so a rank-blind slice would keep the wrong two.
+    const run = await runReview(
+      "low",
+      stubFor({
+        finderFor: (label) =>
+          label === "angle-A"
+            ? [0, 1, 2, 3].map((index) => createCandidate(index, "critical"))
+            : label === "angle-B"
+              ? [4, 5, 6, 7].map((index) => createCandidate(index, "major"))
+              : [8, 9].map((index) => createCandidate(index, "minor")),
+        scope: { files: Array.from({ length: 10 }, (_, index) => `f${index}.ts`) },
+      }),
+    );
+    const verifiedFiles = run.calls.filter((call) => call.label.startsWith("verify:")).map((call) => call.label);
+
+    expect(verifiedFiles).toHaveLength(8);
+    // The criticals and majors are ranked in; the two minors are what the cap cuts — never the other way round.
+    expect(verifiedFiles.filter((label) => /f(?:8|9)\.ts/u.test(label))).toHaveLength(0);
+    expect(run.result.stats).toMatchObject({ droppedAtVerifyCap: 2, verifyCeiling: 8 });
+    expect(run.logs).toContainEqual(expect.stringContaining("dropped at the 8-verifier cap"));
+    // The drop is a different cause from a dead verifier and has a different remedy, so it is stated separately
+    // Rather than folded into the count of candidates a dying agent left unjudged.
+    expect(run.result.summary).toContain("narrow the window or raise the level");
   });
 
   test("honours a self-declared kind in area mode only", async () => {

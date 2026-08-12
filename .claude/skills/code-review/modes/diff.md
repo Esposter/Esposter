@@ -49,4 +49,4 @@ So when the ask is "review the PR" (not just "review my last change"), target th
 
 ## Reporting
 
-Standard table (see SKILL.md). Findings are `correctness` or `cleanup`; `stale-record` appears as a provenance label rather than a finding kind, because a diff review only notices a stale doc when the change happens to walk past it. Auditing the record properly is what `area` mode is for.
+Standard table (see SKILL.md). Findings are `correctness` or `cleanup` — where `cleanup` now means a broken CLAUDE.md convention and nothing else, since the four quality lenses are `/simplify`'s (SKILL.md). `stale-record` appears as a provenance label rather than a finding kind, because a diff review only notices a stale doc when the change happens to walk past it. Auditing the record properly is what `area` mode is for.

@@ -9,16 +9,19 @@ import { stubFor } from "./stubFor.test";
 // Every test here pins a decision the argument parse or the entry guards already got wrong once.
 describe("code-review entry", () => {
   test.each([
-    ["", "diff", "high", ""],
+    // The default is the CHEAP level, not the widest one: a review is launched many times a day and the wide
+    // Levels are an explicit choice, so an omitted level word must not buy the fan-out of a `high` run.
+    ["", "diff", "low", ""],
+    ["low", "diff", "low", ""],
     ["high", "diff", "high", ""],
     ["diff xhigh", "diff", "xhigh", ""],
     ["area high packages/x", "area", "high", "packages/x"],
     ["xhigh 812", "diff", "xhigh", "812"],
     // A diff target is free-form English, so a leading mode word only switches modes when a level follows it —
     // Otherwise "area of message deletion that PR 812 touched" buys a whole-subsystem audit nobody asked for.
-    ["area of message deletion that PR 812 touched", "diff", "high", "area of message deletion that PR 812 touched"],
+    ["area of message deletion that PR 812 touched", "diff", "low", "area of message deletion that PR 812 touched"],
     // Own-property check: an Object.prototype key must never parse as a level.
-    ["constructor 812", "diff", "high", "constructor 812"],
+    ["constructor 812", "diff", "low", "constructor 812"],
   ])("parses %j as %s at %s", async (args, mode, level, target) => {
     expect.hasAssertions();
 

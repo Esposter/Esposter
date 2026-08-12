@@ -25,12 +25,12 @@ One extra pass has no counterpart in diff mode: the **coverage finder**, which l
 
 ## Four finding kinds, and they are not interchangeable
 
-| Kind          | Means                                                        | Deliverable                                             |
-| ------------- | ------------------------------------------------------------ | ------------------------------------------------------- |
-| `correctness` | a defect in the code                                         | a code fix + a test that fails against the pre-fix code |
-| `conformance` | the code and the record disagree                             | fix whichever side is wrong — the evidence says which   |
-| `record-gap`  | the behaviour is deliberate but undocumented                 | a docs page, per the `docs` skill                       |
-| `cleanup`     | reuse / simplification / efficiency / altitude / conventions | as in diff mode                                         |
+| Kind          | Means                                        | Deliverable                                             |
+| ------------- | -------------------------------------------- | ------------------------------------------------------- |
+| `correctness` | a defect in the code                         | a code fix + a test that fails against the pre-fix code |
+| `conformance` | the code and the record disagree             | fix whichever side is wrong — the evidence says which   |
+| `record-gap`  | the behaviour is deliberate but undocumented | a docs page, per the `docs` skill                       |
+| `cleanup`     | a CLAUDE.md convention the code breaks       | as in diff mode                                         |
 
 The kinds never merge into each other (SKILL.md, dedupe). Severity for `conformance` and `record-gap` is the cost of the wrong conclusion a reader would draw, which is usually minor — a critical `record-gap` should make you suspicious that it is really a `correctness` finding wearing the wrong label.
 
@@ -40,7 +40,7 @@ An area resolving to more than 120 files is **truncated in code**, source files 
 
 The cap binds on the **claim inventory** too: a claim whose files were all truncated away is dropped, because a finder asked to check a documented behaviour against code the run never opened cannot find it and reports the docs as wrong. `stats.claimsChecked` against `stats.claimsInventoried` is how much of the record the run actually audited — the gap is claims nobody looked at, never claims that held.
 
-Cost is materially higher than diff mode: finders read whole files, because in an area review every line is in scope. Measured runs on a modest subsystem at `high` land in the low millions of tokens across a few dozen agents and take tens of minutes — enough to exhaust a session limit mid-run. Budget it deliberately; do not fire it at a whole package casually, and prefer narrowing the target over raising the level.
+Cost is materially higher than diff mode: finders read whole files, because in an area review every line is in scope. Measured runs on a modest subsystem at `high` land in the low millions of tokens across a few dozen agents and take tens of minutes — enough to exhaust a session limit mid-run. Budget it deliberately; do not fire it at a whole package casually, and prefer narrowing the target over raising the level. **Start at `low`** — an area audit's finders read whole files whatever the level, so the level buys candidate width over material already paid for, and a narrow target at `low` answers "does this match its docs" for a fraction of a `high` run.
 
 **Session-limit resilience matters here.** When agents die, the run still returns: verifiers that fail drop their group, resolvers that fail leave findings PLAUSIBLE, and a dead synthesizer falls back to ranked-and-deduped-but-unmerged output whose summary says so. Check `stats` and the failure list before reading a degraded run as a clean one.
 

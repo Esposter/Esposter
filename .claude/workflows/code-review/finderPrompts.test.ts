@@ -15,13 +15,26 @@ describe("code-review finder prompts", () => {
   const CRASH_DEMAND = "the user-visible consequence (error, wrong output, data loss)";
   const MIXED_WORDING = "never invent a crash for a documentation problem";
 
-  test("asks a cleanup finder for a cost and never for a crash", async () => {
+  test("asks the conventions finder for the broken rule and never for a crash", async () => {
     expect.hasAssertions();
 
     const run = await runReview("high", stubFor({}));
 
-    expect(getPrompt(run, "cleanup")).toContain("the concrete cost");
-    expect(getPrompt(run, "cleanup")).not.toContain(CRASH_DEMAND);
+    expect(getPrompt(run, "conventions")).toContain("the broken rule");
+    expect(getPrompt(run, "conventions")).not.toContain(CRASH_DEMAND);
+  });
+
+  // The four lenses that left this pipeline for the `simplify` skill. Nothing stops a conventions finder from
+  // Drifting back into them — they are what a model reaches for when asked to review a diff for quality — and each
+  // One that returns buys a verifier and a resolver for a finding that is minor by definition.
+  test("tells the conventions finder the other cleanup lenses are not its job", async () => {
+    expect.hasAssertions();
+
+    const run = await runReview("high", stubFor({}));
+
+    expect(getPrompt(run, "conventions")).toContain(
+      "Do NOT report reuse, simplification, efficiency or altitude cleanups",
+    );
   });
 
   test("asks an area finder that can raise either kind for both wordings", async () => {
@@ -69,21 +82,24 @@ describe("code-review finder prompts", () => {
     const run = await runReview("high", stubFor({}));
 
     expect(getPrompt(run, "angle-A")).toContain("Your cap is a ceiling, not a quota");
-    expect(getPrompt(run, "cleanup")).toContain("Your cap is a ceiling, not a quota");
+    expect(getPrompt(run, "conventions")).toContain("Your cap is a ceiling, not a quota");
   });
 
-  test("runs cleanup finders at low effort and correctness angles at the level's", async () => {
+  test("runs the conventions finder at low effort and correctness angles at the level's", async () => {
     expect.hasAssertions();
 
     const run = await runReview("high", stubFor({}));
     const maxRun = await runReview("max", stubFor({}));
 
-    expect(getOptionsFor(run, "cleanup")?.effort).toBe("low");
+    expect(getOptionsFor(run, "conventions")?.effort).toBe("low");
     expect(getOptionsFor(run, "angle-A")?.effort).toBe("high");
     // The level's second axis: without it `max` spawns the same agents as `xhigh` thinking exactly as hard, so a
     // Re-run after a capped round buys a wider skim rather than the deeper read the level was raised for.
     expect(getOptionsFor(maxRun, "angle-A")?.effort).toBe("max");
-    expect(getOptionsFor(maxRun, "cleanup")?.effort).toBe("low");
+    expect(getOptionsFor(maxRun, "conventions")?.effort).toBe("low");
+    // `low` gives up width, never depth: a bug hunt below medium stops constructing triggers and reports what a
+    // Linter would, which is the one saving that makes the cheap level worthless rather than cheap.
+    expect(getOptionsFor(await runReview("low", stubFor({})), "angle-A")?.effort).toBe("medium");
   });
 
   test("tells the area sweep what the kinds mean, since its schema offers it the enum", async () => {

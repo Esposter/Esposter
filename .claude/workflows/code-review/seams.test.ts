@@ -60,7 +60,7 @@ describe("code-review seam partition", () => {
         !call.label.startsWith("verify:") && !call.label.startsWith("resolve:") && !NON_FINDER_LABELS.has(call.label),
     ).length;
 
-    // Every finder but cleanup, and two resolvers apiece.
+    // Every finder but conventions, and two resolvers apiece.
     expect(run.result.stats).toMatchObject({ angles: finders - 1, findMode: "seam" });
     expect(run.calls.filter((call) => call.label.startsWith("resolve:"))).toHaveLength((finders - 1) * 2);
   });
@@ -92,10 +92,10 @@ describe("code-review seam partition", () => {
     const xhigh = (await runReview("xhigh", stubFor({}))).result.stats;
 
     expect(high?.sweepCap).toBe(0);
-    expect(high?.reportableCeiling).toBe((high?.angles ?? 0) * (high?.perAngle ?? 0) + (high?.cleanupCap ?? 0));
+    expect(high?.reportableCeiling).toBe((high?.angles ?? 0) * (high?.perAngle ?? 0) + (high?.conventionsCap ?? 0));
     expect(xhigh?.sweepCap).toBe(SWEEP_CAP);
     expect(xhigh?.reportableCeiling).toBe(
-      (xhigh?.angles ?? 0) * (xhigh?.perAngle ?? 0) + (xhigh?.cleanupCap ?? 0) + SWEEP_CAP,
+      (xhigh?.angles ?? 0) * (xhigh?.perAngle ?? 0) + (xhigh?.conventionsCap ?? 0) + SWEEP_CAP,
     );
   });
 
