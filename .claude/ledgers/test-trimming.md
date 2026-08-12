@@ -14,7 +14,7 @@ Tests that cannot fail for a reason anyone cares about, and fixtures written mor
 | `app/shared`                                       | 2026-08-12 | 24; the schema suites test composed refinements, not Zod                         |
 | `virrun/src/services/exec/wsl`                     | 2026-08-12 | 27; already on shared constants and trackers — one banned assertion, two dupes   |
 | `virrun/src/services/exec/snapshot`                | 2026-08-12 | 30; six banned error assertions, the last in the package                         |
-| `virrun/src/services/exec`, rest                   | —          | 49; `util`, `test`, `cache`, `os`, `vfs`, `bwrap`, `differential`, `store`       |
+| `virrun/src/services/exec`, rest                   | 2026-08-12 | 49; `util`, `test`, `cache`, `os`, `vfs`, `bwrap`, `differential`, `store`       |
 | `virrun`, rest                                     | 2026-08-12 | 49; already on shared helpers and tables, nothing to trim                        |
 | `azure-functions`, `azure-mock`, `db*`             | 2026-08-12 | 68; the EventGrid handler matrix now sits on its factory                         |
 | `parse-tmx`, `vue-phaserjs`, `xml2js`, rest        | 2026-08-12 | plus `shared`, `shared-node`, `configuration`, `infra`; `createMention` hoisted  |

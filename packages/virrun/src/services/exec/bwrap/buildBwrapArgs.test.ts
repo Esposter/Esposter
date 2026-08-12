@@ -5,7 +5,7 @@ import {
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
 import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(buildBwrapArgs, () => {
@@ -129,14 +129,20 @@ describe(buildBwrapArgs, () => {
     expect(takeOne(args, args.indexOf("--overlay-src") + 1)).toBe(mirror);
   });
 
-  test("throws when only one of upperDir or workDir is supplied", () => {
+  test.each([
+    ["upperDir", { upperDir: `${TEST_DIR}/upper` }],
+    ["workDir", { workDir: `${TEST_DIR}/work` }],
+  ])("throws when only %s is supplied", (_name, overlayLayers) => {
     expect.hasAssertions();
 
-    expect(() => buildBwrapArgs("pwd", TEST_DIR, {}, { upperDir: `${TEST_DIR}/upper` })).toThrow(
-      "a persistent overlay needs both upperDir and workDir",
-    );
-    expect(() => buildBwrapArgs("pwd", TEST_DIR, {}, { workDir: `${TEST_DIR}/work` })).toThrow(
-      "a persistent overlay needs both upperDir and workDir",
+    expect(() => buildBwrapArgs("pwd", TEST_DIR, {}, overlayLayers)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${
+        new InvalidOperationError(
+          Operation.Create,
+          buildBwrapArgs.name,
+          "a persistent overlay needs both upperDir and workDir",
+        ).message
+      }]`,
     );
   });
 });

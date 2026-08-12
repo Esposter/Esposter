@@ -2,6 +2,7 @@ import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemp
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
@@ -36,6 +37,14 @@ describe(resolveWorkspaceRoot, () => {
 
     const root = create();
 
-    expect(() => resolveWorkspaceRoot(root)).toThrow(PNPM_LOCKFILE_FILENAME);
+    expect(() => resolveWorkspaceRoot(root)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${
+        new InvalidOperationError(
+          Operation.Read,
+          resolveWorkspaceRoot.name,
+          `no ${PNPM_LOCKFILE_FILENAME} found in ${root} or any parent`,
+        ).message
+      }]`,
+    );
   });
 });

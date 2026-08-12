@@ -1,9 +1,9 @@
 import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { initRepository } from "@/services/exec/test/initRepository.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
 import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
-import { execFileSync } from "node:child_process";
 import { afterEach, describe, expect, test } from "vitest";
 
 const MASKED_PATHS: readonly string[] = [];
@@ -11,9 +11,6 @@ const MASKED_PATHS: readonly string[] = [];
 // With none reachable the key is null by design, and comparing null against null asserts nothing at all. The two
 // Null cases above stay: they are what the probe failing looks like. CI is linux, where the probe is process.version
 const IS_SANDBOX_NODE_VERSION_READABLE = Boolean(getSandboxNodeVersion());
-const initRepository = (directory: string): void => {
-  execFileSync("git", ["init", "-q"], { cwd: directory });
-};
 
 describe(computeTaskCacheKey, () => {
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
