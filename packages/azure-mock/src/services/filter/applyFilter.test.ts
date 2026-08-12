@@ -11,142 +11,27 @@ describe(applyFilter, () => {
   const rowKey = "0";
   const documents: Record<string, unknown>[] = [{ partitionKey, rowKey }];
 
-  test(BinaryOperator.eq, () => {
+  // Both directions of every operator against the one document's partitionKey of "0": the value that matches and
+  // The value that does not. Serializing and re-parsing the clause is part of what this exercises, so the operator
+  // Matrix belongs here rather than on `compare`
+  test.each([
+    [BinaryOperator.eq, partitionKey, "1"],
+    [BinaryOperator.gt, "-1", partitionKey],
+    [BinaryOperator.ge, partitionKey, "1"],
+    [BinaryOperator.lt, "1", partitionKey],
+    [BinaryOperator.le, partitionKey, "-1"],
+    [BinaryOperator.ne, "1", partitionKey],
+  ])("%s keeps a document it matches and drops one it does not", (operator, matching, nonMatching) => {
     expect.hasAssertions();
 
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },
+    const createClauses = (value: string): Clause<Record<string, unknown>>[] => [
+      { key: CompositeKeyPropertyNames.partitionKey, operator, value },
     ];
-    const filteredDocuments = applyFilter(documents, clauses);
+    const filteredDocuments = applyFilter(documents, createClauses(matching));
 
     expect(filteredDocuments).toHaveLength(1);
     expect(takeOne(filteredDocuments).partitionKey).toBe(partitionKey);
-  });
-
-  test(`${BinaryOperator.eq} negative`, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "1" },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(0);
-  });
-
-  test(BinaryOperator.gt, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.gt, value: "-1" },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(1);
-    expect(takeOne(filteredDocuments).partitionKey).toBe(partitionKey);
-  });
-
-  test(`${BinaryOperator.gt} negative`, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.gt, value: partitionKey },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(0);
-  });
-
-  test(BinaryOperator.ge, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.ge, value: partitionKey },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(1);
-    expect(takeOne(filteredDocuments).partitionKey).toBe(partitionKey);
-  });
-
-  test(`${BinaryOperator.ge} negative`, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.ge, value: "1" },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(0);
-  });
-
-  test(BinaryOperator.lt, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.lt, value: "1" },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(1);
-    expect(takeOne(filteredDocuments).partitionKey).toBe(partitionKey);
-  });
-
-  test(`${BinaryOperator.lt} negative`, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.lt, value: partitionKey },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(0);
-  });
-
-  test(BinaryOperator.le, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.le, value: partitionKey },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(1);
-    expect(takeOne(filteredDocuments).partitionKey).toBe(partitionKey);
-  });
-
-  test(`${BinaryOperator.le} negative`, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.le, value: "-1" },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(0);
-  });
-
-  test(BinaryOperator.ne, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.ne, value: "1" },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(1);
-    expect(takeOne(filteredDocuments).partitionKey).toBe(partitionKey);
-  });
-
-  test(`${BinaryOperator.ne} negative`, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause<Record<string, unknown>>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.ne, value: partitionKey },
-    ];
-    const filteredDocuments = applyFilter(documents, clauses);
-
-    expect(filteredDocuments).toHaveLength(0);
+    expect(applyFilter(documents, createClauses(nonMatching))).toHaveLength(0);
   });
 
   test("matches null clauses against null and missing values", () => {

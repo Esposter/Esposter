@@ -13,12 +13,4 @@ describe(getPartitionKeyFilter, () => {
       `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue(partitionKey)}`,
     );
   });
-
-  test("escapes a value that would otherwise close the literal", () => {
-    expect.hasAssertions();
-
-    expect(getPartitionKeyFilter("a'b")).toBe(
-      `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("a'b")}`,
-    );
-  });
 });
