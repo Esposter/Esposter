@@ -13,7 +13,7 @@ Tests that cannot fail for a reason anyone cares about, and fixtures written mor
 | `app/server/trpc/routers/message`, `room`, `call`  | 2026-08-12 | 11; a `test.each` row cannot carry an inline snapshot → `testing`                |
 | `app/shared`                                       | 2026-08-12 | 24; the schema suites test composed refinements, not Zod                         |
 | `virrun/src/services/exec/wsl`                     | 2026-08-12 | 27; already on shared constants and trackers — one banned assertion, two dupes   |
-| `virrun/src/services/exec/snapshot`                | —          | 30; split off when a pass could not read `exec` whole                            |
+| `virrun/src/services/exec/snapshot`                | 2026-08-12 | 30; six banned error assertions, the last in the package                         |
 | `virrun/src/services/exec`, rest                   | —          | 49; `util`, `test`, `cache`, `os`, `vfs`, `bwrap`, `differential`, `store`       |
 | `virrun`, rest                                     | 2026-08-12 | 49; already on shared helpers and tables, nothing to trim                        |
 | `azure-functions`, `azure-mock`, `db*`             | 2026-08-12 | 68; the EventGrid handler matrix now sits on its factory                         |
