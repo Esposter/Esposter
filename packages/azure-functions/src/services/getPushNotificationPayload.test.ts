@@ -1,6 +1,5 @@
 import { getPushNotificationPayload } from "@/services/getPushNotificationPayload";
 import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { truncate } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getPushNotificationPayload, () => {
@@ -40,12 +39,13 @@ describe(getPushNotificationPayload, () => {
     expect.hasAssertions();
 
     const longBody = "a".repeat(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH + 10);
+    // Spelled out rather than computed with `truncate`, which is what the payload uses: an expectation built
+    // From the function under test cannot fail on what that function appends, and a stray character in the
+    // Suffix survived here for exactly that reason
+    const truncatedBody = `${"a".repeat(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH - 3)}...`;
 
     expect(getPushNotificationPayload({ body: longBody, path })).toBe(
-      JSON.stringify({
-        body: truncate(longBody, PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH),
-        data: { url: `${baseUrl}${path}` },
-      }),
+      JSON.stringify({ body: truncatedBody, data: { url: `${baseUrl}${path}` } }),
     );
   });
 });
