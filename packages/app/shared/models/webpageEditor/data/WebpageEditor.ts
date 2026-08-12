@@ -737,8 +737,12 @@ export class WebpageEditor extends AGrapesJsEditor {
   }
 }
 
-export const webpageEditorSchema = z.object({
-  ...grapesJsEditorSchema.shape,
-  css: z.string().optional(),
-  html: z.string().optional(),
-}) satisfies z.ZodType<ToData<WebpageEditor>>;
+// The catchall is re-declared, not inherited: spreading `.shape` copies fields and nothing else, and without
+// It every GrapesJS key this model does not name (styles, assets, symbols) is stripped on parse
+export const webpageEditorSchema = z
+  .object({
+    ...grapesJsEditorSchema.shape,
+    css: z.string().optional(),
+    html: z.string().optional(),
+  })
+  .catchall(z.unknown()) satisfies z.ZodType<ToData<WebpageEditor>>;
