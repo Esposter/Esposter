@@ -1,12 +1,13 @@
 // @vitest-environment nuxt
 import type { Item } from "@/models/shared/Item";
-import type { MessageEntity, UserToRoomInMessage } from "@esposter/db-schema";
+import type { MessageEntity } from "@esposter/db-schema";
 
+import { createUserToRoom } from "@/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { getMockSession } from "@@/server/trpc/context.test";
-import { createMessageEntity, MessageType, NotificationType } from "@esposter/db-schema";
+import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { assert, beforeAll, describe, expect, test } from "vitest";
@@ -33,19 +34,7 @@ describe(useMessageActionItems, () => {
   const server = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const message = "message";
-  const userToRoom: UserToRoomInMessage = {
-    createdAt: new Date(0),
-    deletedAt: null,
-    isHidden: false,
-    lastMessageAt: null,
-    mentionCount: 0,
-    nickname: "",
-    notificationType: NotificationType.DirectMessage,
-    roomId,
-    timeoutUntil: null,
-    updatedAt: new Date(0),
-    userId: getMockSession().user.id,
-  };
+  const userToRoom = createUserToRoom({ roomId, userId: getMockSession().user.id });
   const createMessage = (createdAt: Date) => {
     const messageEntity = createMessageEntity({
       message,

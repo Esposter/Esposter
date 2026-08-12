@@ -1,36 +1,20 @@
 // @vitest-environment nuxt
-import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
-
+import { createScheduledMessageJob } from "@/services/message/draftsAndSent/createScheduledMessageJob.test";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
-import { createMessageEntity, MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
+import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useScheduledMessageJobStore, () => {
   const server = setupMswTrpc();
-  const createdAt = new Date(0);
   const id = crypto.randomUUID();
   const otherId = crypto.randomUUID();
   const userId = crypto.randomUUID();
-  const message = "message";
   const room = createRoom("name");
-  const createScheduledMessageJob = (jobId: string): ScheduledMessageJobInMessageWithRoom => ({
-    cancelledAt: null,
-    completedAt: null,
-    createdAt,
-    deletedAt: null,
-    id: jobId,
-    payload: { message, type: ScheduledMessageJobType.ScheduledMessage },
-    processingStartedAt: null,
-    room,
-    roomId: room.id,
-    runAt: createdAt,
-    updatedAt: createdAt,
-    userId,
-  });
+  const createJob = (jobId: string) => createScheduledMessageJob({ id: jobId, room, userId });
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -42,7 +26,7 @@ describe(useScheduledMessageJobStore, () => {
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { count, items } = storeToRefs(scheduledMessageJobStore);
     const { removeScheduledMessageJob } = scheduledMessageJobStore;
-    items.value = [createScheduledMessageJob(id), createScheduledMessageJob(otherId)];
+    items.value = [createJob(id), createJob(otherId)];
     count.value = 2;
     removeScheduledMessageJob(id);
 
@@ -58,7 +42,7 @@ describe(useScheduledMessageJobStore, () => {
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { count, items } = storeToRefs(scheduledMessageJobStore);
     const { removeScheduledMessageJob } = scheduledMessageJobStore;
-    items.value = [createScheduledMessageJob(id)];
+    items.value = [createJob(id)];
     count.value = 2;
     removeScheduledMessageJob(otherId);
 
@@ -75,13 +59,13 @@ describe(useScheduledMessageJobStore, () => {
     server.use(
       trpcMsw.message.scheduledMessageJob.cancelScheduledJob.mutation(({ input }) => {
         if (input.id === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
-        return createScheduledMessageJob(input.id);
+        return createJob(input.id);
       }),
     );
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { count, items } = storeToRefs(scheduledMessageJobStore);
     const { cancelScheduledMessageJob } = scheduledMessageJobStore;
-    items.value = [createScheduledMessageJob(id), createScheduledMessageJob(otherId)];
+    items.value = [createJob(id), createJob(otherId)];
     count.value = 2;
     await Promise.all([cancelScheduledMessageJob(id), cancelScheduledMessageJob(otherId)]);
 
@@ -106,7 +90,7 @@ describe(useScheduledMessageJobStore, () => {
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { count, items } = storeToRefs(scheduledMessageJobStore);
     const { cancelScheduledMessageJob, sendScheduledMessageNow } = scheduledMessageJobStore;
-    items.value = [createScheduledMessageJob(id), createScheduledMessageJob(otherId)];
+    items.value = [createJob(id), createJob(otherId)];
     count.value = 2;
     await Promise.all([cancelScheduledMessageJob(id), sendScheduledMessageNow(id)]);
 

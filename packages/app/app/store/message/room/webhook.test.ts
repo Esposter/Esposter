@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
-import type { WebhookInMessage } from "@esposter/db-schema";
-
+import { createWebhook } from "@/services/message/room/createWebhook.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
@@ -11,23 +10,10 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 const roomId = crypto.randomUUID();
 
-const createWebhook = (name: string): WebhookInMessage => ({
-  createdAt: new Date("1970-01-01"),
-  creatorId: crypto.randomUUID(),
-  deletedAt: null,
-  id: crypto.randomUUID(),
-  isActive: true,
-  name,
-  roomId,
-  token: "",
-  updatedAt: new Date("1970-01-01"),
-  userId: crypto.randomUUID(),
-});
-
 describe(useWebhookStore, () => {
   const server = setupMswTrpc();
-  const first = createWebhook("first");
-  const second = createWebhook("second");
+  const first = createWebhook({ name: "first", roomId });
+  const second = createWebhook({ name: "second", roomId });
 
   beforeEach(() => {
     setActivePinia(createPinia());

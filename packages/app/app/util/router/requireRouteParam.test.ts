@@ -1,5 +1,5 @@
 import { requireRouteParam } from "@/util/router/requireRouteParam";
-import { InvalidOperationError } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(requireRouteParam, () => {
@@ -18,20 +18,16 @@ describe(requireRouteParam, () => {
     expect(requireRouteParam({ id: [id, crypto.randomUUID()] }, "id")).toBe(id);
   });
 
-  // The two shapes a segment the page cannot exist without must never be allowed to reach a query as
+  // The two shapes a segment the page cannot exist without must never be allowed to reach a query as. The name
+  // Is in the message because it is the only thing that says which segment the route was missing
   test.each([
     ["missing", {}],
     ["empty", { id: "" }],
   ])("throws on a %s param", (_description, params) => {
     expect.hasAssertions();
 
-    expect(() => requireRouteParam(params, "id")).toThrow(InvalidOperationError);
-  });
-
-  // The name is in the message because it is the only thing that says which segment the route was missing
-  test("names the missing param", () => {
-    expect.hasAssertions();
-
-    expect(() => requireRouteParam({}, "rowKey")).toThrow("Missing route param: rowKey");
+    expect(() => requireRouteParam(params, "id")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, requireRouteParam.name, "Missing route param: id").message}]`,
+    );
   });
 });
