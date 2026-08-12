@@ -1,42 +1,17 @@
 // @vitest-environment nuxt
-import type { RoomRoleInMessage, User } from "@esposter/db-schema";
-
+import { createRoomRole } from "@/services/message/member/createRoomRole.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
+import { createUser } from "@/services/message/user/createUser.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
-import { StorageTier } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useMemberStore, () => {
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
-  const name = "name";
-  const member: User = {
-    biography: "",
-    createdAt: new Date("1970-01-01"),
-    deletedAt: null,
-    email: "",
-    emailVerified: false,
-    id: crypto.randomUUID(),
-    image: "",
-    name,
-    storageBytesUsed: 0,
-    storageTier: StorageTier.Free,
-    updatedAt: new Date("1970-01-01"),
-  };
-  const role: RoomRoleInMessage = {
-    color: "",
-    createdAt: new Date("1970-01-01"),
-    deletedAt: null,
-    id: crypto.randomUUID(),
-    isEveryone: false,
-    name,
-    permissions: 0n,
-    position: 0,
-    roomId,
-    updatedAt: new Date("1970-01-01"),
-  };
+  const member = createUser();
+  const role = createRoomRole({ roomId });
 
   beforeEach(() => {
     setActivePinia(createPinia());

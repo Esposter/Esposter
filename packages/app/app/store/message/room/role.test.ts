@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
-import type { RoomRoleInMessage } from "@esposter/db-schema";
-
+import { createRoomRole } from "@/services/message/member/createRoomRole.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { TRPCError } from "@trpc/server";
@@ -9,23 +8,10 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 const roomId = crypto.randomUUID();
 
-const createRole = (name: string, position: number): RoomRoleInMessage => ({
-  color: "",
-  createdAt: new Date("1970-01-01"),
-  deletedAt: null,
-  id: crypto.randomUUID(),
-  isEveryone: false,
-  name,
-  permissions: 0n,
-  position,
-  roomId,
-  updatedAt: new Date("1970-01-01"),
-});
-
 describe(useRoleStore, () => {
   const server = setupMswTrpc();
-  const first = createRole("first", 1);
-  const second = createRole("second", 2);
+  const first = createRoomRole({ name: "first", position: 1, roomId });
+  const second = createRoomRole({ name: "second", position: 2, roomId });
 
   beforeEach(() => {
     setActivePinia(createPinia());

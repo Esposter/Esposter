@@ -48,8 +48,7 @@ describe(useEmojiStore, () => {
     storeCreateEmoji(newEmoji);
     const emojis = getEmojis(messageRowKey);
 
-    expect(emojis).toHaveLength(1);
-    expect(emojis[0]).toStrictEqual(newEmoji);
+    expect(emojis).toStrictEqual([newEmoji]);
   });
 
   test("updates", () => {
@@ -66,8 +65,7 @@ describe(useEmojiStore, () => {
     storeUpdateEmoji(updatedEmoji);
     const emojis = getEmojis(messageRowKey);
 
-    expect(emojis).toHaveLength(1);
-    expect(emojis[0]).toStrictEqual(new MessageEmojiMetadataEntity(updatedEmoji));
+    expect(emojis).toStrictEqual([new MessageEmojiMetadataEntity(updatedEmoji)]);
   });
 
   test("deletes", () => {
@@ -80,7 +78,7 @@ describe(useEmojiStore, () => {
     storeDeleteEmoji(newEmoji);
     const emojis = getEmojis(messageRowKey);
 
-    expect(emojis).toHaveLength(0);
+    expect(emojis).toStrictEqual([]);
   });
 
   // A reaction is a shared row: the toggle owes back only the caller's own id, so it is unwound against the ids
