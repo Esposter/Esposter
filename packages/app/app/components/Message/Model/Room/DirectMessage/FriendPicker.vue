@@ -43,7 +43,7 @@ const reset = () => {
 
 defineExpose({ reset });
 
-const { readFriends } = useReadFriends();
+const readFriends = useReadFriends();
 await readFriends();
 </script>
 

@@ -11,7 +11,7 @@ interface OverviewProps {
 
 const { room } = defineProps<OverviewProps>();
 const saveRoom = useSaveRoom(() => room);
-const { readRoomCategories } = useReadRoomCategories();
+const readRoomCategories = useReadRoomCategories();
 await readRoomCategories();
 
 const roomCategoryStore = useRoomCategoryStore();

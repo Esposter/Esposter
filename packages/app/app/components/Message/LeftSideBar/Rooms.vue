@@ -12,7 +12,7 @@ import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { VueDraggable } from "vue-draggable-plus";
 
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarRoomsCollapsed, false);
-const { readRoomCategories } = useReadRoomCategories();
+const readRoomCategories = useReadRoomCategories();
 const roomCategoryStore = useRoomCategoryStore();
 const { categories } = storeToRefs(roomCategoryStore);
 const { reorderRoomCategories } = roomCategoryStore;
