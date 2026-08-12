@@ -13,9 +13,12 @@ const BROADCAST_MENTION_IDS = new Set([MENTION_EVERYONE_ID, MENTION_HERE_ID]);
 
 export const classifyMentions = (message: string): ClassifiedMentions => {
   const mentions = getMentions(message)
-    .map((m) => ({ id: m.getAttribute(MENTION_ID_ATTRIBUTE), type: m.getAttribute(MENTION_ITEM_TYPE_ATTRIBUTE) }))
+    .map((mention) => ({
+      id: mention.getAttribute(MENTION_ID_ATTRIBUTE),
+      type: mention.getAttribute(MENTION_ITEM_TYPE_ATTRIBUTE),
+    }))
     // eslint-disable-next-line no-restricted-syntax -- an optional key is not assignable to the mapped element's required one, so the predicate overload drops out
-    .filter((m): m is { id: string; type: string | undefined } => Boolean(m.id));
+    .filter((mention): mention is { id: string; type: string | undefined } => Boolean(mention.id));
   return {
     broadcastIds: mentions.filter(({ id }) => BROADCAST_MENTION_IDS.has(id)).map(({ id }) => id),
     regularUserIds: mentions
