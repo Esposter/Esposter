@@ -28,7 +28,7 @@ catalog:
   "@azure/storage-queue": ^12.31.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.1.0
-  "@better-auth/drizzle-adapter": ^1.6.26
+  "@better-auth/drizzle-adapter": ^1.6.27
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.4
   "@codemirror/language-data": ^6.5.2
@@ -45,8 +45,8 @@ catalog:
   "@fullcalendar/vue3": ^7.0.2
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.4
-  "@lerna-lite/cli": ^5.4.2
-  "@lerna-lite/publish": ^5.4.2
+  "@lerna-lite/cli": ^5.5.0
+  "@lerna-lite/publish": ^5.5.0
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
   "@nuxt/content": ^3.15.2
@@ -64,16 +64,16 @@ catalog:
   "@pulumi/pulumi": ^3.256.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^2.7.1
-  "@tiptap/core": ^3.29.2
-  "@tiptap/extension-code-block-lowlight": ^3.29.2
-  "@tiptap/extension-file-handler": ^3.29.2
-  "@tiptap/extension-mention": ^3.29.2
-  "@tiptap/extensions": ^3.29.2
-  "@tiptap/html": ^3.29.2
-  "@tiptap/pm": ^3.29.2
-  "@tiptap/starter-kit": ^3.29.2
-  "@tiptap/suggestion": ^3.29.2
-  "@tiptap/vue-3": ^3.29.2
+  "@tiptap/core": ^3.30.0
+  "@tiptap/extension-code-block-lowlight": ^3.30.0
+  "@tiptap/extension-file-handler": ^3.30.0
+  "@tiptap/extension-mention": ^3.30.0
+  "@tiptap/extensions": ^3.30.0
+  "@tiptap/html": ^3.30.0
+  "@tiptap/pm": ^3.30.0
+  "@tiptap/starter-kit": ^3.30.0
+  "@tiptap/suggestion": ^3.30.0
+  "@tiptap/vue-3": ^3.30.0
   "@tresjs/cientos": ^5.8.1
   "@tresjs/core": ^5.8.3
   "@tresjs/nuxt": ^5.6.3
@@ -116,7 +116,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^6.8.0
-  better-auth: ^1.6.26
+  better-auth: ^1.6.27
   citty: ^0.2.2
   codemirror: ^6.0.2
   crossws: ^0.4.10
@@ -133,7 +133,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.8.1
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.77.0
+  eslint-plugin-oxlint: ^1.78.0
   eslint-plugin-perfectionist: ^5.10.1
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-vuejs-accessibility: ^2.6.0
@@ -143,7 +143,7 @@ catalog:
   fast-deep-equal: ^3.1.3
   fflate: ^0.8.3
   fs-extra: ^11.4.0
-  grapesjs: ^0.23.4
+  grapesjs: ^0.23.5
   grapesjs-blocks-basic: ^1.0.2
   grapesjs-component-countdown: ^1.0.2
   grapesjs-custom-code: ^1.0.2
@@ -187,7 +187,7 @@ catalog:
   nuxt: ^4.5.2
   nuxt-security: ^2.6.0
   oxfmt: ^0.63.0
-  oxlint: ^1.77.0
+  oxlint: ^1.78.0
   oxlint-tsgolint: ^7.0.2001
   p-progress: ^1.0.0
   pathe: ^2.0.3
@@ -200,7 +200,7 @@ catalog:
   rate-limiter-flexible: ^11.2.0
   read-excel-file: ^9.3.10
   rolldown: ^1.2.3
-  rolldown-plugin-dts: ^0.28.0
+  rolldown-plugin-dts: ^0.28.1
   rxjs: ^7.8.2
   sanitize-html: ^2.17.6
   sass-embedded: ^1.100.0
@@ -208,10 +208,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^3.0.0-beta.9
-  survey-creator-core: ^3.0.0-beta.9
-  survey-creator-vue: ^3.0.0-beta.9
-  survey-vue3-ui: ^3.0.0-beta.9
+  survey-core: ^3.0.0
+  survey-creator-core: ^3.0.0
+  survey-creator-vue: ^3.0.0
+  survey-vue3-ui: ^3.0.0
   temporal-polyfill: ^1.0.3
   three: ^0.185.1
   three-globe: ^2.45.2
