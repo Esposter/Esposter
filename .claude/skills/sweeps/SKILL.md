@@ -15,6 +15,8 @@ Each sweep's progress is a **ledger**: one file in `.claude/ledgers/`, one row i
 
 - **More than one sitting or one commit → its own file.** Anything smaller is just the change; a sweep file for it is overhead that then rots.
 - **One convention per file.** Never a combined "cleanup" sweep — two conventions have different units, different modes and different end conditions, so merging them means neither finishes.
+
+- **A unit is what one pass can read.** Reading is what finds duplication and the helper that already exists; a unit too big to read gets grepped instead, and a grep pass that ticks its row records a sweep that never happened. When a pass reaches for grep because the unit is too large, split the row at the directory boundary rather than carrying on — dated rows keep their dates, the rest become several `—` rows.
 - **A migration is not a sweep.** Work gated on an external trigger (upstream shipping a feature) is tracked by its blocker table in its own docs page, not by coverage.
 
 ## One pass
@@ -70,7 +72,7 @@ Anything else — what the convention says, why it matters, how a pass is run �
 
 ## Modes
 
-- **One-shot** — the units are enumerable and each is swept once. A `—` in `Swept` is unswept; when the last row carries a date, delete the file or folder and its index row. Never delete one while an open finding still lacks its proposal — the ledger is that finding's only record. Add a coverage line rather than widening an existing one when a unit turns out too big, and split it into its own file when the lines stop fitting.
+- **One-shot** — the units are enumerable and each is swept once. A `—` in `Swept` is unswept. **A fully dated ledger is kept, not deleted** — it is the index that answers "was this area swept, and when" in one read, which git can only answer by archaeology from someone who already knows what to look for. The dates are also what a later convention change is scoped against. Add a coverage line rather than widening an existing one when a unit turns out too big, and split it into its own file when the lines stop fitting.
 - **Standing** — the convention applies to code written after the sweep too, so the file carries a date instead of an end. Sweep only what changed since, then bump the date in the same commit:
 
   ```bash
