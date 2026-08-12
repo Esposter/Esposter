@@ -9,6 +9,9 @@ import { setupWithDataSource } from "@/composables/resource/sheet/commands/setup
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const createThreeColumnDataSource = () =>
+  createDataSource([createColumn("a"), createColumn("b"), createColumn("c")], [createRow({ a: 0, b: 1, c: 2 })]);
+
 describe(useReorderColumns, () => {
   setupCommandTest();
 
@@ -27,11 +30,7 @@ describe(useReorderColumns, () => {
   test("moves column backward (index 1 to 0) with three columns", async () => {
     expect.hasAssertions();
 
-    const threeColumnDataSource = createDataSource(
-      [createColumn("a"), createColumn("b"), createColumn("c")],
-      [createRow({ a: 0, b: 1, c: 2 })],
-    );
-    const { dataSource } = setupWithDataSource(threeColumnDataSource);
+    const { dataSource } = setupWithDataSource(createThreeColumnDataSource());
     const reorderColumns = useReorderColumns();
     const newColumns = [
       takeOne(dataSource.columns, 1),
@@ -48,11 +47,7 @@ describe(useReorderColumns, () => {
   test("moves column forward non-adjacent (index 0 to 2) with three columns", async () => {
     expect.hasAssertions();
 
-    const threeColumnDataSource = createDataSource(
-      [createColumn("a"), createColumn("b"), createColumn("c")],
-      [createRow({ a: 0, b: 1, c: 2 })],
-    );
-    const { dataSource } = setupWithDataSource(threeColumnDataSource);
+    const { dataSource } = setupWithDataSource(createThreeColumnDataSource());
     const reorderColumns = useReorderColumns();
     const newColumns = [
       takeOne(dataSource.columns, 1),

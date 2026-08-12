@@ -31,13 +31,8 @@ const getResourceRouterProcedureNames = (type: ResourceType) => {
 // Asserted against the server registry, not the client: the tRPC client is a lazy proxy that answers to every
 // Key, so it can say nothing about which procedures a type actually has
 describe(useResourceRouter, () => {
-  // A multi-word type's key is not simply its lowercased name, so this is also what pins `todoList` over `todolist`
-  test.each(ResourceTypes)("%s: registers a router named after the type", (type) => {
-    expect.hasAssertions();
-
-    expect(getResourceRouterProcedureNames(type)).not.toStrictEqual([]);
-  });
-
+  // A multi-word type's key is not simply its lowercased name, so this is also what pins `todoList` over
+  // `todolist`: a router registered under the wrong key contributes no procedures at all
   test.each(ResourceTypes)("%s: exposes the base procedures", (type) => {
     expect.hasAssertions();
 

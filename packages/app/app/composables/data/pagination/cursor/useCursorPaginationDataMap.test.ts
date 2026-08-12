@@ -2,8 +2,8 @@
 import type { VueWrapper } from "@vue/test-utils";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
 import { goOnline } from "@/composables/shared/network.test";
-import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -30,20 +30,10 @@ describe(useCursorPaginationDataMap, () => {
     );
     await flushPromises();
   };
-  const getPendingData = () => {
+  const createPendingRead = () => {
     const data = new CursorPaginationData<string>();
     data.items = [item];
-    let resolveQuery: (data: CursorPaginationData<string>) => void = noop;
-    const query = () =>
-      new Promise<CursorPaginationData<string>>((resolve) => {
-        resolveQuery = resolve;
-      });
-    return {
-      query,
-      resolveQuery: () => {
-        resolveQuery(data);
-      },
-    };
+    return createPendingQuery(data);
   };
 
   beforeEach(() => {
@@ -59,7 +49,7 @@ describe(useCursorPaginationDataMap, () => {
     expect.hasAssertions();
 
     await mountDataMap();
-    const { query, resolveQuery } = getPendingData();
+    const { query, resolveQuery } = createPendingRead();
     const pendingRead = readItems(query);
     // The target switches while the read for the original key is still in flight
     currentId.value = otherKey;
@@ -79,7 +69,7 @@ describe(useCursorPaginationDataMap, () => {
     expect.hasAssertions();
 
     await mountDataMap();
-    const { query, resolveQuery } = getPendingData();
+    const { query, resolveQuery } = createPendingRead();
     const pendingRead = readMoreItems(query);
     currentId.value = otherKey;
     await flushPromises();

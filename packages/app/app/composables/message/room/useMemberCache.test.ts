@@ -10,8 +10,8 @@ import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/co
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
+import { createUser } from "@/services/message/user/createUser.test";
 import { useMemberStore } from "@/store/message/user/member";
-import { StorageTier } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -24,19 +24,7 @@ describe(useMemberCache, () => {
   let initializeCursorPaginationData: (data: CursorPaginationData<User>) => void;
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
-  const user = {
-    biography: "",
-    createdAt: new Date(),
-    deletedAt: null,
-    email: "email@example.com",
-    emailVerified: true,
-    id: crypto.randomUUID(),
-    image: "",
-    name: "name",
-    storageBytesUsed: 0,
-    storageTier: StorageTier.Free,
-    updatedAt: new Date(),
-  } satisfies User;
+  const user = createUser();
   const mountCache = async (initialRouteId: string = partitionKey) => {
     wrapper = await mountSuspended(
       defineComponent({

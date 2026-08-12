@@ -18,6 +18,8 @@ const selectAnchor = (rowIndex: number, columnIndex: number) => {
   startCellSelection(rowIndex, columnIndex);
 };
 
+const createSingleCellDataSource = () => createDataSource([createColumn("a")], [createRow({ a: "1" })]);
+
 describe(usePasteRangeFromClipboard, () => {
   let readTextMock: ReturnType<typeof vi.fn<() => Promise<string>>>;
 
@@ -66,7 +68,7 @@ describe(usePasteRangeFromClipboard, () => {
     test("appends new rows when pasted data extends past the last row", async () => {
       expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createSingleCellDataSource());
       readTextMock.mockResolvedValueOnce("2\n3");
       selectAnchor(1, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
@@ -86,7 +88,7 @@ describe(usePasteRangeFromClipboard, () => {
     test("appends at end when no cell is selected", async () => {
       expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createSingleCellDataSource());
       readTextMock.mockResolvedValueOnce("2");
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
@@ -131,7 +133,7 @@ describe(usePasteRangeFromClipboard, () => {
     test("no-op when clipboard text is empty", async () => {
       expect.hasAssertions();
 
-      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createSingleCellDataSource());
       readTextMock.mockResolvedValueOnce("");
       selectAnchor(0, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
