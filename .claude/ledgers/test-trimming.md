@@ -11,7 +11,7 @@ Tests that cannot fail for a reason anyone cares about, and fixtures written mor
 | `app/server`                                | —          | 94                                                                              |
 | `app/shared`                                | 2026-08-12 | 24; the schema suites test composed refinements, not Zod                        |
 | `virrun`                                    | —          | 155, split further if a pass cannot read it                                     |
-| `azure-functions`, `azure-mock`, `db*`      | —          | 68                                                                              |
+| `azure-functions`, `azure-mock`, `db*`      | 2026-08-12 | 68; the EventGrid handler matrix now sits on its factory                        |
 | `parse-tmx`, `vue-phaserjs`, `xml2js`, rest | 2026-08-12 | plus `shared`, `shared-node`, `configuration`, `infra`; `createMention` hoisted |
 
 ## Exclusions

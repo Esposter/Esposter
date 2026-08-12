@@ -24,6 +24,12 @@ const FIXTURES = [
     violations: 1,
   },
   // Everything below absorbs something the caller no longer states.
+  // A read of what the forward would have returned is the same rename one step out: the `useGlobalTheme` shape.
+  { name: "readsForwardedCallResult", source: `export const a = () => f().b;`, violations: 1 },
+  { name: "readsParameterProperty", source: `export const a = (b: X) => b.c;`, violations: 1 },
+  // A computed read is a lookup the caller did not spell, and an argument the caller never passed is absorbed.
+  { name: "readsComputedProperty", source: `export const a = (b: X, c: string) => b[c];`, violations: 0 },
+  { name: "readsResultOfSuppliedArgument", source: `export const a = () => f(LIMIT).b;`, violations: 0 },
   { name: "suppliesConstantArgument", source: `export const a = (b: string) => f(b, LIMIT);`, violations: 0 },
   { name: "suppliesLiteralArgument", source: `export const a = (b: string) => f(b, "");`, violations: 0 },
   { name: "suppliesCallback", source: `export const a = (b: string[]) => f(b, (c) => c);`, violations: 0 },

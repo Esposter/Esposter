@@ -62,6 +62,16 @@ const rule = defineRule({
       if (argumentNames.length !== expectedNames.length) return false;
       return argumentNames.every((argumentName, index) => argumentName === expectedNames[index]);
     };
+    // A read of what a forward would have returned is the same rename one step further out: `() =>
+    // UseVTheme().global` and `(a) => a.b` both hand back a property the caller could have reached itself.
+    const getIsForwardingRead = (parameterNames: string[], expression: ESTree.MemberExpression): boolean => {
+      if (expression.computed) return false;
+      const { object } = expression;
+      if (object.type === "Identifier") return parameterNames.includes(object.name);
+      else if (object.type === "CallExpression" || object.type === "NewExpression")
+        return getIsForwardingCall(parameterNames, object);
+      else return false;
+    };
     return {
       ExportNamedDeclaration(node) {
         if (node.declaration?.type !== "VariableDeclaration") return;
@@ -69,10 +79,14 @@ const rule = defineRule({
           if (init?.type !== "ArrowFunctionExpression") continue;
           const parameterNames = init.params.map((parameter) => getParameterName(parameter));
           if (parameterNames.some((parameterName) => parameterName === undefined)) continue;
+          const names = parameterNames as string[];
           // `async (a) => await f(a)` forwards exactly as its sync twin does
           const body = init.body.type === "AwaitExpression" ? init.body.argument : init.body;
-          if (body.type !== "CallExpression" && body.type !== "NewExpression") continue;
-          if (getIsForwardingCall(parameterNames as string[], body)) context.report({ message: MESSAGE, node: init });
+          const isForwarding =
+            body.type === "MemberExpression"
+              ? getIsForwardingRead(names, body)
+              : (body.type === "CallExpression" || body.type === "NewExpression") && getIsForwardingCall(names, body);
+          if (isForwarding) context.report({ message: MESSAGE, node: init });
         }
       },
     };
