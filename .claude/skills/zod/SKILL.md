@@ -14,7 +14,7 @@ description: Esposter Zod schema conventions — z namespace imports and the exp
 ## Imports and Inferred Types
 
 - Always the `z` namespace export: `z.ZodType`, `z.ZodError`. Never named imports like `import type { ZodType }`.
-- Interface-first (`satisfies z.ZodType<T>`) is the default — see `~/.claude/rules/zod.md`. `z.infer` is for schemas with no hand-written interface (tRPC input schemas), not for models.
+- Interface-first (`satisfies z.ZodType<T>`) is the default — see `~/.claude/rules/zod.md`. `z.infer` is for schemas with no hand-written interface (tRPC input schemas), not for models. **Every schema takes it, `z.enum(SomeEnum)` included** — the one-liners are where it goes missing, and there it is what catches a schema pointed at the wrong enum: `rg 'z\.enum\([A-Z]\w+\)\s*(;|$)' | rg -v satisfies` finds them.
 - **When you do need infer, always `export type X = z.infer<typeof xSchema>`** — never `interface X extends z.infer<typeof xSchema> {}`. The extends form trips oxlint `import/namespace` (`"infer" not found in imported namespace`), because the `z` namespace can't be resolved in `extends` position.
 - **Declare the `type` directly beneath its schema and reference it by name** — the alias lives next to the `const xSchema = z.object({...})` it derives from, and use sites refer to `X`. Don't inline `z.infer<typeof xSchema>` at the use site.
 

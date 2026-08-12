@@ -14,4 +14,4 @@ export enum AzureFunction {
   SendTodoReminder = "SendTodoReminder",
 }
 
-export const azureFunctionSchema = z.enum(AzureFunction);
+export const azureFunctionSchema = z.enum(AzureFunction) satisfies z.ZodType<AzureFunction>;
