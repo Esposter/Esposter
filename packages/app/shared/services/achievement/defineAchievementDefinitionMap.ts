@@ -17,4 +17,4 @@ export const defineAchievementDefinitionMap = <
     // Spread because the entry value is generic, and TypeScript rejects spreading it (TS2698)
     // oxlint-disable-next-line prefer-object-spread
     Object.entries(definitionMap).map(([name, definition]) => [name, Object.assign({}, definition, { category })]),
-  ) as { [P in keyof TDefinitionMap]: { category: TCategory } & TDefinitionMap[P] };
+  ) as { [P in keyof TDefinitionMap]: TDefinitionMap[P] & { category: TCategory } };
