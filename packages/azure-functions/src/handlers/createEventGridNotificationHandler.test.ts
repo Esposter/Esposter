@@ -11,8 +11,10 @@ import { z } from "zod";
 // Rejection rather than a swallowed log — a redelivery is the only thing that retries the notification
 describe(createEventGridNotificationHandler, () => {
   const context = new InvocationContext();
-  const schema = z.object({ id: z.string() });
-  const data: z.infer<typeof schema> = { id: "" };
+  // The default is what makes the parse observable: send must receive the schema's output, not the event's data
+  const schema = z.object({ attempt: z.number().default(0), id: z.string() });
+  const data: z.input<typeof schema> = { id: "" };
+  const parsedData: z.infer<typeof schema> = { attempt: 0, id: "" };
   const createEvent = (): EventGridEvent => ({
     data,
     dataVersion: "1.0",
@@ -34,7 +36,7 @@ describe(createEventGridNotificationHandler, () => {
 
     await handler(createEvent(), context);
 
-    expect(send).toHaveBeenCalledExactlyOnceWith(context, data);
+    expect(send).toHaveBeenCalledExactlyOnceWith(context, parsedData);
   });
 
   test("rethrows a failing send so Event Grid redelivers the event", async () => {

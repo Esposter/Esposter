@@ -23,6 +23,8 @@ const FIXTURES = [
     source: `export const a = (b: Client, ...c: string[]) => b.d(...c);`,
     violations: 1,
   },
+  // A default export is the same surface reached without a name, so it forwards on the same terms.
+  { name: "forwardsFromDefaultExport", source: `export default (b: string) => f(b);`, violations: 1 },
   // Everything below absorbs something the caller no longer states.
   // A read of what the forward would have returned is the same rename one step out: the `useGlobalTheme` shape.
   { name: "readsForwardedCallResult", source: `export const a = () => f().b;`, violations: 1 },

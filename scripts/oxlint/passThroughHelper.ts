@@ -72,22 +72,28 @@ const rule = defineRule({
         return getIsForwardingCall(parameterNames, object);
       else return false;
     };
+    // An exported arrow reaches the surface either named or as the module's default, and the two shapes forward
+    // Identically, so both visitors hand their arrow here.
+    const reportIfForwarding = (arrow: ESTree.ArrowFunctionExpression): void => {
+      const parameterNames = arrow.params.map((parameter) => getParameterName(parameter));
+      if (parameterNames.some((parameterName) => parameterName === undefined)) return;
+      const names = parameterNames as string[];
+      // `async (a) => await f(a)` forwards exactly as its sync twin does
+      const body = arrow.body.type === "AwaitExpression" ? arrow.body.argument : arrow.body;
+      const isForwarding =
+        body.type === "MemberExpression"
+          ? getIsForwardingRead(names, body)
+          : (body.type === "CallExpression" || body.type === "NewExpression") && getIsForwardingCall(names, body);
+      if (isForwarding) context.report({ message: MESSAGE, node: arrow });
+    };
     return {
+      ExportDefaultDeclaration(node) {
+        if (node.declaration.type === "ArrowFunctionExpression") reportIfForwarding(node.declaration);
+      },
       ExportNamedDeclaration(node) {
         if (node.declaration?.type !== "VariableDeclaration") return;
-        for (const { init } of node.declaration.declarations) {
-          if (init?.type !== "ArrowFunctionExpression") continue;
-          const parameterNames = init.params.map((parameter) => getParameterName(parameter));
-          if (parameterNames.some((parameterName) => parameterName === undefined)) continue;
-          const names = parameterNames as string[];
-          // `async (a) => await f(a)` forwards exactly as its sync twin does
-          const body = init.body.type === "AwaitExpression" ? init.body.argument : init.body;
-          const isForwarding =
-            body.type === "MemberExpression"
-              ? getIsForwardingRead(names, body)
-              : (body.type === "CallExpression" || body.type === "NewExpression") && getIsForwardingCall(names, body);
-          if (isForwarding) context.report({ message: MESSAGE, node: init });
-        }
+        for (const { init } of node.declaration.declarations)
+          if (init?.type === "ArrowFunctionExpression") reportIfForwarding(init);
       },
     };
   },
