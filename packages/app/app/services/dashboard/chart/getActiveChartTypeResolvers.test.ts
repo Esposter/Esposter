@@ -24,13 +24,4 @@ describe(getActiveChartTypeResolvers, () => {
     expect(takeOne(resolvers)).toBeInstanceOf(BasicResolver);
     expect(takeOne(resolvers, 1)).toBeInstanceOf(DonutResolver);
   });
-
-  // A resolver is stateless, so it is built once at module scope — every lookup hands back the same instance
-  test("hands back the same instance on every call", () => {
-    expect.hasAssertions();
-
-    expect(takeOne(getActiveChartTypeResolvers(ChartType.Donut), 1)).toBe(
-      takeOne(getActiveChartTypeResolvers(ChartType.Donut), 1),
-    );
-  });
 });

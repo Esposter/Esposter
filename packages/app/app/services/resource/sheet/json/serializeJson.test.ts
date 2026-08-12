@@ -1,26 +1,21 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { JsonFileSettings } from "#shared/models/resource/sheet/JsonFileSettings";
 
-import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { JSON_MIME_TYPE, JSON_SETTINGS } from "@/services/resource/sheet/json/constants.test";
+import { createJsonFile } from "@/services/resource/sheet/json/createJsonFile.test";
 import { deserializeJson } from "@/services/resource/sheet/json/deserializeJson";
 import { serializeJson } from "@/services/resource/sheet/json/serializeJson";
 import { jsonDateParse, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const defaultSettings: JsonFileSettings = { configuration: {}, type: DataSourceType.Json };
+const roundTrip = async (dataSource: DataSource) => {
+  const blob = await serializeJson(dataSource, JSON_SETTINGS, JSON_MIME_TYPE);
+  return deserializeJson(createJsonFile(blob), JSON_SETTINGS);
+};
 
 describe(serializeJson, () => {
-  const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Json].mimeType;
-
-  const roundTrip = async (dataSource: DataSource) => {
-    const blob = await serializeJson(dataSource, defaultSettings, MIME_TYPE);
-    return deserializeJson(new File([blob], "a.json", { type: MIME_TYPE }), defaultSettings);
-  };
-
   test("serializes rows to JSON array with column names as keys", async () => {
     expect.hasAssertions();
 
@@ -28,7 +23,7 @@ describe(serializeJson, () => {
       [createColumn("a"), createColumn("b")],
       [createRow({ a: 0, b: 1 }), createRow({ a: 2, b: 3 })],
     );
-    const blob = await serializeJson(dataSource, defaultSettings, MIME_TYPE);
+    const blob = await serializeJson(dataSource, JSON_SETTINGS, JSON_MIME_TYPE);
     const text = await blob.text();
 
     expect(jsonDateParse(text)).toStrictEqual([
@@ -41,7 +36,7 @@ describe(serializeJson, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a")]);
-    const blob = await serializeJson(dataSource, defaultSettings, MIME_TYPE);
+    const blob = await serializeJson(dataSource, JSON_SETTINGS, JSON_MIME_TYPE);
     const text = await blob.text();
 
     expect(jsonDateParse(text)).toStrictEqual([]);

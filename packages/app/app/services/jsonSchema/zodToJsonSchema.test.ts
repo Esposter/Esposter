@@ -72,27 +72,17 @@ describe(zodToJsonSchema, () => {
   });
 
   describe("discriminated union schema", () => {
-    test("adds discriminator with propertyName", () => {
+    test("names the discriminator and branches into oneOf instead of properties", () => {
       expect.hasAssertions();
 
-      const schema = z.discriminatedUnion("type", [
-        z.object({ name: z.string(), type: z.literal("a") }),
-        z.object({ count: z.number(), type: z.literal("b") }),
-      ]);
-      const result = zodToJsonSchema(schema);
+      const result = zodToJsonSchema(
+        z.discriminatedUnion("type", [
+          z.object({ name: z.string(), type: z.literal("a") }),
+          z.object({ count: z.number(), type: z.literal("b") }),
+        ]),
+      );
 
       expect(result.discriminator).toStrictEqual({ propertyName: "type" });
-    });
-
-    test("returns oneOf instead of properties", () => {
-      expect.hasAssertions();
-
-      const schema = z.discriminatedUnion("type", [
-        z.object({ name: z.string(), type: z.literal("a") }),
-        z.object({ count: z.number(), type: z.literal("b") }),
-      ]);
-      const result = zodToJsonSchema(schema);
-
       expect(result).toHaveProperty("oneOf");
       expect(result).not.toHaveProperty("properties");
     });

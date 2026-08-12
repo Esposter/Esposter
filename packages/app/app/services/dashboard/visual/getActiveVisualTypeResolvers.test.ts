@@ -24,13 +24,4 @@ describe(getActiveVisualTypeResolvers, () => {
     expect(takeOne(resolvers)).toBeInstanceOf(TypeResolver);
     expect(takeOne(resolvers, 1)).toBeInstanceOf(ColumnResolver);
   });
-
-  // A resolver is stateless, so it is built once at module scope — every lookup hands back the same instance
-  test("hands back the same instance on every call", () => {
-    expect.hasAssertions();
-
-    expect(takeOne(getActiveVisualTypeResolvers(VisualType.Column), 1)).toBe(
-      takeOne(getActiveVisualTypeResolvers(VisualType.Column), 1),
-    );
-  });
 });

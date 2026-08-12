@@ -1,23 +1,21 @@
-import type { ContentNavigationItem } from "@nuxt/content";
-
+import { createNavigationItem } from "@/services/docs/createNavigationItem.test";
 import { getSurroundingPages } from "@/services/docs/getSurroundingPages";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const createItem = (path: string): ContentNavigationItem => ({
-  path,
-  title: path.split("/").at(-1) ?? "",
-});
-
-const pages = [createItem(`${RoutePath.Docs}/a`), createItem(`${RoutePath.Docs}/b`), createItem(`${RoutePath.Docs}/c`)];
+const pages = [
+  createNavigationItem(`${RoutePath.Docs}/a`),
+  createNavigationItem(`${RoutePath.Docs}/b`),
+  createNavigationItem(`${RoutePath.Docs}/c`),
+];
 
 describe(getSurroundingPages, () => {
   test("returns previous and next around a middle page", () => {
     expect.hasAssertions();
 
     expect(getSurroundingPages(pages, `${RoutePath.Docs}/b`)).toStrictEqual([
-      createItem(`${RoutePath.Docs}/a`),
-      createItem(`${RoutePath.Docs}/c`),
+      createNavigationItem(`${RoutePath.Docs}/a`),
+      createNavigationItem(`${RoutePath.Docs}/c`),
     ]);
   });
 
@@ -26,7 +24,7 @@ describe(getSurroundingPages, () => {
 
     expect(getSurroundingPages(pages, `${RoutePath.Docs}/a`)).toStrictEqual([
       undefined,
-      createItem(`${RoutePath.Docs}/b`),
+      createNavigationItem(`${RoutePath.Docs}/b`),
     ]);
   });
 
@@ -34,7 +32,7 @@ describe(getSurroundingPages, () => {
     expect.hasAssertions();
 
     expect(getSurroundingPages(pages, `${RoutePath.Docs}/c`)).toStrictEqual([
-      createItem(`${RoutePath.Docs}/b`),
+      createNavigationItem(`${RoutePath.Docs}/b`),
       undefined,
     ]);
   });

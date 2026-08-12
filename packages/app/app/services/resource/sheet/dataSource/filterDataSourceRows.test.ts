@@ -103,72 +103,30 @@ describe(filterDataSourceRows, () => {
     expect(result).toHaveLength(0);
   });
 
-  test("boolean filter true keeps only true rows", () => {
+  test.each([
+    [BooleanValue.True, true],
+    [BooleanValue.False, false],
+    [NULL_BOOLEAN_FILTER_VALUE, null],
+  ] as const)("boolean filter %s keeps only the rows holding it", (value, expected) => {
     expect.hasAssertions();
 
-    const result = filterDataSourceRows(booleanDataSource.rows, {
-      "": { type: ColumnType.Boolean, value: BooleanValue.True },
-    });
+    const result = filterDataSourceRows(booleanDataSource.rows, { "": { type: ColumnType.Boolean, value } });
 
-    expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result).data, "")).toBe(true);
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual([expected]);
   });
 
-  test("boolean filter false keeps only false rows", () => {
-    expect.hasAssertions();
-
-    const result = filterDataSourceRows(booleanDataSource.rows, {
-      "": { type: ColumnType.Boolean, value: BooleanValue.False },
-    });
-
-    expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result).data, "")).toBe(false);
-  });
-
-  test("boolean filter null keeps only null rows", () => {
-    expect.hasAssertions();
-
-    const result = filterDataSourceRows(booleanDataSource.rows, {
-      "": { type: ColumnType.Boolean, value: NULL_BOOLEAN_FILTER_VALUE },
-    });
-
-    expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result).data, "")).toBeNull();
-  });
-
-  test("number filter minimum keeps rows at or above the threshold", () => {
+  test.each([
+    ["1", "", [1, 2]],
+    ["", "1", [0, 1]],
+    ["1", "1", [1]],
+  ])("number filter from %s to %s keeps the rows inside it inclusively", (minimum, maximum, expected) => {
     expect.hasAssertions();
 
     const result = filterDataSourceRows(numberDataSource.rows, {
-      "": { maximum: "", minimum: "1", type: ColumnType.Number },
+      "": { maximum, minimum, type: ColumnType.Number },
     });
 
-    expect(result).toHaveLength(2);
-    expect(takeOne(takeOne(result).data, "")).toBe(1);
-    expect(takeOne(takeOne(result, 1).data, "")).toBe(2);
-  });
-
-  test("number filter maximum keeps rows at or below the threshold", () => {
-    expect.hasAssertions();
-
-    const result = filterDataSourceRows(numberDataSource.rows, {
-      "": { maximum: "1", minimum: "", type: ColumnType.Number },
-    });
-
-    expect(result).toHaveLength(2);
-    expect(takeOne(takeOne(result).data, "")).toBe(0);
-    expect(takeOne(takeOne(result, 1).data, "")).toBe(1);
-  });
-
-  test("number filter range keeps rows within min and max inclusive", () => {
-    expect.hasAssertions();
-
-    const result = filterDataSourceRows(numberDataSource.rows, {
-      "": { maximum: "1", minimum: "1", type: ColumnType.Number },
-    });
-
-    expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result).data, "")).toBe(1);
+    expect(result.map((row) => takeOne(row.data, ""))).toStrictEqual(expected);
   });
 
   test("number filter excludes null cell values", () => {

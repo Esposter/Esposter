@@ -1,5 +1,3 @@
-import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
-
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
@@ -11,27 +9,11 @@ import { createDateColumn } from "@/composables/resource/sheet/commands/createDa
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { computeColumnStatistics } from "@/services/resource/sheet/column/computeColumnStatistics";
+import { createColumnStatistics } from "@/services/resource/sheet/column/createColumnStatistics.test";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(computeColumnStatistics, () => {
-  const baseStatistics: ColumnStatistics = {
-    average: undefined,
-    columnName: "",
-    columnType: ColumnType.Number,
-    falseCount: undefined,
-    maximum: undefined,
-    minimum: undefined,
-    mostFrequentValue: undefined,
-    nullCount: 0,
-    nullPercent: undefined,
-    standardDeviation: undefined,
-    summation: undefined,
-    topFrequencies: undefined,
-    trueCount: undefined,
-    uniqueCount: undefined,
-  };
-
   test(`number column computes minimum, maximum, average, standardDeviation, uniqueCount, nullCount`, () => {
     expect.hasAssertions();
 
@@ -40,17 +22,18 @@ describe(computeColumnStatistics, () => {
       [createRow({ "": 0 }), createRow({ "": 2 }), createRow({ "": 2 }), createRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      ...baseStatistics,
-      average: 1.33,
-      maximum: 2,
-      minimum: 0,
-      nullCount: 1,
-      nullPercent: 25,
-      standardDeviation: 0.94,
-      summation: 4,
-      uniqueCount: 2,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual(
+      createColumnStatistics({
+        average: 1.33,
+        maximum: 2,
+        minimum: 0,
+        nullCount: 1,
+        nullPercent: 25,
+        standardDeviation: 0.94,
+        summation: 4,
+        uniqueCount: 2,
+      }),
+    );
   });
 
   test(`number column with repeating decimal mean computes standardDeviation precisely`, () => {
@@ -63,16 +46,17 @@ describe(computeColumnStatistics, () => {
       [createRow({ "": 0 }), createRow({ "": 0 }), createRow({ "": 1 })],
     );
 
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      ...baseStatistics,
-      average: 0.33,
-      maximum: 1,
-      minimum: 0,
-      nullPercent: 0,
-      standardDeviation: 0.47,
-      summation: 1,
-      uniqueCount: 2,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual(
+      createColumnStatistics({
+        average: 0.33,
+        maximum: 1,
+        minimum: 0,
+        nullPercent: 0,
+        standardDeviation: 0.47,
+        summation: 1,
+        uniqueCount: 2,
+      }),
+    );
   });
 
   test(`number column with single value has standardDeviation of 0`, () => {
@@ -80,16 +64,17 @@ describe(computeColumnStatistics, () => {
 
     const dataSource = createDataSource([createNumberColumn("")], [createRow({ "": 1 })]);
 
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      ...baseStatistics,
-      average: 1,
-      maximum: 1,
-      minimum: 1,
-      nullPercent: 0,
-      standardDeviation: 0,
-      summation: 1,
-      uniqueCount: 1,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual(
+      createColumnStatistics({
+        average: 1,
+        maximum: 1,
+        minimum: 1,
+        nullPercent: 0,
+        standardDeviation: 0,
+        summation: 1,
+        uniqueCount: 1,
+      }),
+    );
   });
 
   test(`boolean column computes trueCount, falseCount, nullCount`, () => {
@@ -100,14 +85,15 @@ describe(computeColumnStatistics, () => {
       [createRow({ "": true }), createRow({ "": true }), createRow({ "": false }), createRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      ...baseStatistics,
-      columnType: ColumnType.Boolean,
-      falseCount: 1,
-      nullCount: 1,
-      nullPercent: 25,
-      trueCount: 2,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual(
+      createColumnStatistics({
+        columnType: ColumnType.Boolean,
+        falseCount: 1,
+        nullCount: 1,
+        nullPercent: 25,
+        trueCount: 2,
+      }),
+    );
   });
 
   test(`string column computes uniqueCount, nullCount, nullPercent, mostFrequentValue`, () => {
@@ -118,18 +104,19 @@ describe(computeColumnStatistics, () => {
       [createRow({ "": "" }), createRow({ "": " " }), createRow({ "": "" }), createRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      ...baseStatistics,
-      columnType: ColumnType.String,
-      mostFrequentValue: "",
-      nullCount: 1,
-      nullPercent: 25,
-      topFrequencies: [
-        ["", 2],
-        [" ", 1],
-      ],
-      uniqueCount: 2,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual(
+      createColumnStatistics({
+        columnType: ColumnType.String,
+        mostFrequentValue: "",
+        nullCount: 1,
+        nullPercent: 25,
+        topFrequencies: [
+          ["", 2],
+          [" ", 1],
+        ],
+        uniqueCount: 2,
+      }),
+    );
   });
 
   test(`date column computes uniqueCount, nullCount, nullPercent, mostFrequentValue`, () => {
@@ -145,15 +132,16 @@ describe(computeColumnStatistics, () => {
       ],
     );
 
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      ...baseStatistics,
-      columnType: ColumnType.Date,
-      mostFrequentValue: "1970-01-01",
-      nullCount: 1,
-      nullPercent: 25,
-      topFrequencies: [["1970-01", 3]],
-      uniqueCount: 2,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual(
+      createColumnStatistics({
+        columnType: ColumnType.Date,
+        mostFrequentValue: "1970-01-01",
+        nullCount: 1,
+        nullPercent: 25,
+        topFrequencies: [["1970-01", 3]],
+        uniqueCount: 2,
+      }),
+    );
   });
 
   test("all null number column returns undefined statistics", () => {
@@ -161,13 +149,14 @@ describe(computeColumnStatistics, () => {
 
     const dataSource = createDataSource([createNumberColumn("")], [createRow({ "": null })]);
 
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      ...baseStatistics,
-      nullCount: 1,
-      nullPercent: 100,
-      summation: 0,
-      uniqueCount: 0,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual(
+      createColumnStatistics({
+        nullCount: 1,
+        nullPercent: 100,
+        summation: 0,
+        uniqueCount: 0,
+      }),
+    );
   });
 
   test("empty rows returns zero counts and undefined statistics", () => {
@@ -175,11 +164,12 @@ describe(computeColumnStatistics, () => {
 
     const dataSource = createDataSource([createNumberColumn("")]);
 
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      ...baseStatistics,
-      summation: 0,
-      uniqueCount: 0,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual(
+      createColumnStatistics({
+        summation: 0,
+        uniqueCount: 0,
+      }),
+    );
   });
 
   test("string column with all null values returns undefined mostFrequentValue and 100 nullPercent", () => {
@@ -187,14 +177,15 @@ describe(computeColumnStatistics, () => {
 
     const dataSource = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": null })]);
 
-    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
-      ...baseStatistics,
-      columnType: ColumnType.String,
-      nullCount: 2,
-      nullPercent: 100,
-      topFrequencies: [],
-      uniqueCount: 0,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual(
+      createColumnStatistics({
+        columnType: ColumnType.String,
+        nullCount: 2,
+        nullPercent: 100,
+        topFrequencies: [],
+        uniqueCount: 0,
+      }),
+    );
   });
 
   // A computed column stores nothing in row.data, so its statistics only exist if they are read through the
@@ -213,18 +204,19 @@ describe(computeColumnStatistics, () => {
       [createRow({ "": 0 }), createRow({ "": 2 }), createRow({ "": 2 }), createRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStatistics(dataSource), 1)).toStrictEqual({
-      ...baseStatistics,
-      average: 1.33,
-      columnName: " ",
-      maximum: 2,
-      minimum: 0,
-      nullCount: 1,
-      nullPercent: 25,
-      standardDeviation: 0.94,
-      summation: 4,
-      uniqueCount: 2,
-    });
+    expect(takeOne(computeColumnStatistics(dataSource), 1)).toStrictEqual(
+      createColumnStatistics({
+        average: 1.33,
+        columnName: " ",
+        maximum: 2,
+        minimum: 0,
+        nullCount: 1,
+        nullPercent: 25,
+        standardDeviation: 0.94,
+        summation: 4,
+        uniqueCount: 2,
+      }),
+    );
   });
 
   test("string column with all unique values returns first-encountered mostFrequentValue with count 1", () => {

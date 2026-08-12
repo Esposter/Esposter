@@ -4,7 +4,7 @@ Tests that cannot fail for a reason anyone cares about, and fixtures written mor
 
 | Unit                                        | Swept      | Notes                                                                           |
 | ------------------------------------------- | ---------- | ------------------------------------------------------------------------------- |
-| `app/app/services`                          | —          | 109 files, the largest single tree                                              |
+| `app/app/services`                          | 2026-08-12 | 109; navigation-item, column-statistics and csv/json file fixtures now shared   |
 | `app/app/composables`                       | —          | 73                                                                              |
 | `app/app/store`, `app/app/models`           | —          | 46                                                                              |
 | `app/app/components`, `app/app/util`        | —          | 50                                                                              |
