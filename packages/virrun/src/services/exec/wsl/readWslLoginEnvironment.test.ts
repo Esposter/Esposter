@@ -3,13 +3,13 @@ import type { execFileSync as baseExecFileSync } from "node:child_process";
 import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
 import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
-import { TEST_WSL_LOGIN_ENVIRONMENT } from "@/services/exec/wsl/constants.test";
 import {
   VIRRUN_LOGIN_NODE_BEGIN_MARKER,
   VIRRUN_LOGIN_NODE_END_MARKER,
   VIRRUN_LOGIN_PATH_BEGIN_MARKER,
   VIRRUN_LOGIN_PATH_END_MARKER,
 } from "@/services/exec/wsl/constants";
+import { TEST_WSL_LOGIN_ENVIRONMENT } from "@/services/exec/wsl/constants.test";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
 import { takeOne } from "@esposter/shared";
 import { existsSync, writeFileSync } from "node:fs";

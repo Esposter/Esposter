@@ -1,8 +1,8 @@
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
-import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
