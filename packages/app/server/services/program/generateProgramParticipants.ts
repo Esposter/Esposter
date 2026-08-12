@@ -6,10 +6,16 @@ import { programResourceSchema } from "#shared/models/resource/program/ProgramRe
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
 import { danglingProgramBindingError } from "@@/server/services/program/danglingProgramBindingError";
-import { getProgramParticipantFilter } from "@@/server/services/program/getProgramParticipantFilter";
 import { getProgramParticipantId } from "@@/server/services/program/getProgramParticipantId";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
-import { createEntity, getEntity, getIsConflict, getTopNEntities, serializeEntity } from "@esposter/db";
+import {
+  createEntity,
+  getEntity,
+  getIsConflict,
+  getPartitionKeyFilter,
+  getTopNEntities,
+  serializeEntity,
+} from "@esposter/db";
 import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE, AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
 import { chunk, getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -56,7 +62,7 @@ export const generateProgramParticipants = async (
     programParticipantClient,
     AZURE_MAX_PAGE_SIZE,
     ProgramParticipantEntity,
-    { filter: getProgramParticipantFilter(programId) },
+    { filter: getPartitionKeyFilter(programId) },
   );
   const participantsByKeyValue = new Map<string, ProgramParticipant>(
     existingParticipants.map(({ keyValue, token }) => [keyValue, { keyValue, token }]),

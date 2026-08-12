@@ -1,8 +1,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getSurveyResponseFilter } from "@@/server/services/survey/getSurveyResponseFilter";
-import { getTopNEntities } from "@esposter/db";
+import { getPartitionKeyFilter, getTopNEntities } from "@esposter/db";
 import { AZURE_MAX_PAGE_SIZE, AzureTable, SurveyResponseEntity } from "@esposter/db-schema";
 
 // The one capped read of a survey's responses. The dataset provider and the Responses blade's row-key
@@ -14,7 +13,7 @@ export const readSurveyResponseEntities = async (
 ): Promise<{ hasMore: boolean; surveyResponses: SurveyResponseEntity[] }> => {
   const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
   const surveyResponses = await getTopNEntities(surveyResponseClient, AZURE_MAX_PAGE_SIZE + 1, SurveyResponseEntity, {
-    filter: getSurveyResponseFilter(surveyId),
+    filter: getPartitionKeyFilter(surveyId),
   });
   return {
     hasMore: surveyResponses.length > AZURE_MAX_PAGE_SIZE,

@@ -1,21 +1,5 @@
-import { firstCharLowerCase, normalize, parseBooleans, parseNumbers, stripPrefix } from "@/processors";
+import { parseBooleans, parseNumbers, stripPrefix } from "@/processors";
 import { describe, expect, test } from "vitest";
-
-describe(normalize, () => {
-  test("lowercases", () => {
-    expect.hasAssertions();
-
-    expect(normalize("TagName")).toBe("tagname");
-  });
-});
-
-describe(firstCharLowerCase, () => {
-  test("lowercases only the first character", () => {
-    expect.hasAssertions();
-
-    expect(firstCharLowerCase("TagName")).toBe("tagName");
-  });
-});
 
 describe(stripPrefix, () => {
   test("strips a namespace prefix but keeps xmlns", () => {

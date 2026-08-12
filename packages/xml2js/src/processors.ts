@@ -1,11 +1,5 @@
-import { uncapitalize } from "@esposter/shared";
-
 const BOOLEAN_REGEX = /^(?:true|false)$/iu;
 const PREFIX_MATCH_REGEX = /(?!xmlns)^.*:/u;
-
-export const normalize = (string: string): string => string.toLowerCase();
-
-export const firstCharLowerCase = (string: string): string => uncapitalize(string);
 
 export const stripPrefix = (string: string): string => string.replace(PREFIX_MATCH_REGEX, "");
 

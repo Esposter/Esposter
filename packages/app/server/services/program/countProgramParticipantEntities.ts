@@ -2,8 +2,7 @@ import type { Resource } from "@esposter/db-schema";
 
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getProgramParticipantFilter } from "@@/server/services/program/getProgramParticipantFilter";
-import { countEntities } from "@esposter/db";
+import { countEntities, getPartitionKeyFilter } from "@esposter/db";
 import { AzureTable } from "@esposter/db-schema";
 
 // The uncapped participant count behind the row-cap warning. Counting walks the whole partition, so this
@@ -13,7 +12,7 @@ export const countProgramParticipantEntities = async (programId: Resource["id"])
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   return countEntities(
     programParticipantClient,
-    { filter: getProgramParticipantFilter(programId) },
+    { filter: getPartitionKeyFilter(programId) },
     DATASET_MAX_COUNTED_ROWS,
   );
 };

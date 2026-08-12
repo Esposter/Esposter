@@ -3,7 +3,6 @@ import type { convertableToString, ParserOptions } from "xml2js";
 
 import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "@/constants";
 import { DefaultParserOptions } from "@/DefaultParserOptions";
-import { normalize } from "@/processors";
 import { stripBOM } from "@/stripBOM";
 import { takeOne } from "@esposter/shared";
 import { parser } from "sax";
@@ -26,7 +25,7 @@ export class Parser {
 
     if (this.#options.normalizeTags) {
       this.#options.tagNameProcessors ??= [];
-      this.#options.tagNameProcessors.unshift(normalize);
+      this.#options.tagNameProcessors.unshift((tagName) => tagName.toLowerCase());
     }
 
     this.#saxParser = parser(this.#options.strict, { normalize: false, trim: false, xmlns: this.#options.xmlns });

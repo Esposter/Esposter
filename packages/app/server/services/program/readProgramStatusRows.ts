@@ -3,10 +3,9 @@ import type { Resource } from "@esposter/db-schema";
 
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getProgramParticipantFilter } from "@@/server/services/program/getProgramParticipantFilter";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readSurveyResponseEntities } from "@@/server/services/survey/readSurveyResponseEntities";
-import { getTopNEntities } from "@esposter/db";
+import { getPartitionKeyFilter, getTopNEntities } from "@esposter/db";
 import { AZURE_MAX_PAGE_SIZE, AzureTable, ProgramParticipantEntity } from "@esposter/db-schema";
 
 // The canonical participants × responses join, purpose-built rather than routed through a generic join engine.
@@ -16,7 +15,7 @@ export const readProgramStatusRows = async (
 ): Promise<{ isRespondedPartial: boolean; rows: ProgramStatusParticipantRow[] }> => {
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   const participants = await getTopNEntities(programParticipantClient, AZURE_MAX_PAGE_SIZE, ProgramParticipantEntity, {
-    filter: getProgramParticipantFilter(programId),
+    filter: getPartitionKeyFilter(programId),
   });
   // A deleted or unbound survey leaves the participants readable with nothing responded — the same
   // Fail-soft posture as every dangling reference
