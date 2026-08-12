@@ -96,6 +96,7 @@
     "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }],
     "no-use-before-define": "off",
     "no-useless-return": "off",
+    "one-var": "off",
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
     "prefer-add-event-listener": "off",
