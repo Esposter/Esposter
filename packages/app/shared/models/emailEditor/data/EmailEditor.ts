@@ -102,7 +102,8 @@ export class EmailEditor extends AGrapesJsEditor {
   }
 }
 
-export const emailEditorSchema = grapesJsEditorSchema.extend({
+export const emailEditorSchema = z.object({
+  ...grapesJsEditorSchema.shape,
   datasetReference: datasetReferenceSchema.optional(),
   html: z.string().optional(),
 }) satisfies z.ZodType<ToData<EmailEditor>>;

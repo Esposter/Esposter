@@ -737,7 +737,8 @@ export class WebpageEditor extends AGrapesJsEditor {
   }
 }
 
-export const webpageEditorSchema = grapesJsEditorSchema.extend({
+export const webpageEditorSchema = z.object({
+  ...grapesJsEditorSchema.shape,
   css: z.string().optional(),
   html: z.string().optional(),
 }) satisfies z.ZodType<ToData<WebpageEditor>>;
