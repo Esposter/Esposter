@@ -8,9 +8,10 @@ describe(dedupeFilters, () => {
     expect.hasAssertions();
 
     const filter = { type: FilterType.Has, value: "" };
+    const duplicateFilter = { type: FilterType.Has, value: "" };
     const whitespaceFilter = { type: FilterType.Has, value: " " };
 
-    expect(dedupeFilters([filter, filter])).toStrictEqual([filter]);
+    expect(dedupeFilters([filter, duplicateFilter])).toStrictEqual([filter]);
     expect(dedupeFilters([filter, whitespaceFilter])).toStrictEqual([filter, whitespaceFilter]);
   });
 });

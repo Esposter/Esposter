@@ -13,5 +13,5 @@ export const defineAchievementDefinitionMap = <
   definitionMap: TDefinitionMap,
 ) =>
   Object.fromEntries(
-    Object.entries(definitionMap).map(([name, definition]) => [name, Object.assign({ category }, definition)]),
+    Object.entries(definitionMap).map(([name, definition]) => [name, Object.assign({}, definition, { category })]),
   ) as { [P in keyof TDefinitionMap]: { category: TCategory } & TDefinitionMap[P] };
