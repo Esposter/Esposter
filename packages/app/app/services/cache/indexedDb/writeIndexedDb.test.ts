@@ -1,34 +1,17 @@
-import type { RoomInMessage } from "@esposter/db-schema";
-
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
+import { createRoom } from "@/services/message/room/createRoom.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { MimeCategory, RoomType, StandardMessageEntity } from "@esposter/db-schema";
+import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(writeIndexedDb, () => {
   const { message1, message2, message3 } = setupIndexedDbSuite();
   const userId = crypto.randomUUID();
-  const room = {
-    allowedMimeCategories: Object.values(MimeCategory),
-    categoryId: null,
-    createdAt: new Date(),
-    deletedAt: null,
-    id: crypto.randomUUID(),
-    image: "",
-    isReadOnly: false,
-    maxFileSizeBytes: null,
-    name: "",
-    participantKey: null,
-    slowmodeMs: null,
-    topic: "",
-    type: RoomType.Room,
-    updatedAt: new Date(),
-    userId,
-  } satisfies RoomInMessage;
+  const room = createRoom("");
 
   afterEach(() => {
     vi.restoreAllMocks();

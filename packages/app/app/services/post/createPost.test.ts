@@ -1,6 +1,6 @@
 import type { PostWithRelations } from "@esposter/db-schema";
 
-import { StorageTier } from "@esposter/db-schema";
+import { createUser } from "@/services/message/user/createUser.test";
 import { describe } from "vitest";
 
 // The post row every feed, thread and vote test works against. A comment is the same shape with a `parentId`, so
@@ -10,7 +10,7 @@ import { describe } from "vitest";
 // Feed test as a missing column.
 export const createPost = (overrides: Partial<PostWithRelations> = {}): PostWithRelations => {
   const createdAt = new Date(0);
-  const userId = "userId";
+  const user = createUser({ emailVerified: true, id: "userId" });
   return {
     createdAt,
     deletedAt: null,
@@ -23,20 +23,8 @@ export const createPost = (overrides: Partial<PostWithRelations> = {}): PostWith
     ranking: 0,
     title: "title",
     updatedAt: createdAt,
-    user: {
-      biography: "",
-      createdAt,
-      deletedAt: null,
-      email: "",
-      emailVerified: true,
-      id: userId,
-      image: "",
-      name: "name",
-      storageBytesUsed: 0,
-      storageTier: StorageTier.Free,
-      updatedAt: createdAt,
-    },
-    userId,
+    user,
+    userId: user.id,
     ...overrides,
   };
 };
