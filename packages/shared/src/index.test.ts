@@ -13,6 +13,6 @@ describe("@esposter/shared", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 97.04 KB (99374 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 96.21 KB (98518 bytes)"`);
   });
 });

@@ -13,6 +13,6 @@ describe("@esposter/xml2js", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 33.43 KB (34229 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 33.31 KB (34112 bytes)"`);
   });
 });

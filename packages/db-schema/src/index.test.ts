@@ -13,6 +13,6 @@ describe("@esposter/db-schema", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 5784.37 KB (5923192 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 5778.05 KB (5916727 bytes)"`);
   });
 });

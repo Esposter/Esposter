@@ -13,6 +13,6 @@ describe("azure-mock", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 45.69 KB (46789 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 45.05 KB (46128 bytes)"`);
   });
 });
