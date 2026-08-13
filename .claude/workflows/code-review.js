@@ -3,7 +3,7 @@ export const meta = {
   description:
     "Workflow-backed code review in two modes — diff (anchored on a change, partitioned by lens or by subsystem seam) and area (anchored on an existing subsystem and the docs governing it) — then an independent verifier per file, a resolver per undecided finding, and a ranked report of everything that survived.",
   whenToUse:
-    'Launched by the /code-review skill at high, xhigh, or max effort when workflows are enabled. Pass args as "[mode] <level> [target]" — mode is diff (default) or area; level is high, xhigh, or max. In diff mode target is an optional PR number, branch, ref range, path, or free-form instruction; in area mode it is REQUIRED and names the subsystem or path to audit.',
+    'Launched by the /code-review skill when workflows are enabled. Pass args as "[mode] <level> [target]" — mode is diff (default) or area; level is low (the default), high, xhigh, or max, and it sets both the search width and the reasoning depth. In diff mode target is an optional PR number, branch, ref range, path, or free-form instruction; in area mode it is REQUIRED and names the subsystem or path to audit.',
   phases: [
     {
       title: "Scope",
@@ -13,7 +13,7 @@ export const meta = {
     {
       title: "Find",
       detail:
-        "Both modes lens-partition a small territory and seam-partition a large one — 50 changed files for diff, 25 for area, since area finders read whole files rather than hunks. Area folds the record's claims into each seam finder, or hands the whole inventory to one conformance finder in lens mode, and adds a coverage pass for what the record misses. Cleanup finder either way",
+        "Both modes lens-partition a small territory and seam-partition a large one — 50 changed files for diff, 25 for area, since area finders read whole files rather than hunks. Area folds the record's claims into each seam finder, or hands the whole inventory to one conformance finder in lens mode, and adds a coverage pass for what the record misses. Conventions finder either way",
     },
     {
       title: "Verify",
@@ -29,13 +29,8 @@ export const meta = {
 };
 
 // Code-review: Scope → Find (barrier) → group-by-file → Verify → Sweep (xhigh/max) → Resolve → Synthesize
-// One finder per correctness angle. There is deliberately NO cleanup finder: duplication, stale comments,
-// Altitude and conventions are what the `simplify` skill already sweeps in the main session for a fraction of
-// This pipeline's cost, and they need none of what this pipeline is for. A cleanup claim is settled by looking
-// At the code it names, so buying it a verifier and a resolver pays a verified-bug-hunt price for a finding
-// That is minor by definition — and the stop rule then calls an all-minor round converged, so the fan-out
-// Bought rows that trigger nothing. It used to hold a budget equal to the whole correctness total: half of a
-// Lens run's candidates, and half of its verifier fan-out.
+// One finder per correctness angle, plus the conventions finder — and deliberately no cleanup finder; the
+// Reasoning for that sits at `CONVENTIONS_FINDER`, where the cap it replaced was declared.
 //   Low   → 2 correctness × 4 (≤8 cands)
 //   High  → 3 correctness × 6 (≤18 cands)
 //   Xhigh → 5 correctness × 8 (≤40 cands) → sweep
@@ -47,13 +42,10 @@ export const meta = {
 // Think exactly as hard, so `max` after a capped `xhigh` bought a wider skim rather than a
 // Deeper read. Cleanup-only verifiers still override it downward — a candidate that self-labels
 // `cleanup` is settled by looking, not by reasoning, whichever angle raised it.
-// `low` is the DEFAULT, and its effort is `medium` rather than `low`: the axis it gives up is width, not depth.
-// A bug hunt below medium stops constructing triggers altogether and reports what a linter would, which is the
-// One saving that makes the whole run worthless rather than cheaper.
-// `verifyMax` bounds the verifier fan-out per Verify pass. Every other phase was capped — perAngle on Find,
-// RESOLVE_MAX on Resolve, SWEEP_MAX on Sweep — while Verify was bounded only transitively by the candidate
-// Count, so its worst case is one agent per candidate: the exact per-line fan-out that grouping by file exists
-// To avoid, and the reason a large window cost multiples of a small one at the same level.
+// `low` is the DEFAULT, and its effort is `medium` rather than `low`: the axis a cheap level gives up is width,
+// Not depth. A bug hunt below medium stops constructing triggers altogether and reports what a linter would,
+// Which is the one saving that makes the whole run worthless rather than cheaper.
+// `verifyMax` is the run's verifier budget, spent across every Verify pass — see `verifyGroups`.
 const LEVEL_PARAMS = {
   low: { correctnessAngles: 2, effort: "medium", perAngle: 4, sweep: false, maxSeams: 3, verifyMax: 8 },
   high: { correctnessAngles: 3, effort: "high", perAngle: 6, sweep: false, maxSeams: 6, verifyMax: 16 },
@@ -121,9 +113,6 @@ const makeStats = (known) => ({
   sweepCap: undefined,
   reportableCeiling: undefined,
   resolveCeiling: undefined,
-  // What Verify was allowed to spawn, against what it wanted to — the pair, because a run that hit the cap
-  // Left candidates unexamined and a run that did not is a full pass, and `verifierAgents` alone cannot tell
-  // Them apart.
   verifyCeiling: undefined,
   droppedAtVerifyCap: 0,
   seams: undefined,
@@ -185,14 +174,22 @@ const CORRECTNESS_ANGLES = [
     text: "### Angle E — wrapper/proxy correctness\n\nWhen the PR adds or modifies a type that wraps another (cache, proxy, decorator,\nadapter): check that every method routes to the wrapped instance and not back\nthrough a registry/session/global — e.g. a caching provider holding a\n`delegate` field that resolves IDs via `session.get(...)` instead of\n`delegate.get(...)` will re-enter the cache or recurse. Also check that the\nwrapper forwards all the methods the callers actually use.\n",
   },
 ];
-// The reuse / simplification / efficiency / altitude lenses used to live here beside this one, as the cleanup
-// Finder. They moved OUT of this pipeline to the `simplify` skill, which sweeps exactly those four in the main
-// Session for a fraction of the cost and needs none of the verification the rest of this script exists to buy.
+// The four lenses that are NOT this pipeline's, named once so every prompt that has to exclude them excludes the
+// Same four. They used to live here beside conventions, as the cleanup finder, and moved OUT to the `simplify`
+// Skill — which sweeps exactly those four in the main session for a fraction of the cost and needs none of the
+// Verification the rest of this script exists to buy. Copied into each prompt instead of shared, the list drifted
+// Immediately: `KIND_TAXONOMY` went on offering them as `cleanup` while the conventions finder was being told they
+// Were not its job, and since area mode honours a self-declared kind, that is the path by which they walk back in —
+// A duplication finding labelled `cleanup`, verified at low effort, ranked under the correctness rows, reported.
+const MOVED_LENSES = "reuse, simplification, efficiency and altitude";
 // Conventions did NOT move with them: `simplify` names those four and only those four, so a CLAUDE.md rule the
 // Diff breaks has no other enforcer — CodeRabbit reasons about repo rules from names and routinely asserts
 // Conventions this repo does not have. It stays, on a small cap of its own.
 const CONVENTIONS_TEXT =
-  '### Conventions (CLAUDE.md)\n\nFind the CLAUDE.md files that govern the changed code: the user-level\n~/.claude/CLAUDE.md, the repo-root CLAUDE.md, plus any CLAUDE.md or\nCLAUDE.local.md in a directory that is an ancestor of a changed file (a\ndirectory\'s CLAUDE.md only applies to files at or below it). Read each one\nthat exists, then check the diff for clear violations of the rules they state.\n\nOnly flag a violation when you can quote the exact rule and the exact line\nthat breaks it — no style preferences, no vague "spirit of the doc"\ninferences. In the finding, name the CLAUDE.md path and quote the rule so the\nreport can cite it. If no CLAUDE.md applies, return nothing.\n\nDo NOT report reuse, simplification, efficiency or altitude cleanups — a\nduplicated helper, a simpler form, wasted work, a bandaid at the wrong depth.\nThe `simplify` skill owns those four and sweeps them separately; raising them\nhere buys them a verifier and a resolver they do not need.\n';
+  '### Conventions (CLAUDE.md)\n\nFind the CLAUDE.md files that govern the changed code: the user-level\n~/.claude/CLAUDE.md, the repo-root CLAUDE.md, plus any CLAUDE.md or\nCLAUDE.local.md in a directory that is an ancestor of a changed file (a\ndirectory\'s CLAUDE.md only applies to files at or below it). Read each one\nthat exists, then check the diff for clear violations of the rules they state.\n\nOnly flag a violation when you can quote the exact rule and the exact line\nthat breaks it — no style preferences, no vague "spirit of the doc"\ninferences. In the finding, name the CLAUDE.md path and quote the rule so the\nreport can cite it. If no CLAUDE.md applies, return nothing.\n\n' +
+  `Do NOT report ${
+    MOVED_LENSES
+  } cleanups — a duplicated helper, a simpler\nform, wasted work, a bandaid at the wrong depth. Another pass owns those four\nand sweeps them separately; raising them here buys them a verifier and a\nresolver they do not need.\n`;
 const VERDICT_LADDER =
   "- **CONFIRMED** — can name the inputs/state that trigger it and the wrong\n  output or crash. Quote the line.\n- **PLAUSIBLE** — mechanism is real, trigger is uncertain (timing, env,\n  config). State what would confirm it.\n- **REFUTED** — factually wrong (code doesn't say that) or guarded elsewhere.\n  Quote the line that proves it.";
 const VERDICT_LADDER_RECALL =
@@ -237,7 +234,7 @@ const PROVENANCE_LADDER =
   "  line, and the fix is the doc edit; cite the file and line that no longer matches.\n\n" +
   "`provenanceSource` is the citation that classification rests on — a commit sha, a `docs/…md` path, a\n" +
   "`SKILL.md` path, or the `file:line` of the comment that records the decision. Leave it empty only for **new**.";
-const CLEANUP_PRECEDENCE =
+const CONVENTIONS_PRECEDENCE =
   "Conventions candidates use the same `file`/`line`/`summary` shape; in\n`failure_scenario`, state which CLAUDE.md rule is broken and where, instead of\na crash. Correctness bugs always outrank conventions findings when the output\ncap forces a cut.\n";
 // The per-finder cap is a CEILING, and a finder that reads it as a quota is how a review stops converging: over
 // Any mature file there is always one more wording preference to raise, so successive runs report a fresh batch
@@ -285,8 +282,9 @@ const VERDICTS = ["CONFIRMED", "PLAUSIBLE", "REFUTED"];
 // Real defect into the cleanup family's cheaper verification and lower rank, invisibly.
 const KIND_TAXONOMY =
   "correctness = a defect in the code; conformance = the code and the written record disagree (say which side is " +
-  "wrong); record-gap = the behaviour is real and deliberate but nothing documents it; cleanup = " +
-  "reuse/simplification/efficiency/altitude/conventions.";
+  "wrong); record-gap = the behaviour is real and deliberate but nothing documents it; cleanup = a convention the " +
+  `code breaks, quoting the CLAUDE.md rule and the line. ${MOVED_LENSES} are NOT findings here under any kind — ` +
+  "another pass owns them.";
 // The instruction itself, so the finders and the sweep ask for the field in one voice. The sweep needs it because
 // The schema exposes `kind` to it in area mode exactly as it does to a finder, and a candidate handed the enum
 // With nothing explaining it can self-label `cleanup` and demote its own defect out of full-effort verification.
@@ -932,25 +930,23 @@ const FINDER_PROMPT = (f) => {
   // `correctness` where a mismatch breaks something — so they need the wording for both.
   const isRecordOnly = f.kind === "record-gap";
   const isMixedKind = IS_AREA && !isCleanup && !isRecordOnly;
-  // Which lens family, then which mode — never mode first. Branching on IS_AREA at the top drops the
-  // Cleanup/correctness distinction entirely, so the first preamble-less correctness finder added to area mode
-  // Would be told to "review through the conventions lens" while its candidates were still
-  // Ingested as correctness, with nothing in the output revealing the mismatch.
   const readInstruction = IS_AREA ? "Read the files in your scope" : "Run the diff command above";
-  const defaultPreamble = isCleanup
-    ? `${readInstruction} and review ONLY through the lens below:\n\n`
-    : `${readInstruction} and review ONLY through the lens of your assigned angle:\n\n`;
+  // One lens either way now that the cleanup family is gone — the conventions finder's lens travels in its `text`,
+  // A correctness angle's is assigned to it — so the branch is which noun names it, not a different instruction.
+  const defaultPreamble = `${readInstruction} and review ONLY through the lens ${
+    isCleanup ? "below" : "of your assigned angle"
+  }:\n\n`;
   return (
     `## Code-review finder — ${f.label}\n\n${SCOPE_BLOCK}\n${
       // A seam finder's preamble replaces the "which lens" instruction with "which territory" — it is the only
       // Place the two Find strategies differ, and everything after it is identical for both.
       f.preamble ?? defaultPreamble
-    }${f.text}\n${isCleanup ? CLEANUP_PRECEDENCE + "\n" : ""}${MATERIALITY_BAR}\n` +
+    }${f.text}\n${isCleanup ? CONVENTIONS_PRECEDENCE + "\n" : ""}${MATERIALITY_BAR}\n` +
     `Surface up to ${
       f.cap
     } candidate findings, each with file, line, a one-line summary, and a concrete failure_scenario — ${
       isCleanup
-        ? // The content rule lives in CLEANUP_PRECEDENCE, appended just above, and is referenced rather than
+        ? // The content rule lives in CONVENTIONS_PRECEDENCE, appended just above, and is referenced rather than
           // Restated — two copies drift into two different wordings of what a conventions failure_scenario must hold.
           "the broken rule as the precedence note above defines it, never a crash, since a conventions finding by " +
           "definition has none. "
@@ -962,10 +958,6 @@ const FINDER_PROMPT = (f) => {
               "conclusion a future reader or reviewer would draw and what it costs them — never invent a crash for a " +
               "documentation problem. "
             : "the user-visible consequence (error, wrong output, data loss), not an intermediate state (value stale, set grows). "
-    }${
-      isCleanup
-        ? "Cover whichever lenses apply — you do not need findings from every lens; prioritize the highest-cost issues across all of them. "
-        : ""
     }Pass every candidate with a nameable failure scenario through — do not silently drop half-believed candidates; an independent verifier judges them next. ${
       IS_AREA ? AREA_KIND_INSTRUCTION : ""
     }If nothing qualifies, return an empty list.\n\nStructured output only.`
@@ -1087,7 +1079,17 @@ let unverifiedDropped = 0;
 let verifyCapDropped = 0;
 // The files those candidates sat in, named in the summary alongside the count: a bare number tells the reader some
 // Of the diff went unexamined without telling them WHICH of it, which is the half they need to re-run or read by hand.
+// One set per CAUSE, not one shared by both. Sharing it publishes the cap's filenames under the dead-verifier
+// Sentence — false for them, and with a count that no longer matches the list beside it — and on a cap-only run
+// Nothing renders them at all, since that sentence is gated on the other counter.
 const unverifiedDroppedFiles = new Set();
+const verifyCapDroppedFiles = new Set();
+// The verifier budget is the RUN's, not each pass's. `verifyGroups` is called twice above `high` — once for the
+// Main candidates, once for the sweep's — so reading `P.verifyMax` per call let a run spawn `verifyMax` verifiers
+// Twice while `stats.verifyCeiling` published one of them, and handed the sweep's ≤8 candidates a budget they
+// Cannot exhaust while the pass that truncates got no share of it. Decremented, so the ceiling in stats is the
+// Ceiling the run actually had.
+let verifyBudget = P.verifyMax;
 
 const verifyGroups = async (candidates) => {
   // Grouped by FILE, not by (file, line): a verifier reads the whole file to judge any claim in it, so two
@@ -1097,20 +1099,25 @@ const verifyGroups = async (candidates) => {
   // Verifier inside one file's worth of context.
   const byFile = Object.create(null);
   for (const c of candidates) (byFile[c.file] ||= []).push(c);
-  // Capped worst-first, the way Resolve is. Grouping alone bounds nothing: candidates scattered one per file —
+  // Capped best-first against the run's budget. Grouping alone bounds nothing: candidates scattered one per file —
   // The normal shape of a wide diff, and of every seam run — degrade it to a verifier per candidate, which is the
   // Per-line fan-out the grouping exists to avoid. Every other phase already had a cap of its own and Verify did
   // Not, so the phase holding most of a run's agents was the one phase whose size the level did not set.
-  // Ranked by each group's WORST candidate, so a file holding one critical outranks a file holding four minors:
-  // The alternative — most-candidates-first — spends the budget on whichever file the widest lens touched most.
-  const worstRank = (group) => Math.min(...group.map((c) => rank(c)));
-  const ordered = Object.values(byFile).toSorted((a, b) => worstRank(a) - worstRank(b));
-  const groups = ordered.slice(0, P.verifyMax);
-  const overflow = ordered.slice(P.verifyMax);
+  // Ordered by each group's best-ranked candidate, which before a verdict exists means BY KIND and nothing else:
+  // `CANDIDATES_SCHEMA` deliberately does not ask a finder for `severity` — the verifier assigns it, so a finder
+  // Cannot inflate its own candidate past this cap — which leaves `rank`'s severity term constant here. So what
+  // This buys is that a file carrying a correctness or conformance candidate outranks one carrying only a
+  // Convention nit or a record-gap, whatever order the finders happened to return in. `rank` is called rather
+  // Than a kind comparator written here, so the one ladder still owns the order the report ranks by.
+  const bestRank = (group) => Math.min(...group.map((c) => rank(c)));
+  const ordered = Object.values(byFile).toSorted((a, b) => bestRank(a) - bestRank(b));
+  const groups = ordered.slice(0, verifyBudget);
+  const overflow = ordered.slice(verifyBudget);
+  verifyBudget -= groups.length;
   if (overflow.length > 0) {
     const dropped = overflow.reduce((n, g) => n + g.length, 0);
     verifyCapDropped += dropped;
-    for (const g of overflow) unverifiedDroppedFiles.add(g[0].file);
+    for (const g of overflow) verifyCapDroppedFiles.add(g[0].file);
     log(
       `verify: ${dropped} candidate(s) in ${overflow.length} lower-ranked file(s) dropped at the ${
         P.verifyMax
@@ -1194,10 +1201,7 @@ const verifyGroups = async (candidates) => {
 // ─── Find (barrier) → group → Verify. The barrier is the deliberate trade
 // For cross-finder location merge: grouping needs every finder's output.
 // Correctness stays 1 finder per angle (lens-partitioning matters for catch).
-// Conventions is ONE finder on a cap of `ANGLES`, the only lens left from the
-// Cleanup family: the other four are the `simplify` skill's, and buying a
-// Verifier and a resolver for a finding that is minor by definition is what
-// Made a lens run spend half its fan-out on rows the stop rule ignores.
+// Conventions is ONE finder on a small cap of its own (`CONVENTIONS_FINDER`).
 // Seam finders carry EVERY lens over their own territory rather than one lens over everyone's — the partition
 // Trades territory for lens-diversity-per-file, so the lenses have to travel with the finder or the trade is a
 // Straight loss.
@@ -1738,40 +1742,36 @@ const stats = makeStats({
 // Two phrasings of one condition drift, and which one the user gets would depend only on whether anything else
 // Survived. The refuted rows are built once for the same reason: the report format asks for them on every run,
 // Including the run that refuted everything.
-const unexaminedNote =
-  (unresolvedDropped.length > 0
-    ? " " +
-      unresolvedDropped.length +
-      " further finding(s) were dropped unsettled at the resolve budget rather than refuted — this round did not " +
-      "clear them."
-    : "") +
+// One clause per cause, each gated on its own count and naming its own subjects. Written as a concat ladder of
+// Space-prefixed strings instead, the leading-space rule was restated at every clause and a fourth cause was one
+// Omission away from gluing two sentences together; here the separator is applied once.
+const listOf = (subjects) => [...subjects].toSorted((a, b) => a.localeCompare(b)).join(", ");
+const unexaminedNote = [
+  unresolvedDropped.length > 0 &&
+    `${
+      unresolvedDropped.length
+    } further finding(s) were dropped unsettled at the resolve budget rather than refuted — this round did not clear them.`,
   // The cap biting is stated separately from a verifier dying, because the remedy differs: this one is answered by
   // A narrower window or a higher level, never by re-running the same level over the same range.
-  (verifyCapDropped > 0
-    ? " " +
-      verifyCapDropped +
-      " candidate(s) were dropped at the " +
-      P.verifyMax +
-      "-verifier cap and reached no verdict — narrow the window or raise the level rather than re-running this one."
-    : "") +
-  (unverifiedDropped > 0
-    ? " " +
-      unverifiedDropped +
-      " candidate(s) in " +
-      [...unverifiedDroppedFiles].toSorted((a, b) => a.localeCompare(b)).join(", ") +
-      " reached no verdict at all — a verifier agent returned nothing, so this round did not examine them and " +
-      "their absence is not evidence of a clean file."
-    : "") +
-  // The loudest of the three, because it is the only one that costs a whole lens or seam rather than a handful of
+  verifyCapDropped > 0 &&
+    `${verifyCapDropped} candidate(s) in ${listOf(verifyCapDroppedFiles)} were dropped at the ${
+      P.verifyMax
+    }-verifier cap and reached no verdict — narrow the window or raise the level rather than re-running this one.`,
+  unverifiedDropped > 0 &&
+    `${unverifiedDropped} candidate(s) in ${listOf(
+      unverifiedDroppedFiles,
+    )} reached no verdict at all — a verifier agent returned nothing, so this round did not examine them and their absence is not evidence of a clean file.`,
+  // The loudest of the four, because it is the only one that costs a whole lens or seam rather than a handful of
   // Candidates: the finders are NAMED, since which territory went unread is what decides whether re-running is
   // Worth it, and a bare count reads as a rounding error against a run that reported thirty findings.
-  (finderDropped > 0
-    ? " " +
-      finderDropped +
-      " finder(s) returned nothing usable (" +
-      [...finderDroppedLabels].toSorted((a, b) => a.localeCompare(b)).join(", ") +
-      ") — that territory went unread this round, so a clean result for it means nobody looked."
-    : "");
+  finderDropped > 0 &&
+    `${finderDropped} finder(s) returned nothing usable (${listOf(
+      finderDroppedLabels,
+    )}) — that territory went unread this round, so a clean result for it means nobody looked.`,
+]
+  .filter(Boolean)
+  .map((clause) => ` ${clause}`)
+  .join("");
 const refutedRows = refuted.map((c) => ({
   file: c.file,
   line: c.line,

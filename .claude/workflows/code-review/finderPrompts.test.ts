@@ -14,27 +14,23 @@ const getOptionsFor = (result: RunResult, label: string) => result.calls.find((c
 describe("code-review finder prompts", () => {
   const CRASH_DEMAND = "the user-visible consequence (error, wrong output, data loss)";
   const MIXED_WORDING = "never invent a crash for a documentation problem";
+  // The script's own `MOVED_LENSES`. It cannot be imported — the workflow is a function body, not a module — so the
+  // Wording is stated once here and asserted at both sites that must agree on it.
+  const MOVED_LENSES = "reuse, simplification, efficiency and altitude";
 
-  test("asks the conventions finder for the broken rule and never for a crash", async () => {
+  test("briefs the conventions finder on the broken rule, never a crash, and not on the moved lenses", async () => {
     expect.hasAssertions();
 
     const run = await runReview("high", stubFor({}));
+    const prompt = getPrompt(run, "conventions");
 
-    expect(getPrompt(run, "conventions")).toContain("the broken rule");
-    expect(getPrompt(run, "conventions")).not.toContain(CRASH_DEMAND);
-  });
-
-  // The four lenses that left this pipeline for the `simplify` skill. Nothing stops a conventions finder from
-  // Drifting back into them — they are what a model reaches for when asked to review a diff for quality — and each
-  // One that returns buys a verifier and a resolver for a finding that is minor by definition.
-  test("tells the conventions finder the other cleanup lenses are not its job", async () => {
-    expect.hasAssertions();
-
-    const run = await runReview("high", stubFor({}));
-
-    expect(getPrompt(run, "conventions")).toContain(
-      "Do NOT report reuse, simplification, efficiency or altitude cleanups",
-    );
+    expect(prompt).toContain("the broken rule");
+    expect(prompt).not.toContain(CRASH_DEMAND);
+    // The four lenses that left this pipeline. Whichever prompt names them has to name the same four, so both the
+    // Exclusion here and the kind taxonomy every area finder is handed are asserted against one shared string —
+    // Two hand-written copies is how the taxonomy went on offering them as `cleanup` after this one excluded them.
+    expect(prompt).toContain(MOVED_LENSES);
+    expect(getPrompt(run, "angle-A")).not.toContain(MOVED_LENSES);
   });
 
   test("asks an area finder that can raise either kind for both wordings", async () => {
@@ -90,6 +86,7 @@ describe("code-review finder prompts", () => {
 
     const run = await runReview("high", stubFor({}));
     const maxRun = await runReview("max", stubFor({}));
+    const lowRun = await runReview("low", stubFor({}));
 
     expect(getOptionsFor(run, "conventions")?.effort).toBe("low");
     expect(getOptionsFor(run, "angle-A")?.effort).toBe("high");
@@ -99,7 +96,7 @@ describe("code-review finder prompts", () => {
     expect(getOptionsFor(maxRun, "conventions")?.effort).toBe("low");
     // `low` gives up width, never depth: a bug hunt below medium stops constructing triggers and reports what a
     // Linter would, which is the one saving that makes the cheap level worthless rather than cheap.
-    expect(getOptionsFor(await runReview("low", stubFor({})), "angle-A")?.effort).toBe("medium");
+    expect(getOptionsFor(lowRun, "angle-A")?.effort).toBe("medium");
   });
 
   test("tells the area sweep what the kinds mean, since its schema offers it the enum", async () => {
@@ -112,6 +109,10 @@ describe("code-review finder prompts", () => {
 
     expect(getPrompt(area, "sweep")).toContain("Set each candidate's `kind`");
     expect(getPrompt(diff, "sweep")).not.toContain("Set each candidate's `kind`");
+    // The taxonomy that comes with the enum must exclude the moved lenses too. While it still offered them as
+    // `cleanup`, an area finder could self-label a duplication finding into the kind that routes to low-effort
+    // Verification and a rank below the correctness rows — the four lenses walking back in under a different name.
+    expect(getPrompt(area, "sweep")).toContain(`${MOVED_LENSES} are NOT findings here`);
   });
 
   test("carries the record's settled decisions to finders and verifiers alike", async () => {

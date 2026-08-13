@@ -23,7 +23,7 @@ export interface ReviewStats {
   reported: number;
   seams?: string[];
   sweepCap?: number;
-  verifyCeiling?: number;
   verified: number;
   verifierAgents: number;
+  verifyCeiling?: number;
 }

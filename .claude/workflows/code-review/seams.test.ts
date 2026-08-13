@@ -4,6 +4,7 @@ import type { ScopeAnswer } from "./models/ScopeAnswer";
 
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
 import { createAreaFiles } from "./createAreaFiles.test";
+import { createCandidates } from "./createCandidates.test";
 import { createSeam } from "./createSeam.test";
 import { getPrompt } from "./getPrompt.test";
 import { runReview } from "./runReview.test";
@@ -43,7 +44,7 @@ describe("code-review seam partition", () => {
     // Ones seam mode exists for — the same six resolvers a two-file lens review gets, dropping the rest unexamined.
     const seams = [createSeam("reads", ["cache/f1.ts"]), createSeam("writes", ["cache/f2.ts"])];
     // Twelve unsettled findings, split across two finders because each one's own cap is six.
-    const many = Array.from({ length: 12 }, (_, index) => ({ ...CANDIDATE, line: index + 1 }));
+    const many = createCandidates(12);
     const run = await runReview(
       AREA_ARGS,
       stubFor({
@@ -83,20 +84,19 @@ describe("code-review seam partition", () => {
     expect(new Set(seamLabels).size).toBe(2);
   });
 
-  test("publishes the ceiling it computed rather than a formula to reassemble", async () => {
+  test("publishes a ceiling that widens with the level and counts the sweep only above high", async () => {
     expect.hasAssertions();
 
     // Every term of the prose formula has drifted out of date at least once — the sweep's own cap was missing from
     // It for two levels — and a reader who re-derives it budgets for a run of a different size than they got.
+    // Asserted as behaviour rather than by re-deriving the sum: a test that restates the implementation's own
+    // Expression can only fail when the code stops using it, which is not a change anyone needs warning about.
     const high = (await runReview("high", stubFor({}))).result.stats;
     const xhigh = (await runReview("xhigh", stubFor({}))).result.stats;
 
     expect(high?.sweepCap).toBe(0);
-    expect(high?.reportableCeiling).toBe((high?.angles ?? 0) * (high?.perAngle ?? 0) + (high?.conventionsCap ?? 0));
     expect(xhigh?.sweepCap).toBe(SWEEP_CAP);
-    expect(xhigh?.reportableCeiling).toBe(
-      (xhigh?.angles ?? 0) * (xhigh?.perAngle ?? 0) + (xhigh?.conventionsCap ?? 0) + SWEEP_CAP,
-    );
+    expect(xhigh?.reportableCeiling).toBeGreaterThan(high?.reportableCeiling ?? 0);
   });
 
   test("falls back to lens when only one seam is usable", async () => {

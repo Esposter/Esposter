@@ -1,6 +1,8 @@
 import { describe, expect, test } from "vitest";
 
 import { AREA_ARGS, AREA_SCOPE, CANDIDATE } from "./constants.test";
+import { createCandidates } from "./createCandidates.test";
+import { createCorrectnessOnly } from "./createCorrectnessOnly.test";
 import { getFinding } from "./getFinding.test";
 import { getResolveLog } from "./getResolveLog.test";
 import { runReview } from "./runReview.test";
@@ -21,8 +23,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) =>
-          label === "conventions" ? [] : [{ ...CANDIDATE }, { ...CANDIDATE, summary: "Same bug" }],
+        finderFor: createCorrectnessOnly(() => [{ ...CANDIDATE }, { ...CANDIDATE, summary: "Same bug" }]),
       }),
     );
 
@@ -76,8 +77,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) =>
-          label === "conventions" ? [] : [{ ...CANDIDATE }, { ...CANDIDATE, summary: "Same bug" }],
+        finderFor: createCorrectnessOnly(() => [{ ...CANDIDATE }, { ...CANDIDATE, summary: "Same bug" }]),
       }),
     );
     const angles = run.calls.filter((call) => call.label.startsWith("angle-")).length;
@@ -92,7 +92,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "conventions" ? [] : [{ ...CANDIDATE, summary: label }]),
+        finderFor: createCorrectnessOnly((label) => [{ ...CANDIDATE, summary: label }]),
         verdictFor: (index) => (index === 2 ? { severity: "critical" } : {}),
       }),
     );
@@ -110,7 +110,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "conventions" ? [] : [{ ...CANDIDATE, summary: label }]),
+        finderFor: createCorrectnessOnly((label) => [{ ...CANDIDATE, summary: label }]),
         verdictFor: (index) =>
           index === 0 ? { confidence: 40, severity: "critical" } : { confidence: 95, severity: "minor" },
       }),
@@ -128,7 +128,7 @@ describe("code-review dedupe and resolve", () => {
     const run = await runReview(
       "high",
       stubFor({
-        finderFor: (label) => (label === "conventions" ? [] : [{ ...CANDIDATE }]),
+        finderFor: createCorrectnessOnly(() => [{ ...CANDIDATE }]),
         resolution: RESOLVED,
         verdictFor: UNDER_CONFIDENT,
       }),
@@ -213,7 +213,7 @@ describe("code-review dedupe and resolve", () => {
   test("names findings dropped at the resolve budget in the summary", async () => {
     expect.hasAssertions();
 
-    const many = Array.from({ length: 8 }, (_, index) => ({ ...CANDIDATE, line: index + 1 }));
+    const many = createCandidates(8);
     const run = await runReview(
       "high",
       stubFor({
@@ -230,7 +230,7 @@ describe("code-review dedupe and resolve", () => {
   test("spends the resolve budget worst-first", async () => {
     expect.hasAssertions();
 
-    const many = Array.from({ length: 8 }, (_, index) => ({ ...CANDIDATE, line: index + 1 }));
+    const many = createCandidates(8);
     const run = await runReview(
       "high",
       stubFor({
