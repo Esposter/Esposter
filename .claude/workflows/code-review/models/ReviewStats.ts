@@ -21,6 +21,7 @@ export interface ReviewStats {
   refuted: number;
   reportableCeiling?: number;
   reported: number;
+  resolveCeiling?: number;
   seams?: string[];
   sweepCap?: number;
   verified: number;

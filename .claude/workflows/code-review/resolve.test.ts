@@ -223,7 +223,12 @@ describe("code-review dedupe and resolve", () => {
       }),
     );
 
+    // The pair, not the count alone: `droppedUnsettled` says the budget ran out and `resolveCeiling` says what it
+    // Was, and run-economics sends the reader to the second to tell "nothing else needed resolving" apart from
+    // "the budget ran out". Asserting it is also what keeps `ReviewStats` honest — the field was emitted and
+    // Documented for two rounds while the interface omitted it, because no test ever read it.
     expect(run.result.stats?.droppedUnsettled).toBe(2);
+    expect(run.result.stats?.resolveCeiling).toBe(6);
     expect(run.result.summary).toContain("dropped unsettled at the resolve budget");
   });
 
