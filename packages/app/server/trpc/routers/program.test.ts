@@ -15,6 +15,7 @@ import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "@@/server/trpc/routers
 import { createBoundProgram } from "@@/server/trpc/routers/createBoundProgram.test";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { programRouter } from "@@/server/trpc/routers/program";
+import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { getTopNEntities, serializeClauses } from "@esposter/db";
@@ -29,17 +30,21 @@ import {
   ResourceType,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 
-// This suite reads the participant table directly to prove the delete cleanup, so it needs the mock
-// Registered in its own module graph — createMockContext's registration does not reach a direct import
-vi.mock(
-  import("@@/server/composables/azure/table/useTableClient"),
-  () => import("@@/server/composables/azure/table/useTableClient.test"),
-);
+// The stored partition is what proves a concurrent or purged run left exactly the rows it should have
+const readStoredParticipants = async (programId: string) => {
+  const clauses: Clause<ProgramParticipantEntity>[] = [
+    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: programId },
+  ];
+  const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
+  return getTopNEntities(programParticipantClient, AZURE_MAX_PAGE_SIZE, ProgramParticipantEntity, {
+    filter: serializeClauses(clauses),
+  });
+};
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
 // Here only the router wiring plus the program-specific participant issuance and status join.
@@ -47,6 +52,7 @@ describe("program", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["program"]>;
   let datasetCaller: DecorateRouterRecord<TRPCRouter["dataset"]>;
+  let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const name = "name";
@@ -61,20 +67,30 @@ describe("program", () => {
     AzureEntityType.ProgramParticipant,
     danglingProgramBindingReason,
   ).message;
-  const setupIdentifiedSurvey = async () => {
+  // Every participant test starts from the same pair — an Identified survey and a program bound to it plus an
+  // Audience sheet — and varies only the audience it issues against
+  const setupIdentifiedProgram = async (audienceKeyValues = keyValues) => {
     const survey = await surveyCaller.createResource({ name });
     await surveyCaller.saveResourceContent({
       content: { model, settings: identifiedSettings } satisfies SurveyResource,
       contentVersion: survey.contentVersion,
       id: survey.id,
     });
-    return survey;
+    const program = await createBoundProgram({
+      keyValues: audienceKeyValues,
+      name,
+      programCaller: caller,
+      sheetCaller,
+      surveyId: survey.id,
+    });
+    return { program, survey };
   };
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(programRouter)(mockContext);
     datasetCaller = createCallerFactory(datasetRouter)(mockContext);
+    resourceCaller = createCallerFactory(resourceRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     surveyCaller = createCallerFactory(surveyRouter)(mockContext);
   });
@@ -113,22 +129,15 @@ describe("program", () => {
   test("generates one token per distinct audience key value", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
     // The empty key value is skipped and the duplicate collapses — one token per distinct participant
-    const program = await createBoundProgram({
-      keyValues: [...keyValues, "a"],
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram([...keyValues, "a"]);
     const participants = await caller.generateProgramParticipants({ id: program.id });
 
-    expect(participants.map(({ keyValue }) => keyValue)).toStrictEqual([" ", "a"]);
+    expect(participants.map(({ keyValue: participantKeyValue }) => participantKeyValue)).toStrictEqual([" ", "a"]);
 
     // Tokens are UUIDs, never derived from the key — a derivable token could be minted by anyone
-    for (const { keyValue, token } of participants) {
-      expect(token).not.toBe(keyValue);
+    for (const { keyValue: participantKeyValue, token } of participants) {
+      expect(token).not.toBe(participantKeyValue);
       expect(z.uuid().safeParse(token).success).toBe(true);
     }
   });
@@ -136,14 +145,7 @@ describe("program", () => {
   test("generateProgramParticipants is idempotent", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues,
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram();
     const participants = await caller.generateProgramParticipants({ id: program.id });
     const reissuedParticipants = await caller.generateProgramParticipants({ id: program.id });
 
@@ -154,14 +156,7 @@ describe("program", () => {
   test("generateProgramParticipants issues one token per participant across concurrent runs", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues,
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram();
     // Neither run sees the other's rows, so both try to issue every token — the storage key is what makes
     // One of them lose, and the loser adopts the winner's token instead of minting a rival
     const [participants, concurrentParticipants] = await Promise.all([
@@ -171,18 +166,7 @@ describe("program", () => {
 
     expect(concurrentParticipants).toStrictEqual(participants);
 
-    const clauses: Clause<ProgramParticipantEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: program.id },
-    ];
-    const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
-    const storedParticipants = await getTopNEntities(
-      programParticipantClient,
-      AZURE_MAX_PAGE_SIZE,
-      ProgramParticipantEntity,
-      {
-        filter: serializeClauses(clauses),
-      },
-    );
+    const storedParticipants = await readStoredParticipants(program.id);
 
     expect(storedParticipants).toHaveLength(participants.length);
   });
@@ -190,14 +174,7 @@ describe("program", () => {
   test("generates only the missing tokens for a grown audience", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues: [" "],
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram([" "]);
     const participants = await caller.generateProgramParticipants({ id: program.id });
     const content = await caller.readResourceContent({ id: program.id });
     assert.exists(content?.audience);
@@ -216,14 +193,7 @@ describe("program", () => {
   test("fails generate with dangling audience binding", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues,
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram();
     const content = await caller.readResourceContent({ id: program.id });
     assert.exists(content?.audience);
     await sheetCaller.deleteResource({ id: content.audience.id });
@@ -237,14 +207,7 @@ describe("program", () => {
   test("fails generate with wrong user", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues,
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram();
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.generateProgramParticipants({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -255,14 +218,7 @@ describe("program", () => {
   test("fails read status with wrong user", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues,
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram();
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.readProgramStatus({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -273,14 +229,7 @@ describe("program", () => {
   test("reads status joining participants against responses", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues,
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program, survey } = await setupIdentifiedProgram();
     const participants = await caller.generateProgramParticipants({ id: program.id });
     const [respondedParticipant, unrespondedParticipant] = participants;
     assert.exists(respondedParticipant);
@@ -291,12 +240,29 @@ describe("program", () => {
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
-    const statusRows = await caller.readProgramStatus({ id: program.id });
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
-    expect(statusRows.map(({ isResponded, keyValue }) => ({ isResponded, keyValue }))).toStrictEqual([
+    expect(
+      statusRows.map(({ isResponded, keyValue: statusKeyValue }) => ({ isResponded, keyValue: statusKeyValue })),
+    ).toStrictEqual([
       { isResponded: true, keyValue: respondedParticipant.keyValue },
       { isResponded: false, keyValue: unrespondedParticipant.keyValue },
     ]);
+  });
+
+  test("reads status without the participant credentials", async () => {
+    expect.hasAssertions();
+
+    // A distinctive key value so the token needle below cannot match something incidental
+    const { program } = await setupIdentifiedProgram([keyValue]);
+    const participants = await caller.generateProgramParticipants({ id: program.id });
+    const participant = takeOne(participants);
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
+
+    // The blade renders these three and nothing else. The token is the credential that responds on the
+    // Participant's behalf and publicId is the dataset's identity, so a browser is handed neither
+    expect(Object.keys(takeOne(statusRows)).toSorted()).toStrictEqual(["addedAt", "isResponded", "keyValue"]);
+    expect(JSON.stringify(statusRows)).not.toContain(participant.token);
   });
 
   test("reads status with an anonymous-era responder", async () => {
@@ -323,7 +289,7 @@ describe("program", () => {
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
-    const statusRows = await caller.readProgramStatus({ id: program.id });
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
   });
@@ -331,17 +297,10 @@ describe("program", () => {
   test("reads status with a deleted survey binding", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues: [" "],
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program, survey } = await setupIdentifiedProgram([" "]);
     await caller.generateProgramParticipants({ id: program.id });
     await surveyCaller.deleteResource({ id: survey.id });
-    const statusRows = await caller.readProgramStatus({ id: program.id });
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     // Participants persist and stay readable with responses gone — the fail-soft posture for dangling links
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
@@ -350,21 +309,18 @@ describe("program", () => {
   test("serves the status dataset without the audience key value or the participant token", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
     // A distinctive key value so the "never leaks the participant list" assertion has a real needle
-    const program = await createBoundProgram({
-      keyValues: [keyValue],
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram([keyValue]);
     const participants = await caller.generateProgramParticipants({ id: program.id });
     const participant = participants[0];
     assert.exists(participant);
     const dataset = await datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus });
 
-    expect(dataset.columns.map(({ name }) => name)).toStrictEqual(["participant", "addedAt", "responded"]);
+    expect(dataset.columns.map(({ name: columnName }) => columnName)).toStrictEqual([
+      "participant",
+      "addedAt",
+      "responded",
+    ]);
     expect(dataset.rows.map(({ responded }) => responded)).toStrictEqual([false]);
     // A dashboard bound to this dataset is publishable, so neither the participant list nor the token
     // May enter it — the token is the credential survey writes accept, so publishing it would let any
@@ -376,14 +332,7 @@ describe("program", () => {
   test("fails read status dataset with wrong user", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues: [" "],
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram([" "]);
     await mockSessionOnce(mockContext.db);
 
     await expect(
@@ -391,32 +340,16 @@ describe("program", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("deletes program participants with the program", async () => {
+  test("purges program participants with the program", async () => {
     expect.hasAssertions();
 
-    const survey = await setupIdentifiedSurvey();
-    const program = await createBoundProgram({
-      keyValues: [" "],
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program } = await setupIdentifiedProgram([" "]);
     await caller.generateProgramParticipants({ id: program.id });
+    // Delete is soft, so the partition survives the Recycle bin window — purge is what sweeps it
     await caller.deleteResource({ id: program.id });
+    await resourceCaller.purgeResource({ id: program.id });
     // The program row is gone, so the partition can only be observed against the table itself
-    const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
-    const clauses: Clause<ProgramParticipantEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: program.id },
-    ];
-    const remainingParticipants = await getTopNEntities(
-      programParticipantClient,
-      AZURE_MAX_PAGE_SIZE,
-      ProgramParticipantEntity,
-      {
-        filter: serializeClauses(clauses),
-      },
-    );
+    const remainingParticipants = await readStoredParticipants(program.id);
 
     expect(remainingParticipants).toStrictEqual([]);
   });

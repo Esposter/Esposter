@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { EventSourceInput } from "@fullcalendar/core";
+import type { EventSourceInput } from "@fullcalendar/vue3";
 
 import { useTodoListStore } from "@/store/resource/todoList";
 
 const todoListStore = useTodoListStore();
 const { loadContent, saveTodoList } = todoListStore;
 const { items } = storeToRefs(todoListStore);
-const isLoading = ref(true);
 const events = computed<EventSourceInput>(() => {
   const results: EventSourceInput = [];
 
@@ -18,15 +17,14 @@ const events = computed<EventSourceInput>(() => {
   return results;
 });
 
-onMounted(async () => {
-  await loadContent();
-  isLoading.value = false;
-});
+useTodoListSubscribables();
+// The Suspense-wrapped blade awaits the content, so it opens on a populated store and the shell's
+// Skeleton covers the wait — no per-blade loading flag
+await loadContent();
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
-  <v-container v-else fluid h-full>
+  <v-container fluid h-full>
     <StyledCard p-4 h-full>
       <StyledCalendar
         h-full

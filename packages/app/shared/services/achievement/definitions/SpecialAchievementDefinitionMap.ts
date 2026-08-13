@@ -2,13 +2,13 @@ import { AchievementCategory } from "#shared/models/achievement/AchievementCateg
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { countEmojis } from "#shared/util/text/countEmojis";
 import { SpecialAchievementName } from "@esposter/db-schema";
 
-export const SpecialAchievementDefinitionMap = {
+export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Special, {
   [SpecialAchievementName.AllCaps]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Special,
     condition: {
       operator: AchievementOperator.Matches,
       path: "message",
@@ -22,7 +22,6 @@ export const SpecialAchievementDefinitionMap = {
   }),
   [SpecialAchievementName.AllLower]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Special,
     condition: {
       operator: AchievementOperator.Matches,
       path: "message",
@@ -36,7 +35,6 @@ export const SpecialAchievementDefinitionMap = {
   }),
   [SpecialAchievementName.EmojiLover]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Special,
     condition: {
       operation: (value) => (value ? countEmojis(value) >= 10 : false),
       operator: AchievementOperator.Operation,
@@ -50,7 +48,6 @@ export const SpecialAchievementDefinitionMap = {
     triggerPath: "message.createMessage" as const,
   }),
   [SpecialAchievementName.Meta]: defineAchievementDefinition({
-    category: AchievementCategory.Special,
     condition: {
       operator: AchievementOperator.Contains,
       path: "message",
@@ -65,7 +62,6 @@ export const SpecialAchievementDefinitionMap = {
   }),
   [SpecialAchievementName.NumberEnthusiast]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Special,
     condition: {
       operator: AchievementOperator.Matches,
       path: "message",
@@ -79,7 +75,6 @@ export const SpecialAchievementDefinitionMap = {
   }),
   [SpecialAchievementName.Palindrome]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Special,
     condition: {
       operator: AchievementOperator.IsPalindrome,
       path: "message",
@@ -92,4 +87,4 @@ export const SpecialAchievementDefinitionMap = {
     points: 50,
     triggerPath: "message.createMessage" as const,
   }),
-};
+});

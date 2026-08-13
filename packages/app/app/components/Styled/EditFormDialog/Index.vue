@@ -9,34 +9,40 @@ interface EditFormDialogProps<T> {
   editedItem: T;
   isDirty: boolean;
   isEditFormValid: boolean;
-  isFullScreenDialog: boolean;
   isSavable: boolean;
   name: string;
   originalItem?: T;
   schema: z.ZodType;
 }
 
-const slots = defineSlots<{ default: () => VNode; "prepend-actions": () => VNode; "prepend-form": () => VNode }>();
+defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-form"?: () => VNode }>();
 const dialog = defineModel<boolean>({ required: true });
-const { editedItem, isDirty, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
+const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
+const { editedItem, isDirty, isEditFormValid, isSavable, name, originalItem, schema } =
   defineProps<EditFormDialogProps<T>>();
 const emit = defineEmits<{
   close: [];
   delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
   "update:edit-form": [value: InstanceType<typeof VForm>];
-  "update:fullscreen-dialog": [value: boolean];
 }>();
 const editForm = ref<InstanceType<typeof VForm>>();
 const confirmCloseDialog = ref(false);
 const formId = useId();
+// Instantiated at setup rather than per close: a composable created inside a watch callback sits outside the
+// Component's effect scope, so its timer outlives unmount and emits into a destroyed component
+const { start: startClose } = useTimeoutFn(
+  () => {
+    emit("close");
+  },
+  dayjs.duration(0.3, "seconds").asMilliseconds(),
+  { immediate: false },
+);
 useConfirmBeforeNavigation(() => isDirty);
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;
-  useTimeoutFn(() => {
-    emit("close");
-  }, dayjs.duration(0.3, "seconds").asMilliseconds());
+  startClose();
 });
 
 watch(editForm, (newEditForm) => {
@@ -61,6 +67,7 @@ watch(editForm, (newEditForm) => {
     <StyledCard>
       <StyledEditFormDialogHeader
         v-model:confirm-close-dialog="confirmCloseDialog"
+        v-model:is-full-screen-dialog="isFullScreenDialog"
         :name
         :edited-item
         :original-item
@@ -69,10 +76,8 @@ watch(editForm, (newEditForm) => {
         :is-dirty
         :is-edit-form-valid
         :schema
-        :is-full-screen-dialog
         :is-savable
         @update:edit-form-dialog="dialog = $event"
-        @update:fullscreen-dialog="emit('update:fullscreen-dialog', $event)"
         @save="emit('save')"
         @delete="emit('delete', $event)"
       >

@@ -1,81 +1,72 @@
-import tseslint from "typescript-eslint";
-
-export default Object.assign(
-  ...tseslint.configs.strictTypeChecked.map((c) => {
-    const rules = c.rules ?? {};
-    delete rules["@typescript-eslint/no-base-to-string"];
-    delete rules["@typescript-eslint/no-dynamic-delete"];
-    delete rules["@typescript-eslint/no-empty-object-type"];
-    delete rules["@typescript-eslint/no-redundant-type-constituents"];
-    delete rules["@typescript-eslint/no-unnecessary-condition"];
-    delete rules["@typescript-eslint/no-unsafe-argument"];
-    delete rules["@typescript-eslint/no-unsafe-assignment"];
-    delete rules["@typescript-eslint/no-unsafe-call"];
-    delete rules["@typescript-eslint/no-unsafe-enum-comparison"];
-    delete rules["@typescript-eslint/no-unsafe-function-type"];
-    delete rules["@typescript-eslint/no-unsafe-member-access"];
-    delete rules["@typescript-eslint/no-unsafe-return"];
-    delete rules["@typescript-eslint/no-unused-vars"];
-    delete rules["@typescript-eslint/prefer-reduce-type-parameter"];
-    delete rules["@typescript-eslint/unbound-method"];
-    // Rules we actually want to keep for ts files but conflict with vue files in the script setup section
-    delete rules["@typescript-eslint/restrict-plus-operands"];
-    delete rules["@typescript-eslint/restrict-template-expressions"];
-    // Computationally expensive
-    delete rules["@typescript-eslint/no-deprecated"];
-    delete rules["@typescript-eslint/unified-signatures"];
-    return rules;
-  }),
-  ...tseslint.configs.stylisticTypeChecked.map((c) => {
-    const rules = c.rules ?? {};
-    delete rules["@typescript-eslint/no-empty-function"];
-    return rules;
-  }),
-  {
-    "@typescript-eslint/consistent-type-exports": "error",
-    "no-restricted-imports": [
-      "error",
-      {
-        paths: [
-          {
-            importNames: ["randomUUID"],
-            message: "Use the global `crypto.randomUUID()` instead of importing `randomUUID` from `node:crypto`.",
-            name: "node:crypto",
-          },
-        ],
-      },
-    ],
-    // `protected` is still allowed — no `#` equivalent exists for subclass access.
-    "no-restricted-syntax": [
-      "error",
-      {
-        message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
-        selector:
-          ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
-      },
-      {
-        // `expect.any` also trips a vitest/valid-expect false positive.
-        message:
-          "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
-        selector: "MemberExpression[object.name='expect'][property.name='any']",
-      },
-      {
-        // `router.replace({ query })` is a query-string update, not navigation, so only `push` is banned.
-        message:
-          "Use `navigateTo(target, { replace: true })` instead of `router.push` for navigation. (`router.replace({ query })` for query-only updates is fine.)",
-        selector:
-          "CallExpression[callee.property.name='push']:matches([callee.object.name=/^\\$?router$/], [callee.object.callee.name='useRouter'], [callee.object.property.name='$router'])",
-      },
-    ],
-    // Computationally expensive
-    // "@typescript-eslint/naming-convention": [
-    //   "error",
-    //   {
-    //     Format: ["camelCase", "PascalCase", "UPPER_CASE"],
-    //     Selector: "variable",
-    //     Types: ["array", "boolean", "number", "string"],
-    //     LeadingUnderscore: "allow",
-    //   },
-    // ],
-  },
-);
+import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
+// Everything typescript-eslint's strict/stylistic sets covered is now enforced natively by oxlint
+// (see /docs/proposals/refactors/eslint-to-oxlint-migration). The only survivor is `no-restricted-syntax`:
+// Oxlint has no selector-based rule yet, so these AST-selector bans stay on the ESLint side.
+export default {
+  // `protected` is still allowed — no `#` equivalent exists for subclass access.
+  "no-restricted-syntax": [
+    "error",
+    ...restrictedSyntaxes,
+    {
+      // A loop registers its cases under one name, so the reporter shows the last one only and `-t` cannot
+      // Select a single case. `.each` names each row, and a failing row says which input produced it.
+      message: "Use `test.each` / `it.each` for a table of cases instead of looping around `test`.",
+      // The modifier forms register their cases the same way, so `test.skip` and `it.concurrent` are matched
+      // Alongside the bare call — `.each` included, since a loop around it names every row once per iteration
+      selector:
+        ":matches(ForOfStatement, ForInStatement, ForStatement):has(CallExpression:matches([callee.name=/^(it|test)$/], [callee.object.name=/^(it|test)$/]))",
+    },
+    {
+      message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
+      selector:
+        ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
+    },
+    {
+      message: "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
+      selector: "MemberExpression[object.name='expect'][property.name='any']",
+    },
+    {
+      // Polling is banned repo-wide — see content/docs/architecture/no-polling.md.
+      message:
+        "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+      selector:
+        ":matches(MemberExpression[object.name='expect'][property.name='poll'], MemberExpression[object.name='vi'][property.name=/^(waitFor|waitUntil)$/], CallExpression[callee.name=/^(waitFor|waitUntil)$/])",
+    },
+    {
+      // Dates survive JSON only as strings, so the default parse has to revive them — see
+      // /docs/architecture/serialization.md. Every place plain parsing is the deliberate choice (the content
+      // Blobs and drafts a Zod schema coerces itself, payloads replayed verbatim, machine config) disables this
+      // Rule on the line with its reason.
+      message:
+        "Use `jsonDateParse` from `@esposter/shared` — plain `JSON.parse` leaves every Date as an ISO string. Disable this rule with a reason where blanket revival is wrong (see /docs/architecture/serialization.md).",
+      selector: "MemberExpression[object.name='JSON'][property.name='parse']",
+    },
+    {
+      // The child combinators are load-bearing — they match only the property's own annotation, so
+      // `Ref<T | undefined>`, `(T | undefined)[]`, tuple members and function params are untouched.
+      message: "Declare the property optional (`field?: T`) instead of `field: T | undefined`.",
+      selector:
+        ":matches(TSPropertySignature, PropertyDefinition, TSAbstractPropertyDefinition) > TSTypeAnnotation > TSUnionType > TSUndefinedKeyword",
+    },
+    {
+      // `useRoute()` resolves through the page's *injected* route, which is pinned to that page instance and
+      // Freezes to its last value once the page is swapped out. Anything outliving the page it was created
+      // Under — a Pinia store above all, cached for the app's lifetime — then answers for a route the user has
+      // Already left, and a route naming no segment yields the `""` sentinel a uuid input rejects.
+      message:
+        "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+      selector: "CallExpression[callee.name='useRoute']",
+    },
+  ],
+  // Kept for later: enable via oxlint (`typescript/naming-convention`) once it supports the rule.
+  // Computationally expensive under typescript-eslint, which is why it never shipped here.
+  // "@typescript-eslint/naming-convention": [
+  //   "error",
+  //   {
+  //     Format: ["camelCase", "PascalCase", "UPPER_CASE"],
+  //     Selector: "variable",
+  //     Types: ["array", "boolean", "number", "string"],
+  //     LeadingUnderscore: "allow",
+  //   },
+  // ],
+};

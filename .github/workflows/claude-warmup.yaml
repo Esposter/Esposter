@@ -19,12 +19,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
+
+      - name: 🤝 Trust the workspace
+        # A fresh runner has no ~/.claude.json, so Claude Code treats the checkout as
+        # untrusted and ignores every permissions.allow entry in .claude/settings.local.json.
+        # Pre-accepting the trust dialog for the checkout path silences that warning.
+        run: |
+          node -e '
+            const fs = require("fs");
+            const os = require("os");
+            const path = require("path");
+            const file = path.join(os.homedir(), ".claude.json");
+            const config = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
+            config.projects ??= {};
+            config.projects[process.env.GITHUB_WORKSPACE] ??= {};
+            config.projects[process.env.GITHUB_WORKSPACE].hasTrustDialogAccepted = true;
+            fs.writeFileSync(file, JSON.stringify(config, null, 2));
+          '
 
       - name: 🔥 Warm up Claude Code session
         env:

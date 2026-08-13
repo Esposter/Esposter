@@ -10,6 +10,8 @@ import { invitesInMessageRelation } from "@/relations/invitesInMessageRelation";
 import { likesRelation } from "@/relations/likesRelation";
 import { postsRelation } from "@/relations/postsRelation";
 import { pushSubscriptionsInMessageRelation } from "@/relations/pushSubscriptionsInMessageRelation";
+import { resourceAccessesRelation } from "@/relations/resourceAccessesRelation";
+import { resourceFavoritesRelation } from "@/relations/resourceFavoritesRelation";
 import { resourcePublicationsRelation } from "@/relations/resourcePublicationsRelation";
 import { resourcesRelation } from "@/relations/resourcesRelation";
 import { roomCategoriesInMessageRelation } from "@/relations/roomCategoriesInMessageRelation";
@@ -19,6 +21,8 @@ import { roomsInMessageRelation } from "@/relations/roomsInMessageRelation";
 import { scheduledMessageJobsInMessageRelation } from "@/relations/scheduledMessageJobsInMessageRelation";
 import { searchHistoriesInMessageRelation } from "@/relations/searchHistoriesInMessageRelation";
 import { sessionsRelation } from "@/relations/sessionsRelation";
+import { storageBlobsRelation } from "@/relations/storageBlobsRelation";
+import { threadFollowsInMessageRelation } from "@/relations/threadFollowsInMessageRelation";
 import { userAchievementsRelation } from "@/relations/userAchievementsRelation";
 import { usersRelation } from "@/relations/usersRelation";
 import { userStatusesInMessageRelation } from "@/relations/userStatusesInMessageRelation";
@@ -39,6 +43,8 @@ export const relations = {
   ...likesRelation,
   ...postsRelation,
   ...pushSubscriptionsInMessageRelation,
+  ...resourceAccessesRelation,
+  ...resourceFavoritesRelation,
   ...resourcePublicationsRelation,
   ...resourcesRelation,
   ...roomCategoriesInMessageRelation,
@@ -48,6 +54,8 @@ export const relations = {
   ...scheduledMessageJobsInMessageRelation,
   ...searchHistoriesInMessageRelation,
   ...sessionsRelation,
+  ...storageBlobsRelation,
+  ...threadFollowsInMessageRelation,
   ...userAchievementsRelation,
   ...userStatusesInMessageRelation,
   ...usersRelation,

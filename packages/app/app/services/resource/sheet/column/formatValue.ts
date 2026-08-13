@@ -1,5 +1,5 @@
-import type { ColumnFormat } from "#shared/models/resource/sheet/column/ColumnFormat";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
+import type { ColumnFormat } from "@/models/resource/sheet/column/ColumnFormat";
 
 import { BooleanFormat, BooleanFormats } from "#shared/models/resource/sheet/column/BooleanFormat";
 import { NumberFormat, NumberFormats } from "#shared/models/resource/sheet/column/NumberFormat";

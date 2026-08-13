@@ -72,19 +72,20 @@ flowchart TD
 
 `packages/azure-mock` ships mock implementations:
 
-| Mock class                     | Replaces                                  | In-memory store                         |
-| ------------------------------ | ----------------------------------------- | --------------------------------------- |
-| `MockTableClient`              | `CustomTableClient` (Azure Table Storage) | `MockTableDatabase` (static `Map`)      |
-| `MockContainerClient`          | `ContainerClient` (Azure Blob Storage)    | `MockContainerDatabase` (static `Map`)  |
-| `MockBlobClient`               | `BlobClient` (single blob)                | `MockContainerDatabase`                 |
-| `MockBlobBatchClient`          | `BlobBatchClient` (batch blob deletes)    | `MockContainerDatabase`                 |
-| `MockEventGridPublisherClient` | `EventGridPublisherClient`                | `MockEventGridDatabase` (static `Map`)  |
-| `MockServiceBusSender`         | `ServiceBusSender`                        | `MockServiceBusDatabase` (static `Map`) |
-| `MockSearchClient`             | `SearchClient` (Azure AI Search)          | `MockSearchDatabase` (static `Map`)     |
-| `MockQueueClient`              | `QueueClient` (Azure Queue Storage)       | `MockQueueDatabase` (static `Map`)      |
-| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`                  | none (`sendToAll` no-op)                |
+| Mock class                     | Replaces                                                        | In-memory store                         |
+| ------------------------------ | --------------------------------------------------------------- | --------------------------------------- |
+| `MockTableClient`              | `CustomTableClient` (Azure Table Storage)                       | `MockTableDatabase` (static `Map`)      |
+| `MockContainerClient`          | `ContainerClient` (Azure Blob Storage)                          | `MockContainerDatabase` (static `Map`)  |
+| `MockBlobClient`               | `BlobClient` (single blob)                                      | `MockContainerDatabase`                 |
+| `MockBlockBlobClient`          | `BlockBlobClient` — what every SAS upload path resolves through | `MockContainerDatabase`                 |
+| `MockBlobBatchClient`          | `BlobBatchClient` (batch blob deletes)                          | `MockContainerDatabase`                 |
+| `MockEventGridPublisherClient` | `EventGridPublisherClient`                                      | `MockEventGridDatabase` (static `Map`)  |
+| `MockServiceBusSender`         | `ServiceBusSender`                                              | `MockServiceBusDatabase` (static `Map`) |
+| `MockQueueClient`              | `QueueClient` (Azure Storage Queue)                             | `MockQueueDatabase` (static `Map`)      |
+| `MockSearchClient`             | `SearchClient` (Azure AI Search)                                | `MockSearchDatabase` (static `Map`)     |
+| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`                                        | none (`sendToAll` no-op)                |
 
-The static maps persist across calls within a test run. Clear whichever ones your suite writes to in `afterEach` — `MockEventGridPublisherClient.send` accumulates events, so a suite that fires events must clear `MockEventGridDatabase` or it leaks into the next test:
+The static maps persist across calls within a test run, so **every store your suite writes to is cleared in `afterEach`** — the Store column above names the one behind each client. `MockEventGridPublisherClient.send` accumulates events, and a suite that fires events but clears only the blob and table stores leaks them into the next test; the same holds for a suite that enqueues Service Bus or storage-queue messages. The common three:
 
 ```ts
 afterEach(() => {
@@ -96,7 +97,9 @@ afterEach(() => {
 
 ### 3. `context.test.ts` — wiring hub
 
-`packages/app/server/trpc/context.test.ts` is the central test utility file. It installs `vi.mock` for all Azure composables and auth before any test runs, and exports helpers consumed by every tRPC router test.
+`packages/app/server/trpc/context.test.ts` is the central test utility file. It installs the `vi.mock` for auth — the one whose factory needs this module's session state — and exports helpers consumed by every tRPC router test.
+
+**Every Azure composable is mocked once in `shared/test/setup.ts`, not here.** A `vi.mock` is hoisted only within the file that writes it, so a registration made from an imported module does not intercept a test file's own direct import of the same composable — which is why suites reading a table directly used to repeat the registration verbatim. A setup file runs before the test module is imported, so one registration there covers both the router path and a direct `await useTableClient(...)` in the test. Import the composable from its **real** path; never from its `.test` mock.
 
 **`createMockContext()`** builds a full `Context`: PGlite DB + mocked Azure clients + mocked auth. The default user (base user) is inserted into PGlite and always available via `getMockSession()` — this user becomes the owner for all rooms/resources created in tests.
 
@@ -134,8 +137,8 @@ beforeEach
   └─ caller.someProc(input)
 
 afterEach
-  └─ MockContainerDatabase.clear()
-  └─ MockTableDatabase.clear()
+  └─ <every mock store the suite writes to>.clear()   ← Container/Table, plus EventGrid,
+  │                                                     ServiceBus, Queue or Search when used
   └─ db.delete(affectedTable)
   └─ vi.restoreAllMocks()    ← restores spy implementations + clears call history
 ```
@@ -149,10 +152,10 @@ All cleanup — Azure mock stores and DB rows — lives in `afterEach`, never `b
 | `packages/db-mock/src/createMockDb.ts`                                                | PGlite setup + snapshot loading                                          |
 | `packages/azure-mock/src/`                                                            | `MockTableClient`, `MockContainerClient`, `MockEventGridPublisherClient` |
 | `packages/app/server/trpc/context.test.ts`                                            | `createMockContext`, session helpers, `vi.mock` wiring                   |
-| `packages/app/server/composables/azure/table/useTableClient.test.ts`                  | `useTableClientMock` export                                              |
-| `packages/app/server/composables/azure/container/useContainerClient.test.ts`          | `useContainerClientMock` export                                          |
-| `packages/app/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | `useEventGridPublisherClientMock` export                                 |
-| `packages/app/server/composables/azure/serviceBus/useServiceBusSender.test.ts`        | `useServiceBusSender` mock export                                        |
+| `packages/app/server/composables/azure/table/useTableClient.test.ts`                  | module double — re-exports `useTableClient` over `MockTableClient`       |
+| `packages/app/server/composables/azure/container/useContainerClient.test.ts`          | module double — re-exports `useContainerClient`                          |
+| `packages/app/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | module double — re-exports `useEventGridPublisherClient`                 |
+| `packages/app/server/composables/azure/serviceBus/useServiceBusSender.test.ts`        | module double — re-exports `useServiceBusSender`                         |
 
 ## Adding a new router test
 

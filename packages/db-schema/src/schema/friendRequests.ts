@@ -20,9 +20,9 @@ export const friendRequests = pgTable(
   },
   {
     extraConfig: ({ receiverId, senderId }) => [
-      check("no_self_friend_request", sql`${senderId} != ${receiverId}`),
-      index("friend_requests_receiverId_index").on(receiverId),
-      index("friend_requests_senderId_index").on(senderId),
+      check("friendRequests_senderId_receiverId_check", sql`${senderId} != ${receiverId}`),
+      index("friendRequests_receiverId_index").on(receiverId),
+      index("friendRequests_senderId_index").on(senderId),
     ],
   },
 );

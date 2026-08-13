@@ -39,16 +39,20 @@ const compareValues = (leftHandSide: unknown, rightHandSide: unknown): number =>
   return String(left).localeCompare(String(right));
 };
 
-const sortDocuments = (documents: Record<string, unknown>[], orderBy: string[]): Record<string, unknown>[] =>
-  [...documents].toSorted((leftHandSide, rightHandSide) => {
-    for (const clause of orderBy) {
-      const [field = "", direction = "asc"] = clause.split(/\s+/u);
-      const key = deserializeKey(field);
+const sortDocuments = (documents: Record<string, unknown>[], orderBy: string[]): Record<string, unknown>[] => {
+  // Parsed once rather than inside the comparator, which runs O(n log n) times
+  const parsedOrderBy = orderBy.map((clause) => {
+    const [field = "", direction = "asc"] = clause.split(/\s+/u);
+    return { direction, key: deserializeKey(field) };
+  });
+  return documents.toSorted((leftHandSide, rightHandSide) => {
+    for (const { direction, key } of parsedOrderBy) {
       const comparison = compareValues(leftHandSide[key], rightHandSide[key]);
       if (comparison !== 0) return direction === "desc" ? -comparison : comparison;
     }
     return 0;
   });
+};
 
 const getSearchFieldValues = (value: unknown, pathSegments: string[]): unknown[] => {
   if (pathSegments.length === 0) return [value];
@@ -67,11 +71,12 @@ const searchDocuments = (
   if (!searchText || searchText === "*") return documents;
 
   const normalizedSearchText = searchText.toLocaleLowerCase();
+  const searchFieldPaths = searchFields?.map((searchField) => searchField.split("/"));
   return documents.filter((document) =>
-    (searchFields ?? Object.keys(document)).some((searchField) =>
-      getSearchFieldValues(document, searchField.split("/")).some(
-        (value) =>
-          value !== null && value !== undefined && String(value).toLocaleLowerCase().includes(normalizedSearchText),
+    (searchFieldPaths ?? Object.keys(document).map((field) => field.split("/"))).some((pathSegments) =>
+      // Only string leaves match a search: every other field type is filterable rather than searchable in Azure Search
+      getSearchFieldValues(document, pathSegments).some(
+        (value) => typeof value === "string" && value.toLocaleLowerCase().includes(normalizedSearchText),
       ),
     ),
   );

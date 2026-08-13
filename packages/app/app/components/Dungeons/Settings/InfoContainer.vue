@@ -10,7 +10,7 @@ import { Container, onCreate, Text } from "vue-phaserjs";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { infoText } = storeToRefs(settingsSceneStore);
-const width = useSettingsMenuWidth((width) => (wordWrapWidth.value = width - INITIAL_SETTINGS_POSITION.x * 2));
+const width = useSettingsMenuWidth((menuWidth) => (wordWrapWidth.value = menuWidth - INITIAL_SETTINGS_POSITION.x * 2));
 const height = ref<number>();
 const wordWrapWidth = ref<number>();
 

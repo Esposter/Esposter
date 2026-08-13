@@ -16,11 +16,11 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const volumeIncrementCooldown = ref(0);
   const volumeSlider = ref<Slider>();
   const setVolume = async (baseVolumePercentage: number, isUpdateSlider = true) => {
-    const volumePercentage = clamp(baseVolumePercentage, 0, 100);
-    await setSettings(SettingsOption.VolumePercentage, volumePercentage);
+    const clampedVolumePercentage = clamp(baseVolumePercentage, 0, 100);
+    await setSettings(SettingsOption.VolumePercentage, clampedVolumePercentage);
 
     if (!(volumeSlider.value && isUpdateSlider)) return;
-    volumeSlider.value.value = volumePercentage / 100;
+    volumeSlider.value.value = clampedVolumePercentage / 100;
   };
   const updateVolume = async (direction: Direction, delta: number) => {
     volumeDelta.value += delta / dayjs.duration(1, "second").asMilliseconds();
@@ -38,22 +38,22 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
         ? Math.max(volumePercentage.value - increment, 0)
         : direction === Direction.RIGHT && volumePercentage.value < 100
           ? Math.min(volumePercentage.value + increment, 100)
-          : null;
-    if (newVolumePercentage === null) return;
+          : undefined;
+    if (newVolumePercentage === undefined) return;
     await setVolume(newVolumePercentage);
     volumeIncrementCooldown.value += increment;
   };
   const isUpdateVolume = (input: PlayerInput, settingsOption: SettingsOption): input is Direction => {
-    const isUpdateVolume =
+    const shouldUpdateVolume =
       settingsOption === SettingsOption.VolumePercentage && (input === Direction.LEFT || input === Direction.RIGHT);
     // We can do a little bit of magic here if we're not updating the volume
     // And reset the volume delta metadata if it's not 0 since we know that the user
     // Has lifted the input direction key
-    if (!isUpdateVolume) {
+    if (!shouldUpdateVolume) {
       if (volumeDelta.value !== 0) volumeDelta.value = 0;
       if (volumeIncrementCooldown.value !== 0) volumeIncrementCooldown.value = 0;
     }
-    return isUpdateVolume;
+    return shouldUpdateVolume;
   };
 
   return {

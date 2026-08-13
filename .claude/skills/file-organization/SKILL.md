@@ -1,6 +1,6 @@
 ---
 name: file-organization
-description: Esposter file and folder organisation — the alias imports (shared/root/app-source, never relative), one export per file, no export{} syntax, models vs services vs utils vs constants, the sole-consumer subfolder rule, extracting duplication to one primitive, constant maps with as-const-satisfies, the LocalStorageKey registry, generic Vue components, command pattern field ordering, symlinks via PowerShell, creating a new workspace package (tsconfig/rolldown/eslint/peerDependencies), renaming without re-export aliases, and file length. Apply when creating, moving, renaming, or organising any file, export, constant, or package.
+description: Esposter file and folder organisation — the alias imports (shared/root/app-source, never relative) and the shared-may-not-import-client boundary, one export per file, no export{} syntax, local type declarations at the top of the block, models vs services vs utils vs constants, the sole-consumer subfolder rule, extracting duplication to one primitive or a create* factory, a flag earning its existence, no duplicate constants, the ≥2-consumers rule for shared packages and where cross-package constants/helpers live, constant maps with as-const-satisfies, the LocalStorageKey registry, MIME types in the configuration map, symlinks via PowerShell, renaming without re-export aliases, shared field schemas, and file length — plus deep dives on cross-package placement, generic type maps and generic Vue components, command classes, creating a workspace package, and single-file .claude/workflows scripts. Apply when creating, moving, renaming, or organising any file, export, constant, or package.
 ---
 
 # File & Folder Organisation
@@ -8,184 +8,103 @@ description: Esposter file and folder organisation — the alias imports (shared
 ## Imports
 
 - **Always use alias imports** — never relative imports (`./`, `../`), even for same-folder files.
-  - `#shared/` — the app's shared dir (`packages/app/shared/`, **not** `app/shared/`); models, services, constants shared between client and server. E.g. `import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor"`.
+  - `#shared/` — the app's shared dir (`packages/app/shared/`, **not** `app/shared/`); models, services, constants shared between client and server.
   - `@@/` — project root (`packages/app/`); `server/` and other root-level paths.
   - `@/` — app source dir (`packages/app/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
   - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
-- Import grouping, blank lines, and ordering — see the `formatting` skill.
+- **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `.oxlintrc.json` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See [/docs/architecture/module-boundaries](/docs/architecture/module-boundaries).
+- Import grouping, blank lines, ordering, and line endings — see the `formatting` skill.
 
 ## Files and Exports
 
 - **One export per file** — each exported function, class, or interface in its own file. Exception: Zod schemas may colocate with their interface/type (tightly coupled).
-- **Enums and shared model schemas get their own files** — exported enums, discriminated-union variants, payload types, and reusable Zod schemas belong in `models/` (or the relevant shared model folder), one named concern per file. Don't define an enum/reusable payload schema inside a Drizzle table file just because that table is the first consumer. Schema files import model enums/types/schemas and only define the table plus table-derived select schema/type.
-- **Colocate single-use event/hook map types** — when an event/hook map interface (e.g. `AdminActionHookMap`, `MessageHookMap`) is imported only by its own service file (which creates the singleton), define the interface in the service file rather than a separate `models/` file. The service exports the instance; consumers import the instance, not the type. Do **not** apply to general type maps (`ColumnTypeColumnMap`, `DataSourceConfigurationTypeMap`) — those stay in `models/` regardless of consumer count.
-- **Interfaces go in `models/`** — never define an exported interface inline in a `.vue` component. Extract to `app/models/<feature>/InterfaceName.ts` (app-local) or `shared/models/<feature>/InterfaceName.ts` (cross-package) for reuse.
-- **One class per file** — classes belong in a `models/` folder.
-- **Never use `export { }` syntax** — always inline `export const`/`class`/`interface`/`type`/`function` at the declaration site. Only valid exceptions: empty `export {}` in `.d.ts` files (module marker) and `ctix`-generated barrel files (pinned package). Hand-written `.ts` with `export { ... }` is wrong.
-- **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` under `services/` alongside the files that use them. Never put a production `constants.ts` inside `composables/`. The test/bench equivalents are `constants.test.ts` / `constants.bench.ts`: shared fixture data for the colocated tests/benches groups there (the same multi-export exception), colocated with the code under test even when that sits under `composables/`. Helper _functions_ still get one file each (`<fn>.test.ts` / `<fn>.bench.ts`) — see the `testing` skill "Test Utility Files".
-- **Do not extract function names into constants** — use `functionName.name` at the call site, or pass that `.name` down when a helper needs to report on behalf of the public API. A string constant like `CREATE_THING_ERROR_NAME = "createThing"` is duplication, not a source of truth.
-- **Default option objects** are constants: export one shared `DEFAULT_*` object from the feature's `services/.../constants.ts` and reuse everywhere. Use `Object.freeze({ ... } satisfies InterfaceName)` so callers can't mutate the shared default.
-- **Never duplicate similar logic — source AND tests.** Before writing a helper, grep for an existing one; before finishing a feature, grep for near-twin functions you may have created and collapse them. When ≥2 functions share a shape and differ only in a predicate/parameter, extract **one functional primitive** (`sweepEntries(dir, isStale)`) and make each caller a thin, intention-revealing wrapper that keeps the domain name and passes the constants.
-  - **Stop at the primitive.** Don't introduce a stateful class or "lifecycle manager" when there is no state — it fights the functional grain and adds ceremony for nothing. Classes are for `models/` only.
-  - **Don't force unrelated things together** — different domains stay separate even when they rhyme. The abstraction must reduce total complexity: single-use code stays inline, and per-feature helpers encoding genuinely different semantics stay separate.
-- **No duplicate constants — one source of truth per value.** Never repeat the same literal (magic number/string) or re-declare the same named constant in two files. Extract it to a `constants.ts` and import it only when the value is reused or is a real source of truth; leave single-use literals inline. Examples: `KIBIBYTE = 2 ** 10` (derive `MEGABYTE = KIBIBYTE ** 2` from it, never write a bare `1024`/`2 ** 20`); `PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH` lives only in `@esposter/db-schema` and downstream packages import it. This includes test files — import the constant, don't re-declare a local copy in the `.test.ts`.
-- **Cross-package constant home = the lowest shared dependency.** Pick the package both consumers already depend on: `@esposter/shared` (client-safe, universal) or `@esposter/configuration` (node/build-tooling base). A value is duplicated across realms only when one realm is client-bundle-safe and the other is node-only and they can't share a package (e.g. `KIBIBYTE` exists in both `packages/app/shared/services/app/constants.ts` for client code and `@esposter/configuration` for build scripts).
-- **Functions go in `services/`** — factory functions, command creators, and other exported functions belong in `services/`, not `models/`. `models/` is strictly classes and interfaces/types.
-- **External library extensions go in `services/`** — helpers that extend/wrap third-party libraries (e.g. `services/zod/extractSchemaFields.ts`, `services/dayjs/index.ts`), not `utils/`.
-- **`utils/` is for truly universal utilities only** — math, string, regex, type utilities, Node/browser engine extensions with no external dependency. If the helper imports a third-party package, it belongs in `services/`.
-- **Generic browser utilities** go in `app/utils/` (e.g. `readFileAsText.ts`).
-- **Feature folders** — group related models/services/components under a feature subfolder (e.g. `resource/sheet/`).
-- **Sole-consumer subfolder rule (CRITICAL — keep flat dirs from bloating).** A file lives in the subfolder of the **one feature that consumes it**; it stays at the parent level **only when two or more sibling features import it** (genuinely shared), or it is a shared primitive with no single owning feature. A directory should never accumulate 15–20 loose files that each belong to a distinct sub-concern. When a `models/` folder mirrors a `services/` folder, mirror its feature subfolders too — leaving only genuinely cross-feature types at the mirrored root. Don't over-fragment the other way: a legitimate shared-primitive bucket (a feature's `util/`) stays whole even when large, and an already-feature-organised folder is not nested further.
+- **Enums and shared model schemas get their own files** — exported enums, discriminated-union variants, payload types, and reusable Zod schemas belong in `models/` (or the relevant shared model folder), one named concern per file. Don't define an enum/reusable payload schema inside a Drizzle table file just because that table is the first consumer; schema files import model enums/types/schemas and only define the table plus its table-derived select schema/type.
+- **Colocate single-use event/hook map types** — when an event/hook map interface (`FooHookMap`, `BarHookMap`) is imported only by its own service file (which creates the singleton), define the interface in that service file rather than a separate `models/` file; consumers import the instance, not the type. Does **not** apply to general type maps (`FooTypeMap`, `BarTypeMap`) — those stay in `models/` regardless of consumer count.
+- **Interfaces go in `models/`** — never define an exported interface inline in a `.vue` component. Extract to `app/models/<feature>/InterfaceName.ts` (app-local) or `shared/models/<feature>/InterfaceName.ts` (cross-package).
+- **Local `interface`/`type` declarations sit at the top of the block** — within a `.vue` `<script setup>` or a `.ts` module, group them together after the imports (and macros), before the runtime `const`/logic. Never interleave one between logic blocks.
+- **One class per file**, in a `models/` folder.
+- **Never use `export { }` syntax** — always inline `export const`/`class`/`interface`/`type`/`function` at the declaration site. Only valid exceptions: empty `export {}` in `.d.ts` files (module marker) and `ctix`-generated barrel files (pinned package).
+- **Functions go in `services/`** — factory functions, command creators, and other exported functions. `models/` is strictly classes and interfaces/types.
+- **External library extensions go in `services/`** — helpers that extend/wrap third-party libraries (`services/<lib>/doThing.ts`, `services/dayjs/index.ts`), not `utils/`.
+- **`utils/` is for truly universal utilities only** — math, string, regex, type utilities, Node/browser engine extensions with no external dependency. If the helper imports a third-party package, it belongs in `services/`. Generic browser utilities go in `app/utils/` (e.g. `readFoo.ts`).
+- **Feature folders** — group related models/services/components under a feature subfolder (e.g. `feature/sub-feature/`).
+- **Sole-consumer subfolder rule (CRITICAL).** A file lives in the subfolder of the **one feature that consumes it**, and stays at the parent level only when two or more sibling features import it or it is a shared primitive with no owning feature — which is what keeps a directory from accumulating twenty loose files from distinct sub-concerns. A `models/` folder mirroring a `services/` folder mirrors its feature subfolders too, leaving only cross-feature types at the root. Don't over-fragment the other way: a shared-primitive bucket stays whole even when large, and an already-feature-organised folder is not nested further.
 - **No magic strings** — always use enums for discriminants, command types, and other categorical values.
+
+## Constants
+
+- **Constants go in `constants.ts`** under `services/`, beside the files that use them — never a production `constants.ts` inside `composables/`. The test and bench equivalents are `constants.test.ts` / `constants.bench.ts`, carrying shared fixture data under the same multi-export exception, colocated with the code under test even when that sits under `composables/`. Helper _functions_ still get one file each (`testing` skill).
+- **No duplicate constants — one source of truth per value (per runtime realm).** Never repeat the same literal (magic number/string) or re-declare the same named constant in two files within a realm; extract it to a `constants.ts` and import it when the value is reused or is a real source of truth, and leave single-use literals inline. E.g. `KIBIBYTE = 2 ** 10`, with `MEGABYTE = KIBIBYTE ** 2` derived from it — never a bare `1024`/`2 ** 20`. This includes test files: import the constant, don't re-declare a local copy in the `.test.ts`.
+- **Do not extract function names into constants** — use `functionName.name` at the call site, or pass that `.name` down when a helper must report on behalf of the public API. A `CREATE_THING_ERROR_NAME = "createThing"` constant is duplication, not a source of truth.
+- **Default option objects** are constants: export one shared `DEFAULT_*` object from the feature's `services/.../constants.ts` and reuse it everywhere, wrapped in `Object.freeze({ ... } satisfies InterfaceName)` so callers can't mutate the shared default.
+
+## Never Duplicate Similar Logic — Source AND Tests
+
+Before writing a helper, grep for an existing one; before finishing a feature, grep for near-twin functions you may have created and collapse them. When ≥2 functions share a shape and differ only in a predicate/parameter, extract **one functional primitive** (`sweepEntries(dir, isStale)`) and make each caller a thin, intention-revealing wrapper that keeps the domain name and passes the constants.
+
+- **Stop at the primitive.** Don't introduce a stateful class or "lifecycle manager" when there is no state — it fights the functional grain and adds ceremony for nothing. Classes are for `models/` only.
+- **Shared stateful control flow becomes a `create*` factory returning a closure.** When the near-twins also share per-module state (a memo, a cache tier ordering), the factory takes every varying part as a function parameter and returns the stateful closure. Each call site stays one named `export const` built from it, keeping its own domain rationale; a caller whose semantics differ — a guard that must run before the memo, an action that throws instead of degrading — wraps or parameterizes rather than forking the flow.
+- **Module-scope closure state does not reset between tests** — a test depending on it must call `vi.resetModules()` and then dynamically `import()` the module (static imports stay cached), or build a fresh instance from the factory per test.
+- **Don't force unrelated things together** — different domains stay separate even when they rhyme. The abstraction must reduce total complexity: single-use code stays inline, and per-feature helpers encoding genuinely different semantics stay separate.
+- **An extraction earns its existence only when a call site stops being able to get something wrong.** The test is what the caller no longer has to state, never how short the call reads. A helper that still takes every element hand-written at every call site — `getUnsubscribeAll(a, b, c)` over an inline `[a, b, c]` loop — has moved a loop and absorbed no decision: forgetting one is exactly as easy after. A wrapper carrying no logic, no invariant and no default is a rename with an import, so delete it and leave the inline form. Extraction that pays: the caller passes less than it did, or passes it in a shape that cannot be wrong. **Enforced** by `pass-through-helper/no-forwarding-wrapper` (`scripts/oxlint/passThroughHelper.ts`) for the decidable half — an exported arrow whose whole body is one call passing exactly its own parameters. It has no production suppressions and gets none: "it narrows the parameter type", "it is the single definition several reads agree on" and "it mirrors an upstream API name" have all been raised and rejected. Inline the wrapper.
+- **A flag, field or primitive earns its existence only when something behaves differently without it.** The mirror of the rule above: collapsing near-twins wins because two things become one, so splitting one mechanism into two that each need a decision at every call site loses. Single responsibility is a unit having one job, never one boolean per case. Prefer an over-approximation that costs nothing to a precise distinction that adds surface — one flag covering two causes is free when the consequence is identical — and architect so the case never has to be accounted for rather than adding the switch that accounts for it. **A distinction with no behavioural consequence is not debt**; recording it as such invites the next reviewer to build the switch.
+
+## Cross-package placement — `references/cross-package-placement.md`
+
+Read it before adding a module or constant to a shared package, relocating an existing one for symmetry, or implementing behaviour a second package needs. In short: **a shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another. The home is the lowest package both already depend on. The page also owns the client/node cross-realm exception, env-reading scripts, and the domain-package rule for Azure helpers.
+
+## `.claude/workflows` scripts and repo-wide globs — `references/workflow-scripts.md`
+
+Read it when editing a workflow script or its tests, or writing any glob (Vitest project, tsconfig, lint ignore) that reaches into `.claude/`. In short: the sandbox forbids `import`, so a script is **single-file by force and its length is not a finding**; split it by mode inside the file. Its tests are ordinary modular TypeScript, typechecked and linted, and each linter is configured for the scripts in its own file. Any repo-wide glob must exclude `AGENT_WORKTREES_DIRECTORY`.
 
 ## Symlinks
 
-Always create symlinks with PowerShell `New-Item -ItemType SymbolicLink -Path <link> -Target <target>` (needs Developer Mode or an elevated shell). **Never use `ln -s` on Windows** — Git Bash's `ln` copies the file instead of linking, silently defeating the single-source-of-truth goal and committing duplicate content. (`ln -s` is fine on Linux/macOS.) The repo has `core.symlinks=true` and stores symlinks as git mode `120000`; verify with `git ls-files -s <path>`. Delete the existing file before linking.
+Always PowerShell `New-Item -ItemType SymbolicLink -Path <link> -Target <target>` (needs Developer Mode or an elevated shell), deleting the existing file first. **Never `ln -s` on Windows** — Git Bash's `ln` copies the file instead of linking, so duplicate content gets committed silently. The repo sets `core.symlinks=true` and stores links as git mode `120000`; verify with `git ls-files -s <path>`.
 
-Tracked symlinks in this repo:
-
-- **Agent guides** — `AGENTS.md` is the canonical guidance file; `CLAUDE.md` and `GEMINI.md` symlink to it.
-- **`.agents/skills`** → `.claude/skills` (one skill tree shared by both tools).
-- **Per-package `eslint.config.js`** → the shared `../configuration/eslint/index.{typescript,vue}.js` (see Creating a New Package).
+Tracked symlinks: `AGENTS.md` is the canonical agent guide, with `CLAUDE.md` and `GEMINI.md` pointing at it; `.agents/skills` → `.claude/skills`; each package's `eslint.config.js` → the shared `../configuration/eslint/index.{typescript,vue}.js`.
 
 ## Constant Maps
 
-- **PascalCase matching the filename, with `as const satisfies`** — e.g. `export const FooConfigurationMap = { ... } as const satisfies Record<...>`.
-  - **Per-variant definitions are a map keyed by the discriminant, never a flat array** — closed with a mapped type (`as const satisfies { [K in FooKey]: FooDefinition<K> }`) so each entry keeps its own key type. Derive an array for iteration from the map (`export const FooDefinitions = Object.values(FooDefinitionMap)`), don't hand-maintain one. See typescript skill "Discriminant-Keyed Maps".
-  - **Exception**: when consumers need optional interface fields visible after enum lookup (e.g. `Item.color` on a map where some entries omit it), use an explicit `const MapName: Record<Enum, Interface> = { ... }` annotation instead of `as const satisfies`. This widens lookup results to the shared interface while still enforcing every enum key.
-- **Reuse existing item interfaces for UI metadata maps** — when an entry is a UI display/action item with `title`, `icon`, optional `color`/`active`/`shortTitle`, use `Item` from `@/models/shared/Item` instead of re-declaring an inline shape. `Item.onClick` is optional so it covers both display-only metadata and actionable menu items. Use narrower item interfaces only when they match exactly — `SelectItemCategoryDefinition<T>` (value), `ListItemCategoryDefinition<T>` (value + icon).
-- **Destructure in `v-for` unless passing the base item as props** — `v-for="{ key, format } of FooDefinitions"` preferred over `v-for="definition of ..."` when only specific fields are needed. Exception: if the item itself must be passed as a prop (`<SomeCard :item="definition" />`), don't destructure.
+- **PascalCase matching the filename, with `as const satisfies`** — `export const FooConfigurationMap = { ... } as const satisfies Record<...>`. Per-variant definition maps and their `as const satisfies` mapped type — see the `typescript` skill (`references/type-modelling.md`).
+  - **Exception**: when consumers need optional interface fields visible after enum lookup (e.g. `Item.color` on a map where some entries omit it), annotate explicitly — `const MapName: Record<Enum, Interface> = { ... }` — which widens lookup results to the shared interface while still enforcing every enum key.
+- **Reuse existing item interfaces for UI metadata maps** instead of re-declaring an inline entry shape — the `Item` interface and its narrower alternatives are the `vue-page-composition` skill's.
+- **Destructure in `v-for` unless passing the base item as props** — `v-for="{ key, format } of FooDefinitions"` over `v-for="definition of ..."` when only specific fields are needed. Exception: if the item itself is passed as a prop (`<SomeCard :item="definition" />`), don't destructure.
 - **One constant map per file, named after the constant** — `FooConfigurationMap.ts` exports only `FooConfigurationMap`. Never colocate two independent maps in one file.
-  - **Exception**: a map that only indexes declarations already in that file (a `type → schema` lookup sitting beside the discriminated union built from those same schemas) stays with them — it has no existence apart from them, and splitting it would import every sibling straight back. This is the Zod colocation exception applied to a map.
+  - **Exception**: a map that only indexes declarations already in that file (a `type → schema` lookup beside the discriminated union built from those same schemas) stays with them — it has no existence apart from them, and splitting it would import every sibling straight back. This is the Zod colocation exception applied to a map.
   - When a map transforms another (e.g. omitting a key), derive it rather than restating the entries: `[Foo.Bar]: FooSchemaMap[Foo.Bar].omit({ name: true })`.
-- **Generic type maps for polymorphic dispatch** — when a map associates a discriminant key (e.g. `DataSourceType`) with a type-parameterised generic, define an explicit type map first, then use a mapped type in `satisfies` for per-entry type safety without `as` casts:
-  ```typescript
-  // 1. Explicit type map (one file, in models/)
-  type DataSourceItemTypeMap = { [DataSourceType.Csv]: CsvDataSourceItem };
-  // 2. Satisfies mapped type — each entry checked against its specific type parameter
-  export const DataSourceConfigurationMap: Record<
-    DataSourceType,
-    DataSourceConfiguration<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>
-  > = { ... };
-  ```
-- **Generic map lookup composables** — when a component looks up a typed configuration from a generic map using a discriminant key on a generic item, extract the lookup into a composable. Use `MaybeRefOrGetter<TItem>` with `toValue()` so callers pass refs or plain values. Hide the single internal `as` cast and expose a fully typed API:
-  ```typescript
-  export const useDataSourceConfiguration = <
-    TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap],
-  >(
-    item: MaybeRefOrGetter<TDataSourceItem>,
-  ): ComputedRef<DataSourceConfiguration<TDataSourceItem>> =>
-    computed(() => DataSourceConfigurationMap[toValue(item).type] as DataSourceConfiguration<TDataSourceItem>);
-  ```
 
-## localStorage Keys
+### Typing over a discriminant — `references/generic-typing.md`
 
-Every localStorage key lives in **one** central registry, `app/services/shared/LocalStorageKey.ts` — a `RoutePath`-style `as const` object. Never scatter `*_LOCAL_STORAGE_KEY` constants across `services/*/constants.ts`, and never inline a literal into `useLocalStorage("literal")` / `localStorage.getItem("literal")`. One registry = keys can never silently overlap.
+Read it when a map's entries are type-parameterised generics, when a component looks such a configuration up, or when writing a component generic over a subtype: explicit type map + `satisfies` mapped type (no `as` casts), a `MaybeRefOrGetter` lookup composable hiding the single internal cast, and `generic="T extends …"` SFCs that take the typed value **and** its configuration as props.
 
-```typescript
-export const LocalStorageKey = {
-  ClickerStore: "clicker-store",
-  Draft: (roomId: string) => `draft:${roomId}`, // function form for parameterised keys (like RoutePath.Messages(id))
-  IsResourceListCollapsed: "is-resource-list-collapsed",
-  SurveyResponseId: (surveyId: string) => `survey-response-id:${surveyId}`,
-} as const;
-```
+## localStorage keys — `references/local-storage-keys.md`
 
-- **PascalCase entries; kebab-case string values** for new keys. Boolean-valued keys follow the boolean naming rule (`is`/`has`/`show` prefix, e.g. `IsResourceListCollapsed`).
-- **Parameterised keys are functions** returning the composed string. Derive a prefix for enumeration from the empty call, e.g. `LocalStorageKey.Draft("")` → `"draft:"` for `.startsWith` / `.slice`.
-- **Keep existing string values byte-identical** when migrating scattered keys into the registry — changing a value orphans users' already-persisted data.
-- Not every `*_KEY` constant is a localStorage key — e.g. `THEME_KEY` is a property key inside a model's JSON. Only storage keys belong here.
+Read it when adding, renaming or enumerating a persisted browser key. Every key lives in the one `LocalStorageKey` registry — never a `*_LOCAL_STORAGE_KEY` constant in a feature's `constants.ts`, never a literal inlined into `useLocalStorage(...)`.
 
-## Generic Vue Components
+## Command classes — `references/command-pattern.md`
 
-Use `<script setup lang="ts" generic="T extends SomeBase">` to make components type-safe over a subtype. Pass the typed value AND its associated generic config/interface as props so the parent resolves concrete types and the child stays typed without lookups/casts:
-
-```vue
-<!-- Parent (knows concrete type): -->
-<FilePicker :item="modelValue" :configuration="DataSourceConfigurationMap[DataSourceType.Csv]" />
-<!-- Child: -->
-<script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
-interface FilePickerProps {
-  configuration: DataSourceConfiguration<TDataSourceItem>;
-  item: TDataSourceItem;
-}
-</script>
-```
-
-## Command Pattern
-
-Commands are classes extending `ADataSourceCommand<T extends CommandType>`. Each declares `readonly type = CommandType.X` (no `name` — the base provides `get name() { return this.type; }`). `CommandType` enum lives in `models/resource/sheet/commands/CommandType.ts`. Field ordering within a command: `readonly type` → blank line → `get description()` → blank line → all `readonly #` private fields grouped together (no blank lines between same-level fields) → blank line → constructor → blank line between each method. Use ECMAScript `#` private members, never the TypeScript `private` keyword (see the `typescript` skill); subclass-reachable methods like `doExecute`/`doUndo` stay `protected`.
-
-Command instances are stored in the `useSheetHistoryStore` `ref` arrays, so they MUST be `markRaw`'d on entry — a reactive `Proxy` breaks `#` private brand checks at execute/undo time. See the `pinia` skill "Storing Class Instances — markRaw".
+Read it when adding or editing a command in the undo/redo stack: the base class, the field order, and why every instance is `markRaw`'d on entry.
 
 ## MIME Types
 
 Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfigurationMap`) rather than calling `mime-types` `lookup` at runtime — `mime-types` uses Node.js `path.extname`, unavailable in the browser. Access `mimeType` through the configuration map at the call site.
 
-## Creating a New Package
+## Creating a New Package — `references/new-package.md`
 
-New workspace packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
-
-1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"main": "dist/index.js"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`. Standard scripts: `build` (`pnpm export:gen && rolldown --config rolldown.config.ts`), `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (see testing skill). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
-2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
-3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.json"] }`.
-4. **`rolldown.config.ts`** — call the matching factory from `@esposter/configuration`: `getRolldownConfigurationNode()` (server-only), `getRolldownConfigurationBrowser()`, or `getRolldownConfigurationIsomorphic()`. They are functions, not constants. See the `build` skill.
-5. **`eslint.config.js`** — symlink to the shared config (`index.typescript.js` for TS-only, `index.vue.js` for Vue) per the **Symlinks** section:
-   ```powershell
-   New-Item -ItemType SymbolicLink -Path "packages\db-mock\eslint.config.js" -Target "..\configuration\eslint\index.typescript.js"
-   ```
-   No per-package `.oxlintrc.json` — oxlint runs once from the repo root against the single root `.oxlintrc.json`.
-6. **`src/index.ts`** — minimal barrel; `ctix` regenerates it on `pnpm export:gen`.
-7. **Run plain `pnpm i`** from repo root to link the package. Follow `packages/app/content/docs/architecture/monorepo-tooling.md` for install safety.
-8. **Run `pnpm build`** in the new package to produce `dist/`.
-
-### Bin entrypoints — no shebang
-
-Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`src/cli.ts`). pnpm generates the bin shim that invokes `node` for the target, so the shebang is dead weight. Only add one if a file is genuinely meant to be executed directly (`chmod +x ./file`), which workspace bins are not.
-
-### Rolldown externals
-
-Packages declared as `peerDependencies` must also be in the rolldown `external` array — pnpm doesn't tell rolldown to skip them. Either:
-
-- Add to the shared `external` list in `packages/configuration/src/external/external.ts` (preferred when used by multiple packages), OR
-- Override locally by spreading the factory's result: `const configuration = getRolldownConfigurationNode(); export default { ...configuration, external: [...configuration.external, "my-peer-dep"] }`. The `external` array is `(RegExp | string)[]` — don't cast it to `string[]`.
-
-After adding to the shared config, rebuild `packages/configuration` (`pnpm build`) before rebuilding dependents.
-
-### peerDependencies vs dependencies
-
-Use `peerDependencies` for packages that:
-
-- Are direct runtime imports or generated `.d.ts` imports that should not be bundled into dist.
-- Are framework/runtime singletons, SDKs mirrored in public APIs, or heavy/plugin runtimes the consumer must provide (e.g. `vue`, `pinia`, Azure SDKs, `drizzle-orm`, `zod`, `drizzle-kit`, `@electric-sql/pglite`).
-- Are owned by the package that directly imports them. Don't redeclare transitive-only peers from imported workspace packages.
-
-Use `dependencies` for direct runtime imports that are not consumer-provided and must be bundled/auto-installed. Workspace packages imported at runtime usually stay in `dependencies`.
-
-### Example: `packages/db-mock`
-
-A test-only node package. `@electric-sql/pglite` is a peer (heavy, not bundled, loaded at runtime by `createMockDb`), listed in the shared `external` list. `drizzle-kit` is a `devDependency` only — used by `scripts/generateSnapshot.ts` (regenerates the committed `src/snapshot.tar.gz` via `pnpm snapshot:gen`) and the verification test, not the shipped `createMockDb` runtime. `eslint.config.js` is a symlink to `../configuration/eslint/index.typescript.js`.
+Read it when adding a package under `packages/`, adding a `bin` entrypoint (no shebang — pnpm generates the shim), or choosing `peerDependencies` vs `dependencies`. It carries the eight-step setup (package.json fields and scripts, the two tsconfigs, the rolldown factory, the symlinked `eslint.config.js`, the ctix barrel, `pnpm i`, `pnpm build`) and the rule that every peer dependency must also appear in the rolldown `external` array.
 
 ## Refactoring — No Alias Re-exports
 
-When renaming a file (`createFoo.ts` → `createBar.ts`):
+When renaming a file (`createFoo.ts` → `createBar.ts`), **delete the old file** — never leave a re-export alias (`export { createBar as createFoo } from "./createBar"`). Update all import sites to the new path/name directly, and the barrel (`index.ts`) if it exported the old name. The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's canonical, and the rename never fully propagates.
 
-- **Delete the old file** — never leave a re-export alias (`export { createBar as createFoo } from "./createBar"`).
-- Update all import sites to the new path/name directly.
-- If a barrel (`index.ts`) exported the old name, update it too.
-
-The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's canonical, and the rename never fully propagates.
+The same applies to a function that **moves into a shared package**: consumers import it from the owning package directly. Never leave a local file whose whole body re-exports it — one function with two importable paths means a grep for its call sites finds the wrong half. A package barrel (`index.ts`) is the one file allowed to re-export, because publishing the package is its entire job.
 
 ## Shared Schemas
 
-- **Shared field schemas** — when multiple models share a field (e.g. `description`), define a single named interface + schema (`Description` / `descriptionSchema`) in `shared/models/entity/` and spread the schema's `.shape` into each model schema. No `With` prefix (follows `SourceColumnId`, `ApplicableColumnTypes`). Don't add `.default(...)` to the shared schema — each implementing class declares its own default as a class field and adds it at the schema call site.
+When multiple models share a field (e.g. `bar`), define a single named interface + schema (`Bar` / `barSchema`) in `shared/models/entity/` and spread the schema's `.shape` into each model schema. No `With` prefix. Don't add `.default(...)` to the shared schema — each implementing class declares its own default as a class field and adds it at the schema call site.
 
 ## File Length
 
 - **Target 50-100 lines per file** (`.ts` and `.vue` alike) — consistently over 100 lines is a yellow flag that an extraction is overdue (helper/sub-service/model for `.ts`; slot/sub-component/composable for `.vue` — see the `vue-component-patterns` skill).
 - Each file should have a single clear responsibility. Split a file that handles multiple concerns.
-- Exceptions: generated files, large constant maps with many entries, complex/rare layout components, and files where colocation of tightly coupled logic (e.g. a Zod schema next to its interface) is intentional.
-
-## Line Endings
-
-See the `formatting` skill.
+- Exceptions: generated files, large constant maps with many entries, complex/rare layout components, and files where colocation of tightly coupled logic (a Zod schema next to its interface) is intentional.

@@ -1,6 +1,9 @@
 import { SettingsType } from "@/models/message/room/SettingsType";
 
 export const SettingsContentMap = {
+  [SettingsType.Attachments]: defineAsyncComponent(
+    () => import("@/components/Message/Model/Room/Settings/Type/Attachments/Index.vue"),
+  ),
   [SettingsType.AuditLog]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/AuditLog/Index.vue"),
   ),

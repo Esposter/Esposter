@@ -51,6 +51,24 @@ describe("room/category", () => {
     expect(newRoomCategory.name).toBe(name);
   });
 
+  test("creates appended below the existing drag-assigned order", async () => {
+    expect.hasAssertions();
+
+    const first = await roomCategoryCaller.createRoomCategory({ name });
+    const second = await roomCategoryCaller.createRoomCategory({ name: updatedName });
+
+    expect(first.position).toBe(0);
+    expect(second.position).toBe(1);
+
+    await roomCategoryCaller.reorderRoomCategories([
+      { id: first.id, position: 1 },
+      { id: second.id, position: 0 },
+    ]);
+    const third = await roomCategoryCaller.createRoomCategory({ name });
+
+    expect(third.position).toBe(2);
+  });
+
   test("updates", async () => {
     expect.hasAssertions();
 
@@ -94,7 +112,9 @@ describe("room/category", () => {
         { id: newRoomCategory.id, position: 1 },
         { id: missingId, position: 0 },
       ]),
-    ).rejects.toThrow(new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomCategory, missingId).message);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomCategory, missingId).message}]`,
+    );
 
     const readRoomCategories = await roomCategoryCaller.readRoomCategories();
 

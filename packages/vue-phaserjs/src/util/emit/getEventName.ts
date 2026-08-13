@@ -1,9 +1,8 @@
+import { EVENT_PREFIX } from "@/util/emit/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-const prefix = "on";
-
 export const getEventName = (event: string): string => {
-  if (!event.startsWith(prefix) || event.length <= prefix.length)
+  if (!event.startsWith(EVENT_PREFIX) || event.length <= EVENT_PREFIX.length)
     throw new InvalidOperationError(Operation.Read, getEventName.name, event);
-  return event.slice(prefix.length).toLowerCase();
+  return event.slice(EVENT_PREFIX.length).toLowerCase();
 };

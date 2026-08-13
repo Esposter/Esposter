@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* address CodeRabbit PR 1008 review findings and lint ([91a43f8](https://github.com/Esposter/Esposter/commit/91a43f8724a09b2b56a61564b91e7dfa4805d42b))
+* **esbabbler:** address CodeRabbit review findings on PR [#1017](https://github.com/Esposter/Esposter/issues/1017) ([99cc3e3](https://github.com/Esposter/Esposter/commit/99cc3e3e967c92fd9f5203dc01eaf2f34e2cec9f))
+* post-merge integration fallout ([d7f882c](https://github.com/Esposter/Esposter/commit/d7f882cbef6cf79fc4aa781366b27a6bababdb47))
+* snapshots ([e55471d](https://github.com/Esposter/Esposter/commit/e55471d43085dd03cc7f0cc8ba7866e09486767c))
+
+### Features
+
+* Blueprint resource type with deploy and capture ([b70e0d0](https://github.com/Esposter/Esposter/commit/b70e0d07e79068954839dad498513ec265b0030b))
+* **db-schema:** add resource favorites, tags, activity log schema ([f7277bf](https://github.com/Esposter/Esposter/commit/f7277bf5db5f78490c5ffd62bab75e6b82c8e2bf))
+* **db:** add Note resource_type enum value ([f337b6b](https://github.com/Esposter/Esposter/commit/f337b6b358a02b162d231b1a9369e3686ab0844f))
+* **esbabbler:** consolidate file uploads, add thumbnails, room limits, and files tab ([87acbcf](https://github.com/Esposter/Esposter/commit/87acbcf61dac83023ebe2b98a2e433b2cc1c562a))
+* **platform:** close the end-to-end survey funnel ([adc0d50](https://github.com/Esposter/Esposter/commit/adc0d50af12103710cbd5a85550d824c38f5deec))
+* real-time todo list via onSaveResourceContent subscription ([2d42a1d](https://github.com/Esposter/Esposter/commit/2d42a1d67f3f4e39a58e8b4d47083e73ccdc31f2))
+
+### Performance Improvements
+
+* **message:** read the create-message gate once instead of rule by rule ([ffa0e59](https://github.com/Esposter/Esposter/commit/ffa0e594d0aa3c7609f51105a4cce7eeade30aab))
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Bug Fixes

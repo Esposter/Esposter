@@ -15,7 +15,9 @@ const { items } = storeToRefs(webhookStore);
 <template>
   <v-list>
     <v-list-subheader>Webhooks</v-list-subheader>
-    <MessageModelRoomSettingsTypeWebhookNoData v-if="items.length === 0" />
+    <v-list-item v-if="items.length === 0">
+      <v-list-item-title>No webhooks created</v-list-item-title>
+    </v-list-item>
     <template v-else>
       <MessageModelRoomSettingsTypeWebhookListItem v-for="webhook of items" :key="webhook.id" :room-id :webhook />
     </template>

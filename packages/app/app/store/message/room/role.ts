@@ -9,9 +9,12 @@ import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 import type { RoomRoleInMessage } from "@esposter/db-schema";
 
 import { checkIsManageable as checkIsManageableByPosition } from "#shared/services/room/rbac/checkIsManageable";
-import { MANAGEMENT_PERMISSIONS } from "#shared/services/room/rbac/constants";
 import { useMutation } from "@/composables/shared/useMutation";
+import { getTopRole } from "@/services/message/member/getTopRole";
+import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
+import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
 import { useRoomStore } from "@/store/message/room";
+import { noop } from "@esposter/shared";
 
 export const useRoleStore = defineStore("message/room/role", () => {
   const { $trpc } = useNuxtApp();
@@ -22,6 +25,14 @@ export const useRoleStore = defineStore("message/room/role", () => {
     setData: setRoles,
   } = useDataMap<RoomRoleInMessage[]>(() => roomStore.currentRoomId, []);
   const getRoles = (roomId: string) => baseGetRoles(roomId) ?? [];
+  // Replaces one role where it stands, so a rollback or a server copy never disturbs what a concurrent write —
+  // Or the role subscription — did to the rest of the list while this one was in flight
+  const setRole = (roomId: string, updatedRole: RoomRoleInMessage) => {
+    setRoles(
+      roomId,
+      getRoles(roomId).map((role) => (role.id === updatedRole.id ? updatedRole : role)),
+    );
+  };
   const {
     data: selectedRoleId,
     getData: getSelectedRoleId,
@@ -45,11 +56,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
     selectedMemberId.value = id;
   };
   const checkIsManageable = (roomId: string) => {
-    const myPermissions = getMyPermissions(roomId);
-    if (!myPermissions) return false;
+    const roomPermissions = getMyPermissions(roomId);
+    if (!roomPermissions) return false;
     return (
-      checkIsManageableByPosition(myPermissions.topRolePosition, 0, myPermissions.isRoomOwner) ||
-      Boolean(myPermissions.permissions & MANAGEMENT_PERMISSIONS)
+      checkIsManageableByPosition(roomPermissions.topRolePosition, 0, roomPermissions.isRoomOwner) ||
+      Boolean(roomPermissions.permissions & MANAGEMENT_PERMISSIONS)
     );
   };
   const {
@@ -58,22 +69,42 @@ export const useRoleStore = defineStore("message/room/role", () => {
     setData: setMemberRoleMap,
   } = useDataMap(() => roomStore.currentRoomId, new Map<string, RoomRoleInMessage[]>());
   const getMemberRoles = (roomId: string, userId: string) => getMemberRoleMap(roomId)?.get(userId) ?? [];
-  const setMemberRoles = (roomId: string, userId: string, roles: RoomRoleInMessage[]) => {
-    const memberRoleMap = getMemberRoleMap(roomId) ?? new Map<string, RoomRoleInMessage[]>();
-    memberRoleMap.set(userId, roles);
-    setMemberRoleMap(roomId, memberRoleMap);
+  const setMemberRoles = (roomId: string, userId: string, memberRoles: RoomRoleInMessage[]) => {
+    const roomMemberRoleMap = getMemberRoleMap(roomId) ?? new Map<string, RoomRoleInMessage[]>();
+    roomMemberRoleMap.set(userId, memberRoles);
+    setMemberRoleMap(roomId, roomMemberRoleMap);
+  };
+  // Every role-membership MUTATION funnels through here (reads use setMemberRoles directly — the server
+  // Counts already include them) so top-role-derived state stays current via the registered hooks
+  const mutateMemberRoles = (roomId: string, userId: string, newRoles: RoomRoleInMessage[]) => {
+    const previousTopRoleId = getTopRole(getMemberRoles(roomId, userId))?.id ?? "";
+    const newTopRoleId = getTopRole(newRoles)?.id ?? "";
+    setMemberRoles(roomId, userId, newRoles);
+    if (previousTopRoleId === newTopRoleId) return;
+    for (const topRoleChangeHook of topRoleChangeHooks.hooks)
+      topRoleChangeHook(roomId, previousTopRoleId, newTopRoleId);
+  };
+  // Both sides of one membership, written against whatever the member's list holds right now rather than a
+  // Copy read before the write went out — so an overlapping assign/revoke on another role survives this one
+  const setMemberRole = (roomId: string, userId: string, newRole: RoomRoleInMessage) => {
+    mutateMemberRoles(roomId, userId, [
+      ...getMemberRoles(roomId, userId).filter(({ id }) => id !== newRole.id),
+      newRole,
+    ]);
+  };
+  const deleteMemberRole = (roomId: string, userId: string, roleId: string) => {
+    mutateMemberRoles(
+      roomId,
+      userId,
+      getMemberRoles(roomId, userId).filter(({ id }) => id !== roleId),
+    );
   };
 
   const readRoles = async (input: ReadRolesInput) => {
-    const roles = await $trpc.role.readRoles.query(input);
-    const rolesByRoomId = new Map<string, RoomRoleInMessage[]>();
-    for (const role of roles) {
-      const roomRoles = rolesByRoomId.get(role.roomId) ?? [];
-      roomRoles.push(role);
-      rolesByRoomId.set(role.roomId, roomRoles);
-    }
+    const fetchedRoles = await $trpc.role.readRoles.query(input);
+    const rolesByRoomId = Object.groupBy(fetchedRoles, ({ roomId }) => roomId);
     for (const roomId of input.roomIds) {
-      const roomRoles = rolesByRoomId.get(roomId) ?? [];
+      const roomRoles = rolesByRoomId[roomId] ?? [];
       setRoles(roomId, roomRoles);
 
       const currentSelectedId = getSelectedRoleId(roomId);
@@ -88,22 +119,24 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const readMemberRoles = async (input: ReadMemberRolesInput) => {
     const memberRoles = await $trpc.role.readMemberRoles.query(input);
-    const rolesByUserId = new Map<string, RoomRoleInMessage[]>();
-    for (const { role, userId } of memberRoles) {
-      const roles = rolesByUserId.get(userId) ?? [];
-      roles.push(role);
-      rolesByUserId.set(userId, roles);
-    }
-    for (const userId of input.userIds) setMemberRoles(input.roomId, userId, rolesByUserId.get(userId) ?? []);
+    const memberRolesByUserId = Object.groupBy(memberRoles, ({ userId }) => userId);
+    for (const userId of input.userIds)
+      setMemberRoles(
+        input.roomId,
+        userId,
+        (memberRolesByUserId[userId] ?? []).map(({ role }) => role),
+      );
   };
-  const executeCreateRoleMutation = useMutation();
-  const executeUpdateRoleMutation = useMutation();
-  const executeDeleteRoleMutation = useMutation();
-  const executeAssignRoleMutation = useMutation();
-  const executeRevokeRoleMutation = useMutation();
+  const { executeMutation: executeCreateRoleMutation } = useMutation();
+  const { executeMutation: executeUpdateRoleMutation } = useMutation();
+  const { executeMutation: executeDeleteRoleMutation } = useMutation();
+  const { executeMutation: executeAssignRoleMutation } = useMutation();
+  const { executeMutation: executeRevokeRoleMutation } = useMutation();
   const createRole = async (input: CreateRoleInput) => {
-    // Server-generated role — non-optimistic, applied in onSuccess
+    // Server-generated role — non-optimistic, applied in onSuccess. Creates have no natural entity key,
+    // So each call gets a unique one — overlapping creates must never queue behind each other
     await executeCreateRoleMutation(() => $trpc.role.createRole.mutate(input), {
+      key: Symbol("createRole"),
       onSuccess: (newRole) => {
         setRoles(input.roomId, [newRole, ...getRoles(input.roomId)]);
         setSelectedRoleId(input.roomId, newRole.id);
@@ -111,38 +144,47 @@ export const useRoleStore = defineStore("message/room/role", () => {
     });
   };
   const updateRole = async (input: UpdateRoleInput) => {
-    const previousRoles = getRoles(input.roomId);
     await executeUpdateRoleMutation(() => $trpc.role.updateRole.mutate(input), {
+      // Read when the write is sent, and unwound one role at a time: restoring the list as it stood would undo
+      // Every other role's edit, creation and deletion that landed while this write was in flight
       applyOptimistic: () => {
-        setRoles(
-          input.roomId,
-          previousRoles.map((role) => (role.id === input.id ? { ...role, ...input } : role)),
-        );
+        const previousRole = getRoles(input.roomId).find(({ id }) => id === input.id);
+        if (!previousRole) return noop;
+
+        setRole(input.roomId, { ...previousRole, ...input });
         return () => {
-          setRoles(input.roomId, previousRoles);
+          setRole(input.roomId, previousRole);
         };
       },
+      // Keyed per role so concurrent operations on different roles run independently instead of queueing behind each other
+      key: input.id,
       onSuccess: (updatedRole) => {
-        setRoles(
-          input.roomId,
-          getRoles(input.roomId).map((role) => (role.id === updatedRole.id ? updatedRole : role)),
-        );
+        setRole(input.roomId, updatedRole);
       },
     });
   };
   const deleteRole = async (input: DeleteRoleInput) => {
-    const previousRoles = getRoles(input.roomId);
     let isSuccessful = false;
     await executeDeleteRoleMutation(() => $trpc.role.deleteRole.mutate(input), {
+      // Put back only this role, at the position it held — reinstating the list as it stood would resurrect a
+      // Role another deletion already removed and drop the ones created while this write was in flight
       applyOptimistic: () => {
+        const previousRoles = getRoles(input.roomId);
+        const deletedIndex = previousRoles.findIndex(({ id }) => id === input.id);
+        const deletedRole = previousRoles[deletedIndex];
         setRoles(
           input.roomId,
           previousRoles.filter((role) => role.id !== input.id),
         );
         return () => {
-          setRoles(input.roomId, previousRoles);
+          const rolesNow = getRoles(input.roomId);
+          if (!deletedRole || rolesNow.some(({ id }) => id === deletedRole.id)) return;
+
+          setRoles(input.roomId, rolesNow.toSpliced(Math.min(deletedIndex, rolesNow.length), 0, deletedRole));
         };
       },
+      // Keyed per role so concurrent operations on different roles run independently instead of queueing behind each other
+      key: input.id,
       onSuccess: () => {
         isSuccessful = true;
       },
@@ -150,40 +192,37 @@ export const useRoleStore = defineStore("message/room/role", () => {
     return isSuccessful;
   };
   const assignRole = async (input: AssignRoleInput) => {
-    const existingMemberRoles = getMemberRoles(input.roomId, input.userId);
-    if (existingMemberRoles.some(({ id }) => id === input.roleId)) return;
+    if (getMemberRoles(input.roomId, input.userId).some(({ id }) => id === input.roleId)) return;
     const role = getRoles(input.roomId).find(({ id }) => id === input.roleId);
-    await executeAssignRoleMutation(
-      () => $trpc.role.assignRole.mutate(input),
-      role
-        ? {
-            applyOptimistic: () => {
-              setMemberRoles(input.roomId, input.userId, [...existingMemberRoles, role]);
-              return () => {
-                setMemberRoles(input.roomId, input.userId, existingMemberRoles);
-              };
-            },
+    await executeAssignRoleMutation(() => $trpc.role.assignRole.mutate(input), {
+      // The room's roles are only cached once a surface has read them, so an assignment made before that has
+      // Nothing to show until the server hands back the role itself
+      applyOptimistic: role
+        ? () => {
+            setMemberRole(input.roomId, input.userId, role);
+            return () => {
+              deleteMemberRole(input.roomId, input.userId, role.id);
+            };
           }
-        : {
-            onSuccess: (newRole) => {
-              setMemberRoles(input.roomId, input.userId, [...existingMemberRoles, newRole]);
-            },
-          },
-    );
+        : undefined,
+      // Keyed per member-role pair so concurrent assignments across members/roles run independently instead of queueing behind each other
+      key: `${input.userId}-${input.roleId}`,
+      onSuccess: (newRole) => {
+        setMemberRole(input.roomId, input.userId, newRole);
+      },
+    });
   };
   const revokeRole = async (input: RevokeRoleInput) => {
-    const existingMemberRoles = getMemberRoles(input.roomId, input.userId);
     await executeRevokeRoleMutation(() => $trpc.role.revokeRole.mutate(input), {
       applyOptimistic: () => {
-        setMemberRoles(
-          input.roomId,
-          input.userId,
-          existingMemberRoles.filter(({ id }) => id !== input.roleId),
-        );
+        const revokedRole = getMemberRoles(input.roomId, input.userId).find(({ id }) => id === input.roleId);
+        deleteMemberRole(input.roomId, input.userId, input.roleId);
         return () => {
-          setMemberRoles(input.roomId, input.userId, existingMemberRoles);
+          if (revokedRole) setMemberRole(input.roomId, input.userId, revokedRole);
         };
       },
+      // Keyed per member-role pair so concurrent revocations across members/roles run independently instead of queueing behind each other
+      key: `${input.userId}-${input.roleId}`,
     });
   };
   return {
@@ -196,6 +235,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     getMyPermissions,
     getRoles,
     memberRoleMap,
+    mutateMemberRoles,
     myPermissions,
     readMemberRoles,
     readMyPermissions,

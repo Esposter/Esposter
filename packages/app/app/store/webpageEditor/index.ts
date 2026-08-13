@@ -1,25 +1,35 @@
+import type { ResourceType } from "@esposter/db-schema";
 import type { ProjectData } from "grapesjs";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { getItemMetadata } from "@/services/entity/getItemMetadata";
+import { useResourceStore } from "@/store/resource";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
-  const route = useRoute();
-  const { load, readContent, resource, save } = useResource(() =>
-    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
-  );
-  // Cast avoids the excessively deep UnwrapRef instantiation on the nested GrapesJS project types
-  const content = ref(new WebpageEditor()) as Ref<WebpageEditor>;
+  const resourceStore = useResourceStore();
+  const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
+  // GrapesJS owns the live project once it has loaded, so the content is held plainly rather than reactively —
+  // Nothing outside the two adapter callbacks reads it
+  let content = new WebpageEditor();
   // GrapesJS storage adapter load: serve the selected resource's content
   const readWebpageEditor = async () => {
-    await load();
-    const data = await readContent();
-    content.value = new WebpageEditor(data ?? undefined);
-    return content.value;
+    await readResource();
+    content = new WebpageEditor(await readContent<ResourceType.Webpage>());
+    // Seed the dirty check, the same as every other content store. GrapesJS stores once on load, so without
+    // This the echo of what was just read counts as a change and bumps contentVersion for nothing — which then
+    // Reads as a stale version to whichever other client is holding the page open
+    setPersistedContent(content);
+    return content;
   };
-  // The standalone render (css/html) is captured at save time so the published webpage serves without GrapesJS
-  const saveWebpageEditor = async (projectData: ProjectData, { css, html }: Pick<WebpageEditor, "css" | "html">) => {
-    content.value = new WebpageEditor({ ...projectData, css, html });
-    await save(content.value);
+  // The standalone render (css/html) is captured at save time so the published webpage serves without GrapesJS,
+  // And the loaded content's own metadata is carried across so a save doesn't mint a fresh content identity
+  const saveWebpageEditor = (projectData: ProjectData, { css, html }: Pick<WebpageEditor, "css" | "html">) => {
+    content = new WebpageEditor({ ...projectData, ...getItemMetadata(content), css, html });
+    // The save status is handed back rather than swallowed, the same as every other content store. It is not
+    // Turned into a throw: GrapesJS only reads a rejection as a failed store, and the writes that answer false
+    // Are mostly benign skips (nothing loaded, a resource swapped mid-save) whose one real case, a stale
+    // Version, already raises its own refresh notification
+    return saveContent(content);
   };
-  return { content, readWebpageEditor, resource, saveWebpageEditor };
+  return { readWebpageEditor, saveWebpageEditor };
 });

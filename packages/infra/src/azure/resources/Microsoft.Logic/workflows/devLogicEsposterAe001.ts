@@ -1,8 +1,12 @@
 import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAppServiceManagedApiId from "@/azure/constants/AzureAppServiceManagedApiId";
 import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
+import AzureLogicAppEndpointsConfiguration from "@/azure/constants/AzureLogicAppEndpointsConfiguration";
+import AzureSubscriptionId from "@/azure/constants/AzureSubscriptionId";
 import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devApicEsposterAe001 } from "@/azure/resources/Microsoft.Web/connections/devApicEsposterAe001";
+import { devFuncEsposter001 } from "@/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import { getWorkflowConnectionParameters } from "@/azure/services/getWorkflowConnectionParameters";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -23,7 +27,7 @@ export const devLogicEsposterAe001: azure_native.logic.Workflow = new azure_nati
               },
             },
             method: "post",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('dev-rg-esposter-ae-001')}/providers/Microsoft.Web/sites/@{encodeURIComponent('dev-func-esposter-001')}/stop",
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/Microsoft.Web/sites/@{encodeURIComponent('${devFuncEsposter001.name}')}/stop`,
             queries: {
               "api-version": "2019-08-01",
             },
@@ -148,118 +152,12 @@ export const devLogicEsposterAe001: azure_native.logic.Workflow = new azure_nati
         },
       },
     },
-    endpointsConfiguration: {
-      connector: {
-        outgoingIpAddresses: [
-          {
-            address: "52.237.214.72",
-          },
-          {
-            address: "13.72.243.10",
-          },
-          {
-            address: "13.70.72.192/28",
-          },
-          {
-            address: "13.70.78.224/27",
-          },
-          {
-            address: "20.70.220.224/28",
-          },
-          {
-            address: "20.70.220.192/27",
-          },
-          {
-            address: "20.213.202.84",
-          },
-          {
-            address: "20.213.202.51",
-          },
-        ],
-      },
-      workflow: {
-        accessEndpointIpAddresses: [
-          {
-            address: "20.11.76.135",
-          },
-          {
-            address: "20.11.77.54",
-          },
-          {
-            address: "4.200.57.191",
-          },
-          {
-            address: "20.11.77.111",
-          },
-          {
-            address: "4.200.48.30",
-          },
-          {
-            address: "4.198.185.192",
-          },
-          {
-            address: "4.200.48.37",
-          },
-          {
-            address: "4.200.57.70",
-          },
-        ],
-        outgoingIpAddresses: [
-          {
-            address: "20.53.72.170",
-          },
-          {
-            address: "20.53.106.182",
-          },
-          {
-            address: "20.11.76.122",
-          },
-          {
-            address: "20.11.77.49",
-          },
-          {
-            address: "4.200.57.71",
-          },
-          {
-            address: "20.11.77.107",
-          },
-          {
-            address: "4.198.187.22",
-          },
-          {
-            address: "4.198.185.90",
-          },
-          {
-            address: "4.198.185.246",
-          },
-          {
-            address: "4.200.58.227",
-          },
-        ],
-      },
-    },
+    endpointsConfiguration: AzureLogicAppEndpointsConfiguration,
     identity: {
       type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,
     },
     location: AzureAustraliaEastLocation,
-    parameters: pulumi
-      .all([devApicEsposterAe001.name, devApicEsposterAe001.id])
-      .apply(([connectionName, connectionId]) => ({
-        $connections: {
-          value: {
-            [connectionName]: {
-              connectionId,
-              connectionName,
-              connectionProperties: {
-                authentication: {
-                  type: "ManagedServiceIdentity",
-                },
-              },
-              id: AzureAppServiceManagedApiId,
-            },
-          },
-        },
-      })),
+    parameters: getWorkflowConnectionParameters(devApicEsposterAe001, AzureAppServiceManagedApiId),
     resourceGroupName: devRgEsposterAe001.name,
     state: azure_native.logic.WorkflowState.Enabled,
     tags: {

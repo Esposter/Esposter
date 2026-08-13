@@ -11,12 +11,12 @@ import { describe } from "vitest";
 // A host that runs the sandbox may still mount $HOME read-only (e.g. the root `test:packages` sandbox), where
 // Mkdtemp under .cache throws EROFS — so prove the cache home is writable too, else the test crashes in beforeAll
 // Instead of skipping.
-const isCacheHomeWritable = (): boolean =>
+const checkIsCacheHomeWritable = (): boolean =>
   getResult(() => {
     const cache = join(homedir(), HOME_CACHE_DIRECTORY_NAME);
     mkdirSync(cache, { recursive: true });
-    const dir = mkdtempSync(join(cache, VIRRUN_TEMP_DIR_PREFIX));
-    rmSync(dir, { force: true, recursive: true });
+    const directory = mkdtempSync(join(cache, VIRRUN_TEMP_DIR_PREFIX));
+    rmSync(directory, { force: true, recursive: true });
   }).match(
     () => true,
     () => false,
@@ -24,7 +24,7 @@ const isCacheHomeWritable = (): boolean =>
 // Gate for the heavy install/snapshot tests. The win32 toolchain probe goes through the login + interactive shell
 // (buildWslLoginShellCommand) the backend captures its PATH from, not a bare `wsl.exe --exec sh -lc`: a profile-bound
 // Node manager (fnm, nvm…) is off the non-interactive PATH, so a plain probe skips the suite even though the backend
-// Can reach node. This keeps the gate in lockstep with what readWslLoginPath injects.
+// Can reach node. This keeps the gate in lockstep with what readWslLoginEnvironment injects.
 export const isSandboxInstallSupported: boolean =
   isOsBackendSupported() &&
   getResult(() =>
@@ -40,6 +40,6 @@ export const isSandboxInstallSupported: boolean =
     () => true,
     () => false,
   ) &&
-  isCacheHomeWritable();
+  checkIsCacheHomeWritable();
 
 describe.todo("isSandboxInstallSupported");

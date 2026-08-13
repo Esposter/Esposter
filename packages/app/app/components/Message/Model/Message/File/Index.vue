@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 
-import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
+import { getFileCornerStyle } from "@/services/message/file/getFileCornerStyle";
 import { useDataStore } from "@/store/message/data";
 import { useDownloadFileStore } from "@/store/message/file";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import { takeOne } from "@esposter/shared";
 
 interface FileProps {
   columnLayout: number[];
@@ -17,26 +16,20 @@ interface FileProps {
 
 const { columnLayout, file, index, isPreview, message } = defineProps<FileProps>();
 const isCreator = await useIsCreator(() => message);
-const { deleteFile } = useDataStore();
+const dataStore = useDataStore();
+const { deleteFile } = dataStore;
 const downloadFileStore = useDownloadFileStore();
 const { viewFiles } = downloadFileStore;
 const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
 const viewableFileIndex = computed(() => viewableFiles.value.findIndex(({ id }) => id === file.id));
+const cornerStyle = computed(() => getFileCornerStyle(columnLayout, index));
 const isActive = ref(false);
 </script>
 
 <template>
   <StyledCard
-    :style="{
-      borderTopLeftRadius: index === 0 ? CONTAINER_BORDER_RADIUS : undefined,
-      borderTopRightRadius: index === 12 / takeOne(columnLayout) - 1 ? CONTAINER_BORDER_RADIUS : undefined,
-      borderBottomLeftRadius:
-        index === columnLayout.length - 1 - (12 / takeOne(columnLayout, columnLayout.length - 1) - 1)
-          ? CONTAINER_BORDER_RADIUS
-          : undefined,
-      borderBottomRightRadius: index === columnLayout.length - 1 ? CONTAINER_BORDER_RADIUS : undefined,
-    }"
+    :style="cornerStyle"
     h-full
     @="viewableFileIndex === -1 ? {} : { click: () => viewFiles(viewableFileIndex) }"
     @mouseenter="isActive = true"

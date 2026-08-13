@@ -5,7 +5,7 @@ describe(getVersionParts, () => {
   test("splits a plain version into numeric parts with no prerelease", () => {
     expect.hasAssertions();
 
-    expect(getVersionParts("0.0.0")).toStrictEqual({ major: 0, minor: 0, patch: 0, prerelease: undefined });
+    expect(getVersionParts("0.0.0")).toStrictEqual({ major: 0, minor: 0, patch: 0, prerelease: "" });
   });
 
   test("captures the prerelease identifier after the dash", () => {
@@ -17,6 +17,6 @@ describe(getVersionParts, () => {
   test("defaults missing segments to zero", () => {
     expect.hasAssertions();
 
-    expect(getVersionParts("1")).toStrictEqual({ major: 1, minor: 0, patch: 0, prerelease: undefined });
+    expect(getVersionParts("1")).toStrictEqual({ major: 1, minor: 0, patch: 0, prerelease: "" });
   });
 });

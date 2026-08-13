@@ -1,11 +1,17 @@
 import ApplicationTags from "@/azure/constants/ApplicationTags";
 import AzureAustraliaEastDisplayLocation from "@/azure/constants/AzureAustraliaEastDisplayLocation";
+import { devEvgtEsposterAe001 } from "@/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
 import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devAspEsposterAe001 } from "@/azure/resources/Microsoft.Web/serverFarms/devAspEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
+import * as pulumi from "@pulumi/pulumi";
+
+const config = new pulumi.Config();
+
+const siteName = "dev-func-esposter-001";
 
 export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.WebApp(
-  "dev-func-esposter-001",
+  siteName,
   {
     clientAffinityEnabled: false,
     clientAffinityProxyEnabled: false,
@@ -20,12 +26,12 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
     hostNameSslStates: [
       {
         hostType: azure_native.web.HostType.Standard,
-        name: "dev-func-esposter-001.azurewebsites.net",
+        name: `${siteName}.azurewebsites.net`,
         sslState: azure_native.web.SslState.Disabled,
       },
       {
         hostType: azure_native.web.HostType.Repository,
-        name: "dev-func-esposter-001.scm.azurewebsites.net",
+        name: `${siteName}.scm.azurewebsites.net`,
         sslState: azure_native.web.SslState.Disabled,
       },
     ],
@@ -39,7 +45,7 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
     keyVaultReferenceIdentity: "SystemAssigned",
     kind: "functionapp",
     location: AzureAustraliaEastDisplayLocation,
-    name: "dev-func-esposter-001",
+    name: siteName,
     outboundVnetRouting: {
       allTraffic: false,
       applicationTraffic: false,
@@ -54,6 +60,40 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
     scmSiteAlsoStopped: false,
     serverFarmId: devAspEsposterAe001.id,
     siteConfig: {
+      appSettings: [
+        { name: "AZURE_EVENT_GRID_TOPIC_ENDPOINT", value: devEvgtEsposterAe001.endpoint },
+        { name: "AZURE_EVENT_GRID_TOPIC_KEY", value: config.requireSecret("devFuncEsposter001EventGridTopicKey") },
+        {
+          name: "AZURE_SERVICE_BUS_CONNECTION_STRING",
+          value: config.requireSecret("devFuncEsposter001ServiceBusConnectionString"),
+        },
+        {
+          name: "AZURE_STORAGE_ACCOUNT_CONNECTION_STRING",
+          value: config.requireSecret("devFuncEsposter001StorageAccountConnectionString"),
+        },
+        {
+          name: "AZURE_WEB_PUBSUB_CONNECTION_STRING",
+          value: config.requireSecret("devFuncEsposter001WebPubSubConnectionString"),
+        },
+        { name: "AzureWebJobsStorage__blobServiceUri", value: "https://devstesposter001.blob.core.windows.net" },
+        { name: "AzureWebJobsStorage__credential", value: "managedidentity" },
+        { name: "AzureWebJobsStorage__queueServiceUri", value: "https://devstesposter001.queue.core.windows.net" },
+        { name: "AzureWebJobsStorage__tableServiceUri", value: "https://devstesposter001.table.core.windows.net" },
+        { name: "BASE_URL", value: "https://esposter-develop.up.railway.app" },
+        { name: "DATABASE_URL", value: config.requireSecret("devFuncEsposter001DatabaseUrl") },
+        { name: "FUNCTIONS_EXTENSION_VERSION", value: "~4" },
+        { name: "FUNCTIONS_WORKER_RUNTIME", value: "node" },
+        { name: "VAPID_PRIVATE_KEY", value: config.requireSecret("devFuncEsposter001VapidPrivateKey") },
+        {
+          name: "VAPID_PUBLIC_KEY",
+          value: "BM7bFHT5jh2S--s_l4pPXGNlmpH-fwrT7RM4-JWYvbafCQkO0g2JeO2gUf_yHFOS-0rY6O6d0X7qkuYWmDiJSPE",
+        },
+        { name: "WEBSITE_NODE_DEFAULT_VERSION", value: "~24" },
+        {
+          name: "WEBSITE_RUN_FROM_PACKAGE",
+          value: `https://devstesposter001.blob.core.windows.net/${siteName}/release.zip`,
+        },
+      ],
       use32BitWorkerProcess: false,
     },
     storageAccountRequired: false,

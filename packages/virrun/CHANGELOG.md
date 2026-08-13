@@ -3,6 +3,74 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* add best effort fn ([4435dd0](https://github.com/Esposter/Esposter/commit/4435dd05a738f1e6263d660795f510c2efbe9450))
+* add docs + modifications ([e3b82f1](https://github.com/Esposter/Esposter/commit/e3b82f1284e96089b6376467a155fad28fa1d6dc))
+* add missing regression tests ([a5c0040](https://github.com/Esposter/Esposter/commit/a5c0040443bc57a5423f71cb3d93147f50f64668))
+* address CodeRabbit review comments ([6cfc481](https://github.com/Esposter/Esposter/commit/6cfc481ee2fccc922a6310db363916d8d97683d5))
+* anchor the asset url, attribute the automod log, age-gate the reaper ([aac93e1](https://github.com/Esposter/Esposter/commit/aac93e17e85221d9e964c27ba3a9bfb176072238))
+* CI failures, CodeRabbit findings, and Basic-tier reminder dedupe ([96fd87a](https://github.com/Esposter/Esposter/commit/96fd87a1af102dd0314d60b040d3199e546848aa))
+* CI virrun shim + stale bundle-size snapshots ([b64c9a6](https://github.com/Esposter/Esposter/commit/b64c9a67704629c00780afaaee26b7745d2529cc))
+* clear the remaining confirmed findings from the seam review ([8709cd8](https://github.com/Esposter/Esposter/commit/8709cd8b0687e32fdbec8320bfc0d661c916d043))
+* close the CodeRabbit items the earlier rounds left open ([7288f94](https://github.com/Esposter/Esposter/commit/7288f9446b264c53260f0e27ef62f127df18e04f))
+* close the critical send-path and publish-repair findings ([ff65685](https://github.com/Esposter/Esposter/commit/ff65685d4cfbeb60754f0d15841cb0b39cb4c846))
+* close the defects the develop-to-main review found ([494120b](https://github.com/Esposter/Esposter/commit/494120bf742e6946cc347867187f66e91e2d7a91)), closes [#1029](https://github.com/Esposter/Esposter/issues/1029)
+* close the defects the previous fix round introduced ([d7676dc](https://github.com/Esposter/Esposter/commit/d7676dcd3604ee36b014f3daec203f28ba8e02d9))
+* close the develop -> main review findings ([5e0046b](https://github.com/Esposter/Esposter/commit/5e0046b1d0170a85ac8537ba9696666300c27e69))
+* close the develop-to-main review findings ([3f29155](https://github.com/Esposter/Esposter/commit/3f29155a720cebf09405c443aa1f5e0ffbb4f04e))
+* close the second CodeRabbit round on the develop -> main PR ([df4b09b](https://github.com/Esposter/Esposter/commit/df4b09ba3423f96d6e60a77805f44e42ed87771a))
+* code review comments ([a739015](https://github.com/Esposter/Esposter/commit/a739015af42462afb2890c6532220a86b974b1c9))
+* code review comments ([96cf103](https://github.com/Esposter/Esposter/commit/96cf103f7fa17f79a8227235ca1017be6aec8785))
+* comments and snapshots ([2bd05d9](https://github.com/Esposter/Esposter/commit/2bd05d9ac2e6be0304bf06fb569663578fced448))
+* decode truncated odd-length utf16le stderr + stale comment ([e1aa94d](https://github.com/Esposter/Esposter/commit/e1aa94df0d03f33ce6ddd2c0fc0356ebcd4563e5))
+* docs ([f7ae114](https://github.com/Esposter/Esposter/commit/f7ae114e45ec268afb6e23f1219812ed6433c275))
+* docs & test ([558dfa3](https://github.com/Esposter/Esposter/commit/558dfa3f044d160ba4c632f8450479bfc2035933))
+* docs and workflow ([2b61c7d](https://github.com/Esposter/Esposter/commit/2b61c7d3aad0614799638864a5662f458befc176))
+* have clear timeout error messages ([8ab229d](https://github.com/Esposter/Esposter/commit/8ab229d0b99531bb7fff12593da86473f02a35e8))
+* lint ([74247e1](https://github.com/Esposter/Esposter/commit/74247e1655fb52772163ca2ac62e96dc279a1932))
+* lint ([35d371f](https://github.com/Esposter/Esposter/commit/35d371f0b3654eec75212f387a7e03bffd7f41fa))
+* lint and snapshot ([25e27fd](https://github.com/Esposter/Esposter/commit/25e27fdc7818d37b389c6a7f0c8e0f80c49eddd9))
+* lint and snapshot ([93ce821](https://github.com/Esposter/Esposter/commit/93ce82156ccf2f20ee21977df02592927119ad10))
+* preserve error name in getWslNativeCacheRoot probe ([bbd05e5](https://github.com/Esposter/Esposter/commit/bbd05e54a5711457de210408684ce1d841e07648))
+* re-enable no-shadow and rename all shadowing variables ([0faab46](https://github.com/Esposter/Esposter/commit/0faab46e00078013464161144498ad94d1ac866e))
+* record the facts these fixes kept guessing at ([376dbb0](https://github.com/Esposter/Esposter/commit/376dbb0c56b264b4128e3da56377e6d9be5928b1))
+* remaining tests ([7315b02](https://github.com/Esposter/Esposter/commit/7315b0219dbae103cb0461618ae7549e868b7976))
+* remove unnecessary lints ([0db3054](https://github.com/Esposter/Esposter/commit/0db3054ddc6808b7cb09912820f66b27d4858450))
+* restore lint suppressions as oxlint-disable directives ([4085893](https://github.com/Esposter/Esposter/commit/4085893e4972dd5deb290524a3b05930a45a8d78))
+* say plainly that the mirror marker publish is host-side ([1aea945](https://github.com/Esposter/Esposter/commit/1aea9453c3101719aa4db16fbd2ac942f3bbbe1c))
+* search the end marker after the begin marker, and scope typedoc entrypoints ([d5b0991](https://github.com/Esposter/Esposter/commit/d5b0991def5b4e32717805ac45369e60945b7740))
+* snapshots ([9e7a603](https://github.com/Esposter/Esposter/commit/9e7a60383e4f2441af13b0283f47faed66cdb39a))
+* snapshots ([7e6429c](https://github.com/Esposter/Esposter/commit/7e6429c68b51eb9e6cbf064fab938eee349d87c2))
+* snapshots ([2fefad0](https://github.com/Esposter/Esposter/commit/2fefad023c9fd772c268f592a38a97b2d3df3efd))
+* snapshots ([100c3c0](https://github.com/Esposter/Esposter/commit/100c3c05787c63682b32cabd4dd896cda20fd425))
+* snapshots ([1842fc6](https://github.com/Esposter/Esposter/commit/1842fc678909e00dfe32ecaeae3ff373a910321b))
+* stdout ([3d6d889](https://github.com/Esposter/Esposter/commit/3d6d889090a9a9a1cf92256820a394e146b4140a))
+* tar exe ([844742b](https://github.com/Esposter/Esposter/commit/844742bf86402f0c95bd30505215e996cc3338a3))
+* tests ([97bdc81](https://github.com/Esposter/Esposter/commit/97bdc81353183907175d54eb2e6f7cd2cd863a4f))
+* tests and urls ([c857917](https://github.com/Esposter/Esposter/commit/c85791767dbf80fe9c53c25c3b09b567bd44b750))
+* tests and virrun ([eef931f](https://github.com/Esposter/Esposter/commit/eef931f4af59f56934391cf81d63bfa88b092044))
+* types and tests ([e866d77](https://github.com/Esposter/Esposter/commit/e866d772c57ad1f320603b053674729c11713fb8))
+* update docs ([e470990](https://github.com/Esposter/Esposter/commit/e4709909ea211579bef7ae631a05b3e562e7458b))
+* update snapshots ([ba935c5](https://github.com/Esposter/Esposter/commit/ba935c539d05bee6423cc71fa3fcab21a3278708))
+* **virrun:** tolerate a source path that vanishes mid-archive ([331224a](https://github.com/Esposter/Esposter/commit/331224a188f32360e913b294902f8cdf772b2f59))
+* wip ([acf6466](https://github.com/Esposter/Esposter/commit/acf6466c3340699b1ef5593a27cd5ac80f1e2049))
+* wip ([c79a454](https://github.com/Esposter/Esposter/commit/c79a454e14ba9c3cf08836f41a1dac6f7fb24a9a))
+* wip ([60a99b8](https://github.com/Esposter/Esposter/commit/60a99b8dde872db6cbc0dd5ac1e006439f3e2881))
+* wip ([b02cc3b](https://github.com/Esposter/Esposter/commit/b02cc3b3d3e90cb6215ccbe21d15c9234cadb765))
+* wip ([efe6f55](https://github.com/Esposter/Esposter/commit/efe6f553039e9e05c48ed7600073748038a75f6d))
+
+### Features
+
+* Add process blob deletion handler ([1d66a2c](https://github.com/Esposter/Esposter/commit/1d66a2c6a445de75e285c5ae2629d75d939c13b0))
+* **virrun:** age-prune the task cache and report its payload size ([54955a7](https://github.com/Esposter/Esposter/commit/54955a7df4a5e2bc07be21d291437bcd5ab3b8b9))
+
+### Performance Improvements
+
+* **program:** batch participant inserts into one transaction per 100 ([67f5c86](https://github.com/Esposter/Esposter/commit/67f5c865e40c3cc65590ddcffa9380338a9647a2))
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Bug Fixes

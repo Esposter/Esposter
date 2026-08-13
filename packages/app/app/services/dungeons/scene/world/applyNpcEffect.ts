@@ -46,6 +46,8 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
       });
       return;
     }
+    default:
+      break;
   }
 
   onComplete();

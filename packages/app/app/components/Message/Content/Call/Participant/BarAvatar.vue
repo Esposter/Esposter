@@ -4,13 +4,12 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
 
-interface MessageContentCallParticipantBarAvatarProps {
-  isHandRaised: boolean;
+interface CallParticipantBarAvatarProps {
   isSpeaking: boolean;
   participant: CallParticipant;
 }
 
-const { isHandRaised, isSpeaking, participant } = defineProps<MessageContentCallParticipantBarAvatarProps>();
+const { isSpeaking, participant } = defineProps<CallParticipantBarAvatarProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const callStore = useCallStore();
 const { isInCall } = storeToRefs(callStore);
@@ -29,14 +28,14 @@ const avatarProps = computed(() => ({
 
 <template>
   <div relative>
-    <MessageContentCallParticipantActionMenu v-if="isActionable" :is-hand-raised :participant>
+    <MessageContentCallParticipantActionMenu v-if="isActionable" :participant>
       <template #activator="{ props: menuProps }">
         <StyledAvatar cursor-pointer :="{ ...avatarProps, ...menuProps }" />
       </template>
     </MessageContentCallParticipantActionMenu>
     <StyledAvatar v-else :="avatarProps" />
     <div
-      v-if="isHandRaised"
+      v-if="participant.isHandRaised"
       bg-warning
       text-black
       rd-full
@@ -56,7 +55,7 @@ const avatarProps = computed(() => ({
       rd-full
       pointer-events-none
       absolute
-      shadow="[0_0_0_2px_rgb(var(--v-theme-primary)),0_0_8px_4px_rgba(var(--v-theme-primary),0.4)]"
+      shadow="[0_0_0_0.125rem_rgb(var(--v-theme-primary)),0_0_0.5rem_0.25rem_rgba(var(--v-theme-primary),0.4)]"
     />
   </div>
 </template>

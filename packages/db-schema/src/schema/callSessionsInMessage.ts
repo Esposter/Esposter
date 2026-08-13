@@ -1,8 +1,8 @@
+import { createExactLengthCheckSql } from "@/models/shared/Check";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
-import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
@@ -10,7 +10,7 @@ export const CALL_ID_LENGTH = 12;
 export const CALL_ID_REGEX = new RegExp(String.raw`[A-Za-z0-9]{${CALL_ID_LENGTH}}`, "u");
 
 export const callSessionsInMessage = pgTable(
-  "call_sessions",
+  "callSessions",
   {
     id: text().primaryKey(),
     roomId: uuid()
@@ -21,9 +21,7 @@ export const callSessionsInMessage = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ id }) => [
-      check("call_sessions_id_length_check", sql`LENGTH(${id}) = ${sql.raw(CALL_ID_LENGTH.toString())}`),
-    ],
+    extraConfig: ({ id }) => [check("callSessions_id_length_check", createExactLengthCheckSql(id, CALL_ID_LENGTH))],
     schema: messageSchema,
   },
 );

@@ -13,7 +13,7 @@ Serving is the **DatasetProvider capability** ([/docs/architecture/resources](/d
 
 Shared models in `packages/app/shared/models/dataset/` (one type + schema per file, interface-first). `ColumnType` and `ColumnValue` are reused from the Sheet resource models — they are already the canonical cell-type vocabulary.
 
-```typescript
+```ts
 interface DatasetColumn {
   name: string;
   type: DatasetColumnType; // ColumnType minus Computed — computed values are derived at render time
@@ -22,9 +22,11 @@ interface DatasetColumn {
 interface Dataset {
   columns: DatasetColumn[];
   rows: Record<string, ColumnValue>[];
+  totalRows?: number; // when present, the uncapped count — truncation is detectable only for providers that supply it
 }
 
 enum DatasetProviderType {
+  ProgramStatus = "ProgramStatus",
   Sheet = "Sheet",
   SurveyResponses = "SurveyResponses",
 }
@@ -34,7 +36,7 @@ interface DatasetReference extends ItemEntityType<DatasetProviderType> {
 }
 ```
 
-A reference is just a resource id — a Sheet resource _is_ the dataset (no sub-item selector; the old table document's `itemId` died with the multi-item document). `DatasetProviderType` (server-resolvable references) is a different axis from `DataSourceType` (Csv/Json/Xlsx — file formats parsed client-side). Do not merge them: one describes _where data lives_, the other _how a file is encoded_.
+A reference is just a resource id — a Sheet resource _is_ the dataset, so a reference carries no sub-item selector. `DatasetProviderType` (server-resolvable references) is a different axis from `DataSourceType` (Csv/Json/Xlsx — file formats parsed client-side). Do not merge them: one describes _where data lives_, the other _how a file is encoded_.
 
 ## Serving
 
@@ -54,16 +56,18 @@ flowchart LR
   RD --> MAP["DatasetProviderMap[type]"]
   MAP --> SR["readSurveyResponsesDataset"] --> AT[("SurveyResponseEntity<br/>Azure Table")]
   MAP --> FR["readSheetDataset"] --> BLOB[("Sheet content blob")]
+  MAP --> PR["readProgramStatusDataset"] --> PT[("ProgramParticipantEntity<br/>Azure Table")]
 ```
 
 Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `DatasetProviderType` → provider function, one provider per folder. Each provider owns its auth check and its column/row derivation:
 
 - **`readSurveyResponsesDataset`** — columns from the survey model's questions (name + question-type → `ColumnType` mapping); rows flattened from `SurveyResponseEntity` JSON in Azure Table, non-primitive answers JSON-stringified; auth via resource ownership.
 - **`readSheetDataset`** — reads the Sheet resource's content blob and converts `content.data` via `dataSourceToDataset`; auth via resource ownership.
+- **`readProgramStatusDataset`** — participant/addedAt/responded rows from `ProgramParticipantEntity` in Azure Table, keyed by the non-secret `publicId` (never the token — dashboards bake dataset snapshots into public publishes); auth via resource ownership.
 
 ## Rules
 
-- **Row cap** — `AZURE_MAX_PAGE_SIZE` (1000) on every provider; datasets are for visualization and import, not bulk export. Add pagination only when a real consumer hits the cap ([deferred](/docs/platform/deferred/dataset-row-cap-pagination)).
+- **Row cap** — `AZURE_MAX_PAGE_SIZE` (1000) on every provider; datasets are for visualization and import, not bulk export. **Truncation is `totalRows > rows.length`, never the presence of `totalRows`** — a provider that can count cheaply always reports the uncapped total, which equals the row count on an uncapped read. `getDatasetTruncation` is the one place that comparison lives, so a warning can never disagree with the rows on screen; a provider that cannot count omits the field and its consumers simply never warn, because truncation is then unknowable rather than absent. Add pagination only when a real consumer hits the cap ([deferred](/docs/platform/deferred/dataset-row-cap-pagination)).
 - **Consumers choose copy or reference.** Import (Sheet resource) copies rows once. Binding (dashboard visuals, email editor merge fields) stores the `DatasetReference` and re-resolves on load. All call the same procedure.
 - **Fetch on load + manual refresh.** No live subscriptions through this layer ([deferred](/docs/platform/deferred/realtime-dataset-refresh)).
 - **No external providers** (HTTP APIs, SQL) until secret storage and injection-safety work is scoped ([deferred](/docs/platform/deferred/api-sql-dataset-providers)) — the enum grows one value per new provider, nothing else changes.

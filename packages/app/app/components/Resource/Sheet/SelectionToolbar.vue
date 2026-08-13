@@ -6,7 +6,6 @@ interface ResourceSheetSelectionToolbarProps {
   label: string;
 }
 
-defineSlots<{ default?: () => VNode }>();
 const { label } = defineProps<ResourceSheetSelectionToolbarProps>();
 const selectedIds = defineModel<string[]>({ required: true });
 const emit = defineEmits<{ delete: [ids: string[]] }>();
@@ -16,7 +15,6 @@ const pluralizedLabel = computed(() => pluralize(label, selectedIds.value.length
 <template>
   <v-toolbar>
     <v-toolbar-title>{{ selectedIds.length }} {{ pluralizedLabel }} selected</v-toolbar-title>
-    <slot />
     <StyledConfirmDeleteDialogButton
       :card-props="{ title: `Delete ${selectedIds.length} ${capitalize(pluralizedLabel)}` }"
       @delete="

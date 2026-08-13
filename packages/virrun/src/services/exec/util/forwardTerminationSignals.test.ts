@@ -20,9 +20,9 @@ const createFakeChild = () => {
 
 // Grab the single SIGINT listener forwardTerminationSignals just installed, so we can drive it directly
 // Instead of emitting a real OS signal on `process` and disturbing the test runner.
-const getAddedSignalListener = (signal: NodeJS.Signals, before: readonly unknown[]) =>
+const getAddedSignalListener = (signal: NodeJS.Signals, previousListeners: readonly unknown[]) =>
   takeOne(
-    process.listeners(signal).filter((listener) => !before.includes(listener)),
+    process.listeners(signal).filter((listener) => !previousListeners.includes(listener)),
     0,
   );
 

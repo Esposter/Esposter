@@ -29,13 +29,17 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { MOCK_BLOB_BASE_URL } from "@/constants";
+import { BLOB_NOT_FOUND_MESSAGE } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
+import { getBlobUrl } from "@/services/container/getBlobUrl";
+import { getBlobUrlParts } from "@/services/container/getBlobUrlParts";
+import { getMockContainer } from "@/services/container/getMockContainer";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
+import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
-import { getOrCreate, noop, takeOne } from "@esposter/shared";
+import { noop } from "@esposter/shared";
 import { Readable } from "node:stream";
 
 export class MockBlobClient implements Except<BlobClient, "accountName"> {
@@ -46,14 +50,14 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   url: string;
 
   get container(): MapValue<typeof MockContainerDatabase> {
-    return getOrCreate(MockContainerDatabase, this.containerName, () => new Map());
+    return getMockContainer(this.containerName);
   }
 
   constructor(connectionString: string, containerName: string, blobName: string) {
     this.connectionString = connectionString;
     this.containerName = containerName;
     this.name = blobName;
-    this.url = `${MOCK_BLOB_BASE_URL}/${this.containerName}/${this.name}`;
+    this.url = getBlobUrl(this.containerName, this.name);
   }
 
   abortCopyFromURL(): Promise<BlobAbortCopyFromURLResponse> {
@@ -65,14 +69,10 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   ): Promise<
     PollerLikeWithCancellation<PollOperationState<BlobBeginCopyFromURLResponse>, BlobBeginCopyFromURLResponse>
   > {
-    // Extract container and blob name from the copy source URL
-    // Expected format: https://account.blob.core.windows.net/container/blob-name
-    const url = new URL(copySource);
-    const pathSegments = url.pathname.split("/").filter(Boolean);
-    if (pathSegments.length < 2) throw new MockRestError("Invalid copy source URL format", 400);
+    const sourceParts = getBlobUrlParts(copySource);
+    if (!sourceParts) throw new MockRestError("Invalid copy source URL format", 400);
 
-    const sourceContainerName = takeOne(pathSegments);
-    const sourceBlobName = pathSegments.slice(1).join("/");
+    const { blobName: sourceBlobName, containerName: sourceContainerName } = sourceParts;
     const sourceContainer = MockContainerDatabase.get(sourceContainerName);
     if (!sourceContainer) throw new MockRestError("Source container not found", 404);
 
@@ -80,6 +80,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     if (!sourceData) throw new MockRestError("Source blob not found", 404);
 
     this.container.set(this.name, Buffer.from(sourceData));
+    MockContainerCreatedOnDatabase.set(getMockContainerCreatedOnKey(this.containerName, this.name), new Date());
     const response: BlobBeginCopyFromURLResponse = { _response: createMockResponse(202, `${this.url}?comp=copy`) };
     return Promise.resolve({
       cancelOperation: () => Promise.resolve(),
@@ -99,14 +100,18 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   delete(): Promise<BlobDeleteResponse> {
-    if (!this.container.has(this.name)) throw new MockRestError("The specified blob does not exist.", 404);
+    if (!this.container.has(this.name)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     this.container.delete(this.name);
+    MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, this.name));
     return Promise.resolve({ _response: createMockResponse(200) });
   }
 
   deleteIfExists(): Promise<BlobDeleteIfExistsResponse> {
     const succeeded = this.container.has(this.name);
-    if (succeeded) this.container.delete(this.name);
+    if (succeeded) {
+      this.container.delete(this.name);
+      MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, this.name));
+    }
     return Promise.resolve({ _response: createMockResponse(succeeded ? 200 : 404), succeeded });
   }
 
@@ -124,7 +129,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
 
   downloadToBuffer(): Promise<Buffer> {
     const data = this.container.get(this.name);
-    if (!data) throw new MockRestError("The specified blob does not exist.", 404);
+    if (!data) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     return Promise.resolve(Buffer.from(data));
   }
 
@@ -133,7 +138,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   exists(): Promise<boolean> {
-    throw new Error("Method not implemented.");
+    return Promise.resolve(this.container.has(this.name));
   }
 
   generateSasStringToSign(): string {

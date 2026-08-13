@@ -14,7 +14,7 @@ import { marked } from "marked";
 
 export const useExecuteSlashCommand = () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   const roomStore = useRoomStore();
   const { storeUpdateRoom } = roomStore;
   const { currentRoom, currentRoomId } = storeToRefs(roomStore);
@@ -69,14 +69,17 @@ export const useExecuteSlashCommand = () => {
         break;
       case SlashCommandType.Topic: {
         const { text } = command.parameterValues;
-        const oldTopic = currentRoom.value?.topic;
         await executeMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic: text }), {
+          // Read as the write is sent, so a rejected topic restores what the write ahead of it stored rather than
+          // What was on screen when the command was typed
           applyOptimistic: () => {
+            const previousTopic = currentRoom.value?.topic;
             storeUpdateRoom({ id: roomId, topic: text });
             return () => {
-              storeUpdateRoom({ id: roomId, topic: oldTopic });
+              if (previousTopic !== undefined) storeUpdateRoom({ id: roomId, topic: previousTopic });
             };
           },
+          key: roomId,
         });
         break;
       }

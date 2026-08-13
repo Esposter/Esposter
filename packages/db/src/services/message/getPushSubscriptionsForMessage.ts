@@ -1,6 +1,5 @@
-import type { MessageEntity, relations } from "@esposter/db-schema";
+import type { Database, MessageEntity } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { getMentionNotificationConditions } from "@/services/message/mention/getMentionNotificationConditions";
 import { PUSH_SUBSCRIPTION_COLUMNS } from "@/services/pushNotification/constants";
@@ -14,7 +13,7 @@ import { classifyMentions } from "@esposter/shared";
 import { and, eq, ne, or } from "drizzle-orm";
 
 export const getPushSubscriptionsForMessage = async (
-  db: PostgresJsDatabase<typeof relations>,
+  db: Database,
   { message, partitionKey, userId }: Pick<MessageEntity, "message" | "partitionKey" | "userId">,
 ) => {
   const andWheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, partitionKey)];
@@ -25,7 +24,7 @@ export const getPushSubscriptionsForMessage = async (
   const mentionOrWheres = [eq(usersToRoomsInMessage.notificationType, NotificationType.All), ...mentionConditions];
   andWheres.push(or(...mentionOrWheres));
   return db
-    .select({ ...PUSH_SUBSCRIPTION_COLUMNS })
+    .select({ ...PUSH_SUBSCRIPTION_COLUMNS, userId: pushSubscriptionsInMessage.userId })
     .from(pushSubscriptionsInMessage)
     .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, pushSubscriptionsInMessage.userId))
     .leftJoin(userStatusesInMessage, eq(userStatusesInMessage.userId, pushSubscriptionsInMessage.userId))

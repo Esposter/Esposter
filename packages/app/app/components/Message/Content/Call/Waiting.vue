@@ -9,7 +9,7 @@ const { cancelKnock } = knockerStore;
   <div p-6 bg-background flex size-full items-center justify-center>
     <StyledCard p-8 flex flex-col gap-y-6 max-w-md w-full items-center>
       <div rd-full bg-primary flex size-16 items-center justify-center>
-        <v-progress-circular color="white" indeterminate size="36" />
+        <v-progress-circular color="white" indeterminate size="2.25rem" />
       </div>
       <div text-center flex flex-col gap-y-2 items-center>
         <h2 font-medium text-headline-small>Waiting to be admitted</h2>

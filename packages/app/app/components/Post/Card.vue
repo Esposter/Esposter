@@ -3,7 +3,6 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { usePostDialogStore } from "@/store/post/dialog";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
   // Comments page only: look up post data in the comment store instead.
@@ -15,28 +14,18 @@ const { isCommentStore, post } = defineProps<PostCardProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const postDialogStore = usePostDialogStore();
 const { deletingId } = storeToRefs(postDialogStore);
-const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
 const isCreator = computed(() => post.userId === session.value?.user.id);
-const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description));
 </script>
 
 <template>
   <StyledCard pl-10 bg-surface-opacity-80>
     <PostLikeSection left-2 top-2 absolute :post :is-comment-store />
     <v-card px-2 pt-2>
-      <StyledAvatar :image="post.user.image" :name="post.user.name" />
-      Posted by <span font-bold>{{ post.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
+      <PostByline is-link :post />
       <v-card-title font-bold px-0 whitespace-normal text-title-large>
         {{ post.title }}
       </v-card-title>
-      <v-card-text
-        v-if="!isEmptyDescription"
-        class="rich-text-content"
-        px-0
-        pb-0
-        text-body-large
-        v-html="post.description"
-      />
+      <PostDescription :description="post.description" />
       <v-card-actions p-0>
         <PostCommentsButton :post />
         <PostUpdateButton v-if="isCreator" :post-id="post.id" />

@@ -3,7 +3,12 @@ import type { HttpHandler } from "@azure/functions";
 
 import { db } from "@/services/db";
 import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
-import { AzureFunction, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
+import {
+  AzureFunction,
+  createEventGridEvent,
+  selectWebhookInMessageSchema,
+  webhookPayloadSchema,
+} from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { z, ZodError } from "zod";
 
@@ -20,9 +25,7 @@ export const pushWebhookHandler: HttpHandler = (request, context) => {
     const body = await request.json();
     const payload = await webhookPayloadSchema.parseAsync(body);
     const data: WebhookEventGridData = { payload, webhook };
-    await eventGridPublisherClient.send([
-      { data, dataVersion: "1.0", eventType: AzureFunction.ProcessWebhook, subject: webhook.id },
-    ]);
+    await eventGridPublisherClient.send([createEventGridEvent(AzureFunction.ProcessWebhook, webhook.id, data)]);
     context.log(`Pushed to ${AzureFunction.ProcessWebhook} for webhook id: ${webhook.id}`);
     return {
       jsonBody: { message: "Webhook accepted." },

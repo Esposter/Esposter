@@ -13,28 +13,29 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - `show*` is **banned** — rename to `is*Visible`: `showSettings` → `isSettingsVisible`, `showDialog` → `isDialogVisible`. Exception: 3rd-party API properties that can't be renamed
 - `isDirty` for tracking unsaved state — never `isChanged`
 - `initial*` for the last-saved snapshot used in dirty comparisons: `initialWords`, `initialName`
-- Boolean-valued `LocalStorageKey` registry entries follow the same `is*` rule (`IsResourceListCollapsed`) — see the file-organization skill "localStorage Keys"
+- Boolean-valued `LocalStorageKey` registry entries follow the same `is*` rule (`IsResourceListCollapsed`) — the `file-organization` skill (`references/local-storage-keys.md`) owns that registry
 
 ## Functions
 
-- `get*` for derivation/display functions: `getVisibilityTooltip`, `getRowTitle`
-- `read*` for async data-fetching functions — never `fetch*` (`fetch` is reserved for the Web API): `readMemberMentionItems`, `readRoles`
+- `get*` for derivation/display functions: `getFooTooltip`, `getFooTitle`
+- `read*` for async data-fetching functions — never `fetch*` (`fetch` is reserved for the Web API): `readFoos`
 - CRUD prefixes (`create*`, `update*`, `delete*`) for data/store operations
-- `store*` prefix for subscription-driven state-update counterparts of async user actions: `deleteFriend` (user action) + `storeDeleteFriend` (subscription update). Never on unpaired methods
-- `on*` prefix for handlers **only when wrapping an existing named store/service fn**: `onUpdateMessage` wraps `updateMessage`. Direct actions use the action name: `submit`, `save`, `delete` — never `onSubmit`/`onSave`/`onDelete`
+- `store*` prefix for subscription-driven state-update counterparts of async user actions: `deleteFoo` (user action) + `storeDeleteFoo` (subscription update). Never on unpaired methods
+- `on*` prefix for handlers **only when wrapping an existing named store/service fn**: `onUpdateFoo` wraps `updateFoo`. Direct actions use the action name: `submit`, `save`, `delete` — never `onSubmit`/`onSave`/`onDelete`
 - **No cardinality suffixes** — when upgrading single-item → batch, keep the same name. Never add `ByRooms`, `ByIds`, `Many`, `Batch`
 
 ## Variables
 
 - **No abbreviations** — `directMessageRoom` not `dmRoom`, `existingDirectMessage` not `existing`. Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`
   - Applies to exported names too — spell the full English word: `statistics` not `stat`/`stats` (`ColumnStatistics`, `ColumnStatisticsDefinitionMap`, `useColumnStatistics`, never `ColumnStatDefinitions`/`defineColumnStat`), `summation` not `sum` as a statistics identifier (the `ColumnStatisticsKey` is `summation`). Does NOT apply to math accumulator locals (`acc`, `s`) or the display title `"Sum"`.
+- **`ctx` is the name for a tRPC context value**, in source and tests alike — it mirrors tRPC's own `{ ctx }` destructure, so a local or parameter typed `Context`/`AuthedContext` stays `ctx`. Expanding it to `context` in one file only desyncs that file from every call site.
 - **Name variables after their full domain type, dropping only the schema `InMessage` suffix** — a value typed as `PushSubscription` (table `pushSubscriptionsInMessage`) is `const pushSubscription`, never `const subscription` nor `const pushSubscriptionInMessage`. Omit only the `InMessage`/`inMessage` namespacing suffix.
 - **No `current*` prefix** for reactive refs/computeds — they are always the current value. Exception: global store identifiers distinguishing the active item from a collection: `currentRoomId`
 - `userId` for the session user's ID — never `me`, `myId`, `self`
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`
 - `edited{PropName}` for a **local editable copy** of a prop/store field (form drafts, buffered inputs) — the value a `v-text-field`/`v-model` binds to before save: `editedName` (copy of `resource.name`), `editedRow`, `editedImage`. Never `{prop}Value` (`renameValue` ✗) nor a bare restatement of the field. Holds whether the copy is a plain `ref(source)` or a `useCloned(() => source)` — the prefix marks it as the draft, not the source of truth
 - **Unused params keep the `_` prefix _and_ a readable name** — `_event`, `_index`, never bare `_`. The prefix satisfies lint; the name documents the slot. Applies to inlined handlers too: `@submit="async (_event, onComplete) => {...}"`
-- `display*` for presentation-layer computed that sorts/filters raw store data: `displayFriends`. Never `sorted*` or `filtered*`
+- `display*` for presentation-layer computed that sorts/filters raw store data: `displayFoos`. Never `sorted*` or `filtered*`
 
 ## Numbers & Time
 
@@ -52,15 +53,16 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 
 ## TypeScript & Interfaces
 
-- **No `With` prefix on mixin interfaces** — name after the capability: `SourceColumnId`, not `WithSourceColumnId`. Schema factories follow: `createSourceColumnIdSchema` not `createWithSourceColumnIdSchema`
+- **No `With` prefix on mixin interfaces** — name after the capability: `SourceColumnId`, not `WithSourceColumnId`. Schemas and their factories follow: `sourceColumnIdSchema` / `create<Capability>Schema`, never `createWith<Capability>Schema`
 - **`A` prefix for abstract classes only** — never on interfaces. `AColumn` (abstract class) ✓, `SlashCommand` (interface) ✓, `ASlashCommand` ✗
 - **Interface fields use full type name** — `aggregationType: AggregationTransformationType` not `transform`, `mode`, or `type`. Never abbreviate enum field names
-- **Constant arrays/maps use PascalCase, and the file name matches the export** — `ProductListLinkItems.ts` → `export const ProductListLinkItems = [...]`; likewise `SoundMap.ts`, `EffectOperatorMap.ts`, `ColumnStatisticsDefinitionMap.ts`. (The `app/services/anime/*Expressions.ts` files are camelCase-named legacy outliers — don't copy them.)
-- **UI section enums: one per group, values double as title + id** — when a panel has scrollable subsections (or any list whose labels also serve as stable ids/anchors), model each group as its own enum whose values are the human title (e.g. `VoiceSettingsSection { InputMode = "Input Mode", ... }`). The value is reused as the display title and the DOM/scroll id, so don't derive a separate slug. One enum per subsection group, never a shared catch-all.
+- **A file's name is its single export's name** — `getPostRanking.ts` → `export const getPostRanking`, `FooMap.ts` → `export const FooMap`. This holds for every export, not just constant maps: a noun filename over a `get*` function (`ranking.ts`) hides that the export breaks the verb-prefix rule, and a filename that merely resembles the export (`callParticipantMap.ts` exporting `callSessionParticipantMap`) makes the export unfindable by path. Renaming the export renames the file, in the same change. (Any camelCase-named file holding a PascalCase constant is a legacy outlier — don't copy it.)
+- **Casing conventions apply to identifiers we author, never to foreign wire values.** A key that _is_ a protocol string — a provider's error code read off a redirect query, a field of a third-party payload we accept or emit verbatim — keeps that provider's spelling, `snake_case` included, because renaming it breaks the lookup or the contract. Type the map's key as `string` when the library exports no union for it (most don't, and hand-copying their literals into a union drifts silently), and give the lookup a fallback so an unmapped value degrades instead of rendering blank. Our own key beside it still gets camelCase.
+- **UI section enums: one per group, values double as title + id** — when a panel has scrollable subsections (or any list whose labels also serve as stable ids/anchors), model each group as its own enum whose values are the human title (e.g. `FooSection { Bar = "Bar Baz", ... }`). The value is reused as the display title and the DOM/scroll id, so don't derive a separate slug. One enum per subsection group, never a shared catch-all.
 
 ## Regex Constants
 
-- Named regex constants use `_REGEX` suffix — `EMPTY_TEXT_REGEX`, `INVITE_ID_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix.
+- Named regex constants use `_REGEX` suffix — `FOO_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix.
 
 ## Framework-Specific Naming
 

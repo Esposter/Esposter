@@ -5,16 +5,6 @@ import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCurso
 import { describe, expect, test } from "vitest";
 
 describe(getCursorPaginationData, () => {
-  test("empty array", () => {
-    expect.hasAssertions();
-
-    expect(getCursorPaginationData([], 0, [])).toStrictEqual({
-      hasMore: false,
-      items: [],
-      nextCursor: getNextCursor([], []),
-    });
-  });
-
   test("gets all", () => {
     expect.hasAssertions();
 

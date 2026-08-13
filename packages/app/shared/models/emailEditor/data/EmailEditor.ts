@@ -1,6 +1,5 @@
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { ToData } from "@esposter/shared";
-import type { z } from "zod";
 
 import { datasetReferenceSchema } from "#shared/models/dataset/DatasetReference";
 import { AGrapesJsEditor, grapesJsEditorSchema } from "#shared/models/grapesjs/AGrapesJsEditor";
@@ -10,10 +9,14 @@ import {
   WORDPRESS_DESIGNSPELL_BASE_URL,
 } from "#shared/services/grapesjs/constants";
 import { html } from "@esposter/shared";
+import { z } from "zod";
 
 export class EmailEditor extends AGrapesJsEditor {
   // The bound dataset whose columns become merge-field blocks and drive personalized export
   datasetReference?: DatasetReference;
+  // The compiled MJML captured at save time — MJML compiles in the client editor, so the published
+  // Web view has no way to derive it server-side. Unpersonalized: merge-field tokens stay as authored
+  html?: string;
   pages: unknown[] = [
     {
       component: html`
@@ -99,6 +102,12 @@ export class EmailEditor extends AGrapesJsEditor {
   }
 }
 
-export const emailEditorSchema = grapesJsEditorSchema.extend({
-  datasetReference: datasetReferenceSchema.optional(),
-}) satisfies z.ZodType<ToData<EmailEditor>>;
+// The catchall is re-declared, not inherited: spreading `.shape` copies fields and nothing else, and without
+// It every GrapesJS key this model does not name (styles, assets, symbols) is stripped on parse
+export const emailEditorSchema = z
+  .object({
+    ...grapesJsEditorSchema.shape,
+    datasetReference: datasetReferenceSchema.optional(),
+    html: z.string().optional(),
+  })
+  .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;

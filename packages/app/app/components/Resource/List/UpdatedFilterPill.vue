@@ -29,10 +29,7 @@ const selectPreset = (preset: ResourceUpdatedFilter) => {
 </script>
 
 <template>
-  <v-menu :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <v-chip closable :="menuProps" @click:close="emit('remove')">Updated == {{ updatedFilter || "all" }}</v-chip>
-    </template>
+  <ResourceListFilterPill is-removable label="Updated" :value="updatedFilter || 'all'" @remove="emit('remove')">
     <v-list density="compact">
       <v-list-item
         v-for="{ title, value } of ResourceUpdatedFilterItems"
@@ -46,5 +43,5 @@ const selectPreset = (preset: ResourceUpdatedFilter) => {
         <StyledDatePicker v-model="updatedBeforeValue" :date-picker-props="{ placeholder: 'To' }" />
       </div>
     </v-list>
-  </v-menu>
+  </ResourceListFilterPill>
 </template>

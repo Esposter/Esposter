@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* CI failures, CodeRabbit findings, and Basic-tier reminder dedupe ([96fd87a](https://github.com/Esposter/Esposter/commit/96fd87a1af102dd0314d60b040d3199e546848aa))
+* close cross-feature gaps in guard, rollback and revert paths ([eac8e17](https://github.com/Esposter/Esposter/commit/eac8e17afc5be3d37a54605e4a2fa1d1e4b6b7db))
+* close lint findings on the resource cleanup tests ([c1c3230](https://github.com/Esposter/Esposter/commit/c1c323010a0ef3c9391050962571c07376a813a0))
+* close the defects the develop-to-main review found ([494120b](https://github.com/Esposter/Esposter/commit/494120bf742e6946cc347867187f66e91e2d7a91)), closes [#1029](https://github.com/Esposter/Esposter/issues/1029)
+* close the develop-to-main review findings ([3f29155](https://github.com/Esposter/Esposter/commit/3f29155a720cebf09405c443aa1f5e0ffbb4f04e))
+* close the latest review findings ([74e62c3](https://github.com/Esposter/Esposter/commit/74e62c3149fc93b673998105b603d82ddd61dc32))
+* close the remaining develop-to-main review findings ([358e350](https://github.com/Esposter/Esposter/commit/358e3504c273bf91fad6ec96f4d30092d0cc92fa))
+* code review comments ([922b90e](https://github.com/Esposter/Esposter/commit/922b90e6479f0084f29c5dbfb5018500844835b5))
+* code review comments ([a739015](https://github.com/Esposter/Esposter/commit/a739015af42462afb2890c6532220a86b974b1c9))
+* code review comments ([208fbbe](https://github.com/Esposter/Esposter/commit/208fbbe1545def1aa33c701f33124635d707858d))
+* code review comments ([5f98907](https://github.com/Esposter/Esposter/commit/5f98907bd78739c37ace0dcee88062fa2f23dce2))
+* docs and snapshots ([211fee5](https://github.com/Esposter/Esposter/commit/211fee5280c8f3697cf021800178ed5be0edee7c))
+* lint ([f071e96](https://github.com/Esposter/Esposter/commit/f071e9640eb36ea805a0ce54787347ced20503e0))
+* lint develop and refresh package size snapshots ([bb0c40e](https://github.com/Esposter/Esposter/commit/bb0c40e872cdb23e03c9ed7c2931b1479310ed8c))
+* narrow the blob deletion payload instead of reaching through the union ([7198911](https://github.com/Esposter/Esposter/commit/7198911fbbaddb326da30f4195f4b8ab487497fa))
+* oxlint disable ([7982792](https://github.com/Esposter/Esposter/commit/7982792a00a57951a64229e3e095f6c232866224))
+* post-merge integration fallout ([d7f882c](https://github.com/Esposter/Esposter/commit/d7f882cbef6cf79fc4aa781366b27a6bababdb47))
+* remove unnecessary lints ([0db3054](https://github.com/Esposter/Esposter/commit/0db3054ddc6808b7cb09912820f66b27d4858450))
+* resolve notify closures by binding, restore dead-lettering on recreate ([14bb140](https://github.com/Esposter/Esposter/commit/14bb1404ff931ba1657178b8a1dd1b7fb1ac9f83))
+* settle blob fan-outs before rolling back, and gate the publish sweep ([c4a5192](https://github.com/Esposter/Esposter/commit/c4a51925877e87722980a0f8674af63e6597f459))
+* snapshots ([633d3f2](https://github.com/Esposter/Esposter/commit/633d3f268b26221a5178efb0b9639480494fc738))
+* snapshots ([7e6429c](https://github.com/Esposter/Esposter/commit/7e6429c68b51eb9e6cbf064fab938eee349d87c2))
+* snapshots ([d505054](https://github.com/Esposter/Esposter/commit/d505054f6b852fca4fb57131c682cc8a8e1d7466))
+* snapshots ([e55471d](https://github.com/Esposter/Esposter/commit/e55471d43085dd03cc7f0cc8ba7866e09486767c))
+
+### Features
+
+* **platform:** TodoList due reminders ([78089f2](https://github.com/Esposter/Esposter/commit/78089f2475bc87e3070e3db57890d6f4507a282d))
+* **resource:** favorites, recents, tags, recycle bin and activity blade UI ([4c9ede9](https://github.com/Esposter/Esposter/commit/4c9ede9416c96296bce2f4a9f27d8e795618cb20))
+* **users:** public readUser query and userId filter on readPosts ([a238b98](https://github.com/Esposter/Esposter/commit/a238b98fc89764073ba650e3dbf5838b9d82eded))
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Bug Fixes

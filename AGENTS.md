@@ -39,7 +39,7 @@ This file is the canonical guidance for AI coding agents working in this reposit
 | `packages/infra`           | `@esposter/infra`           | Pulumi infrastructure code and migration tools for Azure                   |
 | `packages/parse-tmx`       | `parse-tmx`                 | Parser for Tiled Map Editor `.tmx` files                                   |
 | `packages/shared`          | `@esposter/shared`          | Shared TypeScript types, utilities, and error classes                      |
-| `packages/shared-node`     | `@esposter/shared-node`     | Node-only shared tooling (benchmark reporting, dev scripts)                |
+| `packages/shared-node`     | `@esposter/shared-node`     | Benchmark reporting/running for vitest bench (no barrel entrypoint)        |
 | `packages/virrun`          | `virrun`                    | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated |
 | `packages/vue-phaserjs`    | `vue-phaserjs`              | Phaser 4 game engine integration for Vue 3                                 |
 | `packages/xml2js`          | `@esposter/xml2js`          | TypeScript rewrite of xml2js — XML ↔ JSON conversion                       |
@@ -51,7 +51,7 @@ All commands run from `packages/app/` unless noted.
 ```bash
 pnpm dev              # start dev server
 pnpm typecheck        # vue-tsc type check
-pnpm lint             # eslint (CI/check-only; avoid locally unless requested). Oxlint runs once from repo root, not per-package.
+pnpm lint             # eslint check-only for the app (CI parity). Oxlint is not part of this command — it runs only via the root-level pnpm lint.
 pnpm lint:fix         # eslint --fix (use this for local lint verification)
 pnpm test             # vitest watch mode
 pnpm test path/to/file.test.ts          # run single test file
@@ -81,13 +81,32 @@ Dependency installs and graph generation (run from repo root):
 
 ```bash
 pnpm i                # refresh dependencies/lockfile after package.json changes
-pnpm update:node      # bump engines.node + @types/node, install/switch via fnm, remove old version
+pnpm update:node      # bump engines.node + @types/node, install + fnm default, remove old version
 pnpm depcruise:graph  # generate dependency-graph.svg from package entrypoints
 ```
 
 Use plain `pnpm i` for dependency installs. See `packages/app/content/docs/architecture/monorepo-tooling.md` for install safety rules. `pnpm update:node [version]` bumps the node version everywhere in one call (see the `dependency-updates` skill).
 
 `pnpm depcruise:graph` pipes dependency-cruiser DOT output directly into `graphviz-cli` to produce `dependency-graph.svg`. Avoid committing intermediate DOT/Mermaid files unless explicitly needed for debugging.
+
+## Finishing a change
+
+Working is not finished. Once the change does what it should — a feature, a fix, a refactor, a docs pass, anything — run this before saying it is done:
+
+1. **`/simplify`** — the cleanup pass: reuse (`file-organization`), simplification (`typescript`, `vue-composable-patterns`), efficiency (`pinia`, `pagination`), altitude (the area's own skill). A first draft of anything non-trivial leaves duplicated copy, a constant restated in two files, a twin of an existing helper, or a special case that belonged in the shared mechanism. That gets found and fixed here, not in review.
+2. **Ground the result in tests — only where a test earns its line.** This step deletes at least as often as it adds. A test is worth writing when it fails on a change someone would care about and nothing cheaper already catches that; the full criterion, and the list of tests to delete on sight, is the `testing` skill's "What to Test".
+   - **Add the regression test for what the pass exposed** — a bug found, an invariant that was only ever true by accident, a shared helper that now has more callers than the one it was written for.
+   - **Add nothing another enforcer already owns.** No test for what typecheck proves (a mechanical schema rewrite, a rename, a tightened type), for a Zod constraint, or for behaviour an existing test already covers. Such a test cannot fail honestly — it only pins the current implementation and breaks on the next real refactor.
+   - **Trim and dedupe the tests themselves.** Repeated fixtures become one `create*` helper; twin test files become a behaviour matrix plus a thin wiring test. Tests bloat exactly like code does, and removing one a change made redundant is part of that change.
+3. **Carry the docs and skills with it.** A shipped decision updates its owning docs page and, if it is a reusable convention, its owning skill (`docs`, `skill-authoring`) — in the same change, never "later".
+4. **`pnpm format` → `typecheck` → `lint:fix` → tests**, batched once at the end (`context-efficiency`, `package-scripts`).
+5. **Commit** the coherent chunk. Never push unless asked.
+
+Skip step 1 only for a genuinely one-line change. When a step finds nothing, say so — that is a result.
+
+Carrying one settled convention across code that predates this ritual is a **sweep**: one file per sweep in `.claude/ledgers/`, tracked as repo state rather than as a proposal, and run per the `sweeps` skill.
+
+A sweep is not only a job someone schedules. **When the change edits a file inside a unit an open ledger still lists as unswept, sweep those files first, in their own commit ahead of the behaviour change** — the ledger drains as a by-product of ordinary work instead of waiting for a sitting. Scope it to the files being touched, keep the two commits apart, and leave the row alone: the coverage table tracks whole units, and there is no partially-swept state (`sweeps` skill).
 
 ## Architecture
 
@@ -102,14 +121,14 @@ When adding a new feature, use Postgres for anything relational/queryable and Az
 
 ### Schema → Migration Workflow
 
-1. Edit schema file in `packages/db-schema/src/schema/` (use `pgTable` wrapper, not raw drizzle `pgTable`)
-2. Add the migration under `packages/app/server/db/migrations/<timestamp>_<name>/` — a `migration.sql` plus a `snapshot.json`
-3. If adding new exported types/functions, run `pnpm export:gen` in `packages/db-schema/`
-4. Migrations apply on next app startup (see the migrate plugin above) — there is no apply script to run
+Edit the schema in `packages/db-schema/src/schema/` (the `pgTable` wrapper, not raw drizzle), register every
+export — tables **and** `pgEnum`s — in `packages/db-schema/src/schema.ts`, and the migration is generated by
+`pnpm db:gen` from that package once the user asks for it. Nothing applies migrations from the CLI; they run at
+app startup via `server/plugins/migrate.ts`.
 
-**Agents: hand-craft the migration; do not run `db:gen`.** `db:gen` needs a live `DATABASE_URL` and generates a random codename folder. Clone the newest migration's `snapshot.json`, give it a fresh uuid `id` and set `prevIds` to `[<the cloned snapshot's id>]`, then write `migration.sql` by hand. Statements are separated by `--> statement-breakpoint`. Name the folder descriptively (`20260714000000_file_to_sheet_rename`, `20260530041000_fix_likes_created_at_default`) rather than in drizzle's codename style.
-
-Hand-writing is also the only correct option where drizzle-kit's diff is wrong — e.g. a rename: `ALTER TYPE "public"."resource_type" RENAME VALUE 'File' TO 'Sheet';` preserves data, whereas a generated diff would drop and recreate. Report to the user that a migration is pending; it applies when they next start the app.
+`db:gen` is the only sanctioned way to produce `snapshot.json`, and it is never an unprompted side effect of a
+schema edit — note the pending migration and let the user choose when to run it. Everything else about running
+it, hand-editing the generated SQL, and recovering a forked chain is in the `drizzle` skill.
 
 ### tRPC Router Organization
 
@@ -119,33 +138,7 @@ Most feature routers are registered as top-level keys (`message`, `room`, `role`
 
 `achievement` is the one merge-time exception: it's merged onto `trpcRouterWithoutAchievements` via `mergeRouters` to avoid a circular dependency with the routers that fire achievement events.
 
-To add a new router:
-
-1. Create `server/trpc/routers/myFeature.ts` exporting `myFeatureRouter`
-2. Import and register it in `server/trpc/routers/index.ts`
-
-See `.claude/skills/trpc/SKILL.md` for full conventions (structure, naming, test patterns, procedure helpers).
-
-### tRPC Procedure Helpers
-
-Three RBAC-aware procedure builders in `server/trpc/procedure/room/`:
-
-- `getMemberProcedure` — verifies the caller is a member of the room; use for standard message/room operations
-- `getPermissionsProcedure(permission, schema, roomIdKey)` — verifies the caller has a specific `RoomPermission`; use for moderation/admin actions
-- `getOwnerProcedure` — verifies the caller owns the room; use for destructive room operations
-
-`getPermissionsProcedure` is the most common for moderation features — it accepts a `RoomPermission` enum value and a Zod input schema, and handles the RBAC check as middleware.
-
-### RBAC System
-
-Permissions stored as a bigint bitfield on `roomRoles` (Postgres). Key service functions:
-
-- `hasPermission(db, userId, roomId, permission)` — single permission check; room owners and Administrators bypass all checks. Lives in `@esposter/db` (`packages/db/src/services/room/rbac/`); `server/services/room/rbac/hasPermission.ts` is a re-export. Same for `getPermissions`.
-- `checkIsManageable(actorTopPosition, targetPosition, isRoomOwner)` — hierarchy check; prevents lower-role members from acting on higher-role members. Room owners always pass. Lives in `packages/app/shared/services/room/rbac/checkIsManageable.ts` (shared — used by both `server/trpc/routers/` and the client `role` store).
-- `getTopRolePosition(db, userId, roomId)` — the actor's highest role position, `-1` if none. Overloaded: pass a `roomId[]` to get a `Map<string, number>` instead. In `server/services/room/rbac/`.
-- `getActorContext(db, actorUserId, roomId)` — bundles `{ actorTopPosition, isOwner }`, the usual input to `checkIsManageable`. In `server/services/room/rbac/`.
-
-`RoomPermission` enum and `roomRoles` schema live in `packages/db-schema`.
+Structure, naming, the RBAC-aware procedure builders and test patterns: the `trpc` skill.
 
 ### Real-time Architecture
 
@@ -156,28 +149,20 @@ Two parallel real-time systems:
 
 When a message is created: `createMessage` → Azure Table write → `messageEventEmitter.emit` → tRPC subscription delivers to connected clients → `getPushSubscriptionsForMessage` → EventGrid → `ProcessPushNotification` Azure Function → web-push to offline users.
 
-### Slash Command Registry
+### Where the feature detail lives
 
-To add a new slash command:
+Per-feature registries and the steps for extending them are **not** here — a recipe restated in two places drifts,
+and this file is the one that goes stale first. Each of these owns its own subject in full:
 
-1. Add the new value to `SlashCommandType` enum (`app/models/message/slashCommands/SlashCommandType.ts`)
-2. Add the definition to `SlashCommandDefinitionMap` (`app/services/message/slashCommands/SlashCommandDefinitionMap.ts`) — object with `icon`, `title`, `description`, `parameters[]`, `type`
-3. Add execution logic to `useExecuteSlashCommand` composable (`app/composables/message/slashCommand/useExecuteSlashCommand.ts`)
-
-### AdminActionType / Moderation
-
-`AdminActionType` enum lives in `packages/db-schema/src/models/message/AdminActionType.ts`. Adding a new action type requires:
-
-1. Add enum value to `AdminActionType`
-2. Add arm to the discriminated union in `ExecuteAdminActionInput` (`app/shared/models/db/moderation/ExecuteAdminActionInput.ts`)
-3. Add permission mapping in `AdminActionPermissionMap` (`server/services/message/moderation/AdminActionPermissionMap.ts`)
-4. Add client-side handler in `useAdminActionMap` (`app/composables/message/moderation/useAdminActionMap.ts`)
-5. Add icon/color/label maps in `app/services/message/moderation/`
-
-### MessageType Enum
-
-`MessageType` lives in `packages/db-schema/src/models/message/MessageType.ts`. Adding a new type also requires updating `MessageEntityMap` (maps type → entity class) and `MessageComponentMap` in the app (maps type → Vue component for rendering).
+| Subject                                                       | Owner                                                           |
+| :------------------------------------------------------------ | :-------------------------------------------------------------- |
+| RBAC — permission bitfield, hierarchy, the service functions  | `packages/app/content/docs/esbabbler/rbac.md`                   |
+| Moderation — `AdminActionType` and the five places it touches | `packages/app/content/docs/esbabbler/moderation.md`             |
+| Slash commands — the registry and adding one                  | `slash-commands` skill                                          |
+| Message types — `MessageComponentMap` and the shared shells   | `packages/app/content/docs/esbabbler/message-list-rendering.md` |
+| tRPC — procedure builders, structure, naming, tests           | `trpc` skill                                                    |
+| Migrations — `db:gen`, SQL fixups, chain recovery             | `drizzle` skill                                                 |
 
 ### Azure Functions
 
-Background handlers triggered by EventGrid events or Service Bus queues, not called directly from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid` for fire-and-forget async work (push notifications, friend request notifications, webhook delivery) and enqueues Service Bus messages for delayed/scheduled work (scheduled message jobs, which need `scheduleMessages` delivery at a future `runAt`). No HTTP triggers are exposed to clients.
+Background handlers, mostly triggered by EventGrid events or Service Bus queues rather than called from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid` for fire-and-forget async work (push notifications, friend request notifications, webhook delivery) and enqueues Service Bus messages for delayed/scheduled work (scheduled message jobs, which need `scheduleMessages` delivery at a future `runAt`). Two timer triggers run on their own schedules (`PurgeDeletedResources`, `SendTodoReminder`), and one HTTP trigger is routed publicly — `PushWebhook` (`POST webhooks/{id}/{token}`, `authLevel: "function"`), which validates its token from the url. No other HTTP surface exists here, and the app never calls these handlers directly.

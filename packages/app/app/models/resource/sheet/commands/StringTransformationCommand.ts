@@ -24,7 +24,7 @@ export class StringTransformationCommand extends ADataSourceCommand<CommandType.
     this.#affectedCells = affectedCells;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(dataSource.rows, rowIndex);
@@ -36,7 +36,7 @@ export class StringTransformationCommand extends ADataSourceCommand<CommandType.
     }
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(dataSource.rows, rowIndex);

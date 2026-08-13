@@ -2,11 +2,28 @@
 import { useSearchMessageStore } from "@/store/message/search";
 
 const searchMessageStore = useSearchMessageStore();
-const { isSearching } = storeToRefs(searchMessageStore);
+const { hasFiles, isSearching } = storeToRefs(searchMessageStore);
+const readSearchedMessages = useReadSearchedMessages();
+const tab = computed({
+  get: () => (hasFiles.value ? "files" : "search"),
+  set: (value) => {
+    hasFiles.value = value === "files";
+    // Selecting the Files tab immediately lists the room's attachments. Leaving it needs no read — each tab
+    // Owns its own result slice in the store, so the Search tab is already showing its own results.
+    if (hasFiles.value) readSearchedMessages(0);
+  },
+});
 </script>
 
 <template>
-  <MessageRightSideBarSearchHeader />
+  <v-tabs v-model="tab" grow density="compact">
+    <v-tab value="search" text="Search" />
+    <v-tab value="files" text="Files in this room" />
+  </v-tabs>
   <v-divider />
+  <template v-if="!hasFiles">
+    <MessageRightSideBarSearchHeader />
+    <v-divider />
+  </template>
   <MessageRightSideBarSearchMessageList v-if="!isSearching" />
 </template>

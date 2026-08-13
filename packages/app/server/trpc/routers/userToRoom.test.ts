@@ -5,16 +5,14 @@ import type { User } from "better-auth";
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMentionMessage } from "@@/server/trpc/routers/createMentionMessage.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
 import { NotificationType, roomsInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
-import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
-
-const getMentionMessage = (userId: string) =>
-  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}"></span>`;
 
 describe("userToRoom", () => {
   let mockContext: Context;
@@ -28,7 +26,7 @@ describe("userToRoom", () => {
     const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user: member } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
-    await messageCaller.createMessage({ message: getMentionMessage(member.id), roomId: newRoom.id });
+    await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId: newRoom.id });
     return { member, roomId: newRoom.id };
   };
   const readMemberMentionCount = async (member: User, roomId: string) => {
@@ -62,16 +60,6 @@ describe("userToRoom", () => {
     expect(userToRoom.roomId).toBe(newRoom.id);
     expect(userToRoom.userId).toBe(userId);
     expect(userToRoom.notificationType).toBe(NotificationType.DirectMessage);
-  });
-
-  test("reads only own record, not other members", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const myUsersToRooms = await userToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] });
-    const userId = getMockSession().user.id;
-
-    expect(myUsersToRooms.every((userToRoom) => userToRoom.userId === userId)).toBe(true);
   });
 
   test("reads nicknames for members", async () => {

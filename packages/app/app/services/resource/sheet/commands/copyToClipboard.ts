@@ -1,5 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
+import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
+import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
 import { serializeToHtml } from "@/services/resource/sheet/commands/serializeToHtml";
 import { serializeToTsv } from "@/services/resource/sheet/commands/serializeToTsv";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -11,11 +13,12 @@ interface CopyToClipboardOptions {
 
 export const copyToClipboard = async (dataSource: DataSource, options: CopyToClipboardOptions = {}): Promise<void> => {
   const { includeHeaders = true, rowIds } = options;
-  const visibleColumns = dataSource.columns.filter((column) => !column.hidden);
+  const visibleColumns = getVisibleColumns(dataSource.columns);
   const rowIdSet = rowIds ? new Set(rowIds) : undefined;
   const rows = rowIdSet ? dataSource.rows.filter((row) => rowIdSet.has(row.id)) : dataSource.rows;
   const filteredDataSource = { ...dataSource, columns: visibleColumns, rows };
-  const tsv = serializeToTsv(filteredDataSource, includeHeaders);
+  const cellTextRows = getCellTextRows(visibleColumns, rows);
+  const tsv = serializeToTsv(filteredDataSource, includeHeaders, cellTextRows);
   await getResultAsync(async () => {
     if (typeof ClipboardItem === "undefined") {
       await window.navigator.clipboard.writeText(tsv);
@@ -23,7 +26,9 @@ export const copyToClipboard = async (dataSource: DataSource, options: CopyToCli
     }
 
     const tsvBlob = new Blob([tsv], { type: "text/plain" });
-    const htmlBlob = new Blob([serializeToHtml(filteredDataSource, includeHeaders)], { type: "text/html" });
+    const htmlBlob = new Blob([serializeToHtml(filteredDataSource, includeHeaders, cellTextRows)], {
+      type: "text/html",
+    });
     await window.navigator.clipboard.write([new ClipboardItem({ "text/html": htmlBlob, "text/plain": tsvBlob })]);
   }).match(noop, (error) => {
     throw error;

@@ -1,3 +1,5 @@
+// Relative imports, against the alias rule everywhere else: `configuration/security.ts` pulls this in from
+// Nuxt.config, which is evaluated before the aliases exist. Rewriting them to `#shared/` breaks the build
 import "../../types/env.d.ts";
 import {
   BLOGSPOT_BASE_URL,
@@ -23,16 +25,11 @@ export const ImageSourceWhitelist = [
   "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
   // Azure
   process.env.AZURE_CONTAINER_BASE_URL,
-  // Grapesjs
+  // Grapesjs — the hosts its stock blocks and default templates load images from
   BLOGSPOT_BASE_URL,
-  // Grapesjs
   GRAPESJS_BASE_URL,
-  // Grapesjs
   MAILJET_BASE_URL,
-  // Grapesjs
   PLACEHOLD_BASE_URL,
-  // Grapesjs
   TUI_BASE_URL,
-  // Grapesjs
   WORDPRESS_DESIGNSPELL_BASE_URL,
 ];

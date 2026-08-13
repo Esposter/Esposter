@@ -12,9 +12,13 @@ const { roomId, userToRoom } = defineProps<ProfileFormProps>();
 const { $trpc } = useNuxtApp();
 const userToRoomStore = useUserToRoomStore();
 const { setMyUserToRoom } = userToRoomStore;
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const nickname = ref(userToRoom.nickname);
+// The field emits save from both blur and Enter, so the same value would otherwise be written twice
+const isDirty = computed(() => nickname.value !== userToRoom.nickname);
 const save = async () => {
+  if (!isDirty.value) return;
+
   const newNickname = nickname.value;
   await executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ nickname: newNickname, roomId }), {
     applyOptimistic: () => {
@@ -24,6 +28,7 @@ const save = async () => {
         setMyUserToRoom(roomId, { ...userToRoom, nickname: oldNickname });
       };
     },
+    key: roomId,
   });
 };
 </script>

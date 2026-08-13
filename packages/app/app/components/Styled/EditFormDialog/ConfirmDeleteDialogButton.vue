@@ -11,7 +11,6 @@ const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void
 </script>
 
 <template>
-  <!-- We don't need to show the delete button if user is creating a new item -->
   <StyledDeleteFormDialog
     v-if="originalItem"
     :card-props="{ title: `Confirm Deletion of ${originalItem.type}` }"

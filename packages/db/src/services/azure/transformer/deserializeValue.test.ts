@@ -23,4 +23,12 @@ describe(deserializeValue, () => {
 
     expect(deserializeValue(escapeValue(value))).toBe(value);
   });
+
+  test("parses an Azure Table datetime literal back to a Date", () => {
+    expect.hasAssertions();
+
+    const epoch = new Date(0);
+
+    expect(deserializeValue(`datetime'${epoch.toISOString()}'`)).toStrictEqual(epoch);
+  });
 });

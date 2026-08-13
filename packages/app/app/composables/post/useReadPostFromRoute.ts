@@ -1,10 +1,11 @@
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { requireRouteParam } from "@/util/router/requireRouteParam";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useReadPostFromRoute = async () => {
   const { $trpc } = useNuxtApp();
-  const route = useRoute();
-  const postId = route.params.id as string;
+  const { currentRoute } = useRouter();
+  const postId = requireRouteParam(currentRoute.value.params, "id");
   const post = await $trpc.post.readPost.query(postId);
 
   if (post.parentId)

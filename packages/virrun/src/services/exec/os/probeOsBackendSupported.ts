@@ -1,6 +1,7 @@
 import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
 import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { execWsl } from "@/services/exec/wsl/execWsl";
 import { getResult, withFinalizer } from "@esposter/shared";
 // Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH. A `command -v
 // Bwrap` probe is insufficient: bubblewrap built without overlayfs support (some WSL2 builds), or a kernel with
@@ -14,7 +15,7 @@ import { getResult, withFinalizer } from "@esposter/shared";
 // Degrades (resolveBackend) or refuses (createOsBackend) cleanly instead of crashing. `--tmp-overlay` writes nothing
 // To cwd (the upper is a discarded tmpfs), so the probe is side-effect-free. The probed command is `true`
 // (engine-agnostic): toolchain reachability is an orthogonal axis handled by the captured WSL login PATH
-// (readWslLoginPath), so probing a specific binary here would conflate the two and hardcode an engine. This is the
+// (readWslLoginEnvironment), so probing a specific binary here would conflate the two and hardcode an engine. This is the
 // Raw host-capability probe: it does NOT account for nesting (isOsBackendSupported layers the VIRRUN nesting guard,
 // The in-process memo, and the persisted cache on top), so it is safe to reuse anywhere the un-cached truth is wanted.
 export const probeOsBackendSupported = (): boolean => {
@@ -27,19 +28,19 @@ export const probeOsBackendSupported = (): boolean => {
         () => false,
       );
     case "win32":
-      return getResult(() => execFileHidden("wsl.exe", ["--exec", "mktemp", "-d"], { timeout: PROBE_TIMEOUT_MS }))
+      return getResult(() => execWsl(["--exec", "mktemp", "-d"], { timeout: PROBE_TIMEOUT_MS }))
         .map((stdout) => stdout.trim())
         .andThen((wslDir) =>
           getResult(() =>
             withFinalizer(
               () =>
-                execFileHidden("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
+                execWsl(["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
                   timeout: PROBE_TIMEOUT_MS,
                 }),
               () => {
-                getResult(() =>
-                  execFileHidden("wsl.exe", ["--exec", "rm", "-rf", wslDir], { timeout: PROBE_TIMEOUT_MS }),
-                ).unwrapOr(undefined);
+                getResult(() => execWsl(["--exec", "rm", "-rf", wslDir], { timeout: PROBE_TIMEOUT_MS })).unwrapOr(
+                  undefined,
+                );
               },
             ),
           ),

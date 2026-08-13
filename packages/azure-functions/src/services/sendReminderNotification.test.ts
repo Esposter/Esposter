@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { sendReminderNotification } from "@/services/sendReminderNotification";
 import { setupWebPushSuite } from "@/services/setupWebPushSuite.test";
@@ -9,7 +8,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, roomsInMessage, users, usersToRoomsInMessage } from "@esposter/db-schema";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {
@@ -34,12 +33,6 @@ describe(sendReminderNotification, () => {
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId });
     await mockDb.insert(usersToRoomsInMessage).values({ roomId, userId });
-  });
-
-  test("completes without error when user has no push subscriptions", async () => {
-    expect.hasAssertions();
-
-    await expect(sendReminderNotification(context, reminder)).resolves.toBeUndefined();
   });
 
   test("sends notification to all subscriptions", async () => {

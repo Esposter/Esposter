@@ -14,7 +14,7 @@ The flag is **live state, not snapshot state**: closing takes effect without re-
 ```mermaid
 flowchart LR
   OV["Overview Collection card<br/>Accepting responses toggle"] -->|saveResourceContent| BLOB[("{id}/content.json<br/>settings.isAcceptingResponses")]
-  RESP["/view/survey/[id]"] -->|readPublishedResourceContent| MERGED["published model snapshot<br/>+ live settings merged by transformPublicReadSurvey"]
+  RESP["/view/Survey/[id]"] -->|readPublishedResourceContent| MERGED["published model snapshot<br/>+ live settings merged by transformPublicReadSurvey"]
   MERGED -->|closed| MSG["closed state<br/>(closedMessage or the default)"]
   MERGED -->|open| FORM["SurveyJS form"]
   SUBMIT["createSurveyResponse<br/>updateSurveyResponse"] -->|"resolveSurveyResponseWrite rejects when closed"| AT[("SurveyResponseEntity")]

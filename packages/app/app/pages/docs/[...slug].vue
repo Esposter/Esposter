@@ -8,9 +8,11 @@ import { getSurroundingPages } from "@/services/docs/getSurroundingPages";
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
 import { RoutePath } from "@esposter/shared";
 
-const route = useRoute();
+const { currentRoute } = useRouter();
 // Reactive so doc→doc navigation refetches in place instead of hard-remounting the page (which felt like a full reload)
-const path = computed(() => (route.path.endsWith("/") ? route.path.slice(0, -1) : route.path));
+const path = computed(() =>
+  currentRoute.value.path.endsWith("/") ? currentRoute.value.path.slice(0, -1) : currentRoute.value.path,
+);
 const [{ data: page }, { data: navigation }] = await Promise.all([
   useAsyncData(
     AsyncDataKey.DocsPage(path.value),
@@ -25,7 +27,6 @@ const [{ data: page }, { data: navigation }] = await Promise.all([
 ]);
 
 if (!page.value) throw createError({ fatal: true, statusCode: 404, statusMessage: "Page Not Found" });
-
 // Unwrap the single docs root group; drop the root index page @nuxt/content injects as its own child
 const sections = computed(() =>
   getSortedNavigationItems(

@@ -4,8 +4,7 @@ const emit = defineEmits<{ save: [] }>();
 </script>
 
 <template>
-  <div flex flex-col gap-2>
-    <div font-semibold>Topic</div>
+  <MessageModelRoomSettingsField hint="Visible below the room name. Use /topic to update from chat." title="Topic">
     <v-text-field
       v-model="modelValue"
       density="compact"
@@ -14,6 +13,5 @@ const emit = defineEmits<{ save: [] }>();
       @blur="emit('save')"
       @keydown.enter.prevent="emit('save')"
     />
-    <span text-hint>Visible below the room name. Use /topic to update from chat.</span>
-  </div>
+  </MessageModelRoomSettingsField>
 </template>

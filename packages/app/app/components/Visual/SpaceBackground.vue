@@ -20,6 +20,7 @@ onMounted(() => {
 <template>
   <div
     :style="{ backgroundImage: `url(${NOT_FOUND_BACKGROUND_PATH})` }"
+    text-white
     flex
     flex-col
     h-full

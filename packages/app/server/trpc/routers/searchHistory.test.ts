@@ -12,7 +12,7 @@ import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("searchHistory", () => {
-  const { getMockContext, getRoomId } = setupRoomSuite();
+  const { createMember, getMockContext, getRoomId } = setupRoomSuite();
   let mockContext: Context;
   let searchHistoryCaller: DecorateRouterRecord<TRPCRouter["searchHistory"]>;
   let roomId: string;
@@ -52,6 +52,17 @@ describe("searchHistory", () => {
     expect(takeOne(readSearchHistories.items).query).toBe(query);
   });
 
+  test("excludes another member's search histories", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await mockSessionOnce(mockContext.db, member);
+    await searchHistoryCaller.createSearchHistory({ query, roomId });
+    const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
+
+    expect(readSearchHistories.items).toHaveLength(0);
+  });
+
   test("fails read search histories with non-existent member", async () => {
     expect.hasAssertions();
 
@@ -75,10 +86,13 @@ describe("searchHistory", () => {
     expect.hasAssertions();
 
     const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
-    const updated = await searchHistoryCaller.updateSearchHistory({ id: newSearchHistory.id, query: updatedQuery });
+    const updatedSearchHistory = await searchHistoryCaller.updateSearchHistory({
+      id: newSearchHistory.id,
+      query: updatedQuery,
+    });
 
-    expect(updated.id).toBe(newSearchHistory.id);
-    expect(updated.query).toBe(updatedQuery);
+    expect(updatedSearchHistory.id).toBe(newSearchHistory.id);
+    expect(updatedSearchHistory.query).toBe(updatedQuery);
   });
 
   test("deletes", async () => {

@@ -25,7 +25,7 @@ describe(getMemberGroups, () => {
     expect(memberGroups).toStrictEqual([
       { members: [highRoleMember], role: highRole },
       { members: [lowRoleMember], role: lowRole },
-      { members: [rolelessMember], role: null },
+      { members: [rolelessMember], role: undefined },
     ]);
   });
 

@@ -2,7 +2,9 @@ import type { RolldownOptions } from "rolldown";
 
 import { dts } from "rolldown-plugin-dts";
 
-import { external } from "./external/external";
+import { DISTRIBUTION_DIRECTORY } from "./constants";
+import { getCleanDistributionPlugin } from "./getCleanDistributionPlugin";
+import { getExternal } from "./getExternal";
 
 export const getRolldownConfigurationBrowser = (): RolldownOptions => ({
   // Disable rolldown's `//#region <module-path>` debug banners (default `"simple"`). Their embedded
@@ -10,9 +12,9 @@ export const getRolldownConfigurationBrowser = (): RolldownOptions => ({
   // They make the bundle non-reproducible across build environments and clutter `.d.ts` hover tooltips.
   // → https://github.com/rolldown/rolldown/issues/9006
   experimental: { attachDebugInfo: "none" },
-  external,
+  external: getExternal(),
   input: "src/index.ts",
-  output: { dir: "dist", format: "es" },
-  plugins: [dts({ tsconfig: "tsconfig.build.json", tsgo: true })],
+  output: { dir: DISTRIBUTION_DIRECTORY, format: "es" },
+  plugins: [getCleanDistributionPlugin(), dts({ tsconfig: "tsconfig.build.json" })],
   tsconfig: "tsconfig.build.json",
 });

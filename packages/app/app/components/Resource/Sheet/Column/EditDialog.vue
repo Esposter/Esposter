@@ -2,9 +2,10 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { columnFormSchema, ColumnTypeFormSchemaMap } from "#shared/models/resource/sheet/column/ColumnForm";
-import { extractSchemaFields } from "#shared/services/zod/extractSchemaFields";
+import { columnFormSchema, ColumnTypeFormSchemaMap } from "@/models/resource/sheet/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { getEditColumnDescription } from "@/services/resource/sheet/commands/getEditColumnDescription";
+import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
@@ -17,11 +18,11 @@ interface EditDialogProps {
 const { column, dataSource } = defineProps<EditDialogProps>();
 const columnDialogStore = useColumnDialogStore();
 const { editingColumnName } = storeToRefs(columnDialogStore);
-const isOpen = useSingletonDialog(editingColumnName);
+const { isOpen } = useSingletonDialog(editingColumnName);
 const updateColumn = useUpdateColumn();
 // StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
 const editedColumn = ref(structuredClone(toRawDeep(column)));
-const title = computed(() => `Edit "${column.name}" Column`);
+const title = computed(() => getEditColumnDescription(column.name));
 const jsonSchema = zodToJsonSchema(columnFormSchema);
 const options = useColumnFormOptions(
   () => dataSource,

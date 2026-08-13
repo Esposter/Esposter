@@ -15,7 +15,7 @@ export const appUsersInMessage = pgTable(
   },
   {
     extraConfig: ({ name }) => [
-      check("app_users_name_length_check", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH)),
+      check("appUsers_name_length_check", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH)),
     ],
     schema: messageSchema,
   },

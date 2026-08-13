@@ -3,7 +3,26 @@ import { z } from "zod";
 
 export const updateRoomInputSchema = refineRoomSchema(
   selectRoomInMessageSchema
-    .pick({ categoryId: true, id: true, image: true, isReadOnly: true, name: true, slowmodeMs: true, topic: true })
-    .partial({ categoryId: true, image: true, isReadOnly: true, name: true, slowmodeMs: true, topic: true }),
+    .pick({
+      allowedMimeCategories: true,
+      categoryId: true,
+      id: true,
+      image: true,
+      isReadOnly: true,
+      maxFileSizeBytes: true,
+      name: true,
+      slowmodeMs: true,
+      topic: true,
+    })
+    .partial({
+      allowedMimeCategories: true,
+      categoryId: true,
+      image: true,
+      isReadOnly: true,
+      maxFileSizeBytes: true,
+      name: true,
+      slowmodeMs: true,
+      topic: true,
+    }),
 );
 export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;

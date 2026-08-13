@@ -2,6 +2,7 @@ import { Environment } from "#shared/models/environment/Environment";
 import { getIsServer } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
+
 // The nuxt test env provides `window`/`document`/`DOMParser` but not `localStorage`/`sessionStorage`,
 // So install a minimal in-memory `Storage` — cheaper than registering a full DOM, harmless in node.
 class MemoryStorage implements Storage {
@@ -34,13 +35,65 @@ class MemoryStorage implements Storage {
 
 globalThis.localStorage = new MemoryStorage();
 globalThis.sessionStorage = new MemoryStorage();
+// Happy-dom implements no `visualViewport`, and Vuetify's overlay location strategy reads it unguarded — so any
+// Test that mounts a real `v-dialog`/`v-menu` dies with `ReferenceError: visualViewport is not defined` before a
+// Single assertion runs. The workaround reached for otherwise is `shallow: true`, which renders no overlay DOM at
+// All and so cannot assert anything about the shell inside it. A stationary 1:1 viewport is exactly what the
+// Strategy wants and never changes, so the listeners are no-ops rather than an event target.
+if (!getIsServer() && !("visualViewport" in globalThis))
+  globalThis.visualViewport = {
+    addEventListener: () => {},
+    height: window.innerHeight,
+    offsetLeft: 0,
+    offsetTop: 0,
+    pageLeft: 0,
+    pageTop: 0,
+    removeEventListener: () => {},
+    scale: 1,
+    width: window.innerWidth,
+  } as unknown as VisualViewport;
 
 vi.mock(import("@@/server/composables/azure/container/useContainerBaseUrl"), () => ({
   useContainerBaseUrl: () => MOCK_BLOB_BASE_URL,
 }));
+// Every Azure client redirects to its colocated in-memory mock, here rather than in `context.test.ts`: a `vi.mock`
+// Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
+// File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
+// Registering once here covers both. The factories are lazy, so a test that touches no Azure client pays nothing.
+vi.mock(
+  import("@@/server/composables/azure/container/useContainerClient"),
+  () => import("@@/server/composables/azure/container/useContainerClient.test"),
+);
 
+vi.mock(
+  import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient"),
+  () => import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test"),
+);
+
+vi.mock(
+  import("@@/server/composables/azure/search/useSearchClient"),
+  () => import("@@/server/composables/azure/search/useSearchClient.test"),
+);
+
+vi.mock(
+  import("@@/server/composables/azure/serviceBus/useServiceBusSender"),
+  () => import("@@/server/composables/azure/serviceBus/useServiceBusSender.test"),
+);
+
+vi.mock(
+  import("@@/server/composables/azure/table/useTableClient"),
+  () => import("@@/server/composables/azure/table/useTableClient.test"),
+);
+// oxlint-disable-next-line vitest/prefer-import-in-mock
 vi.mock("nitropack/runtime", () => ({
   useRuntimeConfig: () => ({
+    // Nuxt 4.5's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
+    // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.
+    app: {
+      baseURL: "/",
+      buildAssetsDir: "/_nuxt/",
+      cdnURL: "",
+    },
     public: {
       appEnv: Environment.development,
       azure: {

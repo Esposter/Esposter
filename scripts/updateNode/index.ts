@@ -21,7 +21,7 @@ const packageJsonPath = resolve(root, "package.json");
 const packageJson = readFileSync(packageJsonPath, "utf8");
 const oldVersion = getEnginesNode(packageJson);
 // Engines.node / @types/node only need rewriting when the target differs. We still hand off to fnm
-// Below even when it matches: a colleague pulling this repo may have an older node active in fnm (or
+// Below even when it matches: a colleague pulling this repo may have an older node defaulted in fnm (or
 // Not have this version installed at all) and needs switching onto the pinned version.
 const isNewVersion = oldVersion !== version;
 if (isNewVersion) {
@@ -33,10 +33,10 @@ if (isNewVersion) {
   const workspacePath = resolve(root, "pnpm-workspace.yaml");
   writeFileSync(workspacePath, setCatalogTypesNode(readFileSync(workspacePath, "utf8"), typesVersion));
   console.info(`✔ pnpm-workspace.yaml @types/node → ^${typesVersion}`);
-} else console.info(`node is already ${version} in package.json — ensuring fnm has it installed and active.\n`);
-// 4. Hand off install / switch / cleanup of the old version to the native (per-OS) script via crossOS.
+} else console.info(`node is already ${version} in package.json — ensuring fnm has it installed and defaulted.\n`);
+// 4. Hand off install / default / cleanup of the old version to the native (per-OS) script via crossOS.
 // When the version is unchanged, `old === new`, so the native script's guard skips the removal step.
-console.info("Installing and switching via fnm…");
+console.info("Installing and defaulting via fnm…");
 const result = spawnSync(`pnpm crossOS update:node ${version} ${oldVersion}`, {
   cwd: root,
   shell: true,
@@ -46,6 +46,6 @@ if (result.status !== 0) throw new Error("fnm install/switch failed");
 
 console.info(
   isNewVersion
-    ? "\nDone. Run `pnpm refresh:lockfile` to resolve the new @types/node (other open shells need `fnm use`)."
-    : "\nDone. Other open shells need `fnm use` to pick up the active version.",
+    ? `\nDone. Run \`pnpm refresh:lockfile\` to resolve the new @types/node (new shells default to ${version}; already-open ones keep ${oldVersion} until reopened).`
+    : `\nDone. New shells default to ${version}.`,
 );

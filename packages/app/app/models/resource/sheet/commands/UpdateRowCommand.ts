@@ -27,7 +27,7 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
     this.#updatedRow = updatedRow;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     if (this.#index === -1) return;
     const row = takeOne(dataSource.rows, this.#index);
     for (const column of dataSource.columns)
@@ -36,7 +36,7 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
     row.data = { ...this.#updatedRow.data };
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     if (this.#index === -1) return;
     const row = takeOne(dataSource.rows, this.#index);
     for (const column of dataSource.columns)

@@ -1,6 +1,6 @@
 import type { BaseTilesetKey } from "#shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
-import type { TilesetKey } from "#shared/models/dungeons/keys/TilesetKey";
+import type { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import type { Tilemaps } from "phaser";
 
 import { ignoreWarn } from "@/util/console/ignoreWarn";
@@ -24,10 +24,7 @@ export const addTilesetImage = (tilemap: Tilemaps.Tilemap, tilemapKey: TilemapKe
   return tileset;
 };
 
-const baseAddTilesetImage = (tilemap: Tilemaps.Tilemap, tilesetKey: TilesetKey) => {
+const baseAddTilesetImage = (tilemap: Tilemaps.Tilemap, tilesetKey: TilesetKey) =>
   // Phaser warns on tileset keys the tilemap doesn't require, which is fine since we always create
   // All of them; the tileset name must exactly match the tileset key.
-  const newTileset = ignoreWarn(() => tilemap.addTilesetImage(tilesetKey));
-  if (!newTileset) return null;
-  return newTileset;
-};
+  ignoreWarn(() => tilemap.addTilesetImage(tilesetKey));

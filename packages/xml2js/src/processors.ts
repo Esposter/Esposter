@@ -1,15 +1,12 @@
-import { uncapitalize } from "@esposter/shared";
-
+const BOOLEAN_REGEX = /^(?:true|false)$/iu;
 const PREFIX_MATCH_REGEX = /(?!xmlns)^.*:/u;
-
-export const normalize = (string: string): string => string.toLowerCase();
-
-export const firstCharLowerCase = (string: string): string => uncapitalize(string);
 
 export const stripPrefix = (string: string): string => string.replace(PREFIX_MATCH_REGEX, "");
 
-export const parseNumbers = (string: string): number | string =>
-  isNaN(Number(string)) ? string : Number(string) % 1 === 0 ? Math.trunc(Number(string)) : Number(string);
+export const parseNumbers = (string: string): number | string => {
+  const number = Number(string);
+  return Number.isNaN(number) ? string : number;
+};
 
 export const parseBooleans = (string: string): boolean | string =>
-  /^(?:true|false)$/iu.test(string) ? string.toLowerCase() === "true" : string;
+  BOOLEAN_REGEX.test(string) ? string.toLowerCase() === "true" : string;

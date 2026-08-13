@@ -1,7 +1,4 @@
-import { normalizeString } from "@esposter/shared";
+import { splitNonEmptyLines } from "@/services/resource/sheet/commands/splitNonEmptyLines";
 
 export const parseClipboardValuesByPosition = (text: string): string[][] =>
-  text
-    .split(/\r?\n/u)
-    .filter((line) => normalizeString(line) !== "")
-    .map((line) => line.split("\t"));
+  splitNonEmptyLines(text).map((line) => line.split("\t"));

@@ -8,8 +8,11 @@ const { items } = storeToRefs(commentStore);
 const { deleteComment } = commentStore;
 const commentDialogStore = useCommentDialogStore();
 const { deletingId } = storeToRefs(commentDialogStore);
-const comment = computed(() => items.value.find(({ id }) => id === deletingId.value));
-const isOpen = useSingletonDialog(deletingId);
+// Resolved through the primitive rather than a computed of our own, so a target whose comment has left the
+// List is dropped with it instead of re-opening this dialog by itself when a later read brings it back
+const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
+  items.value.find(({ id }) => id === deletingId.value),
+);
 </script>
 
 <template>
@@ -27,7 +30,7 @@ const isOpen = useSingletonDialog(deletingId);
   >
     Are you sure you want to delete this comment?
     <StyledPreviewCard>
-      <PostCommentPreview :comment />
+      <PostPreview :post="comment" />
     </StyledPreviewCard>
   </StyledDeleteFormDialog>
 </template>

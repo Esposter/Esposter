@@ -16,7 +16,6 @@ const toBuildingWithStats = ({ amount, id, producedValue }: BoughtBuilding): Bui
   producedValue,
 });
 const toUpgrade = (id: UpgradeId): Upgrade => ({ ...UpgradeMap[id], id });
-
 // Hydrates a stored save back into the in-memory game state by resolving ids through
 // The content maps, falling back to a fresh game for unreadable saves.
 export const toClicker = (savedClicker: unknown) => {

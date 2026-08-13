@@ -1,16 +1,15 @@
 import type { CommandDef } from "citty";
 
-import { Color } from "@/models/cli/Color";
 import { CommandType } from "@/models/virrun/CommandType";
 import { formatCacheListing } from "@/services/cli/cache/formatCacheListing";
-import { colorize } from "@/services/cli/color/colorize";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
+import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
 import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
+import { computeDirectoryByteSize } from "@/services/exec/util/computeDirectoryByteSize";
 import { VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
-import { getResult, toAppError } from "@esposter/shared";
+import { getResult } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -36,13 +35,14 @@ export const cacheLsCommand: CommandDef = defineCommand({
         repoStorePath,
         snapshotHashes,
         snapshotsPath,
+        taskBytes: computeDirectoryByteSize(tasksPath),
         taskCount: existsSync(tasksPath) ? readdirSync(tasksPath).length : 0,
         tasksPath,
       });
     }).match(
       (listing) => process.stderr.write(`${listing}\n`),
       (error) => {
-        process.stderr.write(`${formatVirrunLine(colorize(toAppError(error).message, Color.Red))}\n`);
+        process.stderr.write(`${formatVirrunError(error.message)}\n`);
         process.exitCode = 1;
       },
     );

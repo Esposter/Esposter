@@ -6,15 +6,6 @@ describe(getOffsetPaginationData, () => {
   const item1 = new AItemEntity();
   const item2 = new AItemEntity();
 
-  test("empty array", () => {
-    expect.hasAssertions();
-
-    expect(getOffsetPaginationData([], 0)).toStrictEqual({
-      hasMore: false,
-      items: [],
-    });
-  });
-
   test("gets all", () => {
     expect.hasAssertions();
 

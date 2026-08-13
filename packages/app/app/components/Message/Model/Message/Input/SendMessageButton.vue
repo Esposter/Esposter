@@ -1,10 +1,9 @@
 <script setup lang="ts">
 interface SendMessageButtonProps {
   disabled?: boolean;
-  isLoading?: boolean;
 }
 
-const { disabled, isLoading } = defineProps<SendMessageButtonProps>();
+const { disabled } = defineProps<SendMessageButtonProps>();
 const emit = defineEmits<{ click: [] }>();
 const backgroundColor = computed(() => (disabled ? "transparent" : "currentColor"));
 </script>
@@ -12,15 +11,7 @@ const backgroundColor = computed(() => (disabled ? "transparent" : "currentColor
 <template>
   <v-tooltip text="Send (Enter)">
     <template #activator="{ props: tooltipProps }">
-      <v-btn
-        icon="mdi-send"
-        size="small"
-        bg-transparent
-        :disabled
-        :loading="isLoading"
-        :="tooltipProps"
-        @click="emit('click')"
-      />
+      <v-btn icon="mdi-send" size="small" :disabled :="tooltipProps" @click="emit('click')" />
     </template>
   </v-tooltip>
 </template>

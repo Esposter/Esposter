@@ -2,7 +2,7 @@ import { calculateDamage } from "@/services/dungeons/monster/calculateDamage";
 import { describe, expect, test, vi } from "vitest";
 
 // Pin the damage roll to its upper bound so the formula is deterministic
-vi.mock(import("#shared/util/math/random/createRandomNumber"), () => ({ createRandomNumber: () => 1 }));
+vi.mock(import("@/util/math/random/createRandomNumber"), () => ({ createRandomNumber: () => 1 }));
 
 describe(calculateDamage, () => {
   const attack = 10;

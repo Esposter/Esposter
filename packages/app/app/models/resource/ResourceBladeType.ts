@@ -1,9 +1,10 @@
 /* eslint-disable perfectionist/sort-enums */
 // Built-in blade slugs every resource has; per-type blades come from ResourceBladeDefinitionMap.
-// Declaration order is the nav order, so the sort rule is disabled to keep Overview first (Object.values reads it).
+// Declaration order is the nav order, which getResourceBladeDefinitions reproduces — the sort rule is
+// Disabled so this stays readable as that order rather than alphabetically.
 export enum ResourceBladeType {
   Overview = "overview",
   Editor = "editor",
+  Activity = "activity",
+  PublishHistory = "publish-history",
 }
-// Set iteration preserves the declaration order, so the nav renders Overview → Editor.
-export const ResourceBladeTypes: ReadonlySet<ResourceBladeType> = new Set(Object.values(ResourceBladeType));

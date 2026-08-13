@@ -3,12 +3,12 @@ import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterTy
 import { dayjs } from "#shared/services/dayjs";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
+import { getIsRateLimitExceeded } from "@@/server/services/rateLimiter/getIsRateLimitExceeded";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
 import { getResultAsync, ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { RateLimiterRes } from "rate-limiter-flexible";
 
 export const getIsRateLimited = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
@@ -16,9 +16,12 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     if (!IS_PRODUCTION) return next({ ctx: { getSessionPayload } });
 
     const ipAddress = getIpAddress(ctx.req);
-    if (!ipAddress) {
+    // An authed caller is keyed on its user id, which is available whether or not an address is, so only the
+    // Anonymous key depends on this. Bypassing both would leave every signed-in request unbudgeted on a
+    // Deployment whose ingress header never arrives.
+    if (!getSessionPayload && !ipAddress) {
       console.warn(
-        "[RateLimiter] Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
+        "[RateLimiter] Could not determine IP address for an anonymous request. Bypassing middleware... This is expected for local production builds.",
       );
       return next({ ctx: { getSessionPayload } });
     }
@@ -30,7 +33,7 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     const { msBeforeNext, remainingPoints } = rateLimiterResult.match(
       (result) => result,
       (error) => {
-        if (error instanceof RateLimiterRes) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+        if (getIsRateLimitExceeded(error)) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       },
     );

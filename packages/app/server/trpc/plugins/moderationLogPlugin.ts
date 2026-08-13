@@ -2,8 +2,8 @@ import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { createEntity } from "@esposter/db";
-import { AdminActionType, AzureTable, getReverseTickedTimestamp, ModerationLogEntity } from "@esposter/db-schema";
+import { writeModerationLogEntry } from "@esposter/db";
+import { AdminActionType, AzureTable } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
 
@@ -19,20 +19,15 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
 
   const { roomId, targetUserId, type } = parsedInput.data;
   const durationMs = parsedInput.data.type === AdminActionType.TimeoutUser ? parsedInput.data.durationMs : undefined;
-  await getResultAsync(async () => {
-    const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
-    await createEntity(
-      moderationLogClient,
-      new ModerationLogEntity({
-        actorUserId: ctx.getSessionPayload.user.id,
-        durationMs,
-        partitionKey: roomId,
-        rowKey: getReverseTickedTimestamp(),
-        targetUserId,
-        type,
-      }),
-    );
-  }).match(noop, console.error);
+  await getResultAsync(async () =>
+    writeModerationLogEntry(await useTableClient(AzureTable.ModerationLog), {
+      actorUserId: ctx.getSessionPayload.user.id,
+      durationMs,
+      roomId,
+      targetUserId,
+      type,
+    }),
+  ).match(noop, console.error);
 
   return result;
 });

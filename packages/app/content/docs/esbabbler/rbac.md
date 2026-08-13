@@ -23,9 +23,11 @@ flowchart TD
     B -->|no| Deny[FORBIDDEN]
 ```
 
+The diagram's shape is also the query plan: `hasPermission` awaits the owner lookup and only then reads the bitfield, rather than firing both together and picking a winner. Running them in parallel would shave one round trip off the member case, but it would make every owner pay for a role aggregation whose result is discarded — and the callers that reach here most are owners administering their own room, since `getPermissionsProcedure` guards the moderation and settings endpoints. Both reads are indexed single-row lookups against the same connection, so the sequential cost is small and lands on the branch that is about to do more work anyway. Ordering guards cheapest-and-most-decisive first is the rule; `Promise.all` is for reads where every result is used.
+
 Authority is layered: **Owner** (`rooms.userId`, immune to all role manipulation) → **Administrator** permission (all bits, bypasses hierarchy but not ownership) → explicit permission bits (subject to hierarchy) → `@everyone` baseline. The `@everyone` role is a real `roomRoles` row (`isEveryone = true`, one per room via partial unique index) applied implicitly to every member — it is never stored in `usersToRoomRoles`. `createRoom` seeds it in the same transaction.
 
-**Hierarchy** prevents lower roles acting upward: a user's _top position_ is the max `position` across explicitly assigned roles (owner = infinity), and role management or member-targeting actions require the actor's top position to exceed the target's (`isManageable`).
+**Hierarchy** prevents lower roles acting upward: a user's _top position_ is the max `position` across explicitly assigned roles (owner = infinity), and role management or member-targeting actions require the actor's top position to exceed the target's. That comparison is the pure predicate `checkIsManageable`, which lives in `shared/` because both the server guards and the client `role` store evaluate it; the server calls it through `assertIsManageable`, which resolves both positions and throws `UNAUTHORIZED` when it fails.
 
 `RoomPermission` bits, in order: `ReadMessages`, `SendMessages`, `ManageMessages`, `MentionEveryone`, `ManageRoom`, `ManageRoles`, `ManageInvites`, `KickMembers`, `BanMembers`, `MuteMembers`, `MoveMembers`, `ManageNicknames`, `ManageWebhooks`, `Administrator`. **Bit-ordering rule:** `Administrator` stays the highest bit; new permissions are inserted before `ManageWebhooks`/`Administrator` (which shifts those bits and requires a data migration of stored values).
 
@@ -38,14 +40,16 @@ Authority is layered: **Owner** (`rooms.userId`, immune to all role manipulation
 
 ## Service layer & guards
 
-`server/services/room/rbac/`:
+The functions are split across three homes by who needs them. The two permission reads live in `@esposter/db`, because the Azure Functions workers evaluate them too; `server/services/room/rbac/` re-exports each as a one-line shim so server code keeps importing them from one place. The pure hierarchy predicate lives in `shared/` so the client can evaluate it without a round trip, and the server-only helpers stay under `server/`.
 
-| Function                                  | Purpose                                         |
-| ----------------------------------------- | ----------------------------------------------- |
-| `getPermissions(db, userId, roomId)`      | `BIT_OR` aggregate → bigint                     |
-| `hasPermission(db, userId, roomId, perm)` | Owner bypass → Administrator bit → specific bit |
-| `getTopRolePosition(db, userId, roomId)`  | Max assigned-role position                      |
-| `isManageable(...)`                       | Hierarchy check for acting on a member/role     |
+| Function                                                           | Home                         | Purpose                                         |
+| ------------------------------------------------------------------ | ---------------------------- | ----------------------------------------------- |
+| `getPermissions(db, userId, roomId)`                               | `@esposter/db`               | `BIT_OR` aggregate → bigint                     |
+| `hasPermission(db, userId, roomId, perm)`                          | `@esposter/db`               | Owner bypass → Administrator bit → specific bit |
+| `getTopRolePosition(db, userId, roomId)`                           | `server/services/room/rbac/` | Max assigned-role position                      |
+| `getActorContext(db, actorUserId, roomId)`                         | `server/services/room/rbac/` | Bundles the actor's top position + ownership    |
+| `assertIsManageable(db, actorId, targetId, roomId)`                | `server/services/room/rbac/` | Resolves both sides, throws `UNAUTHORIZED`      |
+| `checkIsManageable(actorTopPosition, targetPosition, isRoomOwner)` | `shared/services/room/rbac/` | The hierarchy comparison itself — no DB access  |
 
 tRPC procedure builders in `server/trpc/procedure/room/`:
 
@@ -61,7 +65,9 @@ tRPC procedure builders in `server/trpc/procedure/room/`:
 | -------------------------------------------------------------------- | ------------------------------------ |
 | `packages/db-schema/src/schema/roomRolesInMessage.ts`                | `RoomPermission` const + roles table |
 | `packages/db-schema/src/schema/usersToRoomRolesInMessage.ts`         | Assignment table                     |
-| `packages/app/server/services/room/rbac/`                            | Service functions (+ tests)          |
+| `packages/db/src/services/room/rbac/`                                | `getPermissions` + `hasPermission`   |
+| `packages/app/server/services/room/rbac/`                            | Server helpers + re-export shims     |
+| `packages/app/shared/services/room/rbac/checkIsManageable.ts`        | Hierarchy predicate shared w/ client |
 | `packages/app/server/trpc/procedure/room/getPermissionsProcedure.ts` | Permission middleware builder        |
 | `packages/app/server/trpc/routers/role.ts`                           | Role CRUD + `readMemberRoles`        |
 

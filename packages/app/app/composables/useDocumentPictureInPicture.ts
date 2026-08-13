@@ -53,7 +53,7 @@ const cloneStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
 
 export const useDocumentPictureInPicture = (options: UseDocumentPictureInPictureOptions = {}) => {
   const isSupported = useSupported(() => "documentPictureInPicture" in window);
-  const pipWindow = shallowRef<null | Window>(null);
+  const pipWindow = shallowRef<Window>();
   let styleObserver: MutationObserver | undefined;
   const bridgeStyles = async (target: Window) => {
     const pendingSheets = [
@@ -90,7 +90,7 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
     styleObserver?.disconnect();
     styleObserver = undefined;
     pipWindow.value?.close();
-    pipWindow.value = null;
+    pipWindow.value = undefined;
   };
   const open = async () => {
     if (!isSupported.value || pipWindow.value) return;

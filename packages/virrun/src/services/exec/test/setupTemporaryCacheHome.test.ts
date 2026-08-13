@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
 import { afterEach, beforeEach, describe } from "vitest";

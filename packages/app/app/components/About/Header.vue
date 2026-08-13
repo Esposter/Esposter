@@ -21,7 +21,9 @@ const ACCENT_CLASSES = ["text-transparent", "bg-clip-text", "bg-[image:--vue-gra
       JavaScript Application
     </div>
     <br />
-    <div text-gray text-headline-small>An approachable, performant and versatile javascript application powered by</div>
+    <div op-medium-emphasis text-headline-small>
+      An approachable, performant and versatile javascript application powered by
+    </div>
     <v-img id="uwu" width="100%" max-width="45rem" :src="VUEJS_LOGO_UWU_PATH" alt="uwu" />
   </div>
 </template>

@@ -28,7 +28,7 @@ export const useReadClicker = async () => {
   });
 
   await useReadData(
-    () => {
+    async () => {
       const clickerJson = localStorage.getItem(LocalStorageKey.ClickerStore);
       setClicker(
         clickerJson
@@ -38,11 +38,11 @@ export const useReadClicker = async () => {
               .unwrapOr(new Clicker())
           : new Clicker(),
       );
-      applyOfflineProgress();
+      await applyOfflineProgress();
     },
     async () => {
       setClicker(toClicker(await $trpc.clicker.readClicker.query()));
-      applyOfflineProgress();
+      await applyOfflineProgress();
     },
   );
 };

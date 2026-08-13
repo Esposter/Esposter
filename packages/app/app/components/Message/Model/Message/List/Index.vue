@@ -19,10 +19,12 @@ const getFirstVisibleMessageElement = () => {
   if (!element) return undefined;
   // Anchor to a real visible message, not scrollHeight: column-reverse height deltas are easy to get subtly wrong.
   const { bottom: containerBottom, top: containerTop } = element.getBoundingClientRect();
-  return [...element.querySelectorAll("[id]")].find((messageElement) => {
+  for (const messageElement of element.querySelectorAll("[id]")) {
     const { bottom, top } = messageElement.getBoundingClientRect();
-    return top < containerBottom && bottom > containerTop;
-  });
+    if (top < containerBottom && bottom > containerTop) return messageElement;
+  }
+
+  return undefined;
 };
 const readMoreNewerMessages = async (onComplete: () => void) => {
   const firstVisibleMessageElement = getFirstVisibleMessageElement();

@@ -1,8 +1,8 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
-import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
+import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useDataStore } from "@/store/message/data";
@@ -16,14 +16,13 @@ export const usePinStore = defineStore("message/pin", () => {
   const { createMessage, deleteMessage } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
   const messages = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const dataStore = useDataStore();
-  MessageHookMap[Operation.Update].push((input) => {
+  MessageHookMap[Operation.Update].register((input) => {
     if (!("isPinned" in input)) return;
 
     if (input.isPinned) {
-      const message = dataStore.items.find((i) =>
-        getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input)(i),
-      );
+      const message = dataStore.items.find(getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input));
       if (!message) return;
+
       createMessage(message);
     } else deleteMessage(input);
   });

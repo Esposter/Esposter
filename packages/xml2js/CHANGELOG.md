@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* cleanup oxlint ([afcf55c](https://github.com/Esposter/Esposter/commit/afcf55c376dbfb2fc0e3ae0dab1a27d679546170))
+* lint ([88f6724](https://github.com/Esposter/Esposter/commit/88f67243af9536f409658d4a17aa481ba5b8657d))
+* lint ([a4868db](https://github.com/Esposter/Esposter/commit/a4868db6ed6a8557dd796e3cc03a87689409a1bc))
+* more lint ([9625e7b](https://github.com/Esposter/Esposter/commit/9625e7bba87ea2bccdf00fee6fc91ef5dfc9fbbf))
+* more lint ([01623cd](https://github.com/Esposter/Esposter/commit/01623cdb19a582c7a26ff09eeccc62866056cda0))
+* re-enable no-shadow and rename all shadowing variables ([0faab46](https://github.com/Esposter/Esposter/commit/0faab46e00078013464161144498ad94d1ac866e))
+* remove unnecessary lints ([0db3054](https://github.com/Esposter/Esposter/commit/0db3054ddc6808b7cb09912820f66b27d4858450))
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Bug Fixes

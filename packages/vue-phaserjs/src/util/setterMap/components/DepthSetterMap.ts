@@ -3,15 +3,15 @@ import type { DepthEventEmitsOptions } from "@/models/emit/components/DepthEvent
 import type { SetterMap } from "@/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { getDepthInsertIndex } from "@/util/getDepthInsertIndex";
+
 export const DepthSetterMap = {
   depth: (gameObject) => (value) => {
     if (value === undefined) return;
 
     gameObject.setDepth(value);
     if (!(gameObject.parentContainer as GameObjects.Container | null)) return;
-    const i = gameObject.parentContainer.list.findIndex(
-      (obj) => "depth" in obj && typeof obj.depth === "number" && obj.depth > gameObject.depth,
-    );
+    const i = getDepthInsertIndex(gameObject.parentContainer.list, gameObject.depth);
     if (i === -1) gameObject.parentContainer.bringToTop(gameObject);
     else gameObject.parentContainer.moveTo(gameObject, Math.max(i - 1, 0));
   },

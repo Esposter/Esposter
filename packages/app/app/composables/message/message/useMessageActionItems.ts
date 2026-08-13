@@ -1,26 +1,30 @@
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { dayjs } from "#shared/services/dayjs";
-import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
-import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
+import { getIsMessageOperationPermitted } from "#shared/services/message/getIsMessageOperationPermitted";
+import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
+import { useClipboardStore } from "@/store/clipboard";
 import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useForwardStore } from "@/store/message/input/forward";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
+import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useThreadStore } from "@/store/message/thread";
-import { MessageType } from "@esposter/db-schema";
-import { exhaustiveGuard, normalizeString, RoutePath } from "@esposter/shared";
+import { hasPermission, MessageType, RoomPermission } from "@esposter/db-schema";
+import { exhaustiveGuard, noop, normalizeString, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
   const { $trpc } = useNuxtApp();
-  const executeUnpinMessageMutation = useMutation();
-  const executeMarkUnreadMutation = useMutation();
+  const { executeMutation: executeUnpinMessageMutation } = useMutation();
+  const { executeMutation: executeMarkUnreadMutation } = useMutation();
+  const clipboardStore = useClipboardStore();
+  const { copy } = clipboardStore;
   const messageStore = useMessageStore();
-  const { copy } = messageStore;
   const { editingRowKey } = storeToRefs(messageStore);
   const messageDialogStore = useMessageDialogStore();
   const { deletingRowKey, pinningRowKey } = storeToRefs(messageDialogStore);
@@ -34,7 +38,28 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
   const threadStore = useThreadStore();
   const { openThread } = threadStore;
+  const roleStore = useRoleStore();
+  const { getMyPermissions } = roleStore;
   const runtimeConfig = useRuntimeConfig();
+  const hasManageMessages = computed(() => {
+    const myPermissions = getMyPermissions(message.partitionKey);
+    if (!myPermissions) return false;
+    return hasPermission(myPermissions.permissions, RoomPermission.ManageMessages, myPermissions.isRoomOwner);
+  });
+  // The same declaration getMessageProcedure guards with, so the menu can never offer an operation the procedure
+  // Refuses — presence answers whether the type supports it, the value answers whether this caller may perform it
+  const getIsOperationPermitted = (operation: MessageOperation) =>
+    getIsMessageOperationPermitted(getMessageOperationPermission(message.type, operation), {
+      hasManageMessages: hasManageMessages.value,
+      isAuthor: isCreator.value,
+    });
+  // Replying to and forwarding a message are neither authored nor moderated actions, so they ride the type's
+  // Support for an update rather than this caller's permission to perform one
+  const isUpdateSupported = computed(() =>
+    Boolean(getMessageOperationPermission(message.type, MessageOperation.Update)),
+  );
+  const isDeletePermitted = computed(() => getIsOperationPermitted(MessageOperation.Delete));
+  const isPinPermitted = computed(() => getIsOperationPermitted(MessageOperation.Pin));
   const editMessageItem: Item = {
     icon: "mdi-pencil",
     onClick: () => {
@@ -73,12 +98,17 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
             await executeUnpinMessageMutation(
               () => $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
               {
+                // Read as the write is sent rather than assumed: a pin that landed — or was itself rolled back —
+                // Between the click and this write decides what unpinning owes back, and a hard-coded true would
+                // Re-pin a message the server never pinned
                 applyOptimistic: () => {
+                  const previousIsPinned = message.isPinned;
                   delete message.isPinned;
                   return () => {
-                    message.isPinned = true;
+                    if (previousIsPinned) message.isPinned = previousIsPinned;
                   };
                 },
+                key: message.rowKey,
               },
             );
           },
@@ -113,27 +143,38 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     onClick: async () => {
       const lastMessageAt = dayjs(message.createdAt).subtract(1, "millisecond").toDate();
       const roomId = message.partitionKey;
-      const previousUserToRoom = getMyUserToRoom(roomId);
       await executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastMessageAt, roomId }), {
+        // Read as the write is sent, so a rejected mark-unread restores the marker the write ahead of it stored
+        // Rather than the one on screen when the user clicked
         applyOptimistic: () => {
-          if (previousUserToRoom) setMyUserToRoom(roomId, { ...previousUserToRoom, lastMessageAt });
+          const previousUserToRoom = getMyUserToRoom(roomId);
+          if (!previousUserToRoom) return noop;
+
+          const { lastMessageAt: previousLastMessageAt } = previousUserToRoom;
+          setMyUserToRoom(roomId, { ...previousUserToRoom, lastMessageAt });
           return () => {
-            if (previousUserToRoom) setMyUserToRoom(roomId, previousUserToRoom);
+            // Only the field this write moved, against the record as it stands — reinstating the row as a whole
+            // Would undo everything else that landed on it while this write was in flight
+            const currentUserToRoom = getMyUserToRoom(roomId);
+            if (currentUserToRoom)
+              setMyUserToRoom(roomId, { ...currentUserToRoom, lastMessageAt: previousLastMessageAt });
           };
         },
+        key: roomId,
       });
     },
     title: "Mark Unread From Here",
   };
+  const pinMessageItems = computed<Item[]>(() => (isPinPermitted.value ? [pinMessageItem.value] : []));
   const updateMessageItems = computed<Item[]>(() =>
-    UpdatableMessageTypes.has(message.type)
+    isUpdateSupported.value
       ? isEditable.value
         ? [editMessageItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
       : [],
   );
   const updateMessageMenuItems = computed<Item[]>(() =>
-    UpdatableMessageTypes.has(message.type)
+    isUpdateSupported.value
       ? isEditable.value
         ? [editMessageItem, replyItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
@@ -146,21 +187,21 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
       case MessageType.EditRoom:
         return [copyTextItem, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Message:
-        return [copyTextItem, viewThreadItem, pinMessageItem.value, markUnreadFromHereItem, copyMessageLinkItem];
+        return [copyTextItem, viewThreadItem, ...pinMessageItems.value, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.PinMessage:
         return [markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Poll:
-        return [pinMessageItem.value, markUnreadFromHereItem, copyMessageLinkItem];
+        return [...pinMessageItems.value, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.System:
         return [markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Webhook:
-        return [copyTextItem, pinMessageItem.value, markUnreadFromHereItem, copyMessageLinkItem];
+        return [copyTextItem, ...pinMessageItems.value, markUnreadFromHereItem, copyMessageLinkItem];
       default:
         return exhaustiveGuard(message);
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    DeletableMessageTypes.has(message.type) && isCreator.value
+    isDeletePermitted.value
       ? {
           color: "error",
           icon: "mdi-delete",

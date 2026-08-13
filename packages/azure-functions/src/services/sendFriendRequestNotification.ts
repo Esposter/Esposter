@@ -2,6 +2,7 @@ import type { InvocationContext } from "@azure/functions";
 import type { FriendRequestNotificationEventGridData } from "@esposter/db-schema";
 
 import { db } from "@/services/db";
+import { getPushNotificationPayload } from "@/services/getPushNotificationPayload";
 import { sendWebPushNotifications } from "@/services/sendWebPushNotifications";
 import { getPushSubscriptionsForUser } from "@esposter/db";
 import { RoutePath } from "@esposter/shared";
@@ -16,10 +17,10 @@ export const sendFriendRequestNotification = async (
     return;
   }
 
-  const payload = JSON.stringify({
+  const payload = getPushNotificationPayload({
     body: "sent you a friend request",
-    data: { url: `${process.env.BASE_URL}${RoutePath.MessagesFriends}` },
     icon,
+    path: RoutePath.MessagesFriends,
     title,
   });
   await sendWebPushNotifications(context, readPushSubscriptions, payload);

@@ -1,6 +1,6 @@
 {
   "name": "virrun",
-  "version": "2.35.0",
+  "version": "2.36.0",
   "description": "An ephemeral, in-memory virtual runner that runs a repo's real toolchain fast and isolated.",
   "keywords": [
     "ci",
@@ -27,9 +27,10 @@
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
   "bin": {
-    "virrun": "dist/cli.js"
+    "virrun": "bin/cli.js"
   },
   "files": [
+    "bin",
     "dist",
     "schema.json"
   ],
@@ -65,7 +66,6 @@
     "unconfig": "catalog:"
   },
   "devDependencies": {
-    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@esposter/shared-node": "workspace:*",

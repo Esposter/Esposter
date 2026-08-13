@@ -5,7 +5,7 @@ import { Vector3 } from "three/webgpu";
 <template>
   <div size-48>
     <TresCanvas :clear-alpha="0" shadows>
-      <TresPerspectiveCamera :far="100" :fov="75" :look-at="new Vector3(2, 2, 6)" :position="new Vector3(0, 0.75, 0)" />
+      <TresPerspectiveCamera :far="100" :fov="75" :look-at="new Vector3(0, 0.75, 0)" :position="new Vector3(2, 2, 6)" />
       <OrbitControls
         :enable-pan="false"
         :enable-zoom="false"

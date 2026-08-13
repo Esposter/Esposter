@@ -10,7 +10,7 @@ import { trpcRouter } from "@@/server/trpc/routers";
 import { achievements, ClickerAchievementName } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("achievementPlugin", () => {
   let mockContext: Context;
@@ -21,7 +21,13 @@ describe("achievementPlugin", () => {
     caller = createCallerFactory(trpcRouter)(mockContext);
   });
 
+  // `unlockedAt` is stamped from `new Date()`, so a frozen clock makes it exactly assertable
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0 });
+  });
+
   afterEach(async () => {
+    vi.useRealTimers();
     vi.restoreAllMocks();
     MockContainerDatabase.clear();
     await mockContext.db.delete(achievements);
@@ -60,7 +66,7 @@ describe("achievementPlugin", () => {
     assert(clickerNovice);
 
     expect(clickerNovice.amount).toBe(1);
-    expect(clickerNovice.unlockedAt).toBeInstanceOf(Date);
+    expect(clickerNovice.unlockedAt).toStrictEqual(new Date(0));
   });
 
   test("counts every increment when mutations run concurrently", async () => {

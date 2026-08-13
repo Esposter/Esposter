@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe } from "vitest";

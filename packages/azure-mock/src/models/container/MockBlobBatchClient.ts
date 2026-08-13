@@ -8,12 +8,15 @@ import type {
 } from "@azure/storage-blob";
 import type { MapValue } from "@esposter/shared";
 
+import { BLOB_NOT_FOUND_ERROR_CODE, BLOB_NOT_FOUND_MESSAGE } from "@/constants";
 import { getAzureErrorXml } from "@/services/container/getAzureErrorXml";
+import { getBlobUrlParts } from "@/services/container/getBlobUrlParts";
+import { getMockContainer } from "@/services/container/getMockContainer";
 import { createMockResponse } from "@/services/createMockResponse";
+import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders } from "@azure/core-rest-pipeline";
-import { getOrCreate, takeOne } from "@esposter/shared";
 
 export class MockBlobBatchClient implements BlobBatchClient {
   url: string;
@@ -38,30 +41,19 @@ export class MockBlobBatchClient implements BlobBatchClient {
     let subResponsesFailedCount = 0;
 
     for (const url of urls) {
-      const urlParts = new URL(url);
-      // Pathname is like "/container/blob/name.txt"
-      const pathSegments = urlParts.pathname.split("/").filter(Boolean);
-      if (pathSegments.length < 2) {
-        const errorCode = "InvalidUri";
-        const statusMessage = "Invalid blob URL format.";
-        subResponses.push({
-          _request: { credential, url: this.url },
-          bodyAsText: getAzureErrorXml(errorCode, statusMessage),
-          errorCode,
-          headers: toHttpHeadersLike(createHttpHeaders()),
-          status: 400,
-          statusMessage,
-        });
+      const urlParts = getBlobUrlParts(url);
+      if (!urlParts) {
+        subResponses.push(this.#createFailedSubResponse(credential, 400, "InvalidUri", "Invalid blob URL format."));
         subResponsesFailedCount++;
         continue;
       }
 
-      const containerName = takeOne(pathSegments);
-      const blobName = pathSegments.slice(1).join("/");
+      const { blobName, containerName } = urlParts;
       const container = this.getContainer(containerName);
 
       if (container.has(blobName)) {
         container.delete(blobName);
+        MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(containerName, blobName));
         subResponses.push({
           _request: { credential, url: this.url },
           headers: toHttpHeadersLike(createHttpHeaders()),
@@ -70,16 +62,9 @@ export class MockBlobBatchClient implements BlobBatchClient {
         });
         subResponsesSucceededCount++;
       } else {
-        const errorCode = "BlobNotFound";
-        const statusMessage = "The specified blob does not exist.";
-        subResponses.push({
-          _request: { credential, url: this.url },
-          bodyAsText: getAzureErrorXml(errorCode, statusMessage),
-          errorCode,
-          headers: toHttpHeadersLike(createHttpHeaders()),
-          status: 404,
-          statusMessage,
-        });
+        subResponses.push(
+          this.#createFailedSubResponse(credential, 404, BLOB_NOT_FOUND_ERROR_CODE, BLOB_NOT_FOUND_MESSAGE),
+        );
         subResponsesFailedCount++;
       }
     }
@@ -99,6 +84,22 @@ export class MockBlobBatchClient implements BlobBatchClient {
   }
 
   getContainer(containerName: string): MapValue<typeof MockContainerDatabase> {
-    return getOrCreate(MockContainerDatabase, containerName, () => new Map());
+    return getMockContainer(containerName);
+  }
+
+  #createFailedSubResponse(
+    credential: AnonymousCredential | StorageSharedKeyCredential,
+    status: number,
+    errorCode: string,
+    statusMessage: string,
+  ): BatchSubResponse {
+    return {
+      _request: { credential, url: this.url },
+      bodyAsText: getAzureErrorXml(errorCode, statusMessage),
+      errorCode,
+      headers: toHttpHeadersLike(createHttpHeaders()),
+      status,
+      statusMessage,
+    };
   }
 }

@@ -11,9 +11,14 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import {describe, expect, test, vi} from "vitest";
 
 const step: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [NUXT_OUTPUT_DIRECTORY] };
+
+vi.mock(
+  import("@/services/exec/util/getSandboxNodeVersion"),
+  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+);
 
 describe(resolvePrepareLocation, () => {
   const { createWorkspace, getCacheHome } = setupTemporaryCacheHome();
@@ -22,11 +27,11 @@ describe(resolvePrepareLocation, () => {
     expect.hasAssertions();
 
     const workspace = createWorkspace();
-    const { dir, upperDir } = resolvePrepareLocation(workspace, step);
+    const { dir: directory, upperDir } = resolvePrepareLocation(workspace, step);
 
-    expect(dir.startsWith(join(getCacheHome(), VIRRUN_PREPARE_DIRECTORY_NAME))).toBe(true);
-    expect(upperDir).toBe(join(dir, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));
-    expect(dir.startsWith(workspace)).toBe(false);
+    expect(directory.startsWith(join(getCacheHome(), VIRRUN_PREPARE_DIRECTORY_NAME))).toBe(true);
+    expect(upperDir).toBe(join(directory, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));
+    expect(directory.startsWith(workspace)).toBe(false);
   });
 
   test("reports exists only once the upper layer has been captured on disk", () => {
@@ -48,18 +53,18 @@ describe(resolvePrepareLocation, () => {
     execFileSync("git", ["init", "-q"], { cwd: workspace });
     const file = join(workspace, TEST_FILENAME);
     writeFileSync(file, "");
-    const before = resolvePrepareLocation(workspace, step).key;
+    const beforeKey = resolvePrepareLocation(workspace, step).key;
     writeFileSync(file, " ");
 
-    expect(resolvePrepareLocation(workspace, step).key).not.toBe(before);
+    expect(resolvePrepareLocation(workspace, step).key).not.toBe(beforeKey);
   });
 
   test("keys differently for a different prepare step", () => {
     expect.hasAssertions();
 
     const workspace = createWorkspace();
-    const other: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [TEST_FILENAME] };
+    const otherStep: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [TEST_FILENAME] };
 
-    expect(resolvePrepareLocation(workspace, step).key).not.toBe(resolvePrepareLocation(workspace, other).key);
+    expect(resolvePrepareLocation(workspace, step).key).not.toBe(resolvePrepareLocation(workspace, otherStep).key);
   });
 });

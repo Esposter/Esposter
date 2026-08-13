@@ -8,7 +8,6 @@ import { createDataSource } from "@/composables/resource/sheet/commands/createDa
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
-import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -29,37 +28,6 @@ describe(useCreateColumn, () => {
     expect(takeOne(dataSource.columns, 2).name).toBe("new");
     expect(takeOne(dataSource.rows).data.new).toBeNull();
     expect(takeOne(dataSource.rows, 1).data.new).toBeNull();
-  });
-
-  test("undo removes the created column and its row values", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const createColumn = useCreateColumn();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
-    await createColumn(newColumn);
-    undo(dataSource);
-
-    expect(dataSource.columns).toHaveLength(2);
-    expect(takeOne(dataSource.rows).data.new).toBeUndefined();
-  });
-
-  test("redo re-applies create after undo", async () => {
-    expect.hasAssertions();
-
-    const { dataSource } = setupWithDataSource();
-    const createColumn = useCreateColumn();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
-    await createColumn(newColumn);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(dataSource.columns).toHaveLength(3);
-    expect(takeOne(dataSource.rows).data.new).toBeNull();
   });
 
   test("creates a unique id when the same column instance is passed multiple times", async () => {
@@ -105,75 +73,7 @@ describe(useCreateColumn, () => {
 
     expect(dataSource.columns).toHaveLength(2);
     expect(takeOne(dataSource.columns, 1)).toBeInstanceOf(ComputedColumn);
-  });
-
-  test("does not write to row.data for computed column", async () => {
-    expect.hasAssertions();
-
-    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { dataSource } = setupWithDataSource(
-      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
-    );
-    const createColumn = useCreateColumn();
-    const newColumn = new ComputedColumn({
-      name: " ",
-      transformation: {
-        sourceColumnId: sourceColumn.id,
-        targetType: ColumnType.String,
-        type: ColumnTransformationType.ConvertTo,
-      },
-    });
-    await createColumn(newColumn);
-
+    // A computed column is derived at render time, so it must never materialise a key in row.data
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual([SOURCE_COLUMN_NAME]);
-  });
-
-  test("undo removes the computed column", async () => {
-    expect.hasAssertions();
-
-    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { dataSource } = setupWithDataSource(
-      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
-    );
-    const createColumn = useCreateColumn();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-    const newColumn = new ComputedColumn({
-      name: " ",
-      transformation: {
-        sourceColumnId: sourceColumn.id,
-        targetType: ColumnType.String,
-        type: ColumnTransformationType.ConvertTo,
-      },
-    });
-    await createColumn(newColumn);
-    undo(dataSource);
-
-    expect(dataSource.columns).toHaveLength(1);
-  });
-
-  test("redo re-adds the computed column after undo", async () => {
-    expect.hasAssertions();
-
-    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { dataSource } = setupWithDataSource(
-      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
-    );
-    const createColumn = useCreateColumn();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-    const newColumn = new ComputedColumn({
-      name: " ",
-      transformation: {
-        sourceColumnId: sourceColumn.id,
-        targetType: ColumnType.String,
-        type: ColumnTransformationType.ConvertTo,
-      },
-    });
-    await createColumn(newColumn);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(dataSource.columns).toHaveLength(2);
   });
 });

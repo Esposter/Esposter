@@ -7,8 +7,8 @@
 // Snapshot; the check is a couple of property reads, so the cost is irrelevant.
 export const isColorEnabled = (): boolean => {
   const { FORCE_COLOR, NO_COLOR } = process.env;
-  if (NO_COLOR !== undefined && NO_COLOR !== "") return false;
+  if (NO_COLOR) return false;
   else if (FORCE_COLOR === "0" || FORCE_COLOR === "false") return false;
-  else if (FORCE_COLOR !== undefined && FORCE_COLOR !== "") return true;
+  else if (FORCE_COLOR) return true;
   else return process.stderr.isTTY;
 };

@@ -1,8 +1,8 @@
-import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 import type {
   AchievementDefinitionMap,
   achievementDefinitions as baseAchievementDefinitions,
 } from "#shared/services/achievement/achievementDefinitions";
+import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 import type { AchievementName, UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
@@ -39,6 +39,11 @@ export const useAchievementStore = defineStore("achievement", () => {
     };
   });
   const recentlyUnlockedUserAchievements = ref<UserAchievementWithDefinition[]>([]);
+  const deleteRecentlyUnlockedUserAchievement = (name: AchievementName) => {
+    recentlyUnlockedUserAchievements.value = recentlyUnlockedUserAchievements.value.filter(
+      ({ achievement }) => achievement.name !== name,
+    );
+  };
   const isAchievementUnlocked = (name: AchievementName): boolean => {
     const userAchievement = userAchievements.value.find(({ achievement }) => achievement.name === name);
     return userAchievement?.unlockedAt !== null;
@@ -62,6 +67,7 @@ export const useAchievementStore = defineStore("achievement", () => {
   return {
     achievementDefinitionMap,
     achievementDefinitions,
+    deleteRecentlyUnlockedUserAchievement,
     initializeAchievementDefinitionMap,
     isAchievementUnlocked,
     recentlyUnlockedUserAchievements,

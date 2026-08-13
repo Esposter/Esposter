@@ -1,0 +1,41 @@
+import { RoomPermission } from "@/schema/roomRolesInMessage";
+import { hasPermission } from "@/services/room/rbac/hasPermission";
+import { describe, expect, test } from "vitest";
+
+describe(hasPermission, () => {
+  test("owner always has permission regardless of permission bits", () => {
+    expect.hasAssertions();
+    expect(hasPermission(0n, RoomPermission.ManageRoom, true)).toBe(true);
+  });
+
+  test("administrator bit grants any permission", () => {
+    expect.hasAssertions();
+    expect(hasPermission(RoomPermission.Administrator, RoomPermission.ManageRoom, false)).toBe(true);
+  });
+
+  test("exact single-bit match returns true", () => {
+    expect.hasAssertions();
+    expect(hasPermission(RoomPermission.ReadMessages, RoomPermission.ReadMessages, false)).toBe(true);
+  });
+
+  test("missing single-bit returns false", () => {
+    expect.hasAssertions();
+    expect(hasPermission(RoomPermission.ReadMessages, RoomPermission.ManageRoom, false)).toBe(false);
+  });
+
+  test("combined mask: all bits present returns true", () => {
+    expect.hasAssertions();
+
+    const combinedPermissions = RoomPermission.ReadMessages | RoomPermission.SendMessages;
+
+    expect(hasPermission(combinedPermissions, combinedPermissions, false)).toBe(true);
+  });
+
+  test("combined mask: partial bit match returns false", () => {
+    expect.hasAssertions();
+
+    const combinedPermissions = RoomPermission.ReadMessages | RoomPermission.SendMessages;
+
+    expect(hasPermission(RoomPermission.ReadMessages, combinedPermissions, false)).toBe(false);
+  });
+});

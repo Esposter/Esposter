@@ -1,65 +1,30 @@
 import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
-import type { FileSasEntity } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
 import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
 import { invalidParticipantTokenError } from "@@/server/services/survey/invalidParticipantTokenError";
 import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
 import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurveyResponseRead";
 import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
 import { transformPublicReadSurvey } from "@@/server/services/survey/transformPublicReadSurvey";
-import { transformPublishedSurvey } from "@@/server/services/survey/transformPublishedSurvey";
-import { transformReadSurvey } from "@@/server/services/survey/transformReadSurvey";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
+import { createEntity, getEntity, updateEntity } from "@esposter/db";
 import {
-  createEntity,
-  deleteEntity,
-  generateDownloadFileSasUrls,
-  generateUploadFileSasEntities,
-  getEntity,
-  updateEntity,
-} from "@esposter/db";
-import {
-  AzureContainer,
   AzureEntityType,
   AzureTable,
-  fileEntitySchema,
   ResourceType,
   selectResourceSchema,
   SurveyResponseEntity,
   surveyResponseEntitySchema,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, InvalidOperationError, MAX_READ_LIMIT, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-
-// Type-owned binary assets (survey uploads) live under the standard {id}/files/… convention
-const getFilesDirectoryName = (surveyId: string) => `${surveyId}/files`;
-
-const generateUploadFileSasEntitiesInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true }), "filename")
-    .min(1)
-    .max(MAX_READ_LIMIT),
-  surveyId: selectResourceSchema.shape.id,
-});
-
-const generateDownloadFileSasUrlsInputSchema = z.object({
-  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true, mimetype: true }), "id")
-    .min(1)
-    .max(MAX_READ_LIMIT),
-  surveyId: selectResourceSchema.shape.id,
-});
-
-const deleteFileInputSchema = z.object({
-  blobPath: z.string().min(1).max(MAX_READ_LIMIT),
-  surveyId: selectResourceSchema.shape.id,
-});
+import { Operation } from "@esposter/shared";
 
 const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   participantToken: true,
@@ -69,6 +34,7 @@ const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
 
 const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   model: true,
+  pageNo: true,
   participantToken: true,
   partitionKey: true,
   rowKey: true,
@@ -77,6 +43,7 @@ const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
 const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   model: true,
   modelVersion: true,
+  pageNo: true,
   participantToken: true,
   partitionKey: true,
   rowKey: true,
@@ -87,17 +54,18 @@ const deleteSurveyResponseInputSchema = surveyResponseEntitySchema.pick({ rowKey
   id: selectResourceSchema.shape.id,
 });
 
-const countSurveyResponsesInputSchema = selectResourceSchema.pick({ id: true });
+const surveyIdInputSchema = selectResourceSchema.pick({ id: true });
 
 export const surveyRouter = router({
+  // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
+  // See ResourceDefinitionMap
   ...createResourceProcedures(ResourceType.Survey, {
     transformPublicReadContent: transformPublicReadSurvey,
-    transformPublishedContent: transformPublishedSurvey,
-    transformReadContent: transformReadSurvey,
+    transformPublishedContent: transformPublishedBlobUrls,
   }),
   countSurveyResponses: getOwnerProcedure(
     ResourceType.Survey,
-    countSurveyResponsesInputSchema,
+    surveyIdInputSchema,
     "id",
   ).query<CountSurveyResponsesOutput>(({ ctx }) => countSurveyResponses(ctx.resource.id)),
   createSurveyResponse: standardRateLimitedProcedure
@@ -109,14 +77,6 @@ export const surveyRouter = router({
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
-  deleteFile: getOwnerProcedure(ResourceType.Survey, deleteFileInputSchema, "surveyId").mutation(
-    async ({ input: { blobPath, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      const blobName = `${surveyId}/${blobPath}`;
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      await blockBlobClient.deleteIfExists();
-    },
-  ),
   deleteSurveyResponse: getOwnerProcedure(ResourceType.Survey, deleteSurveyResponseInputSchema, "id").mutation(
     async ({ ctx, input: { rowKey } }) => {
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
@@ -126,44 +86,28 @@ export const surveyRouter = router({
         AzureEntityType.SurveyResponse,
         JSON.stringify({ partitionKey: ctx.resource.id, rowKey }),
       );
-      await deleteEntity(surveyResponseClient, ctx.resource.id, rowKey);
+      await surveyResponseClient.deleteEntity(ctx.resource.id, rowKey);
     },
   ),
-  generateDownloadFileSasUrls: getOwnerProcedure(
-    ResourceType.Survey,
-    generateDownloadFileSasUrlsInputSchema,
-    "surveyId",
-  ).query<string[]>(async ({ input: { files, surveyId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-    return generateDownloadFileSasUrls(containerClient, files, getFilesDirectoryName(surveyId));
-  }),
-  generateUploadFileSasEntities: getOwnerProcedure(
-    ResourceType.Survey,
-    generateUploadFileSasEntitiesInputSchema,
-    "surveyId",
-  ).query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-    return generateUploadFileSasEntities(containerClient, files, getFilesDirectoryName(surveyId));
-  }),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
-    .query<null | SurveyResponseEntity>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
+    .query<SurveyResponseEntity | undefined>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
       const resolvedParticipantToken = await resolveSurveyResponseRead(ctx.db, partitionKey, participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const surveyResponse = await getEntity(surveyResponseClient, SurveyResponseEntity, partitionKey, rowKey);
-      if (!surveyResponse) return null;
+      if (!surveyResponse) return undefined;
       // A resume must present the identity the response was started with, so another participant's row is
       // Indistinguishable from one that does not exist. Only Identified mode resolves a token to compare —
       // Anonymous carries no identity to contradict, so a survey switched to it still resumes its
       // Identified-era responses, exactly as the write boundary treats them
-      if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken) return null;
+      if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken) return undefined;
       return surveyResponse;
     }),
   // The dataset contract carries no keys, so the blade reads rows keyed through its own procedure —
   // A blade-local read concern, not a Dataset shape change
   readSurveyResponseRecords: getOwnerProcedure(
     ResourceType.Survey,
-    countSurveyResponsesInputSchema,
+    surveyIdInputSchema,
     "id",
   ).query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
   updateSurveyResponse: standardRateLimitedProcedure
@@ -180,27 +124,23 @@ export const surveyRouter = router({
       // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
       if (participantToken && participantToken !== surveyResponse.participantToken)
         throw invalidParticipantTokenError();
-      // Response models are plain records, so duplicates are detected structurally rather than by reference
-      if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model))
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model")
-            .message,
-        });
+      // Response models are plain records, so duplicates are detected structurally rather than by reference.
+      // A page-only write persists only when it advances the resume position — identical answers on the same
+      // Or an earlier page is a no-op (and must not regress a stored later page)
+      if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model) && input.pageNo <= surveyResponse.pageNo)
+        throw getInvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model");
 
       input.modelVersion++;
       if (input.modelVersion <= surveyResponse.modelVersion)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Update,
-            AzureEntityType.SurveyResponse,
-            "cannot update survey response model with old model version",
-          ).message,
-        });
-
-      // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write
-      const updatedSurveyResponse = { ...input, participantToken };
+        throw getInvalidOperationError(
+          Operation.Update,
+          AzureEntityType.SurveyResponse,
+          "cannot update survey response model with old model version",
+        );
+      // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write.
+      // An empty resolution keeps the identity the response was created with, so a live switch to
+      // Anonymous never erases who answered from the program funnel
+      const updatedSurveyResponse = { ...input, participantToken: participantToken || surveyResponse.participantToken };
       await updateEntity(surveyResponseClient, updatedSurveyResponse);
       return Object.assign(surveyResponse, updatedSurveyResponse);
     }),

@@ -9,13 +9,13 @@ import { describe, expect, test } from "vitest";
 
 describe(getServiceSearchItems, () => {
   const surveyItem = {
-    createTo: RoutePath.ResourcesCreateType(ResourceType.Survey),
+    createTo: RoutePath.ResourceExplorerCreateType(ResourceType.Survey),
     group: ResourceSearchGroup.Services,
     icon: ResourceDefinitionMap[ResourceType.Survey].icon,
     id: `${ResourceSearchGroup.Services}-${ResourceType.Survey}`,
     subtitle: ResourceTypeDescriptionMap[ResourceType.Survey],
     title: ResourceDefinitionMap[ResourceType.Survey].title,
-    to: { path: RoutePath.ResourcesAll, query: { types: ResourceType.Survey } },
+    to: { path: RoutePath.ResourceExplorerAll, query: { types: ResourceType.Survey } },
   };
 
   test("returns every creatable type for an empty query", () => {

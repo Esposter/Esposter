@@ -1,5 +1,5 @@
 import { isColorEnabled } from "@/services/cli/color/isColorEnabled";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const originalIsTTY = Object.getOwnPropertyDescriptor(process.stderr, "isTTY");
 const stubIsTTY = (isTTY: boolean): void => {
@@ -7,13 +7,7 @@ const stubIsTTY = (isTTY: boolean): void => {
 };
 
 describe(isColorEnabled, () => {
-  beforeEach(() => {
-    vi.stubEnv("NO_COLOR", "");
-    vi.stubEnv("FORCE_COLOR", "");
-  });
-
   afterEach(() => {
-    vi.unstubAllEnvs();
     if (originalIsTTY) Object.defineProperty(process.stderr, "isTTY", originalIsTTY);
     else Reflect.deleteProperty(process.stderr, "isTTY");
   });

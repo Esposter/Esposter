@@ -13,7 +13,7 @@ Pulumi infrastructure-as-code for Esposter's Azure resources — manages all clo
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/_esposter_infra.html) to level up.
 
 This private package contains Esposter's Azure infrastructure-as-code project. It uses [Pulumi](https://github.com/pulumi/pulumi) with the Azure Native provider to manage Azure resources from TypeScript.
 
@@ -58,6 +58,8 @@ pulumi stack select prod
 - `Pulumi.prod.yaml` holds stack-specific configuration.
 - `docs/` contains architecture, naming, security, and roadmap notes.
 - `src/azure/resources/` contains Pulumi resource declarations grouped by Azure ARM provider namespace and resource type.
+- `src/azure/constants/` holds values shared by more than one resource file — locations, tags, role definition IDs, and settings that must stay identical across stacks.
+- `src/azure/services/` holds the factories that build a repeated block of resource arguments from the few things that differ per resource.
 
 ### Commands
 

@@ -2,7 +2,7 @@
 import { MAX_USER_VOLUME_PERCENTAGE } from "@esposter/db-schema";
 
 interface SliderProps {
-  label?: string;
+  label: string;
 }
 
 const modelValue = defineModel<number>({ required: true });
@@ -12,7 +12,7 @@ defineEmits<{ end: [value: number] }>();
 
 <template>
   <div flex flex-col gap-y-1>
-    <div v-if="label" text-body-medium>{{ label }}</div>
+    <div text-body-medium>{{ label }}</div>
     <div text-body-small>{{ modelValue }}%</div>
     <v-slider
       v-model="modelValue"

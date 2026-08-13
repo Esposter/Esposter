@@ -3,6 +3,77 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* add docs + modifications ([e3b82f1](https://github.com/Esposter/Esposter/commit/e3b82f1284e96089b6376467a155fad28fa1d6dc))
+* add missing Note entry to ResourceOwnedTablesMap and dedupe owned-resource lookup ([b05855e](https://github.com/Esposter/Esposter/commit/b05855ea41156488a3a8d49dd68aa4c6d3dc5ae9))
+* address code review findings on blob lifecycle and attachment urls ([b6213bf](https://github.com/Esposter/Esposter/commit/b6213bfb0d8f9d8544051da920c0abe2718a5d2c))
+* address PR 1004 code review findings ([7d79608](https://github.com/Esposter/Esposter/commit/7d7960882836e1e3bffb7e8ccf46f1e192a05583))
+* address PR 1008 workflow review findings ([4f7eb9d](https://github.com/Esposter/Esposter/commit/4f7eb9d09d62c118171462ad487456e3ef01d8db))
+* **app:** address PR 1017 CodeRabbit findings, CI failures, and docs mobile nav ([924f963](https://github.com/Esposter/Esposter/commit/924f96330477222b10f94c578c36d2012f0ef4d0))
+* clear the remaining confirmed findings from the seam review ([8709cd8](https://github.com/Esposter/Esposter/commit/8709cd8b0687e32fdbec8320bfc0d661c916d043))
+* close the blob-delete gaps this review found ([08f6c83](https://github.com/Esposter/Esposter/commit/08f6c830c439fc96010bb94aefa16908b76bf75d))
+* close the CodeRabbit findings on the publish/replay cohort ([c8db3a5](https://github.com/Esposter/Esposter/commit/c8db3a5651104c7420d5efc3e6119adb54c5b08a))
+* close the defects the develop -> main review found ([2b05608](https://github.com/Esposter/Esposter/commit/2b0560891365eaeade126e5f76ae33ca9982d258))
+* close the defects the develop-to-main review found ([494120b](https://github.com/Esposter/Esposter/commit/494120bf742e6946cc347867187f66e91e2d7a91)), closes [#1029](https://github.com/Esposter/Esposter/issues/1029)
+* close the develop-to-main review findings ([3f29155](https://github.com/Esposter/Esposter/commit/3f29155a720cebf09405c443aa1f5e0ffbb4f04e))
+* code review comments ([a739015](https://github.com/Esposter/Esposter/commit/a739015af42462afb2890c6532220a86b974b1c9))
+* comments and snapshots ([2bd05d9](https://github.com/Esposter/Esposter/commit/2bd05d9ac2e6be0304bf06fb569663578fced448))
+* **db-schema:** let composite keys use any string-format schema ([1479a45](https://github.com/Esposter/Esposter/commit/1479a45194a7d0f8f3bab0c98be218ec3303b1e8))
+* **db:** escape single quotes in Azure OData filter values ([cccc469](https://github.com/Esposter/Esposter/commit/cccc469bdf80374401f32df0b0e6448227254289))
+* drop the shared trpc client stand-in and pin the new deletion contract ([484ec54](https://github.com/Esposter/Esposter/commit/484ec54490c136ef2e057e2424ebf651bf980ac0))
+* **esbabbler:** address CodeRabbit review findings on PR [#1017](https://github.com/Esposter/Esposter/issues/1017) ([99cc3e3](https://github.com/Esposter/Esposter/commit/99cc3e3e967c92fd9f5203dc01eaf2f34e2cec9f))
+* lint ([a267140](https://github.com/Esposter/Esposter/commit/a267140ca8dc8d691db49ca89edd306ceae89faf))
+* lint ([a1b7508](https://github.com/Esposter/Esposter/commit/a1b750832f227379d2dc689bf4528122d48fe76a))
+* lint and snapshot ([b5b333c](https://github.com/Esposter/Esposter/commit/b5b333c7c437d239207a3926212625c9f8a680d1))
+* lint and toctou race ([5af6974](https://github.com/Esposter/Esposter/commit/5af69740326d6e415f96b28a74d4caa6624817da))
+* lint develop and refresh package size snapshots ([bb0c40e](https://github.com/Esposter/Esposter/commit/bb0c40e872cdb23e03c9ed7c2931b1479310ed8c))
+* **lint:** stop oxlint type-aware hang on useFluidSimulator + clear surfaced errors ([404ced5](https://github.com/Esposter/Esposter/commit/404ced53bd00bb2bbf79d15dc3e5079da8881b20))
+* narrow the blob deletion payload instead of reaching through the union ([7198911](https://github.com/Esposter/Esposter/commit/7198911fbbaddb326da30f4195f4b8ab487497fa))
+* **platform:** address CodeRabbit review findings on the survey/program surfaces ([1a24f97](https://github.com/Esposter/Esposter/commit/1a24f97570b26b141880b6be69c2c9e02a4bcc9a))
+* post-merge integration fallout ([d7f882c](https://github.com/Esposter/Esposter/commit/d7f882cbef6cf79fc4aa781366b27a6bababdb47))
+* post-merge integration fallout ([338a728](https://github.com/Esposter/Esposter/commit/338a7280dcca4d5886fae20fb10b63c045da8ade))
+* re-mint expiring read urls and de-collide asset clones ([abe7331](https://github.com/Esposter/Esposter/commit/abe7331485d16f4c407c52b6f229051e7a5bc33f))
+* record the facts these fixes kept guessing at ([376dbb0](https://github.com/Esposter/Esposter/commit/376dbb0c56b264b4128e3da56377e6d9be5928b1))
+* refactor wip ([dd75212](https://github.com/Esposter/Esposter/commit/dd7521242dec77e1d59bdc3f79071bd53f9b7221))
+* remove unnecessary lints ([0db3054](https://github.com/Esposter/Esposter/commit/0db3054ddc6808b7cb09912820f66b27d4858450))
+* resolve oxlint errors ([d9129c7](https://github.com/Esposter/Esposter/commit/d9129c790a6e01acdba2b769c0b2c8c3907f83d4))
+* snapshots ([1fb43ed](https://github.com/Esposter/Esposter/commit/1fb43ede8f60c88b112083c5f01f06c3d8091808))
+* snapshots ([881ecb1](https://github.com/Esposter/Esposter/commit/881ecb15f284319aa6867ccb42b7a7269a9cae66))
+* snapshots ([c5c64fa](https://github.com/Esposter/Esposter/commit/c5c64fa253d142201bd952b9f7a3a135ba642394))
+* snapshots ([1842fc6](https://github.com/Esposter/Esposter/commit/1842fc678909e00dfe32ecaeae3ff373a910321b))
+* snapshots ([e55471d](https://github.com/Esposter/Esposter/commit/e55471d43085dd03cc7f0cc8ba7866e09486767c))
+* snapshots and options ([e274338](https://github.com/Esposter/Esposter/commit/e2743386cda848caad3377c1b199e7924c2cd0f0))
+* snapshots and review wip ([dc3dad0](https://github.com/Esposter/Esposter/commit/dc3dad0c3bb93a3121e82b621a63b2735ff229fc))
+* tar exe ([844742b](https://github.com/Esposter/Esposter/commit/844742bf86402f0c95bd30505215e996cc3338a3))
+* tests ([97bdc81](https://github.com/Esposter/Esposter/commit/97bdc81353183907175d54eb2e6f7cd2cd863a4f))
+* tests and urls ([c857917](https://github.com/Esposter/Esposter/commit/c85791767dbf80fe9c53c25c3b09b567bd44b750))
+* update program invites ([3e6f1fe](https://github.com/Esposter/Esposter/commit/3e6f1fe94d0d31eea90fcbbbbd16df84231d1e17))
+* wip ([acf6466](https://github.com/Esposter/Esposter/commit/acf6466c3340699b1ef5593a27cd5ac80f1e2049))
+* wip ([60a99b8](https://github.com/Esposter/Esposter/commit/60a99b8dde872db6cbc0dd5ac1e006439f3e2881))
+* wip ([b02cc3b](https://github.com/Esposter/Esposter/commit/b02cc3b3d3e90cb6215ccbe21d15c9234cadb765))
+* wip ([726c18a](https://github.com/Esposter/Esposter/commit/726c18af1b45b2bc4b438d24f255ba1be69c159d))
+
+### Features
+
+* Add process blob deletion handler ([1d66a2c](https://github.com/Esposter/Esposter/commit/1d66a2c6a445de75e285c5ae2629d75d939c13b0))
+* Blueprint resource type with deploy and capture ([b70e0d0](https://github.com/Esposter/Esposter/commit/b70e0d07e79068954839dad498513ec265b0030b))
+* **db-schema:** add resource favorites, tags, activity log schema ([f7277bf](https://github.com/Esposter/Esposter/commit/f7277bf5db5f78490c5ffd62bab75e6b82c8e2bf))
+* **db:** add Note resource_type enum value ([f337b6b](https://github.com/Esposter/Esposter/commit/f337b6b358a02b162d231b1a9369e3686ab0844f))
+* **esbabbler:** automod word-filter actions + schema foundation ([1e433fb](https://github.com/Esposter/Esposter/commit/1e433fb42ca71fd0e849020ba37636be863b903a))
+* **esbabbler:** consolidate file uploads, add thumbnails, room limits, and files tab ([87acbcf](https://github.com/Esposter/Esposter/commit/87acbcf61dac83023ebe2b98a2e433b2cc1c562a))
+* **esbabbler:** thread-follow procedures + auto-follow + reply notifications ([9d5d5c5](https://github.com/Esposter/Esposter/commit/9d5d5c5eeaaefa9348b37b6e6a689876448b1631))
+* **infra:** automatic dead-letter replay with attempt cap and quarantine ([4874ab6](https://github.com/Esposter/Esposter/commit/4874ab6677872e4970b54c7c5dfcc2acf5355447))
+* **platform:** close the end-to-end survey funnel ([adc0d50](https://github.com/Esposter/Esposter/commit/adc0d50af12103710cbd5a85550d824c38f5deec))
+* **platform:** TodoList due reminders ([78089f2](https://github.com/Esposter/Esposter/commit/78089f2475bc87e3070e3db57890d6f4507a282d))
+* **resource:** soft delete, favorites, tags, activity log, trigram search ([f741b0f](https://github.com/Esposter/Esposter/commit/f741b0ff4d11082a14be098ab95d3ca9497b06ad))
+
+### Performance Improvements
+
+* **message:** read the create-message gate once instead of rule by rule ([ffa0e59](https://github.com/Esposter/Esposter/commit/ffa0e594d0aa3c7609f51105a4cce7eeade30aab))
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Bug Fixes

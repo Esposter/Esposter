@@ -11,10 +11,6 @@ export const parseVirrunConfiguration = (value: unknown): VirrunConfiguration =>
   getResult(() => virrunConfigurationSchema.parse(value)).match(
     ({ backend, environment }) => (environment ? { backend, environment } : { backend }),
     (error) => {
-      throw new InvalidOperationError(
-        Operation.Read,
-        parseVirrunConfiguration.name,
-        error instanceof Error ? error.message : String(error),
-      );
+      throw new InvalidOperationError(Operation.Read, parseVirrunConfiguration.name, error.message);
     },
   );

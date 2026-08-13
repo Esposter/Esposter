@@ -6,7 +6,8 @@ import { CreatableResourceTypes } from "@/services/resource/CreatableResourceTyp
 import { ResourceTypeDescriptionMap } from "@/services/resource/ResourceTypeDescriptionMap";
 import { RoutePath } from "@esposter/shared";
 
-// Client-side substring match over the type registry — 7 types don't justify server work or a fuzzy library
+// Client-side substring match over the type registry — a registry this small justifies neither server work
+// Nor a fuzzy library
 export const getServiceSearchItems = (searchQuery: string): ResourceSearchItem[] => {
   const query = searchQuery.toLowerCase();
   return CreatableResourceTypes.filter(
@@ -14,12 +15,12 @@ export const getServiceSearchItems = (searchQuery: string): ResourceSearchItem[]
       ResourceDefinitionMap[type].title.toLowerCase().includes(query) ||
       ResourceTypeDescriptionMap[type].toLowerCase().includes(query),
   ).map((type) => ({
-    createTo: RoutePath.ResourcesCreateType(type),
+    createTo: RoutePath.ResourceExplorerCreateType(type),
     group: ResourceSearchGroup.Services,
     icon: ResourceDefinitionMap[type].icon,
     id: `${ResourceSearchGroup.Services}-${type}`,
     subtitle: ResourceTypeDescriptionMap[type],
     title: ResourceDefinitionMap[type].title,
-    to: { path: RoutePath.ResourcesAll, query: { types: type } },
+    to: { path: RoutePath.ResourceExplorerAll, query: { types: type } },
   }));
 };

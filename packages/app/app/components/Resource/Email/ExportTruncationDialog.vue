@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { DATASET_ROW_CAP_DESCRIPTION } from "#shared/services/dataset/constants";
-import { formatTruncationCount } from "#shared/services/dataset/formatTruncationCount";
-import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { pluralize } from "#shared/util/text/pluralize";
+import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
+import { getDatasetTruncation } from "@/services/dataset/getDatasetTruncation";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 
 const exportPersonalizedHtml = useExportPersonalizedHtml();

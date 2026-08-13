@@ -1,11 +1,10 @@
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { standardMessageEntitySchema } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export const readMySentMessagesInputSchema = createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
-  { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
+  CREATED_AT_DESCENDING_SORT_ITEM,
 ])
   .omit({ sortBy: true })
   .prefault({});

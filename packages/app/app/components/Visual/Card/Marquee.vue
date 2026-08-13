@@ -92,7 +92,7 @@ $card-length: 6;
   &::before {
     content: "";
     position: absolute;
-    inset: 4px 4px -2px -2px;
+    inset: 0.25rem 0.25rem -0.125rem -0.125rem;
     border-radius: var(--border-radius);
     background-color: v-bind(onSurface);
     opacity: 0.1;
@@ -107,8 +107,8 @@ $card-length: 6;
     box-shadow:
       0 0 black,
       0 0 black,
-      0 4px 6px -1px rgba(black, 0.1),
-      0 2px 4px -2px rgba(black, 0.1);
+      0 0.25rem 0.375rem -0.0625rem rgba(black, 0.1),
+      0 0.125rem 0.25rem -0.125rem rgba(black, 0.1);
   }
 }
 
@@ -134,10 +134,10 @@ $card-length: 6;
     border 0.25s,
     box-shadow 0.25s;
   scale: calc(1 + (var(--active) * 0.05));
-  transform: translate3d(0, 0, calc(var(--active) * 24px));
+  transform: translate3d(0, 0, calc(var(--active) * 1.5rem));
 }
 
-@container (width < 400px) {
+@container (width < 25rem) {
   .grid {
     --rows: #{$card-length};
     grid-template-columns: 1fr;

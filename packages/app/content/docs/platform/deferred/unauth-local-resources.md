@@ -9,7 +9,7 @@ Editing resources without an account via a localStorage persistence path (the pr
 
 ## Why deferred
 
-Two persistence mechanisms (blob + localStorage) double every save/load path in `useResource` for a niche flow. The consolidation keeps exactly one mechanism; `/resources` is auth-gated.
+Two persistence mechanisms (blob + localStorage) double every save/load path in `useResourceStore` for a niche flow. The consolidation keeps exactly one mechanism; `/resource-explorer` is auth-gated.
 
 ## Revisit when
 

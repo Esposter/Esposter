@@ -30,7 +30,7 @@ export function useOnlineSubscribable<TSource>(
 ): void;
 export function useOnlineSubscribable(
   source: MultiWatchSources | WatchSource,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   callback: (value: any) => Promisable<(() => Promisable<void>) | undefined>,
   context?: OnlineSubscribableContext,
 ) {
@@ -38,27 +38,38 @@ export function useOnlineSubscribable(
   const scope = context?.scope ?? getCurrentScope();
   const online = useOnline();
   const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
+  // One subscription is one target, so tearing the previous one down and establishing the next run as a single
+  // Queued unit — and a subscribe that rejects unwinds on its own instead of wedging every later one behind it
+  const { executeMutation } = useMutation();
+  const key = "subscription";
 
   let currentCleanup: (() => Promisable<void>) | undefined;
   let isActive = true;
-  let chain: Promise<unknown> = Promise.resolve();
 
+  const resubscribe = getSynchronizedFunction(async (value: unknown, isOnline: boolean) => {
+    await executeMutation(
+      async () => {
+        const previousCleanup = currentCleanup;
+        currentCleanup = undefined;
+        await previousCleanup?.();
+
+        if (!isOnline || !isActive) return;
+
+        const newCleanup = await callback(value);
+
+        if (isActive) currentCleanup = newCleanup;
+        else await newCleanup?.();
+      },
+      // A subscription that cannot be established is a background failure of a connection that retries on the
+      // Next online or source change, not something to put in front of the user
+      { key, onError: console.error },
+    );
+  });
   const { trigger } = watchTriggerable(sources, (values) => {
     const isOnline = online.value;
     const value = isOnline ? (Array.isArray(source) ? values.slice(0, -1) : values[0]) : null;
 
-    chain = chain.then(async () => {
-      const previousCleanup = currentCleanup;
-      currentCleanup = undefined;
-      await previousCleanup?.();
-
-      if (!isOnline || !isActive) return;
-
-      const newCleanup = await callback(value);
-
-      if (isActive) currentCleanup = newCleanup;
-      else await newCleanup?.();
-    });
+    resubscribe(value, isOnline);
   });
 
   onMounted(() => {

@@ -1,5 +1,5 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-import type { CallParticipantTileProps } from "@/components/Message/Content/Call/Participant/Tile.vue";
+import type { CallParticipantTileProps } from "@/models/message/room/call/CallParticipantTileProps";
 
 import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
@@ -33,15 +33,12 @@ export const useCallParticipantTiles = () => {
   });
   const getParticipantTileProps = (participant: CallParticipant): CallParticipantTileProps => ({
     isDeafened: isDeafened.value && participant.id === sessionId.value,
-    isHandRaised: participant.isHandRaised,
     isScreenSharing: screenSharingParticipantIds.value.includes(participant.id),
     isSelf: participant.id === sessionId.value,
     isSpeaking: speakingIds.value.includes(participant.id),
     participant,
     videoStream:
-      participant.id === sessionId.value
-        ? (localVideoStream.value ?? undefined)
-        : remoteVideoStreams.value.get(participant.id),
+      participant.id === sessionId.value ? localVideoStream.value : remoteVideoStreams.value.get(participant.id),
   });
   return { callParticipantMap, getParticipantTileProps, presenterName, sessionId };
 };

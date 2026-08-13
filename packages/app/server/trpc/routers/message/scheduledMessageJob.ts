@@ -12,6 +12,7 @@ import { useServiceBusSender } from "@@/server/composables/azure/serviceBus/useS
 import { ownedBy } from "@@/server/services/db/ownedBy";
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
+import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
@@ -27,13 +28,17 @@ import {
   ScheduledMessageJobType,
   scheduledMessageScheduledMessageJobPayloadSchema,
 } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getResultAsync, noop, Operation, WordFilteredError } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
 
-// Not yet cancelled or completed.
+// Not yet cancelled, completed, or claimed by the delivery handler. `processingStartedAt` is what makes the claim
+// Single-shot: once ProcessScheduledMessageJob has stamped it the job is being delivered, so the owner can no
+// Longer cancel, reschedule or send it — every one of those would race a message that is already on its way out
 const isActiveScheduledMessageJob = and(
   isNull(scheduledMessageJobsInMessage.cancelledAt),
   isNull(scheduledMessageJobsInMessage.completedAt),
+  isNull(scheduledMessageJobsInMessage.processingStartedAt),
 );
 // An active scheduled-message job owned by the user — the precondition for cancelling/rescheduling/sending it.
 const isCancellableScheduledMessage = (id: string, userId: string) =>
@@ -42,12 +47,22 @@ const isCancellableScheduledMessage = (id: string, userId: string) =>
     isActiveScheduledMessageJob,
     sql`${scheduledMessageJobsInMessage.payload}->>'type' = ${ScheduledMessageJobType.ScheduledMessage}`,
   );
+// Every write in this router either lands a job row or must fail — the row is what the delivery handler reads
+const requireScheduledMessageJob = (
+  job: ScheduledMessageJobInMessage | undefined,
+  operation: Operation,
+  context: string,
+  code?: "BAD_REQUEST" | "NOT_FOUND",
+) => requireMutation(job, operation, DatabaseEntityType.ScheduledMessageJob, context, code);
+// A persisted job is only delivered once its queue message exists, so the queue binding lives in one place
+const enqueueJob = ({ id, runAt }: ScheduledMessageJobInMessage) =>
+  enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), id, runAt);
 
 export const scheduledMessageJobRouter = router({
   cancelScheduledJob: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
     .mutation<ScheduledMessageJobInMessage>(async ({ ctx, input }) =>
-      requireMutation(
+      requireScheduledMessageJob(
         (
           await ctx.db
             .update(scheduledMessageJobsInMessage)
@@ -61,7 +76,6 @@ export const scheduledMessageJobRouter = router({
             .returning()
         )[0],
         Operation.Update,
-        DatabaseEntityType.ScheduledMessageJob,
         input.id,
         "NOT_FOUND",
       ),
@@ -82,13 +96,10 @@ export const scheduledMessageJobRouter = router({
         .orderBy(asc(scheduledMessageJobsInMessage.runAt))
         .limit(limit + 1)
         .offset(offset);
-      const items = rows
-        .slice(0, limit)
-        .map(({ room, scheduledMessageJob }) => Object.assign(scheduledMessageJob, { room }));
-      return {
-        hasMore: rows.length > limit,
-        items,
-      };
+      return getOffsetPaginationData(
+        rows.map(({ room, scheduledMessageJob }) => Object.assign(scheduledMessageJob, { room })),
+        limit,
+      );
     }),
   readMyScheduledJobsCount: standardAuthedProcedure.query<number>(
     async ({ ctx }) =>
@@ -120,7 +131,7 @@ export const scheduledMessageJobRouter = router({
     async ({ ctx, input }) => {
       await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
       const job = await ctx.db.transaction(async (tx) => {
-        requireMutation(
+        requireScheduledMessageJob(
           (
             await tx
               .update(scheduledMessageJobsInMessage)
@@ -129,11 +140,10 @@ export const scheduledMessageJobRouter = router({
               .returning()
           )[0],
           Operation.Update,
-          DatabaseEntityType.ScheduledMessageJob,
           input.id,
           "NOT_FOUND",
         );
-        return requireMutation(
+        return requireScheduledMessageJob(
           (
             await tx
               .insert(scheduledMessageJobsInMessage)
@@ -146,18 +156,17 @@ export const scheduledMessageJobRouter = router({
               .returning()
           )[0],
           Operation.Create,
-          DatabaseEntityType.ScheduledMessageJob,
           JSON.stringify(input),
         );
       });
-      await enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      await enqueueJob(job);
       return job;
     },
   ),
   scheduleMessage: getMemberProcedure(scheduleMessageInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
       await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
-      const job = requireMutation(
+      const job = requireScheduledMessageJob(
         (
           await ctx.db
             .insert(scheduledMessageJobsInMessage)
@@ -170,16 +179,15 @@ export const scheduledMessageJobRouter = router({
             .returning()
         )[0],
         Operation.Create,
-        DatabaseEntityType.ScheduledMessageJob,
         JSON.stringify(input),
       );
-      await enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      await enqueueJob(job);
       return job;
     },
   ),
   scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
-      const job = requireMutation(
+      const job = requireScheduledMessageJob(
         (
           await ctx.db
             .insert(scheduledMessageJobsInMessage)
@@ -192,36 +200,73 @@ export const scheduledMessageJobRouter = router({
             .returning()
         )[0],
         Operation.Create,
-        DatabaseEntityType.ScheduledMessageJob,
         JSON.stringify(input),
       );
-      await enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      await enqueueJob(job);
       return job;
     },
   ),
   sendScheduledMessageNow: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
-      const scheduledMessageJob = requireMutation(
-        (
-          await ctx.db
-            .update(scheduledMessageJobsInMessage)
-            .set({ cancelledAt: new Date() })
-            .where(isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id))
-            .returning()
-        )[0],
+      const where = isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id);
+      const scheduledMessageJob = requireScheduledMessageJob(
+        (await ctx.db.select().from(scheduledMessageJobsInMessage).where(where).limit(1))[0],
         Operation.Update,
-        DatabaseEntityType.ScheduledMessageJob,
         input.id,
         "NOT_FOUND",
       );
-      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
       const payload = scheduledMessageScheduledMessageJobPayloadSchema.parse(scheduledMessageJob.payload);
-      return createUserMessage(ctx.db, ctx.getSessionPayload, {
-        files: [],
-        message: payload.message,
-        roomId: scheduledMessageJob.roomId,
-        type: MessageType.Message,
+      // Every guard `createUserMessage` would reject on runs before the job is flipped to cancelled. Checked
+      // Afterwards, a rejection — non-member, slowmode, timeout, word filter — burns the job without ever
+      // Sending its message, and nothing reschedules it: the send fails and the scheduled message is gone
+      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
+      // The word filter is the exception: it already applied the room's automod action, and its inputs are
+      // Both stored, so leaving the job scheduled hands the worker the same block at `runAt` — a second
+      // Timeout and a second audit row for one message. Burn it here instead, exactly as the worker does
+      await getResultAsync(() =>
+        assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, scheduledMessageJob.roomId, payload.message),
+      ).match(noop, async (error) => {
+        if (error instanceof TRPCError && error.cause instanceof WordFilteredError)
+          await ctx.db.update(scheduledMessageJobsInMessage).set({ cancelledAt: new Date() }).where(where);
+        throw error;
       });
+      // The claim is this update, not the select above: `isCancellableScheduledMessage` excludes a job the
+      // Delivery handler has already stamped, so a handler that wins the gap leaves nothing to cancel here and
+      // The caller is told NOT_FOUND rather than both paths posting the same message
+      requireScheduledMessageJob(
+        (
+          await ctx.db.update(scheduledMessageJobsInMessage).set({ cancelledAt: new Date() }).where(where).returning()
+        )[0],
+        Operation.Update,
+        input.id,
+        "NOT_FOUND",
+      );
+      // A send that fails past the guards — a transient Table write, a serialization error — must not burn the
+      // Job: lifting the claim leaves the message scheduled, so the caller's error means "not sent", never "lost".
+      // The delivery may have already been consumed and skipped on the tombstone, so the job is re-enqueued with
+      // It; a delivery that is still pending just makes two, and the handler's single-shot claim sends once
+      return getResultAsync(() =>
+        createUserMessage(ctx.db, ctx.getSessionPayload, {
+          files: [],
+          message: payload.message,
+          roomId: scheduledMessageJob.roomId,
+          type: MessageType.Message,
+        }),
+      ).match(
+        (message) => message,
+        async (error) => {
+          // `createUserMessage` re-runs the guards, so the word filter can still block here — a moderator editing
+          // The filter in the gap is enough. Rescheduling that would hand the worker the same block at `runAt`,
+          // Which is the second timeout and second audit row the pre-check above burns the job to avoid
+          if (error instanceof TRPCError && error.cause instanceof WordFilteredError) throw error;
+          await ctx.db
+            .update(scheduledMessageJobsInMessage)
+            .set({ cancelledAt: null })
+            .where(ownedBy(scheduledMessageJobsInMessage, input.id, ctx.getSessionPayload.user.id));
+          await enqueueJob(scheduledMessageJob);
+          throw error;
+        },
+      );
     }),
 });

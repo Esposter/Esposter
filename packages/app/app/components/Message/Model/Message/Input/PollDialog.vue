@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
 
-import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
+import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
+import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "@/services/message/poll/constants";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
@@ -16,7 +17,7 @@ const { isOpen } = storeToRefs(pollDialogStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const question = ref("");
-const options = ref(["", ""]);
+const options = ref(Array.from<string>({ length: POLL_MIN_OPTIONS }).fill(""));
 const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
   await withFinalizerAsync(async () => {
     if (!currentRoomId.value) return;
@@ -48,7 +49,7 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
         />
         <template #append>
           <StyledTooltipIconButton
-            :button-props="{ disabled: options.length <= 2, size: 'small' }"
+            :button-props="{ disabled: options.length <= POLL_MIN_OPTIONS, size: 'small' }"
             icon="mdi-close"
             text="Remove option"
             @click="options.splice(index, 1)"
@@ -58,11 +59,16 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
     </v-list>
     <v-tooltip text="Add option">
       <template #activator="{ props: tooltipProps }">
-        <v-btn :disabled="options.length >= 10" prepend-icon="mdi-plus" :="tooltipProps" @click="options.push('')">
+        <v-btn
+          :disabled="options.length >= POLL_MAX_OPTIONS"
+          prepend-icon="mdi-plus"
+          :="tooltipProps"
+          @click="options.push('')"
+        >
           Add Option
         </v-btn>
       </template>
     </v-tooltip>
-    <template #prepend-actions> {{ options.length }}/10 options </template>
+    <template #prepend-actions> {{ options.length }}/{{ POLL_MAX_OPTIONS }} options </template>
   </StyledFormDialog>
 </template>

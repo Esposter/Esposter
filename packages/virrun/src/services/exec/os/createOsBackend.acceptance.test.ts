@@ -22,12 +22,12 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace install (acceptance)", () => {
   // The whole monorepo's dependency closure materializes well past this many files; a lower count means the
   // Install silently did not complete in the RAM overlay.
-  const minNodeModulesFileCount = 100000;
+  const minimumNodeModulesFileCount = 100_000;
   let corpus = "";
 
   beforeAll(() => {
-    const repoRoot = findRepoRoot();
-    corpus = createWorkspaceCorpus(repoRoot);
+    const repositoryRoot = findRepoRoot();
+    corpus = createWorkspaceCorpus(repositoryRoot);
   });
 
   afterAll(() => {
@@ -44,7 +44,7 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
       // Binary (esbuild's Go executable) actually runs inside the sandbox.
       const command = [
         resolveSetupCommand(),
-        `test "$(find . -path '*/${NODE_MODULES_DIRECTORY}/*' -type f | wc -l)" -gt ${minNodeModulesFileCount}`,
+        `test "$(find . -path '*/${NODE_MODULES_DIRECTORY}/*' -type f | wc -l)" -gt ${minimumNodeModulesFileCount}`,
         FIND_ESBUILD_BINARY_COMMAND,
         RUN_ESBUILD_VERSION_COMMAND,
         `echo ${TEST_FILENAME}`,

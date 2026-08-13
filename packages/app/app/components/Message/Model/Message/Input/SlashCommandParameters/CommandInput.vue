@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getIsCaretAtEnd } from "@/util/dom/getIsCaretAtEnd";
+
 interface CommandInputProps {
   isFocused?: boolean;
 }
@@ -12,16 +14,8 @@ const emit = defineEmits<{
 }>();
 const modelValue = defineModel<string>({ required: true });
 const input = useTemplateRef("input");
-const { trigger } = watchTriggerable(
-  () => isFocused,
-  (newIsFocused) => {
-    if (newIsFocused) input.value?.focus();
-  },
-);
 
-onMounted(() => {
-  trigger();
-});
+useFocusWhenActive(input, () => isFocused);
 </script>
 
 <template>
@@ -42,11 +36,9 @@ onMounted(() => {
       @keydown.space.prevent="emit('navigate:next')"
       @keydown.tab.prevent="emit('navigate:next')"
       @keydown.delete="!modelValue && emit('delete')"
-      @keydown.backspace="!modelValue && emit('delete')"
       @keydown.right.exact="
         (event) => {
-          const target = event.target as HTMLInputElement;
-          if (target.selectionStart === target.value.length && target.selectionEnd === target.value.length) {
+          if (getIsCaretAtEnd(event.target as HTMLInputElement)) {
             event.preventDefault();
             emit('navigate:next');
           }

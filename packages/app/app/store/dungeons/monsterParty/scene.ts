@@ -14,10 +14,10 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   });
   const isPlayerFainted = computed(() => monsters.value.every(({ status }) => status.hp === 0));
   const monstersGrid = computed(() => {
-    const monstersGrid: Monster[][] = [];
+    const grid: Monster[][] = [];
     for (let i = 0; i < Math.min(ROW_SIZE * COLUMN_SIZE, monsters.value.length); i += COLUMN_SIZE)
-      monstersGrid.push(monsters.value.slice(i, Math.min(i + COLUMN_SIZE, monsters.value.length)));
-    return monstersGrid;
+      grid.push(monsters.value.slice(i, Math.min(i + COLUMN_SIZE, monsters.value.length)));
+    return grid;
   });
   const sceneMode = ref(SceneMode.Default);
   const monsterIdToMove = ref("");

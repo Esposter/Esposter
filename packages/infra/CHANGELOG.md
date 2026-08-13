@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.36.0](https://github.com/Esposter/Esposter/compare/v2.35.0...v2.36.0) (2026-07-30)
+
+### Bug Fixes
+
+* address CodeRabbit findings on storage-quotas and policy rename ([a0af799](https://github.com/Esposter/Esposter/commit/a0af799b148b9566fd3c639f88793f7ad35dd772))
+* address post-merge code review findings ([548024d](https://github.com/Esposter/Esposter/commit/548024df27a73e4b9a8f1467c91717c734021812))
+* CI failures, CodeRabbit findings, and Basic-tier reminder dedupe ([96fd87a](https://github.com/Esposter/Esposter/commit/96fd87a1af102dd0314d60b040d3199e546848aa))
+* close lint findings on the resource cleanup tests ([c1c3230](https://github.com/Esposter/Esposter/commit/c1c323010a0ef3c9391050962571c07376a813a0))
+* close the CodeRabbit findings on the publish/replay cohort ([c8db3a5](https://github.com/Esposter/Esposter/commit/c8db3a5651104c7420d5efc3e6119adb54c5b08a))
+* close the develop-to-main review findings ([3f29155](https://github.com/Esposter/Esposter/commit/3f29155a720cebf09405c443aa1f5e0ffbb4f04e))
+* close the remaining develop-to-main review findings ([358e350](https://github.com/Esposter/Esposter/commit/358e3504c273bf91fad6ec96f4d30092d0cc92fa))
+* code review comments ([a739015](https://github.com/Esposter/Esposter/commit/a739015af42462afb2890c6532220a86b974b1c9))
+* docs ([a8e82da](https://github.com/Esposter/Esposter/commit/a8e82dac4f8eca451a036e4bda8f8aa61aa4df3f))
+* **infra:** grant the Logic App identities EventGrid Contributor ([70a8594](https://github.com/Esposter/Esposter/commit/70a85940e19fe91c375f9a23af2794329b0edcc2))
+* **infra:** let the event subscription watchdog write its dead-letter link ([ffb50ab](https://github.com/Esposter/Esposter/commit/ffb50ab6d6a0b95053f92fb5eea1f13264797abb))
+* **infra:** tear down the storage system-topic subscription with the guard ([d9a4807](https://github.com/Esposter/Esposter/commit/d9a4807cf3d5f5f2b50d6a623169208140eb4557))
+* lint ([4c7d254](https://github.com/Esposter/Esposter/commit/4c7d25424784f4632d82778e22b7ece6a48f51c7))
+* lint and tests ([d3dc93a](https://github.com/Esposter/Esposter/commit/d3dc93a81f1bb0dca065d47ed91c7ab252579979))
+* pulumi ([beae6b8](https://github.com/Esposter/Esposter/commit/beae6b82efcf850e3b6e1b8492148d2eed265a95))
+* resolve notify closures by binding, restore dead-lettering on recreate ([14bb140](https://github.com/Esposter/Esposter/commit/14bb1404ff931ba1657178b8a1dd1b7fb1ac9f83))
+* snapshot ([01966c3](https://github.com/Esposter/Esposter/commit/01966c3534f5bfd6e389239be4fd9cb94ba8b02a))
+* snapshot ([6b137e7](https://github.com/Esposter/Esposter/commit/6b137e7366439814ad41c165bd864b28435bd425))
+* snapshots ([7e6429c](https://github.com/Esposter/Esposter/commit/7e6429c68b51eb9e6cbf064fab938eee349d87c2))
+* snapshots ([881ecb1](https://github.com/Esposter/Esposter/commit/881ecb15f284319aa6867ccb42b7a7269a9cae66))
+* snapshots ([d505054](https://github.com/Esposter/Esposter/commit/d505054f6b852fca4fb57131c682cc8a8e1d7466))
+* snapshots ([f5eadf4](https://github.com/Esposter/Esposter/commit/f5eadf4a15126ab6c3de9d088f1419bd6ea625db))
+* status checks and snapshots ([d5865d6](https://github.com/Esposter/Esposter/commit/d5865d6e27cdab38240462b59ccf51e668aa1a5a))
+* tests ([97bdc81](https://github.com/Esposter/Esposter/commit/97bdc81353183907175d54eb2e6f7cd2cd863a4f))
+* types and tests ([e866d77](https://github.com/Esposter/Esposter/commit/e866d772c57ad1f320603b053674729c11713fb8))
+* wip ([60a99b8](https://github.com/Esposter/Esposter/commit/60a99b8dde872db6cbc0dd5ac1e006439f3e2881))
+* wip ([b02cc3b](https://github.com/Esposter/Esposter/commit/b02cc3b3d3e90cb6215ccbe21d15c9234cadb765))
+* wip ([efe6f55](https://github.com/Esposter/Esposter/commit/efe6f553039e9e05c48ed7600073748038a75f6d))
+
+### Features
+
+* Add process blob deletion handler ([1d66a2c](https://github.com/Esposter/Esposter/commit/1d66a2c6a445de75e285c5ae2629d75d939c13b0))
+* **infra:** adopt Function App runtime settings into Pulumi ([7b36e3b](https://github.com/Esposter/Esposter/commit/7b36e3b3b3bc83a8d924025ac656ffe5752d52b4))
+* **infra:** automatic dead-letter replay with attempt cap and quarantine ([4874ab6](https://github.com/Esposter/Esposter/commit/4874ab6677872e4970b54c7c5dfcc2acf5355447))
+* **infra:** cap Log Analytics daily ingestion and adaptively sample App Insights ([0dbd500](https://github.com/Esposter/Esposter/commit/0dbd5004f658d9649302b9435c065a47dd6a1f4c)), closes [high-volume](https://github.com/hi/issues/volume)
+* **infra:** Event Grid dead-letter container, retry tightening, and replay script ([df83e24](https://github.com/Esposter/Esposter/commit/df83e246ced8a7be1d5ce415544ca7e5ac0d09e1))
+* **platform:** TodoList due reminders ([78089f2](https://github.com/Esposter/Esposter/commit/78089f2475bc87e3070e3db57890d6f4507a282d))
+
+### Reverts
+
+* drop spurious alias on paEsposter001 ([515051d](https://github.com/Esposter/Esposter/commit/515051d5761985d6507b1dc8907309757b12b89b))
+
 # [2.35.0](https://github.com/Esposter/Esposter/compare/v2.34.2...v2.35.0) (2026-07-15)
 
 ### Features

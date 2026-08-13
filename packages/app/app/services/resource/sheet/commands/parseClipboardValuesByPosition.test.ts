@@ -3,34 +3,18 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(parseClipboardValuesByPosition, () => {
-  test("parses single row with single value", () => {
-    expect.hasAssertions();
-    expect(parseClipboardValuesByPosition("a")).toStrictEqual([["a"]]);
-  });
-
   test("splits tab-separated values into columns", () => {
     expect.hasAssertions();
+    expect(parseClipboardValuesByPosition("a")).toStrictEqual([["a"]]);
     expect(parseClipboardValuesByPosition("a\tb\tc")).toStrictEqual([["a", "b", "c"]]);
   });
 
-  test("parses multiple rows", () => {
+  test.each(["a\tb\n1\t2", "a\tb\r\n1\t2"])("parses multiple rows out of %j", (text) => {
     expect.hasAssertions();
-
-    const result = parseClipboardValuesByPosition("a\tb\n1\t2");
-
-    expect(result).toHaveLength(2);
-    expect(takeOne(result)).toStrictEqual(["a", "b"]);
-    expect(takeOne(result, 1)).toStrictEqual(["1", "2"]);
-  });
-
-  test("handles CRLF line endings", () => {
-    expect.hasAssertions();
-
-    const result = parseClipboardValuesByPosition("a\tb\r\n1\t2");
-
-    expect(result).toHaveLength(2);
-    expect(takeOne(result)).toStrictEqual(["a", "b"]);
-    expect(takeOne(result, 1)).toStrictEqual(["1", "2"]);
+    expect(parseClipboardValuesByPosition(text)).toStrictEqual([
+      ["a", "b"],
+      ["1", "2"],
+    ]);
   });
 
   test("filters whitespace-only lines", () => {

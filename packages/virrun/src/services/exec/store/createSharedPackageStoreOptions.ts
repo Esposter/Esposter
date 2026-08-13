@@ -28,10 +28,9 @@ const ensureGitIgnoreEntry = (workspaceRoot: string) => {
   if (isIgnored) return;
   appendFileSync(
     gitignore,
-    `${gitignoreContent.endsWith("\n") || gitignoreContent === "" ? "" : "\n"}${VIRRUN_GITIGNORE_ENTRY}\n`,
+    `${!gitignoreContent || gitignoreContent.endsWith("\n") ? "" : "\n"}${VIRRUN_GITIGNORE_ENTRY}\n`,
   );
 };
-
 // `cacheRoot` is the `.virrun` directory the store lives under — the repo's own on Linux, but the WSL distro's
 // Ext4 home on win32 (see getWslNativeCacheRoot), since the repo path resolves to slow v9fs inside the sandbox.
 // The caller (createVirrun) owns that platform decision so this stays a pure function of its inputs.

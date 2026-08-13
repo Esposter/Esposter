@@ -1,9 +1,8 @@
 import { MimeType } from "#shared/models/file/MimeType";
+import { getIsRateLimitExceeded } from "@@/server/services/rateLimiter/getIsRateLimitExceeded";
 import { webhookRateLimiter } from "@@/server/services/rateLimiter/webhookRateLimiter";
-import { RestError } from "@azure/storage-blob";
 import { selectWebhookInMessageSchema } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
-import { RateLimiterRes } from "rate-limiter-flexible";
 
 export default defineEventHandler(async (event) => {
   const { id: rawId, token: rawToken } = getRouterParams(event);
@@ -19,6 +18,9 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   return getResultAsync(async () => {
     await webhookRateLimiter.consume(id);
+    // This route is a thin proxy for the function that owns the webhook: it answers 404 for an unknown id or a
+    // Wrong token and 400 for an invalid payload, and a rejected response would collapse every one of those into
+    // The internal-error branch below, so the sender could not tell a bad credential from an Esposter outage
     const { _data, status } = await $fetch.raw<unknown>(
       `${runtimeConfig.public.azure.function.baseUrl}/api/webhooks/${id}/${token}`,
       {
@@ -27,6 +29,7 @@ export default defineEventHandler(async (event) => {
           "Content-Type": MimeType.Json,
           "x-functions-key": runtimeConfig.azure.function.key,
         },
+        ignoreResponseError: true,
         method: "POST",
       },
     );
@@ -35,10 +38,7 @@ export default defineEventHandler(async (event) => {
   }).match(
     (data) => data,
     (error) => {
-      if (error instanceof RestError) {
-        setResponseStatus(event, error.statusCode ?? 502);
-        return error.cause;
-      } else if (error instanceof RateLimiterRes) {
+      if (getIsRateLimitExceeded(error)) {
         setResponseStatus(event, 429);
         return { message: "Rate limit exceeded." };
       } else {

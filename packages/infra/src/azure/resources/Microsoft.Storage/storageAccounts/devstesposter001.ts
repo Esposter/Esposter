@@ -36,12 +36,7 @@ export const devstesposter001: azure_native.storage.StorageAccount = new azure_n
     networkRuleSet: {
       bypass: azure_native.storage.Bypass.AzureServices,
       defaultAction: azure_native.storage.DefaultAction.Allow,
-      ipRules: [
-        {
-          action: azure_native.storage.Action.Allow,
-          iPAddressOrRange: "172.212.169.145",
-        },
-      ],
+      ipRules: [],
       virtualNetworkRules: [],
     },
     publicNetworkAccess: azure_native.storage.PublicNetworkAccess.Enabled,

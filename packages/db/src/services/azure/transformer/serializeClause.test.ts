@@ -3,6 +3,7 @@ import { serializeClause } from "@/services/azure/transformer/serializeClause";
 import { BinaryOperator, CompositeKeyPropertyNames, escapeValue, SearchOperator } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
+// The isTableFilter value matrix lives in serializeValue.test.ts; here only the clause assembly.
 describe(serializeClause, () => {
   test("serializes", () => {
     expect.hasAssertions();

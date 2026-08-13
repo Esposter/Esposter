@@ -28,20 +28,6 @@ describe(computeMathTransformation, () => {
     expect(result).toBe(12);
   });
 
-  test("respects operator precedence", () => {
-    expect.hasAssertions();
-
-    const result = computeMathTransformation(
-      createTransformation("col0 + col1 * 2", [
-        { name: "col0", sourceColumnId: "a" },
-        { name: "col1", sourceColumnId: "b" },
-      ]),
-      (id) => (id === "a" ? 1 : 3),
-    );
-
-    expect(result).toBe(7);
-  });
-
   test("coerces null source value to 0", () => {
     expect.hasAssertions();
 

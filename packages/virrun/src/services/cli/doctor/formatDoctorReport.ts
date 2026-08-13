@@ -4,6 +4,7 @@ import { Color } from "@/models/cli/Color";
 import { DiagnosticCheckType } from "@/models/cli/DiagnosticCheckType";
 import { DiagnosticStatus } from "@/models/cli/DiagnosticStatus";
 import { colorize } from "@/services/cli/color/colorize";
+import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 // The status column word for each outcome; padded to the widest ("MISSING") so the note column aligns.
 const STATUS_LABEL_MAP = {
@@ -34,8 +35,7 @@ const formatSummary = (checks: readonly DiagnosticCheck[]): string => {
   const isSandboxMissing = checks.some(
     (check) => check.type === DiagnosticCheckType.Sandbox && check.status === DiagnosticStatus.Missing,
   );
-  if (isSandboxMissing)
-    return formatVirrunLine(colorize("os backend unavailable — commands fall back to native (un-isolated)", Color.Red));
+  if (isSandboxMissing) return formatVirrunError("os backend unavailable — commands fall back to native (un-isolated)");
   else if (checks.every((check) => check.status !== DiagnosticStatus.Missing))
     return formatVirrunLine(colorize("os backend ready — `virrun -- <cmd>` runs sandboxed", Color.Green));
   else

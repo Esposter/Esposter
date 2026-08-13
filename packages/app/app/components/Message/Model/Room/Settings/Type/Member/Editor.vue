@@ -14,11 +14,11 @@ const roleStore = useRoleStore();
 const { assignRole, getMemberRoles, getMyPermissions, getRoles, readMemberRoles, revokeRole } = roleStore;
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
 const memberRoles = computed(() => getMemberRoles(roomId, member.id));
+const myPermissions = computed(() => getMyPermissions(roomId));
 const hasRole = (roleId: string) => memberRoles.value.some(({ id }) => id === roleId);
-const isRoleManageable = (role: RoomRoleInMessage) => {
-  const myPermissions = getMyPermissions(roomId);
-  if (!myPermissions) return false;
-  return checkIsManageable(myPermissions.topRolePosition, role.position, myPermissions.isRoomOwner);
+const checkIsRoleManageable = ({ position }: RoomRoleInMessage) => {
+  if (!myPermissions.value) return false;
+  return checkIsManageable(myPermissions.value.topRolePosition, position, myPermissions.value.isRoomOwner);
 };
 
 await readMemberRoles({ roomId, userIds: [member.id] });
@@ -34,11 +34,11 @@ await readMemberRoles({ roomId, userIds: [member.id] });
     <v-list v-else density="compact" rd>
       <v-list-item v-for="role of allRoles" :key="role.id" :title="role.name">
         <template #prepend>
-          <div mr-2 rd-full size-3 :style="{ backgroundColor: role.color || 'rgb(var(--v-theme-surface))' }" />
+          <MessageModelRoomSettingsTypeRoleColorDot mr-2 :color="role.color" />
         </template>
         <template #append>
           <v-switch
-            :disabled="!isRoleManageable(role)"
+            :disabled="!checkIsRoleManageable(role)"
             :model-value="hasRole(role.id)"
             color="primary"
             density="compact"

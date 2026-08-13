@@ -40,7 +40,7 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     this.#originalRowValues = originalRowValues;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     const columnIndex = dataSource.columns.findIndex(({ name }) => name === this.#originalName);
     if (columnIndex === -1) return;
     const column = takeOne(dataSource.columns, columnIndex);
@@ -59,11 +59,11 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const dateFormatChange =
       column.type === ColumnType.Date && this.#updatedColumn.type === ColumnType.Date
         ? { newFormat: this.#updatedColumn.format, oldFormat: column.format }
-        : null;
+        : undefined;
     const newColumn = ColumnTypeCreateMap[this.#updatedColumn.type].create();
     Object.assign(newColumn, this.#updatedColumn);
     dataSource.columns[columnIndex] = newColumn;
-    if (dateFormatChange !== null && dateFormatChange.oldFormat !== dateFormatChange.newFormat) {
+    if (dateFormatChange && dateFormatChange.oldFormat !== dateFormatChange.newFormat) {
       const { newFormat, oldFormat } = dateFormatChange;
       let size = 0;
       for (const row of dataSource.rows) {
@@ -92,7 +92,7 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     }
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     const updatedName = this.#updatedColumn.name;
     const columnIndex = dataSource.columns.findIndex(({ name }) => name === updatedName);
     if (columnIndex === -1) return;

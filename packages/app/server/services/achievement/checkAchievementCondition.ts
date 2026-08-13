@@ -12,9 +12,9 @@ export const checkAchievementCondition = (
 ): boolean => {
   switch (condition.type) {
     case AchievementConditionType.And:
-      return condition.conditions.every((c) => checkAchievementCondition(c, data));
+      return condition.conditions.every((childCondition) => checkAchievementCondition(childCondition, data));
     case AchievementConditionType.Or:
-      return condition.conditions.some((c) => checkAchievementCondition(c, data));
+      return condition.conditions.some((childCondition) => checkAchievementCondition(childCondition, data));
     case AchievementConditionType.Property: {
       // @ts-expect-error achievementDefinitions is well-typed at its definition site
       const value = condition.path.split(".").reduce((property, key) => property?.[key], data);
@@ -24,7 +24,13 @@ export const checkAchievementCondition = (
         case AchievementOperator.IsPalindrome: {
           if (typeof value !== "string") return false;
           const sanitizedValue = value.toLowerCase().replaceAll(/[^a-z0-9]/gu, "");
-          return sanitizedValue === [...EN_US_SEGMENTER.segment(sanitizedValue)].toReversed().join("");
+          return (
+            sanitizedValue ===
+            [...EN_US_SEGMENTER.segment(sanitizedValue)]
+              .map(({ segment }) => segment)
+              .toReversed()
+              .join("")
+          );
         }
         case AchievementOperator.Matches:
           if (!(condition.value instanceof RegExp)) return false;

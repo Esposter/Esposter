@@ -5,7 +5,7 @@ import { useInputStore } from "@/store/message/input";
 import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const router = useRouter();
+const { currentRoute } = useRouter();
 const inputStore = useInputStore();
 const { drafts } = storeToRefs(inputStore);
 const scheduledMessageJobCount = await $trpc.message.scheduledMessageJob.readMyScheduledJobsCount.query();
@@ -14,9 +14,6 @@ const items = computed(
     [
       {
         icon: "mdi-account-group-outline",
-        onClick: async () => {
-          await navigateTo(RoutePath.MessagesFriends);
-        },
         title: "Friends",
         value: RoutePath.MessagesFriends,
       },
@@ -26,9 +23,6 @@ const items = computed(
           { count: scheduledMessageJobCount, icon: "mdi-clock-outline" },
         ].filter(({ count }) => count > 0),
         icon: "mdi-send-outline",
-        onClick: async () => {
-          await navigateTo(RoutePath.MessagesDraftsAndSent);
-        },
         title: "Drafts & sent",
         value: RoutePath.MessagesDraftsAndSent,
       },
@@ -42,13 +36,13 @@ const items = computed(
     <v-divider />
     <div flex-1 overflow-y-auto>
       <v-list-item
-        v-for="{ badges, icon, onClick, title, value } of items"
+        v-for="{ badges, icon, title, value } of items"
         :key="value"
         font-bold
-        :active="router.currentRoute.value.path === value"
+        :active="currentRoute.path === value"
         :prepend-icon="icon"
         :title
-        @click="onClick()"
+        :to="value"
       >
         <template v-if="badges?.length" #append>
           <div flex items-center text-body-small>

@@ -61,7 +61,9 @@ When only dependency versions change, follow the dependency update process and r
 pnpm refresh:lockfile
 ```
 
-To bump the node version, run `pnpm update:node [version]` — it edits `engines.node` + the `@types/node` catalog, installs/switches via fnm, and removes the old version in one call (then refresh the lockfile).
+An install that dies in the app's `postinstall` (`nuxt prepare`) on `Cannot find module '@nuxt/devtools-kit'` is local `node_modules` drift, not a bad lockfile. `@tresjs/nuxt` imports that package without declaring it, so it resolves only through pnpm's hoisted `node_modules/.pnpm/node_modules`; once those links go missing, every `pnpm <script>` fails too, because pnpm's deps-status check re-runs the install before running any script. `pnpm i` reports `Already up to date` and changes nothing — `pnpm i --force` relinks. A forced reinstall also clears `packages/*/dist`, so run `pnpm build:packages` before the next typecheck, or the app reports missing exports from the workspace packages (`@esposter/db`, `@esposter/configuration`) that are really just unbuilt.
+
+To bump the node version, run `pnpm update:node [version]` — it edits `engines.node` + the `@types/node` catalog, installs the version and makes it the fnm default, and removes the old version in one call (then refresh the lockfile). Already-open shells keep the old version until reopened.
 
 ## CI job shape
 
@@ -111,7 +113,7 @@ Vitest runs on Windows: the former `spawn EPERM` / UnoCSS config-load crash was 
 Pin actions to full commit SHAs with a trailing version comment:
 
 ```yaml
-uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 ```
 
 To resolve the SHA for a pin, look up the latest stable `vX.Y.Z` tag via:

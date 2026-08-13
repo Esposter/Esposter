@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
 import { DraftsAndSentTab, DraftsAndSentTabs } from "@/models/message/draftsAndSent/DraftsAndSentTab";
+import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
 
 definePageMeta({ middleware: "auth" });
 
@@ -29,7 +29,7 @@ await readDraftsAndSent();
             <MessageDraftsAndSentScheduledList />
           </v-window-item>
           <v-window-item :value="DraftsAndSentTab.Sent">
-            <MessageDraftsAndSentList />
+            <MessageDraftsAndSentSentList />
           </v-window-item>
         </v-window>
       </div>

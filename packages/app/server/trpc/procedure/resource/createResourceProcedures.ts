@@ -1,38 +1,53 @@
+import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
+import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
-import type { Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
+import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
+import { PUBLISHED_DIRECTORY_SEGMENT, staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useDownload } from "@@/server/composables/azure/container/useDownload";
+import { MAX_UNRECONCILED_STORAGE_BLOBS } from "#shared/services/storage/constants";
+import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
-import { deleteTablePartition } from "@@/server/services/azure/table/deleteTablePartition";
+import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
+import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
+import { on } from "@@/server/services/events/on";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
-import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
+import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
 import { incrementResourceViewCount } from "@@/server/services/resource/incrementResourceViewCount";
+import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { readResourceViewCount } from "@@/server/services/resource/readResourceViewCount";
-import { ResourceOwnedTablesMap } from "@@/server/services/resource/ResourceOwnedTablesMap";
+import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
+import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
+import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
+import { generateReservedUploadFileSasEntities } from "@@/server/services/storage/generateReservedUploadFileSasEntities";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
-  AzureTable,
+  BLOB_SEGMENT_MAX_LENGTH,
+  BLOB_SEGMENT_REGEX,
   DatabaseEntityType,
+  fileEntitySchema,
+  ResourceActivityType,
   resourcePublications,
   resources,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, Operation, streamToText } from "@esposter/shared";
+import { createUniqueArraySchema, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -40,12 +55,50 @@ import { z } from "zod";
 const readResourcesInputSchema = createOffsetPaginationParamsSchema(selectResourceSchema.keyof()).prefault({});
 
 const createResourceInputSchema = selectResourceSchema.pick({ name: true });
-
-const updateResourceInputSchema = selectResourceSchema.pick({ id: true, name: true });
+// Tags replace the whole record rather than merging, which is Azure's own tag update semantics.
+// Both editable fields are optional so a caller writes only the field it owns: a rename and a tag edit are
+// Independent writes to one row, and a tag edit that had to restate the name would put the pre-rename name
+// Back whenever the two overlap
+const updateResourceInputSchema = refineAtLeastOne(
+  z.object({
+    ...selectResourceSchema.pick({ id: true }).shape,
+    ...selectResourceSchema.pick({ name: true, tags: true }).partial().shape,
+  }),
+  ["name", "tags"],
+);
 
 const resourceIdInputSchema = selectResourceSchema.pick({ id: true });
 
-type ResourceContent<TType extends ResourceType> = z.infer<(typeof ResourceDefinitionMap)[TType]["contentSchema"]>;
+const generateUploadFileSasEntitiesInputSchema = z.object({
+  // `size` is what the storage quota reserves against, so it is bounded at the input boundary rather than
+  // Trusted: a negative or non-finite declaration would decrement the counter and bypass the quota entirely.
+  // It is the client's own claim — an Azure write SAS carries no length constraint — so `BlobCreated` is what
+  // Replaces it with the stored object's real size. The array is bounded by the in-flight hold cap rather than
+  // The generic read limit: a batch above the cap can never pass the reserve however long the client waits.
+  // See /docs/platform/storage-quotas
+  files: createUniqueArraySchema(
+    z.object({
+      ...fileEntitySchema.pick({ filename: true, mimetype: true }).shape,
+      size: fileEntitySchema.shape.size.max(MAX_FILE_REQUEST_SIZE),
+    }),
+    "filename",
+  )
+    .min(1)
+    .max(MAX_UNRECONCILED_STORAGE_BLOBS),
+  id: selectResourceSchema.shape.id,
+});
+
+const deleteFileInputSchema = z.object({
+  // The client recovers this from the stable asset url, so it is always the single `{id}|{filename}` segment
+  // GetBlobName emits — a separator or a `..` could only ever be an attempt to climb out of {id}/files/
+  blobPath: z.string().min(1).max(BLOB_SEGMENT_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
+  id: selectResourceSchema.shape.id,
+});
+
+const readPublishedVersionContentInputSchema = z.object({
+  ...resourceIdInputSchema.shape,
+  version: z.int().positive(),
+});
 
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
@@ -56,7 +109,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const { contentSchema } = ResourceDefinitionMap[type];
   // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  const { transformPublicReadContent, transformPublishedContent, transformReadContent } = (args[0] ??
+  const { transformPublicReadContent, transformPublishedContent } = (args[0] ??
     {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
@@ -75,56 +128,68 @@ export const createResourceProcedures = <TType extends ResourceType>(
   >;
   const readContent = async (id: Resource["id"]): Promise<ResourceContent<TType> | undefined> =>
     (await readResourceContent(contentSchema, id)) as ResourceContent<TType> | undefined;
+  // The one snapshot read both published paths go through. It reads through `readContentBlob` because
+  // `BlobClient.download()` rejects on a missing blob rather than returning an empty body: a snapshot the
+  // Unpublish prefix sweep removed between the listing and the click must reach the visitor as the 404 page,
+  // Not as an internal error. The generic contentSchema parses to the union of all content types; the
+  // Concrete caller's TType pins it back down so consumers read their own content shape
+  const readPublishedContent = async (
+    id: Resource["id"],
+    publishVersion: ResourcePublication["publishVersion"],
+  ): Promise<ResourceContent<TType>> => {
+    const content = (await readContentBlob(contentSchema, getPublishedContentBlobName(id, publishVersion))) as
+      | ResourceContent<TType>
+      | undefined;
+    if (content === undefined) throw new TRPCError({ code: "NOT_FOUND" });
+
+    return content;
+  };
   const baseProcedures = {
     createResource: standardAuthedProcedure
       .input(createResourceInputSchema)
-      .mutation<Resource>(async ({ ctx, input }) =>
-        requireMutation(
-          (
-            await ctx.db
-              .insert(resources)
-              .values({ ...input, type, userId: ctx.getSessionPayload.user.id })
-              .returning()
-          )[0],
-          Operation.Create,
-          DatabaseEntityType.Resource,
-          ctx.getSessionPayload.user.id,
-        ),
-      ),
+      .mutation<Resource>(({ ctx, input }) => createResourceRow(ctx, { ...input, type })),
+    // The blobs and the type's table partitions survive until purge — destroying them here would
+    // Make restore hand back an empty resource
     deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { id } }) => {
-        const deletedResource = requireMutation(
-          (await ctx.db.delete(resources).where(eq(resources.id, id)).returning())[0],
+      async ({ ctx, input: { id } }) =>
+        requireMutation(
+          (await softDeleteResources(ctx.db, eq(resources.id, id)))[0],
           Operation.Delete,
           DatabaseEntityType.Resource,
           id,
-        );
-        const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-        await deleteDirectory(containerClient, id, true);
-        // View history is the resource's own telemetry, so it dies with the resource — as does every
-        // Table partition the type owns under this id (a program's participants, and so on)
-        await Promise.all(
-          [AzureTable.ResourceViews, ...ResourceOwnedTablesMap[type]].map((tableName) =>
-            deleteTablePartition(tableName, id),
-          ),
-        );
-        return deletedResource;
-      },
+        ),
     ),
-    readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query(async ({ ctx, input: { id } }) => {
-      const content = await readContent(id);
-      if (content === undefined || !transformReadContent) return content;
-      return transformReadContent(ctx, ctx.resource, content);
+    // Every content write funnels through saveResourceContent, so one save event stream is all it
+    // Takes to keep every other device's view of this resource live
+    onSaveResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").subscription(async function* ({
+      ctx,
+      input: { id },
+      signal,
+    }): AsyncGenerator<{
+      content: ResourceContent<TType>;
+      contentVersion: Resource["contentVersion"];
+      id: Resource["id"];
+    }> {
+      for await (const [[data, device]] of on(resourceEventEmitter, "saveResourceContent", { signal }))
+        if (data.id === id && !getIsSameDevice(device, ctx.getSessionPayload))
+          yield { ...data, content: data.content as ResourceContent<TType> };
     }),
+    readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query(({ input: { id } }) =>
+      readContent(id),
+    ),
     readResources: standardAuthedProcedure
       .input(readResourcesInputSchema)
       .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
         const resultResources = await ctx.db.query.resources.findMany({
           limit: limit + 1,
           offset,
-          orderBy: (resources, { desc }) =>
-            sortBy.length > 0 ? parseSortByToSql(resources, sortBy) : desc(resources.updatedAt),
+          orderBy: (resource, { desc }) =>
+            sortBy.length > 0 ? parseSortByToSql(resource, sortBy) : desc(resource.updatedAt),
           where: {
+            // Soft-deleted resources belong to the Recycle bin, never to a type's own listing
+            deletedAt: {
+              isNull: true,
+            },
             type: {
               eq: type,
             },
@@ -139,31 +204,68 @@ export const createResourceProcedures = <TType extends ResourceType>(
       }),
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
       ({ ctx, input: { content, contentVersion, id } }) =>
-        // Bump the version and write the blob in one transaction so a failed upload rolls the version back,
-        // Keeping Postgres and blob storage consistent instead of stranding the resource at a version with stale content
-        ctx.db.transaction(async (tx) => {
-          // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
-          const updatedResource = (
-            await tx
-              .update(resources)
-              .set({ contentVersion: contentVersion + 1 })
-              .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
-              .returning()
-          )[0];
-          if (!updatedResource) throw new TRPCError({ code: "BAD_REQUEST", message: staleContentVersionErrorMessage });
+        saveResourceContent(ctx, {
+          activityType: ResourceActivityType.ContentSaved,
+          content,
+          resource: ctx.resource,
+          updateContentVersion: async (tx) => {
+            // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
+            const savedResource = (
+              await tx
+                .update(resources)
+                .set({ contentVersion: contentVersion + 1 })
+                .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
+                .returning()
+            )[0];
+            if (!savedResource) throw new TRPCError({ code: "BAD_REQUEST", message: staleContentVersionErrorMessage });
 
-          await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(content));
-          return updatedResource;
+            return savedResource;
+          },
         }),
     ),
     updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { id, ...rest } }) =>
-        requireMutation(
+      async ({ ctx, input: { id, ...rest } }) => {
+        const oldName = ctx.resource.name;
+        const updatedResource = requireMutation(
           (await ctx.db.update(resources).set(rest).where(eq(resources.id, id)).returning())[0],
           Operation.Update,
           DatabaseEntityType.Resource,
           id,
-        ),
+        );
+        // A tags-only edit is not a rename, so it leaves no Renamed entry.
+        // Fire-and-forget: the activity trail is best-effort and the rename must not wait on telemetry
+        if (updatedResource.name !== oldName)
+          getSynchronizedFunction(writeResourceActivity)({
+            activityType: ResourceActivityType.Renamed,
+            newName: updatedResource.name,
+            oldName,
+            resourceId: id,
+            userId: ctx.getSessionPayload.user.id,
+          });
+        return updatedResource;
+      },
+    ),
+  };
+  // Binary assets live under {id}/files/… — the owner uploads through short-lived SAS urls and reads resolve
+  // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature). Teardown comes
+  // At purge, not at delete: a delete only stamps deletedAt, so every asset survives the Recycle bin window and a
+  // Restore hands back a whole resource, and purgeResource is what takes the {id}/ directory wholesale
+  const fileAssetsProcedures = {
+    deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation(async ({ input: { blobPath, id } }) => {
+      // The path is a single separator-free segment (BLOB_SEGMENT_REGEX) anchored under {id}/files/, so this can
+      // Only ever delete uploaded assets, never the content or published-content blobs beside the files directory
+      await publishBlobDeletion(id, AzureContainer.ResourceAssets, [`${getFilesDirectoryName(id)}/${blobPath}`]);
+    }),
+    generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
+      FileSasEntity[]
+    >(({ ctx, input: { files, id } }) =>
+      generateReservedUploadFileSasEntities(
+        ctx.db,
+        ctx.getSessionPayload.user.id,
+        AzureContainer.ResourceAssets,
+        files,
+        getFilesDirectoryName(id),
+      ),
     ),
   };
   const publishProcedures = {
@@ -179,15 +281,33 @@ export const createResourceProcedures = <TType extends ResourceType>(
               "cannot publish resource without content",
             ).message,
           });
+        // Read before the assets are cloned, so the claim below can be compared against it. A sweep of this
+        // Resource's published prefix only ever follows a publication row delete, and that delete resets the
+        // Version sequence — so a claim that is not the successor of what this attempt read is proof one landed
+        const previousPublication = await ctx.db.query.resourcePublications.findFirst({
+          where: { resourceId: { eq: id } },
+        });
+        // Transformed before the transaction opens: a hook may read through `ctx.db` (Dashboard resolves every
+        // Bound dataset), and issuing that read while this connection holds a transaction deadlocks. Nothing it
+        // Writes is keyed by the version claimed below — see createPublishedAssetsDirectoryName
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
+        // One expression for the publish write, since the repair below repeats it at the same version: a change
+        // To where or how the snapshot is written that landed in only one of the two would diverge silently,
+        // And the copy that only runs on the rare concurrency path is the one nobody would notice
+        const uploadPublishedContent = (publishVersion: ResourcePublication["publishVersion"], value: unknown) =>
+          useUpload(
+            AzureContainer.ResourceAssets,
+            getPublishedContentBlobName(id, publishVersion),
+            JSON.stringify(value),
+          );
         // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
         // The publication row can never point at a publishVersion whose blob was never written.
-        return ctx.db.transaction(async (tx) => {
+        const publication = await ctx.db.transaction(async (tx) => {
           // The version bump is done in SQL so concurrent publishes each claim a distinct publish blob;
           // The publication row exists only while the resource is published (the Publishable capability's state)
-          const publication = requireMutation(
+          const newPublication = requireMutation(
             (
               await tx
                 .insert(resourcePublications)
@@ -202,13 +322,59 @@ export const createResourceProcedures = <TType extends ResourceType>(
             DatabaseEntityType.ResourcePublication,
             id,
           );
-          await useUpload(
-            AzureContainer.ResourceAssets,
-            getPublishedContentBlobName(id, publication.publishVersion),
-            JSON.stringify(publishedContent),
-          );
-          return publication;
+          await uploadPublishedContent(newPublication.publishVersion, publishedContent);
+          return newPublication;
         });
+        // An unpublish that landed between the clone and this claim swept the assets it had just written, while
+        // The content blob — written inside the transaction, after that sweep's bound — survived: the resource
+        // Would report itself published and render every image broken, with no operation left that rebuilds
+        // Them. Re-cloning now writes past the bound, and the version is already claimed, so the repair is the
+        // Transform and the upload again rather than another publish. A concurrent publish trips this too and
+        // Pays one redundant clone; a swept snapshot cannot slip through, because a delete restarts the
+        // Sequence at 1 and any successor this attempt could expect is at least 2.
+        // An attempt that read no row expects to claim 1 — reading the successor off the row alone exempted
+        // Every first publish (and every publish after an unpublish) from the check entirely.
+        //
+        // Outside the transaction on purpose, and it cannot move in: the transform may read through `ctx.db`
+        // (Dashboard resolves every bound dataset), which deadlocks against a transaction this same connection
+        // Holds. So the publication has already landed by the time the repair runs, and the transaction's
+        // Guarantee is unaffected — the version it claimed does point at a blob that was written. What a failed
+        // Repair leaves behind is that blob still naming the swept assets, i.e. a live publication whose images
+        // 404. The rejection is therefore reported rather than swallowed, and says so: republishing re-clones and
+        // Overwrites, so the owner's own retry is what repairs it, and a silent success would leave the page
+        // Broken with nothing to signal it. See /docs/architecture/publishing
+        if (publication.publishVersion !== (previousPublication?.publishVersion ?? 0) + 1)
+          await getResultAsync(async () =>
+            uploadPublishedContent(
+              publication.publishVersion,
+              transformPublishedContent ? await transformPublishedContent(ctx, ctx.resource, content) : content,
+            ),
+          ).match(noop, (error) => {
+            console.error(error);
+            // Which of them tripped the check is not knowable from here, so the cause is carried rather than
+            // Asserted: a sweep by a concurrent unpublish, the redundant re-clone a concurrent publish pays, and
+            // A transform that rejects outright (a dataset deleted since the first pass) all arrive identically.
+            // Naming one of them told an owner their assets were swept when nothing had been. A TRPCError already
+            // States what happened in the code the client branches on, so it is rethrown as it is
+            if (error instanceof TRPCError) throw error;
+
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: new InvalidOperationError(
+                Operation.Update,
+                DatabaseEntityType.ResourcePublication,
+                `published at version ${publication.publishVersion}, but its assets could not be re-cloned (${error.message}) — publish again to rebuild them`,
+              ).message,
+            });
+          });
+        // Fire-and-forget: the activity trail is best-effort and the publish must not wait on telemetry
+        getSynchronizedFunction(writeResourceActivity)({
+          activityType: ResourceActivityType.Published,
+          publishVersion: publication.publishVersion,
+          resourceId: id,
+          userId: ctx.getSessionPayload.user.id,
+        });
+        return publication;
       },
     ),
     readPublishedResourceContent: standardRateLimitedProcedure
@@ -224,22 +390,21 @@ export const createResourceProcedures = <TType extends ResourceType>(
         );
         if (!resource.publication) throw new TRPCError({ code: "NOT_FOUND" });
 
-        const { readableStreamBody } = await useDownload(
-          AzureContainer.ResourceAssets,
-          getPublishedContentBlobName(input, resource.publication.publishVersion),
-        );
-        if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
-        // The generic contentSchema parses to the union of all content types; the concrete caller's
-        // TType pins it back down so consumers read their own content shape
-        const content = contentSchema.parse(
-          jsonDateParse(await streamToText(readableStreamBody)),
-        ) as ResourceContent<TType>;
+        const content = await readPublishedContent(input, resource.publication.publishVersion);
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
-        // The increment swallows its own failures — telemetry must never break serving the page
-        await incrementResourceViewCount(input);
+        // Fire-and-forget: the increment swallows its own failures and the viewer must never wait on telemetry
+        getSynchronizedFunction(incrementResourceViewCount)(input);
         if (!transformPublicReadContent) return { content, name: resource.name };
         return { content: await transformPublicReadContent(ctx, resource, content), name: resource.name };
       }),
+    // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
+    // Visitors never reach this — the public read above always serves the latest publish
+    readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query(
+      async ({ ctx, input: { id, version } }) => ({
+        content: await readPublishedContent(id, version),
+        name: ctx.resource.name,
+      }),
+    ),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
       ResourcePublication | undefined
     >(({ ctx }) => ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })),
@@ -248,15 +413,40 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
       const { id } = ctx.resource;
-      await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
-
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      await deleteDirectory(containerClient, `${id}/published`, true);
+      const [deletedPublication] = await ctx.db
+        .delete(resourcePublications)
+        .where(eq(resourcePublications.resourceId, id))
+        .returning();
+      // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
+      // Still holding a cached short-lived SAS, and unpublished snapshots must not linger regardless — cleanup
+      // Goes through the one blob-deletion publish every delete funnels through (/docs/architecture/persist-then-notify)
+      // The snapshot directory grows with every retained publication, so the handler enumerates it — walking
+      // It here would put an unbounded listing on the unpublish request itself.
+      // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything,
+      // And sweeping regardless is what let a stale tab wipe the assets a concurrent FIRST publish had just
+      // Cloned — the sweep's bound is stamped after those clones, and a delete that removed no row leaves the
+      // Version sequence untouched, so the publish's own successor check below cannot see it either
+      if (deletedPublication)
+        await publishBlobPrefixDeletion(
+          id,
+          AzureContainer.ResourceAssets,
+          `${id}/${PUBLISHED_DIRECTORY_SEGMENT}`,
+          new Date(),
+        );
+      // Fire-and-forget: the activity trail is best-effort and the unpublish must not wait on telemetry
+      getSynchronizedFunction(writeResourceActivity)({
+        activityType: ResourceActivityType.Unpublished,
+        resourceId: id,
+        userId: ctx.getSessionPayload.user.id,
+      });
       return ctx.resource;
     }),
   };
   return {
     ...baseProcedures,
+    ...(hasCapability(type, "fileAssets") ? fileAssetsProcedures : {}),
     ...(hasCapability(type, "publishable") ? publishProcedures : {}),
-  } as (TType extends PublishableResourceType ? typeof publishProcedures : unknown) & typeof baseProcedures;
+  } as (TType extends FileAssetsResourceType ? typeof fileAssetsProcedures : unknown) &
+    (TType extends PublishableResourceType ? typeof publishProcedures : unknown) &
+    typeof baseProcedures;
 };

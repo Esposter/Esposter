@@ -9,9 +9,11 @@ Azure-portal notifications parity: resource operation outcomes (duplicated, publ
 
 ## Model
 
-`AppNotification` (client model): `id`, `severity` (`success | info | warning | error`), `title`, `message?`, `action?` (`{ title, to? , handler? }`), `createdAt`, `isRead`.
+`AppNotification` (client model): `id`, `severity` (`success | info | warning | error`), `title`, `message?`, `action?` (`{ title, to?, handler?, isSingleUse? }`), `createdAt`, `isRead`.
 
-Sources (fired from `useResource` and the `/all` list dialogs):
+An action marked `isSingleUse` (undo-style mutations, e.g. the delete toast's **Restore**) is consumed on success: both surfaces call `consumeNotificationAction` when the button completes, stripping the button while keeping the notification as history — a second fire from the bell panel would target state the first fire already changed. Repeatable actions (navigation links, **Copy public link**) stay clickable from the bell for the whole session.
+
+Sources (fired from `useResourceStore` and the `/all` list dialogs):
 
 - duplicated → success + **Go to resource** action
 - published v{n} / unpublished → success, with **Copy public link** action on publish
@@ -23,7 +25,7 @@ Sources (fired from `useResource` and the `/all` list dialogs):
 
 ```mermaid
 flowchart LR
-  UR["useResource actions<br/>publish · delete · rename · duplicate · save"] --> ST
+  UR["useResourceStore actions<br/>publish · delete · rename · duplicate · save"] --> ST
   LST["/all list dialogs + bulk delete + CSV export"] --> ST
   CV["saveResourceContent<br/>stale contentVersion"] -->|warning + Refresh action| ST["store/notification"]
   ST --> BELL["app-bar bell + badge<br/>(G N opens panel)"]
@@ -39,15 +41,15 @@ flowchart LR
 
 ## Key files
 
-| File                                          | Role                                                 |
-| --------------------------------------------- | ---------------------------------------------------- |
-| `app/store/notification.ts`                   | session-scoped notification list + snackbar queue    |
-| `app/components/App/NotificationBell.vue`     | app-bar bell + panel                                 |
-| `app/components/App/NotificationSnackbar.vue` | single snackbar queue rendering the store head       |
-| `app/components/App/NotificationBellItem.vue` | one panel row (severity icon, time, action, dismiss) |
-| `app/models/notification/AppNotification.ts`  | client model                                         |
+| File                                           | Role                                                 |
+| ---------------------------------------------- | ---------------------------------------------------- |
+| `app/store/notification.ts`                    | session-scoped notification list + snackbar queue    |
+| `app/components/App/Notification/Bell.vue`     | app-bar bell + panel                                 |
+| `app/components/App/Notification/Snackbar.vue` | single snackbar queue rendering the store head       |
+| `app/components/App/Notification/BellItem.vue` | one panel row (severity icon, time, action, dismiss) |
+| `app/models/notification/AppNotification.ts`   | client model                                         |
 
 ## Notes
 
-- Deliberately not persisted (no table, no localStorage) — the value is immediate feedback + a session trail; durable history is the activity log's job ([activity log](/docs/proposals/platform/activity-log)).
+- Deliberately not persisted (no table, no localStorage) — the value is immediate feedback + a session trail; durable history is the activity log's job ([activity log](/docs/platform/activity-log)).
 - The store no-ops on the server (`getIsServer`) so SSR renders never enqueue toasts.

@@ -5,32 +5,44 @@ description: The Azure-portal-like Resource Explorer over sheets, surveys, progr
 
 # Platform
 
-The platform area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one Azure-portal-like Resource Explorer at `/resources`. A sheet, a survey, a program, a todo list, a dashboard, an email, a webpage, and a flowchart are all the same thing to the platform — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
+The platform area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one Azure-portal-like Resource Explorer at `/resource-explorer`. A sheet, a survey, a program, a todo list, a dashboard, an email, a webpage, and a flowchart are all the same thing to the platform — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
 
 The standards the platform applies live in architecture: the layer model ([/docs/architecture/platform](/docs/architecture/platform)), the resource model ([/docs/architecture/resources](/docs/architecture/resources)), datasets ([/docs/architecture/datasets](/docs/architecture/datasets)), and publishing ([/docs/architecture/publishing](/docs/architecture/publishing)). The pages in this area describe the product surface built on them.
 
 ## Key concepts
 
 - **Resource** — one Postgres identity row + one content blob in Azure Blob + one `ResourceDefinitionMap` entry. Single-owner, auth-gated, one `contentVersion` write path.
-- **Capability** — a cross-cutting mechanism a type opts into: **Publishable** (versioned snapshot + public `/view/[type]/[id]`), **DatasetProvider** (serves columns + rows through `dataset.readDataset`), **Portable** (import/export formats).
-- **Explorer** — the Azure-portal-shaped shell: Home landing, `/resources/all` list, marketplace-style create flow, and a resource page composing blades. See [resource explorer](/docs/platform/resource-explorer).
-- **Blade** — one panel of a resource page, addressed by route segment (`/resources/[id]/[[blade]]`). Every resource has a built-in Overview; types add their own (Sheet: Data + Settings, Survey: Responses, Program: Setup + Status, TodoList: Items + Calendar) and editor-backed types render their editor inline in the Editor blade.
+- **Capability** — a cross-cutting mechanism a type opts into: **Publishable** (versioned snapshot + public `/view/[type]/[id]`), **DatasetProvider** (serves columns + rows through `dataset.readDataset`), **Portable** (import/export formats), **FileAssets** (hosted binary assets under `{id}/files/…` — see [resource file assets](/docs/platform/resource-file-assets)).
+- **Explorer** — the Azure-portal-shaped shell: Home landing, `/resource-explorer/all` list, marketplace-style create flow, and a resource page composing blades. See [resource explorer](/docs/platform/resource-explorer).
+- **Blade** — one panel of a resource page, addressed by route segment (`/resource-explorer/[id]/[[blade]]`). Every resource has a built-in Overview; types add their own (Sheet: Data + Settings, Survey: Responses, Program: Setup + Status, TodoList: Items + Calendar) and editor-backed types render their editor inline in the Editor blade.
 - **Dataset** — the read contract that lets one resource consume another's data: a Dashboard visual binds to a `DatasetReference` ([dashboard data binding](/docs/platform/dashboard-data-binding)), an Email binds one for merge fields ([email personalization](/docs/platform/email-personalization)), and a Program both binds one as its audience and serves one as its funnel status ([program resource](/docs/platform/program-resource)).
 
 ## Feature pages
 
 - [Resource explorer](/docs/platform/resource-explorer) — the shell: Home, list, create flow, resource page, blades, command bar
-- [List filters & views](/docs/platform/list-filters-and-views) — the `/all` workbench: filter pills, URL-synced state, bulk operations, column chooser, grouping, CSV export
+- [Resource service menu](/docs/platform/resource-service-menu) — the standing left rail: All, Favorites, Recent, Tags and the bin as sibling routes over one list surface
+- [List filters & views](/docs/platform/list-filters-and-views) — the list workbench: filter pills, URL-synced state, bulk operations, column chooser, grouping, CSV export
 - [Summary view](/docs/platform/summary-view) — the `/all` List/Summary toggle: per-type count cards over a grouped count procedure
 - [Resource page parity](/docs/platform/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, type-the-name delete guard, save-conflict surface
 - [Share to esbabbler](/docs/platform/share-to-esbabbler) — Share command posting a published resource's public link into a room you pick
 - [Notifications bell](/docs/platform/notifications) — session-scoped operation-outcome toasts + app-bar bell panel
-- [Global search](/docs/platform/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, prefix-match ranking
+- [TodoList due reminders](/docs/platform/todolist-due-reminders) — web-push when a TodoList item comes due, over the scheduled-job + push subsystems
+- [Global search](/docs/platform/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, relevance-ranked results
+- [Global search relevance](/docs/platform/global-search-relevance) — `pg_trgm` trigram index and `similarity()` ranking, so a typo still finds its resource
+- [Favorites & recents](/docs/platform/favorites-and-recents) — server-side stars and server-side opens, as Home tabs and as full list routes
+- [Resource tags](/docs/platform/tags) — name:value pairs in Essentials, edited in place, filterable on `/all`
+- [Recycle bin](/docs/platform/recycle-bin) — soft delete with restore, permanent purge, and a 30-day timer sweep
+- [Activity log](/docs/platform/activity-log) — the per-resource audit trail blade, in Azure Table Storage
+- [Publish history](/docs/platform/publish-history) — versioned snapshot blade with per-version view and restore-to-draft
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
+- [Breadcrumb trail](/docs/platform/breadcrumb-trail) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all
 - [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Create from file](/docs/platform/create-from-file) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
 - [Program resource](/docs/platform/program-resource) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
+- [Note resource](/docs/platform/note-resource) — a rich-text document type on Tiptap: JSON at rest, publishable `generateHTML` read view
+- [Blueprint resource](/docs/platform/blueprint-resource) — a parameterized manifest of resources: deploy one blueprint, get a fully wired set with all the right cross-references
+- [Blueprint capture](/docs/platform/blueprint-capture) — Save as blueprint on selected resources: contents captured, cross-resource ids rewritten to aliases automatically
 - [Survey response controls](/docs/platform/survey-response-controls) — the accepting-responses toggle and the closed state that keeps participant links alive
 - [Survey response modes](/docs/platform/survey-response-modes) — Anonymous or Identified identity, enforced at the write boundary
 - [Survey response management](/docs/platform/survey-response-management) — response detail, owner delete, response count on Overview
@@ -38,7 +50,11 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Dashboard data binding](/docs/platform/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Email personalization](/docs/platform/email-personalization) — merge fields, survey invite blocks, personalized HTML export
 - [Dataset row-cap warning](/docs/platform/dataset-row-cap-warning) — "showing N of M" wherever a dataset read hits the 1000-row cap
-- [Resource Explorer consolidation](/docs/platform/resource-consolidation) — the shipped six-phase program record
+- [Email web view](/docs/platform/email-web-view) — Email is Publishable: save-time HTML capture, `/view/Email/[id]` browser copy
+- [Flowchart publish](/docs/platform/flowchart-publish) — Flowchart is Publishable: read-only VueFlow render at `/view/Flowchart/[id]`
+- [Resource file assets](/docs/platform/resource-file-assets) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
+- [Storage quotas](/docs/platform/storage-quotas) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
+- [Webpage survey invite blocks](/docs/platform/webpage-survey-invite-blocks) — published surveys as drag-in invite buttons in both GrapesJS editors
 
 Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/platform/deferred) (with revisit triggers) and [rejected](/docs/platform/rejected).
 
@@ -58,3 +74,12 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - File resource renamed to **Sheet** — pg enum value, `sheet` router, models/components/store, and the docs area (`sheet-editor`, `sheet-resource`); no backwards compat
 - **End-to-end survey funnel** — the send → view → respond → analyze loop closed: survey `settings` (accepting-responses toggle + Anonymous/Identified response mode) enforced at one server write boundary, the **Program** resource issuing opaque participant tokens and serving the identity-free `ProgramStatus` dataset, owner-side response detail/delete/count, and best-effort view counts on every publishable type's public read. One new Postgres enum value and two new Azure Tables; no new services. The café-scenario chain is covered end to end by `surveyFunnel.integration.test.ts`.
 - Explorer parity smalls — `/all` Summary lens over a grouped `countsByType`, the dataset row cap surfaced as "showing N of M" in every consumer (`Dataset.totalRows` + `countEntities`), Sheet create-from-file landing in a ready Data blade, and a Share command posting a published link into an esbabbler room
+- FileAssets capability — Survey's `{id}/files` SAS machinery promoted onto the resource factory, adopted by Email and Webpage through a GrapesJS Asset Manager adapter (hosted images instead of base64)
+- Publish parity for the remaining visual types — Email (`/view/Email/[id]` browser copy via save-time MJML capture) and Flowchart (read-only VueFlow render) both opted into Publishable; Sheet and TodoList stay non-publishable by design
+- Survey invite blocks in the webpage editor — the email block builder moved to a shared core with per-editor markup wrappers
+- **Note resource** — a rich-text document `ResourceType` on the existing Tiptap dependency: `{ doc }` JSON content (source of truth at rest), a writing-kit editor blade, and a Publishable `/view/Note/[id]` render through `generateHTML` sanitized at the boundary. One pg enum value, zero new dependencies or services. Also a live test of the one-`ResourceType` extensibility claim — the friction it surfaced (per-type router + registration, client mutation switch arm, exhaustive blade map, and three create-flow lists) is recorded on the [Note resource](/docs/platform/note-resource) page.
+- **Blueprint resource + capture** — a parameterized manifest resource: `deployBlueprint` substitutes `{{parameter:key}}`/`{{entry:key}}` tokens, validates every entry against its type's contentSchema, topologically creates the wired set (with mid-deploy compensating cleanup), and `captureBlueprint` turns a selection of live resources into that manifest by rewriting cross-resource ids to aliases. One Postgres enum value, no new services.
+- Storage-backed explorer features — `resourceFavorites` and `resourceAccesses` behind the Favorites and Recent surfaces, `tags` jsonb with Essentials editing plus an `/all` pill and a Tags route, `deletedAt` soft delete with a Recycle bin and a 30-day timer purge, `pg_trgm` relevance ranking, and the Azure Table activity blade. A handful of Postgres migrations, one new Azure Table, no new Azure services.
+- Publish history blade — a capability-gated built-in blade listing every retained `{id}/published/{n}` snapshot from a blob prefix listing (no history table), an owner-only `?version=` preview on the view route, and a restore-to-draft copying a snapshot into the working copy. No new tables or Azure services.
+- **Storage quotas** — a per-user blob allowance (Free = 10 GiB) held under a row lock at SAS issuance and charged by Storage's own `BlobCreated` event; deletion and purge decrement through the same per-blob ledger, an abandoned hold expires as a predicate rather than as work for a job, and the explorer shell's header grows a usage bar on every resource page. One Postgres migration, one Event Grid subscription on the system topic that already existed, nothing scheduled.
+- **TodoList due reminders** — the first platform feature on the notification stack: a post-save due-date diff enqueues one scheduled Service Bus message per new or changed `(itemId, dueAt)`, and the `SendTodoReminder` function re-reads the content blob at fire time (dropping deleted or re-dated items) before web-pushing `『{item}』 is due` to the owner. Stateless — no Postgres row backs the reminder; the scheduled message is the state. One new Service Bus queue, no new services.

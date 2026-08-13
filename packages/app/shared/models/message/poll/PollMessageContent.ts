@@ -1,0 +1,24 @@
+import type { PollOption } from "#shared/models/message/poll/PollOption";
+
+import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
+import { createUniqueArraySchema, normalizeString } from "@esposter/shared";
+import { z } from "zod";
+
+export interface PollMessageContent {
+  options: PollOption[];
+  question: string;
+  votes: Record<string, string>;
+}
+
+export const pollMessageContentSchema = z
+  .object({
+    options: createUniqueArraySchema(pollOptionSchema, "id").min(1),
+    question: z.string().transform(normalizeString).pipe(z.string().min(1)),
+    votes: z.record(z.string().min(1), z.string().min(1)),
+  })
+  .superRefine(({ options, votes }, ctx) => {
+    const optionIds = new Set(options.map(({ id }) => id));
+    for (const [userId, optionId] of Object.entries(votes))
+      if (!optionIds.has(optionId))
+        ctx.addIssue({ code: "custom", message: "Vote must reference an existing option", path: ["votes", userId] });
+  }) satisfies z.ZodType<PollMessageContent>;

@@ -2,17 +2,30 @@ import { getFileSize } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const distFile = resolve(import.meta.dirname, "../dist/index.js");
-const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
+// The package ships no barrel — the reporter and runner are its only entrypoints.
+const distReporterFile = resolve(import.meta.dirname, "../dist/reporter.js");
+const distReporterDtsFile = resolve(import.meta.dirname, "../dist/reporter.d.ts");
+const distRunnerFile = resolve(import.meta.dirname, "../dist/runner.js");
+const distRunnerDtsFile = resolve(import.meta.dirname, "../dist/runner.d.ts");
 
 describe("@esposter/shared-node", () => {
-  test("bundle size", () => {
+  test("reporter bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 0.38 KB (384 bytes)"`);
+    expect(getFileSize(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: 5.30 KB (5429 bytes)"`);
   });
 
-  test("types size", () => {
+  test("reporter types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 1.31 KB (1340 bytes)"`);
+    expect(getFileSize(distReporterDtsFile)).toMatchInlineSnapshot(`"reporter.d.ts: 0.31 KB (319 bytes)"`);
+  });
+
+  test("runner bundle size", () => {
+    expect.hasAssertions();
+    expect(getFileSize(distRunnerFile)).toMatchInlineSnapshot(`"runner.js: 0.45 KB (463 bytes)"`);
+  });
+
+  test("runner types size", () => {
+    expect.hasAssertions();
+    expect(getFileSize(distRunnerDtsFile)).toMatchInlineSnapshot(`"runner.d.ts: 0.19 KB (190 bytes)"`);
   });
 });

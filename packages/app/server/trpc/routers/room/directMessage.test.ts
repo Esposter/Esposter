@@ -1,12 +1,12 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { User } from "better-auth";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
+import { createMockContext, createMockUser, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createFriends } from "@@/server/trpc/routers/createFriends.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
+import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { DatabaseEntityType, DerivedDatabaseEntityType, friends, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -15,14 +15,12 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe("directMessage", () => {
   let mockContext: Context;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["room"]["directMessage"]>;
-  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   const name = "name";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     directMessageCaller = createCallerFactory(directMessageRouter)(mockContext);
-    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
@@ -31,21 +29,10 @@ describe("directMessage", () => {
     await mockContext.db.delete(roomsInMessage);
   });
 
-  const createFriends = async (userA: User, userB: User) => {
-    await mockSessionOnce(mockContext.db, userA);
-    await friendRequestCaller.sendFriendRequest(userB.id);
-    await mockSessionOnce(mockContext.db, userB);
-    await friendRequestCaller.acceptFriendRequest(userA.id);
-  };
-
   test("creates direct message", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
 
     expect(directMessage.type).toBe("DirectMessage");
     expect(directMessage.participantKey).toContain(user.id);
@@ -55,11 +42,7 @@ describe("directMessage", () => {
   test("creates direct message to be idempotent", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage1 = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage: directMessage1, user } = await createDirectMessageWithFriend(mockContext);
     const directMessage2 = await directMessageCaller.createDirectMessage([user.id]);
 
     expect(directMessage1.id).toBe(directMessage2.id);
@@ -69,9 +52,8 @@ describe("directMessage", () => {
     expect.hasAssertions();
 
     const initialUser = getMockSession().user;
-    const { user: userB } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(initialUser, userB);
+    const userB = await createMockUser(mockContext.db);
+    await createFriends(mockContext, initialUser, userB);
     await mockSessionOnce(mockContext.db, userB);
     const directMessage1 = await directMessageCaller.createDirectMessage([initialUser.id]);
     const directMessage2 = await directMessageCaller.createDirectMessage([userB.id]);
@@ -82,11 +64,7 @@ describe("directMessage", () => {
   test("reads direct messages", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
     const readDirectMessages = await directMessageCaller.readDirectMessages();
 
     expect(readDirectMessages.items).toHaveLength(1);
@@ -96,11 +74,7 @@ describe("directMessage", () => {
   test("reads direct messages excluding hidden", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
     await directMessageCaller.hideDirectMessage(directMessage.id);
     const readDirectMessages = await directMessageCaller.readDirectMessages();
 
@@ -110,11 +84,7 @@ describe("directMessage", () => {
   test("hides direct message", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
 
     await expect(directMessageCaller.hideDirectMessage(directMessage.id)).resolves.toBeUndefined();
   });
@@ -122,11 +92,7 @@ describe("directMessage", () => {
   test("fails hide with non-member", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
     await mockSessionOnce(mockContext.db);
 
     await expect(directMessageCaller.hideDirectMessage(directMessage.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -137,11 +103,7 @@ describe("directMessage", () => {
   test("unhides direct message on re-open", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
     await directMessageCaller.hideDirectMessage(directMessage.id);
     await directMessageCaller.createDirectMessage([user.id]);
     const readDirectMessages = await directMessageCaller.readDirectMessages();
@@ -153,11 +115,7 @@ describe("directMessage", () => {
   test("reads direct message participants", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
 
     expect(participantsData).toHaveLength(1);
@@ -172,14 +130,9 @@ describe("directMessage", () => {
   test("creates direct message participant", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
-    const { user: addedUser } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, addedUser);
+    const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, addedUser);
     await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
     const readDirectMessages = await directMessageCaller.readDirectMessages();
@@ -195,14 +148,9 @@ describe("directMessage", () => {
   test("deletes direct message participant", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
-    const { user: addedUser } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, addedUser);
+    const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, addedUser);
     await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
     await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
@@ -215,11 +163,7 @@ describe("directMessage", () => {
   test("deletes self as direct message participant", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage, mainUser } = await createDirectMessageWithFriend(mockContext);
     await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: mainUser.id });
     const readDirectMessages = await directMessageCaller.readDirectMessages();
 
@@ -229,13 +173,8 @@ describe("directMessage", () => {
   test("fails create direct message participant with non-friend", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
-    const { user: addedUser } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createMockUser(mockContext.db);
 
     await expect(
       directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] }),
@@ -247,11 +186,7 @@ describe("directMessage", () => {
   test("fails read direct message participants with non-member room", async () => {
     expect.hasAssertions();
 
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await createFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
     await mockSessionOnce(mockContext.db);
 
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
@@ -263,8 +198,7 @@ describe("directMessage", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
+    const user = await createMockUser(mockContext.db);
 
     await expect(directMessageCaller.createDirectMessage([user.id])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId).message}]`,
@@ -287,7 +221,7 @@ describe("directMessage", () => {
     const newRoom = await roomCaller.createRoom({ name });
 
     await expect(directMessageCaller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, newRoom.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, newRoom.id).message}]`,
     );
   });
 

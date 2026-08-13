@@ -18,21 +18,24 @@ import { resolveCwd } from "@/services/exec/util/resolveCwd";
 // Sandbox is skipped: the recorded diff is flushed to the host and the recorded streams + exit code reproduced. On a
 // Miss the run executes (capturing output) and its exit-0 result is recorded. Falls back to a plain persistRun when
 // The cache is off or the key can't be computed (not a git repo / no lockfile).
+//
+// `maskedPaths` is keyed on, not re-applied: a hit replays the recorded plan verbatim, so an entry built under a
+// Different mask must miss rather than flush what today's mask forbids (computeTaskCacheKey).
 export const persistWithCache = async (
   backend: ExecBackend,
   command: readonly string[] | string,
   options: ExecOptions,
   extraLowerDirs: readonly string[] = [],
-  outputDirs: readonly string[] = [],
+  maskedPaths: readonly string[] = [],
 ): Promise<ExecResult> => {
-  const key = isTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd) : null;
+  const key = isTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd, maskedPaths) : null;
   if (key === null) {
     writeVirrunDebug(
       isTaskCacheEnabled()
         ? "task cache off — no key (not a git repo or no lockfile)"
         : "task cache off — disabled (CI or VIRRUN_NO_CACHE)",
     );
-    return persistRun(backend, command, options, extraLowerDirs, outputDirs);
+    return persistRun(backend, command, options, extraLowerDirs, maskedPaths);
   }
   // Reproduce a result under the caller's stdio convention, matching createBwrapBackend: "inherit" already put its
   // Output on the terminal so it returns empty streams; "pipe" returns the captured streams.
@@ -57,9 +60,9 @@ export const persistWithCache = async (
   const result = await persistRun(
     backend,
     command,
-    { ...options, isNetworkEnabled: false, stdio: "pipe", tee: options.stdio === "inherit" },
+    { ...options, isNetworkEnabled: false, stdio: "pipe", tee: options.stdio === "inherit" ? "stdout" : undefined },
     extraLowerDirs,
-    outputDirs,
+    maskedPaths,
     (upperDir, plan, persistResult) => {
       // A write-network install (`pnpm install`/`add`/`update`) can still succeed offline from the warm store, so the
       // Net-unshare gate alone would cache it. Its output isn't determined by the key it mutates, so skip recording —

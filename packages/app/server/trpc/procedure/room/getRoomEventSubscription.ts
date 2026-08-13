@@ -5,11 +5,12 @@ import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { roomIdSchema } from "@esposter/db-schema";
-// The shared single-room subscription shape: forward `[data, device]` events matching the
-// Input room to everyone in it except the emitting device.
+// The shared single-room subscription shape: forward `[data, device?]` events matching the input room to
+// Everyone in it. The device is the client that caused the event, and its own subscription skips it; an event
+// That carries none was caused by no single client, so there is nobody to skip and it reaches the whole room.
 export const getRoomEventSubscription = <
   TKey extends keyof TEventMap & string,
-  TEventMap extends Record<TKey, [[unknown, Device]]>,
+  TEventMap extends Record<TKey, [[unknown, Device?]]>,
 >(
   eventEmitter: EventEmitter<TEventMap>,
   eventName: TKey,
@@ -22,6 +23,7 @@ export const getRoomEventSubscription = <
   }): AsyncGenerator<TEventMap[TKey][0][0]> {
     for await (const [[data, device]] of on(eventEmitter, eventName, { signal })) {
       const typedData = data as TEventMap[TKey][0][0];
-      if (getRoomId(typedData) === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield typedData;
+      if (getRoomId(typedData) === roomId && (!device || !getIsSameDevice(device, ctx.getSessionPayload)))
+        yield typedData;
     }
   });

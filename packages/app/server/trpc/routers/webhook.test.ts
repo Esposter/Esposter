@@ -8,7 +8,13 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
-import { appUsersInMessage, DatabaseEntityType, roomsInMessage, webhooksInMessage } from "@esposter/db-schema";
+import {
+  appUsersInMessage,
+  DatabaseEntityType,
+  RoomPermission,
+  roomsInMessage,
+  webhooksInMessage,
+} from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -59,7 +65,8 @@ describe("webhook", () => {
     );
   });
 
-  test("fails create with non-existent room", async () => {
+  // Unauthorized rather than not-found, so a caller cannot probe which room ids exist by the code it gets back
+  test("fails create with an unknown room id", async () => {
     expect.hasAssertions();
 
     const roomId = crypto.randomUUID();
@@ -69,11 +76,14 @@ describe("webhook", () => {
     );
   });
 
-  test("fails create with non-existent creator", async () => {
+  test(`fails create for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(invite.id);
+    await mockSessionOnce(mockContext.db, user);
 
     await expect(webhookCaller.createWebhook({ name, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -115,12 +125,15 @@ describe("webhook", () => {
     expect(updatedWebhook.isActive).toBe(updatedIsActive);
   });
 
-  test("fails update with wrong user", async () => {
+  test(`fails update for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(invite.id);
+    await mockSessionOnce(mockContext.db, user);
 
     await expect(
       webhookCaller.updateWebhook({ id: newWebhook.id, name: updatedName, roomId: newRoom.id }),
@@ -138,12 +151,15 @@ describe("webhook", () => {
     expect(rotatedWebhook.token).not.toBe(previousToken);
   });
 
-  test("fails rotate token with wrong user", async () => {
+  test(`fails rotate token for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(invite.id);
+    await mockSessionOnce(mockContext.db, user);
 
     await expect(
       webhookCaller.rotateToken({ id: newWebhook.id, roomId: newRoom.id }),
@@ -164,12 +180,15 @@ describe("webhook", () => {
     expect(readWebhooks.find(({ id }) => id === newWebhook.id)).toBeUndefined();
   });
 
-  test("fails delete with wrong user", async () => {
+  test(`fails delete for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(invite.id);
+    await mockSessionOnce(mockContext.db, user);
 
     await expect(
       webhookCaller.deleteWebhook({ id: newWebhook.id, roomId: newRoom.id }),

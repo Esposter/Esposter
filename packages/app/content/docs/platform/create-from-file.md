@@ -5,7 +5,7 @@ description: Drop a CSV/JSON/XLSX on the Sheet create form to parse, pre-fill th
 
 # Create From File
 
-Creating a [Sheet](/docs/platform/sheet-resource) from a file you already have is one step. Drop or pick a CSV, JSON, or XLSX on `/resources/create/Sheet` and you arrive at a resource whose Data blade already holds the parsed rows — instead of creating an empty sheet, opening the Data blade, and running Import as a second act.
+Creating a [Sheet](/docs/platform/sheet-resource) from a file you already have is one step. Drop or pick a CSV, JSON, or XLSX on `/resource-explorer/create/Sheet` and you arrive at a resource whose Data blade already holds the parsed rows — instead of creating an empty sheet, opening the Data blade, and running Import as a second act.
 
 The file input is **optional**: name-only create works exactly as before, and every other resource type is untouched.
 
@@ -15,12 +15,12 @@ There is no new machinery here. The parse is the same client-side deserializer t
 
 ```mermaid
 flowchart LR
-  DROP["file drop / picker on<br/>/resources/create/Sheet"] -->|"extension → DataSourceConfigurationMap"| PARSE["client parse<br/>(deserialize)"]
+  DROP["file drop / picker on<br/>/resource-explorer/create/Sheet"] -->|"extension → DataSourceConfigurationMap"| PARSE["client parse<br/>(deserialize)"]
   PARSE --> PREV["5-row preview +<br/>name pre-filled from filename"]
   PREV -->|Create| CR["sheet.createResource"]
   CR -->|"first saveResourceContent<br/>{ settings, data }"| BLOB[("content blob")]
-  BLOB --> DATA["/resources/[id]/data<br/>(rows ready)"]
-  CR -->|"save failed"| OVER["/resources/[id]<br/>(valid empty sheet + error)"]
+  BLOB --> DATA["/resource-explorer/[id]/data<br/>(rows ready)"]
+  CR -->|"save failed"| OVER["/resource-explorer/[id]<br/>(valid empty sheet + error)"]
 ```
 
 - **The format comes from the file, not a picker.** The drop zone accepts every extension in `DataSourceConfigurationMap`, and `getDataSourceTypeByFileName` resolves the format from the name — so a new portable format needs no change to the create form. An unsupported extension blocks Create with a message naming what is accepted.
@@ -33,7 +33,7 @@ flowchart LR
 
 | File                                                                    | Role                                                   |
 | ----------------------------------------------------------------------- | ------------------------------------------------------ |
-| `app/pages/resources/create/[type].vue`                                 | the Sheet branch, submit, and blade routing            |
+| `app/pages/resource-explorer/create/[type].vue`                         | the Sheet branch, submit, and blade routing            |
 | `app/components/Resource/Create/SheetFile.vue`                          | drop zone, picker, parse, preview                      |
 | `app/services/resource/sheet/dataSource/getDataSourceTypeByFileName.ts` | extension → format, from the format map's own `accept` |
 | `app/services/resource/sheet/dataSource/DataSourceConfigurationMap.ts`  | the reused `accept` + `deserialize`                    |

@@ -15,7 +15,7 @@ export const createClassString = (name: string, properties: TiledObjectProperty[
   const interfaceProperties: InterfaceProperty[] = [];
 
   for (const property of properties) {
-    const { name, type } = property;
+    const { name: propertyName, type } = property;
 
     if (type === PropertyType.class) {
       const { propertyType } = property;
@@ -23,7 +23,7 @@ export const createClassString = (name: string, properties: TiledObjectProperty[
         properties: [propertyType],
         src: `${TILED_ROOT_DIRECTORY_IMPORT_PATH}/${PropertyType.class}/${propertyType}`,
       });
-      interfaceProperties.push({ name, type: propertyType });
+      interfaceProperties.push({ name: propertyName, type: propertyType });
       continue;
     }
     // If we can narrow our string type to the specific tiled enum, why not? c:
@@ -33,11 +33,11 @@ export const createClassString = (name: string, properties: TiledObjectProperty[
         properties: [propertyType],
         src: `${TILED_ROOT_DIRECTORY_IMPORT_PATH}/${PropertyType.enum}/${propertyType}`,
       });
-      interfaceProperties.push({ name, type: propertyType });
+      interfaceProperties.push({ name: propertyName, type: propertyType });
       continue;
     }
 
-    interfaceProperties.push({ name, type: type === PropertyType.int ? "number" : type });
+    interfaceProperties.push({ name: propertyName, type: type === PropertyType.int ? "number" : type });
   }
 
   return `${createImportTypeLinesString(importLines)}${createInterfaceString(name, interfaceProperties)}`;

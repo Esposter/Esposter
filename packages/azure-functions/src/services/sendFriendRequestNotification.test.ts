@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { sendFriendRequestNotification } from "@/services/sendFriendRequestNotification";
 import { setupWebPushSuite } from "@/services/setupWebPushSuite.test";
@@ -9,7 +8,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, users } from "@esposter/db-schema";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {

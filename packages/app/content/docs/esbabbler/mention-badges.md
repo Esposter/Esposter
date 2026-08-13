@@ -13,6 +13,12 @@ A per-user, per-room counter (`usersToRooms.mentionCount`) increments when a mes
 
 `createMessage` classifies the message's mentions (`classifyMentions`) and bumps every targeted member's counter in a single batched UPDATE (`incrementMentionCounts`): direct and role mentions badge unconditionally; `@everyone`/`@here` follow each member's notification rules (`Never` opts out; `@here` requires online, with no status row treated as online — the same broadcast targeting as [push notifications](/docs/esbabbler/push-notifications)); the sender is always excluded. The increment runs best-effort after the Table write — a failed increment loses one badge count, never a message, so there is no retry.
 
+### Each consumer classifies for itself
+
+Badging and [push notifications](/docs/esbabbler/push-notifications) both resolve the same three mention kinds, and `createMessage` invokes them back to back — so both call `classifyMentions` on the same body. That repetition is deliberate: the classification is a regex pass over the message text with no I/O, and the one query behind it (`getRoleMemberIds`) is skipped entirely unless the message actually mentions a role.
+
+Threading a precomputed `ClassifiedMentions` through instead would buy that back at a real cost. `getPushSubscriptionsForMessage` is also called from outside the send path, where no classification has happened, so the parameter would have to be optional — and an optional precomputed input is a parameter a caller can pass from the _wrong_ message, turning a self-contained function into one whose correctness depends on its caller. What the two functions share is the resolution rule, and that is already shared: `getMentionConditions` plus `createMentionConditionBuilders` hold one copy of it, and the badge and notification variants differ only in the condition a resolved set of user ids becomes.
+
 Counts arrive with `readMyUsersToRooms` at startup (already loaded for every room — see [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)) and update live through the existing `onUpdateUserToRoom` subscription: both the increment and the clear emit `updateUserToRoom` per affected row, so the chip appears and disappears with no new subscription.
 
 ```mermaid
@@ -20,7 +26,7 @@ flowchart LR
   CM["createMessage"] -->|"incrementMentionCounts<br/>(one batched UPDATE, sender excluded)"| DB[("usersToRooms.mentionCount")]
   VIEW["room view<br/>(/messages/[id])"] -->|"clearMentionCount"| DB
   DB -->|"updateUserToRoom event"| SUB["onUpdateUserToRoom subscription"]
-  SUB --> STORE["useUserToRoomStore.myUserToRoomMap"]
+  SUB --> STORE["useUserToRoomStore.myUserToRoom"]
   STORE -->|"mentionCount > 0"| CHIP["room ListItem red chip"]
 ```
 
@@ -38,14 +44,14 @@ flowchart LR
 
 ## Key files
 
-| File                                                          | Role                                                          |
-| :------------------------------------------------------------ | :------------------------------------------------------------ |
-| `packages/db-schema/src/schema/usersToRoomsInMessage.ts`      | `mentionCount` column + check                                 |
-| `packages/db/src/services/message/incrementMentionCounts.ts`  | batched increment (`MentionBadgeConditionBuilders` targeting) |
-| `packages/app/server/services/message/createUserMessage.ts`   | best-effort increment + `updateUserToRoom` fan-out            |
-| `packages/app/server/trpc/routers/userToRoom.ts`              | `clearMentionCount`                                           |
-| `packages/app/app/pages/messages/[id]/index.vue`              | clears the count on room view                                 |
-| `packages/app/app/components/Message/Model/Room/ListItem.vue` | red count chip                                                |
+| File                                                           | Role                                                          |
+| -------------------------------------------------------------- | ------------------------------------------------------------- |
+| `packages/db-schema/src/schema/usersToRoomsInMessage.ts`       | `mentionCount` column + check                                 |
+| `packages/db/src/services/message/incrementMentionCounts.ts`   | batched increment (`MentionBadgeConditionBuilders` targeting) |
+| `packages/app/server/services/message/createUserMessage.ts`    | best-effort increment + `updateUserToRoom` fan-out            |
+| `packages/app/server/trpc/routers/userToRoom.ts`               | `clearMentionCount`                                           |
+| `packages/app/app/pages/messages/[id]/index.vue`               | clears the count on room view                                 |
+| `packages/app/app/components/Message/Model/Room/List/Item.vue` | red count chip                                                |
 
 ## Notes
 

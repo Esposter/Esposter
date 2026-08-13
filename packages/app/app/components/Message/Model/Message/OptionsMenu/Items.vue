@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db-schema";
+import type { Item } from "@/models/shared/Item";
 
 interface OptionsMenuItemsProps {
-  message: MessageEntity;
+  items: Item[];
 }
 
-const { message } = defineProps<OptionsMenuItemsProps>();
-const isCreator = await useIsCreator(() => message);
-const isEditable = computed(() => isCreator.value && !message.isForward);
-const { updateMessageItems } = useMessageActionItems(message, isEditable, isCreator);
+const { items } = defineProps<OptionsMenuItemsProps>();
 </script>
 
 <template>
   <StyledTooltipIconButton
-    v-for="{ icon, shortTitle, title, onClick } of updateMessageItems"
+    v-for="{ icon, shortTitle, title, onClick } of items"
     :key="title"
     :button-props="{ class: 'm-0', size: 'small', tile: true }"
     :icon

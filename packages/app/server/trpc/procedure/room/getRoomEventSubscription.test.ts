@@ -3,10 +3,13 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
+import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
+import { roleEventEmitter } from "@@/server/services/role/events/roleEventEmitter";
+import { createCallerFactory } from "@@/server/trpc";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
+import { messageRouter } from "@@/server/trpc/routers/message";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -15,6 +18,7 @@ const createDevice = (): Device => ({ sessionId: crypto.randomUUID(), userId: cr
 describe(getRoomEventSubscription, () => {
   const { getMockContext, getRoleCaller, getRoomCaller, getRoomId } = setupRoomSuite();
   let mockContext: Context;
+  let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
@@ -22,6 +26,7 @@ describe(getRoomEventSubscription, () => {
 
   beforeAll(() => {
     mockContext = getMockContext();
+    messageCaller = createCallerFactory(messageRouter)(mockContext);
     roleCaller = getRoleCaller();
     roomCaller = getRoomCaller();
   });
@@ -84,6 +89,25 @@ describe(getRoomEventSubscription, () => {
     );
 
     expect(data).toStrictEqual(role);
+  });
+
+  // A device-less event was caused by no single client, so there is no emitting device to skip and the
+  // Subscriber receives it on the very device the emitting call was made from
+  test("yields a device-less event to the device that caused it", async () => {
+    expect.hasAssertions();
+
+    const deleteMessageInput = { partitionKey: roomId, rowKey: crypto.randomUUID() };
+    const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId });
+    const data = await getFirstEmit(
+      () => onDeleteMessage,
+      () => {
+        messageEventEmitter.emit("deleteMessage", [{ partitionKey: crypto.randomUUID(), rowKey: "" }]);
+        messageEventEmitter.emit("deleteMessage", [deleteMessageInput]);
+        return Promise.resolve();
+      },
+    );
+
+    expect(data).toStrictEqual(deleteMessageInput);
   });
 
   test("throws UNAUTHORIZED if not a member", async () => {

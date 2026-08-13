@@ -25,15 +25,26 @@ vi.mock(import("@/services/exec/snapshot/createSnapshot"));
 vi.mock(import("@/services/exec/snapshot/forkSnapshot"));
 vi.mock(import("@/services/exec/snapshot/resolveSnapshotLocation"));
 // Mock the WSL login-PATH capture: the real one spawns wsl.exe on win32, which this mocked-backend test mustn't
-// Depend on.
-vi.mock(import("@/services/exec/wsl/readWslLoginPath"), () => ({ readWslLoginPath: () => "" }));
+// Depend on. The shared capture, never an empty one — createOsExecOptions reads an empty path on win32 as a failed
+// Capture and throws, which every os-backend case here would then die on.
+vi.mock(import("@/services/exec/wsl/readWslLoginEnvironment"), async () => {
+  const { TEST_WSL_LOGIN_ENVIRONMENT: testWslLoginEnvironment } = await import("@/services/exec/wsl/constants.test");
+  return { readWslLoginEnvironment: () => testWslLoginEnvironment };
+});
+// And the path translation those options reach for on win32: a non-empty login capture puts createOsExecOptions on
+// The win32 branch, which resolves the source mirror through readWslPath — the real one spawns wsl.exe, so mocking
+// Only the capture above left this suite still depending on a live distro answering inside the test timeout.
+vi.mock(import("@/services/exec/wsl/readWslPath"), async () => {
+  const { TEST_WSL_PREFIX: testWslPrefix } = await import("@/services/exec/wsl/constants.test");
+  return { readWslPath: (path: string) => `${testWslPrefix}${path}` };
+});
 // Same for the WSL native cache root: the real one spawns wsl.exe and would create dirs in the live WSL home.
 // Point it at an in-temp dir.
 vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), async () => {
-  const { tmpdir } = await import("node:os");
-  const { join } = await import("node:path");
-  const { TEST_WSL_CACHE_DIR_NAME } = await import("@/services/exec/wsl/constants.test");
-  return { getWslNativeCacheRoot: () => join(tmpdir(), TEST_WSL_CACHE_DIR_NAME) };
+  const { tmpdir: osTmpdir } = await import("node:os");
+  const { join: joinPath } = await import("node:path");
+  const { TEST_WSL_CACHE_DIR_NAME: testWslCacheDirName } = await import("@/services/exec/wsl/constants.test");
+  return { getWslNativeCacheRoot: () => joinPath(osTmpdir(), testWslCacheDirName) };
 });
 
 const mockOsBackend = () =>
@@ -130,10 +141,10 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     mockOsBackend();
-    const snapshotDir = create();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(false, snapshotDir));
+    const snapshotDirectory = create();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(false, snapshotDirectory));
     vi.mocked(createSnapshot).mockResolvedValue({
-      location: snapshotLocation(true, snapshotDir),
+      location: snapshotLocation(true, snapshotDirectory),
       result: { exitCode: 0, stderr: "", stdout: "" },
     });
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
@@ -154,8 +165,8 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     mockOsBackend();
-    const snapshotDir = create();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDir));
+    const snapshotDirectory = create();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDirectory));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     const dir = createWorkspace();
     const { dispose, fork } = await createVirrun({
@@ -173,8 +184,8 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     mockOsBackend();
-    const snapshotDir = create();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDir));
+    const snapshotDirectory = create();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDirectory));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     const dir = createWorkspace();
     const { dispose, fork } = await createVirrun({
@@ -183,7 +194,7 @@ describe(createVirrun, () => {
     });
     await fork("tsgo");
 
-    const leaseFile = join(snapshotDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(process.pid));
+    const leaseFile = join(snapshotDirectory, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(process.pid));
 
     expect(existsSync(leaseFile)).toBe(true);
 

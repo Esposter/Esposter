@@ -1,69 +1,64 @@
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 
 import Scene from "@/components/Scene.vue";
+import { useCameraStore } from "@/store/camera";
 import { useInputStore } from "@/store/input";
 import { getTestGame, getTestPinia, removeTestScene } from "@/test/fixtures/headlessGame.test";
 import { mount } from "@vue/test-utils";
 import { Cameras } from "phaser";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test } from "vitest";
+
+const sceneKey = "sceneKey";
+let wrapper: ReturnType<typeof mount<typeof Scene>> | undefined;
+
+const mountScene = (props?: Partial<InstanceType<typeof Scene>["$props"]>) => {
+  wrapper = mount(Scene, {
+    global: { plugins: [getTestPinia()] },
+    props: { sceneKey, ...props },
+  });
+  return wrapper;
+};
+
+afterEach(() => {
+  wrapper?.unmount();
+  wrapper = undefined;
+  removeTestScene(sceneKey);
+});
 
 describe("scene", () => {
   test("adds the scene to the phaser game after mount", () => {
     expect.hasAssertions();
 
-    const sceneKey = "sceneKey";
     const game = getTestGame();
-
-    const wrapper = mount(Scene, {
-      global: { plugins: [getTestPinia()] },
-      props: { sceneKey },
-    });
+    mountScene();
 
     expect(game.scene.getScene(sceneKey)).not.toBeNull();
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
   });
 
   test("emits init, preload, and create in that order when the scene starts", () => {
     expect.hasAssertions();
 
-    const sceneKey = "sceneKey";
     const game = getTestGame();
     const order: string[] = [];
-
-    const wrapper = mount(Scene, {
-      global: { plugins: [getTestPinia()] },
-      props: {
-        onCreate: () => order.push("create"),
-        onInit: () => order.push("init"),
-        onPreload: () => order.push("preload"),
-        sceneKey,
-      },
+    mountScene({
+      onCreate: () => order.push("create"),
+      onInit: () => order.push("init"),
+      onPreload: () => order.push("preload"),
     });
 
     game.scene.start(sceneKey);
 
     expect(order).toStrictEqual(["init", "preload", "create"]);
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
   });
 
   test("emits shutdown when the scene is stopped externally", () => {
     expect.hasAssertions();
 
-    const sceneKey = "sceneKey";
     const game = getTestGame();
     let shutdownScene: SceneWithPlugins | undefined;
-
-    const wrapper = mount(Scene, {
-      global: { plugins: [getTestPinia()] },
-      props: {
-        onShutdown: (scene: SceneWithPlugins) => {
-          shutdownScene = scene;
-        },
-        sceneKey,
+    mountScene({
+      onShutdown: (scene: SceneWithPlugins) => {
+        shutdownScene = scene;
       },
     });
 
@@ -72,77 +67,38 @@ describe("scene", () => {
     game.scene.stop(sceneKey);
 
     expect(shutdownScene).toBe(scene);
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
   });
 
-  test("fADE_OUT_START disables input", () => {
+  test("disables input while a camera fade runs and re-enables it on fade in complete", () => {
     expect.hasAssertions();
 
-    const sceneKey = "sceneKey";
     const game = getTestGame();
-    const wrapper = mount(Scene, {
-      global: { plugins: [getTestPinia()] },
-      props: { sceneKey },
-    });
+    mountScene();
     game.scene.start(sceneKey);
-    const scene = game.scene.getScene(sceneKey);
+    const camera = game.scene.getScene(sceneKey).cameras.main;
     const inputStore = useInputStore();
     const { isInputActive } = storeToRefs(inputStore);
+    const cameraStore = useCameraStore();
+    const { isFading } = storeToRefs(cameraStore);
 
-    isInputActive.value = true;
-    scene.cameras.main.emit(Cameras.Scene2D.Events.FADE_OUT_START);
+    camera.emit(Cameras.Scene2D.Events.FADE_IN_START);
 
     expect(isInputActive.value).toBe(false);
 
-    wrapper.unmount();
-    removeTestScene(sceneKey);
-  });
-
-  test("fADE_IN_START disables input", () => {
-    expect.hasAssertions();
-
-    const sceneKey = "sceneKey";
-    const game = getTestGame();
-    const wrapper = mount(Scene, {
-      global: { plugins: [getTestPinia()] },
-      props: { sceneKey },
-    });
-    game.scene.start(sceneKey);
-    const scene = game.scene.getScene(sceneKey);
-    const inputStore = useInputStore();
-    const { isInputActive } = storeToRefs(inputStore);
-
-    isInputActive.value = true;
-    scene.cameras.main.emit(Cameras.Scene2D.Events.FADE_IN_START);
-
-    expect(isInputActive.value).toBe(false);
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
-  });
-
-  test("fADE_IN_COMPLETE re-enables input", () => {
-    expect.hasAssertions();
-
-    const sceneKey = "sceneKey";
-    const game = getTestGame();
-    const wrapper = mount(Scene, {
-      global: { plugins: [getTestPinia()] },
-      props: { sceneKey },
-    });
-    game.scene.start(sceneKey);
-    const scene = game.scene.getScene(sceneKey);
-    const inputStore = useInputStore();
-    const { isInputActive } = storeToRefs(inputStore);
-
-    isInputActive.value = false;
-    scene.cameras.main.emit(Cameras.Scene2D.Events.FADE_IN_COMPLETE);
+    isFading.value = true;
+    camera.emit(Cameras.Scene2D.Events.FADE_IN_COMPLETE);
 
     expect(isInputActive.value).toBe(true);
+    expect(isFading.value).toBe(false);
 
-    wrapper.unmount();
-    removeTestScene(sceneKey);
+    camera.emit(Cameras.Scene2D.Events.FADE_OUT_START);
+
+    expect(isInputActive.value).toBe(false);
+
+    isFading.value = true;
+    camera.emit(Cameras.Scene2D.Events.FADE_OUT_COMPLETE);
+
+    expect(isInputActive.value).toBe(false);
+    expect(isFading.value).toBe(false);
   });
 });

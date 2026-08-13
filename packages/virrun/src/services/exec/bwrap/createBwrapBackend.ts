@@ -40,23 +40,23 @@ export const createBwrapBackend = (
       let stdout = "";
       let stderr = "";
       let status = "";
-      const isTee = options.tee === true && options.stdio === "pipe";
+      const teeTarget = options.stdio === "pipe" ? options.tee : undefined;
       // The wsl backend pipes stderr to parse its appended status block, so under "inherit" (or a wsl tee) stream the
       // Real output live, withholding the trailing status block; the fd backend's stderr is clean and tees raw.
       const writeStderrLive =
-        (options.stdio === "inherit" || isTee) && bwrapCommand.statusSource === "stderr"
+        (options.stdio === "inherit" || teeTarget !== undefined) && bwrapCommand.statusSource === "stderr"
           ? createStderrLiveWriter()
           : undefined;
       child.stdout?.on("data", (chunk) => {
         const text = chunk.toString();
         stdout += text;
-        if (isTee) process.stdout.write(text);
+        if (teeTarget) process[teeTarget].write(text);
       });
       child.stderr?.on("data", (chunk) => {
         const text = chunk.toString();
         stderr += text;
         if (writeStderrLive) writeStderrLive(stderr);
-        else if (isTee) process.stderr.write(text);
+        else if (teeTarget) process.stderr.write(text);
       });
       child.stdio[3]?.on("data", (chunk) => {
         status += chunk.toString();

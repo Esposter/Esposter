@@ -20,7 +20,6 @@ interface UseSaveUnauthOptions<T extends ItemMetadata> {
   key: string;
   schema: z.ZodType<T>;
 }
-
 // `updatedAt` is bumped by saving itself (`saveItemMetadata`) so it never participates in the dirty check
 const getSnapshotJson = (value: ItemMetadata) =>
   JSON.stringify(value, (key, propertyValue: unknown) =>
@@ -32,7 +31,7 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
   { auth, toSave, unauth }: UseSaveOptions<TState, T, TDef>,
 ) => {
   const session = authClient.useSession();
-  const executeSaveMutation = useMutation();
+  const { executeMutation: executeSaveMutation } = useMutation();
   const saveToLocalStorage = useSaveToLocalStorage();
   // T defaults to TState when toSave is omitted, which TypeScript cannot follow — the single `as never` is the centralized cost
   const getSaveValue = (): T => (toSave ? toSave(state.value) : (state.value as never));
@@ -47,6 +46,8 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
     let isSuccessful = false;
     if (session.value.data && auth)
       await executeSaveMutation(() => auth.save(value), {
+        // This composable persists a single state, so its saves supersede one another under a stable key
+        key: "save",
         onSuccess: () => {
           isSuccessful = true;
         },

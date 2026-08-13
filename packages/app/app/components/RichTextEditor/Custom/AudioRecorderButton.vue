@@ -5,11 +5,11 @@ import { clearInterval, setInterval } from "worker-timers";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const timer = ref(0);
-let timerInterval: null | number = null;
+let timerInterval: number | undefined;
 const resetTimer = () => {
   timer.value = 0;
   if (timerInterval) clearInterval(timerInterval);
-  timerInterval = null;
+  timerInterval = undefined;
 };
 const { data, start, state, stop } = useMediaRecorder({
   constraints: { audio: true },

@@ -3,7 +3,11 @@ reviews:
     - "!pnpm-lock.yaml"
     # auto-generated migrations
     - "!packages/app/server/db/migrations/**"
+    # generated pglite snapshot (binary)
+    - "!packages/db-mock/src/snapshot.tar.gz"
 
   auto_review:
+    # 0 disables the auto-pause; its resume prompt costs a review slot to answer
+    auto_pause_after_reviewed_commits: 0
     ignore_usernames:
       - renovate[bot]

@@ -7,7 +7,6 @@ import type {
   RemoteTrackPublication,
 } from "livekit-client";
 
-import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { MicrophoneProcessor } from "@/models/message/room/call/MicrophoneProcessor";
 import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
@@ -24,9 +23,42 @@ import {
   NoiseSuppressionMode,
   VoiceInputMode,
 } from "@esposter/db-schema";
-import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { ConnectionQuality, ConnectionState, Room, RoomEvent, Track } from "livekit-client";
+
+// Which persisted selection each LiveKit device kind writes to, so writing a pick, restarting the live track on
+// A change, and syncing back what the room reports all read one declaration instead of three parallel ones
+const VoiceDeviceSettingsKeyMap = {
+  audioinput: "inputDeviceId",
+  audiooutput: "outputDeviceId",
+  videoinput: "cameraDeviceId",
+} as const satisfies Record<MediaDeviceKind, string>;
+// `Object.keys` widens to `string`, and every kind here is handed straight to LiveKit's device API, which takes
+// A `MediaDeviceKind`
+const VoiceDeviceKinds = Object.keys(VoiceDeviceSettingsKeyMap) as MediaDeviceKind[];
+// Camera and screen share arrive on the same two events and differ only in the source they answer to and the
+// Stream they set, so one factory declares both directions for each
+const getRemoteStreamHandlers = (
+  source: Track.Source,
+  setStream: (identity: string, stream: MediaStream | undefined) => void,
+) => ({
+  attach: (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
+    if (publication.source !== source || !track.mediaStream) return;
+    setStream(participant.identity, track.mediaStream);
+  },
+  detach: (_track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
+    if (publication.source !== source) return;
+    setStream(participant.identity, undefined);
+  },
+});
+// Presentation-quality capture: full HD, at a frame rate that keeps slides and code legible without saturating
+// The uplink, and never offering the tab doing the sharing as a surface to share
+const SCREEN_SHARE_CAPTURE_OPTIONS = {
+  audio: true,
+  resolution: { frameRate: 15, height: 1080, width: 1920 },
+  selfBrowserSurface: "exclude",
+  surfaceSwitching: "include",
+} as const;
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
@@ -35,6 +67,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let microphoneProcessor: MicrophoneProcessor | undefined;
   let pushToTalkReleaseTimeoutId: number | undefined;
   let virtualBackgroundProcessor: ReturnType<typeof BackgroundProcessor> | undefined;
+  const { executeMutation: executeSetVirtualBackgroundMutation } = useMutation();
   const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
@@ -94,19 +127,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       }, userSettingsStore.userSettings?.pushToTalkReleaseDelayMs ?? DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS);
   };
   const setActiveDevice = (kind: MediaDeviceKind, deviceId: string) => {
-    switch (kind) {
-      case "audioinput":
-        voiceDeviceSettingsStore.inputDeviceId = deviceId;
-        break;
-      case "audiooutput":
-        voiceDeviceSettingsStore.outputDeviceId = deviceId;
-        break;
-      case "videoinput":
-        voiceDeviceSettingsStore.cameraDeviceId = deviceId;
-        break;
-      default:
-        exhaustiveGuard(kind);
-    }
+    voiceDeviceSettingsStore[VoiceDeviceSettingsKeyMap[kind]] = deviceId;
   };
   const setConnectionQuality = (quality: ConnectionQuality, participant: Participant) => {
     if (participant.identity !== activeRoom?.localParticipant.identity) return;
@@ -140,57 +161,33 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     for (const element of track.detach()) element.remove();
     remoteAudioElements.delete(`${participant.identity}:${publication.source}`);
   };
-  const attachRemoteCamera = (
-    track: RemoteTrack,
-    publication: RemoteTrackPublication,
-    participant: RemoteParticipant,
-  ) => {
-    if (publication.source !== Track.Source.Camera || !track.mediaStream) return;
-    setRemoteVideoStream(participant.identity, track.mediaStream);
-  };
-  const detachRemoteCamera = (
-    _track: RemoteTrack,
-    publication: RemoteTrackPublication,
-    participant: RemoteParticipant,
-  ) => {
-    if (publication.source !== Track.Source.Camera) return;
-    setRemoteVideoStream(participant.identity, null);
-  };
-  const attachRemoteScreenShare = (
-    track: RemoteTrack,
-    publication: RemoteTrackPublication,
-    participant: RemoteParticipant,
-  ) => {
-    if (publication.source !== Track.Source.ScreenShare || !track.mediaStream) return;
-    setRemoteScreenShareStream(participant.identity, track.mediaStream);
-  };
-  const detachRemoteScreenShare = (
-    _track: RemoteTrack,
-    publication: RemoteTrackPublication,
-    participant: RemoteParticipant,
-  ) => {
-    if (publication.source !== Track.Source.ScreenShare) return;
-    setRemoteScreenShareStream(participant.identity, null);
-  };
+  const { attach: attachRemoteCamera, detach: detachRemoteCamera } = getRemoteStreamHandlers(
+    Track.Source.Camera,
+    setRemoteVideoStream,
+  );
+  const { attach: attachRemoteScreenShare, detach: detachRemoteScreenShare } = getRemoteStreamHandlers(
+    Track.Source.ScreenShare,
+    setRemoteScreenShareStream,
+  );
   const setLocalCameraTrack = async (publication: LocalTrackPublication | undefined) => {
     if (!publication?.videoTrack) {
       if (localCameraTrack?.getProcessor()) await localCameraTrack.stopProcessor();
       virtualBackgroundProcessor = undefined;
       localCameraTrack = undefined;
-      mediaStore.localVideoStream = null;
+      mediaStore.localVideoStream = undefined;
       mediaStore.isCameraEnabled = false;
       return;
     }
 
     localCameraTrack = publication.videoTrack;
-    mediaStore.localVideoStream = publication.videoTrack.mediaStream ?? null;
+    mediaStore.localVideoStream = publication.videoTrack.mediaStream;
     mediaStore.isCameraEnabled = true;
     if (mediaStore.selectedVirtualBackground) await setVirtualBackground(mediaStore.selectedVirtualBackground);
   };
   const onLocalTrackPublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
     if (publication.source === Track.Source.Camera) await setLocalCameraTrack(publication);
     else if (publication.source === Track.Source.ScreenShare) {
-      setLocalScreenShareStream(publication.track?.mediaStream ?? null);
+      setLocalScreenShareStream(publication.track?.mediaStream);
       mediaStore.isScreenSharing = true;
     } else if (publication.source === Track.Source.Microphone && publication.audioTrack) {
       microphoneProcessor = new MicrophoneProcessor();
@@ -201,7 +198,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const onLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
     if (publication.source === Track.Source.Camera) await setLocalCameraTrack(undefined);
     else if (publication.source === Track.Source.ScreenShare) {
-      setLocalScreenShareStream(null);
+      setLocalScreenShareStream(undefined);
       mediaStore.isScreenSharing = false;
     } else if (publication.source === Track.Source.Microphone) microphoneProcessor = undefined;
   });
@@ -217,7 +214,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;
     if (!isCameraEnabled) {
-      mediaStore.localVideoStream = null;
+      mediaStore.localVideoStream = undefined;
       await localCameraTrack?.stopProcessor();
       virtualBackgroundProcessor = undefined;
     }
@@ -230,40 +227,42 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   };
   const setScreenShare = async (isScreenSharing: boolean) => {
     if (!activeRoom) return;
-    await activeRoom.localParticipant.setScreenShareEnabled(isScreenSharing, {
-      audio: true,
-      resolution: { frameRate: 15, height: 1080, width: 1920 },
-      selfBrowserSurface: "exclude",
-      surfaceSwitching: "include",
-    });
+    await activeRoom.localParticipant.setScreenShareEnabled(isScreenSharing, SCREEN_SHARE_CAPTURE_OPTIONS);
     mediaStore.isScreenSharing = isScreenSharing;
-    if (!isScreenSharing) setLocalScreenShareStream(null);
+    if (!isScreenSharing) setLocalScreenShareStream(undefined);
   };
-  const setVirtualBackground = getConcurrentFunction(async (checkIsStale, imagePath: string) => {
-    mediaStore.selectedVirtualBackground = imagePath;
-    if (!localCameraTrack) return;
-    else if (!supportsBackgroundProcessors()) {
-      console.warn("Background processors are not supported in this browser.");
-      return;
-    }
+  // Local media pipeline work rather than a server write: clicking through the background picker means only
+  // The last pick matters, and the picks before it have nothing to unwind, so they supersede rather than queue
+  const setVirtualBackground = async (imagePath: string) => {
+    await executeSetVirtualBackgroundMutation(
+      async (checkIsStale) => {
+        mediaStore.selectedVirtualBackground = imagePath;
+        if (!localCameraTrack) return;
+        else if (!supportsBackgroundProcessors()) {
+          console.warn("Background processors are not supported in this browser.");
+          return;
+        }
 
-    virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
-    if (!localCameraTrack.getProcessor()) {
-      await localCameraTrack.setProcessor(virtualBackgroundProcessor);
-      if (checkIsStale()) return;
-      if (virtualBackgroundProcessor.processedTrack)
-        mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
-    }
-    if (!imagePath) {
-      if (checkIsStale()) return;
-      await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
-      return;
-    }
+        virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
+        if (!localCameraTrack.getProcessor()) {
+          await localCameraTrack.setProcessor(virtualBackgroundProcessor);
+          if (checkIsStale()) return;
+          if (virtualBackgroundProcessor.processedTrack)
+            mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
+        }
+        if (!imagePath) {
+          if (checkIsStale()) return;
+          await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
+          return;
+        }
 
-    const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-    if (checkIsStale() || !resolvedPath) return;
-    await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
-  });
+        const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
+        if (checkIsStale() || !resolvedPath) return;
+        await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
+      },
+      { isSupersede: true, key: "virtualBackground" },
+    );
+  };
   // Selecting a device just writes the persisted ref (via setActiveDevice); these watchers restart the
   // Live track on change. The guard skips no-op switches - including the echo from LiveKit's own
   // ActiveDeviceChanged event - so there is no feedback loop.
@@ -271,26 +270,15 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     if (!activeRoom || !deviceId || activeRoom.getActiveDevice(kind) === deviceId) return;
     await activeRoom.switchActiveDevice(kind, deviceId);
   });
-  watch(
-    () => voiceDeviceSettingsStore.inputDeviceId,
-    (deviceId) => {
-      syncDeviceToRoom("audioinput", deviceId);
-    },
-  );
-  watch(
-    () => voiceDeviceSettingsStore.outputDeviceId,
-    (deviceId) => {
-      syncDeviceToRoom("audiooutput", deviceId);
-    },
-  );
-  watch(
-    () => voiceDeviceSettingsStore.cameraDeviceId,
-    (deviceId) => {
-      syncDeviceToRoom("videoinput", deviceId);
-    },
-  );
+  for (const kind of VoiceDeviceKinds)
+    watch(
+      () => voiceDeviceSettingsStore[VoiceDeviceSettingsKeyMap[kind]],
+      (deviceId) => {
+        syncDeviceToRoom(kind, deviceId);
+      },
+    );
   const syncActiveDevices = (room: Room) => {
-    for (const kind of ["audioinput", "audiooutput", "videoinput"] as const) {
+    for (const kind of VoiceDeviceKinds) {
       const deviceId = room.getActiveDevice(kind);
       if (deviceId) setActiveDevice(kind, deviceId);
     }

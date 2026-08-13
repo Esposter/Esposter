@@ -1,32 +1,21 @@
-import type { RoomInMessage } from "@esposter/db-schema";
-
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { RoomType, StandardMessageEntity } from "@esposter/db-schema";
+import { createRoom } from "@/services/message/room/createRoom.test";
+import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(writeIndexedDb, () => {
   const { message1, message2, message3 } = setupIndexedDbSuite();
   const userId = crypto.randomUUID();
-  const room = {
-    categoryId: null,
-    createdAt: new Date(),
-    deletedAt: null,
-    id: crypto.randomUUID(),
-    image: "",
-    isReadOnly: false,
-    name: "",
-    participantKey: null,
-    slowmodeMs: null,
-    topic: "",
-    type: RoomType.Room,
-    updatedAt: new Date(),
-    userId,
-  } satisfies RoomInMessage;
+  const room = createRoom("");
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   test("writes items for a given partitionKey successfully", async () => {
     expect.hasAssertions();
@@ -55,7 +44,7 @@ describe(writeIndexedDb, () => {
     const { limit } = MessageIndexedDbStoreConfiguration;
     const messages = Array.from(
       { length: limit + 10 },
-      (_) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() }),
+      (_value) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() }),
     );
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
@@ -87,5 +76,21 @@ describe(writeIndexedDb, () => {
 
     expect(result).toHaveLength(1);
     expect(takeOne(result)).toStrictEqual(Object.assign(structuredClone(room), { partitionKey: userId }));
+  });
+
+  // A browser that refuses the write — quota reached, private mode, a database another tab has blocked — is
+  // Reported to the caller, which owns how the cache reports a failure. Swallowing it here would put a second
+  // Error channel beside that one, and the two can disagree about whether anything went wrong
+  test("reports a refused write to its caller", async () => {
+    expect.hasAssertions();
+
+    const error = new Error("error");
+    vi.spyOn(indexedDB, "open").mockImplementation(() => {
+      throw error;
+    });
+
+    await expect(
+      writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1], message1.partitionKey),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: ${error.message}]`);
   });
 });

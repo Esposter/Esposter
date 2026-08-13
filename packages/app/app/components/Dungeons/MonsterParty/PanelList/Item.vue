@@ -2,6 +2,7 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { HealthLabelTextStyle } from "@/assets/dungeons/styles/HealthLabelTextStyle";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { prettify } from "@/util/text/prettify";
 import deepEqual from "fast-deep-equal";
@@ -74,11 +75,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
         x: 164,
         y: 66,
         text: 'HP',
-        style: {
-          color: '#ff6505',
-          fontSize: 24,
-          fontStyle: 'italic',
-        },
+        style: HealthLabelTextStyle,
       }"
     />
     <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 100, y: 40 }" :width="252" :bar-percentage />

@@ -1,15 +1,26 @@
 :root {
-  --app-bar-height: 56px;
-  --avatar-width: 40px;
+  --app-bar-height: 3.5rem;
+  --avatar-width: 2.5rem;
   --border-width: thin;
   --border-style: solid;
-  --border-radius: 4px;
+  --border-radius: 0.25rem;
   --transition-duration: 0.3s;
   --transition-move-duration: 0.5s;
   --v-loading-opacity: 0.5;
   --vue-gradient: linear-gradient(45deg, #42d392 25%, #647eff);
   --midnight-bloom: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+  // ApexCharts Facet design tokens — chart chrome follows the active Vuetify theme.
+  // Series colors are deliberately left to the ApexCharts palette, which stays legible in both modes.
+  --apx-fore: rgb(var(--v-theme-on-surface));
+  --apx-grid: rgba(var(--v-theme-on-surface), 0.12);
+  --apx-surface: rgb(var(--v-theme-surface));
 }
+// No global `border-width: 0` here. It looks like the right way to stop a bare `b-solid` painting the CSS
+// Initial `medium` (~3px) on sides it gives no width, but a reset matching `*, ::before, ::after` also reaches
+// Vuetify's own internals — `.v-field__outline__start` and the notch pseudo-elements draw an outlined input's
+// Border, so the whole field renders borderless and every text field in the app becomes invisible. Layer order
+// Did not save it in practice. The width belongs on the element instead: a directional border pairs `b-0` with
+// Its side (`b-0 b-b-1`), which UnoCSS emits in that order, so nothing outside the element is touched
 // https://vuetifyjs.com/en/getting-started/upgrade-guide/#css-reset
 @layer vuetify-core.reset {
   ul,
@@ -55,12 +66,6 @@ canvas {
   min-height: var(--app-bar-height);
   height: auto !important;
 }
-// Theme-change circular reveal (see util/vuetify/animateThemeTransition) — disable the default cross-fade
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
 // Restore list padding for rich text (tiptap) output, which the reset layer above zeroes out
 .rich-text-content {
   ul,
@@ -70,6 +75,24 @@ canvas {
 }
 // https://vuetifyjs.com/en/getting-started/grid-legacy-mode/#css-override
 @layer vuetify-overrides {
+  // Colorless flat buttons (our default via the VBtn flat prop) blend into their parent surface instead
+  // of painting Vuetify's surface background; the color prop still fills via bg-* in the later
+  // vuetify-utilities layer
+  .v-btn--flat:not([class*="bg-"]) {
+    background-color: transparent;
+  }
+  // Every data table in the app wants the same two things: rows that tint on hover, and cells that let the
+  // Tint through instead of painting their own surface over it. These lived twice, as identical `:deep()`
+  // Blocks in two wrapper components, which is why the tables that used `v-data-table` directly never got
+  // Them. The alpha is spelled out rather than reaching for the `background-opacity-40` theme colour: Vuetify
+  // Emits a theme colour as an RGB triplet and drops its alpha channel, so `--v-theme-background-opacity-40`
+  // Is the opaque background and the tint would cover the row entirely.
+  .v-data-table__tr:hover {
+    background-color: rgba(var(--v-theme-background), 0.4);
+  }
+  .v-data-table__td {
+    background-color: transparent;
+  }
   .v-row {
     gap: unset;
     margin: calc(var(--v-col-gap-y) * -0.5) calc(var(--v-col-gap-x) * -0.5);

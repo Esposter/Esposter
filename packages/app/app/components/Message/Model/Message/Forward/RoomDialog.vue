@@ -13,24 +13,20 @@ const { createAlert } = alertStore;
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
+const { resetForward } = forwardStore;
 const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
-const forward = computed(() => items.value.find((m) => m.rowKey === rowKey.value));
+const { isOpen, item: forward } = useSingletonDialog(rowKey, () =>
+  items.value.find((message) => message.rowKey === rowKey.value),
+);
 const creator = useCreator(forward);
-const dialog = computed({
-  get: () => Boolean(rowKey.value),
-  set: (newDialog) => {
-    if (newDialog) return;
-    rowKey.value = "";
-  },
-});
 const {
   hasMore,
   items: itemsSearched,
   readMoreItemsSearched,
   searchQuery,
 } = useCursorSearcher(
-  (searchQuery, cursor, opts) => {
-    const normalizedSearchQuery = normalizeString(searchQuery);
+  (query, cursor, opts) => {
+    const normalizedSearchQuery = normalizeString(query);
     return $trpc.room.readRooms.query(
       {
         cursor,
@@ -42,29 +38,32 @@ const {
   true,
   true,
 );
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 // Forwarded messages land in the target rooms via the subscription echo — non-optimistic
 const forwardMessage = async () => {
   if (!forward.value) return;
-  const { partitionKey, rowKey } = forward.value;
+  const { partitionKey, rowKey: forwardRowKey } = forward.value;
   await executeMutation(
     () =>
       $trpc.message.forwardMessage.mutate({
         message: messageInput.value,
         partitionKey,
         roomIds: roomIds.value,
-        rowKey,
+        rowKey: forwardRowKey,
       }),
     {
+      key: forwardRowKey,
       onSuccess: async () => {
-        if (roomIds.value.length === 1) {
-          await navigateTo(RoutePath.Messages(takeOne(roomIds.value)));
+        // Capture the destination, then reset before navigating. After navigateTo, the forward store's
+        // Room-keyed useDataMap resolves against the destination room, so resetting afterwards would
+        // Clear the destination's state instead of the source's
+        const destinationRoomId = roomIds.value.length === 1 ? takeOne(roomIds.value) : "";
+        resetForward();
+        searchQuery.value = "";
+        if (destinationRoomId) {
+          await navigateTo(RoutePath.Messages(destinationRoomId));
           createAlert("Message forwarded!", "success", { icon: "mdi-share", location: "top center" });
         }
-        dialog.value = false;
-        searchQuery.value = "";
-        roomIds.value = [];
-        messageInput.value = "";
       },
     },
   );
@@ -72,14 +71,19 @@ const forwardMessage = async () => {
 </script>
 
 <template>
-  <v-dialog v-if="forward && creator" v-model="dialog">
+  <v-dialog v-if="forward && creator" v-model="isOpen">
     <StyledCard>
       <v-card-title flex flex-col>
         <div flex items-center justify-between>
           Forward To
-          <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
+          <StyledTooltipIconButton
+            icon="mdi-close"
+            text="Close"
+            :button-props="{ density: 'comfortable' }"
+            @click="isOpen = false"
+          />
         </div>
-        <div text-gray pb-2 text-title-small>Select where you want to share this message.</div>
+        <div pb-2 op-medium-emphasis text-title-small>Select where you want to share this message.</div>
         <v-text-field
           v-model="searchQuery"
           append-inner-icon="mdi-magnify"
@@ -92,12 +96,12 @@ const forwardMessage = async () => {
         <v-list py-0>
           <MessageModelMessageForwardRoomListItem v-for="room of itemsSearched" :key="room.id" :room />
           <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">
-            <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+            <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
           </StyledWaypoint>
         </v-list>
       </v-card-text>
       <v-divider />
-      <component :is="MessageComponentMap[forward.type]" v-if="forward" :creator :message="forward" is-preview />
+      <component :is="MessageComponentMap[forward.type]" :creator :message="forward" is-preview />
       <v-divider />
       <v-card-actions flex-col gap-0>
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />

@@ -26,7 +26,7 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
     this.#affectedRows = affectedRows;
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
     if (this.#mode === NullStrategy.ReplaceWithNA)
       for (const { columnName, rowIndex } of this.#affectedCells) {
@@ -46,7 +46,7 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
     }
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     if (this.#mode === NullStrategy.ReplaceWithNA) {
       const columnsByNameMap = new Map(dataSource.columns.map((column) => [column.name, column]));
       for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {

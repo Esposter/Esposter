@@ -33,6 +33,9 @@ export const prodstesposter001Properties: azure_native.storage.BlobServiceProper
       },
       isVersioningEnabled: false,
       resourceGroupName: prodRgEsposterAe001.name,
+      restorePolicy: {
+        enabled: false,
+      },
     },
     {
       parent: prodstesposter001,

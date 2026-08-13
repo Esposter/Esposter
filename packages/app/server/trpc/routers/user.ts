@@ -1,18 +1,22 @@
-import type { UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
+import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { User, UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
 
+import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
-import { dayjs } from "#shared/services/dayjs";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
-import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
+import { userEventEmitter } from "@@/server/services/user/events/userEventEmitter";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { ContainerSASPermissions } from "@azure/storage-blob";
+import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
+import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -30,89 +34,58 @@ import {
   userStatusesInMessage,
   VoiceInputMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { Operation } from "@esposter/shared";
 import { eq, inArray } from "drizzle-orm";
 
-const readStatusesInputSchema = userIdsSchema.shape.userIds.min(1);
+// The status reads and the status subscription all address the same thing: a non-empty set of other users
+const userStatusIdsInputSchema = userIdsSchema.shape.userIds.min(1);
 
 const upsertStatusInputSchema = refineAtLeastOne(
   selectUserStatusInMessageSchema.pick({ message: true, status: true }).partial(),
   ["message", "status"],
 );
+// Connecting and disconnecting are one upsert of the same column, so the row and the emit are written once
+const setConnectedStatus = async (ctx: AuthedContext, isConnected: boolean) => {
+  const upsertedStatus = requireMutation(
+    (
+      await ctx.db
+        .insert(userStatusesInMessage)
+        .values({ isConnected, userId: ctx.getSessionPayload.user.id })
+        .onConflictDoUpdate({ set: { isConnected }, target: userStatusesInMessage.userId })
+        .returning()
+    )[0],
+    Operation.Update,
+    DatabaseEntityType.UserStatus,
+    JSON.stringify({ isConnected }),
+  );
 
-const onUpsertStatusInputSchema = userIdsSchema.shape.userIds.min(1);
+  userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
+};
 
 export const userRouter = router({
-  connect: standardAuthedProcedure.mutation(async ({ ctx }) => {
-    const upsertedStatus = requireMutation(
-      (
-        await ctx.db
-          .insert(userStatusesInMessage)
-          .values({ isConnected: true, userId: ctx.getSessionPayload.user.id })
-          .onConflictDoUpdate({
-            set: { isConnected: true },
-            target: userStatusesInMessage.userId,
-          })
-          .returning()
-      )[0],
-      Operation.Update,
-      DatabaseEntityType.UserStatus,
-      userRouter.connect.name,
-    );
-
-    userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
-  }),
-  disconnect: standardAuthedProcedure.mutation(async ({ ctx }) => {
-    const upsertedStatus = requireMutation(
-      (
-        await ctx.db
-          .insert(userStatusesInMessage)
-          .values({ isConnected: false, userId: ctx.getSessionPayload.user.id })
-          .onConflictDoUpdate({
-            set: { isConnected: false },
-            target: userStatusesInMessage.userId,
-          })
-          .returning()
-      )[0],
-      Operation.Update,
-      DatabaseEntityType.UserStatus,
-      userRouter.disconnect.name,
-    );
-
-    userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
-  }),
+  connect: standardAuthedProcedure.mutation<void>(({ ctx }) => setConnectedStatus(ctx, true)),
+  disconnect: standardAuthedProcedure.mutation<void>(({ ctx }) => setConnectedStatus(ctx, false)),
   generateProfileImageUploadUrl: standardAuthedProcedure.mutation(async ({ ctx }) => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
     const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    const sasUrl = await blockBlobClient.generateSasUrl({
-      expiresOn: dayjs().add(1, "hour").toDate(),
-      permissions: ContainerSASPermissions.from({ write: true }),
-    });
+    const sasUrl = await generateWriteSasUrl(blockBlobClient);
     return { publicUrl: blockBlobClient.url, sasUrl };
   }),
-  onUpsertStatus: standardAuthedProcedure.input(onUpsertStatusInputSchema).subscription(async function* ({
+  onUpsertStatus: standardAuthedProcedure.input(userStatusIdsInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
   }) {
     if (input.includes(ctx.getSessionPayload.user.id))
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.UserStatus,
-          userRouter.onUpsertStatus.name,
-        ).message,
-      });
+      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, JSON.stringify(input));
 
     for await (const [data] of on(userEventEmitter, "upsertStatus", { signal })) {
       if (!input.includes(data.userId)) continue;
       yield data;
     }
   }),
-  readStatuses: standardAuthedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
+  readStatuses: standardAuthedProcedure.input(userStatusIdsInputSchema).query(async ({ ctx, input }) => {
     const foundUserStatuses = await ctx.db
       .select()
       .from(userStatusesInMessage)
@@ -140,6 +113,20 @@ export const userRouter = router({
 
     return resultUserStatuses;
   }),
+  // Public profile identity — projects only the allowlisted columns so private fields (email) never
+  // Leave the database, and runs unauthenticated on the rate-limited procedure
+  readUser: standardRateLimitedProcedure
+    .input(readUserInputSchema)
+    .query<Pick<User, "biography" | "image" | "name">>(({ ctx, input }) =>
+      requireEntity(
+        ctx.db.query.users.findFirst({
+          columns: { biography: true, image: true, name: true },
+          where: { id: { eq: input } },
+        }),
+        DatabaseEntityType.User,
+        input,
+      ),
+    ),
   readUserSettings: standardAuthedProcedure.query(async ({ ctx }) => {
     const foundUserSettings = (
       await ctx.db

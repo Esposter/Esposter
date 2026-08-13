@@ -1,4 +1,6 @@
-import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
+import type { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
+
+import { csvDelimiterSchema } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { z } from "zod";
 
 export interface CsvDataSourceConfiguration {
@@ -6,10 +8,5 @@ export interface CsvDataSourceConfiguration {
 }
 
 export const csvDataSourceConfigurationSchema = z.object({
-  delimiter: z.union([
-    z.literal(CsvDelimiter.Comma).meta({ title: "Comma (,)" }),
-    z.literal(CsvDelimiter.Pipe).meta({ title: "Pipe (|)" }),
-    z.literal(CsvDelimiter.Semicolon).meta({ title: "Semicolon (;)" }),
-    z.literal(CsvDelimiter.Tab).meta({ title: "Tab" }),
-  ]),
+  delimiter: csvDelimiterSchema,
 }) satisfies z.ZodType<CsvDataSourceConfiguration>;

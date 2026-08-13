@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { validate } from "@/services/router/validate";
+import { requireRouteParam } from "@/util/router/requireRouteParam";
 
 definePageMeta({ middleware: "auth", validate });
 
-const route = useRoute();
+const { currentRoute } = useRouter();
 const { $trpc } = useNuxtApp();
-const roomId = route.params.id as string;
+const roomId = requireRouteParam(currentRoute.value.params, "id");
 await Promise.all([
   $trpc.userToRoom.updateUserToRoom.mutate({ lastMessageAt: new Date(), roomId }),
   $trpc.userToRoom.clearMentionCount.mutate({ roomId }),

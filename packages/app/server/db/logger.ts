@@ -12,7 +12,7 @@ export class DrizzleLogger implements Logger {
     ${
       params.length > 0
         ? `Parameters:
-    ${params.map((p, i) => `$${i + 1} = ${p}`)}`
+    ${params.map((parameter, index) => `$${index + 1} = ${String(parameter)}`).join(", ")}`
         : ""
     }`),
     );

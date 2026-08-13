@@ -2,6 +2,8 @@
 import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
 import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+import { getIsCaretAtEnd } from "@/util/dom/getIsCaretAtEnd";
+import { getIsCaretAtStart } from "@/util/dom/getIsCaretAtStart";
 
 interface ChipProps {
   autofocus?: boolean;
@@ -25,19 +27,11 @@ const { errors } = storeToRefs(slashCommandStore);
 const { setErrors } = slashCommandStore;
 const input = useTemplateRef("input");
 const isError = computed(() => {
-  const error = errors.value.find((e) => e.id === name);
-  return error && error.messages.length > 0;
+  const parameterError = errors.value.find(({ id }) => id === name);
+  return Boolean(parameterError && parameterError.messages.length > 0);
 });
-const { trigger } = watchTriggerable(
-  () => isFocused,
-  (newIsFocused) => {
-    if (newIsFocused) input.value?.focus();
-  },
-);
 
-onMounted(() => {
-  trigger();
-});
+useFocusWhenActive(input, () => isFocused);
 </script>
 
 <template>
@@ -68,6 +62,8 @@ onMounted(() => {
     >
       {{ name }}
     </span>
+    <!-- eslint-disable vuejs-accessibility/no-autofocus -- Focus follows the parameter the user just added, the
+      same deliberate move a dialog makes on open; without it the chip renders unfocused mid-typing. -->
     <input
       ref="input"
       v-model="modelValue"
@@ -91,8 +87,7 @@ onMounted(() => {
       @keydown.delete="!modelValue && emit('delete')"
       @keydown.left.exact="
         (event) => {
-          const target = event.target as HTMLInputElement;
-          if (target.selectionStart === 0 && target.selectionEnd === 0) {
+          if (getIsCaretAtStart(event.target as HTMLInputElement)) {
             event.preventDefault();
             emit('navigate:previous');
           }
@@ -100,13 +95,13 @@ onMounted(() => {
       "
       @keydown.right.exact="
         (event) => {
-          const target = event.target as HTMLInputElement;
-          if (target.selectionStart === target.value.length && target.selectionEnd === target.value.length) {
+          if (getIsCaretAtEnd(event.target as HTMLInputElement)) {
             event.preventDefault();
             emit('navigate:next');
           }
         }
       "
     />
+    <!-- eslint-enable vuejs-accessibility/no-autofocus -->
   </div>
 </template>

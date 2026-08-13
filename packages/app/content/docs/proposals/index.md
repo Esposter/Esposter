@@ -9,7 +9,6 @@ Everything under this folder is **future work awaiting implementation** — one 
 
 Each product area's roadmap is the prioritized index over its proposals:
 
-- [posts roadmap](/docs/posts/roadmap)
 - [users roadmap](/docs/users/roadmap)
 - [esbabbler roadmap](/docs/esbabbler/roadmap)
 - [platform roadmap](/docs/platform/roadmap)
@@ -18,11 +17,12 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)
 
-vue-phaserjs, clicker, dungeons, anime, and fluid-simulator are mature with no roadmap and no open proposals.
+posts, vue-phaserjs, clicker, dungeons, anime, and fluid-simulator have no roadmap and no open proposals.
+
+Infra has open area proposals right now; every other area's roadmap is clear.
 
 Repo-wide refactor plans have no area roadmap and live here directly:
 
-- [Null removal](/docs/proposals/refactors/null-removal) — eliminate `null` in favour of `undefined`, ESLint-enforced.
-- [Comment cleanup](/docs/proposals/refactors/comment-cleanup) — sweep ledger for keeping comments tight repo-wide.
-- [File upload consolidation](/docs/proposals/refactors/file-upload-consolidation) — one SAS round-trip and one file validator instead of four and three.
-- [Mock table ordering fidelity](/docs/proposals/refactors/mock-table-ordering-fidelity) — `MockTableClient` returns insertion order where Azure returns `partitionKey` + `rowKey` order.
+- [ESLint → oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) — move rules to oxlint as coverage lands, prioritized by ESLint rule time.
+
+Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state in `.claude/ledgers/`, one ledger file per sweep — or one coverage folder, once a sweep outgrows a single file.

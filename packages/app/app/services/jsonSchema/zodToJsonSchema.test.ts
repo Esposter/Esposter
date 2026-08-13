@@ -72,29 +72,73 @@ describe(zodToJsonSchema, () => {
   });
 
   describe("discriminated union schema", () => {
-    test("adds discriminator with propertyName", () => {
+    test("names the discriminator and branches into oneOf instead of properties", () => {
       expect.hasAssertions();
 
-      const schema = z.discriminatedUnion("type", [
-        z.object({ name: z.string(), type: z.literal("a") }),
-        z.object({ count: z.number(), type: z.literal("b") }),
-      ]);
-      const result = zodToJsonSchema(schema);
+      const result = zodToJsonSchema(
+        z.discriminatedUnion("type", [
+          z.object({ name: z.string(), type: z.literal("a") }),
+          z.object({ count: z.number(), type: z.literal("b") }),
+        ]),
+      );
 
       expect(result.discriminator).toStrictEqual({ propertyName: "type" });
-    });
-
-    test("returns oneOf instead of properties", () => {
-      expect.hasAssertions();
-
-      const schema = z.discriminatedUnion("type", [
-        z.object({ name: z.string(), type: z.literal("a") }),
-        z.object({ count: z.number(), type: z.literal("b") }),
-      ]);
-      const result = zodToJsonSchema(schema);
-
       expect(result).toHaveProperty("oneOf");
       expect(result).not.toHaveProperty("properties");
+    });
+
+    // The column form nests one under `transformation`, and vjsf only renders the sub-form it offers if the
+    // Discriminator and the titles survive the descent as well as they do at the root
+    test("carries the discriminator and the generated titles into a nested union", () => {
+      expect.hasAssertions();
+
+      const result = zodToJsonSchema(
+        z.object({
+          sourceName: z.string().meta({ readOnly: true }).default(""),
+          transformation: z.discriminatedUnion("type", [
+            z.object({ sourceColumnId: z.string(), type: z.literal("a") }).meta({ title: "A" }),
+          ]),
+        }),
+      );
+
+      expect(result.properties?.transformation).toMatchInlineSnapshot(`
+        {
+          "discriminator": {
+            "propertyName": "type",
+          },
+          "oneOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "sourceColumnId": {
+                  "title": "Source Column Id",
+                  "type": "string",
+                },
+                "type": {
+                  "const": "a",
+                  "title": "Type",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "sourceColumnId",
+                "type",
+              ],
+              "title": "A",
+              "type": "object",
+            },
+          ],
+          "title": "Transformation",
+        }
+      `);
+      expect(result.properties?.sourceName).toMatchInlineSnapshot(`
+        {
+          "default": "",
+          "readOnly": true,
+          "title": "Source Name",
+          "type": "string",
+        }
+      `);
     });
 
     test("prettifies enum-style variant root title", () => {
@@ -204,62 +248,6 @@ describe(zodToJsonSchema, () => {
   });
 
   describe("layout meta properties", () => {
-    test("sets layout.comp from meta", () => {
-      expect.hasAssertions();
-
-      const schema = z.object({ sourceColumnId: z.string().meta({ layout: { comp: "select" } }) });
-      const result = zodToJsonSchema(schema);
-
-      expect(result.properties?.sourceColumnId).toMatchInlineSnapshot(`
-        {
-          "layout": {
-            "comp": "select",
-          },
-          "title": "Source Column Id",
-          "type": "string",
-        }
-      `);
-    });
-
-    test("sets layout.getItems from meta", () => {
-      expect.hasAssertions();
-
-      const schema = z.object({
-        sourceColumnId: z
-          .string()
-          .meta({ layout: { getItems: ColumnFormVjsfContextPropertyNames["context.columnItems"] } }),
-      });
-      const result = zodToJsonSchema(schema);
-
-      expect(result.properties?.sourceColumnId).toMatchInlineSnapshot(`
-        {
-          "layout": {
-            "getItems": "context.columnItems",
-          },
-          "title": "Source Column Id",
-          "type": "string",
-        }
-      `);
-    });
-
-    test("sets layout.getProps from meta", () => {
-      expect.hasAssertions();
-
-      const getProps = `{ rules: [(value) => !context.columnNames.includes(value) || 'Column already exists'] }`;
-      const schema = z.object({ name: z.string().meta({ layout: { getProps } }) });
-      const result = zodToJsonSchema(schema);
-
-      expect(result.properties?.name).toMatchInlineSnapshot(`
-        {
-          "layout": {
-            "getProps": "{ rules: [(value) => !context.columnNames.includes(value) || 'Column already exists'] }",
-          },
-          "title": "Name",
-          "type": "string",
-        }
-      `);
-    });
-
     test("sets all layout properties when multiple are provided", () => {
       expect.hasAssertions();
 

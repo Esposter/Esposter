@@ -4,14 +4,14 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { describe, expect, test } from "vitest";
 
 describe(deserialize, () => {
-  test("deserializes", () => {
+  test("round-trips the cursor keys a serialize produced", () => {
     expect.hasAssertions();
 
     const item = { "": "" };
 
-    const serialized = serialize(item, [{ key: "", order: SortOrder.Asc }]);
-    const deserialized = deserialize(serialized);
+    const serializedCursor = serialize(item, [{ key: "", order: SortOrder.Asc }]);
+    const deserializedItem = deserialize(serializedCursor);
 
-    expect(deserialized).toStrictEqual(item);
+    expect(deserializedItem).toStrictEqual(item);
   });
 });

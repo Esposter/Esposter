@@ -1,55 +1,36 @@
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
+import { getPushNotificationPayload } from "@/services/getPushNotificationPayload";
 import { InvocationContext } from "@azure/functions";
-import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
+// The envelope — absolute url, icon/title omission and the body cap — is getPushNotificationPayload's own
+// Suite; what this one owns is the text pulled out of message html before it is handed over.
 describe(getCreateMessageNotificationPayload, () => {
   const context = new InvocationContext();
-  const url = "url";
   const icon = "icon";
+  const path = "path";
   const title = "title";
 
   test("returns undefined when message has no text content", () => {
     expect.hasAssertions();
 
-    const result = getCreateMessageNotificationPayload(context, "<p></p>", { url });
-
-    expect(result).toBeUndefined();
-  });
-
-  test("returns undefined when message is empty", () => {
-    expect.hasAssertions();
-
-    const result = getCreateMessageNotificationPayload(context, "", { url });
-
-    expect(result).toBeUndefined();
+    expect(getCreateMessageNotificationPayload(context, "<p></p>", { path })).toBeUndefined();
+    expect(getCreateMessageNotificationPayload(context, "", { path })).toBeUndefined();
   });
 
   test("extracts text from paragraph and serializes payload", () => {
     expect.hasAssertions();
 
-    const result = getCreateMessageNotificationPayload(context, "<p>a</p>", { icon, title, url });
-
-    expect(result).toBe(JSON.stringify({ body: "a", data: { url }, icon, title }));
+    expect(getCreateMessageNotificationPayload(context, "<p>a</p>", { icon, path, title })).toBe(
+      getPushNotificationPayload({ body: "a", icon, path, title }),
+    );
   });
 
   test("extracts text from plain-text webhook content without a paragraph wrapper", () => {
     expect.hasAssertions();
 
-    const result = getCreateMessageNotificationPayload(context, "a", { icon, title, url });
-
-    expect(result).toBe(JSON.stringify({ body: "a", data: { url }, icon, title }));
-  });
-
-  test(`truncates body to ${PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH} characters`, () => {
-    expect.hasAssertions();
-
-    const longText = "a".repeat(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH + 10);
-    const result = getCreateMessageNotificationPayload(context, `<p>${longText}</p>`, { url });
-
-    assert.exists(result);
-    const parsed = JSON.parse(result);
-
-    expect(parsed.body.length).toBeLessThanOrEqual(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH);
+    expect(getCreateMessageNotificationPayload(context, "a", { icon, path, title })).toBe(
+      getPushNotificationPayload({ body: "a", icon, path, title }),
+    );
   });
 });

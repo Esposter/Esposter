@@ -2,13 +2,7 @@
 
 How the skills in this directory are organised and maintained. **How to write one is itself a skill — see `skill-authoring`** (frontmatter that drives selection, one owner per topic, don't restate enforcers, generic placeholders). This file is only the index of who owns what.
 
-## Principles
-
-- **Single responsibility** — each skill owns exactly one concern. A given rule lives in exactly one skill.
-- **No overlap** — when a rule could fit two skills, it belongs to the most specific owner. Other skills reference it with a one-line pointer ("See the `formatting` skill") rather than restating it.
-- **Pointers, not duplication** — cross-reference; never copy. Duplicated guidance drifts out of sync and hides the canonical rule, which is what makes a rule hard to find.
-- **No redirect for its own sake** — a pointer earns its place only when it saves a real duplication across skills or sections. Don't redirect to a section a reader reaches by reading on, and don't replace a self-sufficient one-liner with a "see X" link. When in doubt, state the rule concisely inline.
-- **Tight, not fluffy** — one line per rule where possible. Cut redundant prose and example values that will rot.
+**Each skill owns exactly one concern, and a given rule lives in exactly one skill** — which is what the map below is for. Everything about how one is written (the most-specific-owner tiebreak, pointers instead of copies, the two-tier layout and its budget, tight-not-fluffy) is `skill-authoring`'s, stated there in full and deliberately not repeated here.
 
 `.agents/skills` is a symlink to `.claude/skills`, so edits to either tree apply to both automatically — no manual mirroring.
 
@@ -20,7 +14,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 
 ### Meta
 
-- `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, declaration layout.
+- `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, the two-tier layout.
 - `docs` — `packages/app/content/docs` conventions: the Mermaid mandate, location-carries-status, page templates, area lifecycle.
 - `readme-standards` — package `README.md` template, badges, published-vs-private split.
 
@@ -33,12 +27,15 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 - `error-handling` — neverthrow `getResult`, tRPC guards, Azure Functions logging/retry.
 - `string-utils` — `normalizeString` / `sanitizeTextHtml` boundaries.
 - `zod` — schema conventions. **Shares its topic with `~/.claude/rules/zod.md`** — see "Skills vs global rules".
+- `vjsf` — form schemas rendered by Vjsf: `*Form` schemas, `layout` meta, ajv keywords, discriminated-union form quirks, options/context typing.
 
 ### Vue / frontend
 
 - `vue` — SFC semantics: macro/declaration order, template patterns, watch, refs, SSR guards.
-- `vue-component-patterns` — component _architecture_: granularity, generics, slots, co-location, emit naming, local copies.
-- `vue-composable-patterns` — composable _authoring_: `MaybeRefOrGetter`, resource lifecycle, pagination, search.
+- `vue-component-patterns` — component _authoring_: shell primitives, generics, slots, co-location, emit naming, local state init.
+- `vue-page-composition` — page/list _composition_: page decomposition, granularity, `v-for` list items, action items, singleton dialogs.
+- `vue-composable-patterns` — composable _authoring_: `MaybeRefOrGetter`, validation layers, resource lifecycle, async sequencing.
+- `pagination` — paginated lists: the cursor read pattern, `StyledWaypoint`, search-as-you-type, the offline IndexedDB cache.
 - `routing` — links/`:to`, `navigateTo`, route reads, route-synced tabs, `definePageMeta` `validate`/`key`.
 - `styling` / `unocss` — attributify styling usage vs. UnoCSS config.
 - `vuetify` — Vuetify 4 components, dialogs, selects, forms, lists.
@@ -46,7 +43,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 - `pinia` — store conventions.
 - `tiptap` / `grapesjs` / `vue-phaserjs` / `slash-commands` — feature-library integrations.
 
-The `vue` / `vue-component-patterns` / `vue-composable-patterns` boundary is **semantics vs architecture vs composables**: a rule about _how an SFC is written_ is `vue`; about _how components are decomposed_ is `vue-component-patterns`; about _a `use*` function_ is `vue-composable-patterns`. A rule that seems to fit two goes to the more specific one and the other links to it — never state it in both.
+The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-patterns` boundary is **semantics vs one component vs many components vs composables**: a rule about _how an SFC is written_ is `vue`; about _how a single component is built, typed and named_ is `vue-component-patterns`; about _how a page or list is assembled from components_ is `vue-page-composition`; about _a `use*` function_ is `vue-composable-patterns`. A rule that seems to fit two goes to the more specific one and the other links to it — never state it in both.
 
 ### Backend / data
 
@@ -59,7 +56,9 @@ The `vue` / `vue-component-patterns` / `vue-composable-patterns` boundary is **s
 
 - `testing` — Vitest conventions, mock/session patterns, test environments, what to test.
 - `git` — commit format, safety rules, branch hygiene.
+- `code-review` — the one entry point for every review: the workflow script, its two modes, what a run costs and bounds it, confidence and provenance on findings, closing a finding (`fixing-findings.md`), and the stop rule.
 - `coderabbit` — review config: PR file budget, `.coderabbit.yaml` exclusions, exclude/re-enable commit pair.
+- `sweeps` — repo-wide mechanical passes and the `.claude/ledgers/` tree that tracks them: when one earns a file, its metadata/coverage tables, standing vs one-shot, shrinking a sweep into an enforcer. The convention a sweep carries stays owned by its own skill.
 - `oxlint` — lint rule exceptions and disable directives.
 - `package-scripts` — which `pnpm` script to run, and from where.
 - `context-efficiency` — how the main session spends its own context/turns: delegating wide reads, batching verification, polling vs sleeping, baselining before chasing an error.

@@ -6,6 +6,7 @@ import { isVersionAtLeast } from "@/services/cli/run/isVersionAtLeast";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { getTarExecutable } from "@/services/exec/util/getTarExecutable";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult, takeOne } from "@esposter/shared";
 // The oldest bubblewrap exposing `--overlay-src` / `--tmp-overlay` (the RAM-overlay flags the os backend needs).
@@ -44,7 +45,7 @@ const probeBubblewrap = (): DiagnosticCheck => {
   };
 };
 // Off win32 the host's own node runs the sandbox, so the check is N/A. On win32 it probes node via the user's real
-// WSL login + interactive shell (buildWslLoginShellCommand), matching how readWslLoginPath captures the toolchain the
+// WSL login + interactive shell (buildWslLoginShellCommand), matching how readWslLoginEnvironment captures the toolchain the
 // Backend can reach — a profile/rc-bound version manager (fnm/nvm) is invisible to a bare `wsl.exe --exec`.
 const probeWslNode = (): DiagnosticCheck => {
   const label = "WSL Linux node";
@@ -58,15 +59,15 @@ const probeWslNode = (): DiagnosticCheck => {
       type,
     };
   const nodePath = readProbeOutput("sh", ["-c", buildWslLoginShellCommand("command -v node")]) ?? "";
-  return nodePath === ""
-    ? {
+  return nodePath
+    ? { fix: "", label, note: nodePath, status: DiagnosticStatus.Ok, type }
+    : {
         fix: "install node inside your default WSL2 distro (e.g. via fnm/nvm)",
         label,
         note: "no node in the WSL login shell — node commands can't resolve inside the sandbox",
         status: DiagnosticStatus.Missing,
         type,
-      }
-    : { fix: "", label, note: nodePath, status: DiagnosticStatus.Ok, type };
+      };
 };
 
 const probePython3 = (): DiagnosticCheck => {
@@ -99,7 +100,7 @@ const probeTar = (): DiagnosticCheck => {
       status: DiagnosticStatus.NotApplicable,
       type,
     };
-  const output = getResult(() => execFileHidden("tar", ["--version"], { timeout: PROBE_TIMEOUT_MS }))
+  const output = getResult(() => execFileHidden(getTarExecutable(), ["--version"], { timeout: PROBE_TIMEOUT_MS }))
     .map((stdout) => stdout.trim())
     .unwrapOr(null);
   return output === null

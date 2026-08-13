@@ -34,6 +34,14 @@ A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singlet
 <ResourceSheetRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" :index="..." />
 ```
 
+A dialog the user can hold open while the list re-reads underneath it — a confirm as much as an edit, since a confirmation waits on the user just as long — resolves its item **through** `useSingletonDialog` rather than in a computed of its own. The `v-if` unmounts it the moment its row leaves `items` (a search, a page turn, a sort change, an optimistic removal) while the target ref stays set, so without that the dialog re-opens by itself over the same row as soon as a later read brings it back:
+
+```vue
+const { isOpen, item } = useSingletonDialog(detailRowKey, () => items.find(({ rowKey }) => rowKey === detailRowKey));
+```
+
+Where the parent owns the lookup because it passes the item down as a prop (the `v-if` + `:key` case above), the two halves land in different components: the parent passes the item and uses `item`, the dialog passes nothing and uses `isOpen`.
+
 ## Scope and non-goals
 
 - **Hover toolbars and options menus** in list items follow the same principle with `v-if` (mount on hover/activation) rather than `v-show` — an always-mounted `v-show` toolbar per item is the same O(N) mount problem in menu form. See `/docs/esbabbler/message-list-rendering` for the message list's full treatment.
@@ -49,7 +57,7 @@ A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singlet
 | `app/store/message/roomCategoryDialog.ts`, `app/store/message/room/webhookDialog.ts` | Category / webhook delete targets                                                    |
 | `app/store/post/dialog.ts`, `app/store/post/comment/dialog.ts`                       | Post / comment delete targets                                                        |
 | `app/store/resource/sheet/columnDialog.ts`, `app/store/resource/sheet/rowDialog.ts`  | Sheet table editor chart/edit/delete targets                                         |
-| `app/components/Message/Model/Message/ConfirmDeleteDialog.vue`                       | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)              |
+| `app/components/Post/ConfirmDeleteDialog.vue`                                        | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)              |
 | `app/components/Resource/Sheet/Row/EditDialog.vue`                                   | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)          |
 | `app/components/Message/Model/Room/Settings/Dialog.vue`                              | Fullscreen settings dialog driven by `settingsRoomId`                                |
 

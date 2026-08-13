@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 import type { achievementDefinitions as baseAchievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
+import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
 interface GridProps {
   achievementDefinitions: (typeof baseAchievementDefinitions)[number][];

@@ -33,15 +33,12 @@ const inputStore = useInputStore();
 const { isInputActive } = storeToRefs(inputStore);
 const { parallelSceneKeys } = storeToRefs(phaserStore);
 const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
-const fadeInStartListener = () => {
-  if (isInputActive.value) isInputActive.value = false;
+const fadeStartListener = () => {
+  isInputActive.value = false;
 };
 const fadeInCompleteListener = () => {
   isFading.value = false;
-  if (!isInputActive.value) isInputActive.value = true;
-};
-const fadeOutStartListener = () => {
-  if (isInputActive.value) isInputActive.value = false;
+  isInputActive.value = true;
 };
 const fadeOutCompleteListener = () => {
   isFading.value = false;
@@ -49,11 +46,11 @@ const fadeOutCompleteListener = () => {
 const NewScene = createSceneClass(sceneKey, {
   onCreate: (scene) => {
     emit("create", scene);
-    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_START, fadeInStartListener);
+    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_START, fadeStartListener);
     scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_START, fadeOutStartListener);
+    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_START, fadeStartListener);
     scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
-    if (!isInputActive.value) isInputActive.value = true;
+    isInputActive.value = true;
   },
   onInit: (scene) => emit("init", scene),
   onPreload: (scene) => emit("preload", scene),
@@ -69,9 +66,9 @@ const shutdownListener = () => {
   resetLifecycleListeners(scene, Lifecycle.Update);
   resetLifecycleListeners(scene, Lifecycle.NextTick);
   runLifecycleListeners(scene, Lifecycle.Shutdown);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_START, fadeInStartListener);
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_START, fadeStartListener);
   scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_START, fadeOutStartListener);
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_START, fadeStartListener);
   scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
   ExternalSceneStore.sceneReadyMap.set(sceneKey, false);
   emit("shutdown", scene);

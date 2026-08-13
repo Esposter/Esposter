@@ -3,12 +3,36 @@ import { AchievementOperator } from "#shared/models/achievement/AchievementOpera
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { MonsterKeys } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { DungeonsAchievementName } from "@esposter/db-schema";
 
-export const DungeonsAchievementDefinitionMap = {
+// The monster level milestones differ only in threshold and reward, so one definition serves the family
+const defineMonsterLevelAchievementDefinition = ({
+  icon,
+  level,
+  points,
+}: {
+  icon: string;
+  level: number;
+  points: number;
+}) =>
+  defineAchievementDefinition({
+    amount: 1,
+    condition: {
+      operation: (value) => value.some(({ stats }) => stats.level >= level),
+      operator: AchievementOperator.Operation,
+      path: "save.player.monsters",
+      type: AchievementConditionType.Property,
+    },
+    description: `Train a monster to level ${level} in your dungeon game`,
+    icon,
+    points,
+    triggerPath: "dungeons.saveDungeons" as const,
+  });
+
+export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Dungeons, {
   [DungeonsAchievementName.DungeonCrawler]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Dungeons,
     description: "Save your dungeon game",
     icon: "mdi-sword",
     points: 10,
@@ -16,7 +40,6 @@ export const DungeonsAchievementDefinitionMap = {
   }),
   [DungeonsAchievementName.DungeonHomeowner]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Dungeons,
     condition: {
       operation: (value) => {
         const chests = Object.values(value).flatMap(({ chestMap }) => Object.values(chestMap));
@@ -33,7 +56,6 @@ export const DungeonsAchievementDefinitionMap = {
   }),
   [DungeonsAchievementName.DungeonMaster]: defineAchievementDefinition({
     amount: 50,
-    category: AchievementCategory.Dungeons,
     description: "Save your dungeon game 50 times",
     icon: "mdi-castle",
     points: 100,
@@ -41,7 +63,6 @@ export const DungeonsAchievementDefinitionMap = {
   }),
   [DungeonsAchievementName.MonsterCatcher]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Dungeons,
     condition: {
       // The starter is the party's first member, so a second member means a capture
       operation: (value) => value.length >= 2,
@@ -56,7 +77,6 @@ export const DungeonsAchievementDefinitionMap = {
   }),
   [DungeonsAchievementName.MonsterCollector]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Dungeons,
     condition: {
       operation: (value) => MonsterKeys.every((monsterKey) => value.some(({ key }) => key === monsterKey)),
       operator: AchievementOperator.Operation,
@@ -68,32 +88,14 @@ export const DungeonsAchievementDefinitionMap = {
     points: 200,
     triggerPath: "dungeons.saveDungeons" as const,
   }),
-  [DungeonsAchievementName.MonsterElite]: defineAchievementDefinition({
-    amount: 1,
-    category: AchievementCategory.Dungeons,
-    condition: {
-      operation: (value) => value.some(({ stats }) => stats.level >= 25),
-      operator: AchievementOperator.Operation,
-      path: "save.player.monsters",
-      type: AchievementConditionType.Property,
-    },
-    description: "Train a monster to level 25 in your dungeon game",
+  [DungeonsAchievementName.MonsterElite]: defineMonsterLevelAchievementDefinition({
     icon: "mdi-shield-star",
+    level: 25,
     points: 200,
-    triggerPath: "dungeons.saveDungeons" as const,
   }),
-  [DungeonsAchievementName.MonsterTrainer]: defineAchievementDefinition({
-    amount: 1,
-    category: AchievementCategory.Dungeons,
-    condition: {
-      operation: (value) => value.some(({ stats }) => stats.level >= 10),
-      operator: AchievementOperator.Operation,
-      path: "save.player.monsters",
-      type: AchievementConditionType.Property,
-    },
-    description: "Train a monster to level 10 in your dungeon game",
+  [DungeonsAchievementName.MonsterTrainer]: defineMonsterLevelAchievementDefinition({
     icon: "mdi-arm-flex",
+    level: 10,
     points: 50,
-    triggerPath: "dungeons.saveDungeons" as const,
   }),
-};
+});

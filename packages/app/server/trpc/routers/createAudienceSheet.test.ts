@@ -24,7 +24,6 @@ export const createAudienceSheet = async (
       columns: [new StringColumn({ name: AUDIENCE_KEY_COLUMN })],
       metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
       rows: keyValues.map((keyValue) => new Row({ data: { [AUDIENCE_KEY_COLUMN]: keyValue } })),
-      statistics: { columnCount: 1, rowCount: keyValues.length, size: 0 },
     },
     settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
   };

@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { ColumnHeaders } from "@/services/resource/sheet/column/ColumnHeaders";
-import { computeColumnStatistics } from "@/services/resource/sheet/column/computeColumnStatistics";
+import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
 import { getEffectiveColumnColor } from "@/services/resource/sheet/column/getEffectiveColumnColor";
 import { DRAG_HANDLE_CLASS } from "@/services/resource/sheet/constants";
 import { useColumnStore } from "@/store/resource/sheet/column";
@@ -18,13 +18,17 @@ const columnStore = useColumnStore();
 const { search, selectedColumnIds, sortBy } = storeToRefs(columnStore);
 const columnDialogStore = useColumnDialogStore();
 const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
-const isChartOpen = useSingletonDialog(chartingColumnName);
-const chartingColumnStatistics = computed(() =>
-  chartingColumnName.value
-    ? (computeColumnStatistics(dataSource).find(({ columnName }) => columnName === chartingColumnName.value) ?? null)
-    : null,
+// Both are resolved through the target so a column deleted or renamed under an open dialog drops it, instead
+// Of leaving the dialog stranded on a column that is gone and re-opening it if that name appears again
+const { isOpen: isChartOpen, item: chartingColumn } = useSingletonDialog(chartingColumnName, () =>
+  dataSource.columns.find(({ name }) => name === chartingColumnName.value),
 );
-const editingColumn = computed(() => dataSource.columns.find(({ name }) => name === editingColumnName.value));
+const chartingColumnStatistics = computed(() =>
+  chartingColumn.value ? computeColumnStatisticsForColumn(dataSource, chartingColumn.value) : undefined,
+);
+const { item: editingColumn } = useSingletonDialog(editingColumnName, () =>
+  dataSource.columns.find(({ name }) => name === editingColumnName.value),
+);
 const reorderColumns = useReorderColumns();
 const isDraggable = computed(() => !search.value && sortBy.value.length === 0);
 const dragColumns = computed({
@@ -39,23 +43,15 @@ const dragColumns = computed({
       <ResourceSheetColumnTextSlot />
     </template>
     <VueDraggable v-model="dragColumns" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
-      <StyledDataTable
-        :data-table-props="{
-          density: 'compact',
-          headers: ColumnHeaders,
-          hideDefaultFooter: true,
-          items: dataSource.columns,
-          modelValue: selectedColumnIds,
-          search,
-          showSelect: true,
-          sortBy,
-          'onUpdate:modelValue': (newSelectedColumnIds) => {
-            selectedColumnIds = newSelectedColumnIds as string[];
-          },
-          'onUpdate:sortBy': (newSortBy) => {
-            sortBy = newSortBy;
-          },
-        }"
+      <v-data-table
+        v-model="selectedColumnIds"
+        v-model:sort-by="sortBy"
+        density="compact"
+        hide-default-footer
+        show-select
+        :headers="ColumnHeaders"
+        :items="dataSource.columns"
+        :search
       >
         <template v-if="selectedColumnIds.length > 0" #top>
           <ResourceSheetColumnTopSlot />
@@ -72,7 +68,7 @@ const dragColumns = computed({
         <template #[`item.actions`]="{ item: column }">
           <ResourceSheetColumnActionSlot :column />
         </template>
-      </StyledDataTable>
+      </v-data-table>
     </VueDraggable>
     <ResourceSheetColumnChartDialog v-model="isChartOpen" :column-statistics="chartingColumnStatistics" />
     <ResourceSheetColumnEditDialog v-if="editingColumn" :key="editingColumn.id" :column="editingColumn" :data-source />

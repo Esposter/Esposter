@@ -1,7 +1,7 @@
-import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormat, DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { dayjs } from "#shared/services/dayjs";
+import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
 import { inferColumnType } from "@/services/resource/sheet/column/inferColumnType";
 import { describe, expect, test } from "vitest";
 
@@ -24,21 +24,11 @@ describe(inferColumnType, () => {
     expect(inferColumnType(["TRUE", "FALSE"])).toBe(ColumnType.Boolean);
   });
 
-  test(`integer returns ${ColumnType.Number}`, () => {
+  test(`integer, decimal and negative return ${ColumnType.Number}`, () => {
     expect.hasAssertions();
 
     expect(inferColumnType(["0"])).toBe(ColumnType.Number);
-  });
-
-  test(`decimal returns ${ColumnType.Number}`, () => {
-    expect.hasAssertions();
-
     expect(inferColumnType(["0.1"])).toBe(ColumnType.Number);
-  });
-
-  test(`negative returns ${ColumnType.Number}`, () => {
-    expect.hasAssertions();
-
     expect(inferColumnType(["-1"])).toBe(ColumnType.Number);
   });
 
@@ -58,21 +48,11 @@ describe(inferColumnType, () => {
     }
   });
 
-  test(`mixed ${ColumnType.Boolean} and ${ColumnType.Number} returns ${ColumnType.String}`, () => {
+  test(`mixed values return ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
     expect(inferColumnType(["true", "0"])).toBe(ColumnType.String);
-  });
-
-  test(`mixed ${ColumnType.Number} and ${ColumnType.Date} returns ${ColumnType.String}`, () => {
-    expect.hasAssertions();
-
     expect(inferColumnType(["0", "1970-01-01"])).toBe(ColumnType.String);
-  });
-
-  test(`mixed ${ColumnType.Boolean} and ${ColumnType.Date} returns ${ColumnType.String}`, () => {
-    expect.hasAssertions();
-
     expect(inferColumnType(["true", "1970-01-01"])).toBe(ColumnType.String);
   });
 });

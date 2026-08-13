@@ -13,7 +13,7 @@ describe(truncate, () => {
   test("truncates and appends suffix when over length", () => {
     expect.hasAssertions();
 
-    expect(truncate("aaaaaaaaaaa", 5)).toBe('a..."');
+    expect(truncate("aaaaaaaaaaa", 5)).toBe("aa...");
     expect(truncate("a".repeat(110), 100)).toHaveLength(100);
   });
 

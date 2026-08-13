@@ -1,0 +1,1 @@
+ALTER TYPE "public"."resource_type" ADD VALUE 'Blueprint' BEFORE 'Dashboard';

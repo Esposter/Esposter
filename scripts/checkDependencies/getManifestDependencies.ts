@@ -1,6 +1,7 @@
 import type { ManifestDependency } from "@/checkDependencies/models/ManifestDependency";
 
 import { getPackageJsonPaths } from "@/checkDependencies/getPackageJsonPaths";
+import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 
 const dependencyFields = ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"] as const;
@@ -9,7 +10,7 @@ export const getManifestDependencies = (root: string): ManifestDependency[] => {
   const manifestDependencies: ManifestDependency[] = [];
 
   for (const manifestPath of getPackageJsonPaths(root)) {
-    const manifest: unknown = JSON.parse(readFileSync(manifestPath, "utf8"));
+    const manifest = jsonDateParse<unknown>(readFileSync(manifestPath, "utf8"));
     if (!manifest || typeof manifest !== "object") continue;
 
     const manifestName = (manifest as Record<string, unknown>).name;

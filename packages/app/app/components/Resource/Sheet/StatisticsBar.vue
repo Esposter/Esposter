@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { DataSourceStatistics } from "#shared/models/resource/sheet/datasource/DataSourceStatistics";
+import type { DataSourceStatistics } from "@/models/resource/sheet/dataSource/DataSourceStatistics";
 
 import { getFileSize } from "@/services/file/getFileSize";
 
 interface StatisticsBarProps {
-  filteredRowCount?: number;
+  filteredRowCount: number;
   statistics: DataSourceStatistics;
 }
 
 const { filteredRowCount, statistics } = defineProps<StatisticsBarProps>();
-const isFiltered = computed(() => filteredRowCount !== undefined && filteredRowCount !== statistics.rowCount);
+const isFiltered = computed(() => filteredRowCount !== statistics.rowCount);
 </script>
 
 <template>

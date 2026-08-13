@@ -1,17 +1,8 @@
 import type { CreatableResourceType } from "@/services/resource/CreatableResourceTypes";
 
-import { ResourceType } from "@esposter/db-schema";
-// Dispatches to each creatable type's createResourceProcedures-backed router via an explicit per-type map.
+// Creation goes through the same type-to-router dispatch every other resource action does, so a new creatable
+// Type is a router and a gallery entry rather than a third place listing every type
 export const useCreateResource = () => {
-  const { $trpc } = useNuxtApp();
-  const ResourceCreateProcedureMap = {
-    [ResourceType.Dashboard]: $trpc.dashboard.createResource,
-    [ResourceType.Email]: $trpc.email.createResource,
-    [ResourceType.Flowchart]: $trpc.flowchart.createResource,
-    [ResourceType.Sheet]: $trpc.sheet.createResource,
-    [ResourceType.Survey]: $trpc.survey.createResource,
-    [ResourceType.TodoList]: $trpc.todoList.createResource,
-    [ResourceType.Webpage]: $trpc.webpage.createResource,
-  } satisfies Record<CreatableResourceType, unknown>;
-  return (type: CreatableResourceType, name: string) => ResourceCreateProcedureMap[type].mutate({ name });
+  const getResourceRouter = useResourceRouter();
+  return (type: CreatableResourceType, name: string) => getResourceRouter(type).createResource.mutate({ name });
 };

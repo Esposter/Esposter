@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
 import { MAX_SIDE_BAR_WIDTH, MIN_SIDE_BAR_WIDTH } from "@/services/message/ui/constants";
 import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
+import { useMessageLayoutStore } from "@/store/message/ui/layout";
 
 useHead({ titleTemplate: (title) => (title ? `${MESSAGE_DISPLAY_NAME} | ${title}` : MESSAGE_DISPLAY_NAME) });
 await useSubscribables();
@@ -18,12 +19,11 @@ const roomName = useRoomName(currentRoomId);
 </script>
 
 <template>
-  <!-- We only want to show the inner scrollbar inside the chat content -->
   <NuxtLayout
     :footer-style="{ paddingBottom: 0 }"
     hide-global-scrollbar
-    :left-navigation-drawer-props="{ width: leftSideBarWidth }"
-    :right-navigation-drawer-props="{ width: rightSideBarWidth }"
+    :left-navigation-drawer-props="{ width: isDesktop ? leftSideBarWidth : LEFT_DRAWER_WIDTH }"
+    :right-navigation-drawer-props="{ width: isDesktop ? rightSideBarWidth : RIGHT_DRAWER_WIDTH }"
   >
     <Head>
       <Title>{{ roomName }}</Title>

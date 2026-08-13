@@ -31,18 +31,24 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { MOCK_BLOB_BASE_URL } from "@/constants";
+import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "@/constants";
 import { MockBlobBatchClient } from "@/models/container/MockBlobBatchClient";
 import { MockBlockBlobClient } from "@/models/container/MockBlockBlobClient";
 import { MockRestError } from "@/models/MockRestError";
 import { getBlobItemXml } from "@/services/container/getBlobItemXml";
 import { getBlobPrefixXml } from "@/services/container/getBlobPrefixXml";
-import { getListBlobsXml } from "@/services/container/getListBlobsXml";
+import { getBlobUrl } from "@/services/container/getBlobUrl";
+import { getListBlobsSegmentResponse } from "@/services/container/getListBlobsSegmentResponse";
+import { getMockContainer } from "@/services/container/getMockContainer";
 import { createMockResponse } from "@/services/createMockResponse";
 import { getMockSasUrl } from "@/services/getMockSasUrl";
+import {
+  getMockContainerCreatedOnKey,
+  MOCK_BLOB_SEEDED_CREATED_ON,
+  MockContainerCreatedOnDatabase,
+} from "@/store/MockContainerCreatedOnDatabase";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
-import { getOrCreate } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure ContainerClient.
  * It uses a Map to simulate blob storage.
@@ -60,7 +66,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   url: string;
 
   get container(): MapValue<typeof MockContainerDatabase> {
-    return getOrCreate(MockContainerDatabase, this.containerName, () => new Map());
+    return getMockContainer(this.containerName);
   }
 
   constructor(connectionString: string, containerName: string) {
@@ -82,9 +88,10 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
-    if (!this.container.has(blobName)) throw new MockRestError("The specified blob does not exist.", 404);
+    if (!this.container.has(blobName)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     this.container.delete(blobName);
-    return Promise.resolve({ _response: createMockResponse(200, `${this.url}/${blobName}`) });
+    MockContainerCreatedOnDatabase.delete(getMockContainerCreatedOnKey(this.containerName, blobName));
+    return Promise.resolve({ _response: createMockResponse(200, getBlobUrl(this.containerName, blobName)) });
   }
 
   deleteIfExists(): Promise<ContainerDeleteIfExistsResponse> {
@@ -158,7 +165,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     const blobHierarchyItemIterator = this.#getBlobHierarchyItemIterator(delimiter, options);
     return {
       byPage: () =>
-        async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobFlatSegmentResponse> {
+        async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobHierarchySegmentResponse> {
           // For a simple mock, we'll return all entities in a single page
           // A more complex mock could implement maxPageSize and continuationTokens
           const allBlobItems: BlobItem[] = [];
@@ -175,31 +182,14 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
             }
 
           if (allBlobItems.length > 0 || allBlobPrefixes.length > 0)
-            yield await Promise.resolve({
-              _response: {
-                ...createMockResponse(200),
-                bodyAsText: getListBlobsXml(
-                  this.containerName,
-                  `${allBlobItemXml.join("")}${allBlobPrefixXml.join("")}`,
-                ),
-                parsedBody: {
-                  containerName: this.containerName,
-                  marker: "",
-                  prefix: options?.prefix ?? "",
-                  segment: {
-                    blobItems: allBlobItems,
-                  },
-                  serviceEndpoint: "",
-                },
-              },
-              containerName: this.containerName,
-              marker: "",
-              prefix: options?.prefix ?? "",
-              segment: {
-                blobItems: allBlobItems,
-              },
-              serviceEndpoint: "",
-            });
+            yield await Promise.resolve(
+              getListBlobsSegmentResponse(
+                this.containerName,
+                options?.prefix ?? "",
+                { blobItems: allBlobItems, blobPrefixes: allBlobPrefixes },
+                `${allBlobItemXml.join("")}${allBlobPrefixXml.join("")}`,
+              ),
+            );
         }.bind(this)(),
       next: blobHierarchyItemIterator.next.bind(blobHierarchyItemIterator),
       [Symbol.asyncIterator]() {
@@ -208,8 +198,10 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     };
   }
 
-  listBlobsFlat(): PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse> {
-    const blobItemIterator = this.#getBlobItemIterator();
+  listBlobsFlat(
+    options?: ContainerListBlobsOptions,
+  ): PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse> {
+    const blobItemIterator = this.#getBlobItemIterator(options);
     return {
       byPage: () =>
         async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobFlatSegmentResponse> {
@@ -223,28 +215,14 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
           }
 
           if (allBlobItems.length > 0)
-            yield await Promise.resolve({
-              _response: {
-                ...createMockResponse(200),
-                bodyAsText: getListBlobsXml(this.containerName, allBlobItemXml.join("")),
-                parsedBody: {
-                  containerName: this.containerName,
-                  marker: "",
-                  prefix: "",
-                  segment: {
-                    blobItems: allBlobItems,
-                  },
-                  serviceEndpoint: "",
-                },
-              },
-              containerName: this.containerName,
-              marker: "",
-              prefix: "",
-              segment: {
-                blobItems: allBlobItems,
-              },
-              serviceEndpoint: "",
-            });
+            yield await Promise.resolve(
+              getListBlobsSegmentResponse(
+                this.containerName,
+                options?.prefix ?? "",
+                { blobItems: allBlobItems },
+                allBlobItemXml.join(""),
+              ),
+            );
         }.bind(this)(),
       next: blobItemIterator.next.bind(blobItemIterator),
       [Symbol.asyncIterator]() {
@@ -294,20 +272,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
 
       if (delimiterIndex === -1)
         // No delimiter found after the prefix, so it's a blob at this level
-        blobsInCurrentLevel.push({
-          deleted: false,
-          name,
-          properties: {
-            blobType: "BlockBlob",
-            contentLength: buffer.length,
-            contentType: "application/octet-stream",
-            etag: `"${crypto.randomUUID()}"`,
-            lastModified: new Date(),
-            leaseState: "available",
-            leaseStatus: "unlocked",
-          },
-          snapshot: "",
-        });
+        blobsInCurrentLevel.push(this.#getBlobItem(name, buffer));
       else {
         // Delimiter found, this represents a "subdirectory"
         const subprefix = `${prefix}${nameAfterPrefix.slice(0, delimiterIndex + delimiter.length)}`;
@@ -320,21 +285,31 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
-  async *#getBlobItemIterator(): AsyncGenerator<BlobItem> {
-    for (const [name, buffer] of this.container.entries())
-      yield await Promise.resolve({
-        deleted: false,
-        name,
-        properties: {
-          blobType: "BlockBlob",
-          contentLength: buffer.length,
-          contentType: "application/octet-stream",
-          etag: `"${crypto.randomUUID()}"`,
-          lastModified: new Date(),
-          leaseState: "available",
-          leaseStatus: "unlocked",
-        },
-        snapshot: "",
-      });
+  // Both listings report the same blob the same way, so the properties are described in exactly one place
+  #getBlobItem(name: string, buffer: Buffer): BlobItem {
+    return {
+      deleted: false,
+      name,
+      properties: {
+        blobType: "BlockBlob",
+        contentLength: buffer.length,
+        contentType: "application/octet-stream",
+        createdOn:
+          MockContainerCreatedOnDatabase.get(getMockContainerCreatedOnKey(this.containerName, name)) ??
+          MOCK_BLOB_SEEDED_CREATED_ON,
+        etag: `"${crypto.randomUUID()}"`,
+        lastModified: new Date(),
+        leaseState: "available",
+        leaseStatus: "unlocked",
+      },
+      snapshot: "",
+    };
+  }
+  async *#getBlobItemIterator(options?: ContainerListBlobsOptions): AsyncGenerator<BlobItem> {
+    const prefix = options?.prefix ?? "";
+    for (const [name, buffer] of this.container.entries()) {
+      if (!name.startsWith(prefix)) continue;
+      yield await Promise.resolve(this.#getBlobItem(name, buffer));
+    }
   }
 }

@@ -42,16 +42,16 @@ describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
     async () => {
       expect.hasAssertions();
 
-      const dir = temporaryDirectories.create();
+      const directory = temporaryDirectories.create();
       const os = createOsBackend();
 
-      const writeResult = await os.exec(`echo x > ${TEST_FILENAME}`, { cwd: dir, stdio: "pipe" });
+      const writeResult = await os.exec(`echo x > ${TEST_FILENAME}`, { cwd: directory, stdio: "pipe" });
 
       expect(writeResult.exitCode).toBe(0);
-      expect(existsSync(join(dir, TEST_FILENAME))).toBe(false);
+      expect(existsSync(join(directory, TEST_FILENAME))).toBe(false);
 
       // A fresh exec gets a fresh RAM upper, so the previous run's write is gone there too.
-      const readResult = await os.exec(`cat ${TEST_FILENAME}`, { cwd: dir, stdio: "pipe" });
+      const readResult = await os.exec(`cat ${TEST_FILENAME}`, { cwd: directory, stdio: "pipe" });
 
       expect(readResult.exitCode).not.toBe(0);
     },

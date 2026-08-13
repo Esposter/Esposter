@@ -37,8 +37,8 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
           experienceBarStore.isAnimating = false;
         } else if (activePanel.value === ActivePanel.Option) await onSelectPlayerOption();
         else if (activePanel.value === ActivePanel.AttackOption) {
-          const attackOptionGrid = useAttackOptionGrid();
-          if (attackOptionGrid.value) await battleStateMachine.setState(StateName.EnemyInput);
+          const currentAttackOptionGrid = useAttackOptionGrid();
+          if (currentAttackOptionGrid.value) await battleStateMachine.setState(StateName.EnemyInput);
         }
         return;
       case PlayerSpecialInput.Enter:

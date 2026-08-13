@@ -2,6 +2,7 @@ import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemp
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
@@ -25,10 +26,10 @@ describe(resolveWorkspaceRoot, () => {
     expect.hasAssertions();
 
     const root = createWorkspace();
-    const nested = join(root, TEST_FILENAME, TEST_FILENAME);
-    mkdirSync(nested, { recursive: true });
+    const nestedDirectory = join(root, TEST_FILENAME, TEST_FILENAME);
+    mkdirSync(nestedDirectory, { recursive: true });
 
-    expect(resolveWorkspaceRoot(nested)).toBe(root);
+    expect(resolveWorkspaceRoot(nestedDirectory)).toBe(root);
   });
 
   test("throws when no lockfile exists up the tree", () => {
@@ -36,6 +37,14 @@ describe(resolveWorkspaceRoot, () => {
 
     const root = create();
 
-    expect(() => resolveWorkspaceRoot(root)).toThrow(PNPM_LOCKFILE_FILENAME);
+    expect(() => resolveWorkspaceRoot(root)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${
+        new InvalidOperationError(
+          Operation.Read,
+          resolveWorkspaceRoot.name,
+          `no ${PNPM_LOCKFILE_FILENAME} found in ${root} or any parent`,
+        ).message
+      }]`,
+    );
   });
 });

@@ -9,6 +9,8 @@ Token budgets are the constraint: the main session's context is where design qua
 
 The split is by **role, not by model**. Whatever model the session happens to run (`~/.claude/settings.json` sets it), the main session is the thinker and subagents are the implementers — the rule holds when the config changes, and the same model may well sit on both sides.
 
+**Never name a model version anywhere in this repo** — not in skills, docs, workflow scripts, or delegation prompts. Model families ship new versions every few weeks and this project always wants the latest, so write the unversioned family alias only. A version-pinned id (`claude-<family>-<version>`) or a prose family-plus-number is stale the moment it's written and silently keeps work on an old model.
+
 ## Division of labor
 
 - **Main session**: specs, proposals, architecture decisions, triage, naming, docs conventions, reviewing agent output. Anything where judgment compounds.
@@ -21,10 +23,10 @@ The docs skill already encodes the handoff: proposals must be self-contained eno
 The agent starts with zero conversation context. The prompt must carry:
 
 1. **The spec** — point at the proposal file (or inline it) and pre-resolve every judgment call you can: exact rename maps, negative lists (what NOT to touch), edge cases already decided. Ambiguity left in the prompt becomes a judgment call made without you.
-2. **Repo conventions the agent can't infer** — always `pnpm`, never `npx`; verify with `pnpm format` + typecheck (and relevant tests); lint with `pnpm lint:fix:packages` from the root for `packages/*`, but **skip lint entirely when the change touches `packages/app`** (slow — leave it to CI); `try/catch` banned (getResult/getResultAsync + `.match`); no relative imports (`@/`, `#shared`, `@esposter/*`); never run `db:gen`/`db:up` — hand-craft migration folders (`migration.sql` + `snapshot.json` cloned from latest with fresh `id`/`prevIds`) when the spec needs one, and report that the user must apply it.
+2. **Repo conventions the agent can't infer** — always `pnpm`, never `npx`; verify with `pnpm format` + typecheck (and relevant tests); lint with `pnpm lint:fix:packages` from the root for `packages/*`, or `pnpm lint:fix` from `packages/app/` for app changes (ESLint only — oxlint never runs on the app locally; CI's root `pnpm lint` covers it); `try/catch` banned (getResult/getResultAsync + `.match`); no relative imports (`@/`, `#shared`, `@esposter/*`); never run `db:gen`/`db:up` and never hand-craft migration folders (cloning `snapshot.json` forks the migration chain — `db:gen` is the only sanctioned producer); when the spec needs a migration, edit the Drizzle schema only (the TS types alone keep typecheck green) and report that the user must run `pnpm db:gen` and apply it.
 3. **A verifiable done-definition** — grep audits that must return zero hits, test files that must pass. "Done" the agent can prove beats "done" it can claim.
 4. **Git discipline** — commit style from the git skill; push when green. **Never `git add -A`**: other sessions' WIP may be dirty (historically `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `scripts/refreshLockfile.ps1`, but check `git status` fresh) — stage explicit paths only.
-5. **Report-back contract** — files changed, judgment calls made, verification results, and anything only the user can do (e.g. `pnpm db:up`).
+5. **Report-back contract** — files changed, judgment calls made, verification results, and anything only the user can do (e.g. running `pnpm db:gen` for a pending schema change).
 
 ## While the agent runs
 
@@ -39,14 +41,21 @@ Fan-out is earned by the prompt and paid for by the budget. The historical failu
 
 Plan the batch around what the agents touch:
 
+- Size each PR to **fill the review budget, not just stay under it** — the number itself is the `coderabbit` skill's ("PR File Budget"), and a single proposal comes nowhere near it. One-proposal-per-agent therefore wastes most of a review slot and multiplies review rounds; batch several related proposals from one area into a single agent's spec.
 - Give each agent its own branch cut from `develop` and a stated merge order; a PR that depends on another's output is a stacked branch, not a parallel one — fold it into its parent's PR instead.
 - Overlap must be additive only (separate rows on a shared component, separate procedures in a shared router). Shared schema sections or a shared write path mean one PR, not two agents.
 - Each agent commits, pushes, and opens its own PR from its worktree. Verify each landed commit yourself before the next PR merges on top.
 
 ## Cleaning up worktrees
 
-Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. Never sweep a long-lived branch you did not create.
+Agent worktrees and their branches outlive the agent. Sweep them once their PR merges — `git worktree remove <path>` (it refuses while dirty, which is the signal to look before deleting), then `git worktree prune`, then `git branch -d` per branch. Use `-d`, never `-D`: the refusal to delete an unmerged branch is the only thing standing between a stale worktree and lost work. Orphaned `worktree-agent-*` branches with zero commits beyond `develop` are debris from already-cleaned worktrees and delete cleanly. **Only branches you created for an agent are yours to sweep.** A branch with a name someone chose deliberately (not the `worktree-agent-*` pattern) is presumed long-lived: leave it and ask, even when asked to "clean up old branches" — staleness or a merged PR is not authorization to delete it.
+
+## Code reviews
+
+Reviews are execution roles, not the thinking role. The full convention — single entry point, opus-pinned workflow script, scriptPath invocation, findings handling — lives in the `code-review` skill; load it on any review request. Never review inline in the session and never use the `review` skill.
+
+**A delegated fix round carries that skill's closing checklist verbatim in its prompt** (`code-review`, `fixing-findings.md`). An agent handed only a findings list optimises for the finding: it makes each one's own test pass and stops, which is precisely how a round ships a worse defect than it closed — a guard exempted, a sibling site left behind, a mitigation asserted in a comment and never written. The checklist is what the prompt's done-definition is built from, alongside the usual grep audits.
 
 ## Design for agents
 
-Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. The [Blueprint proposal](../../../packages/app/content/docs/proposals/platform/blueprint-resource.md) is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.
+Every feature is designed agentic-first: resource creation (and eventually most authoring) may be done by AI, so specs must keep that path open — content is schema-validated JSON, writes go through ordinary validated procedures, no hidden client-side state, validation before side effects. The [Blueprint feature page](../../../packages/app/content/docs/platform/blueprint-resource.md) is the canonical statement: whatever creates resources — human, form, or model — goes through the same front door.

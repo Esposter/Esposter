@@ -1,3 +1,4 @@
+import { createExactLengthCheckSql } from "@/models/shared/Check";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
@@ -27,10 +28,10 @@ export const invitesInMessage = pgTable(
   },
   {
     extraConfig: ({ id, maxUses, uses }) => [
-      check("invites_id_length_check", sql`LENGTH(${id}) = ${sql.raw(INVITE_ID_LENGTH.toString())}`),
-      check("invites_max_uses_check", sql`${maxUses} >= 0`),
+      check("invites_id_length_check", createExactLengthCheckSql(id, INVITE_ID_LENGTH)),
+      check("invites_maxUses_check", sql`${maxUses} >= 0`),
       check("invites_uses_check", sql`${uses} >= 0`),
-      check("invites_uses_max_uses_check", sql`${maxUses} = 0 OR ${uses} <= ${maxUses}`),
+      check("invites_uses_maxUses_check", sql`${maxUses} = 0 OR ${uses} <= ${maxUses}`),
     ],
     schema: messageSchema,
   },

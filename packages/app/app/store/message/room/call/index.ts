@@ -1,7 +1,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { useMutation } from "@/composables/shared/useMutation";
-import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { useRoomStore } from "@/store/message/room";
@@ -17,9 +16,12 @@ import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  // Camera, mute and hand each own a different field of the participant row, so they share the participant key
+  // Without contending — separate instances let a hand going up while the mic is unmuting land in either order
+  const { executeMutation: executeSetCameraMutation } = useMutation();
+  const { executeMutation: executeSetHandRaisedMutation } = useMutation();
+  const { executeMutation: executeSetMuteMutation } = useMutation();
   const roomStore = useRoomStore();
-  const session = authClient.useSession();
   const knockerStore = useKnockerStore();
   const { resetKnockerState } = knockerStore;
   const mediaStore = useMediaStore();
@@ -44,12 +46,13 @@ export const useCallStore = defineStore("message/room/call", () => {
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
-  const sessionId = computed(() => session.value.data?.session.id);
   const callParticipantMap = computed(
     () =>
       participantStore.callSessionParticipantsMap.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
   );
-  const selfParticipant = computed(() => (sessionId.value ? callParticipantMap.value.get(sessionId.value) : undefined));
+  const selfParticipant = computed(() =>
+    participantStore.sessionId ? callParticipantMap.value.get(participantStore.sessionId) : undefined,
+  );
   const isInCall = computed(() => Boolean(selfParticipant.value));
   // Hosted here (not a component) so hold-to-talk survives navigation, like the call itself
   usePushToTalk(isInCall);
@@ -57,11 +60,11 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
   const setHandRaisedEnabled = async (newIsHandRaised: boolean, targetSessionId?: string) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionIdValue = sessionId.value;
+    const sessionIdValue = participantStore.sessionId;
     const participantSessionId = targetSessionId ?? sessionIdValue;
     if (!callSessionId || !sessionIdValue || !participantSessionId) return;
 
-    await executeMutation(
+    await executeSetHandRaisedMutation(
       () =>
         $trpc.callSession.setHandRaised.mutate({
           callSessionId,
@@ -78,46 +81,58 @@ export const useCallStore = defineStore("message/room/call", () => {
             setHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
           };
         },
+        // Keyed per participant so a moderator lowering several hands never queues behind the other
+        key: participantSessionId,
       },
     );
   };
   const setCameraEnabled = async (newIsCameraEnabled: boolean) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionIdValue = sessionId.value;
+    const sessionIdValue = participantStore.sessionId;
     if (!callSessionId || !sessionIdValue) return;
 
-    const oldIsCameraEnabled = mediaStore.isCameraEnabled;
-    mediaStore.isCameraEnabled = newIsCameraEnabled;
-    setParticipantCamera(callSessionId, sessionIdValue, newIsCameraEnabled);
-
-    await getResultAsync(() =>
-      $trpc.callSession.setCamera.mutate({
-        callSessionId,
-        isCameraEnabled: newIsCameraEnabled,
-      }),
-    ).match(noop, (error) => {
-      mediaStore.isCameraEnabled = oldIsCameraEnabled;
-      setParticipantCamera(callSessionId, sessionIdValue, oldIsCameraEnabled);
-      throw error;
-    });
+    await executeSetCameraMutation(
+      () =>
+        $trpc.callSession.setCamera.mutate({
+          callSessionId,
+          isCameraEnabled: newIsCameraEnabled,
+        }),
+      {
+        applyOptimistic: () => {
+          const oldIsCameraEnabled = mediaStore.isCameraEnabled;
+          mediaStore.isCameraEnabled = newIsCameraEnabled;
+          setParticipantCamera(callSessionId, sessionIdValue, newIsCameraEnabled);
+          return () => {
+            mediaStore.isCameraEnabled = oldIsCameraEnabled;
+            setParticipantCamera(callSessionId, sessionIdValue, oldIsCameraEnabled);
+          };
+        },
+        key: sessionIdValue,
+      },
+    );
   };
   const setMuteEnabled = async (newIsMuted: boolean) => {
     const callSessionId = activeCallSessionId.value;
-    const sessionIdValue = sessionId.value;
+    const sessionIdValue = participantStore.sessionId;
     if (!callSessionId || !sessionIdValue) return;
 
-    const oldIsMuted = isMuted.value;
-    setMute(callSessionId, sessionIdValue, newIsMuted);
-
-    await getResultAsync(() =>
-      $trpc.callSession.setMute.mutate({
-        callSessionId,
-        isMuted: newIsMuted,
-      }),
-    ).match(noop, (error) => {
-      setMute(callSessionId, sessionIdValue, oldIsMuted);
-      throw error;
-    });
+    await executeSetMuteMutation(
+      () =>
+        $trpc.callSession.setMute.mutate({
+          callSessionId,
+          isMuted: newIsMuted,
+        }),
+      {
+        applyOptimistic: () => {
+          const oldIsMuted = isMuted.value;
+          setMute(callSessionId, sessionIdValue, newIsMuted);
+          return () => {
+            setMute(callSessionId, sessionIdValue, oldIsMuted);
+          };
+        },
+        key: sessionIdValue,
+      },
+    );
   };
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
     currentRoomCallSessionId.value = callSessionId;
@@ -153,6 +168,8 @@ export const useCallStore = defineStore("message/room/call", () => {
           joinedCallSessionId = callSessionId;
           isJoined = true;
           setParticipantMap(callSessionId, participantMap);
+          // The call is connected by here, so these only sync the participant row and report their own
+          // Failures — a rejected flag must not tear down a call that is already up
           if (!isMicrophoneEnabled) await setMuteEnabled(true);
           if (isCameraEnabled) {
             await setCamera(true);
@@ -207,7 +224,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     if (!callSessionId) return;
     await withFinalizerAsync(
       async () => {
-        if (sessionId.value) deleteCallParticipant(callSessionId, sessionId.value);
+        if (participantStore.sessionId) deleteCallParticipant(callSessionId, participantStore.sessionId);
         await $trpc.callSession.leaveCall.mutate({ callSessionId });
       },
       async () => {
@@ -224,6 +241,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
   const selectVirtualBackground = async (imagePath: string) => {
     if (imagePath && !mediaStore.isCameraEnabled) {
+      // Only the local device call decides whether to go on: a camera that never turned on has nothing to
+      // Composite a background onto, while the participant-row write reports and unwinds itself
       const isEnabled = await getResultAsync(async () => {
         await setCamera(true);
         await setCameraEnabled(true);
@@ -271,32 +290,32 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, console.error);
   };
 
-  AdminActionHookMap[AdminActionType.CreateBan].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.CreateBan].register(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });
-  AdminActionHookMap[AdminActionType.ForceMute].push(async (roomId) => {
-    if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, true);
+  AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
+    if (participantStore.sessionId) setMute(currentRoomCallSessionId.value, participantStore.sessionId, true);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(false);
     mediaStore.isForceMuted = true;
   });
-  AdminActionHookMap[AdminActionType.ForceUnmute].push(async (roomId) => {
-    if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, false);
+  AdminActionHookMap[AdminActionType.ForceUnmute].register(async (roomId) => {
+    if (participantStore.sessionId) setMute(currentRoomCallSessionId.value, participantStore.sessionId, false);
     if (callRoomId.value !== roomId) return;
     await setMicrophone(true);
     mediaStore.isForceMuted = false;
   });
-  AdminActionHookMap[AdminActionType.KickFromRoom].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.KickFromRoom].register(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });
-  AdminActionHookMap[AdminActionType.KickFromCall].push(async () => {
+  AdminActionHookMap[AdminActionType.KickFromCall].register(async () => {
     await leaveCall();
   });
-  AdminActionHookMap[AdminActionType.StopScreenShare].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.StopScreenShare].register(async (roomId) => {
     if (callRoomId.value !== roomId) return;
     await setScreenShare(false);
   });
-  AdminActionHookMap[AdminActionType.TimeoutUser].push(async (roomId) => {
+  AdminActionHookMap[AdminActionType.TimeoutUser].register(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });
 

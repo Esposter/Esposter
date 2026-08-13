@@ -1,7 +1,7 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
-import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
 import { exhaustiveGuard, normalizeString } from "@esposter/shared";
 
 export const coerceValue = (value: string, type: ColumnType): ColumnValue => {

@@ -20,19 +20,40 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
   if (!participantToken) throw invalidParticipantTokenError();
 
   const survey = await db.query.resources.findFirst({
-    where: { id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
+    where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
   });
   if (!survey) throw invalidParticipantTokenError();
-
-  // Only the survey's owner can bind it to a program, so their programs are the whole candidate set
-  const programs = await db.query.resources.findMany({
-    where: { type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
+  // Only the survey's owner can bind it to a program, so their programs are the whole candidate set.
+  // A recycle-binned program stays in the set: its token links were already distributed to participants,
+  // And only an actual purge — not a recoverable soft-delete — should invalidate them.
+  //
+  // The binding is a column, written in the same transaction as the content it is projected from, so the whole
+  // Candidate set is one indexed lookup. Reading it out of blob content instead opens every Program the owner
+  // Has on every submission to an identified survey — by an unauthenticated caller, at that.
+  const boundPrograms = await db.query.resources.findMany({
+    where: {
+      boundResourceId: { eq: surveyId },
+      type: { eq: ResourceType.Program },
+      userId: { eq: survey.userId },
+    },
   });
-  // Every candidate's binding is read at once: this runs on every submission to an identified survey, and
-  // The owner's programs are independent of each other, so N sequential blob reads would be N latencies
-  // Charged to the respondent for no ordering the answer depends on
-  const contents = await Promise.all(programs.map(({ id }) => readResourceContent(programResourceSchema, id)));
-  const boundPrograms = programs.filter((_program, index) => contents[index]?.surveyId === surveyId);
+  // Programs whose content predates the column have no binding projected yet, so they are still resolved the
+  // Old way until the backfill (or their owner's next save) reaches them. Scoped to exactly those rows, so it
+  // Costs nothing once none are left — and dropping it instead would reject every already-issued token on a
+  // Deploy where the backfill has not run
+  const unprojectedPrograms = await db.query.resources.findMany({
+    where: {
+      boundResourceId: { isNull: true },
+      type: { eq: ResourceType.Program },
+      userId: { eq: survey.userId },
+    },
+  });
+  if (unprojectedPrograms.length > 0) {
+    const contents = await Promise.all(
+      unprojectedPrograms.map(({ id }) => readResourceContent(programResourceSchema, id)),
+    );
+    boundPrograms.push(...unprojectedPrograms.filter((_program, index) => contents[index]?.surveyId === surveyId));
+  }
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   for (const boundProgram of boundPrograms) {
     // The token is a column rather than the key, so this is a single-partition scan for one row —

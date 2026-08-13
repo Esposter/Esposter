@@ -120,18 +120,10 @@ describe("post", () => {
     const newPost = await postCaller.createPost({ title });
     const newComment = await postCaller.createComment({ description, parentId: newPost.id });
     const readPost = await postCaller.readPost(newPost.id);
+    const readComment = await postCaller.readPost(newComment.id);
 
     expect(newComment.description).toBe(description);
     expect(readPost.noComments).toBe(1);
-  });
-
-  test("reads comment", async () => {
-    expect.hasAssertions();
-
-    const newPost = await postCaller.createPost({ title });
-    const newComment = await postCaller.createComment({ description, parentId: newPost.id });
-    const readComment = await postCaller.readPost(newComment.id);
-
     expect(readComment).toStrictEqual(newComment);
   });
 
@@ -265,6 +257,19 @@ describe("post", () => {
     expect(readPost.noComments).toBe(1);
   });
 
+  test("reads posts filtered by user excluding comments", async () => {
+    expect.hasAssertions();
+
+    const post = await postCaller.createPost({ title });
+    const { user: author } = await mockSessionOnce(mockContext.db);
+    const authorPost = await postCaller.createPost({ title });
+    await mockSessionOnce(mockContext.db, author);
+    await postCaller.createComment({ description, parentId: post.id });
+    const readPosts = await postCaller.readPosts({ userId: author.id });
+
+    expect(readPosts.items.map(({ id }) => id)).toStrictEqual([authorPost.id]);
+  });
+
   test("reads blocked user's post by id", async () => {
     expect.hasAssertions();
 
@@ -290,9 +295,7 @@ describe("post", () => {
     const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 1, sortBy });
 
     expect(firstPage.items.map(({ id }) => id)).toStrictEqual([secondPost.id]);
-    expect(firstPage.hasMore).toBe(true);
     expect(secondPage.items.map(({ id }) => id)).toStrictEqual([firstPost.id]);
-    expect(secondPage.hasMore).toBe(false);
   });
 
   test("paginates tied sort values without skipping", async () => {

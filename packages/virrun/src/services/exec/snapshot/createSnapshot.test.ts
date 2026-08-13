@@ -11,24 +11,29 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test } from "vitest";
+import {beforeEach, describe, expect, test, vi} from "vitest";
+
+vi.mock(
+  import("@/services/exec/util/getSandboxNodeVersion"),
+  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+);
 
 describe(createSnapshot, () => {
   const { createWorkspace } = setupTemporaryCacheHome();
   const command = "pnpm install";
-  let repo = "";
+  let repository = "";
 
   beforeEach(() => {
-    repo = createWorkspace();
+    repository = createWorkspace();
   });
 
   test("captures in a private temp upper and atomically publishes it onto the final upperDir", async () => {
     expect.hasAssertions();
 
     const backend = createRecordingBackend();
-    const { location } = await createSnapshot(backend, command, { cwd: repo, stdio: "pipe" });
+    const { location } = await createSnapshot(backend, command, { cwd: repository, stdio: "pipe" });
 
-    expect(location).toStrictEqual(resolveSnapshotLocation(repo));
+    expect(location).toStrictEqual(resolveSnapshotLocation(repository));
     // The published upper exists; the private temps it was captured/scratched in are torn down.
     expect(existsSync(location.upperDir)).toBe(true);
 
@@ -46,12 +51,12 @@ describe(createSnapshot, () => {
     expect.hasAssertions();
 
     // Simulate the lost race: a populated final upper is already on disk before this capture publishes.
-    const publishedUpper = resolveSnapshotLocation(repo).upperDir;
+    const publishedUpper = resolveSnapshotLocation(repository).upperDir;
     mkdirSync(publishedUpper, { recursive: true });
     writeFileSync(join(publishedUpper, TEST_FILENAME), "");
 
     const backend = createRecordingBackend();
-    const { location } = await createSnapshot(backend, command, { cwd: repo, stdio: "pipe" });
+    const { location } = await createSnapshot(backend, command, { cwd: repository, stdio: "pipe" });
 
     expect(location.exists).toBe(true);
     // Theirs is kept untouched; our own temp upper is discarded.
@@ -63,7 +68,7 @@ describe(createSnapshot, () => {
     expect.hasAssertions();
 
     const backend = createRecordingBackend();
-    const { result } = await createSnapshot(backend, command, { cwd: repo, stdio: "pipe" });
+    const { result } = await createSnapshot(backend, command, { cwd: repository, stdio: "pipe" });
 
     expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: "" });
   });
@@ -72,11 +77,11 @@ describe(createSnapshot, () => {
     expect.hasAssertions();
 
     const backend = createRecordingBackend();
-    const store = join(repo, VIRRUN_STORE_DIRECTORY_NAME);
-    await createSnapshot(backend, command, { bindDirs: [store], cwd: repo, isNetworkEnabled: true, stdio: "pipe" });
+    const store = join(repository, VIRRUN_STORE_DIRECTORY_NAME);
+    await createSnapshot(backend, command, { bindDirs: [store], cwd: repository, isNetworkEnabled: true, stdio: "pipe" });
 
     expect(backend.calls[0]).toStrictEqual(
-      expect.objectContaining({ bindDirs: [store], cwd: repo, isNetworkEnabled: true }),
+      expect.objectContaining({ bindDirs: [store], cwd: repository, isNetworkEnabled: true }),
     );
   });
 
@@ -85,7 +90,7 @@ describe(createSnapshot, () => {
 
     const backend = createRecordingBackend({ exitCode: 1, stderr: "", stdout: "" });
 
-    await expect(createSnapshot(backend, command, { cwd: repo, stdio: "pipe" })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(createSnapshot(backend, command, { cwd: repository, stdio: "pipe" })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createSnapshot.name, "snapshot setup command exited with 1: ").message}]`,
     );
   });

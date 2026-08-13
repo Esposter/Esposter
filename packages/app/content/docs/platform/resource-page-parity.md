@@ -5,18 +5,18 @@ description: Azure command-bar parity on the resource page — labeled commands 
 
 # Resource Page Parity
 
-Azure command-bar and destructive-operation parity on `/resources/[id]/[[blade]]`: labeled toolbar commands with a `…` overflow, Refresh, a Duplicate command, and a type-the-name delete confirmation.
+Azure command-bar and destructive-operation parity on `/resource-explorer/[id]/[[blade]]`: labeled toolbar commands with a `…` overflow, Refresh, a Duplicate command, and a type-the-name delete confirmation.
 
 ## Command bar
 
 - **Presentation** (`BladeActions`): `variant="text"` buttons with `prepend-icon` + label (Refresh, Rename, Delete, Duplicate, Publish/Unpublish, Import, Export), `v-divider vertical` between groups; Delete keeps `color="error"`.
-- **Overflow** (`BladeOverflowMenu`): on `smAndDown`, trailing commands collapse into a `…` `v-menu` (labels always visible in the menu); Refresh, Rename, Delete, and the close ✕ never collapse.
-- **Refresh**: re-runs `useResource`'s `load` (row + publication) with the toolbar button showing the loading state.
+- **Overflow**: on `smAndDown`, every command collapses into a single `…` menu (labels always visible in the menu), rendered by `BladeActions` from the same gates as the wide bar; the close ✕ never collapses.
+- **Refresh**: re-runs `useResourceStore`'s `readResource` (row + publication) with the toolbar button showing the loading state.
 - **Duplicate**: `resource.duplicateResource` — copies the row as `{name} (copy)` + the content blob; never the publication (a copy starts as Draft). Routes to the new resource's Overview and raises a "Go to resource" [notification](/docs/platform/notifications). Capability-independent (every type supports it).
 
 ## Destructive-operation guard
 
-`StyledDeleteFormDialog` takes an optional `confirmName` prop: a text field whose value must equal it before Delete enables (Azure's "type the resource name to confirm"). The blade Delete command and the `/all` row delete type the resource name; bulk delete on `/all` types the selection count (`delete {n}` — [list filters & views](/docs/platform/list-filters-and-views)).
+`StyledDeleteFormDialog` takes an optional `confirmName` prop: a text field whose value must equal it before Delete enables (Azure's "type the resource name to confirm"). The blade Delete command and the `/all` row delete type the resource name; a bulk delete past one selection has no single name to type, so it falls back to a count phrase ([list filters & views](/docs/platform/list-filters-and-views)).
 
 ## Save-conflict surface
 
@@ -42,15 +42,14 @@ sequenceDiagram
 
 ## Key files
 
-| File                                            | Role                                                        |
-| ----------------------------------------------- | ----------------------------------------------------------- |
-| `app/components/Resource/BladeActions.vue`      | labeled buttons, dividers, Refresh, Duplicate               |
-| `app/components/Resource/BladeOverflowMenu.vue` | narrow-viewport `…` menu for the collapsible commands       |
-| `app/components/Styled/DeleteFormDialog.vue`    | `confirmName` guard prop                                    |
-| `app/composables/resource/useResource.ts`       | refresh/duplicate actions, conflict + outcome notifications |
+| File                                         | Role                                                        |
+| -------------------------------------------- | ----------------------------------------------------------- |
+| `app/components/Resource/Blade/Actions.vue`  | labeled buttons, dividers, narrow-viewport `…` menu         |
+| `app/components/Styled/DeleteFormDialog.vue` | `confirmName` guard prop                                    |
+| `app/store/resource/index.ts`                | refresh/duplicate actions, conflict + outcome notifications |
 
 ## Notes
 
 - Commands stay capability-gated exactly as before — this changed presentation and added Refresh/Duplicate, not the gating model.
-- Publish history (list `{id}/published/{n}` snapshots, view/rollback) is a separate roadmap investigation — blob retention across re-publishes must be verified first.
+- Listing published snapshots, previewing one, and rolling back to it are [publish history](/docs/platform/publish-history), not command-bar parity.
 - JSON view / export-template parity is [out of scope](/docs/platform/rejected/json-config-parity).

@@ -3,6 +3,10 @@ import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPag
 export const useOffsetPaginationDataMap = <TItem>(
   currentId: MaybeRefOrGetter<string>,
 ): ReturnType<typeof useOffsetPaginationOperationData<TItem>> => {
-  const { data: offsetPaginationData } = useDataMap(currentId, () => new OffsetPaginationData<TItem>());
-  return useOffsetPaginationOperationData(offsetPaginationData);
+  const { getBoundData } = useDataMap(currentId, () => new OffsetPaginationData<TItem>());
+  // Readiness is keyed like the slice it describes, so it lives and dies with those rows. Held anywhere shorter
+  // Lived — a local in whichever composable asks — it starts fresh under a list that did not, and answers for a
+  // Partition it never watched load
+  const { getBoundData: getBoundIsLoaded } = useDataMap(currentId, false);
+  return useOffsetPaginationOperationData(getBoundData, getBoundIsLoaded);
 };

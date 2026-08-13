@@ -1,21 +1,18 @@
 <script setup lang="ts">
 import type { VCard } from "vuetify/components";
-
-import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledCardProps {
-  cardAttrs?: VCard["$attrs"];
   cardProps?: VCard["$props"];
 }
 
 const slots = defineSlots<Record<keyof VCard["$slots"], () => VNode>>();
-const { cardAttrs = {}, cardProps = {} } = defineProps<StyledCardProps>();
+const { cardProps = {} } = defineProps<StyledCardProps>();
 </script>
 
 <template>
-  <v-card b-1 :="mergeProps(cardProps, cardAttrs)">
+  <v-card b-1 :="cardProps">
     <template v-for="(_slot, name) of slots" #[name]="scope">
-      <slot :name :="{ ...scope }" />
+      <slot :name :="scope" />
     </template>
   </v-card>
 </template>

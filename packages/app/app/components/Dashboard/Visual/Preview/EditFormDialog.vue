@@ -20,17 +20,16 @@ const jsonSchema = computed(() => zodToJsonSchema(schema.value));
 <template>
   <StyledEditFormDialog
     v-model="editFormDialog"
+    v-model:is-full-screen-dialog="isFullScreenDialog"
     :name="`${editedItem.chart.type} ${editedItem.type} Visual`"
     :edited-item
     :is-dirty
     :is-edit-form-valid
-    :is-full-screen-dialog
     :is-savable
     :schema
     @close="resetItem()"
     @save="save(editedItem)"
     @update:edit-form="editForm = $event"
-    @update:fullscreen-dialog="isFullScreenDialog = $event"
   >
     <template #prepend-form>
       <v-select v-model="editedItem.chart.type" :items="VisualTypeChartTypesMap[editedItem.type]" label="Chart Type" />

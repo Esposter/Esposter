@@ -3,13 +3,15 @@ import { FilterType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(dedupeFilters, () => {
-  test("dedupes", () => {
+  // The comparison is exact, so two filters of one type whose values differ only by whitespace are two filters
+  test("drops a repeated filter and keeps one differing only by whitespace", () => {
     expect.hasAssertions();
 
-    const filter1 = { type: FilterType.Has, value: "" };
-    const filter2 = { type: FilterType.Has, value: " " };
+    const filter = { type: FilterType.Has, value: "" };
+    const duplicateFilter = { type: FilterType.Has, value: "" };
+    const whitespaceFilter = { type: FilterType.Has, value: " " };
 
-    expect(dedupeFilters([filter1, filter1])).toStrictEqual([filter1]);
-    expect(dedupeFilters([filter1, filter2])).toStrictEqual([filter1, filter2]);
+    expect(dedupeFilters([filter, duplicateFilter])).toStrictEqual([filter]);
+    expect(dedupeFilters([filter, whitespaceFilter])).toStrictEqual([filter, whitespaceFilter]);
   });
 });

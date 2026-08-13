@@ -4,11 +4,16 @@ import type { PanzoomObject } from "@panzoom/panzoom";
 import { MAX_MERMAID_SCALE, MIN_MERMAID_SCALE } from "@/services/docs/constants";
 import { getResultAsync } from "@esposter/shared";
 import Panzoom from "@panzoom/panzoom";
-import mermaid from "mermaid";
 import { useTheme } from "vuetify";
 
 interface MermaidProps {
   code: string;
+}
+
+interface MermaidZoomControl {
+  icon: string;
+  onClick: () => void;
+  text: string;
 }
 
 const { code } = defineProps<MermaidProps>();
@@ -19,18 +24,38 @@ const id = useId();
 const panzoom = shallowRef<PanzoomObject>();
 const { isFullscreen, isSupported: isFullscreenSupported, toggle: toggleFullscreen } = useFullscreen(wrapper);
 const zoomButtonProps = { density: "comfortable", size: "small", variant: "tonal" } as const;
+const zoomControls = computed<MermaidZoomControl[]>(() => {
+  const controls: MermaidZoomControl[] = [
+    { icon: "mdi-plus", onClick: () => panzoom.value?.zoomIn(), text: "Zoom in" },
+    { icon: "mdi-minus", onClick: () => panzoom.value?.zoomOut(), text: "Zoom out" },
+    { icon: "mdi-backup-restore", onClick: () => panzoom.value?.reset(), text: "Reset view" },
+  ];
+  if (isFullscreenSupported.value)
+    controls.push({
+      icon: isFullscreen.value ? "mdi-fullscreen-exit" : "mdi-fullscreen",
+      onClick: () => toggleFullscreen(),
+      text: isFullscreen.value ? "Exit full screen" : "Full screen",
+    });
+  return controls;
+});
 // Entering/leaving full screen changes the viewport, so recenter instead of keeping a stale pan/zoom
 watch(isFullscreen, () => {
   panzoom.value?.reset();
 });
 
 onMounted(async () => {
-  mermaid.initialize({ startOnLoad: false, theme: theme.global.current.value.dark ? "dark" : "default" });
   const result = await getResultAsync(async () => {
+    // Imported lazily after mount so the multi-megabyte mermaid chunk never resolves inside the docs
+    // Page's Suspense: a failed chunk (stale PWA/browser cache after a redeploy) would otherwise reject
+    // The pending tree and silently kill doc→doc navigation — the route reacts before the new tree
+    // Swaps in (https://github.com/nuxt/nuxt/issues/14456), and Nuxt's chunk-error auto-reload only
+    // Catches clean fetch failures, not stale-cache eval errors (https://github.com/nuxt/nuxt/issues/23612)
+    const { default: mermaid } = await import("mermaid");
+    mermaid.initialize({ startOnLoad: false, theme: theme.global.current.value.dark ? "dark" : "default" });
     const { svg } = await mermaid.render(`mermaid-${id}`, code);
     return svg;
   });
-  // On a render failure we keep showing the raw diagram source
+  // On a load or render failure we keep showing the raw diagram source
   result.match((svg) => {
     if (!container.value) return;
     container.value.innerHTML = svg;
@@ -62,29 +87,12 @@ onUnmounted(() => {
     </div>
     <div v-if="panzoom" op-0 flex gap-1 transition-opacity right-2 top-2 absolute group-hover:op-100>
       <StyledTooltipIconButton
+        v-for="{ icon, onClick, text } of zoomControls"
+        :key="text"
         :button-props="zoomButtonProps"
-        icon="mdi-plus"
-        text="Zoom in"
-        @click="panzoom.zoomIn()"
-      />
-      <StyledTooltipIconButton
-        :button-props="zoomButtonProps"
-        icon="mdi-minus"
-        text="Zoom out"
-        @click="panzoom.zoomOut()"
-      />
-      <StyledTooltipIconButton
-        :button-props="zoomButtonProps"
-        icon="mdi-backup-restore"
-        text="Reset view"
-        @click="panzoom.reset()"
-      />
-      <StyledTooltipIconButton
-        v-if="isFullscreenSupported"
-        :button-props="zoomButtonProps"
-        :icon="isFullscreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'"
-        :text="isFullscreen ? 'Exit full screen' : 'Full screen'"
-        @click="toggleFullscreen()"
+        :icon
+        :text
+        @click="onClick()"
       />
     </div>
   </div>

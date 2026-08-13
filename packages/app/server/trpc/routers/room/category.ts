@@ -9,29 +9,44 @@ import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { Operation, takeOne } from "@esposter/shared";
+import { eq, max } from "drizzle-orm";
+
+// Every mutation here addresses one of the caller's own categories, so a miss is always the same rejection
+const requireRoomCategory = (
+  roomCategory: RoomCategoryInMessage | undefined,
+  operation: Operation,
+  context: string,
+  code?: "BAD_REQUEST" | "NOT_FOUND",
+) => requireMutation(roomCategory, operation, DatabaseEntityType.RoomCategory, context, code);
 
 export const categoryRouter = router({
   createRoomCategory: standardAuthedProcedure
     .input(createRoomCategoryInputSchema)
     .mutation<RoomCategoryInMessage>(async ({ ctx, input }) => {
-      const createdRoomCategory = requireMutation(
+      // Append below the user's existing drag-assigned order — the column default 0 would tie with
+      // Whatever category the user dragged to the top and jump the new category above it
+      const { maxPosition } = takeOne(
+        await ctx.db
+          .select({ maxPosition: max(roomCategoriesInMessage.position) })
+          .from(roomCategoriesInMessage)
+          .where(eq(roomCategoriesInMessage.userId, ctx.getSessionPayload.user.id)),
+      );
+      return requireRoomCategory(
         (
           await ctx.db
             .insert(roomCategoriesInMessage)
-            .values({ ...input, userId: ctx.getSessionPayload.user.id })
+            .values({ ...input, position: (maxPosition ?? -1) + 1, userId: ctx.getSessionPayload.user.id })
             .returning()
         )[0],
         Operation.Create,
-        DatabaseEntityType.RoomCategory,
         JSON.stringify(input),
       );
-      return createdRoomCategory;
     }),
   deleteRoomCategory: standardAuthedProcedure
     .input(deleteRoomCategoryInputSchema)
-    .mutation<RoomCategoryInMessage>(async ({ ctx, input }) => {
-      const deletedRoomCategory = requireMutation(
+    .mutation<RoomCategoryInMessage>(async ({ ctx, input }) =>
+      requireRoomCategory(
         (
           await ctx.db
             .delete(roomCategoriesInMessage)
@@ -39,12 +54,10 @@ export const categoryRouter = router({
             .returning()
         )[0],
         Operation.Delete,
-        DatabaseEntityType.RoomCategory,
         input,
         "NOT_FOUND",
-      );
-      return deletedRoomCategory;
-    }),
+      ),
+    ),
   readRoomCategories: standardAuthedProcedure.query<RoomCategoryInMessage[]>(({ ctx }) =>
     ctx.db.query.roomCategoriesInMessage.findMany({
       // Drag-reorder assigns positions, so position must take precedence over the name tiebreaker
@@ -61,7 +74,7 @@ export const categoryRouter = router({
         const reorderedRoomCategories: RoomCategoryInMessage[] = [];
         for (const { id, position } of input)
           reorderedRoomCategories.push(
-            requireMutation(
+            requireRoomCategory(
               (
                 await tx
                   .update(roomCategoriesInMessage)
@@ -70,7 +83,6 @@ export const categoryRouter = router({
                   .returning()
               )[0],
               Operation.Update,
-              DatabaseEntityType.RoomCategory,
               id,
               "NOT_FOUND",
             ),
@@ -80,8 +92,8 @@ export const categoryRouter = router({
     ),
   updateRoomCategory: standardAuthedProcedure
     .input(updateRoomCategoryInputSchema)
-    .mutation<RoomCategoryInMessage>(async ({ ctx, input: { id, ...rest } }) => {
-      const updatedRoomCategory = requireMutation(
+    .mutation<RoomCategoryInMessage>(async ({ ctx, input: { id, ...rest } }) =>
+      requireRoomCategory(
         (
           await ctx.db
             .update(roomCategoriesInMessage)
@@ -90,10 +102,8 @@ export const categoryRouter = router({
             .returning()
         )[0],
         Operation.Update,
-        DatabaseEntityType.RoomCategory,
         id,
         "NOT_FOUND",
-      );
-      return updatedRoomCategory;
-    }),
+      ),
+    ),
 });

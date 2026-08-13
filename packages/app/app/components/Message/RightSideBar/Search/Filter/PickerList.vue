@@ -1,23 +1,25 @@
 <script setup lang="ts">
+import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+
 interface MessageRightSideBarSearchFilterPickerListProps {
   hasMore: boolean;
   isPending: boolean;
 }
 
-defineSlots<{ default: () => VNode; skeleton: () => VNode }>();
+defineSlots<{ default: () => VNode }>();
 const { hasMore, isPending } = defineProps<MessageRightSideBarSearchFilterPickerListProps>();
 const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <v-list density="compact" py-0 overflow-y-auto>
+  <v-list py-0 overflow-y-auto density="compact">
     <template v-if="isPending">
-      <slot name="skeleton" />
+      <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
     <template v-else>
       <slot />
       <StyledWaypoint :is-active="hasMore" @change="emit('readMore', $event)">
-        <slot name="skeleton" />
+        <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>
     </template>
   </v-list>

@@ -2,8 +2,7 @@ import type { SourceColumnId } from "#shared/models/resource/sheet/column/transf
 import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { createSourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
-import { ColumnFormVjsfContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormVjsfContext";
+import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -13,13 +12,9 @@ export interface StringSplitTransformation
   segmentIndex: number;
 }
 
-export const stringSplitTransformationSchema = z
-  .object({
-    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.StringSplit).readonly()).shape,
-    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]).shape,
-    delimiter: z.string().default(","),
-    segmentIndex: z.int().nonnegative().default(0),
-  })
-  .meta({
-    title: ColumnTransformationType.StringSplit,
-  }) satisfies z.ZodType<StringSplitTransformation>;
+export const stringSplitTransformationSchema = z.object({
+  ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.StringSplit).readonly()).shape,
+  ...sourceColumnIdSchema.shape,
+  delimiter: z.string().default(","),
+  segmentIndex: z.int().nonnegative().default(0),
+}) satisfies z.ZodType<StringSplitTransformation>;

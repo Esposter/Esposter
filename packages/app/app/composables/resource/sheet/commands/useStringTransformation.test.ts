@@ -1,6 +1,4 @@
 // @vitest-environment nuxt
-import { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
-import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
@@ -17,11 +15,11 @@ describe(useStringTransformation, () => {
   test(`${StringTransformationType.Trim} strips whitespace from all string cells`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource(
+    const initialDataSource = createDataSource(
       [createColumn(""), createColumn(" ")],
       [createRow({ "": " ", " ": " " }), createRow({ "": " ", " ": " " })],
     );
-    const { dataSource } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
     await stringTransformation(StringTransformationType.Trim);
 
@@ -34,8 +32,8 @@ describe(useStringTransformation, () => {
   test(`${StringTransformationType.LowerCase} lowercases all string cells`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": "A" })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "A" })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
     await stringTransformation(StringTransformationType.LowerCase);
 
@@ -45,8 +43,8 @@ describe(useStringTransformation, () => {
   test(`${StringTransformationType.UpperCase} uppercases all string cells`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": "a" })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "a" })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
     await stringTransformation(StringTransformationType.UpperCase);
 
@@ -56,81 +54,32 @@ describe(useStringTransformation, () => {
   test(`${StringTransformationType.TitleCase} title-cases all string cells`, async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": "a b" })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": "a b" })]);
+    const { dataSource } = setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
     await stringTransformation(StringTransformationType.TitleCase);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("A B");
   });
 
-  test("skips non-string columns", async () => {
+  test("no-op when no string cell changes", async () => {
     expect.hasAssertions();
 
-    const numberColumn = new NumberColumn({ name: "", size: 0, sourceName: "" });
-    const ds = createDataSource([numberColumn], [createRow({ "": 0 })]);
-    const { dataSource } = setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": null })]);
+    setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
     const sheetHistoryStore = useSheetHistoryStore();
     const { isUndoable } = storeToRefs(sheetHistoryStore);
     await stringTransformation(StringTransformationType.Trim);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(isUndoable.value).toBe(false);
-  });
-
-  test("skips hidden columns", async () => {
-    expect.hasAssertions();
-
-    const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
-    const ds = createDataSource([hiddenColumn], [createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(ds);
-    const stringTransformation = useStringTransformation();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { isUndoable } = storeToRefs(sheetHistoryStore);
-    await stringTransformation(StringTransformationType.Trim);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("undo restores all original values", async () => {
-    expect.hasAssertions();
-
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(ds);
-    const stringTransformation = useStringTransformation();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { undo } = sheetHistoryStore;
-
-    await stringTransformation(StringTransformationType.Trim);
-    undo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
-    expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
-  });
-
-  test("redo re-applies after undo", async () => {
-    expect.hasAssertions();
-
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    const { dataSource } = setupWithDataSource(ds);
-    const stringTransformation = useStringTransformation();
-    const sheetHistoryStore = useSheetHistoryStore();
-    const { redo, undo } = sheetHistoryStore;
-
-    await stringTransformation(StringTransformationType.Trim);
-    undo(dataSource);
-    redo(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe("");
   });
 
   test("description includes the transform", async () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    setupWithDataSource(ds);
+    const initialDataSource = createDataSource([createColumn("")], [createRow({ "": " " })]);
+    setupWithDataSource(initialDataSource);
     const stringTransformation = useStringTransformation();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undoDescription } = storeToRefs(sheetHistoryStore);

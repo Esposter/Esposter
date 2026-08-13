@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 
 const callStore = useCallStore();
-const { currentRoomCallSessionId, isCallViewOpen } = storeToRefs(callStore);
+const { isCallViewOpen } = storeToRefs(callStore);
 const participantStore = useParticipantStore();
-const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
-const roomParticipantMap = computed(
-  () => callSessionParticipantsMap.value.get(currentRoomCallSessionId.value) ?? new Map<string, CallParticipant>(),
-);
+const { speakingIds } = storeToRefs(participantStore);
+const roomParticipantMap = useCallRoomParticipantMap();
 </script>
 
 <template>
@@ -22,7 +18,6 @@ const roomParticipantMap = computed(
         v-for="participant of roomParticipantMap.values()"
         :key="participant.id"
         :participant
-        :is-hand-raised="participant.isHandRaised"
         :is-speaking="speakingIds.includes(participant.id)"
       />
     </div>

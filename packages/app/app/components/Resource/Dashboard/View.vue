@@ -1,22 +1,25 @@
 <script setup lang="ts">
 // Aliased so the auto-imported <Dashboard> component isn't shadowed by the model class
 import { Dashboard as DashboardModel } from "#shared/models/dashboard/data/Dashboard";
-import { getResultAsync } from "@esposter/shared";
+import { ResourceType } from "@esposter/db-schema";
 
 interface ResourceDashboardViewProps {
   id: string;
+  version?: number;
 }
 
-const { id } = defineProps<ResourceDashboardViewProps>();
+const { id, version } = defineProps<ResourceDashboardViewProps>();
 const { $trpc } = useNuxtApp();
-const { content, name } = await getResultAsync(() => $trpc.dashboard.readPublishedResourceContent.query(id)).match(
-  (publishedResource) => publishedResource,
-  () => {
-    throw createError({ statusCode: 404, statusMessage: "Dashboard not found" });
-  },
+const { content, name } = await useReadPublishedResourceContent(
+  ResourceType.Dashboard,
+  id,
+  () =>
+    version
+      ? $trpc.dashboard.readPublishedVersionContent.query({ id, version })
+      : $trpc.dashboard.readPublishedResourceContent.query(id),
+  version,
 );
 const dashboard = new DashboardModel(content as never);
-useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>
 
 <template>

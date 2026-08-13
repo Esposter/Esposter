@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface HelpTooltipProps {
+interface StyledHelpTooltipProps {
   text: string;
 }
 
-const { text } = defineProps<HelpTooltipProps>();
+const { text } = defineProps<StyledHelpTooltipProps>();
 </script>
 
 <template>

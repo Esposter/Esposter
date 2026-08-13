@@ -8,6 +8,9 @@ import * as github from "@pulumi/github";
 // Advisory; GitHub cannot gate merge on a bot review). Bypass via Admin repository
 // Role (5) + the Renovate GitHub App (app id 2740) — classic per-user force-push
 // Bypassers do not carry over to rulesets.
+// Required status checks deliberately live in developMainStatusChecks instead of here: bypass is granted
+// Per ruleset and never per rule, so keeping them in this ruleset would exempt Renovate from CI as the
+// Price of exempting it from the pull request requirement.
 export const developMainProtection: github.RepositoryRuleset = new github.RepositoryRuleset(
   "developMainProtection",
   {
@@ -37,22 +40,6 @@ export const developMainProtection: github.RepositoryRuleset = new github.Reposi
       nonFastForward: true,
       pullRequest: {
         requiredApprovingReviewCount: 0,
-      },
-      // Gate merges on CI. Contexts are the CI.yaml job names; the sharded Coverage matrix
-      // Is gated via its single Merge Coverage fan-in job rather than 16 separate contexts.
-      // `build-packages` runs via a reusable workflow (uses:), so its check context is
-      // Prefixed with the caller job id — `build-packages / Build Packages`, not `Build Packages`.
-      requiredStatusChecks: {
-        requiredChecks: [
-          { context: "build-packages / Build Packages" },
-          { context: "Build App" },
-          { context: "Build Documentation" },
-          { context: "Merge Coverage" },
-          { context: "Lint" },
-          { context: "Format" },
-          { context: "Typecheck" },
-        ],
-        strictRequiredStatusChecksPolicy: true,
       },
     },
     target: "branch",

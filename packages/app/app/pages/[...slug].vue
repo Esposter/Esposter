@@ -1,21 +1,8 @@
 <script setup lang="ts">
 import { RoutePath } from "@esposter/shared";
-import { gsap } from "gsap";
 
 const event = useRequestEvent();
 if (event) setResponseStatus(event, 404);
-
-onMounted(() => {
-  gsap.to(".hover", {
-    duration: 3,
-    ease: "sine.inOut",
-    repeat: -1,
-    rotation: gsap.utils.random(-20, 20),
-    x: gsap.utils.random(5, 10),
-    y: gsap.utils.random(10, 100),
-    yoyo: true,
-  });
-});
 </script>
 
 <template>

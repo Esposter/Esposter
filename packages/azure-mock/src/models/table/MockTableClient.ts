@@ -20,9 +20,10 @@ import type { Except } from "type-fest";
 import { MOCK_TABLE_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
+import { compareByCompositeKey } from "@/services/table/compareByCompositeKey";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
-import { exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
+import { chunk, exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
@@ -74,9 +75,10 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     rowKey: string,
   ): Promise<GetTableEntityResponse<TableEntityResult<T>>> {
     const key = this.#getCompositeKey(partitionKey, rowKey);
-    const entity = this.table.get(key) as T | undefined;
+    const entity = this.table.get(key) as (T & { etag?: string }) | undefined;
     if (!entity) throw new MockRestError("The specified resource does not exist.", 404);
-    return Promise.resolve({ ...entity, etag: this.#getEtag() });
+    // The stored etag is served so a subsequent conditional update can match against the version read
+    return Promise.resolve({ ...entity, etag: entity.etag ?? this.#getEtag() });
   }
 
   listEntities<T extends object>(
@@ -84,9 +86,20 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   ): PagedAsyncIterableIterator<TableEntityResult<T>, TableEntityResultPage<T>> {
     const withMetadata = this.#withMetadata.bind(this);
     const filter = options?.queryOptions?.filter;
+    // Azure Table Storage returns entities ordered by partitionKey then rowKey, not insertion order —
+    // The reverse-ticked message rowKey design relies on that scan order to read newest-first.
     const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()];
     const predicate = filter ? createFilterPredicate(filter) : undefined;
-    const resultTableEntities = predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities;
+    // Filtering before the sort keeps the comparison count proportional to the matches rather than to the
+    // Whole table; composite keys are unique, so the surviving order is the same either way
+    const resultTableEntities = (predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities).toSorted(
+      compareByCompositeKey,
+    );
+    // One shared generator retains iteration state across next() calls so a bare for await terminates,
+    // Matching the real SDK where the returned iterator is single-use.
+    const entityIterator = (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
+      for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
+    })(resultTableEntities);
     return {
       byPage: ({ maxPageSize } = {}) =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
@@ -96,19 +109,17 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
           else if (maxPageSize !== undefined && maxPageSize > AZURE_MAX_PAGE_SIZE)
             throw new MockRestError("One of the request inputs is not valid.", 400);
 
-          const allEntitiesWithMetadata = entities.map((e) => withMetadata(e));
-          if (allEntitiesWithMetadata.length === 0) return;
+          if (entities.length === 0) return;
           else if (!maxPageSize) {
-            yield await Promise.resolve(allEntitiesWithMetadata);
+            yield await Promise.resolve(entities.map((e) => withMetadata(e)));
             return;
           }
-          for (let i = 0; i < allEntitiesWithMetadata.length; i += maxPageSize)
-            yield await Promise.resolve(allEntitiesWithMetadata.slice(i, i + maxPageSize));
+          // Cloned a page at a time, so a consumer that stops after the first page (a capped read, a bounded
+          // Count) never pays for the rest of the table
+          for (const page of chunk(entities, maxPageSize))
+            yield await Promise.resolve(page.map((e) => withMetadata(e)));
         })(resultTableEntities),
-      next: () =>
-        (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
-          for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
-        })(resultTableEntities).next(),
+      next: () => entityIterator.next(),
       [Symbol.asyncIterator]() {
         return this;
       },
@@ -118,7 +129,6 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   setAccessPolicy(): Promise<TableSetAccessPolicyHeaders> {
     throw new Error("Method not implemented.");
   }
-
   // The service applies a transaction atomically, so the actions land through the synchronous appliers rather
   // Than the promise-returning methods: awaiting between two actions would let a concurrent caller interleave
   // Its own writes, and the rollback below would then restore a snapshot predating them — silently dropping
@@ -166,8 +176,12 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     });
   }
 
-  updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
-    this.#applyUpdate(entity, mode);
+  updateEntity<T extends object>(
+    entity: TableEntity<T>,
+    mode: UpdateMode = "Merge",
+    options?: { etag?: string },
+  ): Promise<TableMergeEntityHeaders> {
+    this.#applyUpdate(entity, mode, options?.etag);
     return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
   }
 
@@ -179,7 +193,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   #applyCreate<T extends object>(entity: TableEntity<T>): void {
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     if (this.table.has(key)) throw new MockRestError("The specified entity already exists.", 409);
-    this.table.set(key, entity);
+    this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
 
   #applyDelete(partitionKey: string, rowKey: string): void {
@@ -188,35 +202,41 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     this.table.delete(key);
   }
 
-  #applyUpdate<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): void {
+  #applyUpdate<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge", etag?: string): void {
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     const existingEntity = this.table.get(key);
     if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
-    else if (mode === "Merge") this.table.set(key, { ...existingEntity, ...entity });
+    // A conditional update only lands when the caller saw the current version — the real service's
+    // Optimistic-concurrency contract ("*" is the wildcard that always matches)
+    else if (etag !== undefined && etag !== "*" && etag !== existingEntity.etag)
+      throw new MockRestError("The update condition specified in the request was not satisfied.", 412);
+    else if (mode === "Merge") this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
     // "Replace"
-    else this.table.set(key, entity);
+    else this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
 
   #applyUpsert<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): void {
     const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     const existingEntity = this.table.get(key);
-    if (existingEntity && mode === "Merge") this.table.set(key, { ...existingEntity, ...entity });
+    if (existingEntity && mode === "Merge")
+      this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
     // "Replace" or entity doesn't exist (which is an insert)
-    else this.table.set(key, entity);
+    else this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
 
   #getCompositeKey(partitionKey: string, rowKey: string): string {
     return `${partitionKey}${ID_SEPARATOR}${rowKey}`;
   }
-
+  // Random rather than timestamped: two writes can land within one clock tick, and equal etags across
+  // Versions would make a stale conditional update falsely match
   #getEtag(): string {
-    return `W/"datetime'${new Date().toISOString()}'"`;
+    return `W/"${crypto.randomUUID()}"`;
   }
 
-  #withMetadata<T extends object>(entity: T): T & { etag: string } {
+  #withMetadata<T extends object>(entity: T & { etag?: string }): T & { etag: string } {
     return {
       ...entity,
-      etag: this.#getEtag(),
+      etag: entity.etag ?? this.#getEtag(),
     };
   }
 }

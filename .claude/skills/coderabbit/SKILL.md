@@ -1,172 +1,130 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — retrieving review feedback across all three endpoints (nitpicks live in the review body, not inline comments; the bot login is coderabbitai[bot]), replying to findings, checking review state before pushing (never push into a running review), .coderabbit.yaml is read from the PR base branch (normally develop), per-file path_filters for mechanical renames, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — auto-review runs only on default-branch PRs (develop-base PRs triggered manually with @coderabbitai review, reviews.auto_review.base_branches never added), opening or pushing to a default-branch PR spends a review slot so the push is asked for every time, the four gates that decide a push (open findings drained so they lead the window, nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, reading the check's bucket rather than its state string with unknown meaning wait, a rate-limited status not proving the checkpoint stalled and the retrigger as the probe, the ~90-file window against a 100-file cap that refreshes per review cycle, the pipeline that keeps local work ahead of the reviewed frontier, nitpicks living in the review body rather than as inline comments, reconciling against the review's stated counts, and replying to every finding — plus deep dives on retrieving feedback and counting what is open, composing a window and reordering a fix to lead it, editing .coderabbit.yaml on the base branch, cutting an over-budget release PR, and which files may be excluded. Apply when fetching, addressing or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when choosing which commits a push should carry, when a PR is too large for review, or when excluding files.
 ---
 
 # CodeRabbit Conventions
 
-## Config Is Read From the PR Base Branch
+## What Triggers a Review
 
-`.coderabbit.yaml` sits at the repo root. CodeRabbit reads it from the **base branch** of a PR, not the head branch. **PRs target `develop`, so `develop` is the branch that matters** — an exclusion only takes effect once it is on the branch the PR is based against.
+CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**. Develop-base PRs are skipped ("Auto reviews are disabled on base/target branches other than the default branch") and are triggered by commenting `@coderabbitai review`.
 
-CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**: develop-base PRs are skipped with "Auto reviews are disabled on base/target branches other than the default branch" unless `reviews.auto_review.base_branches` lists `develop` (regex list, additive to the default branch). Until that setting lands, trigger a review on a develop-base PR manually by commenting `@coderabbitai review` on it.
+**Never add `reviews.auto_review.base_branches`.** Manual triggering there is deliberate, not a gap: it keeps control of _when_ a review starts — which is what makes the never-push-into-a-running-review rule below workable — and stops every intermediate push spending a rate-limit slot. If a PR was not reviewed, comment `@coderabbitai review`; do not change the config. The setting reads like an obvious fix and has been "helpfully" added before.
 
-Commit exclusions **directly to the base branch (`develop`)** as a standalone commit, separate from the work they cover. An exclusion committed on the feature branch does nothing.
+`.coderabbit.yaml` is read from the PR's **base branch**, so a config change only takes effect once it is on that branch — `references/config-editing.md`.
 
-The two branches diverge and that is expected: `develop` carries the live temporary exclusion block, `main` carries only the permanent entries (it picks up the block on release merges and loses it when the block is removed). Always check the branch you are actually on:
+## Opening a PR Spends a Review Slot
 
-```bash
-git show develop:.coderabbit.yaml | head -20   # the config CodeRabbit actually applies to PRs
-```
+**Creating a PR against the default branch, and every push to one, starts a review** — the slot goes immediately and the next is about an hour out.
 
-## Why Per-File, Not Globs
-
-CodeRabbit's `path_filters` are static globs with no notion of "this file was only renamed". A glob like `!packages/app/app/services/resource/sheet/**` excludes that tree for **every future PR**, permanently blinding review of real changes until someone remembers to revert it.
-
-List every excluded file explicitly instead. It is verbose, and that verbosity is the point — a several-hundred-line block (the live File → Sheet block is ~732 entries) is obviously temporary and obviously scoped, where a 3-line glob quietly rots.
-
-Keep permanent structural entries (`!pnpm-lock.yaml`, generated migrations) at the top of `path_filters`, above any temporary block.
+So ask first, every time. Agreement on the goal ("get this reviewed") is not permission to spend the slot before the shape is settled: the commit range, the cut point, and the base's `.coderabbit.yaml` all have to be final. Until then push the branch and stop — a branch is free and re-cuttable, a PR is not. Opened one too early? Close it; the slot is already gone and the commits stay reviewable under the PR they belong to.
 
 ## Never Push Into an In-Flight Review
 
-**Check CodeRabbit's state before every push to a branch with an open PR.** Pushing while a review is running cancels it and retriggers a fresh one, which costs a rate-limit slot and loses the in-progress review's findings. CodeRabbit is an **incremental** system — it does not re-review commits it has already reviewed — so a cancelled review's comments do not reliably come back on the next run. They are simply gone.
-
-The check run exposes the state directly:
+Pushing while a review runs cancels it and retriggers a fresh one, costing a slot and losing the in-progress findings. CodeRabbit is **incremental** — it does not re-review commits it has already reviewed — so a cancelled review's comments do not come back on the next run. They are gone.
 
 ```bash
-gh pr checks --json name,state,description --jq '.[] | select(.name=="CodeRabbit")'
-# {"description":"Review completed","name":"CodeRabbit","state":"SUCCESS"}
+gh pr checks --json name,state,bucket,description --jq '.[] | select(.name=="CodeRabbit")'
+# {"bucket":"pass","description":"Review rate limited","name":"CodeRabbit","state":"SUCCESS"}
 ```
 
-Push only on `SUCCESS` / `Review completed`. Anything else (`PENDING`, a review-in-progress description) means **wait** — poll until it settles, then push. If there is no open PR for the branch yet, there is no review to interrupt; push freely.
+**Read `bucket` first, then `description`.** `bucket` is gh's normalization across both representations a check can take, so `pending` means a live review whatever CodeRabbit reports underneath — it posts a **commit status** (`pending`/`success`/`failure`/`error`), while Actions entries on the same PR are check runs reporting `IN_PROGRESS`/`QUEUED`. Keying on the state string alone means a representation change reads as terminal.
 
-This applies per push, not per work session — a second push minutes after the first will land while the first push's review is still running. Batch commits and push once when the work is coherent, rather than pushing each commit as it lands.
+| bucket / description                          | meaning                        | push?                         |
+| :-------------------------------------------- | :----------------------------- | :---------------------------- |
+| `pending` (any description)                   | live review, a push cancels it | **wait**                      |
+| `pass` / `Review completed`                   | finished                       | push                          |
+| `pass` / `Review rate limited`                | never started, nothing running | **push**                      |
+| `pass` / skip comment says `Too many files`   | never started                  | push, but fix the count first |
+| `fail`, missing row, or anything unrecognised | unknown                        | **wait**, then look           |
 
-Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit) comment` / `putComment timed out` comment from `coderabbitai[bot]`, or a review that silently returns far fewer comments than the diff warrants.
+The last row is the default, not an edge case: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute.
 
-## Retrieving Review Feedback — All Three Places
+Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit) comment` / `putComment timed out` comment from the bot, or a review returning far fewer comments than the diff warrants.
 
-CodeRabbit's feedback is split across **three different endpoints**. Reading only one silently loses findings, and the loss is invisible — nothing tells you a category was missed.
+## The Four Gates
+
+They are not interchangeable — the first is about leaving findings unanswered, the second about cancelling a review, the third about accumulating an unreviewed window, the fourth about overflowing the cap.
+
+```mermaid
+flowchart TD
+  C[Commit locally] --> D{Any unresolved findings from a completed review}
+  D -->|yes| DR[Drain them first - they lead the next window]
+  DR --> M[Measure backlog from the last reviewed sha]
+  D -->|no| M
+  M --> R{Is a review running}
+  R -->|yes| W1[Wait - a push cancels it and loses its findings]
+  R -->|no| P{Was the previous window reviewed}
+  P -->|no| W2[Wait - unreviewed windows accumulate into one]
+  P -->|yes| B{Is the backlog under the cap}
+  B -->|no| H[Hold the overflow locally and push a smaller window]
+  B -->|yes| PU[Push]
+  PU --> RV[Review runs against the new range]
+  RV --> F[Fix findings then reply with the pushed sha]
+  F --> C
+```
+
+**Drain the open findings before composing a window — they are its first commits, not its last.** A completed review's findings are the only work with an expiry date: threads go stale as the code under them moves, a finding answered three windows later is answered against code the reviewer never saw, and the reviewer re-raises what looks unaddressed. Fresh work has no such clock, so it always yields. This gates **what the window contains**, not merely its order: a window that would exceed the cap drops queued work to keep the fixes in. Count what is open before deciding it is drained (`references/review-feedback.md` — an empty result is usually a wrong filter, not a clean PR).
+
+**The check answers "is one running", never "has the last push been reviewed".** `Review completed` is the status of whichever review ran most recently, which may have covered a range two pushes back — the check names no range at all, so reading it as clearance for the current head is a category error. Every review body states its own range, so the last reviewed sha is a fact to read rather than infer:
 
 ```bash
-# 1. Review bodies -> "Actionable comments posted: N" + the collapsed NITPICK block.
-#    Nitpicks live ONLY here. They are not inline comments.
-gh api "repos/Esposter/Esposter/pulls/<pr>/reviews?per_page=100" --paginate \
-  --jq '.[] | select(.user.login=="coderabbitai[bot]") | select(.body|length > 0) | .body'
-
-# 2. Inline review comments -> the actionable, file-anchored findings.
-gh api "repos/Esposter/Esposter/pulls/<pr>/comments?per_page=100" --paginate \
-  --jq '.[] | "\(.id) \(.path):\(.line // .original_line)\n\(.body)\n"'
-
-# 3. Issue comments -> the walkthrough, status, and rate-limit notices.
-gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate \
-  --jq '.[] | select(.user.login=="coderabbitai[bot]") | .body'
+gh api "repos/:owner/:repo/pulls/<pr>/reviews?per_page=100" --paginate \
+  --jq '.[] | select(.user.login=="coderabbitai[bot]") | select((.body|length) > 0)
+        | "\(.submitted_at)  \(.body | capture("between (?<a>[0-9a-f]{40}) and (?<b>[0-9a-f]{40})") | "\(.a[0:9])..\(.b[0:9])")"' | tail -3
+git diff --name-only <last-reviewed-sha>..origin/<branch> | wc -l   # already pushed and unreviewed
+git diff --name-only <last-reviewed-sha>..HEAD | wc -l              # what the next push would add
 ```
 
-**The bot's login is `coderabbitai[bot]`, not `coderabbitai`.** A `--jq` filter on the wrong login returns empty and exits 0. Empty output from a filtered query means _"my filter was wrong"_ until proven otherwise — never read it as "there are none".
+**Take the second number before a push.** The pipeline deliberately keeps local commits ahead of the reviewed frontier, so `..origin/<branch>` measures the pushed backlog only and omits exactly the commits the push is about to add — it can read comfortably under the cap while the push lands well over it. Use `..origin/<branch>` only to answer "is a previous window still unreviewed"; use `..HEAD` (or `..<cut-sha>` when holding a tail back) to size the window.
 
-**Reconcile before concluding.** Each review body opens with `Actionable comments posted: N` and its nitpick block is headed `🧹 Nitpick comments (M)`. Both counts are ground truth: if you have fewer than N inline comments or fewer than M nitpicks in hand, you are missing some — go find them rather than reporting what you happened to fetch.
+The budget is measured **from that sha, not from the last push**. An unreviewed window does not clear — it accumulates. Two pushes of 35 and 80 that each looked compliant are one 115-file window, over the cap, and the review is skipped outright rather than truncated.
 
-Note the walkthrough issue-comment is **edited in place** across reviews, so its `created_at` stays pinned to the first review while `updated_at` moves. Filtering issue comments by `created_at` hides the current walkthrough. Sort by `updated_at`.
+**A rate-limited status does not prove the frontier stalled.** CodeRabbit advances its incremental checkpoint over commits it never posted a review body for: the status still reads `Review rate limited`, no range names them, and they count as reviewed anyway. Reading that as an unreviewed window inflates the next backlog by everything it silently covered and stalls pushes to protect a review that will never run. The reviewed range is evidence the checkpoint moved, never evidence it did not. The probe is the retrigger itself — `@coderabbitai review` replies `Already reviewed` when the checkpoint covers the head, and starts a review when it does not. Read **the reply to the probe**, never whichever bot comment is newest (`references/review-feedback.md`); a decline costs nothing.
 
-## Replying to Review Comments
-
-```bash
-gh api "repos/Esposter/Esposter/pulls/<pr>/comments/<comment_id>/replies" -f body="..."
-```
-
-Reply to every finding, including rejected ones — a silent skip is indistinguishable from an oversight. State the verdict in the first line (`Agreed, fixed in <sha>` / `Not a real issue, no change`) and give the evidence, since these threads are the record of why the code looks the way it does.
-
-Verify before accepting. CodeRabbit reasons from names and prior "learnings" and will confidently assert semantics the code does not have — check the implementation, and when it flags a pattern, grep for the repo's existing convention rather than taking the suggested diff. If a finding is real, also check whether its twin exists elsewhere; the scan is per-file and routinely stops one file short.
+**This says when a push is _safe_, never when it is _authorised_.** The standing rule overrides everything here: commit the coherent change and **never push unless the user asks** — rate-limited, recovery and force-pushes alike. Given the ask, `Review rate limited` is not a wait state: nothing is running, so holding the branch stalls the working tree for an hour to protect a review that does not exist. Under a standing ask ("keep pushing while it's parked"), treat the review as an async thread and keep pushing rather than waiting for one to be asked for each time. **The ask supplies authorisation, never an exemption from the gates** — every push still clears all four, the in-flight gate included, so a standing ask never licenses pushing into a running review. It applies per push, not per work session: the second push re-reads the gates from scratch, and if the first push's review is still running it waits, however recently permission was given.
 
 ## PR File Budget
 
-CodeRabbit caps this repo at **50 files per review** — the Open Source tier's file limit is popularity-scaled and a low-star repo sits at the floor, so don't expect it to lift. If the limit needs re-checking, the bot's skip comment on an over-budget PR states the current number. Keep every chunk of work to **~40 changed files measured from the branch point** — work is committed and pushed continuously, so dirty-file counts see nothing:
+The cap is **100 files per review** — the Open Source tier's limit is popularity-scaled and can move, so treat it as current-best-known; the bot's skip comment states the current one. Aim each window at **~90 changed files**, close enough to fill the slot without risking it:
 
 ```bash
-git diff --name-only "$(git merge-base <base-branch> HEAD)" | wc -l   # committed changes since branching (base is what this branch was cut from, e.g. develop)
-git status --porcelain -uall | wc -l                                  # plus anything not yet committed
+# Committed since branching, plus anything not yet committed — as a set, since a file can be in both.
+{ git diff --name-only "$(git merge-base <base-branch> HEAD)"; git status --porcelain -uall | cut -c4-; } |
+  sort -u | wc -l
 ```
 
-Run both and sum before starting a sweep. When the budget is reached, stop and hand back for a PR.
+Count the **union**, not the sum: a file with both committed and working-tree changes is one file to CodeRabbit, and summing it twice cuts the chunk early.
 
-The budget is a **target to fill, not only a cap**. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a review slot and multiplies review rounds. When planning PRs from a roadmap, batch items until the estimate approaches ~40 files, grouping by what they touch so the coupling stays inside one review: items that share a schema section, a router, or a settings object belong in the same PR — splitting them creates stacked branches that can't start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can safely land in separate PRs with a stated merge order.
+**Incremental reviews refresh the budget.** CodeRabbit reviews only the files changed since its last completed review, not the cumulative PR diff, so within one long-lived PR the budget applies **per cycle** — measure `<last-reviewed-sha>..HEAD`. The merge-base count above governs the **first** review of a PR and any full re-review.
 
-## When to Exclude
+The budget is a **target to fill, not only a cap**. A slot costs an hour whether it reads 12 files or 90, so an under-filled window is the most expensive kind. A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a slot and multiplies rounds. Batch items until the estimate approaches ~90, grouping by what they touch so coupling stays inside one review: items sharing a schema section, a router or a settings object belong in the same PR — splitting them creates stacked branches that cannot start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land separately with a stated merge order.
 
-Chunk at the budget where you can. A mechanical rename can't be chunked — it's one atomic commit — so exclude the files within it that carry no reviewable content.
+### Pipelining — work lands on `develop`, review runs against the `develop` → `main` PR
 
-Exclude only files with **no reviewable content change**. Two kinds qualify:
+**There are no per-chunk feature branches.** Work is committed and pushed straight to `develop`, and the single long-lived PR is `develop` → `main`. Because that PR's base is the default branch, every push to `develop` auto-triggers a review — no trigger comment, no PR per chunk. Keeping that PR open is what makes the pipeline work.
 
-- **Pure renames** — 100% similarity, zero content change (`R100`).
-- **Rename-token-only edits** — the file's only diff is the mechanical substitution itself (e.g. every `File` identifier → `Sheet`). The live block covers both, and its header comment says so.
+1. Commit continuously on `develop`. When the delta since the last reviewed sha approaches ~90 files, that chunk is ready.
+2. Push it. The push starts a review.
+3. **Keep working locally while it runs.** Commits are free; only pushes trigger reviews. The local commit queue is what absorbs the hour.
+4. When the review completes, address its findings, commit the fixes, verify, and push them **together with** the next queued chunk — then reply to every finding. That single push starts the next cycle. Replying last is what makes a reply checkable: it can name the commit that answers the finding, where a reply written before the push points at nothing.
+5. Repeat, so review effort tracks the work instead of gating it.
 
-A file that was renamed _and_ carries a real logic change still needs review. When in doubt, leave it in.
+The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's fixes plus the queued chunk exceed the budget, push the fixes with only part of the queue and hold the rest — never split a fix away from the finding it answers. Which commits ride in a window, and how a late-authored fix is moved to its front: `references/window-composition.md`.
 
-## Generating the List
+## Reading and Answering Findings
 
-`R100` is git's marker for a rename with no content change — it gets you the pure-rename subset for free:
+- **Nitpicks live only in the review body**, inside the collapsed `🧹 Nitpick comments (M)` block — never as inline comments. Fetching only the inline endpoint loses them silently.
+- **Inline comments can fail to post at all**, and the review says so with a `> [!CAUTION] Inline review comments failed to post` block. The findings are still listed in the body's agent-prompt block, so a run that posted fewer threads than it claims is not a run with fewer findings.
+- **Reconcile before concluding.** Each review body states `Actionable comments posted: N` and `🧹 Nitpick comments (M)`. Both are ground truth: fewer in hand than that means you are missing some — go find them rather than reporting what you happened to fetch.
+- **Reply to every finding, including rejected ones** — a silent skip is indistinguishable from an oversight. State the verdict in the first line (`Agreed, fixed in <sha>` / `Not a real issue, no change`) and give the evidence; these threads are the record of why the code looks the way it does.
+- **Push the fix commits first, then reply.** A reply citing a sha the remote does not have is one CodeRabbit cannot resolve — it answers that it can't find the commit, and the thread's evidence is worthless from then on. Order: commit → check the review has settled → push → reply with the pushed sha.
+- **Verify before accepting.** CodeRabbit reasons from names and prior "learnings" and will confidently assert semantics the code does not have — check the implementation, and when it flags a pattern, grep for the repo's existing convention rather than taking the suggested diff. If a finding is real, check whether its twin exists elsewhere; the scan is per-file and routinely stops one file short.
 
-```bash
-git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 "\""}' | sort
-```
+## Deep Dives
 
-Rename-token-only edits are not `R100` (they have a content diff), so they can't be auto-detected — review those diffs and add them by hand.
-
-Verify the count matches what you expect before committing, and validate the result parses:
-
-```bash
-node -e "
-const fs=require('node:fs');
-// js-yaml is only a transitive dep, so pnpm's strict layout leaves it unresolvable by bare name -
-// reach into .pnpm, but discover the version rather than pinning it.
-const [dir]=fs.readdirSync('node_modules/.pnpm').filter((d)=>d.startsWith('js-yaml@'));
-const yaml=require('./node_modules/.pnpm/'+dir+'/node_modules/js-yaml');
-const d=yaml.load(fs.readFileSync('.coderabbit.yaml','utf8'));
-console.log('path_filters:', d.reviews.path_filters.length);
-"
-```
-
-## The Commit Pair
-
-Exclusions are always temporary. Every exclusion commit names its own revert so the cleanup is unambiguous later.
-
-**Adding** — subject is `chore: exclude <scope> from CodeRabbit review`. The body states why, and quotes the exact removal subject:
-
-```text
-chore: exclude File -> Sheet rename files from CodeRabbit review
-
-The File -> Sheet resource rename touches 800+ files, of which 732 are pure
-renames or rename-token-only edits with no reviewable content change. Exclude
-those so the review stays under the free-tier file limit and focuses on the
-files that actually changed.
-
-Revert with "chore: re-enable CodeRabbit review for File -> Sheet rename
-files" once the rename PR merges.
-```
-
-**Removing** — subject is `chore: re-enable CodeRabbit review for <scope>`, reusing the same `<scope>` wording:
-
-```text
-chore: re-enable CodeRabbit review for File -> Sheet rename files
-
-The rename PR has merged, so these files are reviewable again.
-```
-
-Mark the temporary block in the yaml with a comment naming its scope, so "remove the exclusions" resolves to an exact set of lines:
-
-```yaml
-# pure renames from the File -> Sheet resource rename (no content change);
-# remove these once that PR merges
-```
-
-## Removal Procedure
-
-When the user says "remove the exclusions" or "re-enable review":
-
-1. `git switch develop && git pull --ff-only origin develop` — **the base branch, not `main`.** Removing the block from `main` is a no-op: the live exclusions are on `develop`, which is what PRs are reviewed against.
-2. Delete the commented temporary block from `.coderabbit.yaml`, leaving the permanent entries
-3. Commit as `chore: re-enable CodeRabbit review for <scope>`, taking `<scope>` from the block's comment
-4. Push to `develop`
-
-Verify the block is actually gone from the branch that matters (`git show develop:.coderabbit.yaml | grep -c '"!'` should drop to the permanent-entry count). If more than one temporary block exists, ask which scope to remove rather than clearing all of them.
+- `references/review-feedback.md` — when fetching a PR's feedback, counting what is still open, or replying to a comment.
+- `references/window-composition.md` — when a push would exceed the cap, or work authored last has to be reviewed first.
+- `references/config-editing.md` — when changing `.coderabbit.yaml`.
+- `references/release-pr-cutting.md` — when a PR has grown past the file limit and its review is skipped outright.
+- `references/exclusions.md` — when deciding whether a file may be excluded, generating the list, or removing the exclusions.

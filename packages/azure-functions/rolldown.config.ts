@@ -1,18 +1,12 @@
-import type { Plugin, RolldownOptions, RolldownPluginOption } from "rolldown";
+import type { RolldownOptions } from "rolldown";
 
-import { externalVueFramework, getRolldownConfigurationNode } from "@esposter/configuration";
-// oxlint-disable-next-line typescript/ban-ts-comment, typescript/prefer-ts-expect-error
-// @ts-ignore TS2321: Excessive stack depth
-const rolldownConfigurationNode = getRolldownConfigurationNode();
+import { getCleanDistributionPlugin, getRolldownConfigurationNode } from "@esposter/configuration";
+// Self-contained bundle: the Functions host installs nothing, so everything is vendored except
+// `@azure/functions`, which the host itself provides. No `dts` plugin either — nothing consumes these types.
 const rolldownConfiguration: RolldownOptions = {
-  ...rolldownConfigurationNode,
-  external: [...externalVueFramework, "@azure/functions"],
-  plugins: [
-    (rolldownConfigurationNode.plugins as RolldownPluginOption[]).filter(
-      (plugins) =>
-        !(Array.isArray(plugins) && (plugins as Plugin[]).some(({ name }) => name.includes("rolldown-plugin-dts"))),
-    ),
-  ],
+  ...getRolldownConfigurationNode(),
+  external: ["@azure/functions"],
+  plugins: [getCleanDistributionPlugin()],
 };
 
 export default rolldownConfiguration;

@@ -1,3 +1,4 @@
+/* oxlint-disable no-param-reassign -- Phaser file-plugin base contract reassigns loader params */
 import type { TilemapFile } from "@/models/plugins/TilemapFile";
 import type { TMXEmbeddedTilesetNode, TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
 import type { Types } from "phaser";
@@ -59,8 +60,8 @@ export class TiledJSONExternalFile extends MultiFile {
 
     for (const tilesetFile of tilesetFiles) {
       const responseText = tilesetFile.xhrLoader?.responseText;
-      if (!responseText)
-        throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
+      // Phaser types `url` as `object | string`, so the key is what reliably names the failing tileset
+      if (!responseText) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.key);
 
       const responseData = await parseXmlString<{ tileset: TMXEmbeddedTilesetNode }>(responseText);
       const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
@@ -104,7 +105,7 @@ export class TiledJSONExternalFile extends MultiFile {
     loader.setPath(path);
     loader.setPrefix(prefix);
 
-    for (const [index, tileset] of tilesets.entries()) {
+    for (const [tilesetIndex, tileset] of tilesets.entries()) {
       // Tileset is relative to the tilemap filename, but we will expose our tilesets
       // In nuxt's public folder, so we just need to get the relative path past that
       const publicString = "public";
@@ -113,7 +114,7 @@ export class TiledJSONExternalFile extends MultiFile {
 
       const relativePath = tileset.source.slice(pathIndex + publicString.length);
       const tilesetFile = new TilesetFile(
-        index,
+        tilesetIndex,
         loader,
         `${file.key}${ID_SEPARATOR}Tileset${ID_SEPARATOR}${relativePath}`,
         relativePath,

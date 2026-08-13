@@ -9,7 +9,8 @@ A scheduled CI job running `pulumi refresh --preview-only` (or `preview --refres
 
 **Why deferred**
 
-- Meaningful only after [Pulumi becomes the full source of truth](/docs/proposals/infra/pulumi-source-of-truth) — until then it would permanently report the known Function App settings drift.
-- Needs Azure + Pulumi credentials in a scheduled workflow — a standing secret surface for a single-operator estate that rarely changes out-of-band.
+- Needs Azure + Pulumi credentials in a scheduled workflow — a standing secret surface. That is the whole of the objection.
 
-**Revisit when:** the source-of-truth proposal lands and more than one person operates the infrastructure.
+The estate does change out of band, and a single operator is enough for it to happen: role assignments have gone missing from Azure while still recorded in state. Neither `preview` nor `up` reports that — both diff the program against state, so an `up` reporting `unchanged` says nothing about the live estate, and the gap surfaces only when something that reads as deployed fails at runtime with `Forbidden`. Operator count is therefore not the trigger it was assumed to be.
+
+**Revisit when:** the scheduled job can authenticate without a standing secret — OIDC federation, or a refresh folded into a workflow that is already authenticated. [Pulumi is already the source of truth](/docs/infra/pulumi-source-of-truth), so the credential surface is the only remaining blocker.

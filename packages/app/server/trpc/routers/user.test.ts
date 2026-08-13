@@ -3,12 +3,12 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockNoSessionOnce, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { userRouter } from "@@/server/trpc/routers/user";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { AzureContainer, DatabaseEntityType, UserStatus, userStatusesInMessage } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL, MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -129,13 +129,13 @@ describe("user", () => {
     expect.hasAssertions();
 
     const status = UserStatus.DoNotDisturb;
-    const returned = await caller.upsertStatus({ message, status });
+    const returnedUserStatus = await caller.upsertStatus({ message, status });
     vi.advanceTimersByTime(1);
     const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
-    expect(returned.status).toBe(status);
-    expect(returned.userId).toBe(userId);
+    expect(returnedUserStatus.status).toBe(status);
+    expect(returnedUserStatus.userId).toBe(userId);
     expect(userStatus.message).toBe(message);
     expect(userStatus.status).toBe(status);
   });
@@ -145,13 +145,13 @@ describe("user", () => {
 
     await caller.upsertStatus({ message, status: UserStatus.DoNotDisturb });
     vi.advanceTimersByTime(1);
-    const returned = await caller.upsertStatus({ message: updatedMessage, status: UserStatus.Idle });
+    const returnedUserStatus = await caller.upsertStatus({ message: updatedMessage, status: UserStatus.Idle });
     vi.advanceTimersByTime(1);
     const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
-    expect(returned.status).toBe(UserStatus.Idle);
-    expect(returned.userId).toBe(userId);
+    expect(returnedUserStatus.status).toBe(UserStatus.Idle);
+    expect(returnedUserStatus.userId).toBe(userId);
     expect(userStatus.message).toBe(updatedMessage);
     expect(userStatus.status).toBe(UserStatus.Idle);
   });
@@ -219,7 +219,7 @@ describe("user", () => {
         (iterator) => iterator.next(),
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, userRouter.onUpsertStatus.name).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, JSON.stringify([userId])).message}]`,
     );
   });
 
@@ -255,5 +255,35 @@ describe("user", () => {
     const updatedUser = await caller.updateUser({ biography: "" });
 
     expect(updatedUser.biography).toBe("");
+  });
+
+  test("reads user", async () => {
+    expect.hasAssertions();
+
+    const { user } = await mockSessionOnce(mockContext.db);
+    await caller.updateUser({ biography, image, name });
+    const readUser = await caller.readUser(user.id);
+
+    // Only the allowlisted columns are projected — private fields (email) never leave the database
+    expect(readUser).toStrictEqual({ biography, image, name });
+  });
+
+  test("reads user unauthenticated", async () => {
+    expect.hasAssertions();
+
+    const { user } = await mockSessionOnce(mockContext.db);
+    await caller.updateUser({ biography, image, name });
+    mockNoSessionOnce();
+    const readUser = await caller.readUser(user.id);
+
+    expect(readUser).toStrictEqual({ biography, image, name });
+  });
+
+  test("fails read user with non-existent id", async () => {
+    expect.hasAssertions();
+
+    await expect(caller.readUser("-1")).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, "-1").message}]`,
+    );
   });
 });

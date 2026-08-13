@@ -4,12 +4,12 @@ import { AchievementOperator } from "#shared/models/achievement/AchievementOpera
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { BuildingIds } from "#shared/models/clicker/data/building/BuildingId";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { BinaryOperator, ClickerAchievementName } from "@esposter/db-schema";
 
-export const ClickerAchievementDefinitionMap = {
+export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Clicker, {
   [ClickerAchievementName.ClickerAddict]: defineAchievementDefinition({
     amount: 100,
-    category: AchievementCategory.Clicker,
     description: "Save your clicker game 100 times",
     icon: "mdi-cursor-pointer",
     points: 50,
@@ -17,7 +17,6 @@ export const ClickerAchievementDefinitionMap = {
   }),
   [ClickerAchievementName.ClickerArchitect]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Clicker,
     condition: {
       operation: (value) => BuildingIds.every((buildingId) => value.some(({ id }) => id === buildingId)),
       operator: AchievementOperator.Operation,
@@ -31,7 +30,6 @@ export const ClickerAchievementDefinitionMap = {
   }),
   [ClickerAchievementName.ClickerBillionaire]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Clicker,
     condition: {
       operator: BinaryOperator.ge,
       path: "noPoints",
@@ -45,7 +43,6 @@ export const ClickerAchievementDefinitionMap = {
   }),
   [ClickerAchievementName.ClickerChampion]: defineAchievementDefinition({
     amount: 1000,
-    category: AchievementCategory.Clicker,
     description: "Save your clicker game 1000 times",
     icon: "mdi-crown",
     points: 500,
@@ -53,7 +50,6 @@ export const ClickerAchievementDefinitionMap = {
   }),
   [ClickerAchievementName.ClickerCompletionist]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Clicker,
     condition: {
       operation: (value) => Object.keys(UpgradeMap).every((upgradeId) => value.some((id) => id === upgradeId)),
       operator: AchievementOperator.Operation,
@@ -67,7 +63,6 @@ export const ClickerAchievementDefinitionMap = {
   }),
   [ClickerAchievementName.ClickerMillionaire]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Clicker,
     condition: {
       operator: BinaryOperator.ge,
       path: "noPoints",
@@ -81,7 +76,6 @@ export const ClickerAchievementDefinitionMap = {
   }),
   [ClickerAchievementName.ClickerNovice]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Clicker,
     description: "Save your clicker game for the first time",
     icon: "mdi-cursor-default-outline",
     points: 5,
@@ -89,7 +83,6 @@ export const ClickerAchievementDefinitionMap = {
   }),
   [ClickerAchievementName.ClickerPro]: defineAchievementDefinition({
     amount: 10,
-    category: AchievementCategory.Clicker,
     description: "Save your clicker game 10 times",
     icon: "mdi-cursor-default-click",
     points: 20,
@@ -97,7 +90,6 @@ export const ClickerAchievementDefinitionMap = {
   }),
   [ClickerAchievementName.ClickerSaver]: defineAchievementDefinition({
     amount: 5,
-    category: AchievementCategory.Clicker,
     description: "Save your clicker game 5 times",
     icon: "mdi-content-save-all",
     points: 10,
@@ -105,7 +97,6 @@ export const ClickerAchievementDefinitionMap = {
   }),
   [ClickerAchievementName.ClickerTrillionaire]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Clicker,
     condition: {
       operator: BinaryOperator.ge,
       path: "noPoints",
@@ -117,4 +108,4 @@ export const ClickerAchievementDefinitionMap = {
     points: 400,
     triggerPath: "clicker.saveClicker" as const,
   }),
-};
+});

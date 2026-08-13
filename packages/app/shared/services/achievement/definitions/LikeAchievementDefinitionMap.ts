@@ -1,12 +1,12 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
 import { BinaryOperator, LikeAchievementName } from "@esposter/db-schema";
 
-export const LikeAchievementDefinitionMap = {
+export const LikeAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Like, {
   [LikeAchievementName.Critic]: defineAchievementDefinition({
     amount: 10,
-    category: AchievementCategory.Like,
     condition: {
       operator: BinaryOperator.eq,
       path: "value",
@@ -20,7 +20,6 @@ export const LikeAchievementDefinitionMap = {
   }),
   [LikeAchievementName.CriticalThinker]: defineAchievementDefinition({
     amount: 50,
-    category: AchievementCategory.Like,
     description: "Remove 50 likes",
     icon: "mdi-thumb-down-outline",
     points: 40,
@@ -28,7 +27,6 @@ export const LikeAchievementDefinitionMap = {
   }),
   [LikeAchievementName.Disliker]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Like,
     condition: {
       operator: BinaryOperator.eq,
       path: "value",
@@ -42,7 +40,6 @@ export const LikeAchievementDefinitionMap = {
   }),
   [LikeAchievementName.Hater]: defineAchievementDefinition({
     amount: 10,
-    category: AchievementCategory.Like,
     description: "Unlike 10 posts",
     icon: "mdi-thumb-down",
     points: 15,
@@ -50,7 +47,6 @@ export const LikeAchievementDefinitionMap = {
   }),
   [LikeAchievementName.Liker]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Like,
     condition: {
       operator: BinaryOperator.eq,
       path: "value",
@@ -64,7 +60,6 @@ export const LikeAchievementDefinitionMap = {
   }),
   [LikeAchievementName.SuperFan]: defineAchievementDefinition({
     amount: 100,
-    category: AchievementCategory.Like,
     condition: {
       operator: BinaryOperator.eq,
       path: "value",
@@ -78,10 +73,9 @@ export const LikeAchievementDefinitionMap = {
   }),
   [LikeAchievementName.Unliker]: defineAchievementDefinition({
     amount: 1,
-    category: AchievementCategory.Like,
     description: "Unlike a post",
     icon: "mdi-thumb-down",
     points: 5,
     triggerPath: "like.deleteLike" as const,
   }),
-};
+});

@@ -1,7 +1,7 @@
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
-import type { Game } from "phaser";
 
-import { useGame } from "@/composables/useGame";
+import { NotInitializedError } from "@esposter/shared";
+import { Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
   // Use a writable computed, not a ref, to keep the Game object unproxied: ref() would wrap it in
@@ -21,32 +21,34 @@ export const usePhaserStore = defineStore("phaser", () => {
   const switchToScene = async (newSceneKey: SceneWithPlugins["scene"]["key"]) => {
     if (isSameScene(newSceneKey)) return;
 
-    const game = useGame();
+    const activeGame = game.value;
+    if (!activeGame) throw new NotInitializedError(Game.name);
+
     const oldSceneKey = sceneKey.value;
     sceneKey.value = newSceneKey;
     // Wait for the new scene's vue components to render and their hooks to run before starting it.
     await nextTick();
     // Cleanup old scene resources
-    if (oldSceneKey && game.scene.isActive(oldSceneKey)) game.scene.stop(oldSceneKey);
-    game.scene.start(newSceneKey);
+    if (oldSceneKey && activeGame.scene.isActive(oldSceneKey)) activeGame.scene.stop(oldSceneKey);
+    activeGame.scene.start(newSceneKey);
   };
 
   const parallelSceneKeys = ref<SceneWithPlugins["scene"]["key"][]>([]);
   const prioritizedParallelSceneKeys = ref<SceneWithPlugins["scene"]["key"][]>([]);
-  const launchParallelScene = (scene: SceneWithPlugins, sceneKey: SceneWithPlugins["scene"]["key"]) => {
-    if (parallelSceneKeys.value.includes(sceneKey)) return;
+  const launchParallelScene = (scene: SceneWithPlugins, targetSceneKey: SceneWithPlugins["scene"]["key"]) => {
+    if (parallelSceneKeys.value.includes(targetSceneKey)) return;
 
-    scene.scene.bringToTop(sceneKey);
+    scene.scene.bringToTop(targetSceneKey);
     // Some scenes like the mobile joystick scene are prioritized to always show first
     for (const prioritizedParallelSceneKey of prioritizedParallelSceneKeys.value)
       if (parallelSceneKeys.value.includes(prioritizedParallelSceneKey))
         scene.scene.bringToTop(prioritizedParallelSceneKey);
 
-    scene.scene.launch(sceneKey);
-    parallelSceneKeys.value.push(sceneKey);
+    scene.scene.launch(targetSceneKey);
+    parallelSceneKeys.value.push(targetSceneKey);
   };
-  const removeParallelScene = (scene: SceneWithPlugins, sceneKey: SceneWithPlugins["scene"]["key"]) => {
-    const index = parallelSceneKeys.value.indexOf(sceneKey);
+  const removeParallelScene = (scene: SceneWithPlugins, targetSceneKey: SceneWithPlugins["scene"]["key"]) => {
+    const index = parallelSceneKeys.value.indexOf(targetSceneKey);
     if (index === -1) return;
 
     const parallelSceneKey = parallelSceneKeys.value.splice(index, 1)[0];

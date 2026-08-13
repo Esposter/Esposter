@@ -1,6 +1,7 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions, ExecStdio } from "@/models/exec/ExecOptions";
 import type { Lease } from "@/models/exec/snapshot/Lease";
+import type { Environment } from "@/models/virrun/Environment";
 import type { Virrun } from "@/models/virrun/Virrun";
 import type { VirrunOptions } from "@/models/virrun/VirrunOptions";
 
@@ -24,12 +25,17 @@ import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareL
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
+import { toRootAnchoredExclude } from "@/services/exec/util/toRootAnchoredExclude";
 import { withColorEnv } from "@/services/exec/util/withColorEnv";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
+import { readWslLoginEnvironment } from "@/services/exec/wsl/readWslLoginEnvironment";
+import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { loadSource } from "@/services/source/loadSource";
 import { existsSync } from "node:fs";
-// "auto" resolves to native until vfs beats it on the gates.
-const backendFactories: Record<BackendType, () => ExecBackend> = {
+// "auto" resolves to native until vfs beats it on the gates. Every factory takes the run's `environment` so the one
+// Backend that narrows what the sandbox can see (os on win32, via the source mirror) derives its exclude set from the
+// Same preset `maskedPaths` below does; the others have no mirror and ignore it.
+const backendFactories: Record<BackendType, (environment?: Environment) => ExecBackend> = {
   [BackendType.Auto]: createNativeBackend,
   [BackendType.Native]: createNativeBackend,
   [BackendType.Os]: createOsBackend,
@@ -42,7 +48,7 @@ export const createVirrun = async ({
   environment,
   source = { dir: "", type: SourceType.Dir },
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
-  const execBackend = backendFactories[backend]();
+  const execBackend = backendFactories[backend](environment);
   const { cwd, dispose: disposeSource } = await loadSource(source);
   // Leases this run holds on the snapshot/prepare hash dirs it mounts — released on dispose so pruneStale* can reclaim
   // A superseded layer once no live run is reading it.
@@ -50,14 +56,41 @@ export const createVirrun = async ({
   // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store, login PATH, and
   // Network re-enable must still be injected (createOsExecOptions). Non-os backends need only the VIRRUN signal.
   const isOsBackend = execBackend.name === BackendType.Os;
+  // Capture the WSL login environment up front on win32, before any cache location is resolved. Every sandboxed
+  // Command needs its PATH anyway, and the capture is what tells getSandboxNodeVersion which node the guest runs — so
+  // Taking it first is what stops a cold host keying its very first snapshot on the Windows node's major and then
+  // Re-provisioning under the guest's on the next run.
+  if (isOsBackend && process.platform === "win32") readWslLoginEnvironment();
   // Resolve the framework prepare step once (preset-driven, no overrides). Only the os backend has overlay layers;
   // Other backends run in-place with the host's own artifacts, so there is nothing to regenerate. Throws loudly if
   // `environment` is set to a framework whose config file is absent — a misconfiguration, not a silent skip.
   const prepareStep = isOsBackend ? resolvePrepareStep(environment, cwd) : undefined;
+  // What a persist run may never write back to the host. On native Linux the sandbox reads the real working tree, so
+  // Only the prepare layer's outputs are masked — everything else the command wrote is a genuine native-equivalent
+  // Mutation. On win32 the sandbox reads the WSL source mirror instead, which the mirror excludes were filtered out
+  // Of (resolveMirrorExcludes, which the backend above resolves from this same `environment`, so neither direction
+  // Can answer for a preset the other did not see):
+  // A path that never entered the mirror has no legitimate host origin, so an upper entry under one can only be a
+  // Ghost of stale mirror content — flushing it resurrects a tree the host already deleted (`.claude/worktrees`) or
+  // Clobbers host-only state (`.git`). Either way the outputs are root-anchored (toRootAnchoredExclude): they name one
+  // Directory, and a root-level one (`.nuxt`) left bare would mask that name at every depth in the repo.
+  const prepareOutputs = prepareStep?.outputs ?? [];
+  const maskedPaths =
+    isOsBackend && process.platform === "win32"
+      ? resolveMirrorExcludes(cwd, prepareOutputs)
+      : prepareOutputs.map((output) => toRootAnchoredExclude(output));
   const toOptions = (stdio: ExecStdio): ExecOptions =>
     withColorEnv(isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio });
-  const toInstallOptions = (stdio: ExecStdio): ExecOptions =>
-    isOsBackend ? withColorEnv(createOsInstallOptions(cwd, stdio)) : toOptions(stdio);
+  // Provisioning (deps install / prepare) always pipes: its output must never land on the host's stdout, or a piped
+  // Caller (`virrun -- depcruise | dot`) gets its stdout stream poisoned by setup logs on a cold build. An interactive
+  // Caller ("inherit") still sees the build live via a stderr tee, so a multi-minute install is never a silent stall.
+  const toInstallOptions = (stdio: ExecStdio): ExecOptions => {
+    // Only the os backend provisions (fork/persist fall back to plain exec elsewhere), and tee is os-only — so any
+    // Other backend just honors the requested stdio.
+    if (!isOsBackend) return toOptions(stdio);
+    const options = withColorEnv(createOsInstallOptions(cwd, "pipe"));
+    return stdio === "inherit" ? { ...options, tee: "stderr" } : options;
+  };
   // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork and
   // Persist so the two warm-cache paths can't drift.
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
@@ -117,11 +150,11 @@ export const createVirrun = async ({
       // Other backends have no sandbox, so a plain exec writes straight to the host disk — nothing to flush.
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
       // Same warm-snapshot + prepare-layer provisioning as fork; persistWithCache tops it with a real upper and
-      // Reconciles the command's writes onto the host, masking the prepare outputs (they are cache-owned, never
-      // Flushed) and short-circuiting to a recorded result when the task cache holds the run.
+      // Reconciles the command's writes onto the host, masking the paths the sandbox's source view never carried
+      // (maskedPaths) and short-circuiting to a recorded result when the task cache holds the run.
       await ensureSnapshot(stdio);
       const prepareLowerDirs = await ensurePrepareLayer(stdio);
-      return persistWithCache(execBackend, command, toOptions(stdio), prepareLowerDirs, prepareStep?.outputs ?? []);
+      return persistWithCache(execBackend, command, toOptions(stdio), prepareLowerDirs, maskedPaths);
     },
   };
 };

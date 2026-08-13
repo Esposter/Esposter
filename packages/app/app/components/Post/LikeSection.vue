@@ -21,7 +21,6 @@ const unliked = computed(() => post.viewerLike?.value === -1);
     <v-btn
       p-0
       rd
-      bg-transparent
       width="1.5rem"
       min-width="1.5rem"
       height="1.5rem"
@@ -43,7 +42,6 @@ const unliked = computed(() => post.viewerLike?.value === -1);
     <v-btn
       p-0
       rd
-      bg-transparent
       width="1.5rem"
       min-width="1.5rem"
       height="1.5rem"

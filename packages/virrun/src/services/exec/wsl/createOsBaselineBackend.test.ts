@@ -15,10 +15,12 @@ export const createOsBaselineBackend = (): ExecBackend => {
   return {
     exec: (command, options) =>
       new Promise((resolve, reject) => {
-        const cwd = readWslPath(options.cwd === "" ? process.cwd() : options.cwd);
-        const commandArgs = Array.isArray(command)
-          ? ["sh", "-c", `cd "$1" && shift && exec "$@"`, "virrun-baseline", cwd, ...command]
-          : ["sh", "-c", `cd "$1" && ${command}`, "virrun-baseline", cwd];
+        const cwd = readWslPath(options.cwd || process.cwd());
+        // Branching on `typeof` rather than `Array.isArray`, which cannot narrow a `readonly string[]` away
+        const commandArgs =
+          typeof command === "string"
+            ? ["sh", "-c", `cd "$1" && ${command}`, "virrun-baseline", cwd]
+            : ["sh", "-c", `cd "$1" && shift && exec "$@"`, "virrun-baseline", cwd, ...command];
         const child = spawnHidden("wsl.exe", ["--exec", "env", ...createWslEnvArgs(options), ...commandArgs], {
           env: { ...process.env, ...options.env },
           stdio: options.stdio,

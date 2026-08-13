@@ -1,84 +1,64 @@
 ---
 name: build
-description: Esposter rolldown build conventions — shared rolldown configs, external list rules, and self-contained bundle packages. Apply when adding packages or editing rolldown configs.
+description: Esposter rolldown build conventions — the shared configuration factories, the external list derived from each package's own manifest and the two kinds of package that opt out, why dist is wiped every build, the tsconfig preset chain and the build preset that carries excludes only, and why a declare-module augmentation never travels through a bundled .d.ts to a consuming package. Apply when adding packages, editing rolldown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin.
 ---
 
 # Build Conventions (Rolldown)
 
-## Shared Rolldown Configs
+The mechanism — what runs, in what order, and why — is [/docs/architecture/build-pipeline](../../../packages/app/content/docs/architecture/build-pipeline.md). This skill is the conventions you apply when editing it.
 
-Located in `packages/configuration/src/`. All library packages import one of:
+## Shared configs
 
-Each is a **factory** — call it, don't spread the export: `getRolldownConfigurationBrowser(): RolldownOptions`.
+Everything lives in `packages/configuration/src/`. Each export is a **factory** — call it, don't spread the export.
 
-| Config                               | Platform                 | Use for                                                                                             |
-| ------------------------------------ | ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `getRolldownConfigurationBrowser`    | browser                  | `db-schema`, `parse-tmx`, `shared`                                                                  |
-| `getRolldownConfigurationNode`       | node                     | `azure-functions`, `azure-mock`, `configuration`, `db`, `db-mock`, `infra`, `shared-node`, `virrun` |
-| `getRolldownConfigurationIsomorphic` | browser + node polyfills | `xml2js`                                                                                            |
+A package's `rolldown.config.ts` is one call plus only what is genuinely specific to it. If you are about to repeat a plugin, an exclude or an external across two packages, it belongs in `configuration` instead. Which package calls which factory is countable from the repo — never restate it here.
 
-All extend `getRolldownConfigurationBrowser()`. Node adds `platform: "node"`; Isomorphic adds `@rolldown/plugin-node-polyfills`. Use `{ external }` shorthand when no extra entries needed; spread `[...external, "extra"]` only when the package needs additional externals.
+Base browser config passes only `tsconfig` to `dts()`; the DTS generator is left inferred, and `rolldown-plugin-dts` picks `oxc` where `isolatedDeclarations` is on and `tsc` otherwise. Don't pass a `generator`/`tsgo` option unless a package genuinely needs a specific one.
 
-Base browser config enables `tsgo: true` in `dts()` (`@typescript/native-preview` for fast DTS gen; in catalog — do not remove).
+`getViteConfiguration` is for `.vue` packages only. It is still a Rolldown build (Vite 8 bundles with Rolldown — hence `build.rolldownOptions`); Vite is there for SFC compilation and the `vue-tsc` declaration build. Don't "migrate it to rolldown" — that trade was already made and the bundler is the same one.
 
-## Global External List
+## External is derived — never hand-listed
 
-Defined in `packages/configuration/src/external/external.ts`, exported as `external` — the **single source of truth** for what is externalized. Used by `getRolldownConfigurationBrowser` (extended by all rolldown configs) and by `getViteConfiguration`.
+`getExternal()` reads the **calling package's own `package.json`** (rolldown runs with that package as cwd) and returns its `peerDependencies` plus every workspace sibling, each as a prefix pattern so subpath imports are covered too.
 
-```ts
-// packages/configuration/src/external/external.ts
-export const external: (RegExp | string)[] = [
-  // Workspace packages — never bundle sibling packages
-  /@esposter\//u,
-  "azure-mock",
-  "parse-tmx",
-  "vue-phaserjs",
-  // @esposter/azure-mock
-  "@azure/core-http-compat",
-  // ... (grouped by owning @esposter package, alphabetical package order, alphabetical entries within)
-];
-```
+So the only thing you edit to change what a package externalizes is **that package's manifest**:
 
-### Key rules
+- `dependencies` → bundled. The package's own implementation detail.
+- `peerDependencies` → externalized. Anything in the published runtime or declaration surface the consumer must supply exactly one copy of — framework singletons (`vue`, `pinia`), SDKs mirrored in a public API, the Drizzle/Pulumi runtimes.
+- `devDependencies` → build, lint, test, codegen and typecheck tooling, plus anything used only by types that never reach the generated declarations.
+- Don't redeclare a transitive peer. If `azure-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is db-schema's peer, not azure-mock's.
 
-- `/@esposter\//u` covers all `@esposter/*` workspace packages — never add individual `@esposter/foo` strings.
-- Non-`@esposter/` workspace packages must be listed explicitly (`azure-mock`, `parse-tmx`, `vue-phaserjs` — not covered by the regex).
-- The external list is a build superset, not a per-package peer-dependency checklist — a package declares only the externalized packages it directly imports at runtime or exposes through its `.d.ts` surface.
-- Do not duplicate transitive peers — the package that directly imports a dependency owns the contract. If `azure-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is `db-schema`'s peer, not `azure-mock`'s.
-- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure the shared external list covers it. Exceptions: `@esposter/app` (root consumer, not a library) and the self-contained bundles `@esposter/azure-functions` / `virrun` (override the external list to bundle almost everything — see Self-Contained Bundle Packages).
-- Vite builds: `getViteConfiguration` lives in `packages/configuration/src/getViteConfiguration.ts`; consumers like `vue-phaserjs` import it from `@esposter/configuration`.
+There is no list to audit against any more, and no ordering convention to maintain. **Do not reintroduce one** — a shared registry is exactly what let a forgotten entry silently vendor a dependency into a bundle.
 
-### Ordering convention
+### The opt-outs
 
-Group by owning `@esposter` package; sections in alphabetical package-name order; entries alphabetical within each section. Section header comment is the bare package name (`// @esposter/db`). One exception: a final "Vue framework" group for always-consumer-provided deps not owned by a single package (`@vueuse/core`, `pinia`, `vue`).
+Both are declared in the package's own `rolldown.config.ts`, not in `configuration`:
 
-### Dependency declaration convention
+- **Self-contained bundles** (`virrun`, `azure-functions`) vendor almost everything so consumers manage no peers. `virrun` externalizes only `unconfig` — its synchronous TS loading does `createRequire(import.meta.url)("jiti")` relative to its own installed file, so vendoring rebases that resolution and breaks config loading in consumer repos. `azure-functions` externalizes only `@azure/functions`, supplied by the Functions host, and skips `dts` entirely because nothing consumes its types. Never spread a derived external list into either — `@esposter/*` would come back as peer deps.
+- **`@esposter/configuration`** calls `getExternal("devDependencies")`. It is private, never published, and its dist imports nothing but build tooling every workspace member already has installed, so peers would invent a contract nobody consumes. This is the one package where an externalized import is correctly a devDependency.
 
-> **CRITICAL — external imports are `peerDependencies`, never `dependencies`/`devDependencies`.** If a library package directly imports a non-workspace package that is in the shared `external` list (so it's externalized, not bundled, and ships in that package's dist/declaration surface), it **must** be declared in `peerDependencies` — never in `dependencies` and never in `devDependencies`. We keep regressing on this: a fix that adds an externalized import as a `dependency` (so it resolves locally) silently ships the wrong contract. Audit against `external.ts` after touching the external list or any manifest. The rule scopes to a package's **published runtime/declaration surface** — an externalized package a manifest pulls in only as build/test tooling (never imported by its shipped code) is correctly a `devDependency`, not a peer. Example: `@codspeed/vitest-plugin` is an optional `peerDependency` of `@esposter/configuration` (which lazy-imports it in `getBenchmarkPlugins`), but a `devDependency` of only the packages that actually bench (`app`, `virrun`) — the lazy `CODSPEED_ENV`-gated import means non-bench packages never load it, so they declare no codspeed dep (see [Bench › Dependency placement](../bench/SKILL.md)). The self-contained bundles (`@esposter/app`, `@esposter/azure-functions`, `virrun` — see Self-Contained Bundle Packages) also opt out of external→peer for their bundled deps.
+An `INVALID_ANNOTATION` warning is never our code — it comes from a bundled third-party `dist` (`@vueuse/core`). **Do not "fix" it by externalizing that dep**: virrun's config records that trade-off as rejected. Never edit the third-party comments either.
 
-- `dependencies`: direct runtime imports to bundle or auto-install for consumers. Workspace packages imported at runtime usually go here even though the external list keeps their code out of the bundle.
-- `peerDependencies`: direct runtime or declaration-surface imports that are externalized and must be supplied by the consumer — framework/runtime singletons (`vue`, `pinia`), SDKs mirrored in public APIs, Drizzle/Pulumi runtimes, package-plugin ecosystems.
-- `devDependencies`: build, lint, test, codegen, typecheck tools; test-only packages; packages used only by source types that don't appear in generated declarations.
-- If a package only needs a dependency because an imported workspace package needs it, don't redeclare it as a peer — let the directly importing workspace package own it.
+## dist is wiped every build
 
-### Auditing external vs peerDependencies alignment
+`getCleanDistributionPlugin` is in the base config's `plugins`. Rolldown never clears `output.dir` and chunk filenames are content-hashed, so without it every build leaves its predecessor's chunks behind forever. Keep it first in any `plugins` array a package overrides. The Vite path doesn't need it — Vite empties `outDir` itself.
 
-Read the `external` array in `packages/configuration/src/external/external.ts` (the source of truth — never transcribe it into a script, the copy goes stale) and check each package's `dependencies` against it: any entry the list externalizes belongs in `peerDependencies`. `@esposter/app`, `@esposter/azure-functions`, and `virrun` are the intentional exceptions.
+**Dist size is the correctness signal for anything touching externals.** Every package snapshots its `dist/index.js` size in `src/index.test.ts`, and its `index.d.ts` too unless it skips `dts`. After changing a manifest, an external, or a config factory, rebuild and run those — a jump means something started being bundled that shouldn't be, and a `-u` that "fixes" a large jump is hiding the bug.
 
-## Self-Contained Bundle Packages (azure-functions, virrun)
+## tsconfig presets
 
-Both vendor almost everything so consumers need **no peer deps**, but they draw the line differently:
+`tsconfig.base.json` → `tsconfig.library.json` (composite + isolatedDeclarations) → `tsconfig.node.json` (`types: ["node"]`), with `tsconfig.vue.json` a sibling leaf off the base. The base carries **no framework assumption** — anything Vue-specific (`jsx`, DOM libs, the dxup language-service plugins, the `.vue` include) belongs in the Vue leaf, never at the root where every Node package inherits it.
 
-```ts
-external: [...externalVueFramework, "@azure/functions"],   // azure-functions — provided by the runtime
-external: ["unconfig"],                                    // virrun — vendors even the vue framework peers
-```
+`tsconfig.build.base.json` holds **excludes and nothing else** — no `compilerOptions`, deliberately. A package's `tsconfig.build.json` extends `["./tsconfig.json", "../configuration/tsconfig.build.base.json"]`, so its build program inherits the same platform, libs and `types` as the program it is typechecked with. The preset is a separate file from the build config that extends it because `configuration` is built by the same factories: `dts()` and `ctix` read `tsconfig.build.json` from the package being built, so a preset sitting at that path would leave that one package building with no `compilerOptions` at all. Adding a `compilerOptions` block back there re-creates the bug it was written to remove: declarations emitted against a different lib set than the source was written for, invisible until something downstream fails to resolve.
 
-- **azure-functions** keeps `externalVueFramework` (`vue`, `@vueuse/core`, `pinia`) external — it doesn't use Vue, and `@azure/functions` is supplied by the runtime.
-- **virrun** externalizes only `unconfig`: its synchronous TS loading does `createRequire(import.meta.url)("jiti")` relative to its own installed file, so vendoring it would rebase that resolution into the bundle and break config loading in consumer repos. Everything else — including the vue peers and `@platformatic/vfs` (a devDep) — is vendored.
-- **Never spread the full `external` list here** — `/@esposter\//u` would externalize `@esposter/shared`/`@esposter/db`, re-introducing peer deps.
-- An `INVALID_ANNOTATION` warning is never our code — it comes from a bundled third-party `dist` (`@vueuse/core`). **Do not "fix" it by externalizing that dep**: virrun's config comment records that trade-off as rejected — zero peer deps for consumers is worth the harmless warning. Never edit the third-party comments either.
+These are `**/*.json` under a strict `json/json` ESLint language — **no comments**. Rationale goes in the docs page, not the file.
 
-## Dependency Installs & Workspace Graph
+## Module augmentations do not cross a package boundary
 
-Covered by root `CLAUDE.md` (`pnpm i`, `pnpm depcruise:graph`) and `packages/app/content/docs/architecture/monorepo-tooling.md` (install safety rules). One addition: if `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.
+A `declare module "x"` augmentation — a dayjs plugin, a Zod extension, a Vuetify labs type — is resolved **per TypeScript program** against that module's identity. It is not a value, so it cannot be re-exported, and it does not travel inside a bundled `.d.ts`. Neither `import type {} from "dayjs/plugin/duration"` nor a `/// <reference types="…" />` in the source survives the bundle, and externalizing the dependency changes nothing: the consumer's own program still has to contain the plugin's declarations before the augmented member resolves.
+
+So a package that wraps an augmented library exports the **value** and lets each consumer register the augmentation itself — `packages/db-schema`'s `dayjs` re-export calls `baseDayjs.extend(duration)` so the runtime works everywhere, and every package that types a `.duration(...)` call still imports the plugin in its own graph. Don't chase this with a barrel re-export or a reference directive; both look like they work until a downstream `pnpm typecheck` reports the member missing.
+
+## Dependency installs & workspace graph
+
+Covered by root `CLAUDE.md` (`pnpm i`, `pnpm depcruise:graph`) and [monorepo tooling](../../../packages/app/content/docs/architecture/monorepo-tooling.md) (install safety rules). One addition: if `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.

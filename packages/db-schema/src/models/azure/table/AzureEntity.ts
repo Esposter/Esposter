@@ -1,6 +1,6 @@
 import type { CompositeKeyEntityConstraint } from "@/models/azure/table/CompositeKeyEntity";
 
-import { CompositeKeyEntity, createCompositeKeyEntitySchema } from "@/models/azure/table/CompositeKeyEntity";
+import { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -9,6 +9,6 @@ export type AzureEntity = typeof AzureEntity.prototype;
 
 export const createAzureEntitySchema = <TEntity extends CompositeKeyEntityConstraint>(schema: z.ZodObject<TEntity>) =>
   z.object({
-    ...createCompositeKeyEntitySchema(schema).shape,
+    ...schema.shape,
     ...itemMetadataSchema.shape,
   });

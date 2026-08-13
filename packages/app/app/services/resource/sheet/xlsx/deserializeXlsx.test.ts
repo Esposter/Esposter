@@ -1,31 +1,36 @@
-import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 // @vitest-environment nuxt
 // DOMParser only exists in the nuxt env, and read-excel-file parses the workbook XML with it.
 import type { XlsxFileSettings } from "#shared/models/resource/sheet/XlsxFileSettings";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { Row } from "#shared/models/resource/sheet/datasource/Row";
+import { createColumn } from "@/composables/resource/sheet/commands/createColumn.test";
+import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
+import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { deserializeXlsx } from "@/services/resource/sheet/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/resource/sheet/xlsx/serializeXlsx";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
-const defaultSettings: XlsxFileSettings = { configuration: { sheetIndex: 0 }, type: DataSourceType.Xlsx };
+// Both codecs are reached statically from PortableFormatMap, so whether they pull their library into the
+// Importing module's graph is the fact under test — the seam records the first import instead of replacing it
+const { xlsxLibraries } = vi.hoisted(() => ({ xlsxLibraries: { isReaderLoaded: false, isWriterLoaded: false } }));
 
-const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
-  columns,
-  metadata: { dataSourceType: DataSourceType.Xlsx, importedAt: new Date(0), name: "", size: 0 },
-  rows,
-  statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
+vi.mock(import("read-excel-file/browser"), (importOriginal) => {
+  xlsxLibraries.isReaderLoaded = true;
+  return importOriginal();
 });
 
-const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
+vi.mock(import("write-excel-file/browser"), (importOriginal) => {
+  xlsxLibraries.isWriterLoaded = true;
+  return importOriginal();
+});
 
-const createRow = (data: Record<string, number>): Row => new Row({ data });
+// Read while this file is still evaluating, so the assertion holds whatever order the tests run in
+const librariesLoadedAtImport = { ...xlsxLibraries };
+const defaultSettings: XlsxFileSettings = { configuration: { sheetIndex: 0 }, type: DataSourceType.Xlsx };
 
 describe(deserializeXlsx, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
@@ -34,6 +39,15 @@ describe(deserializeXlsx, () => {
     const blob = await serializeXlsx(dataSource, defaultSettings, MIME_TYPE);
     return new File([blob], name, { type: MIME_TYPE });
   };
+
+  // Importing DataSourceConfigurationMap above is what every resource page does through the command bar, and
+  // Only a Sheet can ever reach an xlsx file — the libraries have to arrive with the workbook, not the page.
+  // That they still arrive is what the round trips below prove: neither can produce a workbook without them
+  test("leaves the xlsx libraries out of the importing module's graph", () => {
+    expect.hasAssertions();
+
+    expect(librariesLoadedAtImport).toStrictEqual({ isReaderLoaded: false, isWriterLoaded: false });
+  });
 
   test("parses columns and rows from xlsx", async () => {
     expect.hasAssertions();
@@ -57,7 +71,7 @@ describe(deserializeXlsx, () => {
   test("only header row returns columns with no rows", async () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource([createColumn("a"), createColumn("b")], []);
+    const dataSource = createDataSource([createColumn("a"), createColumn("b")]);
     const file = await createXlsxFile(dataSource);
     const { columns, metadata, rows } = await deserializeXlsx(file, defaultSettings);
 

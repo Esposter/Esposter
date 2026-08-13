@@ -3,6 +3,7 @@ import { readCapabilityCache } from "@/services/exec/os/readCapabilityCache";
 import { writeCapabilityCache } from "@/services/exec/os/writeCapabilityCache";
 import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
 import { CAPABILITY_CACHE_FILENAME } from "@/services/exec/util/constants";
+import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -27,7 +28,10 @@ describe("capabilityCache", () => {
     writeCapabilityCache({ key, value: true });
     const content = readFileSync(join(getCacheHome(), CAPABILITY_CACHE_FILENAME), "utf8");
 
-    expect(createKeyedCacheSchema(z.boolean()).parse(JSON.parse(content))).toStrictEqual({ key, value: true });
+    const { storedAtMs, ...cache } = createKeyedCacheSchema(z.boolean()).parse(jsonDateParse(content));
+
+    expect(cache).toStrictEqual({ key, value: true });
+    expect(storedAtMs).toBeTypeOf("number");
     expect(readCapabilityCache(key)).toBe(true);
   });
 });

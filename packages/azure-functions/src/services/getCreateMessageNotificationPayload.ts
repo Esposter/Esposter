@@ -1,13 +1,13 @@
 import type { InvocationContext } from "@azure/functions";
 
-import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { getResult, normalizeString, truncate } from "@esposter/shared";
+import { getPushNotificationPayload } from "@/services/getPushNotificationPayload";
+import { getResult, normalizeString } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const getCreateMessageNotificationPayload = (
   context: InvocationContext,
   message: string,
-  { icon, title, url }: { icon?: null | string; title?: null | string; url: string },
+  { icon, path, title }: { icon?: null | string; path: string; title?: null | string },
 ): string | undefined => {
   const textContent = getResult(() => {
     const root = parse(message);
@@ -21,10 +21,5 @@ export const getCreateMessageNotificationPayload = (
   );
   if (!textContent) return undefined;
 
-  return JSON.stringify({
-    body: truncate(textContent, PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH),
-    data: { url },
-    icon,
-    title,
-  });
+  return getPushNotificationPayload({ body: textContent, icon, path, title });
 };

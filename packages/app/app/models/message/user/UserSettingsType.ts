@@ -5,3 +5,5 @@ export enum UserSettingsType {
   Notifications = "Notifications",
   Keybinds = "Keybinds",
 }
+
+export const UserSettingsTypes = Object.values(UserSettingsType);

@@ -8,10 +8,9 @@ const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);
 const { blockUser } = blockStore;
 const friendRequestStore = useFriendRequestStore();
-const { sendFriendRequest } = friendRequestStore;
-const { sentFriendRequests } = storeToRefs(friendRequestStore);
+const { getHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
 const friendStore = useFriendStore();
-const { friends } = storeToRefs(friendStore);
+const { getIsFriend } = friendStore;
 const searchQuery = ref("");
 const searchResults = ref<Awaited<ReturnType<typeof $trpc.friend.searchUsers.query>>>([]);
 const { isPending } = useAutoSearch(searchQuery, {
@@ -22,9 +21,7 @@ const { isPending } = useAutoSearch(searchQuery, {
     searchResults.value = await $trpc.friend.searchUsers.query(sanitizedSearchQuery, { signal });
   },
 });
-const isFriend = (userId: string) => friends.value.some(({ id }) => id === userId);
-const hasSentRequest = (userId: string) => sentFriendRequests.value.some(({ receiverId }) => receiverId === userId);
-const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id === userId);
+const checkIsBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id === userId);
 </script>
 
 <template>
@@ -44,20 +41,20 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
         <template #append>
           <div flex gap-x-2>
             <v-btn
-              v-if="!isFriend(id) && !hasSentRequest(id)"
+              v-if="!getIsFriend(id) && !getHasSentFriendRequest(id)"
+              size="small"
               text="Send Request"
               variant="tonal"
-              size="small"
               @click="sendFriendRequest(id)"
             />
-            <v-chip v-else-if="hasSentRequest(id)" text="Request Sent" size="small" />
-            <v-chip v-else text="Friends" size="small" color="success" />
+            <v-chip v-else-if="getHasSentFriendRequest(id)" size="small" text="Request Sent" />
+            <v-chip v-else color="success" size="small" text="Friends" />
             <v-btn
-              v-if="!isBlocked(id)"
-              text="Block"
-              variant="tonal"
+              v-if="!checkIsBlocked(id)"
               color="error"
               size="small"
+              text="Block"
+              variant="tonal"
               @click="blockUser(id)"
             />
           </div>

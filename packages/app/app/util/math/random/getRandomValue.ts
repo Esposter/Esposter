@@ -1,4 +1,4 @@
-import { createRandomInteger } from "#shared/util/math/random/createRandomInteger";
+import { createRandomInteger } from "@/util/math/random/createRandomInteger";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const getRandomValue = <T extends string | unknown[]>(values: T) => {

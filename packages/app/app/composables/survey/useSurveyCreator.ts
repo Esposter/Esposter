@@ -3,22 +3,26 @@ import type { ThemeTabPlugin } from "survey-creator-core";
 
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
-import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
+import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
+import { ResourceType } from "@esposter/db-schema";
 import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 
 export const useSurveyCreator = () => {
-  const { $trpc } = useNuxtApp();
+  const validateFile = useValidateFile();
+  const resourceStore = useResourceStore();
+  const { resource } = storeToRefs(resourceStore);
   const surveyStore = useSurveyStore();
   const { loadContent, saveModel } = surveyStore;
   const importJsonFile = useImportJsonFile();
   const exportJsonFile = useExportJsonFile();
-  const deleteFile = useDeleteFile(() => surveyStore.resource?.id ?? "");
+  const getResourceId = () => resource.value?.id ?? "";
+  const deleteFile = useDeleteResourceFile(ResourceType.Survey, getResourceId);
+  const uploadFile = useUploadResourceFile(ResourceType.Survey, getResourceId);
   const isDark = useIsDark();
   // The creator needs the loaded model at construction, so the blade renders a skeleton until it exists
   const creator = shallowRef<SurveyCreatorModel>();
@@ -27,9 +31,8 @@ export const useSurveyCreator = () => {
 
   onMounted(async () => {
     await loadContent();
-    const surveyId = surveyStore.resource?.id ?? "";
     const newCreator = new SurveyCreatorModel({ autoSaveEnabled: true, showThemeTab: true, showTranslationTab: true });
-    const actions = getActions(newCreator, () => surveyStore.resource?.name ?? "", importJsonFile, exportJsonFile);
+    const actions = getActions(newCreator, () => resource.value?.name ?? "", importJsonFile, exportJsonFile);
 
     for (const action of actions) {
       newCreator.toolbar.actions.push(action);
@@ -39,14 +42,10 @@ export const useSurveyCreator = () => {
     const { [THEME_KEY]: theme, ...model } = parseSurveyModel(surveyStore.model);
     newCreator.JSON = model;
     if (theme) newCreator.theme = theme;
+    // The creator autosaves on every editor change; the store's own dirty check is what drops the ones that
+    // Changed nothing, so this reports whatever the shared save path answers rather than pre-filtering
     const save = async (saveNo: number, callback: (saveNo: number, isSuccessful: boolean) => void) => {
-      const newModel = JSON.stringify({ ...newCreator.JSON, [THEME_KEY]: newCreator.theme });
-      if (newModel === surveyStore.model) {
-        callback(saveNo, true);
-        return;
-      }
-
-      callback(saveNo, await saveModel(newModel));
+      callback(saveNo, await saveModel(JSON.stringify({ ...newCreator.JSON, [THEME_KEY]: newCreator.theme })));
     };
     newCreator.saveSurveyFunc = save;
     newCreator.saveThemeFunc = save;
@@ -54,39 +53,24 @@ export const useSurveyCreator = () => {
     newCreator.onUploadFile.add(async (_creator, { callback, element, files, propertyName }) => {
       await getResultAsync(async () => {
         const file = takeOne(files);
-
-        if (!validateFile(file.size)) {
-          useEmptyFileAlert();
+        if (!validateFile(file)) {
           callback("error");
           return;
         }
 
-        const { id, sasUrl } = takeOne(
-          await $trpc.survey.generateUploadFileSasEntities.query({
-            files: [{ filename: file.name, mimetype: file.type }],
-            surveyId,
-          }),
-        );
-        await uploadBlocks(file, sasUrl);
+        const url = await uploadFile(file);
+        const oldUrl = (element as Base).getPropertyValue(propertyName.toString());
+        if (oldUrl) await deleteFile(oldUrl);
 
-        const oldDownloadFileSasUrl = (element as Base).getPropertyValue(propertyName.toString());
-        if (oldDownloadFileSasUrl) await deleteFile(oldDownloadFileSasUrl);
-
-        const downloadFileSasUrl = takeOne(
-          await $trpc.survey.generateDownloadFileSasUrls.query({
-            files: [{ filename: file.name, id, mimetype: file.type }],
-            surveyId,
-          }),
-        );
-        callback("success", downloadFileSasUrl);
+        callback("success", url);
       }).match(noop, () => {
         callback("error");
       });
     });
     // Add all the possible delete file events
-    LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (model: LogoImageViewModel) => {
-      const url = model.survey.logo;
-      removeLogoImage(model);
+    LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (logoViewModel: LogoImageViewModel) => {
+      const url = logoViewModel.survey.logo;
+      removeLogoImage(logoViewModel);
       if (!url) return;
       await deleteFile(url);
     });

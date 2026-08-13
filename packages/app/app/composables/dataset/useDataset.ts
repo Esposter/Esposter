@@ -1,42 +1,34 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 
-import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
-import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
-
 export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefined>) => {
   const { $trpc } = useNuxtApp();
+  const { executeQuery, isPending: isLoading } = useMutation();
   const dataset = ref<Dataset>();
   const error = ref<string>();
-  const isLoading = ref(false);
-  // Concurrent so a slow response for a previous reference cannot overwrite the latest one
-  const refresh = getConcurrentFunction(async (checkIsStale) => {
-    const referenceValue = toValue(reference);
-    if (!referenceValue) {
-      dataset.value = undefined;
-      error.value = undefined;
-      return;
-    }
-
-    isLoading.value = true;
-    await withFinalizerAsync(
-      () =>
-        getResultAsync(() => $trpc.dataset.readDataset.query(referenceValue)).match(
-          (newDataset) => {
-            if (checkIsStale()) return;
-            dataset.value = newDataset;
-            error.value = undefined;
-          },
-          (newError) => {
-            if (checkIsStale()) return;
-            error.value = newError.message;
-          },
-        ),
+  // One instance shows one dataset, so a read for a previous reference is superseded by the latest one and
+  // Can never overwrite it
+  const key = Symbol("useDataset");
+  const refresh = async () => {
+    await executeQuery(
       () => {
-        if (!checkIsStale()) isLoading.value = false;
+        const referenceValue = toValue(reference);
+        // Clearing the reference is itself the latest read, so an in-flight response for the old reference
+        // Cannot land on an empty selection
+        return referenceValue ? $trpc.dataset.readDataset.query(referenceValue) : Promise.resolve(undefined);
+      },
+      {
+        key,
+        onError: (newError) => {
+          error.value = newError.message;
+        },
+        onSuccess: (newDataset) => {
+          dataset.value = newDataset;
+          error.value = undefined;
+        },
       },
     );
-  });
+  };
   watch(() => toValue(reference), refresh, { deep: true, immediate: true });
   return { dataset, error, isLoading, refresh };
 };

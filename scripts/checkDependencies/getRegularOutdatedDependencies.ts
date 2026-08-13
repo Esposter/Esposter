@@ -5,7 +5,7 @@ import { getDependencyType } from "@/checkDependencies/getDependencyType";
 import { getOutdatedDependents } from "@/checkDependencies/getOutdatedDependents";
 import { isPnpmOutdatedDependency } from "@/checkDependencies/isPnpmOutdatedDependency";
 import { runPnpmOutdated } from "@/checkDependencies/runPnpmOutdated";
-import { getResult } from "@esposter/shared";
+import { getResult, jsonDateParse } from "@esposter/shared";
 
 export const getRegularOutdatedDependencies = async (
   root: string,
@@ -32,8 +32,8 @@ export const getRegularOutdatedDependencies = async (
     return { errors: [], outdatedDependencies: [] };
   }
 
-  return getResult(() => JSON.parse(result.stdout.slice(jsonStart))).match(
-    (parsed: unknown) => {
+  return getResult(() => jsonDateParse<unknown>(result.stdout.slice(jsonStart))).match(
+    (parsed) => {
       if (!parsed || typeof parsed !== "object")
         return { errors: [{ error: "unexpected JSON output", pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
 

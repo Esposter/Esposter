@@ -15,15 +15,13 @@ export const computeAggregationValue = (
   const sourceColumn = findSource(transformation.sourceColumnId);
   if (!sourceColumn) return null;
 
-  const getNumber = (row: Row): null | number => {
+  const numbers = rows.map((row) => {
     const value = takeOne(row.data, sourceColumn.name);
     return typeof value === "number" ? value : null;
-  };
-  const nonNullValues = rows.map((row) => getNumber(row)).filter((value) => value !== null);
+  });
   return AggregationTransformationComputeMap[transformation.aggregationTransformationType]({
-    getNumber,
-    nonNullValues,
+    nonNullValues: numbers.filter((value) => value !== null),
+    numbers,
     rowIndex,
-    rows,
   });
 };

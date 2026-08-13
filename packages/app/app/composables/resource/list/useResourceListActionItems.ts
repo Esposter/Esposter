@@ -2,6 +2,7 @@ import type { Item } from "@/models/shared/Item";
 import type { Resource } from "@esposter/db-schema";
 
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
+import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { RoutePath } from "@esposter/shared";
 
@@ -11,6 +12,8 @@ import { RoutePath } from "@esposter/shared";
 export const useResourceListActionItems = () => {
   const listDialogStore = useListDialogStore();
   const { deletingId, renamingId } = storeToRefs(listDialogStore);
+  const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
+  const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
   const getActionItems = ({ id }: Resource): Item[] => [
     {
       icon: "mdi-open-in-new",
@@ -23,6 +26,13 @@ export const useResourceListActionItems = () => {
       icon: "mdi-link-variant",
       onClick: () => copyLinkToClipboard(RoutePath.Resource(id)),
       title: "Copy link",
+    },
+    {
+      icon: "mdi-floor-plan",
+      onClick: () => {
+        captureIds.value = [id];
+      },
+      title: "Save as blueprint",
     },
     {
       icon: "mdi-pencil",

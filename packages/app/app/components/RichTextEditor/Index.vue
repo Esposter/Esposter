@@ -36,11 +36,14 @@ const {
 } = defineProps<RichTextEditorProps>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
+// UseEditor tears the editor down in its own onBeforeUnmount — nothing here has to
 const editor = useEditor({
   autofocus,
   content: modelValue.value,
   extensions: [
     CharacterCount.configure({ limit }),
+    // Only onPaste is wired — onDrop is deliberately omitted so file drops fall through to the document-level
+    // Dropzone in MessageModelMessageFileDropzoneBackground (useDropZone), which owns drop-to-upload for the whole room.
     FileHandler.configure({
       onPaste: (...args) => emit("paste", ...args),
     }),
@@ -49,8 +52,8 @@ const editor = useEditor({
     useLinkClickExtension(linkCursorStyle),
     ...(extensions ?? []),
   ],
-  onUpdate: ({ editor }) => {
-    modelValue.value = editor.getHTML();
+  onUpdate: ({ editor: updatedEditor }) => {
+    modelValue.value = updatedEditor.getHTML();
   },
 });
 // https://github.com/ueberdosis/tiptap/issues/1044
@@ -63,8 +66,6 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
 
   editor.value.setOptions();
 });
-
-onUnmounted(() => editor.value?.destroy());
 </script>
 
 <template>

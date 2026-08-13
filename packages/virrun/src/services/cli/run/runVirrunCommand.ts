@@ -1,9 +1,7 @@
-import { Color } from "@/models/cli/Color";
 import { BackendType } from "@/models/virrun/BackendType";
 import { ExecutionMode } from "@/models/virrun/ExecutionMode";
-import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunBanner } from "@/services/cli/format/formatVirrunBanner";
-import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
+import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
 import { formatVirrunPrepare } from "@/services/cli/format/formatVirrunPrepare";
 import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/format/formatVirrunResult";
@@ -13,8 +11,9 @@ import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep"
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { getSandboxNodeVersion } from "@/services/exec/util/getSandboxNodeVersion";
 import { createVirrun } from "@/services/virrun/createVirrun";
-import { exhaustiveGuard, getResult, getResultAsync, noop, toAppError, withFinalizerAsync } from "@esposter/shared";
+import { exhaustiveGuard, getResult, getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { performance } from "node:perf_hooks";
 // Shared orchestration behind the passthrough commands: resolve config/backend, construct the sandbox, bracket the
 // Run with a banner + result line, propagate the child's exit code. All outcomes converge on the single
@@ -29,7 +28,17 @@ export const runVirrunCommand = async (
     const configuration = resolveVirrunConfiguration();
     const backend = resolveBackend(configuration);
     const virrun = await createVirrun({ backend, environment: configuration?.environment });
-    process.stderr.write(`${formatVirrunBanner({ backend: virrun.backend, command, nodeVersion: process.version })}\n`);
+    // The os backend runs the command inside a Linux guest whose node comes from the WSL login environment, not this
+    // Windows process — so report the guest's version there and the host's for the backends that run in place. A
+    // Banner that always printed process.version hid exactly the mismatch (host on one node, sandbox on another) that
+    // Makes a run fail its own engines check.
+    process.stderr.write(
+      `${formatVirrunBanner({
+        backend: virrun.backend,
+        command,
+        nodeVersion: virrun.backend === BackendType.Os ? getSandboxNodeVersion() : process.version,
+      })}\n`,
+    );
     // Announce whether this run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is
     // Explained, not a silent stall. Exec skips the snapshot, so it has nothing to announce.
     if (mode !== ExecutionMode.Exec && virrun.backend === BackendType.Os) {
@@ -62,14 +71,13 @@ export const runVirrunCommand = async (
     );
   });
   const exitCode = result.match(
-    ({ exitCode }) => exitCode,
-    (error) => {
-      const message = toAppError(error).message;
+    ({ exitCode: resolvedExitCode }) => resolvedExitCode,
+    ({ message }) => {
       // A bare package-script name (e.g. `virrun run typecheck`) reaches the backend as a missing executable; swap
       // The raw sandbox-setup error for a hint that points at the working `virrun -- pnpm <script>` form. The hint is
       // Already tagged + colored; the raw-message fallback gets the same [virrun] tag and a red body.
       process.stderr.write(
-        `${getCommandNotFoundHint(command, message, process.cwd()) ?? formatVirrunLine(colorize(message, Color.Red))}\n`,
+        `${getCommandNotFoundHint(command, message, process.cwd()) ?? formatVirrunError(message)}\n`,
       );
       return 1;
     },

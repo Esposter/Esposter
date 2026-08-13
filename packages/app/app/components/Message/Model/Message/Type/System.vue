@@ -8,12 +8,7 @@ const { active, isPreview = false, message } = defineProps<SystemProps>();
 </script>
 
 <template>
-  <MessageModelMessageTypeListItem :active :is-preview>
-    <template #prepend>
-      <v-icon icon="mdi-information-outline" size="small" />
-    </template>
+  <MessageModelMessageTypeSystemLine :active icon="mdi-information-outline" :is-preview :message>
     <span italic op-medium-emphasis>{{ message.message }}</span>
-    <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
-    <MessageModelMessageEmojiList :is-preview :message />
-  </MessageModelMessageTypeListItem>
+  </MessageModelMessageTypeSystemLine>
 </template>

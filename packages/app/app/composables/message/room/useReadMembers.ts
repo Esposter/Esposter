@@ -11,8 +11,7 @@ export const useReadMembers = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { readItems, readMoreItems } = memberStore;
-  const { count } = storeToRefs(memberStore);
+  const { getBoundMemberCounts, readItems, readMoreItems } = memberStore;
   const userStore = useUserStore();
   const { storeUsers } = userStore;
   const readUserStatuses = useReadUserStatuses();
@@ -30,8 +29,17 @@ export const useReadMembers = () => {
   const readMembers = () => {
     const roomId = requirePartitionKey(currentRoomId.value, readMembers.name);
     return readItems(async () => {
-      count.value = await $trpc.room.countMembers.query({ roomId });
-      const cursorPaginationData = await $trpc.room.readMembers.query({ roomId });
+      // Bound before the first await for the same reason readItems binds the member list itself: a room switch
+      // Made while these three are in flight must not file this room's totals under the one being entered,
+      // Where the roleless group derives from a total that never described it
+      const boundMemberCounts = getBoundMemberCounts();
+      const [newCount, newCountsByTopRole, cursorPaginationData] = await Promise.all([
+        $trpc.room.countMembers.query({ roomId }),
+        $trpc.room.countMembersByTopRole.query({ roomId }),
+        $trpc.room.readMembers.query({ roomId }),
+      ]);
+      boundMemberCounts.value.count = newCount;
+      boundMemberCounts.value.countsByTopRole = newCountsByTopRole;
       await readMetadata(
         roomId,
         cursorPaginationData.items.map(({ id }) => id),

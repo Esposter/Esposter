@@ -17,7 +17,7 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test } from "vitest";
+import {beforeEach, describe, expect, test, vi} from "vitest";
 
 // A two-segment output dir (`a/a`) the fake prepare command populates, alongside a node_modules tree it churns.
 const OUTPUT = `${TEST_FILENAME}/${TEST_FILENAME}`;
@@ -33,22 +33,30 @@ const createFakeBackend = (exitCode: number): ExecBackend & ReturnType<typeof cr
     }
   });
 
+vi.mock(
+  import("@/services/exec/util/getSandboxNodeVersion"),
+  () => import("@/services/exec/test/getSandboxNodeVersion.test"),
+);
+
 describe(createPrepareLayer, () => {
   const { createWorkspace } = setupTemporaryCacheHome();
-  let repo = "";
+  let repository = "";
+  // The layer is always provisioned for this suite's own repository and step, so only the backend varies
+  const prepare = (backend: ExecBackend) =>
+    createPrepareLayer(backend, prepareStep, { cwd: repository, stdio: "pipe" }, resolvePrepareLocation(repository, prepareStep));
 
   beforeEach(() => {
-    repo = createWorkspace();
+    repository = createWorkspace();
   });
 
   test("captures only the declared outputs, dropping dep-tree churn, and publishes the layer", async () => {
     expect.hasAssertions();
 
-    mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
+    mkdirSync(resolveSnapshotLocation(repository).upperDir, { recursive: true });
     const backend = createFakeBackend(0);
-    await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep));
+    await prepare(backend);
 
-    const { exists, upperDir } = resolvePrepareLocation(repo, prepareStep);
+    const { exists, upperDir } = resolvePrepareLocation(repository, prepareStep);
 
     expect(exists).toBe(true);
     expect(existsSync(join(upperDir, TEST_FILENAME, TEST_FILENAME, TEST_FILENAME))).toBe(true);
@@ -58,17 +66,17 @@ describe(createPrepareLayer, () => {
   test("forks the deps snapshot as the lower with a per-invocation capture upper", async () => {
     expect.hasAssertions();
 
-    const depsUpperDir = resolveSnapshotLocation(repo).upperDir;
-    mkdirSync(depsUpperDir, { recursive: true });
+    const dependenciesUpperDir = resolveSnapshotLocation(repository).upperDir;
+    mkdirSync(dependenciesUpperDir, { recursive: true });
     const backend = createFakeBackend(0);
-    await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep));
+    await prepare(backend);
 
-    const { dir } = resolvePrepareLocation(repo, prepareStep);
+    const { dir: directory } = resolvePrepareLocation(repository, prepareStep);
     const { lowerDirs, upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
 
-    expect(lowerDirs).toStrictEqual([depsUpperDir]);
-    expect(upperDir?.startsWith(join(dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
-    expect(workDir?.startsWith(join(dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
+    expect(lowerDirs).toStrictEqual([dependenciesUpperDir]);
+    expect(upperDir?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
+    expect(workDir?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
   });
 
   test("throws when there is no deps snapshot to fork", () => {
@@ -76,24 +84,24 @@ describe(createPrepareLayer, () => {
 
     const backend = createFakeBackend(0);
 
-    expect(() => createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep))).toThrow(
-      new InvalidOperationError(
-        Operation.Create,
-        createPrepareLayer.name,
-        "no captured deps snapshot to fork for the prepare layer; run createSnapshot first",
-      ),
+    expect(() => prepare(backend)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${
+        new InvalidOperationError(
+          Operation.Create,
+          createPrepareLayer.name,
+          "no captured deps snapshot to fork for the prepare layer; run createSnapshot first",
+        ).message
+      }]`,
     );
   });
 
   test("throws when the prepare command fails so a half-built layer is never published", async () => {
     expect.hasAssertions();
 
-    mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
+    mkdirSync(resolveSnapshotLocation(repository).upperDir, { recursive: true });
     const backend = createFakeBackend(1);
 
-    await expect(createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep))).rejects.toThrow(
-      InvalidOperationError,
-    );
-    expect(resolvePrepareLocation(repo, prepareStep).exists).toBe(false);
+    await expect(prepare(backend)).rejects.toThrowErrorMatchingInlineSnapshot(`[InvalidOperationError: Invalid operation: Create, name: createPrepareLayer, prepare command exited with 1: ]`);
+    expect(resolvePrepareLocation(repository, prepareStep).exists).toBe(false);
   });
 });

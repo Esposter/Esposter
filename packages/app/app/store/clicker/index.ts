@@ -1,4 +1,4 @@
-import type { ClickerItemProperties } from "#shared/models/clicker/ClickerItemProperties";
+import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
 
 import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { clickerSaveSchema } from "#shared/models/clicker/data/ClickerSave";

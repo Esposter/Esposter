@@ -11,7 +11,7 @@ const { unblockUser } = blockStore;
     <v-list rd>
       <MessageFriendsUserListItem v-for="{ id, name, image } of blockedUsers" :key="id" :image :name>
         <template #append>
-          <v-btn text="Unblock" variant="tonal" size="small" @click="unblockUser(id)" />
+          <v-btn size="small" text="Unblock" variant="tonal" @click="unblockUser(id)" />
         </template>
       </MessageFriendsUserListItem>
     </v-list>

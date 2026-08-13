@@ -30,7 +30,7 @@ const topPx = computed(() => `${top}px`);
   }
   100% {
     opacity: 0;
-    transform: translateY(-250px);
+    transform: translateY(-15.625rem);
   }
 }
 

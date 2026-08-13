@@ -22,10 +22,10 @@ describe(resolveVirrunConfiguration, () => {
 
     const root = create();
     writeFileSync(join(root, VIRRUN_CONFIGURATION_FILENAME), JSON.stringify({ backend: BackendType.Os }));
-    const nested = join(root, TEST_FILENAME, TEST_FILENAME);
-    mkdirSync(nested, { recursive: true });
+    const nestedDirectory = join(root, TEST_FILENAME, TEST_FILENAME);
+    mkdirSync(nestedDirectory, { recursive: true });
 
-    expect(resolveVirrunConfiguration(nested)).toStrictEqual({ backend: BackendType.Os });
+    expect(resolveVirrunConfiguration(nestedDirectory)).toStrictEqual({ backend: BackendType.Os });
   });
 
   test("returns undefined when no config exists in the tree", () => {
@@ -42,10 +42,10 @@ describe(resolveVirrunConfiguration, () => {
       join(root, typescriptConfigurationFilename),
       `export default { backend: "${BackendType.Native}", environment: "${Environment.Nuxt}" };`,
     );
-    const nested = join(root, TEST_FILENAME, TEST_FILENAME);
-    mkdirSync(nested, { recursive: true });
+    const nestedDirectory = join(root, TEST_FILENAME, TEST_FILENAME);
+    mkdirSync(nestedDirectory, { recursive: true });
 
-    expect(resolveVirrunConfiguration(nested)).toStrictEqual({
+    expect(resolveVirrunConfiguration(nestedDirectory)).toStrictEqual({
       backend: BackendType.Native,
       environment: Environment.Nuxt,
     });
@@ -78,11 +78,11 @@ describe(resolveVirrunConfiguration, () => {
 
     const root = create();
     writeFileSync(join(root, typescriptConfigurationFilename), `export default { backend: "${BackendType.Native}" };`);
-    const nested = join(root, TEST_FILENAME);
-    mkdirSync(nested);
-    writeFileSync(join(nested, VIRRUN_CONFIGURATION_FILENAME), JSON.stringify({ backend: BackendType.Os }));
+    const nestedDirectory = join(root, TEST_FILENAME);
+    mkdirSync(nestedDirectory);
+    writeFileSync(join(nestedDirectory, VIRRUN_CONFIGURATION_FILENAME), JSON.stringify({ backend: BackendType.Os }));
 
-    expect(resolveVirrunConfiguration(nested)).toStrictEqual({ backend: BackendType.Os });
+    expect(resolveVirrunConfiguration(nestedDirectory)).toStrictEqual({ backend: BackendType.Os });
   });
 
   test("strips the JSON variant's $schema pointer", () => {

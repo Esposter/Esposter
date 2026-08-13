@@ -5,18 +5,13 @@ import { dayjs } from "#shared/services/dayjs";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const { toJsDate } = useVDate();
-const date = ref<Date | null>(null);
+const date = ref<Date>();
 </script>
 
 <template>
   <v-date-picker
     v-model="date"
-    :allowed-dates="
-      (value) => {
-        const date = toJsDate(value);
-        return dayjs(date).isSameOrBefore(new Date(), 'day');
-      }
-    "
+    :allowed-dates="(value) => dayjs(toJsDate(value)).isSameOrBefore(new Date(), 'day')"
     show-adjacent-months
     @update:model-value="
       (value) => {

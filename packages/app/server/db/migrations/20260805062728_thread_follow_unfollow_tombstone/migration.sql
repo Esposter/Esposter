@@ -1,0 +1,1 @@
+ALTER TABLE "message"."threadFollows" ADD COLUMN "isUnfollowed" boolean DEFAULT false NOT NULL;

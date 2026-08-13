@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { dayjs } from "#shared/services/dayjs";
+import { ScheduledMessageJobIconMap } from "@/services/message/draftsAndSent/ScheduledMessageJobIconMap";
 import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "@/store/message/room";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
@@ -17,28 +18,30 @@ const text = ref("");
 const isReminder = computed(() => type.value === ScheduledMessageJobType.Reminder);
 const title = computed(() => (isReminder.value ? "Set Reminder" : "Schedule Message"));
 const textLabel = computed(() => (isReminder.value ? "Reminder" : "Message"));
-const confirmText = computed(() => (isReminder.value ? "Set Reminder" : "Schedule Message"));
 const setDefaultScheduledAt = () => {
   scheduledAt.value = dayjs().add(1, "minute").toDate();
   minScheduledAt.value = new Date(scheduledAt.value);
 };
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 // Server-scheduled job — non-optimistic
 const scheduleJob = async (onComplete: () => void) => {
   const roomId = currentRoomId.value;
   if (roomId)
-    await executeMutation(() =>
-      isReminder.value
-        ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
-            roomId,
-            runAt: scheduledAt.value,
-            text: text.value,
-          })
-        : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-            message: marked.parse(text.value, { async: false }),
-            roomId,
-            runAt: scheduledAt.value,
-          }),
+    await executeMutation(
+      () =>
+        isReminder.value
+          ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+              roomId,
+              runAt: scheduledAt.value,
+              text: text.value,
+            })
+          : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+              message: marked.parse(text.value, { async: false }),
+              roomId,
+              runAt: scheduledAt.value,
+            }),
+      // A brand-new scheduled job has no id yet, so each gets a per-call symbol
+      { key: Symbol("scheduleJob") },
     );
   onComplete();
 };
@@ -52,7 +55,7 @@ watch(isOpen, (newIsOpen) => {
   <StyledFormDialog
     v-model="isOpen"
     :card-props="{ title }"
-    :confirm-button-props="{ text: confirmText, prependIcon: isReminder ? 'mdi-bell-plus' : 'mdi-send-clock' }"
+    :confirm-button-props="{ text: title, prependIcon: ScheduledMessageJobIconMap[type] }"
     :confirm-button-attrs="{ disabled: !scheduledAt }"
     @submit="(_event, onComplete) => scheduleJob(onComplete)"
   >

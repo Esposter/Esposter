@@ -2,9 +2,9 @@
 import type { User } from "@esposter/db-schema";
 
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { useRoleStore } from "@/store/message/room/role";
-import { AdminActionType, RoomPermission } from "@esposter/db-schema";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { AdminActionType, hasPermission, RoomPermission } from "@esposter/db-schema";
 
 interface ModerationItemsProps {
   roomId: string;
@@ -14,25 +14,28 @@ interface ModerationItemsProps {
 const { roomId, user } = defineProps<ModerationItemsProps>();
 const roleStore = useRoleStore();
 const { getMemberRoleMap, getMyPermissions } = roleStore;
+const userToRoomStore = useUserToRoomStore();
+const { getDisplayName } = userToRoomStore;
+// The moderator picked this member off a list that names them by nickname, so every confirmation names them
+// The same way
+const displayName = computed(() => getDisplayName(user, roomId));
 const myPermissions = computed(() => getMyPermissions(roomId));
+// An unloaded member role map is not the same as a member with no roles: the first hides the actions until the
+// Roles arrive, the second is a real position below every assigned role
 const targetTopPosition = computed(() => {
   const roles = getMemberRoleMap(roomId)?.get(user.id);
   if (!roles) return undefined;
-  return roles.length > 0 ? Math.max(...roles.map(({ position }) => position)) : -1;
+  return Math.max(-1, ...roles.map(({ position }) => position));
 });
 const manageablePermissions = computed(() => {
-  const manageablePermissions = myPermissions.value;
+  const permissions = myPermissions.value;
   if (
-    !manageablePermissions ||
+    !permissions ||
     targetTopPosition.value === undefined ||
-    !checkIsManageable(
-      manageablePermissions.topRolePosition,
-      targetTopPosition.value,
-      manageablePermissions.isRoomOwner,
-    )
+    !checkIsManageable(permissions.topRolePosition, targetTopPosition.value, permissions.isRoomOwner)
   )
-    return null;
-  return manageablePermissions;
+    return undefined;
+  return permissions;
 });
 const checkHasManageablePermission = (permission: RoomPermission) =>
   Boolean(
@@ -49,27 +52,28 @@ const hasModActions = computed(() => isBannable.value || isKickable.value || isW
   <template v-if="hasModActions">
     <MessageModelUserProfileCardMoreMenuConfirmActionDialog
       v-if="isBannable"
-      :text="`Are you sure you want to ban ${user.name}?`"
+      :text="`Are you sure you want to ban ${displayName}?`"
       title="Ban User"
       :type="AdminActionType.CreateBan"
       :user
     />
     <MessageModelUserProfileCardMoreMenuConfirmActionDialog
       v-if="isBannable"
-      :text="`Are you sure you want to soft-ban ${user.name}? They will be kicked and their recent messages deleted, but can rejoin via invite.`"
+      :text="`Are you sure you want to soft-ban ${displayName}? They will be kicked and their recent messages deleted, but can rejoin via invite.`"
       title="Soft Ban Member"
       :type="AdminActionType.SoftBan"
       :user
     />
     <MessageModelUserProfileCardMoreMenuConfirmActionDialog
       v-if="isKickable"
-      :text="`Are you sure you want to kick ${user.name}?`"
+      :text="`Are you sure you want to kick ${displayName}?`"
       title="Kick Member"
       :type="AdminActionType.KickFromRoom"
       :user
     />
-    <MessageModelUserProfileCardMoreMenuTimeoutDialog v-if="isKickable" :user />
-    <MessageModelUserProfileCardMoreMenuWarnDialog v-if="isWarnable" :user />
+    <MessageModelUserProfileCardMoreMenuTimeoutDialog v-if="isKickable" :display-name :user />
+    <MessageModelUserProfileCardMoreMenuWarnDialog v-if="isWarnable" :display-name :user />
+    <MessageModelUserProfileCardMoreMenuNotesDialog v-if="isKickable" :display-name :room-id :user />
     <v-list-item py-2 min-height="auto">
       <v-divider />
     </v-list-item>

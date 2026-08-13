@@ -7,7 +7,7 @@ import { defaultWindow } from "@vueuse/core";
 // Global hold-to-talk listener driving the MicrophoneProcessor gate. isInCall is injected (not read
 // From the call store) so the call store itself can host this composable without a circular import.
 // Key events don't cross documents, so the PiP host mounts a second instance on its own window.
-export const usePushToTalk = (isInCall: MaybeRefOrGetter<boolean>, target?: MaybeRefOrGetter<null | Window>) => {
+export const usePushToTalk = (isInCall: MaybeRefOrGetter<boolean>, target?: MaybeRefOrGetter<undefined | Window>) => {
   const liveKitStore = useLiveKitStore();
   const { setPushToTalkKeyHeld } = liveKitStore;
   const userSettingsStore = useUserSettingsStore();
@@ -19,7 +19,6 @@ export const usePushToTalk = (isInCall: MaybeRefOrGetter<boolean>, target?: Mayb
       Boolean(pushToTalkKeybind.value) &&
       userSettingsStore.userSettings?.voiceInputMode === VoiceInputMode.PushToTalk,
   );
-
   // Casts (not instanceof) — PiP window events come from another realm with its own KeyboardEvent
   useEventListener(listenerTarget, "keydown", (event) => {
     const keyboardEvent = event as KeyboardEvent;

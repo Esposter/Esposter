@@ -29,7 +29,7 @@ flowchart TD
 ### The providers
 
 - **Sheet** parses the whole content blob before slicing to the cap, so `totalRows` costs nothing — it is already holding every row.
-- **SurveyResponses** and **ProgramStatus** cannot count for free: Azure Table Storage has no count API, so a total means walking every matching row. They therefore **only pay when they have to, and never more than a bounded walk**. A read that came back under the cap answers for itself (`totalRows = rows.length`); only a read that filled the cap runs `countEntities` — a keys-only page walk, bounded at `DATASET_MAX_COUNTED_ROWS` so a huge partition cannot stall the read just to render a banner number. A count that hit the bound is a floor: `getDatasetTruncation` marks it `isCountCapped`, and every surface renders it as "M+" via `formatTruncationCount` rather than as an exact total.
+- **SurveyResponses** and **ProgramStatus** cannot count for free: Azure Table Storage has no count API, so a total means walking every matching row. They therefore **only pay when they have to, and never more than a bounded walk**. A read that proved itself complete answers for itself (`totalRows = rows.length`) — the survey read fetches one entity past the cap so a partition holding exactly the cap never pays for a count — and only a read known to be truncated runs `countEntities`: a keys-only page walk, bounded at `DATASET_MAX_COUNTED_ROWS` so a huge partition cannot stall the read just to render a banner number. A count that hit the bound is a floor: `getDatasetTruncation` marks it `isCountCapped`, and every surface renders it as "M+" via `formatTruncationCount` rather than as an exact total.
 
 ### The consumers
 
@@ -45,9 +45,9 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 | File                                                                    | Role                                                    |
 | ----------------------------------------------------------------------- | ------------------------------------------------------- |
 | `shared/models/dataset/Dataset.ts`                                      | the `totalRows` field                                   |
-| `shared/services/dataset/getDatasetTruncation.ts`                       | the one truncation check every consumer shares          |
-| `shared/services/dataset/getDatasetTruncationText.ts`                   | the one "Showing N of M rows" phrasing                  |
-| `shared/services/dataset/formatTruncationCount.ts`                      | renders a bound-hitting count as "M+"                   |
+| `app/services/dataset/getDatasetTruncation.ts`                          | the one truncation check every consumer shares          |
+| `app/services/dataset/getDatasetTruncationText.ts`                      | the one "Showing N of M rows" phrasing                  |
+| `app/services/dataset/formatTruncationCount.ts`                         | renders a bound-hitting count as "M+"                   |
 | `app/components/Dataset/TruncationAlert.vue`                            | banner form (Survey Responses)                          |
 | `app/components/Dataset/TruncationFootnote.vue`                         | footnote form (Dashboard visual)                        |
 | `app/components/Resource/Email/ExportTruncationDialog.vue`              | the pre-export confirm                                  |

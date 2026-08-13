@@ -2,8 +2,10 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { Resource } from "@esposter/db-schema";
 import type { Editor } from "grapesjs";
 
+import { RESOURCE_ASSET_URL_REGEX } from "#shared/services/resource/constants";
 import { downloadFile } from "@/services/app/downloadFile";
 import { sanitizeFilename } from "@/services/app/sanitizeFilename";
+import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
 import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFields";
 import { strToU8, zipSync } from "fflate";
 
@@ -13,7 +15,10 @@ export const exportPersonalizedHtml = (
   resource: Resource,
   rows: Record<string, ColumnValue>[],
 ): number => {
-  const { html } = editor.runCommand("mjml-code-to-html") as { html: string };
+  // Asset urls are absolutized so the downloaded artifact points back at the app instead of resolving relative
+  // To wherever the file was opened. They only load where the request carries the owner's session cookie, so a
+  // File opened straight off disk shows broken images — durable public asset urls are the email-sending follow-on
+  const html = getEmailHtml(editor).replaceAll(RESOURCE_ASSET_URL_REGEX, (url) => `${window.location.origin}${url}`);
   const filename = sanitizeFilename(resource.name);
   const zip = zipSync(
     Object.fromEntries(

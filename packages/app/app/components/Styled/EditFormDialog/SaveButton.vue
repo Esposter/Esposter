@@ -8,9 +8,11 @@ const { formId, isSavable } = defineProps<SaveButtonProps>();
 </script>
 
 <template>
-  <v-tooltip text="Save & Close">
-    <template #activator="{ props }">
-      <v-btn type="submit" :form="formId" icon="mdi-content-save" :disabled="!isSavable" :="props" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ disabled: !isSavable }"
+    :form="formId"
+    icon="mdi-content-save"
+    text="Save & Close"
+    type="submit"
+  />
 </template>

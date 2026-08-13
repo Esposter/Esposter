@@ -13,7 +13,3 @@ export class CompositeKeyEntity extends Serializable implements CompositeKey {
   declare partitionKey: string;
   declare rowKey: string;
 }
-
-export const createCompositeKeyEntitySchema = <TEntity extends CompositeKeyEntityConstraint>(
-  schema: z.ZodObject<TEntity>,
-) => schema;

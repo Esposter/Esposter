@@ -12,21 +12,16 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 </script>
 
 <template>
-  <MessageModelMessageTypeListItem :active :is-preview>
-    <template #prepend>
-      <v-icon icon="mdi-pencil" size="small" />
-    </template>
+  <MessageModelMessageTypeSystemLine :active icon="mdi-pencil" :is-preview :message>
     <span font-bold>{{ creator.name }}</span>
     <template v-if="message.message">
-      <span text-gray> changed the room name: </span>
+      <span op-medium-emphasis> changed the room name: </span>
       <span font-bold>{{ message.message }}. </span>
     </template>
     <template v-else>
-      <span text-gray> removed the custom room name. </span>
+      <span op-medium-emphasis> removed the custom room name. </span>
     </template>
     <span text-info cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">Edit Room</span>
     &nbsp;
-    <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
-    <MessageModelMessageEmojiList :is-preview :message />
-  </MessageModelMessageTypeListItem>
+  </MessageModelMessageTypeSystemLine>
 </template>

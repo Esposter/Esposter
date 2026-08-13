@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Mock Azure service classes for local development and testing. Provides in-memory implementations of Azure Table Storage, Blob Storage, Queue Storage, Service Bus, and EventGrid clients that mirror the real Azure SDK interfaces.
+Mock Azure service classes for local development and testing. Provides in-memory implementations of Azure Table Storage, Blob Storage, Service Bus, and EventGrid clients that mirror the real Azure SDK interfaces.
 
 ## Table of Contents
 
@@ -18,22 +18,29 @@ Mock Azure service classes for local development and testing. Provides in-memory
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/service-bus @azure/storage-blob @azure/storage-queue
+pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/service-bus @azure/storage-blob
 ```
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/azure-mock.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/api/modules/azure-mock.html) to level up.
 
 ### Available Mocks
 
-| Class                          | Azure Equivalent           | Description                   |
-| ------------------------------ | -------------------------- | ----------------------------- |
-| `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage |
-| `MockBlobServiceClient`        | `BlobServiceClient`        | In-memory Azure Blob Storage  |
-| `MockQueueClient`              | `QueueClient`              | In-memory Azure Queue Storage |
-| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus   |
-| `MockEventGridPublisherClient` | `EventGridPublisherClient` | No-op EventGrid publisher     |
+| Class                          | Azure Equivalent           | Description                                  |
+| ------------------------------ | -------------------------- | -------------------------------------------- |
+| `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage                |
+| `MockContainerClient`          | `ContainerClient`          | In-memory blob container, listing and paging |
+| `MockBlobClient`               | `BlobClient`               | In-memory blob read, copy and delete         |
+| `MockBlockBlobClient`          | `BlockBlobClient`          | In-memory block blob upload and download     |
+| `MockBlobBatchClient`          | `BlobBatchClient`          | In-memory batched blob deletion              |
+| `MockSearchClient`             | `SearchClient`             | In-memory Azure AI Search index              |
+| `MockQueueClient`              | `QueueClient`              | In-memory Azure Storage Queue                |
+| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus                  |
+| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`   | In-memory Azure Web PubSub                   |
+| `MockEventGridPublisherClient` | `EventGridPublisherClient` | In-memory EventGrid publisher                |
+
+Each client's state lives in an exported `Mock*Database` map (`MockTableDatabase`, `MockContainerDatabase`, …), so a test resets by clearing the one it seeded.
 
 ### Usage
 

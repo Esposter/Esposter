@@ -11,17 +11,21 @@ import { likes } from "@/schema/likes";
 import { posts } from "@/schema/posts";
 import { pushSubscriptionsInMessage } from "@/schema/pushSubscriptionsInMessage";
 import { rateLimiterFlexible } from "@/schema/rateLimiterFlexible";
+import { resourceAccesses } from "@/schema/resourceAccesses";
+import { resourceFavorites } from "@/schema/resourceFavorites";
 import { resourcePublications } from "@/schema/resourcePublications";
 import { resources, resourceTypeEnum } from "@/schema/resources";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
-import { roomFiltersInMessage } from "@/schema/roomFiltersInMessage";
+import { roomFiltersInMessage, wordFilterActionEnum } from "@/schema/roomFiltersInMessage";
 import { roomRolesInMessage } from "@/schema/roomRolesInMessage";
-import { roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
+import { mimeCategoryEnum, roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
 import { scheduledMessageJobsInMessage } from "@/schema/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "@/schema/searchHistoriesInMessage";
 import { sessions } from "@/schema/sessions";
+import { azureContainerEnum, storageBlobs } from "@/schema/storageBlobs";
+import { threadFollowsInMessage } from "@/schema/threadFollowsInMessage";
 import { userAchievements } from "@/schema/userAchievements";
-import { users } from "@/schema/users";
+import { storageTierEnum, users } from "@/schema/users";
 import { noiseSuppressionModeEnum, userSettingsInMessage, voiceInputModeEnum } from "@/schema/userSettingsInMessage";
 import { userStatusEnum, userStatusesInMessage } from "@/schema/userStatusesInMessage";
 import { usersToRoomRolesInMessage } from "@/schema/usersToRoomRolesInMessage";
@@ -34,6 +38,7 @@ export const schema = {
   achievementNameEnum,
   achievements,
   appUsersInMessage,
+  azureContainerEnum,
   bansInMessage,
   blocks,
   callSessionsInMessage,
@@ -41,11 +46,14 @@ export const schema = {
   friends,
   invitesInMessage,
   likes,
+  mimeCategoryEnum,
   noiseSuppressionModeEnum,
   notificationTypeEnum,
   posts,
   pushSubscriptionsInMessage,
   rateLimiterFlexible,
+  resourceAccesses,
+  resourceFavorites,
   resourcePublications,
   resources,
   resourceTypeEnum,
@@ -57,6 +65,9 @@ export const schema = {
   scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessions,
+  storageBlobs,
+  storageTierEnum,
+  threadFollowsInMessage,
   userAchievements,
   users,
   userSettingsInMessage,
@@ -67,4 +78,5 @@ export const schema = {
   verifications,
   voiceInputModeEnum,
   webhooksInMessage,
+  wordFilterActionEnum,
 };

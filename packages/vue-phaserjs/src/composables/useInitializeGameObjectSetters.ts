@@ -27,12 +27,13 @@ export const useInitializeGameObjectSetters = <
   ][]) {
     const setter = setterMap[key];
     if (!setter) continue;
-    setters.push((gameObject) => {
-      setter(gameObject, emit)(value);
-      if (value !== undefined) emit(getUpdateEvent(key as string), value);
+    const updateEvent = getUpdateEvent(key as string);
+    setters.push((targetGameObject) => {
+      setter(targetGameObject, emit)(value);
+      if (value !== undefined) emit(updateEvent, value);
       // If we haven't defined a proper value for the game object property,
       // We should emit the intrinsic gameObject value so vue can grab it
-      else if (key in gameObject) emit(getUpdateEvent(key as string), gameObject[key as keyof typeof gameObject]);
+      else if (key in targetGameObject) emit(updateEvent, targetGameObject[key as keyof typeof targetGameObject]);
     });
 
     setterWatchHandles.push(
@@ -41,7 +42,7 @@ export const useInitializeGameObjectSetters = <
         (newValue) => {
           const updater = () => {
             setter(toValue(gameObject), emit)(newValue);
-            emit(getUpdateEvent(key as string), newValue);
+            emit(updateEvent, newValue);
           };
           if (immediate) updater();
           else
@@ -49,13 +50,16 @@ export const useInitializeGameObjectSetters = <
               updater();
             }, sceneKey);
         },
-        { deep: typeof toValue(configuration)[key] === "object" },
+        // Deep unconditionally rather than by the initial value's type: a property that starts `undefined` and is
+        // Later given an object would otherwise be watched shallowly forever, so the game object would track the
+        // Replacement and then silently stop tracking its nested edits. Deep on a primitive traverses nothing
+        { deep: true },
       ),
     );
   }
 
-  const initializeGameObjectSetters = (gameObject: TGameObject) => {
-    for (const setter of setters) setter(gameObject);
+  const initializeGameObjectSetters = (targetGameObject: TGameObject) => {
+    for (const setter of setters) setter(targetGameObject);
   };
   return { initializeGameObjectSetters, setterWatchHandles };
 };

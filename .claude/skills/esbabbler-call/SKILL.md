@@ -1,6 +1,6 @@
 ---
 name: esbabbler-call
-description: Esposter messaging calls (esbabbler) implementation — call session architecture, standalone vs room calls, random id generation, call lifecycle/leave boundaries, client call stores, participant Map design, RoomPermission bits, AdminActionType, and the knock/admit lobby. Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages).
+description: Esposter messaging calls (esbabbler) implementation — the persistent callSessionsInMessage row plus the ephemeral in-memory participant/admission/start-time maps, short random codes always being the row's id (never a token/code column) via createId, standalone vs room calls and which join procedure each uses, the call session lifecycle from readCallSessionId to the duration system message, the four leave boundaries (and room navigation not being one), and which of useCallStore / useParticipantStore / useMediaStore / useLiveKitStore owns each piece of client state — plus deep dives on the Map-based participant state rules, RoomPermission bits and AdminActionType with the admin-action hooks, and the standalone /calls surface with its knock/admit lobby. Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages).
 ---
 
 # Esbabbler Calls — Implementation
@@ -45,8 +45,8 @@ Never use `token`, `code`, `createToken`, `createCode`, or `*_TOKEN_LENGTH` — 
 1. **Room entry**: `readCallSessionId({ roomId })` → reads `callSessionsInMessage`, returns `id` (`""` if none). Called by `useCallSubscribables` on viewed-room change; subscriptions skipped when `""`.
 2. **Join via room**: `joinCallByRoomId({ roomId })` → membership required → creates session row if none (3-retry upsert inline) → returns `{ callSessionId, participants, livekitUrl, livekitToken }`.
 3. **Join via id**: `joinCall({ id })` → auth only → finds **standalone** session by id → allows creator or admitted session → same join flow.
-4. **Subscriptions** (`onHandRaisedChanged`, `onJoinCall`, `onLeaveCall`, `onSetMute`, `onVideoChanged`) take `callSessionId` (not `roomId`); auth only — caller must have obtained the `callSessionId` through an authenticated call.
-5. **Leave**: `leaveCall({ callSessionId })`. Throws `NOT_FOUND` if caller not a participant. On last participant leaving: writes call duration as `MessageType.Call` system message to the room.
+4. **Subscriptions** (`onHandRaisedChanged`, `onJoinCall`, `onLeaveCall`, `onSetMute`, `onVideoChanged`) take `callSessionId` (not `roomId`); auth only — the caller must have obtained the `callSessionId` through an authenticated call.
+5. **Leave**: `leaveCall({ callSessionId })`. Throws `NOT_FOUND` if the caller is not a participant. On the last participant leaving: writes the call duration as a `MessageType.Call` system message to the room.
 
 ## Call leave boundaries
 
@@ -65,110 +65,17 @@ Room navigation (`useCallSubscribables` cleanup) is **not** a leave boundary —
 
 - `activeCallSessionId` — session the user is **in** (drives `leaveCall`, `setMute`, `setCamera`).
 - `currentRoomCallSessionId` — session for the **viewed** room (set by `useCallSubscribables`, drives `roomParticipants` display). Reset to `""` on room leave.
-- `callRoomId` — room ID of active call, kept **only** for admin action roomId checks. Empty for standalone.
+- `callRoomId` — room ID of the active call, kept **only** for admin action roomId checks. Empty for standalone.
 - `isCallViewOpen` — controls the `Panel/Dialog.vue` fullscreen overlay in room calls.
 
 `useParticipantStore` (`call/participant.ts`): `callSessionParticipantsMap` (`Map<callSessionId, Map<sessionId, CallParticipant>>`), `speakingIds`, `joinNoticeParticipant`.
-
-### Call participant state — Map-based design
-
-The client `callSessionParticipantsMap` mirrors the server structure for O(1) lookups on all participant mutations (`setMute`, `setHandRaised`, `setParticipantCamera`, `deleteCallParticipant`) without scanning arrays.
-
-- **Don't add a separate tracking collection** for state already on `CallParticipant`. `isHandRaised` on the participant replaces any external `handRaisedIdsMap`. Check if a new field belongs on `CallParticipant` itself before adding a parallel map.
-- **tRPC boundary uses `Map<string, CallParticipant>` directly** — SuperJSON natively serializes Maps. Procedures return Maps and `setParticipantMap` stores as-is. Never convert to/from arrays at the boundary.
-- **Iterate in templates** with `v-for="participant of myMap.values()"`, not via array conversion. Use `.size` not `.length`.
-- **Mutate through the reactive chain** — obtain a participant via `callSessionParticipantsMap.value.get(callSessionId)?.get(sessionId)`. Storing it in a local (`const participant = ...get(id)`) is fine: the object is Vue-proxied, so `participant.isMuted = true` triggers reactivity. The restriction is against capturing a _stale reference_ before the reactive lookup (e.g. closing over the map in a non-reactive context).
-- **`selfParticipant` computed** — derive `isInCall`, `isMuted`, `isHandRaised` for the current session from one `computed(() => sessionId.value ? callSessionParticipantsMap.value.get(activeCallSessionId.value)?.get(sessionId.value) : undefined)` rather than per-value `.find()`/`.includes()`.
-- **Never wrap raw store state in a getter for read-only access** — expose `callSessionParticipantsMap` directly via `storeToRefs` (components) or dot access (stores), and inline the guard within each consumer's reactive context. A `getParticipantMap(id)` wrapper hides tracked deps, can break reactivity when the reference escapes, and returns a new empty `Map` each call (breaking computed caching). Inline `participantStore.callSessionParticipantsMap.get(id) ?? new Map<string, CallParticipant>()` instead.
-
-```ts
-// Map-based, O(1), state on entity, reactive deps visible at the call site
-// In stores (dot access on store instance):
-const childMap = computed(() => entityStore.parentMap.get(parentId.value) ?? new Map<string, Entity>());
-const self = computed(() => (selfId.value ? childMap.value.get(selfId.value) : undefined));
-const isPresent = computed(() => Boolean(self.value));
-const isActive = computed(() => self.value?.isActive ?? false);
-
-// In components (storeToRefs):
-const { parentMap } = storeToRefs(entityStore);
-const childMap = computed(() => parentMap.value.get(parentId.value) ?? new Map<string, Entity>());
-
-// template iteration
-v-for="entity of childMap.values()"
-```
 
 `useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isPoppedOut`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `participantVolumePercentageMap`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
 
 `useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`, `setActiveDevice`. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers call `room.switchActiveDevice` to restart the live track. The store keeps no `selectedAudioInputDeviceId`-style refs. See `packages/app/content/docs/esbabbler/voice-video.md` (Device selection).
 
-## Shareable call link
+## Deep Dives
 
-- `/calls` — standalone lobby; calls `createCall()` then navigates to `/calls/[id]`.
-- `/calls/[id]` — full-screen standalone call; creator auto-joins via persisted `callSessionsInMessage.userId`, everyone else sees pre-join and must knock.
-- `InviteCard.vue` is only shown on `/calls/[id]` (hidden when `callRoomId` is set). It copies `window.location.href` (the correct `/calls/[id]` URL in standalone context).
-
-## Admin actions and calls
-
-Admin action hooks in `useCallStore` receive `roomId`. Compare against `callRoomId` (not `activeCallSessionId`) since admin actions are room-scoped:
-
-```ts
-AdminActionHookMap[AdminActionType.ForceMute].push(async (roomId) => {
-  if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, true);
-  if (callRoomId.value !== roomId) return;
-  await setMicrophone(false);
-  mediaStore.isForceMuted = true;
-});
-```
-
-`KickFromCall` does not check `callRoomId` — it always leaves regardless of room.
-
-## RBAC — `RoomPermission` bits
-
-Current bit assignments (`packages/db-schema/src/schema/roomRolesInMessage.ts`):
-
-| Permission        | Bit | Value | Notes                                             |
-| ----------------- | --- | ----- | ------------------------------------------------- |
-| `ReadMessages`    | 0   | 1     |                                                   |
-| `SendMessages`    | 1   | 2     |                                                   |
-| `ManageMessages`  | 2   | 4     | delete/pin others'; also Warn admin action        |
-| `MentionEveryone` | 3   | 8     | @here / @everyone                                 |
-| `ManageRoom`      | 4   | 16    | edit room settings                                |
-| `ManageRoles`     | 5   | 32    | create/edit/delete roles below own position       |
-| `ManageInvites`   | 6   | 64    | create/delete invite codes                        |
-| `KickMembers`     | 7   | 128   | KickFromRoom + TimeoutUser                        |
-| `BanMembers`      | 8   | 256   | CreateBan + SoftBan                               |
-| `MuteMembers`     | 9   | 512   | ForceMute / ForceUnmute / **StopScreenShare**     |
-| `MoveMembers`     | 10  | 1024  | KickFromCall                                      |
-| `ManageNicknames` | 11  | 2048  | set per-room nicknames for other members          |
-| `ManageWebhooks`  | 12  | 4096  | create/edit/delete webhooks                       |
-| `Administrator`   | 13  | 8192  | all perms; bypasses hierarchy; always highest bit |
-
-`Administrator` **must** remain the highest bit. New permissions go before it, incrementing its bit (requires migration to update stored values).
-
-## `AdminActionType` enum
-
-```ts
-enum AdminActionType {
-  CreateBan,
-  ForceMute,
-  ForceUnmute,
-  KickFromCall,
-  KickFromRoom,
-  SoftBan,
-  StopScreenShare,
-  TimeoutUser,
-  Warn,
-}
-```
-
-`StopScreenShare` permission: `MuteMembers`. Client hook calls `setScreenShare(false)` when `callRoomId` matches. Notification: "Your screen share has been stopped by a moderator."
-
-## Knock/Admit (lobby/waiting room)
-
-Scope: standalone calls only. Room calls stay gated by room membership/RBAC.
-
-- `knockCall({ id })` — adds caller to `callKnockerMap`; emits `onKnockCall` to participants.
-- `admitKnocker` / `dismissKnocker` — called by any participant; `admitKnocker` adds a one-time session admission in `callAdmittedParticipantMap`, then emits `onKnockerAdmitted` to the knocker.
-- `/calls/[id]` states: `idle` (pre-join) → `knocking` (waiting overlay) → `joined` (full CallView).
-- Creator (`callSessionsInMessage.userId`) skips straight to `joined`; everyone else must be admitted.
-- `Message/Content/Call/JoinNotice/Index.vue` shows "Let In" / "Dismiss" per knocker.
+- `references/participant-state.md` — when reading, iterating or mutating call participants on the client, or adding a field that describes one.
+- `references/permissions-and-admin-actions.md` — when adding a `RoomPermission` bit or an `AdminActionType`, or wiring an admin action hook into the call stores.
+- `references/standalone-lobby.md` — when working on `/calls` or `/calls/[id]`: the shareable link, pre-join states, and knock/admit.

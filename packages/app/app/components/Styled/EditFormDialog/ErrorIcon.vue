@@ -6,7 +6,7 @@ import { z } from "zod";
 
 interface ErrorIconProps {
   editedValue?: unknown;
-  editForm: InstanceType<typeof VForm> | undefined;
+  editForm?: InstanceType<typeof VForm>;
   isEditFormValid: boolean;
   schema?: z.ZodType;
 }

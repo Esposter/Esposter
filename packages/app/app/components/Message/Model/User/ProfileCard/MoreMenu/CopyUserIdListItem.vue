@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { useClipboardStore } from "@/store/clipboard";
+
 interface CopyUserIdListItemProps {
   userId: string;
 }
 
 const { userId } = defineProps<CopyUserIdListItemProps>();
-const { copy } = useClipboard();
+const clipboardStore = useClipboardStore();
+const { copy } = clipboardStore;
 </script>
 
 <template>

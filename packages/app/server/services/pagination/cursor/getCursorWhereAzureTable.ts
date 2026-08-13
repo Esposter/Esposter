@@ -29,6 +29,8 @@ export const getCursorWhereAzureTable = <TItem extends AzureEntity>(
       default:
         exhaustiveGuard(sortItem.order);
     }
+    // The cursor payload is a plain record, so its key comes back as a bare string the compiler cannot tie
+    // Back to TItem — the sortItem lookup above is what proves it names one of TItem's sorted columns
     return { key, operator, value } as Clause<TItem>;
   });
 };

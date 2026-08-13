@@ -1,7 +1,7 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
-import { createRandomInteger } from "#shared/util/math/random/createRandomInteger";
 import { calculateLevelExperience } from "@/services/dungeons/monster/calculateLevelExperience";
+import { createRandomInteger } from "@/util/math/random/createRandomInteger";
 
 export const levelUp = (monster: Monster) => {
   monster.status.exp -= calculateLevelExperience(monster.stats.level);

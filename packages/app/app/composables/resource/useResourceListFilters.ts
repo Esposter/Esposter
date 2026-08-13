@@ -1,22 +1,22 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
-import type { Resource, ResourceType } from "@esposter/db-schema";
+import type { ResourceType } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { ResourceStatusFilters } from "@/models/resource/list/ResourceStatusFilter";
 import { ResourceUpdatedFilters } from "@/models/resource/list/ResourceUpdatedFilter";
-import { DEFAULT_RESOURCE_SORT_BY } from "@/services/resource/constants";
 import { deserializeResourceSortBy } from "@/services/resource/list/deserializeResourceSortBy";
 import { serializeResourceSortBy } from "@/services/resource/list/serializeResourceSortBy";
 import { resourceTypeSchema } from "@esposter/db-schema";
-
-const defaultSerializedSortBy = serializeResourceSortBy([...DEFAULT_RESOURCE_SORT_BY]);
 // Dates can't round-trip through a query param directly, so the custom bounds serialize day-granular
 const updatedBoundDateFormat = "YYYY-MM-DD";
-// The /all workbench filter state, mirrored to query params so the list is deep-linkable,
-// Refresh-safe, and back-button-safe. useRouteQuery drops a param again when set back to its default.
-export const useResourceListFilters = () => {
+// The list workbench's filter state, mirrored to query params so the list is deep-linkable, refresh-safe and
+// Back-button-safe. useRouteQuery drops a param again when set back to its default, and the default order is
+// The view's own — Recent's newest-open-first leaves the url as clean as All's newest-updated-first.
+export const useResourceListFilters = (defaultSortBy: readonly SortItem<keyof ResourceListItem>[]) => {
+  const defaultSerializedSortBy = serializeResourceSortBy([...defaultSortBy]);
   const searchQuery = useRouteQuery("search", "", { transform: String });
   const types = useRouteQuery<null | string | string[], ResourceType[]>("types", [], {
     transform: (value) =>
@@ -34,13 +34,16 @@ export const useResourceListFilters = () => {
   });
   // Objects can't round-trip through a query param directly, so sortBy serializes to "key:order,..."
   const sortByQuery = useRouteQuery("sortBy", "", { transform: String });
-  const sortBy = computed<SortItem<keyof Resource>[]>({
-    get: () => (sortByQuery.value ? deserializeResourceSortBy(sortByQuery.value) : [...DEFAULT_RESOURCE_SORT_BY]),
+  const sortBy = computed<SortItem<keyof ResourceListItem>[]>({
+    get: () => (sortByQuery.value ? deserializeResourceSortBy(sortByQuery.value) : [...defaultSortBy]),
     set: (value) => {
       const serializedSortBy = serializeResourceSortBy(value);
       sortByQuery.value = serializedSortBy === defaultSerializedSortBy ? "" : serializedSortBy;
     },
   });
+  // Name and value are separate params so a name-only tag filter stays deep-linkable
+  const tagName = useRouteQuery("tagName", "", { transform: String });
+  const tagValue = useRouteQuery("tagValue", "", { transform: String });
   const updatedFilter = useEnumRouteQuery<"" | ResourceUpdatedFilter>("updated", ResourceUpdatedFilters, "");
   const createUpdatedBound = (key: string) => {
     const boundQuery = useRouteQuery(key, "", { transform: String });
@@ -58,12 +61,14 @@ export const useResourceListFilters = () => {
   const updatedAfter = createUpdatedBound("updatedAfter");
   const updatedBefore = createUpdatedBound("updatedBefore");
   const hasActiveFilters = computed(() =>
-    Boolean(searchQuery.value || types.value.length > 0 || status.value || updatedFilter.value),
+    Boolean(searchQuery.value || types.value.length > 0 || status.value || updatedFilter.value || tagName.value),
   );
   const clearFilters = () => {
     searchQuery.value = "";
     types.value = [];
     status.value = "";
+    tagName.value = "";
+    tagValue.value = "";
     updatedFilter.value = "";
     updatedAfter.value = undefined;
     updatedBefore.value = undefined;
@@ -75,6 +80,8 @@ export const useResourceListFilters = () => {
     searchQuery,
     sortBy,
     status,
+    tagName,
+    tagValue,
     types,
     updatedAfter,
     updatedBefore,

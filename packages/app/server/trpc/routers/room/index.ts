@@ -1,3 +1,4 @@
+import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { InviteInMessage, RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
@@ -15,6 +16,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { checkIsInviteUsable } from "@@/server/services/message/checkIsInviteUsable";
@@ -26,8 +28,11 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
-import { getRoomProfileImageBlobName } from "@@/server/services/room/getRoomProfileImageBlobName";
+import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
+import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
+import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
@@ -40,8 +45,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
-import { ContainerSASPermissions } from "@azure/storage-blob";
-import { deleteDirectory } from "@esposter/db";
+import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -61,21 +65,23 @@ import {
   userIdSchema,
   userIdsSchema,
   users,
+  usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
+  WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import {
   getResultAsync,
   InvalidOperationError,
   ItemMetadataPropertyNames,
   MAX_READ_LIMIT,
-  NotFoundError,
+  noop,
   Operation,
   takeOne,
 } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { and, count, desc, eq, getColumns, gt, ilike, inArray, isNull, lt, ne, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, getColumns, gt, ilike, inArray, isNull, lt, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
@@ -90,13 +96,10 @@ const readRoomsInputSchema = z
     filter: refineRoomSchema(selectRoomInMessageSchema.pick({ name: true })).optional(),
   })
   .prefault({});
-const onUpdateRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
-
-const onDeleteRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
-
-const onJoinRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
-
-const onLeaveRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
+// The rooms a client subscribes to at once — a subscription with no room to watch has nothing to yield
+const roomIdsInputSchema = roomIdsSchema.shape.roomIds.min(1);
+// Invite ids are short enough to collide, so a create re-rolls before giving up
+const MAX_INVITE_ID_RETRIES = 3;
 
 const readMembersInputSchema = z.object({
   ...roomIdSchema.shape,
@@ -110,14 +113,10 @@ const readMembersByIdsInputSchema = z.object({
   ids: userIdsSchema.shape.userIds.min(1),
 });
 
-const countMembersInputSchema = roomIdSchema;
-
 const readInviteInputSchema = selectInviteInMessageSchema.shape.id;
 
-const readMyInviteInputSchema = roomIdSchema;
-
 export const baseRoomRouter = router({
-  countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
+  countMembers: getMemberProcedure(roomIdSchema, "roomId").query(
     async ({ ctx, input: { roomId } }) =>
       takeOne(
         await ctx.db
@@ -125,6 +124,27 @@ export const baseRoomRouter = router({
           .from(usersToRoomsInMessage)
           .where(eq(usersToRoomsInMessage.roomId, roomId)),
       ).count,
+  ),
+  countMembersByTopRole: getMemberProcedure(roomIdSchema, "roomId").query<MemberCountByTopRole[]>(
+    ({ ctx, input: { roomId } }) => {
+      // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups
+      const topRoles = ctx.db
+        .selectDistinctOn([usersToRoomRolesInMessage.userId], {
+          roleId: usersToRoomRolesInMessage.roleId,
+          userId: usersToRoomRolesInMessage.userId,
+        })
+        .from(usersToRoomRolesInMessage)
+        .innerJoin(
+          roomRolesInMessage,
+          and(eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId), not(roomRolesInMessage.isEveryone)),
+        )
+        .where(eq(usersToRoomRolesInMessage.roomId, roomId))
+        .orderBy(usersToRoomRolesInMessage.userId, desc(roomRolesInMessage.position))
+        .as("topRoles");
+      // Only role groups are returned — the roleless trailing group is derived client-side from the
+      // Total member count so join/leave subscription updates keep it current without a refetch
+      return ctx.db.select({ count: count(), roleId: topRoles.roleId }).from(topRoles).groupBy(topRoles.roleId);
+    },
   ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
@@ -136,34 +156,31 @@ export const baseRoomRouter = router({
         .delete(invitesInMessage)
         .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, ctx.getSessionPayload.user.id)));
 
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < MAX_INVITE_ID_RETRIES; i++) {
         const id = createId(INVITE_ID_LENGTH);
         const invites = await getResultAsync(() =>
           ctx.db
             .insert(invitesInMessage)
             .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
             .returning(),
-        ).unwrapOr(null);
+        ).unwrapOr(undefined);
         if (invites) return takeOne(invites);
       }
-      throw new TRPCError({
-        code: "UNPROCESSABLE_CONTENT",
-        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
-      });
+      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
     }),
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
-      const newRoom = (
-        await tx
-          .insert(roomsInMessage)
-          .values({ ...input, userId: ctx.getSessionPayload.user.id })
-          .returning()
-      )[0];
-      if (!newRoom)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Room, JSON.stringify(input)).message,
-        });
+      const newRoom = requireMutation(
+        (
+          await tx
+            .insert(roomsInMessage)
+            .values({ ...input, userId: ctx.getSessionPayload.user.id })
+            .returning()
+        )[0],
+        Operation.Create,
+        DatabaseEntityType.Room,
+        JSON.stringify(input),
+      );
 
       await Promise.all([
         tx.insert(usersToRoomsInMessage).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id }),
@@ -185,15 +202,11 @@ export const baseRoomRouter = router({
   deleteMember: getPermissionsProcedure(RoomPermission.KickMembers, deleteMemberInputSchema, "roomId")
     .use(isRoom)
     .mutation(async ({ ctx, input: { roomId, userId } }) => {
+      // Kicking yourself and kicking someone who is not a member are the same rejection — neither names a
+      // Membership this call can delete
+      const context = JSON.stringify({ roomId, userId });
       if (userId === ctx.getSessionPayload.user.id)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Delete,
-            DatabaseEntityType.UserToRoom,
-            JSON.stringify({ roomId, userId }),
-          ).message,
-        });
+        throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, context);
 
       const [[deletedMember], kickedMember] = await Promise.all([
         ctx.db
@@ -202,17 +215,11 @@ export const baseRoomRouter = router({
           .returning(),
         ctx.db.query.users.findFirst({ columns: { name: true }, where: { id: { eq: userId } } }),
       ]);
-      if (!deletedMember)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Delete,
-            DatabaseEntityType.UserToRoom,
-            JSON.stringify({ roomId, userId }),
-          ).message,
-        });
 
-      roomEventEmitter.emit("leaveRoom", { ...deletedMember, sessionId: ctx.getSessionPayload.session.id });
+      roomEventEmitter.emit("leaveRoom", {
+        ...requireMutation(deletedMember, Operation.Delete, DatabaseEntityType.UserToRoom, context),
+        sessionId: ctx.getSessionPayload.session.id,
+      });
 
       if (kickedMember)
         await createSystemRoomMessage(
@@ -222,21 +229,17 @@ export const baseRoomRouter = router({
           ctx.getSessionPayload.session.id,
         );
     }),
-  deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
-    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-    await deleteDirectory(containerClient, input, true);
-    return deletedRoom;
-  }),
+  deleteRoom: standardAuthedProcedure
+    .input(deleteRoomInputSchema)
+    .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
     async ({ input: { roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      const blobName = getRoomProfileImageBlobName(roomId);
+      // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
+      // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
+      const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${crypto.randomUUID()}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      const sasUrl = await blockBlobClient.generateSasUrl({
-        expiresOn: dayjs().add(1, "hour").toDate(),
-        permissions: ContainerSASPermissions.from({ write: true }),
-      });
+      const sasUrl = await generateWriteSasUrl(blockBlobClient);
       return { publicUrl: blockBlobClient.url, sasUrl };
     },
   ),
@@ -255,11 +258,7 @@ export const baseRoomRouter = router({
           ),
         )
         .returning({ roomId: invitesInMessage.roomId });
-      if (!invite)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Invite, input).message,
-        });
+      if (!invite) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
       await assertIsRoom(tx, invite.roomId);
 
@@ -292,8 +291,8 @@ export const baseRoomRouter = router({
         DatabaseEntityType.UserToRoom,
         JSON.stringify(userToRoom),
       );
-      const { roomId, roomInMessage, user } = userToRoomWithRelations;
-      return { roomId, roomInMessage, user };
+      const { roomId: joinedRoomId, roomInMessage: joinedRoomInMessage, user: joinedUser } = userToRoomWithRelations;
+      return { roomId: joinedRoomId, roomInMessage: joinedRoomInMessage, user: joinedUser };
     });
 
     roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
@@ -316,35 +315,38 @@ export const baseRoomRouter = router({
         return id;
       }
 
-      const userToRoom = (
-        await ctx.db
-          .delete(usersToRoomsInMessage)
-          .where(and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, userId)))
-          .returning()
-      )[0];
-      if (!userToRoom)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, input).message,
-        });
+      const userToRoom = requireMutation(
+        (
+          await ctx.db
+            .delete(usersToRoomsInMessage)
+            .where(and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, userId)))
+            .returning()
+        )[0],
+        Operation.Delete,
+        DatabaseEntityType.UserToRoom,
+        input,
+      );
 
       roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.getSessionPayload.session.id });
-
-      const leavingMember = await ctx.db.query.users.findFirst({
-        columns: { name: true },
-        where: { id: { eq: userId } },
-      });
-      if (leavingMember)
-        await createSystemRoomMessage(
-          userToRoom.roomId,
-          userId,
-          `${leavingMember.name} left the room.`,
-          ctx.getSessionPayload.session.id,
-        );
+      // Best-effort after the membership delete — the name lookup only exists to word the system message, so
+      // A failure costs the room one "X left" line, never the leave that already landed.
+      await getResultAsync(async () => {
+        const leavingMember = await ctx.db.query.users.findFirst({
+          columns: { name: true },
+          where: { id: { eq: userId } },
+        });
+        if (leavingMember)
+          await createSystemRoomMessage(
+            userToRoom.roomId,
+            userId,
+            `${leavingMember.name} left the room.`,
+            ctx.getSessionPayload.session.id,
+          );
+      }).match(noop, console.error);
 
       return userToRoom.roomId;
     }),
-  onDeleteRoom: standardAuthedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({
+  onDeleteRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
@@ -356,31 +358,28 @@ export const baseRoomRouter = router({
       yield roomId;
     }
   }),
-  onJoinRoom: standardAuthedProcedure.input(onJoinRoomInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
+  onJoinRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({ ctx, input, signal }) {
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, user }] of on(roomEventEmitter, "joinRoom", { signal })) {
       if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload)) continue;
-      yield user;
+      // One subscription spans every room the client is in, so the room the event happened in travels with it.
+      // Dropping it leaves the client to infer which room a join belongs to, and the only thing it can infer
+      // From is the room that happens to be open
+      yield { roomId, user };
     }
   }),
-  onLeaveRoom: standardAuthedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
+  onLeaveRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({ ctx, input, signal }) {
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
       if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
-      yield userId;
+      // Yielded with its room for the same reason a join is: a departure applied to the room the user happens
+      // To be looking at removes a member who never left it
+      yield { roomId, userId };
     }
   }),
-  onUpdateRoom: standardAuthedProcedure.input(onUpdateRoomInputSchema).subscription(async function* ({
+  onUpdateRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
@@ -400,7 +399,7 @@ export const baseRoomRouter = router({
     // Expired/exhausted invites behave exactly like unknown tokens — don't leak which
     if (!invite || !checkIsInviteUsable(invite)) return null;
 
-    const isMember = await ctx.db.query.usersToRoomsInMessage.findFirst({
+    const membership = await ctx.db.query.usersToRoomsInMessage.findFirst({
       where: {
         roomId: {
           eq: invite.roomId,
@@ -410,7 +409,7 @@ export const baseRoomRouter = router({
         },
       },
     });
-    return { ...invite, isMember: Boolean(isMember) };
+    return { ...invite, isMember: Boolean(membership) };
   }),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
@@ -456,29 +455,29 @@ export const baseRoomRouter = router({
       .orderBy(desc(roomsInMessage.updatedAt))
       .limit(MAX_READ_LIMIT);
   }),
-  readMyInvite: getMemberProcedure(readMyInviteInputSchema, "roomId")
+  readMyInvite: getMemberProcedure(roomIdSchema, "roomId")
     .use(isRoom)
     .query<InviteInMessage | null>(({ ctx, input: { roomId } }) =>
       readMyInvite(ctx.db, ctx.getSessionPayload.user.id, roomId),
     ),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | RoomInMessage>(async ({ ctx, input }) => {
     if (input) {
-      const room = await ctx.db.query.roomsInMessage.findFirst({
+      const room = ctx.db.query.roomsInMessage.findFirst({
         where: {
-          RAW: (roomsInMessage, { and, eq, exists }) => {
-            const where = and(
-              eq(roomsInMessage.id, input),
+          RAW: (roomTable, { and: andFilter, eq: eqFilter, exists }) => {
+            const where = andFilter(
+              eqFilter(roomTable.id, input),
               exists(
                 // Select a constant '1' - we only care if *any* row matches
                 ctx.db
                   .select({ _: sql`1` })
                   .from(usersToRoomsInMessage)
                   .where(
-                    and(
+                    andFilter(
                       // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
-                      eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
+                      eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
                       // Condition 2: Ensure the row belongs to the specific user
-                      eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+                      eqFilter(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
                     ),
                   ),
               ),
@@ -488,12 +487,7 @@ export const baseRoomRouter = router({
           },
         },
       });
-      if (!room)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Room, input).message,
-        });
-      return room;
+      return requireEntity(room, DatabaseEntityType.Room, input);
     }
     const readRoom = (
       await ctx.db
@@ -524,11 +518,7 @@ export const baseRoomRouter = router({
             .innerJoin(usersToRoomsInMessage, innerJoinCondition)
             .where(eq(roomsInMessage.id, roomId))
         )[0];
-        if (!routeRoom)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new NotFoundError(DatabaseEntityType.Room, roomId).message,
-          });
+        if (!routeRoom) throw getNotFoundError(DatabaseEntityType.Room, roomId);
         if (routeRoom.type === RoomType.Room) room = routeRoom;
       }
 
@@ -553,18 +543,40 @@ export const baseRoomRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
+    const { image } = rest;
+    // Read before the update so the sweep below knows which version the room is dropping
+    const previousImage =
+      image === undefined
+        ? ""
+        : ((await ctx.db.query.roomsInMessage.findFirst({ columns: { image: true }, where: { id: { eq: id } } }))
+            ?.image ?? "");
     const updatedRoom = requireMutation(
       (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
       Operation.Update,
       DatabaseEntityType.Room,
       id,
     );
-    if (rest.image === "") {
-      const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(id));
-      await blockBlobClient.deleteIfExists();
-    }
     roomEventEmitter.emit("updateRoom", updatedRoom);
+    // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
+    // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
+    // Only renamed the room would pay two blob listings on the request path to delete nothing. A dropped publish
+    // Only orphans a public blob, never the room update; every blob delete goes through the one durable mechanism
+    // So no call site keeps a weaker one (/docs/architecture/persist-then-notify)
+    if (image !== undefined && image !== previousImage)
+      await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
+        const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+        // The age filter decides the whole set, including the version this update drops. Nothing may bypass it:
+        // A save carries the image url its form loaded with, which is a *stale* url whenever another admin
+        // Uploaded in between — so the row value being replaced is exactly the value that can name the other
+        // Admin's seconds-old avatar, and naming it explicitly would delete the live one with no later sweep able
+        // To repair it. A version replaced within the window is therefore left for the next image change (or the
+        // Room's deletion) to collect, which is the same deferral every other in-flight upload gets
+        const blobNames = await listRoomProfileImageBlobNames(containerClient, id, {
+          createdBefore: dayjs().subtract(WRITE_SAS_DURATION_MS, "ms").toDate(),
+        });
+        return blobNames.filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== image);
+      });
+
     return updatedRoom;
   }),
 });

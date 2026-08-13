@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe(createOperationData, () => {
   const items = ref<TodoListItem[]>([]);
+  const existingItem = new TodoListItem();
   let operationData: ReturnType<typeof createOperationData<TodoListItem, ["id"], "Item">>;
 
   beforeEach(() => {
@@ -11,37 +12,30 @@ describe(createOperationData, () => {
     operationData = createOperationData(items, ["id"], "Item");
   });
 
-  test("pushes", () => {
+  test("pushes appends and unshifts prepends", () => {
     expect.hasAssertions();
 
-    const { pushItems } = operationData;
-    const newItem = new TodoListItem();
-    pushItems(newItem);
+    const { pushItems, unshiftItems } = operationData;
+    const pushedItem = new TodoListItem();
+    const unshiftedItem = new TodoListItem();
+    items.value = [existingItem];
+    pushItems(pushedItem);
+    unshiftItems(unshiftedItem);
 
-    expect(items.value).toHaveLength(1);
-    expect(items.value[0]).toStrictEqual(newItem);
+    expect(items.value).toStrictEqual([unshiftedItem, existingItem, pushedItem]);
   });
 
-  test("unshifts", () => {
-    expect.hasAssertions();
-
-    const { unshiftItems } = operationData;
-    const newItem = new TodoListItem();
-    unshiftItems(newItem);
-
-    expect(items.value).toHaveLength(1);
-    expect(items.value[0]).toStrictEqual(newItem);
-  });
-
-  test("creates", () => {
+  test("creates appends and prepends when reversed", () => {
     expect.hasAssertions();
 
     const { createItem } = operationData;
-    const newItem = new TodoListItem();
-    createItem(newItem);
+    const createdItem = new TodoListItem();
+    const reversedItem = new TodoListItem();
+    items.value = [existingItem];
+    createItem(createdItem);
+    createItem(reversedItem, true);
 
-    expect(items.value).toHaveLength(1);
-    expect(items.value[0]).toStrictEqual(newItem);
+    expect(items.value).toStrictEqual([reversedItem, existingItem, createdItem]);
   });
 
   test("creates is idempotent", () => {
@@ -63,7 +57,7 @@ describe(createOperationData, () => {
     const updatedName = "updatedName";
     createItem(newItem);
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-spread
+    // oxlint-disable-next-line typescript/no-misused-spread
     const updatedItem = { ...newItem, name: updatedName };
     updateItem(updatedItem);
 

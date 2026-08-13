@@ -5,18 +5,10 @@ const stringTransformation = useStringTransformation();
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton
-    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+  <ResourceSheetRowCommandMenuButton
     icon="mdi-format-letter-case"
+    :items="StringTransformationItemCategoryDefinitions"
     text="String Transformation"
-  >
-    <v-list density="compact">
-      <v-list-item
-        v-for="{ title, value } of StringTransformationItemCategoryDefinitions"
-        :key="value"
-        :title
-        @click="stringTransformation(value)"
-      />
-    </v-list>
-  </StyledTooltipMenuIconButton>
+    @select="(value) => stringTransformation(value)"
+  />
 </template>

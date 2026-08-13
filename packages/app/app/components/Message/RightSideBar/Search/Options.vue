@@ -15,10 +15,10 @@ const { createFilter } = searchMessageStore;
       <v-list-item :="props" @click="createFilter(filterType)">
         <v-list-item-title font-bold>
           {{ uncapitalize(filterType) }}:
-          <span text-gray font-semibold>{{ FilterTypePlaceholderMap[filterType] }}</span>
+          <span font-semibold op-medium-emphasis>{{ FilterTypePlaceholderMap[filterType] }}</span>
         </v-list-item-title>
         <template #append>
-          <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
+          <MessageRightSideBarSearchAddIcon :is-hovering="isHovering ?? false" />
         </template>
       </v-list-item>
     </v-hover>

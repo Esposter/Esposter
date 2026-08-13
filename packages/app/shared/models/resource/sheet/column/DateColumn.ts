@@ -4,7 +4,6 @@ import type { ToData } from "@esposter/shared";
 import { AColumn, createAColumnSchema } from "#shared/models/resource/sheet/column/AColumn";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormat, dateFormatSchema } from "#shared/models/resource/sheet/column/DateFormat";
-import { createFormatSchema } from "#shared/models/resource/sheet/column/Format";
 import { z } from "zod";
 
 export class DateColumn extends AColumn<ColumnType.Date> implements Format<DateFormat> {
@@ -19,5 +18,5 @@ export class DateColumn extends AColumn<ColumnType.Date> implements Format<DateF
 
 export const dateColumnSchema = z.object({
   ...createAColumnSchema(z.literal(ColumnType.Date)).shape,
-  format: createFormatSchema(dateFormatSchema),
+  format: dateFormatSchema,
 }) satisfies z.ZodType<ToData<DateColumn>>;

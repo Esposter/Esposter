@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, generic placeholders over identifiers from one change, magnitudes over incident numbers, and declaration layout. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
+description: Esposter skill-writing conventions for .claude/skills — frontmatter that drives selection, the two-tier layout (SKILL.md is the always-on rule index, references/*.md hold sub-task deep dives, ~150-line budget, trigger-named index lines), when a skill earns a mermaid diagram (an ordered cycle with a gate, never a rule list), one owner per topic, capturing session learnings into skills in the same session (and empirically verifying + fixing stale skill claims instead of obeying them), don't restate what an enforcer already checks, the reproducible-pattern test (one-offs are deleted rather than recorded — git already holds them), generic placeholders over identifiers from one change, and magnitudes over incident numbers. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
 ---
 
 # Skill Authoring
@@ -40,6 +40,17 @@ When a convention is enforced, the note is **one line**: state it, give the non-
 
 Reserve full prose for conventions with **no** enforcer — naming, structure, when-to-use-X, architectural intent. Those are exactly what skills exist to capture.
 
+## Is it a reproducible pattern? If not, it does not belong here
+
+Before writing anything down, ask whether a reader would apply it **again, to different code**. A skill holds repeatable patterns; git holds what happened.
+
+- **Reproducible** — a rule that fires on a whole class of situations ("a token embedded in authored content is matched on its opening delimiter"). Write it, generically.
+- **A one-off** — the specific thing that went wrong once, the file it went wrong in, the fix that was applied. Do **not** write it down at all, and delete it when found. It is not "context worth preserving": the commit, its message and its diff already hold it, in more detail and with a date attached, and a one-off in a skill is read as a standing rule by everyone after you.
+
+The failure mode is subtle because a one-off _feels_ like hard-won knowledge. The test is not "was this expensive to learn" but "will the next reader be in this situation". A war story that generalises should be rewritten as its rule and the story dropped; a war story that doesn't generalise should just go.
+
+This is also why a rule with a live example beats a rule with a historical one: an example lifted from a past change decays into a claim about code that has since moved, which is how a skill starts asserting things that are no longer true.
+
 ## Generic placeholders, never identifiers from one change
 
 Code examples use `Foo`/`Bar`/`baz`, `external-pkg`, `@/models/Bar`. **Never paste the concrete identifiers, function names, package names, or file paths from the change that prompted the note** — a skill is a reusable convention, not a changelog, and task-specific names make the rule read as a one-off that doesn't generalise.
@@ -48,13 +59,40 @@ Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine — they descr
 
 The same applies to numbers: keep only the magnitudes the rule operates on (a limit, a budget), and drop the evidence numbers from the incident that prompted it — PR numbers, dates, counts from one occurrence, quoted error text with baked-in values. If the operative number may drift, state where to re-check it rather than freezing today's reading.
 
-## Declaration layout
+## SKILL.md is the always-on layer; `references/` holds the rest
 
-- **Interfaces/types at the top** — within a `.vue` `<script setup>` or `.ts` module, group all local `interface`/`type` declarations together at the top of the block (after imports), before the runtime `const`/logic. Don't interleave a stray interface between logic blocks.
+A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. The budget is **~15 KB, and ~150 lines**: bytes are what the context actually costs, lines are the readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second. Past that a skill stops being a rule list and becomes a manual nobody reads to the end, which is the same failure as not writing it.
+
+So a skill is two tiers:
+
+- **`SKILL.md`** — the rules that apply to _every_ task in the domain, one line each, plus an index of the deep dives. This is what has to land without anyone asking for it.
+- **`references/<topic>.md`** — a rule set that fires only for a _named sub-task_: a ritual, a file type, a single component, a procedure. It is read when the index line matches, the way `code-review` reads its mode pages.
+
+Move a section out when it is a **procedure** (ordered steps run occasionally), when it fires only for one narrow sub-task, or when it runs past ~40 lines of examples. Keep it in `SKILL.md` when violating it is the **default behaviour** — a rule that fires only if someone thought to look it up does not fire.
+
+**The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — as `testing` indexes `references/timers-and-hand-resolved-promises.md` _when a test installs fake timers or holds a call in flight_. An index line that reads "see X for more detail" guarantees the page is never opened.
+
+Never split to hit a number. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page.
+
+**A split breaks inbound pointers, so fix them in the same change.** Other skills cite sections by heading (``see the `pinia` skill ("Cursor Pagination in Stores")``), and a heading that moved into `references/` leaves that citation pointing at nothing — silently, because nothing resolves skill links. After moving a section, grep the tree for its heading text and repoint each citation at the page (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to the heading itself.
+
+## A cycle earns a diagram; a rule list does not
+
+Most skills are rule lists, and a diagram of a list is decoration. The exception is a skill whose subject is an **ordered process with state** — a gate you can be on the wrong side of, a loop whose position decides what you may do next. Prose describes each step of one of those correctly and still leaves the reader unable to answer "where am I, and what does that permit", because that answer lives in the ordering rather than in any step.
+
+One `mermaid` block, in `SKILL.md` beside the rule it serves, when all three hold:
+
+- The subject is a **sequence or cycle**, not a set of independent rules.
+- Being at the wrong point in it is a **mistake you can actually make** — the diagram is a gate, not an illustration.
+- The nodes are states or decisions, not the rules restated as boxes.
+
+Keep it small enough to read at a glance, label the edges with the condition that takes you along them, and never let it carry a rule the prose does not — a diagram is unsearchable, and a rule that exists only in one is a rule nobody greps. Content docs have their own, stricter diagram mandate, owned by the `docs` skill; this is the narrower rule for skills.
 
 ## Tight, not fluffy
 
 One line per rule where possible. Cut redundant prose and example values that will rot. A skill is read under context pressure — every line competes with the code the reader actually needs.
+
+Long-form prose is the tell. A rule needs its _why_ only where the why is non-obvious and load-bearing; a paragraph re-arguing a rule already stated is the part to cut, and a worked example earns its place only when the prose form is ambiguous without it.
 
 ## Skills vs `~/.claude/rules/*.md`
 

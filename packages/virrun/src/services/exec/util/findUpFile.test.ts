@@ -28,10 +28,10 @@ describe(findUpFile, () => {
     const root = create();
     const file = join(root, TEST_FILENAME);
     writeFileSync(file, "");
-    const nested = join(root, `${TEST_FILENAME}${TEST_FILENAME}`, `${TEST_FILENAME}${TEST_FILENAME}`);
-    mkdirSync(nested, { recursive: true });
+    const nestedDirectory = join(root, `${TEST_FILENAME}${TEST_FILENAME}`, `${TEST_FILENAME}${TEST_FILENAME}`);
+    mkdirSync(nestedDirectory, { recursive: true });
 
-    expect(findUpFile(TEST_FILENAME, nested)).toBe(file);
+    expect(findUpFile(TEST_FILENAME, nestedDirectory)).toBe(file);
   });
 
   test("returns undefined when the file is absent up to the root", () => {

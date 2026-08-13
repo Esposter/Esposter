@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db-schema",
-  "version": "2.35.0",
+  "version": "2.36.0",
   "private": true,
   "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
   "keywords": [
@@ -51,6 +51,9 @@
     "test": "vitest",
     "typecheck": "tsgo"
   },
+  "dependencies": {
+    "dayjs": "catalog:"
+  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@trpc/server": "catalog:",
@@ -62,6 +65,7 @@
   },
   "peerDependencies": {
     "@azure/data-tables": "catalog:",
+    "@azure/eventgrid": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",

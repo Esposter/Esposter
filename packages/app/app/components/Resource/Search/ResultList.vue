@@ -44,6 +44,8 @@ const selectedDomIndex = computed(() => {
     />
     <template v-for="({ createTo, group, icon, id, subtitle, title, to }, index) of items" :key="id">
       <v-list-subheader v-if="items[index - 1]?.group !== group">{{ group }}</v-list-subheader>
+      <!-- A real link, not a click handler: middle-click and ctrl/cmd-click must open a background tab rather
+      than replace the page the user is on, and "Copy link address" and the hover preview come with the href -->
       <v-list-item
         :id="getResourceSearchOptionId(index)"
         :active="selectedIndex === index"
@@ -56,18 +58,21 @@ const selectedDomIndex = computed(() => {
         <template #title>
           <ResourceSearchHighlightedTitle :search-query :text="title" />
         </template>
+        <!-- Stays imperative: the row is an anchor now, and an anchor inside an anchor is invalid markup -->
         <template v-if="createTo" #append>
-          <StyledTooltipIconButton
-            icon="mdi-plus"
-            text="Create"
-            :button-props="{ size: 'small', variant: 'text', to: createTo }"
-            @click="
-              (event) => {
-                event.stopPropagation();
-                emit('select');
-              }
-            "
-          />
+          <StyledLinkRowActions>
+            <StyledTooltipIconButton
+              icon="mdi-plus"
+              text="Create"
+              :button-props="{ size: 'small', variant: 'text' }"
+              @click="
+                async () => {
+                  await navigateTo(createTo);
+                  emit('select');
+                }
+              "
+            />
+          </StyledLinkRowActions>
         </template>
       </v-list-item>
     </template>

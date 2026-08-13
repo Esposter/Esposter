@@ -1,29 +1,22 @@
-import type { JsonFileSettings } from "#shared/models/resource/sheet/JsonFileSettings";
-
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
+import { JSON_SETTINGS } from "@/services/resource/sheet/json/constants.test";
+import { createJsonFile } from "@/services/resource/sheet/json/createJsonFile.test";
 import { deserializeJson } from "@/services/resource/sheet/json/deserializeJson";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const defaultSettings: JsonFileSettings = { configuration: {}, type: DataSourceType.Json };
-
 describe(deserializeJson, () => {
-  const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Json].mimeType;
-
-  const createFile = (content: string, name = "test.json") => new File([content], name, { type: MIME_TYPE });
-
   test("parses columns and rows from JSON array", async () => {
     expect.hasAssertions();
 
-    const file = createFile(
+    const file = createJsonFile(
       JSON.stringify([
         { a: 0, b: 1 },
         { a: 2, b: 3 },
       ]),
     );
-    const { columns, rows } = await deserializeJson(file, defaultSettings);
+    const { columns, rows } = await deserializeJson(file, JSON_SETTINGS);
 
     expect(columns).toHaveLength(2);
     expect(takeOne(columns).name).toBe("a");
@@ -37,8 +30,8 @@ describe(deserializeJson, () => {
   test("empty array returns DataSource with no columns and rows", async () => {
     expect.hasAssertions();
 
-    const file = createFile("[]");
-    const { columns, metadata, rows } = await deserializeJson(file, defaultSettings);
+    const file = createJsonFile("[]");
+    const { columns, metadata, rows } = await deserializeJson(file, JSON_SETTINGS);
 
     expect(columns).toHaveLength(0);
     expect(rows).toHaveLength(0);
@@ -48,10 +41,10 @@ describe(deserializeJson, () => {
   test("throws InvalidOperationError on non-array JSON", async () => {
     expect.hasAssertions();
 
-    const file = createFile(JSON.stringify({ a: 0 }));
+    const file = createJsonFile(JSON.stringify({ a: 0 }));
 
-    await expect(deserializeJson(file, defaultSettings)).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [InvalidOperationError: Invalid operation: Read, name: test.json, [
+    await expect(deserializeJson(file, JSON_SETTINGS)).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Read, name: a.json, [
         {
           "expected": "array",
           "code": "invalid_type",

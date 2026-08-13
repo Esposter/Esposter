@@ -21,19 +21,17 @@ const { hasMore, items } = storeToRefs(searchHistoryStore);
           :="props"
           @click="
             async () => {
-              const history = items.find((i) => i.id === id);
-              if (!history) return;
-              searchQuery = history.query;
-              selectedFilters = history.filters;
+              searchQuery = query;
+              selectedFilters = filters;
               await readSearchedMessages();
             }
           "
         >
           <v-list-item-title>
-            {{ filters.map((f) => getFilterDisplayValue(f)).join(" ") }} {{ query }}
+            {{ filters.map((filter) => getFilterDisplayValue(filter)).join(" ") }} {{ query }}
           </v-list-item-title>
           <template #append>
-            <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
+            <MessageRightSideBarSearchAddIcon :is-hovering="isHovering ?? false" />
           </template>
         </v-list-item>
       </v-hover>

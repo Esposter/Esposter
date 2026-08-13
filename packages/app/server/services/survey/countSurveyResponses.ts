@@ -1,33 +1,27 @@
 import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
-import type { Clause, Resource } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 
+import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { serializeClauses } from "@esposter/db";
-import {
-  AZURE_MAX_PAGE_SIZE,
-  AzureTable,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  SurveyResponseEntity,
-} from "@esposter/db-schema";
+import { countEntities, getPartitionKeyFilter } from "@esposter/db";
+import { AzureTable } from "@esposter/db-schema";
 
-// Counts keys-only rows up to one past the cap — that extra key is what distinguishes exactly-cap
-// From beyond-cap, which is the only thing isCapped needs to be honest about
+// The one response count, for the overview blade and the Responses dataset alike. It counts keys-only rows up
+// To one past the cap — that extra key is what distinguishes exactly-cap from beyond-cap, which is the only
+// Thing isCapped needs to be honest about.
+//
+// The cap is the dataset's, not a page size. Counting to a page (AZURE_MAX_PAGE_SIZE) is cheaper — two requests
+// Rather than eleven — but a survey between the two ceilings then reads "1000+" on the overview and its real
+// Total on the Responses blade, which is one survey with two totals. Only a partition past ten pages pays the
+// Difference, and it pays it to say the same number twice
 export const countSurveyResponses = async (surveyId: Resource["id"]): Promise<CountSurveyResponsesOutput> => {
-  const clauses: Clause<SurveyResponseEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: surveyId },
-  ];
   const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-  let count = 0;
-  // Azure caps a page at AZURE_MAX_PAGE_SIZE, so "one past the cap" is the second page existing at all —
-  // Which short-circuits immediately, keeping this to two requests at worst
-  for await (const page of surveyResponseClient
-    .listEntities({
-      queryOptions: { filter: serializeClauses(clauses), select: [CompositeKeyPropertyNames.rowKey] },
-    })
-    .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })) {
-    count += page.length;
-    if (count > AZURE_MAX_PAGE_SIZE) return { count: AZURE_MAX_PAGE_SIZE, isCapped: true };
-  }
-  return { count, isCapped: false };
+  const count = await countEntities(
+    surveyResponseClient,
+    { filter: getPartitionKeyFilter(surveyId) },
+    DATASET_MAX_COUNTED_ROWS + 1,
+  );
+  return count > DATASET_MAX_COUNTED_ROWS
+    ? { count: DATASET_MAX_COUNTED_ROWS, isCapped: true }
+    : { count, isCapped: false };
 };

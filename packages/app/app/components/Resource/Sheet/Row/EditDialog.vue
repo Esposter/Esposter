@@ -2,7 +2,8 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { rowSchema } from "#shared/models/resource/sheet/datasource/Row";
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
+import { getRowFormColumns } from "@/services/resource/sheet/column/getRowFormColumns";
+import { getEditRowDescription } from "@/services/resource/sheet/commands/getEditRowDescription";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
@@ -15,10 +16,10 @@ interface EditDialogProps {
 const { columns, index, row } = defineProps<EditDialogProps>();
 const rowDialogStore = useRowDialogStore();
 const { editingId } = storeToRefs(rowDialogStore);
-const isOpen = useSingletonDialog(editingId);
-const editableColumns = computed(() => columns.filter((column) => checkIsEditableColumnValue(column)));
+const { isOpen } = useSingletonDialog(editingId);
+const rowFormColumns = computed(() => getRowFormColumns(columns));
 const updateRow = useUpdateRow();
-const title = computed(() => `Edit Row ${index + 1}`);
+const title = computed(() => getEditRowDescription(index));
 const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
   clone: (source) => structuredClone(toRawDeep(source)),
   deep: true,
@@ -40,7 +41,7 @@ const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
       }
     "
   >
-    <v-row v-for="column of editableColumns.filter((column) => !column.hidden)" :key="column.id">
+    <v-row v-for="column of rowFormColumns" :key="column.id">
       <v-col cols="12">
         <ResourceSheetRowFieldInput
           :model-value="takeOne(editedRow.data, column.name)"

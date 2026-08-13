@@ -1,9 +1,15 @@
 ---
 name: azure-table
-description: Esposter Azure Table Storage patterns — key constants, partition/row key design, reverse-ticked timestamps, batch write/pagination, and bounded counting after capped reads. Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code.
+description: Esposter Azure Table Storage patterns — the AZURE_MAX_PAGE_SIZE / AZURE_MAX_BATCH_SIZE constants, partition and row key design, reverse-ticked timestamps and the ascending mirror table, batching writes that share a partitionKey instead of one round trip per row, reading through getEntityWithEtag and writing conditionally, serializeClauses filters with entity-typed Clause arrays and CompositeKeyPropertyNames, the shared getPartitionKeyFilter, counting only after a capped read and bounding the walk, optional-init entity constructors, and soft-delete, plus deep dives on the submitTransactionBatches write path and conflict replay, the updateEntityConditionally retry loop, and observing or intercepting table writes in tests. Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code.
 ---
 
 # Azure Table Storage Patterns
+
+## Deep dives
+
+- `references/batch-writes.md` — when writing many entities that share a `partitionKey`, or when a batched write's rows can individually conflict.
+- `references/conditional-writes.md` — when a write's body is computed from an entity the same request just read (a votes map, a `files` array, any `"Replace"`).
+- `references/testing.md` — when a test must observe, intercept or time a table write, or cross a page boundary.
 
 ## Key Constants (from `@esposter/db-schema`)
 
@@ -25,82 +31,34 @@ Always import from `@esposter/db-schema`, never redefine locally.
 `getReverseTickedTimestamp(timestamp = now())` (`@esposter/db-schema`) returns `AZURE_SELF_DESTRUCT_TIMER - timestamp` as a string, where `now()` (`@esposter/shared`) is epoch **nanoseconds** and `AZURE_SELF_DESTRUCT_TIMER` is `"9".repeat(30)`.
 
 - **It is its own inverse** — `getReverseTickedTimestamp(rowKey)` maps a stored `rowKey` back to the real timestamp, and vice versa. That's how cursors and the ascending-table mirror are built; never hand-roll the subtraction.
+- Never generate a `rowKey` with `Date.now()` or an ISO string — millisecond resolution collides under load, and lexical ISO sorts oldest-first.
+- **Nanosecond resolution is what makes the bare timestamp a sufficient key**, so don't "harden" it with a random suffix or a retry loop. `now()` reads `process.hrtime`, which is monotonic and advances between two consecutive calls in the same process, so two writes to one partition cannot land on one key — and the key staying exactly the timestamp is what lets cursors and the ascending mirror decode it back.
+- **A test that fakes timers breaks that guarantee**, and the failure looks like a production bug — Vitest's default `toFake` set includes `process.hrtime`, so every row written to one partition gets an identical `rowKey`. Narrow it to `toFake: ["Date"]` (`testing` skill, `references/timers-and-hand-resolved-promises.md`).
 
-  ```typescript
-  rowKey: (getReverseTickedTimestamp(), // newest-first key at write time
-    serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROWKEY_SORT_ITEM])); // key → cursor
-  ```
-
-- Never generate a `rowKey` with `Date.now()` or an ISO string — millisecond resolution collides under load and lexical ISO sorts oldest-first.
-
-## Batch Write Pattern
+## Batch Writes
 
 **Never spend a round trip per entity when the entities share a `partitionKey`** — chunk them into `submitTransaction` instead. This is the Azure-side twin of the drizzle skill's batch-insert rule: a loop of `createEntity`/`updateEntity` awaits is one network latency per row, so an unremarkable 1000-row write becomes 1000 sequential calls on a request a user is waiting on. Partition-per-owner designs (`partitionKey = roomId`, `= programId`) mean the writes usually already qualify — check whether they do before reaching for `Promise.all`, which still issues a request per row.
 
-Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`. `submitTransaction` accepts max 100 actions per call, and all actions in one transaction **must share the same `partitionKey`** (Azure requirement).
+Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`, and let `submitTransactionBatches` (`@esposter/db`) own the chunking — never hand-roll the slice loop. A write needing **per-batch** conflict handling is the one case `submitTransactionBatches` can't serve; it chunks with `chunk` (`@esposter/shared`), still never an index-stepping `for` with `.slice()`.
 
-```typescript
-for await (const page of tableClient
-  .listEntities<TEntity>({ queryOptions: { filter } })
-  .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })) {
-  for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE) {
-    const batch = page.slice(i, i + AZURE_MAX_BATCH_SIZE);
-    await tableClient.submitTransaction(
-      batch.map(({ partitionKey, rowKey }) => ["update", serializeEntity({ ...fields, partitionKey, rowKey })]),
-    );
-  }
-}
-```
+## Read-Modify-Write Is Conditional
 
-## Batching Writes That Can Conflict
+**A server-side read-modify-write over an entity reads through `getEntityWithEtag` and writes conditionally.** Azure Table stores an entity as one blob, so a write that echoes back a field the caller computed from what it read carries the whole version it read. Two of them running at once both compute from the same version, and the later write silently erases the earlier change — no error, no log, and the caller whose write landed first is told it succeeded. This applies to any procedure whose write depends on what it just read.
 
-A transaction is **all-or-nothing**: one rejected action (a `create` whose row already exists → `409`) rolls the whole batch back, and the error names no row you can trust to attribute. So a write that needs per-row conflict handling batches optimistically and replays the batch one insert at a time only when the batch is rejected — the fast path costs one call per 100 rows, and only a genuine collision pays the per-row cost:
+`getEntity` is the wrong reader here — it exists to **drop** the etag for callers that don't need it. `getEntityWithEtag` returns `{ entity, etag }`, and `updateEntity` forwards its extra arguments to the SDK, so the conditional write is `updateEntity(client, entity, "Merge", { etag })`. Where a shared procedure performs the read (as `getMessageProcedure` does), the etag belongs on the procedure context beside the entity — the round trip is already paid, and every procedure built on it then gets the option.
 
-```typescript
-const isBatchCreated = await getResultAsync(() =>
-  tableClient.submitTransaction(batch.map((entity) => ["create", serializeEntity(entity)])),
-).match(
-  () => true,
-  (error) => {
-    if (error instanceof RestError && error.statusCode === 409) return false;
-    throw error;
-  },
-);
-// isBatchCreated === false → replay `batch` insert by insert, applying the per-row 409 handling there
-```
-
-Only a `409` may fall back — any other failure is a real fault and must propagate, or a transient error silently degrades into a per-row storm that fails anyway. `RestError` comes from `@azure/data-tables`; `serializeEntity` from `@esposter/db` (`submitTransaction` takes raw entities, so unlike `createEntity` it does not serialize for you).
-
-`MockTableClient.submitTransaction` applies its actions **synchronously** precisely so this is testable: awaiting between actions would let a concurrent caller interleave writes that the rollback then drops. Trust it to model atomicity faithfully under `Promise.all` in tests.
-
-## Testing Pagination Boundaries
-
-Use `AZURE_MAX_PAGE_SIZE + 1` records to cross a page boundary:
-
-```typescript
-const messageCount = AZURE_MAX_PAGE_SIZE + 1;
-for (let i = 0; i < messageCount; i++) {
-  await mockSessionOnce(db, user);
-  await caller.createMessage({ message: " ", roomId });
-}
-```
-
-Inspect raw table state with `MockTableDatabase`:
-
-```typescript
-import { MockTableDatabase } from "azure-mock";
-import { AzureTable } from "@esposter/db-schema";
-
-const allEntities = [...(MockTableDatabase.get(AzureTable.Messages)?.values() ?? [])] as TEntity[];
-```
+A rejected conditional write is a `412`, meaning only that the version is stale — the caller's intent is still valid, so re-read and re-apply rather than surfacing it. **`updateEntityConditionally` owns that loop — do not hand-roll it** (`references/conditional-writes.md`).
 
 ## Filter Clauses
 
-Build OData filter strings with `serializeClauses` from `@esposter/db`:
+Build OData filter strings with `serializeClauses` from `@esposter/db`.
+
+- **`Clause<T extends Record<string, unknown>>` has no default** — type the array with the entity being queried (`const clauses: Clause<FooEntity>[] = [...]`), never a bare `Clause[]`.
+- **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never a string literal.
+- **Entity-specific fields stay on their own `PropertyNames` constant** — `FooEntityPropertyNames.bar`, with `ItemMetadataPropertyNames.deletedAt` for metadata.
+- **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(...)`. `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
 
 ```typescript
-import { getTableNullClause, serializeClauses } from "@esposter/db";
-
 const filter = serializeClauses([
   { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
   { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: userId },
@@ -108,20 +66,22 @@ const filter = serializeClauses([
 ] as Clause<StandardMessageEntity>[]);
 ```
 
+**"Everything under this partition" is `getPartitionKeyFilter(id)`** (`@esposter/db`), never a hand-built one-clause `serializeClauses` call and never a template literal. Every table partitions on its owning entity's id, so a read, a count and a purge of the same entity all start from that one filter — writing it once is what keeps the three from disagreeing after a key-shape change. A feature that also filters on its own columns drops back to the clause array above; a feature that only re-labels the partition filter for its domain (`getSurveyResponseFilter`) is a one-line named wrapper over it, not a second implementation.
+
 ## Counting — Only After a Capped Read, and Bounded
 
 Azure Table has no count API — `countEntities` (from `@esposter/db`) walks every matching page with a keys-only projection. Two rules keep the walk cheap and honest:
 
 - **Only count when a capped read filled.** A read under its cap answers for itself (`rows.length < cap ? rows.length : await countFooEntities(...)`); only a full page has something to be missing.
-- **Bound the walk when the count feeds a display.** Pass `countEntities`'s `maxCount` argument (callers name their bound, e.g. `DATASET_MAX_COUNTED_ROWS`). A count that hit the bound is a floor, not a total — every surface must render it as one ("N+", via the shared truncation formatter), never as an exact number.
+- **Bound the walk when the count feeds a display.** Pass `countEntities`'s `maxCount` argument (callers name their own bound). A count that hit the bound is a floor, not a total — every surface must render it as one ("N+", via the shared truncation formatter), never as an exact number.
 
 ## Entity Class Constructors
 
-`deserializeEntity` calls `new cls()` with **no arguments**, so every Azure entity constructor must declare `init` optional (`init?:`) and access via optional chaining (`init?.foo`):
+`deserializeEntity` calls `new cls()` with **no arguments**, so every Azure entity constructor must declare `init` optional (`init?:`) and access via optional chaining:
 
 ```typescript
 export class MyEntity extends AzureEntity {
-  myField!: string;
+  declare myField: string;
 
   constructor(init?: Partial<MyEntity> & ToData<CompositeKeyEntity>) {
     super();

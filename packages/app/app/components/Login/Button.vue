@@ -24,8 +24,8 @@ const isLoading = ref(false);
 <template>
   <button
     :style
-    shadow="[0_2px_4px_0_rgba(0,0,0,0.25)]"
-    hover:shadow="[0_2px_10px_2px_rgba(0,0,0,0.35)]"
+    shadow="[0_0.125rem_0.25rem_0_rgba(0,0,0,0.25)]"
+    hover:shadow="[0_0.125rem_0.625rem_0.125rem_rgba(0,0,0,0.35)]"
     pl-2
     rd
     flex
@@ -34,7 +34,7 @@ const isLoading = ref(false);
     transition="[box-shadow,transform]"
     duration-.2s
     items-center
-    hover:translate-y="[-3px]"
+    hover:translate-y="[-0.1875rem]"
     :disabled="isLoading"
     @click="
       async () => {

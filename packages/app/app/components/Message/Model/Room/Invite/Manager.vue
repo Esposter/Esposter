@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
-import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
+import { pluralize } from "#shared/util/text/pluralize";
+import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
+import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
+import { useInviteStore } from "@/store/message/room/invite";
 import { RoutePath } from "@esposter/shared";
 
 interface InviteManagerProps {
@@ -14,38 +16,27 @@ interface InviteManagerProps {
 
 const { roomId } = defineProps<InviteManagerProps>();
 const { $trpc } = useNuxtApp();
-const executeMutation = useMutation();
 const runtimeConfig = useRuntimeConfig();
+const inviteStore = useInviteStore();
+const { createInvite, seedInvite } = inviteStore;
+const { invites } = storeToRefs(inviteStore);
+// Display reads the shared per-room map so a link regenerated on any surface updates every mounted Manager
+const invite = computed(() => invites.value.get(roomId));
 const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
 const maxUses = ref<CreateInviteInput["maxUses"]>(0);
-const { data: invite } = useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
+useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
   // Seed from the loaded invite so regenerating via one option doesn't silently reset the other to unlimited
   // (expireAfterMinutes can't be recovered from the absolute expiresAt, so it falls back to the default)
   onSuccess: (newInvite) => {
-    maxUses.value = INVITE_MAX_USES_OPTIONS.find((uses) => uses === newInvite?.maxUses) ?? 0;
+    seedInvite(roomId, newInvite ?? undefined);
+    maxUses.value = INVITE_MAX_USES_OPTIONS.find((uses) => uses === invite.value?.maxUses) ?? 0;
   },
 });
-const expireAfterItems: SelectItemCategoryDefinition<CreateInviteInput["expireAfterMinutes"]>[] = [
-  ...Object.entries(InviteExpireAfterMinutesMap).map(([title, value]) => ({ title, value })),
-  { title: "Never", value: 0 },
-];
-const maxUsesItems: SelectItemCategoryDefinition<CreateInviteInput["maxUses"]>[] = [
-  { title: "No limit", value: 0 },
-  ...INVITE_MAX_USES_OPTIONS.map((uses) => ({ title: `${uses} use${uses === 1 ? "" : "s"}`, value: uses })),
-];
-const createInvite = () =>
-  executeMutation(
-    () =>
-      $trpc.room.createInvite.mutate({ expireAfterMinutes: expireAfterMinutes.value, maxUses: maxUses.value, roomId }),
-    {
-      onSuccess: (newInvite) => {
-        invite.value = newInvite;
-      },
-    },
-  );
+const onCreateInvite = () =>
+  createInvite({ expireAfterMinutes: expireAfterMinutes.value, maxUses: maxUses.value, roomId });
 // Changing options with a live link regenerates it — the old link is replaced (one invite per member per room)
 const onUpdateOptions = async () => {
-  if (invite.value) await createInvite();
+  if (invite.value) await onCreateInvite();
 };
 const inviteLink = computed(() =>
   invite.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.value.id)}` : "",
@@ -59,7 +50,7 @@ const inviteStateText = computed(() => {
   ];
   if (invite.value.maxUses) {
     const remainingUses = invite.value.maxUses - invite.value.uses;
-    parts.push(`${remainingUses} use${remainingUses === 1 ? "" : "s"} remaining.`);
+    parts.push(`${remainingUses} ${pluralize("use", remainingUses)} remaining.`);
   }
   return parts.join(" ");
 });
@@ -72,7 +63,7 @@ const isCopied = ref(false);
       <v-select
         v-model="expireAfterMinutes"
         label="Expire after"
-        :items="expireAfterItems"
+        :items="InviteExpireAfterSelectItems"
         density="compact"
         hide-details
         @update:model-value="onUpdateOptions"
@@ -80,7 +71,7 @@ const isCopied = ref(false);
       <v-select
         v-model="maxUses"
         label="Max uses"
-        :items="maxUsesItems"
+        :items="InviteMaxUsesSelectItems"
         density="compact"
         hide-details
         @update:model-value="onUpdateOptions"
@@ -96,10 +87,10 @@ const isCopied = ref(false);
       :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
     >
       <template #append-inner>
-        <StyledClipboardButton w-20 :source="inviteLink" @update:copied="isCopied = $event" @create="createInvite" />
+        <StyledClipboardButton w-20 :source="inviteLink" @update:copied="isCopied = $event" @create="onCreateInvite" />
       </template>
     </v-text-field>
-    <div v-if="inviteStateText" text-gray pt-2 text-title-small>{{ inviteStateText }}</div>
+    <div v-if="inviteStateText" pt-2 op-medium-emphasis text-title-small>{{ inviteStateText }}</div>
   </div>
 </template>
 

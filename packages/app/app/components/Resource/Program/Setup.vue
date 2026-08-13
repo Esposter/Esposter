@@ -21,35 +21,24 @@ const keyColumns = computed<SelectItemCategoryDefinition<string>[]>(
 );
 const emailIds = ref<SelectItemCategoryDefinition<string>[]>([]);
 const surveyIds = ref<SelectItemCategoryDefinition<string>[]>([]);
-const isLoading = ref(true);
-
-// Autosave binding edits; guarded so the initial load populating the store does not write back
-watchDebounced(
-  programResource,
-  async () => {
-    if (isLoading.value) return;
-    await saveProgram();
-  },
-  { debounce: 500, deep: true },
-);
-
-onMounted(async () => {
-  await loadContent();
-  await getResultAsync(async () => {
-    const [emails, surveys] = await Promise.all([
-      $trpc.email.readResources.query({ limit: MAX_READ_LIMIT }),
-      $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }),
-    ]);
-    emailIds.value = emails.items.map(({ id, name }) => ({ title: name, value: id }));
-    surveyIds.value = surveys.items.map(({ id, name }) => ({ title: name, value: id }));
-  }).match(noop, console.error);
-  isLoading.value = false;
-});
+// The Suspense-wrapped blade awaits everything it renders from, so it opens on a populated store and
+// Populated pickers — the shell's skeleton covers the wait, so there is no per-blade loading flag
+await loadContent();
+// Both binding pickers are independent of each other, so they resolve together
+await getResultAsync(async () => {
+  const [emails, surveys] = await Promise.all([
+    $trpc.email.readResources.query({ limit: MAX_READ_LIMIT }),
+    $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }),
+  ]);
+  emailIds.value = emails.items.map(({ id, name }) => ({ title: name, value: id }));
+  surveyIds.value = surveys.items.map(({ id, name }) => ({ title: name, value: id }));
+}).match(noop, console.error);
+// Autosave binding edits — registered after the load, so the hydration itself never reaches the watcher
+watchAutosave(programResource, saveProgram);
 </script>
 
 <template>
-  <StyledSkeleton v-if="isLoading" />
-  <div v-else p-6 flex flex-col gap-4 max-w-xl>
+  <div p-6 flex flex-col gap-4 max-w-xl>
     <span text-h6>Audience</span>
     <div flex flex-wrap gap-4>
       <DatasetReferencePicker v-model="audience" />

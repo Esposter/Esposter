@@ -6,7 +6,6 @@ import { BaseTilesetKeys } from "#shared/generated/tiled/propertyTypes/enum/Base
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { addTilesetImage } from "@/services/dungeons/tilemap/addTilesetImage";
 import { createLayer } from "@/services/dungeons/tilemap/createLayer";
-import { getObjectLayer } from "@/services/dungeons/tilemap/getObjectLayer";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) => {
@@ -32,7 +31,7 @@ export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) 
     objectLayerMap.value = new Map();
 
     for (const objectgroupName of ObjectgroupNames) {
-      const objectLayer = getObjectLayer(tilemap.value, objectgroupName);
+      const objectLayer = tilemap.value.getObjectLayer(objectgroupName);
       if (!objectLayer) continue;
       objectLayerMap.value.set(objectgroupName, objectLayer);
     }

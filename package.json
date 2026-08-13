@@ -39,13 +39,11 @@
     "bench": "vitest bench --run --project scripts && pnpm -r --if-present run bench",
     "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
     "build:app": "virrun -- pnpm --filter @esposter/app run build",
-    "build:docker": "pnpm crossOS copyfiles .gitignore .dockerignore && docker compose -f docker-compose.dev.yaml build",
     "build:docs": "virrun -- typedoc",
     "build:packages": "pnpm -r --filter \"!@esposter/app\" run build",
     "coverage": "vitest run --coverage",
     "crossOS": "node scripts/crossOS.ts",
     "depcruise:graph": "virrun -- depcruise packages/*/src/index.ts --include-only \"^packages\" --collapse 2 --output-type dot | graphviz -Tsvg > dependency-graph.svg",
-    "dev:docker": "docker compose -f docker-compose.dev.yaml up",
     "format": "virrun -- oxfmt",
     "format:check": "virrun -- oxfmt --check",
     "lint": "virrun -- oxlint --format=default --disable-nested-config && virrun -- eslint . && virrun -- pnpm -r --parallel --aggregate-output run lint",
@@ -71,6 +69,7 @@
     "@esposter/shared-node": "workspace:*",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
+    "@oxlint/plugins": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
@@ -88,15 +87,10 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": "^26.5.0"
+    "node": "^26.7.0"
   },
-  "packageManager": "pnpm@11.6.0+sha512.9a36518224080c6fe5165afdcfe79bfa118c29be703f3f462b1e32efe1e98e47e8750b148e08286250aad4113cc7993ca413c4e2cd447752708c2ee5751bc95f",
+  "packageManager": "pnpm@11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1",
   "crossOS": {
-    "copyfiles": {
-      "darwin": "cp -f",
-      "linux": "cp -f",
-      "win32": "pnpm pwsh -Command Copy-Item -Force"
-    },
     "refresh:lockfile": {
       "darwin": "sh ./scripts/refreshLockfile.sh",
       "linux": "./scripts/refreshLockfile.sh",

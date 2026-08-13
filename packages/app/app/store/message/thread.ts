@@ -2,12 +2,12 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
+import { useMessageLayoutStore } from "@/store/message/ui/layout";
 
 export const useThreadStore = defineStore("message/thread", () => {
   const { $trpc } = useNuxtApp();
-  const activeRootRowKey = ref<null | string>(null);
-  const activeRoomId = ref<null | string>(null);
+  const activeRootRowKey = ref<MessageEntity["rowKey"]>("");
+  const activeRoomId = ref<MessageEntity["partitionKey"]>("");
   const threadMessages = ref<MessageEntity[]>([]);
   const layoutStore = useLayoutStore();
   const messageLayoutStore = useMessageLayoutStore();
@@ -22,8 +22,8 @@ export const useThreadStore = defineStore("message/thread", () => {
     layoutStore.isRightDrawerOpen = true;
   };
   const closeThread = () => {
-    activeRootRowKey.value = null;
-    activeRoomId.value = null;
+    activeRootRowKey.value = "";
+    activeRoomId.value = "";
     threadMessages.value = [];
     layoutStore.isRightDrawerOpen = false;
   };

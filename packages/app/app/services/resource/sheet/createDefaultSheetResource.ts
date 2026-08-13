@@ -8,7 +8,6 @@ export const createDefaultSheetResource = (): SheetResource => ({
     columns: [],
     metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
     rows: [],
-    statistics: { columnCount: 0, rowCount: 0, size: 0 },
   },
   settings: createDefaultSheetSettings(DataSourceType.Csv),
 });

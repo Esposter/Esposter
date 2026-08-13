@@ -1,7 +1,6 @@
 import type { Operation } from "@esposter/shared";
 
-import { InvalidOperationError } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 
 export const requireMutation = <T>(
   result: T | undefined,
@@ -10,10 +9,6 @@ export const requireMutation = <T>(
   context: string,
   code: "BAD_REQUEST" | "NOT_FOUND" = "BAD_REQUEST",
 ): T => {
-  if (result === undefined)
-    throw new TRPCError({
-      code,
-      message: new InvalidOperationError(operation, name, context).message,
-    });
+  if (result === undefined) throw getInvalidOperationError(operation, name, context, code);
   return result;
 };

@@ -6,24 +6,31 @@ import type { MessageEvents } from "#shared/models/message/events/MessageEvents"
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
-import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { useMutation } from "@/composables/shared/useMutation";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
+import { getIsEntityIdEqualComparator } from "@/services/entity/getIsEntityIdEqualComparator";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { getIsAlertedByErrorLink } from "@/services/trpc/errorLink";
+import { useAlertStore } from "@/store/alert";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
+import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getResultAsync, Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const roomStore = useRoomStore();
+  const threadFollowStore = useThreadFollowStore();
+  const { storeFollowThread } = threadFollowStore;
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
@@ -31,60 +38,141 @@ export const useDataStore = defineStore("message/data", () => {
     updateMessage: baseStoreUpdateMessage,
     ...restOperationData
   } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
-  const files = computed(() => items.value.flatMap(({ files }) => files));
-  const hasMoreNewer = ref(false);
-  const nextCursorNewer = ref("");
+  const files = computed(() => items.value.flatMap(({ files: messageFiles }) => messageFiles));
+  // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
+  // And a global one would still be pointing at that room's window after the switch — so the next room renders
+  // A "load newer" waypoint it never earned and pages in a window cut from another room's timestamps
+  const { data: hasMoreNewer } = useDataMap(() => roomStore.currentRoomId, false);
+  const { data: nextCursorNewer } = useDataMap(() => roomStore.currentRoomId, "");
   const typings = ref<CreateTypingInput[]>([]);
-
-  const createMessage = async (input: StandardCreateMessageInput) => {
+  // `onOptimisticCreate` runs once the bubble is in the list and before anything reaches the server — the
+  // Composer reset hangs off it rather than off the send, because the bubble is the sender's only copy of what
+  // They typed once the editor is cleared. It is handed the attachments this send took, so the composer stops
+  // Offering them to the next Enter while it waits for `CommitSend` to drop them for good
+  const createMessage = async (
+    input: StandardCreateMessageInput,
+    onOptimisticCreate?: (sentFileIds: string[]) => Promise<void>,
+  ) => {
     if (!session.value.data) return false;
+    // `input.files` is the composer's own live array, and the composer keeps accepting uploads for the whole
+    // Round trip — so the attachments are snapshotted once, here, and that one snapshot is what the bubble
+    // Carries, what goes on the wire, and what the hooks are handed. Reading the live array in any of those
+    // Places lets them disagree: a file that lands mid-flight is serialized into the payload while the commit
+    // Never hears about it, so it stays in the composer and rides along with the next send too — one blob
+    // Referenced by two messages, and deleting either one reclaims a blob the other still renders
+    const sentInput = input.files ? { ...input, files: [...input.files] } : input;
+    const sentFileIds = sentInput.files?.map(({ id }) => id) ?? [];
+    const newMessage = reactive(
+      createMessageEntity({ ...sentInput, isLoading: true, userId: session.value.data.user.id }),
+    );
+    // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the list,
+    // So roll the entity back out before surfacing the failure — nothing has reached the server yet. Through the
+    // Delete hooks, not a bare list removal: the Create hooks that just ran wrote a download-url entry per
+    // Attached file, and the hourly re-mint sweep would keep re-signing urls for a message that never existed
+    const isOptimisticCreated = await getResultAsync(() => storeCreateMessage(newMessage, true)).match(
+      () => true,
+      async (error) => {
+        await storeDeleteMessage(newMessage);
+        if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        return false;
+      },
+    );
+    if (!isOptimisticCreated) return false;
+    await onOptimisticCreate?.(sentFileIds);
 
-    const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
-    await storeCreateMessage(newMessage);
-    Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
-    delete newMessage.isLoading;
-    return true;
+    return getResultAsync(() => $trpc.message.createMessage.mutate(sentInput)).match(
+      async (createdMessage) => {
+        Object.assign(newMessage, createdMessage);
+        delete newMessage.isLoading;
+        // The server has the message, so the attachments held since the bubble are dropped for good — with them
+        // Go the grants that authorize reclaiming their blobs, which only a rejection could have needed back
+        await MessageHookMap.CommitSend.run(sentInput.roomId, sentFileIds);
+        // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
+        // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
+        // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
+        // Added here is best-effort, never a rollback — the message already exists on the server
+        const { replyRowKey } = input;
+        if (replyRowKey) storeFollowThread(input.roomId, replyRowKey);
+        return true;
+      },
+      async (error) => {
+        // The mutation spans the server commit, so nothing here may roll the bubble back out: a rejection can
+        // Just as well be a lost response for a message that landed, and deleting it then hides a sent message
+        // From its own sender (the subscription echo is filtered for the sending session, so nothing restores
+        // It) and invites the duplicate resend /docs/architecture/persist-then-notify exists to prevent. The
+        // Bubble also stays the sender's copy of a genuinely rejected message — the composer is already reset —
+        // So it holds its loading state and the alert says what happened. Only when errorLink has not already
+        // Said it: a rejected send is characteristically one of the codes it owns (slowmode, a Zod rejection),
+        // And alerting again puts two identical toasts on screen for one send.
+        // The composer's attachments come back, held rather than discarded since the bubble — so the user retries
+        // With the files already uploaded instead of re-picking them, and their grants can still reclaim the
+        // Blobs. The cost is the lost-response case: a message that did land keeps a composer copy whose delete
+        // Affordance would reclaim blobs it is still using. That trades a rare broken attachment the user chose
+        // Against a certain leak plus lost work on every deterministic rejection, which is what slowmode and the
+        // Word filter are
+        await MessageHookMap.RollbackSend.run(sentInput.roomId, sentFileIds);
+        if (!getIsAlertedByErrorLink(error)) createAlert(error.message, "error");
+        return false;
+      },
+    );
   };
   const updateMessage = async (input: UpdateMessageInput) => {
-    const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input));
-    const previousMessage = message?.message;
     await executeMutation(() => $trpc.message.updateMessage.mutate(input), {
       // Apply only the raw reactive field change — the subscription echo re-runs MessageHookMap on success,
-      // So calling storeUpdateMessage here would double-fire the update hooks.
+      // So calling storeUpdateMessage here would double-fire the update hooks. Read as the write is sent, so a
+      // Rejected edit restores the body the edit ahead of it stored rather than the one on screen at the click
       applyOptimistic: () => {
+        const previousMessage = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, input))?.message;
         baseStoreUpdateMessage(input);
         return () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
         };
       },
+      // Keyed per message so edits to different messages through this shared executor run independently instead of queueing behind each other
+      key: input.rowKey,
     });
   };
   const deleteFile = async ({ id, ...compositeKey }: DeleteFileInput) => {
     const message = items.value.find(getIsEntityIdEqualComparator(CompositeAzureKeyPath, compositeKey));
     if (!message) return;
 
-    const previousFiles = message.files;
     await executeMutation(() => $trpc.message.deleteFile.mutate({ id, ...compositeKey }), {
-      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success.
+      // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. Read as the
+      // Write is sent and unwound one attachment at a time: reinstating the list this call was issued with would
+      // Resurrect a file a concurrent deletion already removed and drop whatever arrived while it was in flight
       applyOptimistic: () => {
-        baseStoreUpdateMessage({ ...compositeKey, files: previousFiles.filter((file) => file.id !== id) });
+        const deletedFile = message.files.find((file) => file.id === id);
+        baseStoreUpdateMessage({ ...compositeKey, files: message.files.filter((file) => file.id !== id) });
         return () => {
-          baseStoreUpdateMessage({ ...compositeKey, files: previousFiles });
+          if (!deletedFile) return;
+
+          baseStoreUpdateMessage({ ...compositeKey, files: [...message.files, deletedFile] });
         };
       },
+      // Keyed per file so concurrent deletions never swallow each other's rollbacks
+      key: id,
     });
   };
-  const storeCreateMessage = async (message: MessageEntity) => {
-    await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));
-    // Our messages list is reversed i.e. most recent messages are at the front
-    baseStoreCreateMessage(message, true);
+  // The sender's own message is pushed first (our list is reversed — most recent at the front) so the bubble
+  // Renders immediately in its loading state, THEN the Create hooks run: one of them fetches attachment download
+  // Urls over the network, and running it before the push would gate the "optimistic" render behind a round trip.
+  // A message arriving from anyone else has no bubble to keep responsive and nothing to roll back, so it waits for
+  // Its urls — pushing it first renders every incoming attachment as a broken image until the fetch lands
+  const storeCreateMessage = async (message: MessageEntity, isOptimistic = false) => {
+    if (isOptimistic) {
+      baseStoreCreateMessage(message, true);
+      await MessageHookMap[Operation.Create].run(message);
+    } else {
+      await MessageHookMap[Operation.Create].run(message);
+      baseStoreCreateMessage(message, true);
+    }
   };
-  const storeUpdateMessage = async (input: MessageEvents["updateMessage"][number]) => {
-    await Promise.all(MessageHookMap[Operation.Update].map((fn) => Promise.resolve(fn(input))));
+  const storeUpdateMessage = async (input: MessageEvents["updateMessage"][0][0]) => {
+    await MessageHookMap[Operation.Update].run(input);
     baseStoreUpdateMessage(input);
   };
   const storeDeleteMessage = async (input: DeleteMessageInput) => {
-    await Promise.all(MessageHookMap[Operation.Delete].map((fn) => Promise.resolve(fn(input))));
+    await MessageHookMap[Operation.Delete].run(input);
     baseStoreDeleteMessage(input);
   };
 
@@ -106,10 +194,14 @@ export const useDataStore = defineStore("message/data", () => {
     await storeSendMessage(input, editor);
   };
   const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
-    await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
-    if (await createMessage(input)) clearDraft(input.roomId);
+    // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor and the reply
+    // Target, so a send that fails before the bubble exists would take the text the user just typed with it.
+    // The attachments leave the composer here too, but only held — they are dropped on `CommitSend` once the
+    // Server has accepted the message, and handed back on `RollbackSend` if it rejects
+    if (await createMessage(input, (sentFileIds) => MessageHookMap.ResetSend.run(input.roomId, sentFileIds, editor)))
+      clearDraft(input.roomId);
   };
-  MessageHookMap.ResetSend.push((editor) => {
+  MessageHookMap.ResetSend.register((_roomId, _fileIds, editor) => {
     editor?.commands.clearContent(true);
   });
   // Only expose the internal store CRUD functions for subscriptions; everything else directly calls

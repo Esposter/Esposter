@@ -20,13 +20,13 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
     this.#indexedColumns = indexedColumns.toSorted((a, b) => b.columnIndex - a.columnIndex);
   }
 
-  protected doExecute(dataSource: DataSource) {
+  execute(dataSource: DataSource) {
     const namesToDelete = new Set(this.#indexedColumns.map(({ originalColumn }) => originalColumn.name));
     dataSource.columns = dataSource.columns.filter((column) => !namesToDelete.has(column.name));
     for (const { data } of dataSource.rows) for (const name of namesToDelete) delete data[name];
   }
 
-  protected doUndo(dataSource: DataSource) {
+  undo(dataSource: DataSource) {
     const ascendingColumns = this.#indexedColumns.toSorted((a, b) => a.columnIndex - b.columnIndex);
     const result: Column[] = [];
     let existingIndex = 0;

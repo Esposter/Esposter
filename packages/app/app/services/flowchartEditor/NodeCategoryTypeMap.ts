@@ -1,5 +1,5 @@
 import { GeneralNodeTypes } from "#shared/models/flowchartEditor/node/GeneralNodeType";
-import { NodeCategory } from "#shared/models/flowchartEditor/node/NodeCategory";
+import { NodeCategory } from "@/models/flowchartEditor/node/NodeCategory";
 
 export const NodeCategoryTypeMap = {
   [NodeCategory.General]: GeneralNodeTypes,

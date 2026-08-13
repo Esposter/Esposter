@@ -3,30 +3,40 @@ import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLab
 import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { NotificationType } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
-const { setMyUserToRoom } = userToRoomStore;
-const { myUserToRoomMap } = storeToRefs(userToRoomStore);
-const notificationType = computed(() => myUserToRoomMap.value?.notificationType ?? NotificationType.DirectMessage);
+const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
+const { myUserToRoom } = storeToRefs(userToRoomStore);
+const notificationType = computed(() => myUserToRoom.value?.notificationType ?? NotificationType.DirectMessage);
 const notificationTypeLabels = Object.entries(NotificationTypeLabelMap);
-const executeMutation = useMutation();
+const { executeMutation } = useMutation();
 const updateNotificationType = async (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
-  const userToRoom = myUserToRoomMap.value;
-  if (!roomId || !userToRoom) return;
+  if (!roomId || !myUserToRoom.value) return;
   await executeMutation(
     () => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }),
     {
+      // Read as the write is sent, so a rejected change restores the setting the write ahead of it stored rather
+      // Than the one on screen when the radio was clicked
       applyOptimistic: () => {
-        const oldNotificationType = userToRoom.notificationType;
-        setMyUserToRoom(roomId, { ...userToRoom, notificationType: newNotificationType });
+        const previousUserToRoom = getMyUserToRoom(roomId);
+        if (!previousUserToRoom) return noop;
+
+        const { notificationType: previousNotificationType } = previousUserToRoom;
+        setMyUserToRoom(roomId, { ...previousUserToRoom, notificationType: newNotificationType });
         return () => {
-          setMyUserToRoom(roomId, { ...userToRoom, notificationType: oldNotificationType });
+          // Only the field this write moved, against the record as it stands — reinstating the row as a whole
+          // Would undo everything else that landed on it while this write was in flight
+          const currentUserToRoom = getMyUserToRoom(roomId);
+          if (currentUserToRoom)
+            setMyUserToRoom(roomId, { ...currentUserToRoom, notificationType: previousNotificationType });
         };
       },
+      key: roomId,
     },
   );
 };

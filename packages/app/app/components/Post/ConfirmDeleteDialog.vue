@@ -11,13 +11,16 @@ const commentStore = useCommentStore();
 const { currentPost } = storeToRefs(commentStore);
 const postDialogStore = usePostDialogStore();
 const { deletingId } = storeToRefs(postDialogStore);
+// Resolved through the primitive rather than a computed of our own, so a target whose post has left the feed
+// (a sort change re-reads the first page) is dropped with it instead of re-opening this dialog by itself as
+// Soon as scrolling pages that post back in.
 // The comments page renders the current post outside the post list, so fall back to it
-const post = computed(
+const { isOpen, item: post } = useSingletonDialog(
+  deletingId,
   () =>
     items.value.find(({ id }) => id === deletingId.value) ??
     (currentPost.value?.id === deletingId.value ? currentPost.value : undefined),
 );
-const isOpen = useSingletonDialog(deletingId);
 </script>
 
 <template>

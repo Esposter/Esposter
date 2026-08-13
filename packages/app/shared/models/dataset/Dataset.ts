@@ -7,6 +7,10 @@ import { z } from "zod";
 
 export interface Dataset {
   columns: DatasetColumn[];
+  // Columns whose values a capped read may have got *wrong* rather than left out. A derived column resolved
+  // Against a second capped read reports its unmatched rows as a negative — every row is present, so row
+  // Counts look complete — which makes an exact aggregation over such a column a floor rather than a total
+  partialColumns?: string[];
   rows: Record<string, ColumnValue>[];
   // The uncapped row count, so consumers can tell a complete read from one the AZURE_MAX_PAGE_SIZE cap
   // Truncated; a provider that cannot cheaply count omits it and its consumers simply never warn
@@ -15,6 +19,7 @@ export interface Dataset {
 
 export const datasetSchema = z.object({
   columns: z.array(datasetColumnSchema),
+  partialColumns: z.array(z.string()).optional(),
   rows: z.array(z.record(z.string(), columnValueSchema)),
   totalRows: z.number().optional(),
 }) satisfies z.ZodType<Dataset>;

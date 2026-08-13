@@ -1,49 +1,30 @@
 <script setup lang="ts">
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
-import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
-import type { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 
-import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
-import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
-import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
-import { useRoomStore } from "@/store/message/room";
 
-const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
-const { activeParameterNames, focusedIndex, lastAddedParameterName, parameterValues, pendingSlashCommand } =
+const { activeParameters, focusedIndex, lastAddedParameterName, parameterValues, pendingSlashCommand } =
   storeToRefs(slashCommandStore);
-const { buildText, clearPendingSlashCommand, createParameter, setErrors, setPendingSlashCommand } = slashCommandStore;
-const inputStore = useInputStore();
-const { input } = storeToRefs(inputStore);
-const executeSlashCommand = useExecuteSlashCommand();
+const {
+  collapseToText,
+  createParameter,
+  deleteParameter: baseDeleteParameter,
+  setPendingSlashCommand,
+} = slashCommandStore;
+const submit = useSubmitSlashCommand();
 const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
 
 watch(pendingSlashCommand, (newPendingSlashCommand) => {
   if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
 });
 
-const activeParameters = computed(
-  () => pendingSlashCommand.value?.parameters.filter(({ name }) => activeParameterNames.value.includes(name)) ?? [],
-);
-const hiddenParameters = computed(
-  () => pendingSlashCommand.value?.parameters.filter(({ name }) => !activeParameterNames.value.includes(name)) ?? [],
-);
-
-const collapseToText = () => {
-  input.value = buildText();
-  clearPendingSlashCommand();
-};
-
 const deleteParameter = (index: number) => {
   const name = activeParameters.value[index]?.name;
   if (!name) return;
 
-  activeParameterNames.value = activeParameterNames.value.filter((paramName) => paramName !== name);
-  parameterValues.value[name] = "";
-  setErrors(name, []);
+  baseDeleteParameter(name);
   focus(index - 1);
 };
 const commandNavigateNext = async () => {
@@ -74,39 +55,6 @@ const deleteLastParameter = () => {
   const lastIndex = activeParameters.value.length - 1;
   if (lastIndex >= 0) deleteParameter(lastIndex);
 };
-const submit = async () => {
-  if (!pendingSlashCommand.value || !currentRoomId.value) return;
-
-  const missingRequiredParameters = pendingSlashCommand.value.parameters.filter(
-    ({ isRequired, name }) =>
-      isRequired && !slashCommandParameterValueSchema.safeParse(parameterValues.value[name]).success,
-  );
-
-  for (const { isRequired, name } of pendingSlashCommand.value.parameters)
-    if (isRequired)
-      setErrors(
-        name,
-        slashCommandParameterValueSchema.safeParse(parameterValues.value[name]).success ? [] : [REQUIRED_ERROR_MESSAGE],
-      );
-
-  if (missingRequiredParameters.length > 0) {
-    const hiddenMissingParameters = missingRequiredParameters.filter(
-      ({ name }) => !activeParameterNames.value.includes(name),
-    );
-    if (hiddenMissingParameters.length > 0)
-      activeParameterNames.value = [...activeParameterNames.value, ...hiddenMissingParameters.map(({ name }) => name)];
-    return;
-  }
-
-  const payload = {
-    parameterValues: parameterValues.value,
-    type: pendingSlashCommand.value.type,
-  } as {
-    [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P };
-  }[SlashCommandType];
-  clearPendingSlashCommand();
-  await executeSlashCommand(payload);
-};
 
 onKeyStroke("Escape", () => collapseToText());
 onKeyStroke("Backspace", () => {
@@ -130,7 +78,7 @@ onKeyStroke("Backspace", () => {
           <MessageModelMessageInputSlashCommandParametersChip
             :is-required
             :name
-            :autofocus="lastAddedParameterName === name || (lastAddedParameterName === null && index === 0)"
+            :autofocus="lastAddedParameterName === name || (!lastAddedParameterName && index === 0)"
             :is-focused="focusedIndex === index"
             :model-value="parameterValues[name] ?? ''"
             @update:model-value="updateParameterValue(name, $event)"
@@ -143,8 +91,6 @@ onKeyStroke("Backspace", () => {
           />
         </template>
         <MessageModelMessageInputSlashCommandParametersTrailingInput
-          :hidden-parameters
-          :active-parameters-length="activeParameters.length"
           :is-focused="focusedIndex === activeParameters.length"
           @create-parameter="createParameter"
           @update-parameter-value="updateParameterValue"

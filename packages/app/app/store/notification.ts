@@ -29,6 +29,16 @@ export const useNotificationStore = defineStore("notification", () => {
   const deleteSnackbar = (id: string) => {
     snackbarIds.value = snackbarIds.value.filter((snackbarId) => snackbarId !== id);
   };
+  // A single-use action is spent once it has succeeded — the notification stays as history, but the
+  // Button must not offer a second, now-invalid fire from the bell panel. No-op for repeatable actions
+  const consumeNotificationAction = (id: string) => {
+    notifications.value = notifications.value.map((notification) => {
+      if (notification.id !== id || !notification.action?.isSingleUse) return notification;
+      const consumedNotification = { ...notification };
+      delete consumedNotification.action;
+      return consumedNotification;
+    });
+  };
   const deleteNotification = (id: string) => {
     notifications.value = notifications.value.filter((notification) => notification.id !== id);
     deleteSnackbar(id);
@@ -43,6 +53,7 @@ export const useNotificationStore = defineStore("notification", () => {
     );
   };
   return {
+    consumeNotificationAction,
     createErrorNotification,
     createNotification,
     deleteNotification,

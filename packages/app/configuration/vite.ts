@@ -18,7 +18,9 @@ export const vite: NuxtConfig["vite"] = {
       // Three's inspector loads extension assets relative to import.meta.url, which breaks from Vite's cache.
       "three/examples/jsm/inspector/Inspector.js",
     ],
-    include: [...commonjsDeps, "debug", "pdfjs-dist"],
+    // Mermaid is imported lazily after mount, so without this it is discovered mid-session and the
+    // Re-optimize rewrites the dayjs chunk it shares with the app out from under the loaded module graph
+    include: [...commonjsDeps, "debug", "mermaid", "pdfjs-dist"],
   },
   plugins: [fixAjv],
 };

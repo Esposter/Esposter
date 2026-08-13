@@ -7,11 +7,11 @@ import { getTopRole } from "@/services/message/member/getTopRole";
 export const getMemberGroups = <TMember extends Pick<User, "id">>(
   members: TMember[],
   getMemberRoles: (userId: string) => RoomRoleInMessage[],
-): { members: TMember[]; role: null | RoomRoleInMessage }[] => {
-  const groupByRoleId = new Map<null | string, { members: TMember[]; role: null | RoomRoleInMessage }>();
+): { members: TMember[]; role?: RoomRoleInMessage }[] => {
+  const groupByRoleId = new Map<string, { members: TMember[]; role?: RoomRoleInMessage }>();
   for (const member of members) {
     const role = getTopRole(getMemberRoles(member.id));
-    const roleId = role?.id ?? null;
+    const roleId = role?.id ?? "";
     const group = groupByRoleId.get(roleId) ?? { members: [], role };
     group.members.push(member);
     groupByRoleId.set(roleId, group);

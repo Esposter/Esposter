@@ -1,17 +1,7 @@
 <script setup lang="ts">
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipantTileProps } from "@/models/message/room/call/CallParticipantTileProps";
 
-export interface CallParticipantTileProps {
-  isDeafened: boolean;
-  isHandRaised: boolean;
-  isScreenSharing: boolean;
-  isSelf: boolean;
-  isSpeaking: boolean;
-  participant: CallParticipant;
-  videoStream: MediaStream | undefined;
-}
-
-const { isDeafened, isHandRaised, isScreenSharing, isSelf, isSpeaking, participant, videoStream } =
+const { isDeafened, isScreenSharing, isSelf, isSpeaking, participant, videoStream } =
   defineProps<CallParticipantTileProps>();
 const displayName = computed(() => (isSelf ? `${participant.name} (You)` : participant.name));
 </script>
@@ -27,7 +17,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     :card-props="{ ripple: false }"
     :class="
       isSpeaking
-        ? 'shadow-[0_0_0_2px_rgb(var(--v-theme-primary)),0_0_16px_6px_rgba(var(--v-theme-primary),0.4)]!'
+        ? 'shadow-[0_0_0_0.125rem_rgb(var(--v-theme-primary)),0_0_1rem_0.375rem_rgba(var(--v-theme-primary),0.4)]!'
         : undefined
     "
   >
@@ -45,7 +35,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     <div v-else flex size-full items-center justify-center>
       <StyledAvatar :image="participant.image" :name="participant.name" :avatar-props="{ size: '6rem' }" />
     </div>
-    <MessageContentCallParticipantActionMenu v-if="!isSelf" :is-hand-raised :participant>
+    <MessageContentCallParticipantActionMenu v-if="!isSelf" :participant>
       <template #activator="{ props: menuProps }">
         <v-tooltip text="More Options" location="top">
           <template #activator="{ props: tooltipProps }">
@@ -69,7 +59,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
         {{ displayName }}
       </span>
       <v-icon v-if="isScreenSharing" text-primary icon="mdi-monitor-share" size="small" />
-      <v-icon v-if="isHandRaised" text-warning icon="mdi-hand-back-right" size="small" />
+      <v-icon v-if="participant.isHandRaised" text-warning icon="mdi-hand-back-right" size="small" />
       <v-icon v-if="participant.isCameraEnabled" text-primary icon="mdi-video" size="small" />
       <v-icon v-if="participant.isMuted" icon="mdi-microphone-off" size="small" />
       <v-icon v-if="isDeafened" icon="mdi-headphones-off" size="small" />

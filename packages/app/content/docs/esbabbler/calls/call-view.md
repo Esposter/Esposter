@@ -11,10 +11,10 @@ Full-screen call experience for `/calls/[id]`, with `/calls` as the standalone l
 
 The participant grid (or, when presenting, the screenshare stage) **is** the surface — it fills `<main>` directly with no outer wrapper card. Grid distribution by count: 1 participant = one full-stage column, 2 = up to two columns, 3+ = the wider responsive grid; no side panel is reserved in the default view. The control bar is an absolute bottom-center `StyledCard` pill.
 
-- **`Call/View.vue`** — theme-backed full-size flex column. Its top bar is an absolute top-right overlay (never pushes the stage down), rendered only when there is something to show: the Meet-style **presenter pill** (`{name} is presenting` + inline tonal **Stop presenting** when you are the presenter) plus an `append` slot where the room dialog injects its **Close call view** button — pill and close share one container.
-- **`Call/Participant/Tile.vue`** — `StyledCard` tile: camera `<video>` when available, else centered `StyledAvatar`; speaking ring (animated green outline); bottom-left name + mute badge; raise-hand, screenshare, and self-only deafened badges.
-- **`Call/Control/Bar.vue`** — grouped mic + up-caret audio settings, grouped camera + up-caret video settings/virtual backgrounds, deafen, raise hand, screenshare, PiP pop-out, leave. Moderators (`MuteMembers`) get "Lower Hand" in a participant's action menu.
-- **`Call/Stage.vue`** — the shared presenter/grid stage used by both the full view and the PiP window (`isDense`); see [screenshare](/docs/esbabbler/calls/screenshare) for the presenter layout.
+- **`MessageContentCallView`** — theme-backed full-size flex column. Its top bar is an absolute top-right overlay (never pushes the stage down), rendered only when there is something to show: the Meet-style **presenter pill** (`{name} is presenting` + inline tonal **Stop presenting** when you are the presenter) plus an `append` slot where the room dialog injects its **Close call view** button — pill and close share one container.
+- **`MessageContentCallParticipantTile`** — `StyledCard` tile: camera `<video>` when available, else centered `StyledAvatar`; speaking ring (animated green outline); bottom-left name + mute badge; raise-hand, screenshare, and self-only deafened badges.
+- **`MessageContentCallControlBar`** — grouped mic + up-caret audio settings, grouped camera + up-caret video settings/virtual backgrounds, deafen, raise hand, screenshare, PiP pop-out, leave. Moderators (`MuteMembers`) get "Lower Hand" in a participant's action menu.
+- **`MessageContentCallStage`** — the shared presenter/grid stage used by both the full view and the PiP window (`isDense`); see [screenshare](/docs/esbabbler/calls/screenshare) for the presenter layout.
 
 ## Prejoin / ready room
 
@@ -41,14 +41,16 @@ Prejoin layout: `flex-col` on mobile, `lg:flex-row` — a `flex-1` left column (
 
 ## Room call vs standalone call
 
-| Aspect                     | Room call (`useCallSubscribables`)        | Standalone (`useCallIdSubscribables`)         |
-| -------------------------- | ----------------------------------------- | --------------------------------------------- |
-| Entry                      | `readCallSessionId({ roomId })` then join | creator/admitted `joinCall({ id })`           |
-| `callRoomId`               | set (enables admin actions)               | not set                                       |
-| `currentRoomCallSessionId` | set for the viewed room                   | not set                                       |
-| Layout                     | compact strip in messages view + dialog   | full-screen (`layout: false`)                 |
-| Moderation actions         | available                                 | not available (no room membership)            |
-| Route cleanup              | unsubscribe viewed-room observers only    | unsubscribe **and** leave (unless popped out) |
+| Aspect                     | Room call (`useCallSubscribables`)                                                      | Standalone (`useCallIdSubscribables`)         |
+| -------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Entry                      | one `joinCallByRoomId({ roomId })` mutation — finds or creates the session and joins it | creator/admitted `joinCall({ id })`           |
+| `callRoomId`               | set (enables admin actions)                                                             | not set                                       |
+| `currentRoomCallSessionId` | set for the viewed room                                                                 | not set                                       |
+| Layout                     | compact strip in messages view + dialog                                                 | full-screen (`layout: false`)                 |
+| Moderation actions         | available                                                                               | not available (no room membership)            |
+| Route cleanup              | unsubscribe viewed-room observers only                                                  | unsubscribe **and** leave (unless popped out) |
+
+`readCallSessionId` is not part of that entry path — `useCallSubscribables` queries it to learn whether the viewed room already has a call running (so the messages view can show the compact strip), and the server-side `StopScreenShare` admin action resolves the room's session through it.
 
 `/calls/[id]` unmount cancels any pending knock, unsubscribes, and calls `store.leaveCall()` — the page is the call context. The one exception is a [picture-in-picture](/docs/esbabbler/calls/picture-in-picture) pop-out, which keeps the standalone call alive across navigation.
 

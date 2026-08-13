@@ -1,9 +1,3 @@
 {
-  "compilerOptions": {
-    "allowJs": false,
-    "composite": true,
-    "isolatedDeclarations": true,
-    "lib": ["ESNext"]
-  },
-  "extends": "./tsconfig.vue.json"
+  "extends": "./tsconfig.node.json"
 }

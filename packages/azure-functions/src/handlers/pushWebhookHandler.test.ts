@@ -1,5 +1,4 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { pushWebhookHandler } from "@/handlers/pushWebhookHandler";
 import { MOCK_EVENT_GRID_ENDPOINT } from "@/services/eventGridPublisherClient.test";
@@ -10,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 import { MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {
@@ -20,10 +19,10 @@ vi.mock(import("@/services/db"), () => ({
 
 vi.mock(import("@/services/eventGridPublisherClient"), () => import("@/services/eventGridPublisherClient.test"));
 
-const createMockRequest = (params: Record<string, string>, bodyString?: string): HttpRequest =>
+const createMockRequest = (parameters: Record<string, string>, bodyString?: string): HttpRequest =>
   new HttpRequest({
     method: "POST",
-    params,
+    params: parameters,
     url: "http://localhost",
     ...(bodyString !== undefined && { body: { string: bodyString } }),
   });

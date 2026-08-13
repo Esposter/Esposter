@@ -1,38 +1,44 @@
 import type { User } from "@esposter/db-schema";
 
-import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const { executeMutation } = useMutation();
   const friends = ref<User[]>([]);
-  const { createFriend: baseStoreCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
+  // CreateFriend already dedups by id, so a repeated echo delivery is idempotent without a manual guard
+  const { createFriend: storeCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
     friends,
     ["id"],
     DatabaseEntityType.Friend,
   );
-  const storeCreateFriend = (friend: User) => {
-    if (!friends.value.some(({ id }) => id === friend.id)) baseStoreCreateFriend(friend);
-  };
-  const storeDeleteFriend = (friendId: string) => {
+  const storeDeleteFriend = (friendId: User["id"]) => {
     baseStoreDeleteFriend({ id: friendId });
   };
-  const deleteFriend = async (friendId: string) => {
-    const previousFriends = [...friends.value];
+  // Single source of truth for "is this user already a friend" — every surface offering the add-friend
+  // Affordance asks it, and each one deriving its own predicate is how the profile card and the search
+  // Results end up disagreeing about the same pair
+  const getIsFriend = (userId: User["id"]) => friends.value.some(({ id }) => id === userId);
+  const deleteFriend = async (friendId: User["id"]) => {
     await executeMutation(() => $trpc.friend.deleteFriend.mutate(friendId), {
+      // The one row this write removes, not a copy of the list: removals are keyed per friend and never queue
+      // Against each other, so reinstating the list would resurrect a friend another removal already dropped —
+      // And lose whoever the accept echo delivered while this write was in flight
       applyOptimistic: () => {
+        const deletedFriend = friends.value.find(({ id }) => id === friendId);
         storeDeleteFriend(friendId);
         return () => {
-          friends.value = previousFriends;
+          if (deletedFriend) storeCreateFriend(deletedFriend);
         };
       },
+      key: friendId,
     });
   };
   return {
     deleteFriend,
     friends,
+    getIsFriend,
     storeCreateFriend,
     storeDeleteFriend,
   };

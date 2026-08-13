@@ -7,14 +7,17 @@ import type {
   BlockBlobPutBlobFromUrlResponse,
   BlockBlobStageBlockFromURLResponse,
   BlockBlobStageBlockResponse,
+  BlockBlobUploadOptions,
   BlockBlobUploadResponse,
   HttpRequestBody,
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
 import { MockBlobClient } from "@/models/container/MockBlobClient";
+import { MockRestError } from "@/models/MockRestError";
 import { bodyToBuffer } from "@/services/container/bodyToBuffer";
 import { createMockResponse } from "@/services/createMockResponse";
+import { getMockContainerCreatedOnKey, MockContainerCreatedOnDatabase } from "@/store/MockContainerCreatedOnDatabase";
 
 export class MockBlockBlobClient extends MockBlobClient implements Except<BlockBlobClient, "accountName"> {
   commitBlockList(): Promise<BlockBlobCommitBlockListResponse> {
@@ -41,8 +44,19 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
     throw new Error("Method not implemented.");
   }
 
-  async upload(body: HttpRequestBody, _contentLength: number): Promise<BlockBlobUploadResponse> {
-    this.container.set(this.name, await bodyToBuffer(body));
+  async upload(
+    body: HttpRequestBody,
+    _contentLength: number,
+    options?: BlockBlobUploadOptions,
+  ): Promise<BlockBlobUploadResponse> {
+    // `ifNoneMatch: "*"` is the create-only upload: the service rejects it with 409 when the blob is already
+    // There. The body is buffered first so the check and the write share one tick, because a concurrent create
+    // Is the only thing this condition exists to lose against — awaiting between them would model no condition
+    const buffer = await bodyToBuffer(body);
+    if (options?.conditions?.ifNoneMatch === "*" && this.container.has(this.name))
+      throw new MockRestError("The specified blob already exists.", 409);
+    this.container.set(this.name, buffer);
+    MockContainerCreatedOnDatabase.set(getMockContainerCreatedOnKey(this.containerName, this.name), new Date());
     return { _response: createMockResponse(201) };
   }
 

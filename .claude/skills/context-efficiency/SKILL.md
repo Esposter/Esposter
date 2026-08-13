@@ -21,7 +21,11 @@ Batch format/typecheck/tests until **all** edits are done. Each pass re-pays a f
 
 Commit per coherent chunk regardless: commits are cheap and protect against other sessions' resets, checks are not.
 
+The pass runs **after** `/simplify`, not before — cleanup edits code, so checking first pays the startup cost twice. See "Finishing a change" in `CLAUDE.md` for the full order.
+
 ## Wait on a condition, never a sleep
+
+This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (`testing` skill, and `architecture/no-polling.md`). Nothing here may be copied into a test.
 
 Poll until the thing you need is actually true, with a bounded loop:
 
@@ -33,4 +37,6 @@ A fixed sleep is wrong in both directions — wasted when the work finished earl
 
 ## Diff against a clean tree before chasing an error
 
-Generated types go stale. A typecheck can report errors in files the change never touched — investigating those is pure waste. Before diagnosing any failure in unrelated code, confirm the baseline: stash and re-run. The question is never "are there errors", it is **"does my change add errors"**.
+Generated types go stale, and workspace `dist` output goes stale faster — a typecheck reporting that `@esposter/db` "has no exported member" something long-standing is a build artifact, not a regression. Rebuild the packages the errors name and re-run before reading a single one of them. The question is never "are there errors", it is **"does my change add errors"**.
+
+**"Pre-existing" means pre-dating the change, and HEAD is not that.** On a branch where the work is committed as it goes, HEAD already contains the change under suspicion, so "it fails at HEAD too" proves only that the failure isn't from the uncommitted edit on top. Pick the commit before the one that touched the relevant file (`git log --stat -- <path>`) and check the source there with `git show <sha>:<path>` — never `git stash`, which is banned repo-wide. Getting this wrong inverts the conclusion: a real regression gets filed as unrelated and shipped.

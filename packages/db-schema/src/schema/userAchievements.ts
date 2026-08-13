@@ -19,7 +19,7 @@ export const userAchievements = pgTable(
   {
     extraConfig: ({ achievementId, amount, userId }) => [
       primaryKey({ columns: [userId, achievementId] }),
-      check("user_achievements_amount_check", sql`${amount} >= 1`),
+      check("userAchievements_amount_check", sql`${amount} >= 1`),
     ],
   },
 );

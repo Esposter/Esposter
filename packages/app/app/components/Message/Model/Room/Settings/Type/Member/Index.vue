@@ -24,8 +24,6 @@ const selectedMember = computed(() => members.value.find(({ id }) => id === sele
     <v-col v-if="selectedMember">
       <MessageModelRoomSettingsTypeMemberEditor :key="selectedMember.id" :member="selectedMember" :room-id="room.id" />
     </v-col>
-    <v-col v-else py-12 flex items-center justify-center op-medium-emphasis
-      >Select a member to manage their roles.</v-col
-    >
+    <MessageModelRoomSettingsTypeDetailPlaceholder v-else text="Select a member to manage their roles." />
   </v-row>
 </template>

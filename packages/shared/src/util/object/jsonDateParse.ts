@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// oxlint-disable typescript/no-explicit-any
 import { takeOne } from "@/util/array/takeOne";
 
 const ISO_DATE_REGEX =
@@ -6,22 +6,14 @@ const ISO_DATE_REGEX =
 const MS_AJAX_DATE_REGEX = /^\/Date\((?<timestamp>-?\d+(?:[-+]\d+)?)\)[/\\]$/u;
 // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 export const jsonDateParse = <T = any>(text: string): T =>
+  // eslint-disable-next-line no-restricted-syntax -- the reviver every other caller is pointed at is built here
   JSON.parse(text, (_key, value) => {
-    let parsedValue = value;
+    if (typeof value !== "string") return value;
+    else if (ISO_DATE_REGEX.test(value)) return new Date(value);
 
-    if (typeof value === "string") {
-      let a = ISO_DATE_REGEX.exec(value);
+    const msAjaxDateMatch = MS_AJAX_DATE_REGEX.exec(value);
+    if (!msAjaxDateMatch) return value;
 
-      if (a) parsedValue = new Date(value);
-      else {
-        a = MS_AJAX_DATE_REGEX.exec(value);
-
-        if (a) {
-          const b = takeOne(a, 1).split(/[-+,.]/u);
-          parsedValue = new Date(b[0] ? Number(b[0]) : 0 - Number(b[1]));
-        }
-      }
-    }
-
-    return parsedValue;
+    const timestampParts = takeOne(msAjaxDateMatch, 1).split(/[-+,.]/u);
+    return new Date(timestampParts[0] ? Number(timestampParts[0]) : 0 - Number(timestampParts[1]));
   });

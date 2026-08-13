@@ -1,13 +1,14 @@
 import { Color } from "@/models/cli/Color";
 import { BackendType } from "@/models/virrun/BackendType";
 import { colorize } from "@/services/cli/color/colorize";
+import { formatVirrunError } from "@/services/cli/format/formatVirrunError";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
 import { resolveBackend } from "@/services/configuration/resolveBackend";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createVirrun } from "@/services/virrun/createVirrun";
-import { getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 // Backs `virrun warm`. Forking the `true` no-op triggers the cold-path capture (Virrun.fork): cold installs and
 // Freezes the snapshot, warm reuses it — either way `true` exits 0, so the first real routed run pays nothing.
 export const warmCache = async (): Promise<number> => {
@@ -31,7 +32,7 @@ export const warmCache = async (): Promise<number> => {
   return result.match(
     ({ exitCode }) => exitCode,
     (error) => {
-      process.stderr.write(`${formatVirrunLine(colorize(toAppError(error).message, Color.Red))}\n`);
+      process.stderr.write(`${formatVirrunError(error.message)}\n`);
       return 1;
     },
   );

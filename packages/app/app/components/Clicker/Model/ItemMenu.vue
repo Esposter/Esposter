@@ -6,8 +6,8 @@ import type { VMenu } from "vuetify/components";
 
 import { Target } from "#shared/models/clicker/data/Target";
 import { formatNumberLong } from "@/services/clicker/format";
+import { getGlobImage } from "@/services/clicker/getGlobImage";
 import { marked } from "marked";
-import { filename } from "pathe/utils";
 
 type ItemMenuProps = Partial<Pick<BuildingWithStats, "amount">> &
   Partial<Pick<Upgrade, "description">> &
@@ -23,21 +23,21 @@ const { amount, description, flavorDescription, id, isAffordable, menuProps, pri
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));
-const buildingIcon = computed(() => {
-  const glob = import.meta.glob<string>("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value]));
-  return images[id];
-});
-const menuIcon = computed(() => {
-  const glob = import.meta.glob<string>("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value]));
-  return images[id];
-});
-const upgradeIcon = computed(() => {
-  const glob = import.meta.glob<string>("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value]));
-  return images[id];
-});
+const buildingIcon = computed(() =>
+  getGlobImage(
+    import.meta.glob<string>("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" }),
+    id,
+  ),
+);
+const menuIcon = computed(() =>
+  getGlobImage(import.meta.glob<string>("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" }), id),
+);
+const upgradeIcon = computed(() =>
+  getGlobImage(
+    import.meta.glob<string>("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" }),
+    id,
+  ),
+);
 </script>
 
 <template>

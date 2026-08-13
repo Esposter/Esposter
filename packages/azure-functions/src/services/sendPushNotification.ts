@@ -16,8 +16,8 @@ export const sendPushNotification = async (
 ): Promise<void> => {
   const payload = getCreateMessageNotificationPayload(context, message, {
     icon,
+    path: RoutePath.MessagesMessage(partitionKey, rowKey),
     title,
-    url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, rowKey)}`,
   });
   if (!payload) return;
 

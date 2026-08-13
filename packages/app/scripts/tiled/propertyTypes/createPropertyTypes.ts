@@ -25,7 +25,7 @@ export const createPropertyTypes = async () => {
           `${DIRECTORY}/${type}/${objectPropertyFilename}.ts`,
           createEnumString(
             objectPropertyFilename,
-            members.map(({ name }) => name),
+            members.map(({ name: memberName }) => memberName),
           ),
         ),
       ]);

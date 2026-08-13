@@ -1,33 +1,29 @@
 // @vitest-environment nuxt
-import type { Router } from "vue-router";
 
 import { dayjs } from "#shared/services/dayjs";
 import { getDraft } from "@/services/message/draft/getDraft";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useInputStore } from "@/store/message/input";
 import { marked } from "marked";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const setStoredDraft = (roomId: string, content: string) => {
   localStorage.setItem(LocalStorageKey.Draft(roomId), JSON.stringify({ content, updatedAt: new Date() }));
 };
 
 describe(useInputStore, () => {
-  let router: Router;
   const roomId1 = crypto.randomUUID();
   const roomId2 = crypto.randomUUID();
   const draftContent = marked.parse("draftContent", { async: false });
   const debounceMs = dayjs.duration(0.3, "seconds").asMilliseconds();
 
-  beforeAll(() => {
-    router = useRouter();
-  });
-
   beforeEach(() => {
-    vi.useFakeTimers();
+    // Frozen rather than merely faked, so a draft's `updatedAt` is an exact value instead of "some Date"
+    vi.useFakeTimers({ now: 0 });
     setActivePinia(createPinia());
-    router.currentRoute.value.params.id = roomId1;
+    setCurrentRoomId(roomId1);
   });
 
   afterEach(() => {
@@ -53,6 +49,8 @@ describe(useInputStore, () => {
     const { drafts } = storeToRefs(inputStore);
 
     expect(drafts.value.has(roomId1)).toBe(false);
+    // And drops the key rather than leaving it to be re-scanned on every boot
+    expect(getDraft(roomId1)).toBeUndefined();
   });
 
   test("ignores unparseable draft content", () => {
@@ -137,7 +135,8 @@ describe(useInputStore, () => {
     await nextTick();
 
     expect(getDraft(roomId1)?.content).toBe(draftContent);
-    expect(getDraft(roomId1)?.updatedAt).toBeInstanceOf(Date);
+    // The debounce is what elapsed the frozen clock, so the stamp is that instant exactly
+    expect(getDraft(roomId1)?.updatedAt).toStrictEqual(new Date(debounceMs));
     expect(input.value).toBe(draftContent);
     expect(drafts.value.has(roomId1)).toBe(true);
   });
@@ -151,7 +150,7 @@ describe(useInputStore, () => {
     storeDraft(roomId1, draftContent);
 
     expect(getDraft(roomId1)?.content).toBe(draftContent);
-    expect(getDraft(roomId1)?.updatedAt).toBeInstanceOf(Date);
+    expect(getDraft(roomId1)?.updatedAt).toStrictEqual(new Date(0));
     expect(input.value).toBe(draftContent);
     expect(drafts.value.has(roomId1)).toBe(true);
   });
@@ -210,6 +209,25 @@ describe(useInputStore, () => {
 
     expect(getDraft(roomId1)).toBeUndefined();
     expect(drafts.value.has(roomId1)).toBe(false);
+  });
+
+  // The editor holds what the user typed and the store persists the sanitized form of it. The autosave writing
+  // That sanitized text back into `input` would rewrite the composer under a user who is still typing in it —
+  // Which is the one thing the three draft writers disagree on, and so the one thing worth pinning
+  test("keeps the raw editor text in input while persisting the sanitized draft", async () => {
+    expect.hasAssertions();
+
+    const unsafeContent = `${draftContent}<script>alert(1)</script>`;
+    const inputStore = useInputStore();
+    const { drafts, input } = storeToRefs(inputStore);
+    input.value = unsafeContent;
+    await nextTick();
+    vi.advanceTimersByTime(debounceMs);
+    await nextTick();
+
+    expect(input.value).toBe(unsafeContent);
+    expect(drafts.value.get(roomId1)?.content).toBe(draftContent);
+    expect(getDraft(roomId1)?.content).toBe(draftContent);
   });
 
   test("does not save before debounce delay elapses", async () => {

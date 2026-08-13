@@ -56,10 +56,10 @@ When the same attributify utility combination recurs across components (e.g. `op
 
 ## Snapshot test
 
-`packages/app/uno.config.test.ts` is a single test that snapshots `rules`, `safelist`, `shortcuts`, and `theme`. Run it to update the snapshot after intentional changes:
+`packages/app/uno.config.test.ts` is a single test that snapshots `rules`, `safelist`, `shortcuts`, and `theme`. Run it from `packages/app` to update the snapshot after intentional changes:
 
 ```bash
-pnpm exec vitest run uno.config.test.ts -u
+pnpm test uno.config.test.ts -u --run
 ```
 
 Update the snapshot whenever:

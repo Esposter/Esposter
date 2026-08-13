@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { AchievementStatus, AchievementStatuses } from "#shared/models/achievement/AchievementStatus";
-import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
+import { AchievementStatus, AchievementStatuses } from "@/models/achievement/AchievementStatus";
+import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
 import { useAchievementStore } from "@/store/achievement";
 
 const achievementStore = useAchievementStore();

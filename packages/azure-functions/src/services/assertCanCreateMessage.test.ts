@@ -1,7 +1,7 @@
-import type { relations } from "@esposter/db-schema";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { Database } from "@esposter/db-schema";
 
 import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
+import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
@@ -9,20 +9,23 @@ import {
   roomsInMessage,
   users,
   usersToRoomsInMessage,
+  WordFilterAction,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
+vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
 
 describe(assertCanCreateMessage, () => {
+  const context = new InvocationContext({ logHandler: () => {} });
   const memberUserId = crypto.randomUUID();
   const name = "name";
   const ownerUserId = crypto.randomUUID();
@@ -42,8 +45,7 @@ describe(assertCanCreateMessage, () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(async () => {
@@ -68,7 +70,9 @@ describe(assertCanCreateMessage, () => {
 
     const missingRoomId = crypto.randomUUID();
 
-    await expect(assertCanCreateMessage(memberUserId, missingRoomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      assertCanCreateMessage(context, memberUserId, missingRoomId, ""),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, missingRoomId).message}]`,
     );
   });
@@ -76,7 +80,9 @@ describe(assertCanCreateMessage, () => {
   test("throws when member not found", async () => {
     expect.hasAssertions();
 
-    await expect(assertCanCreateMessage(crypto.randomUUID(), roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      assertCanCreateMessage(context, crypto.randomUUID(), roomId, ""),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -89,7 +95,7 @@ describe(assertCanCreateMessage, () => {
       .set({ timeoutUntil: new Date(Date.now() + 1) })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, memberUserId)));
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -99,7 +105,7 @@ describe(assertCanCreateMessage, () => {
 
     await mockDb.update(roomsInMessage).set({ isReadOnly: true }).where(eq(roomsInMessage.id, roomId));
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -109,7 +115,7 @@ describe(assertCanCreateMessage, () => {
 
     await mockDb.update(roomsInMessage).set({ isReadOnly: true }).where(eq(roomsInMessage.id, roomId));
 
-    await expect(assertCanCreateMessage(ownerUserId, roomId, "")).resolves.toBeUndefined();
+    await expect(assertCanCreateMessage(context, ownerUserId, roomId, "")).resolves.toBeUndefined();
   });
 
   test("throws when slowmode is active and not enough time has elapsed", async () => {
@@ -121,7 +127,7 @@ describe(assertCanCreateMessage, () => {
       .set({ lastMessageAt: new Date() })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, memberUserId)));
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -131,14 +137,33 @@ describe(assertCanCreateMessage, () => {
 
     await mockDb.insert(roomFiltersInMessage).values({ roomId, words: ["a"] });
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "a")).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "a")).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[WordFilteredError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
+  });
+
+  test("times the member out when the filter action is timeout", async () => {
+    expect.hasAssertions();
+
+    const timeoutDurationMs = 1;
+    await mockDb
+      .insert(roomFiltersInMessage)
+      .values({ action: WordFilterAction.Timeout, roomId, timeoutDurationMs, words: ["a"] });
+
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "a")).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[WordFilteredError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
+    );
+
+    const member = await mockDb.query.usersToRoomsInMessage.findFirst({
+      columns: { timeoutUntil: true },
+      where: { roomId: { eq: roomId }, userId: { eq: memberUserId } },
+    });
+    expect(member?.timeoutUntil).toStrictEqual(new Date(timeoutDurationMs));
   });
 
   test("passes when all conditions are met", async () => {
     expect.hasAssertions();
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "a")).resolves.toBeUndefined();
+    await expect(assertCanCreateMessage(context, memberUserId, roomId, "a")).resolves.toBeUndefined();
   });
 });

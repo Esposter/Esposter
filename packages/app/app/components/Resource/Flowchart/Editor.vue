@@ -2,11 +2,16 @@
 import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
-import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
+import { nodeTypes } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
 import { Panel, useVueFlow, VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
+import "@vue-flow/controls/dist/style.css";
+import "@vue-flow/core/dist/style.css";
+import "@vue-flow/core/dist/theme-default.css";
+import "@vue-flow/minimap/dist/style.css";
+import "@vue-flow/node-resizer/dist/style.css";
 
 const flowchartEditorStore = useFlowchartEditorStore();
 const { loadContent, saveFlowchartEditor } = flowchartEditorStore;
@@ -14,11 +19,8 @@ const { flowchartEditor, isSidebarOpen } = storeToRefs(flowchartEditorStore);
 const { addEdges, onConnect } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
 const isLoading = ref(true);
-const nodeTypes = Object.fromEntries(
-  Object.entries(NodeTypeMap).map(([nodeType, { component }]) => [nodeType, component]),
-);
 // VueFlow emits on every drag frame; coalesce so overlapping saves don't fight over contentVersion
-const debouncedSave = useDebounceFn(saveFlowchartEditor, 500);
+const debouncedSave = useAutosaveFn(saveFlowchartEditor);
 
 onConnect(addEdges);
 
@@ -62,17 +64,9 @@ onMounted(async () => {
       </v-sheet>
     </Panel>
     <FlowchartEditorPanel />
-    <FlowchartEditorDropzoneBackground />
+    <FlowchartEditorNodeDropzoneBackground />
   </VueFlow>
 </template>
-
-<style lang="scss">
-@use "@vue-flow/controls/dist/style.css" as *;
-@use "@vue-flow/core/dist/style.css" as *;
-@use "@vue-flow/core/dist/theme-default.css";
-@use "@vue-flow/minimap/dist/style.css" as *;
-@use "@vue-flow/node-resizer/dist/style.css" as *;
-</style>
 
 <style scoped lang="scss">
 :deep(.selected .line) {

@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db",
-  "version": "2.35.0",
+  "version": "2.36.0",
   "private": true,
   "description": "A library of database utilities that is available in server environment only.",
   "keywords": [
@@ -66,6 +66,7 @@
   },
   "peerDependencies": {
     "@azure/core-client": "catalog:",
+    "@azure/core-rest-pipeline": "catalog:",
     "@azure/data-tables": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/service-bus": "catalog:",

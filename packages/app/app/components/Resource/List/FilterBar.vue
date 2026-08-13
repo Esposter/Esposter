@@ -9,10 +9,17 @@ interface ResourceListFilterBarProps {
   hasActiveFilters: boolean;
 }
 
+interface ResourceListFilterTypeDefinition {
+  isVisible: ComputedRef<boolean>;
+  reset: () => void;
+}
+
 const { hasActiveFilters } = defineProps<ResourceListFilterBarProps>();
 const types = defineModel<ResourceType[]>("types", { required: true });
 const status = defineModel<"" | ResourceStatusFilter>("status", { required: true });
 const updatedFilter = defineModel<"" | ResourceUpdatedFilter>("updatedFilter", { required: true });
+const tagName = defineModel<string>("tagName", { required: true });
+const tagValue = defineModel<string>("tagValue", { required: true });
 const updatedAfter = defineModel<Date | undefined>("updatedAfter", { required: true });
 const updatedBefore = defineModel<Date | undefined>("updatedBefore", { required: true });
 const emit = defineEmits<{ clear: [] }>();
@@ -25,21 +32,38 @@ const isStatusPillVisible = computed(
 const isUpdatedPillVisible = computed(
   () => Boolean(updatedFilter.value) || addedFilterTypes.value.includes(ResourceListFilterType.Updated),
 );
+const isTagPillVisible = computed(
+  () => Boolean(tagName.value) || addedFilterTypes.value.includes(ResourceListFilterType.Tag),
+);
 // Keyed by filter type so adding a new ResourceListFilterType is a compile error here instead of a silent fallthrough
-const filterTypeVisibilityMap: Record<ResourceListFilterType, ComputedRef<boolean>> = {
-  [ResourceListFilterType.Status]: isStatusPillVisible,
-  [ResourceListFilterType.Updated]: isUpdatedPillVisible,
+const filterTypeDefinitionMap: Record<ResourceListFilterType, ResourceListFilterTypeDefinition> = {
+  [ResourceListFilterType.Status]: {
+    isVisible: isStatusPillVisible,
+    reset: () => {
+      status.value = "";
+    },
+  },
+  [ResourceListFilterType.Tag]: {
+    isVisible: isTagPillVisible,
+    reset: () => {
+      tagName.value = "";
+      tagValue.value = "";
+    },
+  },
+  [ResourceListFilterType.Updated]: {
+    isVisible: isUpdatedPillVisible,
+    reset: () => {
+      updatedFilter.value = "";
+      updatedAfter.value = undefined;
+      updatedBefore.value = undefined;
+    },
+  },
 };
 const availableFilterTypes = computed(() =>
-  ResourceListFilterTypes.filter((filterType) => !filterTypeVisibilityMap[filterType].value),
+  ResourceListFilterTypes.filter((filterType) => !filterTypeDefinitionMap[filterType].isVisible.value),
 );
 const removeFilter = (filterType: ResourceListFilterType) => {
-  if (filterType === ResourceListFilterType.Status) status.value = "";
-  else {
-    updatedFilter.value = "";
-    updatedAfter.value = undefined;
-    updatedBefore.value = undefined;
-  }
+  filterTypeDefinitionMap[filterType].reset();
   addedFilterTypes.value = addedFilterTypes.value.filter((addedFilterType) => addedFilterType !== filterType);
 };
 const clearFilters = () => {
@@ -49,12 +73,18 @@ const clearFilters = () => {
 </script>
 
 <template>
-  <div px-4 py-2 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
+  <div px-4 py-2 b-0 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
     <ResourceListTypeFilterPill v-model="types" />
     <ResourceListStatusFilterPill
       v-if="isStatusPillVisible"
       v-model="status"
       @remove="removeFilter(ResourceListFilterType.Status)"
+    />
+    <ResourceListTagFilterPill
+      v-if="isTagPillVisible"
+      v-model:tag-name="tagName"
+      v-model:tag-value="tagValue"
+      @remove="removeFilter(ResourceListFilterType.Tag)"
     />
     <ResourceListUpdatedFilterPill
       v-if="isUpdatedPillVisible"

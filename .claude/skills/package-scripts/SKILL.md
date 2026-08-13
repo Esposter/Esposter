@@ -9,18 +9,16 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 
 ## `packages/app`
 
-| Command             | Runs                                                      | When to use                                     |
-| ------------------- | --------------------------------------------------------- | ----------------------------------------------- |
-| `pnpm lint`         | `TIMING=1 eslint --config eslint.light.config.js .`       | CI/check-only lint verification                 |
-| `pnpm lint:fix`     | `TIMING=1 eslint --config eslint.light.config.js --fix .` | **Local lint verification** — use this directly |
-| `pnpm lint:all`     | `TIMING=1 eslint .` (full config)                         | Full lint pass (slower)                         |
-| `pnpm lint:all:fix` | `TIMING=1 eslint --fix .`                                 | Fix all lint errors (full pass)                 |
-| `pnpm typecheck`    | `nuxt typecheck`                                          | TypeScript type checking                        |
-| `pnpm test`         | `vitest` (watch mode)                                     | Run this package's tests in watch mode          |
-| `pnpm format`       | `oxfmt`                                                   | Format code                                     |
-| `pnpm format:check` | `oxfmt --check`                                           | Check formatting without writing                |
-| `pnpm dev`          | `nuxt dev`                                                | Start dev server                                |
-| `pnpm build`        | `nuxt build`                                              | Build for production                            |
+| Command             | Runs                  | When to use                                     |
+| ------------------- | --------------------- | ----------------------------------------------- |
+| `pnpm lint`         | `eslint .`            | CI/check-only lint verification                 |
+| `pnpm lint:fix`     | `eslint --fix .`      | **Local lint verification** — use this directly |
+| `pnpm typecheck`    | `nuxt typecheck`      | TypeScript type checking                        |
+| `pnpm test`         | `vitest` (watch mode) | Run this package's tests in watch mode          |
+| `pnpm format`       | `oxfmt`               | Format code                                     |
+| `pnpm format:check` | `oxfmt --check`       | Check formatting without writing                |
+| `pnpm dev`          | `nuxt dev`            | Start dev server                                |
+| `pnpm build`        | `nuxt build`          | Build for production                            |
 
 > Oxlint is **not** part of any package's `lint` script — it runs as a single repo-wide pass from the **root** `pnpm lint` / `pnpm lint:fix` (one `.oxlintrc.json` at the repo root). Packages run ESLint only.
 
@@ -37,17 +35,17 @@ description: Esposter pnpm script reference — packages/app scripts (lint, type
 
 ## Check Suite (after edits)
 
-Run before declaring work done:
+The suite runs **once per coherent chunk, on `develop`, before that chunk is pushed** — not per commit — see the git skill's "Verify On `develop`". Run before declaring work done:
 
 1. `pnpm typecheck`
-2. `pnpm lint:fix` — **only for `packages/*` (non-app)**; skip when the change touches `packages/app` (slow), leave that to CI.
+2. Lint fix — `pnpm lint:fix` from `packages/app/` for app changes (ESLint only; app oxlint coverage comes from CI's root `pnpm lint`); `pnpm lint:fix:packages` from the root for non-app `packages/*` changes.
 3. `pnpm test -u --run` — **only when actual code changed** (not for test-only or doc edits). `-u` refreshes snapshots, `--run` forces a single non-watch run.
 
 Test-only changes: just run the affected test file(s) — no full `test -u --run` sweep needed.
 
 ## Key Rules
 
-- **Lint locally** with `pnpm lint:fix` directly (packages only, not app) — never hand-edit to satisfy the linter. Reserve `pnpm lint`/`pnpm lint:all` for CI.
+- **Lint locally** with the fix scripts — never hand-edit to satisfy the linter. Reserve the check-only `pnpm lint` for CI.
 - **Windows tests run**: the old `spawn EPERM` config-startup crash is fixed via the minimal Vitest module allowlist in `packages/app/configuration/modules.ts`.
 - **Long-running** (`dev`, `build`, `test`, `typecheck`): use `run_in_background: true` (2+ min).
 - **Never use `pnpm <script> -- <args>`**: pnpm forwards the literal `--`, so trailing flags become post-`--` positionals and are dropped. Use `pnpm exec <binary> <args>` or direct args (`pnpm test -u`).

@@ -1,28 +1,34 @@
 import type { WslSourceMirrorSync } from "@/models/exec/wsl/WslSourceMirrorSync";
 
 import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
+import { getIsBareNameExclude } from "@/services/exec/util/getIsBareNameExclude";
 import { buildSourceMirrorManifest } from "@/services/exec/wsl/buildSourceMirrorManifest";
 import {
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
-  VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
 } from "@/services/exec/wsl/constants";
 import { createSourceMirrorArchive } from "@/services/exec/wsl/createSourceMirrorArchive";
 import { diffSourceMirrorManifests } from "@/services/exec/wsl/diffSourceMirrorManifests";
+import { getChangedExcludes } from "@/services/exec/wsl/getChangedExcludes";
 import { getWslSourceMirrorEntryPath } from "@/services/exec/wsl/getWslSourceMirrorEntryPath";
 import { getWslSourceMirrorEntryUnc } from "@/services/exec/wsl/getWslSourceMirrorEntryUnc";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { joinNullDelimited } from "@/services/exec/wsl/joinNullDelimited";
-import { readSourceMirrorManifest } from "@/services/exec/wsl/readSourceMirrorManifest";
+import { publishSourceMirrorOrigin } from "@/services/exec/wsl/publishSourceMirrorOrigin";
+import { readSourceMirrorPublication } from "@/services/exec/wsl/readSourceMirrorPublication";
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
-import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
-import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
+import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+// Whether the two exclude sets disagree on a bare name — the one exclude shape a delete list can't target, since it
+// Matches that segment at any depth rather than one path. The changed set itself comes from getChangedExcludes, the
+// Same derivation diffSourceMirrorManifests turns into deletes, so the two can never disagree on what changed.
+const getHasBareNameExcludeChange = (previous: readonly string[], current: readonly string[]): boolean =>
+  getChangedExcludes(previous, current).some((exclude) => getIsBareNameExclude(exclude));
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
 // CreateWslOsBackend folds into the run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
@@ -35,20 +41,22 @@ import { join } from "node:path";
 //   The walk runs unconditionally and synchronously by design: it IS the change detector (the skip decision needs the
 //   Current side of the diff, and every sync path publishes that same manifest), and virrun is a one-shot CLI whose
 //   Event loop has nothing else to run during planning — off-threading it would add IPC without cutting wall time.
-//   Measured sub-second warm on NTFS vs the >10s 9p stat-walk it replaced.
+//   Sub-second warm on NTFS, against a 9p stat-walk an order of magnitude slower.
 // - A delta stages pid-tagged temps in the entry dir (over the UNC): the next manifest, the null-delimited delete
 //   List, and a tar archive of the copied paths built host-side (createSourceMirrorArchive — native NTFS reads, one
 //   Sequential 9p write). The script applies them under the mirror lock: `xargs -0 rm -rf` for removals, then a local
 //   Ext4 `tar -x` into `tree/` — no source file ever crosses v9fs individually. `chmod -R 777` after the extract
-//   Restores the drvfs-parity modes the old rsync propagated (bsdtar records NTFS entries mode-less as 644/755, which
+//   Restores the drvfs-parity modes the sandbox expects (bsdtar records NTFS entries mode-less as 644/755, which
 //   Would strip the exec bits repo scripts rely on inside the sandbox). Symlinks ship preserved (their relative
 //   Targets are mirrored too, so they resolve at extract) and a path the archive couldn't capture — Windows-locked, or
 //   Vanished since the walk — is skipped and pruned from the published manifest rather than fatal
 //   (createSourceMirrorArchive).
-// - No readable manifest (first run, corrupt file, `cache clean`) or a missing tree materializes from scratch: the
+// - No readable manifest (first run, corrupt file, `cache clean`), a missing tree, or a manifest published under a
+//   Different exclude set than the one in force now materializes from scratch: the
 //   Archive carries the whole manifest file set and the script clears `tree/` before extracting, which also
-//   Self-heals any mirror-vs-manifest drift; the fresh manifest is published either way. The old whole-tree
-//   `rsync -a --delete` here read every source file across v9fs — a cold materialize could blow past the 5-minute
+//   Self-heals any mirror-vs-manifest drift — including the copies a since-added exclude orphaned, which no delta
+//   Could ever delete; the fresh manifest is published either way. A whole-tree
+//   `rsync -a --delete` here would read every source file across v9fs, so a cold materialize could blow past the
 //   Timeout; the archive does it in seconds.
 //
 // The publish is the last step inside the flock, via atomic `mv` of the staged temps, so the manifest never claims a
@@ -58,29 +66,55 @@ import { join } from "node:path";
 // Extract, not a cross-boundary copy. Readers hold the other side of the same lock: createWslOsBackend wraps every
 // Run (skip included) in a shared flock on lockPath for bwrap's whole duration, so this script's deletes/renames can
 // Never land under a live same-cwd reader — the exclusive acquire waits for readers to drain (bounded by the same
-// -w). Write-back is unaffected: persistRun flushes to `options.cwd` (the host /mnt/c path), derived independently of
-// This mirror. A failed sync fails the folded script before bwrap — the os backend never falls back.
-export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
+// -w). Write-back's target is unaffected: persistRun flushes to `options.cwd` (the host /mnt/c path), derived
+// Independently of this mirror — but its *set* is not, since a path this sync excludes is one the flush must mask,
+// Or the sandbox could write the host a path the mirror never carried. `excludes` is therefore handed in rather than
+// Resolved here: the caller resolves it once from the run's own `environment` (createWslOsBackend) and createVirrun
+// Derives `maskedPaths` from that same `environment`, so the walk and the mask cannot describe different sets.
+// A failed sync fails the folded script before bwrap — the os backend never falls back.
+export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string[]): WslSourceMirrorSync => {
   const entryPath = getWslSourceMirrorEntryPath(cwd);
   const entryUnc = getWslSourceMirrorEntryUnc(cwd);
   const mirrorPath = getWslSourceMirrorPath(cwd);
   const lockPath = `${mirrorPath}.lock`;
-  const excludes = resolveMirrorExcludes(cwd);
   const manifest = buildSourceMirrorManifest(cwd, excludes);
   reapStaleSourceMirrorTemps(entryUnc);
   // A manifest is only trusted while the tree it describes exists: a mirror whose tree was removed out-of-band but
   // Whose manifest survived would otherwise diff to an empty/near-empty delta against a gone tree — force the full
   // Materialize instead, which rebuilds tree and manifest together.
-  const previousManifest = existsSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME))
-    ? readSourceMirrorManifest(cwd)
+  const publication = existsSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME))
+    ? readSourceMirrorPublication(cwd)
     : undefined;
-  const delta = previousManifest === undefined ? undefined : diffSourceMirrorManifests(previousManifest, manifest);
-  if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) return { lockPath, mirrorPath, script: "" };
+  // …and only while every exclude it disagrees with can be reconciled by a targeted delete. The exclude set is not
+  // Constant — linked worktrees come and go while a repo is worked on — and a path on either side of that change is
+  // In neither manifest, so the entries diff alone can never emit a delete for it and the mirror keeps its copy
+  // Forever: read by the sandbox as if it were source, and copied up into the write-back's upper by any tool that
+  // Rewrites it. DiffSourceMirrorManifests turns each disagreement into an `rm -rf`, which is a no-op on a mirror
+  // That never held it. A *bare-name* change is the one shape a path list can't express (it matches at any depth),
+  // So that alone falls back to the clearing full materialize.
+  const current = { entries: manifest, excludes };
+  const previous =
+    publication !== undefined && !getHasBareNameExcludeChange(publication.excludes, excludes) ? publication : undefined;
+  const delta = previous === undefined ? undefined : diffSourceMirrorManifests(previous, current);
+  if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) {
+    // A live repo returns here on nearly every run, so this is where a marker that failed to publish gets a second
+    // Chance. Without it the reaper's "no marker and old enough" arm has no invariant to stand on: one swallowed
+    // Rename would leave a mirror this repo keeps using unattributable, and a day later the sweep would rm -rf it
+    // Out from under a run. Republished only when absent, so the common path still costs no write
+    if (!existsSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME))) publishSourceMirrorOrigin(entryUnc, cwd);
+    return { lockPath, mirrorPath, script: "" };
+  }
   return getResult(() => {
     const tag = `${process.pid}.${crypto.randomUUID()}`;
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
-    const originTempFilename = `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${tag}`;
     mkdirSync(entryUnc, { recursive: true });
+    // The abandonment reaper can only reclaim an entry it can attribute, so the origin marker is published the moment
+    // The entry dir exists rather than at the end of a successful sync: a materialize that dies midway (a killed run,
+    // A failed archive) would otherwise leave an unattributable dir no sweep may ever touch, and those corpses
+    // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp dirs.
+    // The publish is best-effort (publishSourceMirrorOrigin), which every planning pass makes safe by republishing
+    // A missing marker — including the no-delta early return above, the path a live repo takes on nearly every run
+    publishSourceMirrorOrigin(entryUnc, cwd);
     const copyPaths = delta === undefined ? Object.keys(manifest).toSorted() : delta.copyPaths;
     const consumedPaths: string[] = [];
     let archivePath = "";
@@ -93,28 +127,26 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
       // Skipped file hard-failing the run.
       for (const unarchivedPath of unarchivedPaths) delete manifest[unarchivedPath];
     }
-    writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(manifest));
-    // The origin marker is staged host-side like the manifest and published via `mv` (atomic same-fs rename), so a
-    // Concurrent reaper reads either the old or the complete new marker, never a half-written path it would misjudge
-    // As a dead source — and the temp carries the *host* pid reapStaleSourceMirrorTemps can actually attribute (a
-    // Linux-side `$$` temp would sit in the wrong pid domain forever).
-    writeFileSync(join(entryUnc, originTempFilename), cwd);
-    const publish = `mv ${shellQuote(`${entryPath}/${originTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`)} && mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
+    // The manifest is staged host-side as a pid-tagged temp and published by the script via `mv` (atomic same-fs
+    // Rename) as the last step inside the lock, so it never claims a state the mirror doesn't hold and a concurrent
+    // Planner reads either the old or the new one, never a torn file. The temp carries the *host* pid
+    // ReapStaleSourceMirrorTemps can attribute (a Linux-side `$$` temp would sit in the wrong pid domain forever).
+    writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(current));
+    const publish = `mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
       `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(lockPath)}`;
-    const extract =
-      archivePath === ""
-        ? []
-        : [
-            // `--warning=no-unknown-keyword` quiets GNU tar's per-symlink "Ignoring unknown extended header keyword
-            // 'LIBARCHIVE.symlinktype'" line: a benign pax header the win32 bsdtar writer stamps on every archived
-            // Symlink to record its file-vs-dir target kind. That distinction is meaningless on Linux — extraction
-            // Recreates the symlink correctly and exits 0 with or without it — so it is pure noise at this boundary.
-            // This command only ever runs under WSL GNU tar (the mirror is win32-only; a native-Linux run uses the os
-            // Backend, not this archive), and the archive itself stays standard pax for any other reader.
-            `timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar --warning=no-unknown-keyword -xf ${shellQuote(archivePath)} -C ${shellQuote(mirrorPath)}`,
-            `chmod -R 777 ${shellQuote(mirrorPath)}`,
-          ];
+    const extract = archivePath
+      ? [
+          // `--warning=no-unknown-keyword` quiets GNU tar's per-symlink "Ignoring unknown extended header keyword
+          // 'LIBARCHIVE.symlinktype'" line: a benign pax header the win32 bsdtar writer stamps on every archived
+          // Symlink to record its file-vs-dir target kind. That distinction is meaningless on Linux — extraction
+          // Recreates the symlink correctly and exits 0 with or without it — so it is pure noise at this boundary.
+          // This command only ever runs under WSL GNU tar (the mirror is win32-only; a native-Linux run uses the os
+          // Backend, not this archive), and the archive itself stays standard pax for any other reader.
+          `timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar --warning=no-unknown-keyword -xf ${shellQuote(archivePath)} -C ${shellQuote(mirrorPath)}`,
+          `chmod -R 777 ${shellQuote(mirrorPath)}`,
+        ]
+      : [];
     let sync: string[];
     if (delta === undefined)
       // Materialize from scratch: clearing `tree/` before the extract is what self-heals mirror-vs-manifest drift —
@@ -135,7 +167,7 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
   }).match(
     (script) => ({ lockPath, mirrorPath, script }),
     (error) => {
-      throw new InvalidOperationError(Operation.Create, createWslSourceMirrorSync.name, toAppError(error).message);
+      throw new InvalidOperationError(Operation.Create, createWslSourceMirrorSync.name, error.message);
     },
   );
 };
