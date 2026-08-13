@@ -71,6 +71,9 @@ describe(formatVirrunError, () => {
   test("paints the message body in the failure role", () => {
     expect.hasAssertions();
 
+    // NO_COLOR wins over FORCE_COLOR, so an ambient one from the dev's shell would silently strip the color
+    // Back off and fail the .not.toBe below — clear it alongside forcing color on, as colorize's own test does
+    vi.stubEnv("NO_COLOR", "");
     vi.stubEnv("FORCE_COLOR", "true");
 
     expect(formatVirrunError("no pnpm-lock.yaml found")).toBe(
