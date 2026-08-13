@@ -6,7 +6,7 @@ New packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 
 1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"main": "dist/index.js"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`. Standard scripts: `build` (`pnpm export:gen && rolldown --config rolldown.config.ts`), `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (see the `testing` skill). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
 2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
-3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.json"] }`.
+3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.base.json"] }`.
 4. **`rolldown.config.ts`** — call the matching factory from `@esposter/configuration`: `getRolldownConfigurationNode()` (server-only), `getRolldownConfigurationBrowser()`, or `getRolldownConfigurationIsomorphic()`. They are functions, not constants. See the `build` skill.
 5. **`eslint.config.js`** — symlink to the shared config (`index.typescript.js` for TS-only, `index.vue.js` for Vue), created per the SKILL's symlink rule:
    ```powershell
@@ -23,12 +23,7 @@ Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`s
 
 ## Rolldown externals
 
-Packages declared as `peerDependencies` must also be in the rolldown `external` array — pnpm doesn't tell rolldown to skip them. Either:
-
-- Add to the shared `external` list in `packages/configuration/src/external/external.ts` (preferred when used by multiple packages), OR
-- Override locally by spreading the factory's result: `const configuration = getRolldownConfigurationNode(); export default { ...configuration, external: [...configuration.external, "my-peer-dep"] }`. The `external` array is `(RegExp | string)[]` — don't cast it to `string[]`.
-
-After adding to the shared config, rebuild `packages/configuration` (`pnpm build`) before rebuilding dependents.
+Nothing to configure: `getExternal()` derives the external array from the new package's own `peerDependencies` plus its workspace siblings. Declare the peer in `package.json` and it is externalized. See the `build` skill for the two kinds of package that override this in their own `rolldown.config.ts`.
 
 ## peerDependencies vs dependencies
 

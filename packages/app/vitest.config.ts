@@ -1,19 +1,13 @@
-import { getBenchmarkPlugins, getBenchmarkRunner } from "@esposter/configuration";
+import { getBenchmarkTestConfiguration } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 
 import { dayjs } from "./shared/services/dayjs/index.ts";
 
 const vitestConfig = await defineVitestProject({
-  // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire the bench plugin via the shared
-  // Helper (inert unless the CodSpeed runner drives the run). The app benches, so it declares
-  // `@codspeed/vitest-plugin` as a devDependency to satisfy configuration's optional peer.
-  plugins: getBenchmarkPlugins(),
   test: {
-    // Reporter wired inline (same reason): path string resolved by Vitest in bench mode to shared-node's
-    // `./reporter` default export, which writes colocated per-file results.
-    benchmark: {
-      reporters: ["@esposter/shared-node/reporter"],
-    },
+    // `defineVitestProject` builds its own config rather than taking `getVitestConfiguration`, so the bench
+    // Wiring (reporter + runner) comes from the shared helper the other packages get through that config.
+    ...getBenchmarkTestConfiguration(),
     // Anything that signs with the app secret refuses to run without one, rather than quietly signing with an
     // Empty key — Nuxt coerces an unset runtimeConfig value to "", which `createHmac` accepts, so the failure
     // Would otherwise be a forgeable token in production and nothing at all in a test.
@@ -24,9 +18,6 @@ const vitestConfig = await defineVitestProject({
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
     // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
     hookTimeout: dayjs.duration(5, "minutes").asMilliseconds(),
-    // Custom benchmark runner wired inline (same reason as the reporter): bench mode only — see
-    // GetBenchmarkRunner — it zeroes tinybench's time budget so benches run a fixed iteration count.
-    runner: getBenchmarkRunner(),
     // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
     // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
     // The node environment run without a DOM. `fake-indexeddb/auto` polyfills the IDB* global

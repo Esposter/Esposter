@@ -24,6 +24,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only) | No legacy-shape schemas or migration code — parse the latest shape or reset              |
 | [Content token rewriting](/docs/architecture/content-token-rewriting)                     | Finding tokens in authored content — self-delimiting matches, one pass, converge on read |
 | [Monorepo tooling](/docs/architecture/monorepo-tooling)                                   | pnpm workspace orchestration, virrun routing, publishing, installs, and CI job shape     |
+| [Build pipeline](/docs/architecture/build-pipeline)                                       | One bundler, shared build presets, and an external list derived from each manifest       |
 | [Server testing](/docs/architecture/server-testing)                                       | tRPC router test wiring — in-memory DB, mocked Azure services, controlled auth session   |
 | [Dialog shell](/docs/architecture/dialog-shell)                                           | One dialog shell — StyledDialog owns the card, the body slot and the actions row         |
 | [Destructive confirmation](/docs/architecture/destructive-confirmation)                   | One shared delete dialog — StyledDeleteFormDialog + opt-in type-the-name guard           |

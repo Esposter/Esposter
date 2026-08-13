@@ -5,29 +5,18 @@ inputs:
     description: Install bubblewrap and enable unprivileged user namespaces for test/bench jobs that exercise the virrun os backend
     required: false
     default: false
-  node-version-file:
-    description: Path to file containing node version
-    required: false
-    default: package.json
-  node-version:
-    description: Explicit node version; overrides node-version-file when set
-    required: false
-    default: ""
 runs:
   using: composite
   steps:
     # Set up Node *before* pnpm. pnpm/action-setup picks its install strategy from the runner's *system* Node:
     # `standalone = systemNode.major < 22 || (major === 22 && minor < 13)`. When the system Node is too old it
     # falls back to the @pnpm/exe standalone bootstrap, whose self-installer crashes
-    # (`ERR_INVALID_ARG_TYPE: paths[0] ... undefined`) — this is what breaks the bench job on the bare-metal
-    # `codspeed-macro` runners (system Node 18.20.4). Installing a modern Node up front keeps action-setup on the
-    # plain `pnpm` install path. No pnpm cache here yet — pnpm isn't installed, so `cache: pnpm` can't resolve.
+    # (`ERR_INVALID_ARG_TYPE: paths[0] ... undefined`). Installing a modern Node up front keeps action-setup on
+    # the plain `pnpm` install path. No pnpm cache here yet — pnpm isn't installed, so `cache: pnpm` can't resolve.
     - name: 🛠️ Setup node
       uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
-        node-version: ${{ inputs.node-version }}
-        # setup-node warns if both are set, so fall back to the file only when no explicit version is given.
-        node-version-file: ${{ inputs.node-version == '' && inputs.node-version-file || '' }}
+        node-version-file: package.json
 
     - name: 📦 Install pnpm
       uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
@@ -49,6 +38,5 @@ runs:
     - name: 🛠️ Setup node (pnpm cache)
       uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
-        node-version: ${{ inputs.node-version }}
-        node-version-file: ${{ inputs.node-version == '' && inputs.node-version-file || '' }}
+        node-version-file: package.json
         cache: pnpm

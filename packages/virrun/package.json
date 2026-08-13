@@ -66,7 +66,6 @@
     "unconfig": "catalog:"
   },
   "devDependencies": {
-    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@esposter/shared-node": "workspace:*",

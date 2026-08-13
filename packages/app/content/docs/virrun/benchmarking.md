@@ -31,5 +31,4 @@ The biggest win is **warm-fork repeated runs**; the riskiest number is cold over
 ## Notes
 
 - Bench both backends — `vfs` and `os` have different cost profiles. The sandbox task is labelled by bridge (`os/linux`, `os/wsl`) and the md Environment block records the exact kernel/runner.
-- CodSpeed (hardware-independent CPU simulation with PR regression comments) was removed after exceeding its 600 min/month free tier; the `CODSPEED_ENV`-gated plugin wiring remains for easy re-enable.
 - The operational how-to lives in `packages/virrun/readme/speed-harness.md` (published npm docs).

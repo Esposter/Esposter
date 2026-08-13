@@ -29,7 +29,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "search",
     ],
     Backend: ["auth", "rate-limiting", "azure-services", "file-uploads"],
-    Development: ["environment", "monorepo-tooling", "server-testing"],
+    Development: ["environment", "monorepo-tooling", "build-pipeline", "server-testing"],
     Frontend: ["responsive", "security-posture"],
   },
   esbabbler: {
