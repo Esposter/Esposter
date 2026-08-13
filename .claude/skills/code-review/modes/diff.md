@@ -41,7 +41,7 @@ The cloud `/code-review ultra` refuses a diff past its own caps (it names them i
 
 **It does not work, and it fails in the direction that wastes the most attention**: the slice is one tree's subsystem sitting on another tree's everything-else, so every reference crossing the cut reads as a defect. A deleted field looks un-migrated, a moved module looks missing, a composable whose consumers live in the other half looks like it broke all of them — each arrives as a confident, well-argued major finding with a step-by-step proof, and each is an artifact of the cut. A whole run can return nothing else.
 
-Split by **history**, not by path: stack real branches so each one's base contains everything before it, and every reference resolves against a tree that actually exists. When the caps refuse even that, the answer is a smaller PR, not a synthetic branch. A local `typecheck` settles this entire class in one pass and costs nothing — run it against the real branch before spending a run on a slice.
+Split by **history**, not by path: stack real branches so each one's base contains everything before it, and every reference resolves against a tree that actually exists. When the caps refuse even that, the answer is a smaller PR, not a synthetic branch. A local `typecheck` settles the compile-time half of this class in one pass and costs nothing — every reference that stopped resolving across the cut — so run it against the real branch before spending a run on a slice. What it cannot see is the other half: dynamic lookups, data contracts, anything only a run exercises. The suite covers those, and neither is a reason to review a synthetic tree.
 
 ## The Find phase partitions itself by diff size — nothing to pass
 

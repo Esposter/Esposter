@@ -256,7 +256,7 @@ const CONFIDENCE_LADDER =
   "decisive — a low number routes the candidate to a resolver that has the budget to settle it properly, and an " +
   "inflated one ships a guess to the user as fact.";
 const SEVERITY_LADDER =
-  "Also rate each candidate's **severity** — the user-visible impact assuming the finding is real, judged\nindependently of verdict confidence (a PLAUSIBLE data-loss bug is still critical):\n- **critical** — data loss/corruption, security hole, crash or broken core flow in regular use.\n- **major** — wrong behavior on a realistic path: a mishandled edge case, degraded or misleading output,\n  a resilience gap.\n- **minor** — maintainability or cosmetic cost only: cleanup, conventions, stale comments, wasted work\n  with no user-visible effect.";
+  "Also rate each candidate's **severity** — the user-visible impact assuming the finding is real, judged\nindependently of verdict confidence (a PLAUSIBLE data-loss bug is still critical):\n- **critical** — data loss/corruption, security hole, crash or broken core flow in regular use.\n- **major** — wrong behavior on a realistic path: a mishandled edge case, degraded or misleading output,\n  a resilience gap.\n- **minor** — maintainability or cosmetic cost only: a broken convention, a stale comment, a cosmetic slip\n  with no user-visible effect.";
 // Grounds every surviving finding in history + the written record, so the report says whether this is the
 // First time the area has been raised or the Nth. Without it a re-review re-argues settled decisions and
 // Re-lands fixes that already shipped, with no signal in the output that it is doing so.
@@ -1182,8 +1182,8 @@ const verifyGroups = async (candidates) => {
   const out = await parallel(
     groups.map((g) => async () => {
       const short = g[0].file.split("/").pop();
-      // A cleanup claim is settled by looking at the code it names — is the helper already there, is the
-      // Comment stale, is the work duplicated — with no trigger to construct and no failure path to trace.
+      // A cleanup claim is settled by looking at the two lines it names — does the CLAUDE.md rule say that, does
+      // The cited line break it — with no trigger to construct and no failure path to trace.
       // Correctness claims are the ones that need reasoning depth, and cleanup can outnumber them at every
       // Level, so spending the same per-agent effort on both is where the level's budget quietly goes.
       const isCheapGroup = g.every((c) => isCheapToSettle(c));
@@ -1448,8 +1448,8 @@ const COVERAGE_FINDER = {
 // That are minor by definition, on a stop rule that calls an all-minor round converged. Four of those lenses are
 // The `simplify` skill's job now; the cap that survives with the fifth is `ANGLES` — one convention violation per
 // Correctness angle, which keeps it a spot-check rather than a second review.
-// Its `kind` is `cleanup` because that is what its findings ARE — a maintainability cost, ranked below every
-// Correctness candidate. Everything else that used to follow from that word now says so itself: `isNamedLens`
+// Its `kind` is `cleanup` because that is what its findings ARE — a broken CLAUDE.md convention, which is all
+// That word still names, ranked below every correctness candidate. Everything else that used to follow from that word now says so itself: `isNamedLens`
 // Shapes the prompt, `isAncillary` keeps it out of the correctness fan-out the resolve budget is sized from, and
 // `IS_KIND_CHEAP_TO_SETTLE` routes the effort. Read the kind for all four and none of them can be changed
 // Independently — which is how a taxonomy edit silently promoted the family into full-effort verification once.
