@@ -13,6 +13,6 @@ describe("@esposter/db", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 379.57 KB (388678 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 43.83 KB (44885 bytes)"`);
   });
 });
