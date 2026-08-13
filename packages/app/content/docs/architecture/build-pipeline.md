@@ -75,7 +75,7 @@ flowchart TD
   L --> P
   V --> P
   P --> BU["its tsconfig.build.json"]
-  X["tsconfig.build.json — excludes only"] --> BU
+  X["tsconfig.build.base.json — excludes only"] --> BU
 ```
 
 The build preset contributes **excludes and nothing else** — no `compilerOptions` at all. A package's build program therefore inherits the same platform, libs and `types` as the program it is typechecked with. A build config that re-declared `types` is how a package ends up emitting declarations against a different lib set than the one its source was written for, and the mismatch is invisible until something downstream fails to resolve.
@@ -90,5 +90,5 @@ What the build excludes: config files, `scripts/`, and every `*.test.ts` / `*.te
 | `packages/configuration/src/getCleanDistributionPlugin.ts`      | Wipes `dist` before each build              |
 | `packages/configuration/src/getRolldownConfigurationBrowser.ts` | The base every rolldown config extends      |
 | `packages/configuration/tsconfig.base.json`                     | Root of the preset chain                    |
-| `packages/configuration/tsconfig.build.json`                    | The build excludes, shared by every package |
+| `packages/configuration/tsconfig.build.base.json`               | The build excludes, shared by every package |
 | `packages/configuration/.ctirc-ts`                              | Barrel generation config                    |

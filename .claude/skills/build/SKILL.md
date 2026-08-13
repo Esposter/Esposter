@@ -43,13 +43,13 @@ An `INVALID_ANNOTATION` warning is never our code — it comes from a bundled th
 
 `getCleanDistributionPlugin` is in the base config's `plugins`. Rolldown never clears `output.dir` and chunk filenames are content-hashed, so without it every build leaves its predecessor's chunks behind forever. Keep it first in any `plugins` array a package overrides. The Vite path doesn't need it — Vite empties `outDir` itself.
 
-**Dist size is the correctness signal for anything touching externals.** Every package snapshots its `dist/index.js` and `index.d.ts` size in `src/index.test.ts`. After changing a manifest, an external, or a config factory, rebuild and run those — a jump means something started being bundled that shouldn't be, and a `-u` that "fixes" a large jump is hiding the bug.
+**Dist size is the correctness signal for anything touching externals.** Every package snapshots its `dist/index.js` size in `src/index.test.ts`, and its `index.d.ts` too unless it skips `dts`. After changing a manifest, an external, or a config factory, rebuild and run those — a jump means something started being bundled that shouldn't be, and a `-u` that "fixes" a large jump is hiding the bug.
 
 ## tsconfig presets
 
 `tsconfig.base.json` → `tsconfig.library.json` (composite + isolatedDeclarations) → `tsconfig.node.json` (`types: ["node"]`), with `tsconfig.vue.json` a sibling leaf off the base. The base carries **no framework assumption** — anything Vue-specific (`jsx`, DOM libs, the dxup language-service plugins, the `.vue` include) belongs in the Vue leaf, never at the root where every Node package inherits it.
 
-`tsconfig.build.json` holds **excludes and nothing else** — no `compilerOptions`, deliberately. A package's build config extends `["./tsconfig.json", "../configuration/tsconfig.build.json"]`, so its build program inherits the same platform, libs and `types` as the program it is typechecked with. Adding a `compilerOptions` block back there re-creates the bug it was written to remove: declarations emitted against a different lib set than the source was written for, invisible until something downstream fails to resolve.
+`tsconfig.build.base.json` holds **excludes and nothing else** — no `compilerOptions`, deliberately. A package's `tsconfig.build.json` extends `["./tsconfig.json", "../configuration/tsconfig.build.base.json"]`, so its build program inherits the same platform, libs and `types` as the program it is typechecked with. The preset is a separate file from the build config that extends it because `configuration` is built by the same factories: `dts()` and `ctix` read `tsconfig.build.json` from the package being built, so a preset sitting at that path would leave that one package building with no `compilerOptions` at all. Adding a `compilerOptions` block back there re-creates the bug it was written to remove: declarations emitted against a different lib set than the source was written for, invisible until something downstream fails to resolve.
 
 These are `**/*.json` under a strict `json/json` ESLint language — **no comments**. Rationale goes in the docs page, not the file.
 

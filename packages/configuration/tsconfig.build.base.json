@@ -1,0 +1,10 @@
+{
+  "exclude": [
+    "${configDir}/node_modules",
+    "${configDir}/*.config.ts",
+    "${configDir}/scripts/**/*.ts",
+    "${configDir}/**/*.bench.ts",
+    "${configDir}/**/*.test.ts",
+    "${configDir}/**/*.test-d.ts"
+  ]
+}
