@@ -67,6 +67,8 @@ Mock the **smallest seam that makes the behaviour reachable**, never re-declare 
 - **Module-level `vi.fn()` (colocated `vi.mock`) → `vi.clearAllMocks()`** — never a spy, so `restoreAllMocks` lets its call history **leak into the next test**. Required wherever `toHaveBeenCalled*` is asserted on one across tests; a file mixing both kinds needs both calls.
 - **Never `vi.resetAllMocks()` as routine cleanup** — it resets implementations to empty functions, erasing intentional `vi.mock` defaults.
 - **Globals use `vi.stubGlobal`**, never `Object.defineProperty`; unstub with `vi.unstubAllGlobals()` in `afterEach` (per-test stubs) or `afterAll` (set once in `beforeAll`). `vi.restoreAllMocks()` does **not** undo a `stubGlobal`.
+- **`vi.stubEnv` needs no teardown** — `unstubEnvs: true` in `getVitestConfiguration` restores the env after every test, so never write an `unstubAllEnvs` hook. The globals flag stays off deliberately: it would restore a `beforeAll` `stubGlobal` after the file's first test.
+- **A test must never read a color/TTY env var it did not stub.** `isColorEnabled` consults `NO_COLOR`/`FORCE_COLOR`, so an ambient one from the dev's shell repaints CLI output; virrun's `vitest.config.ts` pins both empty for the package, and a test wanting color stubs `FORCE_COLOR` itself.
 
 ## Reactive Effects and Timers
 

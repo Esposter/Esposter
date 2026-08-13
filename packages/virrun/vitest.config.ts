@@ -11,6 +11,10 @@ const vitestConfiguration: ViteUserConfig = {
   ...baseVitestConfiguration,
   test: {
     ...baseVitestConfiguration.test,
+    // Color is decided by these two env vars, read off the ambient process, so a dev shell exporting either one
+    // Repaints every CLI line the format tests assert on. Empty is the neutral value the function treats as
+    // Unset, leaving color off (no TTY in a worker) until a test stubs FORCE_COLOR to ask for it.
+    env: { FORCE_COLOR: "", NO_COLOR: "" },
     globalSetup: ["./vitest.globalSetup.ts"],
   },
 };

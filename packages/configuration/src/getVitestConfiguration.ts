@@ -17,5 +17,8 @@ export const getVitestConfiguration = (): ViteUserConfig => ({
     // Custom benchmark runner (bench mode only — see getBenchmarkRunner) that zeroes tinybench's time budget
     // So benches run a fixed iteration count, keeping the committed `*.bench.md` sample counts machine-stable.
     runner: getBenchmarkRunner(),
+    // Restores every vi.stubEnv after the test that set it, so no file needs its own unstubAllEnvs teardown.
+    // The globals equivalent stays off: a beforeAll stubGlobal is restored after the first test, not the file.
+    unstubEnvs: true,
   },
 });

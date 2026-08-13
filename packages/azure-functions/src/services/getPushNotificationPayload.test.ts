@@ -1,6 +1,6 @@
 import { getPushNotificationPayload } from "@/services/getPushNotificationPayload";
 import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getPushNotificationPayload, () => {
   const baseUrl = "https://esposter.test";
@@ -11,10 +11,6 @@ describe(getPushNotificationPayload, () => {
 
   beforeEach(() => {
     vi.stubEnv("BASE_URL", baseUrl);
-  });
-
-  afterEach(() => {
-    vi.unstubAllEnvs();
   });
 
   test("makes the deep link absolute against the base url", () => {

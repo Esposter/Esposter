@@ -11,7 +11,7 @@ import { formatVirrunNetworkHint } from "@/services/cli/format/formatVirrunNetwo
 import { formatVirrunPrepare } from "@/services/cli/format/formatVirrunPrepare";
 import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/format/formatVirrunResult";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 // Every CLI line builder is a pure template-string over the shared formatVirrunLine tag, so each one's whole
 // Observable surface is a single color-stripped string — they share one file rather than one 1-test file each.
 // The `[virrun] ` tag formatVirrunLine contributes is asserted inside every full-string expectation below.
@@ -53,12 +53,6 @@ describe(formatVirrunDebug, () => {
 });
 
 describe(formatVirrunError, () => {
-  // Registered rather than called at the end of the colour test: a failing assertion returns before the
-  // Teardown line, leaving FORCE_COLOR set for every case after it
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
-
   test("prefixes the message with the virrun tag", () => {
     expect.hasAssertions();
 
@@ -71,9 +65,6 @@ describe(formatVirrunError, () => {
   test("paints the message body in the failure role", () => {
     expect.hasAssertions();
 
-    // NO_COLOR wins over FORCE_COLOR, so an ambient one from the dev's shell would silently strip the color
-    // Back off and fail the .not.toBe below — clear it alongside forcing color on, as colorize's own test does
-    vi.stubEnv("NO_COLOR", "");
     vi.stubEnv("FORCE_COLOR", "true");
 
     expect(formatVirrunError("no pnpm-lock.yaml found")).toBe(

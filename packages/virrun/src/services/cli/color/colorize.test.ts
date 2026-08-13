@@ -1,16 +1,11 @@
 // oxlint-disable unicorn/no-hex-escape -- \x1b is the conventional, readable spelling of the ANSI ESC in assertions
 import { Color } from "@/models/cli/Color";
 import { colorize } from "@/services/cli/color/colorize";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(colorize, () => {
   beforeEach(() => {
-    vi.stubEnv("NO_COLOR", "");
     vi.stubEnv("FORCE_COLOR", "true");
-  });
-
-  afterEach(() => {
-    vi.unstubAllEnvs();
   });
 
   test(`wraps text in the color's SGR pair when color is enabled`, () => {
